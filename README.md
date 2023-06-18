@@ -25,7 +25,7 @@ You can ask questions about an entire solution or project using the "Code - Smar
 
 ## How it works
 
-The application (or extension) allows you to create complex prompt templates and attach data from various sources such as the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, or Chat History. Then, with just a single button press, you can run that template. The data will be sent to the AI model of your choice at https://api.openai.com.
+This application (or extension) enables you to create sophisticated prompt templates and incorporate data from a variety of sources, including the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, or Chat History. With a single button press, you can execute this template. The data will be transmitted to the AI model of your preference for results at https://api.openai.com.
 
 ## Where to get API Organization ID and API Key?
 
