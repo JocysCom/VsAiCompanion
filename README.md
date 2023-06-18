@@ -1,8 +1,8 @@
 # Jocys.com VS AI Companion
 
-The AI Companion is a tool that analyzes your project files and works alongside you or your team to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application.
+The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application.
 
-This is a free and open-source project for people who have an OpenAI API subscription. More information can be found at https://platform.openai.com/.
+This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) subscription.
 
 # Download
 
