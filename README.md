@@ -14,8 +14,8 @@ You can download latest version Visual Studio Extension from <a href="https://ma
 
 # System Requirements
 
-- Microsoft Windows 7 SP1 or newer.
-- https://dotnet.microsoft.com/download/dotnet
+- Microsoft .NET 6.0
+  https://dotnet.microsoft.com/download/dotnet
 
 ## Why was this extension created?
 I wanted something more advanced than GitHub CoPilot. I envisioned an application that could automate the most popular tasks using AI. My goal was for the AI to answer questions about an entire solution or to rewrite a whole Visual Studio Solution in a different language.
