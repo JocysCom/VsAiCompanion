@@ -6,7 +6,7 @@ This is a free and open-source project for people who have an [OpenAI API](https
 
 # Download
 
-Digitally Signed Standalone/Portable Application v1.0.20 (2023-06-18)
+Digitally Signed Standalone/Portable Application v1.0.21 (2023-06-18)
 
 [Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.0.0/JocysCom.VS.AiCompanion.App.zip)
 
