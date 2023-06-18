@@ -18,7 +18,7 @@ You can download latest version Visual Studio Extension from <a href="https://ma
   https://dotnet.microsoft.com/download/dotnet
 
 ## Why was this extension created?
-I wanted something more advanced than GitHub CoPilot. I envisioned an application that could automate the most popular tasks using AI. My goal was for the AI to answer questions about an entire solution or to rewrite a whole Visual Studio Solution in a different language.
+I aimed for a tool more sophisticated than GitHub CoPilot. I imagined an app that could handle common tasks using more detailed AI guidance and information. The purpose was for the AI to respond to queries about a complete project or to rework a whole Visual Studio project using a different framework. Currently, you can request a project rewrite since the extension can send an entire project. However, I need to make some updates to save the outcomes.
 
 ## Limitations
 You can ask questions about an entire solution or project using the "Code - Smart Search" template. However, the size of the solution or project is limited by the maximum amount of tokens the AI can process. People who have access to the GPT-4 API can upload projects or solutions for AI analysis, up to sizes of 128-260KB. These limitations could potentially be removed if you choose to send data to an AI hosted on-premises.
