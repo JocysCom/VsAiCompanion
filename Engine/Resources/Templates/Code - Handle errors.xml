@@ -21,7 +21,7 @@ Write-Host "Number of words in the file: $wordCount"&#xD;
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>

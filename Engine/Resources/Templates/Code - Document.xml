@@ -3,7 +3,7 @@
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
   <Text>Given the following code in {Selection.Language}, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</Text>
-  <AttachContext>None</AttachContext>
+  <AttachContext>Selection</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings>
@@ -12,9 +12,9 @@
   <Type>None</Type>
   <StatusCode>None</StatusCode>
   <Messages />
-  <AutoSend>true</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
-  <AutoOperation>Replace</AutoOperation>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>

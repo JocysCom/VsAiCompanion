@@ -5,7 +5,7 @@
   <Text>Document the steps of this code.&#xD;
 &#xD;
 </Text>
-  <AttachContext>None</AttachContext>
+  <AttachContext>Selection</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings>
@@ -15,7 +15,7 @@
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>

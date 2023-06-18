@@ -3,7 +3,7 @@
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
   <Text>Find a bug in this code</Text>
-  <AttachContext>None</AttachContext>
+  <AttachContext>ActiveDocument</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings>
@@ -13,7 +13,7 @@
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
