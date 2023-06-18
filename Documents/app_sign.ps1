@@ -39,20 +39,32 @@ function Sign-File {
     }
     Write-Host $signToolPath
     Write-Host
-    $arguments = @(
-        "sign",
-        "/f", "`"$PfxPath`"",
-        "/d", "`"$Description`"",
-        "/du", "`"$DescriptionUrl`"",
-        "/fd", "sha256",
-        "/td", "sha256",
-        "/tr", "`"$TimestampUrl`"",
-        "/v",
-        "`"$FilePath`""
-    )
+    $ext = [Path]::GetExtension($FilePath);
+    if ($ext -eq ".vsix") {
+        $arguments = @(
+            "sign",
+            "/f", "`"$PfxPath`"",
+            "/fd", "sha256",
+            "/td", "sha256",
+            "/tr", "`"$TimestampUrl`"",
+            "/v",
+            "/sha1", "cc747560b7f9d3641f2211a03c698e820f06efd9", # Specify the SHA1 hash of the signing cert.
+            "`"$FilePath`""
+        )
+    }else{
+        $arguments = @(
+            "sign",
+            "/f", "`"$PfxPath`"",
+            "/d", "`"$Description`"",
+            "/du", "`"$DescriptionUrl`"",
+            "/fd", "sha256",
+            "/td", "sha256",
+            "/tr", "`"$TimestampUrl`"",
+            "/v",
+            "`"$FilePath`""
+        )
+    }
     & $signToolPath $arguments
-    #/sha1 <h>   Specify the SHA1 hash of the signing cert.
-    #/sha1 cc747560b7f9d3641f2211a03c698e820f06efd9 
 }
 #------------------------------------------------------------------------------
 function GetSignToolExePath() {
@@ -126,7 +138,7 @@ foreach ($source in $files) {
         continue;
     }
     #Remove-SignatureIfExists -FilePath $target
-    Sign-File -FilePath $destination
+    Sign-File -FilePath $target
 }
 Write-Host
 Pause
