@@ -29,14 +29,39 @@ You can ask questions about an entire solution or project using the "Code - Smar
 
 The application (or extension) allows you to create complex prompt templates and attach data from various sources such as the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, or Chat History. Then, with just a single button press, you can run that template. The data will be sent to the AI model of your choice at https://api.openai.com.
 
+## Where to get API Organization ID and API Key?
+
+https://platform.openai.com/account/org-settings
+
 ## Screenshots
 
 <img alt="Extension Menu" src="Documents/Images/JocysComVsAiCompanion_ExtensionMenu.png" width="414" height="118">
 
+Code - Smart Search: The AI can provide you with the exact location of specific code features:
+
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_VisualStudio.png" width="685" height="455">
+
+Application Options:
 
 <img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Options.png" width="898" height="729">
-<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png"  width="898" height="729">
-<img alt="Historical Events" src="Documents/Images/JocysComVsAiCompanion_Task_HistoricalEvents.png"  width="898" height="729">
-<img alt="Smart Search" src="Documents/Images/JocysComVsAiCompanion_Task_SmartSearch.png"  width="898" height="729">
-<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_Task_Translate.png"  width="898" height="729">
+
+Task and template settings are saved in separate files for easy exchange and sharing:
+
+<img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_SettingFiles.png"  width="658" height="184">
+
+Various Templates:
+
 <img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_Templates.png"  width="898" height="729">
+
+Template: Code - Document
+
+<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png"  width="898" height="729">
+
+Template: Custom - Historical Events
+
+<img alt="Historical Events" src="Documents/Images/JocysComVsAiCompanion_Task_HistoricalEvents.png"  width="898" height="729">
+
+Template: Translate - English to Klingon:
+
+<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_Task_Translate.png"  width="898" height="729">
+
