@@ -1,0 +1,37 @@
+﻿<TemplateItem>
+  <Name>Utility - Homework Help</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Can you help me solve this math problem: [insert math problem here]?</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACt1VUW+bMBB+76/wLE1qJbCxwUBoaKXSrpqUbZXWbtreGLjEK4HI0CT99zsbUqVd&#xD;
+VqkP28MIse/Od9/5O5/M9HSzqNFK6k61TYoZ8TCSTdGWqqlSfHP9zo0x6vq8KfO6bWSKmxafnhxM&#xD;
+35x/yq6/XV2gblWhq5uz2fsMYZfSr35G6fn1Ofr85RIxwii9+IgRnvf9MqF0vV6TtU9aXdFLnS/n&#xD;
+qugoOFLjCEEUwBgjZV9iSGGQ16rs57Atz3uL0Vyqat5vtZWS67N2k2IPeYgH8OJdHgwjYNZ06Z7c&#xD;
+3PM8k2t0STa1au72ObLJZELtqnVNumVeQA2WWnZSr+Q2HhR1+yTeWkjRLqip3kMNQbeqrl19X8tE&#xD;
+rmTTluVxUavlU0vX6/ZOupBQ/mxVk+j2vnm0LlQvda1gSvgxFAjBM62QKlOsirYZLaO113nT3bZ6&#xD;
+keJF3mu1OWSOBz8zuuxox9kGLPN+jgDoA/edMINBkCCIEedECO4IEByRsZj4vgBNkDA0szUaR5DZ&#xD;
+GMIgnjkxiSMfZBYRxiMQuAdW7hk4NIRwBvGcZQMYaCO8sduFMbnR/W2olcz+RmCQhlRm39+f1DrR&#xD;
+1Y9DFkUOg2SMxUfHmO6UiFY7ipZFj6CVOEYPKRZ423fc2+m64Hf4WDj2fYa9t/xAMwyj8RBcPqr+&#xD;
+n4+CASUCBTYThwZnnMRh6IRGiJxwFhBzVgFhfgDGYPQys8jMGEVgtasRzL4TzWxglI1AcCz+6Dak&#xD;
+2ls/2O3wf6l++wkH5tkSZpAoiqBTXkc4EAPhUAQD5SAcSAvxEmlYtaTB29I24QNxAPzbxLeUA6iA&#xD;
+F0+ky2AXr6INWxtoC0taWMqw9gJls2ooi4GwGOgaoH9EN4SOhmazbNl/wXb5eCnCRTcDWmIGN8lk&#xD;
+BuowPsN2W/g8qP4h8QgXj7gWc2o+NycHvwDi1U0tbgcAAA==</IconData>
+</TemplateItem>

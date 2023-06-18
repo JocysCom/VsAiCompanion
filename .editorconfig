@@ -1,0 +1,69 @@
+﻿# EditorConfig is awesome: http://EditorConfig.org
+# How to format document:
+# Visual Studio Code: SHIFT+ALT+F
+# Visual Studio 20xx:  Ctrl+K, Ctrl+D
+
+# top-most EditorConfig file
+root = true
+
+# Windows-style newlines with a newline ending every file
+[*]
+end_of_line = crlf
+insert_final_newline = true
+
+# Tab indentation
+[*.{c,h,def,vb,cs,html,xaml,XAML,css}]
+indent_style = tab
+# Comment i.e. allow each user to customize.
+#indent_size = 4
+
+# Trim trailing white spaces
+[*.{c,h,def,txt,vb,cs,html,xaml,XAML,css}]
+trim_trailing_whitespace = true
+
+# UTF-8
+[*.{c,h,def,txt,vb,cs}]
+# Setting charset to UTF-8 can trigger "The source file is different from when the module was built." warning when debugging.
+#charset=utf-8
+
+# TypeScript Files 
+[*.ts]
+quote_type = single
+
+# Markdown files
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = silent
+
+# CA1712: Do not prefix enum values with type name
+dotnet_diagnostic.CA1712.severity = silent
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = silent
+
+# CA2211: Non-constant fields should not be visible
+dotnet_diagnostic.CA2211.severity = silent
+
+# CA2227: Collection properties should be read only
+dotnet_diagnostic.CA2227.severity = silent
+
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = silent
+
+# CA1034: Nested types should not be visible
+dotnet_diagnostic.CA1034.severity = silent
+
+# CA1304: Specify CultureInfo
+dotnet_diagnostic.CA1304.severity = silent
+
+# CA1307: Specify StringComparison
+dotnet_diagnostic.CA1307.severity = silent
+
+# CA1815: Override equals and operator equals on value types
+dotnet_diagnostic.CA1815.severity = silent
+
+# CA1305: Specify IFormatProvider
+dotnet_diagnostic.CA1305.severity = silent

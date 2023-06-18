@@ -1,0 +1,242 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.TemplateItemControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:Chat="clr-namespace:JocysCom.ClassLibrary.Controls.Chat"
+	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignHeight="320"
+	d:DesignWidth="800"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Controls:IconUserControl
+				x:Name="IconPanel"
+				Grid.RowSpan="2"
+				Width="64"
+				Height="64"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+			<!--  Row 0  -->
+			<Label
+				Grid.Row="0"
+				Grid.Column="1"
+				VerticalAlignment="Center"
+				Content="AI Companion"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+			<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+				<ComboBox Name="AiCompanionComboBox" Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+				<Label VerticalAlignment="Center" Content="AI Model" Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+				<ComboBox
+					Name="ModelComboBox"
+					ItemsSource="{Binding AiModels, ElementName=This}"
+					SelectedValue="{Binding AiModel}"
+					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+				<Button
+					Name="ModelRefreshButton"
+					Grid.Row="1"
+					Grid.Column="3"
+					Margin="0,0,3,0"
+					VerticalAlignment="Center"
+					Click="ModelRefreshButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+						<Label VerticalAlignment="Center" Content="Refresh" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+			<Label
+				x:Name="CreativityLabel"
+				Grid.Row="1"
+				Grid.Column="1"
+				Content="AI Creativity"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+			<StackPanel
+				x:Name="CreativityPanel"
+				Grid.Row="1"
+				Grid.Column="2"
+				Orientation="Horizontal"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}">
+				<Slider
+					Name="CreativitySlider"
+					Width="200"
+					Margin="8,8,0,0"
+					IsSnapToTickEnabled="True"
+					Maximum="2"
+					Minimum="0"
+					TickFrequency="0.5"
+					TickPlacement="BottomRight"
+					Value="{Binding Creativity}" />
+				<Label VerticalAlignment="Center" Content="{Binding CreativityName, ElementName=This}" />
+			</StackPanel>
+			<Button
+				Name="ListToggleButton"
+				Grid.Row="4"
+				Grid.Column="0"
+				Width="26"
+				Height="26"
+				Margin="2"
+				Padding="0"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				BorderBrush="Transparent"
+				Click="ListToggleButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl
+						x:Name="ShowHideListContent"
+						VerticalAlignment="Bottom"
+						Content="{StaticResource Icon_navigate_left2}"
+						Focusable="False"
+						Style="{StaticResource ButtonContentControl}" />
+				</StackPanel>
+			</Button>
+			<Label
+				Grid.Row="2"
+				Grid.Column="1"
+				VerticalAlignment="Center"
+				Content="Automation"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+			<StackPanel
+				Grid.Row="2"
+				Grid.Column="2"
+				Grid.ColumnSpan="2"
+				Orientation="Horizontal"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}">
+				<CheckBox Name="AutoSendCheckBox" Content="Auto Send" IsChecked="{Binding AutoSend}" />
+				<ComboBox
+					Name="MessageBoxOperationComboBox"
+					Grid.Row="1"
+					Grid.Column="2"
+					DisplayMemberPath="Value"
+					ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
+					SelectedValue="{Binding MessageBoxOperation}"
+					SelectedValuePath="Key" />
+				<CheckBox Name="AutoRemoveCheckBox" Content="Remove Completed Task" IsChecked="{Binding AutoRemove}" />
+			</StackPanel>
+			<Label
+				x:Name="AutomationVsLabel"
+				Grid.Row="3"
+				Grid.Column="1"
+				VerticalAlignment="Center"
+				Content="Automation (VS)"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+			<StackPanel
+				Grid.Row="3"
+				Grid.Column="2"
+				HorizontalAlignment="Left"
+				Orientation="Horizontal">
+				<ComboBox
+					Name="AutoOperationComboBox"
+					Grid.Row="1"
+					Grid.Column="2"
+					ItemsSource="{Binding AutoOperations, ElementName=This}"
+					SelectedValue="{Binding AutoOperation}"
+					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+				<CheckBox
+					x:Name="AutoFormatCodeCheckBox"
+					Content="Format VS Code"
+					IsChecked="{Binding AutoFormatCode}"
+					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+			</StackPanel>
+			<Label
+				x:Name="InsertMacroLabel"
+				Grid.Row="4"
+				Grid.Column="1"
+				VerticalAlignment="Center"
+				Content="Insert Macro (VS)" />
+			<StackPanel
+				Grid.Row="4"
+				Grid.Column="2"
+				Grid.ColumnSpan="2"
+				Orientation="Horizontal">
+				<ComboBox Name="FileComboBox" Style="{StaticResource ComboBoxGrid}" />
+				<ComboBox Name="SelectionComboBox" Style="{StaticResource ComboBoxGrid}" />
+				<ComboBox Name="DateComboBox" Style="{StaticResource ComboBoxGrid}" />
+			</StackPanel>
+			<StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+				<Label
+					x:Name="AttachmentIcon"
+					Padding="0,0,0,0"
+					VerticalAlignment="Center"
+					Content="&#xE16C;"
+					FontFamily="Segoe MDL2 Assets" />
+				<Label
+					x:Name="ContextTypeLabel"
+					Padding="2,5,5,5"
+					VerticalAlignment="Center"
+					Content="Attachment" />
+			</StackPanel>
+			<StackPanel
+				Grid.Row="5"
+				Grid.Column="2"
+				Grid.ColumnSpan="2"
+				Orientation="Horizontal">
+				<ComboBox
+					Name="ContextTypeComboBox"
+					Grid.Row="1"
+					Grid.Column="2"
+					DisplayMemberPath="Value"
+					ItemsSource="{Binding DataTypes, ElementName=This}"
+					SelectedValue="{Binding AttachContext}"
+					SelectedValuePath="Key" />
+				<CheckBox Name="ErrorCheckBox" Content="Selected Error (VS)" IsChecked="{Binding AttachError}" />
+				<CheckBox Name="ChatHistoryCheckBox" Content="Chat History" IsChecked="{Binding AttachChatHistory}" />
+				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
+				<CheckBox Name="IsFavoriteCheckBox" Content="Is Favorite" IsChecked="{Binding IsFavorite}" />
+			</StackPanel>
+			<Chat:ChatControl x:Name="ChatPanel" Grid.Row="6" Grid.ColumnSpan="4" />
+		</Grid>
+		<Button
+			Name="BarToggleButton"
+			Width="26"
+			Height="26"
+			Margin="2"
+			Padding="0"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Top"
+			BorderBrush="Transparent"
+			Click="BarToggleButton_Click"
+			Style="{StaticResource ToolBarButton}">
+			<StackPanel Style="{StaticResource ButtonStackPanel}">
+				<ContentControl
+					x:Name="ShowHideBarContent"
+					VerticalAlignment="Bottom"
+					Content="{StaticResource Icon_navigate_left2}"
+					Focusable="False"
+					Style="{StaticResource ButtonContentControl}" />
+			</StackPanel>
+		</Button>
+
+	</Grid>
+</UserControl>

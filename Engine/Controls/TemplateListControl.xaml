@@ -1,0 +1,252 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.TemplateListControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:converters="clr-namespace:JocysCom.VS.AiCompanion.Engine.Converters"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="270"
+	d:DesignWidth="480"
+	Loaded="UserControl_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar KeyboardNavigation.TabNavigation="Continue" Style="{StaticResource MainToolBar}">
+				<Button
+					Name="AddButton"
+					HorizontalAlignment="Left"
+					x:FieldModifier="public"
+					Click="AddButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					ToolTip="Add New">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+						<Label
+							x:Name="AddButtonLabel"
+							Content="Add New"
+							Style="{StaticResource ButtonLabel}"
+							Visibility="Collapsed" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EditButton"
+					HorizontalAlignment="Left"
+					x:FieldModifier="public"
+					Click="EditButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					ToolTip="Edit">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+						<Label
+							x:Name="EditButtonLabel"
+							Content="Edit"
+							Style="{StaticResource ButtonLabel}"
+							Visibility="Collapsed" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="DeleteButton"
+					HorizontalAlignment="Right"
+					x:FieldModifier="public"
+					Click="DeleteButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					ToolTip="Delete">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+						<Label
+							x:Name="DeleteButtonLabel"
+							Content="Delete"
+							Style="{StaticResource ButtonLabel}"
+							Visibility="Collapsed" />
+					</StackPanel>
+				</Button>
+
+			</ToolBar>
+		</ToolBarPanel>
+		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar KeyboardNavigation.TabNavigation="Continue" Style="{StaticResource MainToolBar}">
+				<Button
+					Name="CopyButton"
+					HorizontalAlignment="Right"
+					x:FieldModifier="public"
+					Click="CopyButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					ToolTip="Copy">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="PasteButton"
+					HorizontalAlignment="Right"
+					x:FieldModifier="public"
+					Click="PasteButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					ToolTip="Paste">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_clipboard_paste}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+			</ToolBar>
+		</ToolBarPanel>
+		<Grid Grid.Row="1">
+			<TextBox
+				x:Name="SearchTextBox"
+				Margin="0"
+				Padding="4,2,4,4"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				VerticalContentAlignment="Top"
+				AcceptsReturn="True"
+				Background="White"
+				BorderThickness="0"
+				PreviewKeyDown="SearchTextBox_PreviewKeyDown"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				TextChanged="SearchTextBox_TextChanged"
+				TextWrapping="Wrap" />
+			<TextBlock
+				Margin="0"
+				Padding="4,3,4,3"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				IsHitTestVisible="False"
+				Opacity="0.5"
+				Text="Search the list">
+				<TextBlock.Style>
+					<Style TargetType="{x:Type TextBlock}">
+						<Setter Property="Visibility" Value="Collapsed" />
+						<Style.Triggers>
+							<MultiDataTrigger>
+								<MultiDataTrigger.Conditions>
+									<Condition Binding="{Binding ElementName=SearchTextBox, Path=Text}" Value="" />
+									<Condition Binding="{Binding ElementName=SearchTextBox, Path=IsKeyboardFocused}" Value="False" />
+								</MultiDataTrigger.Conditions>
+								<MultiDataTrigger.Setters>
+									<Setter Property="Visibility" Value="Visible" />
+								</MultiDataTrigger.Setters>
+							</MultiDataTrigger>
+						</Style.Triggers>
+					</Style>
+				</TextBlock.Style>
+			</TextBlock>
+		</Grid>
+		<DataGrid
+			x:Name="MainDataGrid"
+			Grid.Row="2"
+			Height="Auto"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			x:FieldModifier="public"
+			AutoGenerateColumns="False"
+			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+			BorderThickness="0"
+			CellEditEnding="MainDataGrid_CellEditEnding"
+			IsReadOnly="False"
+			Loaded="MainDataGrid_Loaded"
+			MouseDoubleClick="MainDataGrid_MouseDoubleClick"
+			PreparingCellForEdit="MainDataGrid_PreparingCellForEdit"
+			ScrollViewer.CanContentScroll="True"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			SelectionMode="Extended">
+			<DataGrid.Resources>
+				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
+			</DataGrid.Resources>
+			<DataGrid.Columns>
+				<DataGridTemplateColumn x:Name="IconColumn" Width="16" IsReadOnly="True">
+					<DataGridTemplateColumn.CellStyle>
+						<Style TargetType="DataGridCell">
+							<Setter Property="Focusable" Value="false" />
+						</Style>
+					</DataGridTemplateColumn.CellStyle>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Image x:Name="IconImage" Margin="3,0,0,0" Source="{Binding Icon}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridCheckBoxColumn
+					x:Name="IsEnabledColumn"
+					Width="Auto"
+					Binding="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					CanUserSort="False"
+					EditingElementStyle="{StaticResource CheckBoxCell}"
+					ElementStyle="{StaticResource CheckBoxCell}"
+					IsThreeState="False" />
+				<DataGridCheckBoxColumn
+					x:Name="IsCheckedColumn"
+					Width="Auto"
+					Binding="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					CanUserSort="False"
+					EditingElementStyle="{StaticResource CheckBoxCell}"
+					ElementStyle="{StaticResource CheckBoxCell}">
+					<DataGridCheckBoxColumn.Header>
+						<CheckBox
+							x:Name="IsCheckedColumnCheckBox"
+							Margin="0,0,0,0"
+							Padding="0,0,0,0"
+							IsEnabled="False" />
+					</DataGridCheckBoxColumn.Header>
+				</DataGridCheckBoxColumn>
+				<DataGridTemplateColumn x:Name="StatusCodeColumn" Width="SizeToCells" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<ContentControl
+							x:Name="StatusCodeColumnContentControl"
+							Width="12"
+							Height="12"
+							VerticalAlignment="Center"
+							Content="{StaticResource Icon_Information_Grey}"
+							IsEnabled="False" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<ContentControl Style="{StaticResource ButtonContentControl}">
+								<ContentControl.Content>
+									<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
+										<Binding RelativeSource="{RelativeSource Self}" />
+										<Binding RelativeSource="{RelativeSource TemplatedParent}" />
+										<Binding Path="StatusCode" />
+									</MultiBinding>
+								</ContentControl.Content>
+							</ContentControl>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn
+					x:Name="StatusTextColumn"
+					Binding="{Binding StatusText}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Status" />
+				<DataGridTextColumn
+					x:Name="NameColumn"
+					Width="*"
+					Binding="{Binding Name}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Name" />
+			</DataGrid.Columns>
+			<DataGrid.CellStyle>
+				<Style TargetType="DataGridCell">
+					<Setter Property="Padding" Value="4" />
+				</Style>
+			</DataGrid.CellStyle>
+		</DataGrid>
+	</Grid>
+</UserControl>

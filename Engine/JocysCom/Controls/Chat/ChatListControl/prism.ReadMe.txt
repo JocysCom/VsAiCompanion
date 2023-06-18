@@ -1,0 +1,9 @@
+To make prism.js IE compatible replace:
+
+Line 24:
+From: var lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i;
+To:   var lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/ig;
+
+Line 209: 
+from: element.className = element.className.replace(RegExp(lang, 'gi'), '');
+to:   element.className = element.className.replace(lang, '');

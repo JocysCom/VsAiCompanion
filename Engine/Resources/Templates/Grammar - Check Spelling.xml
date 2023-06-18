@@ -1,0 +1,52 @@
+﻿<TemplateItem>
+  <Name>Grammar - Check Spelling</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Please proofread the following text, focusing only on correcting spelling and grammar errors. Maintain the original sentence structure and meaning as much as possible, making only minimal changes necessary for correctness.&#xD;
+&#xD;
+After corrections, provide both the fully corrected text.&#xD;
+&#xD;
+Text to process:&#xD;
+&#xD;
+</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACsVX227bRhB9z1ewBAokgETu7IVLylYCxE6DAmoboE6L5k2VaImNTAqUYjn9+s5l&#xD;
+eRFqN0iBorYhzdmdnZ05cyF9+erhbhfdl+2haup5DImKo7JeNeuq3szj9zffTfM4OhyX9Xq5a+py&#xD;
+HtdN/Orls8tvrn+6uvnt3ZvocL+J3r1/vfj+KoqnafqruUrT65vr6Odf3kaQQJq++TGO4u3xuJ+l&#xD;
+6el0Sk4madpN+rZd7rfV6pCiYkqKeChFYwDJ+riO8QqyfKrWxy26pdS3cbQtq8322KH7qjy9bh7m&#xD;
+sYpUpC3+xeM4II4wsvowf+RurZSiu4LK7GFX1R8fU4SiKFLeZdXZYb9cIQf7tjyU7X3ZnUdQ3Z6d&#xD;
+55Vk1dylxN7nHR66rXa7aftpV87K+7Ju1uuL1a7an68cjm3zsZziheVquZ+1zaf6bPGPpqrPV++q&#xD;
+Y9nuKvyaQeIukLcIfy430bFd1ofbpr2bx3fLY1s9PIeJwl/+TMAa9yIohwPVmjSrerQqO+f4i+an&#xD;
+WWKUsX7iE/Cg7PiaLxspxEqBp52CgqwYnRfZU1bY0n553Ebo/g8qUQr9oM8FBTmZqiTLcpS1MQMw&#xD;
+ue6VdD6IjnWQGzqsixFQw4H+hg94HVhHWtpovmMEMASUrWc/uvUP59XQYDlVx88zhZkbyqNu6j/L&#xD;
+trmI0yeISzf/ilGwiVfmawnVqgjEXSFAtgRECGwAlkDmGThHannGwGa4Y5TsGCAQDABqGcuWXU7G&#xD;
+DJ9wzg0ykS2idcVVLytW59QazzZZpHvDqva9EV0Moil6gyAOiAzkv5EcKc8ugwArwQhgNW0zST7K&#xD;
+OByGonCjAkF5qLuePioXnbEtm5ErAThypZOZJO2EGCssM30uu+oLzHlNG3yL86wURC420R8DU3B5&#xD;
+YvIFcCZdAHyHyESWrFsw7BXLzGfnuqUMDXGMokJSh6iQ7SEsnQ1Rae+H2tGsJHkwaojKcJI7cRTI&#xD;
+GKjCclQQAEcV5KgniwmVAyBBiR8gTgXXLd/dx/G/9qnWVJlf2abGcQ6B27QDlhshTDVpBYkQiCwj&#xD;
+OVCcdmOFupyIMEY4zVhNNkIvCzDElmceFXBlOmkSbgyNx0lmgpU0DCmB9/06dxh9S40pTg2EXHJq&#xD;
+VM5+K06N8nIx9y1+iq+0IaGqQgBvAFDfKgkPuKXQfWGkGAFu0AAcUFd0IJxhA45ZDKZdxmoSreNS&#xD;
+Vhn76QoiRXneETdzGXzcPvgglJGoh6BlWIZqzjJWE9mTLSjkiOeq7WRmXoao40kYBoz2lCsjk6OQ&#xD;
+xPMZ54oRAJoEAVif8VMvPKlGQNjoQBhKdmBD2840968dTSV57slYogkpgOLMYbSTZcMZcNlgDUIK&#xD;
++B6wcsboEQB+IguQeu8AR9oDGAFL8eCnVASzG4pAiwfSF4o9kISqgutUuFY5z8Yg8qQxo3UTOoln&#xD;
+ozxJQFFCtDwLAHieSZwg89TJTDIyk0Ktilp48xhNTaRoyA7wgyz0+FjGh8x/NrgeX9z8w4sgfj/5&#xD;
+7tdPLphotTAT8AtHkicJR6BaABrwCzAsO5Y9y/gi4xeazp3FSlGV4a141m5+f64hn+Rq4t2L7l2Z&#xD;
+/5mY6f3Do5H/LcCzhR6wcEn/Pbx89hf9kj3BPQ0AAA==</IconData>
+</TemplateItem>

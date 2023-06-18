@@ -1,0 +1,52 @@
+﻿<TemplateItem>
+  <Name>Code - Make easier to debug</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Make this code easier to debug</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAEAL1YwW7bOBC99ysI9dICokxSpEQVdg5bLLo9dAts0Q+QJTnWVrYCWUmcfP3ODClF&#xD;
+dr1ttd00gC1yyOG894Ycylke7q7ZXdUd6na/CmQkgxcM/o67Zn9YBdu+v3mzWNzf30f3cdR21wsl&#xD;
+hFiAz2Tam2NT779cmiyzLFvQaMDu67LfrgIjVcC2VX297X3nrq7uf2uPq0AwwcCCn+CKll/2dd9U&#xD;
+V11e5h2ri3a/XDiLGy2rQzEZZJuu3bF+W7H30Pv9eFN1dbUvqqgA8zv+tm2aquiBZ8TetjcPHWJg&#xD;
+6wf2/s+3H//6xN7t1n+wV4i+3hdtd0C319FyQVGGgJuDa1IXiFV59w4QQJyeHSUImATswT+PahVo&#xD;
+ISJQzIAVezHwvfbzP+/rHiS+PVTdp5u8qD7uPx+qgNXlKijapu24DJ5iUbxD396wdrM5VKCdCBj2&#xD;
+Oc1dBS9TmW7sJlh80yfSqTDZmWciU5F+x1Oe+RiZyOTEZ7k4lePbOulEO6GogUopqyKTpV6oLIqT&#xD;
+WM4QS80UqxRKf08sZaxV52KZda7kTLGyPJblT4hlvVb2aVNZIcddlWjYY9T9YbniWXIZkxWymEda&#xD;
+yzSV5udJK+OPUmIiJZPMcY5j4KzVHMp63g5Jy1wlM/Nc5mtZ/XfKRJWqR5pExh8LbSOltGOtdByl&#xD;
+ws5hbWaxzmyVmXQe63RTVlDX/gfWInOckf5T0VRxOoNvMovvOt8kNp/H92uNZvJN1cA39jk2MoKb&#xD;
+0tGVCnJs5Zwcp7M4l+WmKtQ8zl/rdJkz3pbDFbm8Zpu6aVbBvt0DXGzz7rapBsOh79ovZz3u3xLk&#xD;
+aMAoRX6zCta3fX9i/but4Y1lV/dVN9qp19TwQHlHc5kftnnX5Q+r4MQ2kWjT7nu+yXd18zAiRtO9&#xD;
+f1WZmA714wi7r449z/fFFmUamDwgyV195Oum2pd815bVG7Zvu13eTDK1vMn7LYMkfoATEMqkkDHc&#xD;
+gKFgSotQijQy1IJPAX0cY5zMaGJ8GOODG1ncDN92rm4Cc65oY8Pgo99Et91dlQU+W7dd8+qlfwF5&#xD;
+fZK26q7at+XpPXbCQdtCSmIgbJjF9IAPwpeAKYuxB9i8mbvJ1IdB33AOOMbAAbtssE/x2gt41Qy8&#xD;
+WliQQ0odmYZrE2oTmULJEE6fYXC5mNBobEEhDq1tEh2iliikCA192/N+w2kWV2EcU7LAHia4Ch+W&#xD;
+GQJxmBDSJEwKZUxKQINQMEsapiCSUEnGEUgY0zrWhrhUI2BdmOHybtzDUuxzE0zlOBchgYiMI6CQ&#xD;
+sNFyBM2H1R4YH5HxARp8EDx36EEnggfEaDXzRBLW9DrgHiNhuNOH2wsmJ6wKCR8jxQghe1psDDtC&#xD;
+G5GNwBx45ThKRooRNjZSdDo4fZw8KNhZ3wlLWilGSpFQg+xjcob0Ddmj5D2yD7FRoUwlKopXeIhf&#xD;
+jRSUGkngMhIUNrZJQDGy4ST0tRQ20Q0nj2ZcoZCWfAXqAjx0yk49tUA8Rvmo9N1gEbEFBgwxNoMD&#xD;
+CoGZm4H+4AlvFyHFbah02AnsAsOFGJnpNIyFc/R+MhEhRW0mAR3sApERTWAJJAmpByqVpfJlnSZT&#xD;
+uKAPjQnaSSIEjvzEFVWFKjmRxWMuSNQQKXIspFBIplBB0JDiOkGaaUiiSIEZiAqqCO/r9JmUm/RC&#xD;
+uYlfn99qj1XX/ku5gZJnkkY52jJTYZoRaeGKMu0KSJCRQwvHpwiSCwj0jIKHMrjt6IM3VG/dObV0&#xD;
+BLiBpF0IbS6ENjNCw4sdSJ81EjSGj+NPUQrPHw+ZgsiathvWgPQUgr4AIZl5PeF1mME5B4opfsGV&#xD;
+K8IMMg4t0hwMHCc4/d2DJtH5gUfMCC6e0DjF0wQoCw2GaUmiLYUlAOe4KVCmcF9jsaGGpseUX3yB&#xD;
+XzqDX0zXGdQuio83MDwy91D0AgEXSQZNxgcb91P9KciGhnIvDZJl2GaDkapbQq72WaNoKv3KimeN&#xD;
+ojIsGrF6Xi5KYs7h9/ozRpnsIjXsouHn648fUeUvn18DVI5A/a+pHwZq6VLO1K/BKUac/hfQN3Au&#xD;
+F9dXL5b4v9GrfwBZidx4VRUAAA==</IconData>
+</TemplateItem>

@@ -1,0 +1,38 @@
+﻿<TemplateItem>
+  <Name>Utility - Explanation of Concepts</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Can you explain [insert complex topic here] in simple terms?</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACq1UW0/bMBh951d4liaBlDq242toQSIwNKnbkAabtresDW1GmlRJaLt/v5NQUMtl&#xD;
+T2vT1P58vnO+i+3h6WZRkFVWN3lVjqhgnJKsnFTTvJyN6M31h4GjpGnTcpoWVZmNaFnR05OD4bvz&#xD;
+L8n1j6sL0qxm5OrmbPwxIXQQht+jJAzPr8/J12+XRDARhhefKaHztl3GYbher9k6YlU9Cy/rdDnP&#xD;
+J00IYNgB4RSCTAg2bacUEh3zOp+2c4TF+XtK5lk+m7ePs1Werc+qzYhywolUeOhuHoISZFY2o1e0&#xD;
+Jee809pC4k2Rl3evAYX3PuxXe2jcLNMJarCssyarV9mjPyb57Z5/b2GTahF21ftTwOk2L4pBfV9k&#xD;
+cbbKymo6PZ4U+XLf0rR1dZcNIJhN0mVcV/flnvF3lZf71kXeZnWR4y8WTB+jbgSf4Yzk0xHNJ1W5&#xD;
+tWytbZ2WzW1VL0Z0kbZ1vjlEx6VUMuD4ompaKBMMMDBCqmDAmfHaSXG0Q/MmFWfeOm483LqHM2ec&#xD;
+MqqjjbR1MBiupDfPyXrCZdrOCWL+ZCHpA6GZ9nosBEZjx7SKAiGZFXa8u/5zr7pxPft1KCITbH9H&#xD;
+xzT8l5IDkw2EYpHUCci97DSkMdi42geOeWmIRE18YLButAsippQgmgmFEJh3xDIdyARuGlSScRUR&#xD;
+EbFIicAwJTXpg1bg0h2Ie6TBmdaWeOa70kCP654FdqdsolAkF3gmtYSOtDLQzHlPbKDA4ZiEMqJw&#xD;
+nsDBOgGzdI6gUIZFXCU4P5IbCEouIKK8BpnH2EDDs0jLJGJdkxyzMkJ62khwWGWJgZRFKUDMnQKf&#xD;
+c6ZPwOjAMs6hYqCt94te4lrY7saXDdju0v4Yx2K5edGRYTjb2aB7k6c+CTQJNfYIBAMi0SYkjROP&#xD;
+gU26d7dEHgBSEuAl8B2mnz4Benz37t0fACDs+f9HUk/x75w/3EP9ZRA/O5CvYbsg3sQOuxvr5OAv&#xD;
+ac+lCrEFAAA=</IconData>
+</TemplateItem>

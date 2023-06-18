@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g>
+        <path id="curve4" d="M184,322.5L183.5,274.5L328.5,274.5L328,322.5C368,362.5 448,368 448,481.5C448,493.5 440.5,503.5 427.5,512L84.5,512C71.5,503.5 64,493.5 64,481.5C64,368 144,362.5 184,322.5Z" style="fill:rgb(117,151,203);"/>
+        <path id="curve3" d="M84.5,512C71.5,503.5 64,493.5 64,481.5C64,368 144,362.5 184,322.5C184,339 220,354.5 256,354.5C292,354.5 328,339 328,322.5C368,362.5 448,368 448,481.5C448,493.5 440.5,503.5 427.5,512L84.5,512Z" style="fill:rgb(71,117,185);"/>
+        <path id="curve2" d="M256,374.5C237,374.5 216,371 198.5,363C186,357.5 173,349 167,336.5C173,332 179,327.5 184,322.5C184,339 220,354.5 256,354.5C292,354.5 328,339 328,322.5C333,327.5 339,332 345,336.5C339,349 326,357.5 313.5,363C296,371 275,374.5 256,374.5Z" style="fill:rgb(209,220,237);"/>
+        <path id="curve1" d="M256,32C347.5,32 378.5,96 378.5,160C378.5,240 317,320 256,320C195,320 133.5,240 133.5,160C133.5,96 164.5,32 256,32Z" style="fill:rgb(164,186,220);"/>
+    </g>
+</svg>

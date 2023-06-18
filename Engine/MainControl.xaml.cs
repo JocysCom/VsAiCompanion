@@ -1,0 +1,47 @@
+﻿using System.Windows;
+using System.Windows.Controls;
+using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls.IssuesControl;
+
+namespace JocysCom.VS.AiCompanion.Engine
+{
+	/// <summary>
+	/// Interaction logic for MainControl.
+	/// </summary>
+	public partial class MainControl : UserControl
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MainControl"/> class.
+		/// </summary>
+		public MainControl()
+		{
+			InitializeComponent();
+			SeverityConverter = new SeverityToImageConverter();
+			var ai = new AssemblyInfo(typeof(MainControl).Assembly);
+			InfoPanel.DefaultHead = ai.GetTitle(true, false, true, false, false);
+			InfoPanel.DefaultBody = ai.Description;
+			InfoPanel.Reset();
+		}
+
+		private void MainWindowPanel_Unloaded(object sender, RoutedEventArgs e)
+		{
+		}
+
+		private void MainWindowPanel_Loaded(object sender, RoutedEventArgs e)
+		{
+			InfoPanel.RightIcon.MouseDoubleClick += RightIcon_MouseDoubleClick;
+		}
+
+		private async void RightIcon_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			if (Global.IsIncompleteSettings())
+				return;
+			var client = new Companions.ChatGPT.Client();
+			var usage = await client.GetUsageAsync();
+			InfoPanel.SetBodyInfo($"Usage: Total Tokens = {usage}, Total Cost = {usage.AdditionalProperties["current_usage_usd"]:C}");
+		}
+
+		SeverityToImageConverter SeverityConverter;
+
+	}
+}

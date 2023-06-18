@@ -1,0 +1,31 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>reticle icon</title>
+    <desc>reticle icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="16" y1="16" x2="453.5927" y2="473.9458" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#657483"/>
+            <stop offset="1" stop-color="#51616f"/>
+        </linearGradient>
+        <linearGradient x1="48" y1="48" x2="429.33345" y2="464.00005" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#96d762"/>
+            <stop offset="1" stop-color="#73b93a"/>
+        </linearGradient>
+        <linearGradient x1="432" y1="432" x2="424.667" y2="80.0005" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#cbf8a6"/>
+            <stop offset="1" stop-color="#abef75"/>
+        </linearGradient>
+        <linearGradient x1="48" y1="48" x2="463.99995" y2="431.45805" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#53991b"/>
+            <stop offset="1" stop-color="#407515"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="none" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M256,16c132.5,0 240,107.5 240,240c0,132.5 -107.5,240 -240,240c-132.5,0 -240,-107.5 -240,-240c0,-132.5 107.5,-240 240,-240z" id="curve4" fill="url(#color-1)" fill-rule="nonzero"/>
+        <path d="M256,48c115,0 208,93 208,208c0,115 -93,208 -208,208c-115,0 -208,-93 -208,-208c0,-115 93,-208 208,-208z" id="curve3" fill="url(#color-2)" fill-rule="evenodd"/>
+        <path d="M256,80c97,0 176,79 176,176c0,97 -79,176 -176,176c-97,0 -176,-79 -176,-176c0,-97 79,-176 176,-176z" id="curve2" fill="url(#color-3)" fill-rule="evenodd"/>
+        <path d="M240,400l8,0l0,-136l-136,0l0,8l-63.5,0c-0.5,-5.5 -0.5,-10.5 -0.5,-16c0,-5.5 0,-10.5 0.5,-16l63.5,0l0,8l136,0l0,-136l-8,0l0,-63.5c5.5,-0.5 10.5,-0.5 16,-0.5c5.5,0 10.5,0 16,0.5l0,63.5l-8,0l0,136l136,0l0,-8l63.5,0c0.5,5.5 0.5,10.5 0.5,16c0,5.5 0,10.5 -0.5,16l-63.5,0l0,-8l-136,0l0,136l8,0l0,63.5c-5.5,0.5 -10.5,0.5 -16,0.5c-5.5,0 -10.5,0 -16,-0.5z" id="curve1" fill="url(#color-4)" fill-rule="evenodd"/>
+        <path d="M288,288l32,0l0,16l-32,0z M288,208l32,0l0,16l-32,0z M288,176l32,0l0,16l-32,0z M288,144l32,0l0,16l-32,0z M288,352l32,0l0,16l-32,0z M288,320l32,0l0,16l-32,0z M192,288l32,0l0,16l-32,0z M192,208l32,0l0,16l-32,0z M192,176l32,0l0,16l-32,0z M192,144l32,0l0,16l-32,0z M192,352l32,0l0,16l-32,0z M192,320l32,0l0,16l-32,0z" id="curve0" fill="#3b6d13" fill-rule="evenodd"/>
+    </g>
+</svg>

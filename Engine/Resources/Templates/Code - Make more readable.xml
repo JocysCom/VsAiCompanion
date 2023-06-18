@@ -1,0 +1,50 @@
+﻿<TemplateItem>
+  <Name>Code - Make more readable</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Make this code more readable</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACtWXb2/bNhDG3/dTcBoGtIBskTxSEt24Bap2xQBtLdBkw/Zm8GzF0epIhqz8+/Z7&#xD;
+7iS7TZcO6ZABXVP4KJI63v2eIyUdPb8+36jLqtvVbTOPzFRHqmqW7apu1vPo5Pj7SR6pXb9oVotN&#xD;
+21TzqGmj588eHX3z8k1x/OvbV2p3uVZvT16UPxQqmiTJL1Qkycvjl+rdz6+VmZokefVTpKKzvt/O&#xD;
+kuTq6mp6RdO2Wyevu8X2rF7uEkxMeCJuSuDMmOmqX0VYgj1f1av+DGFp/V2kzqp6fdbvry7r6upF&#xD;
+ez2PtNLKOvyPPs7DRAqZNbv5HWtbrTWvNU6ZXW/q5v1dE00IIZFRmTrbbRdLMNh21a7qLqv9/bio&#xD;
+T2/dLz3TZXueML2bDW46rTebSXexqWbVZdW0q9XT5abe3u7Z9V37vppgwerPtm5mXXvRHHrP677q&#xD;
+NjXMzD4FIIV/R+vBDm1Vr+bR8gKRpZHqu0WzO22783l0vui7+vqxnmpnQ5rnsea/w5WJzZQcZf7J&#xD;
+6PXgcbvozxR8/hjSOKSF0TT1aChjHBq4VMZqaWWlyTJuOSpMMNzyVpngYpN6ZTKsktnCpCmP8Exl&#xD;
+PPcFZRxbXRodYkNpEQJPsbkKlhtkVS43OVwWOWL1pNIsNkGr1MXW2JJsbPO8DLHNMLPgGG2GX6Vj&#xD;
+m+ajtSV+nUYIWC3lW5GHpPXbLYlm3fqPxxkmGYSTpU+eRslHiJPP8PYPzNsZAe7ABGFSyEbcNKAF&#xD;
+biI34qZBAuAmkwtujAlucv6Amzz3BUXInHE7TYLbGTvydiaMwJ31B+KOBuTOeWHuIBdDd7kW6h5+&#xD;
+Bu4ewQ7cvbEj+aFlS7Gg78KAn70gsSHNhxDAPbAAlhA+h1xKShK8RRXDKpsjGcphGZMlX8BtbC2n&#xD;
+Tji/0GcARJFloIAFIVgiq4MIwcCtzkUK2NKlQKjzwuVhHBFcNgzWp4XYDPehRzzlGNMcIWkGzxtE&#xD;
+ygC9LibE5oKM8lrwy+VDOY+7VMdOQ0YSW3IMsAVRkH4yw1wUHYSlNEPWHBVRJnmTxknrU7aFhQ+5&#xD;
+JrufgRLge7DvRy8mI/HLu5zXgwtezovBmX0IzNAh3lwy8IecaMzTjJnrkYUWNlpI2T1UF4Qpr8dM&#xD;
+jd8zNZk5aGByOyqDR8FBL/yOKlqb7pVFjqI1tpRov6+LO4o2x87CWWSCv2fR0gMXLfY3EkDSKVs/&#xD;
+HLIcLh6PAsS6kvlYV2BXSy8y5oykAZhsmBNoCWxgE/U1FZbx0QCKawzSoSK4z2UFZdAdmsl17hRX&#xD;
+Su5EBVi4HaoKC+YiuehngtStR40Zw5oLeXAOo+VZhbS8gTqyD4lrStL8RIGLbvP4299LPDoXnbmn&#xD;
+APaBBSAiEQDTRgHIS9RALbudBeDdDgUcnmXcz0fioIG0IIJYUcHJPmIZnDwNWQcX9EEIh7AGJVxO&#xD;
+oxQu86KFk5WZOe91VoMjYDXIDdsOMdnsoAYZP6pB+qAG/IsabAc1uMVqyPnCaow5/4Ma9p5qmK9t&#xD;
+O5RsUry2ZNjxTEhSxvMRN5EdzhjC8OAVA7IS8Qkia+PxypVt3XCmyJnjs7G2oV/55VX+6Tkjb5Ut&#xD;
+Xkvr/maGwrgfaf011j20GHC7wCcs17TeA+d7QVx8gfjoHSOyohCXGECcq3ckPjxPmbjUrxD/4kr+&#xD;
+d8Q/NFbV6e6jCfxuv+jw9bOqq6YXSfaHFj4nDD5nInUzmGuLDxlcWblaj7ecNHWPr5oLfGK848+R&#xD;
+N83JrvowfPw3XcM0C5l11cTgDS6FrgA02TduD7IwUPlo17db1Z6e7qpe1h55cPdk2W7aTqhY3heW&#xD;
+34mww2Vsj8WAyW0n5nNOpMxZMhvucpLc5nUvkPY/AjlhZFogCsB43yGF+78gd5QM5XjEn7/PHv0F&#xD;
+Ghj6cv4PAAA=</IconData>
+</TemplateItem>

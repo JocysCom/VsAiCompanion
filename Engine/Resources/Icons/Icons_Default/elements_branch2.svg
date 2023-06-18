@@ -1,0 +1,30 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>elements branch2 icon</title>
+    <desc>elements branch2 icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="160" y1="96" x2="335.9975" y2="311.107" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#4d5c69"/>
+            <stop offset="1" stop-color="#414e59"/>
+        </linearGradient>
+        <linearGradient x1="304" y1="32" x2="480" y2="176.0002" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#98e957"/>
+            <stop offset="1" stop-color="#77da26"/>
+        </linearGradient>
+        <linearGradient x1="1" y1="176.5" x2="160.7335" y2="336.5" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#4db6f2"/>
+            <stop offset="1" stop-color="#18a0ee"/>
+        </linearGradient>
+        <linearGradient x1="304" y1="320" x2="463.7325" y2="480" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#4db6f2"/>
+            <stop offset="1" stop-color="#18a0ee"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="none" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M308.5,100.5c6.5,-6 16.5,-6 23,0c6,6.5 6,16.5 0,23l-133,132.5l133,132.5c6,6.5 6,16.5 0,23c-6.5,6 -16.5,6 -23,0l-144,-144c-6,-6.5 -6,-16.5 0,-23z" id="curve3" fill="url(#color-1)" fill-rule="nonzero"/>
+        <path d="M320,32l160,0c9,0 16,7 16,16l0,128c0,9 -7,16 -16,16l-160,0c-9,0 -16,-7 -16,-16l0,-128c0,-9 7,-16 16,-16z" id="curve2" fill="url(#color-2)" fill-rule="evenodd"/>
+        <path d="M17,176.5l160,0c9,0 16,7 16,16l0,128c0,8.5 -7,16 -16,16l-160,0c-9,0 -16,-7.5 -16,-16l0,-128c0,-9 7,-16 16,-16z" id="curve1" fill="url(#color-3)" fill-rule="evenodd"/>
+        <path d="M320,320l160,0c9,0 16,7 16,16l0,128c0,9 -7,16 -16,16l-160,0c-9,0 -16,-7 -16,-16l0,-128c0,-9 7,-16 16,-16z" id="curve0" fill="url(#color-4)" fill-rule="evenodd"/>
+    </g>
+</svg>

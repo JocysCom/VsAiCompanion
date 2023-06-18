@@ -1,0 +1,59 @@
+﻿<TemplateItem>
+  <Name>Translate - English to Klingon</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Translate English to Klingon and Klingon to English.&#xD;
+&#xD;
+Text to translate:&#xD;
+&#xD;
+</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACrVYa08bRxT93l+x3apSItmz834ATqSQNKpk2khNWpUvFbU3sI2x0doB0l/fc+/s&#xD;
+Yi+YtKoSQN45O3fmPs+dMUfPby8XxXXdrpvVclIqIcuiXs5W82Z5Pinfvf1hHMtivTlbzs8Wq2U9&#xD;
+KZer8vmzb46+ffnz8dvf37wq1tfnxZt3L6Y/HhfluKp+M8dV9fLty+KXX18XSqiqevVTWZQXm83V&#xD;
+QVXd3NyIGyNW7Xn1uj27umhm6wqCFQliUYXNlBLzzbyECtr5pplvLmCWlN+XxUXdnF9senTd1Dcv&#xD;
+VreTUhay0BZ/5a4fqizg2XI92aNbSylJVydycLtolh/2CaqUUsWzLHqwvjqbIQZXbb2u2+u6Xw/Q&#xD;
+vB+s5zditrqsKHqfFlj0vlksxu3HRX1QX9fL1Xx+OFs0V8M36027+lCPobD+a9UsD9rVx+Xd28tm&#xD;
+U7eLBo8DfYgAFfg5Oi827dly/X7VXk7Ky7NN29w+QRK99COJ3244tiIlrTHQwlgZzdNu/Wf2oCCp&#xD;
+bpM8HhuhdAhmNHZCO6n07i6806xpZ4u6mCErSouoXFnMPvEYo3ZSOnruxOPg5gJOHZbVjjXV+cC0&#xD;
+Zj4p23q2cdqjNPca6oJyvaE8hn3eWwuLSbO37oGhOzo+9y47hTS9OdtcsCl/EFL3tns0BhYGdSEI&#xD;
+IvQxwLsdhweLq17ZI/PnBRfNFSQm5cd28eS7bNB9BweLSLqA7SdBODuikEzpY3fkhA1+ejd/eqJ8&#xD;
+ntZSpG5Ir7JcN3l6os1IGRE05DDCREKpRBppLazVI0RAAvRieUWifc1IKxGCu1vTvaUnxFitNqSq&#xD;
++5RCatvZow0sJMMxx0aTDOMs1c2dnqDgej00ZCXQl3QebqezKAznR/apE+ze+dNh6bbnfz5ByZFp&#xD;
+zj093NJ7uVr+Xberw8eTvK/67r8c8uARUihpkh+b/bxw1uueF3k89sJIB1pEEfFUX5gW+r/SQvdt&#xD;
+gQkBkvj4pRnxoDftZwROG2W5mqOzUytivA9YYNrLDRAobfQ0iw9BL5eEUg9Q3r6XHCJPsbjTNkQs&#xD;
+grrvtukmrTCBCtYSBYieW9QJohlKptl22elJ9i4bnYTXaaSkcCFMo3DEwgyyVBQmuenOChjBKnqx&#xD;
+LbIReqOQMvUByWo7QMbqh6uAsCU/74y/Q04FEDAl1btMhoQedLbfXwS0h64aZA0wxj79KuTcDvaf&#xD;
+qDYo9K5MyDz2Qjovw8iJIHFeDU7lHcJ4nB0+c8YjErajDb984KOJI1Dcqa2P/2qX9s70dvEYeTJa&#xD;
+2pERMg2YdL8bdL2I+GRC2HtAoyP7pH1IrGGLxjgSfaJrBTqw1kjKHsZumWoCygpnu4moZ6uOoU7E&#xD;
+oIAtcCoISw1oRFIaELFVocMk7oBtxpLErVBed8tJ3nbz2N5YyIN1EZGQgeqsMD7iNIgja8gDD6yF&#xD;
+Qq3hkMOlSB8br0TUGYdA8sDeA6OCg2V5HbDeQm8ykLfCGpoPeAboRxAi5h2ooizb44wdoW8LFyEP&#xD;
+nOC+9biEOYd5HEqeoU0kDjrYkHEk81EovByY1CM6zqe8XHnGqd+e3I1wV7N21GFhIqbRc6z1mCac&#xD;
+REyJvbEUzSSFNpq9jQHWE6boAGsVGUuOjgI/I7aHGoloItVWIfpR5mhIRIfNHyR3SN3Pn6oPuTko&#xD;
+Sf01S9L4HIWQ6L5wbAysVyNLzhXGgKChQ8EwlsGzMAoUwkYgLIydI3ktkkOIEYqoTcYxY0n1Dnlc&#xD;
+bpExFHaAvM3NjlKWFOQtP4FxeXHY38kOazSZwjjUE/JtoV0iYc4Lz+UYEXAPaXgOwhNWRA8XRaBy&#xD;
+BEYxACe0bioAXIpC4nL3vDfaL4obHYqKCweAh2ke1YIeZD04F4l7FIKMA7lGOME0LMPFhOVhFDC4&#xD;
+JmlzhESTPFOcuRcSFSs46EgdQoKuzxjbw7WAts7LI6YtjkFaHlCc5OswTV+wuOzXLK4EgtsccTQI&#xD;
+UM6BoYozkuBkQj5VhsGDQcmAoY5x1CA0cO43wBH5T+hLOheA1hkbnKmEg8X2xHBqPwZ1gRSiLeLg&#xD;
+5f4gI7ZHFbvUhZwJTSlkGCQyCKiI/8icTtQvJL5nUoaxKxUvsKXtkXnTzUcXGONSA6wESgoYbUhF&#xD;
+tl7i64NFG3MyFhYnO8LIKVVGFxZfLyS3Lypjf0wYpyFjDW9x/KO7E0YpJMMYeQBGtw+B5RNuItQO&#xD;
+IyqWMMo8t8cIfUiR4wolOchLXIs8kQ33jVRYCbPxbdpS5XEwB7n63xU2vEkc0b8onn3zD2AdpIai&#xD;
+EQAA</IconData>
+</TemplateItem>

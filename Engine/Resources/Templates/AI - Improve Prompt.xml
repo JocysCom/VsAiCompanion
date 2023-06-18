@@ -1,0 +1,51 @@
+﻿<TemplateItem>
+  <Name>AI - Improve Prompt</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Please analyze the following text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised text.&#xD;
+&#xD;
+Data for processing:&#xD;
+&#xD;
+[insert original prompt here]</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACu1X227cNhB9z1ewAgokgEzxIork2k6AKBcUUNoATVo0b1uvslazlgztxnb69T0z&#xD;
+5Dp2sUWahz4EaBBEM7wM55w5HG5OntxcbMRVP2+HaTwttFSF6MezaTWM69Pi7ZsXR6EQ291yXC03&#xD;
+09ifFuNUPHn84OS7Zz+1b357/Vxsr9bi9dun3Q+tKI6q6lfbVtWzN8/Ez7+8FFrqqnr+YyGK893u&#xD;
+clFV19fX8trKaV5XL+fl5flwtq2wsKKF2FQhmNZytVsVOIIiXw+r3TnSUur7Qpz3w/p8t/euhv76&#xD;
+6XRzWiihhKnxt7iLQxcCyMbt6YGzjVKKzspLFjebYfxwaKGOMVY8y0sX28vlGTi4nPttP1/1+/1w&#xD;
+hvf39vOIPJsuKmLv0wab3g+bzdH8cdMv+qt+nFar47PNcHl/ZLubpw/9EQ7s/5iGcTFPH8fb0Yth&#xD;
+18+bAZ+FOQZBAn9O1mJYnRbD2TTmER69XO7OBcZfGSOtaUqtpPGxheeNI6/WRhhLlg+OLS2Najqy&#xD;
+sCjWLVlWGo3ZvMtKF4LYR7QY1J2OMkZT6lrW0ZNXa19qJ0NwnVHSaewLUgXdwvMKMYOsnRfwGhPJ&#xD;
+i1qTZy2iROQQKQo+ZRps0xLyGivSbnK8qkWKTJ7TTZdOpSC1Dl3KiLwYXZeyLVPubUJSJlwioSwN&#xD;
+ojNyWF1iA1abGOJZZu12FzOaI3ZROsLGZHRBaoLNXHQO2TMWUNE66WqbsrfCIXmeARGixsk6Q+6s&#xD;
+bJqQ2WittH7PEzKNzZ5CK+tQZ3a7GojMnvhaKuVuayIbj2VMQAtY/raSel9gGIy8g8HAW71XRt6Q&#xD;
+BJNDMXI+JJQMnE+3JeNG8jX4YtjI3aAGjBrpWq9LBi0SQMbcJeQ80iZKaKVIVDFgkThkvJlchptZ&#xD;
+Z7Rdrgen2OZScfIiV1CLXFSINtUZdKTSYyopIm9IYuFQSUeUK9DuJcZwu6w+xttmYTJg0mXE8YxY&#xD;
+ZDUzwC4LnTHTjWhsZiQpOlOVBJ04THcqZnKTnDPr9+72u1c40cmmRSIN8U+0NSV7bGnT8gdHWCfS&#xD;
+Ksoaqudvm2byGP7ZL002X8Q6x8tL6ZB06rt7XW4xr39/qL0qtQenIT46/tz7xmn8s5+n46I61K50&#xD;
+Ix1ajZc1UR+l9+AK9/G/4+1b74noHf/cFN032RTDwaZIOqD93nckD8RirUDvjcWEl02oOQHyvlrX&#xD;
+aaNIYUqOKe6K8YDAEdPi+pus7gk/DYbdp4WS+ktyX4vdvBy376f54rS4WO7m4eYhEAM5iD7Kli3J&#xD;
+8BaMZ8OVRwYWtVSUwjlvH9158/9+keiqKtPBAF6P+rIRFToS0c/8KYNXALMheQFk4DI79rTF5QZT&#xD;
+KnkKbc0hYsMrlW+hJYdmjUEdWS6g28pguJneOhCBdqDXyxA9aoXfUyx+Z9CCvNOfHUcvGy/rcBzd&#xD;
+AxxnqGlFj4o6aRp+CajyUAluCOVItyw4bv/4rcZ3NwLFXQ+xAzRBymtgK24KOK31ErcULOGFoXM1&#xD;
+bFuTHWsHG/qnJYhDN4papoYaAr7IpAx0iHUwiJfGhDsGsRhqHqEy6ICnM9fjgI6IHnp7nPtin6zW&#xD;
+/6vI/1sVeWnpiWvw8BoU8rNDdaKmiMoo1niqvdZobBBYKhkmyDB4Yw7X7msu/L5ubJzQ/zweP/gL&#xD;
+OO8SFXkNAAA=</IconData>
+</TemplateItem>

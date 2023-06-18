@@ -1,0 +1,22 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>navigate right2 icon</title>
+    <desc>navigate right2 icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="4.625" y1="20.625" x2="301.15873" y2="323.1742" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#48b4f2"/>
+            <stop offset="0.7098" stop-color="#129eee"/>
+            <stop offset="1" stop-color="#108ed5"/>
+        </linearGradient>
+        <linearGradient x1="212.625" y1="20.625" x2="509.161" y2="323.1742" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#48b4f2"/>
+            <stop offset="0.7098" stop-color="#129eee"/>
+            <stop offset="1" stop-color="#108ed5"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M77.5,486.5l219,-219c6.5,-6.5 6.5,-16.5 0,-23l-219,-219c-6.5,-6.5 -16.5,-6.5 -23,0l-45,45c-6.5,6.5 -6.5,16.5 0,23l162.5,162.5l-162.5,162.5c-6.5,6.5 -6.5,16.5 0,23l45,45c6.5,6.5 16.5,6.5 23,0z" id="curve1" fill="url(#color-1)"/>
+        <path d="M285.5,486.5l219,-219c6.5,-6.5 6.5,-16.5 0,-23l-219,-219c-6.5,-6.5 -16.5,-6.5 -23,0l-45,45c-6.5,6.5 -6.5,16.5 0,23l162.5,162.5l-162.5,162.5c-6.5,6.5 -6.5,16.5 0,23l45,45c6.5,6.5 16.5,6.5 23,0z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

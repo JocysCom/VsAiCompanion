@@ -1,0 +1,36 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>face scan icon</title>
+    <desc>face scan icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="48" y1="0" x2="351.0655" y2="491.63955" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#59a31d"/>
+            <stop offset="1" stop-color="#4c8b19"/>
+        </linearGradient>
+        <linearGradient x1="64" y1="274.5" x2="384.0005" y2="274.5" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#98e957"/>
+            <stop offset="1" stop-color="#77da26"/>
+        </linearGradient>
+        <linearGradient x1="64" y1="322.5" x2="440.716" y2="470.6465" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#77da26"/>
+            <stop offset="1" stop-color="#59a31d"/>
+        </linearGradient>
+        <linearGradient x1="167" y1="322.5" x2="335.807" y2="368.538" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#dcfec0"/>
+            <stop offset="1" stop-color="#baf68a"/>
+        </linearGradient>
+        <radialGradient cx="194.70581" cy="147.39091" r="223.0709" fx="194.70581" fy="147.39091" gradientUnits="userSpaceOnUse" id="color-5">
+            <stop offset="0" stop-color="#baf68a"/>
+            <stop offset="1" stop-color="#98e957"/>
+        </radialGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M64,0l384,0c9,0 16,7 16,16l0,480c0,9 -7,16 -16,16l-384,0c-9,0 -16,-7 -16,-16l0,-480c0,-9 7,-16 16,-16z" id="curve5" fill="url(#color-1)"/>
+        <path d="M184,322.5l-0.5,-48c49,0 96,0 145,0l-0.5,48c40,40 120,45.5 120,159c0,12 -7.5,22 -20.5,30.5l-343,0c-13,-8.5 -20.5,-18.5 -20.5,-30.5c0,-113.5 80,-119 120,-159z" id="curve4" fill="url(#color-2)"/>
+        <path d="M84.5,512c-13,-8.5 -20.5,-18.5 -20.5,-30.5c0,-113.5 80,-119 120,-159c0,16.5 36,32 72,32c36,0 72,-15.5 72,-32c40,40 120,45.5 120,159c0,12 -7.5,22 -20.5,30.5z" id="curve3" fill="url(#color-3)"/>
+        <path d="M256,374.5c-19,0 -40,-3.5 -57.5,-11.5c-12.5,-5.5 -25.5,-14 -31.5,-26.5c6,-4.5 12,-9 17,-14c0,16.5 36,32 72,32c36,0 72,-15.5 72,-32c5,5 11,9.5 17,14c-6,12.5 -19,21 -31.5,26.5c-17.5,8 -38.5,11.5 -57.5,11.5z" id="curve2" fill="url(#color-4)"/>
+        <path d="M256,32c91.5,0 122.5,64 122.5,128c0,80 -61.5,160 -122.5,160c-61,0 -122.5,-80 -122.5,-160c0,-64 31,-128 122.5,-128z" id="curve1" fill="url(#color-5)"/>
+        <path d="M416,272l48,0l0,16l-48,0z M416,368l48,0l0,16l-48,0z M416,416l48,0l0,16l-48,0z M416,464l48,0l0,16l-48,0z M416,320l48,0l0,16l-48,0z M416,80l48,0l0,16l-48,0z M416,128l48,0l0,16l-48,0z M416,176l48,0l0,16l-48,0z M416,224l48,0l0,16l-48,0z M416,32l48,0l0,16l-48,0z M48,272l48,0l0,16l-48,0z M48,368l48,0l0,16l-48,0z M48,416l48,0l0,16l-48,0z M48,464l48,0l0,16l-48,0z M48,320l48,0l0,16l-48,0z M48,80l48,0l0,16l-48,0z M48,128l48,0l0,16l-48,0z M48,176l48,0l0,16l-48,0z M48,224l48,0l0,16l-48,0z M48,32l48,0l0,16l-48,0z" id="curve0" fill="#baf68a"/>
+    </g>
+</svg>

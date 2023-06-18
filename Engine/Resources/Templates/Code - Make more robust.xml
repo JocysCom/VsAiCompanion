@@ -1,0 +1,38 @@
+﻿<TemplateItem>
+  <Name>Code - Make more robust</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Make this code more robust</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAEAJVVXY+bOBR976+w3JdWisE2EGAE87Cj1WwftpW26g8gxgneEhwZ56u/fu81JJNs&#xD;
+q2kbKeHecz/PiZ1U42FDDtqNxg41FZGgbwi8Ttt+GGvaeb97iOPj8Rgdk8i6TSw55zHU3KQ9nHoz&#xD;
+fP1RsijLMg5RSo6m9V1NMyEp6bTZdH52DkYf/7CnmnLCCSD4po+hfeWN7/Xj2Bndt8QoO1TxBE3h&#xD;
+Vo/qNkrWzm6J7zT5AN6fp512Rg9KRwrgZ/Zk+14rD0wj8mR3Z4dbkNWZfPj49Omfz+R5u/qLvMP9&#xD;
+zaCsG7HsfVTFYcxl4nqczOACNd24Z9e0MMeTk6hpApTO8OSUnGRN04JHIFkCoAyE0ctKSjZz0ZfB&#xD;
+eFB6P2r3edco/Wn4MmpKTFtTZXvrmKAvA8PQ0dsdsev1qH0Ygz4LuTV92xaa64LGr9WI/9WsEsVV&#xD;
+e1tTxffMXqe8TCfKSTpzTouJLgK/zFP+Fk8hS6316zx5lOZB6/tKXqxa+bPKLBWi+L4yUdnvact1&#xD;
+vlzJn2uLp+xytKoNWZu+r+lgB5AIbeb2va6pPujBti3OcParvmRMHpuvmLgCOEg1u5qu9t7fof9a&#xD;
+A9d9a7x2Vzx4vYEH9OBXuG3GrnGuOdf0Drv5ZtZ28GzdbE1/vi6N0HG+5zfQaL5d1/b65FkzqA6V&#xD;
+ujA5I8+tObFVr4eWbW2rH8hg3bbpbw5ItWt8R+Ds/C2z5QKulWIiEVG2YFkWZYRJmS6YKF7sJMl7&#xD;
+DpCAJAVGCpGQX4CRYQDwBPLAzaELESEKaQqaLDgRfHoETy1ztBPsmBJRwIAUAkpijcCOaEhSwEcA&#xD;
+eUCgBUBSZekCl4UZ+QLrQofQYJr0MifFPqEMDDEthTvBmosE9s7hjSBwu1ATGbZmJY6VhbgoAAJ8&#xD;
+m6/b3h20oPMZ27v+3dv5l+b93Tm9kzjNcyXEclKYiFICz1xGs5lwieqWWdiEKxb0ga8EFBUoKQtp&#xD;
+gSLLykUiAZHZRD7E0qkUOyCHhJMcFZBpHibAgNvt+Q+2l9ftq3jz+KbCf6nH/wAnjCyq3wYAAA==</IconData>
+</TemplateItem>

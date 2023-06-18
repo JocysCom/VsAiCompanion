@@ -1,0 +1,60 @@
+﻿<TemplateItem>
+  <Name>AI - Introduction</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <Text>Could you describe your own primary functions, capabilities, and optimal use cases as an AI? Please provide a few examples of scenarios where you could be most effectively used as a list.</Text>
+  <AttachContext>None</AttachContext>
+  <AttachError>false</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
+  <Settings>
+    <ScrollPosition>0</ScrollPosition>
+  </Settings>
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACu2YW28jxxGF3/0rJgQC2AA5nL5Nz2hXNuBZ2wgwSQxknSB5UySuxJgiBZKW1vn1&#xD;
++U41yaVsOcgNMQJktQCrZrq7qk+dupCvP3t/v6oeF9vdcrO+nLi6mVSL9fXmZrm+vZx88/bLWTep&#xD;
+dvur9c3VarNeXE7Wm8lnn370+hdvfju8/ePXX1S7x9vq628+H381VJPZfP6HMMznb96+qX73+68q&#xD;
+V7v5/IvfTKrJ3X7/cDGfPz091U+h3mxv519trx7ulte7OQvnWsimOYc5V9/sbyaY0MlPy5v9HW41&#xD;
+zS8n1d1ieXu3P2qPy8XT55v3l5Omaiof+T85v4ebVNxsvbt8wbZvmka2Dksu3q+W629fWuj6vp/b&#xD;
+W1t6sXu4ugaDh+1it9g+Lo77UZbvnu23J/X15n4u9L5fsendcrWabb9bLS4Wj4v15ubm1fVq+fD8&#xD;
+yW6/3Xy7mGFw8ZfNcn2x3Xy3Pj29X+4X29WSjwv/CoAq/r2+rfbbq/Xu3WZ7fzm5v9pvl+8/buom&#xD;
++a6Nftro76TNXJ0a33bTWahT6Hz3yeGUctIH2fSHq/1ddXM5+bXvYp3T1HVt3Y0hdXWa+ibUfgxd&#xD;
+qHte9PoYo091P/V9rvMYXa7jNDQNG4fY8CKhRT6qwAKPRpw7aU3dToP3ODmGHOrAq4iJIbRt3aJg&#xD;
+L7Mucew0tOWI2OJDaHv88b6beraH8dzNPz1D/WJ7++ePPSe73Exd4z959SEW6836r4vt5tVk/lPX&#xD;
+Dy7g6dSHvsZFl7gYZ3GHIbheN/ahCq7TFb0T2JXtAJYeZQgNF8CrTm88zyJu9JXvcu2QYp3S6Lkr&#xD;
+G1oepcFzVfnahjpDau4txeniPmRbJ+gGbq4TUFiG/Vj2hMpjEeScABxdagS3UAlpdHgmJUnpGmxb&#xD;
+IHCh65Ei+wayS+hyYle5pscl4pMw4rg7QAQu348uBKyHFuTZAjZ4GbKv28oRPlMscC4JIzGl1T09&#xD;
+R0ccx/3OybEYWvkPhfA/cr9cBYxqFWj3Sa6kPETXmiMRuqQqeiGAjywUh4DAiAclz4L1Egka0E/+&#xD;
+XyABhvtpBBo/OkInPns4PriM/0Zgbg4jYT0wOWRKEJyX24NLEDYoIbhzA5JJ4WzxmddND2SEPDp0&#xD;
+6m/swBMcoBkRahNnBZgNPL4lDG1E53YZ5iVfxzYM2t4nMbGvAaNgrrxsaxafKYO8EjWEGLEhHGDB&#xD;
+daCmEUnc4Ew8Ptc4A9ZHsRi6dtACwy4HI1Lb4y8k6xtnLHNe98HBNhTWBWeU8LLU1r7ncMBMrrxu&#xD;
+KALnrHymDD35bla7KnM3eQ7EFdQi6103IASCHWF9xwsgkiVoC2DAA0tGQi3meOqI+ynOIxnlsWPi&#xD;
+QbbnuSj9SKVyFlwqFbIeUwXGUsAk2mMdadkFxCKs6oUpVvOgs+SyoS1yOinmqBSMEZkzWRvAytbA&#xD;
+NiXDSMrYciCW7IvIElLJZNmlhpicilzWtyO46i5Ql+egZ3JnsvmTJWmnqDGShVqtum1yOlOKLFO6&#xD;
+gynIJVmRdT5BN7mTaNiKrlJsgz22bLYIkcYyRmAl2nLKheS2iCYf1uOn6mqpVpJLUQAc9CJzjNVm&#xD;
+k9lbCpoqh+RYZKFfKEDAJXYmgr1Vrx+I1FEVApUAOFG0WLRgSi5KedOdZJK7vMimeJPFUKeIIfcm&#xD;
+CxUKnDMln2Qtd1bEYXRRlKgo2qxt8N4fd6t2eznsKViS0rHLuqZ0WWuaUopMCKXIWx1ypshbq6pH&#xD;
+JZp5bY5mW0Q0RUs0GEg2P2TJNDNPD0ApBELRzZU2RdE65QpaPBOLxzQeU+y00oWOWqEamvmsDDAt&#xD;
+F828sJQ904RmW1yyVHWNGq9pRdH1oLPJ5gYmUSgtyJZMUoIpWiVWmqIA0nxPsvCntEuy5ZBYe62U&#xD;
+ScuDcxbjICJZ7bMOS7x+jnb7ock9752zDXPvcv/9BV7+U21THUuGvI1CqsG5mKWpeFwhH2LUbOHF&#xD;
+ft6QnYOzMhqBsLSyMI3MVeoiUc5B+ZLcdF41D9y1oZGkRSkVBgKoz8ArZRyGPAvBQVoESetowB7L&#xD;
+xJOVSmjEn3WUPg0dvTZ5V4gC1HlQcxGF1D0rn8WTSMSA/dk9/5PDp8+aN13qmCNV4x0TMCEjUBoe&#xD;
++ypoFjxOd0EF8NQ7NYPD6tI9I5Rqj+0zQia4oAYqkVYKQm0VVTnVKdWHKtEgFS0PunJnMiaZ0jlK&#xD;
+V3bYB31kbAxGer1Q0sIxlXMaMjUCsGAiihJp8C29mRJluKk+StF0S0w0uxEnLqNZF7J4RidC6X3R&#xD;
+FAcGXGsYioCGEw1NMiuNWFpJ0RCtd7lcgvspsqX7i2uUB2+8Z/2gIJfhWV4oYUEcE1DUEHGJdgl7&#xD;
+y0jEBzM2izVW47LueozSS6HXXN4ROZf+odC/9IVOtY6vDlPxPkGlGc612WuCktBOZ5H4hBD4iqcJ&#xD;
+rAnn3+x+zCpyyrkpE0L0Q5GpMd5XNMouIiek1OlpGunBWcIAmwicXmI99IctRbajxiKTEQ18PSkp&#xD;
+M7zZXsfkptNcHMv5Lg7FJG+KH4f1J4WTxjNvX8BXux2Z5cmsH4E5v/3Z0FWJPiByJjoyKJyDww8X&#xD;
+1BEahYHTamgWOrHLB3T43v4MHX9S7KgDOjLxd2r2vwfM7IjMD4FRdc6B+qOxyT37OeH/pPvvY9v/&#xD;
+z1DupJjwWr/FffrR3wDPhk1eixQAAA==</IconData>
+</TemplateItem>
