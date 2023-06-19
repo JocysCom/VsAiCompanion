@@ -45,7 +45,7 @@ Code - Smart Search: The AI can provide you with the exact location of specific 
 
 Application Options:
 
-<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Options.png" width="898" height="729">
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Options.png" width="680" height="550">
 
 Task and template settings are saved in separate files for easy exchange and sharing:
 
@@ -53,17 +53,17 @@ Task and template settings are saved in separate files for easy exchange and sha
 
 Various Templates:
 
-<img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_Templates.png"  width="898" height="729">
+<img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_Templates.png"  width="680" height="550">
 
 Template: Code - Document
 
-<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png"  width="898" height="729">
+<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png"  width="680" height="550">
 
 Template: Custom - Historical Events
 
-<img alt="Historical Events" src="Documents/Images/JocysComVsAiCompanion_Task_HistoricalEvents.png"  width="898" height="729">
+<img alt="Historical Events" src="Documents/Images/JocysComVsAiCompanion_Task_HistoricalEvents.png"  width="680" height="550">
 
 Template: Translate - English to Klingon:
 
-<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_Task_Translate.png"  width="898" height="729">
+<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_Task_Translate.png"  width="680" height="550">
 
