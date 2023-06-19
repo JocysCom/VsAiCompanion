@@ -27,6 +27,10 @@ You can ask questions about an entire solution or project using the "Code - Smar
 
 This application (or extension) enables you to create sophisticated prompt templates and incorporate data from a variety of sources, including the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, or Chat History. With a single button press, you can execute this template. The data will be transmitted to the AI model of your preference for results at https://api.openai.com.
 
+## Data Safety Concerns
+
+OpenAI will not use the data submitted by customers via the API to train or improve its models, unless customers explicitly decide to share their data for this purpose. Customers have the option to opt-in to share data. Please note that this data policy does not apply to OpenAI's Non-API consumer services like ChatGPT or DALL·E. More information can be found at: https://openai.com/policies/api-data-usage-policies."
+
 ## Where to get API Organization ID and API Key?
 
 https://platform.openai.com/account/org-settings
