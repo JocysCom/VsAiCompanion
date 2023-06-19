@@ -4,9 +4,6 @@
   <IconType>.svg</IconType>
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
-  <Settings>
-    <ScrollPosition>0</ScrollPosition>
-  </Settings>
   <Type>None</Type>
   <StatusCode>None</StatusCode>
   <Messages />

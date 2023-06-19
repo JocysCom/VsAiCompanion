@@ -260,7 +260,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (v >= 1.5 - 0.25)
 					return "Creative";
 				if (v >= 1 - 0.25)
-					return "Normal";
+					return "Balanced";
 				if (v >= 0.5 - 0.25)
 					return "Precise";
 				return "Very Precise";

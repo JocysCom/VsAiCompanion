@@ -5,10 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime;
+using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -223,9 +226,16 @@ namespace JocysCom.ClassLibrary.Controls
 				? e.Button == System.Windows.Forms.MouseButtons.Right
 				: e.Button == System.Windows.Forms.MouseButtons.Left;
 			if (isPrimaryClick)
-				RestoreFromTray();
+			{
+				if (_Window.WindowState == WindowState.Minimized || !IsVisible(_Window))
+					RestoreFromTray();
+				else
+					MinimizeToTray(false, Settings.MinimizeToTray);
+			}
 			else
+			{
 				OpenTrayMenu();
+			}
 		}
 		void OpenTrayMenu()
 		{
@@ -250,6 +260,73 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+		#region IsVisible
+
+		// Import from user32.dll
+		[DllImport("user32.dll")]
+		static extern IntPtr WindowFromPoint(POINT Point);
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct POINT
+		{
+			public int X;
+			public int Y;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct RECT
+		{
+			public int Left;
+			public int Top;
+			public int Right;
+			public int Bottom;
+		}
+
+		private bool IsVisible(Window window)
+		{
+			IntPtr myHandle = new WindowInteropHelper(window).Handle;
+			// Get the window's content bounds
+			Rect contentBounds = VisualTreeHelper.GetDescendantBounds((Visual)window.Content);
+			// Convert to screen coordinates
+			Point topLeft = window.PointToScreen(contentBounds.TopLeft);
+			Point bottomRight = window.PointToScreen(contentBounds.BottomRight);
+			RECT myRect = new RECT()
+			{
+				Left = (int)topLeft.X,
+				Top = (int)topLeft.Y,
+				Right = (int)bottomRight.X,
+				Bottom = (int)bottomRight.Y,
+			};
+			// Define the points to check
+			POINT[] pointsToCheck =
+			{
+				new POINT { X = myRect.Left + (myRect.Right - myRect.Left) / 2, Y = myRect.Top }, // Top center
+				new POINT { X = myRect.Left, Y = myRect.Top }, // Top left
+				new POINT { X = myRect.Right, Y = myRect.Top }, // Top right
+				new POINT { X = myRect.Left, Y = myRect.Top + (myRect.Bottom - myRect.Top) / 2 }, // Middle left
+				new POINT { X = myRect.Right, Y = myRect.Top + (myRect.Bottom - myRect.Top) / 2 }, // Middle right
+				new POINT { X = myRect.Left + (myRect.Right - myRect.Left) / 2, Y = myRect.Bottom }, // Bottom center
+				new POINT { X = myRect.Left, Y = myRect.Bottom }, // Bottom left
+				new POINT { X = myRect.Right, Y = myRect.Bottom } // Bottom right
+			};
+			// Perform a hit-test at each point
+			for (int i = 0; i < pointsToCheck.Length; i++)
+			{
+				var pt = pointsToCheck[i];
+				var hWnd = WindowFromPoint(pt);
+				// The point is covered by another window
+				if (hWnd != myHandle)
+					return false;
+			}
+			// All points are not covered by other windows
+			return true;
+		}
+
+		#endregion
 
 		#region ■ Minimize / Restore
 
