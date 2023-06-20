@@ -1,0 +1,18 @@
+{
+  "@id": "https://github.com/JocysCom/VsAiCompanion/releases",
+  "count": 1,
+  "items": [
+    {
+      "@id": "https://github.com/JocysCom/VsAiCompanion/releases/tag/1.0.0",
+      "count": 1,
+      "items": [
+        {
+          "@id": "https://github.com/JocysCom/VsAiCompanion/releases/download/1.0.0/JocysCom.VS.AiCompanion.App.zip",
+          "version": "1.0.22",
+          "published": "2023-06-20T00:00:00Z",
+          "packageContent": "https://github.com/JocysCom/VsAiCompanion/releases/download/1.0.0/JocysCom.VS.AiCompanion.App.zip"
+        }
+      ]
+    },
+  ]
+}
