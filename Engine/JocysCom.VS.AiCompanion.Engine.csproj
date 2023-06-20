@@ -16,8 +16,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.0.21</AssemblyVersion>
-		<FileVersion>1.0.21</FileVersion>
+		<AssemblyVersion>1.0.22</AssemblyVersion>
+		<FileVersion>1.0.22</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
@@ -81,8 +81,6 @@
 	<ItemGroup>
 		<None Remove="AiCompanion.svg" />
 		<None Remove="App.ico" />
-		<None Remove="Documents\ChangeLog.txt" />
-		<None Remove="Documents\License.txt" />
 		<None Remove="JocysCom\Controls\Chat\ChatListControl.html" />
 		<None Remove="JocysCom\Controls\Chat\ChatListControl.html.zip" />
 		<None Remove="JocysCom\Controls\Chat\ChatListControl\core.min.js" />
@@ -170,8 +168,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Documents\ChangeLog.txt" />
-		<EmbeddedResource Include="Documents\License.txt" />
 		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl.html" />
 		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\core.min.js" />
 		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\IconError.svg" />
@@ -186,6 +182,11 @@
 		<EmbeddedResource Include="Resources\BuildDate.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
 		<EmbeddedResource Include="Resources\Templates\*.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
+	  <EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
 	</ItemGroup>
 
 	<ItemGroup>

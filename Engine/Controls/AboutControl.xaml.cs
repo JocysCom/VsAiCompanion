@@ -27,10 +27,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var ai = new AssemblyInfo(typeof(MainControl).Assembly);
-			ChangeLogTextBox.Text = ClassLibrary.Helper.FindResource<string>("Documents.ChangeLog.txt", ai.Assembly);
+			ChangeLogTextBox.Text = ClassLibrary.Helper.FindResource<string>("CHANGELOG.md", ai.Assembly);
 			AboutProductLabel.Content = string.Format("{0} {1} {2}", ai.Company, ai.Product, ai.Version);
 			AboutDescriptionLabel.Text = ai.Description;
-			LicenseTextBox.Text = ClassLibrary.Helper.FindResource<string>("Documents.License.txt", ai.Assembly);
+			LicenseTextBox.Text = ClassLibrary.Helper.FindResource<string>("LICENSE", ai.Assembly);
 			LicenseTabPage.Header = string.Format("{0} {1} License", ai.Product, ai.Version.ToString(2));
 		}
 	}

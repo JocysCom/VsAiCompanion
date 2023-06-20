@@ -6,12 +6,17 @@ using System.Net.Http.Headers;
 using OpenAI;
 using System.Linq;
 using System.Collections.Generic;
+using System.Security.Policy;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
 	public class Client : IClient
 	{
-		private const string baseUrl = "https://api.openai.com/v1";
+		public Client(string baseUrl)
+		{
+			BaseUrl = baseUrl;
+		}
+		private string BaseUrl;
 		private const string usageUrl = "/usage";
 		private const string modelsUrl = "/models";
 		public static Settings Settings;
@@ -19,6 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public HttpClient GetClient()
 		{
 			var client = new HttpClient();
+			client.BaseAddress = new Uri(BaseUrl);
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Settings.ApiSecretKey);
 			client.DefaultRequestHeaders.Accept.Clear();
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -33,7 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<string> GetResponseAsync(string url)
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{baseUrl}/{url}?date={date}";
+			var urlWithDate = $"{BaseUrl}/{url}?date={date}";
 			var client = GetClient();
 			var response = await client.GetAsync(urlWithDate);
 			var responseBody = await response.Content.ReadAsStringAsync();
@@ -46,23 +52,52 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public async Task<OpenAI.Usage> GetUsageAsync()
 		{
-			var responseBody = await GetResponseAsync(usageUrl);
-			var o = JsonSerializer.Deserialize<OpenAI.Usage>(responseBody);
-			return o;
+			var id = Guid.NewGuid();
+			try
+			{
+				Global.MainControl.InfoPanel.AddTask(id);
+				var responseBody = await GetResponseAsync(usageUrl);
+				var o = JsonSerializer.Deserialize<OpenAI.Usage>(responseBody);
+				return o;
+			}
+			catch (Exception ex)
+			{
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+				return new Usage();
+			}
+			finally
+			{
+				Global.MainControl.InfoPanel.RemoveTask(id);
+			}
 		}
 
 		public async Task<Model[]> GetModels()
 		{
-			var apiClient = new OpenAI.ApiClient(GetClient());
-			var models = await apiClient.ListModelsAsync();
-			var list = models.Data.ToArray();
-			return list;
+			var id = Guid.NewGuid();
+			try
+			{
+				Global.MainControl.InfoPanel.AddTask(id);
+				var apiClient = new OpenAI.ApiClient(GetClient());
+				var models = await apiClient.ListModelsAsync();
+				var list = models.Data.ToArray();
+				return list;
+			}
+			catch (Exception ex)
+			{
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+				return new Model[0];
+			}
+			finally
+			{
+				Global.MainControl.InfoPanel.RemoveTask(id);
+			}
 		}
 
 		public async Task<string> QueryAI(string modelName, string prompt, double creativity)
 		{
 			string answer;
-			Global.MainControl.InfoPanel.AddTask(prompt);
+			var id = Guid.NewGuid();
+			Global.MainControl.InfoPanel.AddTask(id);
 			try
 			{
 				var apiClient = new ApiClient(GetClient());
@@ -110,7 +145,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			finally
 			{
-				Global.MainControl.InfoPanel.RemoveTask(prompt);
+				Global.MainControl.InfoPanel.RemoveTask(id);
 			}
 			return answer;
 		}

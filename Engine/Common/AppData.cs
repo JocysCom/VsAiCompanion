@@ -79,7 +79,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string ContextChatTitle { get => _ContextChatTitle; set => SetProperty(ref _ContextChatTitle, value); }
 		private string _ContextChatTitle;
 
-		[DefaultValue("The chat log contains our previous conversation. Please generate a response based on the current message, but also consider the chat log to provide a relevant and coherent response.")]
+		[DefaultValue("The chat log contains our previous conversation. Please provide a relevant and coherent response based on chat log.")]
 		public string ContextChatInstructions { get => _ContextChatInstructions; set => SetProperty(ref _ContextChatInstructions, value); }
 		private string _ContextChatInstructions;
 

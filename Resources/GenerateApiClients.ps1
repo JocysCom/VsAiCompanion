@@ -123,28 +123,30 @@ function GenerateNSwagFiles {
 		[string[]]$exeArgs = @(
 			"openapi2csclient"
 			"/JsonLibrary:SystemTextJson"
-			#"/UseBaseUrl:false" # Indicates that the generated client will not use a base URL.
-			#"/ClientBaseClass:System.Net.Http.HttpClient" # Specifies the base class for the generated client.
-			#"/ClassStyle:Poco"
-			#"/GenerateDataContractAttributes:false"
-			#"/OperationGenerationMode:MultipleClientsFromOperationId"
-			#"/GenerateClientClasses:true" # Specifies whether to generate client classes.
-			#"/GenerateClientInterfaces:false" # Specifies whether to generate interfaces for the client classes.
-			#"/UseHttpClientCreationMethod:true" # Specifies whether to call CreateHttpClientAsync on the base class to create a new HttpClient.
-			#"/GenerateExceptionClasses:true" # Specifies whether to generate exception classes.
-			#"/WrapDtoExceptions:false" # Specifies whether to wrap DTO exceptions in a SwaggerException instance.
-			#"/GenerateContractsOutput:false" # Specifies whether to generate contracts output.
-			#"/GenerateOptionalParameters:false" # Specifies whether to reorder parameters (required first, optional at the end) and generate optional parameters.
-			#"/GenerateJsonMethods:false" # Specifies whether to render ToJson() and FromJson() methods for DTOs.
-			#"/GenerateDataAnnotations:false" # Specifies whether to generate data annotation attributes on DTO classes.
-			#"/GenerateDtoTypes:true" # Specifies whether to generate DTO classes.
-			#"/GenerateOptionalPropertiesAsNullable:false" # Specifies whether optional schema properties (not required) are generated as nullable properties.
-			#"/GenerateNullableReferenceTypes:false" # Specifies whether to generate Nullable Reference Type annotations.
-			#"/InjectHttpClient:true"
-    		#"/DisposeHttpClient:false"
-    		#"/GenerateDefaultValues:false"
-    		#"/JsonSerializerSettingsTransformationMethod:"""""
+			"/UseBaseUrl:false" # Indicates that the generated client will not use a base URL.
 		);
+		if (1 -eq 0) {
+			$exeArgs += "/ClientBaseClass:System.Net.Http.HttpClient" # Specifies the base class for the generated client.
+			$exeArgs += "/ClassStyle:Poco"
+			$exeArgs += "/GenerateDataContractAttributes:false"
+			$exeArgs += "/OperationGenerationMode:SingleClientFromOperationId"
+			$exeArgs += "/GenerateClientClasses:true" # Specifies whether to generate client classes.
+			$exeArgs += "/GenerateClientInterfaces:false" # Specifies whether to generate interfaces for the client classes.
+			$exeArgs += "/UseHttpClientCreationMethod:true" # Specifies whether to call CreateHttpClientAsync on the base class to create a new HttpClient.
+			$exeArgs += "/GenerateExceptionClasses:true" # Specifies whether to generate exception classes.
+			$exeArgs += "/WrapDtoExceptions:false" # Specifies whether to wrap DTO exceptions in a SwaggerException instance.
+			$exeArgs += "/GenerateContractsOutput:false" # Specifies whether to generate contracts output.
+			$exeArgs += "/GenerateOptionalParameters:false" # Specifies whether to reorder parameters (required first, optional at the end) and generate optional parameters.
+			$exeArgs += "/GenerateJsonMethods:false" # Specifies whether to render ToJson() and FromJson() methods for DTOs.
+			$exeArgs += "/GenerateDataAnnotations:false" # Specifies whether to generate data annotation attributes on DTO classes.
+			$exeArgs += "/GenerateDtoTypes:true" # Specifies whether to generate DTO classes.
+			$exeArgs += "/GenerateOptionalPropertiesAsNullable:true" # Specifies whether optional schema properties (not required) are generated as nullable properties.
+			$exeArgs += "/GenerateNullableReferenceTypes:true" # Specifies whether to generate Nullable Reference Type annotations.
+			$exeArgs += "/InjectHttpClient:true"
+			$exeArgs += "/DisposeHttpClient:false"
+			$exeArgs += "/GenerateDefaultValues:false"
+			$exeArgs += "/JsonSerializerSettingsTransformationMethod:"""""
+		}
 		#"/BaseAddress:<base-address>
 		$namespace = $urlFileName.split(".")[0];
 		$className = $urlFileName.split(".")[1];
@@ -194,21 +196,22 @@ function FixEnumValueNameFromEnumMember {
 	$replaceFunction = {
 		param($match)
 		# Get the captured groups
-		$beforeValue = $match.Groups[1].Value
-		$value = $match.Groups[2].Value
-		$beforeName = $match.Groups[3].Value
-		$name = $match.Groups[4].Value
-		$afterName = $match.Groups[5].Value
-		# Convert the first letter of the name to lower case
-		$newName = $name.Substring(0, 1).ToLower() + $name.Substring(1)
+		$beforeValue = $match.Groups["bv"].Value
+		$value = $match.Groups["v"].Value
+		$beforeName = $match.Groups["bn"].Value
+		$name = $match.Groups["n"].Value
+		$afterName = $match.Groups["an"].Value
 		# Construct the new string
-		$newString = $beforeValue + $value + $beforeName + $newName + $afterName
+		if ($value[0] -match "\d") {
+			$newString = $beforeValue + $value + $beforeName + $name + $afterName
+		} else {
+			$newString = $beforeValue + $value + $beforeName + $value + $afterName
+		}
 		Write-Host $newString
 		return $newString
 	}
-	$pattern = '(\[System.Runtime.Serialization.EnumMember\(Value = @")(\w+)("\)\]\s+)(\w+)(\s+=\s+\d+,)'
+	$pattern = '(?s)(?<bv>\[[\w.]*EnumMember\(Value\s*=\s*@")(?<v>\w+)(?<bn>"\)\]\s+)(?<n>\w+)(?<an>\s+=\s*\d+[,]*)'
 	$newContent = [Regex]::Replace($content, $pattern, $replaceFunction)
-	Write-Host "new content"
 	return $newContent
 }
 # ----------------------------------------------------------------------------

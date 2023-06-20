@@ -36,7 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (Global.IsIncompleteSettings())
 				return;
-			var client = new Companions.ChatGPT.Client();
+			var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 			var usage = await client.GetUsageAsync();
 			InfoPanel.SetBodyInfo($"Usage: Total Tokens = {usage}, Total Cost = {usage.AdditionalProperties["current_usage_usd"]:C}");
 		}

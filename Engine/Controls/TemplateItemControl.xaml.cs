@@ -155,7 +155,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var reqTokens = Client.CountTokens(messageForAI);
 			var availableTokens = maxRequesTokens - usedTokens;
 			// Attach chat history at the end (use left tokens).
-			if (_item.AttachChatHistory)
+			if (_item.AttachChatHistory && _item.Messages?.Count > 0)
 			{
 				var a0 = new MessageAttachments();
 				a0.Title = Global.AppSettings.ContextChatTitle;
@@ -163,27 +163,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				a0.Type = AttachmentType.ChatHistory;
 				var options = new JsonSerializerOptions();
 				options.WriteIndented = true;
-				var messages = _item.Messages?.Select(x => new MessageHistoryItem()
+				if (_item.Messages == null)
+					_item.Messages = new BindingList<MessageItem>();
+				var messages = _item.Messages.Select(x => new MessageHistoryItem()
 				{
 					Date = x.Date,
 					User = x.User,
 					Body = x.Body,
 					Type = x.Type.ToString(),
 				}).ToDictionary(x => x, x => 0);
-				if (messages?.Count > 0)
+				var keys = messages.Keys.ToArray();
+				// Count number of tokens used by each message.
+				foreach (var key in keys)
 				{
-					var keys = messages.Keys.ToArray();
-					// Count number of tokens used by each message.
-					foreach (var key in keys)
-					{
-						var messageJson = JsonSerializer.Serialize(messages[key], options);
-						messages[key] = Client.CountTokens(messageJson);
-					}
-					var messagesToSend = AppHelper.GetMessages(messages, availableTokens);
-					var json = JsonSerializer.Serialize(messagesToSend, options);
-					a0.Data = $"```json\r\n{json}\r\n```";
-					m.Attachments.Add(a0);
+					var messageJson = JsonSerializer.Serialize(messages[key], options);
+					messages[key] = Client.CountTokens(messageJson);
 				}
+				var messagesToSend = AppHelper.GetMessages(messages, availableTokens);
+				// Attach message body to the bottom of the chat instead.
+				messageForAI = "";
+				messagesToSend.Add(new MessageHistoryItem()
+				{
+					Date = m.Date,
+					User = m.User,
+					Body = m.Body,
+					Type = m.Type.ToString(),
+				});
+				var json = JsonSerializer.Serialize(messagesToSend, options);
+				a0.Data = $"```json\r\n{json}\r\n```";
+				m.Attachments.Add(a0);
 			}
 			foreach (var a in m.Attachments)
 			{
@@ -202,7 +210,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				try
 				{
-					var client = new Companions.ChatGPT.Client();
+					var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 					// Send body and context data.
 					var response = await client.QueryAI(_item.AiModel, messageForAI, _item.Creativity);
 					if (response != null)
@@ -374,7 +382,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				filterRx = new Regex(Global.AppSettings.OpenAiSettings.ModelFilter);
 			}
 			catch { }
-			var client = new Companions.ChatGPT.Client();
+			var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 			var models = await client.GetModels();
 			var modelIds = models
 				.OrderByDescending(x => x.Id)

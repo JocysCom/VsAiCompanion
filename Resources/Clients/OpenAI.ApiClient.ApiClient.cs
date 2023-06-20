@@ -16,5781 +16,5049 @@
 
 namespace OpenAI
 {
-    using System = global::System;
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ApiClient 
-    {
-        private string _baseUrl = "https://api.openai.com/v1";
-        private System.Net.Http.HttpClient _httpClient;
-        private System.Lazy<System.Text.Json.JsonSerializerOptions> _settings;
-
-        public ApiClient(System.Net.Http.HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-            _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings);
-        }
-
-        private System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
-        {
-            var settings = new System.Text.Json.JsonSerializerOptions();
-            UpdateJsonSerializerSettings(settings);
-            return settings;
-        }
-
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
-        }
-
-        protected System.Text.Json.JsonSerializerOptions JsonSerializerSettings { get { return _settings.Value; } }
-
-        partial void UpdateJsonSerializerSettings(System.Text.Json.JsonSerializerOptions settings);
-
-        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
-        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
-        partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
-
-        /// <summary>
-        /// Lists the currently available (non-finetuned) models, and provides basic information about each one such as the owner and availability.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual System.Threading.Tasks.Task<ListEnginesResponse> ListEnginesAsync()
-        {
-            return ListEnginesAsync(System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Lists the currently available (non-finetuned) models, and provides basic information about each one such as the owner and availability.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual async System.Threading.Tasks.Task<ListEnginesResponse> ListEnginesAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/engines");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ListEnginesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a model instance, providing basic information about it such as the owner and availability.
-        /// </summary>
-        /// <param name="engine_id">The ID of the engine to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual System.Threading.Tasks.Task<Engine> RetrieveEngineAsync(string engine_id)
-        {
-            return RetrieveEngineAsync(engine_id, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Retrieves a model instance, providing basic information about it such as the owner and availability.
-        /// </summary>
-        /// <param name="engine_id">The ID of the engine to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual async System.Threading.Tasks.Task<Engine> RetrieveEngineAsync(string engine_id, System.Threading.CancellationToken cancellationToken)
-        {
-            if (engine_id == null)
-                throw new System.ArgumentNullException("engine_id");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/engines/{engine_id}");
-            urlBuilder_.Replace("{engine_id}", System.Uri.EscapeDataString(ConvertToString(engine_id, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<Engine>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Creates a completion for the provided prompt and parameters
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateCompletionResponse> CreateCompletionAsync(CreateCompletionRequest body)
-        {
-            return CreateCompletionAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Creates a completion for the provided prompt and parameters
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateCompletionResponse> CreateCompletionAsync(CreateCompletionRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/completions");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateCompletionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Creates a completion for the chat message
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateChatCompletionResponse> CreateChatCompletionAsync(CreateChatCompletionRequest body)
-        {
-            return CreateChatCompletionAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Creates a completion for the chat message
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateChatCompletionResponse> CreateChatCompletionAsync(CreateChatCompletionRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/chat/completions");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateChatCompletionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Creates a new edit for the provided input, instruction, and parameters.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateEditResponse> CreateEditAsync(CreateEditRequest body)
-        {
-            return CreateEditAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Creates a new edit for the provided input, instruction, and parameters.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateEditResponse> CreateEditAsync(CreateEditRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/edits");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateEditResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Creates an image given a prompt.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ImagesResponse> CreateImageAsync(CreateImageRequest body)
-        {
-            return CreateImageAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Creates an image given a prompt.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ImagesResponse> CreateImageAsync(CreateImageRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/images/generations");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ImagesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Creates an edited or extended image given an original image and a prompt.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ImagesResponse> CreateImageEditAsync(System.IO.Stream body)
-        {
-            return CreateImageEditAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Creates an edited or extended image given an original image and a prompt.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ImagesResponse> CreateImageEditAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/images/edits");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StreamContent(body);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ImagesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Creates a variation of a given image.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ImagesResponse> CreateImageVariationAsync(System.IO.Stream body)
-        {
-            return CreateImageVariationAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Creates a variation of a given image.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ImagesResponse> CreateImageVariationAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/images/variations");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StreamContent(body);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ImagesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Creates an embedding vector representing the input text.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateEmbeddingResponse> CreateEmbeddingAsync(CreateEmbeddingRequest body)
-        {
-            return CreateEmbeddingAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Creates an embedding vector representing the input text.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateEmbeddingResponse> CreateEmbeddingAsync(CreateEmbeddingRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/embeddings");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateEmbeddingResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Transcribes audio into the input language.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateTranscriptionResponse> CreateTranscriptionAsync(System.IO.Stream body)
-        {
-            return CreateTranscriptionAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Transcribes audio into the input language.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateTranscriptionResponse> CreateTranscriptionAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/audio/transcriptions");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StreamContent(body);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateTranscriptionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Translates audio into into English.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateTranslationResponse> CreateTranslationAsync(System.IO.Stream body)
-        {
-            return CreateTranslationAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Translates audio into into English.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateTranslationResponse> CreateTranslationAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/audio/translations");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StreamContent(body);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateTranslationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// The search endpoint computes similarity scores between provided query and documents. Documents can be passed directly to the API if there are no more than 200 of them.
-        /// <br/>
-        /// <br/>To go beyond the 200 document limit, documents can be processed offline and then used for efficient retrieval at query time. When `file` is set, the search endpoint searches over all the documents in the given file and returns up to the `max_rerank` number of documents. These documents will be returned along with their search scores.
-        /// <br/>
-        /// <br/>The similarity score is a positive score that usually ranges from 0 to 300 (but can sometimes go higher), where a score above 200 usually means the document is semantically similar to the query.
-        /// </summary>
-        /// <param name="engine_id">The ID of the engine to use for this request.  You can select one of `ada`, `babbage`, `curie`, or `davinci`.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual System.Threading.Tasks.Task<CreateSearchResponse> CreateSearchAsync(string engine_id, CreateSearchRequest body)
-        {
-            return CreateSearchAsync(engine_id, body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// The search endpoint computes similarity scores between provided query and documents. Documents can be passed directly to the API if there are no more than 200 of them.
-        /// <br/>
-        /// <br/>To go beyond the 200 document limit, documents can be processed offline and then used for efficient retrieval at query time. When `file` is set, the search endpoint searches over all the documents in the given file and returns up to the `max_rerank` number of documents. These documents will be returned along with their search scores.
-        /// <br/>
-        /// <br/>The similarity score is a positive score that usually ranges from 0 to 300 (but can sometimes go higher), where a score above 200 usually means the document is semantically similar to the query.
-        /// </summary>
-        /// <param name="engine_id">The ID of the engine to use for this request.  You can select one of `ada`, `babbage`, `curie`, or `davinci`.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual async System.Threading.Tasks.Task<CreateSearchResponse> CreateSearchAsync(string engine_id, CreateSearchRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (engine_id == null)
-                throw new System.ArgumentNullException("engine_id");
-
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/engines/{engine_id}/search");
-            urlBuilder_.Replace("{engine_id}", System.Uri.EscapeDataString(ConvertToString(engine_id, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateSearchResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Returns a list of files that belong to the user's organization.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ListFilesResponse> ListFilesAsync()
-        {
-            return ListFilesAsync(System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Returns a list of files that belong to the user's organization.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ListFilesResponse> ListFilesAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/files");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ListFilesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact us if you need to increase the storage limit.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<OpenAIFile> CreateFileAsync(System.IO.Stream body)
-        {
-            return CreateFileAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact us if you need to increase the storage limit.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<OpenAIFile> CreateFileAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/files");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StreamContent(body);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<OpenAIFile>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Delete a file.
-        /// </summary>
-        /// <param name="file_id">The ID of the file to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<DeleteFileResponse> DeleteFileAsync(string file_id)
-        {
-            return DeleteFileAsync(file_id, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Delete a file.
-        /// </summary>
-        /// <param name="file_id">The ID of the file to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DeleteFileResponse> DeleteFileAsync(string file_id, System.Threading.CancellationToken cancellationToken)
-        {
-            if (file_id == null)
-                throw new System.ArgumentNullException("file_id");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/files/{file_id}");
-            urlBuilder_.Replace("{file_id}", System.Uri.EscapeDataString(ConvertToString(file_id, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<DeleteFileResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Returns information about a specific file.
-        /// </summary>
-        /// <param name="file_id">The ID of the file to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<OpenAIFile> RetrieveFileAsync(string file_id)
-        {
-            return RetrieveFileAsync(file_id, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Returns information about a specific file.
-        /// </summary>
-        /// <param name="file_id">The ID of the file to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<OpenAIFile> RetrieveFileAsync(string file_id, System.Threading.CancellationToken cancellationToken)
-        {
-            if (file_id == null)
-                throw new System.ArgumentNullException("file_id");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/files/{file_id}");
-            urlBuilder_.Replace("{file_id}", System.Uri.EscapeDataString(ConvertToString(file_id, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<OpenAIFile>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Returns the contents of the specified file
-        /// </summary>
-        /// <param name="file_id">The ID of the file to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<string> DownloadFileAsync(string file_id)
-        {
-            return DownloadFileAsync(file_id, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Returns the contents of the specified file
-        /// </summary>
-        /// <param name="file_id">The ID of the file to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<string> DownloadFileAsync(string file_id, System.Threading.CancellationToken cancellationToken)
-        {
-            if (file_id == null)
-                throw new System.ArgumentNullException("file_id");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/files/{file_id}/content");
-            urlBuilder_.Replace("{file_id}", System.Uri.EscapeDataString(ConvertToString(file_id, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Answers the specified question using the provided documents and examples.
-        /// <br/>
-        /// <br/>The endpoint first [searches](/docs/api-reference/searches) over provided documents or files to find relevant context. The relevant context is combined with the provided examples and question to create the prompt for [completion](/docs/api-reference/completions).
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual System.Threading.Tasks.Task<CreateAnswerResponse> CreateAnswerAsync(CreateAnswerRequest body)
-        {
-            return CreateAnswerAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Answers the specified question using the provided documents and examples.
-        /// <br/>
-        /// <br/>The endpoint first [searches](/docs/api-reference/searches) over provided documents or files to find relevant context. The relevant context is combined with the provided examples and question to create the prompt for [completion](/docs/api-reference/completions).
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual async System.Threading.Tasks.Task<CreateAnswerResponse> CreateAnswerAsync(CreateAnswerRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/answers");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateAnswerResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Classifies the specified `query` using provided examples.
-        /// <br/>
-        /// <br/>The endpoint first [searches](/docs/api-reference/searches) over the labeled examples
-        /// <br/>to select the ones most relevant for the particular query. Then, the relevant examples
-        /// <br/>are combined with the query to construct a prompt to produce the final label via the
-        /// <br/>[completions](/docs/api-reference/completions) endpoint.
-        /// <br/>
-        /// <br/>Labeled examples can be provided via an uploaded `file`, or explicitly listed in the
-        /// <br/>request using the `examples` parameter for quick tests and small scale use cases.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual System.Threading.Tasks.Task<CreateClassificationResponse> CreateClassificationAsync(CreateClassificationRequest body)
-        {
-            return CreateClassificationAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Classifies the specified `query` using provided examples.
-        /// <br/>
-        /// <br/>The endpoint first [searches](/docs/api-reference/searches) over the labeled examples
-        /// <br/>to select the ones most relevant for the particular query. Then, the relevant examples
-        /// <br/>are combined with the query to construct a prompt to produce the final label via the
-        /// <br/>[completions](/docs/api-reference/completions) endpoint.
-        /// <br/>
-        /// <br/>Labeled examples can be provided via an uploaded `file`, or explicitly listed in the
-        /// <br/>request using the `examples` parameter for quick tests and small scale use cases.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual async System.Threading.Tasks.Task<CreateClassificationResponse> CreateClassificationAsync(CreateClassificationRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/classifications");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateClassificationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Creates a job that fine-tunes a specified model from a given dataset.
-        /// <br/>
-        /// <br/>Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
-        /// <br/>
-        /// <br/>[Learn more about Fine-tuning](/docs/guides/fine-tuning)
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<FineTune> CreateFineTuneAsync(CreateFineTuneRequest body)
-        {
-            return CreateFineTuneAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Creates a job that fine-tunes a specified model from a given dataset.
-        /// <br/>
-        /// <br/>Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
-        /// <br/>
-        /// <br/>[Learn more about Fine-tuning](/docs/guides/fine-tuning)
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FineTune> CreateFineTuneAsync(CreateFineTuneRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/fine-tunes");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<FineTune>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// List your organization's fine-tuning jobs
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ListFineTunesResponse> ListFineTunesAsync()
-        {
-            return ListFineTunesAsync(System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// List your organization's fine-tuning jobs
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ListFineTunesResponse> ListFineTunesAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/fine-tunes");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ListFineTunesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Gets info about the fine-tune job.
-        /// <br/>
-        /// <br/>[Learn more about Fine-tuning](/docs/guides/fine-tuning)
-        /// </summary>
-        /// <param name="fine_tune_id">The ID of the fine-tune job</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<FineTune> RetrieveFineTuneAsync(string fine_tune_id)
-        {
-            return RetrieveFineTuneAsync(fine_tune_id, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Gets info about the fine-tune job.
-        /// <br/>
-        /// <br/>[Learn more about Fine-tuning](/docs/guides/fine-tuning)
-        /// </summary>
-        /// <param name="fine_tune_id">The ID of the fine-tune job</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FineTune> RetrieveFineTuneAsync(string fine_tune_id, System.Threading.CancellationToken cancellationToken)
-        {
-            if (fine_tune_id == null)
-                throw new System.ArgumentNullException("fine_tune_id");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/fine-tunes/{fine_tune_id}");
-            urlBuilder_.Replace("{fine_tune_id}", System.Uri.EscapeDataString(ConvertToString(fine_tune_id, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<FineTune>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Immediately cancel a fine-tune job.
-        /// </summary>
-        /// <param name="fine_tune_id">The ID of the fine-tune job to cancel</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<FineTune> CancelFineTuneAsync(string fine_tune_id)
-        {
-            return CancelFineTuneAsync(fine_tune_id, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Immediately cancel a fine-tune job.
-        /// </summary>
-        /// <param name="fine_tune_id">The ID of the fine-tune job to cancel</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FineTune> CancelFineTuneAsync(string fine_tune_id, System.Threading.CancellationToken cancellationToken)
-        {
-            if (fine_tune_id == null)
-                throw new System.ArgumentNullException("fine_tune_id");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/fine-tunes/{fine_tune_id}/cancel");
-            urlBuilder_.Replace("{fine_tune_id}", System.Uri.EscapeDataString(ConvertToString(fine_tune_id, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<FineTune>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Get fine-grained status updates for a fine-tune job.
-        /// </summary>
-        /// <param name="fine_tune_id">The ID of the fine-tune job to get events for.</param>
-        /// <param name="stream">Whether to stream events for the fine-tune job. If set to true,
-        /// <br/>events will be sent as data-only
-        /// <br/>[server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
-        /// <br/>as they become available. The stream will terminate with a
-        /// <br/>`data: [DONE]` message when the job is finished (succeeded, cancelled,
-        /// <br/>or failed).
-        /// <br/>
-        /// <br/>If set to false, only events generated so far will be returned.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ListFineTuneEventsResponse> ListFineTuneEventsAsync(string fine_tune_id, bool? stream)
-        {
-            return ListFineTuneEventsAsync(fine_tune_id, stream, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get fine-grained status updates for a fine-tune job.
-        /// </summary>
-        /// <param name="fine_tune_id">The ID of the fine-tune job to get events for.</param>
-        /// <param name="stream">Whether to stream events for the fine-tune job. If set to true,
-        /// <br/>events will be sent as data-only
-        /// <br/>[server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
-        /// <br/>as they become available. The stream will terminate with a
-        /// <br/>`data: [DONE]` message when the job is finished (succeeded, cancelled,
-        /// <br/>or failed).
-        /// <br/>
-        /// <br/>If set to false, only events generated so far will be returned.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ListFineTuneEventsResponse> ListFineTuneEventsAsync(string fine_tune_id, bool? stream, System.Threading.CancellationToken cancellationToken)
-        {
-            if (fine_tune_id == null)
-                throw new System.ArgumentNullException("fine_tune_id");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/fine-tunes/{fine_tune_id}/events?");
-            urlBuilder_.Replace("{fine_tune_id}", System.Uri.EscapeDataString(ConvertToString(fine_tune_id, System.Globalization.CultureInfo.InvariantCulture)));
-            if (stream != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("stream") + "=").Append(System.Uri.EscapeDataString(ConvertToString(stream, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ListFineTuneEventsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Lists the currently available models, and provides basic information about each one such as the owner and availability.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ListModelsResponse> ListModelsAsync()
-        {
-            return ListModelsAsync(System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Lists the currently available models, and provides basic information about each one such as the owner and availability.
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ListModelsResponse> ListModelsAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/models");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ListModelsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a model instance, providing basic information about the model such as the owner and permissioning.
-        /// </summary>
-        /// <param name="model">The ID of the model to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<Model> RetrieveModelAsync(string model)
-        {
-            return RetrieveModelAsync(model, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Retrieves a model instance, providing basic information about the model such as the owner and permissioning.
-        /// </summary>
-        /// <param name="model">The ID of the model to use for this request</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Model> RetrieveModelAsync(string model, System.Threading.CancellationToken cancellationToken)
-        {
-            if (model == null)
-                throw new System.ArgumentNullException("model");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/models/{model}");
-            urlBuilder_.Replace("{model}", System.Uri.EscapeDataString(ConvertToString(model, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<Model>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Delete a fine-tuned model. You must have the Owner role in your organization.
-        /// </summary>
-        /// <param name="model">The model to delete</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<DeleteModelResponse> DeleteModelAsync(string model)
-        {
-            return DeleteModelAsync(model, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Delete a fine-tuned model. You must have the Owner role in your organization.
-        /// </summary>
-        /// <param name="model">The model to delete</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DeleteModelResponse> DeleteModelAsync(string model, System.Threading.CancellationToken cancellationToken)
-        {
-            if (model == null)
-                throw new System.ArgumentNullException("model");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/models/{model}");
-            urlBuilder_.Replace("{model}", System.Uri.EscapeDataString(ConvertToString(model, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<DeleteModelResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Classifies if text violates OpenAI's Content Policy
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateModerationResponse> CreateModerationAsync(CreateModerationRequest body)
-        {
-            return CreateModerationAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Classifies if text violates OpenAI's Content Policy
-        /// </summary>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateModerationResponse> CreateModerationAsync(CreateModerationRequest body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/moderations");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateModerationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        protected struct ObjectResponseResult<T>
-        {
-            public ObjectResponseResult(T responseObject, string responseText)
-            {
-                this.Object = responseObject;
-                this.Text = responseText;
-            }
-
-            public T Object { get; }
-
-            public string Text { get; }
-        }
-
-        public bool ReadResponseAsString { get; set; }
-
-        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Threading.CancellationToken cancellationToken)
-        {
-            if (response == null || response.Content == null)
-            {
-                return new ObjectResponseResult<T>(default(T), string.Empty);
-            }
-
-            if (ReadResponseAsString)
-            {
-                var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                try
-                {
-                    var typedBody = System.Text.Json.JsonSerializer.Deserialize<T>(responseText, JsonSerializerSettings);
-                    return new ObjectResponseResult<T>(typedBody, responseText);
-                }
-                catch (System.Text.Json.JsonException exception)
-                {
-                    var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
-                    throw new ApiException(message, (int)response.StatusCode, responseText, headers, exception);
-                }
-            }
-            else
-            {
-                try
-                {
-                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                    {
-                        var typedBody = await System.Text.Json.JsonSerializer.DeserializeAsync<T>(responseStream, JsonSerializerSettings, cancellationToken).ConfigureAwait(false);
-                        return new ObjectResponseResult<T>(typedBody, string.Empty);
-                    }
-                }
-                catch (System.Text.Json.JsonException exception)
-                {
-                    var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
-                    throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
-                }
-            }
-        }
-
-        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
-        {
-            if (value == null)
-            {
-                return "";
-            }
-
-            if (value is System.Enum)
-            {
-                var name = System.Enum.GetName(value.GetType(), value);
-                if (name != null)
-                {
-                    var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
-                    if (field != null)
-                    {
-                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
-                            as System.Runtime.Serialization.EnumMemberAttribute;
-                        if (attribute != null)
-                        {
-                            return attribute.Value != null ? attribute.Value : name;
-                        }
-                    }
-
-                    var converted = System.Convert.ToString(System.Convert.ChangeType(value, System.Enum.GetUnderlyingType(value.GetType()), cultureInfo));
-                    return converted == null ? string.Empty : converted;
-                }
-            }
-            else if (value is bool) 
-            {
-                return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
-            }
-            else if (value is byte[])
-            {
-                return System.Convert.ToBase64String((byte[]) value);
-            }
-            else if (value.GetType().IsArray)
-            {
-                var array = System.Linq.Enumerable.OfType<object>((System.Array) value);
-                return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
-            }
-
-            var result = System.Convert.ToString(value, cultureInfo);
-            return result == null ? "" : result;
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ListEnginesResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Engine> Data { get; set; } = new System.Collections.ObjectModel.Collection<Engine>();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ListModelsResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Model> Data { get; set; } = new System.Collections.ObjectModel.Collection<Model>();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DeleteModelResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("deleted")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Deleted { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateCompletionRequest
-    {
-        /// <summary>
-        /// ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// The prompt(s) to generate completions for, encoded as a string, array of strings, array of tokens, or array of token arrays.
-        /// <br/>
-        /// <br/>Note that &lt;|endoftext|&gt; is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Prompt { get; set; }
-
-        /// <summary>
-        /// The suffix that comes after a completion of inserted text.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("suffix")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Suffix { get; set; }
-
-        /// <summary>
-        /// The maximum number of [tokens](/tokenizer) to generate in the completion.
-        /// <br/>
-        /// <br/>The token count of your prompt plus `max_tokens` cannot exceed the model's context length. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("max_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0, int.MaxValue)]
-        public int? Max_tokens { get; set; } = 16;
-
-        /// <summary>
-        /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-        /// <br/>
-        /// <br/>We generally recommend altering this or `top_p` but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("temperature")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0D, 2D)]
-        public double? Temperature { get; set; } = 1D;
-
-        /// <summary>
-        /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-        /// <br/>
-        /// <br/>We generally recommend altering this or `temperature` but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("top_p")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0D, 1D)]
-        public double? Top_p { get; set; } = 1D;
-
-        /// <summary>
-        /// How many completions to generate for each prompt.
-        /// <br/>
-        /// <br/>**Note:** Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max_tokens` and `stop`.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("n")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, 128)]
-        public int? N { get; set; } = 1;
-
-        /// <summary>
-        /// Whether to stream back partial progress. If set, tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("stream")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Stream { get; set; } = false;
-
-        /// <summary>
-        /// Include the log probabilities on the `logprobs` most likely tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.
-        /// <br/>
-        /// <br/>The maximum value for `logprobs` is 5. If you need more than this, please contact us through our [Help center](https://help.openai.com) and describe your use case.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0, 5)]
-        public int? Logprobs { get; set; }
-
-        /// <summary>
-        /// Echo back the prompt in addition to the completion
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("echo")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Echo { get; set; } = false;
-
-        /// <summary>
-        /// Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("stop")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<string> Stop { get; set; }
-
-        /// <summary>
-        /// Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
-        /// <br/>
-        /// <br/>[See more information about frequency and presence penalties.](/docs/api-reference/parameter-details)
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("presence_penalty")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(-2D, 2D)]
-        public double? Presence_penalty { get; set; } = 0D;
-
-        /// <summary>
-        /// Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
-        /// <br/>
-        /// <br/>[See more information about frequency and presence penalties.](/docs/api-reference/parameter-details)
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("frequency_penalty")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(-2D, 2D)]
-        public double? Frequency_penalty { get; set; } = 0D;
-
-        /// <summary>
-        /// Generates `best_of` completions server-side and returns the "best" (the one with the highest log probability per token). Results cannot be streamed.
-        /// <br/>
-        /// <br/>When used with `n`, `best_of` controls the number of candidate completions and `n` specifies how many to return – `best_of` must be greater than `n`.
-        /// <br/>
-        /// <br/>**Note:** Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max_tokens` and `stop`.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("best_of")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0, 20)]
-        public int? Best_of { get; set; } = 1;
-
-        /// <summary>
-        /// Modify the likelihood of specified tokens appearing in the completion.
-        /// <br/>
-        /// <br/>Accepts a json object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
-        /// <br/>
-        /// <br/>As an example, you can pass `{"50256": -100}` to prevent the &lt;|endoftext|&gt; token from being generated.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("logit_bias")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public object Logit_bias { get; set; }
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateCompletionResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Created { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("choices")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Choices> Choices { get; set; } = new System.Collections.ObjectModel.Collection<Choices>();
-
-        [System.Text.Json.Serialization.JsonPropertyName("usage")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public Usage Usage { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ChatCompletionRequestMessage
-    {
-        /// <summary>
-        /// The role of the author of this message.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("role")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public ChatCompletionRequestMessageRole Role { get; set; }
-
-        /// <summary>
-        /// The contents of the message
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("content")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Content { get; set; }
-
-        /// <summary>
-        /// The name of the user in a multi-user chat
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Name { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ChatCompletionResponseMessage
-    {
-        /// <summary>
-        /// The role of the author of this message.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("role")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public ChatCompletionResponseMessageRole Role { get; set; }
-
-        /// <summary>
-        /// The contents of the message
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("content")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Content { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateChatCompletionRequest
-    {
-        /// <summary>
-        /// ID of the model to use. Currently, only `gpt-3.5-turbo` and `gpt-3.5-turbo-0301` are supported.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// The messages to generate chat completions for, in the [chat format](/docs/guides/chat/introduction).
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("messages")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.MinLength(1)]
-        public System.Collections.Generic.ICollection<ChatCompletionRequestMessage> Messages { get; set; } = new System.Collections.ObjectModel.Collection<ChatCompletionRequestMessage>();
-
-        /// <summary>
-        /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-        /// <br/>
-        /// <br/>We generally recommend altering this or `top_p` but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("temperature")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0D, 2D)]
-        public double? Temperature { get; set; } = 1D;
-
-        /// <summary>
-        /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-        /// <br/>
-        /// <br/>We generally recommend altering this or `temperature` but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("top_p")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0D, 1D)]
-        public double? Top_p { get; set; } = 1D;
-
-        /// <summary>
-        /// How many chat completion choices to generate for each input message.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("n")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, 128)]
-        public int? N { get; set; } = 1;
-
-        /// <summary>
-        /// If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("stream")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Stream { get; set; } = false;
-
-        /// <summary>
-        /// Up to 4 sequences where the API will stop generating further tokens.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("stop")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<string> Stop { get; set; }
-
-        /// <summary>
-        /// The maximum number of tokens allowed for the generated answer. By default, the number of tokens the model can return will be (4096 - prompt tokens).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("max_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Max_tokens { get; set; }
-
-        /// <summary>
-        /// Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
-        /// <br/>
-        /// <br/>[See more information about frequency and presence penalties.](/docs/api-reference/parameter-details)
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("presence_penalty")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(-2D, 2D)]
-        public double? Presence_penalty { get; set; } = 0D;
-
-        /// <summary>
-        /// Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
-        /// <br/>
-        /// <br/>[See more information about frequency and presence penalties.](/docs/api-reference/parameter-details)
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("frequency_penalty")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(-2D, 2D)]
-        public double? Frequency_penalty { get; set; } = 0D;
-
-        /// <summary>
-        /// Modify the likelihood of specified tokens appearing in the completion.
-        /// <br/>
-        /// <br/>Accepts a json object that maps tokens (specified by their token ID in the tokenizer) to an associated bias value from -100 to 100. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("logit_bias")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public object Logit_bias { get; set; }
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateChatCompletionResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Created { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("choices")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Choices2> Choices { get; set; } = new System.Collections.ObjectModel.Collection<Choices2>();
-
-        [System.Text.Json.Serialization.JsonPropertyName("usage")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public Usage2 Usage { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateEditRequest
-    {
-        /// <summary>
-        /// ID of the model to use. You can use the `text-davinci-edit-001` or `code-davinci-edit-001` model with this endpoint.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// The input text to use as a starting point for the edit.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("input")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Input { get; set; } = "";
-
-        /// <summary>
-        /// The instruction that tells the model how to edit the prompt.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("instruction")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Instruction { get; set; }
-
-        /// <summary>
-        /// How many edits to generate for the input and instruction.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("n")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, 20)]
-        public int? N { get; set; } = 1;
-
-        /// <summary>
-        /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-        /// <br/>
-        /// <br/>We generally recommend altering this or `top_p` but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("temperature")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0D, 2D)]
-        public double? Temperature { get; set; } = 1D;
-
-        /// <summary>
-        /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-        /// <br/>
-        /// <br/>We generally recommend altering this or `temperature` but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("top_p")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0D, 1D)]
-        public double? Top_p { get; set; } = 1D;
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateEditResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Created { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("choices")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Choices3> Choices { get; set; } = new System.Collections.ObjectModel.Collection<Choices3>();
-
-        [System.Text.Json.Serialization.JsonPropertyName("usage")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public Usage3 Usage { get; set; } = new Usage3();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateImageRequest
-    {
-        /// <summary>
-        /// A text description of the desired image(s). The maximum length is 1000 characters.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Prompt { get; set; }
-
-        /// <summary>
-        /// The number of images to generate. Must be between 1 and 10.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("n")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, 10)]
-        public int? N { get; set; } = 1;
-
-        /// <summary>
-        /// The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("size")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public CreateImageRequestSize? Size { get; set; } = OpenAI.CreateImageRequestSize._1024x1024;
-
-        /// <summary>
-        /// The format in which the generated images are returned. Must be one of `url` or `b64_json`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("response_format")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public CreateImageRequestResponse_format? Response_format { get; set; } = OpenAI.CreateImageRequestResponse_format.url;
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ImagesResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("created")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Created { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Data> Data { get; set; } = new System.Collections.ObjectModel.Collection<Data>();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateImageEditRequest
-    {
-        /// <summary>
-        /// The image to edit. Must be a valid PNG file, less than 4MB, and square. If mask is not provided, image must have transparency, which will be used as the mask.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("image")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public byte[] Image { get; set; }
-
-        /// <summary>
-        /// An additional image whose fully transparent areas (e.g. where alpha is zero) indicate where `image` should be edited. Must be a valid PNG file, less than 4MB, and have the same dimensions as `image`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("mask")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public byte[] Mask { get; set; }
-
-        /// <summary>
-        /// A text description of the desired image(s). The maximum length is 1000 characters.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Prompt { get; set; }
-
-        /// <summary>
-        /// The number of images to generate. Must be between 1 and 10.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("n")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, 10)]
-        public int? N { get; set; } = 1;
-
-        /// <summary>
-        /// The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("size")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public CreateImageEditRequestSize? Size { get; set; } = OpenAI.CreateImageEditRequestSize._1024x1024;
-
-        /// <summary>
-        /// The format in which the generated images are returned. Must be one of `url` or `b64_json`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("response_format")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public CreateImageEditRequestResponse_format? Response_format { get; set; } = OpenAI.CreateImageEditRequestResponse_format.url;
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateImageVariationRequest
-    {
-        /// <summary>
-        /// The image to use as the basis for the variation(s). Must be a valid PNG file, less than 4MB, and square.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("image")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public byte[] Image { get; set; }
-
-        /// <summary>
-        /// The number of images to generate. Must be between 1 and 10.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("n")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, 10)]
-        public int? N { get; set; } = 1;
-
-        /// <summary>
-        /// The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("size")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public CreateImageVariationRequestSize? Size { get; set; } = OpenAI.CreateImageVariationRequestSize._1024x1024;
-
-        /// <summary>
-        /// The format in which the generated images are returned. Must be one of `url` or `b64_json`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("response_format")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public CreateImageVariationRequestResponse_format? Response_format { get; set; } = OpenAI.CreateImageVariationRequestResponse_format.url;
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateModerationRequest
-    {
-        /// <summary>
-        /// The input text to classify
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("input")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Input { get; set; }
-
-        /// <summary>
-        /// Two content moderations models are available: `text-moderation-stable` and `text-moderation-latest`.
-        /// <br/>
-        /// <br/>The default is `text-moderation-latest` which will be automatically upgraded over time. This ensures you are always using our most accurate model. If you use `text-moderation-stable`, we will provide advanced notice before updating the model. Accuracy of `text-moderation-stable` may be slightly lower than for `text-moderation-latest`.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Model { get; set; } = "text-moderation-latest";
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateModerationResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("results")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Results> Results { get; set; } = new System.Collections.ObjectModel.Collection<Results>();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateSearchRequest
-    {
-        /// <summary>
-        /// Query to search against the documents.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("query")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Query { get; set; }
-
-        /// <summary>
-        /// Up to 200 documents to search over, provided as a list of strings.
-        /// <br/>
-        /// <br/>The maximum document length (in tokens) is 2034 minus the number of tokens in the query.
-        /// <br/>
-        /// <br/>You should specify either `documents` or a `file`, but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("documents")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.MinLength(1)]
-        [System.ComponentModel.DataAnnotations.MaxLength(200)]
-        public System.Collections.Generic.ICollection<string> Documents { get; set; }
-
-        /// <summary>
-        /// The ID of an uploaded file that contains documents to search over.
-        /// <br/>
-        /// <br/>You should specify either `documents` or a `file`, but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("file")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string File { get; set; }
-
-        /// <summary>
-        /// The maximum number of documents to be re-ranked and returned by search.
-        /// <br/>
-        /// <br/>This flag only takes effect when `file` is set.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("max_rerank")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
-        public int? Max_rerank { get; set; } = 200;
-
-        /// <summary>
-        /// A special boolean flag for showing metadata. If set to `true`, each document entry in the returned JSON will contain a "metadata" field.
-        /// <br/>
-        /// <br/>This flag only takes effect when `file` is set.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("return_metadata")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Return_metadata { get; set; } = false;
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateSearchResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<Data2> Data { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ListFilesResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<OpenAIFile> Data { get; set; } = new System.Collections.ObjectModel.Collection<OpenAIFile>();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateFileRequest
-    {
-        /// <summary>
-        /// Name of the [JSON Lines](https://jsonlines.readthedocs.io/en/latest/) file to be uploaded.
-        /// <br/>
-        /// <br/>If the `purpose` is set to "fine-tune", each line is a JSON record with "prompt" and "completion" fields representing your [training examples](/docs/guides/fine-tuning/prepare-training-data).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("file")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public byte[] File { get; set; }
-
-        /// <summary>
-        /// The intended purpose of the uploaded documents.
-        /// <br/>
-        /// <br/>Use "fine-tune" for [Fine-tuning](/docs/api-reference/fine-tunes). This allows us to validate the format of the uploaded file.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("purpose")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Purpose { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DeleteFileResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("deleted")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Deleted { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateAnswerRequest
-    {
-        /// <summary>
-        /// ID of the model to use for completion. You can select one of `ada`, `babbage`, `curie`, or `davinci`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// Question to get answered.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("question")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Question { get; set; }
-
-        /// <summary>
-        /// List of (question, answer) pairs that will help steer the model towards the tone and answer format you'd like. We recommend adding 2 to 3 examples.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("examples")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.MinLength(1)]
-        [System.ComponentModel.DataAnnotations.MaxLength(200)]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>> Examples { get; set; } = new System.Collections.ObjectModel.Collection<System.Collections.Generic.ICollection<string>>();
-
-        /// <summary>
-        /// A text snippet containing the contextual information used to generate the answers for the `examples` you provide.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("examples_context")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Examples_context { get; set; }
-
-        /// <summary>
-        /// List of documents from which the answer for the input `question` should be derived. If this is an empty list, the question will be answered based on the question-answer examples.
-        /// <br/>
-        /// <br/>You should specify either `documents` or a `file`, but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("documents")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.MaxLength(200)]
-        public System.Collections.Generic.ICollection<string> Documents { get; set; }
-
-        /// <summary>
-        /// The ID of an uploaded file that contains documents to search over. See [upload file](/docs/api-reference/files/upload) for how to upload a file of the desired format and purpose.
-        /// <br/>
-        /// <br/>You should specify either `documents` or a `file`, but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("file")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string File { get; set; }
-
-        /// <summary>
-        /// ID of the model to use for [Search](/docs/api-reference/searches/create). You can select one of `ada`, `babbage`, `curie`, or `davinci`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("search_model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Search_model { get; set; } = "ada";
-
-        /// <summary>
-        /// The maximum number of documents to be ranked by [Search](/docs/api-reference/searches/create) when using `file`. Setting it to a higher value leads to improved accuracy but with increased latency and cost.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("max_rerank")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Max_rerank { get; set; } = 200;
-
-        /// <summary>
-        /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("temperature")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public double? Temperature { get; set; } = 0D;
-
-        /// <summary>
-        /// Include the log probabilities on the `logprobs` most likely tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.
-        /// <br/>
-        /// <br/>The maximum value for `logprobs` is 5. If you need more than this, please contact us through our [Help center](https://help.openai.com) and describe your use case.
-        /// <br/>
-        /// <br/>When `logprobs` is set, `completion` will be automatically added into `expand` to get the logprobs.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0, 5)]
-        public int? Logprobs { get; set; }
-
-        /// <summary>
-        /// The maximum number of tokens allowed for the generated answer
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("max_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Max_tokens { get; set; } = 16;
-
-        /// <summary>
-        /// Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("stop")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Stop { get; set; }
-
-        /// <summary>
-        /// How many answers to generate for each question.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("n")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, 10)]
-        public int? N { get; set; } = 1;
-
-        /// <summary>
-        /// Modify the likelihood of specified tokens appearing in the completion.
-        /// <br/>
-        /// <br/>Accepts a json object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
-        /// <br/>
-        /// <br/>As an example, you can pass `{"50256": -100}` to prevent the &lt;|endoftext|&gt; token from being generated.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("logit_bias")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public object Logit_bias { get; set; }
-
-        /// <summary>
-        /// A special boolean flag for showing metadata. If set to `true`, each document entry in the returned JSON will contain a "metadata" field.
-        /// <br/>
-        /// <br/>This flag only takes effect when `file` is set.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("return_metadata")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Return_metadata { get; set; } = false;
-
-        /// <summary>
-        /// If set to `true`, the returned JSON will include a "prompt" field containing the final prompt that was used to request a completion. This is mainly useful for debugging purposes.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("return_prompt")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Return_prompt { get; set; } = false;
-
-        /// <summary>
-        /// If an object name is in the list, we provide the full information of the object; otherwise, we only provide the object ID. Currently we support `completion` and `file` objects for expansion.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("expand")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<object> Expand { get; set; }
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateAnswerResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("search_model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Search_model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("completion")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Completion { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("answers")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<string> Answers { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("selected_documents")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<Selected_documents> Selected_documents { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateClassificationRequest
-    {
-        /// <summary>
-        /// ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// Query to be classified.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("query")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Query { get; set; }
-
-        /// <summary>
-        /// A list of examples with labels, in the following format:
-        /// <br/>
-        /// <br/>`[["The movie is so interesting.", "Positive"], ["It is quite boring.", "Negative"], ...]`
-        /// <br/>
-        /// <br/>All the label strings will be normalized to be capitalized.
-        /// <br/>
-        /// <br/>You should specify either `examples` or `file`, but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("examples")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.MinLength(2)]
-        [System.ComponentModel.DataAnnotations.MaxLength(200)]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>> Examples { get; set; }
-
-        /// <summary>
-        /// The ID of the uploaded file that contains training examples. See [upload file](/docs/api-reference/files/upload) for how to upload a file of the desired format and purpose.
-        /// <br/>
-        /// <br/>You should specify either `examples` or `file`, but not both.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("file")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string File { get; set; }
-
-        /// <summary>
-        /// The set of categories being classified. If not specified, candidate labels will be automatically collected from the examples you provide. All the label strings will be normalized to be capitalized.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("labels")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.MinLength(2)]
-        [System.ComponentModel.DataAnnotations.MaxLength(200)]
-        public System.Collections.Generic.ICollection<string> Labels { get; set; }
-
-        /// <summary>
-        /// ID of the model to use for [Search](/docs/api-reference/searches/create). You can select one of `ada`, `babbage`, `curie`, or `davinci`.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("search_model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Search_model { get; set; } = "ada";
-
-        /// <summary>
-        /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("temperature")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0D, 2D)]
-        public double? Temperature { get; set; } = 0D;
-
-        /// <summary>
-        /// Include the log probabilities on the `logprobs` most likely tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.
-        /// <br/>
-        /// <br/>The maximum value for `logprobs` is 5. If you need more than this, please contact us through our [Help center](https://help.openai.com) and describe your use case.
-        /// <br/>
-        /// <br/>When `logprobs` is set, `completion` will be automatically added into `expand` to get the logprobs.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(0, 5)]
-        public int? Logprobs { get; set; }
-
-        /// <summary>
-        /// The maximum number of examples to be ranked by [Search](/docs/api-reference/searches/create) when using `file`. Setting it to a higher value leads to improved accuracy but with increased latency and cost.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("max_examples")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Max_examples { get; set; } = 200;
-
-        /// <summary>
-        /// Modify the likelihood of specified tokens appearing in the completion.
-        /// <br/>
-        /// <br/>Accepts a json object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
-        /// <br/>
-        /// <br/>As an example, you can pass `{"50256": -100}` to prevent the &lt;|endoftext|&gt; token from being generated.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("logit_bias")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public object Logit_bias { get; set; }
-
-        /// <summary>
-        /// If set to `true`, the returned JSON will include a "prompt" field containing the final prompt that was used to request a completion. This is mainly useful for debugging purposes.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("return_prompt")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Return_prompt { get; set; } = false;
-
-        /// <summary>
-        /// A special boolean flag for showing metadata. If set to `true`, each document entry in the returned JSON will contain a "metadata" field.
-        /// <br/>
-        /// <br/>This flag only takes effect when `file` is set.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("return_metadata")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Return_metadata { get; set; } = false;
-
-        /// <summary>
-        /// If an object name is in the list, we provide the full information of the object; otherwise, we only provide the object ID. Currently we support `completion` and `file` objects for expansion.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("expand")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<object> Expand { get; set; }
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateClassificationResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("search_model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Search_model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("completion")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Completion { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("label")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Label { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("selected_examples")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<Selected_examples> Selected_examples { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateFineTuneRequest
-    {
-        /// <summary>
-        /// The ID of an uploaded file that contains training data.
-        /// <br/>
-        /// <br/>See [upload file](/docs/api-reference/files/upload) for how to upload a file.
-        /// <br/>
-        /// <br/>Your dataset must be formatted as a JSONL file, where each training
-        /// <br/>example is a JSON object with the keys "prompt" and "completion".
-        /// <br/>Additionally, you must upload your file with the purpose `fine-tune`.
-        /// <br/>
-        /// <br/>See the [fine-tuning guide](/docs/guides/fine-tuning/creating-training-data) for more details.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("training_file")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Training_file { get; set; }
-
-        /// <summary>
-        /// The ID of an uploaded file that contains validation data.
-        /// <br/>
-        /// <br/>If you provide this file, the data is used to generate validation
-        /// <br/>metrics periodically during fine-tuning. These metrics can be viewed in
-        /// <br/>the [fine-tuning results file](/docs/guides/fine-tuning/analyzing-your-fine-tuned-model).
-        /// <br/>Your train and validation data should be mutually exclusive.
-        /// <br/>
-        /// <br/>Your dataset must be formatted as a JSONL file, where each validation
-        /// <br/>example is a JSON object with the keys "prompt" and "completion".
-        /// <br/>Additionally, you must upload your file with the purpose `fine-tune`.
-        /// <br/>
-        /// <br/>See the [fine-tuning guide](/docs/guides/fine-tuning/creating-training-data) for more details.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("validation_file")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Validation_file { get; set; }
-
-        /// <summary>
-        /// The name of the base model to fine-tune. You can select one of "ada",
-        /// <br/>"babbage", "curie", "davinci", or a fine-tuned model created after 2022-04-21.
-        /// <br/>To learn more about these models, see the
-        /// <br/>[Models](https://platform.openai.com/docs/models) documentation.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Model { get; set; } = "curie";
-
-        /// <summary>
-        /// The number of epochs to train the model for. An epoch refers to one
-        /// <br/>full cycle through the training dataset.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("n_epochs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? N_epochs { get; set; } = 4;
-
-        /// <summary>
-        /// The batch size to use for training. The batch size is the number of
-        /// <br/>training examples used to train a single forward and backward pass.
-        /// <br/>
-        /// <br/>By default, the batch size will be dynamically configured to be
-        /// <br/>~0.2% of the number of examples in the training set, capped at 256 -
-        /// <br/>in general, we've found that larger batch sizes tend to work better
-        /// <br/>for larger datasets.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("batch_size")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Batch_size { get; set; }
-
-        /// <summary>
-        /// The learning rate multiplier to use for training.
-        /// <br/>The fine-tuning learning rate is the original learning rate used for
-        /// <br/>pretraining multiplied by this value.
-        /// <br/>
-        /// <br/>By default, the learning rate multiplier is the 0.05, 0.1, or 0.2
-        /// <br/>depending on final `batch_size` (larger learning rates tend to
-        /// <br/>perform better with larger batch sizes). We recommend experimenting
-        /// <br/>with values in the range 0.02 to 0.2 to see what produces the best
-        /// <br/>results.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("learning_rate_multiplier")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public double? Learning_rate_multiplier { get; set; }
-
-        /// <summary>
-        /// The weight to use for loss on the prompt tokens. This controls how
-        /// <br/>much the model tries to learn to generate the prompt (as compared
-        /// <br/>to the completion which always has a weight of 1.0), and can add
-        /// <br/>a stabilizing effect to training when completions are short.
-        /// <br/>
-        /// <br/>If prompts are extremely long (relative to completions), it may make
-        /// <br/>sense to reduce this weight so as to avoid over-prioritizing
-        /// <br/>learning the prompt.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt_loss_weight")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public double? Prompt_loss_weight { get; set; } = 0.01D;
-
-        /// <summary>
-        /// If set, we calculate classification-specific metrics such as accuracy
-        /// <br/>and F-1 score using the validation set at the end of every epoch.
-        /// <br/>These metrics can be viewed in the [results file](/docs/guides/fine-tuning/analyzing-your-fine-tuned-model).
-        /// <br/>
-        /// <br/>In order to compute classification metrics, you must provide a
-        /// <br/>`validation_file`. Additionally, you must
-        /// <br/>specify `classification_n_classes` for multiclass classification or
-        /// <br/>`classification_positive_class` for binary classification.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("compute_classification_metrics")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? Compute_classification_metrics { get; set; } = false;
-
-        /// <summary>
-        /// The number of classes in a classification task.
-        /// <br/>
-        /// <br/>This parameter is required for multiclass classification.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("classification_n_classes")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Classification_n_classes { get; set; }
-
-        /// <summary>
-        /// The positive class in binary classification.
-        /// <br/>
-        /// <br/>This parameter is needed to generate precision, recall, and F1
-        /// <br/>metrics when doing binary classification.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("classification_positive_class")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Classification_positive_class { get; set; }
-
-        /// <summary>
-        /// If this is provided, we calculate F-beta scores at the specified
-        /// <br/>beta values. The F-beta score is a generalization of F-1 score.
-        /// <br/>This is only used for binary classification.
-        /// <br/>
-        /// <br/>With a beta of 1 (i.e. the F-1 score), precision and recall are
-        /// <br/>given the same weight. A larger beta score puts more weight on
-        /// <br/>recall and less on precision. A smaller beta score puts more weight
-        /// <br/>on precision and less on recall.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("classification_betas")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<double> Classification_betas { get; set; }
-
-        /// <summary>
-        /// A string of up to 40 characters that will be added to your fine-tuned model name.
-        /// <br/>
-        /// <br/>For example, a `suffix` of "custom-model-name" would produce a model name like `ada:ft-your-org:custom-model-name-2022-02-15-04-21-04`.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("suffix")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
-        public string Suffix { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ListFineTunesResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<FineTune> Data { get; set; } = new System.Collections.ObjectModel.Collection<FineTune>();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ListFineTuneEventsResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<FineTuneEvent> Data { get; set; } = new System.Collections.ObjectModel.Collection<FineTuneEvent>();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateEmbeddingRequest
-    {
-        /// <summary>
-        /// ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// Input text to get embeddings for, encoded as a string or array of tokens. To get embeddings for multiple inputs in a single request, pass an array of strings or array of token arrays. Each input must not exceed 8192 tokens in length.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("input")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Input { get; set; }
-
-        /// <summary>
-        /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("user")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string User { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateEmbeddingResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Data3> Data { get; set; } = new System.Collections.ObjectModel.Collection<Data3>();
-
-        [System.Text.Json.Serialization.JsonPropertyName("usage")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public Usage4 Usage { get; set; } = new Usage4();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateTranscriptionRequest
-    {
-        /// <summary>
-        /// The audio file to transcribe, in one of these formats: mp3, mp4, mpeg, mpga, m4a, wav, or webm.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("file")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public byte[] File { get; set; }
-
-        /// <summary>
-        /// ID of the model to use. Only `whisper-1` is currently available.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// An optional text to guide the model's style or continue a previous audio segment. The [prompt](/docs/guides/speech-to-text/prompting) should match the audio language.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Prompt { get; set; }
-
-        /// <summary>
-        /// The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("response_format")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Response_format { get; set; } = "json";
-
-        /// <summary>
-        /// The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use [log probability](https://en.wikipedia.org/wiki/Log_probability) to automatically increase the temperature until certain thresholds are hit.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("temperature")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public double Temperature { get; set; } = 0D;
-
-        /// <summary>
-        /// The language of the input audio. Supplying the input language in [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) format will improve accuracy and latency.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("language")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Language { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateTranscriptionResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("text")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Text { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateTranslationRequest
-    {
-        /// <summary>
-        /// The audio file to translate, in one of these formats: mp3, mp4, mpeg, mpga, m4a, wav, or webm.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("file")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public byte[] File { get; set; }
-
-        /// <summary>
-        /// ID of the model to use. Only `whisper-1` is currently available.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// An optional text to guide the model's style or continue a previous audio segment. The [prompt](/docs/guides/speech-to-text/prompting) should be in English.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Prompt { get; set; }
-
-        /// <summary>
-        /// The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("response_format")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Response_format { get; set; } = "json";
-
-        /// <summary>
-        /// The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use [log probability](https://en.wikipedia.org/wiki/Log_probability) to automatically increase the temperature until certain thresholds are hit.
-        /// <br/>
-        /// </summary>
-
-        [System.Text.Json.Serialization.JsonPropertyName("temperature")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public double Temperature { get; set; } = 0D;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateTranslationResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("text")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Text { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Engine
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int? Created { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("ready")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Ready { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Model
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Created { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("owned_by")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Owned_by { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class OpenAIFile
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("bytes")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Bytes { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created_at")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Created_at { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("filename")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Filename { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("purpose")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Purpose { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Status { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("status_details")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public object Status_details { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class FineTune
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created_at")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Created_at { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("updated_at")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Updated_at { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("fine_tuned_model")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public string Fine_tuned_model { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("organization_id")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Organization_id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Status { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("hyperparams")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public object Hyperparams { get; set; } = new object();
-
-        [System.Text.Json.Serialization.JsonPropertyName("training_files")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<OpenAIFile> Training_files { get; set; } = new System.Collections.ObjectModel.Collection<OpenAIFile>();
-
-        [System.Text.Json.Serialization.JsonPropertyName("validation_files")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<OpenAIFile> Validation_files { get; set; } = new System.Collections.ObjectModel.Collection<OpenAIFile>();
-
-        [System.Text.Json.Serialization.JsonPropertyName("result_files")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<OpenAIFile> Result_files { get; set; } = new System.Collections.ObjectModel.Collection<OpenAIFile>();
-
-        [System.Text.Json.Serialization.JsonPropertyName("events")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<FineTuneEvent> Events { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class FineTuneEvent
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created_at")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Created_at { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("level")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Level { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Message { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Choices
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("text")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Text { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("index")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Index { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public Logprobs Logprobs { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("finish_reason")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Finish_reason { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Usage
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Prompt_tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("completion_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Completion_tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("total_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Total_tokens { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum ChatCompletionRequestMessageRole
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"system")]
-        system = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"user")]
-        user = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"assistant")]
-        assistant = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum ChatCompletionResponseMessageRole
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"system")]
-        system = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"user")]
-        user = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"assistant")]
-        assistant = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Choices2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("index")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Index { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public ChatCompletionResponseMessage Message { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("finish_reason")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Finish_reason { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Usage2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Prompt_tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("completion_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Completion_tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("total_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Total_tokens { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Choices3
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("text")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Text { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("index")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Index { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public Logprobs2 Logprobs { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("finish_reason")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Finish_reason { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Usage3
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Prompt_tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("completion_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Completion_tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("total_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Total_tokens { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CreateImageRequestSize
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"256x256")]
-        _256x256 = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"512x512")]
-        _512x512 = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"1024x1024")]
-        _1024x1024 = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CreateImageRequestResponse_format
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"url")]
-        url = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"b64_json")]
-        b64_json = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Data
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("url")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Url { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("b64_json")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string B64_json { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CreateImageEditRequestSize
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"256x256")]
-        _256x256 = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"512x512")]
-        _512x512 = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"1024x1024")]
-        _1024x1024 = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CreateImageEditRequestResponse_format
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"url")]
-        url = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"b64_json")]
-        b64_json = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CreateImageVariationRequestSize
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"256x256")]
-        _256x256 = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"512x512")]
-        _512x512 = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"1024x1024")]
-        _1024x1024 = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CreateImageVariationRequestResponse_format
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"url")]
-        url = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"b64_json")]
-        b64_json = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Results
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("flagged")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Flagged { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("categories")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public Categories Categories { get; set; } = new Categories();
-
-        [System.Text.Json.Serialization.JsonPropertyName("category_scores")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public Category_scores Category_scores { get; set; } = new Category_scores();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Data2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("document")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Document { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("score")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public double Score { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Selected_documents
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("document")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Document { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("text")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Text { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Selected_examples
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("document")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Document { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("text")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Text { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("label")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string Label { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Data3
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("index")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Index { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("object")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Object { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("embedding")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<double> Embedding { get; set; } = new System.Collections.ObjectModel.Collection<double>();
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Usage4
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("prompt_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Prompt_tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("total_tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public int Total_tokens { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Logprobs
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<string> Tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("token_logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<double> Token_logprobs { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("top_logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<object> Top_logprobs { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("text_offset")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<int> Text_offset { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Logprobs2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("tokens")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<string> Tokens { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("token_logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<double> Token_logprobs { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("top_logprobs")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<object> Top_logprobs { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("text_offset")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<int> Text_offset { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Categories
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("hate")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Hate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("hate/threatening")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Hate_threatening { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("self-harm")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool SelfHarm { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("sexual")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Sexual { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("sexual/minors")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Sexual_minors { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("violence")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Violence { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("violence/graphic")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public bool Violence_graphic { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Category_scores
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("hate")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public double Hate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("hate/threatening")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public double Hate_threatening { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("self-harm")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public double SelfHarm { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("sexual")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public double Sexual { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("sexual/minors")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public double Sexual_minors { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("violence")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public double Violence { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("violence/graphic")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        public double Violence_graphic { get; set; }
-
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ApiException : System.Exception
-    {
-        public int StatusCode { get; private set; }
-
-        public string Response { get; private set; }
-
-        public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
-
-        public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
-            : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
-        {
-            StatusCode = statusCode;
-            Response = response;
-            Headers = headers;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("HTTP Response: \n\n{0}\n\n{1}", Response, base.ToString());
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ApiException<TResult> : ApiException
-    {
-        public TResult Result { get; private set; }
-
-        public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
-            : base(message, statusCode, response, headers, innerException)
-        {
-            Result = result;
-        }
-    }
+	using System = global::System;
+
+	[System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ApiClient
+	{
+		private System.Net.Http.HttpClient _httpClient;
+		private System.Lazy<System.Text.Json.JsonSerializerOptions> _settings;
+
+		public ApiClient(System.Net.Http.HttpClient httpClient)
+		{
+			_httpClient = httpClient;
+			_settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings);
+		}
+
+		private System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
+		{
+			var settings = new System.Text.Json.JsonSerializerOptions();
+			UpdateJsonSerializerSettings(settings);
+			return settings;
+		}
+
+		protected System.Text.Json.JsonSerializerOptions JsonSerializerSettings { get { return _settings.Value; } }
+
+		partial void UpdateJsonSerializerSettings(System.Text.Json.JsonSerializerOptions settings);
+
+		partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+		partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+		partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+
+		/// <summary>
+		/// Creates a model response for the given chat conversation.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<CreateChatCompletionResponse> CreateChatCompletionAsync(CreateChatCompletionRequest body)
+		{
+			return CreateChatCompletionAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Creates a model response for the given chat conversation.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<CreateChatCompletionResponse> CreateChatCompletionAsync(CreateChatCompletionRequest body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("chat/completions");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+					var content_ = new System.Net.Http.StringContent(json_);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<CreateChatCompletionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Creates a completion for the provided prompt and parameters.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<CreateCompletionResponse> CreateCompletionAsync(CreateCompletionRequest body)
+		{
+			return CreateCompletionAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Creates a completion for the provided prompt and parameters.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<CreateCompletionResponse> CreateCompletionAsync(CreateCompletionRequest body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("completions");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+					var content_ = new System.Net.Http.StringContent(json_);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<CreateCompletionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Creates a new edit for the provided input, instruction, and parameters.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<CreateEditResponse> CreateEditAsync(CreateEditRequest body)
+		{
+			return CreateEditAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Creates a new edit for the provided input, instruction, and parameters.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<CreateEditResponse> CreateEditAsync(CreateEditRequest body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("edits");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+					var content_ = new System.Net.Http.StringContent(json_);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<CreateEditResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Creates an image given a prompt.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<ImagesResponse> CreateImageAsync(CreateImageRequest body)
+		{
+			return CreateImageAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Creates an image given a prompt.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<ImagesResponse> CreateImageAsync(CreateImageRequest body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("images/generations");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+					var content_ = new System.Net.Http.StringContent(json_);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<ImagesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Creates an edited or extended image given an original image and a prompt.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<ImagesResponse> CreateImageEditAsync(System.IO.Stream body)
+		{
+			return CreateImageEditAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Creates an edited or extended image given an original image and a prompt.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<ImagesResponse> CreateImageEditAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("images/edits");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var content_ = new System.Net.Http.StreamContent(body);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<ImagesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Creates a variation of a given image.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<ImagesResponse> CreateImageVariationAsync(System.IO.Stream body)
+		{
+			return CreateImageVariationAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Creates a variation of a given image.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<ImagesResponse> CreateImageVariationAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("images/variations");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var content_ = new System.Net.Http.StreamContent(body);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<ImagesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Creates an embedding vector representing the input text.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<CreateEmbeddingResponse> CreateEmbeddingAsync(CreateEmbeddingRequest body)
+		{
+			return CreateEmbeddingAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Creates an embedding vector representing the input text.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<CreateEmbeddingResponse> CreateEmbeddingAsync(CreateEmbeddingRequest body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("embeddings");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+					var content_ = new System.Net.Http.StringContent(json_);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<CreateEmbeddingResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Transcribes audio into the input language.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<CreateTranscriptionResponse> CreateTranscriptionAsync(System.IO.Stream body)
+		{
+			return CreateTranscriptionAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Transcribes audio into the input language.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<CreateTranscriptionResponse> CreateTranscriptionAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("audio/transcriptions");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var content_ = new System.Net.Http.StreamContent(body);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<CreateTranscriptionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Translates audio into English.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<CreateTranslationResponse> CreateTranslationAsync(System.IO.Stream body)
+		{
+			return CreateTranslationAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Translates audio into English.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<CreateTranslationResponse> CreateTranslationAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("audio/translations");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var content_ = new System.Net.Http.StreamContent(body);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<CreateTranslationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Returns a list of files that belong to the user's organization.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<ListFilesResponse> ListFilesAsync()
+		{
+			return ListFilesAsync(System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Returns a list of files that belong to the user's organization.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<ListFilesResponse> ListFilesAsync(System.Threading.CancellationToken cancellationToken)
+		{
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("files");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("GET");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<ListFilesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact us if you need to increase the storage limit.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<OpenAIFile> CreateFileAsync(System.IO.Stream body)
+		{
+			return CreateFileAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact us if you need to increase the storage limit.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<OpenAIFile> CreateFileAsync(System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("files");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var content_ = new System.Net.Http.StreamContent(body);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<OpenAIFile>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Delete a file.
+		/// </summary>
+		/// <param name="file_id">The ID of the file to use for this request</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<DeleteFileResponse> DeleteFileAsync(string file_id)
+		{
+			return DeleteFileAsync(file_id, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Delete a file.
+		/// </summary>
+		/// <param name="file_id">The ID of the file to use for this request</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<DeleteFileResponse> DeleteFileAsync(string file_id, System.Threading.CancellationToken cancellationToken)
+		{
+			if (file_id == null)
+				throw new System.ArgumentNullException("file_id");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("files/{file_id}");
+			urlBuilder_.Replace("{file_id}", System.Uri.EscapeDataString(ConvertToString(file_id, System.Globalization.CultureInfo.InvariantCulture)));
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("DELETE");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<DeleteFileResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Returns information about a specific file.
+		/// </summary>
+		/// <param name="file_id">The ID of the file to use for this request</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<OpenAIFile> RetrieveFileAsync(string file_id)
+		{
+			return RetrieveFileAsync(file_id, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Returns information about a specific file.
+		/// </summary>
+		/// <param name="file_id">The ID of the file to use for this request</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<OpenAIFile> RetrieveFileAsync(string file_id, System.Threading.CancellationToken cancellationToken)
+		{
+			if (file_id == null)
+				throw new System.ArgumentNullException("file_id");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("files/{file_id}");
+			urlBuilder_.Replace("{file_id}", System.Uri.EscapeDataString(ConvertToString(file_id, System.Globalization.CultureInfo.InvariantCulture)));
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("GET");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<OpenAIFile>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Returns the contents of the specified file
+		/// </summary>
+		/// <param name="file_id">The ID of the file to use for this request</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<string> DownloadFileAsync(string file_id)
+		{
+			return DownloadFileAsync(file_id, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Returns the contents of the specified file
+		/// </summary>
+		/// <param name="file_id">The ID of the file to use for this request</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<string> DownloadFileAsync(string file_id, System.Threading.CancellationToken cancellationToken)
+		{
+			if (file_id == null)
+				throw new System.ArgumentNullException("file_id");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("files/{file_id}/content");
+			urlBuilder_.Replace("{file_id}", System.Uri.EscapeDataString(ConvertToString(file_id, System.Globalization.CultureInfo.InvariantCulture)));
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("GET");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Creates a job that fine-tunes a specified model from a given dataset.
+		/// <br/>
+		/// <br/>Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
+		/// <br/>
+		/// <br/>[Learn more about Fine-tuning](/docs/guides/fine-tuning)
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<FineTune> CreateFineTuneAsync(CreateFineTuneRequest body)
+		{
+			return CreateFineTuneAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Creates a job that fine-tunes a specified model from a given dataset.
+		/// <br/>
+		/// <br/>Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
+		/// <br/>
+		/// <br/>[Learn more about Fine-tuning](/docs/guides/fine-tuning)
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<FineTune> CreateFineTuneAsync(CreateFineTuneRequest body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("fine-tunes");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+					var content_ = new System.Net.Http.StringContent(json_);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<FineTune>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// List your organization's fine-tuning jobs
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<ListFineTunesResponse> ListFineTunesAsync()
+		{
+			return ListFineTunesAsync(System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// List your organization's fine-tuning jobs
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<ListFineTunesResponse> ListFineTunesAsync(System.Threading.CancellationToken cancellationToken)
+		{
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("fine-tunes");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("GET");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<ListFineTunesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Gets info about the fine-tune job.
+		/// <br/>
+		/// <br/>[Learn more about Fine-tuning](/docs/guides/fine-tuning)
+		/// </summary>
+		/// <param name="fine_tune_id">The ID of the fine-tune job</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<FineTune> RetrieveFineTuneAsync(string fine_tune_id)
+		{
+			return RetrieveFineTuneAsync(fine_tune_id, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Gets info about the fine-tune job.
+		/// <br/>
+		/// <br/>[Learn more about Fine-tuning](/docs/guides/fine-tuning)
+		/// </summary>
+		/// <param name="fine_tune_id">The ID of the fine-tune job</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<FineTune> RetrieveFineTuneAsync(string fine_tune_id, System.Threading.CancellationToken cancellationToken)
+		{
+			if (fine_tune_id == null)
+				throw new System.ArgumentNullException("fine_tune_id");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("fine-tunes/{fine_tune_id}");
+			urlBuilder_.Replace("{fine_tune_id}", System.Uri.EscapeDataString(ConvertToString(fine_tune_id, System.Globalization.CultureInfo.InvariantCulture)));
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("GET");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<FineTune>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Immediately cancel a fine-tune job.
+		/// </summary>
+		/// <param name="fine_tune_id">The ID of the fine-tune job to cancel</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<FineTune> CancelFineTuneAsync(string fine_tune_id)
+		{
+			return CancelFineTuneAsync(fine_tune_id, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Immediately cancel a fine-tune job.
+		/// </summary>
+		/// <param name="fine_tune_id">The ID of the fine-tune job to cancel</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<FineTune> CancelFineTuneAsync(string fine_tune_id, System.Threading.CancellationToken cancellationToken)
+		{
+			if (fine_tune_id == null)
+				throw new System.ArgumentNullException("fine_tune_id");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("fine-tunes/{fine_tune_id}/cancel");
+			urlBuilder_.Replace("{fine_tune_id}", System.Uri.EscapeDataString(ConvertToString(fine_tune_id, System.Globalization.CultureInfo.InvariantCulture)));
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<FineTune>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Get fine-grained status updates for a fine-tune job.
+		/// </summary>
+		/// <param name="fine_tune_id">The ID of the fine-tune job to get events for.</param>
+		/// <param name="stream">Whether to stream events for the fine-tune job. If set to true,
+		/// <br/>events will be sent as data-only
+		/// <br/>[server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
+		/// <br/>as they become available. The stream will terminate with a
+		/// <br/>`data: [DONE]` message when the job is finished (succeeded, cancelled,
+		/// <br/>or failed).
+		/// <br/>
+		/// <br/>If set to false, only events generated so far will be returned.</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<ListFineTuneEventsResponse> ListFineTuneEventsAsync(string fine_tune_id, bool? stream)
+		{
+			return ListFineTuneEventsAsync(fine_tune_id, stream, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Get fine-grained status updates for a fine-tune job.
+		/// </summary>
+		/// <param name="fine_tune_id">The ID of the fine-tune job to get events for.</param>
+		/// <param name="stream">Whether to stream events for the fine-tune job. If set to true,
+		/// <br/>events will be sent as data-only
+		/// <br/>[server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
+		/// <br/>as they become available. The stream will terminate with a
+		/// <br/>`data: [DONE]` message when the job is finished (succeeded, cancelled,
+		/// <br/>or failed).
+		/// <br/>
+		/// <br/>If set to false, only events generated so far will be returned.</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<ListFineTuneEventsResponse> ListFineTuneEventsAsync(string fine_tune_id, bool? stream, System.Threading.CancellationToken cancellationToken)
+		{
+			if (fine_tune_id == null)
+				throw new System.ArgumentNullException("fine_tune_id");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("fine-tunes/{fine_tune_id}/events?");
+			urlBuilder_.Replace("{fine_tune_id}", System.Uri.EscapeDataString(ConvertToString(fine_tune_id, System.Globalization.CultureInfo.InvariantCulture)));
+			if (stream != null)
+			{
+				urlBuilder_.Append(System.Uri.EscapeDataString("stream") + "=").Append(System.Uri.EscapeDataString(ConvertToString(stream, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+			}
+			urlBuilder_.Length--;
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("GET");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<ListFineTuneEventsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Lists the currently available models, and provides basic information about each one such as the owner and availability.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<ListModelsResponse> ListModelsAsync()
+		{
+			return ListModelsAsync(System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Lists the currently available models, and provides basic information about each one such as the owner and availability.
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<ListModelsResponse> ListModelsAsync(System.Threading.CancellationToken cancellationToken)
+		{
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("models");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("GET");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<ListModelsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Retrieves a model instance, providing basic information about the model such as the owner and permissioning.
+		/// </summary>
+		/// <param name="model">The ID of the model to use for this request</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<Model> RetrieveModelAsync(string model)
+		{
+			return RetrieveModelAsync(model, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Retrieves a model instance, providing basic information about the model such as the owner and permissioning.
+		/// </summary>
+		/// <param name="model">The ID of the model to use for this request</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<Model> RetrieveModelAsync(string model, System.Threading.CancellationToken cancellationToken)
+		{
+			if (model == null)
+				throw new System.ArgumentNullException("model");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("models/{model}");
+			urlBuilder_.Replace("{model}", System.Uri.EscapeDataString(ConvertToString(model, System.Globalization.CultureInfo.InvariantCulture)));
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("GET");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<Model>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Delete a fine-tuned model. You must have the Owner role in your organization.
+		/// </summary>
+		/// <param name="model">The model to delete</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<DeleteModelResponse> DeleteModelAsync(string model)
+		{
+			return DeleteModelAsync(model, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Delete a fine-tuned model. You must have the Owner role in your organization.
+		/// </summary>
+		/// <param name="model">The model to delete</param>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<DeleteModelResponse> DeleteModelAsync(string model, System.Threading.CancellationToken cancellationToken)
+		{
+			if (model == null)
+				throw new System.ArgumentNullException("model");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("models/{model}");
+			urlBuilder_.Replace("{model}", System.Uri.EscapeDataString(ConvertToString(model, System.Globalization.CultureInfo.InvariantCulture)));
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					request_.Method = new System.Net.Http.HttpMethod("DELETE");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<DeleteModelResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Classifies if text violates OpenAI's Content Policy
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual System.Threading.Tasks.Task<CreateModerationResponse> CreateModerationAsync(CreateModerationRequest body)
+		{
+			return CreateModerationAsync(body, System.Threading.CancellationToken.None);
+		}
+
+		/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <summary>
+		/// Classifies if text violates OpenAI's Content Policy
+		/// </summary>
+		/// <returns>OK</returns>
+		/// <exception cref="ApiException">A server side error occurred.</exception>
+		public virtual async System.Threading.Tasks.Task<CreateModerationResponse> CreateModerationAsync(CreateModerationRequest body, System.Threading.CancellationToken cancellationToken)
+		{
+			if (body == null)
+				throw new System.ArgumentNullException("body");
+
+			var urlBuilder_ = new System.Text.StringBuilder();
+			urlBuilder_.Append("moderations");
+
+			var client_ = _httpClient;
+			var disposeClient_ = false;
+			try
+			{
+				using (var request_ = new System.Net.Http.HttpRequestMessage())
+				{
+					var json_ = System.Text.Json.JsonSerializer.Serialize(body, _settings.Value);
+					var content_ = new System.Net.Http.StringContent(json_);
+					content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+					request_.Content = content_;
+					request_.Method = new System.Net.Http.HttpMethod("POST");
+					request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+					PrepareRequest(client_, request_, urlBuilder_);
+
+					var url_ = urlBuilder_.ToString();
+					request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+					PrepareRequest(client_, request_, url_);
+
+					var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+					var disposeResponse_ = true;
+					try
+					{
+						var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+						if (response_.Content != null && response_.Content.Headers != null)
+						{
+							foreach (var item_ in response_.Content.Headers)
+								headers_[item_.Key] = item_.Value;
+						}
+
+						ProcessResponse(client_, response_);
+
+						var status_ = (int)response_.StatusCode;
+						if (status_ == 200)
+						{
+							var objectResponse_ = await ReadObjectResponseAsync<CreateModerationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+							if (objectResponse_.Object == null)
+							{
+								throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+							}
+							return objectResponse_.Object;
+						}
+						else
+						{
+							var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+							throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+						}
+					}
+					finally
+					{
+						if (disposeResponse_)
+							response_.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				if (disposeClient_)
+					client_.Dispose();
+			}
+		}
+
+		protected struct ObjectResponseResult<T>
+		{
+			public ObjectResponseResult(T responseObject, string responseText)
+			{
+				this.Object = responseObject;
+				this.Text = responseText;
+			}
+
+			public T Object { get; }
+
+			public string Text { get; }
+		}
+
+		public bool ReadResponseAsString { get; set; }
+
+		protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Threading.CancellationToken cancellationToken)
+		{
+			if (response == null || response.Content == null)
+			{
+				return new ObjectResponseResult<T>(default(T), string.Empty);
+			}
+
+			if (ReadResponseAsString)
+			{
+				var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+				try
+				{
+					var typedBody = System.Text.Json.JsonSerializer.Deserialize<T>(responseText, JsonSerializerSettings);
+					return new ObjectResponseResult<T>(typedBody, responseText);
+				}
+				catch (System.Text.Json.JsonException exception)
+				{
+					var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
+					throw new ApiException(message, (int)response.StatusCode, responseText, headers, exception);
+				}
+			}
+			else
+			{
+				try
+				{
+					using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+					{
+						var typedBody = await System.Text.Json.JsonSerializer.DeserializeAsync<T>(responseStream, JsonSerializerSettings, cancellationToken).ConfigureAwait(false);
+						return new ObjectResponseResult<T>(typedBody, string.Empty);
+					}
+				}
+				catch (System.Text.Json.JsonException exception)
+				{
+					var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+					throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
+				}
+			}
+		}
+
+		private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+		{
+			if (value == null)
+			{
+				return "";
+			}
+
+			if (value is System.Enum)
+			{
+				var name = System.Enum.GetName(value.GetType(), value);
+				if (name != null)
+				{
+					var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
+					if (field != null)
+					{
+						var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute))
+							as System.Runtime.Serialization.EnumMemberAttribute;
+						if (attribute != null)
+						{
+							return attribute.Value != null ? attribute.Value : name;
+						}
+					}
+
+					var converted = System.Convert.ToString(System.Convert.ChangeType(value, System.Enum.GetUnderlyingType(value.GetType()), cultureInfo));
+					return converted == null ? string.Empty : converted;
+				}
+			}
+			else if (value is bool)
+			{
+				return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
+			}
+			else if (value is byte[])
+			{
+				return System.Convert.ToBase64String((byte[])value);
+			}
+			else if (value.GetType().IsArray)
+			{
+				var array = System.Linq.Enumerable.OfType<object>((System.Array)value);
+				return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+			}
+
+			var result = System.Convert.ToString(value, cultureInfo);
+			return result == null ? "" : result;
+		}
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Error
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("type")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Type { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Message { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("param")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public string Param { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("code")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public string Code { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ErrorResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("error")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public Error Error { get; set; } = new Error();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ListModelsResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<Model> Data { get; set; } = new System.Collections.ObjectModel.Collection<Model>();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class DeleteModelResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("deleted")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Deleted { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateCompletionRequest
+	{
+		/// <summary>
+		/// ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		/// <summary>
+		/// The prompt(s) to generate completions for, encoded as a string, array of strings, array of tokens, or array of token arrays.
+		/// <br/>
+		/// <br/>Note that &lt;|endoftext|&gt; is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public string Prompt { get; set; }
+
+		/// <summary>
+		/// The suffix that comes after a completion of inserted text.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("suffix")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Suffix { get; set; }
+
+		/// <summary>
+		/// The maximum number of [tokens](/tokenizer) to generate in the completion.
+		/// <br/>
+		/// <br/>The token count of your prompt plus `max_tokens` cannot exceed the model's context length. [Example Python code](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb) for counting tokens.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("max_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0, int.MaxValue)]
+		public int? Max_tokens { get; set; } = 16;
+
+		/// <summary>
+		/// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+		/// <br/>
+		/// <br/>We generally recommend altering this or `top_p` but not both.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("temperature")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0D, 2D)]
+		public double? Temperature { get; set; } = 1D;
+
+		/// <summary>
+		/// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+		/// <br/>
+		/// <br/>We generally recommend altering this or `temperature` but not both.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("top_p")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0D, 1D)]
+		public double? Top_p { get; set; } = 1D;
+
+		/// <summary>
+		/// How many completions to generate for each prompt.
+		/// <br/>
+		/// <br/>**Note:** Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max_tokens` and `stop`.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("n")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(1, 128)]
+		public int? N { get; set; } = 1;
+
+		/// <summary>
+		/// Whether to stream back partial progress. If set, tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. [Example Python code](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_stream_completions.ipynb).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("stream")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public bool? Stream { get; set; } = false;
+
+		/// <summary>
+		/// Include the log probabilities on the `logprobs` most likely tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.
+		/// <br/>
+		/// <br/>The maximum value for `logprobs` is 5.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("logprobs")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0, 5)]
+		public int? Logprobs { get; set; }
+
+		/// <summary>
+		/// Echo back the prompt in addition to the completion
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("echo")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public bool? Echo { get; set; } = false;
+
+		/// <summary>
+		/// Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("stop")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<string> Stop { get; set; }
+
+		/// <summary>
+		/// Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
+		/// <br/>
+		/// <br/>[See more information about frequency and presence penalties.](/docs/api-reference/parameter-details)
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("presence_penalty")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(-2D, 2D)]
+		public double? Presence_penalty { get; set; } = 0D;
+
+		/// <summary>
+		/// Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
+		/// <br/>
+		/// <br/>[See more information about frequency and presence penalties.](/docs/api-reference/parameter-details)
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("frequency_penalty")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(-2D, 2D)]
+		public double? Frequency_penalty { get; set; } = 0D;
+
+		/// <summary>
+		/// Generates `best_of` completions server-side and returns the "best" (the one with the highest log probability per token). Results cannot be streamed.
+		/// <br/>
+		/// <br/>When used with `n`, `best_of` controls the number of candidate completions and `n` specifies how many to return – `best_of` must be greater than `n`.
+		/// <br/>
+		/// <br/>**Note:** Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max_tokens` and `stop`.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("best_of")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0, 20)]
+		public int? Best_of { get; set; } = 1;
+
+		/// <summary>
+		/// Modify the likelihood of specified tokens appearing in the completion.
+		/// <br/>
+		/// <br/>Accepts a json object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
+		/// <br/>
+		/// <br/>As an example, you can pass `{"50256": -100}` to prevent the &lt;|endoftext|&gt; token from being generated.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("logit_bias")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public object Logit_bias { get; set; }
+
+		/// <summary>
+		/// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("user")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string User { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateCompletionResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("created")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("choices")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<Choices> Choices { get; set; } = new System.Collections.ObjectModel.Collection<Choices>();
+
+		[System.Text.Json.Serialization.JsonPropertyName("usage")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public Usage Usage { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ChatCompletionRequestMessage
+	{
+		/// <summary>
+		/// The role of the messages author. One of `system`, `user`, `assistant`, or `function`.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("role")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public ChatCompletionRequestMessageRole Role { get; set; }
+
+		/// <summary>
+		/// The contents of the message. `content` is required for all messages except assistant messages with function calls.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("content")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Content { get; set; }
+
+		/// <summary>
+		/// The name of the author of this message. `name` is required if role is `function`, and it should be the name of the function whose response is in the `content`. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Name { get; set; }
+
+		/// <summary>
+		/// The name and arguments of a function that should be called, as generated by the model.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("function_call")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public Function_call Function_call { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	/// <summary>
+	/// The parameters the functions accepts, described as a JSON Schema object. See the [guide](/docs/guides/gpt/function-calling) for examples, and the [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for documentation about the format.
+	/// </summary>
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ChatCompletionFunctionParameters
+	{
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ChatCompletionFunctions
+	{
+		/// <summary>
+		/// The name of the function to be called. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length of 64.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Name { get; set; }
+
+		/// <summary>
+		/// The description of what the function does.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("description")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Description { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("parameters")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public ChatCompletionFunctionParameters Parameters { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ChatCompletionResponseMessage
+	{
+		/// <summary>
+		/// The role of the author of this message.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("role")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public ChatCompletionResponseMessageRole Role { get; set; }
+
+		/// <summary>
+		/// The contents of the message.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("content")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Content { get; set; }
+
+		/// <summary>
+		/// The name and arguments of a function that should be called, as generated by the model.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("function_call")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public Function_call2 Function_call { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ChatCompletionStreamResponseDelta
+	{
+		/// <summary>
+		/// The role of the author of this message.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("role")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public ChatCompletionStreamResponseDeltaRole Role { get; set; }
+
+		/// <summary>
+		/// The contents of the chunk message.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("content")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Content { get; set; }
+
+		/// <summary>
+		/// The name and arguments of a function that should be called, as generated by the model.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("function_call")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public Function_call3 Function_call { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateChatCompletionRequest
+	{
+		/// <summary>
+		/// ID of the model to use. See the [model endpoint compatibility](/docs/models/model-endpoint-compatibility) table for details on which models work with the Chat API.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		/// <summary>
+		/// A list of messages comprising the conversation so far. [Example Python code](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_format_inputs_to_ChatGPT_models.ipynb).
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("messages")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		[System.ComponentModel.DataAnnotations.MinLength(1)]
+		public System.Collections.Generic.ICollection<ChatCompletionRequestMessage> Messages { get; set; } = new System.Collections.ObjectModel.Collection<ChatCompletionRequestMessage>();
+
+		/// <summary>
+		/// A list of functions the model may generate JSON inputs for.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("functions")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.MinLength(1)]
+		public System.Collections.Generic.ICollection<ChatCompletionFunctions> Functions { get; set; }
+
+		/// <summary>
+		/// Controls how the model responds to function calls. "none" means the model does not call a function, and responds to the end-user. "auto" means the model can pick between an end-user or calling a function.  Specifying a particular function via `{"name":\ "my_function"}` forces the model to call that function. "none" is the default when no functions are present. "auto" is the default if functions are present.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("function_call")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public Function_call4 Function_call { get; set; }
+
+		/// <summary>
+		/// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+		/// <br/>
+		/// <br/>We generally recommend altering this or `top_p` but not both.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("temperature")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0D, 2D)]
+		public double? Temperature { get; set; } = 1D;
+
+		/// <summary>
+		/// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+		/// <br/>
+		/// <br/>We generally recommend altering this or `temperature` but not both.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("top_p")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0D, 1D)]
+		public double? Top_p { get; set; } = 1D;
+
+		/// <summary>
+		/// How many chat completion choices to generate for each input message.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("n")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(1, 128)]
+		public int? N { get; set; } = 1;
+
+		/// <summary>
+		/// If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. [Example Python code](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_stream_completions.ipynb).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("stream")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public bool? Stream { get; set; } = false;
+
+		/// <summary>
+		/// Up to 4 sequences where the API will stop generating further tokens.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("stop")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<string> Stop { get; set; }
+
+		/// <summary>
+		/// The maximum number of [tokens](/tokenizer) to generate in the chat completion.
+		/// <br/>
+		/// <br/>The total length of input tokens and generated tokens is limited by the model's context length. [Example Python code](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb) for counting tokens.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("max_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public int Max_tokens { get; set; }
+
+		/// <summary>
+		/// Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
+		/// <br/>
+		/// <br/>[See more information about frequency and presence penalties.](/docs/api-reference/parameter-details)
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("presence_penalty")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(-2D, 2D)]
+		public double? Presence_penalty { get; set; } = 0D;
+
+		/// <summary>
+		/// Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
+		/// <br/>
+		/// <br/>[See more information about frequency and presence penalties.](/docs/api-reference/parameter-details)
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("frequency_penalty")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(-2D, 2D)]
+		public double? Frequency_penalty { get; set; } = 0D;
+
+		/// <summary>
+		/// Modify the likelihood of specified tokens appearing in the completion.
+		/// <br/>
+		/// <br/>Accepts a json object that maps tokens (specified by their token ID in the tokenizer) to an associated bias value from -100 to 100. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("logit_bias")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public object Logit_bias { get; set; }
+
+		/// <summary>
+		/// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("user")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string User { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateChatCompletionResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("created")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("choices")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<Choices2> Choices { get; set; } = new System.Collections.ObjectModel.Collection<Choices2>();
+
+		[System.Text.Json.Serialization.JsonPropertyName("usage")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public Usage2 Usage { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateChatCompletionStreamResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("created")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("choices")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<Choices3> Choices { get; set; } = new System.Collections.ObjectModel.Collection<Choices3>();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateEditRequest
+	{
+		/// <summary>
+		/// ID of the model to use. You can use the `text-davinci-edit-001` or `code-davinci-edit-001` model with this endpoint.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		/// <summary>
+		/// The input text to use as a starting point for the edit.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("input")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Input { get; set; } = "";
+
+		/// <summary>
+		/// The instruction that tells the model how to edit the prompt.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("instruction")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Instruction { get; set; }
+
+		/// <summary>
+		/// How many edits to generate for the input and instruction.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("n")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(1, 20)]
+		public int? N { get; set; } = 1;
+
+		/// <summary>
+		/// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+		/// <br/>
+		/// <br/>We generally recommend altering this or `top_p` but not both.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("temperature")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0D, 2D)]
+		public double? Temperature { get; set; } = 1D;
+
+		/// <summary>
+		/// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+		/// <br/>
+		/// <br/>We generally recommend altering this or `temperature` but not both.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("top_p")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(0D, 1D)]
+		public double? Top_p { get; set; } = 1D;
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateEditResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("created")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("choices")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<Choices4> Choices { get; set; } = new System.Collections.ObjectModel.Collection<Choices4>();
+
+		[System.Text.Json.Serialization.JsonPropertyName("usage")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public Usage3 Usage { get; set; } = new Usage3();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateImageRequest
+	{
+		/// <summary>
+		/// A text description of the desired image(s). The maximum length is 1000 characters.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Prompt { get; set; }
+
+		/// <summary>
+		/// The number of images to generate. Must be between 1 and 10.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("n")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(1, 10)]
+		public int? N { get; set; } = 1;
+
+		/// <summary>
+		/// The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024`.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("size")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public CreateImageRequestSize? Size { get; set; } = OpenAI.CreateImageRequestSize._1024x1024;
+
+		/// <summary>
+		/// The format in which the generated images are returned. Must be one of `url` or `b64_json`.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("response_format")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public CreateImageRequestResponse_format? Response_format { get; set; } = OpenAI.CreateImageRequestResponse_format.url;
+
+		/// <summary>
+		/// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("user")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string User { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ImagesResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("created")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<Data> Data { get; set; } = new System.Collections.ObjectModel.Collection<Data>();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateImageEditRequest
+	{
+		/// <summary>
+		/// The image to edit. Must be a valid PNG file, less than 4MB, and square. If mask is not provided, image must have transparency, which will be used as the mask.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("image")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public byte[] Image { get; set; }
+
+		/// <summary>
+		/// An additional image whose fully transparent areas (e.g. where alpha is zero) indicate where `image` should be edited. Must be a valid PNG file, less than 4MB, and have the same dimensions as `image`.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("mask")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public byte[] Mask { get; set; }
+
+		/// <summary>
+		/// A text description of the desired image(s). The maximum length is 1000 characters.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Prompt { get; set; }
+
+		/// <summary>
+		/// The number of images to generate. Must be between 1 and 10.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("n")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(1, 10)]
+		public int? N { get; set; } = 1;
+
+		/// <summary>
+		/// The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024`.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("size")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public CreateImageEditRequestSize? Size { get; set; } = OpenAI.CreateImageEditRequestSize._1024x1024;
+
+		/// <summary>
+		/// The format in which the generated images are returned. Must be one of `url` or `b64_json`.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("response_format")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public CreateImageEditRequestResponse_format? Response_format { get; set; } = OpenAI.CreateImageEditRequestResponse_format.url;
+
+		/// <summary>
+		/// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("user")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string User { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateImageVariationRequest
+	{
+		/// <summary>
+		/// The image to use as the basis for the variation(s). Must be a valid PNG file, less than 4MB, and square.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("image")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public byte[] Image { get; set; }
+
+		/// <summary>
+		/// The number of images to generate. Must be between 1 and 10.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("n")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.Range(1, 10)]
+		public int? N { get; set; } = 1;
+
+		/// <summary>
+		/// The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024`.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("size")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public CreateImageVariationRequestSize? Size { get; set; } = OpenAI.CreateImageVariationRequestSize._1024x1024;
+
+		/// <summary>
+		/// The format in which the generated images are returned. Must be one of `url` or `b64_json`.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("response_format")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public CreateImageVariationRequestResponse_format? Response_format { get; set; } = OpenAI.CreateImageVariationRequestResponse_format.url;
+
+		/// <summary>
+		/// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("user")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string User { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateModerationRequest
+	{
+		/// <summary>
+		/// The input text to classify
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("input")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Input { get; set; }
+
+		/// <summary>
+		/// Two content moderations models are available: `text-moderation-stable` and `text-moderation-latest`.
+		/// <br/>
+		/// <br/>The default is `text-moderation-latest` which will be automatically upgraded over time. This ensures you are always using our most accurate model. If you use `text-moderation-stable`, we will provide advanced notice before updating the model. Accuracy of `text-moderation-stable` may be slightly lower than for `text-moderation-latest`.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Model { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateModerationResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("results")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<Results> Results { get; set; } = new System.Collections.ObjectModel.Collection<Results>();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ListFilesResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<OpenAIFile> Data { get; set; } = new System.Collections.ObjectModel.Collection<OpenAIFile>();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateFileRequest
+	{
+		/// <summary>
+		/// Name of the [JSON Lines](https://jsonlines.readthedocs.io/en/latest/) file to be uploaded.
+		/// <br/>
+		/// <br/>If the `purpose` is set to "fine-tune", each line is a JSON record with "prompt" and "completion" fields representing your [training examples](/docs/guides/fine-tuning/prepare-training-data).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("file")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public byte[] File { get; set; }
+
+		/// <summary>
+		/// The intended purpose of the uploaded documents.
+		/// <br/>
+		/// <br/>Use "fine-tune" for [Fine-tuning](/docs/api-reference/fine-tunes). This allows us to validate the format of the uploaded file.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("purpose")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Purpose { get; set; }
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class DeleteFileResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("deleted")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Deleted { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateFineTuneRequest
+	{
+		/// <summary>
+		/// The ID of an uploaded file that contains training data.
+		/// <br/>
+		/// <br/>See [upload file](/docs/api-reference/files/upload) for how to upload a file.
+		/// <br/>
+		/// <br/>Your dataset must be formatted as a JSONL file, where each training
+		/// <br/>example is a JSON object with the keys "prompt" and "completion".
+		/// <br/>Additionally, you must upload your file with the purpose `fine-tune`.
+		/// <br/>
+		/// <br/>See the [fine-tuning guide](/docs/guides/fine-tuning/creating-training-data) for more details.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("training_file")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Training_file { get; set; }
+
+		/// <summary>
+		/// The ID of an uploaded file that contains validation data.
+		/// <br/>
+		/// <br/>If you provide this file, the data is used to generate validation
+		/// <br/>metrics periodically during fine-tuning. These metrics can be viewed in
+		/// <br/>the [fine-tuning results file](/docs/guides/fine-tuning/analyzing-your-fine-tuned-model).
+		/// <br/>Your train and validation data should be mutually exclusive.
+		/// <br/>
+		/// <br/>Your dataset must be formatted as a JSONL file, where each validation
+		/// <br/>example is a JSON object with the keys "prompt" and "completion".
+		/// <br/>Additionally, you must upload your file with the purpose `fine-tune`.
+		/// <br/>
+		/// <br/>See the [fine-tuning guide](/docs/guides/fine-tuning/creating-training-data) for more details.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("validation_file")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Validation_file { get; set; }
+
+		/// <summary>
+		/// The name of the base model to fine-tune. You can select one of "ada",
+		/// <br/>"babbage", "curie", "davinci", or a fine-tuned model created after 2022-04-21.
+		/// <br/>To learn more about these models, see the
+		/// <br/>[Models](https://platform.openai.com/docs/models) documentation.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Model { get; set; }
+
+		/// <summary>
+		/// The number of epochs to train the model for. An epoch refers to one
+		/// <br/>full cycle through the training dataset.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("n_epochs")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public int? N_epochs { get; set; } = 4;
+
+		/// <summary>
+		/// The batch size to use for training. The batch size is the number of
+		/// <br/>training examples used to train a single forward and backward pass.
+		/// <br/>
+		/// <br/>By default, the batch size will be dynamically configured to be
+		/// <br/>~0.2% of the number of examples in the training set, capped at 256 -
+		/// <br/>in general, we've found that larger batch sizes tend to work better
+		/// <br/>for larger datasets.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("batch_size")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public int? Batch_size { get; set; }
+
+		/// <summary>
+		/// The learning rate multiplier to use for training.
+		/// <br/>The fine-tuning learning rate is the original learning rate used for
+		/// <br/>pretraining multiplied by this value.
+		/// <br/>
+		/// <br/>By default, the learning rate multiplier is the 0.05, 0.1, or 0.2
+		/// <br/>depending on final `batch_size` (larger learning rates tend to
+		/// <br/>perform better with larger batch sizes). We recommend experimenting
+		/// <br/>with values in the range 0.02 to 0.2 to see what produces the best
+		/// <br/>results.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("learning_rate_multiplier")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public double? Learning_rate_multiplier { get; set; }
+
+		/// <summary>
+		/// The weight to use for loss on the prompt tokens. This controls how
+		/// <br/>much the model tries to learn to generate the prompt (as compared
+		/// <br/>to the completion which always has a weight of 1.0), and can add
+		/// <br/>a stabilizing effect to training when completions are short.
+		/// <br/>
+		/// <br/>If prompts are extremely long (relative to completions), it may make
+		/// <br/>sense to reduce this weight so as to avoid over-prioritizing
+		/// <br/>learning the prompt.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt_loss_weight")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public double? Prompt_loss_weight { get; set; } = 0.01D;
+
+		/// <summary>
+		/// If set, we calculate classification-specific metrics such as accuracy
+		/// <br/>and F-1 score using the validation set at the end of every epoch.
+		/// <br/>These metrics can be viewed in the [results file](/docs/guides/fine-tuning/analyzing-your-fine-tuned-model).
+		/// <br/>
+		/// <br/>In order to compute classification metrics, you must provide a
+		/// <br/>`validation_file`. Additionally, you must
+		/// <br/>specify `classification_n_classes` for multiclass classification or
+		/// <br/>`classification_positive_class` for binary classification.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("compute_classification_metrics")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public bool? Compute_classification_metrics { get; set; } = false;
+
+		/// <summary>
+		/// The number of classes in a classification task.
+		/// <br/>
+		/// <br/>This parameter is required for multiclass classification.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("classification_n_classes")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public int? Classification_n_classes { get; set; }
+
+		/// <summary>
+		/// The positive class in binary classification.
+		/// <br/>
+		/// <br/>This parameter is needed to generate precision, recall, and F1
+		/// <br/>metrics when doing binary classification.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("classification_positive_class")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Classification_positive_class { get; set; }
+
+		/// <summary>
+		/// If this is provided, we calculate F-beta scores at the specified
+		/// <br/>beta values. The F-beta score is a generalization of F-1 score.
+		/// <br/>This is only used for binary classification.
+		/// <br/>
+		/// <br/>With a beta of 1 (i.e. the F-1 score), precision and recall are
+		/// <br/>given the same weight. A larger beta score puts more weight on
+		/// <br/>recall and less on precision. A smaller beta score puts more weight
+		/// <br/>on precision and less on recall.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("classification_betas")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<double> Classification_betas { get; set; }
+
+		/// <summary>
+		/// A string of up to 40 characters that will be added to your fine-tuned model name.
+		/// <br/>
+		/// <br/>For example, a `suffix` of "custom-model-name" would produce a model name like `ada:ft-your-org:custom-model-name-2022-02-15-04-21-04`.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("suffix")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.ComponentModel.DataAnnotations.StringLength(40, MinimumLength = 1)]
+		public string Suffix { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ListFineTunesResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<FineTune> Data { get; set; } = new System.Collections.ObjectModel.Collection<FineTune>();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ListFineTuneEventsResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<FineTuneEvent> Data { get; set; } = new System.Collections.ObjectModel.Collection<FineTuneEvent>();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateEmbeddingRequest
+	{
+		/// <summary>
+		/// ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		/// <summary>
+		/// Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. Each input must not exceed the max input tokens for the model (8191 tokens for `text-embedding-ada-002`). [Example Python code](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb) for counting tokens.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("input")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Input { get; set; }
+
+		/// <summary>
+		/// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("user")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string User { get; set; }
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateEmbeddingResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<Data2> Data { get; set; } = new System.Collections.ObjectModel.Collection<Data2>();
+
+		[System.Text.Json.Serialization.JsonPropertyName("usage")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public Usage4 Usage { get; set; } = new Usage4();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateTranscriptionRequest
+	{
+		/// <summary>
+		/// The audio file object (not file name) to transcribe, in one of these formats: mp3, mp4, mpeg, mpga, m4a, wav, or webm.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("file")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public byte[] File { get; set; }
+
+		/// <summary>
+		/// ID of the model to use. Only `whisper-1` is currently available.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		/// <summary>
+		/// An optional text to guide the model's style or continue a previous audio segment. The [prompt](/docs/guides/speech-to-text/prompting) should match the audio language.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Prompt { get; set; }
+
+		/// <summary>
+		/// The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("response_format")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Response_format { get; set; } = "json";
+
+		/// <summary>
+		/// The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use [log probability](https://en.wikipedia.org/wiki/Log_probability) to automatically increase the temperature until certain thresholds are hit.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("temperature")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public double Temperature { get; set; } = 0D;
+
+		/// <summary>
+		/// The language of the input audio. Supplying the input language in [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) format will improve accuracy and latency.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("language")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Language { get; set; }
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateTranscriptionResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("text")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Text { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateTranslationRequest
+	{
+		/// <summary>
+		/// The audio file object (not file name) translate, in one of these formats: mp3, mp4, mpeg, mpga, m4a, wav, or webm.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("file")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public byte[] File { get; set; }
+
+		/// <summary>
+		/// ID of the model to use. Only `whisper-1` is currently available.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		/// <summary>
+		/// An optional text to guide the model's style or continue a previous audio segment. The [prompt](/docs/guides/speech-to-text/prompting) should be in English.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Prompt { get; set; }
+
+		/// <summary>
+		/// The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("response_format")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Response_format { get; set; } = "json";
+
+		/// <summary>
+		/// The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use [log probability](https://en.wikipedia.org/wiki/Log_probability) to automatically increase the temperature until certain thresholds are hit.
+		/// <br/>
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("temperature")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public double Temperature { get; set; } = 0D;
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class CreateTranslationResponse
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("text")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Text { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Model
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("created")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("owned_by")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Owned_by { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class OpenAIFile
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("bytes")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Bytes { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("created_at")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created_at { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("filename")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Filename { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("purpose")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Purpose { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("status")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Status { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("status_details")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public object Status_details { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class FineTune
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("created_at")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created_at { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("updated_at")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Updated_at { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Model { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("fine_tuned_model")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public string Fine_tuned_model { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("organization_id")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Organization_id { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("status")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Status { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("hyperparams")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public object Hyperparams { get; set; } = new object();
+
+		[System.Text.Json.Serialization.JsonPropertyName("training_files")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<OpenAIFile> Training_files { get; set; } = new System.Collections.ObjectModel.Collection<OpenAIFile>();
+
+		[System.Text.Json.Serialization.JsonPropertyName("validation_files")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<OpenAIFile> Validation_files { get; set; } = new System.Collections.ObjectModel.Collection<OpenAIFile>();
+
+		[System.Text.Json.Serialization.JsonPropertyName("result_files")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<OpenAIFile> Result_files { get; set; } = new System.Collections.ObjectModel.Collection<OpenAIFile>();
+
+		[System.Text.Json.Serialization.JsonPropertyName("events")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<FineTuneEvent> Events { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class FineTuneEvent
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("created_at")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Created_at { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("level")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Level { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Message { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Choices
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("text")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Text { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("index")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Index { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("logprobs")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public Logprobs Logprobs { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("finish_reason")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public ChoicesFinish_reason Finish_reason { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Usage
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Prompt_tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("completion_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Completion_tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("total_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Total_tokens { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum ChatCompletionRequestMessageRole
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"system")]
+		system = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"user")]
+		user = 1,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"assistant")]
+		assistant = 2,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"function")]
+		function = 3,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Function_call
+	{
+		/// <summary>
+		/// The name of the function to call.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Name { get; set; }
+
+		/// <summary>
+		/// The arguments to call the function with, as generated by the model in JSON format. Note that the model does not always generate valid JSON, and may hallucinate parameters not defined by your function schema. Validate the arguments in your code before calling your function.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("arguments")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Arguments { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum ChatCompletionResponseMessageRole
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"system")]
+		system = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"user")]
+		user = 1,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"assistant")]
+		assistant = 2,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"function")]
+		function = 3,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Function_call2
+	{
+		/// <summary>
+		/// The name of the function to call.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Name { get; set; }
+
+		/// <summary>
+		/// The arguments to call the function with, as generated by the model in JSON format. Note that the model does not always generate valid JSON, and may hallucinate parameters not defined by your function schema. Validate the arguments in your code before calling your function.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("arguments")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Arguments { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum ChatCompletionStreamResponseDeltaRole
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"system")]
+		system = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"user")]
+		user = 1,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"assistant")]
+		assistant = 2,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"function")]
+		function = 3,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Function_call3
+	{
+		/// <summary>
+		/// The name of the function to call.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Name { get; set; }
+
+		/// <summary>
+		/// The arguments to call the function with, as generated by the model in JSON format. Note that the model does not always generate valid JSON, and may hallucinate parameters not defined by your function schema. Validate the arguments in your code before calling your function.
+		/// </summary>
+
+		[System.Text.Json.Serialization.JsonPropertyName("arguments")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Arguments { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum Function_call4
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"none")]
+		none = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"auto")]
+		auto = 1,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Choices2
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("index")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public int Index { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public ChatCompletionResponseMessage Message { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("finish_reason")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public Choices2Finish_reason Finish_reason { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Usage2
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Prompt_tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("completion_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Completion_tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("total_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Total_tokens { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Choices3
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("index")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public int Index { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("delta")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public ChatCompletionStreamResponseDelta Delta { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("finish_reason")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public Choices3Finish_reason Finish_reason { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Choices4
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("text")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Text { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("index")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public int Index { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("logprobs")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public Logprobs2 Logprobs { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("finish_reason")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+		public Choices4Finish_reason Finish_reason { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Usage3
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Prompt_tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("completion_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Completion_tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("total_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Total_tokens { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum CreateImageRequestSize
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"256x256")]
+		_256x256 = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"512x512")]
+		_512x512 = 1,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"1024x1024")]
+		_1024x1024 = 2,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum CreateImageRequestResponse_format
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"url")]
+		url = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"b64_json")]
+		b64_json = 1,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Data
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("url")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string Url { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("b64_json")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public string B64_json { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum CreateImageEditRequestSize
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"256x256")]
+		_256x256 = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"512x512")]
+		_512x512 = 1,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"1024x1024")]
+		_1024x1024 = 2,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum CreateImageEditRequestResponse_format
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"url")]
+		url = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"b64_json")]
+		b64_json = 1,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum CreateImageVariationRequestSize
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"256x256")]
+		_256x256 = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"512x512")]
+		_512x512 = 1,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"1024x1024")]
+		_1024x1024 = 2,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum CreateImageVariationRequestResponse_format
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"url")]
+		url = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"b64_json")]
+		b64_json = 1,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Results
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("flagged")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Flagged { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("categories")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public Categories Categories { get; set; } = new Categories();
+
+		[System.Text.Json.Serialization.JsonPropertyName("category_scores")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public Category_scores Category_scores { get; set; } = new Category_scores();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Data2
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("index")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Index { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("object")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		public string Object { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("embedding")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		[System.ComponentModel.DataAnnotations.Required]
+		public System.Collections.Generic.ICollection<double> Embedding { get; set; } = new System.Collections.ObjectModel.Collection<double>();
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Usage4
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("prompt_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Prompt_tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("total_tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public int Total_tokens { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Logprobs
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<string> Tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("token_logprobs")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<double> Token_logprobs { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("top_logprobs")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<object> Top_logprobs { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("text_offset")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<int> Text_offset { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum ChoicesFinish_reason
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"stop")]
+		stop = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"length")]
+		length = 1,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum Choices2Finish_reason
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"stop")]
+		stop = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"length")]
+		length = 1,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"function_call")]
+		function_call = 2,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum Choices3Finish_reason
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"stop")]
+		stop = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"length")]
+		length = 1,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"function_call")]
+		function_call = 2,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Logprobs2
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("tokens")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<string> Tokens { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("token_logprobs")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<double> Token_logprobs { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("top_logprobs")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<object> Top_logprobs { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("text_offset")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+		public System.Collections.Generic.ICollection<int> Text_offset { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public enum Choices4Finish_reason
+	{
+
+		[System.Runtime.Serialization.EnumMember(Value = @"stop")]
+		stop = 0,
+
+		[System.Runtime.Serialization.EnumMember(Value = @"length")]
+		length = 1,
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Categories
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("hate")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Hate { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("hate/threatening")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Hate_threatening { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("self-harm")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool SelfHarm { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("sexual")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Sexual { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("sexual/minors")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Sexual_minors { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("violence")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Violence { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("violence/graphic")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public bool Violence_graphic { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class Category_scores
+	{
+
+		[System.Text.Json.Serialization.JsonPropertyName("hate")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public double Hate { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("hate/threatening")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public double Hate_threatening { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("self-harm")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public double SelfHarm { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("sexual")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public double Sexual { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("sexual/minors")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public double Sexual_minors { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("violence")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public double Violence { get; set; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("violence/graphic")]
+
+		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
+		public double Violence_graphic { get; set; }
+
+		private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+
+		[System.Text.Json.Serialization.JsonExtensionData]
+		public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+		{
+			get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+			set { _additionalProperties = value; }
+		}
+
+	}
+
+
+
+	[System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ApiException : System.Exception
+	{
+		public int StatusCode { get; private set; }
+
+		public string Response { get; private set; }
+
+		public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
+
+		public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
+			: base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
+		{
+			StatusCode = statusCode;
+			Response = response;
+			Headers = headers;
+		}
+
+		public override string ToString()
+		{
+			return string.Format("HTTP Response: \n\n{0}\n\n{1}", Response, base.ToString());
+		}
+	}
+
+	[System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+	public partial class ApiException<TResult> : ApiException
+	{
+		public TResult Result { get; private set; }
+
+		public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
+			: base(message, statusCode, response, headers, innerException)
+		{
+			Result = result;
+		}
+	}
 
 }
 
-#pragma warning restore  108
-#pragma warning restore  114
-#pragma warning restore  472
-#pragma warning restore  612
+#pragma warning restore 108
+#pragma warning restore 114
+#pragma warning restore 472
+#pragma warning restore 612
 #pragma warning restore 1573
 #pragma warning restore 1591
 #pragma warning restore 8073

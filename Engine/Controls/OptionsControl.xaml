@@ -34,6 +34,7 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
@@ -64,10 +65,18 @@
 				<Label Grid.Row="2" Grid.Column="0" Content="OpenAI API Organization ID" />
 				<PasswordBox Name="OpenAiApiOrganizationPasswordBox" Grid.Row="2" Grid.Column="1" />
 
-				<Label Grid.Row="3" Grid.Column="0" Content="Model Filter" />
+				<Label Grid.Row="3" Grid.Column="0" Content="Open AI Base URL" />
+				<TextBox
+					Name="OpenAiBaseUrlTextBox"
+					Grid.Row="3"
+					Grid.Column="1"
+					Grid.ColumnSpan="2"
+					Text="{Binding OpenAiSettings.BaseUrl, ElementName=This}" />
+
+				<Label Grid.Row="4" Grid.Column="0" Content="Model Filter" />
 				<TextBox
 					Name="ModelFilterTExtBox"
-					Grid.Row="3"
+					Grid.Row="4"
 					Grid.Column="1"
 					Grid.ColumnSpan="2"
 					Text="{Binding OpenAiSettings.ModelFilter, ElementName=This}" />
@@ -84,6 +93,8 @@
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
 				<Label Grid.Row="0" Grid.Column="0" Content="Data" />
 				<TextBox
@@ -91,23 +102,24 @@
 					Grid.Row="0"
 					Grid.Column="1"
 					Text="{Binding ContextDataTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				<Label Grid.Row="1" Grid.Column="0" Content="Files" />
+				<Label Grid.Row="0" Grid.Column="2" Content="Files" />
 				<TextBox
 					Name="ContextFileTitleTextBox"
-					Grid.Row="1"
-					Grid.Column="1"
+					Grid.Row="0"
+					Grid.Column="3"
 					Text="{Binding ContextFileTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				<Label Grid.Row="2" Grid.Column="0" Content="Chat" />
+				<Label Grid.Row="1" Grid.Column="0" Content="Chat" />
 				<TextBox
 					Name="ContextChatTitleTextBox"
-					Grid.Row="2"
+					Grid.Row="1"
 					Grid.Column="1"
 					Text="{Binding ContextChatTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				<Label Grid.Row="3" Grid.Column="0" Content="Chat Instructions" />
+				<Label Grid.Row="2" Grid.Column="0" Content="Chat Instructions" />
 				<TextBox
 					Name="ContextChatInstructionsTextBox"
-					Grid.Row="3"
+					Grid.Row="2"
 					Grid.Column="1"
+					Grid.ColumnSpan="3"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
