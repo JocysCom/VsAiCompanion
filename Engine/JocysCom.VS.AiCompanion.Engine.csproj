@@ -36,6 +36,11 @@
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="SharpVectors" Version="1.8.1" />
+		<PackageReference Include="System.Text.Json" Version="7.0.3" />
+	</ItemGroup>
+
 	<ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
@@ -43,8 +48,8 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
 		<PackageReference Include="System.Diagnostics.EventLog" Version="7.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="7.0.5" />
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="7.0.7" />
 		<PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" />
 	</ItemGroup>
 
@@ -187,11 +192,6 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
 	  <EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="SharpVectors" Version="1.8.1" />
-		<PackageReference Include="System.Text.Json" Version="7.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
