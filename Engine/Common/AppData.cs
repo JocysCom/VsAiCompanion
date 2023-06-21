@@ -17,8 +17,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool AppAlwaysOnTop { get => _AppAlwaysOnTop; set => SetProperty(ref _AppAlwaysOnTop, value); }
 		private bool _AppAlwaysOnTop;
 
-		[DefaultValue(false)]
+		/// <summary>Allow only one standalone copy.</summary>
+		[DefaultValue(true)]
+		public bool AllowOnlyOneCopy { get => _AllowOnlyOneCopy; set => SetProperty(ref _AllowOnlyOneCopy, value); }
+		private bool _AllowOnlyOneCopy;
 
+		[DefaultValue(false)]
 		public bool BarAlwaysOnTop { get => _BarAlwaysOnTop; set => SetProperty(ref _BarAlwaysOnTop, value); }
 		private bool _BarAlwaysOnTop;
 
@@ -111,7 +115,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool MinimizeToTray { get => _MinimizeToTray; set => SetProperty(ref _MinimizeToTray, value); }
 		bool _MinimizeToTray;
 
-		[DefaultValue(false)]
+		[DefaultValue(true)]
 		public bool MinimizeOnClose { get => _MinimizeOnClose; set => SetProperty(ref _MinimizeOnClose, value); }
 		bool _MinimizeOnClose;
 

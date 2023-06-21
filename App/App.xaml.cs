@@ -2,7 +2,6 @@
 using JocysCom.VS.AiCompanion.Engine;
 using System;
 using System.Configuration;
-using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 
@@ -15,12 +14,33 @@ namespace JocysCom.VS.AiCompanion
 	{
 		public App()
 		{
+			Global.LoadSettings();
+			Global.InitDefaultSettings();
+			// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
+			StartHelper.Initialize(typeof(App).Assembly.GetName().Name);
+			allowToRun = StartHelper.AllowToRun(Global.AppSettings.AllowOnlyOneCopy);
+			if (!allowToRun)
+				return;
+			StartHelper.OnClose += StartHelper_OnClose;
+			StartHelper.OnRestore += StartHelper_OnRestore;
 			SetDPIAware();
 			System.Windows.Forms.Application.EnableVisualStyles();
 			System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 			TrayManager = new TrayManager();
 			TrayManager.OnExitClick += TrayManager_OnExitClick;
 		}
+
+		private void StartHelper_OnRestore(object sender, EventArgs e)
+		{
+			TrayManager.RestoreFromTray();
+		}
+
+		private void StartHelper_OnClose(object sender, EventArgs e)
+		{
+			Shutdown();
+		}
+
+		private bool allowToRun;
 
 		private void TrayManager_OnExitClick(object sender, EventArgs e)
 		{
@@ -46,6 +66,11 @@ namespace JocysCom.VS.AiCompanion
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			if (!allowToRun)
+			{
+				Shutdown();
+				return;
+			}
 			base.OnStartup(e);
 			try
 			{
@@ -60,6 +85,7 @@ namespace JocysCom.VS.AiCompanion
 				// Set it as the main window and show it
 				MainWindow = window;
 				TrayManager.ProcessGetCommandLineArgs();
+
 			}
 			catch (Exception ex)
 			{

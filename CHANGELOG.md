@@ -1,3 +1,8 @@
+2023-06-21 v1.0.23
+
+- New: Added an "Allow Only One Copy" option for standalone application.
+- Update: The "Minimize On Close" option is now enabled by default.
+
 2023-06-20 v1.0.22
 
 - Fix: Changed how the chat log is sent to allow for better AI interpretation.

@@ -14,12 +14,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			StartWithWindowsStateBox.ItemsSource = Enum.GetValues(typeof(WindowState));
 			SettingsFolderTextBox.Text = Global.AppData.XmlFile.Directory.FullName;
 			OpenAiApiSecretKeyPasswordBox.Password = Global.AppSettings.OpenAiSettings.ApiSecretKey;
 			OpenAiApiSecretKeyPasswordBox.PasswordChanged += ChatGptSecretKeyPasswordBox_PasswordChanged;
 			OpenAiApiOrganizationPasswordBox.Password = Global.AppSettings.OpenAiSettings.ApiOrganizationId;
 			OpenAiApiOrganizationPasswordBox.PasswordChanged += OpenAiApiOrganizationPasswordBox_PasswordChanged;
+		}
+
+		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			// Make sure that AllowOnlyOneCopy setting applies immediatelly.
+			if (e.PropertyName == nameof(AppData.AllowOnlyOneCopy))
+				Global.AppData.Save();
 		}
 
 		public Companions.ChatGPT.Settings OpenAiSettings => Global.AppSettings.OpenAiSettings;

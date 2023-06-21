@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -13,8 +14,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public MainWindow()
 		{
 			ControlsHelper.InitInvokeContext();
-			Global.LoadSettings();
-			Global.InitDefaultSettings();
 			Topmost = Global.AppSettings.AppAlwaysOnTop;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			InitializeComponent();
@@ -38,6 +37,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private void Window_SourceInitialized(object sender, System.EventArgs e)
 		{
 			Global.AppSettings.StartPosition.LoadPosition(this);
+		}
+
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
+			var source = (System.Windows.Interop.HwndSource)PresentationSource.FromVisual(this);
+			source.AddHook(StartHelper.CustomWndProc);
 		}
 	}
 }

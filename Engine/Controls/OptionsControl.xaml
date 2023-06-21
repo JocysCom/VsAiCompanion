@@ -141,6 +141,7 @@
 						Visibility="Collapsed" />
 					<CheckBox Name="MinimizeToTrayBox" Content="Minimize to Tray" IsChecked="{Binding MinimizeToTray, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="MinimizeOnCloseTrayBox" Content="Minimize on Close" IsChecked="{Binding MinimizeOnClose, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="AllowOnlyOneCopyBox" Content="Allow Only One Copy" IsChecked="{Binding AllowOnlyOneCopy, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<StackPanel Orientation="Horizontal">
 						<CheckBox Name="StartWithWindowsBox" Content="Start with Windows:" IsChecked="{Binding StartWithWindows, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						<ComboBox
