@@ -2,7 +2,7 @@
   <Name>Code - Fix Selected Error</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <TextInstructions>How to fix this error reported by Visual Studio?</TextInstructions>
+  <TextInstructions>How to fix this error reported by Visual Studio? Please reply with the fixed code.</TextInstructions>
   <AttachContext>None</AttachContext>
   <AttachError>true</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

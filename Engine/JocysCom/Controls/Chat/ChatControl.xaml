@@ -133,6 +133,7 @@
 						AcceptsReturn="True"
 						Background="#fdfdfd"
 						BorderThickness="0"
+						PreviewKeyDown="DataInstructionsTextBox_PreviewKeyDown"
 						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 						ScrollViewer.VerticalScrollBarVisibility="Auto"
 						Text="{Binding TextInstructions}"

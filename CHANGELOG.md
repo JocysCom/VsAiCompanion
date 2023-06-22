@@ -1,3 +1,7 @@
+2023-06-22 v1.0.26
+
+- Fix: Send button opacity when a message is changed.
+
 2023-06-22 v1.0.25
 
 - Fix: Some Template properties not copying to the Task.

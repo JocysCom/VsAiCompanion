@@ -83,6 +83,12 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			SendButton.Opacity = AllowToSend() ? 1.0 : 0.5;
 		}
 
+		private void DataInstructionsTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			SendButton.Opacity = AllowToSend() ? 1.0 : 0.5;
+		}
+
+
 		void UpdateControlButtons()
 		{
 			ControlsHelper.Invoke(() =>
@@ -99,6 +105,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		{
 			OnSend?.Invoke(sender, e);
 		}
+
 	}
 
 }
