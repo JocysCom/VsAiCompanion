@@ -6,3 +6,4 @@
 - Add: On premise AI choice.
 - Add: Grammar templates as tasks by default.
 - Add: Quick access to tasks from Tray Notification icon.
+- Add: Mention and provide link to markdown syntax above send box.
