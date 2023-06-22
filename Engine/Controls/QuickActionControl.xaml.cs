@@ -85,6 +85,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var item = (TemplateItem)((Button)sender).DataContext;
 			var copy = item.Copy(true);
+			// Hide instructions box by default on Tasks.
+			copy.ShowInstructions = false;
 			var originalName = copy.Name;
 			// Select newly created item.
 			var panel = Global.MainControl.TasksPanel.ListPanel;

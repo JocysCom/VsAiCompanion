@@ -60,7 +60,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			var m = new MessageItem()
 			{
-				Body = ChatPanel.DataTextBox.Text,
+				Body = $"{ChatPanel.DataInstructionsTextBox.Text}\r\n{ChatPanel.DataTextBox.Text}",
 				User = "User",
 				Type = MessageType.Out,
 			};

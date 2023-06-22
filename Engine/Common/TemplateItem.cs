@@ -12,6 +12,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 	{
 		public TemplateItem()
 		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			_AiModel = Companions.ChatGPT.Settings.AiModelDefault;
 		}
 
@@ -26,6 +27,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public string IconType { get => _IconType; set => SetProperty(ref _IconType, value); }
 		string _IconType;
+
+		/// <summary>Instructions that will be included at the start of every message.</summary>
+		[DefaultValue("")]
+		public string TextInstructions { get => _TextInstructions; set => SetProperty(ref _TextInstructions, value); }
+		string _TextInstructions;
+
+		/// <summary>Show Instructions</summary>
+		[DefaultValue(true)]
+		public bool ShowInstructions { get => _ShowInstructions; set => SetProperty(ref _ShowInstructions, value); }
+		bool _ShowInstructions;
 
 		public string Text { get => _Text; set => SetProperty(ref _Text, value); }
 		string _Text;
@@ -52,7 +63,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		[DefaultValue(true)]
 		public bool AttachChatHistory { get => _AttachChatHistory; set => SetProperty(ref _AttachChatHistory, value); }
-		bool _AttachChatHistory = true;
+		bool _AttachChatHistory;
 
 		public ChatSettings Settings { get => _Settings; set => SetProperty(ref _Settings, value); }
 		ChatSettings _Settings;
@@ -114,7 +125,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[DefaultValue(true)]	
 		public bool IsFavorite { get => _IsFavorite; set => SetProperty(ref _IsFavorite, value); }
-		bool _IsFavorite = true;
+		bool _IsFavorite;
 
 		public bool IsChecked
 		{
@@ -139,6 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var copy = new TemplateItem();
 			copy.Name = Name;
 			copy.TemplateName = Name; // Will be used tom find original template.
+			copy.TextInstructions = TextInstructions;
 			copy.Text = Text;
 			copy.AiModel = AiModel;
 			copy.IconData = IconData;

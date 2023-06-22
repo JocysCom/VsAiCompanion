@@ -215,7 +215,13 @@
 				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
 				<CheckBox Name="IsFavoriteCheckBox" Content="Is Favorite" IsChecked="{Binding IsFavorite}" />
 			</StackPanel>
-			<Chat:ChatControl x:Name="ChatPanel" Grid.Row="6" Grid.ColumnSpan="4" />
+			<Border
+				Grid.Row="6"
+				Grid.ColumnSpan="4"
+				BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+				BorderThickness="0,1,0,0">
+				<Chat:ChatControl x:Name="ChatPanel" />
+			</Border>
 		</Grid>
 		<Button
 			Name="BarToggleButton"
