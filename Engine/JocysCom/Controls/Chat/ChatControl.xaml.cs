@@ -42,7 +42,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		{
 			if (e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
 			{
-				if (!string.IsNullOrEmpty(DataTextBox.Text))
+				if (AllowToSend())
 					OnSend?.Invoke(sender, e);
 				e.Handled = true;
 			}
@@ -71,9 +71,16 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			});
 		}
 
+		public bool AllowToSend()
+		{
+			return
+				!string.IsNullOrEmpty(DataTextBox.Text) ||
+				!string.IsNullOrEmpty(DataInstructionsTextBox.Text);
+		}
+
 		private void DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			SendButton.Opacity = string.IsNullOrEmpty(DataTextBox.Text) ? 0.5 : 1.0;
+			SendButton.Opacity = AllowToSend() ? 1.0 : 0.5;
 		}
 
 		void UpdateControlButtons()

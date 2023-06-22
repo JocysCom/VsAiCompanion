@@ -2,7 +2,8 @@
   <Name>Utility - Book or Movie</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Can you suggest some [insert genre here] books/movies?</Text>
+  <TextInstructions>Can you suggest some books/movies? This is what I like:</TextInstructions>
+  <Text>[insert genre here]</Text>
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

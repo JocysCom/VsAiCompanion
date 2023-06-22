@@ -164,7 +164,7 @@
 			background-color: rgba(255, 255, 255, 0.2);
 			border: 1px solid rgba(0, 0, 0, 0.2);
 			display: inline-block;
-			margin: 0 auto;
+			margin: 0 auto 2px auto;
 		}
 
 		.expandable-title {
@@ -179,10 +179,16 @@
 		.expandable-title-indicator {
 		}
 
-		.expandable-box div:not(.expandable-title) {
+		.expandable-box-data {
 			padding: 0.25em 0.5em;
 			width: 100%;
 		}
+
+		p, pre {
+			padding: 0;
+			margin: 0;
+		}
+
 	</style>
 	<script defer="defer">
 
@@ -219,11 +225,11 @@
 			var body = marked.parse("" + message.Body);
 			var attachments = message.Attachments;
 			var data = "";
+			var expandableBoxTemplate = document.getElementById('expandableBoxTemplate').innerHTML;
 			if (Array.isArray(attachments)) {
 				for (var i = 0; i < attachments.length; i++) {
 					var a = attachments[i];
 					var aData = "";
-					var expandableBoxTemplate = document.getElementById('expandableBoxTemplate').innerHTML;
 					if (a.Type == AttachmentType.Selection ||
 						a.Type == AttachmentType.ActiveDocument ||
 						a.Type == AttachmentType.SelectedError ||
@@ -238,21 +244,35 @@
 						pre.innerText = a.Data;
 						aData = pre.outerHTML;
 					}
+					var instructions = "";
+					if ((a.Instructions) && ("" + a.Instructions).length > 0)
+						instructions = a.Instructions + "</ br>";
 					var aInTemplate = expandableBoxTemplate
 						.replace(/{Title}/g, a.Title)
-						.replace(/{Instructions}/g, a.Instructions)
+						.replace(/{Instructions}/g, instructions)
 						.replace(/{Data}/g, aData);
 					data += "\r\n\r\n" + aInTemplate;
 				}
 			}
+
+			var newMessageInstructionsHTML = "";
+			// If body AI instructions supplied then...
+			if ((message.BodyInstructions) && ("" + message.BodyInstructions).length > 0) {
+				newMessageInstructionsHTML = expandableBoxTemplate
+					.replace(/{Title}/g, "Instructions")
+					.replace(/{Instructions}/g, marked.parse(message.BodyInstructions))
+					.replace(/{Data}/g, "");
+			}
+
 			// Replace all placeholders with actual values from the message.
 			var newMessageHTML = messageTemplate
 				.replace(/{Type}/g, messageType[message.Type])
 				.replace(/{Id}/g, idPrefix + message.Id)
 				.replace(/{User}/g, message.User)
 				.replace(/{Date}/g, FormatDateTime(message.Date))
-				.replace(/{Body}/g, body)
+				.replace(/{Body}/g, newMessageInstructionsHTML + body)
 				.replace(/{Data}/g, data);
+
 			// Create a new div element and set its innerHTML to the newly created message.
 			var newMessage = document.createElement('div');
 			newMessage.innerHTML = newMessageHTML;
@@ -415,9 +435,8 @@
 			<div class="expandable-title" onclick="expandCollapse(this)">
 				<span class="expandable-title-text">{Title}</span><span class="expandable-title-indicator">…</span>
 			</div>
-			<div class="chat-message-data" style="display: none;">
-				{Instructions}<br />
-				{Data}
+			<div class="expandable-box-data" style="display: none;">
+				{Instructions}{Data}
 			</div>
 		</div>
 	</div>
@@ -441,3 +460,5 @@
 	</div>
 </body>
 </html>
+
+

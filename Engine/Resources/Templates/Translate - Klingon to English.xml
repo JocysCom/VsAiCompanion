@@ -2,11 +2,10 @@
   <Name>Translate - Klingon to English</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Translate English to Klingon and Klingon to English.&#xD;
+  <TextInstructions>Translate English to Klingon and Klingon to English.&#xD;
 &#xD;
-Text to translate:&#xD;
-&#xD;
-</Text>
+Text to translate:</TextInstructions>
+  <Text />
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

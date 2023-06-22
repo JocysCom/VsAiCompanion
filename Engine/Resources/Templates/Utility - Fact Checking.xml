@@ -2,7 +2,8 @@
   <Name>Utility - Fact Checking</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Is it true that [insert claim here]?</Text>
+  <TextInstructions>Is it true that?:</TextInstructions>
+  <Text />
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

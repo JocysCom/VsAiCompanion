@@ -2,7 +2,8 @@
   <Name>Utility - Health and Wellness Tips</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>What are some exercises for [insert specific fitness goal here]?</Text>
+  <TextInstructions>What are some exercises for?:</TextInstructions>
+  <Text />
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

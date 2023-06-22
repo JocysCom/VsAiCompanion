@@ -1,3 +1,8 @@
+2023-06-22 v1.0.24
+
+- New: Separate the AI instructions from the main message.
+- Update: Updated all templates.
+
 2023-06-21 v1.0.23
 
 - New: Added an "Allow Only One Copy" option for standalone application.

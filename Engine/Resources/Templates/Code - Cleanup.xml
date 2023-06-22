@@ -2,9 +2,8 @@
   <Name>Code - Cleanup</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Cleanup this code.&#xD;
-&#xD;
-</Text>
+  <TextInstructions>Cleanup this code.</TextInstructions>
+  <Text />
   <AttachContext>Selection</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

@@ -2,11 +2,10 @@
   <Name>AI - Improve Prompt</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Please analyze the following text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised text.&#xD;
+  <TextInstructions>Please analyze the following text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised text.&#xD;
 &#xD;
-Data for processing:&#xD;
-&#xD;
-[insert original prompt here]</Text>
+Data for processing:</TextInstructions>
+  <Text>[insert original prompt here]</Text>
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

@@ -2,7 +2,8 @@
   <Name>Utility - Language Learning</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Can you translate [insert text here] to [insert language here]?</Text>
+  <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>
+  <Text />
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

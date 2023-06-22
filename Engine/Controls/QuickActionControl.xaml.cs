@@ -52,7 +52,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var button = CreateButton(item);
 			MyToolBar.Items.Add(button);
-			Global.MainControl.InfoPanel.HelpProvider.Add(button, item.Name, item.Text);
+			Global.MainControl.InfoPanel.HelpProvider.Add(button, item.Name, item.TextInstructions);
 		}
 
 		private void RefreshToolbar()

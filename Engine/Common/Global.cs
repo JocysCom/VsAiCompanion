@@ -4,6 +4,8 @@ using JocysCom.ClassLibrary.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Security.Policy;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -94,6 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void SaveSettings()
 		{
+
 			OnSaveSettings?.Invoke(null, new EventArgs());
 			AppData.Save();
 			Templates.Save();
@@ -123,6 +126,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Tasks.Save();
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
+			// If old settings version then reset templates.
+			if (AppData.Version < 2) {
+				AppData.Version = 2;
+				ResetTemplates();
+			}
+		}
+
+		public static void ResetTemplates()
+		{
+			var items = Templates.Items.ToArray();
+			foreach (var item in items)
+				Templates.DeleteItem(item);
+			Templates.Load();
+			Templates.Save();
+		}
+
+		public static void ResetAppSettings()
+		{
+			var exclude = new string[] { nameof(AppSettings.OpenAiSettings) };
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(AppSettings, false, exclude);
+
 		}
 
 		private static bool DefaultTemplatesAdded = false;

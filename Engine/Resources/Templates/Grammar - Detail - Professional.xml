@@ -2,15 +2,14 @@
   <Name>Grammar - Detail - Professional</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Please proofread the following text, checking for spelling and grammar errors. Additionally, rewrite sentences where clarity could be improved, opting to use more common words when possible to enhance comprehension. Ensure that the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
+  <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. Additionally, rewrite sentences where clarity could be improved, opting to use more common words when possible to enhance comprehension. Ensure that the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
 &#xD;
 After corrections, provide both the fully corrected text and a detailed list of the errors found and the corresponding corrections made.&#xD;
 &#xD;
 Ensure that the language used is formal and professional, adhering to standard rules of grammar and etiquette.&#xD;
 &#xD;
-Text to process:&#xD;
-&#xD;
-</Text>
+Text to process:</TextInstructions>
+  <Text />
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

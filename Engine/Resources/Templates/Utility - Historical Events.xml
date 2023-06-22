@@ -2,7 +2,8 @@
   <Name>Utility - Historical Events</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Can you tell me about [insert historical event or figure]?</Text>
+  <TextInstructions>Can you tell me about?:</TextInstructions>
+  <Text>[insert historical event or figure]</Text>
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

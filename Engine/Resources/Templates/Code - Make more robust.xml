@@ -2,7 +2,8 @@
   <Name>Code - Make more robust</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Make this code more robust</Text>
+  <TextInstructions>Make this code more robust</TextInstructions>
+  <Text />
   <AttachContext>ActiveDocument</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

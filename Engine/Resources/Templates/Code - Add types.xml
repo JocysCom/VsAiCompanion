@@ -2,9 +2,8 @@
   <Name>Code - Add types</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Add types to this code. Code:&#xD;
-&#xD;
-</Text>
+  <TextInstructions>Add types to this code. Code:</TextInstructions>
+  <Text />
   <AttachContext>Selection</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

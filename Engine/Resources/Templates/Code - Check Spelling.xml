@@ -2,7 +2,8 @@
   <Name>Code - Check Spelling</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Please check the spelling and grammar of comments in the code. Reply with corrected data.</Text>
+  <TextInstructions>Please check the spelling and grammar of comments in the code. Reply with corrected data.</TextInstructions>
+  <Text />
   <AttachContext>Selection</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

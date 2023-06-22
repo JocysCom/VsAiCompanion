@@ -2,7 +2,8 @@
   <Name>Utility - Travel Advice</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>What are some must-visit places in [insert location here]?</Text>
+  <TextInstructions>What are some must-visit places in?:</TextInstructions>
+  <Text>[insert location here]</Text>
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

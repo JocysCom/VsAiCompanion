@@ -23,6 +23,9 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		public string User { get => _User; set => SetProperty(ref _User, value); }
 		string _User;
 
+		public string BodyInstructions { get => _BodyInstructions; set => SetProperty(ref _BodyInstructions, value); }
+		string _BodyInstructions;
+
 		public string Body { get => _Body; set => SetProperty(ref _Body, value); }
 		string _Body;
 
@@ -47,6 +50,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			var copy = new MessageItem();
 			copy.Id = Id;
 			copy.User = User;
+			copy.BodyInstructions = BodyInstructions;
 			copy.Body = Body;
 			copy.Date = Date;
 			copy.Type = Type;

@@ -60,7 +60,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			var m = new MessageItem()
 			{
-				Body = $"{ChatPanel.DataInstructionsTextBox.Text}\r\n{ChatPanel.DataTextBox.Text}",
+				BodyInstructions = ChatPanel.DataInstructionsTextBox.Text,
+				Body = ChatPanel.DataTextBox.Text,
 				User = "User",
 				Type = MessageType.Out,
 			};
@@ -77,6 +78,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 			}
 			var vsData = AppHelper.GetMacroValues();
+			m.BodyInstructions = AppHelper.ReplaceMacros(m.BodyInstructions, vsData);
 			m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
 			DocItem di = null;
 			List<DocItem> dis = null;
@@ -147,7 +149,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				};
 				m.Attachments.Add(a3);
 			}
-			var messageForAI = $"{m.Body}";
+			var messageForAI = $"{m.BodyInstructions}\r\n\r\n{m.Body}";
 			var maxTokens = Client.GetMaxTokens(_item.AiModel);
 			var usedTokens = Client.CountTokens(messageForAI);
 			// Split 50%/50% between request and response.
@@ -169,7 +171,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					Date = x.Date,
 					User = x.User,
-					Body = x.Body,
+					Body = $"{x.BodyInstructions}\r\n\r\n{x.Body}",
 					Type = x.Type.ToString(),
 				}).ToDictionary(x => x, x => 0);
 				var keys = messages.Keys.ToArray();
@@ -186,7 +188,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					Date = m.Date,
 					User = m.User,
-					Body = m.Body,
+					Body = $"{m.BodyInstructions}\r\n\r\n{m.Body}",
 					Type = m.Type.ToString(),
 				});
 				var json = JsonSerializer.Serialize(messagesToSend, options);

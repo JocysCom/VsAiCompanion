@@ -48,9 +48,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 			if (result != MessageBoxResult.Yes)
 				return;
-			var settings = Global.AppSettings;
-			var exclude = new string[] { nameof(AppData.OpenAiSettings) };
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(settings, false, exclude);
+			Global.ResetAppSettings();
 		}
 
 		private void ResetTemplatesButton_Click(object sender, RoutedEventArgs e)
@@ -60,10 +58,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 			if (result != MessageBoxResult.Yes)
 				return;
-			var items = Global.Templates.Items.ToArray();
-			foreach (var item in items)
-				Global.Templates.DeleteItem(item);
-			Global.Templates.Load();
+			Global.ResetTemplates();
 		}
 	}
 

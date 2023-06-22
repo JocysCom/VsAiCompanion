@@ -2,9 +2,8 @@
   <Name>Code - Handle errors</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>We have a piece of PowerShell code. The code does not currently handle any exceptions or errors. We want to improve this code to handle potential errors without using try-catch blocks if possible, and provide user-friendly error messages Reply with fully modified code.  Use instant return if possible. Here's the original code:&#xD;
-&#xD;
-```PowerShell&#xD;
+  <TextInstructions>We have a piece of PowerShell code. The code does not currently handle any exceptions or errors. We want to improve this code to handle potential errors without using try-catch blocks if possible, and provide user-friendly error messages Reply with fully modified code.  Use instant return if possible. Here's the original code:</TextInstructions>
+  <Text>```PowerShell&#xD;
 $file = 'C:\path\to\your\file.txt'&#xD;
 $content = Get-Content $file&#xD;
 $words = $content -split '\s+'&#xD;

@@ -2,7 +2,8 @@
   <Name>Utility - Writing Assistance</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Can you help me write an introduction for an essay about [insert topic here]?</Text>
+  <TextInstructions>Can you help me write an introduction for an essay about?:</TextInstructions>
+  <Text> [insert topic here]</Text>
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>

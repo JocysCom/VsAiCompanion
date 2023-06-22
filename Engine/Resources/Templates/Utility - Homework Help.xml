@@ -2,7 +2,8 @@
   <Name>Utility - Homework Help</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <Text>Can you help me solve this math problem: [insert math problem here]?</Text>
+  <TextInstructions>Can you help me solve this math problem:</TextInstructions>
+  <Text>[insert math problem here]</Text>
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
