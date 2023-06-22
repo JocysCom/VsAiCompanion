@@ -8,7 +8,7 @@
 		<UseWPF>true</UseWPF>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<Title>Jocys.com VS AI Companion</Title>
-		<Description>AI Companion that analyzes your project files and works alongside you or your team to streamline development and boost productivity.</Description>
+		<Description>AI Companion that analyzes your project files and works alongside you to streamline development and boost productivity.</Description>
 		<Copyright>Jocys.com</Copyright>
 		<Product>VS AI Companion</Product>
 		<Company>Jocys.com</Company>

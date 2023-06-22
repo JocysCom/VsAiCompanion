@@ -148,19 +148,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public TemplateItem Copy(bool newId)
 		{
 			var copy = new TemplateItem();
-			copy.Name = Name;
-			copy.TemplateName = Name; // Will be used tom find original template.
-			copy.TextInstructions = TextInstructions;
-			copy.Text = Text;
 			copy.AiModel = AiModel;
-			copy.IconData = IconData;
-			copy.IsChecked = IsChecked;
-			copy.IsEnabled = IsEnabled;
+			copy.AttachChatHistory = AttachChatHistory;
 			copy.AttachContext = AttachContext;
-			copy.AutoSend = AutoSend;
-			copy.MessageBoxOperation = MessageBoxOperation;
+			copy.AttachError = AttachError;
+			copy.AutoFormatCode = AutoFormatCode;
 			copy.AutoOperation = AutoOperation;
 			copy.AutoRemove = AutoRemove;
+			copy.AutoSend = AutoSend;
+			copy.Creativity = Creativity;
+			copy.IconData = IconData;
+			copy.IconType = IconType;
+			copy.IsChecked = IsChecked;
+			copy.IsEnabled = IsEnabled;
+			copy.IsFavorite = IsFavorite;
+			copy.IsPreview = IsPreview;
+			copy.MessageBoxOperation = MessageBoxOperation;
+			copy.Name = Name;
+			copy.ShowInstructions = ShowInstructions;
+			copy.TemplateName = Name; // Will be used tom find original template.
+			copy.Text = Text;
+			copy.TextInstructions = TextInstructions;
 			copy.Messages = new BindingList<MessageItem>();
 			var messages = Messages.Select(x => x.Copy(newId)).ToList();
 			foreach (var message in messages)
