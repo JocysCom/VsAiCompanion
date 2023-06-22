@@ -35,6 +35,10 @@ OpenAI will not use the data submitted by customers via the OpenAI API to train 
 
 https://platform.openai.com/account/org-settings
 
+## How-To Examples
+
+How-To examples can be found here: [HOWTO.md](HOWTO.md)
+
 ## Screenshots
 
 <img alt="Extension Menu" src="Documents/Images/JocysComVsAiCompanion_ExtensionMenu.png" width="414" height="118">
