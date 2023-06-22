@@ -1,5 +1,6 @@
-2023-06-22 v1.0.24
+2023-06-22 v1.0.25
 
+- Fix: Some Template properties not copying to the Task.
 - New: Separate the AI instructions from the main message.
 - Update: Updated all templates.
 
