@@ -5,6 +5,7 @@
   <TextInstructions>How to fix this error reported by Visual Studio?</TextInstructions>
   <AttachContext>None</AttachContext>
   <AttachError>true</AttachError>
+  <AttachChatHistory>false</AttachChatHistory>
   <Settings>
     <ScrollPosition>0</ScrollPosition>
   </Settings>
