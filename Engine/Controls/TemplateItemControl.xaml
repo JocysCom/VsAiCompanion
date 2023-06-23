@@ -183,6 +183,7 @@
 				<ComboBox Name="FileComboBox" Style="{StaticResource ComboBoxGrid}" />
 				<ComboBox Name="SelectionComboBox" Style="{StaticResource ComboBoxGrid}" />
 				<ComboBox Name="DateComboBox" Style="{StaticResource ComboBoxGrid}" />
+				<ComboBox Name="VsMacrosComboBox" Style="{StaticResource ComboBoxGrid}" />
 			</StackPanel>
 			<StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
 				<Label

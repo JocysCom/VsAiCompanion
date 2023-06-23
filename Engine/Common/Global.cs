@@ -33,6 +33,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		// Format code.
 		public static Action EditFormatDocument = () => { };
 		public static Action EditFormatSelection = () => { };
+		// Get macros
+		public static Func<Dictionary<string, string>> GetMacrosOfStartupProject = () => new Dictionary<string, string>();
 
 		public static AssemblyInfo Info { get; } = new AssemblyInfo(typeof(Global).Assembly);
 

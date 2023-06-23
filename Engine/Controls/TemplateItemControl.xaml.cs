@@ -472,6 +472,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AddKeys(SelectionComboBox, nameof(MacroValues.Selection), AppHelper.GetReplaceMacrosSelection());
 			AddKeys(FileComboBox, nameof(MacroValues.Document), AppHelper.GetReplaceMacrosDocument());
 			AddKeys(DateComboBox, nameof(MacroValues.Date), AppHelper.GetReplaceMacrosDate());
+			AddKeys(VsMacrosComboBox, null, AppHelper.GetMacrosOfStartupProject());
 		}
 
 		void AddKeys(ComboBox cb, string name, IEnumerable<string> list)

@@ -36,7 +36,11 @@ namespace JocysCom.VS.AiCompanion.Extension
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var projectName = (string)solution.Properties.Item("StartupProject").Value;
-			var project = solution.Projects.Cast<Project>().FirstOrDefault(p => p.Name == projectName);
+			var project = solution.Projects.Cast<Project>().FirstOrDefault(p =>
+			{
+				ThreadHelper.ThrowIfNotOnUIThread();
+				return p.Name == projectName;
+			});
 			return project;
 		}
 
@@ -61,6 +65,20 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return dte?.ActiveDocument?.ProjectItem?.ContainingProject;
 		}
 
+		public static Project GetStartupProject()
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var solution = GetCurrentSolution();
+			var solutionBuild = solution?.SolutionBuild;
+			var startupProjects = (object[])solutionBuild?.StartupProjects;
+			if (startupProjects == null || startupProjects.Length == 0)
+				return null;
+			return solution?.Projects?.OfType<Project>().FirstOrDefault(p =>
+			{
+				ThreadHelper.ThrowIfNotOnUIThread();
+				return p.UniqueName == (string)startupProjects[0];
+			});
+		}
 
 		public static string References = "References";
 
@@ -89,8 +107,31 @@ namespace JocysCom.VS.AiCompanion.Extension
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var projects = GetAllProjects();
-			var project = projects.FirstOrDefault(x => x.Name == name);
+			var project = projects.FirstOrDefault(x =>
+			{
+				ThreadHelper.ThrowIfNotOnUIThread();
+				return x.Name == name;
+			});
 			return project;
+		}
+
+		public static Dictionary<string, string> GetMacrosOfStartupProject()
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var dic = new Dictionary<string, string>();
+			var project = GetStartupProject();
+			if (project is null)
+				return dic;
+			var projectPath = project.FullName;
+			var pc = new Microsoft.Build.Evaluation.ProjectCollection();
+			var msbuildProject = pc.LoadProject(projectPath);
+			var allProperties = msbuildProject.AllEvaluatedProperties;
+			foreach (var property in allProperties)
+			{
+				if (!dic.ContainsKey(property.Name))
+					dic.Add(property.Name, property.EvaluatedValue);
+			}
+			return dic;
 		}
 
 		public static List<Project> GetAllProjects()
@@ -142,11 +183,13 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		public static List<DocItem> GetDocumentsOfProjectOfActiveDocument()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			return GetDocumentsByProject(GetProjectOfActiveDocument());
 		}
 
 		public static List<DocItem> GetDocumentsOfProjectOfSelectedDocument()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			return GetDocumentsByProject(GetProjectOfSelectedDocument());
 		}
 
@@ -323,10 +366,14 @@ namespace JocysCom.VS.AiCompanion.Extension
 		/// Get Language of selected document
 		/// </summary>
 		public static string GetLanguage()
-			=> GetTextDocument()?.Language;
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			return GetTextDocument()?.Language;
+		}
 
 		public static DocItem GetActiveDocument()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var mi = new DocItem("");
 			var td = GetTextDocument();
 			if (td == null)
@@ -342,6 +389,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		public static void SetActiveDocument(string data)
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var td = GetTextDocument();
 			if (td == null)
 				return;
@@ -355,6 +403,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		/// <returns>Selection contents.</returns>
 		public static DocItem GetSelection()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var mi = new DocItem("");
 			var doc = GetTextDocument();
 			if (doc == null)
@@ -372,6 +421,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		/// <returns>Selection contents.</returns>
 		public static void SetSelection(string contents)
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var document = GetTextDocument();
 			var selection = document.Selection;
 			selection.Delete();
@@ -427,14 +477,14 @@ namespace JocysCom.VS.AiCompanion.Extension
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
-			dte.ExecuteCommand("Edit.FormatDocument");
+			dte?.ExecuteCommand("Edit.FormatDocument");
 		}
 
 		public static void EditFormatSelection()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
-			dte.ExecuteCommand("Edit.FormatSelection");
+			dte?.ExecuteCommand("Edit.FormatSelection");
 		}
 
 		public static void EditSelect(

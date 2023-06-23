@@ -33,6 +33,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static List<string> GetReplaceMacrosSelection()
 			=> JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DocItem>(true, nameof(MacroValues.Selection));
 
+		public static List<string> GetMacrosOfStartupProject()
+			=> Global.GetMacrosOfStartupProject().Keys.ToList();
+
 		public static List<string> GetReplaceMacrosDocument()
 			=> JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DocItem>(true, nameof(MacroValues.Document));
 		public static List<string> GetReplaceMacrosDate()

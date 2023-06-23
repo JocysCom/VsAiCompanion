@@ -57,6 +57,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.SetSelection = SolutionHelper.SetSelection;
 			Global.GetClipboard = AppHelper.GetClipboard;
 			Global.SetClipboard = AppHelper.SetClipboard;
+			Global.GetMacrosOfStartupProject = SolutionHelper.GetMacrosOfStartupProject;
 			// Get Errors
 			Global.GetSelectedError = SolutionHelper.GetSelectedError;
 			// Format code
