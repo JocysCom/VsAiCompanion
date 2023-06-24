@@ -129,7 +129,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
 			// If old settings version then reset templates.
-			if (AppData.Version < 2) {
+			if (AppData.Version < 2)
+			{
 				AppData.Version = 2;
 				ResetTemplates();
 			}
@@ -180,15 +181,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var asm = typeof(Global).Assembly;
 			var keys = asm.GetManifestResourceNames()
 				.Where(x => x.Contains("Resources.Templates"))
+				.OrderBy(x => x)
 				.ToList();
 			foreach (var key in keys)
 			{
-				// Add only templates which mention chat.
-				if (key.IndexOf("Chat", StringComparison.OrdinalIgnoreCase) == -1)
-					continue;
-				var bytes = Helper.GetResource<byte[]>(key, asm);
-				var item = sd.DeserializeItem(bytes, false);
-				e.Items.Add(item.Copy(true));
+				// Add chat and grammar templates.
+				if (key.IndexOf("Chat", StringComparison.OrdinalIgnoreCase) > -1 ||
+					key.IndexOf("Grammar", StringComparison.OrdinalIgnoreCase) > -1)
+				{
+					var bytes = Helper.GetResource<byte[]>(key, asm);
+					var item = sd.DeserializeItem(bytes, false);
+					e.Items.Add(item.Copy(true));
+				}
 			}
 			DefaultTemplatesAdded = true;
 			DefaultTasksAdded = true;

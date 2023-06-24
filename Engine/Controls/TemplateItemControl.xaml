@@ -241,7 +241,8 @@
 				Grid.ColumnSpan="4"
 				BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
 				BorderThickness="0,1,0,0">
-				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" />
+				<!--  Hide in order to preved UI freeze whe WebBrowser is loading. It will be made visible in MainContro.xaml.cs.  -->
+				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" Visibility="Collapsed" />
 			</Border>
 		</Grid>
 		<Button

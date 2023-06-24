@@ -38,6 +38,7 @@
 			x:Name="MainTabControl"
 			Grid.Row="2"
 			Margin="4"
+			SelectionChanged="MainTabControl_SelectionChanged"
 			x:FieldModifier="public">
 			<TabItem x:Name="TasksTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -53,7 +54,7 @@
 				<controls:TemplateControl x:Name="TasksPanel" x:FieldModifier="public" ItemControlType="Task" />
 			</TabItem>
 
-			<TabItem>
+			<TabItem x:Name="TemplatesTabItem">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl

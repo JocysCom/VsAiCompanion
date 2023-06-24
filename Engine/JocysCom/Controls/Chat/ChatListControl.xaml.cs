@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -110,9 +111,13 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			{
 				WebBrowser.Navigating += WebBrowser_Navigating;
 				WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
-				WebBrowser.Navigate("http://localhost/ChatListControl.html");
+				WebBrowser.Navigate($"http://localhost/{contentsFile}");
 			}
 		}
+
+		public static string contentsFile = "ChatListControl.html";
+		public static object contentsLock = new object();
+		public static string contents;
 
 		private void WebBrowser_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
 		{
@@ -120,19 +125,26 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 				return;
 			var fileName = e.Uri.AbsolutePath;
 			// Check if it's trying to navigate to one of our files.
-			if (fileName.EndsWith("ChatListControl.html"))
+			if (fileName.EndsWith(contentsFile))
 			{
-				var contents = GetResource("ChatListControl.html");
-				LoadResource(ref contents, "IconInformation.svg");
-				LoadResource(ref contents, "IconQuestion.svg");
-				LoadResource(ref contents, "IconWarning.svg");
-				LoadResource(ref contents, "IconError.svg");
-				LoadResource(ref contents, "IconIn.svg");
-				LoadResource(ref contents, "IconOut.svg");
-				LoadResource(ref contents, "core.min.js");
-				LoadResource(ref contents, "marked.min.js");
-				LoadResource(ref contents, "prism.css");
-				LoadResource(ref contents, "prism.js");
+				// process contents only once.
+				lock (contentsLock)
+				{
+					if (contents is null)
+					{
+						contents = GetResource(contentsFile);
+						LoadResource(ref contents, "IconInformation.svg");
+						LoadResource(ref contents, "IconQuestion.svg");
+						LoadResource(ref contents, "IconWarning.svg");
+						LoadResource(ref contents, "IconError.svg");
+						LoadResource(ref contents, "IconIn.svg");
+						LoadResource(ref contents, "IconOut.svg");
+						LoadResource(ref contents, "core.min.js");
+						LoadResource(ref contents, "marked.min.js");
+						LoadResource(ref contents, "prism.css");
+						LoadResource(ref contents, "prism.js");
+					}
+				}
 				WebBrowser.NavigateToString(contents);
 				return;
 			}

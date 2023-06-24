@@ -73,7 +73,8 @@ namespace JocysCom.VS.AiCompanion
 					separator.Name = "TasksSeparator";
 					items.Insert(0, separator);
 				}
-				foreach (var task in Global.Tasks.Items)
+				// Reverse order to make sure that insert is done in alphabetically.
+				foreach (var task in Global.Tasks.Items.Reverse())
 				{
 					var menuItem = new System.Windows.Forms.ToolStripMenuItem();
 					menuItem.Text = task.Name;
