@@ -191,7 +191,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					var bytes = Helper.GetResource<byte[]>(key, asm);
 					var item = sd.DeserializeItem(bytes, false);
-					e.Items.Add(item.Copy(true));
+					var task = item.Copy(true);
+					task.ShowInstructions = false;
+					e.Items.Add(task);
 				}
 			}
 			DefaultTemplatesAdded = true;
