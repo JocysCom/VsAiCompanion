@@ -1,3 +1,7 @@
+2023-06-23 v1.0.27
+
+- New: Add Environment macros.
+
 2023-06-22 v1.0.26
 
 - Fix: Send button opacity when a message is changed.

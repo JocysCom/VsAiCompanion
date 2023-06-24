@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Chat;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -30,22 +31,36 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return mv;
 		}
 
-		public static List<string> GetReplaceMacrosSelection()
-			=> JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DocItem>(true, nameof(MacroValues.Selection));
+		public static List<PropertyItem> GetReplaceMacrosSelection()
+		{
+			var keys = JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DocItem>(true, nameof(MacroValues.Selection));
+			return keys.Select(x => new PropertyItem(x)).ToList();
+		}
 
-		public static List<string> GetMacrosOfStartupProject()
-			=> Global.GetMacrosOfStartupProject().Keys.ToList();
+		//public static List<string> GetMacrosOfStartupProject()
+		//	=> Global.GetMacrosOfStartupProject().Keys.ToList();
 
-		public static List<string> GetReplaceMacrosDocument()
-			=> JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DocItem>(true, nameof(MacroValues.Document));
-		public static List<string> GetReplaceMacrosDate()
-			=> JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DateTime>(true, nameof(MacroValues.Date));
+		public static List<PropertyItem> GetReplaceMacrosDocument()
+		{
+			var keys = JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DocItem>(true, nameof(MacroValues.Document));
+			return keys.Select(x => new PropertyItem(x)).ToList();
+		}
+
+		public static List<PropertyItem> GetReplaceMacrosDate()
+		{
+			var keys = JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DateTime>(true, nameof(MacroValues.Date));
+			return keys.Select(x => new PropertyItem(x)).ToList();
+		}
+
+		private const string EnvironmentPrefix = "Env";
 
 		public static string ReplaceMacros(string s, MacroValues o)
 		{
 			s = JocysCom.ClassLibrary.Text.Helper.Replace(s, o.Date, true, nameof(MacroValues.Date));
 			s = JocysCom.ClassLibrary.Text.Helper.Replace(s, o.Selection, true, nameof(MacroValues.Selection));
 			s = JocysCom.ClassLibrary.Text.Helper.Replace(s, o.Document, true, nameof(MacroValues.Document));
+			var envDic = GetEnvironmentProperties().ToDictionary(x => x.Key.Substring(EnvironmentPrefix.Length + 1), x => (object)x.Value);
+			s = JocysCom.ClassLibrary.Text.Helper.ReplaceDictionary(s, envDic, true, EnvironmentPrefix);
 			return s;
 		}
 
@@ -65,6 +80,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return inlineCodeMatch.Groups["code"].Value;
 			// If no code block or inline code found, return the original reply text
 			return replyText;
+		}
+
+		public static List<PropertyItem> GetEnvironmentProperties()
+		{
+			var envVars = Environment.GetEnvironmentVariables();
+			var solutionProperties = new List<PropertyItem>();
+
+			foreach (DictionaryEntry envVar in envVars)
+			{
+				var solutionProperty = new PropertyItem
+				{
+					Key = $"{EnvironmentPrefix}.{envVar.Key}",
+					Value = $"{envVar.Value}",
+					Display = $"{envVar.Value}",
+					//Display = $"{envVar.Key} = {envVar.Value}"
+				};
+				solutionProperties.Add(solutionProperty);
+			}
+			return solutionProperties.OrderBy(x => x.Key).ToList();
 		}
 
 		public static DocItem GetClipboard()

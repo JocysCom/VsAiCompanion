@@ -115,23 +115,80 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return project;
 		}
 
-		public static Dictionary<string, string> GetMacrosOfStartupProject()
+		public static List<Microsoft.Build.Evaluation.ProjectProperty> GetAllProperties()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			var dic = new Dictionary<string, string>();
+			var list = new List<Microsoft.Build.Evaluation.ProjectProperty>();
 			var project = GetStartupProject();
 			if (project is null)
-				return dic;
+				return list;
 			var projectPath = project.FullName;
 			var pc = new Microsoft.Build.Evaluation.ProjectCollection();
 			var msbuildProject = pc.LoadProject(projectPath);
-			var allProperties = msbuildProject.AllEvaluatedProperties;
-			foreach (var property in allProperties)
-			{
-				if (!dic.ContainsKey(property.Name))
-					dic.Add(property.Name, property.EvaluatedValue);
-			}
-			return dic;
+			list = msbuildProject.AllEvaluatedProperties
+				.Where(x => !string.IsNullOrWhiteSpace(x.EvaluatedValue))
+				// Include only original properties
+				.Where(x => x.EvaluatedValue == x.UnevaluatedValue)
+				// Only if don't start with "_"
+				.Where(x => !x.Name.StartsWith("_"))
+				// Not Undefined.
+				.Where(x => x.EvaluatedValue != "*Undefined*")
+				// Exclude multiline
+				.Where(x => !x.EvaluatedValue.Contains("\r") && !x.EvaluatedValue.Contains("\n"))
+				// Exclude booleans.
+				.Where(x => !bool.TryParse(x.EvaluatedValue, out var value))
+				// Exclude numbers.
+				.Where(x => !double.TryParse(x.EvaluatedValue, out var value))
+				// Exclude guids.
+				.Where(x => !Guid.TryParse(x.EvaluatedValue, out var value))
+				.OrderBy(x => x.Name)
+				.ToList();
+			return list;
+		}
+
+		public static List<PropertyItem> GetEnvironmentProperties()
+		{
+			return GetAllProperties()
+				.Where(x => x.IsEnvironmentProperty)
+				.Where(x => !x.IsReservedProperty)
+				.Select(
+				x => new PropertyItem()
+				{
+					Key = x.Name,
+					Value = x.EvaluatedValue,
+					Display = x.EvaluatedValue,
+				})
+				.ToList();
+		}
+
+		public static List<PropertyItem> GetReservedProperties()
+		{
+			return GetAllProperties()
+				.Where(x => !x.IsEnvironmentProperty)
+				.Where(x => x.IsReservedProperty)
+				.Select(
+				x => new PropertyItem()
+				{
+					Key = x.Name,
+					Value = x.EvaluatedValue,
+					Display = x.EvaluatedValue,
+				})
+				.ToList();
+		}
+
+		public static List<PropertyItem> GetOtherProperties()
+		{
+			return GetAllProperties()
+				.Where(x => !x.IsEnvironmentProperty)
+				.Where(x => !x.IsReservedProperty)
+				.Select(
+				x => new PropertyItem()
+				{
+					Key = x.Name,
+					Value = x.EvaluatedValue,
+					Display = x.EvaluatedValue,
+				})
+				.ToList();
 		}
 
 		public static List<Project> GetAllProjects()

@@ -57,7 +57,10 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.SetSelection = SolutionHelper.SetSelection;
 			Global.GetClipboard = AppHelper.GetClipboard;
 			Global.SetClipboard = AppHelper.SetClipboard;
-			Global.GetMacrosOfStartupProject = SolutionHelper.GetMacrosOfStartupProject;
+			Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;
+			//Global.GetEnvironmentProperties = SolutionHelper.GetEnvironmentProperties;
+			//Global.GetReservedProperties = SolutionHelper.GetReservedProperties;
+			//Global.GetOtherProperties = SolutionHelper.GetOtherProperties;
 			// Get Errors
 			Global.GetSelectedError = SolutionHelper.GetSelectedError;
 			// Format code

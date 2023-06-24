@@ -4,8 +4,6 @@ using JocysCom.ClassLibrary.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Security.Policy;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -33,8 +31,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		// Format code.
 		public static Action EditFormatDocument = () => { };
 		public static Action EditFormatSelection = () => { };
-		// Get macros
-		public static Func<Dictionary<string, string>> GetMacrosOfStartupProject = () => new Dictionary<string, string>();
+		// Get solution properties (macros).
+		public static Func<List<PropertyItem>> GetEnvironmentProperties = () => new List<PropertyItem>();
+		public static Func<List<PropertyItem>> GetReservedProperties = () => new List<PropertyItem>();
+		public static Func<List<PropertyItem>> GetOtherProperties = () => new List<PropertyItem>();
 
 		public static AssemblyInfo Info { get; } = new AssemblyInfo(typeof(Global).Assembly);
 

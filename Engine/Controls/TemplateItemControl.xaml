@@ -169,21 +169,41 @@
 					IsChecked="{Binding AutoFormatCode}"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 			</StackPanel>
-			<Label
-				x:Name="InsertMacroLabel"
+			<CheckBox
+				Name="UseMacrosCheckBox"
 				Grid.Row="4"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="Insert Macro (VS)" />
+				Content="Use Macros"
+				IsChecked="{Binding UseMacros}" />
 			<StackPanel
 				Grid.Row="4"
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
-				<ComboBox Name="FileComboBox" Style="{StaticResource ComboBoxGrid}" />
-				<ComboBox Name="SelectionComboBox" Style="{StaticResource ComboBoxGrid}" />
-				<ComboBox Name="DateComboBox" Style="{StaticResource ComboBoxGrid}" />
-				<ComboBox Name="VsMacrosComboBox" Style="{StaticResource ComboBoxGrid}" />
+				<Label VerticalAlignment="Center" Content="Document" />
+				<ComboBox Name="FileComboBox" DisplayMemberPath="Key" Style="{StaticResource ComboBoxGrid}" />
+				<Label VerticalAlignment="Center" Content="Selection" />
+				<ComboBox Name="SelectionComboBox" DisplayMemberPath="Key" Style="{StaticResource ComboBoxGrid}" />
+				<Label VerticalAlignment="Center" Content="Date" />
+				<ComboBox Name="DateComboBox" DisplayMemberPath="Key" Style="{StaticResource ComboBoxGrid}" />
+				<Label VerticalAlignment="Center" Content="Environment" />
+				<local:PropertyComboBox x:Name="VsMacrosComboBox" Style="{StaticResource ComboBoxGrid}" />
+				<Button
+					Name="PropertiesRefreshButton"
+					Grid.Row="1"
+					Grid.Column="3"
+					Margin="0,0,3,0"
+					VerticalAlignment="Center"
+					Click="PropertiesRefreshButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					Visibility="Collapsed">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+						<Label VerticalAlignment="Center" Content="Refresh" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+
 			</StackPanel>
 			<StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
 				<Label

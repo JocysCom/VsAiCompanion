@@ -127,6 +127,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsFavorite { get => _IsFavorite; set => SetProperty(ref _IsFavorite, value); }
 		bool _IsFavorite;
 
+		[DefaultValue(false)]
+		public bool UseMacros { get => _UseMacros; set => SetProperty(ref _UseMacros, value); }
+		bool _UseMacros;
+
 		public bool IsChecked
 		{
 			get => _IsChecked;

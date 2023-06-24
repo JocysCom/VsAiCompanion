@@ -13,6 +13,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 	{
 		public MainWindow()
 		{
+			Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;
 			ControlsHelper.InitInvokeContext();
 			Topmost = Global.AppSettings.AppAlwaysOnTop;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;

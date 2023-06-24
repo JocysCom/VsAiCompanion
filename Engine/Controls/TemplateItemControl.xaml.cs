@@ -78,8 +78,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 			}
 			var vsData = AppHelper.GetMacroValues();
-			m.BodyInstructions = AppHelper.ReplaceMacros(m.BodyInstructions, vsData);
-			m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
+			if (_item.UseMacros)
+			{
+				m.BodyInstructions = AppHelper.ReplaceMacros(m.BodyInstructions, vsData);
+				m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
+			}
 			DocItem di = null;
 			List<DocItem> dis = null;
 			ErrorItem err = null;
@@ -467,18 +470,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Macros
 
-		void InitMacros()
+		private void PropertiesRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			AddKeys(SelectionComboBox, nameof(MacroValues.Selection), AppHelper.GetReplaceMacrosSelection());
-			AddKeys(FileComboBox, nameof(MacroValues.Document), AppHelper.GetReplaceMacrosDocument());
-			AddKeys(DateComboBox, nameof(MacroValues.Date), AppHelper.GetReplaceMacrosDate());
-			AddKeys(VsMacrosComboBox, null, AppHelper.GetMacrosOfStartupProject());
+			InitMacros();
 		}
 
-		void AddKeys(ComboBox cb, string name, IEnumerable<string> list)
+
+		void InitMacros()
 		{
-			var options = new List<string>();
-			options.Insert(0, name);
+			AddKeys(SelectionComboBox, null, AppHelper.GetReplaceMacrosSelection());
+			AddKeys(FileComboBox, null, AppHelper.GetReplaceMacrosDocument());
+			AddKeys(DateComboBox, null, AppHelper.GetReplaceMacrosDate());
+			AddKeys(VsMacrosComboBox, null, Global.GetEnvironmentProperties());
+		}
+
+		int alwaysSelectedIndex = -1;
+
+		void AddKeys(ComboBox cb, string name, IEnumerable<PropertyItem> list)
+		{
+			var options = new List<PropertyItem>();
+			//options.Insert(0, new PropertyItem() { Display = name });
 			options.AddRange(list);
 			cb.ItemsSource = options;
 			cb.SelectedIndex = alwaysSelectedIndex;
@@ -489,9 +500,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var cb = (ComboBox)sender;
 			if (cb.SelectedIndex <= alwaysSelectedIndex)
 				return;
-			var value = (string)cb.SelectedItem;
+			var item = (PropertyItem)cb.SelectedItem;
 			cb.SelectedIndex = alwaysSelectedIndex;
-			InsertText(ChatPanel.DataTextBox, "{" + value + "}");
+			InsertText(ChatPanel.DataTextBox, "{" + item.Key + "}");
 		}
 
 		public static void InsertText(TextBox box, string s, bool activate = false)
@@ -515,8 +526,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				box.CaretIndex = cursorPosition + s.Length;
 			}
 		}
-
-		int alwaysSelectedIndex = 0;
 
 		#endregion
 
@@ -545,8 +554,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!Global.IsVsExtesion)
 			{
 				Global.MainControl.InfoPanel.HelpProvider.Add(ErrorCheckBox, ErrorCheckBox.Content as string, Global.VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, InsertMacroLabel.Content as string, Global.VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(SelectionComboBox, InsertMacroLabel.Content as string, Global.VsExtensionFeatureMessage);
+				Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Global.VsExtensionFeatureMessage);
+				Global.MainControl.InfoPanel.HelpProvider.Add(SelectionComboBox, UseMacrosCheckBox.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutomationVsLabel, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);

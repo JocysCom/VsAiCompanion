@@ -1,0 +1,22 @@
+﻿<ComboBox
+	x:Class="JocysCom.VS.AiCompanion.Engine.PropertyComboBox"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	SelectedValuePath="Value"
+	mc:Ignorable="d">
+	<ComboBox.ItemTemplate>
+		<DataTemplate>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" MinWidth="200" />
+					<ColumnDefinition Width="*" MinWidth="200" MaxWidth="500" />
+				</Grid.ColumnDefinitions>
+				<TextBlock Grid.Column="0" Text="{Binding Key}" />
+				<TextBlock Grid.Column="1" Text="{Binding Display}" />
+			</Grid>
+		</DataTemplate>
+	</ComboBox.ItemTemplate>
+</ComboBox>
+
