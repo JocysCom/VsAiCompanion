@@ -3,10 +3,13 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -148,6 +151,36 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return result;
 		}
 
+
+public static System.Drawing.Image ConvertDrawingImageToDrawingBitmap(DrawingImage drawingImage, int targetWidth, int targetHeight)
+	{
+		// Create a BitmapSource from the DrawingImage
+		double dpi = 96;
+		RenderTargetBitmap renderTarget = new RenderTargetBitmap(targetWidth, targetHeight, dpi, dpi, PixelFormats.Pbgra32);
+		DrawingVisual drawingVisual = new DrawingVisual();
+
+		using (DrawingContext context = drawingVisual.RenderOpen())
+		{
+			context.DrawImage(drawingImage, new Rect(new System.Windows.Point(), new System.Windows.Size(targetWidth, targetHeight)));
+		}
+
+		renderTarget.Render(drawingVisual);
+		BitmapSource bitmapSource = BitmapFrame.Create(renderTarget);
+
+		// Convert the BitmapSource to a Bitmap
+		System.Drawing.Bitmap bitmap;
+		using (MemoryStream outStream = new MemoryStream())
+		{
+			BitmapEncoder encoder = new PngBitmapEncoder();
+			encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+			encoder.Save(outStream);
+			bitmap = new System.Drawing.Bitmap(outStream);
+		}
+
+		return bitmap;
 	}
+
+
+}
 
 }

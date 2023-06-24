@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -140,6 +141,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var list = PanelSettings.ListSelection;
 				ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, true);
 			}));
+		}
+
+		public void SelectByName(string name)
+		{
+			var list = new List<string>() { name };
+			ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, true);
 		}
 
 		private ItemType _ItemControlType;

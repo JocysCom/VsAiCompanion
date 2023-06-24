@@ -1,6 +1,7 @@
-2023-06-23 v1.0.27
+2023-06-23 v1.0.28
 
 - New: Add Environment macros.
+- New: Quick access to tasks from Tray Notification icon.
 
 2023-06-22 v1.0.26
 

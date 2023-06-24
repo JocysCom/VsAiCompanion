@@ -148,6 +148,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		public static List<PropertyItem> GetEnvironmentProperties()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			return GetAllProperties()
 				.Where(x => x.IsEnvironmentProperty)
 				.Where(x => !x.IsReservedProperty)
@@ -163,6 +164,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		public static List<PropertyItem> GetReservedProperties()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			return GetAllProperties()
 				.Where(x => !x.IsEnvironmentProperty)
 				.Where(x => x.IsReservedProperty)
@@ -178,6 +180,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		public static List<PropertyItem> GetOtherProperties()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			return GetAllProperties()
 				.Where(x => !x.IsEnvironmentProperty)
 				.Where(x => !x.IsReservedProperty)

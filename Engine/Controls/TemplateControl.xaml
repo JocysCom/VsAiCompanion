@@ -29,13 +29,17 @@
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="60*" />
 		</Grid.ColumnDefinitions>
-		<local:TemplateListControl x:Name="ListPanel" Grid.Column="0" Visibility="{Binding ListPanelVisibility, ElementName=This}" />
+		<local:TemplateListControl
+			x:Name="ListPanel"
+			Grid.Column="0"
+			x:FieldModifier="public"
+			Visibility="{Binding ListPanelVisibility, ElementName=This}" />
 		<GridSplitter
 			Grid.Column="1"
 			DragCompleted="GridSplitter_DragCompleted"
 			ResizeDirection="Columns"
 			Style="{StaticResource GridSplitterVertical}"
 			Visibility="{Binding ListPanelVisibility, ElementName=This}" />
-		<local:TemplateItemControl x:Name="ItemPanel" Grid.Column="2" />
+		<local:TemplateItemControl x:Name="ItemPanel" Grid.Column="2" x:FieldModifier="public" />
 	</Grid>
 </UserControl>

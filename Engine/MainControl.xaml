@@ -34,8 +34,12 @@
 		</Grid.RowDefinitions>
 		<JcControls:InfoControl x:Name="InfoPanel" Grid.Row="0" RightIconContent="{StaticResource Icon_AiCompanion}" />
 		<Controls:QuickActionControl x:Name="QuickActionPanel" Grid.Row="1" />
-		<TabControl x:Name="MainTabControl" Grid.Row="2" Margin="4">
-			<TabItem x:Name="TasksTabItem">
+		<TabControl
+			x:Name="MainTabControl"
+			Grid.Row="2"
+			Margin="4"
+			x:FieldModifier="public">
+			<TabItem x:Name="TasksTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl
@@ -46,7 +50,7 @@
 						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="Tasks" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:TemplateControl x:Name="TasksPanel" ItemControlType="Task" />
+				<controls:TemplateControl x:Name="TasksPanel" x:FieldModifier="public" ItemControlType="Task" />
 			</TabItem>
 
 			<TabItem>

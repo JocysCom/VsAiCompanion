@@ -241,7 +241,7 @@
 				Grid.ColumnSpan="4"
 				BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
 				BorderThickness="0,1,0,0">
-				<Chat:ChatControl x:Name="ChatPanel" />
+				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" />
 			</Border>
 		</Grid>
 		<Button

@@ -6,10 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 
@@ -113,7 +111,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public Window ApplicationCurrentMainWindow;
 
 		private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
-		private System.Windows.Forms.ContextMenuStrip TrayMenuStrip;
+		public System.Windows.Forms.ContextMenuStrip TrayMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem OpenApplicationMenu;
 		private System.Windows.Forms.ToolStripMenuItem ExitMenu;
 

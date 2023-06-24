@@ -190,6 +190,7 @@
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
 						VerticalContentAlignment="Top"
+						x:FieldModifier="public"
 						AcceptsReturn="True"
 						Background="#fdfdfd"
 						BorderThickness="0"

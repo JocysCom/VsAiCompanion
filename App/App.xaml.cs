@@ -2,7 +2,10 @@
 using JocysCom.VS.AiCompanion.Engine;
 using System;
 using System.Configuration;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion
@@ -28,6 +31,73 @@ namespace JocysCom.VS.AiCompanion
 			System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 			TrayManager = new TrayManager();
 			TrayManager.OnExitClick += TrayManager_OnExitClick;
+		}
+
+		private async void Items_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
+		{
+			var updateTrayMenu =
+				e.ListChangedType == System.ComponentModel.ListChangedType.ItemAdded ||
+				e.ListChangedType == System.ComponentModel.ListChangedType.ItemDeleted ||
+				(e.ListChangedType == System.ComponentModel.ListChangedType.ItemChanged &&
+				e.PropertyDescriptor?.Name == nameof(TemplateItem.Icon));
+			if (updateTrayMenu)
+				await UpdateTrayMenu();
+		}
+		private CancellationTokenSource cts = new CancellationTokenSource();
+
+		public async Task UpdateTrayMenu()
+		{
+			// Cancel any previous filter operation.
+			cts.Cancel();
+			cts = new CancellationTokenSource();
+			await Task.Delay(500);
+			// If new filter operation was started then return.
+			if (cts.Token.IsCancellationRequested)
+				return;
+			lock (TrayManager)
+			{
+
+				// Cleanup first.
+				var items = TrayManager.TrayMenuStrip.Items;
+				foreach (System.Windows.Forms.ToolStripItem item in items.Cast<System.Windows.Forms.ToolStripItem>().ToArray())
+				{
+					if (item.Tag is TemplateItem)
+					{
+						item.Click -= MenuItem_Click;
+						items.Remove(item);
+					}
+				}
+				if (items[0].Name != "TasksSeparator")
+				{
+					var separator = new System.Windows.Forms.ToolStripSeparator();
+					separator.Name = "TasksSeparator";
+					items.Insert(0, separator);
+				}
+				foreach (var task in Global.Tasks.Items)
+				{
+					var menuItem = new System.Windows.Forms.ToolStripMenuItem();
+					menuItem.Text = task.Name;
+					menuItem.Tag = task;
+					menuItem.Image = AppHelper.ConvertDrawingImageToDrawingBitmap(task.Icon, 32, 32);
+					menuItem.Click += MenuItem_Click;
+					items.Insert(0, menuItem);
+				}
+			}
+		}
+
+		private void MenuItem_Click(object sender, EventArgs e)
+		{
+			var menuItem = (System.Windows.Forms.ToolStripMenuItem)sender;
+			var item = menuItem.Tag as TemplateItem;
+			TrayManager.RestoreFromTray();
+			Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksTabItem;
+			Global.MainControl.TasksPanel.ListPanel.SelectByName(item.Name);
+			Dispatcher.BeginInvoke(new Action(() =>
+			{
+				var textBox = Global.MainControl.TasksPanel.ItemPanel.ChatPanel.DataTextBox;
+				textBox.Focus();
+				textBox.SelectionStart = textBox.Text?.Length ?? 0;
+			}));
 		}
 
 		private void StartHelper_OnRestore(object sender, EventArgs e)
@@ -85,7 +155,8 @@ namespace JocysCom.VS.AiCompanion
 				// Set it as the main window and show it
 				MainWindow = window;
 				TrayManager.ProcessGetCommandLineArgs();
-
+				Global.Tasks.Items.ListChanged += Items_ListChanged;
+				_ = UpdateTrayMenu();
 			}
 			catch (Exception ex)
 			{
