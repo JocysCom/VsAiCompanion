@@ -503,6 +503,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var item = (PropertyItem)cb.SelectedItem;
 			cb.SelectedIndex = alwaysSelectedIndex;
 			InsertText(ChatPanel.DataTextBox, "{" + item.Key + "}");
+			// Enable use of macros.
+			if (!_item.UseMacros)
+				_item.UseMacros = true;
 		}
 
 		public static void InsertText(TextBox box, string s, bool activate = false)

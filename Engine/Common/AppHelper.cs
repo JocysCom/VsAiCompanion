@@ -89,9 +89,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var envVars = Environment.GetEnvironmentVariables();
 			var solutionProperties = new List<PropertyItem>();
-
 			foreach (DictionaryEntry envVar in envVars)
 			{
+				if ($"{envVar.Key}".Contains("."))
+					continue;
 				var solutionProperty = new PropertyItem
 				{
 					Key = $"{EnvironmentPrefix}.{envVar.Key}",

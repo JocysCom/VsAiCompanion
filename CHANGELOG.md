@@ -1,8 +1,9 @@
-2023-06-23 v1.0.28
+2023-06-25 v1.0.28
 
 - New: Include macros for the Environment.
 - New: Easily access tasks from the Tray Notification icon.
 - Fix: Correct rendering of template list when switching tabs.
+- Fix: Automatically enable macros if they are used.
 
 2023-06-22 v1.0.26
 
