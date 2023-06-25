@@ -6,7 +6,7 @@ This is a free and open-source project for people who have an [OpenAI API](https
 
 # Download
 
-Digitally Signed Standalone/Portable Application v1.0.25 (2023-06-22)
+Digitally Signed Standalone/Portable Application v1.0.28 (2023-06-22)
 
 [Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.0.0/JocysCom.VS.AiCompanion.App.zip)
 
@@ -40,6 +40,12 @@ https://platform.openai.com/account/org-settings
 How-To examples can be found here: [HOWTO.md](HOWTO.md)
 
 ## Screenshots
+
+Standalone Application: Quickly access tasks from the notification icon in the tray:
+
+<img alt="Tray Notification" src="Documents/Images/JocysComVsAiCompanion_TrayIcon.png" width="248" height="186">
+
+Visual Studio Extension: Open the extension in Visual Studio:
 
 <img alt="Extension Menu" src="Documents/Images/JocysComVsAiCompanion_ExtensionMenu.png" width="414" height="118">
 
