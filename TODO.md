@@ -7,3 +7,4 @@
 - Add: Mention and provide link to markdown syntax above send box.
 - Add: Suppot for Visual Studio macros.
 - Add: Clear messages button.
+- Add: Hide more bar stuff on standalone app.

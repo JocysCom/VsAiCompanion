@@ -48,17 +48,6 @@ class Config {
 	[string[]]$VCodes = @()
 }
 # ----------------------------------------------------------------------------
-function GetConfigurationFiles
-{
-	# First record will be used to identify current version.
-	[Config[]]$items = @()
-	$items += (GetConfig "Engine\JocysCom.VS.AiCompanion.Engine.csproj")
-	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
-	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")
-	$items += (GetConfig "Extension\source.extension.vsixmanifest")
-	return $items
-}
-# ----------------------------------------------------------------------------
 function GetConfig
 {
 	param($file)
@@ -191,27 +180,54 @@ function SetVersion
 	Write-Host "  Version updated to: $newVersion"
 }
 # ----------------------------------------------------------------------------
+function ShowMainMenu {
+	$m = "";
+	do {
+		# Clear screen.
+		Clear-Host;
+		[Config[]]$items = GetConfigurationFiles
+		#$items
+		Write-Host
+		ShowVersions $items
+		[Version]$oldVersion = GetVersion $items[0]
+		[Version]$newVersionM = new-Object Version("$($oldVersion.Major).$($oldVersion.Minor).$([Math]::Max(0, $oldVersion.Build - 1)).$([Math]::Max(0, $oldVersion.Revision - 1))")
+		[Version]$newVersionP = new-Object Version("$($oldVersion.Major).$($oldVersion.Minor).$($oldVersion.Build + 1).$($oldVersion.Revision + 1)")
+		Write-Host
+		Write-Host "Current version: $oldVersion"
+		# Set certificate types.
+		Write-Host
+		Write-Host "  1 - Decrement version to $newVersionM"
+		Write-Host "  2 - Set       version to $oldVersion"
+		Write-Host "  3 - Increment version to $newVersionP"
+		Write-Host
+		$m = Read-Host -Prompt "Type option and press ENTER to continue"
+		Write-Host
+		# Options:
+		if ("${m}" -eq "1") {  SetVersion $newVersionM; }
+		if ("${m}" -eq "2") {  SetVersion $oldVersion; }
+		if ("${m}" -eq "3") {  SetVersion $newVersionP; }
+		Write-Host;
+		# If option was choosen.
+		IF ("$m" -ne "") {
+			#pause;
+		}
+	} until ("$m" -eq "");
+	return $m;
+}
+# ----------------------------------------------------------------------------
+# Execute.
+# ----------------------------------------------------------------------------
+function GetConfigurationFiles
+{
+	# First record will be used to identify current version.
+	[Config[]]$items = @()
+	$items += (GetConfig "Engine\JocysCom.VS.AiCompanion.Engine.csproj")
+	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
+	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")
+	$items += (GetConfig "Extension\source.extension.vsixmanifest")
+	return $items
+}
+# ----------------------------------------------------------------------------
 Write-Host;
 ConfigureSettings
-[Config[]]$items = GetConfigurationFiles
-$items
-
-Write-Host
-ShowVersions $items
-[Version]$oldVersion = GetVersion $items[0]
-[Version]$newVersionM = new-Object Version("$($oldVersion.Major).$($oldVersion.Minor).$([Math]::Max(0, $oldVersion.Build - 1)).$([Math]::Max(0, $oldVersion.Revision - 1))")
-[Version]$newVersionP = new-Object Version("$($oldVersion.Major).$($oldVersion.Minor).$($oldVersion.Build + 1).$($oldVersion.Revision + 1)")
-Write-Host
-Write-Host "Current version: $oldVersion"
-# Set certificate types.
-Write-Host
-Write-Host "  1 - Decrement version to $newVersionM"
-Write-Host "  2 - Set       version to $oldVersion"
-Write-Host "  3 - Increment version to $newVersionP"
-Write-Host
-$m = Read-Host -Prompt "Type option and press ENTER to continue"
-Write-Host
-if ("${m}" -eq "1") {  SetVersion $newVersionM; Write-Host; pause; }
-if ("${m}" -eq "2") {  SetVersion $oldVersion; Write-Host; pause; }
-if ("${m}" -eq "3") {  SetVersion $newVersionP; Write-Host; pause; }
-Write-Host;
+ShowMainMenu;
