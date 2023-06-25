@@ -22,4 +22,4 @@
 8. Click the [Send] button.
 9. Wait for the AI's response to appear in the chat. Active document will be fixed by AI.
 
-<img alt="Fix Selecetd Error" src="Documents/Images/HowTo_Grammar.png" width="913" height="607">
+<img alt="Fix Selecetd Error" src="Documents/Images/HowTo_FixSelectedError.png" width="913" height="607">
