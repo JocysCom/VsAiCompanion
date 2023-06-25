@@ -41,13 +41,13 @@ How-To examples can be found here: [HOWTO.md](HOWTO.md)
 
 ## Screenshots
 
-<img alt="Tray Notification" src="Documents/Images/JocysComVsAiCompanion_TrayIcon.png" width="248" height="186">
-
 Visual Studio Extension: Open the extension in Visual Studio:
+
+<img alt="Extension Menu" src="Documents/Images/JocysComVsAiCompanion_ExtensionMenu.png" width="414" height="118">
 
 Standalone Application: Quickly access tasks from the notification icon in the tray:
 
-<img alt="Extension Menu" src="Documents/Images/JocysComVsAiCompanion_ExtensionMenu.png" width="414" height="118">
+<img alt="Tray Notification" src="Documents/Images/JocysComVsAiCompanion_TrayIcon.png" width="248" height="186">
 
 Code - Smart Search: The AI can provide you with the exact location of specific code features:
 
