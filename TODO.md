@@ -8,3 +8,4 @@
 - Add: Suppot for Visual Studio macros.
 - Add: Clear messages button.
 - Add: Hide more bar stuff on standalone app.
+- Add: Scroll to the bottom button on chat.
