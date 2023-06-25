@@ -13,9 +13,7 @@ Write-Host "Number of words in the file: $wordCount"&#xD;
   <AttachContext>None</AttachContext>
   <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
-  <Settings>
-    <ScrollPosition>0</ScrollPosition>
-  </Settings>
+  <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>
   <Messages />
