@@ -236,6 +236,52 @@
 				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
 				<CheckBox Name="IsFavoriteCheckBox" Content="Is Favorite" IsChecked="{Binding IsFavorite}" />
 			</StackPanel>
+			<StackPanel
+				Grid.Row="5"
+				Grid.Column="2"
+				Grid.ColumnSpan="2"
+				HorizontalAlignment="Right"
+				Orientation="Horizontal">
+				<Button
+					Name="ScrollToBottomMessagesButton"
+					Width="26"
+					Height="26"
+					Margin="2"
+					Padding="0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					BorderBrush="Transparent"
+					Click="ScrollToBottomButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl
+							VerticalAlignment="Bottom"
+							Content="{StaticResource Icon_arrow_barrier_bottom}"
+							Focusable="False"
+							Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+
+				<Button
+					Name="ClearMessagesButton"
+					Width="26"
+					Height="26"
+					Margin="2"
+					Padding="0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					BorderBrush="Transparent"
+					Click="ClearMessagesButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl
+							VerticalAlignment="Bottom"
+							Content="{StaticResource Icon_broom}"
+							Focusable="False"
+							Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
 			<Border
 				Grid.Row="6"
 				Grid.ColumnSpan="4"

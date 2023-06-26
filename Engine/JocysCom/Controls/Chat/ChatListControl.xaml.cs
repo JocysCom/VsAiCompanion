@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -234,6 +233,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		#endregion
 
+		/*
 		public void AddMessage(string user, string body, MessageType type = MessageType.Information)
 		{
 			var message = new MessageItem()
@@ -245,6 +245,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			};
 			Messages.Add(message);
 		}
+		*/
 
 		#region HTML
 

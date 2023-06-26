@@ -1,3 +1,9 @@
+2023-06-26 v1.0.32
+
+- Fix: AI response added to a different task.
+- New: Clear all messages button.
+- New: Scroll to the bottom button.
+
 2023-06-25 v1.0.28
 
 - New: Include macros for the Environment.

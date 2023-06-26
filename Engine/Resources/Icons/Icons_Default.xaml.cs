@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 {
 	partial class Icons_Default : ResourceDictionary
 	{
@@ -13,12 +13,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private static Icons_Default _Current;
 
 		public const string Icon_AiCompanion = nameof(Icon_AiCompanion);
+		public const string Icon_arrow_barrier_bottom = nameof(Icon_arrow_barrier_bottom);
+		public const string Icon_arrow_barrier_top = nameof(Icon_arrow_barrier_top);
 		public const string Icon_arrow_fork2 = nameof(Icon_arrow_fork2);
 		public const string Icon_blackboard = nameof(Icon_blackboard);
 		public const string Icon_book_open = nameof(Icon_book_open);
 		public const string Icon_brain = nameof(Icon_brain);
 		public const string Icon_broom = nameof(Icon_broom);
 		public const string Icon_businessman = nameof(Icon_businessman);
+		public const string Icon_button_error = nameof(Icon_button_error);
+		public const string Icon_chat = nameof(Icon_chat);
 		public const string Icon_clipboard_checks = nameof(Icon_clipboard_checks);
 		public const string Icon_clipboard_check_edit = nameof(Icon_clipboard_check_edit);
 		public const string Icon_clipboard_paste = nameof(Icon_clipboard_paste);

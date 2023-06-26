@@ -136,7 +136,7 @@
 						PreviewKeyDown="DataInstructionsTextBox_PreviewKeyDown"
 						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 						ScrollViewer.VerticalScrollBarVisibility="Auto"
-						Text="{Binding TextInstructions}"
+						Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}"
 						TextWrapping="Wrap" />
 					<TextBlock
 						Margin="0"
@@ -197,7 +197,7 @@
 						PreviewKeyDown="DataTextBox_PreviewKeyDown"
 						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 						ScrollViewer.VerticalScrollBarVisibility="Auto"
-						Text="{Binding Text}"
+						Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
 						TextChanged="DataTextBox_TextChanged"
 						TextWrapping="Wrap" />
 					<TextBlock

@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Controls.Chat;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,219 +45,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ChatPanel_OnSend(object sender, EventArgs e)
 		{
-			await Send();
-		}
-
-		public async Task Send()
-		{
-			if (Global.IsIncompleteSettings())
-				return;
-			if (string.IsNullOrEmpty(_item.AiModel))
-			{
-				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
-				return;
-			}
-			var m = new MessageItem()
-			{
-				BodyInstructions = ChatPanel.DataInstructionsTextBox.Text,
-				Body = ChatPanel.DataTextBox.Text,
-				User = "User",
-				Type = MessageType.Out,
-			};
-			// If task panel then allow to use AutoClear.
-			if (ItemControlType == ItemType.Task)
-			{
-				if (_item.MessageBoxOperation == MessageBoxOperation.ClearMessage)
-					ChatPanel.DataTextBox.Text = "";
-				if (_item.MessageBoxOperation == MessageBoxOperation.ResetMessage)
-				{
-					var template = Global.GetItems(ItemType.Template).Where(x => x.Name == _item.TemplateName).FirstOrDefault();
-					if (template != null)
-						ChatPanel.DataTextBox.Text = template.Text;
-				}
-			}
-			var vsData = AppHelper.GetMacroValues();
-			if (_item.UseMacros)
-			{
-				m.BodyInstructions = AppHelper.ReplaceMacros(m.BodyInstructions, vsData);
-				m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
-			}
-			DocItem di = null;
-			List<DocItem> dis = null;
-			ErrorItem err = null;
-			switch (_item.AttachContext)
-			{
-				case AttachmentType.None:
-					break;
-				case AttachmentType.Clipboard:
-					di = Global.GetClipboard();
-					break;
-				case AttachmentType.Selection:
-					di = Global.GetSelection();
-					break;
-				case AttachmentType.ActiveDocument:
-					di = Global.GetActiveDocument();
-					break;
-				case AttachmentType.SelectedDocuments:
-					dis = Global.GetSelectedDocuments();
-					break;
-				case AttachmentType.ActiveProject:
-					dis = Global.GetActiveProject();
-					break;
-				case AttachmentType.SelectedProject:
-					dis = Global.GetSelectedProject();
-					break;
-				case AttachmentType.Solution:
-					dis = Global.GetSolution();
-					break;
-				default:
-					break;
-			}
-			if (_item.AttachError)
-			{
-				err = Global.GetSelectedError();
-				if (!string.IsNullOrEmpty(err?.Description))
-				{
-					var a1 = new MessageAttachments();
-					a1.Title = Global.AppSettings.ContextErrorTitle;
-					a1.Type = AttachmentType.SelectedError;
-					var options = new JsonSerializerOptions();
-					options.WriteIndented = true;
-					var json = JsonSerializer.Serialize(err, options);
-					a1.Data = $"```json\r\n{json}\r\n```";
-					m.Attachments.Add(a1);
-				}
-			}
-			if (dis?.Count > 0)
-			{
-				var a2 = new MessageAttachments()
-				{
-					Title = Global.AppSettings.ContextFileTitle,
-					Type = _item.AttachContext,
-					Data = DocItem.ConvertFile(dis),
-				};
-				m.Attachments.Add(a2);
-			}
-			else if (!string.IsNullOrEmpty(di?.Data))
-			{
-				var a3 = new MessageAttachments()
-				{
-					Title = Global.AppSettings.ContextDataTitle,
-					Type = _item.AttachContext,
-					Data = _item.AttachContext == AttachmentType.Selection || _item.AttachContext == AttachmentType.ActiveDocument
-					// Use markdown which will make AI to reply with markdown too.
-					? $"```{di.Language}\r\n{di.Data}\r\n```"
-					: di.Data,
-				};
-				m.Attachments.Add(a3);
-			}
-			var messageForAI = $"{m.BodyInstructions}\r\n\r\n{m.Body}";
-			var maxTokens = Client.GetMaxTokens(_item.AiModel);
-			var usedTokens = Client.CountTokens(messageForAI);
-			// Split 50%/50% between request and response.
-			var maxRequesTokens = maxTokens / 2;
-			var reqTokens = Client.CountTokens(messageForAI);
-			var availableTokens = maxRequesTokens - usedTokens;
-			// Attach chat history at the end (use left tokens).
-			if (_item.AttachChatHistory && _item.Messages?.Count > 0)
-			{
-				var a0 = new MessageAttachments();
-				a0.Title = Global.AppSettings.ContextChatTitle;
-				a0.Instructions = Global.AppSettings.ContextChatInstructions;
-				a0.Type = AttachmentType.ChatHistory;
-				var options = new JsonSerializerOptions();
-				options.WriteIndented = true;
-				if (_item.Messages == null)
-					_item.Messages = new BindingList<MessageItem>();
-				var messages = _item.Messages.Select(x => new MessageHistoryItem()
-				{
-					Date = x.Date,
-					User = x.User,
-					Body = $"{x.BodyInstructions}\r\n\r\n{x.Body}",
-					Type = x.Type.ToString(),
-				}).ToDictionary(x => x, x => 0);
-				var keys = messages.Keys.ToArray();
-				// Count number of tokens used by each message.
-				foreach (var key in keys)
-				{
-					var messageJson = JsonSerializer.Serialize(messages[key], options);
-					messages[key] = Client.CountTokens(messageJson);
-				}
-				var messagesToSend = AppHelper.GetMessages(messages, availableTokens);
-				// Attach message body to the bottom of the chat instead.
-				messageForAI = "";
-				messagesToSend.Add(new MessageHistoryItem()
-				{
-					Date = m.Date,
-					User = m.User,
-					Body = $"{m.BodyInstructions}\r\n\r\n{m.Body}",
-					Type = m.Type.ToString(),
-				});
-				var json = JsonSerializer.Serialize(messagesToSend, options);
-				a0.Data = $"```json\r\n{json}\r\n```";
-				m.Attachments.Add(a0);
-			}
-			foreach (var a in m.Attachments)
-			{
-				messageForAI += $"\r\n\r\n{a.Title}";
-				if (!string.IsNullOrEmpty(a.Instructions))
-					messageForAI += $"\r\n\r\n{a.Instructions}";
-				messageForAI += $"\r\n\r\n{a.Data}";
-				messageForAI = messageForAI.Trim('\r', '\n');
-			}
-			_item.Messages.Add(m);
-			if (_item.IsPreview)
-			{
-				ChatPanel.MessagesPanel.AddMessage("System", PreviewModeMessage, MessageType.Information);
-			}
-			else
-			{
-				try
-				{
-					var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
-					// Send body and context data.
-					var response = await client.QueryAI(_item.AiModel, messageForAI, _item.Creativity);
-					if (response != null)
-					{
-						ChatPanel.MessagesPanel.AddMessage("AI", response, MessageType.In);
-						if (_item.AttachContext == AttachmentType.Selection && Global.SetSelection != null)
-						{
-							var code = AppHelper.GetCodeFromReply(response);
-							if (_item.AutoOperation == DataOperation.Replace)
-								Global.SetSelection(code);
-							if (_item.AutoOperation == DataOperation.InsertBefore)
-								Global.SetSelection(code + vsData.Selection.Data);
-							if (_item.AutoOperation == DataOperation.InsertAfter)
-								Global.SetSelection(vsData.Selection.Data + code);
-							if (_item.AutoFormatCode)
-								Global.EditFormatSelection();
-						}
-						else if (_item.AttachContext == AttachmentType.ActiveDocument && Global.SetActiveDocument != null)
-						{
-							var code = AppHelper.GetCodeFromReply(response);
-							if (_item.AutoOperation == DataOperation.Replace)
-								Global.SetActiveDocument(code);
-							if (_item.AutoOperation == DataOperation.InsertBefore)
-								Global.SetActiveDocument(code + vsData.Selection.Data);
-							if (_item.AutoOperation == DataOperation.InsertAfter)
-								Global.SetActiveDocument(vsData.Selection.Data + code);
-							if (_item.AutoFormatCode)
-								Global.EditFormatDocument();
-						}
-
-					}
-				}
-				catch (Exception ex)
-				{
-					ChatPanel.MessagesPanel.AddMessage("System", ex.Message, MessageType.Error);
-				}
-			}
-			// If item type task, then allow to do auto removal.
-			if (ItemControlType == ItemType.Task && _item.AutoRemove && Global.Tasks.Items.Contains(_item))
-			{
-				_ = Dispatcher.BeginInvoke(new Action(() => { _ = Global.Tasks.Items.Remove(_item); }));
-			}
-
+			await ClientHelper.Send(_item);
 		}
 
 		public string CreativityName
@@ -366,7 +153,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_item.AutoSend = false;
 				_ = Dispatcher.BeginInvoke(new Action(() =>
 				{
-					_ = Send();
+					_ = ClientHelper.Send(_item);
 				}));
 			}
 		}
@@ -543,8 +330,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		const string PreviewModeMessage = "Preview Mode - Sending messages to AI is suppressed.";
-
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
@@ -566,10 +351,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.HelpProvider.Add(ChatHistoryCheckBox, ChatHistoryCheckBox.Content as string,
 				"The AI API doesn't store messages, so the chat log must be attached to each request in order to simulate a conversation.");
 			Global.MainControl.InfoPanel.HelpProvider.Add(IsPreviewCheckBox, IsPreviewCheckBox.Content as string,
-				PreviewModeMessage);
+				ClientHelper.PreviewModeMessage);
 			Global.MainControl.InfoPanel.HelpProvider.Add(IsFavoriteCheckBox, IsFavoriteCheckBox.Content as string,
 				"Display the template button in the toolbar for quick task creation.");
 		}
 
+		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
+		{
+			var text = $"Do you want to clear all messages?";
+			var caption = $"{Global.Info.Product} - Clear messages";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+			if (result != MessageBoxResult.Yes)
+				return;
+			_item.Messages.Clear();
+			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
+		}
+
+		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
+		{
+			ChatPanel.MessagesPanel.InvokeScript("ScrollToBottom()");
+		}
 	}
 }

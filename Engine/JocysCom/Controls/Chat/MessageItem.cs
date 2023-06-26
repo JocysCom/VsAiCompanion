@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
-using JocysCom.VS.AiCompanion.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +15,16 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			_Id = Guid.NewGuid().ToString("N");
 			Date = DateTime.Now;
 		}
+
+		public MessageItem(string user, string body, MessageType type = MessageType.Information)
+		{
+			Id = Guid.NewGuid().ToString("N");
+			Body = body;
+			User = user;
+			Type = type;
+			Date = DateTime.Now;
+		}
+
 
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
