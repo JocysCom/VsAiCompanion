@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			UpdateControlButtons();
-			DataTextBox_TextChanged(null, null);
+			UpdateSendButton();
 			MessagesPanel.ScriptingHandler.OnMessageAction += ScriptingHandler_OnMessageAction;
 			//MessagesPanel.Messages
 			//InfoPanel.Tasks.ListChanged += Tasks_ListChanged;
@@ -80,10 +80,15 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		private void DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			SendButton.Opacity = AllowToSend() ? 1.0 : 0.5;
+			UpdateSendButton();
 		}
 
 		private void DataInstructionsTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			UpdateSendButton();
+		}
+
+		public void UpdateSendButton()
 		{
 			SendButton.Opacity = AllowToSend() ? 1.0 : 0.5;
 		}

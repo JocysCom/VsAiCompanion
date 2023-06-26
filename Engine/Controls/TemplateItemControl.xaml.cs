@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -146,6 +144,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateAiModels(item?.AiModel);
 			IconPanel.BindData(_item);
 			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
+			ChatPanel.UpdateSendButton();
 			// AutoSend once enabled then...
 			if (ItemControlType == ItemType.Task && _item.AutoSend)
 			{
@@ -365,6 +364,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			_item.Messages.Clear();
 			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
+			ChatPanel.UpdateSendButton();
 		}
 
 		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
