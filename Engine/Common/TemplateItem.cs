@@ -167,6 +167,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			copy.IsEnabled = IsEnabled;
 			copy.IsFavorite = IsFavorite;
 			copy.IsPreview = IsPreview;
+			copy.UseMacros = UseMacros;
 			copy.MessageBoxOperation = MessageBoxOperation;
 			copy.Name = Name;
 			copy.ShowInstructions = ShowInstructions;

@@ -17,6 +17,7 @@
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMacros>true</UseMacros>
   <IsChecked>false</IsChecked>
   <IsEnabled>false</IsEnabled>
   <ItemType>None</ItemType>

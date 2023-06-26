@@ -1,6 +1,7 @@
-2023-06-26 v1.0.32
+2023-06-26 v1.0.33
 
 - Fix: AI response added to a different task.
+- Fix: Use Macros Template property not copying to the Task.
 - New: Clear all messages button.
 - New: Scroll to the bottom button.
 
