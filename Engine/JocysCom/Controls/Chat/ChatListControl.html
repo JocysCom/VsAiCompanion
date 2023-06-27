@@ -48,7 +48,7 @@
 			background-color: #f7f9fc;
 		}
 
-		/* In (my messages) */
+		/* Out (my messages) */
 		.color-Out {
 			background-color: #d1e6ff;
 		}
@@ -126,6 +126,7 @@
 		}
 
 		.chat-button {
+			cursor: pointer;
 			color: white;
 			opacity: 0.20;
 			border: none;
@@ -134,7 +135,7 @@
 			background: linear-gradient(to bottom, #00aeec, #008adc);
 			transition: opacity 0.3s ease;
 			font-size: x-small;
-			margin-left: 0.25em;
+			margin-left: 0.5em;
 		}
 
 			.chat-button:hover {
@@ -160,40 +161,89 @@
 		}
 	</style>
 	<style>
-		.expandable-box {
-			background-color: rgba(255, 255, 255, 0.2);
-			border: 1px solid rgba(0, 0, 0, 0.2);
-			display: inline-block;
-			margin: 0 auto 2px auto;
+
+		.expandable-button-visible {
+			opacity: 1.0 !important;
 		}
 
-		.expandable-title {
-			background-color: rgba(255, 255, 255, 0.50);
+		.expandable-button {
+			cursor: pointer;
+			color: black;
+			opacity: 0.50;
+			border: none;
+			padding: 0.25em 0.5em;
+			border-radius: 0.5em;
+			background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+			transition: opacity 0.3s ease;
+			font-size: x-small;
+			margin-left: 0.5em;
+		}
+
+		.expandable-button:hover {
+			/* opacity: 1.0;  */
+			outline: none;
+		}
+
+			.expandable-button.clicked {
+				/* background: linear-gradient(to bottom, #00ff00, #008000); */
+			}
+
+
+		.expandable-box {
+			border-radius: 0.5em;
+			overflow: hidden;
+			border: 0 solid rgba(0, 0, 0, 0.2);
+			display: inline-block;
+			margin: 0 auto 2px auto;
+			background: #ffffff;
+		}
+
+		.expandable-head {
+			background-color: rgba(209, 230, 255, 0.4);
 			cursor: pointer;
 			padding: 0.25em 0.5em;
 		}
 
-		.expandable-title-text {
+		.expandable-head-text {
 		}
 
-		.expandable-title-indicator {
+		.expandable-head-indicator {
 		}
 
-		.expandable-box-data {
-			padding: 0.25em 0.5em;
+		.expandable-body {
+			padding-bottom: 0;
 			width: 100%;
 		}
 
-		.expandable-box-data p {
-			padding: 0;
-			margin: 0;
+		.expandable-instructions {
+			padding: 0.25em 0.5em;
 		}
 
-		.expandable-box-data pre {
-			padding: 0;
-			margin: 0;
+			.expandable-instructions p {
+				padding: 0;
+				margin: 0;
+			}
+
+			.expandable-instructions pre {
+				padding: 0;
+				margin: 0;
+			}
+
+		.expandable-data {
+			padding: 0.25em 0.5em;
+			max-height: 1024px;
+			overflow: auto;
 		}
 
+			.expandable-data p {
+				padding: 0;
+				margin: 0;
+			}
+
+			.expandable-data pre {
+				padding: 0;
+				margin: 0;
+			}
 	</style>
 	<script defer="defer">
 
@@ -230,7 +280,17 @@
 			var body = marked.parse("" + message.Body);
 			var attachments = message.Attachments;
 			var data = "";
-			var expandableBoxTemplate = document.getElementById('expandableBoxTemplate').innerHTML;
+			var buttons = "";
+
+			var newMessageInstructionsHTML = "";
+
+			// If body AI instructions supplied then...
+			if ((message.BodyInstructions) && ("" + message.BodyInstructions).length > 0) {
+				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", marked.parse(message.BodyInstructions), "");
+				buttons += box.buttonHTML;
+				newMessageInstructionsHTML = box.panelHTML;
+			}
+
 			if (Array.isArray(attachments)) {
 				for (var i = 0; i < attachments.length; i++) {
 					var a = attachments[i];
@@ -250,23 +310,14 @@
 						aData = pre.outerHTML;
 					}
 					var instructions = "";
-					if ((a.Instructions) && ("" + a.Instructions).length > 0)
+					if ((a.Instructions) && ("" + a.Instructions).length > 0) {
 						instructions = a.Instructions + "</ br>";
-					var aInTemplate = expandableBoxTemplate
-						.replace(/{Title}/g, a.Title)
-						.replace(/{Instructions}/g, instructions)
-						.replace(/{Data}/g, aData);
-					data += "\r\n\r\n" + aInTemplate;
-				}
-			}
+					}
 
-			var newMessageInstructionsHTML = "";
-			// If body AI instructions supplied then...
-			if ((message.BodyInstructions) && ("" + message.BodyInstructions).length > 0) {
-				newMessageInstructionsHTML = expandableBoxTemplate
-					.replace(/{Title}/g, "Instructions")
-					.replace(/{Instructions}/g, marked.parse(message.BodyInstructions))
-					.replace(/{Data}/g, "");
+					var box = AddAttachmentBox(message.Id + "_" + i, a.Title, instructions, aData);
+					buttons += box.buttonHTML;
+					data += "\r\n\r\n" + box.panelHTML;
+				}
 			}
 
 			// Replace all placeholders with actual values from the message.
@@ -276,7 +327,8 @@
 				.replace(/{User}/g, message.User)
 				.replace(/{Date}/g, FormatDateTime(message.Date))
 				.replace(/{Body}/g, newMessageInstructionsHTML + body)
-				.replace(/{Data}/g, data);
+				.replace(/{Data}/g, data)
+				.replace(/{Buttons}/g, buttons);
 
 			// Create a new div element and set its innerHTML to the newly created message.
 			var newMessage = document.createElement('div');
@@ -287,6 +339,45 @@
 			// Scroll to the bottom of the chatLog div.
 			if (autoScroll && scroll)
 				ScrollToBottom();
+		}
+
+		function AddAttachmentBox(attachmentId, title, instructions, data) {
+			var showInstructions = (instructions) && instructions.trim().length > 0;
+			var showData = (data) && data.trim().length > 0;
+			// Return if nothing to show.
+			if (!showInstructions && !showData)
+				return { buttonHTML: "", panelHTML: "" };
+			var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML;
+			panelHTML = panelHTML
+				.replace(/{Id}/g, attachmentId)
+				.replace(/{Title}/g, title)
+				.replace(/{Instructions}/g, instructions)
+				.replace(/{InstructionsStyle}/g, showInstructions ? "" : "display: none;")
+				.replace(/{Data}/g, data)
+				.replace(/{DataStyle}/g, showData ? "" : "display: none;");
+			var buttonHTML = document.getElementById("expandableBoxButtonTemplate").innerHTML;
+			buttonHTML = buttonHTML
+				.replace(/{Id}/g, attachmentId)
+				.replace(/{Title}/g, title)
+			return { buttonHTML: buttonHTML, panelHTML: panelHTML };
+		}
+
+		// attachmentId = "{messageId}_{attachmentIndex}".
+		function AttachmentButton_Click(sender, attachmentId) {
+			sender.classList.add('clicked');
+			setTimeout(function () {
+				sender.classList.remove('clicked');
+			}, 500);
+			var element = document.getElementById(attachmentId + "_panel");
+			var button = document.getElementById(attachmentId + "_button");
+			// Toggle visibility
+			if (element.style.display === "none") {
+				element.style.display = "inline-block";
+				button.classList.add('expandable-button-visible');
+			} else {
+				element.style.display = "none";
+				button.classList.remove('expandable-button-visible');
+			}
 		}
 
 		function DeleteMessage(messageId) {
@@ -369,19 +460,6 @@
 			return JSON.stringify(settings);
 		}
 
-		function expandCollapse(element) {
-			var content = element.nextElementSibling;
-			var indicator = element.querySelector('.expandable-title-indicator');
-			// toggle visibility
-			if (content.style.display === "none") {
-				content.style.display = "block";
-				indicator.textContent = "";
-			} else {
-				content.style.display = "none";
-				indicator.textContent = "…";
-			}
-		}
-
 		window.onload = function () {
 
 			window.external.MessageAction("0", "Loaded");
@@ -414,6 +492,7 @@
 					User: i % 2 == 1 ? "UserIn" : "UserOut",
 					Date: new Date().setMinutes(i),
 					Body: messageType[i % 6] + "(" + i + ")" + " messsage.\r\n",
+					BodyInstructions: "Instructions included at the start of every message.",
 					DataType: AttachmentType.Selection,
 					Data:
 						"```csharp\r\n" +
@@ -427,6 +506,14 @@
 						"```css\r\n" +
 						"p { color: red }\r\n" +
 						"```\r\n",
+					Attachments: [
+						{
+							Title: "Data to Process",
+							Instructions: "aaa",
+							Type: AttachmentType.Selection,
+							Data: "```csharp\r\nvar x = 1 + y;\r\n```",
+						}
+					]
 				}
 				InsertMessage(message);
 			}
@@ -435,13 +522,24 @@
 	</script>
 </head>
 <body>
-	<div style="display: none" id="expandableBoxTemplate">
-		<div class="expandable-box">
-			<div class="expandable-title" onclick="expandCollapse(this)">
-				<span class="expandable-title-text">{Title}</span><span class="expandable-title-indicator">…</span>
+	<div style="display: none" id="expandableBoxButtonTemplate">
+		<button id="{Id}_button" class="expandable-button" onclick="AttachmentButton_Click(this, '{Id}')">
+			<span>{Title}</span>
+		</button>
+	</div>
+	<div id="expandableBoxPanelTemplate">
+		<div class="expandable-box" id="{Id}_panel" style="display: none;">
+			<div class="expandable-head">
+				<span class="expandable-head-text">{Title}</span>
+				<span class="expandable-head-indicator" style="display: none;">…</span>
 			</div>
-			<div class="expandable-box-data" style="display: none;">
-				{Instructions}{Data}
+			<div class="expandable-body">
+				<div class="expandable-instructions" style="{InstructionsStyle}">
+					{Instructions}
+				</div>
+				<div class="expandable-data" style="{DataStyle}">
+					{Data}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -454,6 +552,7 @@
 					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Use')">Use</button>
 					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Remove')">Remove</button>
 					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Copy')">Copy</button>
+					{Buttons}
 				</div>
 				<div class="chat-message-body">{Body}</div>
 				<div class="chat-message-data">{Data}</div>

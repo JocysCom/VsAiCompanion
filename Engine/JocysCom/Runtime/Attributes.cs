@@ -147,7 +147,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				return (T)attributes[0].Value;
 			return default;
 		}
-
+		
+		#endregion
 
 		/// <summary>
 		/// Assign property values from their [DefaultValueAttribute] value.
@@ -174,8 +175,6 @@ namespace JocysCom.ClassLibrary.Runtime
 				p.SetValue(o, value, null);
 			}
 		}
-
-		#endregion
 
 	}
 

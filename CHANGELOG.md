@@ -1,3 +1,8 @@
+2023-06-27 v1.0.35
+
+- Fix: Send button opacity when a message is changed.
+- Update: Reduce the amount of space that attachments and data occupy in the chat.
+
 2023-06-26 v1.0.33
 
 - Fix: AI response added to a different task.
