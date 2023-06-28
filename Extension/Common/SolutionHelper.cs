@@ -500,6 +500,14 @@ namespace JocysCom.VS.AiCompanion.Extension
 		//	return errors;
 		//}
 
+		public static DocItem GetSelectedErrorDocument()
+		{
+			var ei = GetSelectedError();
+			var di = new DocItem();
+			di.FullName = ei.File;
+			di.Name = System.IO.Path.GetFileName(ei.File);
+			return di;
+		}
 
 		public static Engine.ErrorItem GetSelectedError()
 		{
@@ -529,6 +537,37 @@ namespace JocysCom.VS.AiCompanion.Extension
 				};
 			}
 			return null;
+		}
+
+		public static ExceptionInfo GetCurrentException()
+		{
+			var ei = new ExceptionInfo();
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
+			// We are not in break mode then return.
+			if (dte.Debugger.CurrentMode != dbgDebugMode.dbgBreakMode)
+				return null;
+			// We are in break mode, possibly due to an exception.
+
+			// Get the current exception
+			var exceptionExpression = dte.Debugger.GetExpression("$exception", true, 100);
+			if (exceptionExpression.IsValidValue)
+			{
+				string exceptionDetails = exceptionExpression.Value;
+				ei.Details = exceptionDetails;
+			}
+			var stackFrames = dte.Debugger.CurrentThread.StackFrames;
+			foreach (StackFrame stackFrame in stackFrames)
+			{
+				ei.StackFrames.Add(new StackFrameInfo() { FilePath = stackFrame.FunctionName });
+			}
+			return ei;
+		}
+
+		public static List<DocItem> GetCurrentExceptionDocuments()
+		{
+			var list = new List<DocItem>();
+			return list;
 		}
 
 		#region Formatting

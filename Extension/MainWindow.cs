@@ -63,6 +63,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 			//Global.GetOtherProperties = SolutionHelper.GetOtherProperties;
 			// Get Errors
 			Global.GetSelectedError = SolutionHelper.GetSelectedError;
+			Global.GetSelectedErrorDocument = SolutionHelper.GetSelectedErrorDocument;
+			Global.GetCurrentException = SolutionHelper.GetCurrentException;
+			Global.GetCurrentExceptionDocuments = SolutionHelper.GetCurrentExceptionDocuments;
 			// Format code
 			Global.EditFormatDocument = SolutionHelper.EditFormatDocument;
 			Global.EditFormatSelection = SolutionHelper.EditFormatSelection;

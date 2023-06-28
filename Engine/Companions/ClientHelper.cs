@@ -35,7 +35,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
 			}
 			DocItem di = null;
-			List<DocItem> dis = null;
+			var dis = new List<DocItem>();
 			ErrorItem err = null;
 			switch (item.AttachContext)
 			{
@@ -51,16 +51,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					di = Global.GetActiveDocument();
 					break;
 				case AttachmentType.SelectedDocuments:
-					dis = Global.GetSelectedDocuments();
+					dis.AddRange(Global.GetSelectedDocuments());
 					break;
 				case AttachmentType.ActiveProject:
-					dis = Global.GetActiveProject();
+					dis.AddRange(Global.GetActiveProject());
 					break;
 				case AttachmentType.SelectedProject:
-					dis = Global.GetSelectedProject();
+					dis.AddRange(Global.GetSelectedProject());
 					break;
 				case AttachmentType.Solution:
-					dis = Global.GetSolution();
+					dis.AddRange(Global.GetSolution());
+					break;
+				case AttachmentType.ErrorWithDocument:
+				case AttachmentType.ErrorDocument:
+					dis.Add(Global.GetSelectedErrorDocument());
+					break;
+				case AttachmentType.ExceptionWithDocuments:
+				case AttachmentType.ExceptionDocuments:
+					dis.AddRange(Global.GetCurrentExceptionDocuments());
 					break;
 				default:
 					break;
@@ -80,7 +88,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					m.Attachments.Add(a1);
 				}
 			}
-			if (dis?.Count > 0)
+			if (dis.Count > 0)
 			{
 				var a2 = new MessageAttachments()
 				{

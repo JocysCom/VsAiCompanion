@@ -28,6 +28,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static Action<string> SetClipboard = (x) => { };
 		// Errors.
 		public static Func<ErrorItem> GetSelectedError = () => new ErrorItem();
+		public static Func<DocItem> GetSelectedErrorDocument = () => new DocItem();
+		public static Func<ExceptionInfo> GetCurrentException = () => new ExceptionInfo();
+		public static Func<List<DocItem>> GetCurrentExceptionDocuments = () => new List<DocItem>();
 		// Format code.
 		public static Action EditFormatDocument = () => { };
 		public static Action EditFormatSelection = () => { };
