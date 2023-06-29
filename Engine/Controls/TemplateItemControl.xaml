@@ -223,6 +223,7 @@
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
+				<Controls:EnumComboBox x:Name="AttachmentEnumComboBox" VerticalAlignment="Center" />
 				<ComboBox
 					Name="ContextTypeComboBox"
 					Grid.Row="1"

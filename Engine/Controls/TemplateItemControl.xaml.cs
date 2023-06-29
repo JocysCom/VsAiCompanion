@@ -268,6 +268,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AddKeys(FileComboBox, null, AppHelper.GetReplaceMacrosDocument());
 			AddKeys(DateComboBox, null, AppHelper.GetReplaceMacrosDate());
 			AddKeys(VsMacrosComboBox, null, Global.GetEnvironmentProperties());
+			AttachmentEnumComboBox.SetItemSource<AttachmentType>();
 		}
 
 		int alwaysSelectedIndex = -1;

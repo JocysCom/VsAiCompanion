@@ -198,6 +198,12 @@
 		<Resource Include="AiCompanion.svg" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Controls\EnumComboBox.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	</ItemGroup>
+
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Command="PowerShell.exe -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;&#xD;&#xA;PowerShell.exe -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;&#xD;&#xA;" />
 	</Target>

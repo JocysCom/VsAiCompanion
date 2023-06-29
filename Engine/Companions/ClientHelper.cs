@@ -62,11 +62,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				case AttachmentType.Solution:
 					dis.AddRange(Global.GetSolution());
 					break;
-				case AttachmentType.ErrorWithDocument:
 				case AttachmentType.ErrorDocument:
 					dis.Add(Global.GetSelectedErrorDocument());
 					break;
-				case AttachmentType.ExceptionWithDocuments:
 				case AttachmentType.ExceptionDocuments:
 					dis.AddRange(Global.GetCurrentExceptionDocuments());
 					break;
