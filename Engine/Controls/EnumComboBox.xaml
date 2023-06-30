@@ -10,6 +10,11 @@
 	SelectionChanged="ComboBox_SelectionChanged"
 	StaysOpenOnEdit="True"
 	mc:Ignorable="d">
+	<ComboBox.ItemContainerStyle>
+		<Style TargetType="ComboBoxItem">
+			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+		</Style>
+	</ComboBox.ItemContainerStyle>
 	<ComboBox.ItemTemplate>
 		<DataTemplate>
 			<StackPanel>
@@ -19,6 +24,7 @@
 					Content="{Binding Description}"
 					Visibility="{Binding LabelVisibility}" />
 				<CheckBox
+					HorizontalAlignment="Stretch"
 					Command="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=DataContext.CheckCommand}"
 					CommandParameter="{Binding}"
 					Content="{Binding Description}"

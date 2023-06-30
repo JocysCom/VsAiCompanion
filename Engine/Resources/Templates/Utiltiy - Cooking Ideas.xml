@@ -5,7 +5,6 @@
   <TextInstructions>Can you suggest a recipe for?</TextInstructions>
   <Text>[insert dietary restriction or ingredient here]</Text>
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

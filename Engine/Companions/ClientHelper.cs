@@ -34,44 +34,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				m.BodyInstructions = AppHelper.ReplaceMacros(m.BodyInstructions, vsData);
 				m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
 			}
-			DocItem di = null;
-			var dis = new List<DocItem>();
+			var dataItems = new List<DocItem>();
+			var fileItems = new List<DocItem>();
 			ErrorItem err = null;
-			switch (item.AttachContext)
-			{
-				case AttachmentType.None:
-					break;
-				case AttachmentType.Clipboard:
-					di = Global.GetClipboard();
-					break;
-				case AttachmentType.Selection:
-					di = Global.GetSelection();
-					break;
-				case AttachmentType.ActiveDocument:
-					di = Global.GetActiveDocument();
-					break;
-				case AttachmentType.SelectedDocuments:
-					dis.AddRange(Global.GetSelectedDocuments());
-					break;
-				case AttachmentType.ActiveProject:
-					dis.AddRange(Global.GetActiveProject());
-					break;
-				case AttachmentType.SelectedProject:
-					dis.AddRange(Global.GetSelectedProject());
-					break;
-				case AttachmentType.Solution:
-					dis.AddRange(Global.GetSolution());
-					break;
-				case AttachmentType.ErrorDocument:
-					dis.Add(Global.GetSelectedErrorDocument());
-					break;
-				case AttachmentType.ExceptionDocuments:
-					dis.AddRange(Global.GetCurrentExceptionDocuments());
-					break;
-				default:
-					break;
-			}
-			if (item.AttachError)
+			var at = item.AttachContext;
+			if (at.HasFlag(AttachmentType.Clipboard))
+				dataItems.Add(Global.GetClipboard());
+			if (at.HasFlag(AttachmentType.Selection))
+				dataItems.Add(Global.GetSelection());
+			if (at.HasFlag(AttachmentType.Error))
 			{
 				err = Global.GetSelectedError();
 				if (!string.IsNullOrEmpty(err?.Description))
@@ -86,28 +57,47 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					m.Attachments.Add(a1);
 				}
 			}
-			if (dis.Count > 0)
+			if (at.HasFlag(AttachmentType.ActiveDocument))
+				dataItems.Add(Global.GetActiveDocument());
+			if (at.HasFlag(AttachmentType.SelectedDocuments))
+				fileItems.AddRange(Global.GetSelectedDocuments());
+			if (at.HasFlag(AttachmentType.ActiveProject))
+				fileItems.AddRange(Global.GetActiveProject());
+			if (at.HasFlag(AttachmentType.SelectedProject))
+				fileItems.AddRange(Global.GetSelectedProject());
+			if (at.HasFlag(AttachmentType.Solution))
+				fileItems.AddRange(Global.GetSolution());
+			if (at.HasFlag(AttachmentType.ErrorDocument))
+				fileItems.Add(Global.GetSelectedErrorDocument());
+			//if (at.HasFlag(AttachmentType.Exception))
+			//	fileItems.Add(Global.GetCurrentException());
+			if (at.HasFlag(AttachmentType.ExceptionDocuments))
+				fileItems.AddRange(Global.GetCurrentExceptionDocuments());
+			foreach (var dataItem in dataItems)
 			{
-				var a2 = new MessageAttachments()
-				{
-					Title = Global.AppSettings.ContextFileTitle,
-					Type = item.AttachContext,
-					Data = DocItem.ConvertFile(dis),
-				};
-				m.Attachments.Add(a2);
-			}
-			else if (!string.IsNullOrEmpty(di?.Data))
-			{
+				if (string.IsNullOrEmpty(dataItem?.Data))
+					continue;
 				var a3 = new MessageAttachments()
 				{
 					Title = Global.AppSettings.ContextDataTitle,
 					Type = item.AttachContext,
 					Data = item.AttachContext == AttachmentType.Selection || item.AttachContext == AttachmentType.ActiveDocument
 					// Use markdown which will make AI to reply with markdown too.
-					? $"```{di.Language}\r\n{di.Data}\r\n```"
-					: di.Data,
+					? $"```{dataItem.Language}\r\n{dataItem.Data}\r\n```"
+					: dataItem.Data,
 				};
 				m.Attachments.Add(a3);
+			}
+			// Attach files at the end.
+			if (fileItems.Count > 0)
+			{
+				var a2 = new MessageAttachments()
+				{
+					Title = Global.AppSettings.ContextFileTitle,
+					Type = item.AttachContext,
+					Data = DocItem.ConvertFile(fileItems),
+				};
+				m.Attachments.Add(a2);
 			}
 			var messageForAI = $"{m.BodyInstructions}\r\n\r\n{m.Body}";
 			var maxTokens = Client.GetMaxTokens(item.AiModel);

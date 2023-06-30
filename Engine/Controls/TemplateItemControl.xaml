@@ -223,16 +223,7 @@
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
-				<Controls:EnumComboBox x:Name="AttachmentEnumComboBox" VerticalAlignment="Center" />
-				<ComboBox
-					Name="ContextTypeComboBox"
-					Grid.Row="1"
-					Grid.Column="2"
-					DisplayMemberPath="Value"
-					ItemsSource="{Binding DataTypes, ElementName=This}"
-					SelectedValue="{Binding AttachContext}"
-					SelectedValuePath="Key" />
-				<CheckBox Name="ErrorCheckBox" Content="Selected Error (VS)" IsChecked="{Binding AttachError}" />
+				<Controls:EnumComboBox x:Name="AttachmentEnumComboBox" VerticalAlignment="Center" SelectedValue="{Binding AttachContext}" />
 				<CheckBox Name="ChatHistoryCheckBox" Content="Chat History" IsChecked="{Binding AttachChatHistory}" />
 				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
 				<CheckBox Name="IsFavoriteCheckBox" Content="Is Favorite" IsChecked="{Binding IsFavorite}" />

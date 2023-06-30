@@ -5,7 +5,6 @@
   <TextInstructions>Can you tell me about?:</TextInstructions>
   <Text>[insert historical event or figure]</Text>
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

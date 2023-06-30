@@ -53,12 +53,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		AttachmentType _AttachContext;
 
 		/// <summary>
-		/// Visual studio errors.
-		/// </summary>
-		public bool AttachError { get => _AttachErrors; set => SetProperty(ref _AttachErrors, value); }
-		bool _AttachErrors;
-
-		/// <summary>
 		/// Chat history with AI.
 		/// </summary>
 		[DefaultValue(true)]
@@ -155,7 +149,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			copy.AiModel = AiModel;
 			copy.AttachChatHistory = AttachChatHistory;
 			copy.AttachContext = AttachContext;
-			copy.AttachError = AttachError;
 			copy.AutoFormatCode = AutoFormatCode;
 			copy.AutoOperation = AutoOperation;
 			copy.AutoRemove = AutoRemove;

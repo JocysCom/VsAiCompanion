@@ -89,7 +89,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (_DataTypes == null)
 				{
 					var values = new AttachmentType[] {
-						AttachmentType.None,
 						AttachmentType.Clipboard,
 						AttachmentType.Selection,
 						AttachmentType.ActiveDocument,
@@ -268,7 +267,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AddKeys(FileComboBox, null, AppHelper.GetReplaceMacrosDocument());
 			AddKeys(DateComboBox, null, AppHelper.GetReplaceMacrosDate());
 			AddKeys(VsMacrosComboBox, null, Global.GetEnvironmentProperties());
-			AttachmentEnumComboBox.SetItemSource<AttachmentType>();
+			//AttachmentEnumComboBox.SetItemSource<AttachmentType>();
 		}
 
 		int alwaysSelectedIndex = -1;
@@ -336,12 +335,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var head = "Caring for Your Sensitive Data";
 			var body = "As you share files for AI processing, please remember not to include confidential, proprietary, or sensitive information.";
-			Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeComboBox, head, body, MessageBoxImage.Warning);
+			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentEnumComboBox, head, body, MessageBoxImage.Warning);
 			Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeLabel, head, body, MessageBoxImage.Warning);
 			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentIcon, head, body, MessageBoxImage.Warning);
 			if (!Global.IsVsExtesion)
 			{
-				Global.MainControl.InfoPanel.HelpProvider.Add(ErrorCheckBox, ErrorCheckBox.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(SelectionComboBox, UseMacrosCheckBox.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutomationVsLabel, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);

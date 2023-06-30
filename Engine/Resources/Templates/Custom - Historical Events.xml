@@ -5,7 +5,6 @@
   <TextInstructions>Please provide a list of significant historical events that occurred on {Date.Now:MMMM dd} across all years in the past, detailing the year and a brief description of each event.</TextInstructions>
   <Text />
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

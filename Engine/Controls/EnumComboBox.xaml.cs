@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +9,7 @@ using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
-	public partial class EnumComboBox : ComboBox, INotifyPropertyChanged
+	public partial class EnumComboBox : ComboBox
 	{
 		public class CheckBoxViewModel : INotifyPropertyChanged
 		{
@@ -45,22 +46,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public EnumComboBox()
 		{
 			InitializeComponent();
-			list.ListChanged += List_ListChanged;
+			SetItemSource<AttachmentType>();
+			Data.ListChanged += List_ListChanged;
 		}
 
 		private void List_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			if (e.PropertyDescriptor?.Name == nameof(CheckBoxViewModel.IsChecked))
 			{
-				var count = ItemsSource.Cast<CheckBoxViewModel>().Count(x => x.IsChecked);
-				list[0].Description = $"Attachments ({count})";
+				var items = ItemsSource.Cast<CheckBoxViewModel>();
+				var top = items.First(x => x.Value == AttachmentType.None);
+				var choice = ItemsSource.Cast<CheckBoxViewModel>().Where(x => x.Value != AttachmentType.None).ToList();
+				var count = choice.Count(x => x.IsChecked);
+				var names = choice.Where(x => x.IsChecked).Select(x => x.Description).ToList();
+				if (count == 0)
+					top.Description = "None";
+				else if (count == 1)
+					top.Description = names.First();
+				else
+					top.Description = $"{names.First()} + " + (count - 1).ToString();
+				var value = Data
+					.Where(x => x.IsChecked)
+					.Aggregate(default(AttachmentType), (current, item) => current | item.Value);
+				if (!Equals(SelectedValue, value))
+					SelectedValue = value;
 			}
-
 		}
 
-		BindingList<CheckBoxViewModel> list = new BindingList<CheckBoxViewModel>();
+		BindingList<CheckBoxViewModel> Data = new BindingList<CheckBoxViewModel>();
 
-		public void SetItemSource<T>()
+		void SetItemSource<T>()
 		{
 			var items = Enum.GetValues(typeof(T))
 				.Cast<AttachmentType>()
@@ -69,10 +84,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Description = GetDescription(e),
 					Value = e
 				}).ToList();
-			list.Clear();
-			items.ForEach(e => list.Add(e));
-			list[0].Description = $"Attachments";
-			ItemsSource = items;
+			Data.Clear();
+			items.ForEach(e => Data.Add(e));
+			items[0].Description = "None";
+			ItemsSource = Data;
 		}
 
 		public static string GetDescription(Enum value)
@@ -85,14 +100,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			SelectedIndex = 0;
+			if (SelectedIndex != 0)
+				SelectedIndex = 0;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		#region Binding
 
-		protected virtual void OnPropertyChanged(string propertyName = null)
+		private static readonly new DependencyProperty SelectedValueProperty =
+			DependencyProperty.Register("SelectedValue", typeof(AttachmentType), typeof(EnumComboBox),
+		new FrameworkPropertyMetadata(default(AttachmentType), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
+
+		public new AttachmentType SelectedValue
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			get => (AttachmentType)GetValue(SelectedValueProperty);
+			set => SetValue(SelectedValueProperty, value);
 		}
+
+		private static void OnSelectedValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var box = (EnumComboBox)d;
+			var value = (AttachmentType)box.GetValue(SelectedValueProperty);
+			var items = (IEnumerable<CheckBoxViewModel>)box.ItemsSource;
+			foreach (var item in items)
+			{
+				var isChecked = item.Value != AttachmentType.None && value.HasFlag(item.Value);
+				if (item.IsChecked != isChecked)
+					item.IsChecked = isChecked;
+			}
+		}
+
+		#endregion
 	}
 }

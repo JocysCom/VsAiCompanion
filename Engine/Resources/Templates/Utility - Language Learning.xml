@@ -5,7 +5,6 @@
   <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>
   <Text />
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

@@ -7,7 +7,6 @@
 Data for processing:</TextInstructions>
   <Text>[insert original prompt here]</Text>
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

@@ -5,7 +5,6 @@
   <TextInstructions>Could you describe your own primary functions, capabilities, and optimal use cases as an AI? Please provide a few examples of scenarios where you could be most effectively used as a list.</TextInstructions>
   <Text />
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

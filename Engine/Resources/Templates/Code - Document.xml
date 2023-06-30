@@ -5,7 +5,6 @@
   <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>
   <Text />
   <AttachContext>Selection</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

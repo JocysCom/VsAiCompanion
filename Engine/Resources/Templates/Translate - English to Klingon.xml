@@ -7,7 +7,6 @@
 Text to translate:</TextInstructions>
   <Text />
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

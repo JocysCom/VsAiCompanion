@@ -5,7 +5,6 @@
   <TextInstructions>Cleanup this code.</TextInstructions>
   <Text />
   <AttachContext>Selection</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

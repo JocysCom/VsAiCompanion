@@ -5,7 +5,6 @@
   <TextInstructions>Please check the spelling and grammar of comments in the code. Reply with corrected data.</TextInstructions>
   <Text />
   <AttachContext>Selection</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

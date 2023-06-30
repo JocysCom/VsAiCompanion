@@ -11,7 +11,6 @@ $wordCount = $words.Count&#xD;
 Write-Host "Number of words in the file: $wordCount"&#xD;
 ```</Text>
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

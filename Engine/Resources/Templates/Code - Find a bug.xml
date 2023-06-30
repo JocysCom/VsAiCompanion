@@ -5,7 +5,6 @@
   <TextInstructions>Find a bug in this code</TextInstructions>
   <Text />
   <AttachContext>ActiveDocument</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

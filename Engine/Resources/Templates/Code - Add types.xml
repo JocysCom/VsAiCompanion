@@ -5,7 +5,6 @@
   <TextInstructions>Add types to this code. Code:</TextInstructions>
   <Text />
   <AttachContext>Selection</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

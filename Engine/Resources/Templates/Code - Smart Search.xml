@@ -7,7 +7,6 @@
 Code feature to find:</TextInstructions>
   <Text>Multiplication</Text>
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

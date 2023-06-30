@@ -9,7 +9,6 @@ After corrections, provide both the fully corrected text.&#xD;
 Text to process:</TextInstructions>
   <Text />
   <AttachContext>None</AttachContext>
-  <AttachError>false</AttachError>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
