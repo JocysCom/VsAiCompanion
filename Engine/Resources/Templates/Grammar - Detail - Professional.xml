@@ -9,7 +9,6 @@ After corrections, provide both the fully corrected text and a detailed list of 
 Ensure that the language used is formal and professional, adhering to standard rules of grammar and etiquette.&#xD;
 &#xD;
 Text to process:</TextInstructions>
-  <Text />
   <AttachContext>None</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />

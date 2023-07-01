@@ -1,11 +1,35 @@
 ﻿using JocysCom.VS.AiCompanion.Engine;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace JocysCom.ClassLibrary.Controls.Chat
 {
 	public class MessageAttachments : INotifyPropertyChanged
 	{
+		public MessageAttachments() { }
+
+		public MessageAttachments(AttachmentType attachmentType, string language, string data)
+		{
+			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
+			Type = attachmentType;
+			Data = $"```{language}\r\n{data}\r\n```";
+			IsMarkdown = true;
+		}
+
+		public MessageAttachments(AttachmentType attachmentType, object dataToJson)
+		{
+			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
+			Type = attachmentType;
+			var options = new JsonSerializerOptions();
+			options.WriteIndented = true;
+			var data = JsonSerializer.Serialize(dataToJson, options);
+			Data = $"```json\r\n{data}\r\n```";
+			IsMarkdown = true;
+		}
+
+		public bool IsMarkdown { get => _IsMarkdown; set => SetProperty(ref _IsMarkdown, value); }
+		bool _IsMarkdown;
 
 		public AttachmentType Type { get => _Type; set => SetProperty(ref _Type, value); }
 		AttachmentType _Type;

@@ -3,7 +3,6 @@
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Make this code more readable</TextInstructions>
-  <Text />
   <AttachContext>ActiveDocument</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />

@@ -2,8 +2,7 @@
   <Name>Code - Find a bug</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <TextInstructions>Find a bug in this code</TextInstructions>
-  <Text />
+  <TextInstructions>Find a bug or issue in this code.</TextInstructions>
   <AttachContext>ActiveDocument</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />

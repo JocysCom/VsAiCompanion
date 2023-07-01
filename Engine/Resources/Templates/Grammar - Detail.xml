@@ -7,7 +7,6 @@
 After corrections, provide both the fully corrected text and a detailed list of the errors found and the corresponding corrections made.&#xD;
 &#xD;
 Text to process:</TextInstructions>
-  <Text />
   <AttachContext>None</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />

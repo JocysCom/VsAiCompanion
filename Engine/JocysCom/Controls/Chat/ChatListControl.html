@@ -295,13 +295,9 @@
 				for (var i = 0; i < attachments.length; i++) {
 					var a = attachments[i];
 					var aData = "";
-					if (a.Type == AttachmentType.Selection ||
-						a.Type == AttachmentType.ActiveDocument ||
-						a.Type == AttachmentType.SelectedError ||
-						a.Type == AttachmentType.ChatHistory
-					) {
-						// Data will come with markdown.
-						//data = "```" + message.Language + "\r\n" + message.Data + "\r\n```";
+					// If data use markdown then...
+					// Example: ```{Language}\r\n{Data}\r\n```
+					if (a.IsMarkdown) {
 						aData = marked.parse(a.Data);
 					} else {
 						// Use plain text.

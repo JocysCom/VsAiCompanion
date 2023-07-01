@@ -3,7 +3,6 @@
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>
-  <Text />
   <AttachContext>Selection</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />

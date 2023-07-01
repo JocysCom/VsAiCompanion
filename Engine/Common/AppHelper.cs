@@ -110,7 +110,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var text = Clipboard.GetText();
 			var item = new DocItem(text);
 			item.Name = nameof(Clipboard);
-			item.Language = "CSharp";
 			return item;
 		}
 

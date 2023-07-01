@@ -34,31 +34,44 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				m.BodyInstructions = AppHelper.ReplaceMacros(m.BodyInstructions, vsData);
 				m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
 			}
-			var dataItems = new List<DocItem>();
 			var fileItems = new List<DocItem>();
-			ErrorItem err = null;
 			var at = item.AttachContext;
+			// If data from clipboard.
 			if (at.HasFlag(AttachmentType.Clipboard))
-				dataItems.Add(Global.GetClipboard());
+			{
+				var clip = AppHelper.GetClipboard();
+				var clipAttachment = new MessageAttachments()
+				{
+					Title = Global.AppSettings.ContextDataTitle,
+					Type = item.AttachContext,
+					Data = clip.Data,
+				};
+				m.Attachments.Add(clipAttachment);
+			}
+			// If text selection in Visual Studio.
 			if (at.HasFlag(AttachmentType.Selection))
-				dataItems.Add(Global.GetSelection());
+			{
+				var ad = Global.GetSelection();
+				var adAttachment = new MessageAttachments(AttachmentType.Selection, ad.Language, ad.Data);
+				m.Attachments.Add(adAttachment);
+			}
+			// If selected error in Visual Studio.
 			if (at.HasFlag(AttachmentType.Error))
 			{
-				err = Global.GetSelectedError();
+				var err = Global.GetSelectedError();
 				if (!string.IsNullOrEmpty(err?.Description))
 				{
-					var a1 = new MessageAttachments();
-					a1.Title = Global.AppSettings.ContextErrorTitle;
-					a1.Type = AttachmentType.SelectedError;
-					var options = new JsonSerializerOptions();
-					options.WriteIndented = true;
-					var json = JsonSerializer.Serialize(err, options);
-					a1.Data = $"```json\r\n{json}\r\n```";
-					m.Attachments.Add(a1);
+					var errorAttachment = new MessageAttachments(AttachmentType.Error, err);
+					m.Attachments.Add(errorAttachment);
 				}
 			}
+			// If active open document in Visual Studio.
 			if (at.HasFlag(AttachmentType.ActiveDocument))
-				dataItems.Add(Global.GetActiveDocument());
+			{
+				var ad = Global.GetActiveDocument();
+				var adAttachment = new MessageAttachments(AttachmentType.ActiveDocument, ad.Language, ad.Data);
+				m.Attachments.Add(adAttachment);
+			}
 			if (at.HasFlag(AttachmentType.SelectedDocuments))
 				fileItems.AddRange(Global.GetSelectedDocuments());
 			if (at.HasFlag(AttachmentType.ActiveProject))
@@ -69,26 +82,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				fileItems.AddRange(Global.GetSolution());
 			if (at.HasFlag(AttachmentType.ErrorDocument))
 				fileItems.Add(Global.GetSelectedErrorDocument());
-			//if (at.HasFlag(AttachmentType.Exception))
-			//	fileItems.Add(Global.GetCurrentException());
+			if (at.HasFlag(AttachmentType.Exception))
+			{
+				var ei = Global.GetCurrentException();
+				if (!string.IsNullOrEmpty(ei?.Message))
+				{
+					var exceptionAttachment = new MessageAttachments(AttachmentType.Exception, ei);
+					m.Attachments.Add(exceptionAttachment);
+				}
+			}
 			if (at.HasFlag(AttachmentType.ExceptionDocuments))
 				fileItems.AddRange(Global.GetCurrentExceptionDocuments());
-			foreach (var dataItem in dataItems)
-			{
-				if (string.IsNullOrEmpty(dataItem?.Data))
-					continue;
-				var a3 = new MessageAttachments()
-				{
-					Title = Global.AppSettings.ContextDataTitle,
-					Type = item.AttachContext,
-					Data = item.AttachContext == AttachmentType.Selection || item.AttachContext == AttachmentType.ActiveDocument
-					// Use markdown which will make AI to reply with markdown too.
-					? $"```{dataItem.Language}\r\n{dataItem.Data}\r\n```"
-					: dataItem.Data,
-				};
-				m.Attachments.Add(a3);
-			}
-			// Attach files at the end.
+			// Attach files as message attachments at the end.
 			if (fileItems.Count > 0)
 			{
 				var a2 = new MessageAttachments()

@@ -5,7 +5,6 @@
   <TextInstructions>Translate English to Klingon and Klingon to English.&#xD;
 &#xD;
 Text to translate:</TextInstructions>
-  <Text />
   <AttachContext>None</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />

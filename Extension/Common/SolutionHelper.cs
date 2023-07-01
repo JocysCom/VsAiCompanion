@@ -221,13 +221,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		public static DocItem GetDocumentsBySolution(Solution2 solution)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			var item = new DocItem("")
-			{
-				FullName = solution.FullName,
-				Name = Path.GetFileName(solution.FullName),
-				Type = "Solution",
-				Language = null,
-			};
+			var item = new DocItem("", solution.FullName, "Solution");
 			LoadData(new List<DocItem> { item });
 			return item;
 		}
@@ -291,13 +285,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 					for (short i = 1; i <= item.ProjectItem.FileCount; i++)
 					{
 						var file = item.ProjectItem.get_FileNames(i);
-						items.Add(new DocItem("")
-						{
-							FullName = file,
-							Name = Path.GetFileName(file),
-							Type = "Project Item",
-							Language = null,
-						});
+						items.Add(new DocItem("", file, "Project Item"));
 					}
 				}
 			}
@@ -337,29 +325,11 @@ namespace JocysCom.VS.AiCompanion.Extension
 		public static long LoadData(List<DocItem> items)
 		{
 			long totalBytesLoaded = 0;
-			foreach (var doc in items)
-			{
-				// Don't load binary files.
-				if (!doc.IsText)
-					continue;
-				if (string.IsNullOrEmpty(doc.FullName))
-					continue;
-				if (!File.Exists(doc.FullName))
-					continue;
-				try
-				{
-					doc.Data = File.ReadAllText(doc.FullName);
-					totalBytesLoaded += Encoding.Unicode.GetByteCount(doc.Data);
-				}
-				catch
-				{
-					// Handle exceptions here, for example when trying to open a file 
-					// that is already open in another program.
-				}
-			}
+			foreach (var item in items)
+				// Load files 1 megabytes max in size.
+				totalBytesLoaded += item.LoadData(1024 * 1024);
 			return totalBytesLoaded;
 		}
-
 
 		#endregion
 
@@ -434,17 +404,14 @@ namespace JocysCom.VS.AiCompanion.Extension
 		public static DocItem GetActiveDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			var mi = new DocItem("");
 			var td = GetTextDocument();
 			if (td == null)
-				return mi;
+				return new DocItem("");
 			var startPoint = td.StartPoint.CreateEditPoint();
 			var data = startPoint.GetText(td.EndPoint);
-			mi.Data = data;
-			mi.Type = td.Type;
-			mi.Language = td.Language;
-			mi.Name = td.Parent?.Name;
-			return mi;
+			var di = new DocItem(data, td.Parent?.FullName, td.Type);
+			di.Language = td.Language;
+			return di;
 		}
 
 		public static void SetActiveDocument(string data)
@@ -464,15 +431,13 @@ namespace JocysCom.VS.AiCompanion.Extension
 		public static DocItem GetSelection()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			var mi = new DocItem("");
 			var doc = GetTextDocument();
 			if (doc == null)
-				return mi;
-			mi.Data = doc.Selection?.Text;
-			mi.Type = doc.Type;
-			mi.Language = doc.Language;
-			mi.Name = doc.Parent?.Name;
-			return mi;
+				return new DocItem("");
+			var data = doc.Selection?.Text;
+			var di = new DocItem(data, doc.Parent?.FullName, doc.Type);
+			di.Language = doc.Language;
+			return di;
 		}
 
 		/// <summary>
@@ -503,9 +468,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 		public static DocItem GetSelectedErrorDocument()
 		{
 			var ei = GetSelectedError();
-			var di = new DocItem();
-			di.FullName = ei.File;
-			di.Name = System.IO.Path.GetFileName(ei.File);
+			var di = new DocItem(null, ei.File, "Error Document");
+			di.Kind = di.Kind;
 			return di;
 		}
 

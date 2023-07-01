@@ -9,7 +9,6 @@ After corrections, provide both the fully corrected text and a detailed list of 
 Feel free to use a casual and conversational tone, including common colloquialisms and informal language where appropriate.&#xD;
 &#xD;
 Text to process:</TextInstructions>
-  <Text />
   <AttachContext>None</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />

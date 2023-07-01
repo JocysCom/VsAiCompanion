@@ -38,7 +38,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool ShowInstructions { get => _ShowInstructions; set => SetProperty(ref _ShowInstructions, value); }
 		bool _ShowInstructions;
 
-		public string Text { get => _Text; set => SetProperty(ref _Text, value); }
+		[DefaultValue("")]
+		public string Text { get => _Text ?? ""; set => SetProperty(ref _Text, value); }
 		string _Text;
 
 		/// <summary>0 - Precise, 1 - Normal,  2 - Creative.</summary>
@@ -49,6 +50,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Documents files, selction, clipboard.
 		/// </summary>
+		[DefaultValue(AttachmentType.None)]
 		public AttachmentType AttachContext { get => _AttachContext; set => SetProperty(ref _AttachContext, value); }
 		AttachmentType _AttachContext;
 
