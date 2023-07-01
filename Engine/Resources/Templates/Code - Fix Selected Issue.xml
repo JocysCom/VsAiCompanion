@@ -1,8 +1,8 @@
 ﻿<TemplateItem>
-  <Name>Code - Fix Error or Warning</Name>
+  <Name>Code - Fix Selected Issue</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
-  <TextInstructions>How to fix this error reported by Visual Studio? Please reply with the fixed code.</TextInstructions>
+  <TextInstructions>How to fix this issue reported by Visual Studio? Please reply with the fixed code.</TextInstructions>
   <AttachContext>Error ErrorDocument</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />

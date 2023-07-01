@@ -1,5 +1,5 @@
 ﻿<TemplateItem>
-  <Name>Code - Fix Exception</Name>
+  <Name>Code - Fix Debug Exception</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>How to fix this exception thrown during debug session in Visual Studio? Please reply with the fixed code.</TextInstructions>
