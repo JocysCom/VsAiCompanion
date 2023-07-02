@@ -168,9 +168,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				messageForAI += $"\r\n\r\n{a.Data}";
 				messageForAI = messageForAI.Trim('\r', '\n');
 			}
+			// ShowSensitiveDataWarning
 			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
 			{
-				var text = $"Do you want to send these files to AI?";
+				var lines = new List<string>();
+				foreach (var fileItem in fileItems)
+				{
+					if (string.IsNullOrEmpty(fileItem.Data))
+						continue;
+					var word = AppHelper.ContainsSensitiveData(fileItem.Data);
+					if (string.IsNullOrEmpty(word))
+						continue;
+					lines.Add($"Word '{word}' in File: {fileItem.FullName}\r\n");
+				}
+				if (lines.Count > 0)
+				{
+					var text = "Possible sensitive data has been detected. Do you want to send these files to AI?";
+					text += "\r\n\r\n" + string.Join("\r\n", lines);
+					var caption = $"{Global.Info.Product} - Send Files";
+					var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+					if (result != MessageBoxResult.Yes)
+						return;
+				}
+			}
+			// ShowDocumentsAttachedWarning
+			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
+			{
+				var text = "Do you want to send these files to AI?";
 				var files = fileItems.Select(x => x.FullName).ToList();
 				text += "\r\n\r\n" + string.Join("\r\n", files);
 				var caption = $"{Global.Info.Product} - Send Files";

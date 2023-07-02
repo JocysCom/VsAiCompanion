@@ -2,7 +2,6 @@
 {
 	public class Class1
 	{
-
 		public static int Multiply(int x, int y)
 		{
 			var z = x * y;

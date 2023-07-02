@@ -216,6 +216,28 @@ namespace JocysCom.VS.AiCompanion.Engine
 				copy.Name = newName;
 		}
 
+		public static string ContainsSensitiveData(string contents)
+		{
+			if (string.IsNullOrEmpty(contents))
+				return null;
+			List<string> sensitiveWords = new List<string> {
+				"password",
+				"card number",
+				"secret keyword",
+				"social security number",
+				"credit card",
+				"cvv",
+				"expiration date",
+				"passport number"
+			};
+			var lower = contents.ToLower();
+			foreach (var word in sensitiveWords)
+			{
+				if (lower.Contains(word))
+					return word;
+			}
+			return null;
+		}
 
 	}
 

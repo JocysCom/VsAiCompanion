@@ -7,6 +7,7 @@
 - New: Added the capability to send debugging exception errors.
 - New: Feature to send relevant files/documents for exceptions.
 - New: Show a warning when files are sent to the AI.
+- New: Show a warning when files sent to the AI contains possible sensitive data.
 
 2023-06-27 v1.0.35
 

@@ -179,7 +179,10 @@
 				</WrapPanel>
 			</GroupBox>
 			<GroupBox Header="Other">
-				<CheckBox Name="AppAlwaysOnTopCheckBoxCheckBox" Content="Show Documents Attached Warning" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
+					<CheckBox Name="ShowDocumentsAttachedWarningCheckBox" Content="Show Documents Attached Warning" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="Show Sensitive Data Warning" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				</WrapPanel>
 			</GroupBox>
 		</WrapPanel>
 	</Grid>

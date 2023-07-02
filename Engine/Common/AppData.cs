@@ -95,6 +95,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool ShowDocumentsAttachedWarning { get => _ShowDocumentsAttachedWarning; set => SetProperty(ref _ShowDocumentsAttachedWarning, value); }
 		private bool _ShowDocumentsAttachedWarning;
 
+		[DefaultValue(true)]
+		public bool ShowSensitiveDataWarning { get => _ShowSensitiveDataWarning; set => SetProperty(ref _ShowSensitiveDataWarning, value); }
+		private bool _ShowSensitiveDataWarning;
+
 		#endregion
 
 		public Companions.ChatGPT.Settings OpenAiSettings
