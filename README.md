@@ -6,7 +6,7 @@ This is a free and open-source project for people who have an [OpenAI API](https
 
 # Download
 
-Digitally Signed Standalone/Portable Application v1.0.35 (2023-06-27)
+Digitally Signed Standalone/Portable Application v1.0.42 (2023-07-02)
 
 [Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.0.0/JocysCom.VS.AiCompanion.App.zip)
 
@@ -52,6 +52,14 @@ Standalone Application: Quickly access tasks from the notification icon in the t
 Code - Smart Search: The AI can provide you with the exact location of specific code features:
 
 <img alt="Options" src="Documents/Images/JocysComVsAiCompanion_VisualStudio.png" width="685" height="455">
+
+Select Errors or Warnings reported by Visual Studio and ask AI to fix it:
+
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Task_Fix_SelectedIssue.png" width="604" height="490">
+
+Ask AI to fix the exception by either copying and pasting the exception info as a message or clicking the [Send] button when Visual Studio throws it during debugging:
+
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Task_Fix_Exception.png" width="604" height="490">
 
 Application Options:
 
