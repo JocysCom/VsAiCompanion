@@ -4,7 +4,6 @@
   <IconType>.svg</IconType>
   <TextInstructions>What are some must-visit places in?:</TextInstructions>
   <Text>[insert location here]</Text>
-  <AttachContext>None</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

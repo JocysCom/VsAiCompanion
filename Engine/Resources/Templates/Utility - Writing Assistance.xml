@@ -4,7 +4,6 @@
   <IconType>.svg</IconType>
   <TextInstructions>Can you help me write an introduction for an essay about?:</TextInstructions>
   <Text> [insert topic here]</Text>
-  <AttachContext>None</AttachContext>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>

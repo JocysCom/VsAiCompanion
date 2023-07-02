@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
@@ -467,6 +469,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		public static DocItem GetSelectedErrorDocument()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var ei = GetSelectedError();
 			var di = new DocItem(null, ei.File, "Error Document");
 			di.Kind = di.Kind;
@@ -503,36 +506,50 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return null;
 		}
 
+		#region Exception
+
 		public static ExceptionInfo GetCurrentException()
 		{
-			var ei = new ExceptionInfo();
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
-			// We are not in break mode then return.
+			if (dte == null)
+				return null;
+			// If not in break mode, possibly due to an exception then return.
 			if (dte.Debugger.CurrentMode != dbgDebugMode.dbgBreakMode)
 				return null;
-			// We are in break mode, possibly due to an exception.
-
 			// Get the current exception
 			var exceptionExpression = dte.Debugger.GetExpression("$exception", true, 100);
+			var ei = new ExceptionInfo();
 			if (exceptionExpression.IsValidValue)
 			{
-				string exceptionDetails = exceptionExpression.Value;
-				ei.Details = exceptionDetails;
+				var exception = ToDictionary(exceptionExpression);
+				var members = ToDictionary(exceptionExpression.DataMembers);
+				// Exception.Type
+				var typeName = nameof(Type);
+				if (exception.ContainsKey(typeName))
+					ei.Type = $"{exception[typeName]}";
+				// Exception.Message
+				ei.Message = Parse(exceptionExpression.Value);
+				// Exception.StackTrace
+				var stackTraceName = nameof(Exception.StackTrace);
+				if (members.Keys.Contains(stackTraceName))
+					ei.StackTrace = Parse(members[stackTraceName]);
 			}
-			var stackFrames = dte.Debugger.CurrentThread.StackFrames;
-			foreach (StackFrame stackFrame in stackFrames)
-			{
-				ei.StackFrames.Add(new StackFrameInfo() { FilePath = stackFrame.FunctionName });
-			}
+			// Alternative way to get StackTrace.
+			if (string.IsNullOrEmpty(ei.StackTrace))
+				ei.StackTrace = GetStackTrace(dte.Debugger.CurrentThread.StackFrames);
 			return ei;
 		}
 
 		public static List<DocItem> GetCurrentExceptionDocuments()
 		{
-			var list = new List<DocItem>();
-			return list;
+			var details = GetCurrentException().ToString();
+			var files = AppHelper.ExtractFilePaths(details);
+			var items = files.Select(x => new DocItem(null, x)).ToList();
+			return items;
 		}
+
+		#endregion
 
 		#region Formatting
 
@@ -574,6 +591,83 @@ namespace JocysCom.VS.AiCompanion.Extension
 				return;
 			doc.Selection.MoveToLineAndOffset(startLine, startOffset.Value, false);
 			doc.Selection.MoveToLineAndOffset(endLine, endOffset.Value, true);
+		}
+
+		#endregion
+
+		#region ComObject properties
+
+		public static string Parse(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+				return value;
+			// If C# or Regex format.
+			if (value.StartsWith("\"") && value.EndsWith("\""))
+			{
+				// Remove the surrounding quotes
+				var trimmedValue = value.Substring(1, value.Length - 2);
+				// Unescape any escape sequences
+				var unescapedValue = System.Text.RegularExpressions.Regex.Unescape(trimmedValue);
+				return unescapedValue;
+			}
+			// If JSON format.
+			if (value.StartsWith("{\"") && value.EndsWith("\"}"))
+			{
+				// Remove the surrounding braces and quotes
+				var trimmedValue = value.Substring(1, value.Length - 2);
+				try
+				{
+					var parsed = JsonDocument.Parse(trimmedValue);
+					var message = parsed.RootElement.GetString();
+					return message;
+				}
+				catch (JsonException)
+				{
+					// If the input is not a valid JSON string, return the original value
+					return value;
+				}
+			}
+			return value;
+		}
+
+		public static Dictionary<string, string> ToDictionary(Expressions expressions)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var d = new Dictionary<string, string>();
+			if (expressions == null)
+				return d;
+			var items = expressions.Cast<Expression>().ToArray();
+			for (int m = 0; m < items.Length; m++)
+			{
+				var item = items[m];
+				if (item.IsValidValue && !d.ContainsKey(item.Name))
+					d.Add(item.Name, item.Value);
+			}
+			return d;
+		}
+
+		public static Dictionary<string, object> ToDictionary<T>(T o)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var d = new Dictionary<string, object>();
+			if (o == null)
+				return d;
+			var properties = typeof(T).GetProperties();
+			foreach (var p in properties)
+				d.Add(p.Name, p.GetValue(o));
+			return d;
+		}
+
+		public static string GetStackTrace(StackFrames stackFrames)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			StringBuilder stackTrace = new StringBuilder();
+			foreach (StackFrame stackFrame in stackFrames)
+			{
+				string functionName = stackFrame.FunctionName;
+				stackTrace.AppendLine("   at " + functionName);
+			}
+			return stackTrace.ToString();
 		}
 
 		#endregion

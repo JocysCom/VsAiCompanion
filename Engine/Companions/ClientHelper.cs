@@ -92,7 +92,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				}
 			}
 			if (at.HasFlag(AttachmentType.ExceptionDocuments))
-				fileItems.AddRange(Global.GetCurrentExceptionDocuments());
+			{
+				// Get files for exception.
+				var exceptionFiles = Global.GetCurrentExceptionDocuments();
+				// Extract files if exception info was pasted manually inside the message.
+				var messagePaths = AppHelper.ExtractFilePaths(item.Text);
+				var uniquePaths = messagePaths
+					.Where(x => exceptionFiles.All(y => !x.Equals(y.FullName, StringComparison.OrdinalIgnoreCase)));
+				var messageFiles = uniquePaths.Select(x => new DocItem(null, x)).ToList();
+				fileItems.AddRange(exceptionFiles);
+				fileItems.AddRange(messageFiles);
+			}
 			// Attach files as message attachments at the end.
 			if (fileItems.Count > 0)
 			{

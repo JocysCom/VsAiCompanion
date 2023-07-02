@@ -152,35 +152,50 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-public static System.Drawing.Image ConvertDrawingImageToDrawingBitmap(DrawingImage drawingImage, int targetWidth, int targetHeight)
-	{
-		// Create a BitmapSource from the DrawingImage
-		double dpi = 96;
-		RenderTargetBitmap renderTarget = new RenderTargetBitmap(targetWidth, targetHeight, dpi, dpi, PixelFormats.Pbgra32);
-		DrawingVisual drawingVisual = new DrawingVisual();
-
-		using (DrawingContext context = drawingVisual.RenderOpen())
+		public static System.Drawing.Image ConvertDrawingImageToDrawingBitmap(DrawingImage drawingImage, int targetWidth, int targetHeight)
 		{
-			context.DrawImage(drawingImage, new Rect(new System.Windows.Point(), new System.Windows.Size(targetWidth, targetHeight)));
+			// Create a BitmapSource from the DrawingImage
+			double dpi = 96;
+			RenderTargetBitmap renderTarget = new RenderTargetBitmap(targetWidth, targetHeight, dpi, dpi, PixelFormats.Pbgra32);
+			DrawingVisual drawingVisual = new DrawingVisual();
+
+			using (DrawingContext context = drawingVisual.RenderOpen())
+			{
+				context.DrawImage(drawingImage, new Rect(new System.Windows.Point(), new System.Windows.Size(targetWidth, targetHeight)));
+			}
+
+			renderTarget.Render(drawingVisual);
+			BitmapSource bitmapSource = BitmapFrame.Create(renderTarget);
+
+			// Convert the BitmapSource to a Bitmap
+			System.Drawing.Bitmap bitmap;
+			using (MemoryStream outStream = new MemoryStream())
+			{
+				BitmapEncoder encoder = new PngBitmapEncoder();
+				encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+				encoder.Save(outStream);
+				bitmap = new System.Drawing.Bitmap(outStream);
+			}
+
+			return bitmap;
 		}
 
-		renderTarget.Render(drawingVisual);
-		BitmapSource bitmapSource = BitmapFrame.Create(renderTarget);
-
-		// Convert the BitmapSource to a Bitmap
-		System.Drawing.Bitmap bitmap;
-		using (MemoryStream outStream = new MemoryStream())
+		public static List<string> ExtractFilePaths(string stackTrace)
 		{
-			BitmapEncoder encoder = new PngBitmapEncoder();
-			encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-			encoder.Save(outStream);
-			bitmap = new System.Drawing.Bitmap(outStream);
+			var items = new List<string>();
+			if (string.IsNullOrEmpty(stackTrace))
+				return items;
+			var matchCollection = Regex.Matches(stackTrace, @"in\s(?<name>.*):line\s\d+");
+			foreach (Match match in matchCollection)
+			{
+				var name = match.Groups["name"].Value;
+				var isValid = !name.ToCharArray().Intersect(Path.GetInvalidPathChars()).Any();
+				if (isValid)
+					items.Add(name);
+			}
+			return items;
 		}
 
-		return bitmap;
 	}
-
-
-}
 
 }
