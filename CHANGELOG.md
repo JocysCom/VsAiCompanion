@@ -6,6 +6,7 @@
 - New: Added the option to send selected errors.
 - New: Added the capability to send debugging exception errors.
 - New: Feature to send relevant files/documents for exceptions.
+- New: Show a warning when files are sent to the AI.
 
 2023-06-27 v1.0.35
 

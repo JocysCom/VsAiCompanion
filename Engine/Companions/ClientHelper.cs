@@ -168,6 +168,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				messageForAI += $"\r\n\r\n{a.Data}";
 				messageForAI = messageForAI.Trim('\r', '\n');
 			}
+			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
+			{
+				var text = $"Do you want to send these files to AI?";
+				var files = fileItems.Select(x => x.FullName).ToList();
+				text += "\r\n\r\n" + string.Join("\r\n", files);
+				var caption = $"{Global.Info.Product} - Send Files";
+				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+				if (result != MessageBoxResult.Yes)
+					return;
+			}
 			item.Messages.Add(m);
 			// Message is added. Cleanup now.
 			if (isTask)

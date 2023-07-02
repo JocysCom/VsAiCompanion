@@ -91,6 +91,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string ContextErrorTitle { get => _ContextErrorTitle; set => SetProperty(ref _ContextErrorTitle, value); }
 		private string _ContextErrorTitle;
 
+		[DefaultValue(true)]
+		public bool ShowDocumentsAttachedWarning { get => _ShowDocumentsAttachedWarning; set => SetProperty(ref _ShowDocumentsAttachedWarning, value); }
+		private bool _ShowDocumentsAttachedWarning;
+
 		#endregion
 
 		public Companions.ChatGPT.Settings OpenAiSettings
