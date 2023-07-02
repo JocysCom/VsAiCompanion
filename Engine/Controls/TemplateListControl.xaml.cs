@@ -12,7 +12,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -364,6 +363,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				var xml = Clipboard.GetText();
 				var item = Serializer.DeserializeFromXmlString<TemplateItem>(xml);
+				AppHelper.FixName(item, CurrentItems);
 				InsertItem(item);
 			}
 			catch (Exception ex)

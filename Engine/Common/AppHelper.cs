@@ -196,6 +196,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return items;
 		}
 
+		/// <summary>
+		/// Fix name to make sure that it is not same as existing names.
+		/// </summary>
+		public static void FixName(TemplateItem copy, IEnumerable<TemplateItem> items)
+		{
+			var newName = copy.Name;
+			for (int i = 1; i < int.MaxValue; i++)
+			{
+				var sameFound = items.Any(x => string.Equals(x.Name, newName, StringComparison.OrdinalIgnoreCase));
+				// If item with the same name not found then...
+				if (!sameFound)
+					break;
+				// Change name of the copy and continue.
+				newName = $"{copy.Name} ({i})";
+				continue;
+			}
+			if (copy.Name != newName)
+				copy.Name = newName;
+		}
+
+
 	}
 
 }

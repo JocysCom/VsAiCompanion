@@ -306,8 +306,8 @@
 			// Trim all space from the end.
 			body = body.replace(spacesRx, "");
 			// Make sure that multiple spaces are preserved.
-			if (message.Type == MessageType.Out)
-				body = "<div style=\"white-space: pre;\">" + body + "</div>";
+			//if (message.Type == MessageType.Out)
+			//	body = "<div style=\"white-space: pre;\">" + body + "</div>";
 			var attachments = message.Attachments;
 			var data = "";
 			var buttons = "";

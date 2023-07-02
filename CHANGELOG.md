@@ -1,3 +1,12 @@
+2023-07-02 v1.0.42
+
+- Fix: Issue when attempting to paste an item with the same name.
+- Fix: Corrected message output display.
+- New: Now allows for attachment of multiple item types to AI with the same message.
+- New: Added the option to send selected errors.
+- New: Added the capability to send debugging exception errors.
+- New: Feature to send relevant files/documents for exceptions.
+
 2023-06-27 v1.0.35
 
 - Fix: Send button opacity when a message is changed.

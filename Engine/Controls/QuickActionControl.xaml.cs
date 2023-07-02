@@ -85,22 +85,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var copy = item.Copy(true);
 			// Hide instructions box by default on Tasks.
 			copy.ShowInstructions = false;
-			var originalName = copy.Name;
-			// Select newly created item.
 			var panel = Global.MainControl.TasksPanel.ListPanel;
-			for (int i = 1; i < int.MaxValue; i++)
-			{
-				var sameFound = Global.Tasks.Items.Any(x => string.Equals(x.Name, copy.Name, System.StringComparison.OrdinalIgnoreCase));
-				// If item with the same name not found then...
-				if (sameFound)
-				{
-					// Change name of the copy and continue.
-					copy.Name = $"{originalName} ({i})";
-					continue;
-				}
-				panel.InsertItem(copy);
-				break;
-			}
+			AppHelper.FixName(copy, Global.Tasks.Items);
+			panel.InsertItem(copy);
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
