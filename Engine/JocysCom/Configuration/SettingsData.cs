@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.Linq;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -99,18 +100,6 @@ namespace JocysCom.ClassLibrary.Configuration
 		public bool UseSeparateFiles { get; set; }
 
 		[XmlIgnore]
-		public string FileNamePropertyName
-		{
-			get => _FileNamePropertyName;
-			set { _FileNamePropertyName = value; FileNameProperty = typeof(T).GetProperty(value); }
-		}
-		string _FileNamePropertyName;
-
-
-		[XmlIgnore]
-		public PropertyInfo FileNameProperty { get; set; }
-
-		[XmlIgnore]
 		public FileInfo XmlFile { get { return _XmlFile; } set { _XmlFile = value; } }
 
 		[NonSerialized]
@@ -188,13 +177,14 @@ namespace JocysCom.ClassLibrary.Configuration
 						di.Create();
 					for (int i = 0; i < items.Length; i++)
 					{
-						var item = items[i];
-						var bytes = Serializer.SerializeToXmlBytes(item, Encoding.UTF8, true, _Comment);
-						var fileName = GetFileNameWithoutExtension(item) + fi.Extension;
+						var fileItem = (ISettingsItemFile)items[i];
+						var bytes = Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
+						var fileName = RemoveInvalidFileNameChars(fileItem.Name) + fi.Extension;
 						var fileFullName = Path.Combine(di.FullName, fileName);
 						if (compress)
 							bytes = SettingsHelper.Compress(bytes);
-						SettingsHelper.WriteIfDifferent(fileFullName, bytes);
+						if (SettingsHelper.WriteIfDifferent(fileFullName, bytes))
+							fileItem.ItemFileInfo = new FileInfo(fileFullName);
 					}
 				}
 				else
@@ -300,12 +290,13 @@ namespace JocysCom.ClassLibrary.Configuration
 									try
 									{
 										var item = DeserializeItem(bytes, compress);
+										var itemFile = (ISettingsItemFile)item;
+										itemFile.ItemFileInfo = file;
 										// Set Name property value to the same as the file.
-										var name = GetFileNameWithoutExtension(item);
-										var fileNamePropertyValue = (string)FileNameProperty.GetValue(item);
+										var name = RemoveInvalidFileNameChars(itemFile.Name);
 										var fileBaseName = Path.GetFileNameWithoutExtension(file.Name);
-										if (fileNamePropertyValue != fileBaseName)
-											FileNameProperty.SetValue(item, fileBaseName);
+										if (itemFile.Name != fileBaseName)
+											itemFile.Name = fileBaseName;
 										data.Add(item);
 									}
 									catch { }
@@ -397,21 +388,14 @@ namespace JocysCom.ClassLibrary.Configuration
 			return path;
 		}
 
-		public string GetFileNameWithoutExtension(T item)
-		{
-			var name = (string)FileNameProperty.GetValue(item);
-			name = RemoveInvalidFileNameChars(name);
-			return name;
-		}
-
 		/// <summary>
 		/// Returns error.
 		/// </summary>
-		public string RenameItem(T item, string newName)
+		public string RenameItem(ISettingsItemFile item, string newName)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = GetFileNameWithoutExtension(item);
+				var oldName = RemoveInvalidFileNameChars(item.Name);
 				// Case sensitive comparison.
 				if (string.Equals(oldName, newName, StringComparison.Ordinal))
 					return null;
@@ -422,22 +406,23 @@ namespace JocysCom.ClassLibrary.Configuration
 				if (invalidChars.Any())
 					return $"File name cannot contain invalid characters: {string.Join("", invalidChars)}";
 				var oldPath = GetItemFileFullName(oldName);
-				var oldFile = new FileInfo(oldPath);
+				var file = new FileInfo(oldPath);
 				var newPath = GetItemFileFullName(newName);
 				// If only case changed then rename to temp file first.
 				if (string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
 				{
 					var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
-					oldFile.MoveTo(tempFilePath);
+					file.MoveTo(tempFilePath);
 				}
 				else if (File.Exists(newPath))
 				{
 					return "File with the same name already exists.";
 				}
-				if (oldFile.Exists)
+				if (file.Exists)
 				{
-					oldFile.MoveTo(newPath);
-					FileNameProperty.SetValue(item, newName);
+					file.MoveTo(newPath);
+					item.Name = newName;
+					item.ItemFileInfo = file;
 				}
 				return null;
 			}
@@ -446,16 +431,16 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Returns new name.
 		/// </summary>
-		public void DeleteItem(T item)
+		public void DeleteItem(ISettingsItemFile item)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = GetFileNameWithoutExtension(item);
+				var oldName = RemoveInvalidFileNameChars(item.Name);
 				var oldPath = GetItemFileFullName(oldName);
 				var fi = new FileInfo(oldPath);
 				if (fi.Exists)
 					fi.Delete();
-				Items.Remove(item);
+				Items.Remove((T)item);
 			}
 		}
 

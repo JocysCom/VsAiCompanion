@@ -2,6 +2,7 @@
   <Name>AI - Chat</Name>
   <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
   <IconType>.svg</IconType>
+  <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>
   <Messages />

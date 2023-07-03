@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls.Chat;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
@@ -8,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class TemplateItem : ISettingsItem, INotifyPropertyChanged
+	public class TemplateItem : ISettingsItem, INotifyPropertyChanged, ISettingsItemFile
 	{
 		public TemplateItem()
 		{
@@ -18,6 +19,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
+
+		/// <summary>Information about original file. Used for tracking and loading.</summary>
+		[XmlIgnore]
+		FileInfo ISettingsItemFile.ItemFileInfo { get; set; }
 
 		public string TemplateName { get => _TemplateName; set => SetProperty(ref _TemplateName, value); }
 		string _TemplateName;

@@ -51,14 +51,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			new SettingsData<TemplateItem>($"{nameof(Templates)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
 				UseSeparateFiles = true,
-				FileNamePropertyName = nameof(TemplateItem.Name),
 			};
 
 		public static SettingsData<TemplateItem> Tasks =
 		new SettingsData<TemplateItem>($"{nameof(Tasks)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 		{
 			UseSeparateFiles = true,
-			FileNamePropertyName = nameof(TemplateItem.Name),
 		};
 
 		public static SortableBindingList<TemplateItem> GetItems(ItemType type)
