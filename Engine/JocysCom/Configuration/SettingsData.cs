@@ -11,6 +11,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Linq;
+using JocysCom.ClassLibrary.Controls;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -178,7 +179,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					for (int i = 0; i < items.Length; i++)
 					{
 						var fileItem = (ISettingsItemFile)items[i];
-						var bytes = Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
+						var bytes = Serialize(fileItem);
 						var fileName = RemoveInvalidFileNameChars(fileItem.BaseName) + fi.Extension;
 						var fileFullName = Path.Combine(di.FullName, fileName);
 						if (compress)
@@ -195,7 +196,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				{
 					if (!fi.Directory.Exists)
 						fi.Directory.Create();
-					var bytes = Serializer.SerializeToXmlBytes(this, Encoding.UTF8, true, _Comment);
+					var bytes = Serialize(this);
 					if (compress)
 						bytes = SettingsHelper.Compress(bytes);
 					SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
@@ -450,10 +451,10 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#endregion
 
+		public bool ClearWhenLoading = false;
+
 		void LoadAndValidateData(IList<T> data)
 		{
-			// Clear original data.
-			Items.Clear();
 			if (data is null)
 				data = new SortableBindingList<T>();
 			// Filter data if filter method exists.
@@ -464,9 +465,93 @@ namespace JocysCom.ClassLibrary.Configuration
 			// Filter data if filter method exists.
 			var e = new SettingsDataEventArgs(items);
 			OnValidateData?.Invoke(this, e);
-			for (int i = 0; i < items.Count; i++)
-				Items.Add(items[i]);
+			if (ClearWhenLoading)
+			{
+				// Clear original data.
+				Items.Clear();
+				for (int i = 0; i < items.Count; i++)
+					Items.Add(items[i]);
+			}
+			else
+			{
+				var oldList = GetHashValues(Items);
+				var newList = GetHashValues(data).ToArray();
+				var newData = new List<T>();
+				// Step 1: Update new list with the old items if they are exactly the same.
+				for (int i = 0; i < newList.Length; i++)
+				{
+					var newItem = newList[i];
+					// Find same item from the old list.
+					var oldItem = oldList.FirstOrDefault(x => x.Value.SequenceEqual(newItem.Value));
+					// If same item found then use it...
+					if (oldItem.Key != null)
+					{
+						newData.Add(oldItem.Key);
+						oldList.Remove(oldItem.Key);
+					}
+					else
+					{
+						newData.Add(newItem.Key);
+					}
+				}
+				SettingsHelper.Synchronize(newData, Items);
+			}
 		}
+
+		#region Synchronize
+
+		/// <summary>
+		/// Synchronize source collection to destination.
+		/// </summary>
+		/// <remarks>
+		/// Same Code:
+		/// JocysCom\Controls\SearchHelper.cs
+		/// </remarks>
+		public static void Synchronize(IList<T> source, IList<T> target)
+		{
+			// Convert to array to avoid modification of collection during processing.
+			var sList = source.ToArray();
+			var t = 0;
+			for (var s = 0; s < sList.Length; s++)
+			{
+				var item = sList[s];
+				// If item exists in destination and is in the correct position then continue
+				if (t < target.Count && target[t].Equals(item))
+				{
+					t++;
+					continue;
+				}
+				// If item is in destination but not at the correct position, remove it.
+				var indexInDestination = target.IndexOf(item);
+				if (indexInDestination != -1)
+					target.RemoveAt(indexInDestination);
+				// Insert item at the correct position.
+				target.Insert(s, item);
+				t = s + 1;
+			}
+			// Remove extra items.
+			while (target.Count > sList.Length)
+				target.RemoveAt(target.Count - 1);
+		}
+
+
+		/// <summary>
+		/// Return list of items their SHA256 hash.
+		/// </summary>
+		Dictionary<T, byte[]> GetHashValues(IList<T> items)
+		{
+			var list = new Dictionary<T, byte[]>();
+			var algorithm = System.Security.Cryptography.SHA256.Create();
+			foreach (var item in items)
+			{
+				var bytes = Serialize(item);
+				var byteHash = algorithm.ComputeHash(bytes);
+				list.Add(item, byteHash);
+			}
+			return list;
+		}
+
+		#endregion
 
 		public bool ResetToDefault()
 		{
@@ -504,6 +589,11 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 			LoadAndValidateData(data is null ? null : data.Items);
 			return success;
+		}
+
+		byte[] Serialize(object fileItem)
+		{
+			return Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
 		}
 
 		SettingsData<T> DeserializeData(byte[] bytes, bool compressed)

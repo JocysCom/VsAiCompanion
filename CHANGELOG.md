@@ -1,3 +1,7 @@
+2023-07-04 v1.0.43
+
+- Fix: The entire list refreshes when a task is removed or updated on the disk.
+
 2023-07-02 v1.0.42
 
 - Fix: Issue when attempting to paste an item with the same name.

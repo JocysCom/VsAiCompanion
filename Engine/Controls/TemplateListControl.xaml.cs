@@ -131,21 +131,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			Dispatcher.BeginInvoke(new Action(() =>
 			{
-
-				var oldType = ItemControlType;
-				var oldSettings = SettingsData;
-				ItemControlType = ItemType.None;
-				oldSettings.Load();
-				ItemControlType = oldType;
-				var list = PanelSettings.ListSelection;
-				ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, true);
+				// Reload data from the disk.
+				SettingsData.Load();
+				ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), PanelSettings.ListSelection, lastSelectedIndex);
 			}));
 		}
 
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, true);
+			ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
 		}
 
 		private ItemType _ItemControlType;
@@ -195,10 +190,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		int lastSelectedIndex;
+
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(TemplateItem.Name));
 			PanelSettings.ListSelection = selection;
+			// Remember last selected index.
+			if (selection.Count > 0)
+				lastSelectedIndex = MainDataGrid.SelectedIndex;
+			// Try to select row at the same position.
+			else if (lastSelectedIndex >= 0 && lastSelectedIndex < MainDataGrid.Items.Count)
+				MainDataGrid.SelectedIndex = lastSelectedIndex;
 			UpdateButtons();
 		}
 
@@ -385,7 +388,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var list = PanelSettings.ListSelection;
 			if (list?.Count > 0)
-				ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, true);
+				ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
 			SearchTextBox.Text = PanelSettings.SearchText;
 		}
 

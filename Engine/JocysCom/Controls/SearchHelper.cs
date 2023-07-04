@@ -62,6 +62,7 @@ namespace JocysCom.ClassLibrary.Controls
 				return;
 			var filteredSourceList = new BindingList<T>(SourceList.Where(item => Predicate(item)).ToList());
 			Synchronize(filteredSourceList, FilteredList);
+			Synchronized?.Invoke(this, EventArgs.Empty);
 		}
 
 		public event EventHandler Synchronized;
@@ -69,7 +70,12 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Synchronize source collection to destination.
 		/// </summary>
-		public void Synchronize(IList<T> source, IList<T> target)
+		/// <remarks>
+		/// Same Code:
+		/// JocysCom\Controls\SearchHelper.cs
+		/// JocysCom\Configuration\SettingsHelper.cs
+		/// </remarks>
+		static void Synchronize(IList<T> source, IList<T> target)
 		{
 			// Convert to array to avoid modification of collection during processing.
 			var sList = source.ToArray();
@@ -94,7 +100,6 @@ namespace JocysCom.ClassLibrary.Controls
 			// Remove extra items.
 			while (target.Count > sList.Length)
 				target.RemoveAt(target.Count - 1);
-			Synchronized?.Invoke(this, EventArgs.Empty);
 		}
 	}
 
