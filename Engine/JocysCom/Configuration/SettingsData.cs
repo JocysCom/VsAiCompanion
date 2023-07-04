@@ -179,12 +179,16 @@ namespace JocysCom.ClassLibrary.Configuration
 					{
 						var fileItem = (ISettingsItemFile)items[i];
 						var bytes = Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
-						var fileName = RemoveInvalidFileNameChars(fileItem.Name) + fi.Extension;
+						var fileName = RemoveInvalidFileNameChars(fileItem.BaseName) + fi.Extension;
 						var fileFullName = Path.Combine(di.FullName, fileName);
 						if (compress)
 							bytes = SettingsHelper.Compress(bytes);
 						if (SettingsHelper.WriteIfDifferent(fileFullName, bytes))
-							fileItem.ItemFileInfo = new FileInfo(fileFullName);
+						{
+							fi.Refresh();
+							fileItem.WriteTime = new FileInfo(fileFullName).LastWriteTime;
+						}
+
 					}
 				}
 				else
@@ -291,12 +295,12 @@ namespace JocysCom.ClassLibrary.Configuration
 									{
 										var item = DeserializeItem(bytes, compress);
 										var itemFile = (ISettingsItemFile)item;
-										itemFile.ItemFileInfo = file;
+										itemFile.WriteTime = file.LastWriteTime;
 										// Set Name property value to the same as the file.
-										var name = RemoveInvalidFileNameChars(itemFile.Name);
+										var name = RemoveInvalidFileNameChars(file.Name);
 										var fileBaseName = Path.GetFileNameWithoutExtension(file.Name);
-										if (itemFile.Name != fileBaseName)
-											itemFile.Name = fileBaseName;
+										if (itemFile.BaseName != fileBaseName)
+											itemFile.BaseName = fileBaseName;
 										data.Add(item);
 									}
 									catch { }
@@ -391,11 +395,11 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Returns error.
 		/// </summary>
-		public string RenameItem(ISettingsItemFile item, string newName)
+		public string RenameItem(ISettingsItemFile itemFile, string newName)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = RemoveInvalidFileNameChars(item.Name);
+				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
 				// Case sensitive comparison.
 				if (string.Equals(oldName, newName, StringComparison.Ordinal))
 					return null;
@@ -421,8 +425,8 @@ namespace JocysCom.ClassLibrary.Configuration
 				if (file.Exists)
 				{
 					file.MoveTo(newPath);
-					item.Name = newName;
-					item.ItemFileInfo = file;
+					itemFile.BaseName = newName;
+					itemFile.WriteTime = file.LastWriteTime;
 				}
 				return null;
 			}
@@ -431,16 +435,16 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Returns new name.
 		/// </summary>
-		public void DeleteItem(ISettingsItemFile item)
+		public void DeleteItem(ISettingsItemFile itemFile)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = RemoveInvalidFileNameChars(item.Name);
+				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
 				var oldPath = GetItemFileFullName(oldName);
 				var fi = new FileInfo(oldPath);
 				if (fi.Exists)
 					fi.Delete();
-				Items.Remove((T)item);
+				Items.Remove((T)itemFile);
 			}
 		}
 

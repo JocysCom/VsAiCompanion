@@ -1,7 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls.Chat;
+using System;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
@@ -19,10 +19,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
-
-		/// <summary>Information about original file. Used for tracking and loading.</summary>
-		[XmlIgnore]
-		FileInfo ISettingsItemFile.ItemFileInfo { get; set; }
 
 		public string TemplateName { get => _TemplateName; set => SetProperty(ref _TemplateName, value); }
 		string _TemplateName;
@@ -195,6 +191,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region ■ ISettingsItemFile
+
+		[XmlIgnore]
+		string ISettingsItemFile.BaseName { get => Name; set => Name = value; }
+
+		[XmlIgnore]
+		DateTime ISettingsItemFile.WriteTime { get; set; }
+
+		#endregion
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -214,6 +220,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			((ISettingsItemFile)this).WriteTime = DateTime.Now;
 		}
 
 		#endregion
