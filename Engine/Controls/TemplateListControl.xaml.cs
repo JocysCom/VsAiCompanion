@@ -452,7 +452,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-	}
+		private void FilterButton_Click(object sender, RoutedEventArgs e)
+		{
+			_SearchHelper.Filter();
+		}
+    }
 
 	#endregion
 

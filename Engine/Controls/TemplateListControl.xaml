@@ -104,48 +104,69 @@
 				</Button>
 			</ToolBar>
 		</ToolBarPanel>
-		<Grid Grid.Row="1">
-			<TextBox
-				x:Name="SearchTextBox"
-				Margin="0"
-				Padding="4,2,4,4"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch"
-				VerticalContentAlignment="Top"
-				AcceptsReturn="True"
-				Background="White"
-				BorderThickness="0"
-				PreviewKeyDown="SearchTextBox_PreviewKeyDown"
-				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				ScrollViewer.VerticalScrollBarVisibility="Auto"
-				TextChanged="SearchTextBox_TextChanged"
-				TextWrapping="Wrap" />
-			<TextBlock
-				Margin="0"
-				Padding="4,3,4,3"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch"
-				IsHitTestVisible="False"
-				Opacity="0.5"
-				Text="Search the list">
-				<TextBlock.Style>
-					<Style TargetType="{x:Type TextBlock}">
-						<Setter Property="Visibility" Value="Collapsed" />
-						<Style.Triggers>
-							<MultiDataTrigger>
-								<MultiDataTrigger.Conditions>
-									<Condition Binding="{Binding ElementName=SearchTextBox, Path=Text}" Value="" />
-									<Condition Binding="{Binding ElementName=SearchTextBox, Path=IsKeyboardFocused}" Value="False" />
-								</MultiDataTrigger.Conditions>
-								<MultiDataTrigger.Setters>
-									<Setter Property="Visibility" Value="Visible" />
-								</MultiDataTrigger.Setters>
-							</MultiDataTrigger>
-						</Style.Triggers>
-					</Style>
-				</TextBlock.Style>
-			</TextBlock>
-		</Grid>
+		<Border Grid.Row="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,1,0,1">
+			<Grid>
+				<TextBox
+					x:Name="SearchTextBox"
+					Margin="0,0,0,0"
+					Padding="24,2,4,4"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					Background="White"
+					BorderThickness="0"
+					PreviewKeyDown="SearchTextBox_PreviewKeyDown"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextChanged="SearchTextBox_TextChanged"
+					TextWrapping="Wrap" />
+				<Button
+					Name="FilterButton"
+					MinWidth="0"
+					Margin="0,0,0,0"
+					Padding="0"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Center"
+					Background="Transparent"
+					BorderThickness="0"
+					Click="FilterButton_Click"
+					Opacity="0.5">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl
+							VerticalAlignment="Center"
+							Content="{StaticResource Icon_find_gray}"
+							Focusable="False"
+							Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+				<TextBlock
+					Margin="0"
+					Padding="24,3,4,3"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					IsHitTestVisible="False"
+					Opacity="0.5"
+					Text="Search the list">
+					<TextBlock.Style>
+						<Style TargetType="{x:Type TextBlock}">
+							<Setter Property="Visibility" Value="Collapsed" />
+							<Style.Triggers>
+								<MultiDataTrigger>
+									<MultiDataTrigger.Conditions>
+										<Condition Binding="{Binding ElementName=SearchTextBox, Path=Text}" Value="" />
+										<Condition Binding="{Binding ElementName=SearchTextBox, Path=IsKeyboardFocused}" Value="False" />
+									</MultiDataTrigger.Conditions>
+									<MultiDataTrigger.Setters>
+										<Setter Property="Visibility" Value="Visible" />
+									</MultiDataTrigger.Setters>
+								</MultiDataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+				</TextBlock>
+			</Grid>
+		</Border>
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"

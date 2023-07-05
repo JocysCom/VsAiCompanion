@@ -37,6 +37,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_elements_tree = nameof(Icon_elements_tree);
 		public const string Icon_eyeglasses = nameof(Icon_eyeglasses);
 		public const string Icon_face_scan = nameof(Icon_face_scan);
+		public const string Icon_find = nameof(Icon_find);
+		public const string Icon_find_gray = nameof(Icon_find_gray);
 		public const string Icon_find_text = nameof(Icon_find_text);
 		public const string Icon_first_aid_box = nameof(Icon_first_aid_box);
 		public const string Icon_folders = nameof(Icon_folders);
@@ -66,6 +68,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_Template = nameof(Icon_Template);
 		public const string Icon_user = nameof(Icon_user);
 		public const string Icon_Visual_Studio = nameof(Icon_Visual_Studio);
+		public const string Icon_warning = nameof(Icon_warning);
 		public const string Icon_window = nameof(Icon_window);
 		public const string Icon_windows = nameof(Icon_windows);
 		public const string Icon_window_split_hor = nameof(Icon_window_split_hor);
