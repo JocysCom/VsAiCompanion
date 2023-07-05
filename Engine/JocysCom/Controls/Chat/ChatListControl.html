@@ -166,7 +166,6 @@
 			margin-block-start: 0.5em;
 			margin-block-end: 0.5em;
 		}
-
 	</style>
 	<style>
 
@@ -187,10 +186,10 @@
 			margin-left: 0.5em;
 		}
 
-		.expandable-button:hover {
-			/* opacity: 1.0;  */
-			outline: none;
-		}
+			.expandable-button:hover {
+				/* opacity: 1.0;  */
+				outline: none;
+			}
 
 			.expandable-button.clicked {
 				/* background: linear-gradient(to bottom, #00ff00, #008000); */
@@ -302,24 +301,30 @@
 			// Add support for markdown.
 			var spacesRx = new RegExp("[\r\n\s]+$", "g")
 			body = body.replace(spacesRx, "");
+			// Make sure characters like `<` or `>` are not treated as HTML element characters.
+			body = ConvertForDisplayAsHtml(body);
 			body = marked.parse(body);
 			// Trim all space from the end.
 			body = body.replace(spacesRx, "");
 			// Make sure that multiple spaces are preserved.
 			//if (message.Type == MessageType.Out)
 			//	body = "<div style=\"white-space: pre;\">" + body + "</div>";
-			var attachments = message.Attachments;
-			var data = "";
-			var buttons = "";
-
 			var newMessageInstructionsHTML = "";
 
+			var buttons = "";
 			// If body AI instructions supplied then...
 			if ((message.BodyInstructions) && ("" + message.BodyInstructions).length > 0) {
-				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", marked.parse(message.BodyInstructions), "");
+				var instructions = message.BodyInstructions;
+				// Make sure characters like `<` or `>` are not treated as HTML element characters.
+				instructions = ConvertForDisplayAsHtml(instructions);
+				instructions = marked.parse(instructions);
+				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", instructions, "");
 				buttons += box.buttonHTML;
 				newMessageInstructionsHTML = box.panelHTML;
 			}
+
+			var attachments = message.Attachments;
+			var data = "";
 
 			if (Array.isArray(attachments)) {
 				for (var i = 0; i < attachments.length; i++) {
@@ -328,19 +333,23 @@
 					// If data use markdown then...
 					// Example: ```{Language}\r\n{Data}\r\n```
 					if (a.IsMarkdown) {
-						aData = marked.parse(a.Data);
+						aData = (a.Data) ? a.Data : "";
+						aData = ConvertForDisplayAsHtml(aData);
+						aData = marked.parse(aData);
 					} else {
-						// Use plain text.
+						// Wrap into plain text element.
 						var pre = document.createElement('pre');
 						pre.innerText = a.Data;
 						aData = pre.outerHTML;
 					}
-					var instructions = "";
+					var aInstructions = "";
+					// If instructions supplied then...
 					if ((a.Instructions) && ("" + a.Instructions).length > 0) {
-						instructions = a.Instructions + "</ br>";
+						aInstructions = a.Instructions;
+						aInstructions = ConvertForDisplayAsHtml(aInstructions);
+						aInstructions = aInstructions + "</ br>";
 					}
-
-					var box = AddAttachmentBox(message.Id + "_" + i, a.Title, instructions, aData);
+					var box = AddAttachmentBox(message.Id + "_" + i, a.Title, aInstructions, aData);
 					buttons += box.buttonHTML;
 					data += "\r\n\r\n" + box.panelHTML;
 				}
@@ -404,6 +413,43 @@
 				element.style.display = "none";
 				button.classList.remove('expandable-button-visible');
 			}
+		}
+
+		function ConvertForDisplayAsHtml(text) {
+			// Normalize line endings and split on line breaks.
+			var lines = text.replace(/\r\n/g, '\n').split('\n');
+			var inCodeBlock = false;
+			var inCodeSpan = false;
+			for (var i = 0; i < lines.length; i++) {
+				var line = lines[i];
+				// Toggle state for triple-backtick blocks.
+				if (line.startsWith("```"))
+					inCodeBlock = !inCodeBlock;
+				// Toggle state for single-backtick spans within this line.
+				var backticksInLine = (line.match(/`/g) || []).length;
+				// If the number of backticks is odd.
+				if (backticksInLine % 2 !== 0)
+					inCodeSpan = !inCodeSpan;
+				// Escape HTML characters outside of code blocks and spans.
+				if (!inCodeBlock && !inCodeSpan) {
+					line = EscapeHtml(line);
+					// If it is not the last line, then append <br />.
+					if (i < lines.length - 1)
+						line += "<br />";
+				}
+				lines[i] = line;
+			}
+			var processedText = lines.join('\r\n');
+			return processedText;
+		}
+
+		function EscapeHtml(unsafe) {
+			return unsafe
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;")
+				.replace(/'/g, "&#039;");
 		}
 
 		function DeleteMessage(messageId) {

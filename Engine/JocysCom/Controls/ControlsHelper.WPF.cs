@@ -642,7 +642,7 @@ namespace JocysCom.ClassLibrary.Controls
 			RestoreSelection(grid, keyPropertyName, list, selectFirst ? 0 : -1);
 		}
 
-		public static void RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
+		public static bool RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
 		{
 			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));
@@ -651,7 +651,7 @@ namespace JocysCom.ClassLibrary.Controls
 			var items = grid.Items.Cast<object>().ToArray();
 			// Return if grid is empty.
 			if (items.Length == 0)
-				return;
+				return false;
 			// If something to restore then...
 			if (list.Count > 0)
 			{
@@ -682,6 +682,7 @@ namespace JocysCom.ClassLibrary.Controls
 			// If nothing was selected and must select index then...
 			if (grid.SelectedItems.Count == 0 && selectIndex >= 0 && selectIndex < grid.Items.Count)
 				grid.SelectedItem = items[selectIndex];
+			return grid.SelectedItems.Count > 0;
 		}
 
 		#endregion

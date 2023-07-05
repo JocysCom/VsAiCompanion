@@ -133,7 +133,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				// Reload data from the disk.
 				SettingsData.Load();
-				ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), PanelSettings.ListSelection, lastSelectedIndex);
 			}));
 		}
 
@@ -190,18 +189,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		int lastSelectedIndex;
-
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(TemplateItem.Name));
-			PanelSettings.ListSelection = selection;
-			// Remember last selected index.
-			if (selection.Count > 0)
-				lastSelectedIndex = MainDataGrid.SelectedIndex;
-			// Try to select row at the same position.
-			else if (lastSelectedIndex >= 0 && lastSelectedIndex < MainDataGrid.Items.Count)
-				MainDataGrid.SelectedIndex = lastSelectedIndex;
+			// If item selected then...
+			if (MainDataGrid.SelectedIndex >= 0)
+			{
+				// Remember selection.
+				PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(TemplateItem.Name));
+				PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
+			}
+			else
+			{
+				// Try to restore selection.
+				ControlsHelper.RestoreSelection(
+					MainDataGrid, nameof(TemplateItem.Name),
+					PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
+				);
+			}
 			UpdateButtons();
 		}
 
@@ -264,7 +268,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void InsertItem(TemplateItem item)
 		{
 			var position = FindInsertPosition(CurrentItems, item);
-			SelectedIndex = position;
+			// Make sure new item will be selected and focused.
+			PanelSettings.ListSelection = new List<string>() { item.Name };
+			PanelSettings.ListSelectedIndex = position;
 			CurrentItems.Insert(position, item);
 			SettingsData.Save();
 		}
@@ -278,14 +284,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return list.Count;
 		}
 
-		int? SelectedIndex = 0;
-
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<TemplateItem>().ToList();
 			if (items.Count == 0)
 				return;
-			SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
+			//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
 			var text = $"Do you want to delete {items.Count} item{(items.Count > 1 ? "s" : "")}?";
 			var caption = $"{Global.Info.Product} - Delete";
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -420,24 +424,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _SearchHelper_Synchronized(object sender, EventArgs e)
 		{
-			var index = SelectedIndex;
-			SelectedIndex = null;
-			if (index != null && index > -1)
-			{
-				// Select the first item after deletion
-				if (MainDataGrid.Items.Count > 0)
-				{
-					MainDataGrid.SelectedIndex = Math.Min(index.Value, MainDataGrid.Items.Count - 1);
-					MainDataGrid.ScrollIntoView(MainDataGrid.SelectedItem);
-					// Set focus to the selected row
-					var row = (DataGridRow)MainDataGrid.ItemContainerGenerator.ContainerFromIndex(MainDataGrid.SelectedIndex);
-					if (row != null)
-						row.Focus();
-				}
-			}
+			// Try to restore selection.
+			ControlsHelper.RestoreSelection(
+				MainDataGrid, nameof(TemplateItem.Name),
+				PanelSettings.ListSelection, 0
+			);
 		}
 
-		private JocysCom.ClassLibrary.Controls.SearchHelper<TemplateItem> _SearchHelper;
+		private SearchHelper<TemplateItem> _SearchHelper;
 
 		private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
 		{

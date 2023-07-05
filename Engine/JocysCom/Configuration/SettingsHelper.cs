@@ -168,28 +168,34 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// </remarks>
 		public static void Synchronize<T>(IList<T> source, IList<T> target)
 		{
-			// Convert to array to avoid modification of collection during processing.
-			var sList = source.ToArray();
-			var t = 0;
-			for (var s = 0; s < sList.Length; s++)
+			// Create a dictionary for fast lookup in source list
+			var sourceSet = new Dictionary<T, int>();
+			for (int i = 0; i < source.Count; i++)
+				sourceSet[source[i]] = i;
+			// Iterate over the target, remove items not in source
+			for (int i = target.Count - 1; i >= 0; i--)
+				if (!sourceSet.ContainsKey(target[i]))
+					target.RemoveAt(i);
+			// Iterate over source
+			for (int s = 0; s < source.Count; s++)
 			{
-				var item = sList[s];
-				// If item exists in destination and is in the correct position then continue
-				if (t < target.Count && target[t].Equals(item))
+				// If item is not present in target, insert it.
+				if (!target.Contains(source[s]))
 				{
-					t++;
+					target.Insert(s, source[s]);
 					continue;
 				}
-				// If item is in destination but not at the correct position, remove it.
-				var indexInDestination = target.IndexOf(item);
-				if (indexInDestination != -1)
-					target.RemoveAt(indexInDestination);
-				// Insert item at the correct position.
-				target.Insert(s, item);
-				t = s + 1;
+				// If item is present in target but not at the right position, move it.
+				int t = target.IndexOf(source[s]);
+				if (t != s)
+				{
+					T temp = target[s];
+					target[s] = target[t];
+					target[t] = temp;
+				}
 			}
-			// Remove extra items.
-			while (target.Count > sList.Length)
+			// Remove items at the end of target that exceed source's length
+			while (target.Count > source.Count)
 				target.RemoveAt(target.Count - 1);
 		}
 

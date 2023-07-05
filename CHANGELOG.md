@@ -1,6 +1,8 @@
-2023-07-04 v1.0.43
+2023-07-05 v1.0.47
 
 - Fix: The entire list refreshes when a task is removed or updated on the disk.
+- Fix: Display XML elements within the message.
+- Fix: App not restoring the last Task selection upon restart.
 
 2023-07-02 v1.0.42
 

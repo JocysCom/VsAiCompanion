@@ -105,8 +105,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 		Dictionary<AttachmentType, string> _DataTypes;
 
-
-
 		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
 		{
 			get
@@ -267,7 +265,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AddKeys(FileComboBox, null, AppHelper.GetReplaceMacrosDocument());
 			AddKeys(DateComboBox, null, AppHelper.GetReplaceMacrosDate());
 			AddKeys(VsMacrosComboBox, null, Global.GetEnvironmentProperties());
-			//AttachmentEnumComboBox.SetItemSource<AttachmentType>();
 		}
 
 		int alwaysSelectedIndex = -1;
@@ -275,7 +272,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		void AddKeys(ComboBox cb, string name, IEnumerable<PropertyItem> list)
 		{
 			var options = new List<PropertyItem>();
-			//options.Insert(0, new PropertyItem() { Display = name });
 			options.AddRange(list);
 			cb.ItemsSource = options;
 			cb.SelectedIndex = alwaysSelectedIndex;

@@ -20,6 +20,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public List<string> ListSelection { get => _ListSelection; set => SetProperty(ref _ListSelection, value); }
 		private List<string> _ListSelection;
 
+		/// <summary>
+		/// Alternative selection is list selection is not available.
+		/// </summary>
+		public int ListSelectedIndex { get => _ListSelectedIndex; set => SetProperty(ref _ListSelectedIndex, value); }
+		private int _ListSelectedIndex;
+
 		/// <summary>Remember "Search the list" text.</summary>
 		[DefaultValue("")]
 		public string SearchText { get => _SearchText; set => SetProperty(ref _SearchText, value); }
