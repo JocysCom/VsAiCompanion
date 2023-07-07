@@ -1,8 +1,11 @@
-2023-07-07 v1.0.51
+2023-07-07 v1.0.52
 
 - Fix: Error with the limit of reply tokens.
 - Fix: AI models not refreshing in the select box when [Refresh] is clicked.
 - Fix: Maximum height for the message and instructions text box.
+- Fix: The scroll does not stay at the bottom when resizing.
+- Fix: The HTML code display in the message box was sometimes incorrect.
+- Fix: Settings not saving when exiting from Tray menu.
 
 2023-07-05 v1.0.47
 

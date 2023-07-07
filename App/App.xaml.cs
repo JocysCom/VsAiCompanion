@@ -116,6 +116,7 @@ namespace JocysCom.VS.AiCompanion
 		private void TrayManager_OnExitClick(object sender, EventArgs e)
 		{
 			// Remove tray icon first.
+			Global.SaveSettings();
 			TrayManager.Dispose();
 			Shutdown();
 		}

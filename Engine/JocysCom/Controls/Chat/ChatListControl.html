@@ -290,6 +290,7 @@
 		}
 
 		function InsertMessage(message, autoScroll) {
+			var scroll = IsScrollOnTheBottom();
 			var chatLog = document.getElementById('chatLog');
 			var messageTemplate = document.getElementById('messageTemplate').innerHTML;
 			// Convert markdown code to HTML.
@@ -368,8 +369,6 @@
 			// Create a new div element and set its innerHTML to the newly created message.
 			var newMessage = document.createElement('div');
 			newMessage.innerHTML = newMessageHTML;
-			if (autoScroll)
-				var scroll = IsScrollOnTheBottom();
 			chatLog.appendChild(newMessage);
 			// Scroll to the bottom of the chatLog div.
 			if (autoScroll && scroll)
@@ -423,7 +422,8 @@
 			for (var i = 0; i < lines.length; i++) {
 				var line = lines[i];
 				// Toggle state for triple-backtick blocks.
-				if (line.startsWith("```"))
+				var isQuotes = line.startsWith("```");
+				if (isQuotes)
 					inCodeBlock = !inCodeBlock;
 				// Toggle state for single-backtick spans within this line.
 				var backticksInLine = (line.match(/`/g) || []).length;
@@ -434,7 +434,7 @@
 				if (!inCodeBlock && !inCodeSpan) {
 					line = EscapeHtml(line);
 					// If it is not the last line, then append <br />.
-					if (i < lines.length - 1)
+					if (!isQuotes && i < lines.length - 1)
 						line += "<br />";
 				}
 				lines[i] = line;
@@ -473,19 +473,13 @@
 		}
 
 		function IsScrollOnTheBottom() {
-			// Get current scroll position
 			var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-
-			// Get the difference between scroll height and window height
-			var scrollHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-			var delta = scrollHeight - window.innerHeight;
-
-			// If scroll is not visible or the current position is at the bottom, return true
-			if (delta === 0 || Math.abs(delta - scrollTop) < 10) { // 10 is just a buffer, you can adjust it based on your needs.
-				return true;
-			} else {
-				return false;
-			}
+			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+			var body = document.body, html = document.documentElement;
+			var pageHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+			var delta = Math.ceil(windowHeight + scrollTop);
+			// if the sum of the height of the inner window and the scroll position is greater than or equal to the total scroll height of the page
+			return pageHeight <= delta;
 		}
 
 		function ScrollToBottom() {
@@ -531,6 +525,28 @@
 			};
 			return JSON.stringify(settings);
 		}
+
+		// Keep scrool on the bottom when resizing.
+		let resizeTimeout;
+		let wasScrolledToBottom;
+		window.addEventListener('resize', function () {
+			// Clear the timeout if it exists
+			if (resizeTimeout)
+				clearTimeout(resizeTimeout);
+			else {
+				wasScrolledToBottom = IsScrollOnTheBottom();
+				//console.log("Start: " + wasScrolledToBottom);
+			}
+			// Set a timeout to run the function after a short delay
+			resizeTimeout = setTimeout(function () {
+				// Check the scroll position status when resizing ends
+				//console.log("End: " + wasScrolledToBottom);
+				if (wasScrolledToBottom) {
+					ScrollToBottom();
+				}
+				resizeTimeout = null;
+			}, 100);
+		});
 
 		window.onload = function () {
 
