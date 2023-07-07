@@ -1,19 +1,19 @@
 # Jocys.com VS AI Companion
+This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) subscription.
 
 The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application. It's like a Swiss Army Knife of AI for developers.
 
-This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) subscription.
+# Why Use Tools Utilizing API Instead of Web Chat GPT?
+Data submitted via the OpenAI API is not used to train or improve its models, unless customers explicitly decide to share their data. Web Chat is limited to 4K tokens, while AI models on API can process data 4-8 times larger.
 
 # Download
-
-Digitally Signed Standalone/Portable Application v1.0.47 (2023-07-05)
+Digitally Signed Standalone/Portable Application v1.0.52 (2023-07-07)
 
 [Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.0.0/JocysCom.VS.AiCompanion.App.zip)
 
 You can download latest version Visual Studio Extension from <a href="https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion">VS AI Companion - Visual Studio Marketplace</a> or install by using Visual Studio Extension Manager.
 
 # System Requirements
-
 - Microsoft .NET 6.0
   https://dotnet.microsoft.com/download/dotnet
 
@@ -24,23 +24,18 @@ Existing tools like GitHub CoPilot have limitations when it comes to interacting
 You can ask questions about an entire solution or project using the "Code - Smart Search" template. However, the size of the solution or project is limited by the maximum amount of tokens the AI can process. People who have access to the GPT-4 API can upload projects or solutions for AI analysis, up to sizes of 128-260KB. These limitations could potentially be removed if AI is hosted on-premises.
 
 ## How it works
-
 This application (or extension) allows you to create advanced prompt templates and include data from various sources such as the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, Exception with relevant code files, or Chat History. You can execute this template with just one button press, and the data will be sent to your preferred AI model for results at https://api.openai.com.
 
 ## Data Safety Concerns
-
 OpenAI will not use the data submitted by customers via the OpenAI API to train or improve its models, unless customers explicitly decide to share their data for this purpose. Customers have the option to opt-in to share data. Please note that this data policy does not apply to OpenAI's Non-API consumer services like ChatGPT or DALL·E. More information can be found at: https://openai.com/policies/api-data-usage-policies."
 
 ## Where to get API Organization ID and API Key?
-
 https://platform.openai.com/account/org-settings
 
 ## How-To Examples
-
 How-To examples can be found here: [HOWTO.md](HOWTO.md)
 
 ## Screenshots
-
 Visual Studio Extension: Open the extension in Visual Studio:
 
 <img alt="Extension Menu" src="Documents/Images/JocysComVsAiCompanion_ExtensionMenu.png" width="414" height="118">
