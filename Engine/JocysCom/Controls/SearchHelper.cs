@@ -32,7 +32,7 @@ namespace JocysCom.ClassLibrary.Controls
 				SourceList.ListChanged -= SourceList_ListChanged;
 			SourceList = source;
 			SourceList.ListChanged += SourceList_ListChanged;
-			Filter();
+			Filter(100);
 		}
 
 		private void SourceList_ListChanged(object sender, ListChangedEventArgs e)
@@ -51,18 +51,23 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private CancellationTokenSource cts = new CancellationTokenSource();
 
-		public async void Filter()
+		object filterLock = new object();
+
+		public async void Filter(int delay = 500)
 		{
 			// Cancel any previous filter operation.
 			cts.Cancel();
 			cts = new CancellationTokenSource();
-			await Task.Delay(500);
-			// If new filter operation was started then return.
-			if (cts.Token.IsCancellationRequested)
-				return;
-			var filteredSourceList = new BindingList<T>(SourceList.Where(item => Predicate(item)).ToList());
-			Synchronize(filteredSourceList, FilteredList);
-			Synchronized?.Invoke(this, EventArgs.Empty);
+			await Task.Delay(delay);
+			lock (filterLock)
+			{
+				// If new filter operation was started then return.
+				if (cts.Token.IsCancellationRequested)
+					return;
+				var filteredSourceList = new BindingList<T>(SourceList.Where(item => Predicate(item)).ToList());
+				Synchronize(filteredSourceList, FilteredList);
+				Synchronized?.Invoke(this, EventArgs.Empty);
+			}
 		}
 
 		public event EventHandler Synchronized;

@@ -2,6 +2,7 @@
 
 - Fix: Error with the limit of reply tokens.
 - Fix: AI models not refreshing in the select box when [Refresh] is clicked.
+- Fix: Maximum height for the message and instructions text box.
 
 2023-07-05 v1.0.47
 

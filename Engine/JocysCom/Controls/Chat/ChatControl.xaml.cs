@@ -111,6 +111,23 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			OnSend?.Invoke(sender, e);
 		}
 
+		private void This_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+		{
+			UpdateMaxSize();
+		}
+
+		private void DataInstructionsPanel_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+		{
+			UpdateMaxSize();
+		}
+
+		private void UpdateMaxSize()
+		{
+			var maxHeight = ActualHeight;
+			DataInstructionsTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
+			DataTextBox.MaxHeight = Math.Round(maxHeight * 0.4);
+		}
+
 	}
 
 }

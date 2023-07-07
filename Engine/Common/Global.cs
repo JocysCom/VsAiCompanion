@@ -100,11 +100,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void SaveSettings()
 		{
 
-			OnSaveSettings?.Invoke(null, new EventArgs());
+			OnSaveSettings?.Invoke(null, EventArgs.Empty);
 			AppData.Save();
 			Templates.Save();
 			Tasks.Save();
 		}
+
+		/// <summary>
+		/// Subscribed by controls that need to refresh when the source data is updated.
+		/// </summary>
+		public static event EventHandler AiModelsUpdated;
+
+		public static void TriggerAiModelsUpdated()
+			=> AiModelsUpdated?.Invoke(null, EventArgs.Empty);
 
 		public static void InitDefaultSettings()
 		{

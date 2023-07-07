@@ -117,10 +117,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var messageForAI = $"{m.BodyInstructions}\r\n\r\n{m.Body}";
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
 			var usedTokens = Client.CountTokens(messageForAI);
-			// Split 50%/50% between request and response.
-			var maxRequesTokens = maxTokens / 2;
 			var reqTokens = Client.CountTokens(messageForAI);
-			var availableTokens = maxRequesTokens - usedTokens;
 			// Attach chat history at the end (use left tokens).
 			if (item.AttachChatHistory && item.Messages?.Count > 0)
 			{
@@ -146,6 +143,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					var messageJson = JsonSerializer.Serialize(messages[key], options);
 					messages[key] = Client.CountTokens(messageJson);
 				}
+				// Split 90%/10% between request and response.
+				var maxRequesTokens = maxTokens / 2;
+				var availableTokens = maxRequesTokens - usedTokens;
 				var messagesToSend = AppHelper.GetMessages(messages, availableTokens);
 				// Attach message body to the bottom of the chat instead.
 				messageForAI = "";
@@ -215,9 +215,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						item.Text = template.Text;
 				}
 			}
+			var msgTokens = Client.CountTokens(messageForAI);
 			if (item.IsPreview)
 			{
 				var message = new MessageItem("System", PreviewModeMessage);
+				item.Messages.Add(message);
+			}
+			else if (maxTokens < msgTokens)
+			{
+				var message = new MessageItem("System", $"Message is too big. Message Tokens: {msgTokens}, Maximum Tokens: {maxTokens}", MessageType.Error);
 				item.Messages.Add(message);
 			}
 			else
