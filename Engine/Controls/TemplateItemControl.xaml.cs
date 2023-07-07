@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			BindData();
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
+			Global.AiModelsUpdated += Global_AiModelsUpdated;
 		}
 
 		private void Global_OnSaveSettings(object sender, EventArgs e)
@@ -65,7 +67,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		public List<string> AiModels { get; set; } = new List<string>();
+		#region AI Models.
+
+		public BindingList<string> AiModels { get; set; } = new BindingList<string>();
+
+		private void Global_AiModelsUpdated(object sender, EventArgs e)
+		{
+			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
+			UpdateAiModels(_item?.AiModel);
+		}
+
 
 		public void UpdateAiModels(params string[] args)
 		{
@@ -76,9 +87,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (!string.IsNullOrEmpty(arg) && !list.Contains(arg))
 					list.Add(arg);
 			}
-			AiModels = list;
-			OnPropertyChanged(nameof(AiModels));
+			SettingsHelper.Synchronize(list, AiModels);
 		}
+
+		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (Global.IsIncompleteSettings())
+				return;
+			Regex filterRx = null;
+			try
+			{
+				filterRx = new Regex(Global.AppSettings.OpenAiSettings.ModelFilter);
+			}
+			catch { }
+			var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
+			var models = await client.GetModels();
+			var modelIds = models
+				.OrderByDescending(x => x.Id)
+				.Select(x => x.Id)
+				.ToArray();
+			if (filterRx != null)
+				modelIds = modelIds.Where(x => filterRx.IsMatch(x)).ToArray();
+			if (modelIds.Any())
+				Global.AppSettings.OpenAiSettings.AiModels = modelIds;
+			Global.TriggerAiModelsUpdated();
+		}
+
+
+		#endregion
 
 		public DataOperation[] AutoOperations => (DataOperation[])Enum.GetValues(typeof(DataOperation));
 
@@ -158,31 +194,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (e.PropertyName == nameof(TemplateItem.Creativity))
 				OnPropertyChanged(nameof(CreativityName));
-		}
-
-		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (Global.IsIncompleteSettings())
-				return;
-			Regex filterRx = null;
-			try
-			{
-				filterRx = new Regex(Global.AppSettings.OpenAiSettings.ModelFilter);
-			}
-			catch { }
-			var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
-			var models = await client.GetModels();
-			var modelIds = models
-				.OrderByDescending(x => x.Id)
-				.Select(x => x.Id)
-				.ToArray();
-			if (filterRx != null)
-				modelIds = modelIds.Where(x => filterRx.IsMatch(x)).ToArray();
-			if (modelIds.Any())
-			{
-				Global.AppSettings.OpenAiSettings.AiModels = modelIds;
-			}
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AiModels)));
 		}
 
 		private void ListToggleButton_Click(object sender, RoutedEventArgs e)

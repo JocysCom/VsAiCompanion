@@ -1,6 +1,7 @@
 2023-07-07 v1.0.51
 
 - Fix: Error with the limit of reply tokens.
+- Fix: AI models not refreshing in the select box when [Refresh] is clicked.
 
 2023-07-05 v1.0.47
 
