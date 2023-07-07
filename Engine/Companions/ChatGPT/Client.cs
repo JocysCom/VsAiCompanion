@@ -6,7 +6,6 @@ using System.Net.Http.Headers;
 using OpenAI;
 using System.Linq;
 using System.Collections.Generic;
-using System.Security.Policy;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -107,7 +106,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					{
 						Model = modelName,
 						Prompt = prompt,
-						Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt),
+						// Comment out the Max_tokens line to allow the AI to use the maximum available amount.
+						// Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt),
 						N = 1,
 						Stop = null,
 						Temperature = creativity,
@@ -128,8 +128,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							Role =  ChatCompletionRequestMessageRole.assistant,
 						}
 					},
-						// Half for messages, half for response.
-						Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt),
+						// Comment out the Max_tokens line to allow the AI to use the maximum available amount.
+						// Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt),
 						N = 1,
 						Stop = null,
 						Temperature = creativity,

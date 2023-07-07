@@ -1,3 +1,7 @@
+2023-07-07 v1.0.51
+
+- Fix: Error with the limit of reply tokens.
+
 2023-07-05 v1.0.47
 
 - Fix: The entire list refreshes when a task is removed or updated on the disk.
