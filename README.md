@@ -3,17 +3,17 @@ This is a free and open-source project for people who have an [OpenAI API](https
 
 The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application. It's like a Swiss Army Knife of AI for developers.
 
-# Why Use Tools Utilizing API Instead of Web Chat GPT?
+## Why Use Tools Utilizing API Instead of Web Chat GPT?
 Data submitted via the OpenAI API is not used to train or improve its models, unless customers explicitly decide to share their data. Web Chat is limited to 4K tokens, while AI models on API can process data 4-8 times larger.
 
-# Download
+## Download
 Digitally Signed Standalone/Portable Application v1.0.52 (2023-07-07)
 
 [Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.0.0/JocysCom.VS.AiCompanion.App.zip)
 
 You can download latest version Visual Studio Extension from <a href="https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion">VS AI Companion - Visual Studio Marketplace</a> or install by using Visual Studio Extension Manager.
 
-# System Requirements
+## System Requirements
 - Microsoft .NET 6.0
   https://dotnet.microsoft.com/download/dotnet
 
