@@ -1,5 +1,5 @@
 # Jocys.com VS AI Companion
-This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) subscription.
+This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci...) subscription.
 
 The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application. It's like a Swiss Army Knife of AI for developers.
 
