@@ -3,7 +3,6 @@
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <Text>which model are you?Are you GPT-4 or GPT-3?</Text>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>
