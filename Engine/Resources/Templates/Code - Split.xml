@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
   <Name>Code - Split</Name>
-  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Break this code into smaller chunks</TextInstructions>
   <AttachChatHistory>false</AttachChatHistory>

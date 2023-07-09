@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
   <Name>Utility - Travel Advice</Name>
-  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>What are some must-visit places in?:</TextInstructions>
   <Text>[insert location here]</Text>

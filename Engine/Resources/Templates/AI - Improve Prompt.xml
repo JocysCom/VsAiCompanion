@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
   <Name>AI - Improve Prompt</Name>
-  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Please analyze the following text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised text.&#xD;
 &#xD;

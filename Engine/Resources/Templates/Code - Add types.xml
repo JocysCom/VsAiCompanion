@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
   <Name>Code - Add types</Name>
-  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Add types to this code. Code:</TextInstructions>
   <AttachContext>Selection</AttachContext>

@@ -1,10 +1,12 @@
 ﻿<TemplateItem>
   <Name>Grammar - Detail</Name>
-  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
-  <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. Additionally, rewrite sentences where clarity could be improved, opting to use more common words when possible to enhance comprehension. Ensure that the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
+  <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. The text may consist of complete sentences, phrases, or standalone titles. Additionally, rewrite any sentences that could be clearer by using more common words to enhance understanding. Make sure the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
 &#xD;
-After corrections, provide both the fully corrected text and a detailed list of the errors found and the corresponding corrections made.&#xD;
+After making the corrections, please provide two things:&#xD;
+1. The fully corrected text first.&#xD;
+2. Thorough list of errors found and the corresponding corrections made.&#xD;
 &#xD;
 Text to process:</TextInstructions>
   <AttachChatHistory>false</AttachChatHistory>

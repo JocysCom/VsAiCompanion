@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
   <Name>Custom - Historical Events</Name>
-  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Please provide a list of significant historical events that occurred on {Date.Now:MMMM dd} across all years in the past, detailing the year and a brief description of each event.</TextInstructions>
   <AttachChatHistory>false</AttachChatHistory>

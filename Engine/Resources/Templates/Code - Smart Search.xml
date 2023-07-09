@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
   <Name>Code - Smart Search</Name>
-  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Analyse supplied data and find code which feature describe below. Please respond with the full file path, line number and relevant code lines. Use markdown format for the code.&#xD;
 &#xD;
