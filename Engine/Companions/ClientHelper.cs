@@ -7,6 +7,8 @@ using System.Windows;
 using System;
 using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using OpenAI;
+using System.Text.Json.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
@@ -115,11 +117,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				m.Attachments.Add(a2);
 			}
 			var messageForAI = $"{m.BodyInstructions}\r\n\r\n{m.Body}";
+			var chatLogForAI = "";
+			var chatLogMessages = new List<ChatCompletionRequestMessage>();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
-			var usedTokens = Client.CountTokens(messageForAI);
-			var reqTokens = Client.CountTokens(messageForAI);
+			var usedTokens = CountTokens(messageForAI);
+			var reqTokens = CountTokens(messageForAI);
+			// Mark message as preview is preview.
+			m.IsPreview = item.IsPreview;
 			// Attach chat history at the end (use left tokens).
-			if (item.AttachChatHistory && item.Messages?.Count > 0)
+			if (item.AttachChatHistory)
 			{
 				var a0 = new MessageAttachments();
 				a0.Title = Global.AppSettings.ContextChatTitle;
@@ -129,44 +135,64 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				options.WriteIndented = true;
 				if (item.Messages == null)
 					item.Messages = new BindingList<MessageItem>();
-				var messages = item.Messages.Select(x => new MessageHistoryItem()
-				{
-					Date = x.Date,
-					User = x.User,
-					Body = $"{x.BodyInstructions}\r\n\r\n{x.Body}",
-					Type = x.Type.ToString(),
-				}).ToDictionary(x => x, x => 0);
-				var keys = messages.Keys.ToArray();
-				// Count number of tokens used by each message.
-				foreach (var key in keys)
-				{
-					var messageJson = JsonSerializer.Serialize(messages[key], options);
-					messages[key] = Client.CountTokens(messageJson);
-				}
+				var messagesIncludingLast = item.Messages.ToList();
+				messagesIncludingLast.Add(m);
+				var messages = messagesIncludingLast
+					// Include only chat messages.
+					.Where(x => x.Type == MessageType.Out || x.Type == MessageType.In)
+					// Exclude all preview messages.
+					.Where(x => !x.IsPreview)
+					.Select(x => new MessageHistoryItem()
+					{
+						Date = x.Date,
+						User = x.User,
+						Body = $"{x.BodyInstructions}".Trim().Length == 0
+							? $"{x.Body}"
+							: $"{x.BodyInstructions}\r\n\r\n{x.Body}",
+						Type = x.Type,
+					}).ToList();
 				// Split 90%/10% between request and response.
 				var maxRequesTokens = maxTokens / 2;
 				var availableTokens = maxRequesTokens - usedTokens;
-				var messagesToSend = AppHelper.GetMessages(messages, availableTokens);
+				var chatLogOptions = new JsonSerializerOptions
+				{
+					WriteIndented = true,
+					// Serialize enums as string for AI to understand.
+					Converters = { new JsonStringEnumConverter() }
+				};
+
+				var messagesToSend = AppHelper.GetMessages(messages, availableTokens, chatLogOptions);
 				// Attach message body to the bottom of the chat instead.
 				messageForAI = "";
-				messagesToSend.Add(new MessageHistoryItem()
+				// Prepare messages for API.
+				chatLogMessages = messagesToSend.Select(x =>
 				{
-					Date = m.Date,
-					User = m.User,
-					Body = $"{m.BodyInstructions}\r\n\r\n{m.Body}",
-					Type = m.Type.ToString(),
-				});
-				var json = JsonSerializer.Serialize(messagesToSend, options);
+					return new ChatCompletionRequestMessage()
+					{
+						Name = x.User,
+						Content = x.Body,
+						Role = x.Type == MessageType.Out
+							? ChatCompletionRequestMessageRole.user
+							: ChatCompletionRequestMessageRole.assistant,
+					};
+				}).ToList();
+				var json = JsonSerializer.Serialize(messagesToSend, chatLogOptions);
 				a0.Data = $"```json\r\n{json}\r\n```";
+				a0.IsMarkdown = true;
 				m.Attachments.Add(a0);
 			}
 			foreach (var a in m.Attachments)
 			{
-				messageForAI += $"\r\n\r\n{a.Title}";
+				var aText = "";
+				aText += $"\r\n\r\n{a.Title}";
 				if (!string.IsNullOrEmpty(a.Instructions))
-					messageForAI += $"\r\n\r\n{a.Instructions}";
-				messageForAI += $"\r\n\r\n{a.Data}";
-				messageForAI = messageForAI.Trim('\r', '\n');
+					aText += $"\r\n\r\n{a.Instructions}";
+				aText += $"\r\n\r\n{a.Data}";
+				aText = aText.Trim('\r', '\n');
+				if (a.Type == AttachmentType.ChatHistory)
+					chatLogForAI += aText;
+				else
+					messageForAI += aText;
 			}
 			// ShowSensitiveDataWarning
 			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
@@ -202,7 +228,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (result != MessageBoxResult.Yes)
 					return;
 			}
-			item.Messages.Add(m);
 			// Message is added. Cleanup now.
 			if (isTask)
 			{
@@ -215,7 +240,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						item.Text = template.Text;
 				}
 			}
-			var msgTokens = Client.CountTokens(messageForAI);
+			// Add the message item to the message list once all the content is added.
+			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
+			item.Messages.Add(m);
+			var msgTokens = CountTokens(messageForAI);
 			if (item.IsPreview)
 			{
 				var message = new MessageItem("System", PreviewModeMessage);
@@ -232,7 +260,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				{
 					var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 					// Send body and context data.
-					var response = await client.QueryAI(item.AiModel, messageForAI, item.Creativity);
+					var response = await client.QueryAI(item.AiModel, messageForAI, chatLogForAI, chatLogMessages, item.Creativity);
 					if (response != null)
 					{
 						var message = new MessageItem("AI", response, MessageType.In);
@@ -274,6 +302,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (Global.Tasks.Items.Contains(item) && item.AutoRemove)
 				_ = Global.MainControl.Dispatcher.BeginInvoke(new Action(() => { _ = Global.Tasks.Items.Remove(item); }));
 
+		}
+
+		public static int CountTokens(string s)
+		{
+			int count = 0;
+			bool inWord = false;
+			for (int i = 0; i < s.Length; i++)
+			{
+				char c = s[i];
+				char nextC = i < s.Length - 1 ? s[i + 1] : '\0';
+				if (char.IsWhiteSpace(c) || char.IsPunctuation(c))
+				{
+					if (inWord)
+					{
+						count++;
+						inWord = false;
+					}
+					if (!char.IsWhiteSpace(c))
+					{
+						if (c == '-' && char.IsLetter(nextC)) // don't split hyphenated words
+							continue;
+						// don't split contractions and handle multi-character punctuation
+						if (c == '\'' && char.IsLetter(nextC) || c == nextC)
+							i++;  // skip next character
+						count++; // punctuation is a separate token
+					}
+				}
+				else if (!inWord)
+				{
+					// start of a new word
+					inWord = true;
+				}
+			}
+			if (inWord)
+				count++;  // count the last word if the string doesn't end with a punctuation or a whitespace
+			return count;
 		}
 
 

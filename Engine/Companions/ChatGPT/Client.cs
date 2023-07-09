@@ -92,7 +92,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
-		public async Task<string> QueryAI(string modelName, string prompt, double creativity)
+		public async Task<string> QueryAI(
+			string modelName,
+			string prompt, string chatLog,
+			List<ChatCompletionRequestMessage> messagesToSend,
+			double creativity)
 		{
 			string answer;
 			var id = Guid.NewGuid();
@@ -105,9 +109,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var request = new CreateCompletionRequest
 					{
 						Model = modelName,
-						Prompt = prompt,
+						Prompt = prompt + chatLog,
 						// Comment out the Max_tokens line to allow the AI to use the maximum available amount.
-						// Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt),
+						// Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt + chatLog),
 						N = 1,
 						Stop = null,
 						Temperature = creativity,
@@ -118,16 +122,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				}
 				else
 				{
+					if (messagesToSend.Count == 0)
+					{
+						messagesToSend = new List<ChatCompletionRequestMessage> {
+							new ChatCompletionRequestMessage()
+							{
+								Content = prompt,
+								Role =  ChatCompletionRequestMessageRole.user,
+							}
+						};
+					}
 					var request = new CreateChatCompletionRequest
 					{
 						Model = modelName,
-						Messages = new List<ChatCompletionRequestMessage> {
-						new ChatCompletionRequestMessage()
-						{
-							Content = prompt,
-							Role =  ChatCompletionRequestMessageRole.assistant,
-						}
-					},
+						Messages = messagesToSend,
 						// Comment out the Max_tokens line to allow the AI to use the maximum available amount.
 						// Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt),
 						N = 1,
@@ -175,42 +183,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				return 2048;
 			return 2049; // Default for other models
 		}
-		public static int CountTokens(string s)
-		{
-			int count = 0;
-			bool inWord = false;
-			for (int i = 0; i < s.Length; i++)
-			{
-				char c = s[i];
-				char nextC = i < s.Length - 1 ? s[i + 1] : '\0';
-				if (char.IsWhiteSpace(c) || char.IsPunctuation(c))
-				{
-					if (inWord)
-					{
-						count++;
-						inWord = false;
-					}
-					if (!char.IsWhiteSpace(c))
-					{
-						if (c == '-' && char.IsLetter(nextC)) // don't split hyphenated words
-							continue;
-						// don't split contractions and handle multi-character punctuation
-						if (c == '\'' && char.IsLetter(nextC) || c == nextC)
-							i++;  // skip next character
-						count++; // punctuation is a separate token
-					}
-				}
-				else if (!inWord)
-				{
-					// start of a new word
-					inWord = true;
-				}
-			}
-			if (inWord)
-				count++;  // count the last word if the string doesn't end with a punctuation or a whitespace
-			return count;
-		}
-
 
 		//public class Usage
 		//{

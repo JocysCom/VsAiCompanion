@@ -38,6 +38,10 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		public string Body { get => _Body; set => SetProperty(ref _Body, value); }
 		string _Body;
 
+		[DefaultValue(false)]
+		public bool IsPreview { get => _IsPreview; set => SetProperty(ref _IsPreview, value); }
+		bool _IsPreview;
+
 		/// <summary>Optional context data: cliboard, selection or Files.</summary>
 		public List<MessageAttachments> Attachments { get => _Attachments; set => SetProperty(ref _Attachments, value); }
 		List<MessageAttachments> _Attachments = new List<MessageAttachments>();

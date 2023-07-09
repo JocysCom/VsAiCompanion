@@ -416,30 +416,38 @@
 
 		function ConvertForDisplayAsHtml(text) {
 			// Normalize line endings and split on line breaks.
-			var lines = text.replace(/\r\n/g, '\n').split('\n');
+			var lines = text.replace(/\r\n/g, "\n").split("\n");
 			var inCodeBlock = false;
-			var inCodeSpan = false;
+			var processedLines = [];
+
 			for (var i = 0; i < lines.length; i++) {
 				var line = lines[i];
 				// Toggle state for triple-backtick blocks.
 				var isQuotes = line.startsWith("```");
 				if (isQuotes)
 					inCodeBlock = !inCodeBlock;
-				// Toggle state for single-backtick spans within this line.
-				var backticksInLine = (line.match(/`/g) || []).length;
-				// If the number of backticks is odd.
-				if (backticksInLine % 2 !== 0)
-					inCodeSpan = !inCodeSpan;
-				// Escape HTML characters outside of code blocks and spans.
-				if (!inCodeBlock && !inCodeSpan) {
-					line = EscapeHtml(line);
+
+				if (!inCodeBlock) {
+					var inCodeSpan = false;
+					var processedLine = "";
+					for (var j = 0; j < line.length; j++) {
+						if (line[j] === "`") {
+							inCodeSpan = !inCodeSpan;
+						}
+						if (!inCodeSpan && line[j] !== "`") {
+							processedLine += EscapeHtml(line[j]);
+						} else {
+							processedLine += line[j];
+						}
+					}
 					// If it is not the last line, then append <br />.
 					if (!isQuotes && i < lines.length - 1)
-						line += "<br />";
+						processedLine += "<br />";
+					line = processedLine;
 				}
-				lines[i] = line;
+				processedLines.push(line);
 			}
-			var processedText = lines.join('\r\n');
+			var processedText = processedLines.join('\r\n');
 			return processedText;
 		}
 
@@ -579,7 +587,7 @@
 					Id: idPrefix + i,
 					User: i % 2 == 1 ? "UserIn" : "UserOut",
 					Date: new Date().setMinutes(i),
-					Body: messageType[i % 6] + "(" + i + ")" + " messsage.\r\n",
+					Body: messageType[i % 6] + "(" + i + ")" + " messsage. ` test <> test ` \r\n",
 					BodyInstructions: "Instructions included at the start of every message.",
 					DataType: AttachmentType.Selection,
 					Data:

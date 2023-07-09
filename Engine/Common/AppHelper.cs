@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Text.Json;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -112,45 +114,61 @@ namespace JocysCom.VS.AiCompanion.Engine
 			item.Name = nameof(Clipboard);
 			return item;
 		}
-
 		public static void SetClipboard(string text)
 		{
 			Clipboard.SetText(text);
 		}
 
+		public static int CountTokens(object item, JsonSerializerOptions options)
+		{
+			var json = JsonSerializer.Serialize(item, options);
+			return ClientHelper.CountTokens(json);
+		}
+
 		/// <summary>
 		/// Return lis of messages, but do not exceed availableTokens
+
 		/// </summary>
 		/// <param name="messages"></param>
 		/// <param name="availableTokens"></param>
-		public static List<MessageHistoryItem> GetMessages(Dictionary<MessageHistoryItem, int> messages, int availableTokens)
+		public static List<MessageHistoryItem> GetMessages(
+			List<MessageHistoryItem> messages,
+			int availableTokens,
+			JsonSerializerOptions options
+		)
 		{
-			var orderedMessages = messages.OrderBy(x => x.Key.Date).ToList();
-			var result = new List<MessageHistoryItem>();
-			if (orderedMessages.Count == 0)
-				return result;
+			var target = new List<MessageHistoryItem>();
+			if (messages.Count == 0)
+				return target;
+			var source = messages.ToList();
 			int currentTokens = 0;
-			var firstMessage = orderedMessages.FirstOrDefault().Key;
-			var firstTokens = orderedMessages.FirstOrDefault().Value;
-			// Return if the first message can't be added.
-			if (firstTokens > availableTokens)
-				return result;
-			// Add the first message.
-			result.Add(orderedMessages[0].Key);
-			currentTokens += orderedMessages[0].Value;
-			// Iterate from the end
-			for (int i = orderedMessages.Count - 1; i > 0; i--)
+			// Reverse order (begin adding latest messages first)
+			source.Reverse();
+			// This is actually the first message posted in chat.
+			var lastItem = source.Last();
+			var lastTokens = CountTokens(lastItem, options);
+			for (int i = 0; i < source.Count; i++)
 			{
-				if (currentTokens + orderedMessages[i].Value > availableTokens)
+				var item = source[i];
+				var itemTokens = CountTokens(item, options);
+				var hasSpaceForLastItemAfterAdd = currentTokens + itemTokens + lastTokens < availableTokens;
+				// If first item was added already and
+				// this is not the last item and 
+				// won't be able to last item then...
+				if (i > 0 && item != lastItem && !hasSpaceForLastItemAfterAdd)
+				{
+					target.Add(lastItem);
 					break;
-				result.Add(orderedMessages[i].Key);
-				currentTokens += orderedMessages[i].Value;
+				}
+				var hasSpaceForThisItem = currentTokens + itemTokens < availableTokens;
+				if (!hasSpaceForThisItem)
+					break;
+				target.Add(item);
 			}
 			// Reverse the result to maintain the original order
-			result.Reverse();
-			return result;
+			target.Reverse();
+			return target;
 		}
-
 
 		public static System.Drawing.Image ConvertDrawingImageToDrawingBitmap(DrawingImage drawingImage, int targetWidth, int targetHeight)
 		{

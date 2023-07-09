@@ -6,7 +6,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 	{
 		public DateTime Date {get;set;}
 		public string User { get; set; }
-		public string Type { get; set; }
+		public MessageType Type { get; set; }
 		public string Body { get; set; }
 	}
 }

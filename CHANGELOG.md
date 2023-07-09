@@ -1,5 +1,8 @@
-2023-07-09 v1.0.54
+2023-07-09 v1.0.57
 
+- Fix: Preview messages are excluded from the chat log now.
+- Fix: Chat log markdown display.
+- Update: The chat log is now submitted to the API correctly.
 - Update: AI model in templates.
 - Update: Improved instructions in the grammar template to ensure more consistent results.
 
