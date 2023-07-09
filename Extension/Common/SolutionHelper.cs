@@ -543,6 +543,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		public static List<DocItem> GetCurrentExceptionDocuments()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var details = GetCurrentException().ToString();
 			var files = AppHelper.ExtractFilePaths(details);
 			var items = files.Select(x => new DocItem(null, x)).ToList();
