@@ -128,7 +128,11 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			DataTextBox.MaxHeight = Math.Round(maxHeight * 0.4);
 		}
 
-	}
+		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+        }
+    }
 
 }
 
