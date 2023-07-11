@@ -26,6 +26,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AiCompanionComboBox.ItemsSource = Enum.GetValues(typeof(Companions.CompanionType));
 			AiCompanionComboBox.SelectedItem = Companions.CompanionType.OpenAI;
 			ChatPanel.OnSend += ChatPanel_OnSend;
+			ChatPanel.OnStop += ChatPanel_OnStop;
+
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -46,6 +48,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void ChatPanel_OnSend(object sender, EventArgs e)
 		{
 			await ClientHelper.Send(_item);
+		}
+
+		private void ChatPanel_OnStop(object sender, EventArgs e)
+		{
+			_item?.StopClient();
 		}
 
 		public string CreativityName
@@ -177,7 +184,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateAiModels(item?.AiModel);
 			IconPanel.BindData(_item);
 			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
-			ChatPanel.UpdateSendButton();
+			ChatPanel.UpdateButtons();
 			// AutoSend once enabled then...
 			if (ItemControlType == ItemType.Task && _item.AutoSend)
 			{
@@ -370,7 +377,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			_item.Messages.Clear();
 			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
-			ChatPanel.UpdateSendButton();
+			ChatPanel.UpdateButtons();
 		}
 
 		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)

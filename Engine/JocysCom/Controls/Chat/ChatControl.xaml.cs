@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			UpdateControlButtons();
-			UpdateSendButton();
+			UpdateButtons();
 			MessagesPanel.ScriptingHandler.OnMessageAction += ScriptingHandler_OnMessageAction;
 			//MessagesPanel.Messages
 			//InfoPanel.Tasks.ListChanged += Tasks_ListChanged;
@@ -80,19 +80,18 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		private void DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			UpdateSendButton();
+			UpdateButtons();
 		}
 
 		private void DataInstructionsTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			UpdateSendButton();
+			UpdateButtons();
 		}
 
-		public void UpdateSendButton()
+		public void UpdateButtons()
 		{
 			SendButton.Opacity = AllowToSend() ? 1.0 : 0.5;
 		}
-
 
 		void UpdateControlButtons()
 		{
@@ -105,6 +104,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		}
 
 		public event EventHandler OnSend;
+		public event EventHandler OnStop;
 
 		private void SendButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
@@ -130,7 +130,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			OnStop?.Invoke(sender, e);
         }
     }
 

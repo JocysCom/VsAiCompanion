@@ -260,7 +260,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				{
 					var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 					// Send body and context data.
-					var response = await client.QueryAI(item.AiModel, messageForAI, chatLogForAI, chatLogMessages, item.Creativity);
+					var response = await client.QueryAI(
+						item.AiModel,
+						messageForAI,
+						chatLogForAI,
+						chatLogMessages,
+						item.Creativity,
+						item
+					);
 					if (response != null)
 					{
 						var message = new MessageItem("AI", response, MessageType.In);

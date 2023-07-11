@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using System.Xml.Serialization;
@@ -182,6 +183,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 			IconType = type;
 			IconData = base64;
 		}
+
+		#region HTTP Client
+
+		/// <summary>Show Instructions</summary>
+
+		[XmlIgnore, DefaultValue(false)]
+		public bool IsClientBusy { get => _IsClientBusy; set => SetProperty(ref _IsClientBusy, value); }
+		bool _IsClientBusy;
+
+		[XmlIgnore, DefaultValue(null)]
+		public HttpClient HttpClient { get => _HttpClient; set => SetProperty(ref _HttpClient, value); }
+		HttpClient _HttpClient;
+
+		public void StopClient()
+		{
+			HttpClient?.CancelPendingRequests();
+		}
+
+		#endregion
 
 		#region ■ ISettingsItem
 		bool ISettingsItem.Enabled { get => IsEnabled; set => IsEnabled = value; }
