@@ -1,6 +1,8 @@
 2023-07-11 v1.0.61
 
 - Fix: HTML and markdown text weren't being displayed properly.
+- New: Code is displayed in a code box now.
+- New: A copy button has been added to each code block.
 
 2023-07-09 v1.0.57
 

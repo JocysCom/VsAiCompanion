@@ -209,16 +209,26 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			}
 			var id = e[0];
 			var message = Messages.FirstOrDefault(x => x.Id == id);
-			if (message == null)
-				return;
 			switch (action)
 			{
 				case MessageAction.Remove:
-					Messages.Remove(message);
-					InvokeScript($"DeleteMessage('{message.Id}');");
+					if (message != null)
+					{
+						Messages.Remove(message);
+						InvokeScript($"DeleteMessage('{message.Id}');");
+					}
 					break;
 				case MessageAction.Copy:
-					Clipboard.SetText(message.Body);
+					if (message != null)
+					{
+						Clipboard.SetText(message.Body);
+					}
+					break;
+				case MessageAction.DataCopy:
+					Clipboard.SetText(e[2]);
+					break;
+				case MessageAction.DataApply:
+					//Global.SetSelection(e[2]);
 					break;
 				default:
 					break;

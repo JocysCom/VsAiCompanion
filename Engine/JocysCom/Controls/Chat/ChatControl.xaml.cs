@@ -25,10 +25,10 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		private void ScriptingHandler_OnMessageAction(object sender, string[] e)
 		{
 			var id = e[0];
-			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e[1]);
 			var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == id);
 			if (message == null)
 				return;
+			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e[1]);
 			if (action == MessageAction.Use)
 				DataTextBox.Text = message.Body;
 		}

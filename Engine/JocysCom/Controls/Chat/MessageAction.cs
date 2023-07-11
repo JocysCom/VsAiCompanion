@@ -7,5 +7,7 @@
 		Remove,
 		Copy,
 		Loaded,
+		DataCopy,
+		DataApply,
 	}
 }

@@ -272,31 +272,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					{
 						var message = new MessageItem("AI", response, MessageType.In);
 						item.Messages.Add(message);
-						if (item.AttachContext == AttachmentType.Selection && Global.SetSelection != null)
-						{
-							var code = AppHelper.GetCodeFromReply(response);
-							if (item.AutoOperation == DataOperation.Replace)
-								Global.SetSelection(code);
-							if (item.AutoOperation == DataOperation.InsertBefore)
-								Global.SetSelection(code + vsData.Selection.Data);
-							if (item.AutoOperation == DataOperation.InsertAfter)
-								Global.SetSelection(vsData.Selection.Data + code);
-							if (item.AutoFormatCode)
-								Global.EditFormatSelection();
-						}
-						else if (item.AttachContext == AttachmentType.ActiveDocument && Global.SetActiveDocument != null)
-						{
-							var code = AppHelper.GetCodeFromReply(response);
-							if (item.AutoOperation == DataOperation.Replace)
-								Global.SetActiveDocument(code);
-							if (item.AutoOperation == DataOperation.InsertBefore)
-								Global.SetActiveDocument(code + vsData.Selection.Data);
-							if (item.AutoOperation == DataOperation.InsertAfter)
-								Global.SetActiveDocument(vsData.Selection.Data + code);
-							if (item.AutoFormatCode)
-								Global.EditFormatDocument();
-						}
-
+						SetData(item, response);
 					}
 				}
 				catch (Exception ex)
@@ -310,6 +286,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				_ = Global.MainControl.Dispatcher.BeginInvoke(new Action(() => { _ = Global.Tasks.Items.Remove(item); }));
 
 		}
+
+		public static void SetData(TemplateItem item, string data)
+		{
+			if (item.AttachContext == AttachmentType.Selection && Global.SetSelection != null)
+			{
+				var vsData = AppHelper.GetMacroValues();
+				var code = AppHelper.GetCodeFromReply(data);
+				if (item.AutoOperation == DataOperation.Replace)
+					Global.SetSelection(code);
+				if (item.AutoOperation == DataOperation.InsertBefore)
+					Global.SetSelection(code + vsData.Selection.Data);
+				if (item.AutoOperation == DataOperation.InsertAfter)
+					Global.SetSelection(vsData.Selection.Data + code);
+				if (item.AutoFormatCode)
+					Global.EditFormatSelection();
+			}
+			else if (item.AttachContext == AttachmentType.ActiveDocument && Global.SetActiveDocument != null)
+			{
+				var vsData = AppHelper.GetMacroValues();
+				var code = AppHelper.GetCodeFromReply(data);
+				if (item.AutoOperation == DataOperation.Replace)
+					Global.SetActiveDocument(code);
+				if (item.AutoOperation == DataOperation.InsertBefore)
+					Global.SetActiveDocument(code + vsData.Selection.Data);
+				if (item.AutoOperation == DataOperation.InsertAfter)
+					Global.SetActiveDocument(vsData.Selection.Data + code);
+				if (item.AutoFormatCode)
+					Global.EditFormatDocument();
+			}
+		}
+
 
 		public static int CountTokens(string s)
 		{

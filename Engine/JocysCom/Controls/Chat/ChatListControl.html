@@ -16,6 +16,7 @@
 
 		html, body {
 			height: 100%;
+			width: 100%;
 			margin: 0;
 			padding: 0;
 			font-family: 'Segoe UI', Arial, sans-serif;
@@ -166,6 +167,11 @@
 			margin-block-start: 0.5em;
 			margin-block-end: 0.5em;
 		}
+
+		.display-none {
+			display: none !important;
+		}
+
 	</style>
 	<style>
 
@@ -197,6 +203,10 @@
 
 
 		.expandable-box {
+			min-width: 10em;
+			max-width: 100%;
+			width: auto;
+			box-sizing: border-box; /* This includes padding and borders in the div's total width */
 			border-radius: 0.5em;
 			overflow: hidden;
 			border: 0 solid rgba(0, 0, 0, 0.2);
@@ -208,22 +218,27 @@
 		.expandable-head {
 			background-color: rgba(209, 230, 255, 0.4);
 			cursor: pointer;
-			padding: 0.25em 0.5em;
+			opacity: 0.5;
+			padding: 0.25em 0.5em 0.25em 0.5em;
 		}
 
 		.expandable-head-text {
+			font-size: x-small;
+			padding-top: 0.25em;
 		}
 
 		.expandable-head-indicator {
 		}
 
 		.expandable-body {
-			padding-bottom: 0;
+			padding: 0 0 0.5em 0;
 			width: 100%;
+			max-height: 64em; /* 1024px; */
+			overflow: auto;
 		}
 
 		.expandable-instructions {
-			padding: 0.25em 0.5em;
+			padding: 0.5em 0.5em 0 0.5em;
 		}
 
 			.expandable-instructions p {
@@ -237,9 +252,7 @@
 			}
 
 		.expandable-data {
-			padding: 0.25em 0.5em;
-			max-height: 1024px;
-			overflow: auto;
+			padding: 0.5em 0.5em 0 0.5em;
 		}
 
 			.expandable-data p {
@@ -304,7 +317,7 @@
 			body = body.replace(spacesRx, "");
 			// Make sure characters like `<` or `>` are not treated as HTML element characters.
 			body = ConvertForDisplayAsHtml(body);
-			body = marked.parse(body);
+			body = parseMarkdown(body, true);
 			// Trim all space from the end.
 			body = body.replace(spacesRx, "");
 			// Make sure that multiple spaces are preserved.
@@ -318,7 +331,7 @@
 				var instructions = message.BodyInstructions;
 				// Make sure characters like `<` or `>` are not treated as HTML element characters.
 				instructions = ConvertForDisplayAsHtml(instructions);
-				instructions = marked.parse(instructions);
+				instructions = parseMarkdown(instructions);
 				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", instructions, "");
 				buttons += box.buttonHTML;
 				newMessageInstructionsHTML = box.panelHTML;
@@ -336,7 +349,7 @@
 					if (a.IsMarkdown) {
 						aData = (a.Data) ? a.Data : "";
 						aData = ConvertForDisplayAsHtml(aData);
-						aData = marked.parse(aData);
+						aData = parseMarkdown(aData);
 					} else {
 						// Wrap into plain text element.
 						var pre = document.createElement('pre');
@@ -386,9 +399,10 @@
 				.replace(/{Id}/g, attachmentId)
 				.replace(/{Title}/g, title)
 				.replace(/{Instructions}/g, instructions)
-				.replace(/{InstructionsStyle}/g, showInstructions ? "" : "display: none;")
+				.replace(/{InstructionsClass}/g, showInstructions ? "" : "display-none")
 				.replace(/{Data}/g, data)
-				.replace(/{DataStyle}/g, showData ? "" : "display: none;");
+				.replace(/{DataClass}/g, showData ? "" : "display-none;")
+				.replace(/{TitleButtons}/g, "");
 			var buttonHTML = document.getElementById("expandableBoxButtonTemplate").innerHTML;
 			buttonHTML = buttonHTML
 				.replace(/{Id}/g, attachmentId)
@@ -471,10 +485,23 @@
 		}
 
 		function IsScrollOnTheBottom() {
+			return IsScrollOnTheBottom1() || IsScrollOnTheBottom2();
+		}
+
+		function IsScrollOnTheBottom1() {
 			var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
 			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
 			var body = document.body, html = document.documentElement;
 			var pageHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+			var delta = Math.ceil(windowHeight + scrollTop);
+			// if the sum of the height of the inner window and the scroll position is greater than or equal to the total scroll height of the page
+			return pageHeight <= delta;
+		}
+
+		function IsScrollOnTheBottom2() {
+			var scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop);
+			var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+			var pageHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.offsetHeight, document.body.scrollHeight, document.body.offsetHeight);
 			var delta = Math.ceil(windowHeight + scrollTop);
 			// if the sum of the height of the inner window and the scroll position is greater than or equal to the total scroll height of the page
 			return pageHeight <= delta;
@@ -492,7 +519,7 @@
 				button.classList.remove('clicked');
 			}, 500);
 			var id = messageId.substr(idPrefix.length);
-			window.external.MessageAction(id, action);
+			window.external.MessageAction(id, action, "");
 		}
 
 		function FormatDateTime(datetime) {
@@ -527,35 +554,76 @@
 		// Keep scrool on the bottom when resizing.
 		let resizeTimeout;
 		let wasScrolledToBottom;
-		window.addEventListener('resize', function () {
+
+		function window_resize() {
 			// Clear the timeout if it exists
 			if (resizeTimeout)
 				clearTimeout(resizeTimeout);
 			else {
 				wasScrolledToBottom = IsScrollOnTheBottom();
-				//console.log("Start: " + wasScrolledToBottom);
+				console.log("Start: " + wasScrolledToBottom);
 			}
 			// Set a timeout to run the function after a short delay
 			resizeTimeout = setTimeout(function () {
 				// Check the scroll position status when resizing ends
-				//console.log("End: " + wasScrolledToBottom);
+				console.log("End: " + wasScrolledToBottom);
 				if (wasScrolledToBottom) {
 					ScrollToBottom();
 				}
 				resizeTimeout = null;
 			}, 100);
-		});
+		}
 
-		window.onload = function () {
+		window.addEventListener('resize', window_resize);
 
-			window.external.MessageAction("0", "Loaded");
+		function generateGUID() {
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+				var r = Math.random() * 16 | 0,
+					v = c === 'x' ? r : (r & 0x3 | 0x8);
+				return v.toString(16);
+			}).replace(/-/g, "");
+		}
+
+		function CodeActionButton_Click(button, codeId, action) {
+			button.classList.add('clicked');
+			setTimeout(function () {
+				button.classList.remove('clicked');
+			}, 500);
+			var panel = document.getElementById(codeId + "_data");
+			window.external.MessageAction("", action, panel.innerText);
+		}
+
+		function parseMarkdown(body, boxedCode) {
 
 			// Update rendered to convert language to lowercase for Prism.js.
 			var renderer = new marked.Renderer();
 			var originalCodeFunction = renderer.code;
+
 			renderer.code = function (code, lang, escaped) {
 				lang = lang ? lang.toLowerCase() : undefined;
+				var spacesRx = new RegExp("[\r\n\s]+$", "g")
+				code = code.replace(spacesRx, "");
 				var html = originalCodeFunction.call(this, code, lang, escaped);
+				spacesRx = new RegExp("[\r\n\s]+</code>", "g")
+				html = html.replace(spacesRx, "</code>");
+				if (boxedCode) {
+					var id = generateGUID();
+					var buttonHTML = document.getElementById("expandableBoxCopyButtonTemplate").innerHTML;
+					buttonHTML = buttonHTML
+						.replace(/{Id}/g, idPrefix + id);
+					var panelHTML = document.getElementById("expandableBoxPanelTemplate").innerHTML;
+					panelHTML = panelHTML
+						.replace("display: none;", "")
+						.replace(/{Id}/g, idPrefix + id)
+						.replace(/{Title}/g, lang)
+						.replace(/{Instructions}/g, "aaa")
+						.replace(/{InstructionsClass}/g, "display-none")
+						.replace(/{Data}/g, html)
+						.replace(/{DataClass}/g, "")
+						.replace(/{TitleButtons}/g, buttonHTML);
+					//console.log(panelHTML);
+					html = panelHTML;
+				}
 				return html;
 			};
 
@@ -564,40 +632,48 @@
 				highlight: function (code, lang) {
 					return Prism.languages[lang] ? Prism.highlight(code, Prism.languages[lang], lang) : code;
 				},
-
 				renderer: renderer
 			});
+			// Parse the markdown with the modified renderer.
+			return marked.parse(body);
+		}
+
+		window.onload = function () {
+
+			if (typeof window.external.MessageAction !== "undefined")
+				window.external.MessageAction("0", "Loaded", "");
 
 			// The code will only run if the file is opened locally.
 			if (window.location.href.indexOf("file://") == -1)
 				return;
+			var codeText = "```csharp\r\n" +
+				"var x = 1 + y;\r\n" +
+				"```\r\n" +
+				"\r\n" +
+				"```JavaScript\r\n" +
+				"var x = 1 + y;\r\n" +
+				"```\r\n" +
+				"\r\n" +
+				"```css\r\n" +
+				"p { color: red }\r\n" +
+				"```\r\n";
 			for (var i = 0; i < 6; i++) {
 				var message = {
 					Type: i % 6,
 					Id: idPrefix + i,
 					User: i % 2 == 1 ? "UserIn" : "UserOut",
 					Date: new Date().setMinutes(i),
-					Body: messageType[i % 6] + "(" + i + ")" + " messsage. ` test <> test ` \r\n",
+					Body: messageType[i % 6] + "(" + i + ")" + " messsage. ` test <> test ` \r\n" + codeText,
 					BodyInstructions: "Instructions included at the start of every message.",
 					DataType: AttachmentType.Selection,
-					Data:
-						"```csharp\r\n" +
-						"var x = 1 + y;\r\n" +
-						"```\r\n" +
-						"\r\n" +
-						"```JavaScript\r\n" +
-						"var x = 1 + y;\r\n" +
-						"```\r\n" +
-						"\r\n" +
-						"```css\r\n" +
-						"p { color: red }\r\n" +
-						"```\r\n",
+					Data: codeText,
 					Attachments: [
 						{
 							Title: "Data to Process",
 							Instructions: "aaa",
 							Type: AttachmentType.Selection,
 							Data: "```csharp\r\nvar x = 1 + y;\r\n```",
+							IsMarkdown: true,
 						}
 					]
 				}
@@ -608,6 +684,10 @@
 	</script>
 </head>
 <body>
+	<div style="display: none" id="expandableBoxCopyButtonTemplate">
+		<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataCopy')">Copy</button>
+		<button class="chat-button" onclick="CodeActionButton_Click(this, '{Id}', 'DataApply')" style="display: none;">Apply</button>
+	</div>
 	<div style="display: none" id="expandableBoxButtonTemplate">
 		<button id="{Id}_button" class="expandable-button" onclick="AttachmentButton_Click(this, '{Id}')">
 			<span>{Title}</span>
@@ -615,15 +695,16 @@
 	</div>
 	<div id="expandableBoxPanelTemplate">
 		<div class="expandable-box" id="{Id}_panel" style="display: none;">
-			<div class="expandable-head">
-				<span class="expandable-head-text">{Title}</span>
+			<div class="expandable-head" style="display: flex;">
+				<span class="expandable-head-text" style="flex: 1;">{Title}</span>
 				<span class="expandable-head-indicator" style="display: none;">…</span>
+				<span>{TitleButtons}</span>
 			</div>
 			<div class="expandable-body">
-				<div class="expandable-instructions" style="{InstructionsStyle}">
+				<div class="expandable-instructions {InstructionsClass}" id="{Id}_instructions">
 					{Instructions}
 				</div>
-				<div class="expandable-data" style="{DataStyle}">
+				<div class="expandable-data {DataClass}" id="{Id}_data">
 					{Data}
 				</div>
 			</div>
