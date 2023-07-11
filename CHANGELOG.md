@@ -1,3 +1,7 @@
+2023-07-11 v1.0.61
+
+- Fix: HTML and markdown text weren't being displayed properly.
+
 2023-07-09 v1.0.57
 
 - Fix: Preview messages are excluded from the chat log now.

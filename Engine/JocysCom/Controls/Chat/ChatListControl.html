@@ -414,40 +414,30 @@
 			}
 		}
 
+		// Prepare text for markdown and display as HTML.
 		function ConvertForDisplayAsHtml(text) {
-			// Normalize line endings and split on line breaks.
-			var lines = text.replace(/\r\n/g, "\n").split("\n");
-			var inCodeBlock = false;
-			var processedLines = [];
-
-			for (var i = 0; i < lines.length; i++) {
-				var line = lines[i];
-				// Toggle state for triple-backtick blocks.
-				var isQuotes = line.startsWith("```");
-				if (isQuotes)
-					inCodeBlock = !inCodeBlock;
-
-				if (!inCodeBlock) {
-					var inCodeSpan = false;
-					var processedLine = "";
-					for (var j = 0; j < line.length; j++) {
-						if (line[j] === "`") {
-							inCodeSpan = !inCodeSpan;
-						}
-						if (!inCodeSpan && line[j] !== "`") {
-							processedLine += EscapeHtml(line[j]);
-						} else {
-							processedLine += line[j];
+			// Split the text by triple quotes ('```')
+			var blocks = text.split('```');
+			for (let i = 0; i < blocks.length; i++) {
+				// Only process the text not within triple quotes
+				if (i % 2 === 0) {
+					var block = blocks[i];
+					var subBlocks = block.split('`');
+					for (let s = 0; s < subBlocks.length; s++) {
+						// Only process the text not within single quotes
+						if (s % 2 === 0) {
+							subBlocks[s] = EscapeHtml(subBlocks[s]);
+							var lines = subBlocks[s].replace(/\r?\n/g, "\n").split("\n");
+							var lBlock = "";
+							for (let l = 0; l < lines.length; l++)
+								lBlock += lines[l] + (l > 0 && l < lines.length - 1 ? "<br />\r\n" : "\r\n");
+							subBlocks[s] = lBlock;
 						}
 					}
-					// If it is not the last line, then append <br />.
-					if (!isQuotes && i < lines.length - 1)
-						processedLine += "<br />";
-					line = processedLine;
+					blocks[i] = subBlocks.join('`');
 				}
-				processedLines.push(line);
 			}
-			var processedText = processedLines.join('\r\n');
+			var processedText = blocks.join('```');
 			return processedText;
 		}
 
