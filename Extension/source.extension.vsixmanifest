@@ -10,7 +10,7 @@
         <ReleaseNotes>https://github.com/JocysCom/VsAiCompanion/releases</ReleaseNotes>
         <Icon>App.ico</Icon>
         <PreviewImage>JocysComVsAiCompanion_VisualStudio.png</PreviewImage>
-        <Tags>artificial intelligence companion copilot productivity</Tags>
+        <Tags>Jocys.com, Jocys, Visual Studio, VS, AI, companion, artificial, intelligence, code, analysis, collaboration, efficiency, productivity, project, OpenAI, Chat, GPT, ChatGPT, Davinici</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Community">
