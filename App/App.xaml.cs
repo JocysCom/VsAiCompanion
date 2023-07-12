@@ -17,20 +17,29 @@ namespace JocysCom.VS.AiCompanion
 	{
 		public App()
 		{
-			Global.LoadSettings();
-			Global.InitDefaultSettings();
-			// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
-			StartHelper.Initialize(typeof(App).Assembly.GetName().Name);
-			allowToRun = StartHelper.AllowToRun(Global.AppSettings.AllowOnlyOneCopy);
-			if (!allowToRun)
-				return;
-			StartHelper.OnClose += StartHelper_OnClose;
-			StartHelper.OnRestore += StartHelper_OnRestore;
-			SetDPIAware();
-			System.Windows.Forms.Application.EnableVisualStyles();
-			System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-			TrayManager = new TrayManager();
-			TrayManager.OnExitClick += TrayManager_OnExitClick;
+			try
+			{
+				Global.LoadSettings();
+				Global.InitDefaultSettings();
+				// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
+				StartHelper.Initialize(typeof(App).Assembly.GetName().Name);
+				allowToRun = StartHelper.AllowToRun(Global.AppSettings.AllowOnlyOneCopy);
+				if (!allowToRun)
+					return;
+				StartHelper.OnClose += StartHelper_OnClose;
+				StartHelper.OnRestore += StartHelper_OnRestore;
+				SetDPIAware();
+				System.Windows.Forms.Application.EnableVisualStyles();
+				System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+				TrayManager = new TrayManager();
+				TrayManager.OnExitClick += TrayManager_OnExitClick;
+			}
+			catch (Exception ex)
+			{
+				var message = ExceptionToText(ex);
+				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+				throw;
+			}
 		}
 
 		private async void Items_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)

@@ -38,16 +38,6 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			UpdateControlButtons();
 		}
 
-		private void DataTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
-			{
-				if (AllowToSend())
-					OnSend?.Invoke(sender, e);
-				e.Handled = true;
-			}
-		}
-
 		public string Connect = "Connect";
 		public string Disconnect = "Disconnect";
 		public bool IsConnected;
@@ -78,19 +68,28 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 				!string.IsNullOrEmpty(DataInstructionsTextBox.Text);
 		}
 
-		private void DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		private void DataTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+			{
+				if (AllowToSend())
+					OnSend?.Invoke(sender, e);
+				e.Handled = true;
+			}
+			UpdateButtons();
+		}
+
+		private void DataInstructionsTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
 		{
 			UpdateButtons();
 		}
 
-		private void DataInstructionsTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-		{
-			UpdateButtons();
-		}
+		public bool IsBusy;
 
 		public void UpdateButtons()
 		{
-			SendButton.Opacity = AllowToSend() ? 1.0 : 0.5;
+			SendButton.Opacity = IsBusy ? 0.2 : AllowToSend() ? 1.0 : 0.5;
+			StopButton.Opacity = IsBusy ? 1.0 : 0.2;
 		}
 
 		void UpdateControlButtons()
@@ -132,7 +131,8 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		{
 			OnStop?.Invoke(sender, e);
         }
-    }
+
+	}
 
 }
 

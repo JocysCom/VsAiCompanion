@@ -54,22 +54,6 @@
 			background-color: #d1e6ff;
 		}
 
-		.chat-log {
-		}
-
-		.chat-container {
-			padding: 0.5em 0 0.5em 0;
-			display: flex;
-			align-items: flex-start;
-		}
-
-		.chat-user {
-			min-width: 2em;
-			width: 2em;
-			height: 2em;
-			margin: 0.5em;
-		}
-
 		.icon-Information {
 			background: url('ChatListControl/IconInformation.svg') no-repeat transparent;
 			background-size: contain;
@@ -100,19 +84,27 @@
 			background-size: contain;
 		}
 
+		.chat-log {
+		}
+
+		.chat-container {
+			padding-top: 0.5em;
+			padding-bottom: 0.5em;
+			width: 100%;
+		}
+
+		.chat-user {
+			position: absolute;
+			width: 2em;
+			height: 2em;
+			margin-left: 0.5em;
+		}
+
 		.chat-message {
-			/*padding: 0.5em 1em 1em 1em;*/ /* round corners */
-			padding: 0.5em 1em 0 0; /* square corners */
-			color: black;
-			box-sizing: border-box;
-			border-radius: 1em;
-			flex-grow: 1;
-			margin-right: 1em;
+			padding: 0 1em 0 3em;
 		}
 
 		.chat-message-head {
-			display: flex;
-			align-items: center;
 		}
 
 		.chat-message-body {
@@ -173,7 +165,6 @@
 		.display-none {
 			display: none !important;
 		}
-
 	</style>
 	<style>
 
@@ -221,16 +212,22 @@
 			background-color: rgba(0, 116, 255, 0.2);
 			cursor: pointer;
 			opacity: 0.5;
-			padding: 0.2em 0.25em  0.25em 0.5em;
+			display: flex;
+			padding: 0.2em 0.25em 0.25em 0.5em;
 		}
 
 		.expandable-head-text {
 			font-family: 'Cascadia Mono', 'Consolas';
 			font-size: x-small;
+			flex: 1;
 			padding-top: 0.5em;
 		}
 
 		.expandable-head-indicator {
+		}
+
+		.expandable-head-buttons {
+			
 		}
 
 		.expandable-body {
@@ -477,39 +474,6 @@
 			chatLog.innerHTML = "";
 		}
 
-		function SetScrollPosition(position) {
-			window.scrollTo(0, position);
-		}
-
-		function GetScrollPosition() {
-			// Get current scroll position
-			var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-			return scrollTop;
-		}
-
-		function IsScrollOnTheBottom() {
-			return IsScrollOnTheBottom1() || IsScrollOnTheBottom2();
-		}
-
-		function IsScrollOnTheBottom1() {
-			var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
-			var body = document.body, html = document.documentElement;
-			var pageHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-			var delta = Math.ceil(windowHeight + scrollTop);
-			// if the sum of the height of the inner window and the scroll position is greater than or equal to the total scroll height of the page
-			return pageHeight <= delta;
-		}
-
-		function IsScrollOnTheBottom2() {
-			var scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop);
-			var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-			var pageHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.offsetHeight, document.body.scrollHeight, document.body.offsetHeight);
-			var delta = Math.ceil(windowHeight + scrollTop);
-			// if the sum of the height of the inner window and the scroll position is greater than or equal to the total scroll height of the page
-			return pageHeight <= delta;
-		}
-
 		function ScrollToBottom() {
 			window.setTimeout(function () {
 				window.scroll(0, document.body.scrollHeight);
@@ -552,6 +516,27 @@
 				"ScrollPosition": position,
 			};
 			return JSON.stringify(settings);
+		}
+
+		function SetScrollPosition(position) {
+			window.scrollTo(0, position);
+		}
+
+		function GetScrollPosition() {
+			// Get current scroll position
+			var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+			return scrollTop;
+		}
+
+		function IsScrollOnTheBottom() {
+			var scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop);
+			var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+			var pageHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.offsetHeight, document.body.scrollHeight, document.body.offsetHeight);
+			var delta = Math.ceil(windowHeight + scrollTop);
+			// Added Tolerance. experiment with the value
+			var tolerance = 50;
+			// Check if sum of inner window height and scroll position is within tolerance range of page height
+			return Math.abs(pageHeight - delta) <= tolerance;
 		}
 
 		// Keep scrool on the bottom when resizing.
@@ -650,7 +635,7 @@
 			if (window.location.href.indexOf("file://") == -1)
 				return;
 			var codeText = "```csharp\r\n" +
-				"var x = 1 + y + 0;\r\n" +
+				"var x = 1 + y + 0; var x = 1 + y + 0; var x = 1 + y + 0; var x = 1 + y + 0; var x = 1 + y + 0; var x = 1 + y + 0; var x = 1 + y + 0; \r\n" +
 				"```\r\n" +
 				"\r\n" +
 				"```JavaScript\r\n" +
@@ -698,10 +683,10 @@
 	</div>
 	<div id="expandableBoxPanelTemplate">
 		<div class="expandable-box" id="{Id}_panel" style="display: none;">
-			<div class="expandable-head" style="display: flex;">
-				<span class="expandable-head-text" style="flex: 1;">{Title}</span>
+			<div class="expandable-head">
+				<span class="expandable-head-text">{Title}</span>
 				<span class="expandable-head-indicator" style="display: none;">…</span>
-				<span>{TitleButtons}</span>
+				<span class="expandable-head-buttons">{TitleButtons}</span>
 			</div>
 			<div class="expandable-body">
 				<div class="expandable-instructions {InstructionsClass}" id="{Id}_instructions">

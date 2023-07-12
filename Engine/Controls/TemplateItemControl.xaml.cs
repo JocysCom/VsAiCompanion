@@ -52,7 +52,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ChatPanel_OnStop(object sender, EventArgs e)
 		{
-			_item?.StopClient();
+			_item?.StopClients();
 		}
 
 		public string CreativityName
@@ -184,6 +184,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateAiModels(item?.AiModel);
 			IconPanel.BindData(_item);
 			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
+			ChatPanel.IsBusy = _item.IsBusy;
 			ChatPanel.UpdateButtons();
 			// AutoSend once enabled then...
 			if (ItemControlType == ItemType.Task && _item.AutoSend)
@@ -199,7 +200,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(TemplateItem.Creativity))
+			if (e.PropertyName == nameof(TemplateItem.IsBusy))
+			{
+				ChatPanel.IsBusy = _item.IsBusy;
+				ChatPanel.UpdateButtons();
+			}
+			else if (e.PropertyName == nameof(TemplateItem.Creativity))
 				OnPropertyChanged(nameof(CreativityName));
 		}
 

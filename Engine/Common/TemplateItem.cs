@@ -16,6 +16,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			_AiModel = Companions.ChatGPT.Settings.AiModelDefault;
+			HttpClients = new BindingList<HttpClient>();
+			HttpClients.ListChanged += HttpClients_ListChanged;
+		}
+
+		private void HttpClients_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
+			{
+				var isBusy = HttpClients.Count > 0;
+				if (IsBusy != isBusy)
+				{
+					IsBusy = isBusy;
+					OnPropertyChanged(nameof(IsBusy));
+				}
+			}
 		}
 
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
@@ -121,7 +136,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsPreview { get => _IsPreview; set => SetProperty(ref _IsPreview, value); }
 		bool _IsPreview;
 
-		[DefaultValue(true)]	
+		[DefaultValue(true)]
 		public bool IsFavorite { get => _IsFavorite; set => SetProperty(ref _IsFavorite, value); }
 		bool _IsFavorite;
 
@@ -189,16 +204,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>Show Instructions</summary>
 
 		[XmlIgnore, DefaultValue(false)]
-		public bool IsClientBusy { get => _IsClientBusy; set => SetProperty(ref _IsClientBusy, value); }
-		bool _IsClientBusy;
+		public bool IsBusy { get => _IsBusy; set => SetProperty(ref _IsBusy, value); }
+		bool _IsBusy;
 
 		[XmlIgnore, DefaultValue(null)]
-		public HttpClient HttpClient { get => _HttpClient; set => SetProperty(ref _HttpClient, value); }
-		HttpClient _HttpClient;
+		public BindingList<HttpClient> HttpClients { get => _HttpClients; set => SetProperty(ref _HttpClients, value); }
+		BindingList<HttpClient> _HttpClients;
 
-		public void StopClient()
+		public void StopClients()
 		{
-			HttpClient?.CancelPendingRequests();
+			var clients = HttpClients.ToArray();
+			try
+			{
+				foreach (var client in clients)
+					client.CancelPendingRequests();
+			}
+			catch { }
 		}
 
 		#endregion

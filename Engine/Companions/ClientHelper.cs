@@ -21,6 +21,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		{
 			if (Global.IsIncompleteSettings())
 				return;
+			if (item.IsBusy)
+				return;
 			if (string.IsNullOrEmpty(item.AiModel))
 			{
 				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");

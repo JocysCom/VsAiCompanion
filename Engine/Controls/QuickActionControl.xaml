@@ -58,7 +58,7 @@
 		<ToolBarPanel
 			Grid.Row="0"
 			Grid.Column="1"
-			HorizontalAlignment="Left"
+			HorizontalAlignment="Stretch"
 			Style="{StaticResource MainToolBarPanel}">
 			<ToolBar x:Name="MyToolBar" KeyboardNavigation.TabNavigation="Continue" Style="{StaticResource MainToolBar}" />
 		</ToolBarPanel>

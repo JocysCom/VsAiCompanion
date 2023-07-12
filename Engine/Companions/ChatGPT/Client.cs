@@ -97,15 +97,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			string prompt, string chatLog,
 			List<ChatCompletionRequestMessage> messagesToSend,
 			double creativity,
-			TemplateItem task
+			TemplateItem item
 		)
 		{
 			string answer;
 			var id = Guid.NewGuid();
-			Global.MainControl.InfoPanel.AddTask(task);
+			var httpClient = GetClient();
+			item.HttpClients.Add(httpClient);
+			Global.MainControl.InfoPanel.AddTask(id);
 			try
 			{
-				var httpClient = GetClient();
 				var apiClient = new ApiClient(httpClient);
 				if (modelName.Contains("davinci"))
 				{
@@ -156,7 +157,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			finally
 			{
-				Global.MainControl.InfoPanel.RemoveTask(task);
+				Global.MainControl.InfoPanel.RemoveTask(id);
+				item.HttpClients.Remove(httpClient);
 			}
 			return answer;
 		}

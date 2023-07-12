@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -35,7 +36,10 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			Messages.ListChanged += DataItems_ListChanged;
 			IsResetMessgesPending = !ScriptHandlerInitialized;
 			if (ScriptHandlerInitialized)
-				ResetWebMessages();
+				Dispatcher.BeginInvoke(new Action(() =>
+				{
+					ResetWebMessages();
+				}));
 		}
 
 		private ChatSettings Settings;
