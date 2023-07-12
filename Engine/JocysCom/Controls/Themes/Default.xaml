@@ -761,7 +761,7 @@
 	<!--  ToolBar  -->
 
 	<Style x:Key="MainToolBar" TargetType="ToolBar">
-		<Setter Property="Margin" Value="-1,0,0,-1" />
+		<Setter Property="Margin" Value="-1,0,-12,-1" />
 		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="ToolBar.OverflowMode" Value="AsNeeded" />
 		<Setter Property="ToolBarTray.IsLocked" Value="True" />

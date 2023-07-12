@@ -60,7 +60,11 @@
 			Grid.Column="1"
 			HorizontalAlignment="Stretch"
 			Style="{StaticResource MainToolBarPanel}">
-			<ToolBar x:Name="MyToolBar" KeyboardNavigation.TabNavigation="Continue" Style="{StaticResource MainToolBar}" />
+			<ToolBar
+				x:Name="MyToolBar"
+				Margin="-1,0,0,-1"
+				KeyboardNavigation.TabNavigation="Continue"
+				Style="{StaticResource MainToolBar}" />
 		</ToolBarPanel>
 	</Grid>
 </UserControl>

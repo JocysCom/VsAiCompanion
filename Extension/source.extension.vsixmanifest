@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="JocysCom.VS.AiCompanion" Version="1.0.65" Language="en-US" Publisher="Jocys.com" />
+        <Identity Id="JocysCom.VS.AiCompanion" Version="1.0.67" Language="en-US" Publisher="Jocys.com" />
         <DisplayName>VS AI Companion</DisplayName>
         <Description xml:space="preserve">AI Companion that analyzes your project files and works alongside you to streamline development and boost productivity.</Description>
         <MoreInfo>https://github.com/JocysCom/VsAiCompanion</MoreInfo>

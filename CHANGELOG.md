@@ -1,4 +1,4 @@
-2023-07-12 v1.0.65
+2023-07-12 v1.0.67
 
 - Fix: Templated bar does not display button to access all templates.
 - Fix: Code box expands outside of the message window.
