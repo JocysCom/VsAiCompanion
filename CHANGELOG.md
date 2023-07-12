@@ -1,9 +1,9 @@
 2023-07-12 v1.0.67
 
-- Fix: Templated bar does not display button to access all templates.
+- Fix: Template bar does not display button to access all templates.
 - Fix: Code box expands outside of the message window.
 - Fix: The scroll does not stay at the bottom when resizing.
-- New: Stop button for canceling prompt requests.
+- New: Stop button for cancelling prompt requests.
 
 2023-07-11 v1.0.61
 
