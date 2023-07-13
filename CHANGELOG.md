@@ -1,3 +1,7 @@
+2023-07-13 v1.0.69
+
+- New: Option to automatically generate chat title.
+
 2023-07-12 v1.0.67
 
 - Fix: Template bar does not display button to access all templates.

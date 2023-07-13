@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -164,22 +165,43 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private static bool DefaultTemplatesAdded = false;
 		private static bool DefaultTasksAdded = false;
 
+		public const string GenerateTitleTaskName = "® Reserverd - Generate Title";
+
 		private static void Templates_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
 		{
 			var sd = (SettingsData<TemplateItem>)sender;
-			if (e.Items.Count > 0)
-				return;
-			var asm = typeof(Global).Assembly;
-			var keys = asm.GetManifestResourceNames()
-				.Where(x => x.Contains("Resources.Templates"))
-				.ToList();
-			foreach (var key in keys)
+			if (e.Items.Count == 0)
 			{
-				var bytes = Helper.GetResource<byte[]>(key, asm);
-				var item = sd.DeserializeItem(bytes, false);
-				e.Items.Add(item);
+				var asm = typeof(Global).Assembly;
+				var keys = asm.GetManifestResourceNames()
+					.Where(x => x.Contains("Resources.Templates"))
+					.ToList();
+				foreach (var key in keys)
+				{
+					var bytes = Helper.GetResource<byte[]>(key, asm);
+					var item = sd.DeserializeItem(bytes, false);
+					e.Items.Add(item);
+				}
+				DefaultTemplatesAdded = true;
+				return;
 			}
-			DefaultTemplatesAdded = true;
+			// Check reserved templates used for some automation.
+			var rItem = e.Items.FirstOrDefault(x => x.Name == GenerateTitleTaskName);
+			if (rItem == null)
+			{
+				var asm = typeof(Global).Assembly;
+				var keys = asm.GetManifestResourceNames()
+					.Where(x => x.Contains(GenerateTitleTaskName))
+					.ToList();
+				foreach (var key in keys)
+				{
+					var bytes = Helper.GetResource<byte[]>(key, asm);
+					var item = sd.DeserializeItem(bytes, false);
+					e.Items.Add(item);
+				}
+				DefaultTemplatesAdded = true;
+			}
+			return;
 		}
 
 		private static void Tasks_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)

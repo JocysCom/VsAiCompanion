@@ -1,6 +1,8 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using OpenAI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -389,6 +391,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
 		{
 			ChatPanel.MessagesPanel.InvokeScript("ScrollToBottom()");
+		}
+
+		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
+		{
+			var firstMessage = _item.Messages.FirstOrDefault();
+			if (firstMessage == null)
+				return;
+			var message = new ChatCompletionRequestMessage()
+			{
+				Name = firstMessage.User,
+				Content = $"{firstMessage.BodyInstructions}\r\n\r\n{firstMessage.Body}",
+				Role = firstMessage.Type == MessageType.Out
+						? ChatCompletionRequestMessageRole.user
+						: ChatCompletionRequestMessageRole.assistant,
+			};
+			var messages = new List<ChatCompletionRequestMessage>() { message };
+			_ = ClientHelper.AutoGenerateTitle(_item, messages);
 		}
 	}
 }

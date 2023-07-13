@@ -7,6 +7,7 @@
 Data for processing:</TextInstructions>
   <Text>[insert original prompt here]</Text>
   <AttachChatHistory>false</AttachChatHistory>
+  <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>
   <Messages />

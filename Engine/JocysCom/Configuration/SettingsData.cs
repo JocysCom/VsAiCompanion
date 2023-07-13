@@ -205,7 +205,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			SetFileMonitoring(true);
 		}
 
-		static string RemoveInvalidFileNameChars(string name)
+		public static string RemoveInvalidFileNameChars(string name)
 		{
 			var invalidChars = Path.GetInvalidFileNameChars();
 			return new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
@@ -413,21 +413,34 @@ namespace JocysCom.ClassLibrary.Configuration
 				var oldPath = GetItemFileFullName(oldName);
 				var file = new FileInfo(oldPath);
 				var newPath = GetItemFileFullName(newName);
-				// If only case changed then rename to temp file first.
-				if (string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+				// Disable monitoring in order not to trigger reloading.
+				SetFileMonitoring(false);
+				try
 				{
-					var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
-					file.MoveTo(tempFilePath);
+					// If only case changed then rename to temp file first.
+					if (string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+					{
+						var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
+						file.MoveTo(tempFilePath);
+					}
+					else if (File.Exists(newPath))
+					{
+						return "File with the same name already exists.";
+					}
+					if (file.Exists)
+					{
+						file.MoveTo(newPath);
+						itemFile.BaseName = newName;
+						itemFile.WriteTime = file.LastWriteTime;
+					}
 				}
-				else if (File.Exists(newPath))
+				catch (Exception)
 				{
-					return "File with the same name already exists.";
+					throw;
 				}
-				if (file.Exists)
+				finally
 				{
-					file.MoveTo(newPath);
-					itemFile.BaseName = newName;
-					itemFile.WriteTime = file.LastWriteTime;
+					SetFileMonitoring(true);
 				}
 				return null;
 			}

@@ -9,6 +9,7 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using OpenAI;
 using System.Text.Json.Serialization;
+using JocysCom.ClassLibrary.Configuration;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
@@ -260,6 +261,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			{
 				try
 				{
+					if (item.AutoGenerateTitle)
+					{
+						item.AutoGenerateTitle = false;
+						_ = AutoGenerateTitle(item, chatLogMessages);
+					}
 					var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 					// Send body and context data.
 					var response = await client.QueryAI(
@@ -287,6 +293,54 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (Global.Tasks.Items.Contains(item) && item.AutoRemove)
 				_ = Global.MainControl.Dispatcher.BeginInvoke(new Action(() => { _ = Global.Tasks.Items.Remove(item); }));
 
+		}
+
+		public async static Task AutoGenerateTitle(TemplateItem item,
+			List<ChatCompletionRequestMessage> chatLogMessages
+		)
+		{
+			/// Template must use chat model.
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Global.GenerateTitleTaskName);
+			if (rItem == null)
+				return;
+			if (chatLogMessages.Count == 0)
+				return;
+			// Crate a copy in order not to add to existing list.
+			var messages = chatLogMessages.ToList();
+			try
+			{
+				messages.Add(new ChatCompletionRequestMessage()
+				{
+					Name = "User",
+					Content = rItem.Text,
+					Role = ChatCompletionRequestMessageRole.user
+
+				});
+				var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
+				// Send body and context data.
+				var response = await client.QueryAI(
+					rItem.AiModel,
+					"",
+					"",
+					messages,
+					rItem.Creativity,
+					rItem
+				);
+				if (response != null)
+				{
+					response = SettingsData<object>.RemoveInvalidFileNameChars(response);
+					if (response.Split().Length > 0 && response.Split().Length <= 5)
+					{
+						if (Global.Tasks.Items.Contains(item))
+							Global.Tasks.RenameItem(item, response);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				var message = new MessageItem("System", ex.Message, MessageType.Error);
+				item.Messages.Add(message);
+			}
 		}
 
 		public static void SetData(TemplateItem item, string data)

@@ -66,6 +66,7 @@
 					Grid.Column="3"
 					Margin="0,0,3,0"
 					VerticalAlignment="Center"
+					BorderBrush="Transparent"
 					Click="ModelRefreshButton_Click"
 					Style="{StaticResource ToolBarButton}"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}">
@@ -142,6 +143,25 @@
 					ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
 					SelectedValue="{Binding MessageBoxOperation}"
 					SelectedValuePath="Key" />
+				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Generate Title" IsChecked="{Binding AutoGenerateTitle}" />
+
+				<Button
+					Name="GenerateTitleButton"
+					Grid.Row="1"
+					Grid.Column="3"
+					Margin="0,0,3,0"
+					VerticalAlignment="Center"
+					BorderBrush="Transparent"
+					Click="GenerateTitleButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					ToolTip="Generate Title"
+					Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+
+				
 				<CheckBox Name="AutoRemoveCheckBox" Content="Remove Completed Task" IsChecked="{Binding AutoRemove}" />
 			</StackPanel>
 			<Label

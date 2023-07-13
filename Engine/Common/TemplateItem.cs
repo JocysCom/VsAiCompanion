@@ -133,6 +133,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool AutoFormatCode { get => _AutoFormatCode; set => SetProperty(ref _AutoFormatCode, value); }
 		bool _AutoFormatCode;
 
+		[DefaultValue(false)]
+		public bool AutoGenerateTitle { get => _AutoGenerateTitle; set => SetProperty(ref _AutoGenerateTitle, value); }
+		bool _AutoGenerateTitle;
+
 		public bool IsPreview { get => _IsPreview; set => SetProperty(ref _IsPreview, value); }
 		bool _IsPreview;
 
@@ -171,6 +175,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			copy.AutoFormatCode = AutoFormatCode;
 			copy.AutoOperation = AutoOperation;
 			copy.AutoRemove = AutoRemove;
+			copy.AutoGenerateTitle = AutoGenerateTitle;
 			copy.AutoSend = AutoSend;
 			copy.Creativity = Creativity;
 			copy.IconData = IconData;
