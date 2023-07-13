@@ -7,3 +7,4 @@
 - Add: Suppot for Visual Studio macros.
 - Add: Hide more bar stuff on standalone app.
 - Fix: Optionally use the "system" message for instructions.
+- Fix: Store scroll setting as a distance from the bottom.
