@@ -1,6 +1,7 @@
 2023-07-13 v1.0.69
 
 - New: Option to automatically generate chat title.
+- Fix: URLs open inside the message control instead of a new browser window.
 
 2023-07-12 v1.0.67
 

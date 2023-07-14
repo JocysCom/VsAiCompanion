@@ -9,5 +9,6 @@
 		Loaded,
 		DataCopy,
 		DataApply,
+		Navigate,
 	}
 }

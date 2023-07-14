@@ -151,6 +151,9 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 				WebBrowser.NavigateToString(contents);
 				return;
 			}
+			ControlsHelper.OpenUrl(e.Uri.OriginalString);
+			// Supress all other navigation.
+			e.Cancel = true;
 		}
 
 		// Don't work correctly.
