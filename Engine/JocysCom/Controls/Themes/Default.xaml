@@ -58,9 +58,7 @@
 
 	<!--  Grid  -->
 
-	<Style x:Key="Grid_Default" TargetType="Grid">
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-	</Style>
+	<Style x:Key="Grid_Default" TargetType="Grid" />
 
 	<!--  GridSplitter  -->
 
@@ -800,14 +798,14 @@
 		Removed static resource link to "<BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>" from style which caused memory leak.
 	-->
 
-	<Style x:Name="GroupBox_Default" TargetType="GroupBox">
-		<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrush}}" />
+	<Style x:Key="GroupBox_Default" TargetType="GroupBox">
+		<Setter Property="BorderBrush" Value="Transparent" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="HeaderTemplate">
 			<Setter.Value>
 				<DataTemplate>
-					<TextBlock Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Style="{DynamicResource TextBlock_Default}" Text="{Binding}" />
+					<TextBlock Style="{DynamicResource TextBlock_Default}" Text="{Binding Content}" />
 				</DataTemplate>
 			</Setter.Value>
 		</Setter>
@@ -834,8 +832,9 @@
 							Grid.ColumnSpan="4"
 							Background="{TemplateBinding Background}"
 							BorderBrush="Transparent"
-							BorderThickness="{TemplateBinding BorderThickness}"
+							BorderThickness="1"
 							CornerRadius="4" />
+
 						<Border
 							Grid.Row="1"
 							Grid.RowSpan="3"
@@ -844,10 +843,11 @@
 							BorderThickness="{TemplateBinding BorderThickness}"
 							CornerRadius="4"
 							OpacityMask="{x:Null}">
-							<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
-								<Border BorderBrush="White" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2" />
+							<Border BorderBrush="Transparent" BorderThickness="1" CornerRadius="3">
+								<Border BorderBrush="White" BorderThickness="0.5" CornerRadius="2" />
 							</Border>
 						</Border>
+
 						<Border
 							x:Name="Header"
 							Grid.Row="0"
@@ -856,6 +856,7 @@
 							Padding="3,1,3,0">
 							<ContentPresenter ContentSource="Header" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 						</Border>
+
 						<ContentPresenter
 							Grid.Row="2"
 							Grid.Column="1"
