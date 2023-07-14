@@ -129,7 +129,7 @@
 		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOff.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Warning.svg" />
-		<None Remove="Resources\BuildDate.txt" />
+		<None Remove="Resources\BuildDate.*" />
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<None Remove="Resources\MainWindowCommand.png" />
@@ -169,23 +169,14 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
+		<Content Include="Resources\Icons\Icons_Default\document_gear.svg" />
 		<Content Include="Resources\MainWindowCommand.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl.html" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\core.min.js" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\IconError.svg" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\IconIn.svg" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\IconInformation.svg" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\IconOut.svg" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\IconQuestion.svg" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\IconWarning.svg" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\marked.min.js" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\prism.css" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\prism.js" />
-		<EmbeddedResource Include="Resources\BuildDate.txt" />
-		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
+		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\*.*" />
+		<EmbeddedResource Include="Resources\BuildDate.*" />
 		<EmbeddedResource Include="Resources\Templates\*.xml" />
 	</ItemGroup>
 
