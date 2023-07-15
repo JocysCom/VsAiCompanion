@@ -192,10 +192,16 @@
 
 	<Style x:Key="Button_Default" TargetType="Button">
 		<Setter Property="Height" Value="Auto" />
-		<Setter Property="Margin" Value="3,3,3,3" />
-		<Setter Property="Padding" Value="3,3,3,3" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Padding" Value="4,2,2,2" />
 		<Setter Property="MinWidth" Value="75" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<Style.Resources>
+			<Style TargetType="Border">
+				<Setter Property="CornerRadius" Value="5" />
+			</Style>
+		</Style.Resources>
 		<Style.Triggers>
 			<Trigger Property="IsEnabled" Value="False">
 				<Setter Property="Opacity" Value="0.5" />
@@ -206,7 +212,14 @@
 	<!--  Button -ToolBar  -->
 
 	<Style x:Key="ToolBarButton" TargetType="Button">
-		<Setter Property="Margin" Value="0,0,0,0" />
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="Padding" Value="4,2,2,2" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Style.Resources>
+			<Style TargetType="Border">
+				<Setter Property="CornerRadius" Value="5" />
+			</Style>
+		</Style.Resources>
 		<Style.Triggers>
 			<Trigger Property="IsEnabled" Value="False">
 				<Setter Property="Opacity" Value="0.5" />

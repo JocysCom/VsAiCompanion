@@ -15,6 +15,10 @@
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../Themes/Default.xaml" />
+				<ResourceDictionary Source="../Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
 			<Style x:Key="RoundCornerRed" TargetType="{x:Type Button}">
 				<Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -24,23 +28,27 @@
 					<Setter.Value>
 						<ControlTemplate TargetType="{x:Type Button}">
 							<Grid x:Name="grid" Background="Transparent">
-								<Border
+								<Viewbox>
+									<Border
+									Width="40"
+									Height="40"
 									x:Name="border"
-									Padding="4"
+									Padding="0"
 									BorderThickness="0"
-									CornerRadius="10"
+									CornerRadius="20"
 									RenderTransformOrigin="0.5,0.5">
-									<Border.RenderTransform>
-										<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
-									</Border.RenderTransform>
-									<Border.Background>
-										<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-											<GradientStop Offset="0" Color="#FA0000" />
-											<GradientStop Offset="1" Color="#DC0000" />
-										</LinearGradientBrush>
-									</Border.Background>
-									<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-								</Border>
+										<Border.RenderTransform>
+											<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
+										</Border.RenderTransform>
+										<Border.Background>
+											<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
+												<GradientStop Offset="0" Color="#EF6B78" />
+												<GradientStop Offset="1" Color="#EF6B78" />
+											</LinearGradientBrush>
+										</Border.Background>
+										<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+									</Border>
+								</Viewbox>
 							</Grid>
 							<ControlTemplate.Triggers>
 								<MultiDataTrigger>
@@ -52,8 +60,8 @@
 											<Setter.Value>
 												<!--  +6L  -->
 												<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-													<GradientStop Offset="0" Color="#FF1A1A" />
-													<GradientStop Offset="1" Color="#FF0A0A" />
+													<GradientStop Offset="0" Color="#ED5564" />
+													<GradientStop Offset="1" Color="#ED5564" />
 												</LinearGradientBrush>
 											</Setter.Value>
 										</Setter>
@@ -106,12 +114,12 @@
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="{x:Type Button}">
-							<Grid x:Name="grid" Background="Transparent">
+								<Viewbox>
 								<Border
+									Width="40"
+									Height="40"
 									x:Name="border"
-									Padding="8"
-									BorderThickness="0"
-									CornerRadius="12"
+									CornerRadius="20"
 									RenderTransformOrigin="0.5,0.5">
 									<Border.RenderTransform>
 										<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
@@ -119,12 +127,12 @@
 									<Border.Background>
 										<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
 											<GradientStop Offset="0" Color="#00aeec" />
-											<GradientStop Offset="1" Color="#008adc" />
+											<GradientStop Offset="1" Color="#00aeec" />
 										</LinearGradientBrush>
 									</Border.Background>
 									<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
 								</Border>
-							</Grid>
+							</Viewbox>
 							<ControlTemplate.Triggers>
 								<MultiDataTrigger>
 									<MultiDataTrigger.Conditions>
@@ -135,7 +143,7 @@
 											<Setter.Value>
 												<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
 													<GradientStop Offset="0" Color="#00B8FA" />
-													<GradientStop Offset="1" Color="#0093EB" />
+													<GradientStop Offset="1" Color="#00B8FA" />
 												</LinearGradientBrush>
 											</Setter.Value>
 										</Setter>
@@ -345,22 +353,37 @@
 			Grid.Column="1"
 			VerticalAlignment="Stretch"
 			Background="White">
-			<StackPanel VerticalAlignment="Bottom">
-				<Button
-					x:Name="StopButton"
-					Width="85"
-					Margin="0,10,10,0"
-					Click="StopButton_Click"
-					Content="Stop"
-					Style="{DynamicResource RoundCornerRed}" />
+			<StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
 				<Button
 					x:Name="SendButton"
-					Width="85"
-					Margin="0,10,10,10"
-					Padding="12"
+					Width="30"
+					Height="30"
+					Margin="0,0,0,10"
+					Padding="0"
 					Click="SendButton_Click"
-					Content="Send"
-					Style="{DynamicResource RoundCornerBlue}" />
+					Style="{DynamicResource RoundCornerBlue}">
+					<Viewbox>
+						<ContentControl Margin="0" Padding="0"
+							Content="{StaticResource Icon_MediaPlay}"
+							Focusable="False"
+							Style="{StaticResource ButtonContentControl}" />
+					</Viewbox>
+				</Button>
+				<Button
+					x:Name="StopButton"
+					Width="30"
+					Height="30"
+					Margin="10,0,10,10"
+					Padding="0"
+					Click="StopButton_Click"
+					Style="{DynamicResource RoundCornerRed}">
+					<Viewbox>
+						<ContentControl Margin="0" Padding="0"
+							Content="{StaticResource Icon_MediaStop}"
+							Focusable="False"
+							Style="{StaticResource ButtonContentControl}" />
+					</Viewbox>
+				</Button>
 			</StackPanel>
 		</Grid>
 
