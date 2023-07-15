@@ -44,7 +44,7 @@ Standalone Application: Quickly access tasks from the notification icon in the t
 
 <img alt="Tray Notification" src="Documents/Images/JocysComVsAiCompanion_TrayIcon.png" width="248" height="186">
 
-Code - Smart Search: The AI can provide you with the exact location of specific code features:
+Code - Smart Search: The AI can help you find the specific location of code features in the project or solution.
 
 <img alt="Options" src="Documents/Images/Half/JocysComVsAiCompanion_VisualStudio.png" width="640" height="344">
 
