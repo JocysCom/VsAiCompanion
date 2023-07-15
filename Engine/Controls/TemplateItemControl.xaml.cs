@@ -401,5 +401,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			_ = ClientHelper.GenerateTitle(_item);
 		}
+
+		private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+		{
+			ControlsHelper.OpenPath(e.Uri.AbsoluteUri);
+		}
 	}
 }

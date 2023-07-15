@@ -84,12 +84,26 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			UpdateButtons();
 		}
 
+		private void DataInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			UpdateButtons();
+		}
+
+		private void DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			UpdateButtons();
+		}
+
 		public bool IsBusy;
 
 		public void UpdateButtons()
 		{
-			SendButton.Opacity = IsBusy ? 0.2 : AllowToSend() ? 1.0 : 0.5;
-			StopButton.Opacity = IsBusy ? 1.0 : 0.2;
+			var sendOp = IsBusy ? 0.2 : AllowToSend() ? 1.0 : 0.5;
+			if (SendButton.Opacity != sendOp)
+				SendButton.Opacity = sendOp;
+			var stopOp = IsBusy ? 1.0 : 0.2;
+			if (StopButton.Opacity != stopOp)
+				StopButton.Opacity = stopOp;
 		}
 
 		void UpdateControlButtons()

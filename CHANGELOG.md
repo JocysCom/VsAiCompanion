@@ -1,7 +1,11 @@
-2023-07-13 v1.0.69
+2023-07-15 v1.0.73
 
-- New: Option to automatically generate chat title.
+- New: Option to use AI to auto-format your message with markdown.
+- New: Option to use AI to auto-generate chat title.
+- New: Button to re-generate chat title.
+- New: Separated Visual Studio options for clarity.
 - Fix: URLs open inside the message control instead of a new browser window.
+- Fix: The scroll does not stay at the bottom when the message box is resized. 
 
 2023-07-12 v1.0.67
 

@@ -241,6 +241,7 @@
 								PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
 								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 								ScrollViewer.VerticalScrollBarVisibility="Auto"
+								TextChanged="DataInstructionsTextBox_TextChanged"
 								Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}"
 								TextWrapping="Wrap" />
 							<TextBlock
@@ -303,6 +304,7 @@
 							AcceptsReturn="True"
 							Background="#fdfdfd"
 							BorderThickness="0"
+							TextChanged="DataTextBox_TextChanged"
 							PreviewKeyUp="DataTextBox_PreviewKeyUp"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Auto"

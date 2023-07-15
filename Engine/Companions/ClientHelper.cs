@@ -34,14 +34,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
 				return;
 			}
-
-			var itemText = item.Text;
-			if (item.AutoFormatMessage)
-				itemText = await FormatMessage(item, item.Text);
-			var m = new MessageItem(UserName, itemText, MessageType.Out);
-			m.BodyInstructions = item.TextInstructions;
 			// If task panel then allow to use AutoClear.
 			var isTask = Global.Tasks.Items.Contains(item);
+			// Message is added. Cleanup now.
+			var itemText = item.Text;
+			if (isTask)
+			{
+				if (item.MessageBoxOperation == MessageBoxOperation.ClearMessage)
+					item.Text = "";
+				if (item.MessageBoxOperation == MessageBoxOperation.ResetMessage)
+				{
+					var template = Global.GetItems(ItemType.Template).Where(x => x.Name == item.TemplateName).FirstOrDefault();
+					if (template != null)
+						item.Text = template.Text;
+				}
+			}
+			if (item.AutoFormatMessage)
+				itemText = await FormatMessage(item, itemText);
+			var m = new MessageItem(UserName, itemText, MessageType.Out);
+			m.BodyInstructions = item.TextInstructions;
 			var vsData = AppHelper.GetMacroValues();
 			if (item.UseMacros)
 			{
@@ -110,7 +121,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// Get files for exception.
 				var exceptionFiles = Global.GetCurrentExceptionDocuments();
 				// Extract files if exception info was pasted manually inside the message.
-				var messagePaths = AppHelper.ExtractFilePaths(item.Text);
+				var messagePaths = AppHelper.ExtractFilePaths(itemText);
 				var uniquePaths = messagePaths
 					.Where(x => exceptionFiles.All(y => !x.Equals(y.FullName, StringComparison.OrdinalIgnoreCase)));
 				var messageFiles = uniquePaths.Select(x => new DocItem(null, x)).ToList();
@@ -202,18 +213,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 				if (result != MessageBoxResult.Yes)
 					return;
-			}
-			// Message is added. Cleanup now.
-			if (isTask)
-			{
-				if (item.MessageBoxOperation == MessageBoxOperation.ClearMessage)
-					item.Text = "";
-				if (item.MessageBoxOperation == MessageBoxOperation.ResetMessage)
-				{
-					var template = Global.GetItems(ItemType.Template).Where(x => x.Name == item.TemplateName).FirstOrDefault();
-					if (template != null)
-						item.Text = template.Text;
-				}
 			}
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.

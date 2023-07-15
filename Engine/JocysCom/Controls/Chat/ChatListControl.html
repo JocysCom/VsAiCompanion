@@ -303,7 +303,6 @@
 		}
 
 		function InsertMessage(message, autoScroll) {
-			var scroll = IsScrollOnTheBottom();
 			var chatLog = document.getElementById('chatLog');
 			var messageTemplate = document.getElementById('messageTemplate').innerHTML;
 			// Convert markdown code to HTML.
@@ -384,7 +383,7 @@
 			newMessage.innerHTML = newMessageHTML;
 			chatLog.appendChild(newMessage);
 			// Scroll to the bottom of the chatLog div.
-			if (autoScroll && scroll)
+			if (autoScroll && keepScrollOnTheBottom)
 				ScrollToBottom();
 		}
 
@@ -539,29 +538,39 @@
 			return Math.abs(pageHeight - delta) <= tolerance;
 		}
 
+		let scrollTimeout;
+		var keepScrollOnTheBottom = true;
+
+		function window_scroll() {
+			// Clear the timeout if it exists
+			if (scrollTimeout)
+				clearTimeout(scrollTimeout);
+			// Set a timeout to run the function after a short delay
+			scrollTimeout = setTimeout(function () {
+				keepScrollOnTheBottom = IsScrollOnTheBottom();
+				console.log("keepScrollOnTheBottom: " + keepScrollOnTheBottom);
+				scrollTimeout = null;
+			}, 100);
+		}
+
+		window.addEventListener('scroll', window_scroll);
+
 		// Keep scrool on the bottom when resizing.
 		let resizeTimeout;
-		let wasScrolledToBottom;
-
+	
 		function window_resize() {
 			// Clear the timeout if it exists
 			if (resizeTimeout)
 				clearTimeout(resizeTimeout);
-			else {
-				wasScrolledToBottom = IsScrollOnTheBottom();
-				console.log("Start: " + wasScrolledToBottom);
-			}
 			// Set a timeout to run the function after a short delay
 			resizeTimeout = setTimeout(function () {
-				// Check the scroll position status when resizing ends
-				console.log("End: " + wasScrolledToBottom);
-				if (wasScrolledToBottom) {
+				if (keepScrollOnTheBottom)
 					ScrollToBottom();
-				}
 				resizeTimeout = null;
 			}, 100);
 		}
 
+		window.addEventListener('scroll', window_scroll);
 		window.addEventListener('resize', window_resize);
 
 		function generateGUID() {
@@ -667,6 +676,7 @@
 				}
 				InsertMessage(message);
 			}
+			ScrollToBottom();
 		}
 
 	</script>
