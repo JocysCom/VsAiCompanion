@@ -226,8 +226,6 @@
 						Margin="10,10,10,0"
 						Padding="12,8,12,8"
 						Background="#fdfdfd"
-						BorderThickness="1"
-						BorderBrush="#8848CFAE"
 						CornerRadius="10">
 						<Border.Effect>
 							<DropShadowEffect
@@ -293,8 +291,6 @@
 					Margin="10"
 					Padding="12,8,12,8"
 					Background="#fdfdfd"
-					BorderThickness="1"
-					BorderBrush="#8800aeec"
 					CornerRadius="10">
 					<Border.Effect>
 						<DropShadowEffect
