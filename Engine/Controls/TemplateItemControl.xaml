@@ -357,7 +357,7 @@
 				<TextBlock VerticalAlignment="Center">
 					<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 						Markdown
-					</Hyperlink> auto-format</TextBlock>
+					</Hyperlink> Auto-Format</TextBlock>
 				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" Margin="5,0,0,0" />
 			</StackPanel>
 
