@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -165,9 +166,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private static bool DefaultTemplatesAdded = false;
 		private static bool DefaultTasksAdded = false;
 
-		public const string GenerateTitleReservedTaskName = "® Reserved - Generate Title";
-		public const string FormatMessageReservedTaskName = "® Reserved - Format Message";
-
 		private static void Templates_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
 		{
 			var sd = (SettingsData<TemplateItem>)sender;
@@ -187,12 +185,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return;
 			}
 			// Check reserved templates used for some automation.
-			var rItem = e.Items.FirstOrDefault(x => x.Name == GenerateTitleReservedTaskName);
+			var rItem = e.Items.FirstOrDefault(x => x.Name == ClientHelper.GenerateTitleTaskName);
 			if (rItem == null)
 			{
 				var asm = typeof(Global).Assembly;
 				var keys = asm.GetManifestResourceNames()
-					.Where(x => x.Contains(GenerateTitleReservedTaskName))
+					.Where(x => x.Contains(ClientHelper.GenerateTitleTaskName))
 					.ToList();
 				foreach (var key in keys)
 				{

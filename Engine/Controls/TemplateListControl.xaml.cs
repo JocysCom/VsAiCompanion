@@ -460,7 +460,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var item = MainDataGrid.SelectedItems.Cast<TemplateItem>().FirstOrDefault();
 			if (item == null)
 				return;
-			TitleTask = ClientHelper.AutoGenerateTitle(item);
+			TitleTask = ClientHelper.GenerateTitle(item);
 		}
     }
 

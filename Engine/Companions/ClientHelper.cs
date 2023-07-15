@@ -20,7 +20,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string UserName = "User";
 		public const string SystemName = "System";
 		public const string AiName = "Ai";
-
+		public const string GenerateTitleTaskName = "® System - Generate Title";
+		public const string FormatMessageTaskName = "® System - Format Message";
 
 		public async static Task Send(TemplateItem item)
 		{
@@ -33,7 +34,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
 				return;
 			}
-			var m = new MessageItem(UserName, item.Text, MessageType.Out);
+
+			var itemText = item.Text;
+			if (item.AutoFormatMessage)
+				itemText = await FormatMessage(item, item.Text);
+			var m = new MessageItem(UserName, itemText, MessageType.Out);
 			m.BodyInstructions = item.TextInstructions;
 			// If task panel then allow to use AutoClear.
 			var isTask = Global.Tasks.Items.Contains(item);
@@ -231,7 +236,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					if (item.AutoGenerateTitle)
 					{
 						item.AutoGenerateTitle = false;
-						_ = AutoGenerateTitle(item);
+						_ = GenerateTitle(item);
 					}
 					var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 					// Send body and context data.
@@ -309,10 +314,58 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return messagesToSend;
 		}
 
-		public async static Task AutoGenerateTitle(TemplateItem item)
+		#region Reserved Tempalte Functions
+
+		public async static Task<string> FormatMessage(TemplateItem item, string text)
+		{
+			if (string.IsNullOrEmpty((text ?? "").Trim()))
+				return text;
+			/// Try to get reserved template to generate title.
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == FormatMessageTaskName);
+			if (rItem == null)
+				return text;
+			var messages = new List<ChatCompletionRequestMessage>();
+			// Crate a copy in order not to add to existing list.
+			try
+			{
+				// Add instructions to generate title to existing messages.
+				messages.Add(new ChatCompletionRequestMessage()
+				{
+					Name = SystemName,
+					Content = rItem.TextInstructions,
+					Role = ChatCompletionRequestMessageRole.system
+				});
+				// Supply data for processing.
+				messages.Add(new ChatCompletionRequestMessage()
+				{
+					Name = UserName,
+					Content = text,
+					Role = ChatCompletionRequestMessageRole.user
+				});
+				var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
+				// Send body and context data.
+				var response = await client.QueryAI(
+					rItem.AiModel,
+					"",
+					"",
+					messages,
+					rItem.Creativity,
+					rItem
+				);
+				return response ?? text;
+			}
+			catch (Exception ex)
+			{
+				var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
+				item.Messages.Add(message);
+				return text;
+			}
+		}
+
+		public async static Task GenerateTitle(TemplateItem item)
 		{
 			/// Try to get reserved template to generate title.
-			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Global.GenerateTitleReservedTaskName);
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == GenerateTitleTaskName);
 			if (rItem == null)
 				return;
 			if (item.Messages.Count == 0)
@@ -324,10 +377,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// Add instructions to generate title to existing messages.
 				messages.Add(new ChatCompletionRequestMessage()
 				{
-					Name = UserName,
-					Content = rItem.Text,
-					Role = ChatCompletionRequestMessageRole.user
-
+					Name = SystemName,
+					Content = rItem.TextInstructions,
+					Role = ChatCompletionRequestMessageRole.system
 				});
 				var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 				// Send body and context data.
@@ -342,10 +394,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (response != null)
 				{
 					response = SettingsData<object>.RemoveInvalidFileNameChars(response);
-					if (response.Split().Length > 0 && response.Split().Length <= 5)
+					if (response.Split().Length > 0)
 					{
+						var title = string.Join(" ", response.Split().Take(6).ToList());
 						if (Global.Tasks.Items.Contains(item))
-							Global.Tasks.RenameItem(item, response);
+							Global.Tasks.RenameItem(item, title);
 					}
 				}
 			}
@@ -355,6 +408,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				item.Messages.Add(message);
 			}
 		}
+
+		#endregion
 
 		public static void SetData(TemplateItem item, string data)
 		{

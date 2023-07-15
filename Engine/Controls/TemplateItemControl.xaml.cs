@@ -1,8 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions;
-using OpenAI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -360,6 +358,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentEnumComboBox, head, body, MessageBoxImage.Warning);
 			Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeLabel, head, body, MessageBoxImage.Warning);
 			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentIcon, head, body, MessageBoxImage.Warning);
+
+			Global.MainControl.InfoPanel.HelpProvider.Add(AutoSendCheckBox, AutoSendCheckBox.Content as string,
+				"Automatically send Task for processing to AI when Task is created from the Template.");
 			if (!Global.IsVsExtesion)
 			{
 				Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Global.VsExtensionFeatureMessage);
@@ -398,7 +399,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var firstMessage = _item.Messages.FirstOrDefault();
 			if (firstMessage == null)
 				return;
-			_ = ClientHelper.AutoGenerateTitle(_item);
+			_ = ClientHelper.GenerateTitle(_item);
 		}
 	}
 }

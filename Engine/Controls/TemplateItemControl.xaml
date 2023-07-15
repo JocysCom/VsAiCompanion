@@ -4,12 +4,12 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:Chat="clr-namespace:JocysCom.ClassLibrary.Controls.Chat"
 	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
-	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="320"
+	d:DesignWidth="520"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -27,11 +27,8 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -39,13 +36,6 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-			<Controls:IconUserControl
-				x:Name="IconPanel"
-				Grid.Row="1"
-				Grid.RowSpan="2"
-				Width="64"
-				Height="64"
-				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 			<!--  Row 0  -->
 			<Label
 				Grid.Row="0"
@@ -72,32 +62,32 @@
 						<Label VerticalAlignment="Center" Content="Refresh" Style="{StaticResource ButtonLabel}" />
 					</StackPanel>
 				</Button>
-				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
-				<CheckBox Name="IsFavoriteCheckBox" Content="Is Favorite" IsChecked="{Binding IsFavorite}" />
 			</StackPanel>
-			<Label
-				x:Name="CreativityLabel"
-				Grid.Row="1"
-				Grid.Column="1"
-				Content="AI Creativity"
-				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 			<StackPanel
-				x:Name="CreativityPanel"
-				Grid.Row="1"
+				Grid.Row="0"
 				Grid.Column="2"
-				Orientation="Horizontal"
-				Visibility="{Binding BarPanelVisibility, ElementName=This}">
-				<Slider
-					Name="CreativitySlider"
-					Width="100"
-					Margin="8,8,0,0"
-					IsSnapToTickEnabled="True"
-					Maximum="2"
-					Minimum="0"
-					TickFrequency="0.5"
-					TickPlacement="BottomRight"
-					Value="{Binding Creativity}" />
-				<Label VerticalAlignment="Center" Content="{Binding CreativityName, ElementName=This}" />
+				HorizontalAlignment="Right"
+				Orientation="Horizontal">
+				<Button
+					Name="BarToggleButton"
+					Width="26"
+					Height="26"
+					Margin="2"
+					Padding="0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					BorderBrush="Transparent"
+					Click="BarToggleButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl
+							x:Name="ShowHideBarContent"
+							VerticalAlignment="Bottom"
+							Content="{StaticResource Icon_navigate_left2}"
+							Focusable="False"
+							Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
 			</StackPanel>
 			<Button
 				Name="ListToggleButton"
@@ -121,113 +111,84 @@
 						Style="{StaticResource ButtonContentControl}" />
 				</StackPanel>
 			</Button>
-			<Label
-				Grid.Row="2"
-				Grid.Column="1"
-				VerticalAlignment="Center"
-				Content="Automation"
+			<!--  Row 1  -->
+			<Controls:IconUserControl
+				x:Name="IconPanel"
+				Grid.Row="1"
+				Width="64"
+				Height="64"
+				VerticalAlignment="Top"
 				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-			<StackPanel
-				Grid.Row="2"
-				Grid.Column="2"
-				Grid.ColumnSpan="2"
-				Orientation="Horizontal"
-				Visibility="{Binding BarPanelVisibility, ElementName=This}">
-				<CheckBox Name="AutoSendCheckBox" Content="Send on Create" IsChecked="{Binding AutoSend}" />
-				<ComboBox
-					Name="MessageBoxOperationComboBox"
-					Grid.Row="1"
-					Grid.Column="2"
-					DisplayMemberPath="Value"
-					ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
-					SelectedValue="{Binding MessageBoxOperation}"
-					SelectedValuePath="Key" />
-				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Generate Title" IsChecked="{Binding AutoGenerateTitle}" />
+			<WrapPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+				<StackPanel Orientation="Vertical">
+					<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+						<GroupBox.Header>
+							<StackPanel Orientation="Horizontal">
+								<Label
+									x:Name="CreativityLabel"
+									Margin="0"
+									Padding="5,5,0,5"
+									Content="Creativity:"
+									Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+								<Label Margin="0" VerticalAlignment="Center" Content="{Binding CreativityName, ElementName=This}" />
+							</StackPanel>
+						</GroupBox.Header>
+						<StackPanel Orientation="Vertical">
+							<Slider
+								Name="CreativitySlider"
+								Width="150"
+								IsSnapToTickEnabled="True"
+								Maximum="2"
+								Minimum="0"
+								TickFrequency="0.5"
+								TickPlacement="BottomRight"
+								Value="{Binding Creativity}" />
 
-				<Button
-					Name="GenerateTitleButton"
+						</StackPanel>
+					</GroupBox>
+					<CheckBox Name="IsFavoriteCheckBox" Content="Show Icon in Toolbar" IsChecked="{Binding IsFavorite}" />
+				</StackPanel>
+				<GroupBox
 					Grid.Row="1"
-					Grid.Column="3"
-					Margin="0,0,3,0"
-					VerticalAlignment="Center"
-					BorderBrush="Transparent"
-					Click="GenerateTitleButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Generate Title"
+					Grid.Column="1"
+					Margin="0,0,3,3"
+					VerticalAlignment="Top"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-					</StackPanel>
-				</Button>
+					<GroupBox.Header>
+						<StackPanel Orientation="Horizontal">
+							<Label
+								Grid.Row="2"
+								Grid.Column="1"
+								VerticalAlignment="Center"
+								Content="Automation"
+								Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+						</StackPanel>
+					</GroupBox.Header>
+					<StackPanel
+						Grid.Row="2"
+						Grid.Column="2"
+						Grid.ColumnSpan="2"
+						Orientation="Horizontal"
+						Visibility="{Binding BarPanelVisibility, ElementName=This}">
+						<StackPanel VerticalAlignment="Top">
+							<CheckBox Name="AutoSendCheckBox" Content="Send on Create" IsChecked="{Binding AutoSend}" />
+							<CheckBox Name="AutoRemoveCheckBox" Content="Remove on Complete" IsChecked="{Binding AutoRemove}" />
+						</StackPanel>
+						<ComboBox
+							Name="MessageBoxOperationComboBox"
+							VerticalAlignment="Top"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
+							SelectedValue="{Binding MessageBoxOperation}"
+							SelectedValuePath="Key" />
 
 
-				<CheckBox Name="AutoRemoveCheckBox" Content="Remove on Complete" IsChecked="{Binding AutoRemove}" />
-			</StackPanel>
-			<StackPanel
-				Grid.Row="0"
-				Grid.Column="2"
-				HorizontalAlignment="Right"
-				Orientation="Horizontal">
-				<Button
-					Name="ScrollToBottomMessagesButton"
-					Width="26"
-					Height="26"
-					Margin="2"
-					Padding="0"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Top"
-					BorderBrush="Transparent"
-					Click="ScrollToBottomButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl
-							VerticalAlignment="Bottom"
-							Content="{StaticResource Icon_arrow_barrier_bottom}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
+
 					</StackPanel>
-				</Button>
-				<Button
-					Name="ClearMessagesButton"
-					Width="26"
-					Height="26"
-					Margin="0,2,0,0"
-					Padding="0"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Top"
-					BorderBrush="Transparent"
-					Click="ClearMessagesButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl
-							VerticalAlignment="Bottom"
-							Content="{StaticResource Icon_broom}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="BarToggleButton"
-					Width="26"
-					Height="26"
-					Margin="2"
-					Padding="0"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Top"
-					BorderBrush="Transparent"
-					Click="BarToggleButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl
-							x:Name="ShowHideBarContent"
-							VerticalAlignment="Bottom"
-							Content="{StaticResource Icon_navigate_left2}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
-					</StackPanel>
-				</Button>
-			</StackPanel>
-			<Grid Grid.Row="6" Grid.ColumnSpan="4">
+				</GroupBox>
+			</WrapPanel>
+			<!--  Row 2  -->
+			<Grid Grid.Row="2" Grid.ColumnSpan="4">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
@@ -235,9 +196,10 @@
 				</Grid.RowDefinitions>
 				<Border Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0.5" />
 				<Label
-					Padding="0"
+					Padding="2"
 					HorizontalAlignment="Center"
 					Content="Visual Studio Extension Options"
+					Opacity="0.3"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 				<Border Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0.1" />
 				<WrapPanel Grid.Row="1" Orientation="Horizontal">
@@ -377,14 +339,73 @@
 				<Border Grid.Row="2" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0.25" />
 				<StackPanel Grid.Row="2" Orientation="Horizontal" />
 			</Grid>
+			<!--  Row 3  -->
 			<Border
-				Grid.Row="7"
+				Grid.Row="3"
 				Grid.ColumnSpan="4"
 				BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
-				BorderThickness="0,1,0,0">
+				BorderThickness="0,1,0,1">
 				<!--  Hide in order to preved UI freeze whe WebBrowser is loading. It will be made visible in MainContro.xaml.cs.  -->
 				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" Visibility="Collapsed" />
 			</Border>
+			<!--  Row 4  -->
+			<StackPanel
+				Grid.Row="4"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				Margin="0,3,0,3"
+				Orientation="Horizontal">
+				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
+				<CheckBox Name="AutoFormatMessageCheckBox" Content="Format My Messages" IsChecked="{Binding AutoFormatMessage}" />
+				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
+			</StackPanel>
+
+			<StackPanel
+				Grid.Row="4"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				HorizontalAlignment="Right"
+				Orientation="Horizontal">
+				<Button
+					Name="ScrollToBottomMessagesButton"
+					Width="26"
+					Height="26"
+					Margin="2"
+					Padding="0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					BorderBrush="Transparent"
+					Click="ScrollToBottomButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl
+							VerticalAlignment="Bottom"
+							Content="{StaticResource Icon_arrow_barrier_bottom}"
+							Focusable="False"
+							Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="ClearMessagesButton"
+					Width="26"
+					Height="26"
+					Margin="0,2,2,0"
+					Padding="0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					BorderBrush="Transparent"
+					Click="ClearMessagesButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl
+							VerticalAlignment="Bottom"
+							Content="{StaticResource Icon_broom}"
+							Focusable="False"
+							Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+
 		</Grid>
 
 	</Grid>
