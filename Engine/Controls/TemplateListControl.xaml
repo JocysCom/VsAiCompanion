@@ -81,6 +81,19 @@
 		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
 			<ToolBar KeyboardNavigation.TabNavigation="Continue" Style="{StaticResource MainToolBar}">
 				<Button
+					Name="GenerateTitleButton"
+					HorizontalAlignment="Right"
+					x:FieldModifier="public"
+					Click="GenerateTitleButton_Click"
+					Style="{StaticResource ToolBarButton}"
+					ToolTip="Use AI to automatically generate title">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_document_title_refresh}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
+					</StackPanel>
+				</Button>
+
+				<Separator />
+				<Button
 					Name="CopyButton"
 					HorizontalAlignment="Right"
 					x:FieldModifier="public"

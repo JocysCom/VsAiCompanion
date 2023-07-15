@@ -1,0 +1,16 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>document header icon</title>
+    <desc>document header icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="64" y1="0" x2="359.822" y2="512.00059" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#f3fafe"/>
+            <stop offset="1" stop-color="#cae9fb"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M72,0l368,0c4.5,0 8,3.5 8,8l0,496c0,4.5 -3.5,8 -8,8l-368,0c-4.5,0 -8,-3.5 -8,-8l0,-496c0,-4.5 3.5,-8 8,-8z" id="curve1" fill="url(#color-1)"/>
+        <path d="M96,32l320,0l0,48l-320,0z" id="curve0" fill="#717f8f"/>
+    </g>
+</svg>

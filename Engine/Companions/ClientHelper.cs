@@ -17,6 +17,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 	{
 
 		public const string PreviewModeMessage = "Preview Mode - Sending messages to AI is suppressed.";
+		public const string UserName = "User";
+		public const string SystemName = "System";
+		public const string AiName = "Ai";
+
 
 		public async static Task Send(TemplateItem item)
 		{
@@ -29,7 +33,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
 				return;
 			}
-			var m = new MessageItem("User", item.Text, MessageType.Out);
+			var m = new MessageItem(UserName, item.Text, MessageType.Out);
 			m.BodyInstructions = item.TextInstructions;
 			// If task panel then allow to use AutoClear.
 			var isTask = Global.Tasks.Items.Contains(item);
@@ -123,7 +127,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var chatLogForAI = "";
 			var chatLogMessages = new List<ChatCompletionRequestMessage>();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
-			var usedTokens = CountTokens(messageForAI);
 			var reqTokens = CountTokens(messageForAI);
 			// Mark message as preview is preview.
 			m.IsPreview = item.IsPreview;
@@ -138,48 +141,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				options.WriteIndented = true;
 				if (item.Messages == null)
 					item.Messages = new BindingList<MessageItem>();
-				var messagesIncludingLast = item.Messages.ToList();
-				messagesIncludingLast.Add(m);
-				var messages = messagesIncludingLast
-					// Include only chat messages.
-					.Where(x => x.Type == MessageType.Out || x.Type == MessageType.In)
-					// Exclude all preview messages.
-					.Where(x => !x.IsPreview)
-					.Select(x => new MessageHistoryItem()
-					{
-						Date = x.Date,
-						User = x.User,
-						Body = $"{x.BodyInstructions}".Trim().Length == 0
-							? $"{x.Body}"
-							: $"{x.BodyInstructions}\r\n\r\n{x.Body}",
-						Type = x.Type,
-					}).ToList();
-				// Split 90%/10% between request and response.
-				var maxRequesTokens = maxTokens / 2;
-				var availableTokens = maxRequesTokens - usedTokens;
-				var chatLogOptions = new JsonSerializerOptions
-				{
-					WriteIndented = true,
-					// Serialize enums as string for AI to understand.
-					Converters = { new JsonStringEnumConverter() }
-				};
-
-				var messagesToSend = AppHelper.GetMessages(messages, availableTokens, chatLogOptions);
 				// Attach message body to the bottom of the chat instead.
 				messageForAI = "";
+				var messagesToSend = GetMessagesToSend(item, m);
 				// Prepare messages for API.
-				chatLogMessages = messagesToSend.Select(x =>
-				{
-					return new ChatCompletionRequestMessage()
-					{
-						Name = x.User,
-						Content = x.Body,
-						Role = x.Type == MessageType.Out
-							? ChatCompletionRequestMessageRole.user
-							: ChatCompletionRequestMessageRole.assistant,
-					};
-				}).ToList();
-				var json = JsonSerializer.Serialize(messagesToSend, chatLogOptions);
+				chatLogMessages = messagesToSend.Select(x => ConvertToRequestMessage(x)).ToList();
+				var json = JsonSerializer.Serialize(messagesToSend, ChatLogOptions);
 				a0.Data = $"```json\r\n{json}\r\n```";
 				a0.IsMarkdown = true;
 				m.Attachments.Add(a0);
@@ -249,12 +216,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var msgTokens = CountTokens(messageForAI);
 			if (item.IsPreview)
 			{
-				var message = new MessageItem("System", PreviewModeMessage);
+				var message = new MessageItem(SystemName, PreviewModeMessage);
 				item.Messages.Add(message);
 			}
 			else if (maxTokens < msgTokens)
 			{
-				var message = new MessageItem("System", $"Message is too big. Message Tokens: {msgTokens}, Maximum Tokens: {maxTokens}", MessageType.Error);
+				var message = new MessageItem(SystemName, $"Message is too big. Message Tokens: {msgTokens}, Maximum Tokens: {maxTokens}", MessageType.Error);
 				item.Messages.Add(message);
 			}
 			else
@@ -264,7 +231,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					if (item.AutoGenerateTitle)
 					{
 						item.AutoGenerateTitle = false;
-						_ = AutoGenerateTitle(item, chatLogMessages);
+						_ = AutoGenerateTitle(item);
 					}
 					var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
 					// Send body and context data.
@@ -278,14 +245,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					);
 					if (response != null)
 					{
-						var message = new MessageItem("AI", response, MessageType.In);
+						var message = new MessageItem(AiName, response, MessageType.In);
 						item.Messages.Add(message);
 						SetData(item, response);
 					}
 				}
 				catch (Exception ex)
 				{
-					var message = new MessageItem("System", ex.Message, MessageType.Error);
+					var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
 					item.Messages.Add(message);
 				}
 			}
@@ -295,23 +262,69 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		}
 
-		public async static Task AutoGenerateTitle(TemplateItem item,
-			List<ChatCompletionRequestMessage> chatLogMessages
-		)
+		public static ChatCompletionRequestMessage ConvertToRequestMessage(MessageHistoryItem item)
 		{
-			/// Template must use chat model.
-			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Global.GenerateTitleTaskName);
+			return new ChatCompletionRequestMessage()
+			{
+				Name = item.User,
+				Content = item.Body,
+				Role = item.Type == MessageType.Out
+					? ChatCompletionRequestMessageRole.user
+					: ChatCompletionRequestMessageRole.assistant,
+			};
+		}
+
+		public static JsonSerializerOptions ChatLogOptions = new JsonSerializerOptions
+		{
+			WriteIndented = true,
+			// Serialize enums as string for AI to understand.
+			Converters = { new JsonStringEnumConverter() }
+		};
+
+		public static List<MessageHistoryItem> GetMessagesToSend(TemplateItem item, MessageItem lastMessage = null)
+		{
+			var messages = item.Messages.ToList();
+			if (lastMessage != null)
+				messages.Add(lastMessage);
+			var messageHistory = messages
+				// Include only chat messages.
+				.Where(x => x.Type == MessageType.Out || x.Type == MessageType.In)
+				// Exclude all preview messages.
+				.Where(x => !x.IsPreview)
+				.Select(x => new MessageHistoryItem()
+				{
+					Date = x.Date,
+					User = x.User,
+					Body = $"{x.BodyInstructions}".Trim().Length == 0
+						? $"{x.Body}"
+						: $"{x.BodyInstructions}\r\n\r\n{x.Body}",
+					Type = x.Type,
+				}).ToList();
+			var maxTokens = Client.GetMaxTokens(item.AiModel);
+			// Split 50%/50% between request and response.
+			var maxRequesTokens = maxTokens / 2;
+			var usedTokens = lastMessage == null ? 0 : CountTokens(lastMessage.BodyInstructions);
+			var availableTokens = maxRequesTokens - usedTokens;
+			var messagesToSend = AppHelper.GetMessages(messageHistory, availableTokens, ChatLogOptions);
+			return messagesToSend;
+		}
+
+		public async static Task AutoGenerateTitle(TemplateItem item)
+		{
+			/// Try to get reserved template to generate title.
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Global.GenerateTitleReservedTaskName);
 			if (rItem == null)
 				return;
-			if (chatLogMessages.Count == 0)
+			if (item.Messages.Count == 0)
 				return;
+			var messages = GetMessagesToSend(item).Select(x => ConvertToRequestMessage(x)).ToList();
 			// Crate a copy in order not to add to existing list.
-			var messages = chatLogMessages.ToList();
 			try
 			{
+				// Add instructions to generate title to existing messages.
 				messages.Add(new ChatCompletionRequestMessage()
 				{
-					Name = "User",
+					Name = UserName,
 					Content = rItem.Text,
 					Role = ChatCompletionRequestMessageRole.user
 
@@ -338,7 +351,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			catch (Exception ex)
 			{
-				var message = new MessageItem("System", ex.Message, MessageType.Error);
+				var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
 				item.Messages.Add(message);
 			}
 		}

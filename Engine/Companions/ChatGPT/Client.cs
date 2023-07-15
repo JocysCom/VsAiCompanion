@@ -131,6 +131,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						messagesToSend = new List<ChatCompletionRequestMessage> {
 							new ChatCompletionRequestMessage()
 							{
+								Name  = ClientHelper.UserName,
 								Content = prompt,
 								Role =  ChatCompletionRequestMessageRole.user,
 							}

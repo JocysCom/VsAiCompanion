@@ -4,12 +4,14 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -449,6 +451,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void FilterButton_Click(object sender, RoutedEventArgs e)
 		{
 			_SearchHelper.Filter();
+		}
+
+		Task TitleTask;
+
+		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
+		{
+			var item = MainDataGrid.SelectedItems.Cast<TemplateItem>().FirstOrDefault();
+			if (item == null)
+				return;
+			TitleTask = ClientHelper.AutoGenerateTitle(item);
 		}
     }
 

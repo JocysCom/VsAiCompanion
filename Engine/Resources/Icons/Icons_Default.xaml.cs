@@ -32,6 +32,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_dictionary = nameof(Icon_dictionary);
 		public const string Icon_document_checks = nameof(Icon_document_checks);
 		public const string Icon_document_gear = nameof(Icon_document_gear);
+		public const string Icon_document_header = nameof(Icon_document_header);
+		public const string Icon_document_title_refresh = nameof(Icon_document_title_refresh);
 		public const string Icon_dude3 = nameof(Icon_dude3);
 		public const string Icon_elements_branch2 = nameof(Icon_elements_branch2);
 		public const string Icon_elements_tree = nameof(Icon_elements_tree);
@@ -66,11 +68,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_Task = nameof(Icon_Task);
 		public const string Icon_teacher = nameof(Icon_teacher);
 		public const string Icon_Template = nameof(Icon_Template);
+		public const string Icon_translate = nameof(Icon_translate);
 		public const string Icon_user = nameof(Icon_user);
 		public const string Icon_Visual_Studio = nameof(Icon_Visual_Studio);
 		public const string Icon_warning = nameof(Icon_warning);
 		public const string Icon_window = nameof(Icon_window);
 		public const string Icon_windows = nameof(Icon_windows);
+		public const string Icon_window_panel_left = nameof(Icon_window_panel_left);
+		public const string Icon_window_panel_top = nameof(Icon_window_panel_top);
 		public const string Icon_window_split_hor = nameof(Icon_window_split_hor);
 
 	}

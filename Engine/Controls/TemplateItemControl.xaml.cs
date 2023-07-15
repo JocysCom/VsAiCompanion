@@ -398,16 +398,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var firstMessage = _item.Messages.FirstOrDefault();
 			if (firstMessage == null)
 				return;
-			var message = new ChatCompletionRequestMessage()
-			{
-				Name = firstMessage.User,
-				Content = $"{firstMessage.BodyInstructions}\r\n\r\n{firstMessage.Body}",
-				Role = firstMessage.Type == MessageType.Out
-						? ChatCompletionRequestMessageRole.user
-						: ChatCompletionRequestMessageRole.assistant,
-			};
-			var messages = new List<ChatCompletionRequestMessage>() { message };
-			_ = ClientHelper.AutoGenerateTitle(_item, messages);
+			_ = ClientHelper.AutoGenerateTitle(_item);
 		}
 	}
 }

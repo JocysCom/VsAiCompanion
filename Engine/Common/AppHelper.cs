@@ -126,8 +126,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		/// <summary>
-		/// Return lis of messages, but do not exceed availableTokens
-
+		/// Return lis of messages, but do not exceed availableTokens.
+		/// Priorityu of adding messages:
+		/// Last message. First message. All mesages beginning from the end.
 		/// </summary>
 		/// <param name="messages"></param>
 		/// <param name="availableTokens"></param>
@@ -142,22 +143,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return target;
 			var source = messages.ToList();
 			int currentTokens = 0;
+			var firstMessageInChat = source.First();
 			// Reverse order (begin adding latest messages first)
 			source.Reverse();
-			// This is actually the first message posted in chat.
-			var lastItem = source.Last();
-			var lastTokens = CountTokens(lastItem, options);
+			var firstMessageInChatTokens = CountTokens(firstMessageInChat, options);
 			for (int i = 0; i < source.Count; i++)
 			{
 				var item = source[i];
 				var itemTokens = CountTokens(item, options);
-				var hasSpaceForLastItemAfterAdd = currentTokens + itemTokens + lastTokens < availableTokens;
+				var hasSpaceForLastItemAfterAdd = currentTokens + itemTokens + firstMessageInChatTokens < availableTokens;
 				// If first item was added already and
 				// this is not the last item and 
 				// won't be able to last item then...
-				if (i > 0 && item != lastItem && !hasSpaceForLastItemAfterAdd)
+				if (i > 0 && item != firstMessageInChat && !hasSpaceForLastItemAfterAdd)
 				{
-					target.Add(lastItem);
+					target.Add(firstMessageInChat);
 					break;
 				}
 				var hasSpaceForThisItem = currentTokens + itemTokens < availableTokens;
