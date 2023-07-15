@@ -27,15 +27,12 @@
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="{x:Type Button}">
-							<Grid x:Name="grid" Background="Transparent">
 								<Viewbox>
 									<Border
 									Width="40"
 									Height="40"
-									x:Name="border"
-									Padding="0"
-									BorderThickness="0"
 									CornerRadius="20"
+									x:Name="border"
 									RenderTransformOrigin="0.5,0.5">
 										<Border.RenderTransform>
 											<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
@@ -49,7 +46,6 @@
 										<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
 									</Border>
 								</Viewbox>
-							</Grid>
 							<ControlTemplate.Triggers>
 								<MultiDataTrigger>
 									<MultiDataTrigger.Conditions>
@@ -118,8 +114,8 @@
 								<Border
 									Width="40"
 									Height="40"
-									x:Name="border"
 									CornerRadius="20"
+									x:Name="border"
 									RenderTransformOrigin="0.5,0.5">
 									<Border.RenderTransform>
 										<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
@@ -214,7 +210,7 @@
 			Grid.Row="1"
 			Grid.Column="0"
 			VerticalAlignment="Stretch"
-			Background="#11000000">
+			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 			<StackPanel VerticalAlignment="Bottom">
 				<StackPanel
 					x:Name="DataInstructionsPanel"
@@ -224,28 +220,28 @@
 					Visibility="{Binding ShowInstructions, Converter={StaticResource _BoolToVisibilityConverter}}">
 					<Border
 						Margin="10,10,10,0"
-						Padding="12,8,12,8"
-						Background="#fdfdfd"
+						Padding="12,7,12,8"
+						Background="White"
 						CornerRadius="10">
-						<Border.Effect>
+						<!--<Border.Effect>
 							<DropShadowEffect
 								BlurRadius="0"
 								Direction="0"
 								Opacity="0.25"
 								ShadowDepth="0"
 								Color="Black" />
-						</Border.Effect>
+						</Border.Effect>-->
 						<Grid>
 							<TextBox
 								x:Name="DataInstructionsTextBox"
 								Margin="0"
 								Padding="0"
+								BorderThickness="0"
 								HorizontalAlignment="Stretch"
 								VerticalAlignment="Stretch"
 								VerticalContentAlignment="Top"
 								AcceptsReturn="True"
-								Background="#fdfdfd"
-								BorderThickness="0"
+								Background="Transparent"
 								PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
 								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 								ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -289,29 +285,29 @@
 				<!--  Send Message  -->
 				<Border
 					Margin="10"
-					Padding="12,8,12,8"
-					Background="#fdfdfd"
+					Padding="12,7,12,8"
+					Background="White"
 					CornerRadius="10">
-					<Border.Effect>
+					<!--<Border.Effect>
 						<DropShadowEffect
 							BlurRadius="0"
 							Direction="0"
 							Opacity="0.25"
 							ShadowDepth="0"
 							Color="Black" />
-					</Border.Effect>
+					</Border.Effect>-->
 					<Grid>
 						<TextBox
 							x:Name="DataTextBox"
 							Margin="0"
 							Padding="0"
+							BorderThickness="0"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
 							VerticalContentAlignment="Top"
 							x:FieldModifier="public"
 							AcceptsReturn="True"
-							Background="#fdfdfd"
-							BorderThickness="0"
+							Background="White"
 							TextChanged="DataTextBox_TextChanged"
 							PreviewKeyUp="DataTextBox_PreviewKeyUp"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -352,14 +348,13 @@
 			Grid.Row="1"
 			Grid.Column="1"
 			VerticalAlignment="Stretch"
-			 Background="#11000000">
+			 Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 			<StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
 				<Button
 					x:Name="SendButton"
 					Width="30"
 					Height="30"
 					Margin="0,0,0,10"
-					Padding="0"
 					Click="SendButton_Click"
 					Style="{DynamicResource RoundCornerBlue}">
 					<Viewbox>
@@ -374,7 +369,6 @@
 					Width="30"
 					Height="30"
 					Margin="10,0,10,10"
-					Padding="0"
 					Click="StopButton_Click"
 					Style="{DynamicResource RoundCornerRed}">
 					<Viewbox>

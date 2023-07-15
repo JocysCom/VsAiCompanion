@@ -72,7 +72,7 @@
 					Name="BarToggleButton"
 					Width="26"
 					Height="26"
-					Margin="2"
+					Margin="2,2,3,2"
 					Padding="0"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
@@ -181,9 +181,6 @@
 							ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
 							SelectedValue="{Binding MessageBoxOperation}"
 							SelectedValuePath="Key" />
-
-
-
 					</StackPanel>
 				</GroupBox>
 			</WrapPanel>
@@ -393,7 +390,7 @@
 					Name="ClearMessagesButton"
 					Width="26"
 					Height="26"
-					Margin="0,2,2,0"
+					Margin="0,2,3,0"
 					Padding="0"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
