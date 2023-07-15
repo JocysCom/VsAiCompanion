@@ -353,12 +353,12 @@
 				Margin="0,3,0,3"
 				Orientation="Horizontal">
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
-				<CheckBox Name="AutoFormatMessageCheckBox" Content="Format my messages with" IsChecked="{Binding AutoFormatMessage}" />
+				<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}" Padding="0" />
 				<TextBlock VerticalAlignment="Center">
 					<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 						Markdown
-					</Hyperlink></TextBlock>
-				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
+					</Hyperlink> auto-format</TextBlock>
+				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" Margin="5,0,0,0" />
 			</StackPanel>
 
 			<StackPanel
