@@ -1,3 +1,8 @@
+2023-07-16 v1.0.75
+
+- Fix: Add missing title and markdown format templates.
+- Update: Theme has been updated and more tooltips have been added.
+
 2023-07-15 v1.0.73
 
 - New: Option to use AI to auto-format your message with markdown.
