@@ -1,20 +1,29 @@
 ﻿<TemplateItem>
-  <Name>® Reserverd - Generate Title</Name>
+  <Name>® System - Format Message</Name>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
-  <ShowInstructions>false</ShowInstructions>
-  <Text>Generate a 2-5 word chat title. Avoid prefixes such as 'Title: '. Responses will be used immediately for file names.</Text>
+  <TextInstructions>Analyze the text and incorporate markdown. Ensure that you encapsulate any discovered code blocks within markdown triple quotes. Should the code language be unspecified, attempt to recognize it and denote it within the markdown. Do not edit the original text, simply include additional markdowns. Only produce responses that contain the text altered by the introduced markdown.</TextInstructions>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>
-  <Messages />
+  <Messages>
+    <MessageItem>
+      <Id>b9eedde09e924045a8add4660fff9426</Id>
+      <User>System</User>
+      <Body>This reserved task use AI to automatically format your message using markdown.</Body>
+      <Attachments />
+      <Date>2023-07-16T08:56:44.733945+01:00</Date>
+      <Type>Information</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+  </Messages>
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>None</MessageBoxOperation>
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
+  <IsPreview>true</IsPreview>
   <IsFavorite>false</IsFavorite>
   <IsChecked>false</IsChecked>
   <IsEnabled>false</IsEnabled>

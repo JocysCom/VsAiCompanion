@@ -352,13 +352,19 @@
 				Grid.ColumnSpan="3"
 				Margin="0,3,0,3"
 				Orientation="Horizontal">
+				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
-				<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}" Padding="0" />
-				<TextBlock VerticalAlignment="Center">
-					<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-						Markdown
-					</Hyperlink> Auto-Format</TextBlock>
-				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" Margin="5,0,0,0" />
+				<CheckBox Name="AutoFormatMessageCheckBox" Padding="0" IsChecked="{Binding AutoFormatMessage}">
+					<TextBlock VerticalAlignment="Center">
+						Auto-Format with<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
+							Markdown
+						</Hyperlink></TextBlock>
+				</CheckBox>
+				<CheckBox
+					Name="IsPreviewCheckBox"
+					Margin="5,0,0,0"
+					Content="Preview Mode"
+					IsChecked="{Binding IsPreview}" />
 			</StackPanel>
 
 			<StackPanel

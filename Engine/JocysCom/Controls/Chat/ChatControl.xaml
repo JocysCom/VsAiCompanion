@@ -276,12 +276,6 @@
 						</Grid>
 					</Border>
 				</StackPanel>
-				<!--  Message Instructions  -->
-				<CheckBox
-					Margin="10,10,10,0"
-					Content="Show instructions that will be included at the start of every message."
-					Foreground="Gray"
-					IsChecked="{Binding ShowInstructions}" />
 				<!--  Send Message  -->
 				<Border
 					Margin="10"

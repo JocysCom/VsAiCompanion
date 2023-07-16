@@ -349,6 +349,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void AddHelp(ContentControl control, string help)
+		{
+			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
+		}
+
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
@@ -356,11 +361,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var head = "Caring for Your Sensitive Data";
 			var body = "As you share files for AI processing, please remember not to include confidential, proprietary, or sensitive information.";
 			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentEnumComboBox, head, body, MessageBoxImage.Warning);
-			Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeLabel, head, body, MessageBoxImage.Warning);
 			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentIcon, head, body, MessageBoxImage.Warning);
-
-			Global.MainControl.InfoPanel.HelpProvider.Add(AutoSendCheckBox, AutoSendCheckBox.Content as string,
-				"Automatically send Task for processing to AI when Task is created from the Template.");
+			Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeLabel, head, body, MessageBoxImage.Warning);
 			if (!Global.IsVsExtesion)
 			{
 				Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Global.VsExtensionFeatureMessage);
@@ -369,12 +371,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 			}
-			Global.MainControl.InfoPanel.HelpProvider.Add(ChatHistoryCheckBox, ChatHistoryCheckBox.Content as string,
-				"The AI API doesn't store messages, so the chat log must be attached to each request in order to simulate a conversation.");
-			Global.MainControl.InfoPanel.HelpProvider.Add(IsPreviewCheckBox, IsPreviewCheckBox.Content as string,
-				ClientHelper.PreviewModeMessage);
-			Global.MainControl.InfoPanel.HelpProvider.Add(IsFavoriteCheckBox, IsFavoriteCheckBox.Content as string,
-				"Display the template button in the toolbar for quick task creation.");
+			AddHelp(ShowInstructionsCheckBox, "Show instructions that will be included at the start of every message.");
+			AddHelp(AutoSendCheckBox, "Automatically send Task for processing to AI when Task is created from the Template.");
+			AddHelp(ChatHistoryCheckBox, "The AI API doesn't store messages, so the chat log must be attached to each request in order to simulate a conversation.");
+			AddHelp(IsPreviewCheckBox, ClientHelper.PreviewModeMessage);
+			AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
+			AddHelp(AutoFormatMessageCheckBox, "Use AI to automatically format your message using markdown.");
+			AddHelp(AutoGenerateTitleCheckBox, "Use AI to to automatically generate chat title.");
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
