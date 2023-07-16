@@ -356,7 +356,7 @@
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
 				<CheckBox Name="AutoFormatMessageCheckBox" Padding="0" IsChecked="{Binding AutoFormatMessage}">
 					<TextBlock VerticalAlignment="Center">
-						Auto-Format with<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
+						<TextBlock Margin="0,0,3,0">Format with</TextBlock><Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 							Markdown
 						</Hyperlink></TextBlock>
 				</CheckBox>

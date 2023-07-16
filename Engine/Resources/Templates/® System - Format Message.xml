@@ -2,7 +2,7 @@
   <Name>® System - Format Message</Name>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
-  <TextInstructions>Analyze the text and incorporate markdown. Ensure that you encapsulate any discovered code blocks within markdown triple quotes. Should the code language be unspecified, attempt to recognize it and denote it within the markdown. Do not edit the original text, simply include additional markdowns. Only produce responses that contain the text altered by the introduced markdown.</TextInstructions>
+  <TextInstructions>Analyze the orignal user text. Once you detect any segment of programing code, please encapsulate it within single or triple markdown quotes in order to create a code block. If you notice the absence of the programming language specification for the code block, please deduce the language and indicate it in the markdown. Be careful to not envelop standard, non-code text in such markdowns. The original user text is not to be edited or removed, only supplement it by adding markdowns where necessary. Refrain from inserting your own annotations or comments.</TextInstructions>
   <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
