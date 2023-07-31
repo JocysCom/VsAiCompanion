@@ -106,7 +106,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (at.HasFlag(AttachmentType.Solution))
 				fileItems.AddRange(Global.GetSolution());
 			if (at.HasFlag(AttachmentType.ErrorDocument))
-				fileItems.Add(Global.GetSelectedErrorDocument());
+			{
+				var doc = Global.GetSelectedErrorDocument();
+				if (doc == null)
+				{
+					Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
+					return;
+				}
+				else
+				{
+					fileItems.Add(doc);
+				}
+			}
 			if (at.HasFlag(AttachmentType.Exception))
 			{
 				var ei = Global.GetCurrentException();

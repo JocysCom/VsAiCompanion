@@ -450,6 +450,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var document = GetTextDocument();
+			if (document == null)
+				return;
 			var selection = document.Selection;
 			selection.Delete();
 			selection.Insert(contents, (int)vsInsertFlags.vsInsertFlagsInsertAtEnd);
@@ -471,6 +473,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var ei = GetSelectedError();
+			if (ei == null)
+				return null;
 			var di = new DocItem(null, ei.File, "Error Document");
 			di.Kind = di.Kind;
 			return di;

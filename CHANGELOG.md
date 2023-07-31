@@ -1,3 +1,8 @@
+2023-07-31 v1.0.77
+
+- Fix: Crash when no error is selected while fixing the selected error.
+- Fix: Crash when no document is open while replacing the selection.
+
 2023-07-16 v1.0.75
 
 - Fix: Add missing title and markdown format templates.
