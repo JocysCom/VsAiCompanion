@@ -1,3 +1,7 @@
+2023-08-02 v1.0.79
+
+- Fix: Remove duplicate option to attach chat logs.
+
 2023-07-31 v1.0.77
 
 - Fix: Crash when no error is selected while fixing the selected error.
