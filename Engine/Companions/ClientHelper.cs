@@ -158,7 +158,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			// Mark message as preview is preview.
 			m.IsPreview = item.IsPreview;
 			// Attach chat history at the end (use left tokens).
-			if (item.AttachChatHistory)
+			if (at.HasFlag(AttachmentType.ChatHistory))
 			{
 				var a0 = new MessageAttachments();
 				a0.Title = Global.AppSettings.ContextChatTitle;

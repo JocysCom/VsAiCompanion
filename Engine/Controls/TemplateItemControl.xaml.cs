@@ -373,7 +373,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			AddHelp(ShowInstructionsCheckBox, "Show instructions that will be included at the start of every message.");
 			AddHelp(AutoSendCheckBox, "Automatically send Task for processing to AI when Task is created from the Template.");
-			AddHelp(ChatHistoryCheckBox, "The AI API doesn't store messages, so the chat log must be attached to each request in order to simulate a conversation.");
 			AddHelp(IsPreviewCheckBox, ClientHelper.PreviewModeMessage);
 			AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
 			AddHelp(AutoFormatMessageCheckBox, "Use AI to automatically format your message using markdown.");

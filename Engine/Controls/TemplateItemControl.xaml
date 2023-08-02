@@ -222,12 +222,6 @@
 								Margin="0,6,0,3"
 								VerticalAlignment="Center"
 								SelectedValue="{Binding AttachContext}" />
-							<CheckBox
-								Name="ChatHistoryCheckBox"
-								Margin="0,6,0,0"
-								VerticalAlignment="Center"
-								Content="Chat History"
-								IsChecked="{Binding AttachChatHistory}" />
 							<Separator Style="{DynamicResource MainSeparator}" />
 						</StackPanel>
 					</GroupBox>

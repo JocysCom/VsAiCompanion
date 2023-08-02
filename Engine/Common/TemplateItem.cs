@@ -71,13 +71,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public AttachmentType AttachContext { get => _AttachContext; set => SetProperty(ref _AttachContext, value); }
 		AttachmentType _AttachContext;
 
-		/// <summary>
-		/// Chat history with AI.
-		/// </summary>
-		[DefaultValue(true)]
-		public bool AttachChatHistory { get => _AttachChatHistory; set => SetProperty(ref _AttachChatHistory, value); }
-		bool _AttachChatHistory;
-
 		public ChatSettings Settings { get => _Settings; set => SetProperty(ref _Settings, value); }
 		ChatSettings _Settings;
 
@@ -174,7 +167,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var copy = new TemplateItem();
 			copy.AiModel = AiModel;
-			copy.AttachChatHistory = AttachChatHistory;
 			copy.AttachContext = AttachContext;
 			copy.AutoFormatCode = AutoFormatCode;
 			copy.AutoOperation = AutoOperation;
