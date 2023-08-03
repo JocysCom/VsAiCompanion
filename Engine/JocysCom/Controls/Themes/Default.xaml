@@ -727,6 +727,7 @@
 		<Setter Property="Margin" Value="3,0,3,0" />
 		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalAlignment" Value="Center" />
 	</Style>
 
 
@@ -804,6 +805,39 @@
 	</Style>
 
 	<!--  GroupBox  -->
+
+	<Style TargetType="GroupBox" x:Key="GroupBox_Default">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="GroupBox">
+					<Grid>
+						<Border
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"
+						BorderBrush="White"
+						BorderThickness="1"
+						CornerRadius="5"
+						Margin="1,14,0,0" />
+						<Border
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"
+						BorderBrush="Black"
+						Opacity="0.15"
+						BorderThickness="1"
+						CornerRadius="5"
+						Margin="0,13,1,1" />
+						<StackPanel>
+							<Border Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Margin="10,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+								<ContentPresenter ContentSource="Header" Margin="5"/>
+							</Border>
+							<ContentPresenter ContentSource="Content" Margin="5,0,5,5"/>
+						</StackPanel>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<!--
 		Using default style in .NET 4.8 prevents GroupBox control from disposing.
 		Use modified style extracted from:
@@ -811,7 +845,7 @@
 		Removed static resource link to "<BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>" from style which caused memory leak.
 	-->
 
-	<Style x:Key="GroupBox_Default" TargetType="GroupBox">
+	<!--<Style x:Key="GroupBox_Default" TargetType="GroupBox">
 		<Setter Property="BorderBrush" Value="Transparent" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="Margin" Value="3,3,3,3" />
@@ -880,14 +914,14 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-	</Style>
+	</Style>-->
 
 	<!--  Default Styles  -->
 
 	<Style BasedOn="{StaticResource Window_Default}" TargetType="Window" />
 	<Style BasedOn="{StaticResource UserControl_Default}" TargetType="UserControl" />
 	<Style BasedOn="{StaticResource Grid_Default}" TargetType="Grid" />
-	<!--<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />-->
+	<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />
 	<Style BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid" />
 	<Style BasedOn="{StaticResource PasswordBox_Default}" TargetType="PasswordBox" />
 	<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />

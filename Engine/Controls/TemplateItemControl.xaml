@@ -72,7 +72,7 @@
 					Name="BarToggleButton"
 					Width="26"
 					Height="26"
-					Margin="2,2,3,2"
+					Margin="2"
 					Padding="0"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
@@ -127,10 +127,10 @@
 								<Label
 									x:Name="CreativityLabel"
 									Margin="0"
-									Padding="5,5,0,5"
+									Padding="0"
 									Content="Creativity:"
 									Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-								<Label Margin="0" VerticalAlignment="Center" Content="{Binding CreativityName, ElementName=This}" />
+								<Label Margin="0" Padding="6,0,0,0" VerticalAlignment="Center" Content="{Binding CreativityName, ElementName=This}" />
 							</StackPanel>
 						</GroupBox.Header>
 						<StackPanel Orientation="Vertical">
@@ -143,20 +143,20 @@
 								TickFrequency="0.5"
 								TickPlacement="BottomRight"
 								Value="{Binding Creativity}" />
-
 						</StackPanel>
 					</GroupBox>
-					<CheckBox Name="IsFavoriteCheckBox" Content="Show Icon in Toolbar" IsChecked="{Binding IsFavorite}" />
+					<CheckBox Margin="6,0,0,0" Name="IsFavoriteCheckBox" Content="Show Icon in Toolbar" IsChecked="{Binding IsFavorite}" />
 				</StackPanel>
 				<GroupBox
 					Grid.Row="1"
 					Grid.Column="1"
 					Margin="0,0,3,3"
-					VerticalAlignment="Top"
+					VerticalAlignment="Stretch"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}">
 					<GroupBox.Header>
 						<StackPanel Orientation="Horizontal">
 							<Label
+								Padding="0"
 								Grid.Row="2"
 								Grid.Column="1"
 								VerticalAlignment="Center"
@@ -176,6 +176,7 @@
 						</StackPanel>
 						<ComboBox
 							Name="MessageBoxOperationComboBox"
+							Margin="6,0,0,0"
 							VerticalAlignment="Top"
 							DisplayMemberPath="Value"
 							ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
@@ -191,27 +192,28 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<Border Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0.5" />
+				<Border Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0.4" />
 				<Label
 					Padding="2"
 					HorizontalAlignment="Center"
 					Content="Visual Studio Extension Options"
 					Opacity="0.3"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-				<Border Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0.1" />
+				<Border Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0" />
 				<WrapPanel Grid.Row="1" Orientation="Horizontal">
-					<GroupBox Margin="3,0,3,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
-							<StackPanel MinHeight="27" Orientation="Horizontal">
+							<StackPanel Orientation="Horizontal">
 								<Label
 									x:Name="AttachmentIcon"
-									Padding="0,0,0,0"
+									Padding="0"
+									Margin="-2"
 									VerticalAlignment="Center"
 									Content="&#xE16C;"
 									FontFamily="Segoe MDL2 Assets" />
 								<Label
 									x:Name="ContextTypeLabel"
-									Padding="2,5,5,5"
+									Padding="4,0,0,0"
 									VerticalAlignment="Center"
 									Content="Attachments" />
 							</StackPanel>
@@ -225,11 +227,11 @@
 							<Separator Style="{DynamicResource MainSeparator}" />
 						</StackPanel>
 					</GroupBox>
-					<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
 							<CheckBox
+								Margin="0"
 								Name="UseMacrosCheckBox"
-								MinHeight="22"
 								VerticalAlignment="Center"
 								Content="Use Macros"
 								IsChecked="{Binding UseMacros}" />
@@ -307,9 +309,9 @@
 
 
 					</GroupBox>
-					<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
-							<Label x:Name="AutomationVsLabel" Content="Automation" />
+							<Label Padding="0" x:Name="AutomationVsLabel" Content="Automation" />
 						</GroupBox.Header>
 						<StackPanel Orientation="Vertical">
 							<ComboBox
@@ -319,7 +321,7 @@
 								SelectedValue="{Binding AutoOperation}" />
 							<CheckBox
 								x:Name="AutoFormatCodeCheckBox"
-								Margin="0,6,0,6"
+								Margin="0,6,0,3"
 								Content="Format Code"
 								IsChecked="{Binding AutoFormatCode}" />
 						</StackPanel>
@@ -391,7 +393,7 @@
 					Name="ClearMessagesButton"
 					Width="26"
 					Height="26"
-					Margin="0,2,3,0"
+					Margin="0,2,2,0"
 					Padding="0"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
