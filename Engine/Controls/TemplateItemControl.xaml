@@ -130,7 +130,11 @@
 									Padding="0"
 									Content="Creativity:"
 									Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-								<Label Margin="0" Padding="6,0,0,0" VerticalAlignment="Center" Content="{Binding CreativityName, ElementName=This}" />
+								<Label
+									Margin="0"
+									Padding="6,0,0,0"
+									VerticalAlignment="Center"
+									Content="{Binding CreativityName, ElementName=This}" />
 							</StackPanel>
 						</GroupBox.Header>
 						<StackPanel Orientation="Vertical">
@@ -145,7 +149,12 @@
 								Value="{Binding Creativity}" />
 						</StackPanel>
 					</GroupBox>
-					<CheckBox Margin="6,0,0,0" Name="IsFavoriteCheckBox" Content="Show Icon in Toolbar" IsChecked="{Binding IsFavorite}" />
+					<CheckBox
+						Name="IsFavoriteCheckBox"
+						Margin="6,0,0,0"
+						Content="Show Icon in Toolbar"
+						IsChecked="{Binding IsFavorite}"
+						Visibility="{Binding TemplateItemVisibility, ElementName=This}" />
 				</StackPanel>
 				<GroupBox
 					Grid.Row="1"
@@ -156,9 +165,9 @@
 					<GroupBox.Header>
 						<StackPanel Orientation="Horizontal">
 							<Label
-								Padding="0"
 								Grid.Row="2"
 								Grid.Column="1"
+								Padding="0"
 								VerticalAlignment="Center"
 								Content="Automation"
 								Visibility="{Binding BarPanelVisibility, ElementName=This}" />
@@ -206,8 +215,8 @@
 							<StackPanel Orientation="Horizontal">
 								<Label
 									x:Name="AttachmentIcon"
-									Padding="0"
 									Margin="-2"
+									Padding="0"
 									VerticalAlignment="Center"
 									Content="&#xE16C;"
 									FontFamily="Segoe MDL2 Assets" />
@@ -230,8 +239,8 @@
 					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
 							<CheckBox
-								Margin="0"
 								Name="UseMacrosCheckBox"
+								Margin="0"
 								VerticalAlignment="Center"
 								Content="Use Macros"
 								IsChecked="{Binding UseMacros}" />
@@ -311,7 +320,7 @@
 					</GroupBox>
 					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
-							<Label Padding="0" x:Name="AutomationVsLabel" Content="Automation" />
+							<Label x:Name="AutomationVsLabel" Padding="0" Content="Automation" />
 						</GroupBox.Header>
 						<StackPanel Orientation="Vertical">
 							<ComboBox

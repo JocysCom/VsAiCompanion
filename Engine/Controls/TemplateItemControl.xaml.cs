@@ -232,7 +232,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				UpdateBarToggleButtonIcon();
 				UpdateListToggleButtonIcon();
 				OnPropertyChanged(nameof(BarPanelVisibility));
-				IsFavoriteCheckBox.Visibility = value == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
+				OnPropertyChanged(nameof(TemplateItemVisibility));
 			}
 		}
 		private ItemType _ItemControlType;
@@ -244,6 +244,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))
 			{
 				OnPropertyChanged(nameof(BarPanelVisibility));
+				OnPropertyChanged(nameof(TemplateItemVisibility));
 				UpdateBarToggleButtonIcon();
 			}
 		}
@@ -258,6 +259,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public Visibility BarPanelVisibility
 			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+		public Visibility TemplateItemVisibility
+			=> PanelSettings.IsBarPanelVisible && _ItemControlType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
 
 		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
 		{
