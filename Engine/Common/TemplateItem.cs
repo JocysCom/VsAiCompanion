@@ -201,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			IconData = base64;
 		}
 
-		#region HTTP Client
+		#region ■ HTTP Client
 
 		/// <summary>Show Instructions</summary>
 

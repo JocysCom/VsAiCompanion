@@ -411,12 +411,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
 		{
-			Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri)
-			{
-				UseShellExecute = true
-			});
+			ControlsHelper.OpenUrl(e.Uri.AbsoluteUri);
 			e.Handled = true;
-			//ControlsHelper.OpenPath(e.Uri.AbsoluteUri);
 		}
 	}
 }

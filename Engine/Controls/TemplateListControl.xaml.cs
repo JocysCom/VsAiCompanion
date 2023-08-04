@@ -262,7 +262,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				item.MessageBoxOperation = MessageBoxOperation.ClearMessage;
 			item.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
 			// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
-			var contents = Helper.FindResource<string>("document_gear.svg", GetType().Assembly);
+			var contents = Helper.FindResource<string>(ClientHelper.DefaultIconEmbeddedResource, GetType().Assembly);
 			item.SetIcon(contents);
 			InsertItem(item);
 		}

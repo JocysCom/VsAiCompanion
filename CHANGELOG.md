@@ -1,7 +1,10 @@
-2023-08-04 v1.0.80
+2023-08-04 v1.0.82
 
 - Fix: Remove duplicate option to attach chat logs.
-- Fix the visibility of the "Show Icon in Toolbar" checkbox.
+- Fix: The visibility of the "Show Icon in Toolbar" checkbox.
+- Fix: The URL for Markdown help is not opening.
+- Fix: Default icon is missing when creating a new task.
+- Update: UI style updated.
 
 2023-07-31 v1.0.77
 

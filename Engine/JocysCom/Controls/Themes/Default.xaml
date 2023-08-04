@@ -348,18 +348,18 @@
 	</Style>
 
 	<!--  PasswordBox  -->
-	
+
 	<Style x:Key="PasswordBox_Default" TargetType="PasswordBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="PasswordBox">
 					<Border
 						x:Name="PasswordBoxBorder"
-						BorderBrush="{TemplateBinding BorderBrush}" 
-                        BorderThickness="{TemplateBinding BorderThickness}" 
-                        Background="{TemplateBinding Background}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
 						CornerRadius="5"
-                        SnapsToDevicePixels="True">
+						SnapsToDevicePixels="True">
 						<ScrollViewer x:Name="PART_ContentHost" />
 					</Border>
 				</ControlTemplate>
@@ -370,17 +370,17 @@
 		<Setter Property="Padding" Value="4" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="BorderBrush" Value="#22000000"/>
-		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="BorderBrush" Value="#22000000" />
+		<Setter Property="BorderThickness" Value="1" />
 		<Style.Triggers>
 			<Trigger Property="IsEnabled" Value="False">
 				<Setter Property="BorderThickness" Value="0" />
-				<Setter Property="Background" Value="#11000000"/>
+				<Setter Property="Background" Value="#11000000" />
 			</Trigger>
 			<MultiTrigger>
 				<MultiTrigger.Conditions>
-					<Condition Property="IsMouseOver" Value="True"/>
-					<Condition Property="IsEnabled" Value="True"/>
+					<Condition Property="IsMouseOver" Value="True" />
+					<Condition Property="IsEnabled" Value="True" />
 				</MultiTrigger.Conditions>
 				<Setter Property="BorderBrush" Value="#7eb4ea" />
 			</MultiTrigger>
@@ -395,19 +395,19 @@
 		<Setter Property="Padding" Value="4" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="BorderBrush" Value="#22000000"/>
-		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="BorderBrush" Value="#22000000" />
+		<Setter Property="BorderThickness" Value="1" />
 		<!--<Setter Property="MinWidth" Value="120" />-->
 		<Style.Resources>
 			<Style TargetType="Border">
-				<Setter Property="CornerRadius" Value="5"/>
+				<Setter Property="CornerRadius" Value="5" />
 			</Style>
 		</Style.Resources>
 		<Style.Triggers>
 			<Trigger Property="IsReadOnly" Value="True">
 				<Setter Property="Padding" Value="5" />
 				<Setter Property="BorderThickness" Value="0" />
-				<Setter Property="Background" Value="#11000000"/>
+				<Setter Property="Background" Value="#11000000" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -757,7 +757,11 @@
 		<Setter Property="Control.Template">
 			<Setter.Value>
 				<ControlTemplate>
-					<Rectangle RadiusX="5" RadiusY="5" Stroke="{StaticResource Color.White.B}" StrokeThickness="1"/>
+					<Rectangle
+						RadiusX="5"
+						RadiusY="5"
+						Stroke="{StaticResource Color.White.B}"
+						StrokeThickness="1" />
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
@@ -765,45 +769,73 @@
 
 	<!--  CheckBox Template  -->
 	<ControlTemplate x:Key="CheckBox_Template" TargetType="CheckBox">
-			<StackPanel Orientation="Horizontal" Margin="3,3">
-				<Border x:Name="checkBoxBorder" Padding="1" BorderThickness="1" BorderBrush="#22000000" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="3">
-					<Grid x:Name="markGrid">
-						<Path x:Name="optionMark" Data="F1M9.97498,1.22334L4.6983,9.09834 4.52164,9.09834 0,5.19331 1.27664,3.52165 4.255,6.08833 8.33331,1.52588E-05 9.97498,1.22334z" Opacity="0" Margin="2" Stretch="None" Fill="Black"/>
-						<Rectangle x:Name="indeterminateMark" Fill="Black" Margin="2" Opacity="0"/>
-					</Grid>
-				</Border>
-			<ContentPresenter x:Name="contentPresenter" Margin="3,0,3,0" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
-			</StackPanel>
+		<StackPanel Margin="3,3" Orientation="Horizontal">
+			<Border
+				x:Name="checkBoxBorder"
+				Padding="1"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Background="White"
+				BorderBrush="#22000000"
+				BorderThickness="1"
+				CornerRadius="3">
+				<Grid x:Name="markGrid">
+					<Path
+						x:Name="optionMark"
+						Margin="2"
+						Data="F1M9.97498,1.22334L4.6983,9.09834 4.52164,9.09834 0,5.19331 1.27664,3.52165 4.255,6.08833 8.33331,1.52588E-05 9.97498,1.22334z"
+						Fill="Black"
+						Opacity="0"
+						Stretch="None" />
+					<Rectangle
+						x:Name="indeterminateMark"
+						Margin="2"
+						Fill="Black"
+						Opacity="0" />
+				</Grid>
+			</Border>
+			<ContentPresenter
+				x:Name="contentPresenter"
+				Margin="3,0,3,0"
+				HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+				VerticalAlignment="Center"
+				Content="{TemplateBinding Content}"
+				ContentStringFormat="{TemplateBinding ContentStringFormat}"
+				ContentTemplate="{TemplateBinding ContentTemplate}"
+				Focusable="False"
+				RecognizesAccessKey="True"
+				SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+		</StackPanel>
 		<ControlTemplate.Triggers>
 			<Trigger Property="IsEnabled" Value="False">
-				<Setter Property="Opacity" Value="0.5" TargetName="checkBoxBorder"/>
+				<Setter TargetName="checkBoxBorder" Property="Opacity" Value="0.5" />
 			</Trigger>
 			<Trigger Property="IsChecked" Value="True">
-				<Setter Property="Opacity" Value="1" TargetName="optionMark"/>
-				<Setter Property="Opacity" Value="0" TargetName="indeterminateMark"/>
+				<Setter TargetName="optionMark" Property="Opacity" Value="1" />
+				<Setter TargetName="indeterminateMark" Property="Opacity" Value="0" />
 			</Trigger>
 			<Trigger Property="IsChecked" Value="{x:Null}">
-				<Setter Property="Opacity" Value="0" TargetName="optionMark"/>
-				<Setter Property="Opacity" Value="1" TargetName="indeterminateMark"/>
+				<Setter TargetName="optionMark" Property="Opacity" Value="0" />
+				<Setter TargetName="indeterminateMark" Property="Opacity" Value="1" />
 			</Trigger>
-				<Trigger Property="IsEnabled" Value="False">
-					<Setter Property="Background" Value="#11000000"/>
-				</Trigger>
-				<MultiTrigger>
-					<MultiTrigger.Conditions>
-						<Condition Property="IsMouseOver" Value="True"/>
-						<Condition Property="IsEnabled" Value="True"/>
-					</MultiTrigger.Conditions>
-				<Setter Property="Background" Value="#f3f9ff" TargetName="checkBoxBorder"/>
-				<Setter Property="BorderBrush" Value="#7eb4ea" TargetName="checkBoxBorder" />
-				</MultiTrigger>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter Property="Background" Value="#11000000" />
+			</Trigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsMouseOver" Value="True" />
+					<Condition Property="IsEnabled" Value="True" />
+				</MultiTrigger.Conditions>
+				<Setter TargetName="checkBoxBorder" Property="Background" Value="#f3f9ff" />
+				<Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#7eb4ea" />
+			</MultiTrigger>
 		</ControlTemplate.Triggers>
 	</ControlTemplate>
 
 	<!--  CheckBox  -->
-	<Style TargetType="CheckBox" x:Key="CheckBox_Default">
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual_Checkbox}"/>
-		<Setter Property="Template" Value="{DynamicResource CheckBox_Template}"/>
+	<Style x:Key="CheckBox_Default" TargetType="CheckBox">
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual_Checkbox}" />
+		<Setter Property="Template" Value="{DynamicResource CheckBox_Template}" />
 	</Style>
 
 	<!--  CheckBox - Cell  -->
@@ -890,31 +922,35 @@
 
 	<!--  GroupBox  -->
 
-	<Style TargetType="GroupBox" x:Key="GroupBox_Default">
+	<Style x:Key="GroupBox_Default" TargetType="GroupBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="GroupBox">
 					<Grid>
 						<Border
-						HorizontalAlignment="Stretch"
-						VerticalAlignment="Stretch"
-						BorderBrush="White"
-						BorderThickness="1"
-						CornerRadius="5"
-						Margin="1,14,0,0" />
+							Margin="1,14,0,0"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							BorderBrush="White"
+							BorderThickness="1"
+							CornerRadius="5" />
 						<Border
-						HorizontalAlignment="Stretch"
-						VerticalAlignment="Stretch"
-						BorderBrush="Black"
-						Opacity="0.15"
-						BorderThickness="1"
-						CornerRadius="5"
-						Margin="0,13,1,1" />
+							Margin="0,13,1,1"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							BorderBrush="Black"
+							BorderThickness="1"
+							CornerRadius="5"
+							Opacity="0.15" />
 						<StackPanel>
-							<Border Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Margin="10,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Top">
-								<ContentPresenter ContentSource="Header" Margin="5"/>
+							<Border
+								Margin="10,0,10,0"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Top"
+								Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+								<ContentPresenter Margin="5" ContentSource="Header" />
 							</Border>
-							<ContentPresenter ContentSource="Content" Margin="5,0,5,5"/>
+							<ContentPresenter Margin="5,0,5,5" ContentSource="Content" />
 						</StackPanel>
 					</Grid>
 				</ControlTemplate>

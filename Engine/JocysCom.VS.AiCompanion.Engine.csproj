@@ -16,8 +16,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.0.80</AssemblyVersion>
-		<FileVersion>1.0.80</FileVersion>
+		<AssemblyVersion>1.0.81</AssemblyVersion>
+		<FileVersion>1.0.81</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
@@ -169,7 +169,7 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
-		<Content Include="Resources\Icons\Icons_Default\document_gear.svg" />
+		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
 		<Content Include="Resources\MainWindowCommand.png" />
 	</ItemGroup>
 
