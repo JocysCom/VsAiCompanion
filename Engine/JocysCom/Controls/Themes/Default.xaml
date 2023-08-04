@@ -760,7 +760,7 @@
 					<Rectangle
 						RadiusX="5"
 						RadiusY="5"
-						Stroke="{StaticResource Color.White.B}"
+						Stroke="#11000000"
 						StrokeThickness="1" />
 				</ControlTemplate>
 			</Setter.Value>
