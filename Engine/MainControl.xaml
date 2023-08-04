@@ -38,8 +38,8 @@
 			x:Name="MainTabControl"
 			Grid.Row="2"
 			Margin="4"
-			SelectionChanged="MainTabControl_SelectionChanged"
-			x:FieldModifier="public">
+			x:FieldModifier="public"
+			SelectionChanged="MainTabControl_SelectionChanged">
 			<TabItem x:Name="TasksTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

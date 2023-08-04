@@ -277,14 +277,7 @@
 					Header="Name" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
-				<Style TargetType="DataGridCell">
-					<Setter Property="Padding" Value="4" />
-					<Style.Triggers>
-						<Trigger Property="IsSelected" Value="True">
-							<Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}"/>
-						</Trigger>
-					</Style.Triggers>
-				</Style>
+				<Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}" />
 			</DataGrid.CellStyle>
 		</DataGrid>
 	</Grid>

@@ -1036,6 +1036,22 @@
 		</Setter>
 	</Style>-->
 
+	<!--DataGridCell Triggers-->
+	<Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+		<Setter Property="Padding" Value="4" />
+		<Style.Triggers>
+			<Trigger Property="IsSelected" Value="True">
+				<Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<!-- XAML Page.
+	<DataGrid.CellStyle>
+		<Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}" />
+	</DataGrid.CellStyle>
+	-->
+
 	<!--  Default Styles  -->
 
 	<Style BasedOn="{StaticResource Window_Default}" TargetType="Window" />
