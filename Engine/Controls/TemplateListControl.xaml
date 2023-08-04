@@ -118,7 +118,7 @@
 			</ToolBar>
 		</ToolBarPanel>
 		<Border Grid.Row="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,1,0,1">
-			<Grid>
+			<Grid Background="White">
 				<TextBox
 					x:Name="SearchTextBox"
 					Margin="0,0,0,0"
@@ -279,6 +279,11 @@
 			<DataGrid.CellStyle>
 				<Style TargetType="DataGridCell">
 					<Setter Property="Padding" Value="4" />
+					<Style.Triggers>
+						<Trigger Property="IsSelected" Value="True">
+							<Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}"/>
+						</Trigger>
+					</Style.Triggers>
 				</Style>
 			</DataGrid.CellStyle>
 		</DataGrid>

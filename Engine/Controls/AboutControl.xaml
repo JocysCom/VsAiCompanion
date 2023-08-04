@@ -106,6 +106,7 @@
 			Padding="0,0,0,0">
 			<TabItem Name="ChangesTabPage" Header="Changes">
 				<TextBox
+					Background="Transparent"
 					Name="ChangeLogTextBox"
 					Margin="0"
 					Padding="4"
@@ -120,6 +121,7 @@
 			</TabItem>
 			<TabItem Name="LicenseTabPage" Header="License">
 				<TextBox
+					Background="Transparent"
 					Name="LicenseTextBox"
 					Margin="0"
 					Padding="4"
