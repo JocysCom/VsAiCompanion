@@ -1065,6 +1065,7 @@
 	<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />
 	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
 	<Style BasedOn="{StaticResource MenuItem_Default}" TargetType="MenuItem" />
+	<Style BasedOn="{StaticResource DataGridCellStyle}" TargetType="DataGridCell" />
 
 	<!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->
 	<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
