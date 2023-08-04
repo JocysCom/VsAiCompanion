@@ -260,6 +260,7 @@
 								x:Name="VsMacrosComboBox"
 								Grid.Row="0"
 								Grid.Column="1"
+								Padding="0,3"
 								Style="{StaticResource ComboBoxGrid}" />
 							<Label
 								Grid.Row="0"
@@ -275,13 +276,14 @@
 								Name="SelectionComboBox"
 								Grid.Row="0"
 								Grid.Column="3"
+								Padding="0,3"
 								DisplayMemberPath="Key"
 								Style="{StaticResource ComboBoxGrid}" />
-
 							<ComboBox
 								Name="DateComboBox"
 								Grid.Row="1"
 								Grid.Column="1"
+								Padding="0,3"
 								DisplayMemberPath="Key"
 								Style="{StaticResource ComboBoxGrid}" />
 							<Label
@@ -294,6 +296,7 @@
 								Name="FileComboBox"
 								Grid.Row="1"
 								Grid.Column="3"
+								Padding="0,3"
 								DisplayMemberPath="Key"
 								Style="{StaticResource ComboBoxGrid}" />
 							<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
