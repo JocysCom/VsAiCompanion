@@ -4,6 +4,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -410,7 +411,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
 		{
-			ControlsHelper.OpenPath(e.Uri.AbsoluteUri);
+			Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri)
+			{
+				UseShellExecute = true
+			});
+			e.Handled = true;
+			//ControlsHelper.OpenPath(e.Uri.AbsoluteUri);
 		}
 	}
 }

@@ -41,31 +41,34 @@
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				<Label Grid.Row="0" Grid.Column="0" Content="Settings Folder" />
+				<Label Grid.Row="0" Grid.Column="0" Content="Settings Folder" VerticalAlignment="Center" />
 				<TextBox
 					Name="SettingsFolderTextBox"
 					Grid.Row="0"
 					Grid.Column="1"
-					IsReadOnly="True" />
+					IsReadOnly="True"
+					VerticalAlignment="Center"
+					/>
 				<Button
 					Name="OpenButton"
+					Margin="0,0,3,0"
 					Grid.Row="0"
 					Grid.Column="2"
-					VerticalAlignment="Center"
 					Click="OpenButton_Click"
-					Style="{StaticResource ToolBarButton}">
+					Style="{StaticResource ToolBarButton}"
+					VerticalAlignment="Center">
 					<StackPanel Focusable="False" Style="{StaticResource ButtonStackPanel}">
 						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Open..." Style="{StaticResource ButtonLabel}" />
+						<Label Content="Open..." Style="{StaticResource ButtonLabel}" VerticalAlignment="Center" />
 					</StackPanel>
 				</Button>
-				<Label Grid.Row="1" Grid.Column="0" Content="OpenAI API Key" />
-				<PasswordBox Name="OpenAiApiSecretKeyPasswordBox" Grid.Row="1" Grid.Column="1" />
+				<Label Grid.Row="1" Grid.Column="0" Content="OpenAI API Key" VerticalAlignment="Center" />
+				<PasswordBox Name="OpenAiApiSecretKeyPasswordBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" />
 
-				<Label Grid.Row="2" Grid.Column="0" Content="OpenAI API Organization ID" />
-				<PasswordBox Name="OpenAiApiOrganizationPasswordBox" Grid.Row="2" Grid.Column="1" />
+				<Label Grid.Row="2" Grid.Column="0" Content="OpenAI API Organization ID" VerticalAlignment="Center" />
+				<PasswordBox Name="OpenAiApiOrganizationPasswordBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" />
 
-				<Label Grid.Row="3" Grid.Column="0" Content="Open AI Base URL" />
+				<Label Grid.Row="3" Grid.Column="0" Content="Open AI Base URL" VerticalAlignment="Center" />
 				<TextBox
 					Name="OpenAiBaseUrlTextBox"
 					Grid.Row="3"
@@ -73,7 +76,7 @@
 					Grid.ColumnSpan="2"
 					Text="{Binding OpenAiSettings.BaseUrl, ElementName=This}" />
 
-				<Label Grid.Row="4" Grid.Column="0" Content="Model Filter" />
+				<Label Grid.Row="4" Grid.Column="0" Content="Model Filter" VerticalAlignment="Center" />
 				<TextBox
 					Name="ModelFilterTExtBox"
 					Grid.Row="4"
@@ -96,25 +99,25 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<Label Grid.Row="0" Grid.Column="0" Content="Data" />
+				<Label Grid.Row="0" Grid.Column="0" Content="Data" VerticalAlignment="Center" />
 				<TextBox
 					Name="ContextDataTitleTextBox"
 					Grid.Row="0"
 					Grid.Column="1"
 					Text="{Binding ContextDataTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				<Label Grid.Row="0" Grid.Column="2" Content="Files" />
+				<Label Grid.Row="0" Grid.Column="2" Content="Files" VerticalAlignment="Center" />
 				<TextBox
 					Name="ContextFileTitleTextBox"
 					Grid.Row="0"
 					Grid.Column="3"
 					Text="{Binding ContextFileTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				<Label Grid.Row="1" Grid.Column="0" Content="Chat" />
+				<Label Grid.Row="1" Grid.Column="0" Content="Chat" VerticalAlignment="Center" />
 				<TextBox
 					Name="ContextChatTitleTextBox"
 					Grid.Row="1"
 					Grid.Column="1"
 					Text="{Binding ContextChatTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				<Label Grid.Row="2" Grid.Column="0" Content="Chat Instructions" />
+				<Label Grid.Row="2" Grid.Column="0" Content="Chat Instructions" VerticalAlignment="Center" />
 				<TextBox
 					Name="ContextChatInstructionsTextBox"
 					Grid.Row="2"

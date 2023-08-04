@@ -151,7 +151,8 @@
 					</GroupBox>
 					<CheckBox
 						Name="IsFavoriteCheckBox"
-						Margin="6,0,0,0"
+						Margin="0,-3,0,0"
+						HorizontalAlignment="Center"
 						Content="Show Icon in Toolbar"
 						IsChecked="{Binding IsFavorite}"
 						Visibility="{Binding TemplateItemVisibility, ElementName=This}" />
@@ -240,7 +241,7 @@
 						<GroupBox.Header>
 							<CheckBox
 								Name="UseMacrosCheckBox"
-								Margin="0"
+								Margin="-4"
 								VerticalAlignment="Center"
 								Content="Use Macros"
 								IsChecked="{Binding UseMacros}" />
@@ -328,12 +329,11 @@
 						<StackPanel Orientation="Vertical">
 							<ComboBox
 								Name="AutoOperationComboBox"
-								Margin="0,3,0,3"
+								Margin="0,3,0,5"
 								ItemsSource="{Binding AutoOperations, ElementName=This}"
 								SelectedValue="{Binding AutoOperation}" />
 							<CheckBox
 								x:Name="AutoFormatCodeCheckBox"
-								Margin="0,6,0,3"
 								Content="Format Code"
 								IsChecked="{Binding AutoFormatCode}" />
 						</StackPanel>
@@ -364,14 +364,12 @@
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
 				<CheckBox Name="AutoFormatMessageCheckBox" Padding="0" IsChecked="{Binding AutoFormatMessage}">
 					<TextBlock VerticalAlignment="Center">
-						<TextBlock Margin="0,0,3,0" /><Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-							Markdown
-						</Hyperlink>
-						Auto-Format</TextBlock>
+						<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
+						Auto-Format
+					</TextBlock>
 				</CheckBox>
 				<CheckBox
 					Name="IsPreviewCheckBox"
-					Margin="5,0,0,0"
 					Content="Preview Mode"
 					IsChecked="{Binding IsPreview}" />
 			</StackPanel>

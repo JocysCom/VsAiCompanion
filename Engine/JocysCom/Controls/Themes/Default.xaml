@@ -348,28 +348,66 @@
 	</Style>
 
 	<!--  PasswordBox  -->
-
+	
 	<Style x:Key="PasswordBox_Default" TargetType="PasswordBox">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="PasswordBox">
+					<Border
+						x:Name="PasswordBoxBorder"
+						BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        Background="{TemplateBinding Background}"
+						CornerRadius="5"
+                        SnapsToDevicePixels="True">
+						<ScrollViewer x:Name="PART_ContentHost" />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
 		<Setter Property="Height" Value="Auto" />
-		<Setter Property="Margin" Value="3,3,3,3" />
-		<Setter Property="Padding" Value="1,3,1,3" />
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Padding" Value="4" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="BorderBrush" Value="#22000000"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Style.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter Property="BorderThickness" Value="0" />
+				<Setter Property="Background" Value="#11000000"/>
+			</Trigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsMouseOver" Value="True"/>
+					<Condition Property="IsEnabled" Value="True"/>
+				</MultiTrigger.Conditions>
+				<Setter Property="BorderBrush" Value="#7eb4ea" />
+			</MultiTrigger>
+		</Style.Triggers>
 	</Style>
-
 
 	<!--  TextBox  -->
 
 	<Style x:Key="TextBox_Default" TargetType="TextBox">
 		<Setter Property="Height" Value="Auto" />
-		<Setter Property="Margin" Value="3,3,3,3" />
-		<Setter Property="Padding" Value="1,3,1,3" />
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Padding" Value="4" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="BorderBrush" Value="#22000000"/>
+		<Setter Property="BorderThickness" Value="1"/>
 		<!--<Setter Property="MinWidth" Value="120" />-->
+		<Style.Resources>
+			<Style TargetType="Border">
+				<Setter Property="CornerRadius" Value="5"/>
+			</Style>
+		</Style.Resources>
 		<Style.Triggers>
 			<Trigger Property="IsReadOnly" Value="True">
-				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+				<Setter Property="Padding" Value="5" />
+				<Setter Property="BorderThickness" Value="0" />
+				<Setter Property="Background" Value="#11000000"/>
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -418,9 +456,6 @@
 		<Setter Property="Padding" Value="3,3,3,3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
-
-	<!--<Style BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock" />-->
-
 
 	<!--  TextBlock - Cell  -->
 
@@ -708,20 +743,70 @@
 
 	<!--  CheckBox  -->
 
-
-	<Style x:Key="CheckBox_Default" TargetType="CheckBox">
-		<Setter Property="Margin" Value="3,3,3,3" />
-		<Setter Property="Padding" Value="3,3,3,3" />
+	<!--<Style x:Key="CheckBox_Default" TargetType="CheckBox">
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Padding" Value="5" />
 		<Setter Property="Height" Value="Auto" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
+	</Style>-->
+
+
+	<!--  CheckBox FocusVisualStyle  -->
+	<Style x:Key="FocusVisual_Checkbox">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Rectangle RadiusX="5" RadiusY="5" Stroke="{StaticResource Color.White.B}" StrokeThickness="1"/>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
 	</Style>
 
-	<!--<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />-->
+	<!--  CheckBox Template  -->
+	<ControlTemplate x:Key="CheckBox_Template" TargetType="CheckBox">
+			<StackPanel Orientation="Horizontal" Margin="3,3">
+				<Border x:Name="checkBoxBorder" Padding="1" BorderThickness="1" BorderBrush="#22000000" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="3">
+					<Grid x:Name="markGrid">
+						<Path x:Name="optionMark" Data="F1M9.97498,1.22334L4.6983,9.09834 4.52164,9.09834 0,5.19331 1.27664,3.52165 4.255,6.08833 8.33331,1.52588E-05 9.97498,1.22334z" Opacity="0" Margin="2" Stretch="None" Fill="Black"/>
+						<Rectangle x:Name="indeterminateMark" Fill="Black" Margin="2" Opacity="0"/>
+					</Grid>
+				</Border>
+			<ContentPresenter x:Name="contentPresenter" Margin="3,0,3,0" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+			</StackPanel>
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter Property="Opacity" Value="0.5" TargetName="checkBoxBorder"/>
+			</Trigger>
+			<Trigger Property="IsChecked" Value="True">
+				<Setter Property="Opacity" Value="1" TargetName="optionMark"/>
+				<Setter Property="Opacity" Value="0" TargetName="indeterminateMark"/>
+			</Trigger>
+			<Trigger Property="IsChecked" Value="{x:Null}">
+				<Setter Property="Opacity" Value="0" TargetName="optionMark"/>
+				<Setter Property="Opacity" Value="1" TargetName="indeterminateMark"/>
+			</Trigger>
+				<Trigger Property="IsEnabled" Value="False">
+					<Setter Property="Background" Value="#11000000"/>
+				</Trigger>
+				<MultiTrigger>
+					<MultiTrigger.Conditions>
+						<Condition Property="IsMouseOver" Value="True"/>
+						<Condition Property="IsEnabled" Value="True"/>
+					</MultiTrigger.Conditions>
+				<Setter Property="Background" Value="#f3f9ff" TargetName="checkBoxBorder"/>
+				<Setter Property="BorderBrush" Value="#7eb4ea" TargetName="checkBoxBorder" />
+				</MultiTrigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
 
+	<!--  CheckBox  -->
+	<Style TargetType="CheckBox" x:Key="CheckBox_Default">
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual_Checkbox}"/>
+		<Setter Property="Template" Value="{DynamicResource CheckBox_Template}"/>
+	</Style>
 
 	<!--  CheckBox - Cell  -->
-
 
 	<Style x:Key="CheckBoxCell" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox">
 		<Setter Property="Margin" Value="3,0,3,0" />
@@ -729,7 +814,6 @@
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="HorizontalAlignment" Value="Center" />
 	</Style>
-
 
 	<!--  ContentControl  -->
 
