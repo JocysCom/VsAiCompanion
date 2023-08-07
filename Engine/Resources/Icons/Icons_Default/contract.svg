@@ -1,0 +1,62 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>contract icon</title>
+    <desc>contract icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="64" y1="0" x2="392.2055" y2="512.00059" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#fafdff"/>
+            <stop offset="1" stop-color="#cbe9fb"/>
+        </linearGradient>
+        <linearGradient x1="314" y1="141" x2="324.563" y2="370.2375" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#e7f5fd"/>
+            <stop offset="1" stop-color="#9ed7f8"/>
+        </linearGradient>
+        <linearGradient x1="112" y1="64" x2="285.715" y2="320.0005" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#7dcaf6"/>
+            <stop offset="1" stop-color="#5cbcf3"/>
+        </linearGradient>
+        <linearGradient x1="338" y1="304" x2="350.381" y2="320.0005" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#36adf1"/>
+            <stop offset="1" stop-color="#32abf1"/>
+        </linearGradient>
+        <linearGradient x1="107.01728" y1="349.96601" x2="210.42928" y2="453.37801" gradientUnits="userSpaceOnUse" id="color-5">
+            <stop offset="0" stop-color="#1199e6"/>
+            <stop offset="1" stop-color="#0f7fbf"/>
+        </linearGradient>
+        <linearGradient x1="266.5" y1="309" x2="288.3745" y2="322.434" gradientUnits="userSpaceOnUse" id="color-6">
+            <stop offset="0" stop-color="#ffd041"/>
+            <stop offset="1" stop-color="#ffc001"/>
+        </linearGradient>
+        <linearGradient x1="300" y1="327.5" x2="335.135" y2="346.7205" gradientUnits="userSpaceOnUse" id="color-7">
+            <stop offset="0" stop-color="#ffd041"/>
+            <stop offset="0.3098" stop-color="#ffc001"/>
+            <stop offset="1" stop-color="#d69800"/>
+        </linearGradient>
+        <linearGradient x1="305.24517" y1="56.25567" x2="370.01367" y2="96.03167" gradientUnits="userSpaceOnUse" id="color-8">
+            <stop offset="0" stop-color="#91a0af"/>
+            <stop offset="1" stop-color="#717f8f"/>
+        </linearGradient>
+        <linearGradient x1="305.24517" y1="56.25567" x2="406.71867" y2="114.81367" gradientUnits="userSpaceOnUse" id="color-9">
+            <stop offset="0" stop-color="#51616f"/>
+            <stop offset="1" stop-color="#36414a"/>
+        </linearGradient>
+        <linearGradient x1="439.5" y1="87" x2="497.4905" y2="122.406" gradientUnits="userSpaceOnUse" id="color-10">
+            <stop offset="0" stop-color="#8291a0"/>
+            <stop offset="1" stop-color="#586876"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="none" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M432,0l-360,0c-4.5,0 -8,3.5 -8,8l0,496c0,4.5 3.5,8 8,8l368,0c4.5,0 8,-3.5 8,-8l0,-488c0,-9 -7,-16 -16,-16z" id="curve10" fill="url(#color-1)" fill-rule="evenodd"/>
+        <path d="M448,244.5l0,-103.5l-134,218l12.5,7.5c10,6 22.5,5 31,-2.5c14.5,-11.5 27,-26.5 38.5,-41c14.5,-18.5 27.5,-38 39.5,-57.5c4,-7 8.5,-14 12.5,-21z" id="curve9" fill="url(#color-2)" fill-rule="evenodd"/>
+        <path d="M112,256l288,0l0,16l-288,0z M112,112l288,0l0,16l-288,0z M112,160l288,0l0,16l-288,0z M112,208l288,0l0,16l-288,0z M112,304l288,0l0,16l-288,0z M112,64l288,0l0,16l-288,0z" id="curve8" fill="url(#color-3)" fill-rule="evenodd"/>
+        <path d="M348,304l-10,16l60,0c1,-1 1.5,-1.5 2,-2.5l0,-13.5z" id="curve7" fill="url(#color-4)" fill-rule="evenodd"/>
+        <path d="M125,387c-2,2.5 -5,2.5 -7,0.5l-0.5,0c-2.5,15.5 1.5,29 23.5,49c4,-4.5 8.5,-12.5 9,-27.5c0.5,-14 -1,-28.5 -6.5,-33c-3,-2.5 -9,0 -18.5,11z M121.5,376c12.5,-12.5 22,-13.5 28.5,-7.5c8,7 11,24 10,41c-0.5,17 -4.5,33.5 -10.5,40c-4,4.5 -8.5,5.5 -13.5,1c-27.5,-24.5 -32.5,-50 -27,-69c2,-8.5 6.5,-15.5 11.5,-21c5.5,-5.5 12,-9 18.5,-10c10,-2 19.5,1.5 26,12.5c4.5,7.5 9.5,40.5 11,50c1,4 1,0.5 1.5,-5c2.5,-34 6.5,-51 14,-43.5c2,2.5 4,15 5.5,41c4,-11.5 9,-22.5 16,-24c8,-1 16,9 23,42.5c1,-3.5 2,-7.5 3.5,-11.5c4.5,-13.5 8.5,-27 15,-27c5,0 8,8.5 8,31.5c0,3.5 0.5,7.5 1,10c0.5,1 1,1.5 1,1.5l0,0l0,0l0,0c1,0 2,-1 3.5,-2c2,-1.5 5,-1.5 7,1c1.5,2 1.5,5 -1,7c-2.5,2 -4.5,3 -7,3.5c-3,1 -6,0.5 -8.5,-1.5c-2,-1.5 -3,-3.5 -4,-6.5c-1.5,-3.5 -2,-8.5 -2,-13c-0.5,-9 -2.5,-4.5 -3.5,-1.5c-4,12.5 -8,25 -13,26c-4,0.5 -7,-1.5 -8,-8c-6,-32.5 -11,-35.5 -13.5,-35c-4.5,1 -9,14 -12.5,26c-2,7.5 -3.5,13 -7.5,13c-3.5,0.5 -5.5,-1.5 -6,-6.5c0,-9 -0.5,-16.5 -1,-23.5c-0.5,4.5 -2,41 -10.5,40.5c-6,-0.5 -8,-15.5 -11,-33.5c-2.5,-16.5 -5.5,-36.5 -9.5,-47c-4,-6.5 -10,-8.5 -15.5,-7.5c-4.5,1 -9.5,3.5 -13,7.5c-2.5,2.5 -4.5,5 -6.5,8.5z M264.5,428.5l0,0z" id="curve6" fill="url(#color-5)" fill-rule="nonzero"/>
+        <path d="M333.5,386.5c-5,-20 8,-44 19.5,-61c-8.5,-5.5 -17.5,-11 -26.5,-16.5c-10,18.5 -25.5,40.5 -45.5,45c-3,1 -5.5,4 -5.5,7.5c0,21 -3,50.5 -9,65l9,5.5c10.5,-12 35.5,-28 54,-37c3,-1.5 5,-5.5 4,-8.5z M303.5,377c3.5,2 5,7 2.5,11c-2.5,4 -7.5,5 -11.5,3c-3.5,-2.5 -5,-7.5 -2.5,-11.5c2.5,-4 7.5,-5 11.5,-2.5z" id="curve5" fill="url(#color-6)" fill-rule="evenodd"/>
+        <path d="M334,365c1.5,-7 4.5,-14 8,-21l-27,-16.5c-4.5,6.5 -9.5,12 -15,16.5l34,21z" id="curve4" fill="url(#color-7)" fill-rule="evenodd"/>
+        <path d="M468.5,60c-29.5,34 -68,85 -112,157c-25,41 -44.5,81.5 -51,109c-1,4.5 1,9.5 5,12l24.5,14.5c4,2.5 9,2.5 12.5,-0.5c22,-18.5 49,-54 74.5,-95c44,-71.5 72,-129 89,-171c2,-5 0.5,-10.5 -4,-13.5l-24.5,-14.5c-4.5,-3 -10.5,-2 -14,2z" id="curve3" fill="url(#color-8)" fill-rule="evenodd"/>
+        <path d="M468.5,60c-3.5,4.5 -7.5,9 -11.5,13.5l47,29c2.5,-5.5 5,-11 7,-16.5c2,-5 0.5,-10.5 -4,-13.5l-24.5,-14.5c-4.5,-3 -10.5,-2 -14,2z M343,240c-18.5,32.5 -32.5,63.5 -37.5,86c-1,4.5 1,9.5 5,12l24.5,14.5c4,2.5 9,2.5 12.5,-0.5c17.5,-15 39,-41 60,-72.5z" id="curve2" fill="url(#color-9)" fill-rule="evenodd"/>
+        <path d="M371.5,182.5c-5.5,-3.5 -7,-10 -4,-15l57.5,-93.5c6.5,-10.5 20,-13.5 30,-7.5l51,31.5c-2.5,6.5 -5.5,13 -9,20l-53.5,-32.5c-5,-3.5 -11.5,-1.5 -15,3.5l-43.5,71c-1,2 -1,4.5 0.5,6c3,3.5 3.5,8.5 1,13c-3.5,5 -10,6.5 -15,3.5z" id="curve1" fill="#ffc001" fill-rule="evenodd"/>
+        <path d="M446,87c-2,3 -4.5,5.5 -6.5,8.5c17.5,11 35.5,22 53,32.5l0,0.5c1.5,-4 3.5,-7.5 5,-11l-0.5,0.5z" id="curve0" fill="url(#color-10)" fill-rule="evenodd"/>
+    </g>
+</svg>
