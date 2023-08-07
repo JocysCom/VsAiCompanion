@@ -3,7 +3,6 @@
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Could you describe your own primary functions, capabilities, and optimal use cases as an AI? Please provide a few examples of scenarios where you could be most effectively used as a list.</TextInstructions>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>

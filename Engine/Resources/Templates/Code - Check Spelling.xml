@@ -4,7 +4,6 @@
   <IconType>.svg</IconType>
   <TextInstructions>Please check the spelling and grammar of comments in the code. Reply with corrected data.</TextInstructions>
   <AttachContext>Selection</AttachContext>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>

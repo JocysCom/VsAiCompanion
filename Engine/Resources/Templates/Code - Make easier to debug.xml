@@ -4,7 +4,6 @@
   <IconType>.svg</IconType>
   <TextInstructions>Make this code easier to debug</TextInstructions>
   <AttachContext>ActiveDocument</AttachContext>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>

@@ -11,7 +11,6 @@ After making the corrections, please provide two things:&#xD;
 2. Thorough list of errors found and the corresponding corrections made.&#xD;
 &#xD;
 Text to process:</TextInstructions>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>

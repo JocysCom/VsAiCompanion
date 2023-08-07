@@ -3,7 +3,6 @@
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Analyze conversation and create a chat title consisting of 2-5 words. Emphasize user requests in the title. Do not mention the chat itself by using words like "chat," "chat log," or "conversation." Please do not include prefixes such as "Title:." Avoid using dots, commas, or any other special characters. Only provide the generated title in your response.</TextInstructions>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>

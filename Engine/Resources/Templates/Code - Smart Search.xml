@@ -6,7 +6,6 @@
 &#xD;
 Code feature to find:</TextInstructions>
   <Text>Multiplication</Text>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>

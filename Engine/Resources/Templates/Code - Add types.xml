@@ -4,7 +4,6 @@
   <IconType>.svg</IconType>
   <TextInstructions>Add types to this code. Code:</TextInstructions>
   <AttachContext>Selection</AttachContext>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>

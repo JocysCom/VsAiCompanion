@@ -3,7 +3,6 @@
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Convert KnockoutJS HTML to Angular in this Microsoft Razor page template. Reply with fully converted code. Code:</TextInstructions>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>

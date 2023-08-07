@@ -4,7 +4,6 @@
   <IconType>.svg</IconType>
   <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>
   <AttachContext>Selection</AttachContext>
-  <AttachChatHistory>false</AttachChatHistory>
   <Settings />
   <Type>None</Type>
   <StatusCode>None</StatusCode>
