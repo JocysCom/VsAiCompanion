@@ -151,7 +151,7 @@
 					</GroupBox>
 					<CheckBox
 						Name="IsFavoriteCheckBox"
-						Margin="0,-3,0,0"
+						Margin="-2,-3,0,0"
 						HorizontalAlignment="Center"
 						Content="Show Icon in Toolbar"
 						IsChecked="{Binding IsFavorite}"
@@ -360,7 +360,7 @@
 				Grid.ColumnSpan="3"
 				Margin="0,3,0,3"
 				Orientation="Horizontal">
-				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
+				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" Margin="4,0,0,0" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
 				<CheckBox Name="AutoFormatMessageCheckBox" Padding="0" IsChecked="{Binding AutoFormatMessage}">
 					<TextBlock VerticalAlignment="Center">
