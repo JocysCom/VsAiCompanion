@@ -15,7 +15,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public TemplateItem()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
-			_AiModel = Companions.ChatGPT.Settings.AiModelDefault;
+			_AiModel = Global.AppSettings.AiSettings.FirstOrDefault()?.AiModelDefault;
 			HttpClients = new BindingList<HttpClient>();
 			HttpClients.ListChanged += HttpClients_ListChanged;
 		}

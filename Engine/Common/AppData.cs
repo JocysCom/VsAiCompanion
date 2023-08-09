@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -100,6 +101,58 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private bool _ShowSensitiveDataWarning;
 
 		#endregion
+
+		public SortableBindingList<Companions.ChatGPT.Settings> AiSettings
+		{
+			get
+			{
+				if (_AiSettings == null)
+					_AiSettings = new SortableBindingList<Companions.ChatGPT.Settings>();
+				if (_AiSettings.Count == 0)
+				{
+					// Add open AI Model
+					var s1 = new Companions.ChatGPT.Settings()
+					{
+						AiModels = new string[] {
+							"text-davinci-003",
+							"text-davinci-002",
+							"text-davinci-001",
+							"gpt-3.5-turbo-16k-0613",
+							"gpt-3.5-turbo-16k",
+							"gpt-3.5-turbo-0613",
+							"gpt-3.5-turbo-0301",
+							"gpt-3.5-turbo"
+						},
+						AiModelDefault = "gpt-3.5-turbo-16k-0613",
+						BaseUrl = "https://api.openai.com/v1/",
+						ModelFilter = "gpt|text-davinci-[0-9+]",
+					};
+					_AiSettings.Add(s1);
+					// Add GPT4All Service
+					var s2 = new Companions.ChatGPT.Settings()
+					{
+						AiModels = new string[0],
+						AiModelDefault = "GPT4All Falcon",
+						BaseUrl = "https://localhost:4891/v1/",
+						ModelFilter = "",
+					};
+					_AiSettings.Add(s2);
+					// Add Open AI (on-premises)
+					var s3 = new Companions.ChatGPT.Settings()
+					{
+						AiModels = new string[0],
+						AiModelDefault = "",
+						BaseUrl = "https://ai.company.local/v1/",
+						ModelFilter = "",
+					};
+					_AiSettings.Add(s2);
+				}
+				return _AiSettings;
+			}
+			set => _AiSettings = value;
+		}
+		private SortableBindingList<Companions.ChatGPT.Settings> _AiSettings;
+
 
 		public Companions.ChatGPT.Settings OpenAiSettings
 		{

@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+﻿using JocysCom.ClassLibrary.Collections;
+using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	public class Settings : SettingsBase
+	public class Settings : SettingsBase, IKeyValue<string, string>
 	{
 
 		public Settings()
@@ -32,13 +33,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		[DefaultValue(null), XmlElement(ElementName = nameof(ApiOrganizationId))]
 		public string _ApiOrganizationIdEncrypted { get; set; }
 
-
-		public const string AiModelDefault = "gpt-3.5-turbo-16k-0613";
+		public string AiModelDefault { get; set; } = "gpt-3.5-turbo-16k-0613";
 
 		/// <summary>Cache AI Model list.</summary>
 		public string[] AiModels { get => _AiModels; set => SetProperty(ref _AiModels, value); }
 		string[] _AiModels;
 
+		/// <summary>AI Name.</summary>
+		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
+		string _Name;
+
+		/// <summary>Base Url.</summary>
 		[DefaultValue("https://api.openai.com/v1/")]
 		public string BaseUrl { get => _BaseUrl; set => SetProperty(ref _BaseUrl, value); }
 		string _BaseUrl;
@@ -47,7 +52,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public string ModelFilter { get => _ModelFilter; set => SetProperty(ref _ModelFilter, value); }
 		string _ModelFilter;
 
+		#region ■ IKeyValue<string, string>
 
+		string IKeyValue<string, string>.Key { get => Name; set => Name = value; }
+		string IKeyValue<string, string>.Value { get => BaseUrl; set => BaseUrl = value; }
+
+		#endregion
 	}
 
 }
