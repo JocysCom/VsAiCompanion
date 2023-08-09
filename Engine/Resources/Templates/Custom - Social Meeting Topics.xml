@@ -1,0 +1,40 @@
+﻿<TemplateItem>
+  <Name>Custom - Social Meeting Topics</Name>
+  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <IconType>.svg</IconType>
+  <TextInstructions>Suggest five topics for a weekly team-building social meeting. The aim is to bond, have fun, and expand knowledge. Try to be creative and consider topics that are about some of the most fascinating and bizarre events that happened in the past week. Provide one sentence about the event, a link to news about it, and a question to discuss.</TextInstructions>
+  <Settings />
+  <Type>None</Type>
+  <StatusCode>None</StatusCode>
+  <Messages>
+    <MessageItem>
+      <Id>b207351d53c347b494df4a6cd9ed1922</Id>
+      <User>System</User>
+      <Body>It is best to send these instructions to an AI that has access to the internet news.</Body>
+      <Attachments />
+      <Date>2023-08-09T09:57:17.5137619+01:00</Date>
+      <Type>Information</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACn1UwW6jMBC99yss99JKAWwTCFSQw1arbg/bSlv1A4gxwVtjI+MkpF+/Y0qy6apa&#xD;
+JLDfmzfjmfGIYthv0V7YQRpdYhpSfIXgGTulhxK3zvV3UXQ4HMJDHBq7jRghJAKfC9ndqKR++0pM&#xD;
+8zyPJitGB1m7tsQJZRi1Qm5bN4O9FIdvZiwxQQQB41+8nsIXTjol1kMvBG/RplLKGI0kN7qIPkwf&#xD;
+sloM/CsVaqzpkGsFegT0feyFlUJzEXKgH4J7o5TgDioP0b3pj9ZnhTZH9Ph0//zrBT10mx/oxtcj&#xD;
+NTd28G63YRFNx51OboaP7QShVFHZB1vVcI5DI4WqQpqlcY7RcQKEJssMo5GVOM6W3pZ5m4dpdrJu&#xD;
+5wCvWjq4hd0g7EtfcfGsXweBkaxLzI0yNqBzo84JDM70yDTNIKC9BCOPg0lb4uvVqq5YiqP/+dB/&#xD;
+fJK8iml96VNEn6ucOxH9bUWxRY1UChK36uZ6zvQWT2Rgd0qUWOyFNnXtD7PmDQhttDihYJ4Veib8&#xD;
+ibzqS7zZOfeJ/W0kzG0nnbBnfkJKwgIxyJmuq6GtrK2OJf7EXbSrMdoFTdVJdTylNFGHeWAvqEG+&#xD;
+n9N2YnRBpXnrW3aq5Ojr7OQYbJTQddCZWtwhbWxXqYtbK/rKtQgu9CfL0wWMPs8WQcwQfDOCApqH&#xD;
+ySKgZBkmPMgXLEyAy4CDlfk15QGlZEFTwCz14iV8ASy9XwISEOSwpTHQyRSOxT4OzVewTRinSzKx&#xD;
+BLEMAjIUEx+ZEQrOLFnQBBLJvIatGESm4L2IySpM3udZ3Nm9IKcZKaLt+qrw/4j1H8MHB29dBAAA</IconData>
+</TemplateItem>
