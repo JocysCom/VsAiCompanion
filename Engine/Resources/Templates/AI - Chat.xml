@@ -13,6 +13,7 @@
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
+  <AutoGenerateTitle>true</AutoGenerateTitle>
   <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
   <IsEnabled>false</IsEnabled>
