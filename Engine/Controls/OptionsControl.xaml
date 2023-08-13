@@ -178,12 +178,6 @@
 			</Grid>
 		</GroupBox>
 		<WrapPanel Grid.Row="2">
-
-			<TabControl x:Name="AiServicesTabControl" Margin="3,3,3,3" Padding="0,0,0,0">
-				<TabItem x:Name="AiServicesTabPage" Header="AI Services">
-					<Controls:KeyValueUserControl />
-				</TabItem>
-			</TabControl>
 			<GroupBox Margin="3,0,3,3" Header="Standalone Progam">
 				<WrapPanel Orientation="Vertical">
 					<CheckBox Name="AppAlwaysOnTopCheckBox" Content="App Always on Top" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
