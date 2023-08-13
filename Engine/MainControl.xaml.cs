@@ -41,11 +41,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private async void RightIcon_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			if (Global.IsIncompleteSettings())
-				return;
-			var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
-			var usage = await client.GetUsageAsync();
-			InfoPanel.SetBodyInfo($"Usage: Total Tokens = {usage}, Total Cost = {usage.AdditionalProperties["current_usage_usd"]:C}");
+			await Task.Delay(500);
+			//if (Global.IsIncompleteSettings())
+			//return;
+			//var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
+			//var usage = await client.GetUsageAsync();
+			//InfoPanel.SetBodyInfo($"Usage: Total Tokens = {usage}, Total Cost = {usage.AdditionalProperties["current_usage_usd"]:C}");
 		}
 
 		SeverityToImageConverter SeverityConverter;

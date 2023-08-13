@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Text.Json;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -257,6 +259,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return null;
 		}
 
+		/// <summary>
+		/// Helps to generate same Unique IDs.
+		/// </summary>
+		public static Guid GetGuid(params object[] args)
+		{
+			var value = string.Join(Environment.NewLine, args);
+			var algorithm = System.Security.Cryptography.SHA256.Create();
+			// Important: Don’t Use Encoding.Default, because it is different on different machines and send data may be decoded as as gibberish.
+			// Use UTF-8 or Unicode (UTF-16), used by SQL Server.
+			var encoding = Encoding.UTF8;
+			var bytes = encoding.GetBytes(value);
+			var hash = algorithm.ComputeHash(bytes);
+			var guidBytes = new byte[16];
+			Array.Copy(hash, guidBytes, guidBytes.Length);
+			Guid guid = new Guid(guidBytes);
+			algorithm.Dispose();
+			return guid;
+		}
 	}
 
 }

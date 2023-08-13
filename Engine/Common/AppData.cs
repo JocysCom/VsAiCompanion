@@ -1,11 +1,16 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
+	/// <summary>
+	/// Application settings.
+	/// </summary>
+	/// <remarks>Advice: Organize all settings as flat data tables instead of using a tree structure to improve compatibility and ease conversion.</remarks>
 	public class AppData : JocysCom.ClassLibrary.Configuration.ISettingsItem, INotifyPropertyChanged, ITrayManagerSettings
 	{
 
@@ -102,64 +107,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		public SortableBindingList<Companions.ChatGPT.Settings> AiSettings
+		public SortableBindingList<AiService> AiServices
 		{
 			get
 			{
-				if (_AiSettings == null)
-					_AiSettings = new SortableBindingList<Companions.ChatGPT.Settings>();
-				if (_AiSettings.Count == 0)
-				{
-					// Add open AI Model
-					var s1 = new Companions.ChatGPT.Settings()
-					{
-						AiModels = new string[] {
-							"text-davinci-003",
-							"text-davinci-002",
-							"text-davinci-001",
-							"gpt-3.5-turbo-16k-0613",
-							"gpt-3.5-turbo-16k",
-							"gpt-3.5-turbo-0613",
-							"gpt-3.5-turbo-0301",
-							"gpt-3.5-turbo"
-						},
-						AiModelDefault = "gpt-3.5-turbo-16k-0613",
-						BaseUrl = "https://api.openai.com/v1/",
-						ModelFilter = "gpt|text-davinci-[0-9+]",
-					};
-					_AiSettings.Add(s1);
-					// Add GPT4All Service
-					var s2 = new Companions.ChatGPT.Settings()
-					{
-						AiModels = new string[0],
-						AiModelDefault = "GPT4All Falcon",
-						BaseUrl = "https://localhost:4891/v1/",
-						ModelFilter = "",
-					};
-					_AiSettings.Add(s2);
-					// Add Open AI (on-premises)
-					var s3 = new Companions.ChatGPT.Settings()
-					{
-						AiModels = new string[0],
-						AiModelDefault = "",
-						BaseUrl = "https://ai.company.local/v1/",
-						ModelFilter = "",
-					};
-					_AiSettings.Add(s2);
-				}
-				return _AiSettings;
+				if (_AiServices == null || _AiServices.Count == 0)
+					_AiServices = GetDefaultAiServices();
+				return _AiServices;
 			}
-			set => _AiSettings = value;
+			set => _AiServices = value;
 		}
-		private SortableBindingList<Companions.ChatGPT.Settings> _AiSettings;
+		private SortableBindingList<AiService> _AiServices;
 
-
-		public Companions.ChatGPT.Settings OpenAiSettings
+		public SortableBindingList<AiModel> AiModels
 		{
-			get => _OpenAiSettings = _OpenAiSettings ?? new Companions.ChatGPT.Settings();
-			set => _OpenAiSettings = value;
+			get
+			{
+				if (_AiModels == null)
+					_AiModels = new SortableBindingList<AiModel>();
+				return _AiModels;
+			}
+			set => _AiModels = value;
 		}
-		private Companions.ChatGPT.Settings _OpenAiSettings;
+		private SortableBindingList<AiModel> _AiModels;
 
 		public bool Enabled { get; set; }
 
@@ -183,6 +153,74 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(WindowState.Normal)]
 		public WindowState StartWithWindowsState { get => _StartWithWindowsState; set => SetProperty(ref _StartWithWindowsState, value); }
 		WindowState _StartWithWindowsState;
+
+		#endregion
+
+		#region Defaults
+
+		private static SortableBindingList<AiService> GetDefaultAiServices()
+		{
+			var list = new SortableBindingList<AiService>();
+			// Add open AI Model
+			var s1 = new AiService()
+			{
+				Id = AppHelper.GetGuid(nameof(AiService), "Open AI"),
+				Name = "Open AI",
+				AiModelDefault = "gpt-3.5-turbo-16k-0613",
+				BaseUrl = "https://api.openai.com/v1/",
+				ModelFilter = "gpt|text-davinci-[0-9+]",
+			};
+			list.Add(s1);
+			// Add GPT4All Service
+			var s2 = new AiService()
+			{
+				Id = AppHelper.GetGuid(nameof(AiService), "GPT4All"),
+				Name = "GPT4All",
+				AiModels = new string[0],
+				AiModelDefault = "GPT4All Falcon",
+				BaseUrl = "https://localhost:4891/v1/",
+				ModelFilter = "",
+			};
+
+			list.Add(s2);
+			// Add Open AI (on-premises)
+			var s3 = new AiService()
+			{
+				Id = AppHelper.GetGuid(nameof(AiService), "Open AI (On-Premises)"),
+				Name = "Open AI (On-Premises)",
+				AiModels = new string[0],
+				AiModelDefault = "",
+				BaseUrl = "https://ai.company.local/v1/",
+				ModelFilter = "",
+			};
+			list.Add(s3);
+			return list;
+		}
+
+		private static SortableBindingList<AiModel> GetDefaultAiModels()
+		{
+			var list = new SortableBindingList<AiModel>();
+			var names = new string[] {
+				"text-davinci-003",
+				"text-davinci-002",
+				"text-davinci-001",
+				"gpt-3.5-turbo-16k-0613",
+				"gpt-3.5-turbo-16k",
+				"gpt-3.5-turbo-0613",
+				"gpt-3.5-turbo-0301",
+				"gpt-3.5-turbo"
+			};
+			foreach (var name in names)
+			{
+				var item = new AiModel()
+				{
+					Id = AppHelper.GetGuid(nameof(AiModel), name),
+					Name = name,
+				};
+				list.Add(item);
+			}
+			return list;
+		}
 
 		#endregion
 

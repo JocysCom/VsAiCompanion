@@ -30,7 +30,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.AppData.Save();
 		}
 
-		public Companions.ChatGPT.Settings OpenAiSettings => Global.AppSettings.OpenAiSettings;
+		public AiService OpenAiSettings => Global.AppSettings.OpenAiSettings;
 
 		private void ChatGptSecretKeyPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
 			=> Global.AppSettings.OpenAiSettings.ApiSecretKey = OpenAiApiSecretKeyPasswordBox.Password;

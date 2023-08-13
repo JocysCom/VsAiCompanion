@@ -4,7 +4,6 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -24,11 +23,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AiCompanionComboBox.ItemsSource = Enum.GetValues(typeof(Companions.CompanionType));
-			AiCompanionComboBox.SelectedItem = Companions.CompanionType.OpenAI;
+			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
+			AiCompanionComboBox.DisplayMemberPath = nameof(AiService.Name);
+			AiCompanionComboBox.SelectedValuePath = nameof(AiService.Id);
+			AiCompanionComboBox.SelectedItem = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault);
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
-
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -85,30 +85,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateAiModels(_item?.AiModel);
 		}
 
-
-		public void UpdateAiModels(params string[] args)
-		{
-			// Make sure checkbox can display current model.
-			var list = Global.AppSettings.OpenAiSettings.AiModels.ToList();
-			foreach (var arg in args)
-			{
-				if (!string.IsNullOrEmpty(arg) && !list.Contains(arg))
-					list.Add(arg);
-			}
-			SettingsHelper.Synchronize(list, AiModels);
-		}
-
 		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (Global.IsIncompleteSettings())
+			if (Global.IsIncompleteSettings(_item.AiService))
 				return;
 			Regex filterRx = null;
 			try
 			{
-				filterRx = new Regex(Global.AppSettings.OpenAiSettings.ModelFilter);
+				filterRx = new Regex(_item.AiService.ModelFilter);
 			}
 			catch { }
-			var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
+			var client = new Companions.ChatGPT.Client(_item.AiService);
 			var models = await client.GetModels();
 			var modelIds = models
 				.OrderByDescending(x => x.Id)
@@ -117,10 +104,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (filterRx != null)
 				modelIds = modelIds.Where(x => filterRx.IsMatch(x)).ToArray();
 			if (modelIds.Any())
-				Global.AppSettings.OpenAiSettings.AiModels = modelIds;
+				Global.AppSettings.AiModels = modelIds;
 			Global.TriggerAiModelsUpdated();
 		}
 
+		public void UpdateAiModels(params string[] names)
+		{
+			// Make sure checkbox can display current model.
+			var models = Global.AppSettings.AiModels.Where(x => x.AiServiceId == _item.AiServiceId).ToList();
+			foreach (var name in names)
+			{
+				if (!string.IsNullOrEmpty(name) && !models.Any(x => x.Name == name))
+					models.Add(new AiModel(name, _item.AiServiceId));
+			}
+			SettingsHelper.Synchronize(models, Global.AppSettings.AiModels);
+		}
 
 		#endregion
 
@@ -413,6 +411,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			ControlsHelper.OpenUrl(e.Uri.AbsoluteUri);
 			e.Handled = true;
+		}
+
+		private void AiCompanionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
 		}
 	}
 }

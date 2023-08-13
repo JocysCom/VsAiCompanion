@@ -81,13 +81,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static bool IsIncompleteSettings()
+		public static bool IsIncompleteSettings(AiService item)
 		{
 			var itemsRequired = new List<string>();
-			if (string.IsNullOrEmpty(AppSettings.OpenAiSettings.ApiSecretKey))
-				itemsRequired.Add("API Key");
-			if (string.IsNullOrEmpty(AppSettings.OpenAiSettings.ApiOrganizationId))
-				itemsRequired.Add("API Organization ID");
+			if (string.IsNullOrEmpty(item.BaseUrl))
+				itemsRequired.Add("Base URL");
+			if (string.IsNullOrEmpty(item.Name))
+				itemsRequired.Add("Service Name");
+			if (itemsRequired.Count == 0)
+			{
+				if (string.IsNullOrEmpty(item.ApiSecretKey))
+					itemsRequired.Add("API Key");
+				if (string.IsNullOrEmpty(item.ApiOrganizationId))
+					itemsRequired.Add("API Organization ID");
+			}
 			if (itemsRequired.Count > 0)
 			{
 				MainControl.MainTabControl.SelectedItem = MainControl.OptionsTabItem;
@@ -123,7 +130,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AppData.Items.Add(new AppData());
 				AppData.Save();
 			}
-			Companions.ChatGPT.Client.Settings = Global.AppSettings.OpenAiSettings;
 		}
 
 		public static void LoadSettings()
@@ -158,9 +164,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void ResetAppSettings()
 		{
-			var exclude = new string[] { nameof(AppSettings.OpenAiSettings) };
+			// Reset all app settings except list of services and list of models.
+			var exclude = new string[] { nameof(AppSettings.AiServices), nameof(AppSettings.AiModels) };
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(AppSettings, false, exclude);
-
 		}
 
 		private static bool DefaultTemplatesAdded = false;

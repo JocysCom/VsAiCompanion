@@ -332,10 +332,7 @@
 								Margin="0,3,0,5"
 								ItemsSource="{Binding AutoOperations, ElementName=This}"
 								SelectedValue="{Binding AutoOperation}" />
-							<CheckBox
-								x:Name="AutoFormatCodeCheckBox"
-								Content="Format Code"
-								IsChecked="{Binding AutoFormatCode}" />
+							<CheckBox x:Name="AutoFormatCodeCheckBox" Content="Format Code" IsChecked="{Binding AutoFormatCode}" />
 						</StackPanel>
 					</GroupBox>
 
@@ -360,18 +357,18 @@
 				Grid.ColumnSpan="3"
 				Margin="0,3,0,3"
 				Orientation="Horizontal">
-				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" Margin="4,0,0,0" IsChecked="{Binding ShowInstructions}" />
+				<CheckBox
+					Name="ShowInstructionsCheckBox"
+					Margin="4,0,0,0"
+					Content="Show Instructions"
+					IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
 				<CheckBox Name="AutoFormatMessageCheckBox" Padding="0" IsChecked="{Binding AutoFormatMessage}">
 					<TextBlock VerticalAlignment="Center">
 						<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
-						Auto-Format
-					</TextBlock>
+						Auto-Format</TextBlock>
 				</CheckBox>
-				<CheckBox
-					Name="IsPreviewCheckBox"
-					Content="Preview Mode"
-					IsChecked="{Binding IsPreview}" />
+				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
 			</StackPanel>
 
 			<StackPanel

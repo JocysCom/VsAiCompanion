@@ -26,7 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		public async static Task Send(TemplateItem item)
 		{
-			if (Global.IsIncompleteSettings())
+			if (Global.IsIncompleteSettings(item.AiService))
 				return;
 			if (item.IsBusy)
 				return;
@@ -249,7 +249,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						item.AutoGenerateTitle = false;
 						_ = GenerateTitle(item);
 					}
-					var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
+					var client = new Companions.ChatGPT.Client(item.AiService);
 					// Send body and context data.
 					var response = await client.QueryAI(
 						item.AiModel,
@@ -353,7 +353,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					Content = text,
 					Role = ChatCompletionRequestMessageRole.user
 				});
-				var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
+				var client = new Companions.ChatGPT.Client(item.AiService);
 				// Send body and context data.
 				var response = await client.QueryAI(
 					rItem.AiModel,
@@ -392,7 +392,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					Content = rItem.TextInstructions,
 					Role = ChatCompletionRequestMessageRole.system
 				});
-				var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
+				var client = new Companions.ChatGPT.Client(item.AiService);
 				// Send body and context data.
 				var response = await client.QueryAI(
 					rItem.AiModel,
