@@ -60,19 +60,21 @@
 		<!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
 	</Style>
 
-	<!--  UserControl  -->
+	<!--StatusBar-->
+	<Style x:Key="StatusBar_Default" TargetType="StatusBar">
+		<Setter Property="SnapsToDevicePixels" Value="True" />
+		<Setter Property="Background" Value="{StaticResource BackgroundLight}" />
+	</Style>
 
+	<!--  UserControl  -->
 	<Style x:Key="UserControl_Default" TargetType="UserControl">
-		<!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
 		<Setter Property="Background" Value="{StaticResource BackgroundLight}" />
 	</Style>
 
 	<!--  Grid  -->
-
 	<Style x:Key="Grid_Default" TargetType="Grid" />
 
 	<!--  GridSplitter  -->
-
 	<Style x:Key="GridSplitterHorizontal" TargetType="GridSplitter">
 		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -194,10 +196,6 @@
 		<Setter Property="HorizontalContentAlignment" Value="Left" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
-
-
-
-
 
 	<!--  StackPanel  -->
 
@@ -372,10 +370,22 @@
 							Grid.Row="1"
 							BorderBrush="{StaticResource BorderDark}"
 							BorderThickness="1"
+							ClipToBounds="True"
 							CornerRadius="0,5,5,5"
 							KeyboardNavigation.DirectionalNavigation="Contained"
 							KeyboardNavigation.TabIndex="2"
 							KeyboardNavigation.TabNavigation="Local">
+							<Border.OpacityMask>
+								<VisualBrush>
+									<VisualBrush.Visual>
+										<Border
+											Width="{Binding ActualWidth, ElementName=Border}"
+											Height="{Binding ActualHeight, ElementName=Border}"
+											Background="White"
+											CornerRadius="0,5,5,5" />
+									</VisualBrush.Visual>
+								</VisualBrush>
+							</Border.OpacityMask>
 							<ContentPresenter ContentSource="SelectedContent" />
 						</Border>
 					</Grid>
@@ -971,7 +981,7 @@
 		<Setter Property="Focusable" Value="false" />
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type Separator}">
+				<ControlTemplate TargetType="Separator">
 					<Border
 						VerticalAlignment="Stretch"
 						Background="{TemplateBinding Background}"
@@ -1269,6 +1279,7 @@
 	<!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->
 	<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
 	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
+	<Style BasedOn="{StaticResource StatusBar_Default}" TargetType="StatusBar" />
 
 
 </ResourceDictionary>

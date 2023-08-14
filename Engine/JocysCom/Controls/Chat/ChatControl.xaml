@@ -201,7 +201,7 @@
 			Grid.Row="0"
 			Grid.Column="0"
 			Grid.ColumnSpan="2"
-			BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+			BorderBrush="{StaticResource BorderDark}"
 			BorderThickness="0,0,0,1">
 			<local:ChatListControl x:Name="MessagesPanel" />
 		</Border>
@@ -210,7 +210,7 @@
 			Grid.Row="1"
 			Grid.Column="0"
 			VerticalAlignment="Stretch"
-			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+			Background="{StaticResource BackgroundLight}">
 			<StackPanel VerticalAlignment="Bottom">
 				<StackPanel
 					x:Name="DataInstructionsPanel"
@@ -223,14 +223,6 @@
 						Padding="12,7,12,8"
 						Background="White"
 						CornerRadius="10">
-						<!--<Border.Effect>
-							<DropShadowEffect
-								BlurRadius="0"
-								Direction="0"
-								Opacity="0.25"
-								ShadowDepth="0"
-								Color="Black" />
-						</Border.Effect>-->
 						<Grid>
 							<TextBox
 								x:Name="DataInstructionsTextBox"
@@ -342,7 +334,7 @@
 			Grid.Row="1"
 			Grid.Column="1"
 			VerticalAlignment="Stretch"
-			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+			Background="{StaticResource BackgroundLight}">
 			<StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
 				<Button
 					x:Name="SendButton"
