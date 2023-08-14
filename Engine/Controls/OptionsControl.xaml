@@ -9,7 +9,6 @@
 	Name="This"
 	d:DesignHeight="640"
 	d:DesignWidth="640"
-	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -57,13 +56,10 @@
 					Name="OpenButton"
 					Grid.Row="0"
 					Grid.Column="2"
-					Margin="0,0,3,0"
-					VerticalAlignment="Center"
-					Click="OpenButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Focusable="False" Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label VerticalAlignment="Center" Content="Open..." Style="{StaticResource ButtonLabel}" />
+					Click="OpenButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+						<Label Content="Open..." />
 					</StackPanel>
 				</Button>
 				<Label
@@ -200,30 +196,24 @@
 				</WrapPanel>
 			</GroupBox>
 			<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Header="Reset Settings">
-				<WrapPanel Orientation="Vertical">
-					<Button
-						Name="ResetApplicationSettingsButton"
-						Margin="3"
-						VerticalAlignment="Center"
-						Click="ResetApplicationSettingsButton_Click"
-						Style="{StaticResource ToolBarButton}">
-						<StackPanel Focusable="False" Style="{StaticResource ButtonStackPanel}">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-							<Label Content="Reset Application Settings" Style="{StaticResource ButtonLabel}" />
+				<StackPanel>
+					<Button Name="ResetApplicationSettingsButton" Click="ResetApplicationSettingsButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="Reset Application Settings" />
 						</StackPanel>
 					</Button>
 					<Button
 						Name="ResetTemplatesButton"
-						Margin="3,3,3,4"
-						VerticalAlignment="Center"
-						Click="ResetTemplatesButton_Click"
-						Style="{StaticResource ToolBarButton}">
-						<StackPanel Focusable="False" Style="{StaticResource ButtonStackPanel}">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-							<Label Content="Reset Templates Settings" Style="{StaticResource ButtonLabel}" />
+						Margin="3,2,3,3"
+						HorizontalAlignment="Stretch"
+						Click="ResetTemplatesButton_Click">
+						<StackPanel HorizontalAlignment="Left" Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="Reset Templates Settings" />
 						</StackPanel>
 					</Button>
-				</WrapPanel>
+				</StackPanel>
 			</GroupBox>
 			<GroupBox Margin="0,0,3,3" Header="Warnings">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">

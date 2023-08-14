@@ -29,17 +29,11 @@
 			Padding="0"
 			HorizontalAlignment="Center"
 			VerticalAlignment="Bottom"
-			BorderBrush="Transparent"
 			Click="IconEditButton_Click"
 			Opacity="0.8"
-			Style="{StaticResource ToolBarButton}"
 			Visibility="Collapsed">
-			<StackPanel Style="{StaticResource ButtonStackPanel}">
-				<ContentControl
-					Margin="2"
-					Content="{StaticResource Icon_Edit}"
-					Focusable="False"
-					Style="{StaticResource ButtonContentControl}" />
+			<StackPanel>
+				<ContentControl Margin="2" Content="{StaticResource Icon_Edit}" Focusable="False" />
 			</StackPanel>
 		</Button>
 	</Grid>

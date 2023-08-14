@@ -25,99 +25,74 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar KeyboardNavigation.TabNavigation="Continue" Style="{StaticResource MainToolBar}">
-				<Button
-					Name="AddButton"
-					HorizontalAlignment="Left"
-					x:FieldModifier="public"
-					Click="AddButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Add New">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label
-							x:Name="AddButtonLabel"
-							Content="Add New"
-							Style="{StaticResource ButtonLabel}"
-							Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="EditButton"
-					HorizontalAlignment="Left"
-					x:FieldModifier="public"
-					Click="EditButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Edit">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label
-							x:Name="EditButtonLabel"
-							Content="Edit"
-							Style="{StaticResource ButtonLabel}"
-							Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="DeleteButton"
-					HorizontalAlignment="Right"
-					x:FieldModifier="public"
-					Click="DeleteButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Delete">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label
-							x:Name="DeleteButtonLabel"
-							Content="Delete"
-							Style="{StaticResource ButtonLabel}"
-							Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-
-			</ToolBar>
-		</ToolBarPanel>
-		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar KeyboardNavigation.TabNavigation="Continue" Style="{StaticResource MainToolBar}">
-				<Button
-					Name="GenerateTitleButton"
-					HorizontalAlignment="Right"
-					x:FieldModifier="public"
-					Click="GenerateTitleButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Use AI to automatically generate title">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_document_title_refresh}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-					</StackPanel>
-				</Button>
-
-				<Separator />
-				<Button
-					Name="CopyButton"
-					HorizontalAlignment="Right"
-					x:FieldModifier="public"
-					Click="CopyButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Copy">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="PasteButton"
-					HorizontalAlignment="Right"
-					x:FieldModifier="public"
-					Click="PasteButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Paste">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_clipboard_paste}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-					</StackPanel>
-				</Button>
-			</ToolBar>
-		</ToolBarPanel>
-		<Border Grid.Row="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="0,1,0,1">
+		<StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal">
+			<Button
+				Name="AddButton"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="AddButton_Click"
+				ToolTip="Add New">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+					<Label x:Name="AddButtonLabel" Content="Add New" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="EditButton"
+				Margin="0,3,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="EditButton_Click"
+				ToolTip="Edit">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+					<Label x:Name="EditButtonLabel" Content="Edit" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="DeleteButton"
+				Margin="0,3,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="DeleteButton_Click"
+				ToolTip="Delete">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
+					<Label x:Name="DeleteButtonLabel" Content="Delete" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+			<Button
+				Background="Transparent"
+				Name="GenerateTitleButton"
+				x:FieldModifier="public"
+				Click="GenerateTitleButton_Click"
+				ToolTip="Use AI to automatically generate title">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_document_title_refresh}" Focusable="False" />
+				</StackPanel>
+			</Button>
+			<Button
+				Background="Transparent"
+				Name="CopyButton"
+				Margin="0,3,3,3"
+				x:FieldModifier="public"
+				Click="CopyButton_Click"
+				ToolTip="Copy">
+				<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" />
+			</Button>
+			<Button
+				Background="Transparent"
+				Name="PasteButton"
+				Margin="0,3,3,3"
+				x:FieldModifier="public"
+				Click="PasteButton_Click"
+				ToolTip="Paste">
+				<ContentControl Content="{StaticResource Icon_clipboard_paste}" Focusable="False" />
+			</Button>
+		</StackPanel>
+		<Border Grid.Row="1" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,1,0,1">
 			<Grid Background="White">
 				<TextBox
 					x:Name="SearchTextBox"
@@ -136,33 +111,27 @@
 					TextWrapping="Wrap" />
 				<Button
 					Name="FilterButton"
-					MinWidth="0"
-					Margin="0,0,0,0"
+					Margin="0"
 					Padding="0"
 					HorizontalAlignment="Left"
-					VerticalAlignment="Center"
+					VerticalAlignment="Stretch"
 					Background="Transparent"
-					BorderThickness="0"
 					Click="FilterButton_Click"
 					Opacity="0.5">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_find_gray}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
-					</StackPanel>
+					<ContentControl Content="{StaticResource Icon_find_gray}" Focusable="False" />
 				</Button>
 				<TextBlock
 					Margin="0"
-					Padding="24,3,4,3"
+					Padding="26,3,5,3"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					IsHitTestVisible="False"
 					Opacity="0.5"
 					Text="Search the list">
 					<TextBlock.Style>
-						<Style TargetType="{x:Type TextBlock}">
+						<Style TargetType="TextBlock">
+							<Setter Property="Padding" Value="26,3,5,3" />
+							<Setter Property="VerticalAlignment" Value="Stretch" />
 							<Setter Property="Visibility" Value="Collapsed" />
 							<Style.Triggers>
 								<MultiDataTrigger>
@@ -250,7 +219,7 @@
 					</DataGridTemplateColumn.Header>
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<ContentControl Style="{StaticResource ButtonContentControl}">
+							<ContentControl>
 								<ContentControl.Content>
 									<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
 										<Binding RelativeSource="{RelativeSource Self}" />
@@ -277,7 +246,7 @@
 					Header="Name" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
-				<Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}" />
+				<Style BasedOn="{StaticResource DataGridCellStyle}" TargetType="DataGridCell" />
 			</DataGrid.CellStyle>
 		</DataGrid>
 	</Grid>

@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Xml.Linq;
+//using System.Xml.Linq;
 using JocysCom.ClassLibrary.Controls;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core

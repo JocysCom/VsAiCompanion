@@ -51,65 +51,35 @@
 					Name="ModelRefreshButton"
 					Grid.Row="1"
 					Grid.Column="3"
-					Margin="0,0,3,0"
+					Margin="3,0,3,0"
 					VerticalAlignment="Center"
-					BorderBrush="Transparent"
 					Click="ModelRefreshButton_Click"
-					Style="{StaticResource ToolBarButton}"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label VerticalAlignment="Center" Content="Refresh" Style="{StaticResource ButtonLabel}" />
-					</StackPanel>
-				</Button>
-			</StackPanel>
-			<StackPanel
-				Grid.Row="0"
-				Grid.Column="2"
-				HorizontalAlignment="Right"
-				Orientation="Horizontal">
-				<Button
-					Name="BarToggleButton"
-					Width="26"
-					Height="26"
-					Margin="2"
-					Padding="0"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Top"
-					BorderBrush="Transparent"
-					Click="BarToggleButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl
-							x:Name="ShowHideBarContent"
-							VerticalAlignment="Bottom"
-							Content="{StaticResource Icon_navigate_left2}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+						<Label VerticalAlignment="Center" Content="Refresh" />
 					</StackPanel>
 				</Button>
 			</StackPanel>
 			<Button
+				Name="BarToggleButton"
+				Grid.Row="0"
+				Grid.Column="2"
+				Margin="2"
+				HorizontalAlignment="Right"
+				Click="BarToggleButton_Click"
+				Focusable="False">
+				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+			</Button>
+			<Button
 				Name="ListToggleButton"
 				Grid.Row="0"
 				Grid.Column="0"
-				Width="26"
-				Height="26"
 				Margin="2"
-				Padding="0"
 				HorizontalAlignment="Left"
-				VerticalAlignment="Center"
-				BorderBrush="Transparent"
 				Click="ListToggleButton_Click"
-				Style="{StaticResource ToolBarButton}">
-				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<ContentControl
-						x:Name="ShowHideListContent"
-						VerticalAlignment="Bottom"
-						Content="{StaticResource Icon_navigate_left2}"
-						Focusable="False"
-						Style="{StaticResource ButtonContentControl}" />
-				</StackPanel>
+				Focusable="False">
+				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 			</Button>
 			<!--  Row 1  -->
 			<Controls:IconUserControl
@@ -202,14 +172,13 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<Border Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0.4" />
+				<Border Background="{StaticResource BackgroundDark}" />
 				<Label
-					Padding="2"
+					Padding="0,2,0,3"
 					HorizontalAlignment="Center"
 					Content="Visual Studio Extension Options"
 					Opacity="0.3"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-				<Border Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0" />
 				<WrapPanel Grid.Row="1" Orientation="Horizontal">
 					<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
@@ -228,14 +197,11 @@
 									Content="Attachments" />
 							</StackPanel>
 						</GroupBox.Header>
-						<StackPanel Orientation="Vertical">
-							<Controls:EnumComboBox
-								x:Name="AttachmentEnumComboBox"
-								Margin="0,3,0,3"
-								VerticalAlignment="Center"
-								SelectedValue="{Binding AttachContext}" />
-							<Separator Style="{DynamicResource MainSeparator}" />
-						</StackPanel>
+						<Controls:EnumComboBox
+							x:Name="AttachmentEnumComboBox"
+							Margin="0,3,0,3"
+							VerticalAlignment="Center"
+							SelectedValue="{Binding AttachContext}" />
 					</GroupBox>
 					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
@@ -262,7 +228,7 @@
 								Grid.Row="0"
 								Grid.Column="1"
 								Padding="0,3"
-								Style="{StaticResource ComboBoxGrid}" />
+								Style="{StaticResource ComboBox_Default}" />
 							<Label
 								Grid.Row="0"
 								Grid.Column="0"
@@ -278,15 +244,13 @@
 								Grid.Row="0"
 								Grid.Column="3"
 								Padding="0,3"
-								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBoxGrid}" />
+								DisplayMemberPath="Key" />
 							<ComboBox
 								Name="DateComboBox"
 								Grid.Row="1"
 								Grid.Column="1"
 								Padding="0,3"
-								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBoxGrid}" />
+								DisplayMemberPath="Key" />
 							<Label
 								Grid.Row="1"
 								Grid.Column="0"
@@ -298,8 +262,7 @@
 								Grid.Row="1"
 								Grid.Column="3"
 								Padding="0,3"
-								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBoxGrid}" />
+								DisplayMemberPath="Key" />
 							<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 								<Button
 									Name="PropertiesRefreshButton"
@@ -308,11 +271,10 @@
 									Margin="0,0,3,0"
 									VerticalAlignment="Center"
 									Click="PropertiesRefreshButton_Click"
-									Style="{StaticResource ToolBarButton}"
 									Visibility="Collapsed">
-									<StackPanel Style="{StaticResource ButtonStackPanel}">
-										<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-										<Label VerticalAlignment="Center" Content="Refresh" Style="{StaticResource ButtonLabel}" />
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+										<Label Content="Refresh" />
 									</StackPanel>
 								</Button>
 							</StackPanel>
@@ -332,23 +294,16 @@
 								Margin="0,3,0,5"
 								ItemsSource="{Binding AutoOperations, ElementName=This}"
 								SelectedValue="{Binding AutoOperation}" />
-							<CheckBox
-								x:Name="AutoFormatCodeCheckBox"
-								Content="Format Code"
-								IsChecked="{Binding AutoFormatCode}" />
+							<CheckBox x:Name="AutoFormatCodeCheckBox" Content="Format Code" IsChecked="{Binding AutoFormatCode}" />
 						</StackPanel>
 					</GroupBox>
-
-
 				</WrapPanel>
-				<Border Grid.Row="2" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Opacity="0.25" />
-				<StackPanel Grid.Row="2" Orientation="Horizontal" />
 			</Grid>
 			<!--  Row 3  -->
 			<Border
 				Grid.Row="3"
 				Grid.ColumnSpan="4"
-				BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+				BorderBrush="{StaticResource BorderDark}"
 				BorderThickness="0,1,0,1">
 				<!--  Hide in order to preved UI freeze whe WebBrowser is loading. It will be made visible in MainContro.xaml.cs.  -->
 				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" Visibility="Collapsed" />
@@ -360,18 +315,18 @@
 				Grid.ColumnSpan="3"
 				Margin="0,3,0,3"
 				Orientation="Horizontal">
-				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" Margin="4,0,0,0" IsChecked="{Binding ShowInstructions}" />
+				<CheckBox
+					Name="ShowInstructionsCheckBox"
+					Margin="4,0,0,0"
+					Content="Show Instructions"
+					IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
 				<CheckBox Name="AutoFormatMessageCheckBox" Padding="0" IsChecked="{Binding AutoFormatMessage}">
 					<TextBlock VerticalAlignment="Center">
 						<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
-						Auto-Format
-					</TextBlock>
+						Auto-Format</TextBlock>
 				</CheckBox>
-				<CheckBox
-					Name="IsPreviewCheckBox"
-					Content="Preview Mode"
-					IsChecked="{Binding IsPreview}" />
+				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
 			</StackPanel>
 
 			<StackPanel
@@ -381,41 +336,23 @@
 				HorizontalAlignment="Right"
 				Orientation="Horizontal">
 				<Button
+					Margin="3,2,3,2"
 					Name="ScrollToBottomMessagesButton"
-					Width="26"
-					Height="26"
-					Margin="2"
-					Padding="0"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
-					BorderBrush="Transparent"
-					Click="ScrollToBottomButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl
-							VerticalAlignment="Bottom"
-							Content="{StaticResource Icon_arrow_barrier_bottom}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
+					Click="ScrollToBottomButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_arrow_barrier_bottom}" Focusable="False" />
 					</StackPanel>
 				</Button>
 				<Button
 					Name="ClearMessagesButton"
-					Width="26"
-					Height="26"
-					Margin="0,2,2,0"
-					Padding="0"
+					Margin="0,2,2,2"
 					HorizontalAlignment="Right"
-					VerticalAlignment="Top"
-					BorderBrush="Transparent"
-					Click="ClearMessagesButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl
-							VerticalAlignment="Bottom"
-							Content="{StaticResource Icon_broom}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
+					VerticalAlignment="Center"
+					Click="ClearMessagesButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_broom}" Focusable="False" />
 					</StackPanel>
 				</Button>
 			</StackPanel>
