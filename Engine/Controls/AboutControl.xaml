@@ -44,8 +44,7 @@
 				Margin="4,4,8,4"
 				Padding="0"
 				VerticalAlignment="Top"
-				Content="{StaticResource Icon_AiCompanion}"
-				Style="{StaticResource ButtonContentControl}" />
+				Content="{StaticResource Icon_AiCompanion}" />
 			<Label
 				Name="AboutProductLabel"
 				Grid.Row="0"

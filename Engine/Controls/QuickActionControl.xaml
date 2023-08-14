@@ -14,29 +14,31 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
 			<DataTemplate x:Key="ToolBarButtonTemplate">
 				<Button
+					Margin="0"
+					Background="Transparent"
 					HorizontalAlignment="Left"
 					Click="Button_Click"
-					Style="{StaticResource ToolBarButton}"
+					Style="{StaticResource Button_Default}"
 					ToolTip="{Binding Name}"
 					Visibility="{Binding IsFavorite, Converter={StaticResource _BoolToVisibilityConverter}}">
 					<Button.DataContext>
 						<Binding />
 					</Button.DataContext>
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<Image Focusable="False" Source="{Binding Icon}" Style="{StaticResource ButtonImage}" />
-						<Label
-							Content="{Binding Name}"
-							Focusable="False"
-							Style="{StaticResource ButtonLabel}"
-							Visibility="Collapsed" />
-					</StackPanel>
+					<ContentControl>
+						<StackPanel>
+							<Image
+								Focusable="False"
+								Source="{Binding Icon}" />
+							<Label Content="{Binding Name}" Focusable="False" Visibility="Collapsed" />
+						</StackPanel>
+					</ContentControl>
 				</Button>
 			</DataTemplate>
 		</ResourceDictionary>

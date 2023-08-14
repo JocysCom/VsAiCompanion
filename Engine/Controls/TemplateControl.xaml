@@ -38,6 +38,7 @@
 			Grid.Column="1"
 			DragCompleted="GridSplitter_DragCompleted"
 			ResizeDirection="Columns"
+			BorderBrush="{StaticResource BorderDark}"
 			Style="{StaticResource GridSplitterVertical}"
 			Visibility="{Binding ListPanelVisibility, ElementName=This}" />
 		<local:TemplateItemControl x:Name="ItemPanel" Grid.Column="2" x:FieldModifier="public" />

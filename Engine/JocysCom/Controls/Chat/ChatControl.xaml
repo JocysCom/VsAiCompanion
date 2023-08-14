@@ -27,25 +27,25 @@
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="{x:Type Button}">
-							<Viewbox>
-								<Border
-									x:Name="border"
+								<Viewbox>
+									<Border
 									Width="40"
 									Height="40"
 									CornerRadius="20"
+									x:Name="border"
 									RenderTransformOrigin="0.5,0.5">
-									<Border.RenderTransform>
-										<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
-									</Border.RenderTransform>
-									<Border.Background>
-										<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-											<GradientStop Offset="0" Color="#EF6B78" />
-											<GradientStop Offset="1" Color="#EF6B78" />
-										</LinearGradientBrush>
-									</Border.Background>
-									<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-								</Border>
-							</Viewbox>
+										<Border.RenderTransform>
+											<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
+										</Border.RenderTransform>
+										<Border.Background>
+											<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
+												<GradientStop Offset="0" Color="#EF6B78" />
+												<GradientStop Offset="1" Color="#EF6B78" />
+											</LinearGradientBrush>
+										</Border.Background>
+										<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+									</Border>
+								</Viewbox>
 							<ControlTemplate.Triggers>
 								<MultiDataTrigger>
 									<MultiDataTrigger.Conditions>
@@ -110,12 +110,12 @@
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="{x:Type Button}">
-							<Viewbox>
+								<Viewbox>
 								<Border
-									x:Name="border"
 									Width="40"
 									Height="40"
 									CornerRadius="20"
+									x:Name="border"
 									RenderTransformOrigin="0.5,0.5">
 									<Border.RenderTransform>
 										<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
@@ -201,7 +201,7 @@
 			Grid.Row="0"
 			Grid.Column="0"
 			Grid.ColumnSpan="2"
-			BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+			BorderBrush="{StaticResource BorderDark}"
 			BorderThickness="0,0,0,1">
 			<local:ChatListControl x:Name="MessagesPanel" />
 		</Border>
@@ -210,7 +210,7 @@
 			Grid.Row="1"
 			Grid.Column="0"
 			VerticalAlignment="Stretch"
-			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+			Background="{StaticResource BackgroundLight}">
 			<StackPanel VerticalAlignment="Bottom">
 				<StackPanel
 					x:Name="DataInstructionsPanel"
@@ -236,17 +236,17 @@
 								x:Name="DataInstructionsTextBox"
 								Margin="0"
 								Padding="0"
+								BorderThickness="0"
 								HorizontalAlignment="Stretch"
 								VerticalAlignment="Stretch"
 								VerticalContentAlignment="Top"
 								AcceptsReturn="True"
 								Background="Transparent"
-								BorderThickness="0"
 								PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
 								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 								ScrollViewer.VerticalScrollBarVisibility="Auto"
-								Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}"
 								TextChanged="DataInstructionsTextBox_TextChanged"
+								Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}"
 								TextWrapping="Wrap" />
 							<TextBlock
 								Margin="0"
@@ -257,7 +257,7 @@
 								Opacity="0.5"
 								Text="Type instructions">
 								<TextBlock.Style>
-									<Style TargetType="{x:Type TextBlock}">
+									<Style TargetType="TextBlock">
 										<Setter Property="Visibility" Value="Collapsed" />
 										<Style.Triggers>
 											<MultiDataTrigger>
@@ -295,18 +295,18 @@
 							x:Name="DataTextBox"
 							Margin="0"
 							Padding="0"
+							BorderThickness="0"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
 							VerticalContentAlignment="Top"
 							x:FieldModifier="public"
 							AcceptsReturn="True"
 							Background="White"
-							BorderThickness="0"
+							TextChanged="DataTextBox_TextChanged"
 							PreviewKeyUp="DataTextBox_PreviewKeyUp"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Auto"
 							Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
-							TextChanged="DataTextBox_TextChanged"
 							TextWrapping="Wrap" />
 						<TextBlock
 							Margin="0"
@@ -317,7 +317,7 @@
 							Opacity="0.5"
 							Text="Type a message">
 							<TextBlock.Style>
-								<Style TargetType="{x:Type TextBlock}">
+								<Style TargetType="TextBlock">
 									<Setter Property="Visibility" Value="Collapsed" />
 									<Style.Triggers>
 										<MultiDataTrigger>
@@ -342,7 +342,7 @@
 			Grid.Row="1"
 			Grid.Column="1"
 			VerticalAlignment="Stretch"
-			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+			 Background="{StaticResource BackgroundLight}">
 			<StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
 				<Button
 					x:Name="SendButton"
@@ -352,12 +352,9 @@
 					Click="SendButton_Click"
 					Style="{DynamicResource RoundCornerBlue}">
 					<Viewbox>
-						<ContentControl
-							Margin="0"
-							Padding="0"
+						<ContentControl Margin="0" Padding="0"
 							Content="{StaticResource Icon_MediaPlay}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
+							Focusable="False" />
 					</Viewbox>
 				</Button>
 				<Button
@@ -368,12 +365,9 @@
 					Click="StopButton_Click"
 					Style="{DynamicResource RoundCornerRed}">
 					<Viewbox>
-						<ContentControl
-							Margin="0"
-							Padding="0"
+						<ContentControl Margin="0" Padding="0"
 							Content="{StaticResource Icon_MediaStop}"
-							Focusable="False"
-							Style="{StaticResource ButtonContentControl}" />
+							Focusable="False" />
 					</Viewbox>
 				</Button>
 			</StackPanel>

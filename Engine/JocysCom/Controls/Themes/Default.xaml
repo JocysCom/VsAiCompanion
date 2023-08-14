@@ -10,6 +10,16 @@
 	-->
 
 	<!--  Colors  -->
+	<SolidColorBrush x:Key="BackgroundWhite" Color="#ffffff" />
+
+	<SolidColorBrush x:Key="BackgroundLight" Color="#f0f0f0" />
+	<SolidColorBrush x:Key="BackgroundLightSelected" Color="#e4f4ff" />
+
+	<SolidColorBrush x:Key="BackgroundDark" Color="#dedede" />
+	<SolidColorBrush x:Key="BackgroundDarkSelected" Color="#c2e7ff" />
+
+	<SolidColorBrush x:Key="BorderDark" Color="#cccccc" />
+	<SolidColorBrush x:Key="BorderDarkSelected" Color="#a4d8fa" />
 
 	<SolidColorBrush x:Key="SolidColorBrush_BFF">#ff000000</SolidColorBrush>
 
@@ -47,13 +57,14 @@
 
 	<Style x:Key="Window_Default" TargetType="Window">
 		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
 	</Style>
 
 	<!--  UserControl  -->
 
 	<Style x:Key="UserControl_Default" TargetType="UserControl">
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
+		<Setter Property="Background" Value="{StaticResource BackgroundLight}" />
 	</Style>
 
 	<!--  Grid  -->
@@ -70,6 +81,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type GridSplitter}">
+					<!--  The "Transparent" background is necessary for the resize icon to be visible beneath the mouse correctly.  -->
 					<Grid Background="Transparent">
 						<StackPanel Margin="3" VerticalAlignment="Center" Orientation="Vertical">
 							<StackPanel.LayoutTransform>
@@ -119,6 +131,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type GridSplitter}">
+					<!--  The "Transparent" background is necessary for the resize icon to be visible beneath the mouse correctly.  -->
 					<Grid Background="Transparent">
 						<StackPanel Margin="3" VerticalAlignment="Center" Orientation="Vertical">
 							<StackPanel.LayoutTransform>
@@ -169,6 +182,12 @@
 
 	-->
 
+	<!--  Label  -->
+	<Style x:Key="Label_Default" TargetType="Label">
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+	</Style>
+
+
 	<!--  MenuItem  -->
 
 	<Style x:Key="MenuItem_Default" TargetType="MenuItem">
@@ -176,38 +195,134 @@
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
 
+
+
+
+
 	<!--  StackPanel  -->
 
 	<Style x:Key="Container" TargetType="StackPanel">
 		<Setter Property="Margin" Value="0" />
 	</Style>
 
+	<!--  ContentControl  -->
+	<Style x:Key="ContentControl_Default" TargetType="ContentControl">
+		<Setter Property="Width" Value="16" />
+		<Setter Property="Height" Value="16" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ContentControl">
+					<ControlTemplate.Resources>
+						<Style TargetType="Image">
+							<Setter Property="Width" Value="16" />
+							<Setter Property="Height" Value="16" />
+						</Style>
+						<Style TargetType="Label">
+							<Setter Property="Padding" Value="0" />
+							<Setter Property="Margin" Value="5,0,0,0" />
+							<Setter Property="VerticalAlignment" Value="Center" />
+						</Style>
+					</ControlTemplate.Resources>
+					<!--  Template  -->
+					<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  BUTTON  -->
+
+	<!--  Button StackPanel  -->
 	<Style x:Key="ButtonStackPanel" TargetType="StackPanel">
-		<Setter Property="Margin" Value="3,1,3,1" />
 		<Setter Property="Orientation" Value="Horizontal" />
 		<Setter Property="IsHitTestVisible" Value="False" />
 	</Style>
 
-	<!--  Button  -->
-
-	<Style x:Key="Button_Default" TargetType="Button">
-		<Setter Property="Height" Value="Auto" />
-		<Setter Property="BorderThickness" Value="0" />
-		<Setter Property="Margin" Value="3" />
-		<Setter Property="Padding" Value="2" />
-		<Setter Property="MinWidth" Value="75" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-		<Style.Resources>
-			<Style TargetType="Border">
-				<Setter Property="CornerRadius" Value="5" />
-			</Style>
-		</Style.Resources>
-		<Style.Triggers>
-			<Trigger Property="IsEnabled" Value="False">
-				<Setter Property="Opacity" Value="0.5" />
-			</Trigger>
-		</Style.Triggers>
+	<!--  Label  -->
+	<Style x:Key="ButtonLabel" TargetType="Label">
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
 	</Style>
+
+	<!--  Button  -->
+	<Style x:Key="Button_Default" TargetType="Button">
+		<Setter Property="HorizontalAlignment" Value="Left" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="SnapsToDevicePixels" Value="True" />
+		<Setter Property="MinWidth" Value="26" />
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Padding" Value="5" />
+		<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<ControlTemplate.Resources>
+						<Style TargetType="StackPanel">
+							<Setter Property="Orientation" Value="Horizontal" />
+							<Setter Property="HorizontalAlignment" Value="Center" />
+						</Style>
+						<Style TargetType="Image">
+							<Setter Property="Width" Value="16" />
+							<Setter Property="Height" Value="16" />
+						</Style>
+						<Style TargetType="Label">
+							<Setter Property="Padding" Value="0" />
+							<Setter Property="Margin" Value="5,0,0,0" />
+							<Setter Property="VerticalAlignment" Value="Center" />
+						</Style>
+					</ControlTemplate.Resources>
+					<!--  Template  -->
+					<Border
+						Name="ButtonBorder"
+						Margin="{TemplateBinding Margin}"
+						Padding="{TemplateBinding Padding}"
+						Background="{TemplateBinding Background}"
+						CornerRadius="5">
+						<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+					</Border>
+					<!--  Triggers  -->
+					<ControlTemplate.Triggers>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsMouseOver" Value="True" />
+								<Condition Property="IsEnabled" Value="True" />
+							</MultiTrigger.Conditions>
+							<Setter TargetName="ButtonBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+						</MultiTrigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Opacity" Value="0.5" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--<Style x:Key="Button_Default" TargetType="Button">
+        <Setter Property="Height" Value="Auto" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="MinWidth" Value="75" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5" />
+            </Style>
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.5" />
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsEnabled" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="Red" />
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>-->
 
 	<!--  Button -ToolBar  -->
 
@@ -215,51 +330,53 @@
 		<Setter Property="Margin" Value="0" />
 		<Setter Property="Padding" Value="2" />
 		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Background" Value="Transparent" />
 		<Style.Resources>
 			<Style TargetType="Border">
 				<Setter Property="CornerRadius" Value="5" />
+				<Setter Property="Background" Value="Green" />
 			</Style>
 		</Style.Resources>
 		<Style.Triggers>
 			<Trigger Property="IsEnabled" Value="False">
 				<Setter Property="Opacity" Value="0.5" />
 			</Trigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsMouseOver" Value="True" />
+					<Condition Property="IsEnabled" Value="True" />
+				</MultiTrigger.Conditions>
+				<Setter Property="Background" Value="Red" />
+			</MultiTrigger>
 		</Style.Triggers>
 	</Style>
 
 	<!--  TabItem  -->
-
 	<Style x:Key="TabItem_Default" TargetType="TabItem" />
 
 	<!--  TabControl  -->
-
 	<!--  This style is making control to fail garbage collection (leak memory)  -->
 	<Style x:Key="TabControl_Default" TargetType="TabControl">
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type TabControl}">
+				<ControlTemplate TargetType="TabControl">
 					<Grid KeyboardNavigation.TabNavigation="Local">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="*" />
 						</Grid.RowDefinitions>
-						<TabPanel
-							x:Name="HeaderPanel"
-							Grid.Row="0"
-							Margin="0,0,0,-1"
-							Panel.ZIndex="1"
-							IsItemsHost="True" />
+						<TabPanel x:Name="HeaderPanel" Panel.ZIndex="1" IsItemsHost="True" />
 						<Border
 							x:Name="Border"
 							Grid.Row="1"
-							BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+							BorderBrush="{StaticResource BorderDark}"
 							BorderThickness="1"
+							CornerRadius="0,5,5,5"
 							KeyboardNavigation.DirectionalNavigation="Contained"
 							KeyboardNavigation.TabIndex="2"
 							KeyboardNavigation.TabNavigation="Local">
-							<ContentPresenter Margin="0" ContentSource="SelectedContent" />
+							<ContentPresenter ContentSource="SelectedContent" />
 						</Border>
 					</Grid>
 				</ControlTemplate>
@@ -271,64 +388,39 @@
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="TabItem">
-							<Border Name="TiBorder" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1,1,1,1">
-								<ContentPresenter
-									Name="TiContent"
-									HorizontalAlignment="Center"
-									VerticalAlignment="Center"
-									ContentSource="Header" />
-							</Border>
+							<ControlTemplate.Resources>
+								<Style TargetType="Label">
+									<Setter Property="Padding" Value="0" />
+									<Setter Property="Margin" Value="3,0,0,0" />
+									<Setter Property="VerticalAlignment" Value="Center" />
+								</Style>
+							</ControlTemplate.Resources>
+							<Grid Margin="0,0,3,-1">
+								<Border
+									Name="TiBorder"
+									Margin="0,0,0,1"
+									Padding="5,4,5,5"
+									Background="{StaticResource BackgroundDark}"
+									BorderBrush="{StaticResource BackgroundDark}"
+									BorderThickness="1,1,1,0"
+									CornerRadius="5,5,0,0">
+									<ContentPresenter
+										Name="TiContent"
+										HorizontalAlignment="Center"
+										VerticalAlignment="Center"
+										ContentSource="Header" />
+								</Border>
+								<Border
+									Name="BoBorder"
+									Margin="1,0,1,0"
+									BorderBrush="{StaticResource BorderDark}"
+									BorderThickness="0,0,0,1" />
+							</Grid>
 							<ControlTemplate.Triggers>
-								<MultiDataTrigger>
-									<MultiDataTrigger.Conditions>
-										<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="False" />
-										<Condition Binding="{Binding Converter={StaticResource _TabIndexConverter}, RelativeSource={RelativeSource Self}}" Value="First" />
-									</MultiDataTrigger.Conditions>
-									<MultiDataTrigger.Setters>
-										<Setter TargetName="TiBorder" Property="BorderThickness" Value="1,1,1,1" />
-									</MultiDataTrigger.Setters>
-								</MultiDataTrigger>
-								<MultiDataTrigger>
-									<MultiDataTrigger.Conditions>
-										<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
-										<Condition Binding="{Binding Converter={StaticResource _TabIndexConverter}, RelativeSource={RelativeSource Self}}" Value="FirstSelected" />
-									</MultiDataTrigger.Conditions>
-									<MultiDataTrigger.Setters>
-										<Setter TargetName="TiBorder" Property="BorderThickness" Value="1,1,1,0" />
-									</MultiDataTrigger.Setters>
-								</MultiDataTrigger>
-								<MultiDataTrigger>
-									<MultiDataTrigger.Conditions>
-										<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="False" />
-										<Condition Binding="{Binding Converter={StaticResource _TabIndexConverter}, RelativeSource={RelativeSource Self}}" Value="" />
-									</MultiDataTrigger.Conditions>
-									<MultiDataTrigger.Setters>
-										<Setter TargetName="TiBorder" Property="BorderThickness" Value="0,1,1,1" />
-									</MultiDataTrigger.Setters>
-								</MultiDataTrigger>
-								<MultiDataTrigger>
-									<MultiDataTrigger.Conditions>
-										<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
-										<Condition Binding="{Binding Converter={StaticResource _TabIndexConverter}, RelativeSource={RelativeSource Self}}" Value="Selected" />
-									</MultiDataTrigger.Conditions>
-									<MultiDataTrigger.Setters>
-										<Setter TargetName="TiBorder" Property="BorderThickness" Value="0,1,1,0" />
-									</MultiDataTrigger.Setters>
-								</MultiDataTrigger>
 								<Trigger Property="IsSelected" Value="True">
-									<Setter TargetName="TiContent" Property="Margin" Value="6,3,6,4" />
-									<Setter TargetName="TiBorder" Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-								</Trigger>
-								<Trigger Property="IsSelected" Value="False">
-									<Setter TargetName="TiContent" Property="Margin" Value="6,3,6,3" />
-									<Setter TargetName="TiBorder" Property="Background">
-										<Setter.Value>
-											<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-												<GradientStop Offset="0" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
-												<GradientStop Offset="1" Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}" />
-											</LinearGradientBrush>
-										</Setter.Value>
-									</Setter>
+									<Setter TargetName="TiBorder" Property="Background" Value="{StaticResource BackgroundWhite}" />
+									<Setter TargetName="TiBorder" Property="BorderBrush" Value="{StaticResource BorderDark}" />
+									<Setter TargetName="BoBorder" Property="BorderBrush" Value="{StaticResource BackgroundWhite}" />
 								</Trigger>
 								<MultiTrigger>
 									<MultiTrigger.Conditions>
@@ -336,7 +428,8 @@
 										<Condition Property="IsSelected" Value="False" />
 									</MultiTrigger.Conditions>
 									<MultiTrigger.Setters>
-										<Setter TargetName="TiBorder" Property="Background" Value="{DynamicResource {x:Static SystemColors.GradientInactiveCaptionBrushKey}}" />
+										<Setter TargetName="TiBorder" Property="BorderBrush" Value="{StaticResource BackgroundDarkSelected}" />
+										<Setter TargetName="TiBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
 									</MultiTrigger.Setters>
 								</MultiTrigger>
 							</ControlTemplate.Triggers>
@@ -419,7 +512,7 @@
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="VerticalContentAlignment" Value="Top" />
 		<Setter Property="AcceptsReturn" Value="True" />
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
 		<Setter Property="FontFamily" Value="Consolas" />
 		<Setter Property="MinLines" Value="5" />
 		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
@@ -491,7 +584,7 @@
 		<Setter Property="CanUserDeleteRows" Value="False" />
 		<Setter Property="GridLinesVisibility" Value="Horizontal" />
 		<Setter Property="HeadersVisibility" Value="Column" />
-		<Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BackgroundDark}" />
 		<Setter Property="VerticalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="VerticalScrollBarVisibility" Value="Auto" />
 		<Style.Resources>
@@ -501,7 +594,7 @@
 			<!--  Other styles  -->
 			<Style TargetType="DataGridColumnHeader">
 				<Setter Property="Padding" Value="3,3,3,3" />
-				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+				<!--<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
 				<Setter Property="Background">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
@@ -533,7 +626,7 @@
 	</Style>
 
 	<Style x:Key="DataGridReadOnly" BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid">
-		<Setter Property="RowBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<!--<Setter Property="RowBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
 		<Setter Property="IsReadOnly" Value="true" />
 		<Setter Property="BorderThickness" Value="1,0,0,0" />
 		<Setter Property="GridLinesVisibility" Value="All" />
@@ -714,9 +807,6 @@
 		</Style.Triggers>
 	</Style>
 
-
-
-
 	<!--  DataGridTextColumn  -->
 	<!--
 
@@ -725,20 +815,19 @@
 	-->
 	<!--  ComboBox  -->
 
-
-	<Style x:Key="ComboBox_Default" TargetType="ComboBox">
-		<Setter Property="Margin" Value="3,3,3,3" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-	</Style>
+	<!--<Style x:Key="ComboBox_Default" TargetType="ComboBox">
+        <Setter Property="Margin" Value="3,3,3,3" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>-->
 
 	<!--  ComboBox - Grid  -->
 
-	<Style x:Key="ComboBoxGrid" BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox">
-		<Setter Property="Padding" Value="3,3,3,3" />
-		<Setter Property="Margin" Value="3,3,3,3" />
-		<Setter Property="HorizontalAlignment" Value="Left" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-	</Style>
+	<!--<Style x:Key="ComboBoxGrid" BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox">
+        <Setter Property="Padding" Value="3,3,3,3" />
+        <Setter Property="Margin" Value="3,3,3,3" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>-->
 
 
 	<!--  CheckBox  -->
@@ -769,7 +858,7 @@
 
 	<!--  CheckBox Template  -->
 	<ControlTemplate x:Key="CheckBox_Template" TargetType="CheckBox">
-		<StackPanel Margin="3,3" Orientation="Horizontal">
+		<StackPanel Margin="3" Orientation="Horizontal">
 			<Border
 				x:Name="checkBoxBorder"
 				Padding="1"
@@ -847,38 +936,12 @@
 		<Setter Property="HorizontalAlignment" Value="Center" />
 	</Style>
 
-	<!--  ContentControl  -->
-
-	<Style x:Key="ButtonImage" TargetType="Image">
-		<Setter Property="Margin" Value="0,2,0,2" />
-		<Setter Property="Width" Value="16" />
-		<Setter Property="Height" Value="16" />
-	</Style>
-
-	<Style x:Key="ButtonContentControl" TargetType="ContentControl">
-		<Setter Property="Margin" Value="0,2,0,2" />
-		<Setter Property="Padding" Value="0,0,0,0" />
-		<Setter Property="Width" Value="16" />
-		<Setter Property="Height" Value="16" />
-	</Style>
-
-	<!--  Label  -->
-
-	<Style x:Key="ButtonLabel" TargetType="Label">
-		<Setter Property="Margin" Value="0,0,0,0" />
-		<Setter Property="Padding" Value="4,2,4,2" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="HorizontalContentAlignment" Value="Center" />
-		<Setter Property="MinWidth" Value="48" />
-	</Style>
-
 	<Style x:Key="LabelGrid" TargetType="Label">
 		<Setter Property="Padding" Value="4,2,4,2" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
 
 	<!--  ToolBarPanel  -->
-
 	<Style x:Key="MainToolBarPanel" TargetType="ToolBarPanel">
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="VerticalAlignment" Value="Top" />
@@ -887,13 +950,13 @@
 	</Style>
 
 	<!--  ToolBar  -->
-
 	<Style x:Key="MainToolBar" TargetType="ToolBar">
+		<Setter Property="Background" Value="Transparent" />
 		<Setter Property="Margin" Value="-1,0,-12,-1" />
+		<!--  Hide right expand mini button  -->
 		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="ToolBar.OverflowMode" Value="AsNeeded" />
 		<Setter Property="ToolBarTray.IsLocked" Value="True" />
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Style.Resources>
 			<Style x:Key="ToolBarMainPanelBorderStyle" TargetType="{x:Type Border}">
 				<Setter Property="CornerRadius" Value="0,0,0,0" />
@@ -938,16 +1001,15 @@
 							Margin="0,13,1,1"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
-							BorderBrush="Black"
+							BorderBrush="{StaticResource BorderDark}"
 							BorderThickness="1"
-							CornerRadius="5"
-							Opacity="0.15" />
+							CornerRadius="5" />
 						<StackPanel>
 							<Border
 								Margin="10,0,10,0"
 								HorizontalAlignment="Left"
 								VerticalAlignment="Top"
-								Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+								Background="{StaticResource BackgroundLight}">
 								<ContentPresenter Margin="5" ContentSource="Header" />
 							</Border>
 							<ContentPresenter Margin="5,0,5,5" ContentSource="Content" />
@@ -1036,12 +1098,147 @@
 		</Setter>
 	</Style>-->
 
-	<!--DataGridCell Triggers-->
+	<!--  ComboBoxTogleButton (SelectedItem) and (Arrow)  -->
+	<Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ToggleButton">
+					<Border Name="Border" Background="{StaticResource BackgroundDark}" CornerRadius="5">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition />
+								<ColumnDefinition Width="25" />
+							</Grid.ColumnDefinitions>
+							<Path
+								Name="Arrow"
+								Grid.Column="1"
+								Width="10"
+								Height="5"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center"
+								Data="M 0,0 L 10,0 L 5,5 Z"
+								Fill="Black"
+								RenderTransformOrigin="0.5,0.5" />
+						</Grid>
+					</Border>
+					<!--  Triggers  -->
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="Border" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  ComboBoxItem  -->
+	<Style TargetType="ComboBoxItem">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ComboBoxItem">
+					<Border
+						Name="ComboBoxItemBorder"
+						Padding="10,5,25,5"
+						CornerRadius="5"
+						SnapsToDevicePixels="True">
+						<ContentPresenter />
+					</Border>
+					<!--  Triggers  -->
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="ComboBoxItemBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  ComboBoxTextBox  -->
+	<!--
+		<ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+			<Border x:Name="PART_ContentHost" />
+		</ControlTemplate>-->
+
+	<!--  ComboBox **********************************************************************  -->
+	<Style x:Key="ComboBox_Default" TargetType="ComboBox">
+		<Setter Property="SnapsToDevicePixels" Value="True" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
+		<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ComboBox">
+					<Grid>
+						<!--  Toggle Button settings  -->
+						<ToggleButton
+							Name="ToggleButton"
+							ClickMode="Press"
+							Focusable="false"
+							IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+							Style="{StaticResource ComboBoxToggleButton}" />
+						<!--  Selected item settings  -->
+						<ContentPresenter
+							Name="ContentSite"
+							Margin="10,5,25,5"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Center"
+							Content="{TemplateBinding SelectionBoxItem}"
+							ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+							IsHitTestVisible="False" />
+						<!--  DropDown popup settings  -->
+						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
+							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+								<Border Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+								<ScrollViewer Margin="0">
+									<VirtualizingStackPanel IsItemsHost="True" />
+								</ScrollViewer>
+							</Grid>
+						</Popup>
+					</Grid>
+					<!--  Triggers  -->
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Opacity" Value="0.5" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  ComboBox Default  -->
+
+	<!--<Style TargetType="ListView">
+        <Setter Property="Background" Value="{StaticResource Color.Black.4}"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Padding" Value="5"/>
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Roboto Mono"/>
+                <Setter Property="FontSize" Value="11"/>
+            </Style>
+
+            <Style TargetType="ListViewItem">
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Style>
+        </Style.Resources>
+    </Style>-->
+
+
+	<!--  DataGridCell Triggers  -->
 	<Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
 		<Setter Property="Padding" Value="4" />
 		<Style.Triggers>
 			<Trigger Property="IsSelected" Value="True">
-				<Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}"/>
+				<Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -1065,6 +1262,8 @@
 	<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />
 	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
 	<Style BasedOn="{StaticResource MenuItem_Default}" TargetType="MenuItem" />
+	<Style BasedOn="{StaticResource Label_Default}" TargetType="Label" />
+	<Style BasedOn="{StaticResource ContentControl_Default}" TargetType="ContentControl" />
 	<!--<Style BasedOn="{StaticResource DataGridCellStyle}" TargetType="DataGridCell" />-->
 
 	<!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->

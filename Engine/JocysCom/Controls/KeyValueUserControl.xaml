@@ -21,59 +21,38 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar KeyboardNavigation.TabNavigation="Continue" Style="{StaticResource MainToolBar}">
-				<Button
-					Name="AddButton"
-					HorizontalAlignment="Left"
-					x:FieldModifier="public"
-					Click="AddButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Add New">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label
-							x:Name="AddButtonLabel"
-							Content="Add New"
-							Style="{StaticResource ButtonLabel}"
-							Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="EditButton"
-					HorizontalAlignment="Left"
-					x:FieldModifier="public"
-					Click="EditButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Edit">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label
-							x:Name="EditButtonLabel"
-							Content="Edit"
-							Style="{StaticResource ButtonLabel}"
-							Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="DeleteButton"
-					HorizontalAlignment="Right"
-					x:FieldModifier="public"
-					Click="DeleteButton_Click"
-					Style="{StaticResource ToolBarButton}"
-					ToolTip="Delete">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" Style="{StaticResource ButtonContentControl}" />
-						<Label
-							x:Name="DeleteButtonLabel"
-							Content="Delete"
-							Style="{StaticResource ButtonLabel}"
-							Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-
-			</ToolBar>
-		</ToolBarPanel>
+		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+			<Button
+				Name="AddButton"
+				x:FieldModifier="public"
+				Click="AddButton_Click"
+				ToolTip="Add New">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+					<Label x:Name="AddButtonLabel" Content="Add New" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="EditButton"
+				x:FieldModifier="public"
+				Click="EditButton_Click"
+				ToolTip="Edit">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+					<Label x:Name="EditButtonLabel" Content="Edit" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="DeleteButton"
+				x:FieldModifier="public"
+				Click="DeleteButton_Click"
+				ToolTip="Delete">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
+					<Label x:Name="DeleteButtonLabel" Content="Delete" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
