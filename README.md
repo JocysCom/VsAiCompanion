@@ -58,7 +58,7 @@ Ask AI to fix the exception by either copying and pasting the exception info as 
 
 Application Options:
 
-<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Options.png" width="400" height="400">
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Options.png" width="600" height="600">
 
 Task and template settings are saved in separate files for easy exchange and sharing:
 
