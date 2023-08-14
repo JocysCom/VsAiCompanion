@@ -2,7 +2,6 @@
   <Name>AI - Chat</Name>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
-  <ShowInstructions>false</ShowInstructions>
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
