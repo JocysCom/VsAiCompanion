@@ -81,7 +81,8 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type GridSplitter}">
-					<Grid>
+					<!--  The "Transparent" background is necessary for the resize icon to be visible beneath the mouse correctly.  -->
+					<Grid Background="Transparent">
 						<StackPanel Margin="3" VerticalAlignment="Center" Orientation="Vertical">
 							<StackPanel.LayoutTransform>
 								<RotateTransform Angle="0" />
@@ -130,7 +131,8 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type GridSplitter}">
-					<Grid>
+					<!--  The "Transparent" background is necessary for the resize icon to be visible beneath the mouse correctly.  -->
+					<Grid Background="Transparent">
 						<StackPanel Margin="3" VerticalAlignment="Center" Orientation="Vertical">
 							<StackPanel.LayoutTransform>
 								<RotateTransform Angle="90" />
