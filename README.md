@@ -1,5 +1,5 @@
 # Jocys.com VS AI Companion
-This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci...) subscription.
+This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci...) subscription, also run Open AI on their local machine ([GPT4All](https://gpt4all.io/)), as well as those who run AI on-premises or on Azure Cloud.
 
 The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application. It's like a Swiss Army Knife of AI for developers.
 
@@ -7,7 +7,7 @@ The AI Companion is a tool that analyzes your project files and works alongside 
 Data submitted via the OpenAI API is not used to train or improve its models, unless customers explicitly decide to share their data. Web Chat is limited to 4K tokens, while AI models on API can process data 4-8 times larger.
 
 ### Download
-Digitally Signed Standalone/Portable Application v1.0.82 (2023-08-04)
+Digitally Signed Standalone/Portable Application v1.0.91 (2023-08-14)
 
 [Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.0.0/JocysCom.VS.AiCompanion.App.zip)
 
@@ -58,7 +58,7 @@ Ask AI to fix the exception by either copying and pasting the exception info as 
 
 Application Options:
 
-<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Options.png" width="604" height="490">
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Options.png" width="400" height="400">
 
 Task and template settings are saved in separate files for easy exchange and sharing:
 
