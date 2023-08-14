@@ -27,41 +27,38 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<GroupBox Grid.Row="0" Margin="3,0,3,0" Header="General">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<Label
-					Grid.Row="0"
-					Grid.Column="0"
-					VerticalAlignment="Center"
-					Content="Settings Folder" />
-				<TextBox
-					Name="SettingsFolderTextBox"
-					Grid.Row="0"
-					Grid.Column="1"
-					VerticalAlignment="Center"
-					IsReadOnly="True" />
-				<Button
-					Name="OpenButton"
-					Grid.Row="0"
-					Grid.Column="2"
-					Click="OpenButton_Click">
-					<StackPanel Focusable="False">
-						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
-						<Label Content="Open..." />
-					</StackPanel>
-				</Button>
-			</Grid>
-		</GroupBox>
-
+		<Grid Grid.Row="0" Margin="3,0,3,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Row="0"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				Content="Settings Folder" />
+			<TextBox
+				Name="SettingsFolderTextBox"
+				Grid.Row="0"
+				Grid.Column="1"
+				VerticalAlignment="Center"
+				IsReadOnly="True" />
+			<Button
+				Name="OpenButton"
+				Grid.Row="0"
+				Grid.Column="2"
+				Click="OpenButton_Click">
+				<StackPanel Focusable="False">
+					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+					<Label Content="Open..." />
+				</StackPanel>
+			</Button>
+		</Grid>
 		<TabControl
 			x:Name="AiServicesTabControl"
 			Grid.Row="1"

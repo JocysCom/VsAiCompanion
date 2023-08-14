@@ -37,6 +37,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
+
 			if (e.WidthChanged && !_gridSplitterPositionSet)
 			{
 				_gridSplitterPositionSet = true;
@@ -46,12 +47,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void LoadPositions()
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			var position = Global.AppSettings.AiServiceData.GridSplitterPosition;
 			PositionSettings.SetGridSplitterPosition(MainGrid, position);
 		}
 
 		void SavePositions()
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			var position = PositionSettings.GetGridSplitterPosition(MainGrid);
 			if (position == 0.0)
 				return;

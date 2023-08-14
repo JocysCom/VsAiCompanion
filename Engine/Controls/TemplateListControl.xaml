@@ -151,105 +151,106 @@
 				</TextBlock>
 			</Grid>
 		</Border>
-		<DataGrid
-			x:Name="MainDataGrid"
-			Grid.Row="2"
-			Height="Auto"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
-			x:FieldModifier="public"
-			AutoGenerateColumns="False"
-			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-			BorderThickness="0"
-			CellEditEnding="MainDataGrid_CellEditEnding"
-			IsReadOnly="False"
-			Loaded="MainDataGrid_Loaded"
-			MouseDoubleClick="MainDataGrid_MouseDoubleClick"
-			PreparingCellForEdit="MainDataGrid_PreparingCellForEdit"
-			ScrollViewer.CanContentScroll="True"
-			ScrollViewer.HorizontalScrollBarVisibility="Auto"
-			ScrollViewer.VerticalScrollBarVisibility="Auto"
-			SelectionMode="Extended">
-			<DataGrid.Resources>
-				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
-			</DataGrid.Resources>
-			<DataGrid.Columns>
-				<DataGridTemplateColumn x:Name="IconColumn" Width="16" IsReadOnly="True">
-					<DataGridTemplateColumn.CellStyle>
-						<Style TargetType="DataGridCell">
-							<Setter Property="Focusable" Value="false" />
-						</Style>
-					</DataGridTemplateColumn.CellStyle>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Image x:Name="IconImage" Margin="3,0,0,0" Source="{Binding Icon}" />
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridCheckBoxColumn
-					x:Name="IsEnabledColumn"
-					Width="Auto"
-					Binding="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					CanUserSort="False"
-					EditingElementStyle="{StaticResource CheckBoxCell}"
-					ElementStyle="{StaticResource CheckBoxCell}"
-					IsThreeState="False" />
-				<DataGridCheckBoxColumn
-					x:Name="IsCheckedColumn"
-					Width="Auto"
-					Binding="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					CanUserSort="False"
-					EditingElementStyle="{StaticResource CheckBoxCell}"
-					ElementStyle="{StaticResource CheckBoxCell}">
-					<DataGridCheckBoxColumn.Header>
-						<CheckBox
-							x:Name="IsCheckedColumnCheckBox"
-							Margin="0,0,0,0"
-							Padding="0,0,0,0"
-							IsEnabled="False" />
-					</DataGridCheckBoxColumn.Header>
-				</DataGridCheckBoxColumn>
-				<DataGridTemplateColumn x:Name="StatusCodeColumn" Width="SizeToCells" IsReadOnly="True">
-					<DataGridTemplateColumn.Header>
-						<ContentControl
-							x:Name="StatusCodeColumnContentControl"
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_Information_Grey}"
-							IsEnabled="False" />
-					</DataGridTemplateColumn.Header>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<ContentControl>
-								<ContentControl.Content>
-									<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
-										<Binding RelativeSource="{RelativeSource Self}" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" />
-										<Binding Path="StatusCode" />
-									</MultiBinding>
-								</ContentControl.Content>
-							</ContentControl>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTextColumn
-					x:Name="StatusTextColumn"
-					Binding="{Binding StatusText}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Status" />
-				<DataGridTextColumn
-					x:Name="NameColumn"
-					Width="*"
-					Binding="{Binding Name}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Name" />
-			</DataGrid.Columns>
-			<DataGrid.CellStyle>
-				<Style BasedOn="{StaticResource DataGridCellStyle}" TargetType="DataGridCell" />
-			</DataGrid.CellStyle>
-		</DataGrid>
+		<Border Grid.Row="2" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" CornerRadius="0,0,0,5">
+			<DataGrid
+				x:Name="MainDataGrid"
+				Height="Auto"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				x:FieldModifier="public"
+				AutoGenerateColumns="False"
+				Background="Transparent"
+				BorderThickness="0"
+				CellEditEnding="MainDataGrid_CellEditEnding"
+				IsReadOnly="False"
+				Loaded="MainDataGrid_Loaded"
+				MouseDoubleClick="MainDataGrid_MouseDoubleClick"
+				PreparingCellForEdit="MainDataGrid_PreparingCellForEdit"
+				ScrollViewer.CanContentScroll="True"
+				ScrollViewer.HorizontalScrollBarVisibility="Auto"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				SelectionMode="Extended">
+				<DataGrid.Resources>
+					<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
+				</DataGrid.Resources>
+				<DataGrid.Columns>
+					<DataGridTemplateColumn x:Name="IconColumn" Width="16" IsReadOnly="True">
+						<DataGridTemplateColumn.CellStyle>
+							<Style TargetType="DataGridCell">
+								<Setter Property="Focusable" Value="false" />
+							</Style>
+						</DataGridTemplateColumn.CellStyle>
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<Image x:Name="IconImage" Margin="3,0,0,0" Source="{Binding Icon}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridCheckBoxColumn
+						x:Name="IsEnabledColumn"
+						Width="Auto"
+						Binding="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						CanUserSort="False"
+						EditingElementStyle="{StaticResource CheckBoxCell}"
+						ElementStyle="{StaticResource CheckBoxCell}"
+						IsThreeState="False" />
+					<DataGridCheckBoxColumn
+						x:Name="IsCheckedColumn"
+						Width="Auto"
+						Binding="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						CanUserSort="False"
+						EditingElementStyle="{StaticResource CheckBoxCell}"
+						ElementStyle="{StaticResource CheckBoxCell}">
+						<DataGridCheckBoxColumn.Header>
+							<CheckBox
+								x:Name="IsCheckedColumnCheckBox"
+								Margin="0,0,0,0"
+								Padding="0,0,0,0"
+								IsEnabled="False" />
+						</DataGridCheckBoxColumn.Header>
+					</DataGridCheckBoxColumn>
+					<DataGridTemplateColumn x:Name="StatusCodeColumn" Width="SizeToCells" IsReadOnly="True">
+						<DataGridTemplateColumn.Header>
+							<ContentControl
+								x:Name="StatusCodeColumnContentControl"
+								Width="12"
+								Height="12"
+								VerticalAlignment="Center"
+								Content="{StaticResource Icon_Information_Grey}"
+								IsEnabled="False" />
+						</DataGridTemplateColumn.Header>
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<ContentControl>
+									<ContentControl.Content>
+										<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
+											<Binding RelativeSource="{RelativeSource Self}" />
+											<Binding RelativeSource="{RelativeSource TemplatedParent}" />
+											<Binding Path="StatusCode" />
+										</MultiBinding>
+									</ContentControl.Content>
+								</ContentControl>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTextColumn
+						x:Name="StatusTextColumn"
+						Binding="{Binding StatusText}"
+						EditingElementStyle="{StaticResource TextBoxCell}"
+						ElementStyle="{StaticResource TextBlockCell}"
+						Header="Status" />
+					<DataGridTextColumn
+						x:Name="NameColumn"
+						Width="*"
+						Binding="{Binding Name}"
+						EditingElementStyle="{StaticResource TextBoxCell}"
+						ElementStyle="{StaticResource TextBlockCell}"
+						Header="Name" />
+				</DataGrid.Columns>
+				<DataGrid.CellStyle>
+					<Style BasedOn="{StaticResource DataGridCellStyle}" TargetType="DataGridCell" />
+				</DataGrid.CellStyle>
+			</DataGrid>
+		</Border>
 	</Grid>
 </UserControl>

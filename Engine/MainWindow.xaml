@@ -7,7 +7,7 @@
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	Title="MainWindow"
 	Width="800"
-	Height="700"
+	Height="800"
 	Closing="Window_Closing"
 	RenderOptions.BitmapScalingMode="HighQuality"
 	ResizeMode="CanResizeWithGrip"
