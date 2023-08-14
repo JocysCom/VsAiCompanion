@@ -7,7 +7,7 @@
 Code feature to find:</TextInstructions>
   <Text>Multiplication</Text>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>

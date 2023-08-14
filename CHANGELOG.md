@@ -1,3 +1,9 @@
+2023-08-14 v1.0.91
+
+- New: Added support for multiple API services, including local machine, on-premise, or cloud.
+- New: Option to send a message with ENTER. Use SHIFT+ENTER for a new line.
+- Update: UI style updated.
+
 2023-08-04 v1.0.82
 
 - Fix: Remove duplicate option to attach chat logs.

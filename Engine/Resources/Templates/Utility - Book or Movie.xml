@@ -5,7 +5,7 @@
   <TextInstructions>Can you suggest some books/movies? This is what I like:</TextInstructions>
   <Text>[insert genre here]</Text>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>

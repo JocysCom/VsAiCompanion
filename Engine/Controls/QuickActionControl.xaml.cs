@@ -18,7 +18,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 			{
 				var list = new SortableBindingList<TemplateItem>();
-				list.Add(new TemplateItem() { Name = "TestButton " });
 				CurrentItems = list;
 				return;
 			}

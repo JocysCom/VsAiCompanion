@@ -4,10 +4,8 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -24,11 +22,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AiCompanionComboBox.ItemsSource = Enum.GetValues(typeof(Companions.CompanionType));
-			AiCompanionComboBox.SelectedItem = Companions.CompanionType.OpenAI;
+			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
-
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -37,6 +33,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			Global.AiModelsUpdated += Global_AiModelsUpdated;
+			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
+			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+		}
+
+		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AppData.UseEnterToSendMessage))
+				ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 		}
 
 		private void Global_OnSaveSettings(object sender, EventArgs e)
@@ -82,45 +86,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void Global_AiModelsUpdated(object sender, EventArgs e)
 		{
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-			UpdateAiModels(_item?.AiModel);
+			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
-
-
-		public void UpdateAiModels(params string[] args)
-		{
-			// Make sure checkbox can display current model.
-			var list = Global.AppSettings.OpenAiSettings.AiModels.ToList();
-			foreach (var arg in args)
-			{
-				if (!string.IsNullOrEmpty(arg) && !list.Contains(arg))
-					list.Add(arg);
-			}
-			SettingsHelper.Synchronize(list, AiModels);
-		}
-
-		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (Global.IsIncompleteSettings())
-				return;
-			Regex filterRx = null;
-			try
-			{
-				filterRx = new Regex(Global.AppSettings.OpenAiSettings.ModelFilter);
-			}
-			catch { }
-			var client = new Companions.ChatGPT.Client(Global.AppSettings.OpenAiSettings.BaseUrl);
-			var models = await client.GetModels();
-			var modelIds = models
-				.OrderByDescending(x => x.Id)
-				.Select(x => x.Id)
-				.ToArray();
-			if (filterRx != null)
-				modelIds = modelIds.Where(x => filterRx.IsMatch(x)).ToArray();
-			if (modelIds.Any())
-				Global.AppSettings.OpenAiSettings.AiModels = modelIds;
-			Global.TriggerAiModelsUpdated();
-		}
-
 
 		#endregion
 
@@ -175,14 +142,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_item.PropertyChanged -= _item_PropertyChanged;
 			}
 			// Set new item.
-			_item = item ?? new TemplateItem();
+			_item = item ?? AppHelper.GetNewTemplateItem();
 			// Make sure that even custom AiModel old and new item is available to select.
-			UpdateAiModels(item?.AiModel, oldItem?.AiModel);
+			AppHelper.UpdateModelCodes(_item?.AiService, AiModels, _item?.AiModel, oldItem?.AiModel);
 			DataContext = _item;
 			_item.PropertyChanged += _item_PropertyChanged;
+			var aiServiceId = _item.AiServiceId;
+			if (aiServiceId == Guid.Empty)
+				aiServiceId = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)?.Id ??
+					Global.AppSettings.AiServices.FirstOrDefault()?.Id ?? Guid.Empty;
+			AiCompanionComboBox.SelectedValue = aiServiceId;
 			OnPropertyChanged(nameof(CreativityName));
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-			UpdateAiModels(item?.AiModel);
+			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 			IconPanel.BindData(_item);
 			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
 			ChatPanel.IsBusy = _item.IsBusy;
@@ -413,6 +385,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			ControlsHelper.OpenUrl(e.Uri.AbsoluteUri);
 			e.Handled = true;
+		}
+
+		private void AiCompanionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
 	}
 }

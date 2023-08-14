@@ -256,7 +256,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = new TemplateItem();
+			var item = AppHelper.GetNewTemplateItem();
 			// Treat the new task as a chat; therefore, clear the input box after sending.
 			if (ItemControlType == ItemType.Task)
 				item.MessageBoxOperation = MessageBoxOperation.ClearMessage;

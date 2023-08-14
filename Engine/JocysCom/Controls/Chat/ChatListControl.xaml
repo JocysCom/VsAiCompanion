@@ -12,7 +12,13 @@
 	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
 	<Grid>
-		<Label x:Name="LoadingLabel" Content="Loading. Please wait..." Foreground="DarkGray" />
+		<Label
+			x:Name="LoadingLabel"
+			HorizontalContentAlignment="Center"
+			VerticalContentAlignment="Center"
+			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+			Content="Loading. Please wait..."
+			Foreground="DarkGray" />
 		<WebBrowser x:Name="WebBrowser" Visibility="Hidden" />
 	</Grid>
 </UserControl>

@@ -4,7 +4,7 @@
   <IconType>.svg</IconType>
   <TextInstructions>Suggest five topics for a weekly team-building social meeting. The aim is to bond, have fun, and expand knowledge. Try to be creative and consider topics that are about some of the most fascinating and bizarre events that happened in the past week. Provide one sentence about the event, a link to news about it, and a question to discuss.</TextInstructions>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages>
     <MessageItem>

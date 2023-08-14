@@ -16,6 +16,9 @@
 
 namespace OpenAI
 {
+	using System;
+	using System.Text.Json;
+	using System.Text.Json.Serialization;
 	using System = global::System;
 
 	[System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -33,8 +36,35 @@ namespace OpenAI
 		private System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
 		{
 			var settings = new System.Text.Json.JsonSerializerOptions();
+			// Some API services provide invalid values (comments instead of numbers).
+			settings.Converters.Add(new IntConverter());
+			settings.NumberHandling = JsonNumberHandling.AllowReadingFromString;
 			UpdateJsonSerializerSettings(settings);
 			return settings;
+		}
+
+		public class IntConverter : JsonConverter<int>
+		{
+			public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+			{
+				if (reader.TokenType == JsonTokenType.String)
+				{
+					string stringValue = reader.GetString();
+					if (Int32.TryParse(stringValue, out int value))
+						return value;
+					else
+						return 0;
+				}
+				else if (reader.TokenType == JsonTokenType.Number)
+					return reader.GetInt32();
+				else
+					return 0; // or maybe throw an exception
+			}
+
+			public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
+			{
+				writer.WriteNumberValue(value);
+			}
 		}
 
 		protected System.Text.Json.JsonSerializerOptions JsonSerializerSettings { get { return _settings.Value; } }
@@ -2211,7 +2241,7 @@ namespace OpenAI
 		[System.Text.Json.Serialization.JsonPropertyName("object")]
 
 		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
-		[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+		//[System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
 		public string Object { get; set; }
 
 		[System.Text.Json.Serialization.JsonPropertyName("data")]
@@ -4003,6 +4033,7 @@ namespace OpenAI
 
 		[System.Text.Json.Serialization.JsonPropertyName("created")]
 
+		// change type to string. Some people put invalid string here.
 		[System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]
 		public int Created { get; set; }
 

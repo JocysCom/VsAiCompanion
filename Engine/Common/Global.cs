@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -81,13 +80,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static bool IsIncompleteSettings()
+		public static bool IsIncompleteSettings(AiService item)
 		{
 			var itemsRequired = new List<string>();
-			if (string.IsNullOrEmpty(AppSettings.OpenAiSettings.ApiSecretKey))
-				itemsRequired.Add("API Key");
-			if (string.IsNullOrEmpty(AppSettings.OpenAiSettings.ApiOrganizationId))
-				itemsRequired.Add("API Organization ID");
+			if (string.IsNullOrEmpty(item.BaseUrl))
+				itemsRequired.Add("Base URL");
+			if (string.IsNullOrEmpty(item.Name))
+				itemsRequired.Add("Service Name");
+			// If OpenAI service then check for API Key and Organization ID.
+			if ((item.BaseUrl ?? "").Contains(".openai.com"))
+			{
+				if (string.IsNullOrEmpty(item.ApiSecretKey))
+					itemsRequired.Add("API Key");
+				if (string.IsNullOrEmpty(item.ApiOrganizationId))
+					itemsRequired.Add("API Organization ID");
+			}
 			if (itemsRequired.Count > 0)
 			{
 				MainControl.MainTabControl.SelectedItem = MainControl.OptionsTabItem;
@@ -116,19 +123,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void TriggerAiModelsUpdated()
 			=> AiModelsUpdated?.Invoke(null, EventArgs.Empty);
 
-		public static void InitDefaultSettings()
-		{
-			if (AppData.Items.Count == 0)
-			{
-				AppData.Items.Add(new AppData());
-				AppData.Save();
-			}
-			Companions.ChatGPT.Client.Settings = Global.AppSettings.OpenAiSettings;
-		}
-
 		public static void LoadSettings()
 		{
+			// Load app data.
+			AppData.OnValidateData += AppData_OnValidateData;
 			AppData.Load();
+			if (DefaultAppDataAdded)
+				AppData.Save();
 			Templates.OnValidateData += Templates_OnValidateData;
 			Templates.Load();
 			if (DefaultTemplatesAdded)
@@ -147,6 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+
 		public static void ResetTemplates()
 		{
 			var items = Templates.Items.ToArray();
@@ -158,13 +160,34 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void ResetAppSettings()
 		{
-			var exclude = new string[] { nameof(AppSettings.OpenAiSettings) };
+			// Reset all app settings except list of services and list of models.
+			var exclude = new string[] { nameof(AppSettings.AiServices), nameof(AppSettings.AiModels) };
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(AppSettings, false, exclude);
-
 		}
 
+		private static bool DefaultAppDataAdded = false;
 		private static bool DefaultTemplatesAdded = false;
 		private static bool DefaultTasksAdded = false;
+
+		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				e.Items.Add(new AppData());
+				DefaultTemplatesAdded = true;
+			}
+			var appSettings = e.Items.FirstOrDefault();
+			if (appSettings.AiServices == null || appSettings.AiServices.Count == 0)
+			{
+				appSettings.AiServices = Engine.AppData.GetDefaultAiServices();
+				DefaultTemplatesAdded = true;
+			}
+			if (appSettings.AiModels == null || appSettings.AiModels.Count == 0)
+			{
+				appSettings.AiModels = new SortableBindingList<AiModel>();
+				DefaultTemplatesAdded = true;
+			}
+		}
 
 		private static void Templates_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
 		{

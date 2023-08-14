@@ -11,23 +11,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
 	public class Client : IClient
 	{
-		public Client(string baseUrl)
+		public Client(AiService service)
 		{
-			BaseUrl = baseUrl;
+			Service = service;
 		}
-		private string BaseUrl;
-		private const string usageUrl = "/usage";
-		private const string modelsUrl = "/models";
-		public static Settings Settings;
+		private const string usageUrl = "usage";
+		private const string modelsUrl = "models";
+		private readonly AiService Service;
 
 		public HttpClient GetClient()
 		{
 			var client = new HttpClient();
-			client.BaseAddress = new Uri(BaseUrl);
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Settings.ApiSecretKey);
+			client.BaseAddress = new Uri(Service.BaseUrl);
+			//if (!string.IsNullOrEmpty(Service.ApiSecretKey))
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Service.ApiSecretKey);
 			client.DefaultRequestHeaders.Accept.Clear();
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-			client.DefaultRequestHeaders.Add("OpenAI-Organization", Settings.ApiOrganizationId);
+			//if (!string.IsNullOrEmpty(Service.ApiOrganizationId))
+			client.DefaultRequestHeaders.Add("OpenAI-Organization", Service.ApiOrganizationId);
 			return client;
 		}
 
@@ -38,7 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<string> GetResponseAsync(string url)
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{BaseUrl}/{url}?date={date}";
+			var urlWithDate = $"{Service.BaseUrl}{url}?date={date}";
 			var client = GetClient();
 			var response = await client.GetAsync(urlWithDate);
 			var responseBody = await response.Content.ReadAsStringAsync();
@@ -93,12 +94,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		}
 
 		public async Task<string> QueryAI(
-			string modelName,
-			string prompt, string chatLog,
-			List<ChatCompletionRequestMessage> messagesToSend,
-			double creativity,
-			TemplateItem item
-		)
+				string modelName,
+				string prompt, string chatLog,
+				List<ChatCompletionRequestMessage> messagesToSend,
+				double creativity,
+				TemplateItem item
+			)
 		{
 			string answer;
 			var id = Guid.NewGuid();
@@ -201,4 +202,5 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		//}
 
 	}
+
 }

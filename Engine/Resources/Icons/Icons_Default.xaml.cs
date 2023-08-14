@@ -26,7 +26,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_clipboard_checks = nameof(Icon_clipboard_checks);
 		public const string Icon_clipboard_check_edit = nameof(Icon_clipboard_check_edit);
 		public const string Icon_clipboard_paste = nameof(Icon_clipboard_paste);
+		public const string Icon_cloud_gear = nameof(Icon_cloud_gear);
 		public const string Icon_code = nameof(Icon_code);
+		public const string Icon_contract = nameof(Icon_contract);
 		public const string Icon_copy = nameof(Icon_copy);
 		public const string Icon_debug = nameof(Icon_debug);
 		public const string Icon_dictionary = nameof(Icon_dictionary);
@@ -70,6 +72,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_Template = nameof(Icon_Template);
 		public const string Icon_translate = nameof(Icon_translate);
 		public const string Icon_user = nameof(Icon_user);
+		public const string Icon_user_group_emoticon = nameof(Icon_user_group_emoticon);
 		public const string Icon_Visual_Studio = nameof(Icon_Visual_Studio);
 		public const string Icon_warning = nameof(Icon_warning);
 		public const string Icon_window = nameof(Icon_window);

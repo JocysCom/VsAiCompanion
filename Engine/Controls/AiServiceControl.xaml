@@ -1,0 +1,39 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.AiServiceControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid x:Name="MainGrid" SizeChanged="Grid_SizeChanged">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition x:Name="ListPanelColumn" Width="40*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="60*" />
+		</Grid.ColumnDefinitions>
+		<local:AiServiceListControl x:Name="ListPanel" Grid.Column="0" x:FieldModifier="public" />
+		<GridSplitter
+			Grid.Column="1"
+			BorderBrush="{StaticResource BorderDark}"
+			DragCompleted="GridSplitter_DragCompleted"
+			ResizeDirection="Columns"
+			Style="{StaticResource GridSplitterVertical}" />
+		<local:AiServiceItemControl x:Name="ItemPanel" Grid.Column="2" x:FieldModifier="public" />
+	</Grid>
+</UserControl>

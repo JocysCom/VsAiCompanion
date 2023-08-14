@@ -4,6 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:Controls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	Name="This"
@@ -23,16 +24,12 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<GroupBox Grid.Row="0" Margin="3,0,3,0" Header="General">
 			<Grid>
-
-
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
@@ -62,54 +59,30 @@
 						<Label Content="Open..." />
 					</StackPanel>
 				</Button>
-				<Label
-					Grid.Row="1"
-					Grid.Column="0"
-					VerticalAlignment="Center"
-					Content="OpenAI API Key" />
-				<PasswordBox
-					Name="OpenAiApiSecretKeyPasswordBox"
-					Grid.Row="1"
-					Grid.Column="1"
-					Grid.ColumnSpan="2" />
-
-				<Label
-					Grid.Row="2"
-					Grid.Column="0"
-					VerticalAlignment="Center"
-					Content="OpenAI API Organization ID" />
-				<PasswordBox
-					Name="OpenAiApiOrganizationPasswordBox"
-					Grid.Row="2"
-					Grid.Column="1"
-					Grid.ColumnSpan="2" />
-
-				<Label
-					Grid.Row="3"
-					Grid.Column="0"
-					VerticalAlignment="Center"
-					Content="Open AI Base URL" />
-				<TextBox
-					Name="OpenAiBaseUrlTextBox"
-					Grid.Row="3"
-					Grid.Column="1"
-					Grid.ColumnSpan="2"
-					Text="{Binding OpenAiSettings.BaseUrl, ElementName=This}" />
-
-				<Label
-					Grid.Row="4"
-					Grid.Column="0"
-					VerticalAlignment="Center"
-					Content="Model Filter" />
-				<TextBox
-					Name="ModelFilterTExtBox"
-					Grid.Row="4"
-					Grid.Column="1"
-					Grid.ColumnSpan="2"
-					Text="{Binding OpenAiSettings.ModelFilter, ElementName=This}" />
 			</Grid>
 		</GroupBox>
-		<GroupBox Grid.Row="1" Margin="3,0,3,0" Header="Title for Attached Context">
+
+		<TabControl
+			x:Name="AiServicesTabControl"
+			Grid.Row="1"
+			Margin="4"
+			x:FieldModifier="public">
+			<TabItem x:Name="AiServicesTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl
+							Width="12"
+							Height="12"
+							VerticalAlignment="Center"
+							Content="{StaticResource Icon_cloud_gear}" />
+						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="AI API Services" />
+					</StackPanel>
+				</TabItem.Header>
+				<local:AiServiceControl x:Name="ItemPanel" x:FieldModifier="public" />
+			</TabItem>
+		</TabControl>
+
+		<GroupBox Grid.Row="2" Margin="3,0,3,0" Header="Title for Attached Context">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -173,7 +146,7 @@
 					TextWrapping="Wrap" />
 			</Grid>
 		</GroupBox>
-		<WrapPanel Grid.Row="2">
+		<WrapPanel Grid.Row="3">
 			<GroupBox Margin="3,0,3,3" Header="Standalone Progam">
 				<WrapPanel Orientation="Vertical">
 					<CheckBox Name="AppAlwaysOnTopCheckBox" Content="App Always on Top" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -215,10 +188,11 @@
 					</Button>
 				</StackPanel>
 			</GroupBox>
-			<GroupBox Margin="0,0,3,3" Header="Warnings">
+			<GroupBox Margin="0,0,3,3" Header="Sending Message">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 					<CheckBox Name="ShowDocumentsAttachedWarningCheckBox" Content="Show Documents Attached Warning" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="Show Sensitive Data Warning" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="UseEnterToSendMessageCheckBox" Content="Use [Enter] to send the message." IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
 		</WrapPanel>

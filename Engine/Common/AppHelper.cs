@@ -12,6 +12,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Text.Json;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using System.Text;
+using System.Threading.Tasks;
+using JocysCom.ClassLibrary.Configuration;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -255,6 +258,95 @@ namespace JocysCom.VS.AiCompanion.Engine
 					return word;
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Helps to generate same Unique IDs.
+		/// </summary>
+		public static Guid GetGuid(params object[] args)
+		{
+			var value = string.Join(Environment.NewLine, args);
+			var algorithm = System.Security.Cryptography.SHA256.Create();
+			// Important: Don’t Use Encoding.Default, because it is different on different machines and send data may be decoded as as gibberish.
+			// Use UTF-8 or Unicode (UTF-16), used by SQL Server.
+			var encoding = Encoding.UTF8;
+			var bytes = encoding.GetBytes(value);
+			var hash = algorithm.ComputeHash(bytes);
+			var guidBytes = new byte[16];
+			Array.Copy(hash, guidBytes, guidBytes.Length);
+			Guid guid = new Guid(guidBytes);
+			algorithm.Dispose();
+			return guid;
+		}
+
+
+		/// <summary>
+		/// Download models from API service.
+		/// </summary>
+		public static async Task UpdateModelsFromAPI(AiService aiService)
+		{
+			if (Global.IsIncompleteSettings(aiService))
+				return;
+			Regex filterRx = null;
+			try
+			{
+				filterRx = new Regex(aiService.ModelFilter);
+			}
+			catch { }
+			var client = new Companions.ChatGPT.Client(aiService);
+			var models = await client.GetModels();
+			var modelCodes = models
+				.OrderByDescending(x => x.Id)
+				.Select(x => x.Id)
+				.ToArray();
+			if (filterRx != null)
+				modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
+			// If models found then...
+			if (modelCodes.Any())
+			{
+				// Remove all old models.
+				var serviceModels = Global.AppSettings.AiModels.Where(x => x.AiServiceId == aiService.Id).ToList();
+				foreach (var serviceModel in serviceModels)
+					Global.AppSettings.AiModels.Remove(serviceModel);
+				// Add all new models.
+				foreach (var modelCode in modelCodes)
+					Global.AppSettings.AiModels.Add(new AiModel(modelCode, aiService.Id));
+				// This will inform all forms that models changed.
+				Global.TriggerAiModelsUpdated();
+			}
+		}
+
+		/// <summary>
+		/// Load models ComboBoc source.
+		/// </summary>
+		/// <param name="extraNames">
+		/// Make sure that target list contains extra model names.
+		/// </param>
+		public static void UpdateModelCodes(AiService aiService, IList<string> target, params string[] extraNames)
+		{
+			if (aiService == null)
+				return;
+			// Make sure checkbox can display current model.
+			var serviceModels = Global.AppSettings.AiModels
+				.Where(x => x.AiServiceId == aiService.Id)
+				.Select(x => x.Name)
+				.ToList();
+			foreach (var extraName in extraNames)
+			{
+				if (!string.IsNullOrEmpty(extraName) && !serviceModels.Contains(extraName))
+					serviceModels.Add(extraName);
+			}
+			SettingsHelper.Synchronize(serviceModels, target);
+		}
+
+		public static TemplateItem GetNewTemplateItem()
+		{
+			var item = new TemplateItem();
+			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
+				Global.AppSettings.AiServices.FirstOrDefault(); ;
+			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
+			item.AiModel = defaultAiService.DefaultAiModel;
+			return item;
 		}
 
 	}

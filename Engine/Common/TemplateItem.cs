@@ -15,7 +15,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public TemplateItem()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
-			_AiModel = Global.AppSettings.AiSettings.FirstOrDefault()?.AiModelDefault;
 			HttpClients = new BindingList<HttpClient>();
 			HttpClients.ListChanged += HttpClients_ListChanged;
 		}
@@ -78,8 +77,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public DrawingImage Icon { get => _Icon; }
 		DrawingImage _Icon;
 
-		public Companions.CompanionType Type { get => _Type; set => SetProperty(ref _Type, value); }
-		Companions.CompanionType _Type;
+		public Guid AiServiceId
+		{
+			get => _AiServiceId;
+			set => SetProperty(ref _AiServiceId, value);
+		}
+		Guid _AiServiceId;
+
+		public AiService AiService =>
+			Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
 
 		public string StatusText { get => _StatusText; set => SetProperty(ref _StatusText, value); }
 		string _StatusText;

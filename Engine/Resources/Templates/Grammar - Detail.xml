@@ -10,7 +10,7 @@ After making the corrections, please provide two things:&#xD;
 &#xD;
 Text to process:</TextInstructions>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>

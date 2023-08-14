@@ -20,7 +20,6 @@ namespace JocysCom.VS.AiCompanion
 			try
 			{
 				Global.LoadSettings();
-				Global.InitDefaultSettings();
 				// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
 				StartHelper.Initialize(typeof(App).Assembly.GetName().Name);
 				allowToRun = StartHelper.AllowToRun(Global.AppSettings.AllowOnlyOneCopy);
