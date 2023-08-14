@@ -4,7 +4,7 @@
   <IconType>.svg</IconType>
   <TextInstructions>Analyze conversation and create a chat title consisting of 2-5 words. Emphasize user requests in the title. Do not mention the chat itself by using words like "chat," "chat log," or "conversation." Please do not include prefixes such as "Title:." Avoid using dots, commas, or any other special characters. Only provide the generated title in your response.</TextInstructions>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages>
     <MessageItem>

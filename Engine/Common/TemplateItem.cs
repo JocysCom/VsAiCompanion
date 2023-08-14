@@ -1,7 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls.Chat;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
@@ -16,7 +15,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public TemplateItem()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
-			_AiModel = Global.AppSettings.AiServices.FirstOrDefault()?.AiModelDefault;
 			HttpClients = new BindingList<HttpClient>();
 			HttpClients.ListChanged += HttpClients_ListChanged;
 		}
@@ -79,7 +77,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public DrawingImage Icon { get => _Icon; }
 		DrawingImage _Icon;
 
-		public Guid AiServiceId { get => _AiServiceId; set => SetProperty(ref _AiServiceId, value); }
+		public Guid AiServiceId
+		{
+			get => _AiServiceId;
+			set => SetProperty(ref _AiServiceId, value);
+		}
 		Guid _AiServiceId;
 
 		public AiService AiService =>

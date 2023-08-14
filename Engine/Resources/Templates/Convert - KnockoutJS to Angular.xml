@@ -4,7 +4,7 @@
   <IconType>.svg</IconType>
   <TextInstructions>Convert KnockoutJS HTML to Angular in this Microsoft Razor page template. Reply with fully converted code. Code:</TextInstructions>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>

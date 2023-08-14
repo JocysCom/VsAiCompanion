@@ -4,9 +4,15 @@ using System.Runtime.CompilerServices;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class TaskSettings: INotifyPropertyChanged
+	public class TaskSettings : INotifyPropertyChanged
 	{
-		public double GridSplitterPosition { get; set; }
+		[DefaultValue(0.3)]
+		public double GridSplitterPosition
+		{
+			get => _GridSplitterPosition == 0 ? 0.3 : _GridSplitterPosition;
+			set => _GridSplitterPosition = value;
+		}
+		private double _GridSplitterPosition;
 
 		[DefaultValue(true)]
 		public bool IsListPanelVisible { get => _IsListPanelVisible; set => SetProperty(ref _IsListPanelVisible, value); }

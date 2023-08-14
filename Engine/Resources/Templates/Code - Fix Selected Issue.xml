@@ -5,7 +5,7 @@
   <TextInstructions>How to fix this issue reported by Visual Studio? Please reply with the fixed code.</TextInstructions>
   <AttachContext>Error ErrorDocument</AttachContext>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>

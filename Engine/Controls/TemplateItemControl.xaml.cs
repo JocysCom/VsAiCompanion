@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -24,9 +23,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
-			AiCompanionComboBox.DisplayMemberPath = nameof(AiService.Name);
-			AiCompanionComboBox.SelectedValuePath = nameof(AiService.Id);
-			AiCompanionComboBox.SelectedItem = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault);
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
@@ -82,42 +78,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void Global_AiModelsUpdated(object sender, EventArgs e)
 		{
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-			UpdateAiModels(_item?.AiModel);
-		}
-
-		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (Global.IsIncompleteSettings(_item.AiService))
-				return;
-			Regex filterRx = null;
-			try
-			{
-				filterRx = new Regex(_item.AiService.ModelFilter);
-			}
-			catch { }
-			var client = new Companions.ChatGPT.Client(_item.AiService);
-			var models = await client.GetModels();
-			var modelIds = models
-				.OrderByDescending(x => x.Id)
-				.Select(x => x.Id)
-				.ToArray();
-			if (filterRx != null)
-				modelIds = modelIds.Where(x => filterRx.IsMatch(x)).ToArray();
-			if (modelIds.Any())
-				Global.AppSettings.AiModels = modelIds;
-			Global.TriggerAiModelsUpdated();
-		}
-
-		public void UpdateAiModels(params string[] names)
-		{
-			// Make sure checkbox can display current model.
-			var models = Global.AppSettings.AiModels.Where(x => x.AiServiceId == _item.AiServiceId).ToList();
-			foreach (var name in names)
-			{
-				if (!string.IsNullOrEmpty(name) && !models.Any(x => x.Name == name))
-					models.Add(new AiModel(name, _item.AiServiceId));
-			}
-			SettingsHelper.Synchronize(models, Global.AppSettings.AiModels);
+			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
 
 		#endregion
@@ -173,14 +134,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_item.PropertyChanged -= _item_PropertyChanged;
 			}
 			// Set new item.
-			_item = item ?? new TemplateItem();
+			_item = item ?? AppHelper.GetNewTemplateItem();
 			// Make sure that even custom AiModel old and new item is available to select.
-			UpdateAiModels(item?.AiModel, oldItem?.AiModel);
+			AppHelper.UpdateModelCodes(_item?.AiService, AiModels, _item?.AiModel, oldItem?.AiModel);
 			DataContext = _item;
 			_item.PropertyChanged += _item_PropertyChanged;
+			var aiServiceId = _item.AiServiceId;
+			if (aiServiceId == Guid.Empty)
+				aiServiceId = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)?.Id ??
+					Global.AppSettings.AiServices.FirstOrDefault()?.Id ?? Guid.Empty;
+			AiCompanionComboBox.SelectedValue = aiServiceId;
 			OnPropertyChanged(nameof(CreativityName));
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-			UpdateAiModels(item?.AiModel);
+			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 			IconPanel.BindData(_item);
 			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
 			ChatPanel.IsBusy = _item.IsBusy;
@@ -415,7 +381,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AiCompanionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
+			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
 	}
 }

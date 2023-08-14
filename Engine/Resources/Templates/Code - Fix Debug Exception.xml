@@ -5,7 +5,7 @@
   <TextInstructions>How to fix this exception thrown during debug session in Visual Studio? Please reply with the fixed code.</TextInstructions>
   <AttachContext>Exception ExceptionDocuments</AttachContext>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>

@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
-using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -41,27 +40,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private PositionSettings _WindowPosition;
 
-		[DefaultValue(0.3)]
-		public double TasksGridSplitterPosition { get => _TasksGridSplitterPosition; set => SetProperty(ref _TasksGridSplitterPosition, value); }
-		private double _TasksGridSplitterPosition;
-
-		[DefaultValue(0.3)]
-		public double TemplatesGridSplitterPosition { get => _TemplatesGridSplitterPosition; set => SetProperty(ref _TemplatesGridSplitterPosition, value); }
-		private double _TemplatesGridSplitterPosition;
+		public AiServiceSettings AiServiceData
+		{
+			get => _AiServiceData = _AiServiceData ?? new AiServiceSettings();
+			set => SetProperty(ref _AiServiceData, value);
+		}
+		private AiServiceSettings _AiServiceData;
 
 		public TaskSettings TaskData
 		{
 			get => _TaskData = _TaskData ?? new TaskSettings();
 			set => SetProperty(ref _TaskData, value);
 		}
-		private TaskSettings _TaskData = new TaskSettings();
+		private TaskSettings _TaskData;
 
 		public TaskSettings TemplateData
 		{
 			get => _TemplateData = _TemplateData ?? new TaskSettings();
 			set => SetProperty(ref _TemplateData, value);
 		}
-		private TaskSettings _TemplateData = new TaskSettings();
+		private TaskSettings _TemplateData;
 
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
@@ -111,13 +109,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			get
 			{
-				if (_AiServices == null || _AiServices.Count == 0)
-					_AiServices = GetDefaultAiServices();
-				return _AiServices;
+				lock (_AiServicesLock)
+				{
+					if (_AiServices == null || _AiServices.Count == 0)
+						_AiServices = new SortableBindingList<AiService>();
+					return _AiServices;
+				}
 			}
 			set => _AiServices = value;
 		}
 		private SortableBindingList<AiService> _AiServices;
+		private object _AiServicesLock = new object();
 
 		public SortableBindingList<AiModel> AiModels
 		{
@@ -156,9 +158,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		#region Defaults
+		#region ■ Helper Functions
 
-		private static SortableBindingList<AiService> GetDefaultAiServices()
+		public static SortableBindingList<AiService> GetDefaultAiServices()
 		{
 			var list = new SortableBindingList<AiService>();
 			// Add open AI Model
@@ -166,7 +168,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Id = AppHelper.GetGuid(nameof(AiService), "Open AI"),
 				Name = "Open AI",
-				AiModelDefault = "gpt-3.5-turbo-16k-0613",
+				DefaultAiModel = "gpt-3.5-turbo-16k-0613",
 				BaseUrl = "https://api.openai.com/v1/",
 				ModelFilter = "gpt|text-davinci-[0-9+]",
 			};
@@ -174,10 +176,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Add GPT4All Service
 			var s2 = new AiService()
 			{
-				Id = AppHelper.GetGuid(nameof(AiService), "GPT4All"),
-				Name = "GPT4All",
+				Id = AppHelper.GetGuid(nameof(AiService), "GPT4All (Local)"),
+				Name = "GPT4All (Local)",
 				AiModels = new string[0],
-				AiModelDefault = "GPT4All Falcon",
+				DefaultAiModel = "GPT4All Falcon",
 				BaseUrl = "https://localhost:4891/v1/",
 				ModelFilter = "",
 			};
@@ -189,8 +191,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Id = AppHelper.GetGuid(nameof(AiService), "Open AI (On-Premises)"),
 				Name = "Open AI (On-Premises)",
 				AiModels = new string[0],
-				AiModelDefault = "",
+				DefaultAiModel = "",
 				BaseUrl = "https://ai.company.local/v1/",
+				ModelFilter = "",
+			};
+			// Add Azure Open AI
+			var s4 = new AiService()
+			{
+				Id = AppHelper.GetGuid(nameof(AiService), "Azure Open AI"),
+				Name = "Azure Open AI",
+				AiModels = new string[0],
+				DefaultAiModel = "",
+				BaseUrl = "https://api.cognitive.microsoft.com/v1/",
 				ModelFilter = "",
 			};
 			list.Add(s3);

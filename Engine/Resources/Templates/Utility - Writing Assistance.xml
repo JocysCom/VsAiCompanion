@@ -5,7 +5,7 @@
   <TextInstructions>Can you help me write an introduction for an essay about?:</TextInstructions>
   <Text> [insert topic here]</Text>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>

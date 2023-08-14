@@ -8,11 +8,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public class AiModel : INotifyPropertyChanged
 	{
 		public AiModel() { }
-		public AiModel(string name, Guid aiServicId)
+		public AiModel(string name, Guid aiServiceId)
 		{
 			Id = AppHelper.GetGuid(GetType().Name, name);
 			Name = name;
-			AiServiceId = aiServicId;
+			AiServiceId = aiServiceId;
 		}
 
 		/// <summary>Unique Id.</summary>
@@ -26,11 +26,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public Guid AiServiceId { get => _AiServiceId; set => SetProperty(ref _AiServiceId, value); }
 		Guid _AiServiceId;
-
-		/// <summary>Used by default.</summary>
-		[DefaultValue(false)]
-		public bool IsDefault { get => _IsDefault; set => SetProperty(ref _IsDefault, value); }
-		bool _IsDefault;
 
 		#region ■ INotifyPropertyChanged
 

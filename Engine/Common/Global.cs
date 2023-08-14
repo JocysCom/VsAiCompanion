@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -88,7 +87,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				itemsRequired.Add("Base URL");
 			if (string.IsNullOrEmpty(item.Name))
 				itemsRequired.Add("Service Name");
-			if (itemsRequired.Count == 0)
+			// If OpenAI service then check for API Key and Organization ID.
+			if ((item.BaseUrl ?? "").Contains(".openai.com"))
 			{
 				if (string.IsNullOrEmpty(item.ApiSecretKey))
 					itemsRequired.Add("API Key");
@@ -123,18 +123,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void TriggerAiModelsUpdated()
 			=> AiModelsUpdated?.Invoke(null, EventArgs.Empty);
 
-		public static void InitDefaultSettings()
-		{
-			if (AppData.Items.Count == 0)
-			{
-				AppData.Items.Add(new AppData());
-				AppData.Save();
-			}
-		}
-
 		public static void LoadSettings()
 		{
+			// Load app data.
+			AppData.OnValidateData += AppData_OnValidateData;
 			AppData.Load();
+			if (DefaultAppDataAdded)
+				AppData.Save();
 			Templates.OnValidateData += Templates_OnValidateData;
 			Templates.Load();
 			if (DefaultTemplatesAdded)
@@ -153,6 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+
 		public static void ResetTemplates()
 		{
 			var items = Templates.Items.ToArray();
@@ -169,8 +165,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(AppSettings, false, exclude);
 		}
 
+		private static bool DefaultAppDataAdded = false;
 		private static bool DefaultTemplatesAdded = false;
 		private static bool DefaultTasksAdded = false;
+
+		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				e.Items.Add(new AppData());
+				DefaultTemplatesAdded = true;
+			}
+			var appSettings = e.Items.FirstOrDefault();
+			if (appSettings.AiServices == null || appSettings.AiServices.Count == 0)
+			{
+				appSettings.AiServices = Engine.AppData.GetDefaultAiServices();
+				DefaultTemplatesAdded = true;
+			}
+			if (appSettings.AiModels == null || appSettings.AiModels.Count == 0)
+			{
+				appSettings.AiModels = new SortableBindingList<AiModel>();
+				DefaultTemplatesAdded = true;
+			}
+		}
 
 		private static void Templates_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
 		{

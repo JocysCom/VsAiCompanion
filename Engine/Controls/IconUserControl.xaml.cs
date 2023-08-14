@@ -21,7 +21,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void BindData(TemplateItem item = null)
 		{
-			_item = item ?? new TemplateItem();
+			_item = item ?? AppHelper.GetNewTemplateItem();
 			DataContext = item;
 		}
 

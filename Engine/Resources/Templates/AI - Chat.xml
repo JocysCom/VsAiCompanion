@@ -5,7 +5,7 @@
   <ShowInstructions>false</ShowInstructions>
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
-  <Type>None</Type>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>

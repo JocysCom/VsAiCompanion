@@ -41,25 +41,16 @@
 				Grid.Row="0"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="AI Companion"
-				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+				Content="AI Companion" />
 			<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-				<ComboBox Name="AiCompanionComboBox" Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+				<ComboBox
+					Name="AiCompanionComboBox"
+					DisplayMemberPath="Name"
+					SelectedValue="{Binding AiServiceId}"
+					SelectedValuePath="Id"
+					SelectionChanged="AiCompanionComboBox_SelectionChanged" />
 				<Label VerticalAlignment="Center" Content="AI Model" />
 				<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
-				<Button
-					Name="ModelRefreshButton"
-					Grid.Row="1"
-					Grid.Column="3"
-					Margin="3,0,3,0"
-					VerticalAlignment="Center"
-					Click="ModelRefreshButton_Click"
-					Visibility="{Binding BarPanelVisibility, ElementName=This}">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
-						<Label VerticalAlignment="Center" Content="Refresh" />
-					</StackPanel>
-				</Button>
 			</StackPanel>
 			<Button
 				Name="BarToggleButton"
@@ -336,8 +327,8 @@
 				HorizontalAlignment="Right"
 				Orientation="Horizontal">
 				<Button
-					Margin="3,2,3,2"
 					Name="ScrollToBottomMessagesButton"
+					Margin="3,2,3,2"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
 					Click="ScrollToBottomButton_Click">

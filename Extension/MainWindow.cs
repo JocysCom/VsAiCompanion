@@ -43,7 +43,6 @@ namespace JocysCom.VS.AiCompanion.Extension
 			// the object returned by the Content property.
 			ControlsHelper.InitInvokeContext();
 			Global.LoadSettings();
-			Global.InitDefaultSettings();
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			// Get or Set multiple documents.
 			Global.GetSolution = SolutionHelper.GetAllSolutionDocuments;

@@ -89,8 +89,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (PanelSettings.IsListPanelVisible)
 			{
 				position = ItemControlType == ItemType.Task
-					? Global.AppSettings.TasksGridSplitterPosition
-					: Global.AppSettings.TemplatesGridSplitterPosition;
+					? Global.AppSettings.TaskData.GridSplitterPosition
+					: Global.AppSettings.TemplateData.GridSplitterPosition;
 			}
 			PositionSettings.SetGridSplitterPosition(MainGrid, position);
 		}
@@ -103,9 +103,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (position == 0.0)
 				return;
 			if (ItemControlType == ItemType.Task)
-				Global.AppSettings.TasksGridSplitterPosition = position;
+				Global.AppSettings.TaskData.GridSplitterPosition = position;
 			if (ItemControlType == ItemType.Template)
-				Global.AppSettings.TemplatesGridSplitterPosition = position;
+				Global.AppSettings.TemplateData.GridSplitterPosition = position;
 		}
 
 		#endregion

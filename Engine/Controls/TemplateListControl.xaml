@@ -64,9 +64,9 @@
 		</StackPanel>
 		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
 			<Button
-				Background="Transparent"
 				Name="GenerateTitleButton"
 				x:FieldModifier="public"
+				Background="Transparent"
 				Click="GenerateTitleButton_Click"
 				ToolTip="Use AI to automatically generate title">
 				<StackPanel>
@@ -74,19 +74,19 @@
 				</StackPanel>
 			</Button>
 			<Button
-				Background="Transparent"
 				Name="CopyButton"
 				Margin="0,3,3,3"
 				x:FieldModifier="public"
+				Background="Transparent"
 				Click="CopyButton_Click"
 				ToolTip="Copy">
 				<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" />
 			</Button>
 			<Button
-				Background="Transparent"
 				Name="PasteButton"
 				Margin="0,3,3,3"
 				x:FieldModifier="public"
+				Background="Transparent"
 				Click="PasteButton_Click"
 				ToolTip="Paste">
 				<ContentControl Content="{StaticResource Icon_clipboard_paste}" Focusable="False" />

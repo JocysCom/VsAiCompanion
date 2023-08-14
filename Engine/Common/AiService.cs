@@ -68,7 +68,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		public string AiModelDefault { get; set; }
+		/// <summary>Cache AI Model list.</summary>
+		public string DefaultAiModel { get => _DefaultAiModel; set => SetProperty(ref _DefaultAiModel, value); }
+		string _DefaultAiModel;
 
 		/// <summary>Cache AI Model list.</summary>
 		public string[] AiModels { get => _AiModels; set => SetProperty(ref _AiModels, value); }
