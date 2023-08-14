@@ -103,6 +103,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool ShowSensitiveDataWarning { get => _ShowSensitiveDataWarning; set => SetProperty(ref _ShowSensitiveDataWarning, value); }
 		private bool _ShowSensitiveDataWarning;
 
+		[DefaultValue(true)]
+		public bool UseEnterToSendMessage { get => _UseEnterToSendMessage; set => SetProperty(ref _UseEnterToSendMessage, value); }
+		private bool _UseEnterToSendMessage;
+
 		#endregion
 
 		public SortableBindingList<AiService> AiServices
@@ -168,7 +172,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Id = AppHelper.GetGuid(nameof(AiService), "Open AI"),
 				Name = "Open AI",
-				DefaultAiModel = "gpt-3.5-turbo-16k-0613",
+				DefaultAiModel = "gpt-3.5-turbo-16k",
+				IsDefault = true,
 				BaseUrl = "https://api.openai.com/v1/",
 				ModelFilter = "gpt|text-davinci-[0-9+]",
 			};
@@ -191,7 +196,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Id = AppHelper.GetGuid(nameof(AiService), "Open AI (On-Premises)"),
 				Name = "Open AI (On-Premises)",
 				AiModels = new string[0],
-				DefaultAiModel = "",
+				DefaultAiModel = "gpt-3.5-turbo-16k",
 				BaseUrl = "https://ai.company.local/v1/",
 				ModelFilter = "",
 			};
@@ -201,11 +206,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Id = AppHelper.GetGuid(nameof(AiService), "Azure Open AI"),
 				Name = "Azure Open AI",
 				AiModels = new string[0],
-				DefaultAiModel = "",
+				DefaultAiModel = "gpt-3.5-turbo-16k",
 				BaseUrl = "https://api.cognitive.microsoft.com/v1/",
 				ModelFilter = "",
 			};
-			list.Add(s3);
+			list.Add(s4);
 			return list;
 		}
 

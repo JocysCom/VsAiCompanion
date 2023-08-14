@@ -68,9 +68,10 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 				!string.IsNullOrEmpty(DataInstructionsTextBox.Text);
 		}
 
+		public bool UseEnterToSendMessage { get; set; } = true;
 		private void DataTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
 		{
-			if (e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+			if (UseEnterToSendMessage && e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
 			{
 				if (AllowToSend())
 					OnSend?.Invoke(sender, e);

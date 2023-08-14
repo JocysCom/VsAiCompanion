@@ -27,6 +27,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			get => _Item;
 			set
 			{
+				if (ControlsHelper.IsDesignMode(this))
+					return;
 				lock (_ItemLock)
 				{
 					var oldItem = _Item;
@@ -36,9 +38,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						SecretKeyPasswordBox.PasswordChanged -= SecretKeyPasswordBox_PasswordChanged;
 						OrganizationPasswordBox.PasswordChanged -= OrganizationPasswordBox_PasswordChanged;
 					}
+					_Item = value ?? new AiService();
 					// Make sure that even custom AiModel old and new item is available to select.
 					AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel, oldItem?.DefaultAiModel);
-					_Item = value ?? new AiService();
 					DataContext = value;
 					// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 					AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel);
@@ -70,9 +72,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 			AppHelper.UpdateModelCodes(Item, AiModels);
 			if (string.IsNullOrEmpty(Item.DefaultAiModel) && AiModels?.Count > 0)
-			{
 				Item.DefaultAiModel = AiModels.FirstOrDefault();
-			}
 		}
 
 		private void CheckBox_Checked(object sender, RoutedEventArgs e)

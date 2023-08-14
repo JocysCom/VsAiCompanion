@@ -24,7 +24,9 @@
 		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 			<Button
 				Name="AddButton"
+				Margin="1"
 				x:FieldModifier="public"
+				Background="Transparent"
 				Click="AddButton_Click"
 				ToolTip="Add New">
 				<StackPanel>
@@ -34,7 +36,9 @@
 			</Button>
 			<Button
 				Name="EditButton"
+				Margin="1"
 				x:FieldModifier="public"
+				Background="Transparent"
 				Click="EditButton_Click"
 				ToolTip="Edit">
 				<StackPanel>
@@ -44,7 +48,9 @@
 			</Button>
 			<Button
 				Name="DeleteButton"
+				Margin="1"
 				x:FieldModifier="public"
+				Background="Transparent"
 				Click="DeleteButton_Click"
 				ToolTip="Delete">
 				<StackPanel>

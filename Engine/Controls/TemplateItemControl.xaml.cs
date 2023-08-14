@@ -33,6 +33,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			Global.AiModelsUpdated += Global_AiModelsUpdated;
+			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
+			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+		}
+
+		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AppData.UseEnterToSendMessage))
+				ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 		}
 
 		private void Global_OnSaveSettings(object sender, EventArgs e)

@@ -74,7 +74,7 @@
 							Width="12"
 							Height="12"
 							VerticalAlignment="Center"
-							Content="{StaticResource Icon_gearwheel}" />
+							Content="{StaticResource Icon_cloud_gear}" />
 						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="AI API Services" />
 					</StackPanel>
 				</TabItem.Header>
@@ -188,10 +188,11 @@
 					</Button>
 				</StackPanel>
 			</GroupBox>
-			<GroupBox Margin="0,0,3,3" Header="Warnings">
+			<GroupBox Margin="0,0,3,3" Header="Sending Message">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 					<CheckBox Name="ShowDocumentsAttachedWarningCheckBox" Content="Show Documents Attached Warning" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="Show Sensitive Data Warning" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="UseEnterToSendMessageCheckBox" Content="Use [Enter] to send the message." IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
 		</WrapPanel>
