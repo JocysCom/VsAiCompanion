@@ -184,8 +184,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			if (appSettings.AiModels == null || appSettings.AiModels.Count == 0)
 			{
-				appSettings.AiModels = new SortableBindingList<AiModel>();
+				appSettings.AiModels = Engine.AppData.GetDefaultAiModels();
 				DefaultTemplatesAdded = true;
+			}
+			if (appSettings.AiServiceData == null)
+			{
+				var d = new AiServiceSettings();
+				d.ListSelection = new List<string> { Engine.AppData.OpenAiName };
+				appSettings.AiServiceData = d;
+				
 			}
 		}
 

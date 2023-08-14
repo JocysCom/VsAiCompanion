@@ -78,20 +78,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			// If item selected then...
 			if (MainDataGrid.SelectedIndex >= 0)
-				{
-					// Remember selection.
-					PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(TemplateItem.Name));
-					PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
-				}
-				else
-				{
-					// Try to restore selection.
-					ControlsHelper.RestoreSelection(
-						MainDataGrid, nameof(TemplateItem.Name),
-						PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
-					);
-				}
-				UpdateButtons();
+			{
+				// Remember selection.
+				PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(TemplateItem.Name));
+				PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
+			}
+			else
+			{
+				// Try to restore selection.
+				ControlsHelper.RestoreSelection(
+					MainDataGrid, nameof(TemplateItem.Name),
+					PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
+				);
+			}
+			UpdateButtons();
 		}
 
 		void UpdateButtons()
@@ -201,8 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var list = PanelSettings.ListSelection;
-			if (list?.Count > 0)
-				ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, PanelSettings.ListSelectedIndex);
+			ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, PanelSettings.ListSelectedIndex);
 		}
 	}
 

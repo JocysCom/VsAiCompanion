@@ -6,6 +6,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class AiServiceSettings : INotifyPropertyChanged
 	{
+		public AiServiceSettings()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
+
 		[DefaultValue(0.2)]
 		public double GridSplitterPosition
 		{

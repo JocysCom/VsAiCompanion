@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -164,14 +165,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region ■ Helper Functions
 
+		public static Guid OpenAiId { get; } = AppHelper.GetGuid(nameof(AiService), OpenAiName);
+		public static string OpenAiName { get; } = "Open AI";
+
 		public static SortableBindingList<AiService> GetDefaultAiServices()
 		{
 			var list = new SortableBindingList<AiService>();
 			// Add open AI Model
 			var s1 = new AiService()
 			{
-				Id = AppHelper.GetGuid(nameof(AiService), "Open AI"),
-				Name = "Open AI",
+				Id = OpenAiId,
+				Name = OpenAiName,
 				DefaultAiModel = "gpt-3.5-turbo-16k",
 				IsDefault = true,
 				BaseUrl = "https://api.openai.com/v1/",
@@ -181,14 +185,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Add GPT4All Service
 			var s2 = new AiService()
 			{
-				Id = AppHelper.GetGuid(nameof(AiService), "GPT4All (Local)"),
-				Name = "GPT4All (Local)",
+				Id = AppHelper.GetGuid(nameof(AiService), "GPT4All (Local Machine)"),
+				Name = "GPT4All (Local Machine)",
 				AiModels = new string[0],
 				DefaultAiModel = "GPT4All Falcon",
 				BaseUrl = "https://localhost:4891/v1/",
 				ModelFilter = "",
 			};
-
 			list.Add(s2);
 			// Add Open AI (on-premises)
 			var s3 = new AiService()
@@ -200,6 +203,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				BaseUrl = "https://ai.company.local/v1/",
 				ModelFilter = "",
 			};
+			list.Add(s3);
 			// Add Azure Open AI
 			var s4 = new AiService()
 			{
@@ -214,7 +218,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return list;
 		}
 
-		private static SortableBindingList<AiModel> GetDefaultAiModels()
+		public static SortableBindingList<AiModel> GetDefaultAiModels()
 		{
 			var list = new SortableBindingList<AiModel>();
 			var names = new string[] {
@@ -233,6 +237,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					Id = AppHelper.GetGuid(nameof(AiModel), name),
 					Name = name,
+					AiServiceId = OpenAiId,
 				};
 				list.Add(item);
 			}
