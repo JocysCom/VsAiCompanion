@@ -1,0 +1,150 @@
+﻿<UserControl
+	x:Class="JocysCom.ClassLibrary.Controls.DynamicCompile.CompilerControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.ClassLibrary.Controls.DynamicCompile"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../Themes/Default.xaml" />
+				<ResourceDictionary Source="../Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<StackPanel Grid.Row="0" Orientation="Horizontal">
+			<Label x:Name="DataTempFolderLabel" Grid.Row="0" Content="Temp Folder:" />
+			<Button
+				Name="OpenButton"
+				Margin="1"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="OpenButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+					<Label Content="Open" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="SaveButton"
+				Margin="1"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="SaveButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_Save}" Focusable="False" />
+					<Label Content="Save" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="ReloadButton"
+				x:FieldModifier="public"
+				Click="ReloadButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+					<Label Content="Reload" />
+				</StackPanel>
+			</Button>
+			<Separator />
+			<CheckBox x:Name="AutoLoadCheckBox" Content="Auto Load" />
+			<CheckBox x:Name="AutoRunCheckBox" Content="Auto Run" />
+			<Separator />
+			<ComboBox x:Name="LanguageComboBox">
+				<ComboBoxItem Content="C#" />
+				<ComboBoxItem Content="VB" />
+				<ComboBoxItem Content="JScript" />
+			</ComboBox>
+			<Button
+				Name="CheckButton"
+				Margin="1"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="CheckButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+					<Label Content="Check" />
+				</StackPanel>
+			</Button>
+			<Separator />
+			<TextBlock VerticalAlignment="Center" Text="Entry:" />
+			<ComboBox x:Name="EntryComboBox" />
+			<Button
+				Name="RunButton"
+				Margin="1"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="RunButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
+					<Label Content="Run" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+		<avalonedit:TextEditor
+			x:Name="CodeTextBox"
+			Grid.Row="1"
+			VerticalAlignment="Stretch"
+			VerticalScrollBarVisibility="Auto" />
+		<TabControl
+			x:Name="ResultsTabControl"
+			Grid.Row="2"
+			Margin="4"
+			x:FieldModifier="public">
+			<TabItem x:Name="OutputTabItem" Header="Output">
+				<StackPanel>
+					<TextBox
+						x:Name="OutputTextBox"
+						MinHeight="55"
+						IsReadOnly="True"
+						VerticalScrollBarVisibility="Auto" />
+					<DataGrid x:Name="OutputDataGridView" AutoGenerateColumns="True" IsReadOnly="True" />
+				</StackPanel>
+			</TabItem>
+			<TabItem x:Name="ErrorsTabItem" Header="Errors">
+				<TextBox
+					x:Name="ErrorsTextBox"
+					AcceptsReturn="True"
+					IsReadOnly="True"
+					TextWrapping="Wrap"
+					VerticalScrollBarVisibility="Auto" />
+			</TabItem>
+			<TabItem x:Name="CodeTabItem" Header="Code">
+				<TextBox
+					x:Name="CodeLineTextBox"
+					AcceptsReturn="True"
+					IsReadOnly="True"
+					TextWrapping="Wrap"
+					VerticalScrollBarVisibility="Auto" />
+			</TabItem>
+		</TabControl>
+		<StatusBar Grid.Row="2">
+			<StatusBarItem>
+				<TextBlock x:Name="ChangedStatusLabel" />
+			</StatusBarItem>
+			<StatusBarItem>
+				<TextBlock x:Name="LoadedStatusLabel" />
+			</StatusBarItem>
+			<StatusBarItem>
+				<TextBlock x:Name="FileStatusLabel" TextAlignment="Right" />
+			</StatusBarItem>
+		</StatusBar>
+	</Grid>
+</UserControl>
