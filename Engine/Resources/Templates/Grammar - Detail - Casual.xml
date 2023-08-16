@@ -6,13 +6,16 @@
 &#xD;
 Feel free to use a casual and conversational tone, including common colloquialisms and informal language where appropriate.&#xD;
 &#xD;
-After making the corrections, please provide two things:&#xD;
-1. The fully corrected text first.&#xD;
+After making the corrections, please provide only two things:&#xD;
+1. The fully corrected text first. Wrap the fully corrected text in the Markdown code block. Like this:&#xD;
+```text&#xD;
+{fully corrected text}&#xD;
+```&#xD;
 2. Thorough list of errors found and the corresponding corrections made.&#xD;
 &#xD;
 Text to process:</TextInstructions>
   <Settings />
-  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
