@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -50,6 +49,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			InvokeScript($"DeleteMessages();");
 			foreach (var message in Messages)
 			{
+				// Set message id in case data is bad and it is missing.
 				if (string.IsNullOrEmpty(message.Id))
 					message.Id = Guid.NewGuid().ToString("N");
 				InsertWebMessage(message, false);
@@ -82,6 +82,12 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
 			}
 			return null;
+		}
+
+		public void RemoveMessage(MessageItem message)
+		{
+			Messages.Remove(message);
+			InvokeScript($"DeleteMessage('{message.Id}');");
 		}
 
 		void InsertWebMessage(MessageItem item, bool autoScroll)
@@ -220,16 +226,11 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			{
 				case MessageAction.Remove:
 					if (message != null)
-					{
-						Messages.Remove(message);
-						InvokeScript($"DeleteMessage('{message.Id}');");
-					}
+						RemoveMessage(message);
 					break;
 				case MessageAction.Copy:
 					if (message != null)
-					{
 						Clipboard.SetText(message.Body);
-					}
 					break;
 				case MessageAction.DataCopy:
 					Clipboard.SetText(e[2]);

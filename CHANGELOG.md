@@ -1,3 +1,9 @@
+2023-08-16 v1.0.94
+
+- New: [Edit] button has been added. Edit chat message and delete any messages that follow it.
+- Update: Grammar instruction template updated to make it easier to copy the corrected sentence.
+- Update: Updated some default settings.
+
 2023-08-14 v1.0.91
 
 - New: Added support for multiple API services, including local machine, on-premise, or cloud.

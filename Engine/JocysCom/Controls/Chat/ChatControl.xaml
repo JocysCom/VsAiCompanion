@@ -295,6 +295,7 @@
 							Background="White"
 							BorderThickness="0"
 							PreviewKeyUp="DataTextBox_PreviewKeyUp"
+							PreviewKeyDown="DataTextBox_PreviewKeyDown"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Auto"
 							Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
