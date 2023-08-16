@@ -170,51 +170,60 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static SortableBindingList<AiService> GetDefaultAiServices()
 		{
-			var list = new SortableBindingList<AiService>();
-			// Add open AI Model
-			var s1 = new AiService()
+			var list = new SortableBindingList<AiService>
 			{
-				Id = OpenAiId,
-				Name = OpenAiName,
-				DefaultAiModel = "gpt-3.5-turbo-16k",
-				IsDefault = true,
-				BaseUrl = "https://api.openai.com/v1/",
-				ModelFilter = "gpt|text-davinci-[0-9+]",
+				// Add open AI Model
+				new AiService()
+				{
+					Id = OpenAiId,
+					Name = OpenAiName,
+					DefaultAiModel = "gpt-3.5-turbo-16k",
+					IsDefault = true,
+					BaseUrl = "https://api.openai.com/v1/",
+					ModelFilter = "gpt|text-davinci-[0-9+]",
+				},
+				// Add GPT4All Service
+				new AiService()
+				{
+					Id = AppHelper.GetGuid(nameof(AiService), "GPT4All (Local Machine)"),
+					Name = "GPT4All (Local Machine)",
+					AiModels = new string[0],
+					DefaultAiModel = "GPT4All Falcon",
+					BaseUrl = "https://localhost:4891/v1/",
+					ModelFilter = "",
+				},
+				//// Add LocalGPT Service. Currently incompatible with OpenAI API.
+				//new AiService()
+				//{
+				//	Id = AppHelper.GetGuid(nameof(AiService), "LocalGPT (Local Machine)"),
+				//	Name = "LocalGPT (Local Machine)",
+				//	AiModels = new string[0],
+				//	DefaultAiModel = "llama-2-7b-chat.ggmlv3.q4_0.bin",
+				//	BaseUrl = "https://localhost:5110/v1/",
+				//	ModelFilter = "",
+				//},
+				// Add Open AI (on-premises)
+				new AiService()
+				{
+					Id = AppHelper.GetGuid(nameof(AiService), "Open AI (On-Premises)"),
+					Name = "Open AI (On-Premises)",
+					AiModels = new string[0],
+					DefaultAiModel = "gpt-3.5-turbo-16k",
+					BaseUrl = "https://ai.company.local/v1/",
+					ModelFilter = "",
+				},
+				// Add Azure Open AI
+				new AiService()
+				{
+					Id = AppHelper.GetGuid(nameof(AiService), "Azure Open AI"),
+					Name = "Azure Open AI",
+					AiModels = new string[0],
+					DefaultAiModel = "gpt-3.5-turbo-16k",
+					BaseUrl = "https://api.cognitive.microsoft.com/v1/",
+					ModelFilter = "",
+				}
 			};
-			list.Add(s1);
-			// Add GPT4All Service
-			var s2 = new AiService()
-			{
-				Id = AppHelper.GetGuid(nameof(AiService), "GPT4All (Local Machine)"),
-				Name = "GPT4All (Local Machine)",
-				AiModels = new string[0],
-				DefaultAiModel = "GPT4All Falcon",
-				BaseUrl = "https://localhost:4891/v1/",
-				ModelFilter = "",
-			};
-			list.Add(s2);
-			// Add Open AI (on-premises)
-			var s3 = new AiService()
-			{
-				Id = AppHelper.GetGuid(nameof(AiService), "Open AI (On-Premises)"),
-				Name = "Open AI (On-Premises)",
-				AiModels = new string[0],
-				DefaultAiModel = "gpt-3.5-turbo-16k",
-				BaseUrl = "https://ai.company.local/v1/",
-				ModelFilter = "",
-			};
-			list.Add(s3);
-			// Add Azure Open AI
-			var s4 = new AiService()
-			{
-				Id = AppHelper.GetGuid(nameof(AiService), "Azure Open AI"),
-				Name = "Azure Open AI",
-				AiModels = new string[0],
-				DefaultAiModel = "gpt-3.5-turbo-16k",
-				BaseUrl = "https://api.cognitive.microsoft.com/v1/",
-				ModelFilter = "",
-			};
-			list.Add(s4);
+
 			return list;
 		}
 
