@@ -5,6 +5,7 @@
 		Insert,
 		Use,
 		Remove,
+		Edit,
 		Copy,
 		Loaded,
 		DataCopy,

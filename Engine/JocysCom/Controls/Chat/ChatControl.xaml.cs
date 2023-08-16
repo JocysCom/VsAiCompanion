@@ -24,14 +24,42 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		private void ScriptingHandler_OnMessageAction(object sender, string[] e)
 		{
+			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e[1]);
+			if (action != MessageAction.Use && action != MessageAction.Edit)
+				return;
 			var id = e[0];
 			var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == id);
 			if (message == null)
 				return;
-			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e[1]);
 			if (action == MessageAction.Use)
+			{
 				DataTextBox.Text = message.Body;
+				EditMessageId = null;
+				FocusDataTextBox();
+			}
+			else if (action == MessageAction.Edit)
+			{
+				DataTextBox.Text = message.Body;
+				EditMessageId = id;
+				FocusDataTextBox();
+			}
 		}
+
+		public void FocusDataTextBox()
+		{
+			Dispatcher.BeginInvoke(new Action(() =>
+			{
+				DataTextBox.Focus();
+				DataTextBox.SelectionStart = DataTextBox.Text?.Length ?? 0;
+			}));
+		}
+
+		public string EditMessageId
+		{
+			get { return _EditMessageId; }
+			set { _EditMessageId = value; UpdateButtons(); }
+		}
+		string _EditMessageId;
 
 		private void Tasks_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
@@ -69,12 +97,23 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		}
 
 		public bool UseEnterToSendMessage { get; set; } = true;
+
+		private void DataTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (UseEnterToSendMessage && e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+			{
+				// Prevent new line added to the message.
+				e.Handled = true;
+			}
+		}
+
 		private void DataTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
 		{
 			if (UseEnterToSendMessage && e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
 			{
 				if (AllowToSend())
 					OnSend?.Invoke(sender, e);
+				// Prevent new line added to the message.
 				e.Handled = true;
 			}
 			UpdateButtons();
@@ -99,10 +138,15 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		public void UpdateButtons()
 		{
-			var sendOp = IsBusy ? 0.2 : AllowToSend() ? 1.0 : 0.5;
+			var isEdit = !string.IsNullOrEmpty(EditMessageId);
+			SendButton.ToolTip = isEdit ? "Update Message" : "Send Message";
+			StopButton.ToolTip = isEdit ? "Cancel Editing" : "Stop Request";
+			SendButton.IsEnabled = !IsBusy && AllowToSend();
+			StopButton.IsEnabled = isEdit || IsBusy;
+			var sendOp = !IsBusy || AllowToSend() ? 1.0 : 0.2;
 			if (SendButton.Opacity != sendOp)
 				SendButton.Opacity = sendOp;
-			var stopOp = IsBusy ? 1.0 : 0.2;
+			var stopOp = IsBusy || isEdit ? 1.0 : 0.2;
 			if (StopButton.Opacity != stopOp)
 				StopButton.Opacity = stopOp;
 		}
@@ -122,7 +166,23 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		private void SendButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			var isEdit = !string.IsNullOrEmpty(EditMessageId);
+			if (isEdit)
+			{
+				var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId);
+				if (message != null)
+				{
+					var messageIndex = MessagesPanel.Messages.IndexOf(message);
+					if (messageIndex > -1)
+					{
+						var messagesToDelete = MessagesPanel.Messages.Skip(messageIndex).ToArray();
+						foreach (var messageToDelete in messagesToDelete)
+							MessagesPanel.RemoveMessage(messageToDelete);
+					}
+				}
+			}
 			OnSend?.Invoke(sender, e);
+			EditMessageId = null;
 		}
 
 		private void This_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
@@ -144,8 +204,18 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			OnStop?.Invoke(sender, e);
-        }
+			var isEdit = !string.IsNullOrEmpty(EditMessageId);
+			if (isEdit)
+			{
+				DataTextBox.Text = "";
+				EditMessageId = null;
+				UpdateButtons();
+			}
+			else
+			{
+				OnStop?.Invoke(sender, e);
+			}
+		}
 
 	}
 

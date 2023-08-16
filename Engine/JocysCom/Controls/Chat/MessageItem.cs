@@ -18,13 +18,12 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		public MessageItem(string user, string body, MessageType type = MessageType.Information)
 		{
-			Id = Guid.NewGuid().ToString("N");
-			Body = body;
-			User = user;
-			Type = type;
-			Date = DateTime.Now;
+			_Id = Guid.NewGuid().ToString("N");
+			_Body = body;
+			_User = user;
+			_Type = type;
+			_Date = DateTime.Now;
 		}
-
 
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
