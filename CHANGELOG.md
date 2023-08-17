@@ -1,6 +1,6 @@
 2023-08-17 v1.0.95
 
-- Fix: In message edit mode, following messages won't be deleted if sent using SHIFT+ENTER.
+- Fix: In message edit mode, following messages won't be deleted if sent using ENTER key.
 
 2023-08-16 v1.0.94
 
