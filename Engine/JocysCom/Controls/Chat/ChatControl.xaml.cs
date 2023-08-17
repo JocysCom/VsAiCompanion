@@ -164,7 +164,10 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		public event EventHandler OnSend;
 		public event EventHandler OnStop;
 
-		private void SendButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		/// <summary>
+		/// If the chat form is in message edit mode, remove relevant messages before adding a new message.
+		/// </summary>
+		public void ApplyMessageEdit()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			if (isEdit)
@@ -181,8 +184,12 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 					}
 				}
 			}
-			OnSend?.Invoke(sender, e);
 			EditMessageId = null;
+		}
+
+		private void SendButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			OnSend?.Invoke(sender, e);
 		}
 
 		private void This_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)

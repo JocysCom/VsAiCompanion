@@ -51,7 +51,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ChatPanel_OnSend(object sender, EventArgs e)
 		{
-			await ClientHelper.Send(_item);
+			await ClientHelper.Send(_item, ChatPanel.ApplyMessageEdit);
 		}
 
 		private void ChatPanel_OnStop(object sender, EventArgs e)
@@ -165,7 +165,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_item.AutoSend = false;
 				_ = Dispatcher.BeginInvoke(new Action(() =>
 				{
-					_ = ClientHelper.Send(_item);
+					_ = ClientHelper.Send(_item, ChatPanel.ApplyMessageEdit);
 				}));
 			}
 		}

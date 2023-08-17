@@ -1,3 +1,7 @@
+2023-08-17 v1.0.95
+
+- Fix: In message edit mode, following messages won't be deleted if sent using SHIFT+ENTER.
+
 2023-08-16 v1.0.94
 
 - New: [Edit] button has been added. Edit chat message and delete any messages that follow it.
