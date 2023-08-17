@@ -24,7 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string FormatMessageTaskName = "® System - Format Message";
 		public const string DefaultIconEmbeddedResource = "document_gear.svg";
 
-		public async static Task Send(TemplateItem item)
+		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null)
 		{
 			if (Global.IsIncompleteSettings(item.AiService))
 				return;
@@ -228,6 +228,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
+			executeBeforeAddMessage?.Invoke();
 			item.Messages.Add(m);
 			var msgTokens = CountTokens(messageForAI);
 			if (item.IsPreview)
