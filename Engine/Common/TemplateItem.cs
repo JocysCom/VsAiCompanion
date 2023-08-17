@@ -164,6 +164,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
 		ItemType _ItemType;
 
+		/// <summary>
+		/// Automation script name.
+		/// </summary>
+		public string ScriptName { get => _ScriptName; set => SetProperty(ref _ScriptName, value); }
+		string _ScriptName;
+
 		[XmlIgnore]
 		public object Tag;
 		public string IconData { get => _IconData; set => SetProperty(ref _IconData, value); }

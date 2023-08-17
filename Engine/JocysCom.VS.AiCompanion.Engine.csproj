@@ -187,6 +187,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Automation\JocysCom.VS.AiCompanion.Automation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Resource Include="AiCompanion.svg" />
 	</ItemGroup>
 

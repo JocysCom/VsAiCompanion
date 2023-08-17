@@ -15,6 +15,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using System.Text;
 using System.Threading.Tasks;
 using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.Automation;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {

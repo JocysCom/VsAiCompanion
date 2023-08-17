@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.Automation;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;

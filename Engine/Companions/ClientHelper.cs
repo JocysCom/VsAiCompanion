@@ -10,6 +10,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using OpenAI;
 using System.Text.Json.Serialization;
 using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.Automation;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
