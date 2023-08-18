@@ -5,32 +5,63 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Name="This"
+	IsEditable="True"
+	IsReadOnly="True"
 	IsSynchronizedWithCurrentItem="True"
 	IsTextSearchEnabled="False"
 	SelectionChanged="ComboBox_SelectionChanged"
 	StaysOpenOnEdit="True"
 	mc:Ignorable="d">
+
 	<ComboBox.ItemContainerStyle>
 		<Style TargetType="ComboBoxItem">
-			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ComboBoxItem">
+						<Border
+							Name="ComboBoxItemBorder"
+							Padding="0,0,0,0"
+							CornerRadius="5"
+							SnapsToDevicePixels="True">
+							<CheckBox
+								Margin="0"
+								Padding="5"
+								VerticalAlignment="Stretch"
+								HorizontalAlignment="Stretch"
+								Command="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=DataContext.CheckCommand}"
+								CommandParameter="{Binding}"
+								Content="{Binding Description}"
+								IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								Visibility="{Binding CheckVisibility}" />
+							<!--<ContentPresenter />-->
+						</Border>
+						<!--  Triggers  -->
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="ComboBoxItemBorder" Property="Background" Value="#c2e7ff" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 	</ComboBox.ItemContainerStyle>
-	<ComboBox.ItemTemplate>
+	<!--<ComboBox.ItemTemplate>
 		<DataTemplate>
-			<StackPanel>
-				<Label
-					Margin="0,0,0,0"
-					Padding="0,0,0,0"
+			-->
+	<!--<Label
+					Margin="3"
+					Padding="0"
 					Content="{Binding Description}"
-					Visibility="{Binding LabelVisibility}" />
-				<CheckBox
-					HorizontalAlignment="Stretch"
-					Command="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=DataContext.CheckCommand}"
-					CommandParameter="{Binding}"
-					Content="{Binding Description}"
-					IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					Visibility="{Binding CheckVisibility}" />
-			</StackPanel>
+					Visibility="{Binding LabelVisibility}" />-->
+	<!--
+			<CheckBox
+				Margin="0"
+				Command="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=DataContext.CheckCommand}"
+				CommandParameter="{Binding}"
+				Content="{Binding Description}"
+				IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				Visibility="{Binding CheckVisibility}" />
 		</DataTemplate>
-	</ComboBox.ItemTemplate>
+	</ComboBox.ItemTemplate>-->
 </ComboBox>

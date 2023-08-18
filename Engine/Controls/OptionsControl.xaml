@@ -8,8 +8,6 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	Name="This"
-	d:DesignHeight="640"
-	d:DesignWidth="640"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -156,7 +154,11 @@
 					<CheckBox Name="MinimizeOnCloseTrayBox" Content="Minimize on Close" IsChecked="{Binding MinimizeOnClose, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="AllowOnlyOneCopyBox" Content="Allow Only One Copy" IsChecked="{Binding AllowOnlyOneCopy, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<StackPanel Orientation="Horizontal">
-						<CheckBox Name="StartWithWindowsBox" Content="Start with Windows:" IsChecked="{Binding StartWithWindows, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						<CheckBox
+							Name="StartWithWindowsBox"
+							VerticalAlignment="Center"
+							Content="Start with Windows"
+							IsChecked="{Binding StartWithWindows, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						<ComboBox
 							Name="StartWithWindowsStateBox"
 							MinWidth="75"
@@ -189,7 +191,7 @@
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 					<CheckBox Name="ShowDocumentsAttachedWarningCheckBox" Content="Show Documents Attached Warning" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="Show Sensitive Data Warning" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-					<CheckBox Name="UseEnterToSendMessageCheckBox" Content="Use [Enter] to send the message." IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="UseEnterToSendMessageCheckBox" Content="Use [Enter] to send the message" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
 		</WrapPanel>

@@ -60,11 +60,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var count = choice.Count(x => x.IsChecked);
 				var names = choice.Where(x => x.IsChecked).Select(x => x.Description).ToList();
 				if (count == 0)
-					top.Description = "None";
+					top.Description = This.Text = "None";
 				else if (count == 1)
-					top.Description = names.First();
+					top.Description = This.Text = names.First();
 				else
-					top.Description = $"{names.First()} + " + (count - 1).ToString();
+					top.Description = This.Text = $"{names.First()} + " + (count - 1).ToString();
 				var value = Data
 					.Where(x => x.IsChecked)
 					.Aggregate(default(AttachmentType), (current, item) => current | item.Value);

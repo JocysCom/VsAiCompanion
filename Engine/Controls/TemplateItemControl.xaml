@@ -8,8 +8,6 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:DesignHeight="320"
-	d:DesignWidth="520"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -112,7 +110,7 @@
 					</GroupBox>
 					<CheckBox
 						Name="IsFavoriteCheckBox"
-						Margin="-1,-3,0,0"
+						Margin="-1,-4,0,0"
 						HorizontalAlignment="Center"
 						Content="Show Icon in Toolbar"
 						IsChecked="{Binding IsFavorite}"
@@ -190,16 +188,17 @@
 						</GroupBox.Header>
 						<Controls:EnumComboBox
 							x:Name="AttachmentEnumComboBox"
-							Margin="0,3,0,3"
+							Width="180"
 							VerticalAlignment="Center"
-							SelectedValue="{Binding AttachContext}" />
+							SelectedValue="{Binding AttachContext}"
+							Style="{StaticResource ComboBox_AsMenu2}"
+							Text="None" />
 					</GroupBox>
 					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
 							<CheckBox
 								Name="UseMacrosCheckBox"
-								Margin="-4"
-								VerticalAlignment="Center"
+								Margin="-4,-6,-4,-4"
 								Content="Use Macros"
 								IsChecked="{Binding UseMacros}" />
 						</GroupBox.Header>
@@ -218,42 +217,60 @@
 								x:Name="VsMacrosComboBox"
 								Grid.Row="0"
 								Grid.Column="1"
+								Width="110"
 								Padding="0,3"
-								Style="{StaticResource ComboBox_Default}" />
+								Style="{StaticResource ComboBox_AsMenu}"
+								Text="Environment" />
 							<Label
 								Grid.Row="0"
 								Grid.Column="0"
 								VerticalAlignment="Center"
-								Content="Environment" />
+								Content="Environment"
+								Visibility="Collapsed" />
 							<Label
 								Grid.Row="0"
 								Grid.Column="2"
 								VerticalAlignment="Center"
-								Content="Selection" />
+								Content="Selection"
+								Visibility="Collapsed" />
 							<ComboBox
 								Name="SelectionComboBox"
 								Grid.Row="0"
 								Grid.Column="3"
+								Width="100"
 								Padding="0,3"
-								DisplayMemberPath="Key" />
+								DisplayMemberPath="Key"
+								Style="{StaticResource ComboBox_AsMenu}"
+								Text="Selection" />
 							<ComboBox
 								Name="DateComboBox"
 								Grid.Row="1"
 								Grid.Column="1"
+								Width="110"
 								Padding="0,3"
-								DisplayMemberPath="Key" />
+								DisplayMemberPath="Key"
+								Style="{StaticResource ComboBox_AsMenu}"
+								Text="Date" />
 							<Label
 								Grid.Row="1"
 								Grid.Column="0"
 								VerticalAlignment="Center"
-								Content="Date" />
-							<Label Grid.Row="1" Grid.Column="2" Content="Document" />
+								Content="Date"
+								Visibility="Collapsed" />
+							<Label
+								Grid.Row="1"
+								Grid.Column="2"
+								Content="Document"
+								Visibility="Collapsed" />
 							<ComboBox
 								Name="FileComboBox"
 								Grid.Row="1"
 								Grid.Column="3"
+								Width="100"
 								Padding="0,3"
-								DisplayMemberPath="Key" />
+								DisplayMemberPath="Key"
+								Style="{StaticResource ComboBox_AsMenu}"
+								Text="Document" />
 							<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 								<Button
 									Name="PropertiesRefreshButton"
@@ -282,7 +299,7 @@
 						<StackPanel Orientation="Vertical">
 							<ComboBox
 								Name="AutoOperationComboBox"
-								Margin="0,3,0,5"
+								Margin="3,3,0,6"
 								ItemsSource="{Binding AutoOperations, ElementName=This}"
 								SelectedValue="{Binding AutoOperation}" />
 							<CheckBox x:Name="AutoFormatCodeCheckBox" Content="Format Code" IsChecked="{Binding AutoFormatCode}" />
@@ -308,11 +325,11 @@
 				Orientation="Horizontal">
 				<CheckBox
 					Name="ShowInstructionsCheckBox"
-					Margin="4,0,0,0"
+					Margin="6,0,3,0"
 					Content="Show Instructions"
 					IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
-				<CheckBox Name="AutoFormatMessageCheckBox" Padding="0" IsChecked="{Binding AutoFormatMessage}">
+				<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}">
 					<TextBlock VerticalAlignment="Center">
 						<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
 						Auto-Format</TextBlock>

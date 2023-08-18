@@ -5,8 +5,6 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:DesignHeight="450"
-	d:DesignWidth="800"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -50,7 +48,7 @@
 					<Label VerticalAlignment="Center" Content="Refresh" />
 				</StackPanel>
 			</Button>
-			<CheckBox Checked="CheckBox_Checked" Content="Is Default AI Service" IsChecked="{Binding IsDefault}" />
+			<CheckBox Checked="CheckBox_Checked" Content="Is Default AI Service" VerticalAlignment="Center" IsChecked="{Binding IsDefault}" />
 		</StackPanel>
 		<Label
 			Grid.Row="1"
