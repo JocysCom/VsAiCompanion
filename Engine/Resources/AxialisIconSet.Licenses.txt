@@ -1,0 +1,58 @@
+Commercial License
+
+This is a legal agreement between you ("user") and Axialis Software("Axialis"). This agreement applies to licenses issued via Internet and local sales representatives, and is applicable to digital and physical delivery of the icons, modified by the user or not, included in the stock icon sets ("icons"). Axialis grants the user a non-exclusive license to use the icons, as indicated herein.
+
+LICENSE TYPE
+
+The license is user-based. This means that each user of icons in projects must acquire a license. Use of icons in projects such as applications, websites, documentations or any distributed media is subject to the following terms and obligations:
+
+The user MAY: (a) use the icons royalty-free in commercial projects, without limit of time. This means that the user can use the icons in an unlimited number of projects without paying additional fees; (b) modify, create derivative work of the icons; (c) include the icons in a project for a client as long as this client does not modify or enhance the project after delivery.
+
+The user MAY NOT: (a) copy and distribute the icons or any portion of the set without including them in a project; (b) include a collection of icons in a project for the sole purpose of increasing the value of this project, as a library of image or icons for example; (c) sublicense, lease, rent, or transfer the icons to another; (d) include the icons in a logo or trademark; (e) use the icons in a BSD (Berkeley Systems Distribution) open source project.
+
+TERM
+
+This License is effective until terminated. You may terminate it at any time by destroying the icons, together with all copies thereof. This License will also terminate if you fail to comply with any term or condition of this Agreement. Upon such termination, you agree to destroy the icons, together with all copies thereof.
+
+COPYRIGHT/OWNERSHIP
+
+The icons are proprietary products of AXIALIS and are protected by copyright and other intellectual property laws. The icons are licensed and not sold. You acquire only the right to use the icons and do not acquire any rights, express or implied, in the icons other than those specified in this License.
+
+DISCLAIMER OF WARRANTIES
+
+The icons are supplied "AS IS". AXIALIS disclaims all warranties, expressed or implied, including, without limitation, the warranties of merchantability and of fitness for any purpose. The user must assume the entire risk of using the icons.
+
+DISCLAIMER OF DAMAGES
+
+AXIALIS assumes no liability for damages, direct or consequential, which may result from the use of the icons, even if AXIALIS has been advised of the possibility of such damages. Any liability of the seller will be limited to refund the purchase price.
+
+Free License with Attribution (CC BY-ND 4.0)
+
+Axialis free icons are licensed under the CC Attribution-NoDerivatives 4.0 International license.
+
+This is a legal agreement between you ("user") and Axialis Software("Axialis"). This agreement applies to licenses issued via Internet and local sales representatives, and is applicable to digital and physical delivery of the icons, modified by the user or not, included in the stock icon sets ("icons"). Axialis grants the user a non-exclusive license to use the icons, as indicated herein.
+
+LICENSE TYPE
+
+Use of icons in projects such as applications, websites, documentations or any distributed media is subject to the following terms and obligations:
+The user MAY: (a) use the icons royalty-free in commercial projects, without limit of time. This means that the user can use the icons in an unlimited number of projects without paying additional fees; (b) modify, create derivative work of the icons as long as you don't distribute them; (c) include the icons in a project for a client as long as this client does not modify or enhance the project after delivery.
+
+The user MAY NOT: (a) copy and distribute the icons or any portion of the set without including them in a project; (b) include a collection of icons in a project for the sole purpose of increasing the value of this project, as a library of image or icons for example; (c) sublicense, lease, rent, or transfer the icons to another; (d) include the icons in a logo or trademark; (e) use the icons in a BSD (Berkeley Systems Distribution) open source project.
+
+The user MUST: (a) Give credits to Axialis "Icons by Axialis" with a link to "https://www.axialis.com"; (b) Keep the derivatives. If you remix, transform, or build upon the icons, you may not distribute the modified icons.
+
+TERM
+
+This License is effective until terminated. You may terminate it at any time by destroying the icons, together with all copies thereof. This License will also terminate if you fail to comply with any term or condition of this Agreement. Upon such termination, you agree to destroy the icons, together with all copies thereof.
+
+COPYRIGHT/OWNERSHIP
+
+The icons are proprietary products of AXIALIS and are protected by copyright and other intellectual property laws. The icons are licensed and not sold. You acquire only the right to use the icons and do not acquire any rights, express or implied, in the icons other than those specified in this License.
+
+DISCLAIMER OF WARRANTIES
+
+The icons are supplied "AS IS". AXIALIS disclaims all warranties, expressed or implied, including, without limitation, the warranties of merchantability and of fitness for any purpose. The user must assume the entire risk of using the icons.
+
+DISCLAIMER OF DAMAGES
+
+AXIALIS assumes no liability for damages, direct or consequential, which may result from the use of the icons, even if AXIALIS has been advised of the possibility of such damages. Any liability of the seller will be limited to refund the purchase price.

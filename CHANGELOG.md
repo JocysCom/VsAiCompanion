@@ -1,3 +1,8 @@
+2023-08-20 v1.0.96
+
+- Fix: Corrected dropdown ComboBox theme.
+- Updated: Information on About control.
+
 2023-08-17 v1.0.95
 
 - Fix: In message edit mode, following messages won't be deleted if sent using ENTER key.

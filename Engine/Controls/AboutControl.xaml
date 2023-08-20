@@ -25,6 +25,7 @@
 				<RowDefinition Height="auto" />
 				<RowDefinition Height="auto" />
 				<RowDefinition Height="auto" />
+				<RowDefinition Height="auto" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="auto" />
@@ -73,8 +74,7 @@
 			<TextBlock
 				Grid.Row="2"
 				Grid.Column="2"
-				Margin="0"
-				Padding="4,2,2,2"
+				Padding="3,0,0,0"
 				VerticalAlignment="Center">
 				<Hyperlink NavigateUri="https://www.jocys.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 					https://www.jocys.com
@@ -83,25 +83,41 @@
 			<Label
 				Grid.Row="2"
 				Grid.Column="4"
-				Padding="8,0,0,0"
+				Padding="6,0,0,0"
 				VerticalAlignment="Center">
 				GitHub Project
 			</Label>
 			<TextBlock
 				Grid.Row="2"
 				Grid.Column="5"
-				Margin="0"
-				Padding="4,2,2,2"
+				Padding="3,0,0,0"
 				VerticalAlignment="Center">
 				<Hyperlink NavigateUri="https://github.com/JocysCom/VsAiCompanion" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 					https://github.com/JocysCom/VsAiCompanion
+				</Hyperlink>
+			</TextBlock>
+			<Label
+				Grid.Row="3"
+				Grid.Column="1"
+				Padding="3,0,3,0"
+				VerticalAlignment="Center">
+				Market Place
+			</Label>
+			<TextBlock
+				Grid.Row="3"
+				Grid.Column="2"
+				Grid.ColumnSpan="4"
+				Padding="3,0,0,0"
+				VerticalAlignment="Center">
+				<Hyperlink NavigateUri="https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
+					https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion
 				</Hyperlink>
 			</TextBlock>
 		</Grid>
 		<TabControl
 			Name="AboutTabControl"
 			Grid.Row="1"
-			Margin="3,3,3,3"
+			Margin="3,6,3,3"
 			Padding="0,0,0,0">
 			<TabItem Name="ChangesTabPage" Header="Changes">
 				<TextBox
@@ -111,7 +127,7 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
-					Background="White"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 					BorderThickness="0"
 					IsReadOnly="True"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -126,7 +142,7 @@
 								<Border
 									Width="{Binding ActualWidth, ElementName=ChangeLogTextBox}"
 									Height="{Binding ActualHeight, ElementName=ChangeLogTextBox}"
-									Background="White"
+									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 									CornerRadius="0,5,5,5"
 									SnapsToDevicePixels="True" />
 							</VisualBrush.Visual>
@@ -142,7 +158,7 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
-					Background="White"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 					BorderThickness="0"
 					IsReadOnly="True"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -157,7 +173,7 @@
 								<Border
 									Width="{Binding ActualWidth, ElementName=LicenseTextBox}"
 									Height="{Binding ActualHeight, ElementName=LicenseTextBox}"
-									Background="White"
+									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 									CornerRadius="0,5,5,5"
 									SnapsToDevicePixels="True" />
 							</VisualBrush.Visual>
@@ -165,6 +181,69 @@
 					</TextBox.OpacityMask>
 				</TextBox>
 			</TabItem>
+			<TabItem Name="IconExperienceTabPage" Header="IconExperience License">
+				<TextBox
+					Name="IconExperienceTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+					<TextBox.OpacityMask>
+						<VisualBrush>
+							<VisualBrush.Visual>
+								<Border
+									Width="{Binding ActualWidth, ElementName=IconExperienceTextBox}"
+									Height="{Binding ActualHeight, ElementName=IconExperienceTextBox}"
+									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+									CornerRadius="0,5,5,5"
+									SnapsToDevicePixels="True" />
+							</VisualBrush.Visual>
+						</VisualBrush>
+					</TextBox.OpacityMask>
+				</TextBox>
+			</TabItem>
+			<TabItem Name="AxialisIconSetTabPage" Header="Axialis Icon Set Licenses">
+				<TextBox
+					Name="AxialisIconSetTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+					<TextBox.OpacityMask>
+						<VisualBrush>
+							<VisualBrush.Visual>
+								<Border
+									Width="{Binding ActualWidth, ElementName=AxialisIconSetTextBox}"
+									Height="{Binding ActualHeight, ElementName=AxialisIconSetTextBox}"
+									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+									CornerRadius="0,5,5,5"
+									SnapsToDevicePixels="True" />
+							</VisualBrush.Visual>
+						</VisualBrush>
+					</TextBox.OpacityMask>
+				</TextBox>
+			</TabItem>
+
 		</TabControl>
 	</Grid>
 </UserControl>

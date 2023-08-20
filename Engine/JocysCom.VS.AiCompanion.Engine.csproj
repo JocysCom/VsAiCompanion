@@ -16,8 +16,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.0.95</AssemblyVersion>
-		<FileVersion>1.0.95</FileVersion>
+		<AssemblyVersion>1.0.96</AssemblyVersion>
+		<FileVersion>1.0.96</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
@@ -130,6 +130,8 @@
 		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<None Remove="Resources\BuildDate.*" />
+		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
+		<None Remove="Resources\IconExperience.License.txt" />
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<None Remove="Resources\MainWindowCommand.png" />
@@ -169,6 +171,8 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
+		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
+		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
 		<Content Include="Resources\MainWindowCommand.png" />
 	</ItemGroup>

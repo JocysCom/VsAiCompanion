@@ -32,6 +32,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AboutDescriptionLabel.Text = ai.Description;
 			LicenseTextBox.Text = ClassLibrary.Helper.FindResource<string>("LICENSE", ai.Assembly);
 			LicenseTabPage.Header = string.Format("{0} {1} License", ai.Product, ai.Version.ToString(2));
+			IconExperienceTextBox.Text = ClassLibrary.Helper.FindResource<string>("IconExperience.License.txt", ai.Assembly);
+			AxialisIconSetTextBox.Text = ClassLibrary.Helper.FindResource<string>("AxialisIconSet.Licenses.txt", ai.Assembly);
 		}
 	}
 }
