@@ -1,4 +1,4 @@
-2023-08-20 v1.0.96
+2023-08-20 v1.0.97
 
 - Fix: Corrected dropdown ComboBox theme.
 - Updated: Information on About control.
