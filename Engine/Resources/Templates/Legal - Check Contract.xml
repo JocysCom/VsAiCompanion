@@ -1,12 +1,12 @@
 ﻿<TemplateItem>
   <Name>Legal - Check Contract</Name>
-  <AiModel>gpt-3.5-turbo-16k-0613</AiModel>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Analyze the contract or terms and conditions provided. Identify any deceptive language, loopholes, or missing parts that can unfairly benefit one party.&#xD;
 &#xD;
 Data for processing:</TextInstructions>
   <Settings />
-  <AiServiceId>00000000-0000-0000-0000-000000000000</AiServiceId>
+  <AiServiceId>eef68e23-ff22-7c3d-8dd6-4f36654d766a</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
