@@ -6,7 +6,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	Title="MainWindow"
-	Width="800"
+	Width="900"
 	Height="800"
 	Closing="Window_Closing"
 	RenderOptions.BitmapScalingMode="HighQuality"

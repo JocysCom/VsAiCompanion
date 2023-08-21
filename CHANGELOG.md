@@ -1,7 +1,13 @@
+2023-08-21 v1.0.100
+
+- Fix: AI service setting in templates.
+- Fix: Copy AI service value from template.
+- Fix: Initial app start position.
+
 2023-08-20 v1.0.97
 
 - Fix: Corrected dropdown ComboBox theme.
-- Updated: Information on About control.
+- Update: Information on About control.
 
 2023-08-17 v1.0.95
 

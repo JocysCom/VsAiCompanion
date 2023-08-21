@@ -15,6 +15,8 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using System.Text;
 using System.Threading.Tasks;
 using JocysCom.ClassLibrary.Configuration;
+using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -348,6 +350,67 @@ namespace JocysCom.VS.AiCompanion.Engine
 			item.AiModel = defaultAiService.DefaultAiModel;
 			return item;
 		}
+
+		#region Copy Properties
+
+		public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+
+		public static bool IsKnownType(Type type)
+		{
+			if (type is null)
+				throw new ArgumentNullException(nameof(type));
+			return
+				type == typeof(string)
+				|| type.IsPrimitive
+				|| type.IsSerializable;
+		}
+
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<Type, PropertyInfo[]> Properties { get; } = new ConcurrentDictionary<Type, PropertyInfo[]>();
+
+		private static PropertyInfo[] GetProperties(Type t, bool cache = true)
+		{
+			var items = cache
+				? Properties.GetOrAdd(t, x => t.GetProperties(DefaultBindingFlags))
+				: t.GetProperties(DefaultBindingFlags);
+			return items;
+		}
+
+		public static void CopyProperties(object source, object target)
+		{
+			if (source is null)
+				throw new ArgumentNullException(nameof(source));
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
+			// Get type of the destination object.
+			var sourceProperties = GetProperties(source.GetType());
+			var targetProperties = GetProperties(target.GetType());
+			foreach (var sp in sourceProperties)
+			{
+				// Get destination property and skip if not found.
+				var tp = targetProperties.FirstOrDefault(x => Equals(x.Name, sp.Name));
+				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
+					continue;
+				if (!sp.CanRead || !tp.CanWrite)
+					continue;
+				// Get source value.
+				var sValue = sp.GetValue(source, null);
+				var update = true;
+				// If can read target value.
+				if (tp.CanRead)
+				{
+					// Get target value.
+					var dValue = tp.GetValue(target, null);
+					// Update only if values are different.
+					update = !Equals(sValue, dValue);
+				}
+				if (update)
+					tp.SetValue(target, sValue, null);
+			}
+		}
+
+		#endregion
 
 	}
 

@@ -36,10 +36,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public PositionSettings StartPosition
 		{
-			get => _WindowPosition = _WindowPosition ?? new PositionSettings();
-			set => _WindowPosition = value;
+			get => _StartPosition = _StartPosition ?? new PositionSettings() { Width = 900, Height = 800 };
+			set => _StartPosition = value;
 		}
-		private PositionSettings _WindowPosition;
+		private PositionSettings _StartPosition;
 
 		public AiServiceSettings AiServiceData
 		{
