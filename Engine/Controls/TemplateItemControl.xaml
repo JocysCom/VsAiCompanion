@@ -188,7 +188,7 @@
 						</GroupBox.Header>
 						<Controls:EnumComboBox
 							x:Name="AttachmentEnumComboBox"
-							Width="180"
+							Width="170"
 							VerticalAlignment="Center"
 							SelectedValue="{Binding AttachContext}"
 							Style="{StaticResource ComboBox_AsMenu2}"
@@ -217,8 +217,7 @@
 								x:Name="VsMacrosComboBox"
 								Grid.Row="0"
 								Grid.Column="1"
-								Width="110"
-								Padding="0,3"
+								Width="100"
 								Style="{StaticResource ComboBox_AsMenu}"
 								Text="Environment" />
 							<Label
@@ -237,8 +236,7 @@
 								Name="SelectionComboBox"
 								Grid.Row="0"
 								Grid.Column="3"
-								Width="100"
-								Padding="0,3"
+								Width="90"
 								DisplayMemberPath="Key"
 								Style="{StaticResource ComboBox_AsMenu}"
 								Text="Selection" />
@@ -246,8 +244,7 @@
 								Name="DateComboBox"
 								Grid.Row="1"
 								Grid.Column="1"
-								Width="110"
-								Padding="0,3"
+								Width="100"
 								DisplayMemberPath="Key"
 								Style="{StaticResource ComboBox_AsMenu}"
 								Text="Date" />
@@ -266,8 +263,7 @@
 								Name="FileComboBox"
 								Grid.Row="1"
 								Grid.Column="3"
-								Width="100"
-								Padding="0,3"
+								Width="90"
 								DisplayMemberPath="Key"
 								Style="{StaticResource ComboBox_AsMenu}"
 								Text="Document" />
