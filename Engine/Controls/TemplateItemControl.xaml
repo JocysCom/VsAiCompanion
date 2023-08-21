@@ -299,7 +299,8 @@
 						<StackPanel Orientation="Vertical">
 							<ComboBox
 								Name="AutoOperationComboBox"
-								Margin="3,3,0,6"
+								Width="100"
+								Margin="3,3,3,6"
 								ItemsSource="{Binding AutoOperations, ElementName=This}"
 								SelectedValue="{Binding AutoOperation}" />
 							<CheckBox x:Name="AutoFormatCodeCheckBox" Content="Format Code" IsChecked="{Binding AutoFormatCode}" />
