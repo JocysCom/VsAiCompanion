@@ -237,6 +237,7 @@
 								PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
 								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 								ScrollViewer.VerticalScrollBarVisibility="Auto"
+								SpellCheck.IsEnabled="True"
 								Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}"
 								TextChanged="DataInstructionsTextBox_TextChanged"
 								TextWrapping="Wrap" />
@@ -294,10 +295,11 @@
 							AcceptsReturn="True"
 							Background="White"
 							BorderThickness="0"
-							PreviewKeyUp="DataTextBox_PreviewKeyUp"
 							PreviewKeyDown="DataTextBox_PreviewKeyDown"
+							PreviewKeyUp="DataTextBox_PreviewKeyUp"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Auto"
+							SpellCheck.IsEnabled="True"
 							Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
 							TextChanged="DataTextBox_TextChanged"
 							TextWrapping="Wrap" />
