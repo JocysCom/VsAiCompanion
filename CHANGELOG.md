@@ -1,3 +1,7 @@
+2023-08-22 v1.0.102
+
+- New: "Enable Spell Check" option.
+
 2023-08-21 v1.0.101
 
 - Fix: AI service setting in templates.

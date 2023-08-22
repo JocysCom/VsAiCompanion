@@ -74,6 +74,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region  Spell Check
+
+		/// <summary>Allow only one standalone copy.</summary>
+		[DefaultValue(true)]
+		public bool IsSpellCheckEnabled { get => _IsSpellCheckEnabled; set => SetProperty(ref _IsSpellCheckEnabled, value); }
+		private bool _IsSpellCheckEnabled;
+
+		#endregion
+
 		#region Attached Context Titles
 
 		[DefaultValue("Data for Processing")]

@@ -8,8 +8,8 @@
 		<UseWPF>true</UseWPF>
 		<PackageIcon>App.ico</PackageIcon>
 		<ApplicationIcon>App.ico</ApplicationIcon>
-		<AssemblyVersion>1.0.101</AssemblyVersion>
-		<FileVersion>1.0.101</FileVersion>
+		<AssemblyVersion>1.0.102</AssemblyVersion>
+		<FileVersion>1.0.102</FileVersion>
 		<!-- Include all necessary native libraries (such as sni.dll for SQL Network Interface)
 			 inside the main output file (.dll or .exe). These libraries are then extracted to a
 			 temporary directory and loaded from there when the application starts, making

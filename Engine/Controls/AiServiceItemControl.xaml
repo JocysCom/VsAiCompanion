@@ -48,7 +48,11 @@
 					<Label VerticalAlignment="Center" Content="Refresh" />
 				</StackPanel>
 			</Button>
-			<CheckBox Checked="CheckBox_Checked" Content="Is Default AI Service" VerticalAlignment="Center" IsChecked="{Binding IsDefault}" />
+			<CheckBox
+				VerticalAlignment="Center"
+				Checked="CheckBox_Checked"
+				Content="Is Default AI Service"
+				IsChecked="{Binding IsDefault}" />
 		</StackPanel>
 		<Label
 			Grid.Row="1"

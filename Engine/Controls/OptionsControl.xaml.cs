@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,13 +16,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			StartWithWindowsStateBox.ItemsSource = Enum.GetValues(typeof(WindowState));
 			SettingsFolderTextBox.Text = Global.AppData.XmlFile.Directory.FullName;
+			UpdateSpellCheck();
 		}
 
 		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			// Make sure that AllowOnlyOneCopy setting applies immediatelly.
-			if (e.PropertyName == nameof(AppData.AllowOnlyOneCopy))
-				Global.AppData.Save();
+			switch (e.PropertyName)
+			{
+				case nameof(AppData.AllowOnlyOneCopy):
+					// Make sure that AllowOnlyOneCopy setting applies immediatelly.
+					Global.AppData.Save();
+					break;
+				case nameof(AppData.IsSpellCheckEnabled):
+					UpdateSpellCheck();
+					break;
+				default:
+					break;
+			}
+		}
+
+		void UpdateSpellCheck()
+		{
+			var isEnabled = Global.AppSettings.IsSpellCheckEnabled;
+			SpellCheck.SetIsEnabled(ContextDataTitleTextBox, isEnabled);
+			SpellCheck.SetIsEnabled(ContextFileTitleTextBox, isEnabled);
+			SpellCheck.SetIsEnabled(ContextChatInstructionsTextBox, isEnabled);
+			SpellCheck.SetIsEnabled(ContextChatTitleTextBox, isEnabled);
 		}
 
 		private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -47,6 +65,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != MessageBoxResult.Yes)
 				return;
 			Global.ResetTemplates();
+		}
+
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, "Enable spell check for the chat textbox and certain option text boxes.");
 		}
 	}
 

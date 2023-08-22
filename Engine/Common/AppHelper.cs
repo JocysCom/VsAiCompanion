@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 using JocysCom.ClassLibrary.Configuration;
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.CodeDom.Compiler;
+using System.Management;
+using System.Security.Policy;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -349,6 +352,31 @@ namespace JocysCom.VS.AiCompanion.Engine
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService.DefaultAiModel;
 			return item;
+		}
+
+
+		/// <summary>
+		/// Set custom dictionary for spell check.
+		/// </summary>
+		/// <param name="box">TextBox</param>
+		/// <param name="languages">Language list, for example: de-DE, en-GB.</param>
+		public static void SetCustomDictionaryTextBox(TextBox box, IList<string> languages)
+		{
+			if (box.SpellCheck.IsEnabled && box.SpellCheck.CustomDictionaries.Count == 0)
+			{
+				box.SpellCheck.CustomDictionaries.Clear();
+				foreach (var language in languages)
+				{
+					// The Uri points to the.lex file in the application root.
+					var uri = new Uri($"pack://application:,,,/Dictionary.{language}.lex");
+					box.SpellCheck.CustomDictionaries.Add(uri);
+				}
+			}
+		}
+
+		public static void AddHelp(ContentControl control, string help)
+		{
+			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
 		}
 
 		#region Copy Properties

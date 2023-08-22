@@ -34,12 +34,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.AiModelsUpdated += Global_AiModelsUpdated;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+			UpdateSpellCheck();
 		}
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(AppData.UseEnterToSendMessage))
-				ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
+			switch (e.PropertyName)
+			{
+				case nameof(AppData.UseEnterToSendMessage):
+					ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
+					break;
+				case nameof(AppData.IsSpellCheckEnabled):
+					UpdateSpellCheck();
+					break;
+				default:
+					break;
+			}
+		}
+
+		void UpdateSpellCheck()
+		{
+			var isEnabled = Global.AppSettings.IsSpellCheckEnabled;
+			SpellCheck.SetIsEnabled(ChatPanel.DataTextBox, isEnabled);
+			SpellCheck.SetIsEnabled(ChatPanel.DataInstructionsTextBox, isEnabled);
 		}
 
 		private void Global_OnSaveSettings(object sender, EventArgs e)
@@ -325,11 +342,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		private void AddHelp(ContentControl control, string help)
-		{
-			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
-		}
-
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
@@ -347,12 +359,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 			}
-			AddHelp(ShowInstructionsCheckBox, "Show instructions that will be included at the start of every message.");
-			AddHelp(AutoSendCheckBox, "Automatically send Task for processing to AI when Task is created from the Template.");
-			AddHelp(IsPreviewCheckBox, ClientHelper.PreviewModeMessage);
-			AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
-			AddHelp(AutoFormatMessageCheckBox, "Use AI to automatically format your message using markdown.");
-			AddHelp(AutoGenerateTitleCheckBox, "Use AI to to automatically generate chat title.");
+			AppHelper.AddHelp(ShowInstructionsCheckBox, "Show instructions that will be included at the start of every message.");
+			AppHelper.AddHelp(AutoSendCheckBox, "Automatically send Task for processing to AI when Task is created from the Template.");
+			AppHelper.AddHelp(IsPreviewCheckBox, ClientHelper.PreviewModeMessage);
+			AppHelper.AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
+			AppHelper.AddHelp(AutoFormatMessageCheckBox, "Use AI to automatically format your message using markdown.");
+			AppHelper.AddHelp(AutoGenerateTitleCheckBox, "Use AI to to automatically generate chat title.");
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
