@@ -101,6 +101,7 @@
 					Name="ContextDataTitleTextBox"
 					Grid.Row="0"
 					Grid.Column="1"
+					SpellCheck.IsEnabled="True"
 					Text="{Binding ContextDataTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				<Label
 					Grid.Row="0"
@@ -111,6 +112,7 @@
 					Name="ContextFileTitleTextBox"
 					Grid.Row="0"
 					Grid.Column="3"
+					SpellCheck.IsEnabled="True"
 					Text="{Binding ContextFileTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				<Label
 					Grid.Row="1"
@@ -121,6 +123,7 @@
 					Name="ContextChatTitleTextBox"
 					Grid.Row="1"
 					Grid.Column="1"
+					SpellCheck.IsEnabled="True"
 					Text="{Binding ContextChatTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				<Label
 					Grid.Row="2"
@@ -138,6 +141,7 @@
 					AcceptsReturn="True"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
 					Text="{Binding ContextChatInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					TextWrapping="Wrap" />
 			</Grid>
