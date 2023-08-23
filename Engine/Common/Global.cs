@@ -184,7 +184,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			if (appSettings.AiModels == null || appSettings.AiModels.Count == 0)
 			{
-				appSettings.AiModels = Engine.AppData.GetDefaultAiModels();
+				appSettings.AiModels = Engine.AppData.GetDefaultOpenAiModels();
 				DefaultTemplatesAdded = true;
 			}
 			if (appSettings.AiServiceData == null)

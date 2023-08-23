@@ -174,17 +174,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region ■ Helper Functions
 
-		public static Guid OpenAiId { get; } = AppHelper.GetGuid(nameof(AiService), OpenAiName);
-		public static string OpenAiName { get; } = "Open AI";
+		public static Guid OpenAiServiceId
+			=> AppHelper.GetGuid(nameof(AiService), OpenAiName);
+		public const string OpenAiName = "Open AI";
 
 		public static SortableBindingList<AiService> GetDefaultAiServices()
 		{
+			var openAiServiceId = OpenAiServiceId;
 			var list = new SortableBindingList<AiService>
 			{
 				// Add open AI Model
 				new AiService()
 				{
-					Id = OpenAiId,
+					Id = openAiServiceId,
 					Name = OpenAiName,
 					DefaultAiModel = "gpt-3.5-turbo-16k",
 					IsDefault = true,
@@ -236,8 +238,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return list;
 		}
 
-		public static SortableBindingList<AiModel> GetDefaultAiModels()
+		public static SortableBindingList<AiModel> GetDefaultOpenAiModels()
 		{
+			var openAiServiceId = OpenAiServiceId;
 			var list = new SortableBindingList<AiModel>();
 			var names = new string[] {
 				"text-davinci-003",
@@ -255,7 +258,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					Id = AppHelper.GetGuid(nameof(AiModel), name),
 					Name = name,
-					AiServiceId = OpenAiId,
+					AiServiceId = openAiServiceId,
 				};
 				list.Add(item);
 			}

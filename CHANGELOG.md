@@ -1,6 +1,7 @@
-2023-08-22 v1.0.102
+2023-08-23 v1.0.103
 
 - New: "Enable Spell Check" option.
+- Fix: AI Service dropdown box value reset.
 
 2023-08-21 v1.0.101
 

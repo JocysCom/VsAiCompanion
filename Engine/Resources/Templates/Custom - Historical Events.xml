@@ -4,7 +4,7 @@
   <IconType>.svg</IconType>
   <TextInstructions>Please provide a list of significant historical events that occurred on {Date.Now:MMMM dd} across all years in the past, detailing the year and a brief description of each event.</TextInstructions>
   <Settings />
-  <AiServiceId>eef68e23-ff22-7c3d-8dd6-4f36654d766a</AiServiceId>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
