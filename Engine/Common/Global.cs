@@ -192,8 +192,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var d = new AiServiceSettings();
 				d.ListSelection = new List<string> { Engine.AppData.OpenAiName };
 				appSettings.AiServiceData = d;
-				
+
 			}
+			// Fix OpenAI Id
+			var openAiService = appSettings.AiServices.FirstOrDefault(x => x.Name == Engine.AppData.OpenAiName);
+			if (openAiService != null)
+				openAiService.Id = Engine.AppData.OpenAiServiceId;
+			// Fix models.
+			var emptyServiceGuid = AppHelper.GetGuid(nameof(AiService), "");
+			var models = appSettings.AiModels.Where(x => x.AiServiceId == emptyServiceGuid).ToArray();
+			foreach (var model in models)
+				model.AiServiceId = Engine.AppData.OpenAiServiceId;
+		}
+
+		private static bool FixTempalteItems(IList<TemplateItem> items)
+		{
+			// Fix items with wrong AI Serivce Id (empty service name).
+			var emptyServiceGuid = AppHelper.GetGuid(nameof(AiService), "");
+			var tasks = items.Where(x => x.AiServiceId == emptyServiceGuid).ToArray();
+			foreach (var task in tasks)
+				task.AiServiceId = Engine.AppData.OpenAiServiceId;
+			return tasks.Count() > 0;
 		}
 
 		private static void Templates_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
@@ -230,34 +249,36 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				DefaultTemplatesAdded = true;
 			}
-			return;
+			DefaultTemplatesAdded |= FixTempalteItems(e.Items);
 		}
 
 		private static void Tasks_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
 		{
 			var sd = (SettingsData<TemplateItem>)sender;
-			if (e.Items.Count > 0)
-				return;
-			var asm = typeof(Global).Assembly;
-			var keys = asm.GetManifestResourceNames()
-				.Where(x => x.Contains("Resources.Templates"))
-				.OrderBy(x => x)
-				.ToList();
-			foreach (var key in keys)
+			if (e.Items.Count == 0)
 			{
-				// Add chat and grammar templates.
-				if (key.IndexOf("Chat", StringComparison.OrdinalIgnoreCase) > -1 ||
-					key.IndexOf("Grammar", StringComparison.OrdinalIgnoreCase) > -1)
+				var asm = typeof(Global).Assembly;
+				var keys = asm.GetManifestResourceNames()
+					.Where(x => x.Contains("Resources.Templates"))
+					.OrderBy(x => x)
+					.ToList();
+				foreach (var key in keys)
 				{
-					var bytes = Helper.GetResource<byte[]>(key, asm);
-					var item = sd.DeserializeItem(bytes, false);
-					var task = item.Copy(true);
-					task.ShowInstructions = false;
-					e.Items.Add(task);
+					// Add chat and grammar templates.
+					if (key.IndexOf("Chat", StringComparison.OrdinalIgnoreCase) > -1 ||
+						key.IndexOf("Grammar", StringComparison.OrdinalIgnoreCase) > -1)
+					{
+						var bytes = Helper.GetResource<byte[]>(key, asm);
+						var item = sd.DeserializeItem(bytes, false);
+						var task = item.Copy(true);
+						task.ShowInstructions = false;
+						e.Items.Add(task);
+					}
 				}
+				DefaultTemplatesAdded = true;
+				DefaultTasksAdded = true;
 			}
-			DefaultTemplatesAdded = true;
-			DefaultTasksAdded = true;
+			DefaultTemplatesAdded |= FixTempalteItems(e.Items);
 		}
 
 		public static void ClearItems()

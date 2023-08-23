@@ -335,6 +335,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var serviceModels = Global.AppSettings.AiModels
 				.Where(x => x.AiServiceId == aiService.Id)
 				.Select(x => x.Name)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
 				.ToList();
 			foreach (var extraName in extraNames)
 			{

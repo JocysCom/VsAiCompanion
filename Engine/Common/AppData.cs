@@ -176,6 +176,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static Guid OpenAiServiceId
 			=> AppHelper.GetGuid(nameof(AiService), OpenAiName);
+		// Must be string constant or OpenAiServiceId property will get empty string.
 		public const string OpenAiName = "Open AI";
 
 		public static SortableBindingList<AiService> GetDefaultAiServices()
