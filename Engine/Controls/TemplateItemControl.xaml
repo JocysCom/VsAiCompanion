@@ -145,7 +145,7 @@
 						</StackPanel>
 						<ComboBox
 							Name="MessageBoxOperationComboBox"
-							Margin="6,0,0,0"
+							Margin="6,0,3,0"
 							VerticalAlignment="Top"
 							DisplayMemberPath="Value"
 							ItemsSource="{Binding MessageBoxOperations, ElementName=This}"

@@ -19,12 +19,23 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid VerticalAlignment="Stretch">
+	<Grid Name="TemplateListGrid" VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
+		<Grid.OpacityMask>
+			<VisualBrush>
+				<VisualBrush.Visual>
+					<Border
+						Width="{Binding ActualWidth, ElementName=TemplateListGrid}"
+						Height="{Binding ActualHeight, ElementName=TemplateListGrid}"
+						Background="White"
+						CornerRadius="0,0,0,5" />
+				</VisualBrush.Visual>
+			</VisualBrush>
+		</Grid.OpacityMask>
 		<StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal">
 			<Button
 				Name="AddButton"
@@ -159,7 +170,7 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+			Background="White"
 			BorderThickness="0"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			ClipToBounds="True"
@@ -171,17 +182,6 @@
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
-			<DataGrid.OpacityMask>
-				<VisualBrush>
-					<VisualBrush.Visual>
-						<Border
-							Width="{Binding ActualWidth, ElementName=MainDataGrid}"
-							Height="{Binding ActualHeight, ElementName=MainDataGrid}"
-							Background="White"
-							CornerRadius="0,5,5,5" />
-					</VisualBrush.Visual>
-				</VisualBrush>
-			</DataGrid.OpacityMask>
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 			</DataGrid.Resources>

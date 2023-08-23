@@ -73,7 +73,7 @@ Various Templates:
 
 Template: Code - Document
 
-<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png" width="600" height="473">
+<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png" width="600" height="600">
 
 Template: Custom - Historical Events
 

@@ -174,22 +174,26 @@
 			</GroupBox>
 			<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Header="Reset Settings">
 				<StackPanel>
-					<Button Name="ResetApplicationSettingsButton" Click="ResetApplicationSettingsButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="Reset Application Settings" />
-						</StackPanel>
-					</Button>
-					<Button
-						Name="ResetTemplatesButton"
-						Margin="3,2,3,3"
-						HorizontalAlignment="Stretch"
-						Click="ResetTemplatesButton_Click">
-						<StackPanel HorizontalAlignment="Left" Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="Reset Templates Settings" />
-						</StackPanel>
-					</Button>
+					<Border Margin="3">
+						<Button Name="ResetApplicationSettingsButton" Margin="0" Click="ResetApplicationSettingsButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="Reset Application Settings" />
+							</StackPanel>
+						</Button>
+					</Border>
+					<Border Margin="3">
+						<Button
+							Name="ResetTemplatesButton"
+							Margin="0"
+							HorizontalAlignment="Stretch"
+							Click="ResetTemplatesButton_Click">
+							<StackPanel HorizontalAlignment="Left" Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="Reset Templates Settings" />
+							</StackPanel>
+						</Button>
+					</Border>
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Margin="0,0,3,3" Header="Sending Message">
