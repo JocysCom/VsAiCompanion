@@ -49,15 +49,15 @@ Standalone Application: Quickly access tasks from the notification icon in the t
 
 Code - Smart Search: The AI can help you find the specific location of code features in the project or solution.
 
-<img alt="Options" src="Documents/Images/Half/JocysComVsAiCompanion_VisualStudio.png" width="640" height="344">
+<img alt="Options" src="Documents/Images/Half/JocysComVsAiCompanion_VisualStudio.png" width="600" height="323">
 
 Select Errors or Warnings reported by Visual Studio and ask AI to fix it:
 
-<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Task_Fix_SelectedIssue.png" width="604" height="490">
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Task_Fix_SelectedIssue.png" width="600" height="473">
 
 Ask AI to fix the exception by either copying and pasting the exception info as a message or clicking the [Send] button when Visual Studio throws it during debugging:
 
-<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Task_Fix_Exception.png" width="604" height="490">
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Task_Fix_Exception.png" width="600" height="473">
 
 Application Options:
 
@@ -65,21 +65,21 @@ Application Options:
 
 Task and template settings are saved in separate files for easy exchange and sharing:
 
-<img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_SettingFiles.png"  width="658" height="184">
+<img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_SettingFiles.png"  width="600" height="168">
 
 Various Templates:
 
-<img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_Templates.png" width="604" height="490">
+<img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_Templates.png" width="600" height="600">
 
 Template: Code - Document
 
-<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png" width="604" height="490">
+<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png" width="600" height="473">
 
 Template: Custom - Historical Events
 
-<img alt="Historical Events" src="Documents/Images/JocysComVsAiCompanion_Task_HistoricalEvents.png"  width="604" height="490">
+<img alt="Historical Events" src="Documents/Images/JocysComVsAiCompanion_Task_HistoricalEvents.png"  width="600" height="600">
 
 Template: Translate - English to Klingon:
 
-<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_Task_Translate.png"  width="604" height="490">
+<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_Task_Translate.png"  width="600" height="600">
 
