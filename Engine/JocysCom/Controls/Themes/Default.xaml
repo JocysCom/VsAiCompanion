@@ -447,8 +447,25 @@
 		<Setter Property="HorizontalContentAlignment" Value="Center" />
 	</Style>
 
-	<!--  Button  -->
+    <!--  CheckBox FocusVisualStyle  -->
+    <Style x:Key="FocusVisualStyle">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle
+						RadiusX="5"
+						RadiusY="5"
+						Stroke="Black"
+                        StrokeDashArray="1 2"
+						StrokeThickness="1" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Button  -->
 	<Style x:Key="Button_Default" TargetType="Button">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
@@ -459,8 +476,13 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="Button">
-					<ControlTemplate.Resources>
-						<Style TargetType="StackPanel">
+ 					<ControlTemplate.Resources>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Focusable" Value="False" />
+                            <Setter Property="Width" Value="16" />
+                            <Setter Property="Height" Value="16" />
+                        </Style>
+                        <Style TargetType="StackPanel">
 							<Setter Property="Orientation" Value="Horizontal" />
 							<Setter Property="HorizontalAlignment" Value="Center" />
 						</Style>
@@ -588,10 +610,11 @@
 		<Style.Resources>
 			<JcControls:TabIndexConverter x:Key="_TabIndexConverter" />
 			<Style TargetType="TabItem">
-				<Setter Property="Template">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
+                <Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="TabItem">
-							<ControlTemplate.Resources>
+                            <ControlTemplate.Resources>
 								<Style TargetType="Label">
 									<Setter Property="Padding" Value="0" />
 									<Setter Property="Margin" Value="3,0,0,0" />
@@ -1033,7 +1056,6 @@
 
 
 	<!--  CheckBox  -->
-
 	<!--<Style x:Key="CheckBox_Default" TargetType="CheckBox">
 		<Setter Property="Margin" Value="3" />
 		<Setter Property="Padding" Value="5" />
@@ -1042,25 +1064,9 @@
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>-->
 
-
-	<!--  CheckBox FocusVisualStyle  -->
-	<Style x:Key="FocusVisual_Checkbox">
-		<Setter Property="Control.Template">
-			<Setter.Value>
-				<ControlTemplate>
-					<Rectangle
-						RadiusX="5"
-						RadiusY="5"
-						Stroke="{StaticResource BorderDark}"
-						StrokeThickness="1" />
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-
 	<!--  CheckBox Template  -->
 	<Style x:Key="CheckBox_Default" TargetType="CheckBox">
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual_Checkbox}" />
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
 		<Setter Property="Template" Value="{DynamicResource CheckBox_Template}" />
 		<Setter Property="Margin" Value="0,0,3,0" />
 		<Setter Property="Padding" Value="3" />
@@ -1365,6 +1371,7 @@
 
 	<!--  ComboBox  -->
 	<Style x:Key="ComboBox_Default" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ComboBox">
@@ -1479,6 +1486,7 @@
 
 	<!--  ComboBox as Menu  -->
 	<Style x:Key="ComboBox_AsMenu" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
 		<Setter Property="IsEditable" Value="True" />
 		<Setter Property="IsReadOnly" Value="True" />
 		<Setter Property="Text" Value="" />
@@ -1534,6 +1542,7 @@
 
 	<!--  ComboBox as Menu  -->
 	<Style x:Key="ComboBox_AsMenu2" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
 		<Setter Property="IsEditable" Value="True" />
 		<Setter Property="IsReadOnly" Value="True" />
 		<Setter Property="Text" Value="" />
