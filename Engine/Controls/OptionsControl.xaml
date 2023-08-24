@@ -36,20 +36,17 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-			<Label
-				VerticalAlignment="Center"
-				Margin="0,6,0,0"
-				Content="Settings Folder" />
+			<Label Margin="0,6,0,0" VerticalAlignment="Center" Content="Settings Folder" />
 			<TextBox
 				Name="SettingsFolderTextBox"
-				Margin="6,6,6,0"
 				Grid.Column="1"
+				Margin="6,6,6,0"
 				VerticalAlignment="Center"
 				IsReadOnly="True" />
 			<Button
 				Name="OpenButton"
-				Margin="0,6,3,0"
 				Grid.Column="2"
+				Margin="0,6,3,0"
 				Click="OpenButton_Click">
 				<StackPanel Focusable="False">
 					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />

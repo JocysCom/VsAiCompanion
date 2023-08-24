@@ -43,12 +43,8 @@
 			<TabItem x:Name="TasksTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_Task}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="Tasks" />
+						<ContentControl Content="{StaticResource Icon_Task}" />
+						<Label Content="Tasks" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:TemplateControl x:Name="TasksPanel" x:FieldModifier="public" ItemControlType="Task" />
@@ -57,12 +53,8 @@
 			<TabItem x:Name="TemplatesTabItem">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_Template}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="Templates" />
+						<ContentControl Content="{StaticResource Icon_Template}" />
+						<Label Content="Templates" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:TemplateControl x:Name="TemplatesPanel" ItemControlType="Template" />
@@ -70,12 +62,8 @@
 			<TabItem x:Name="OptionsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_gearwheel}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="Options" />
+						<ContentControl Content="{StaticResource Icon_gearwheel}" />
+						<Label Content="Options" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:OptionsControl x:Name="OptionsPanel" />
@@ -83,12 +71,8 @@
 			<TabItem>
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_Question}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="About" />
+						<ContentControl Content="{StaticResource Icon_Question}" />
+						<Label Content="About" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:AboutControl x:Name="AboutPanel" />

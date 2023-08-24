@@ -189,7 +189,7 @@
 							Width="170"
 							VerticalAlignment="Center"
 							SelectedValue="{Binding AttachContext}"
-							Style="{StaticResource ComboBox_AsMenu2}"
+							Style="{StaticResource ComboBox_Dynamic}"
 							Text="None" />
 					</GroupBox>
 					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
@@ -216,7 +216,7 @@
 								Grid.Row="0"
 								Grid.Column="1"
 								Width="100"
-								Style="{StaticResource ComboBox_AsMenu}"
+								Style="{StaticResource ComboBox_Static}"
 								Text="Environment" />
 							<Label
 								Grid.Row="0"
@@ -236,7 +236,7 @@
 								Grid.Column="3"
 								Width="90"
 								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBox_AsMenu}"
+								Style="{StaticResource ComboBox_Static}"
 								Text="Selection" />
 							<ComboBox
 								Name="DateComboBox"
@@ -244,7 +244,7 @@
 								Grid.Column="1"
 								Width="100"
 								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBox_AsMenu}"
+								Style="{StaticResource ComboBox_Static}"
 								Text="Date" />
 							<Label
 								Grid.Row="1"
@@ -263,7 +263,7 @@
 								Grid.Column="3"
 								Width="90"
 								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBox_AsMenu}"
+								Style="{StaticResource ComboBox_Static}"
 								Text="Document" />
 							<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 								<Button
