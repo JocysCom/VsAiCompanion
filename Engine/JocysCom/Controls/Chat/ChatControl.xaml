@@ -7,9 +7,6 @@
 	xmlns:local="clr-namespace:JocysCom.ClassLibrary.Controls.Chat"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:DesignHeight="450"
-	d:DesignWidth="800"
-	Background="White"
 	Loaded="UserControl_Loaded"
 	SizeChanged="This_SizeChanged"
 	mc:Ignorable="d">
