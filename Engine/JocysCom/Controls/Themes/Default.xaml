@@ -647,7 +647,7 @@
 	<Style x:Key="SharedTextBoxStyle" TargetType="Control">
 		<Setter Property="Height" Value="Auto" />
 		<Setter Property="Margin" Value="3" />
-		<Setter Property="Padding" Value="5,4,5,5" />
+		<Setter Property="Padding" Value="5,4,5,4" />
 		<Setter Property="MinHeight" Value="26" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
@@ -667,7 +667,7 @@
 			<!--  Disabled  -->
 			<Trigger Property="IsReadOnly" Value="True">
 				<Setter Property="BorderThickness" Value="0" />
-				<Setter Property="Padding" Value="6,4,6,5" />
+				<Setter Property="Padding" Value="6,4,6,4" />
 				<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 			</Trigger>
 		</Style.Triggers>
@@ -693,7 +693,7 @@
 			<!--  Disabled  -->
 			<Trigger Property="IsEnabled" Value="False">
 				<Setter Property="BorderThickness" Value="0" />
-				<Setter Property="Padding" Value="6,4,6,5" />
+				<Setter Property="Padding" Value="6,4,6,4" />
 				<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 			</Trigger>
 			<MultiTrigger>

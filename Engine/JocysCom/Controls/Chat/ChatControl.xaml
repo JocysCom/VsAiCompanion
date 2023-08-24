@@ -218,107 +218,48 @@
 					Grid.Column="0"
 					IsVisibleChanged="DataInstructionsPanel_IsVisibleChanged"
 					Visibility="{Binding ShowInstructions, Converter={StaticResource _BoolToVisibilityConverter}}">
-					<Border
-						Margin="10,10,10,0"
-						Padding="12,7,12,8"
-						Background="White"
-						CornerRadius="10">
-						<Grid>
-							<TextBox
-								x:Name="DataInstructionsTextBox"
-								Margin="0"
-								Padding="0"
-								HorizontalAlignment="Stretch"
-								VerticalAlignment="Stretch"
-								VerticalContentAlignment="Top"
-								AcceptsReturn="True"
-								Background="Transparent"
-								BorderThickness="0"
-								PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
-								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-								ScrollViewer.VerticalScrollBarVisibility="Auto"
-								SpellCheck.IsEnabled="True"
-								Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}"
-								TextChanged="DataInstructionsTextBox_TextChanged"
-								TextWrapping="Wrap" />
-							<TextBlock
-								Margin="0"
-								Padding="0"
-								HorizontalAlignment="Stretch"
-								VerticalAlignment="Stretch"
-								IsHitTestVisible="False"
-								Opacity="0.5"
-								Text="Type instructions">
-								<TextBlock.Style>
-									<Style TargetType="{x:Type TextBlock}">
-										<Setter Property="Visibility" Value="Collapsed" />
-										<Style.Triggers>
-											<MultiDataTrigger>
-												<MultiDataTrigger.Conditions>
-													<Condition Binding="{Binding ElementName=DataInstructionsTextBox, Path=Text}" Value="" />
-													<Condition Binding="{Binding ElementName=DataInstructionsTextBox, Path=IsKeyboardFocused}" Value="False" />
-												</MultiDataTrigger.Conditions>
-												<MultiDataTrigger.Setters>
-													<Setter Property="Visibility" Value="Visible" />
-												</MultiDataTrigger.Setters>
-											</MultiDataTrigger>
-										</Style.Triggers>
-									</Style>
-								</TextBlock.Style>
-							</TextBlock>
-						</Grid>
-					</Border>
-				</StackPanel>
-				<!--  Send Message  -->
-				<Border
-					Margin="10"
-					Padding="12,7,12,8"
-					Background="White"
-					CornerRadius="10">
-					<!--<Border.Effect>
-						<DropShadowEffect
-							BlurRadius="0"
-							Direction="0"
-							Opacity="0.25"
-							ShadowDepth="0"
-							Color="Black" />
-					</Border.Effect>-->
 					<Grid>
 						<TextBox
-							x:Name="DataTextBox"
-							Margin="0"
-							Padding="0"
+							x:Name="DataInstructionsTextBox"
+							MinHeight="30"
+							Margin="10,10,10,0"
+							Padding="10,7,10,7"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
 							VerticalContentAlignment="Top"
-							x:FieldModifier="public"
 							AcceptsReturn="True"
 							Background="White"
 							BorderThickness="0"
-							PreviewKeyDown="DataTextBox_PreviewKeyDown"
-							PreviewKeyUp="DataTextBox_PreviewKeyUp"
+							PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Auto"
 							SpellCheck.IsEnabled="True"
-							Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
-							TextChanged="DataTextBox_TextChanged"
-							TextWrapping="Wrap" />
+							Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}"
+							TextChanged="DataInstructionsTextBox_TextChanged"
+							TextWrapping="Wrap">
+							<TextBox.Resources>
+								<Style TargetType="Border">
+									<Setter Property="CornerRadius" Value="10" />
+								</Style>
+							</TextBox.Resources>
+						</TextBox>
 						<TextBlock
-							Margin="0"
-							Padding="0"
+							MinHeight="30"
+							Margin="10,10,10,0"
+							Padding="10,7,10,7"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
 							IsHitTestVisible="False"
 							Opacity="0.5"
-							Text="Type a message">
+							Text="Type instructions">
 							<TextBlock.Style>
 								<Style TargetType="{x:Type TextBlock}">
 									<Setter Property="Visibility" Value="Collapsed" />
 									<Style.Triggers>
 										<MultiDataTrigger>
 											<MultiDataTrigger.Conditions>
-												<Condition Binding="{Binding ElementName=DataTextBox, Path=Text}" Value="" />
-												<Condition Binding="{Binding ElementName=DataTextBox, Path=IsKeyboardFocused}" Value="False" />
+												<Condition Binding="{Binding ElementName=DataInstructionsTextBox, Path=Text}" Value="" />
+												<Condition Binding="{Binding ElementName=DataInstructionsTextBox, Path=IsKeyboardFocused}" Value="False" />
 											</MultiDataTrigger.Conditions>
 											<MultiDataTrigger.Setters>
 												<Setter Property="Visibility" Value="Visible" />
@@ -329,7 +270,62 @@
 							</TextBlock.Style>
 						</TextBlock>
 					</Grid>
-				</Border>
+				</StackPanel>
+				<!--  Send Message  -->
+				<Grid>
+					<TextBox
+						x:Name="DataTextBox"
+						MinHeight="30"
+						Margin="10"
+						Padding="10,7,10,7"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"
+						VerticalContentAlignment="Top"
+						x:FieldModifier="public"
+						AcceptsReturn="True"
+						Background="White"
+						BorderThickness="0"
+						PreviewKeyDown="DataTextBox_PreviewKeyDown"
+						PreviewKeyUp="DataTextBox_PreviewKeyUp"
+						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+						ScrollViewer.VerticalScrollBarVisibility="Auto"
+						SpellCheck.IsEnabled="True"
+						Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+						TextChanged="DataTextBox_TextChanged"
+						TextWrapping="Wrap">
+						<TextBox.Resources>
+							<Style TargetType="Border">
+								<Setter Property="CornerRadius" Value="10" />
+							</Style>
+						</TextBox.Resources>
+					</TextBox>
+					<TextBlock
+						MinHeight="30"
+						Margin="10"
+						Padding="10,7,10,7"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Center"
+						IsHitTestVisible="False"
+						Opacity="0.5"
+						Text="Type a message">
+						<TextBlock.Style>
+							<Style TargetType="{x:Type TextBlock}">
+								<Setter Property="Visibility" Value="Collapsed" />
+								<Style.Triggers>
+									<MultiDataTrigger>
+										<MultiDataTrigger.Conditions>
+											<Condition Binding="{Binding ElementName=DataTextBox, Path=Text}" Value="" />
+											<Condition Binding="{Binding ElementName=DataTextBox, Path=IsKeyboardFocused}" Value="False" />
+										</MultiDataTrigger.Conditions>
+										<MultiDataTrigger.Setters>
+											<Setter Property="Visibility" Value="Visible" />
+										</MultiDataTrigger.Setters>
+									</MultiDataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+					</TextBlock>
+				</Grid>
 			</StackPanel>
 		</Border>
 		<!--  Buttons Panel  -->
