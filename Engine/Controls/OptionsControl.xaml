@@ -37,19 +37,18 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<Label
-				Grid.Row="0"
-				Grid.Column="0"
 				VerticalAlignment="Center"
+				Margin="0,6,0,0"
 				Content="Settings Folder" />
 			<TextBox
 				Name="SettingsFolderTextBox"
-				Grid.Row="0"
+				Margin="6,6,6,0"
 				Grid.Column="1"
 				VerticalAlignment="Center"
 				IsReadOnly="True" />
 			<Button
 				Name="OpenButton"
-				Grid.Row="0"
+				Margin="0,6,3,0"
 				Grid.Column="2"
 				Click="OpenButton_Click">
 				<StackPanel Focusable="False">
@@ -174,26 +173,18 @@
 			</GroupBox>
 			<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Header="Reset Settings">
 				<StackPanel>
-					<Border Margin="3">
-						<Button Name="ResetApplicationSettingsButton" Margin="0" Click="ResetApplicationSettingsButton_Click">
-							<StackPanel Focusable="False">
-								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-								<Label Content="Reset Application Settings" />
-							</StackPanel>
-						</Button>
-					</Border>
-					<Border Margin="3">
-						<Button
-							Name="ResetTemplatesButton"
-							Margin="0"
-							HorizontalAlignment="Stretch"
-							Click="ResetTemplatesButton_Click">
-							<StackPanel HorizontalAlignment="Left" Focusable="False">
-								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-								<Label Content="Reset Templates Settings" />
-							</StackPanel>
-						</Button>
-					</Border>
+					<Button Name="ResetApplicationSettingsButton" Click="ResetApplicationSettingsButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="Reset Application Settings" />
+						</StackPanel>
+					</Button>
+					<Button Name="ResetTemplatesButton" HorizontalAlignment="Stretch" Click="ResetTemplatesButton_Click">
+						<StackPanel HorizontalAlignment="Left" Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="Reset Templates Settings" />
+						</StackPanel>
+					</Button>
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Margin="0,0,3,3" Header="Sending Message">

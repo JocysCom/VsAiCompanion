@@ -477,7 +477,7 @@
 					<!--  Template  -->
 					<Border
 						Name="ButtonBorder"
-						Margin="{TemplateBinding Margin}"
+						Margin="0"
 						Padding="{TemplateBinding Padding}"
 						Background="{TemplateBinding Background}"
 						CornerRadius="5">
@@ -579,18 +579,6 @@
 							KeyboardNavigation.DirectionalNavigation="Contained"
 							KeyboardNavigation.TabIndex="2"
 							KeyboardNavigation.TabNavigation="Local">
-							<!--<Border.OpacityMask>
-                                <VisualBrush>
-                                    <VisualBrush.Visual>
-                                        <Border
-                                            SnapsToDevicePixels="True"
-                                            Width="{Binding ActualWidth, ElementName=TabControlBorder}"
-                                            Height="{Binding ActualHeight, ElementName=TabControlBorder}"
-                                            Background="White"
-                                            CornerRadius="0,5,5,5" />
-                                    </VisualBrush.Visual>
-                                </VisualBrush>
-                            </Border.OpacityMask>-->
 							<ContentPresenter ContentSource="SelectedContent" />
 						</Border>
 					</Grid>
@@ -655,9 +643,38 @@
 		</Style.Resources>
 	</Style>
 
-	<!--  PasswordBox  -->
+	<!--  Shared TextBox Style  -->
+	<Style x:Key="SharedTextBoxStyle" TargetType="Control">
+		<Setter Property="Height" Value="Auto" />
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Padding" Value="5,4,5,5" />
+		<Setter Property="MinHeight" Value="26" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="BorderBrush" Value="{StaticResource BorderDark}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="SnapsToDevicePixels" Value="True" />
+		<Style.Resources>
+			<Style TargetType="Border">
+				<Setter Property="CornerRadius" Value="5" />
+			</Style>
+		</Style.Resources>
+	</Style>
 
-	<Style x:Key="PasswordBox_Default" TargetType="PasswordBox">
+	<!--  TextBox  -->
+	<Style x:Key="TextBox_Default" BasedOn="{StaticResource SharedTextBoxStyle}" TargetType="TextBox">
+		<Style.Triggers>
+			<!--  Disabled  -->
+			<Trigger Property="IsReadOnly" Value="True">
+				<Setter Property="BorderThickness" Value="0" />
+				<Setter Property="Padding" Value="6,4,6,5" />
+				<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<!--  PasswordBox  -->
+	<Style x:Key="PasswordBox_Default" BasedOn="{StaticResource SharedTextBoxStyle}" TargetType="PasswordBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="PasswordBox">
@@ -666,57 +683,27 @@
 						Background="{TemplateBinding Background}"
 						BorderBrush="{TemplateBinding BorderBrush}"
 						BorderThickness="{TemplateBinding BorderThickness}"
-						CornerRadius="5"
-						SnapsToDevicePixels="True">
+						CornerRadius="5">
 						<ScrollViewer x:Name="PART_ContentHost" />
 					</Border>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="Height" Value="Auto" />
-		<Setter Property="Margin" Value="3" />
-		<Setter Property="Padding" Value="4" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="BorderBrush" Value="#22000000" />
-		<Setter Property="BorderThickness" Value="1" />
 		<Style.Triggers>
+			<!--  Disabled  -->
 			<Trigger Property="IsEnabled" Value="False">
 				<Setter Property="BorderThickness" Value="0" />
-				<Setter Property="Background" Value="#11000000" />
+				<Setter Property="Padding" Value="6,4,6,5" />
+				<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 			</Trigger>
 			<MultiTrigger>
+				<!--  MouseOver  -->
 				<MultiTrigger.Conditions>
 					<Condition Property="IsMouseOver" Value="True" />
 					<Condition Property="IsEnabled" Value="True" />
 				</MultiTrigger.Conditions>
-				<Setter Property="BorderBrush" Value="#7eb4ea" />
+				<Setter Property="BorderBrush" Value="{StaticResource BorderDarkSelected}" />
 			</MultiTrigger>
-		</Style.Triggers>
-	</Style>
-
-	<!--  TextBox  -->
-
-	<Style x:Key="TextBox_Default" TargetType="TextBox">
-		<Setter Property="Height" Value="Auto" />
-		<Setter Property="Margin" Value="3" />
-		<Setter Property="Padding" Value="4" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="BorderBrush" Value="#22000000" />
-		<Setter Property="BorderThickness" Value="1" />
-		<!--<Setter Property="MinWidth" Value="120" />-->
-		<Style.Resources>
-			<Style TargetType="Border">
-				<Setter Property="CornerRadius" Value="5" />
-			</Style>
-		</Style.Resources>
-		<Style.Triggers>
-			<Trigger Property="IsReadOnly" Value="True">
-				<Setter Property="Padding" Value="5" />
-				<Setter Property="BorderThickness" Value="0" />
-				<Setter Property="Background" Value="#11000000" />
-			</Trigger>
 		</Style.Triggers>
 	</Style>
 
@@ -760,8 +747,8 @@
 
 	<Style x:Key="TextBlock_Default" TargetType="TextBlock">
 		<Setter Property="Height" Value="Auto" />
-		<Setter Property="Margin" Value="3,3,3,3" />
-		<Setter Property="Padding" Value="3,3,3,3" />
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Padding" Value="3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
@@ -769,7 +756,7 @@
 
 	<Style x:Key="TextBlockCell" BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock">
 		<Setter Property="Padding" Value="3,4,3,2" />
-		<Setter Property="Margin" Value="0,0,0,0" />
+		<Setter Property="Margin" Value="0" />
 	</Style>
 
 	<Style x:Key="TextBlockLeftCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
@@ -808,7 +795,7 @@
 			<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />
 			<!--  Other styles  -->
 			<Style TargetType="DataGridColumnHeader">
-				<Setter Property="Padding" Value="3,3,3,3" />
+				<Setter Property="Padding" Value="3" />
 				<!--<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
 				<Setter Property="Background">
 					<Setter.Value>
@@ -822,18 +809,18 @@
 				<Style.Triggers>
 					<!--  Apply style to first column only  -->
 					<Trigger Property="DisplayIndex" Value="0">
-						<Setter Property="BorderThickness" Value="0,0,0,0" />
+						<Setter Property="BorderThickness" Value="0" />
 					</Trigger>
 				</Style.Triggers>
 			</Style>
 			<Style TargetType="DataGridCell">
-				<Setter Property="Padding" Value="3,3,3,3" />
+				<Setter Property="Padding" Value="3" />
 				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 				<Setter Property="BorderThickness" Value="1,0,0,0" />
 				<Style.Triggers>
 					<!--  Apply style to first column only  -->
 					<DataTrigger Binding="{Binding Column.DisplayIndex, RelativeSource={RelativeSource Self}}" Value="0">
-						<Setter Property="BorderThickness" Value="0,0,0,0" />
+						<Setter Property="BorderThickness" Value="0" />
 					</DataTrigger>
 				</Style.Triggers>
 			</Style>
@@ -1076,7 +1063,7 @@
 		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual_Checkbox}" />
 		<Setter Property="Template" Value="{DynamicResource CheckBox_Template}" />
 		<Setter Property="Margin" Value="0,0,3,0" />
-		<Setter Property="Padding" Value="4" />
+		<Setter Property="Padding" Value="3" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
 		<Setter Property="Control.Template">
 			<Setter.Value>

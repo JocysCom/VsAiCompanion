@@ -54,7 +54,6 @@
 				Name="BarToggleButton"
 				Grid.Row="0"
 				Grid.Column="2"
-				Margin="2"
 				HorizontalAlignment="Right"
 				Click="BarToggleButton_Click"
 				Focusable="False">
@@ -64,7 +63,6 @@
 				Name="ListToggleButton"
 				Grid.Row="0"
 				Grid.Column="0"
-				Margin="2"
 				HorizontalAlignment="Left"
 				Click="ListToggleButton_Click"
 				Focusable="False">
@@ -198,7 +196,7 @@
 						<GroupBox.Header>
 							<CheckBox
 								Name="UseMacrosCheckBox"
-								Margin="-4,-6,-4,-4"
+								Margin="-4"
 								Content="Use Macros"
 								IsChecked="{Binding UseMacros}" />
 						</GroupBox.Header>
@@ -296,7 +294,7 @@
 							<ComboBox
 								Name="AutoOperationComboBox"
 								Width="100"
-								Margin="3,3,3,6"
+								Margin="3,3,3,8"
 								ItemsSource="{Binding AutoOperations, ElementName=This}"
 								SelectedValue="{Binding AutoOperation}" />
 							<CheckBox x:Name="AutoFormatCodeCheckBox" Content="Format Code" IsChecked="{Binding AutoFormatCode}" />
@@ -342,7 +340,6 @@
 				Orientation="Horizontal">
 				<Button
 					Name="ScrollToBottomMessagesButton"
-					Margin="3,2,3,2"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
 					Click="ScrollToBottomButton_Click">
@@ -352,7 +349,7 @@
 				</Button>
 				<Button
 					Name="ClearMessagesButton"
-					Margin="0,2,2,2"
+					Margin="0,3,3,3"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Center"
 					Click="ClearMessagesButton_Click">
