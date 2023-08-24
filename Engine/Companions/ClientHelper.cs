@@ -26,6 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null)
 		{
+			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
 			if (Global.IsIncompleteSettings(item.AiService))
 				return;
 			if (item.IsBusy)
@@ -362,7 +363,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					"",
 					messages,
 					rItem.Creativity,
-					rItem
+					item
 				);
 				return response ?? text;
 			}
@@ -401,7 +402,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					"",
 					messages,
 					rItem.Creativity,
-					rItem
+					item
 				);
 				if (response != null)
 				{

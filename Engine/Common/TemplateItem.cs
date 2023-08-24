@@ -25,10 +25,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var isBusy = HttpClients.Count > 0;
 				if (IsBusy != isBusy)
-				{
 					IsBusy = isBusy;
-					OnPropertyChanged(nameof(IsBusy));
-				}
 			}
 		}
 
@@ -236,6 +233,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
 		{
+			if (Equals(property, value))
+				return;
 			if (propertyName == nameof(IconData))
 			{
 				var svgContent = Converters.SvgHelper.GetContent((string)(object)value);

@@ -93,6 +93,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
+		/// <summary>
+		/// Query AI
+		/// </summary>
+		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
 		public async Task<string> QueryAI(
 				string modelName,
 				string prompt, string chatLog,

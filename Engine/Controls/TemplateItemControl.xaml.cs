@@ -148,42 +148,50 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		Dictionary<MessageBoxOperation, string> _MessageBoxOperations;
 
 		TemplateItem _item;
+		object bindLock = new object();
+
 		public void BindData(TemplateItem item = null)
 		{
-			var oldItem = _item;
-			// Update from previous settings.
-			if (_item != null)
+			lock (bindLock)
 			{
-				_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
-				_item.PropertyChanged -= _item_PropertyChanged;
-			}
-			// Set new item.
-			_item = item ?? AppHelper.GetNewTemplateItem();
-			// Make sure that even custom AiModel old and new item is available to select.
-			AppHelper.UpdateModelCodes(_item?.AiService, AiModels, _item?.AiModel, oldItem?.AiModel);
-			DataContext = _item;
-			_item.PropertyChanged += _item_PropertyChanged;
-			var aiServiceId = _item.AiServiceId;
-			if (aiServiceId == Guid.Empty)
-				aiServiceId = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)?.Id ??
-					Global.AppSettings.AiServices.FirstOrDefault()?.Id ?? Guid.Empty;
-			AiCompanionComboBox.SelectedValue = aiServiceId;
-			OnPropertyChanged(nameof(CreativityName));
-			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
-			IconPanel.BindData(_item);
-			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
-			ChatPanel.IsBusy = _item.IsBusy;
-			ChatPanel.UpdateButtons();
-			// AutoSend once enabled then...
-			if (ItemControlType == ItemType.Task && _item.AutoSend)
-			{
-				// Disable auto-send so that it won't trigger every time item is bound.
-				_item.AutoSend = false;
-				_ = Dispatcher.BeginInvoke(new Action(() =>
+				if (Equals(item, _item))
+					return;
+				var oldItem = _item;
+				// Update from previous settings.
+					if (_item != null)
 				{
-					_ = ClientHelper.Send(_item, ChatPanel.ApplyMessageEdit);
-				}));
+					_item.PropertyChanged -= _item_PropertyChanged;
+					_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
+				}
+				// Set new item.
+				_item = item ?? AppHelper.GetNewTemplateItem();
+				// Make sure that even custom AiModel old and new item is available to select.
+				AppHelper.UpdateModelCodes(_item?.AiService, AiModels, _item?.AiModel, oldItem?.AiModel);
+				DataContext = _item;
+				_item.PropertyChanged += _item_PropertyChanged;
+				var aiServiceId = _item.AiServiceId;
+				if (aiServiceId == Guid.Empty)
+					aiServiceId = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)?.Id ??
+						Global.AppSettings.AiServices.FirstOrDefault()?.Id ?? Guid.Empty;
+				AiCompanionComboBox.SelectedValue = aiServiceId;
+				OnPropertyChanged(nameof(CreativityName));
+				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
+				AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
+				IconPanel.BindData(_item);
+				ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
+				ChatPanel.IsBusy = _item.IsBusy;
+				ChatPanel.UpdateButtons();
+				System.Diagnostics.Debug.WriteLine($"Bound Item: {_item.Name}");
+				// AutoSend once enabled then...
+				if (ItemControlType == ItemType.Task && _item.AutoSend)
+				{
+					// Disable auto-send so that it won't trigger every time item is bound.
+					_item.AutoSend = false;
+					_ = Dispatcher.BeginInvoke(new Action(() =>
+					{
+						_ = ClientHelper.Send(_item, ChatPanel.ApplyMessageEdit);
+					}));
+				}
 			}
 		}
 

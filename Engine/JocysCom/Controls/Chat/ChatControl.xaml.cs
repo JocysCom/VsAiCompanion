@@ -143,12 +143,13 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			StopButton.ToolTip = isEdit ? "Cancel Editing" : "Stop Request";
 			SendButton.IsEnabled = !IsBusy && AllowToSend();
 			StopButton.IsEnabled = isEdit || IsBusy;
-			var sendOp = !IsBusy || AllowToSend() ? 1.0 : 0.2;
+			var sendOp = SendButton.IsEnabled ? 1.0 : 0.2;
 			if (SendButton.Opacity != sendOp)
 				SendButton.Opacity = sendOp;
-			var stopOp = IsBusy || isEdit ? 1.0 : 0.2;
+			var stopOp = StopButton.IsEnabled ? 1.0 : 0.2;
 			if (StopButton.Opacity != stopOp)
 				StopButton.Opacity = stopOp;
+			System.Diagnostics.Debug.WriteLine($"UpdateButtons: IsBusy={IsBusy}, isEdit={isEdit}, stopOp={stopOp}");
 		}
 
 		void UpdateControlButtons()
