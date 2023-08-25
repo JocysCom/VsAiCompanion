@@ -78,7 +78,7 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+			Background="White"
 			BorderThickness="0"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			IsReadOnly="False"
@@ -98,11 +98,6 @@
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Name" />
 			</DataGrid.Columns>
-			<DataGrid.CellStyle>
-				<Style TargetType="DataGridCell">
-					<Setter Property="Padding" Value="4" />
-				</Style>
-			</DataGrid.CellStyle>
 		</DataGrid>
 	</Grid>
 </UserControl>

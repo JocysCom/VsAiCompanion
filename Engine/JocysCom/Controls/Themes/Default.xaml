@@ -645,6 +645,14 @@
         </Style.Resources>
     </Style>
 
+    <!--  TextBlock  -->
+    <Style x:Key="TextBlock_Default" TargetType="TextBlock">
+        <Setter Property="Height" Value="Auto" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="Padding" Value="3" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
     <!--  Shared TextBox Style  -->
     <Style x:Key="SharedTextBoxStyle" TargetType="Control">
         <Setter Property="Height" Value="Auto" />
@@ -731,10 +739,17 @@
     <Style x:Key="TextBoxCell" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Height" Value="Auto" />
-        <Setter Property="Padding" Value="1,4,1,2" />
-        <Setter Property="Margin" Value="0,0,0,0" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
+        <Setter Property="MinHeight" Value="19" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+		<Style.Resources>
+			<Style TargetType="Border">
+				<Setter Property="CornerRadius" Value="0" />
+			</Style>
+		</Style.Resources>
+	</Style>
 
     <Style x:Key="TextBoxRightCell" BasedOn="{StaticResource TextBoxCell}" TargetType="TextBox">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -744,14 +759,6 @@
     <Style x:Key="TextBoxCenterCell" BasedOn="{StaticResource TextBoxCell}" TargetType="TextBox">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="TextAlignment" Value="Center" />
-    </Style>
-
-    <!--  TextBlock  -->
-    <Style x:Key="TextBlock_Default" TargetType="TextBlock">
-        <Setter Property="Height" Value="Auto" />
-        <Setter Property="Margin" Value="3" />
-        <Setter Property="Padding" Value="3" />
-        <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
     <!--  TextBlock - Cell  -->
@@ -776,6 +783,23 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="TextAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!--  DataGridCell Style and Triggers  -->
+    <Style x:Key="DataGridCell_Default" TargetType="DataGridCell">
+        <Setter Property="Padding" Value="3,0,3,0" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Style.Triggers>
+            <!--  Selected  -->
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}" />
+            </Trigger>
+            <!--  First column only  -->
+            <DataTrigger Binding="{Binding Column.DisplayIndex, RelativeSource={RelativeSource Self}}" Value="0">
+                <Setter Property="BorderThickness" Value="0" />
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <!--  DataGrid  -->
@@ -804,7 +828,7 @@
                         </LinearGradientBrush>
                     </Setter.Value>
                 </Setter>
-                <Setter Property="BorderThickness" Value="1,0,0,0" />
+                <Setter Property="BorderThickness" Value="0,0,0,0" />
                 <Style.Triggers>
                     <!--  Apply style to first column only  -->
                     <Trigger Property="DisplayIndex" Value="0">
@@ -812,24 +836,14 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-            <Style TargetType="DataGridCell">
-                <Setter Property="Padding" Value="3" />
-                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-                <Setter Property="BorderThickness" Value="1,0,0,0" />
-                <Style.Triggers>
-                    <!--  Apply style to first column only  -->
-                    <DataTrigger Binding="{Binding Column.DisplayIndex, RelativeSource={RelativeSource Self}}" Value="0">
-                        <Setter Property="BorderThickness" Value="0" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
+            <!--<Style TargetType="DataGridCell" />-->
         </Style.Resources>
     </Style>
 
     <Style x:Key="DataGridReadOnly" BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid">
         <!--<Setter Property="RowBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
         <Setter Property="IsReadOnly" Value="true" />
-        <Setter Property="BorderThickness" Value="1,0,0,0" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
         <Setter Property="GridLinesVisibility" Value="All" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
         <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
@@ -1006,9 +1020,6 @@
         </Style.Triggers>
     </Style>
 
-    <!--  DataGridTextColumn  -->
-    <!--<Style BasedOn="{StaticResource DataGridTextColumnDefault}" TargetType="DataGridTextColumn" />-->
-
     <!--  CheckBox Template  -->
     <Style x:Key="CheckBox_Default" TargetType="CheckBox">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
@@ -1093,14 +1104,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
-    <!--  CheckBox - Cell  -->
-    <Style x:Key="CheckBoxCell" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox">
-        <Setter Property="Margin" Value="0" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
     <Style x:Key="LabelGrid" TargetType="Label">
@@ -1494,15 +1497,28 @@
         </Style.Resources>
     </Style>-->
 
-    <!--  DataGridCell Triggers  -->
-    <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
-        <Setter Property="Padding" Value="4" />
-        <Style.Triggers>
-            <Trigger Property="IsSelected" Value="True">
-                <Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}" />
-            </Trigger>
-        </Style.Triggers>
+    <Style x:Key="CheckBoxCell_Default" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox">
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
+
+    <Style x:Key="ImageCell_Default" TargetType="Image">
+        <Setter Property="Margin" Value="3,0,3,0" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+    </Style>
+
+    <!--  Cell Styles  -->
+    <Style TargetType="DataGridCheckBoxColumn">
+        <Setter Property="EditingElementStyle" Value="{StaticResource CheckBoxCell_Default}" />
+        <Setter Property="ElementStyle" Value="{StaticResource CheckBoxCell_Default}" />
+    </Style>
+
+    <!--<Style TargetType="DataGridTextColumn">
+        <Setter Property="EditingElementStyle" Value="{StaticResource TextBoxCell}" />
+        <Setter Property="ElementStyle" Value="{StaticResource TextBoxCell}" />
+    </Style>-->
 
     <!--  Default Styles  -->
     <Style BasedOn="{StaticResource Window_Default}" TargetType="Window" />
@@ -1510,6 +1526,7 @@
     <Style BasedOn="{StaticResource Grid_Default}" TargetType="Grid" />
     <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />
     <Style BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid" />
+    <Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
     <Style BasedOn="{StaticResource PasswordBox_Default}" TargetType="PasswordBox" />
     <Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />
     <Style BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox" />
