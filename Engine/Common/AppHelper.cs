@@ -14,12 +14,9 @@ using System.Text.Json;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System.Text;
 using System.Threading.Tasks;
-using JocysCom.ClassLibrary.Configuration;
 using System.Collections.Concurrent;
 using System.Reflection;
-using System.CodeDom.Compiler;
-using System.Management;
-using System.Security.Policy;
+using JocysCom.ClassLibrary.Collections;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -342,7 +339,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!string.IsNullOrEmpty(extraName) && !serviceModels.Contains(extraName))
 					serviceModels.Add(extraName);
 			}
-			SettingsHelper.Synchronize(serviceModels, target);
+			CollectionsHelper.Synchronize(serviceModels, target);
 		}
 
 		public static TemplateItem GetNewTemplateItem()

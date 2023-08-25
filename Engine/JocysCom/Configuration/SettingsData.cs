@@ -10,8 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-//using System.Xml.Linq;
-using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Collections;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -506,7 +505,7 @@ namespace JocysCom.ClassLibrary.Configuration
 						newData.Add(newItem.Key);
 					}
 				}
-				SettingsHelper.Synchronize(newData, Items);
+				CollectionsHelper.Synchronize(newData, Items);
 			}
 		}
 
