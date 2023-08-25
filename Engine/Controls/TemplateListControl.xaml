@@ -203,16 +203,16 @@
 					Width="Auto"
 					Binding="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					CanUserSort="False"
-					EditingElementStyle="{StaticResource CheckBoxCell}"
-					ElementStyle="{StaticResource CheckBoxCell}"
+					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+					ElementStyle="{StaticResource CheckBoxCell_Default}"
 					IsThreeState="False" />
 				<DataGridCheckBoxColumn
 					x:Name="IsCheckedColumn"
 					Width="Auto"
 					Binding="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					CanUserSort="False"
-					EditingElementStyle="{StaticResource CheckBoxCell}"
-					ElementStyle="{StaticResource CheckBoxCell}">
+					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+					ElementStyle="{StaticResource CheckBoxCell_Default}">
 					<DataGridCheckBoxColumn.Header>
 						<CheckBox
 							x:Name="IsCheckedColumnCheckBox"
@@ -260,7 +260,7 @@
 					Header="Name" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
-				<Style BasedOn="{StaticResource DataGridCellStyle}" TargetType="DataGridCell" />
+				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
 			</DataGrid.CellStyle>
 		</DataGrid>
 	</Grid>
