@@ -110,10 +110,10 @@
 				<TextBox
 					x:Name="SearchTextBox"
 					Margin="0,0,0,0"
-					Padding="24,2,4,4"
+					Padding="24,0,4,0"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
-					VerticalContentAlignment="Top"
+					VerticalContentAlignment="Center"
 					AcceptsReturn="True"
 					Background="White"
 					BorderThickness="0"
@@ -135,15 +135,15 @@
 				</Button>
 				<TextBlock
 					Margin="0"
-					Padding="26,3,5,3"
+					Padding="26,0,5,0"
 					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
+					VerticalAlignment="Center"
 					IsHitTestVisible="False"
 					Opacity="0.5"
 					Text="Search the list">
 					<TextBlock.Style>
 						<Style TargetType="TextBlock">
-							<Setter Property="Padding" Value="26,3,5,3" />
+							<Setter Property="Padding" Value="26,0,5,0" />
 							<Setter Property="VerticalAlignment" Value="Stretch" />
 							<Setter Property="Visibility" Value="Collapsed" />
 							<Style.Triggers>
@@ -171,7 +171,6 @@
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
 			Background="White"
-			BorderThickness="0"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			ClipToBounds="True"
 			IsReadOnly="False"
@@ -186,7 +185,7 @@
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 			</DataGrid.Resources>
 			<DataGrid.Columns>
-				<DataGridTemplateColumn x:Name="IconColumn" Width="16" IsReadOnly="True">
+				<DataGridTemplateColumn x:Name="IconColumn" Width="Auto" IsReadOnly="True">
 					<DataGridTemplateColumn.CellStyle>
 						<Style TargetType="DataGridCell">
 							<Setter Property="Focusable" Value="false" />
@@ -194,7 +193,7 @@
 					</DataGridTemplateColumn.CellStyle>
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Image x:Name="IconImage" Margin="3,0,0,0" Source="{Binding Icon}" />
+							<Image Style="{StaticResource ImageCell_Default}" x:Name="IconImage" Width="16" Height="16" Source="{Binding Icon}" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
@@ -216,8 +215,8 @@
 					<DataGridCheckBoxColumn.Header>
 						<CheckBox
 							x:Name="IsCheckedColumnCheckBox"
-							Margin="0,0,0,0"
-							Padding="0,0,0,0"
+							Margin="0"
+							Padding="0"
 							IsEnabled="False" />
 					</DataGridCheckBoxColumn.Header>
 				</DataGridCheckBoxColumn>
@@ -225,8 +224,6 @@
 					<DataGridTemplateColumn.Header>
 						<ContentControl
 							x:Name="StatusCodeColumnContentControl"
-							Width="12"
-							Height="12"
 							VerticalAlignment="Center"
 							Content="{StaticResource Icon_Information_Grey}"
 							IsEnabled="False" />

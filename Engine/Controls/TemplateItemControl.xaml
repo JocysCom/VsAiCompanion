@@ -167,7 +167,7 @@
 					Opacity="0.3"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 				<WrapPanel Grid.Row="1" Orientation="Horizontal">
-					<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
 							<StackPanel Orientation="Horizontal">
 								<Label
@@ -192,7 +192,7 @@
 							Style="{StaticResource ComboBox_Dynamic}"
 							Text="None" />
 					</GroupBox>
-					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
 							<CheckBox
 								Name="UseMacrosCheckBox"
@@ -280,13 +280,9 @@
 									</StackPanel>
 								</Button>
 							</StackPanel>
-
-
 						</Grid>
-
-
 					</GroupBox>
-					<GroupBox Margin="0,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<GroupBox.Header>
 							<Label x:Name="AutomationVsLabel" Padding="0" Content="Automation" />
 						</GroupBox.Header>

@@ -29,11 +29,7 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<Label
-			Grid.Row="0"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="Default AI Model" />
+		<Label VerticalAlignment="Center" Content="Default AI Model" />
 		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
 			<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding DefaultAiModel}" />
 			<Button
@@ -41,46 +37,29 @@
 				Grid.Row="1"
 				Grid.Column="3"
 				Margin="3,0,3,0"
-				VerticalAlignment="Center"
 				Click="ModelRefreshButton_Click">
 				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
-					<Label VerticalAlignment="Center" Content="Refresh" />
+					<ContentControl Content="{StaticResource Icon_Refresh}" />
+					<Label Content="Refresh" />
 				</StackPanel>
 			</Button>
-			<CheckBox
-				VerticalAlignment="Center"
-				Checked="CheckBox_Checked"
-				Content="Is Default AI Service"
-				IsChecked="{Binding IsDefault}" />
+			<CheckBox Checked="CheckBox_Checked" Content="Is Default AI Service" IsChecked="{Binding IsDefault}" />
 		</StackPanel>
-		<Label
-			Grid.Row="1"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="OpenAI API Key" />
+		<Label Grid.Row="1" Content="OpenAI API Key" />
 		<PasswordBox
 			Name="SecretKeyPasswordBox"
 			Grid.Row="1"
 			Grid.Column="1"
 			Grid.ColumnSpan="2" />
 
-		<Label
-			Grid.Row="2"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="OpenAI API Organization ID" />
+		<Label Grid.Row="2" Content="OpenAI API Organization ID" />
 		<PasswordBox
 			Name="OrganizationPasswordBox"
 			Grid.Row="2"
 			Grid.Column="1"
 			Grid.ColumnSpan="2" />
 
-		<Label
-			Grid.Row="3"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="Open AI Base URL" />
+		<Label Grid.Row="3" Content="Open AI Base URL" />
 		<TextBox
 			Name="OpenAiBaseUrlTextBox"
 			Grid.Row="3"
@@ -88,11 +67,7 @@
 			Grid.ColumnSpan="2"
 			Text="{Binding BaseUrl}" />
 
-		<Label
-			Grid.Row="4"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="Model Filter" />
+		<Label Grid.Row="4" Content="Model Filter" />
 		<TextBox
 			Name="ModelFilterTExtBox"
 			Grid.Row="4"

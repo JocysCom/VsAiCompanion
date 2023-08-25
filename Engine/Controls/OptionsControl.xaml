@@ -48,8 +48,8 @@
 				Grid.Column="2"
 				Margin="0,6,3,0"
 				Click="OpenButton_Click">
-				<StackPanel Focusable="False">
-					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_FolderOpen}" />
 					<Label Content="Open..." />
 				</StackPanel>
 			</Button>
@@ -143,7 +143,7 @@
 			</Grid>
 		</GroupBox>
 		<WrapPanel Grid.Row="3">
-			<GroupBox Margin="3,0,3,3" Header="Standalone Progam">
+			<GroupBox Margin="3,0,0,3" Header="Standalone Progam">
 				<WrapPanel Orientation="Vertical">
 					<CheckBox Name="AppAlwaysOnTopCheckBox" Content="App Always on Top" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox
@@ -168,7 +168,7 @@
 					</StackPanel>
 				</WrapPanel>
 			</GroupBox>
-			<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Header="Reset Settings">
+			<GroupBox Margin="3,0,0,3" VerticalAlignment="Top" Header="Reset Settings">
 				<StackPanel>
 					<Button Name="ResetApplicationSettingsButton" Click="ResetApplicationSettingsButton_Click">
 						<StackPanel Focusable="False">
@@ -184,14 +184,14 @@
 					</Button>
 				</StackPanel>
 			</GroupBox>
-			<GroupBox Margin="0,0,3,3" Header="Sending Message">
+			<GroupBox Margin="3,0,0,3" Header="Sending Message">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 					<CheckBox Name="ShowDocumentsAttachedWarningCheckBox" Content="Show Documents Attached Warning" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="Show Sensitive Data Warning" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="UseEnterToSendMessageCheckBox" Content="Use [Enter] to send the message" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
-			<GroupBox Margin="0,0,3,3" Header="Other">
+			<GroupBox Margin="3,0,3,3" Header="Other">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 					<CheckBox Name="IsSpellCheckEnabledCheckBox" Content="Enable Spell Check" IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
