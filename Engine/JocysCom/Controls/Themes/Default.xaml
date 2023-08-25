@@ -828,7 +828,7 @@
                         </LinearGradientBrush>
                     </Setter.Value>
                 </Setter>
-                <Setter Property="BorderThickness" Value="0,0,0,0" />
+                <Setter Property="BorderThickness" Value="0" />
                 <Style.Triggers>
                     <!--  Apply style to first column only  -->
                     <Trigger Property="DisplayIndex" Value="0">
@@ -836,14 +836,11 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-            <!--<Style TargetType="DataGridCell" />-->
         </Style.Resources>
     </Style>
 
     <Style x:Key="DataGridReadOnly" BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid">
-        <!--<Setter Property="RowBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
         <Setter Property="IsReadOnly" Value="true" />
-        <Setter Property="BorderThickness" Value="0,0,0,0" />
         <Setter Property="GridLinesVisibility" Value="All" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
         <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
@@ -1515,10 +1512,10 @@
         <Setter Property="ElementStyle" Value="{StaticResource CheckBoxCell_Default}" />
     </Style>
 
-    <!--<Style TargetType="DataGridTextColumn">
+    <Style TargetType="DataGridTextColumn">
         <Setter Property="EditingElementStyle" Value="{StaticResource TextBoxCell}" />
         <Setter Property="ElementStyle" Value="{StaticResource TextBoxCell}" />
-    </Style>-->
+    </Style>
 
     <!--  Default Styles  -->
     <Style BasedOn="{StaticResource Window_Default}" TargetType="Window" />
