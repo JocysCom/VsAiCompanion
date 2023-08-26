@@ -191,7 +191,7 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 			else
 			{
-				// Must shutdown application, because onlu main window will close and
+				// Must shutdown application, because only main window will close and
 				// Parent window will keep Application running.
 				if (TrayNotifyIcon != null) TrayNotifyIcon.Visible = false;
 				Application.Current.Shutdown();
