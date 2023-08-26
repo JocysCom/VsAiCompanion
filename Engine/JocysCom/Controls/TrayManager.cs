@@ -110,7 +110,7 @@ namespace JocysCom.ClassLibrary.Controls
 		private WeakReference _WindowReference;
 		public Window ApplicationCurrentMainWindow;
 
-		private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
+		public System.Windows.Forms.NotifyIcon TrayNotifyIcon;
 		public System.Windows.Forms.ContextMenuStrip TrayMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem OpenApplicationMenu;
 		private System.Windows.Forms.ToolStripMenuItem ExitMenu;
