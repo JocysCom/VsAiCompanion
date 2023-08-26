@@ -549,6 +549,8 @@ namespace JocysCom.ClassLibrary.Controls
 			if (disposing)
 			{
 				IsDisposing = true;
+				if (TrayNotifyIcon != null)
+					TrayNotifyIcon.Visible = false;
 				TrayNotifyIcon?.Dispose();
 				TrayMenuStrip?.Dispose();
 				OpenApplicationMenu?.Dispose();
