@@ -110,7 +110,7 @@ namespace JocysCom.ClassLibrary.Controls
 		private WeakReference _WindowReference;
 		public Window ApplicationCurrentMainWindow;
 
-		public System.Windows.Forms.NotifyIcon TrayNotifyIcon;
+		private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
 		public System.Windows.Forms.ContextMenuStrip TrayMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem OpenApplicationMenu;
 		private System.Windows.Forms.ToolStripMenuItem ExitMenu;
@@ -193,6 +193,7 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				// Must shutdown application, because onlu main window will close and
 				// Parent window will keep Application running.
+				if (TrayNotifyIcon != null) TrayNotifyIcon.Visible = false;
 				Application.Current.Shutdown();
 			}
 		}

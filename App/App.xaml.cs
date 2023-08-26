@@ -120,7 +120,6 @@ namespace JocysCom.VS.AiCompanion
 		{
 			// Remove tray icon first.
 			Global.SaveSettings();
-			TrayManager.TrayNotifyIcon.Visible = false;
 			TrayManager.Dispose();
 			Shutdown();
 		}
