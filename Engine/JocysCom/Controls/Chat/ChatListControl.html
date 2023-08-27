@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Messages</title>
 	<!-- include marked -->
 	<!-- include Prism's JS -->
@@ -94,10 +95,11 @@
 		}
 
 		.chat-user {
-			position: absolute;
+			position: relative;
 			width: 2em;
 			height: 2em;
 			margin-left: 0.5em;
+			margin-bottom: -2em;
 		}
 
 		.chat-message {
@@ -310,10 +312,16 @@
 		}
 
 		function SetZoom(zoom) {
-			//var chatLog = document.getElementById('chatLog');
-			//chatLog.style.zoom = zoom + '%';
-			document.body.style.zoom = zoom + '%';
-			//chatLog.style.transform = "scale(" + (zoom/100) + ")";
+			var el = document.body;
+			var scale = zoom / 100;
+			el.style.zoom = zoom + "%";
+			var htmlElement = document.documentElement;
+			el.style.height = 100 / scale + "vh"; // Set the height to 100vh (viewport height)
+			htmlElement.style.overflowY = zoom < 100 ? "hidden" : "auto"; // Enable vertical scrollbar if zoom is less than 100
+			htmlElement.style.overflowX = "hidden"; // Hide horizontal scrollbar
+			el.style.width = 100 / scale + "%"; // Adjust width to fill the page
+			el.style.overflowX = zoom < 100 ? "hidden" : "auto"; // Hide horizontal scrollbar if zoom is less than 100
+			// Set top scroll positon of he to 0.
 		}
 
 		function InsertMessage(message, autoScroll) {
