@@ -191,7 +191,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
+		}
+
+		private void UpdateOnSelectionChanged()
 		{
 			// If item selected then...
 			if (MainDataGrid.SelectedIndex >= 0)
@@ -210,6 +215,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			UpdateButtons();
 		}
+
 
 		void UpdateButtons()
 		{
@@ -462,7 +468,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			TitleTask = ClientHelper.GenerateTitle(item);
 		}
-    }
+	}
 
 	#endregion
 

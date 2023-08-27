@@ -22,7 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public static class AppHelper
 	{
-
+		public const int NavigateDelayMs = 250;
 		public static void SetText(Label label, string name, int count, int updatable = 0)
 		{
 			var text = $"{count} {name}" + (count == 1 ? "" : "s");

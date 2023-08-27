@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -20,11 +21,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
+		}
+
+		void UpdateOnSelectionChanged()
 		{
 			var item = ListPanel.MainDataGrid.SelectedItems.Cast<TemplateItem>().FirstOrDefault();
 			ItemPanel.BindData(item);
 		}
+
 
 		#region ■ Properties
 
