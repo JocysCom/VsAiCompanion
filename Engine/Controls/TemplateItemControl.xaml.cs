@@ -159,7 +159,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					return;
 				var oldItem = _item;
 				// Update from previous settings.
-					if (_item != null)
+				if (_item != null)
 				{
 					_item.PropertyChanged -= _item_PropertyChanged;
 					_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
@@ -179,6 +179,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 				AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 				IconPanel.BindData(_item);
+				OnPropertyChanged(nameof(SendChatHistory));
 				ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
 				ChatPanel.IsBusy = _item.IsBusy;
 				ChatPanel.UpdateButtons();
@@ -421,5 +422,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
 		}
+
+		public bool SendChatHistory
+		{
+			get
+			{
+				return _item.AttachContext.HasFlag(AttachmentType.ChatHistory);
+			}
+			set
+			{
+				if (_item.AttachContext.HasFlag(AttachmentType.ChatHistory))
+					_item.AttachContext &= ~AttachmentType.ChatHistory;
+				else
+					_item.AttachContext |= AttachmentType.ChatHistory;
+			}
+		}
+
 	}
 }

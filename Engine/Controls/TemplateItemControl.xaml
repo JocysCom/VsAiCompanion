@@ -329,7 +329,7 @@
 				Grid.ColumnSpan="3"
 				Margin="0,3,0,3"
 				Orientation="Horizontal">
-				<CheckBox Name="SendChatHistory" Content="Send Chat History" IsChecked="{Binding AutoGenerateTitle}" />
+				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory, ElementName=This}" />
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
 				<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}">
