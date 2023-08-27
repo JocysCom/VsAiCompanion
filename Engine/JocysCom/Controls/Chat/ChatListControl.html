@@ -310,7 +310,10 @@
 		}
 
 		function SetZoom(zoom) {
+			//var chatLog = document.getElementById('chatLog');
+			//chatLog.style.zoom = zoom + '%';
 			document.body.style.zoom = zoom + '%';
+			//chatLog.style.transform = "scale(" + (zoom/100) + ")";
 		}
 
 		function InsertMessage(message, autoScroll) {

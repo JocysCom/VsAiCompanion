@@ -274,6 +274,8 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		public string InvokeScript(string script)
 		{
+			if (!ScriptHandlerInitialized)
+				return null;
 			try
 			{
 				return (string)WebBrowser.InvokeScript("eval", new object[] { script });

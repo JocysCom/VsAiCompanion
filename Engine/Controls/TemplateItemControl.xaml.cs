@@ -427,14 +427,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			get
 			{
-				return _item.AttachContext.HasFlag(AttachmentType.ChatHistory);
+				return _item?.AttachContext.HasFlag(AttachmentType.ChatHistory) ?? false;
 			}
 			set
 			{
-				if (_item.AttachContext.HasFlag(AttachmentType.ChatHistory))
-					_item.AttachContext &= ~AttachmentType.ChatHistory;
-				else
-					_item.AttachContext |= AttachmentType.ChatHistory;
+				var item = _item;
+				if (item == null)
+					return;
+				item.AttachContext = item.AttachContext.HasFlag(AttachmentType.ChatHistory)
+					? item.AttachContext & ~AttachmentType.ChatHistory
+					: item.AttachContext |= AttachmentType.ChatHistory;
 			}
 		}
 
