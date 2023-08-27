@@ -8,6 +8,8 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
+	d:Height="450"
+	d:Width="900"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -47,8 +49,20 @@
 					SelectedValue="{Binding AiServiceId}"
 					SelectedValuePath="Id"
 					SelectionChanged="AiCompanionComboBox_SelectionChanged" />
-				<Label VerticalAlignment="Center" Content="AI Model" />
+				<Label VerticalAlignment="Center" Content="Model" />
 				<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
+				<CheckBox Name="IsPreviewCheckBox" Content="Enabled" IsChecked="{Binding IsPreview}" />
+				<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
+				<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
+				<Slider
+					Name="ZoomSlider"
+					Width="100"
+					Maximum="500"
+					Minimum="25"
+					TickFrequency="10"
+					Value="100" />
+				<!--  Value="{Binding Creativity}"  -->
+				<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
 			</StackPanel>
 			<Button
 				Name="BarToggleButton"
@@ -314,18 +328,15 @@
 				Grid.ColumnSpan="3"
 				Margin="0,3,0,3"
 				Orientation="Horizontal">
-				<CheckBox
-					Name="ShowInstructionsCheckBox"
-					Margin="6,0,3,0"
-					Content="Show Instructions"
-					IsChecked="{Binding ShowInstructions}" />
+				<CheckBox Name="SendChatHistory" Content="Send Chat History" IsChecked="{Binding AutoGenerateTitle}" />
+				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
 				<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}">
 					<TextBlock VerticalAlignment="Center">
+						<Run Text="Auto​" />
 						<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
-						Auto-Format</TextBlock>
+					</TextBlock>
 				</CheckBox>
-				<CheckBox Name="IsPreviewCheckBox" Content="Preview Mode" IsChecked="{Binding IsPreview}" />
 			</StackPanel>
 
 			<StackPanel
@@ -339,9 +350,7 @@
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
 					Click="ScrollToBottomButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_arrow_barrier_bottom}" Focusable="False" />
-					</StackPanel>
+					<ContentControl Content="{StaticResource Icon_arrow_barrier_bottom}" Focusable="False" />
 				</Button>
 				<Button
 					Name="ClearMessagesButton"
@@ -349,9 +358,7 @@
 					HorizontalAlignment="Right"
 					VerticalAlignment="Center"
 					Click="ClearMessagesButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_broom}" Focusable="False" />
-					</StackPanel>
+					<ContentControl Content="{StaticResource Icon_broom}" Focusable="False" />
 				</Button>
 			</StackPanel>
 
