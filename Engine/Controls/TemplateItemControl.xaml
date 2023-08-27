@@ -51,7 +51,7 @@
 					SelectionChanged="AiCompanionComboBox_SelectionChanged" />
 				<Label VerticalAlignment="Center" Content="Model" />
 				<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
-				<CheckBox Name="IsPreviewCheckBox" Content="Enabled" IsChecked="{Binding IsPreview}" />
+				<CheckBox Name="IsPreviewCheckBox" Content="Preview" IsChecked="{Binding IsPreview}" />
 				<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
 				<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
 				<Slider
