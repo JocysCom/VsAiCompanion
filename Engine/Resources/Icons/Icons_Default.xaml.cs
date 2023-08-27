@@ -46,6 +46,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_find_text = nameof(Icon_find_text);
 		public const string Icon_first_aid_box = nameof(Icon_first_aid_box);
 		public const string Icon_folders = nameof(Icon_folders);
+		public const string Icon_font_decrease = nameof(Icon_font_decrease);
+		public const string Icon_font_increase = nameof(Icon_font_increase);
 		public const string Icon_fried_egg_bacon = nameof(Icon_fried_egg_bacon);
 		public const string Icon_gearwheel = nameof(Icon_gearwheel);
 		public const string Icon_gearwheel_m = nameof(Icon_gearwheel_m);
