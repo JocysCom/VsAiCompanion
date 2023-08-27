@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
@@ -409,6 +410,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void AiCompanionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
+		}
+
+		private async void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			await Helper.Delay(SetZoom);
+		}
+
+		void SetZoom()
+		{
+			ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
 		}
 	}
 }

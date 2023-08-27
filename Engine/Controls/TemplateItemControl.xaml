@@ -60,6 +60,7 @@
 					Maximum="500"
 					Minimum="25"
 					TickFrequency="10"
+					ValueChanged="ZoomSlider_ValueChanged"
 					Value="100" />
 				<!--  Value="{Binding Creativity}"  -->
 				<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />

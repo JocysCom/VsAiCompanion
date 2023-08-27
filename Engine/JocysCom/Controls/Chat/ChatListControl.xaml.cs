@@ -90,6 +90,11 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			InvokeScript($"DeleteMessage('{message.Id}');");
 		}
 
+		public void SetZoom(int zoom)
+		{
+			InvokeScript($"SetZoom({zoom});");
+		}
+
 		void InsertWebMessage(MessageItem item, bool autoScroll)
 		{
 			var json = JsonSerializer.Serialize(item);

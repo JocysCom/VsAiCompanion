@@ -235,7 +235,6 @@
 		}
 
 		.expandable-head-buttons {
-			
 		}
 
 		.expandable-body {
@@ -308,6 +307,10 @@
 				}
 			}
 			return null;
+		}
+
+		function SetZoom(zoom) {
+			document.body.style.zoom = zoom + '%';
 		}
 
 		function InsertMessage(message, autoScroll) {
@@ -565,7 +568,7 @@
 
 		// Keep scrool on the bottom when resizing.
 		let resizeTimeout;
-	
+
 		function window_resize() {
 			// Clear the timeout if it exists
 			if (resizeTimeout)
