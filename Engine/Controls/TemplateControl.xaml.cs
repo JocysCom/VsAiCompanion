@@ -54,7 +54,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ListPanel.ItemControlType = ItemControlType;
 				ItemPanel.ItemControlType = ItemControlType;
 				ListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-				//LoadPositions();
 				OnPropertyChanged(nameof(ListPanelVisibility));
 			}
 		}
@@ -65,17 +64,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(PanelSettings.IsListPanelVisible))
-			{
-				LoadPositions();
 				OnPropertyChanged(nameof(ListPanelVisibility));
-			}
 		}
 
 		#endregion
 
 		#region GridSplitter Postion
 
-		private bool _gridSplitterPositionWasLoaded;
+		private bool _LoadGridPosition = true;
 
 		private void Global_OnSaveSettings(object sender, System.EventArgs e)
 		{
@@ -89,10 +85,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// </summary>
 		private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			if (e.WidthChanged && !_gridSplitterPositionWasLoaded)
-				_gridSplitterPositionWasLoaded = true;
+			if (e.WidthChanged && _LoadGridPosition)
+				LoadPositions();
 		}
 
+		/// <summary>
+		/// Runs when windows size and postion is loaded from settings.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void StartPosition_PositionLoaded(object sender, System.EventArgs e)
 		{
 			LoadPositions();
@@ -108,7 +109,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var position = 0.0;
 				if (PanelSettings.IsListPanelVisible)
 					position = PanelSettings.GridSplitterPosition;
-				PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
+				var success = PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
+				if (success)
+					_LoadGridPosition = false;
 				MainGrid.SizeChanged += MainGrid_SizeChanged;
 			}
 		}

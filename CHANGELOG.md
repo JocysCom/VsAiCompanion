@@ -1,3 +1,7 @@
+2023-08-28 v1.0.112
+
+- Fix: Loading of grid splitter settings.
+
 2023-08-28 v1.0.111
 
 - Fix: Reset value of AI Service dropdown box.

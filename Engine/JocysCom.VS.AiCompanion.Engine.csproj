@@ -16,8 +16,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.0.111</AssemblyVersion>
-		<FileVersion>1.0.111</FileVersion>
+		<AssemblyVersion>1.0.112</AssemblyVersion>
+		<FileVersion>1.0.112</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">

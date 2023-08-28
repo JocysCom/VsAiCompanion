@@ -286,11 +286,11 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Set Grid Splitter positon as percentage from 0 to 1.
 		/// </summary>
-		public static void SetGridSplitterPosition(Grid grid, double position, GridSplitter splitter = null, bool fixedSize = false)
+		public static bool SetGridSplitterPosition(Grid grid, double position, GridSplitter splitter = null, bool fixedSize = false)
 		{
 			// If saved position value is invalid then return.
 			if (double.IsNaN(position) || double.IsInfinity(position) || position < 0 || position > 1)
-				return;
+				return false;
 			splitter = splitter ?? grid.Children.OfType<GridSplitter>().First();
 			var isVertical = splitter.ResizeDirection == GridResizeDirection.Rows;
 			GridLength value0;
@@ -301,6 +301,8 @@ namespace JocysCom.ClassLibrary.Controls
 				var total = isVertical
 					? grid.ActualHeight
 					: grid.ActualWidth;
+				if (total == 0)
+					return false;
 				// Remove splitter from total.
 				value0 = new GridLength(position * total, GridUnitType.Pixel);
 				value2 = new GridLength(1, GridUnitType.Star);
@@ -320,7 +322,7 @@ namespace JocysCom.ClassLibrary.Controls
 				grid.ColumnDefinitions[0].Width = value0;
 				grid.ColumnDefinitions[2].Width = value2;
 			}
-
+			return true;
 		}
 
 		#endregion
