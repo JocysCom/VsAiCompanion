@@ -49,7 +49,7 @@ Standalone Application: Quickly access tasks from the notification icon in the t
 
 Code - Smart Search: The AI can help you find the specific location of code features in the project or solution.
 
-<img alt="Options" src="Documents/Images/Half/JocysComVsAiCompanion_VisualStudio.png" width="600" height="323">
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_VisualStudio.png" width="600" height="338">
 
 Select Errors or Warnings reported by Visual Studio and ask AI to fix it:
 
