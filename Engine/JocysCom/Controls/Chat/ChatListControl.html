@@ -16,8 +16,6 @@
 			1em is equal to the font size of the parent element, so if the parent's font-size is 16px, 1em would be 16px. */
 
 		html, body {
-			height: 100%;
-			width: 100%;
 			margin: 0;
 			padding: 0;
 			font-family: 'Segoe UI', Arial, sans-serif;
@@ -86,12 +84,12 @@
 		}
 
 		.chat-log {
+			width: 100%;
 		}
 
 		.chat-container {
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
-			width: 100%;
 		}
 
 		.chat-user {
@@ -312,16 +310,15 @@
 		}
 
 		function SetZoom(zoom) {
-			var el = document.body;
 			var scale = zoom / 100;
+			var el = document.getElementById('chatLog');
 			el.style.zoom = zoom + "%";
-			var htmlElement = document.documentElement;
-			el.style.height = 100 / scale + "vh"; // Set the height to 100vh (viewport height)
-			htmlElement.style.overflowY = zoom < 100 ? "hidden" : "auto"; // Enable vertical scrollbar if zoom is less than 100
-			htmlElement.style.overflowX = "hidden"; // Hide horizontal scrollbar
-			el.style.width = 100 / scale + "%"; // Adjust width to fill the page
-			el.style.overflowX = zoom < 100 ? "hidden" : "auto"; // Hide horizontal scrollbar if zoom is less than 100
-			// Set top scroll positon of he to 0.
+			if (isInsideApp) {
+				el.style.width = 100 / scale + "%"; // Adjust width to fill the parent.
+				//var elP = document.getElementById('chatLogParent');
+				//elP.style.overflowX = "hidden";
+				//elP.style.overflowY = "hidden";
+			}
 		}
 
 		function InsertMessage(message, autoScroll) {
@@ -401,9 +398,10 @@
 				.replace(/{Buttons}/g, buttons);
 
 			// Create a new div element and set its innerHTML to the newly created message.
-			var newMessage = document.createElement('div');
-			newMessage.innerHTML = newMessageHTML;
-			chatLog.appendChild(newMessage);
+			//var newMessage = document.createElement('div');
+			//newMessage.innerHTML = newMessageHTML;
+			//chatLog.appendChild(newMessage);
+			chatLog.insertAdjacentHTML('beforeend', newMessageHTML);
 			// Scroll to the bottom of the chatLog div.
 			if (autoScroll && keepScrollOnTheBottom)
 				ScrollToBottom();
@@ -659,10 +657,15 @@
 			return marked.parse(body);
 		}
 
+		var isInsideApp = false;
+
 		window.onload = function () {
 
-			if (typeof window.external.MessageAction !== "undefined")
+			isInsideApp = typeof window.external.MessageAction !== "undefined";
+			if (isInsideApp)
 				window.external.MessageAction("0", "Loaded", "");
+
+			//SetZoom(50);
 
 			// The code will only run if the file is opened locally.
 			if (window.location.href.indexOf("file://") == -1)
@@ -745,7 +748,7 @@
 	</div>
 	<div style="display: none" id="messageTemplate">
 		<div class="chat-container color-{Type}" id="{Id}">
-			<div class="chat-user icon-{Type}" aria-label="{User}"></div>
+			<div class="chat-user icon-{Type}"></div>
 			<div class="chat-message color-{Type}">
 				<div class="chat-message-head">
 					<span class="chat-date">{Date}</span>
@@ -760,8 +763,14 @@
 			</div>
 		</div>
 	</div>
-	<!-- Messages would go here -->
-	<div id="chatLog" class="chat-log">
+	<!--
+		A parent div is required for resizing when running inside an app in order
+		to crop any extra space from the right and bottom.
+	-->
+	<div id="chatLogParent" style="overflow: hidden;">
+		<!-- Messages would go here -->
+		<div id="chatLog" class="chat-log">
+		</div>
 	</div>
 </body>
 </html>
