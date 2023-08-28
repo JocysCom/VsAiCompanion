@@ -22,8 +22,8 @@
 			<DataTemplate x:Key="ToolBarButtonTemplate">
 				<Button
 					Margin="0"
-					Background="Transparent"
 					HorizontalAlignment="Left"
+					Background="Transparent"
 					Click="Button_Click"
 					Style="{StaticResource Button_Default}"
 					ToolTip="{Binding Name}"
@@ -33,9 +33,7 @@
 					</Button.DataContext>
 					<ContentControl>
 						<StackPanel>
-							<Image
-								Focusable="False"
-								Source="{Binding Icon}" />
+							<Image Focusable="False" Source="{Binding Icon}" />
 							<Label Content="{Binding Name}" Focusable="False" Visibility="Collapsed" />
 						</StackPanel>
 					</ContentControl>
@@ -53,15 +51,11 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Label
-			Grid.Column="0"
+			Padding="6,3,0,3"
 			VerticalAlignment="Center"
-			Content="Templates:"
+			Content="Templates"
 			Opacity="0.4" />
-		<ToolBarPanel
-			Grid.Row="0"
-			Grid.Column="1"
-			HorizontalAlignment="Stretch"
-			Style="{StaticResource MainToolBarPanel}">
+		<ToolBarPanel Grid.Column="1" HorizontalAlignment="Stretch" Style="{StaticResource MainToolBarPanel}">
 			<ToolBar
 				x:Name="MyToolBar"
 				Margin="-1,0,0,-1"

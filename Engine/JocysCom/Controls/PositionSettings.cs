@@ -43,6 +43,8 @@ namespace JocysCom.ClassLibrary.Controls
 			IsEnabled = true;
 		}
 
+		public event EventHandler PositionLoaded;
+
 		/// <summary>
 		/// Call on Window_SourceInitialized event.
 		/// </summary>
@@ -91,6 +93,7 @@ namespace JocysCom.ClassLibrary.Controls
 			w.Width = pixRectangle.Width;
 			w.Height = pixRectangle.Height;
 			w.WindowState = overrideState ?? WindowState;
+			PositionLoaded?.Invoke(this, EventArgs.Empty);
 		}
 
 		#region Helper Functions
@@ -271,12 +274,14 @@ namespace JocysCom.ClassLibrary.Controls
 			splitter = splitter ?? grid.Children.OfType<GridSplitter>().First();
 			var isVertical = splitter.ResizeDirection == GridResizeDirection.Rows;
 			var size0 = isVertical
-				? grid.RowDefinitions[0].Height.Value
-				: grid.ColumnDefinitions[0].Width.Value;
-			var size2 = isVertical
-				? grid.RowDefinitions[2].Height.Value
-				: grid.ColumnDefinitions[2].Width.Value;
-			var total = size0 + size2;
+				? grid.RowDefinitions[0].ActualHeight
+				: grid.ColumnDefinitions[0].ActualWidth;
+			//var size2 = isVertical
+			//	? grid.RowDefinitions[2].ActualHeight
+			//	: grid.ColumnDefinitions[2].ActualWidth;
+			var total = isVertical
+					? grid.ActualHeight
+					: grid.ActualWidth;
 			var position = size0 / total;
 			return position;
 		}
@@ -284,22 +289,38 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Set Grid Splitter positon as percentage from 0 to 1.
 		/// </summary>
-		public static void SetGridSplitterPosition(Grid grid, double position, GridSplitter splitter = null)
+		public static void SetGridSplitterPosition(Grid grid, double position, GridSplitter splitter = null, bool fixedSize = false)
 		{
+			// If saved position value is invalid then return.
+			if (position < 0 || position > 1)
+				return;
 			splitter = splitter ?? grid.Children.OfType<GridSplitter>().First();
 			var isVertical = splitter.ResizeDirection == GridResizeDirection.Rows;
-			var size0 = isVertical
-				? grid.RowDefinitions[0].Height.Value
-				: grid.ColumnDefinitions[0].Width.Value;
-			var size2 = isVertical
-				? grid.RowDefinitions[2].Height.Value
-				: grid.ColumnDefinitions[2].Width.Value;
-			var total = size0 + size2;
-			// If saved position value is out of range then return.
-			if (position < 0 || total < position)
-				return;
-			var value0 = new GridLength(position * total, GridUnitType.Star);
-			var value2 = new GridLength(total - position * total, GridUnitType.Star);
+			GridLength value0;
+			GridLength value2;
+			if (fixedSize)
+			{
+				//// Get size.
+				//var size0 = isVertical
+				//	? grid.RowDefinitions[0].ActualHeight
+				//	: grid.ColumnDefinitions[0].ActualWidth;
+				//var size2 = isVertical
+				//	? grid.RowDefinitions[2].ActualHeight
+				//	: grid.ColumnDefinitions[2].ActualWidth;
+				//var total = size0 + size2;
+				// Get size.
+				var total = isVertical
+					? grid.ActualHeight
+					: grid.ActualWidth;
+				// Remove splitter from total.
+				value0 = new GridLength(position * total, GridUnitType.Pixel);
+				value2 = new GridLength(1, GridUnitType.Star);
+			}
+			else
+			{
+				value0 = new GridLength(position * 100.0, GridUnitType.Star);
+				value2 = new GridLength(100.0 - position * 100.0, GridUnitType.Star);
+			}
 			if (isVertical)
 			{
 				grid.RowDefinitions[0].Height = value0;
@@ -310,6 +331,7 @@ namespace JocysCom.ClassLibrary.Controls
 				grid.ColumnDefinitions[0].Width = value0;
 				grid.ColumnDefinitions[2].Width = value2;
 			}
+
 		}
 
 		#endregion

@@ -37,6 +37,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string SearchText { get => _SearchText; set => SetProperty(ref _SearchText, value); }
 		private string _SearchText;
 
+		/// <summary>
+		/// Zoom Settings
+		/// </summary>
+		[DefaultValue(100)]
+		public int ChatPanelZoom { get => _ChatPanelZoom; set => SetProperty(ref _ChatPanelZoom, value); }
+		private int _ChatPanelZoom;
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;

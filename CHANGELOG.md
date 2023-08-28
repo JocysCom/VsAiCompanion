@@ -1,3 +1,8 @@
+2023-08-28 v1.0.103
+
+- New: Added chat window zoom slider.
+- Fix: AI Service dropdown box value reset.
+
 2023-08-23 v1.0.103
 
 - New: "Enable Spell Check" option.

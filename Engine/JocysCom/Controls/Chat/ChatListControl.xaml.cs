@@ -213,6 +213,8 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			}));
 		}
 
+		public event EventHandler WebBrowserDataLoaded;
+
 		/// <summary>
 		/// This handler will be triggered from ChatListControl.html
 		/// </summary>
@@ -223,6 +225,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			{
 				LoadingLabel.Visibility = Visibility.Collapsed;
 				WebBrowser.Visibility = Visibility.Visible;
+				WebBrowserDataLoaded?.Invoke(this, EventArgs.Empty);
 				return;
 			}
 			var id = e[0];

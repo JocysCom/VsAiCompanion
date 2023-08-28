@@ -19,6 +19,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			Global.AppSettings.StartPosition.PositionLoaded += StartPosition_PositionLoaded;
 		}
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -51,7 +52,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ListPanel.ItemControlType = ItemControlType;
 				ItemPanel.ItemControlType = ItemControlType;
 				ListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-				LoadPositions();
+				//LoadPositions();
 				OnPropertyChanged(nameof(ListPanelVisibility));
 			}
 		}
@@ -79,6 +80,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SavePositions();
 		}
 
+		/// <summary>
+		/// This method will be called twice:
+		/// 1. At the beginning when the Window is shown, and
+		/// 2. when Global.AppSettings.StartPosition.LoadPosition(this) is called in MainWindow.xaml.cs.
+		/// </summary>
 		private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			if (e.WidthChanged && !_gridSplitterPositionSet)
@@ -86,6 +92,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_gridSplitterPositionSet = true;
 				LoadPositions();
 			}
+		}
+
+		private void StartPosition_PositionLoaded(object sender, System.EventArgs e)
+		{
+			LoadPositions();
 		}
 
 		void LoadPositions()
@@ -99,7 +110,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					? Global.AppSettings.TaskData.GridSplitterPosition
 					: Global.AppSettings.TemplateData.GridSplitterPosition;
 			}
-			PositionSettings.SetGridSplitterPosition(MainGrid, position);
+			PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
 		}
 
 		void SavePositions()

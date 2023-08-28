@@ -193,7 +193,12 @@
 					</DataGridTemplateColumn.CellStyle>
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Image Style="{StaticResource ImageCell_Default}" x:Name="IconImage" Width="16" Height="16" Source="{Binding Icon}" />
+							<Image
+								x:Name="IconImage"
+								Width="16"
+								Height="16"
+								Source="{Binding Icon}"
+								Style="{StaticResource ImageCell_Default}" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>

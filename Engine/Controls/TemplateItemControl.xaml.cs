@@ -25,6 +25,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
+			ChatPanel.MessagesPanel.WebBrowserDataLoaded += MessagesPanel_WebBrowserDataLoaded;
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -36,6 +37,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			UpdateSpellCheck();
+		}
+
+		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
+		{
+			await Helper.Delay(SetZoom, 250);
 		}
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -226,6 +232,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Update panel settings.
 				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
 				PanelSettings = Global.AppSettings.GetTaskSettings(value);
+				ZoomSlider.Value = PanelSettings.ChatPanelZoom;
 				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
 				// Update the rest.
 				UpdateBarToggleButtonIcon();
@@ -238,13 +245,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 
-		private void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))
 			{
 				OnPropertyChanged(nameof(BarPanelVisibility));
 				OnPropertyChanged(nameof(TemplateItemVisibility));
 				UpdateBarToggleButtonIcon();
+			}
+			if (e.PropertyName == nameof(PanelSettings.ChatPanelZoom))
+			{
+				await Helper.Delay(SetZoom);
 			}
 		}
 
@@ -413,9 +424,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
 
-		private async void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			await Helper.Delay(SetZoom);
+			PanelSettings.ChatPanelZoom = (int)ZoomSlider.Value;
 		}
 
 		void SetZoom()

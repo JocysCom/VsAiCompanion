@@ -50,7 +50,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var position = Global.AppSettings.AiServiceData.GridSplitterPosition;
-			PositionSettings.SetGridSplitterPosition(MainGrid, position);
+			PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
 		}
 
 		void SavePositions()

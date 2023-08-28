@@ -100,11 +100,11 @@
 									x:Name="CreativityLabel"
 									Margin="0"
 									Padding="0"
-									Content="Creativity:"
+									Content="Creativity - "
 									Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 								<Label
 									Margin="0"
-									Padding="6,0,0,0"
+									Padding="0"
 									VerticalAlignment="Center"
 									Content="{Binding CreativityName, ElementName=This}" />
 							</StackPanel>
@@ -327,7 +327,7 @@
 				Grid.Row="4"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
-				Margin="0,3,0,3"
+				Margin="5,3,0,3"
 				Orientation="Horizontal">
 				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory, ElementName=This}" />
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
