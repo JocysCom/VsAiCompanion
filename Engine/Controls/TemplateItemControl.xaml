@@ -37,12 +37,24 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<!--  Row 0  -->
-			<Label
+			<StackPanel
 				Grid.Row="0"
-				Grid.Column="1"
-				VerticalAlignment="Center"
-				Content="AI Companion" />
-			<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				Orientation="Horizontal">
+				<Button
+					Name="ListToggleButton"
+					HorizontalAlignment="Left"
+					Click="ListToggleButton_Click"
+					Focusable="False">
+					<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+				</Button>
+				<Label
+					Grid.Row="0"
+					Grid.Column="1"
+					VerticalAlignment="Center"
+					Content="Service" />
+
 				<ComboBox
 					Name="AiCompanionComboBox"
 					DisplayMemberPath="Name"
@@ -71,15 +83,6 @@
 				Grid.Column="2"
 				HorizontalAlignment="Right"
 				Click="BarToggleButton_Click"
-				Focusable="False">
-				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
-			</Button>
-			<Button
-				Name="ListToggleButton"
-				Grid.Row="0"
-				Grid.Column="0"
-				HorizontalAlignment="Left"
-				Click="ListToggleButton_Click"
 				Focusable="False">
 				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 			</Button>

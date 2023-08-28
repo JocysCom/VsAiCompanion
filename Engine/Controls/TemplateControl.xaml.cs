@@ -20,6 +20,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			Global.AppSettings.StartPosition.PositionLoaded += StartPosition_PositionLoaded;
+			MainGrid.SizeChanged += MainGrid_SizeChanged;
+			Global.OnSaveSettings += Global_OnSaveSettings;
 		}
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -73,9 +75,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region GridSplitter Postion
 
-		private bool _gridSplitterPositionSet;
+		private bool _gridSplitterPositionWasLoaded;
 
-		private void GridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+		private void Global_OnSaveSettings(object sender, System.EventArgs e)
 		{
 			SavePositions();
 		}
@@ -85,13 +87,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// 1. At the beginning when the Window is shown, and
 		/// 2. when Global.AppSettings.StartPosition.LoadPosition(this) is called in MainWindow.xaml.cs.
 		/// </summary>
-		private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+		private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			if (e.WidthChanged && !_gridSplitterPositionSet)
-			{
-				_gridSplitterPositionSet = true;
-				LoadPositions();
-			}
+			if (e.WidthChanged && !_gridSplitterPositionWasLoaded)
+				_gridSplitterPositionWasLoaded = true;
 		}
 
 		private void StartPosition_PositionLoaded(object sender, System.EventArgs e)
@@ -103,14 +102,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ItemControlType == ItemType.None)
 				return;
-			var position = 0.0;
-			if (PanelSettings.IsListPanelVisible)
+			lock (MainGrid)
 			{
-				position = ItemControlType == ItemType.Task
-					? Global.AppSettings.TaskData.GridSplitterPosition
-					: Global.AppSettings.TemplateData.GridSplitterPosition;
+				MainGrid.SizeChanged -= MainGrid_SizeChanged;
+				var position = 0.0;
+				if (PanelSettings.IsListPanelVisible)
+					position = PanelSettings.GridSplitterPosition;
+				PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
+				MainGrid.SizeChanged += MainGrid_SizeChanged;
 			}
-			PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
 		}
 
 		void SavePositions()
@@ -120,10 +120,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var position = PositionSettings.GetGridSplitterPosition(MainGrid);
 			if (position == 0.0)
 				return;
-			if (ItemControlType == ItemType.Task)
-				Global.AppSettings.TaskData.GridSplitterPosition = position;
-			if (ItemControlType == ItemType.Template)
-				Global.AppSettings.TemplateData.GridSplitterPosition = position;
+			PanelSettings.GridSplitterPosition = position;
 		}
 
 		#endregion

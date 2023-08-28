@@ -1,7 +1,10 @@
-2023-08-28 v1.0.103
+2023-08-28 v1.0.111
 
-- New: Added chat window zoom slider.
-- Fix: AI Service dropdown box value reset.
+- Fix: Reset value of AI Service dropdown box.
+- Fix: Improved list navigation for smoother operation.
+- Fix: TrayNotifyIcon visible after app shutdown.
+- New: Zoom slider for chat window.
+- Update: Resolved some UI and theme issues.
 
 2023-08-23 v1.0.103
 

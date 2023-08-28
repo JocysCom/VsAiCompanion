@@ -276,12 +276,9 @@ namespace JocysCom.ClassLibrary.Controls
 			var size0 = isVertical
 				? grid.RowDefinitions[0].ActualHeight
 				: grid.ColumnDefinitions[0].ActualWidth;
-			//var size2 = isVertical
-			//	? grid.RowDefinitions[2].ActualHeight
-			//	: grid.ColumnDefinitions[2].ActualWidth;
 			var total = isVertical
-					? grid.ActualHeight
-					: grid.ActualWidth;
+				? grid.ActualHeight
+				: grid.ActualWidth;
 			var position = size0 / total;
 			return position;
 		}
@@ -292,7 +289,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public static void SetGridSplitterPosition(Grid grid, double position, GridSplitter splitter = null, bool fixedSize = false)
 		{
 			// If saved position value is invalid then return.
-			if (position < 0 || position > 1)
+			if (double.IsNaN(position) || double.IsInfinity(position) || position < 0 || position > 1)
 				return;
 			splitter = splitter ?? grid.Children.OfType<GridSplitter>().First();
 			var isVertical = splitter.ResizeDirection == GridResizeDirection.Rows;
@@ -300,14 +297,6 @@ namespace JocysCom.ClassLibrary.Controls
 			GridLength value2;
 			if (fixedSize)
 			{
-				//// Get size.
-				//var size0 = isVertical
-				//	? grid.RowDefinitions[0].ActualHeight
-				//	: grid.ColumnDefinitions[0].ActualWidth;
-				//var size2 = isVertical
-				//	? grid.RowDefinitions[2].ActualHeight
-				//	: grid.ColumnDefinitions[2].ActualWidth;
-				//var total = size0 + size2;
 				// Get size.
 				var total = isVertical
 					? grid.ActualHeight

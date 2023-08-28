@@ -6,6 +6,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class TaskSettings : INotifyPropertyChanged
 	{
+		public TaskSettings()
+		{
+			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
+
 		[DefaultValue(0.3)]
 		public double GridSplitterPosition
 		{
@@ -16,11 +21,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[DefaultValue(true)]
 		public bool IsListPanelVisible { get => _IsListPanelVisible; set => SetProperty(ref _IsListPanelVisible, value); }
-		private bool _IsListPanelVisible = true;
+		private bool _IsListPanelVisible;
 
 		[DefaultValue(true)]
 		public bool IsBarPanelVisible { get => _IsBarPanelVisible; set => SetProperty(ref _IsBarPanelVisible, value); }
-		private bool _IsBarPanelVisible = true;
+		private bool _IsBarPanelVisible;
 
 		//[DefaultValue([])]
 		public List<string> ListSelection { get => _ListSelection; set => SetProperty(ref _ListSelection, value); }

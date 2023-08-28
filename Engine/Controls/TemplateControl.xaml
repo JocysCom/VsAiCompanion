@@ -20,14 +20,14 @@
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid x:Name="MainGrid" SizeChanged="Grid_SizeChanged">
+	<Grid x:Name="MainGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition x:Name="ListPanelColumn" Width="40*" />
+			<ColumnDefinition x:Name="ListPanelColumn" Width="30*" />
 			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="60*" />
+			<ColumnDefinition Width="70*" />
 		</Grid.ColumnDefinitions>
 		<local:TemplateListControl
 			x:Name="ListPanel"
@@ -36,9 +36,8 @@
 			Visibility="{Binding ListPanelVisibility, ElementName=This}" />
 		<GridSplitter
 			Grid.Column="1"
-			DragCompleted="GridSplitter_DragCompleted"
-			ResizeDirection="Columns"
 			BorderBrush="{StaticResource BorderDark}"
+			ResizeDirection="Columns"
 			Style="{StaticResource GridSplitterVertical}"
 			Visibility="{Binding ListPanelVisibility, ElementName=This}" />
 		<local:TemplateItemControl x:Name="ItemPanel" Grid.Column="2" x:FieldModifier="public" />
