@@ -1,3 +1,7 @@
+2023-08-29 v1.0.113
+
+- Fix: Unable to add new messages after using the Edit and Remove buttons.
+
 2023-08-28 v1.0.112
 
 - Fix: Loading of grid splitter settings.
