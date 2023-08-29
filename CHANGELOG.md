@@ -1,6 +1,7 @@
-2023-08-29 v1.0.113
+2023-08-29 v1.0.114
 
 - Fix: Unable to add new messages after using the Edit and Remove buttons.
+- New: Added [Regenerate] button to the last user message.
 
 2023-08-28 v1.0.112
 

@@ -17,34 +17,8 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 				return;
 			UpdateControlButtons();
 			UpdateButtons();
-			MessagesPanel.ScriptingHandler.OnMessageAction += ScriptingHandler_OnMessageAction;
-			//MessagesPanel.Messages
-			//InfoPanel.Tasks.ListChanged += Tasks_ListChanged;
 		}
-
-		private void ScriptingHandler_OnMessageAction(object sender, string[] e)
-		{
-			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e[1]);
-			if (action != MessageAction.Use && action != MessageAction.Edit)
-				return;
-			var id = e[0];
-			var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == id);
-			if (message == null)
-				return;
-			if (action == MessageAction.Use)
-			{
-				DataTextBox.Text = message.Body;
-				EditMessageId = null;
-				FocusDataTextBox();
-			}
-			else if (action == MessageAction.Edit)
-			{
-				DataTextBox.Text = message.Body;
-				EditMessageId = id;
-				FocusDataTextBox();
-			}
-		}
-
+		
 		public void FocusDataTextBox()
 		{
 			Dispatcher.BeginInvoke(new Action(() =>

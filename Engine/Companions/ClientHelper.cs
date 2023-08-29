@@ -24,7 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string FormatMessageTaskName = "® System - Format Message";
 		public const string DefaultIconEmbeddedResource = "document_gear.svg";
 
-		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null)
+		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null, string overrideText = null)
 		{
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
 			if (Global.IsIncompleteSettings(item.AiService))
@@ -39,7 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			// If task panel then allow to use AutoClear.
 			var isTask = Global.Tasks.Items.Contains(item);
 			// Message is added. Cleanup now.
-			var itemText = item.Text;
+			var itemText = overrideText ?? item.Text;
 			if (isTask)
 			{
 				if (item.MessageBoxOperation == MessageBoxOperation.ClearMessage)

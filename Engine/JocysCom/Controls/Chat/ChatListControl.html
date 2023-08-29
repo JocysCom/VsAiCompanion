@@ -405,6 +405,19 @@
 			// Scroll to the bottom of the chatLog div.
 			if (autoScroll && keepScrollOnTheBottom)
 				ScrollToBottom();
+			HideRegenerateButtonsExceptLast();
+		}
+
+		function HideRegenerateButtonsExceptLast() {
+			// Get all the buttons inside chatLog
+			var buttons = document.getElementById('chatLog').getElementsByClassName('regenerate-Out');
+			// Hide all buttons
+			for (var i = 0; i < buttons.length; i++) {
+				var value = i == buttons.length - 1 ? 'inline-block' : "none";
+				var style = buttons[i].style;
+				if (style.display !== value)
+					style.display = value;
+			}
 		}
 
 		function AddAttachmentBox(attachmentId, title, instructions, data) {
@@ -486,6 +499,7 @@
 		function DeleteMessage(messageId) {
 			var el = document.getElementById(idPrefix + messageId);
 			el.parentElement.removeChild(el);
+			HideRegenerateButtonsExceptLast();
 		}
 
 		function DeleteMessages() {
@@ -756,6 +770,7 @@
 					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Edit')">Edit</button>
 					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Remove')">Remove</button>
 					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Copy')">Copy</button>
+					<button class="chat-button regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;">Regenerate</button>
 					{Buttons}
 				</div>
 				<div class="chat-message-body">{Body}</div>

@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
 			ChatPanel.MessagesPanel.WebBrowserDataLoaded += MessagesPanel_WebBrowserDataLoaded;
+			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += MessagesPanel_ScriptingHandler_OnMessageAction;
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -43,6 +45,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await Helper.Delay(SetZoom, 250);
 		}
+
+		private async void MessagesPanel_ScriptingHandler_OnMessageAction(object sender, string[] e)
+		{
+			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e[1]);
+			if (action != MessageAction.Use && action != MessageAction.Edit && action != MessageAction.Regenerate)
+				return;
+			var id = e[0];
+			var message = ChatPanel.MessagesPanel.Messages.FirstOrDefault(x => x.Id == id);
+			if (message == null)
+				return;
+			if (action == MessageAction.Use)
+			{
+				ChatPanel.DataTextBox.Text = message.Body;
+				ChatPanel.EditMessageId = null;
+				ChatPanel.FocusDataTextBox();
+			}
+			if (action == MessageAction.Regenerate)
+			{
+				ChatPanel.EditMessageId = id;
+				ChatPanel.FocusDataTextBox();
+				await ClientHelper.Send(_item, ChatPanel.ApplyMessageEdit, message.Body);
+			}
+			else if (action == MessageAction.Edit)
+			{
+				ChatPanel.DataTextBox.Text = message.Body;
+				ChatPanel.EditMessageId = id;
+				ChatPanel.FocusDataTextBox();
+			}
+		}
+
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
