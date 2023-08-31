@@ -6,6 +6,9 @@ using System.Net.Http.Headers;
 using OpenAI;
 using System.Linq;
 using System.Collections.Generic;
+using Azure.AI.OpenAI;
+using Azure.Core;
+using Azure;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -93,6 +96,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
+		public event EventHandler Done;
+
 		/// <summary>
 		/// Query AI
 		/// </summary>
@@ -102,7 +107,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				string prompt, string chatLog,
 				List<ChatCompletionRequestMessage> messagesToSend,
 				double creativity,
-				TemplateItem item
+				TemplateItem item,
+				bool stream = false
 			)
 		{
 			string answer;
@@ -112,6 +118,38 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			Global.MainControl.InfoPanel.AddTask(id);
 			try
 			{
+				if (stream)
+				{
+					var client = new OpenAIClient(Service.ApiSecretKey, new OpenAIClientOptions());
+					var chatCompletionsOptions = new ChatCompletionsOptions()
+					{
+						Messages =
+						{
+							new ChatMessage(ChatRole.System, "You are a helpful assistant. You will talk like a pirate."),
+							new ChatMessage(ChatRole.User, "Can you help me?"),
+							new ChatMessage(ChatRole.Assistant, "Arrrr! Of course, me hearty! What can I do for ye?"),
+							new ChatMessage(ChatRole.User, "What's the best way to train a parrot?"),
+						}
+					};
+
+					Response<StreamingChatCompletions> response = await client.GetChatCompletionsStreamingAsync(
+						deploymentOrModelName: modelName,
+						chatCompletionsOptions);
+					using StreamingChatCompletions streamingChatCompletions = response.Value;
+
+					await foreach (StreamingChatChoice choice in streamingChatCompletions.GetChoicesStreaming())
+					{
+						await foreach (ChatMessage message in choice.GetMessageStreaming())
+						{
+							Console.Write(message.Content);
+						}
+						Console.WriteLine();
+					}
+				}
+
+
+
+
 				var apiClient = new ApiClient(httpClient);
 				if (modelName.Contains("davinci"))
 				{
@@ -168,6 +206,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			return answer;
 		}
+
+
+
 
 		public static int GetMaxTokens(string modelName)
 		{
