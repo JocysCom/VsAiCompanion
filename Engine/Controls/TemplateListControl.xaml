@@ -25,17 +25,6 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Grid.OpacityMask>
-			<VisualBrush>
-				<VisualBrush.Visual>
-					<Border
-						Width="{Binding ActualWidth, ElementName=TemplateListGrid}"
-						Height="{Binding ActualHeight, ElementName=TemplateListGrid}"
-						Background="White"
-						CornerRadius="0,0,0,5" />
-				</VisualBrush.Visual>
-			</VisualBrush>
-		</Grid.OpacityMask>
 		<StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal">
 			<Button
 				Name="AddButton"

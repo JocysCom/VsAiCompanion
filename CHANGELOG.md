@@ -1,3 +1,7 @@
+2023-08-31 v1.0.115
+
+- Fix: Unable to hide template or task list panel.
+
 2023-08-29 v1.0.114
 
 - Fix: Unable to add new messages after using the Edit and Remove buttons.
