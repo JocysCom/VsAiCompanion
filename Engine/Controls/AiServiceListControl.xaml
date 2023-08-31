@@ -21,17 +21,6 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Grid.OpacityMask>
-			<VisualBrush>
-				<VisualBrush.Visual>
-					<Border
-						Width="{Binding ActualWidth, ElementName=AiServiceListGrid}"
-						Height="{Binding ActualHeight, ElementName=AiServiceListGrid}"
-						Background="White"
-						CornerRadius="0,0,0,5" />
-				</VisualBrush.Visual>
-			</VisualBrush>
-		</Grid.OpacityMask>
 		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 			<Button
 				Name="AddButton"

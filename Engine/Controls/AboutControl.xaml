@@ -136,18 +136,6 @@
 					<TextBox.Resources>
 						<Style TargetType="Border" />
 					</TextBox.Resources>
-					<TextBox.OpacityMask>
-						<VisualBrush>
-							<VisualBrush.Visual>
-								<Border
-									Width="{Binding ActualWidth, ElementName=ChangeLogTextBox}"
-									Height="{Binding ActualHeight, ElementName=ChangeLogTextBox}"
-									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-									CornerRadius="0,5,5,5"
-									SnapsToDevicePixels="True" />
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</TextBox.OpacityMask>
 				</TextBox>
 			</TabItem>
 			<TabItem Name="LicenseTabPage" Header="License">
@@ -167,18 +155,6 @@
 					<TextBox.Resources>
 						<Style TargetType="Border" />
 					</TextBox.Resources>
-					<TextBox.OpacityMask>
-						<VisualBrush>
-							<VisualBrush.Visual>
-								<Border
-									Width="{Binding ActualWidth, ElementName=LicenseTextBox}"
-									Height="{Binding ActualHeight, ElementName=LicenseTextBox}"
-									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-									CornerRadius="0,5,5,5"
-									SnapsToDevicePixels="True" />
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</TextBox.OpacityMask>
 				</TextBox>
 			</TabItem>
 			<TabItem Name="IconExperienceTabPage" Header="IconExperience License">
@@ -198,18 +174,6 @@
 					<TextBox.Resources>
 						<Style TargetType="Border" />
 					</TextBox.Resources>
-					<TextBox.OpacityMask>
-						<VisualBrush>
-							<VisualBrush.Visual>
-								<Border
-									Width="{Binding ActualWidth, ElementName=IconExperienceTextBox}"
-									Height="{Binding ActualHeight, ElementName=IconExperienceTextBox}"
-									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-									CornerRadius="0,5,5,5"
-									SnapsToDevicePixels="True" />
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</TextBox.OpacityMask>
 				</TextBox>
 			</TabItem>
 			<TabItem Name="AxialisIconSetTabPage" Header="Axialis Icon Set Licenses">
@@ -229,18 +193,6 @@
 					<TextBox.Resources>
 						<Style TargetType="Border" />
 					</TextBox.Resources>
-					<TextBox.OpacityMask>
-						<VisualBrush>
-							<VisualBrush.Visual>
-								<Border
-									Width="{Binding ActualWidth, ElementName=AxialisIconSetTextBox}"
-									Height="{Binding ActualHeight, ElementName=AxialisIconSetTextBox}"
-									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-									CornerRadius="0,5,5,5"
-									SnapsToDevicePixels="True" />
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</TextBox.OpacityMask>
 				</TextBox>
 			</TabItem>
 
