@@ -6,10 +6,8 @@ using System.Net.Http.Headers;
 using OpenAI;
 using System.Linq;
 using System.Collections.Generic;
-using Azure.AI.OpenAI;
 using Azure.Core;
-using Azure;
-using System.Runtime.CompilerServices;
+using Azure.AI.OpenAI;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -97,14 +95,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
-		public class OA: Azure.AI.OpenAI.OpenAIClient
-		{
-			public OA()
-			{
-				
-			}
-		}
-
 		public event EventHandler Done;
 
 		/// <summary>
@@ -127,40 +117,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			Global.MainControl.InfoPanel.AddTask(id);
 			try
 			{
-				if (stream)
-				{
-					var client = new OpenAIClient(Service.ApiSecretKey, new OpenAIClientOptions());
-					var chatCompletionsOptions = new ChatCompletionsOptions()
-					{
-						Messages =
-						{
-							new ChatMessage(ChatRole.System, "You are a helpful assistant. You will talk like a pirate."),
-							new ChatMessage(ChatRole.User, "Can you help me?"),
-							new ChatMessage(ChatRole.Assistant, "Arrrr! Of course, me hearty! What can I do for ye?"),
-							new ChatMessage(ChatRole.User, "What's the best way to train a parrot?"),
-						}
-					};
-
-					Response<StreamingChatCompletions> response = await client.GetChatCompletionsStreamingAsync(
-						deploymentOrModelName: modelName,
-						chatCompletionsOptions);
-					using (StreamingChatCompletions streamingChatCompletions = response.Value)
-					{
-						var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
-						while (await choicesEnumerator.MoveNextAsync())
-						{
-							StreamingChatChoice choice = choicesEnumerator.Current;
-							var messagesEnumerator = choice.GetMessageStreaming().GetAsyncEnumerator();
-							while (await messagesEnumerator.MoveNextAsync())
-							{
-								ChatMessage message = messagesEnumerator.Current;
-								Console.Write(message.Content);
-							}
-						}
-						Console.WriteLine();
-					}
-				}
-
 				var apiClient = new ApiClient(httpClient);
 				if (modelName.Contains("davinci"))
 				{
@@ -180,30 +136,45 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				}
 				else
 				{
+					var messages = new List<ChatMessage>();
 					if (messagesToSend.Count == 0)
 					{
-						messagesToSend = new List<ChatCompletionRequestMessage> {
-							new ChatCompletionRequestMessage()
-							{
-								Name  = ClientHelper.UserName,
-								Content = prompt,
-								Role =  ChatCompletionRequestMessageRole.user,
-							}
-						};
+						messages.Add(new ChatMessage(ChatRole.User, prompt) { Name = ClientHelper.UserName });
 					}
-					var request = new CreateChatCompletionRequest
+					else
 					{
-						Model = modelName,
-						Messages = messagesToSend,
-						// Comment out the Max_tokens line to allow the AI to use the maximum available amount.
-						// Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt),
-						N = 1,
-						Stop = null,
-						Temperature = creativity,
-						Top_p = 1.0,
-					};
-					var result = await apiClient.CreateChatCompletionAsync(request);
-					answer = result.Choices.FirstOrDefault()?.Message.Content.Trim();
+						messages = messagesToSend
+							.Select(x => new ChatMessage(x.Role.ToString(), x.Content) { Name = ClientHelper.UserName })
+							.ToList();
+					}
+					// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
+					// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
+					var chatCompletionsOptions = new ChatCompletionsOptions(messages);
+					var endpoint = new Uri(Service.BaseUrl);
+					var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
+					var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
+					var options = new OpenAIClientOptions();
+					answer = "";
+					var client = new Azure.AI.OpenAI.OpenAIClient(endpoint, credential, options);
+					var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+					prop.SetValue(client, false);
+					var response = await client.GetChatCompletionsStreamingAsync(
+						deploymentOrModelName: modelName,
+						chatCompletionsOptions);
+					using (var streamingChatCompletions = response.Value)
+					{
+						var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
+						while (await choicesEnumerator.MoveNextAsync())
+						{
+							var choice = choicesEnumerator.Current;
+							var messagesEnumerator = choice.GetMessageStreaming().GetAsyncEnumerator();
+							while (await messagesEnumerator.MoveNextAsync())
+							{
+								var message = messagesEnumerator.Current;
+								answer += message.Content;
+							}
+						}
+					}
 				}
 			}
 			catch (Exception)

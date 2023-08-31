@@ -141,7 +141,6 @@
 
 	<ItemGroup>
 		<Compile Include="..\Resources\Clients\OpenAI.ApiClient.ApiClient.cs" Link="Companions\ChatGPT\OpenAI.ApiClient.ApiClient.cs" />
-		<Compile Include="..\Resources\Clients\OpenAIClientCustom.cs" Link="Companions\ChatGPT\OpenAIClientCustom.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
