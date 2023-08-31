@@ -64,7 +64,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(PanelSettings.IsListPanelVisible))
+			{
+				UpdateGridPosition();
 				OnPropertyChanged(nameof(ListPanelVisibility));
+			}
 		}
 
 		#endregion
@@ -106,14 +109,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			lock (MainGrid)
 			{
 				MainGrid.SizeChanged -= MainGrid_SizeChanged;
-				var position = 0.0;
-				if (PanelSettings.IsListPanelVisible)
-					position = PanelSettings.GridSplitterPosition;
-				var success = PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
-				if (success)
+				if (UpdateGridPosition())
 					_LoadGridPosition = false;
 				MainGrid.SizeChanged += MainGrid_SizeChanged;
 			}
+		}
+
+		bool UpdateGridPosition()
+		{
+			var position = 0.0;
+			if (PanelSettings.IsListPanelVisible)
+				position = PanelSettings.GridSplitterPosition;
+			return PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
 		}
 
 		void SavePositions()

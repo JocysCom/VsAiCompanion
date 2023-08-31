@@ -25,7 +25,7 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition x:Name="ListPanelColumn" Width="30*" />
+			<ColumnDefinition Width="30*" />
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="70*" />
 		</Grid.ColumnDefinitions>
