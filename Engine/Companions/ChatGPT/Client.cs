@@ -150,6 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 					// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
 					var chatCompletionsOptions = new ChatCompletionsOptions(messages);
+					chatCompletionsOptions.Temperature = (float)creativity;
 					var endpoint = new Uri(Service.BaseUrl);
 					var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
 					var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
