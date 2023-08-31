@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure;
+using System.Runtime.CompilerServices;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -96,6 +97,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
+		public class OA: Azure.AI.OpenAI.OpenAIClient
+		{
+			public OA()
+			{
+				
+			}
+		}
+
 		public event EventHandler Done;
 
 		/// <summary>
@@ -135,20 +144,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					Response<StreamingChatCompletions> response = await client.GetChatCompletionsStreamingAsync(
 						deploymentOrModelName: modelName,
 						chatCompletionsOptions);
-					using StreamingChatCompletions streamingChatCompletions = response.Value;
-
-					await foreach (StreamingChatChoice choice in streamingChatCompletions.GetChoicesStreaming())
+					using (StreamingChatCompletions streamingChatCompletions = response.Value)
 					{
-						await foreach (ChatMessage message in choice.GetMessageStreaming())
+						var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
+						while (await choicesEnumerator.MoveNextAsync())
 						{
-							Console.Write(message.Content);
+							StreamingChatChoice choice = choicesEnumerator.Current;
+							var messagesEnumerator = choice.GetMessageStreaming().GetAsyncEnumerator();
+							while (await messagesEnumerator.MoveNextAsync())
+							{
+								ChatMessage message = messagesEnumerator.Current;
+								Console.Write(message.Content);
+							}
 						}
 						Console.WriteLine();
 					}
 				}
-
-
-
 
 				var apiClient = new ApiClient(httpClient);
 				if (modelName.Contains("davinci"))
