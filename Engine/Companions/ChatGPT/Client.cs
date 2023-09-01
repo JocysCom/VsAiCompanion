@@ -119,20 +119,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				{
 					var messages = new List<string>();
 					messages.Add(prompt + chatLog);
-
 					var completionsOptions = new CompletionsOptions(messages);
 					completionsOptions.Temperature = (float)creativity;
-					var response = await client.GetCompletionsStreamingAsync(modelName, completionsOptions);
-					using (var streamingChatCompletions = response.Value)
+					if (stream)
 					{
-						var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
-						while (await choicesEnumerator.MoveNextAsync())
+
+						var response = await client.GetCompletionsStreamingAsync(modelName, completionsOptions);
+						using (var streamingChatCompletions = response.Value)
 						{
-							var choice = choicesEnumerator.Current;
-							var messagesEnumerator = choice.GetTextStreaming().GetAsyncEnumerator();
-							while (await messagesEnumerator.MoveNextAsync())
-								answer += messagesEnumerator.Current;
+							var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
+							while (await choicesEnumerator.MoveNextAsync())
+							{
+								var choice = choicesEnumerator.Current;
+								var messagesEnumerator = choice.GetTextStreaming().GetAsyncEnumerator();
+								while (await messagesEnumerator.MoveNextAsync())
+									answer += messagesEnumerator.Current;
+							}
 						}
+					}
+					else
+					{
+						var response = await client.GetCompletionsAsync(modelName, completionsOptions);
+						foreach (Choice choice in response.Value.Choices)
+							answer += choice.Text;
 					}
 				}
 				else
@@ -150,17 +159,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					}
 					var chatCompletionsOptions = new ChatCompletionsOptions(messages);
 					chatCompletionsOptions.Temperature = (float)creativity;
-					var response = await client.GetChatCompletionsStreamingAsync(modelName, chatCompletionsOptions);
-					using (var streamingChatCompletions = response.Value)
+					if (stream)
 					{
-						var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
-						while (await choicesEnumerator.MoveNextAsync())
+						var response = await client.GetChatCompletionsStreamingAsync(modelName, chatCompletionsOptions);
+						using (var streamingChatCompletions = response.Value)
 						{
-							var choice = choicesEnumerator.Current;
-							var messagesEnumerator = choice.GetMessageStreaming().GetAsyncEnumerator();
-							while (await messagesEnumerator.MoveNextAsync())
-								answer += messagesEnumerator.Current.Content;
+							var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
+							while (await choicesEnumerator.MoveNextAsync())
+							{
+								var choice = choicesEnumerator.Current;
+								var messagesEnumerator = choice.GetMessageStreaming().GetAsyncEnumerator();
+								while (await messagesEnumerator.MoveNextAsync())
+									answer += messagesEnumerator.Current.Content;
+							}
 						}
+					}
+					else
+					{
+						var response = await client.GetChatCompletionsAsync(modelName, chatCompletionsOptions);
+						foreach (ChatChoice chatChoice in response.Value.Choices)
+							answer += chatChoice.Message.Content;
 					}
 				}
 			}
