@@ -6,10 +6,23 @@
 	xmlns:converters="clr-namespace:JocysCom.VS.AiCompanion.Engine.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Name="TemplateListUserControl"
 	d:DesignHeight="270"
 	d:DesignWidth="480"
 	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
+	<UserControl.OpacityMask>
+		<VisualBrush>
+			<VisualBrush.Visual>
+				<Border
+					Width="{Binding ActualWidth, ElementName=TemplateListUserControl}"
+					Height="{Binding ActualHeight, ElementName=TemplateListUserControl}"
+					Background="White"
+					CornerRadius="0,0,0,5"
+					SnapsToDevicePixels="True" />
+			</VisualBrush.Visual>
+		</VisualBrush>
+	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -159,9 +172,9 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			Background="White"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			ClipToBounds="True"
+			HorizontalGridLinesBrush="{StaticResource BorderDark}"
 			IsReadOnly="False"
 			Loaded="MainDataGrid_Loaded"
 			MouseDoubleClick="MainDataGrid_MouseDoubleClick"
@@ -176,7 +189,7 @@
 			<DataGrid.Columns>
 				<DataGridTemplateColumn x:Name="IconColumn" Width="Auto" IsReadOnly="True">
 					<DataGridTemplateColumn.CellStyle>
-						<Style TargetType="DataGridCell">
+						<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
 							<Setter Property="Focusable" Value="false" />
 						</Style>
 					</DataGridTemplateColumn.CellStyle>

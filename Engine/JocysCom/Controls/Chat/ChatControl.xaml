@@ -217,6 +217,7 @@
 					Visibility="{Binding ShowInstructions, Converter={StaticResource _BoolToVisibilityConverter}}">
 					<Grid>
 						<TextBox
+							FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
 							x:Name="DataInstructionsTextBox"
 							MinHeight="30"
 							Margin="10,10,10,0"
@@ -271,6 +272,7 @@
 				<!--  Send Message  -->
 				<Grid>
 					<TextBox
+						FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
 						x:Name="DataTextBox"
 						MinHeight="30"
 						Margin="10"
