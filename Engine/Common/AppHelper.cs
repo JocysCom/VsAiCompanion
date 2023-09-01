@@ -296,10 +296,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			catch { }
 			var client = new Companions.ChatGPT.Client(aiService);
-			var models = await client.GetModels();
-			var modelCodes = models
-				.OrderByDescending(x => x.Id)
-				.Select(x => x.Id)
+			var models = await client.GetModelsAsync();
+			var modelCodes = models?.data.ToArray()
+				.OrderByDescending(x => x.id)
+				.Select(x => x.id)
 				.ToArray();
 			if (filterRx != null)
 				modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();

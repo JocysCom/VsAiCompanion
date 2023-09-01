@@ -138,11 +138,6 @@
 		<None Remove="Resources\MainWindowCommand.png" />
 	</ItemGroup>
 
-
-	<ItemGroup>
-		<Compile Include="..\Resources\Clients\OpenAI.ApiClient.ApiClient.cs" Link="Companions\ChatGPT\OpenAI.ApiClient.ApiClient.cs" />
-	</ItemGroup>
-
 	<ItemGroup>
 		<EmbeddedResource Include="App.ico" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Add.svg" />

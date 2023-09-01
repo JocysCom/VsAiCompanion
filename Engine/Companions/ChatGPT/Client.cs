@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System;
 using System.Net.Http.Headers;
-using OpenAI;
 using System.Linq;
 using System.Collections.Generic;
 using Azure.Core;
@@ -52,20 +51,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return responseBody;
 		}
 
-		public async Task<OpenAI.Usage> GetUsageAsync()
+		public async Task<T> GetAsync<T>(string url)
 		{
 			var id = Guid.NewGuid();
 			try
 			{
 				Global.MainControl.InfoPanel.AddTask(id);
-				var responseBody = await GetResponseAsync(usageUrl);
-				var o = JsonSerializer.Deserialize<OpenAI.Usage>(responseBody);
+				var responseBody = await GetResponseAsync(url);
+				var o = JsonSerializer.Deserialize<T>(responseBody);
 				return o;
 			}
 			catch (Exception ex)
 			{
 				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-				return new Usage();
+				return default;
 			}
 			finally
 			{
@@ -73,29 +72,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
-		public async Task<Model[]> GetModels()
+		public async Task<usage_response> GetUsageAsync() =>
+			await GetAsync<usage_response>(usageUrl);
+
+		public async Task<models_response> GetModelsAsync() =>
+			await GetAsync<models_response>(modelsUrl);
+
+		public event EventHandler MessageDone;
+
+		public OpenAIClient GetAiClient()
 		{
-			var id = Guid.NewGuid();
-			try
-			{
-				Global.MainControl.InfoPanel.AddTask(id);
-				var apiClient = new OpenAI.ApiClient(GetClient());
-				var models = await apiClient.ListModelsAsync();
-				var list = models.Data.ToArray();
-				return list;
-			}
-			catch (Exception ex)
-			{
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-				return new Model[0];
-			}
-			finally
-			{
-				Global.MainControl.InfoPanel.RemoveTask(id);
-			}
+			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
+			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
+			var endpoint = new Uri(Service.BaseUrl);
+			var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
+			var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
+			var options = new OpenAIClientOptions();
+			var client = new Azure.AI.OpenAI.OpenAIClient(endpoint, credential, options);
+			var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			prop.SetValue(client, false);
+			return client;
 		}
-
-		public event EventHandler Done;
 
 		/// <summary>
 		/// Query AI
@@ -104,35 +101,39 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<string> QueryAI(
 				string modelName,
 				string prompt, string chatLog,
-				List<ChatCompletionRequestMessage> messagesToSend,
+				List<ChatMessage> messagesToSend,
 				double creativity,
 				TemplateItem item,
 				bool stream = false
 			)
 		{
-			string answer;
+			var answer = "";
 			var id = Guid.NewGuid();
 			var httpClient = GetClient();
 			item.HttpClients.Add(httpClient);
 			Global.MainControl.InfoPanel.AddTask(id);
+			var client = GetAiClient();
 			try
 			{
-				var apiClient = new ApiClient(httpClient);
 				if (modelName.Contains("davinci"))
 				{
-					var request = new CreateCompletionRequest
+					var messages = new List<string>();
+					messages.Add(prompt + chatLog);
+
+					var completionsOptions = new CompletionsOptions(messages);
+					completionsOptions.Temperature = (float)creativity;
+					var response = await client.GetCompletionsStreamingAsync(modelName, completionsOptions);
+					using (var streamingChatCompletions = response.Value)
 					{
-						Model = modelName,
-						Prompt = prompt + chatLog,
-						// Comment out the Max_tokens line to allow the AI to use the maximum available amount.
-						// Max_tokens = GetMaxTokens(modelName) - CountTokens(prompt + chatLog),
-						N = 1,
-						Stop = null,
-						Temperature = creativity,
-						Top_p = 1.0,
-					};
-					var result = await apiClient.CreateCompletionAsync(request);
-					answer = result.Choices.FirstOrDefault()?.Text.Trim();
+						var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
+						while (await choicesEnumerator.MoveNextAsync())
+						{
+							var choice = choicesEnumerator.Current;
+							var messagesEnumerator = choice.GetTextStreaming().GetAsyncEnumerator();
+							while (await messagesEnumerator.MoveNextAsync())
+								answer += messagesEnumerator.Current;
+						}
+					}
 				}
 				else
 				{
@@ -147,21 +148,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							.Select(x => new ChatMessage(x.Role.ToString(), x.Content) { Name = ClientHelper.UserName })
 							.ToList();
 					}
-					// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
-					// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
 					var chatCompletionsOptions = new ChatCompletionsOptions(messages);
 					chatCompletionsOptions.Temperature = (float)creativity;
-					var endpoint = new Uri(Service.BaseUrl);
-					var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
-					var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
-					var options = new OpenAIClientOptions();
-					answer = "";
-					var client = new Azure.AI.OpenAI.OpenAIClient(endpoint, credential, options);
-					var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-					prop.SetValue(client, false);
-					var response = await client.GetChatCompletionsStreamingAsync(
-						deploymentOrModelName: modelName,
-						chatCompletionsOptions);
+					var response = await client.GetChatCompletionsStreamingAsync(modelName, chatCompletionsOptions);
 					using (var streamingChatCompletions = response.Value)
 					{
 						var choicesEnumerator = streamingChatCompletions.GetChoicesStreaming().GetAsyncEnumerator();
@@ -170,10 +159,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							var choice = choicesEnumerator.Current;
 							var messagesEnumerator = choice.GetMessageStreaming().GetAsyncEnumerator();
 							while (await messagesEnumerator.MoveNextAsync())
-							{
-								var message = messagesEnumerator.Current;
-								answer += message.Content;
-							}
+								answer += messagesEnumerator.Current.Content;
 						}
 					}
 				}
@@ -186,6 +172,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				Global.MainControl.InfoPanel.RemoveTask(id);
 				item.HttpClients.Remove(httpClient);
+				MessageDone?.Invoke(this, EventArgs.Empty);
 			}
 			return answer;
 		}
