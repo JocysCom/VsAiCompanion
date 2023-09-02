@@ -23,6 +23,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -74,5 +75,10 @@
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Text="{Binding ModelFilter}" />
+
+		<StackPanel Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2">
+			<CheckBox Content="Response Streaming" IsChecked="{Binding ResponseStreaming}" />
+		</StackPanel>
+
 	</Grid>
 </UserControl>

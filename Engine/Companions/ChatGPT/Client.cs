@@ -121,7 +121,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					messages.Add(prompt + chatLog);
 					var completionsOptions = new CompletionsOptions(messages);
 					completionsOptions.Temperature = (float)creativity;
-					if (stream)
+					if (Service.ResponseStreaming)
 					{
 
 						var response = await client.GetCompletionsStreamingAsync(modelName, completionsOptions);
@@ -159,7 +159,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					}
 					var chatCompletionsOptions = new ChatCompletionsOptions(messages);
 					chatCompletionsOptions.Temperature = (float)creativity;
-					if (stream)
+					if (Service.ResponseStreaming)
 					{
 						var response = await client.GetChatCompletionsStreamingAsync(modelName, chatCompletionsOptions);
 						using (var streamingChatCompletions = response.Value)

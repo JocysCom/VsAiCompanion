@@ -30,6 +30,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsDefault { get => _IsDefault; set => SetProperty(ref _IsDefault, value); }
 		bool _IsDefault;
 
+		/// <summary>Stream response data as it becomes available.</summary>
+		[DefaultValue(true)]
+		public bool ResponseStreaming { get => _ResponseStreaming; set => SetProperty(ref _ResponseStreaming, value); }
+		bool _ResponseStreaming;
+
 		#region API Keys
 
 		/// <summary>Organization key. Usage from these API requests will count against the specified organization's subscription quota.</summary>
