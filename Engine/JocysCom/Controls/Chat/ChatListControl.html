@@ -496,6 +496,51 @@
 				.replace(/'/g, "&#039;");
 		}
 
+		var previousMessageTextBody = "";
+
+		/** Update message.
+			@param messageId Unique message Id.
+			@param responseDiff Response recevied from the stream.
+		 */
+		function UpdateMessage(messageId, responseDiff) {
+			// Get message element by message Id.
+			var el = document.getElementById(idPrefix + messageId);
+			var bodyEl = el.getElementsByClassName("chat-message-body")[0];
+			var currentMessageTextBody = previousMessageTextBody + responseDiff;
+			var currentMessageHtmlBody = parseMarkdown(currentMessageTextBody, true);
+			ApplyDiffference(bodyEl, currentMessageHtmlBody);
+			previousMessageTextBody = currentMessageTextBody;
+		}
+
+		function ApplyDiffference(el, newHtml) {
+			var tempEl = el.cloneNode();
+			// Convert the new html string to DOM tree
+			tempEl.innerHTML = newHtml;
+			let i = 0;
+			for (; i < tempEl.childNodes.length && i < el.childNodes.length; i += 1) {
+				var newTextNode = tempEl.childNodes[i];
+				var oldTextNode = el.childNodes[i];
+
+				// Check if two nodes are the same
+				if (!oldTextNode.isEqualNode(newTextNode)) {
+					break;
+				}
+			}
+			// If new matching content is shorter then...
+			if (i < el.childNodes.length) {
+				while (el.childNodes.length > i) {
+					el.removeChild(el.lastChild);
+				}
+			}
+			// If new content must be added then...
+			if (i < tempEl.childNodes.length) {
+				while (i < tempEl.childNodes.length) {
+					el.appendChild(document.importNode(tempEl.childNodes[i], true));
+					i += 1;
+				}
+			}
+		}
+
 		function DeleteMessage(messageId) {
 			var el = document.getElementById(idPrefix + messageId);
 			el.parentElement.removeChild(el);

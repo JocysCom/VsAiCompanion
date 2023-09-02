@@ -301,11 +301,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 				.OrderByDescending(x => x.id)
 				.Select(x => x.id)
 				.ToArray();
-			if (filterRx != null)
-				modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
 			// If models found then...
-			if (modelCodes.Any())
+			if (modelCodes?.Any() == true)
 			{
+				if (filterRx != null)
+					modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
 				// Remove all old models.
 				var serviceModels = Global.AppSettings.AiModels.Where(x => x.AiServiceId == aiService.Id).ToList();
 				foreach (var serviceModel in serviceModels)

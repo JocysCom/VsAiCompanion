@@ -7,6 +7,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Azure.Core;
 using Azure.AI.OpenAI;
+using Azure;
+using Azure.Identity;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -85,12 +87,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
 			var endpoint = new Uri(Service.BaseUrl);
-			var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
-			var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
 			var options = new OpenAIClientOptions();
-			var client = new Azure.AI.OpenAI.OpenAIClient(endpoint, credential, options);
-			var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-			prop.SetValue(client, false);
+			OpenAIClient client;
+			if (Service.IsAzureOpenAI)
+			{
+				if (string.IsNullOrEmpty(Service.ApiAccessKey))
+				{
+					client = new OpenAIClient(endpoint, new DefaultAzureCredential());
+				}
+				else
+				{
+					client = new OpenAIClient(endpoint, new AzureKeyCredential(Service.ApiSecretKey));
+				}
+			}
+			else
+			{
+				var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
+				var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
+				client = new OpenAIClient(endpoint, credential, options);
+				var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+				prop.SetValue(client, false);
+			}
 			return client;
 		}
 

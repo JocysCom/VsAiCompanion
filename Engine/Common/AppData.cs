@@ -233,6 +233,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					DefaultAiModel = "gpt-3.5-turbo-16k",
 					BaseUrl = "https://api.cognitive.microsoft.com/v1/",
 					ModelFilter = "",
+					IsAzureOpenAI = true,
 				}
 			};
 

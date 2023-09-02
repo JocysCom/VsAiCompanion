@@ -76,8 +76,13 @@
 			Grid.ColumnSpan="2"
 			Text="{Binding ModelFilter}" />
 
-		<StackPanel Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2">
+		<StackPanel
+			Grid.Row="5"
+			Grid.Column="1"
+			Grid.ColumnSpan="2"
+			Orientation="Horizontal">
 			<CheckBox Content="Response Streaming" IsChecked="{Binding ResponseStreaming}" />
+			<CheckBox Content="Is Azure OpenAI" IsChecked="{Binding IsAzureOpenAI}" />
 		</StackPanel>
 
 	</Grid>
