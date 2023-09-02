@@ -140,7 +140,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					else
 					{
 						var response = await client.GetCompletionsAsync(modelName, completionsOptions);
-						foreach (Choice choice in response.Value.Choices)
+						foreach (var choice in response.Value.Choices)
 							answer += choice.Text;
 					}
 				}
