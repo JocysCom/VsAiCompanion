@@ -1,4 +1,6 @@
-﻿namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
+﻿using System;
+
+namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
 	public partial class model: base_response
 	{
@@ -6,7 +8,7 @@
 
 		public string @object { get; set; }
 
-		public int created { get; set; }
+		public DateTime created { get; set; }
 
 		public string owned_by { get; set; }
 

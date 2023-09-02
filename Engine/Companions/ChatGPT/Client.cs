@@ -60,7 +60,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				Global.MainControl.InfoPanel.AddTask(id);
 				var responseBody = await GetResponseAsync(url);
-				var o = JsonSerializer.Deserialize<T>(responseBody);
+				var options = new JsonSerializerOptions();
+				options.Converters.Add(new UnixTimestampConverter());
+				var o = JsonSerializer.Deserialize<T>(responseBody, options);
 				return o;
 			}
 			catch (Exception ex)
@@ -104,6 +106,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
 				var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
+				if (string.IsNullOrEmpty(Service.ApiAccessKey))
+				{
+					// TODO: Allow HTTP localhost connections.
+					// Bearer token authentication is not permitted for non TLS protected (https) endpoints.
+				}
 				client = new OpenAIClient(endpoint, credential, options);
 				var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 				prop.SetValue(client, false);
