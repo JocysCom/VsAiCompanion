@@ -9,6 +9,8 @@ using Azure.Core;
 using Azure.AI.OpenAI;
 using Azure;
 using Azure.Identity;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -20,6 +22,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		}
 		private const string usageUrl = "usage";
 		private const string modelsUrl = "models";
+		private const string chatCompletions = "chat/completions";
+		private const string completions = "completions";
 		private readonly AiService Service;
 
 		public HttpClient GetClient()
@@ -35,35 +39,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return client;
 		}
 
-		/// <summary>
-		/// Get usage.
-		/// </summary>
-		/// <returns></returns>
-		public async Task<string> GetResponseAsync(string url)
-		{
-			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{Service.BaseUrl}{url}?date={date}";
-			var client = GetClient();
-			var response = await client.GetAsync(urlWithDate);
-			var responseBody = await response.Content.ReadAsStringAsync();
-			//var usage = await response.Content.ReadFromJsonAsync<Usage>();
-			Console.WriteLine(responseBody); // Print the response content for debugging purposes
-			response.EnsureSuccessStatusCode();
-			response.Dispose();
-			return responseBody;
-		}
-
-		public async Task<T> GetAsync<T>(string url)
+		public async Task<T> GetAsync<T>(string operationPath, object o = null)
 		{
 			var id = Guid.NewGuid();
 			try
 			{
 				Global.MainControl.InfoPanel.AddTask(id);
-				var responseBody = await GetResponseAsync(url);
+				var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+				var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
+				var client = GetClient();
 				var options = new JsonSerializerOptions();
+				options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 				options.Converters.Add(new UnixTimestampConverter());
-				var o = JsonSerializer.Deserialize<T>(responseBody, options);
-				return o;
+				options.Converters.Add(new JsonStringEnumConverter());
+				HttpResponseMessage response;
+				if (o == null)
+				{
+					client.DefaultRequestHeaders.Accept.Clear();
+					client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+					response = await client.GetAsync(urlWithDate);
+				}
+				else
+				{
+					var json = JsonSerializer.Serialize(o, options);
+					var content = new StringContent(json, Encoding.UTF8, "application/json");
+					response = await client.PostAsync(urlWithDate, content);
+				}
+				var responseBody = await response.Content.ReadAsStringAsync();
+				response.EnsureSuccessStatusCode();
+				var responseObject = JsonSerializer.Deserialize<T>(responseBody, options);
+				return responseObject;
 			}
 			catch (Exception ex)
 			{
@@ -127,8 +132,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				string prompt, string chatLog,
 				List<ChatMessage> messagesToSend,
 				double creativity,
-				TemplateItem item,
-				bool stream = false
+				TemplateItem item
 			)
 		{
 			var answer = "";
@@ -183,7 +187,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					}
 					var chatCompletionsOptions = new ChatCompletionsOptions(messages);
 					chatCompletionsOptions.Temperature = (float)creativity;
-					if (Service.ResponseStreaming)
+					// If not secure then use simple service.
+					if (new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttp)
+					{
+						var request = new chat_completion_request
+						{
+							model = modelName,
+							temperature = (float)creativity
+							 
+						};
+						request.messages = messages.Select(x => new chat_completion_message()
+						{
+							role = (message_role)Enum.Parse(typeof(message_role), x.Role.ToString()),
+							content = x.Content,
+							name = x.Name,
+						}).ToList();
+						var response = await GetAsync<chat_completion_response>(chatCompletions, request);
+						foreach (var chatChoice in response.choices)
+							answer += chatChoice.message.content;
+					}
+					else if (Service.ResponseStreaming)
 					{
 						var response = await client.GetChatCompletionsStreamingAsync(modelName, chatCompletionsOptions);
 						using (var streamingChatCompletions = response.Value)

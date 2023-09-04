@@ -4,7 +4,8 @@ using System.Text.Json.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	public class base_response
+	public class base_item
+
 	{
 		/// <summary>
 		/// This property is used to capture additional JSON properties that aren't explicitly defined in the class.
