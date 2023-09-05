@@ -14,5 +14,4 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 	}
 
-
 }

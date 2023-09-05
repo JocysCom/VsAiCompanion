@@ -1,13 +1,14 @@
 ﻿namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	public class choice: base_item
+	public class text_choice: base_item
 	{
+		public string text { get; set; }
+
 		public int index { get; set; }
 
-		public chat_completion_message message { get; set; }
+		public logprobs logprobs { get; set; }
 
 		public choice_finish_reason finish_reason { get; set; }
-
 
 	}
 }

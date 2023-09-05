@@ -24,6 +24,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string FormatMessageTaskName = "® System - Format Message";
 		public const string DefaultIconEmbeddedResource = "document_gear.svg";
 
+		public static string JoinMessageParts(params string[] args)
+		{
+			return string.Join("\r\n\r\n", args.Where(x => !string.IsNullOrEmpty(x)));
+		}
+
 		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null, string overrideText = null)
 		{
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
@@ -152,7 +157,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				};
 				m.Attachments.Add(a2);
 			}
-			var messageForAI = $"{m.BodyInstructions}\r\n\r\n{m.Body}";
+			var messageForAI = JoinMessageParts(m.BodyInstructions, m.Body );
 			var chatLogForAI = "";
 			var chatLogMessages = new List<ChatMessage>();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
@@ -208,8 +213,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				}
 				if (lines.Count > 0)
 				{
-					var text = "Possible sensitive data has been detected. Do you want to send these files to AI?";
-					text += "\r\n\r\n" + string.Join("\r\n", lines);
+					var text = JoinMessageParts(
+						"Possible sensitive data has been detected. Do you want to send these files to AI?",
+						string.Join("\r\n", lines)
+					);
 					var caption = $"{Global.Info.Product} - Send Files";
 					var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 					if (result != MessageBoxResult.Yes)
@@ -219,9 +226,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			// ShowDocumentsAttachedWarning
 			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
 			{
-				var text = "Do you want to send these files to AI?";
 				var files = fileItems.Select(x => x.FullName).ToList();
-				text += "\r\n\r\n" + string.Join("\r\n", files);
+				var text = JoinMessageParts(
+					"Do you want to send these files to AI?",
+					string.Join("\r\n", files)
+				);
 				var caption = $"{Global.Info.Product} - Send Files";
 				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 				if (result != MessageBoxResult.Yes)
@@ -313,9 +322,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				{
 					Date = x.Date,
 					User = x.User,
-					Body = $"{x.BodyInstructions}".Trim().Length == 0
-						? $"{x.Body}"
-						: $"{x.BodyInstructions}\r\n\r\n{x.Body}",
+					Body = JoinMessageParts(x.BodyInstructions, x.Body),
 					Type = x.Type,
 				}).ToList();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
@@ -346,7 +353,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				{
 					Name = SystemName,
 					Content = rItem.TextInstructions,
-					Role =  ChatRole.System
+					Role = ChatRole.System
 				});
 				// Supply data for processing.
 				messages.Add(new ChatMessage()

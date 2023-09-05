@@ -98,14 +98,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			OpenAIClient client;
 			if (Service.IsAzureOpenAI)
 			{
-				if (string.IsNullOrEmpty(Service.ApiAccessKey))
-				{
-					client = new OpenAIClient(endpoint, new DefaultAzureCredential());
-				}
-				else
-				{
-					client = new OpenAIClient(endpoint, new AzureKeyCredential(Service.ApiSecretKey));
-				}
+				client = string.IsNullOrEmpty(Service.ApiAccessKey)
+					? new OpenAIClient(endpoint, new DefaultAzureCredential())
+					: new OpenAIClient(endpoint, new AzureKeyCredential(Service.ApiSecretKey));
 			}
 			else
 			{
@@ -149,7 +144,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					messages.Add(prompt + chatLog);
 					var completionsOptions = new CompletionsOptions(messages);
 					completionsOptions.Temperature = (float)creativity;
-					if (Service.ResponseStreaming)
+					// If not secure then use simple service.
+					if (new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttp)
+					{
+						var request = new text_completion_request
+						{
+							model = modelName,
+							temperature = (float)creativity
+						};
+						request.prompt = prompt + chatLog;
+						var response = await GetAsync<text_completion_response>(completions, request);
+						foreach (var chatChoice in response.choices)
+							answer += chatChoice.text;
+					}
+					else if (Service.ResponseStreaming)
 					{
 
 						var response = await client.GetCompletionsStreamingAsync(modelName, completionsOptions);
@@ -169,7 +177,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					{
 						var response = await client.GetCompletionsAsync(modelName, completionsOptions);
 						foreach (var choice in response.Value.Choices)
+						{
 							answer += choice.Text;
+							// Pick first first answer.
+							break;
+						}
 					}
 				}
 				else
@@ -194,7 +206,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						{
 							model = modelName,
 							temperature = (float)creativity
-							 
 						};
 						request.messages = messages.Select(x => new chat_completion_message()
 						{
@@ -225,7 +236,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					{
 						var response = await client.GetChatCompletionsAsync(modelName, chatCompletionsOptions);
 						foreach (ChatChoice chatChoice in response.Value.Choices)
+						{
 							answer += chatChoice.Message.Content;
+							// Pick first first answer.
+							break;
+						}
 					}
 				}
 			}

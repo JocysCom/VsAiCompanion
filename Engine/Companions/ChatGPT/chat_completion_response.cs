@@ -2,20 +2,8 @@
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	internal class chat_completion_response: base_item
+	internal class chat_completion_response: base_completion_response
 	{
-		public string id { get; set; }
-
-		public string @object { get; set; }
-
-		public int created { get; set; }
-
-		public string model { get; set; }
-
-		public List<choice> choices { get; set; } = new List<choice>();
-
-		public usage usage { get; set; }
-
-
+		public List<chat_choice> choices { get; set; }
 	}
 }
