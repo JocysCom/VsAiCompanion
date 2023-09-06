@@ -11,10 +11,11 @@ using Azure;
 using Azure.Identity;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.IO;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	public class Client : IClient
+	public class Client
 	{
 		public Client(AiService service)
 		{
@@ -39,7 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return client;
 		}
 
-		public async Task<T> GetAsync<T>(string operationPath, object o = null)
+		public async Task<List<T>> GetAsync<T>(string operationPath, object o = null, bool stream = false)
 		{
 			var id = Guid.NewGuid();
 			try
@@ -47,7 +48,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				Global.MainControl.InfoPanel.AddTask(id);
 				var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
 				var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
-				var client = GetClient();
+				HttpClient client = GetClient();
 				var options = new JsonSerializerOptions();
 				options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 				options.Converters.Add(new UnixTimestampConverter());
@@ -65,10 +66,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var content = new StringContent(json, Encoding.UTF8, "application/json");
 					response = await client.PostAsync(urlWithDate, content);
 				}
-				var responseBody = await response.Content.ReadAsStringAsync();
 				response.EnsureSuccessStatusCode();
-				var responseObject = JsonSerializer.Deserialize<T>(responseBody, options);
-				return responseObject;
+				var list = new List<T>();
+				if (stream)
+				{
+					using (var responseStream = await response.Content.ReadAsStreamAsync())
+					{
+						using (var streamReader = new StreamReader(responseStream))
+						{
+							string line;
+							while ((line = await streamReader.ReadLineAsync()) != null)
+							{
+								if (line.Contains("[DONE]"))
+									break;
+								var dataStartIndex = line.IndexOf("{");
+								if (dataStartIndex < 0)
+									continue;
+								var jsonLine = line.Substring(dataStartIndex);
+								var responseObject = JsonSerializer.Deserialize<T>(jsonLine, options);
+								list.Add(responseObject);
+							}
+						}
+					}
+				}
+				else
+				{
+					var responseBody = await response.Content.ReadAsStringAsync();
+					var responseObject = JsonSerializer.Deserialize<T>(responseBody, options);
+					list.Add(responseObject);
+				}
+				return list;
 			}
 			catch (Exception ex)
 			{
@@ -81,10 +108,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
-		public async Task<usage_response> GetUsageAsync() =>
+		public class part
+		{
+			public JsonElement data;
+		}
+
+		public async Task<List<usage_response>> GetUsageAsync() =>
 			await GetAsync<usage_response>(usageUrl);
 
-		public async Task<models_response> GetModelsAsync() =>
+		public async Task<List<models_response>> GetModelsAsync() =>
 			await GetAsync<models_response>(modelsUrl);
 
 		public event EventHandler MessageDone;
@@ -136,6 +168,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			item.HttpClients.Add(httpClient);
 			Global.MainControl.InfoPanel.AddTask(id);
 			var client = GetAiClient();
+			var notSecure = new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttp;
 			try
 			{
 				if (modelName.Contains("davinci"))
@@ -144,18 +177,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					messages.Add(prompt + chatLog);
 					var completionsOptions = new CompletionsOptions(messages);
 					completionsOptions.Temperature = (float)creativity;
+
 					// If not secure then use simple service.
-					if (new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttp)
+					if (notSecure)
 					{
 						var request = new text_completion_request
 						{
 							model = modelName,
-							temperature = (float)creativity
+							temperature = (float)creativity,
+							prompt = prompt + chatLog,
+							stream = Service.ResponseStreaming
 						};
-						request.prompt = prompt + chatLog;
-						var response = await GetAsync<text_completion_response>(completions, request);
-						foreach (var chatChoice in response.choices)
-							answer += chatChoice.text;
+						var data = await GetAsync<text_completion_response>(completions, request, Service.ResponseStreaming);
+						foreach (var dataItem in data)
+							foreach (var chatChoice in dataItem.choices)
+								answer += chatChoice.text;
 					}
 					else if (Service.ResponseStreaming)
 					{
@@ -200,12 +236,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var chatCompletionsOptions = new ChatCompletionsOptions(messages);
 					chatCompletionsOptions.Temperature = (float)creativity;
 					// If not secure then use simple service.
-					if (new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttp)
+					if (notSecure)
 					{
 						var request = new chat_completion_request
 						{
 							model = modelName,
-							temperature = (float)creativity
+							temperature = (float)creativity,
+							stream = Service.ResponseStreaming,
 						};
 						request.messages = messages.Select(x => new chat_completion_message()
 						{
@@ -213,9 +250,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							content = x.Content,
 							name = x.Name,
 						}).ToList();
-						var response = await GetAsync<chat_completion_response>(chatCompletions, request);
-						foreach (var chatChoice in response.choices)
-							answer += chatChoice.message.content;
+						var data = await GetAsync<chat_completion_response>(chatCompletions, request, Service.ResponseStreaming);
+						foreach (var dataItem in data)
+							foreach (var chatChoice in dataItem.choices)
+								answer += (chatChoice.message ?? chatChoice.delta).content;
 					}
 					else if (Service.ResponseStreaming)
 					{

@@ -8,7 +8,7 @@
 
 		public logprobs logprobs { get; set; }
 
-		public choice_finish_reason finish_reason { get; set; }
+		public choice_finish_reason? finish_reason { get; set; }
 
 	}
 }

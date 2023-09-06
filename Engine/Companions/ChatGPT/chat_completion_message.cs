@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
+﻿namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
 	public class chat_completion_message: base_item
 	{
