@@ -108,11 +108,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
-		public class part
-		{
-			public JsonElement data;
-		}
-
 		public async Task<List<usage_response>> GetUsageAsync() =>
 			await GetAsync<usage_response>(usageUrl);
 
