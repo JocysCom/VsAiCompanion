@@ -21,6 +21,8 @@
     <SolidColorBrush x:Key="BorderDark" Color="#cccccc" />
     <SolidColorBrush x:Key="BorderDarkSelected" Color="#a4d8fa" />
 
+    <SolidColorBrush x:Key="ForegroundBlack" Color="#000000" />
+
     <SolidColorBrush x:Key="SolidColorBrush_BFF">#ff000000</SolidColorBrush>
 
     <!--  HUE Color Degrees - Light (hue: X, saturation: 10, lightness: 100)  -->
@@ -78,6 +80,21 @@
                         Stroke="Black"
                         StrokeDashArray="1 2"
                         StrokeThickness="1" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="FocusVisualStyle_None">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle
+                        RadiusX="5"
+                        RadiusY="5"
+                        Stroke="Black"
+                        StrokeDashArray="1 2"
+                        StrokeThickness="0" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -593,7 +610,7 @@
                             KeyboardNavigation.DirectionalNavigation="Contained"
                             KeyboardNavigation.TabIndex="2"
                             KeyboardNavigation.TabNavigation="Local">
-                            <ContentPresenter Name="ContentPresenter" ContentSource="SelectedContent">
+                            <ContentPresenter Name="ContentPresenter" VerticalAlignment="Top" ContentSource="SelectedContent">
                                 <ContentPresenter.OpacityMask>
                                     <VisualBrush>
                                         <VisualBrush.Visual>
@@ -915,13 +932,33 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
 
-    <!--  DataGridCell Style and Triggers  -->
+    <Style x:Key="DataGridColumnHeader_Default" TargetType="DataGridColumnHeader">
+        <Setter Property="Padding" Value="3" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Margin" Value="1,0,0,0" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
+                    <GradientStop Offset="0" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
+                    <GradientStop Offset="1" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <!--  Apply style to first column only  -->
+            <Trigger Property="DisplayIndex" Value="0">
+                <Setter Property="Margin" Value="0" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="DataGridCell_Default" TargetType="DataGridCell">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="MinHeight" Value="25" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="3,1,3,1" />
-        <Setter Property="BorderBrush" Value="{StaticResource BackgroundDark}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Style.Triggers>
             <!--  Selected  -->
@@ -932,61 +969,42 @@
             <DataTrigger Binding="{Binding Column.DisplayIndex, RelativeSource={RelativeSource Self}}" Value="0">
                 <Setter Property="BorderThickness" Value="0" />
             </DataTrigger>
+            <!--  IsReadOnly and IsSelected  -->
+            <!--<MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=IsReadOnly}" Value="True" />
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="False" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="IsHitTestVisible" Value="False" />
+            </MultiDataTrigger>-->
         </Style.Triggers>
     </Style>
 
     <!--  DataGrid  -->
     <Style x:Key="DataGrid_Default" TargetType="DataGrid">
+        <Setter Property="Background" Value="{StaticResource BackgroundWhite}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CanUserAddRows" Value="False" />
         <Setter Property="CanUserDeleteRows" Value="False" />
         <Setter Property="GridLinesVisibility" Value="Horizontal" />
         <Setter Property="HeadersVisibility" Value="Column" />
-        <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BackgroundDark}" />
-        <Setter Property="VerticalGridLinesBrush" Value="{StaticResource BackgroundDark}" />
+        <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BackgroundLight}" />
+        <Setter Property="VerticalGridLinesBrush" Value="{StaticResource BackgroundLight}" />
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Style.Resources>
             <!--  Make selected row color of inactive grid as same as active grid.  -->
             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />
-            <!--  Other styles  -->
-            <Style TargetType="DataGridColumnHeader">
-                <Setter Property="Padding" Value="3" />
-                <Setter Property="SnapsToDevicePixels" Value="True" />
-                <!--<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
-                <Setter Property="Background">
-                    <Setter.Value>
-                        <LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-                            <GradientStop Offset="0" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
-                            <GradientStop Offset="1" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="BorderThickness" Value="0" />
-                <Style.Triggers>
-                    <!--  Apply style to first column only  -->
-                    <Trigger Property="DisplayIndex" Value="0">
-                        <Setter Property="BorderThickness" Value="0" />
-                    </Trigger>
-                </Style.Triggers>
+            <!--  DataGridColumnHeader  -->
+            <Style BasedOn="{StaticResource DataGridColumnHeader_Default}" TargetType="DataGridColumnHeader" />
+            <!--  DataGridRow  -->
+            <Style TargetType="DataGridRow">
+                <Setter Property="Background" Value="Transparent" />
             </Style>
+            <!--  DataGridCell  -->
+            <Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
         </Style.Resources>
-    </Style>
-
-    <!--<Style x:Key="DataGridRow_Default" TargetType="DataGridRow">
-        <Style.Triggers>
-            <Trigger Property="IsSelected" Value="True">
-                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>-->
-
-    <Style x:Key="DataGridReadOnly" BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid">
-        <Setter Property="IsReadOnly" Value="true" />
-        <Setter Property="GridLinesVisibility" Value="All" />
-        <Setter Property="BorderBrush" Value="{StaticResource BackgroundDark}" />
-        <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BackgroundDark}" />
-        <Setter Property="VerticalGridLinesBrush" Value="{StaticResource BackgroundDark}" />
     </Style>
 
     <!--  Cell HUE Degree Pastel Colours  -->
@@ -1330,8 +1348,8 @@
                                                 <Border
                                                     Width="{Binding ActualWidth, ElementName=ScrollViewerRounded}"
                                                     Height="{Binding ActualHeight, ElementName=ScrollViewerRounded}"
-                                                    Background="{StaticResource BackgroundLight}"
-                                                    CornerRadius="5,5,5,5"
+                                                    Background="White"
+                                                    CornerRadius="5"
                                                     SnapsToDevicePixels="True" />
                                             </VisualBrush.Visual>
                                         </VisualBrush>
@@ -1446,8 +1464,8 @@
                                                 <Border
                                                     Width="{Binding ActualWidth, ElementName=ScrollViewerRounded}"
                                                     Height="{Binding ActualHeight, ElementName=ScrollViewerRounded}"
-                                                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-                                                    CornerRadius="5,5,5,5"
+                                                    Background="White"
+                                                    CornerRadius="5"
                                                     SnapsToDevicePixels="True" />
                                             </VisualBrush.Visual>
                                         </VisualBrush>
@@ -1503,8 +1521,8 @@
                                                 <Border
                                                     Width="{Binding ActualWidth, ElementName=ScrollViewerRounded}"
                                                     Height="{Binding ActualHeight, ElementName=ScrollViewerRounded}"
-                                                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-                                                    CornerRadius="5,5,5,5"
+                                                    Background="White"
+                                                    CornerRadius="5"
                                                     SnapsToDevicePixels="True" />
                                             </VisualBrush.Visual>
                                         </VisualBrush>
@@ -1575,7 +1593,6 @@
     <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />
     <Style BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid" />
     <!--<Style BasedOn="{StaticResource DataGridRow_Default}" TargetType="DataGridRow" />-->
-    <Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
     <Style BasedOn="{StaticResource PasswordBox_Default}" TargetType="PasswordBox" />
     <Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />
     <Style BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox" />

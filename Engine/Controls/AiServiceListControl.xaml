@@ -4,9 +4,22 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Name="AiServiceListUserControl"
 	d:DesignHeight="140"
 	d:DesignWidth="320"
 	mc:Ignorable="d">
+	<UserControl.OpacityMask>
+		<VisualBrush>
+			<VisualBrush.Visual>
+				<Border
+					Width="{Binding ActualWidth, ElementName=AiServiceListUserControl}"
+					Height="{Binding ActualHeight, ElementName=AiServiceListUserControl}"
+					Background="White"
+					CornerRadius="0,0,0,5"
+					SnapsToDevicePixels="True" />
+			</VisualBrush.Visual>
+		</VisualBrush>
+	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
