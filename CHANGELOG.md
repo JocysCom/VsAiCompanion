@@ -1,3 +1,10 @@
+2023-09-06 v1.1.6
+
+- Fix: Task cloning, stopping sending.
+- New: Added support for streaming replies and typing indications.
+- Update: Improved support for Azure OpenAI.
+- Update: Improved support for GPT4All.
+
 2023-08-31 v1.0.115
 
 - Fix: Unable to hide template or task list panel.
