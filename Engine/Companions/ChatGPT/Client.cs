@@ -319,16 +319,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return 2049; // Default for other models
 		}
 
-		//public class Usage
-		//{
-		//	public string _object { get; set; }
-		//	public object[] data { get; set; }
-		//	public object[] ft_data { get; set; }
-		//	public object[] dalle_api_data { get; set; }
-		//	public object[] whisper_api_data { get; set; }
-		//	public float current_usage_usd { get; set; }
-		//}
-
 	}
 
 }
