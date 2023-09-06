@@ -910,7 +910,7 @@
 							</MultiTrigger.Conditions>
 							<Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="{StaticResource BorderDarkSelected}" />
 						</MultiTrigger>
-						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}, Path=Content, Mode=OneTime}" Value="">
+						<DataTrigger Binding="{Binding Path=Content, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=OneTime}" Value="">
 							<Setter TargetName="contentPresenter" Property="Visibility" Value="Collapsed" />
 						</DataTrigger>
 					</ControlTemplate.Triggers>
