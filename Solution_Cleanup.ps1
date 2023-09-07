@@ -9,68 +9,68 @@
 .LINK
     http://www.jocys.com
 #>
-using namespace System;
-using namespace System.IO;
+using namespace System
+using namespace System.IO
 
 # ----------------------------------------------------------------------------
 # Run as administrator.
 If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {   
 	# Pass arguments: script path, original user profile path and local app data path.
-	$argumentList = "& '" + $MyInvocation.MyCommand.Path + "' '$($env:USERNAME)' '$($env:USERPROFILE)' '$($env:LOCALAPPDATA)'";
+	$argumentList = "& '" + $MyInvocation.MyCommand.Path + "' '$($env:USERNAME)' '$($env:USERPROFILE)' '$($env:LOCALAPPDATA)'"
 	Start-Process PowerShell.exe -Verb Runas -ArgumentList $argumentList
-	return;
+	return
 }	
 
 # Add original user profile path and optionally admin user profile path to process.
-$userNames = @( $args[0]);
-if ($args[0] -ne $env:USERNAME) { $userNames += $env:USERNAME };
+$userNames = @( $args[0])
+if ($args[0] -ne $env:USERNAME) { $userNames += $env:USERNAME }
 
 # Add original user profile path and optionally admin user profile path to process.
-$userProfilePaths = @( $args[1]);
-if ($args[1] -ne $env:USERPROFILE) { $userProfilePaths += $env:USERPROFILE };
+$userProfilePaths = @( $args[1])
+if ($args[1] -ne $env:USERPROFILE) { $userProfilePaths += $env:USERPROFILE }
 
 # Add original user app data path and optionally admin user app data path to process.
-$localAppDataPaths = @( $args[2]);
-if ($args[2] -ne $env:LOCALAPPDATA) { $localAppDataPaths += $env:LOCALAPPDATA };
+$localAppDataPaths = @( $args[2])
+if ($args[2] -ne $env:LOCALAPPDATA) { $localAppDataPaths += $env:LOCALAPPDATA }
 
 # ----------------------------------------------------------------------------
 # Get current command path.
-[string]$current = $MyInvocation.MyCommand.Path;
+[string]$current = $MyInvocation.MyCommand.Path
 # Get calling command path.
-[string]$calling = @(Get-PSCallStack)[1].InvocationInfo.MyCommand.Path;
+[string]$calling = @(Get-PSCallStack)[1].InvocationInfo.MyCommand.Path
 # If executed directly then...
 if ($calling -ne "") {
-	$current = $calling;
+	$current = $calling
 }
 # ----------------------------------------------------------------------------
-[FileInfo]$file = New-Object FileInfo($current);
+[FileInfo]$file = New-Object FileInfo($current)
 # Set public parameters.
-$global:scriptName = $file.Basename;
-$global:scriptPath = $file.Directory.FullName;
+$global:scriptName = $file.Basename
+$global:scriptPath = $file.Directory.FullName
 # Change current directory.
-Write-Host "Script Path:    $scriptPath";
-[Environment]::CurrentDirectory = $scriptPath;
-Set-Location $scriptPath;
+Write-Host "Script Path:    $scriptPath"
+[Environment]::CurrentDirectory = $scriptPath
+Set-Location $scriptPath
 # ----------------------------------------------------------------------------
 # Shot which profiles will be affected.
 foreach ($p in $userProfilePaths) {
-	Write-host "User Profile:   $p";
+	Write-host "User Profile:   $p"
 }
 foreach ($d in $localAppDataPaths) {
-	Write-host "Local App Data: $d";
+	Write-host "Local App Data: $d"
 }
 # ----------------------------------------------------------------------------
 Function KillProcess {
-	param($pattern);
+	param($pattern)
 	# -------------------------
 	# Function.
-	$procs = Get-Process;
+	$procs = Get-Process
 	foreach ($proc in $procs) {
 		if ($proc.Path) {
-			$item = Get-Item $proc.Path;
+			$item = Get-Item $proc.Path
 			if ($item.Name -eq $pattern) {
-				Write-Output "  Stopping process: $($item.Name)";
-				Stop-Process $proc;
+				Write-Output "  Stopping process: $($item.Name)"
+				Stop-Process $proc
 			}
 		}
 	}	
@@ -80,128 +80,134 @@ Function RemoveDirectories {
 	param ($pattern, $mustBeInProject)
 	# -------------------------
 	# Function.
-	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object { $_ -is [DirectoryInfo] };
+	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object { $_ -is [DirectoryInfo] }
 	foreach ($item in $items) {
 		if ($mustBeInProject) {
 			# Get parent folder.
-			[DirectoryInfo] $parent = $item.Parent;
-			$projects = $parent.GetFiles("*.*proj", [SearchOption]::TopDirectoryOnly);
+			[DirectoryInfo] $parent = $item.Parent
+			$projects = $parent.GetFiles("*.*proj", [SearchOption]::TopDirectoryOnly)
 			# If parent folder do not contain *.*proj file then...
 			if ($projects.length -eq 0) {
 				# Ignore node_modules.
 				if ($item.FullName -like "*\node_modules\*") {
-					continue;
+					continue
 				}
-				Write-Output "  Skip:   $($item.FullName)";
-				$global:skipCount += 1;
-				continue;
+				Write-Output "  Skip:   $($item.FullName)"
+				$global:skipCount += 1
+				continue
 			}
-			Write-Output "  Remove: $($item.FullName)";
-			$global:removeCount += 1;
+			Write-Output "  Remove: $($item.FullName)"
+			$global:removeCount += 1
 			Remove-Item -LiteralPath $item.FullName -Force -Recurse
 		}
 	}
 }
 # ----------------------------------------------------------------------------
 function RemoveSubFoldersAndFiles {
-	param($path, $onlyDirs);
+	param($path, $onlyDirs)
 	# -------------------------
 	# Function.
-	$dirs = Get-Item $path -ErrorAction SilentlyContinue;
+	$dirs = Get-Item $path -ErrorAction SilentlyContinue
 	foreach ($dir in $dirs) {
-		Write-Output "  $($dir.FullName)";
-		$items = Get-ChildItem -LiteralPath $dir.FullName -Force;
+		Write-Output "  $($dir.FullName)"
+		$items = Get-ChildItem -LiteralPath $dir.FullName -Force
 		if ($onlyDirs -eq $true) {
-			$items = $items | Where-Object { $_ -is [DirectoryInfo] };
+			$items = $items | Where-Object { $_ -is [DirectoryInfo] }
 		}
 		foreach ($item in $items) {
-			Write-Output "  - $($item.Name)";
-			Remove-Item -LiteralPath $item.FullName -Force -Recurse;
+			Write-Output "  - $($item.Name)"
+			Remove-Item -LiteralPath $item.FullName -Force -Recurse
 		}
 	}
 }
 # ----------------------------------------------------------------------------
 Function RemoveFiles {
-	param($pattern);
+	param($pattern)
 	# -------------------------
 	# Function.
-	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object { $_ -is [FileInfo] };
+	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object { $_ -is [FileInfo] }
 	foreach ($item in $items) {
-		Write-Output $item.FullName;
-		Remove-Item -LiteralPath $item.FullName -Force;
+		Write-Output $item.FullName
+		Remove-Item -LiteralPath $item.FullName -Force
 	}
 }
 # ----------------------------------------------------------------------------
 function ClearBuilds {
-	$global:removeCount = 0;
-	$global:skipCount = 0;
-	Write-Host "Clear Build Folders";
+	$global:removeCount = 0
+	$global:skipCount = 0
+	Write-Host "Clear Build Folders"
 	# Remove 'obj' folders first, because it can contain 'bin' inside.
-	RemoveDirectories "obj" $true;
-	RemoveDirectories "bin" $true;
-	#Write-Output "Skipped: $global:skipCount, Removed: $global:removeCount";
+	RemoveDirectories "obj" $true
+	RemoveDirectories "bin" $true
+	#Write-Output "Skipped: $global:skipCount, Removed: $global:removeCount"
 }
 # ----------------------------------------------------------------------------
 # Kill tasks which could lock files in the project folders.
 function KillDeveloperTasks {
+	# You can find the process locking file by searching for the locked file name using SysInternals Process Explorer.
+	# 1. Open SysInternals Process Explorer.
+	# 2. Go to the Menu and click on "Find". Then, choose "Find Handle or DLL...(CTRL+SHIFT+F)".
+	#
 	# TaskKill
 	#   /IM <name>  Name of the process to be terminated.
 	#   /T          Terminates the specified process and any child processes.
 	#   /F          Specifies to forcefully terminate the process(es).
 	#
 	# Kill Microsoft Build Engine. 
-	& TaskKill.exe @("/F", "/T", "/IM", "MsBuild.exe");
+	& TaskKill.exe @("/F", "/T", "/IM", "MsBuild.exe")
 	# Kill Microsoft Visual Studio Team Foundation Server End Task.
-	& TaskKill.exe @("/F", "/T", "/IM", "EndTask.exe");
+	& TaskKill.exe @("/F", "/T", "/IM", "EndTask.exe")
 	# Kill IIS Worker.
-	& TaskKill.exe @("/F", "/T", "/IM", "w3wp.exe");
+	& TaskKill.exe @("/F", "/T", "/IM", "w3wp.exe")
 	# Kill Node.js JavaScript runtime environment.
-	& TaskKill.exe @("/F", "/T", "/IM", "node.exe");
+	& TaskKill.exe @("/F", "/T", "/IM", "node.exe")
 	# Kill Web View Host.
-	& TaskKill.exe @("/F", "/T", "/IM", "WebViewHost.exe");
+	& TaskKill.exe @("/F", "/T", "/IM", "WebViewHost.exe")
 	# Kill ChromeDriver. Ued for UI testing.
-	& TaskKill.exe @("/F", "/T", "/IM", "ChromeDriver.exe");
+	& TaskKill.exe @("/F", "/T", "/IM", "ChromeDriver.exe")
 	# Kill IIS Express.
-	& TaskKill.exe @("/F", "/T", "/IM", "iisexpress.exe");
+	& TaskKill.exe @("/F", "/T", "/IM", "iisexpress.exe")
 	# Kill IIS Express Tray Icon.
-	& TaskKill.exe @("/F", "/T", "/IM", "iisexpresstray.exe");
+	& TaskKill.exe @("/F", "/T", "/IM", "iisexpresstray.exe")
+	# Kill Integrated Development Environment (IDE) for Microsoft's Visual Studio.
+	& TaskKill.exe @("/F", "/T", "/IM", "devenv.exe")
 }
 # ----------------------------------------------------------------------------
 function ClearCache {
-	Write-Host "Clear IIS Express configuration and remove temp files";
-	Start-Sleep -Seconds 2.0;
+	Write-Host "Clear IIS Express configuration and remove temp files"
+	Start-Sleep -Seconds 2.0
 	foreach ($p in $userProfilePaths) {
-		RemoveSubFoldersAndFiles "$p\Documents\My Web Sites" $true;
+		RemoveSubFoldersAndFiles "$p\Documents\My Web Sites" $true
 	}
-	Write-Host "Remove temp directories";
-	RemoveDirectories ".vs"; # Visual Studio
-	RemoveDirectories ".vscode"; # Visual Studio Code
-	Write-Host "Remove temp files";
-	RemoveFiles "*.dbmdl";
-	RemoveFiles "*.user";
-	RemoveFiles "*.suo";
-	RemoveFiles "tsconfig.tsbuildinfo";
+	Write-Host "Remove temp directories"
+	RemoveDirectories ".vs" # Visual Studio
+	RemoveDirectories ".vscode" # Visual Studio Code
+	Write-Host "Remove temp files"
+	RemoveFiles "*.dbmdl"
+	RemoveFiles "*.user"
+	RemoveFiles "*.suo"
+	RemoveFiles "tsconfig.tsbuildinfo"
 }
 # ----------------------------------------------------------------------------
 function ResetPermissions {
-	param([string]$path);
+	param([string]$path)
 	# -------------------------
 	# Give read write permissions to local users.
-	$di = new-Object System.IO.DirectoryInfo($path);
-	Write-Host "Reset Permissions on $($di.FullName)";
+	$di = new-Object System.IO.DirectoryInfo($path)
+	Write-Host "Reset Permissions on $($di.FullName)"
 	if ($di.Exists -eq $false) {
-		Write-Host "Folder not found!";
-		return;
+		Write-Host "Folder not found!"
+		return
 	}
 	# Take ownership.
-	& takeown.exe @("/F", $path);
+	& takeown.exe @("/F", $path)
 	# Return ownership to TrustedInstaller.
-	& icacls.exe @($path, "/setowner", "`"NT Service\TrustedInstaller`"", "/Q");
+	& icacls.exe @($path, "/setowner", "`"NT Service\TrustedInstaller`"", "/Q")
 	# Replace ACL with default inherited acls for all matching files.
-	& icacls.exe @($path, "/reset", "/T", "/C", "/Q");
+	& icacls.exe @($path, "/reset", "/T", "/C", "/Q")
 	# Add modify (M) & write (W) permission.
 	# Inherit: This folder and files (OI), This folder and subfolders (CI).
-	#& icacls.exe @($path, "/grant", "`"Users`":(OI)(CI)MW");
+	#& icacls.exe @($path, "/grant", "`"Users`":(OI)(CI)MW")
 }
 # ----------------------------------------------------------------------------
 function ClearCacheVS {
@@ -209,38 +215,38 @@ function ClearCacheVS {
 	# clearing temporary compiled assemblies inside dynamically created folders by Visual Studio.
 	# Visual studio must be closed for this batch script to succeed.
 	#
-	Write-Host "Clear Visual Studio Cache";
+	Write-Host "Clear Visual Studio Cache"
 	foreach ($p in $userProfilePaths) {
 		for ($i = 12; $i -le 20; $i++) {
 			$vsPaths = @(
 				"$p\AppData\Local\Microsoft\VisualStudio\$($i).*\ProjectAssemblies",
 				"$p\AppData\Local\Microsoft\VisualStudio\$($i).*\ItemTemplatesCache_{00000000-0000-0000-0000-000000000000}",
 				"$p\AppData\Local\Microsoft\VisualStudio\$($i).*\ProjectTemplatesCache_{00000000-0000-0000-0000-000000000000}"
-			);
+			)
 			foreach ($vsPath in $vsPaths) {
-				$paExpanded = Get-Item $vsPath -ErrorAction SilentlyContinue;
+				$paExpanded = Get-Item $vsPath -ErrorAction SilentlyContinue
 				if ($paExpanded.Length -ne 0) {
-					RemoveSubFoldersAndFiles $vsPath;
+					RemoveSubFoldersAndFiles $vsPath
 				}
 			}
 		}
 	}	
-	return;
-	Write-Host "Clear IIS Express Cache";
+	return
+	Write-Host "Clear IIS Express Cache"
 	foreach ($p in $localAppDataPaths) {
-		RemoveSubFoldersAndFiles "$p\Temp\iisexpress";
-		RemoveSubFoldersAndFiles "$p\Temp\Temporary ASP.NET Files";
+		RemoveSubFoldersAndFiles "$p\Temp\iisexpress"
+		RemoveSubFoldersAndFiles "$p\Temp\Temporary ASP.NET Files"
 	}
-	Write-Host "Clear Xamarin Cache";
+	Write-Host "Clear Xamarin Cache"
 	foreach ($p in $localAppDataPaths) {
-		RemoveSubFoldersAndFiles "$p\Temp\Xamarin";
-		RemoveSubFoldersAndFiles "$p\Xamarin\iOS\Provisioning";
+		RemoveSubFoldersAndFiles "$p\Temp\Xamarin"
+		RemoveSubFoldersAndFiles "$p\Xamarin\iOS\Provisioning"
 	}
-	Write-Host "Clear .NET Framework Cache";
-	$netVersions = @("v2.0.50727", "v4.0.30319");
+	Write-Host "Clear .NET Framework Cache"
+	$netVersions = @("v2.0.50727", "v4.0.30319")
 	foreach ($v in $netVersions) {
-		RemoveSubFoldersAndFiles "$($env:SystemRoot)\Microsoft.NET\Framework\$v\Temporary ASP.NET Files";
-		RemoveSubFoldersAndFiles "$($env:SystemRoot)\Microsoft.NET\Framework64\$v\Temporary ASP.NET Files";
+		RemoveSubFoldersAndFiles "$($env:SystemRoot)\Microsoft.NET\Framework\$v\Temporary ASP.NET Files"
+		RemoveSubFoldersAndFiles "$($env:SystemRoot)\Microsoft.NET\Framework64\$v\Temporary ASP.NET Files"
 	}
 	#
 	# Solution Explorer, right-click Solution
@@ -254,42 +260,42 @@ function ClearCacheVS {
 }
 # ----------------------------------------------------------------------------
 function ShowMainMenu {
-	$m = "";
+	$m = ""
 	do {
-		$namesAffected = [String]::Join(", ", $userNames);
+		$namesAffected = [String]::Join(", ", $userNames)
 		# Clear screen.
-		Clear-Host;
-		Write-Host;
-		Write-Host "User profiles will be affected: $namesAffected";
-		Write-Host "Please close Visual Studio before starting cleanup.";
-		Write-Host "The 'Clear' option will kill all developer tasks.";
-		Write-Host;
-		Write-Host "    1 - Clear Project builds";
-		Write-Host "    2 - Clear IIS and temp files";
-		Write-Host "    3 - Clear Visual Studio cache";
-		Write-Host;
-		Write-Host "    0 - Clear all";
-		Write-Host;
-		Write-Host "    R - Reset Permissions";
-		Write-Host "    K - Kill Developer Tasks";
-		Write-Host;
-		$m = Read-Host -Prompt "Type option and press ENTER to continue";
-		Write-Host;
+		Clear-Host
+		Write-Host
+		Write-Host "User profiles will be affected: $namesAffected"
+		Write-Host "Please close Visual Studio before starting cleanup."
+		Write-Host "The 'Clear' option will kill all developer tasks."
+		Write-Host
+		Write-Host "    1 - Clear Project builds"
+		Write-Host "    2 - Clear IIS and temp files"
+		Write-Host "    3 - Clear Visual Studio cache"
+		Write-Host
+		Write-Host "    0 - Clear all"
+		Write-Host
+		Write-Host "    R - Reset Permissions"
+		Write-Host "    K - Kill Developer Tasks"
+		Write-Host
+		$m = Read-Host -Prompt "Type option and press ENTER to continue"
+		Write-Host
 		# Options:
-		IF ("$m" -eq "0" -or "$m" -eq "1" -or "$m" -eq "2" -or "$m" -eq "3" ) { KillDeveloperTasks; };
-		IF ("$m" -eq "0" -or "$m" -eq "1") { ClearBuilds; };
-		IF ("$m" -eq "0" -or "$m" -eq "2") { ClearCache; };
-		IF ("$m" -eq "0" -or "$m" -eq "3") { ClearCacheVS; };
-		IF ("$m" -eq "R") { ResetPermissions "$scriptPath"; };
-		IF ("$m" -eq "K") { KillDeveloperTasks; Start-Sleep -Seconds 2.0; };
+		IF ("$m" -eq "0" -or "$m" -eq "1" -or "$m" -eq "2" -or "$m" -eq "3" ) { KillDeveloperTasks }
+		IF ("$m" -eq "0" -or "$m" -eq "1") { ClearBuilds }
+		IF ("$m" -eq "0" -or "$m" -eq "2") { ClearCache }
+		IF ("$m" -eq "0" -or "$m" -eq "3") { ClearCacheVS }
+		IF ("$m" -eq "R") { ResetPermissions "$scriptPath" }
+		IF ("$m" -eq "K") { KillDeveloperTasks; Start-Sleep -Seconds 2.0; }
 		# If option was choosen.
 		IF ("$m" -ne "") {
-			pause;
+			pause
 		}
-	} until ("$m" -eq "");
-	return $m;
+	} until ("$m" -eq "")
+	return $m
 }
 # ----------------------------------------------------------------------------
 # Execute.
 # ----------------------------------------------------------------------------
-ShowMainMenu;
+ShowMainMenu
