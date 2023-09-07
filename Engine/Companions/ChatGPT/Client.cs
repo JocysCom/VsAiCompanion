@@ -47,7 +47,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
 				var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
-				HttpClient client = GetClient();
+				var client = GetClient();
+				// TODO: Make timeout an option.
+				client.Timeout = new TimeSpan(0, 5, 0);
 				var options = new JsonSerializerOptions();
 				options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 				options.Converters.Add(new UnixTimestampConverter());
@@ -104,10 +106,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				}
 				return list;
 			}
-			catch (Exception ex)
+			catch
 			{
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-				return default;
+				throw;
+				//Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+				//return default;
 			}
 		}
 
@@ -292,7 +295,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					}
 				}
 			}
-			catch (Exception)
+			catch
 			{
 				throw;
 			}
