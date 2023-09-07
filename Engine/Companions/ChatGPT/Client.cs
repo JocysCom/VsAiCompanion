@@ -43,10 +43,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public async Task<List<T>> GetAsync<T>(string operationPath, object o = null, bool stream = false, CancellationToken cancellationToken = default)
 		{
-			var id = Guid.NewGuid();
 			try
 			{
-				Global.MainControl.InfoPanel.AddTask(id);
 				var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
 				var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
 				HttpClient client = GetClient();
@@ -55,17 +53,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				options.Converters.Add(new UnixTimestampConverter());
 				options.Converters.Add(new JsonStringEnumConverter());
 				HttpResponseMessage response;
+				var completionOption = stream
+					? HttpCompletionOption.ResponseHeadersRead
+					: HttpCompletionOption.ResponseContentRead;
+				var request = new HttpRequestMessage();
+				request.RequestUri = new Uri(urlWithDate);
 				if (o == null)
 				{
 					client.DefaultRequestHeaders.Accept.Clear();
 					client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					response = await client.GetAsync(urlWithDate, cancellationToken);
+					request.Method = HttpMethod.Get;
+					response = await client.SendAsync(request, completionOption, cancellationToken);
 				}
 				else
 				{
 					var json = JsonSerializer.Serialize(o, options);
 					var content = new StringContent(json, Encoding.UTF8, "application/json");
-					response = await client.PostAsync(urlWithDate, content, cancellationToken);
+					request.Method = HttpMethod.Post;
+					request.Content = content;
+					response = await client.SendAsync(request, completionOption, cancellationToken);
 				}
 				response.EnsureSuccessStatusCode();
 				var list = new List<T>();
@@ -102,10 +108,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
 				return default;
-			}
-			finally
-			{
-				Global.MainControl.InfoPanel.RemoveTask(id);
 			}
 		}
 
@@ -180,7 +182,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							model = modelName,
 							temperature = (float)creativity,
 							prompt = prompt + chatLog,
-							stream = Service.ResponseStreaming
+							stream = Service.ResponseStreaming,
+							max_tokens = GetMaxTokens(modelName),
+
 						};
 						var data = await GetAsync<text_completion_response>(completions, request, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
@@ -242,7 +246,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							model = modelName,
 							temperature = (float)creativity,
 							stream = Service.ResponseStreaming,
-							max_tokens = 2048,
+							max_tokens = GetMaxTokens(modelName),
 						};
 						request.messages = messages.Select(x => new chat_completion_message()
 						{
