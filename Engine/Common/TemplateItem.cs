@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows.Media;
 using System.Xml.Serialization;
 
@@ -15,15 +16,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public TemplateItem()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
-			HttpClients = new BindingList<HttpClient>();
-			HttpClients.ListChanged += HttpClients_ListChanged;
+			CancellationTokenSources = new BindingList<CancellationTokenSource>();
+			CancellationTokenSources.ListChanged += HttpClients_ListChanged;
 		}
 
 		private void HttpClients_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
 			{
-				var isBusy = HttpClients.Count > 0;
+				var isBusy = CancellationTokenSources.Count > 0;
 				if (IsBusy != isBusy)
 					IsBusy = isBusy;
 			}
@@ -193,16 +194,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		bool _IsBusy;
 
 		[XmlIgnore, DefaultValue(null)]
-		public BindingList<HttpClient> HttpClients { get => _HttpClients; set => SetProperty(ref _HttpClients, value); }
-		BindingList<HttpClient> _HttpClients;
+		public BindingList<CancellationTokenSource> CancellationTokenSources { get => _CancellationTokenSources; set => SetProperty(ref _CancellationTokenSources, value); }
+		BindingList<CancellationTokenSource> _CancellationTokenSources;
 
 		public void StopClients()
 		{
-			var clients = HttpClients.ToArray();
+			var clients = CancellationTokenSources.ToArray();
 			try
 			{
 				foreach (var client in clients)
-					client.CancelPendingRequests();
+					client.Cancel();
 			}
 			catch { }
 		}
