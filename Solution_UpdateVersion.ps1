@@ -196,9 +196,10 @@ function ShowMainMenu {
 		Write-Host "Current version: $oldVersion"
 		# Set certificate types.
 		Write-Host
-		Write-Host "  1 - Decrement version to $newVersionM"
-		Write-Host "  2 - Set       version to $oldVersion"
-		Write-Host "  3 - Increment version to $newVersionP"
+		Write-Host "  1 - Decrement  version to $newVersionM"
+		Write-Host "  2 - Set        version to $oldVersion"
+		Write-Host "  3 - Increment  version to $newVersionP"
+		Write-Host "  4 - Set        version to custom"
 		Write-Host
 		$m = Read-Host -Prompt "Type option and press ENTER to continue"
 		Write-Host
@@ -206,6 +207,12 @@ function ShowMainMenu {
 		if ("${m}" -eq "1") {  SetVersion $newVersionM; }
 		if ("${m}" -eq "2") {  SetVersion $oldVersion; }
 		if ("${m}" -eq "3") {  SetVersion $newVersionP; }
+		if ("${m}" -eq "4") {
+			Write-Host "Please enter a version number: " -NoNewLine
+			$inputVersion = Read-Host
+			[Version]$version = $inputVersion
+			SetVersion $version;
+		}
 		Write-Host;
 		# If option was choosen.
 		IF ("$m" -ne "") {

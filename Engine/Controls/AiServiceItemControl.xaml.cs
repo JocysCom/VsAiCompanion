@@ -85,5 +85,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					item.IsDefault = false;
 			}
 		}
+
+		private void OpenAiBaseUrlTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			Uri result;
+			if (Uri.TryCreate(OpenAiBaseUrlTextBox.Text, UriKind.Absolute, out result))
+			{
+				var isOK = result.Scheme == Uri.UriSchemeHttps
+					|| result.Host.Equals("localhost")
+					|| result.Host.Equals("127.0.0.1");
+				if (isOK)
+					Global.MainControl.InfoPanel.Reset();
+				else
+					Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, $"OpenAI's base URL for '{_Item?.Name}' is not local and does not use HTTPS!");
+			}
+
+		}
 	}
 }

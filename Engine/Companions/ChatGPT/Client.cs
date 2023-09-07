@@ -48,8 +48,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
 			var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
 			var client = GetClient();
-			// TODO: Make timeout an option.
-			client.Timeout = new TimeSpan(0, 5, 0);
+			client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			var options = new JsonSerializerOptions();
 			options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 			options.Converters.Add(new UnixTimestampConverter());
@@ -110,6 +109,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<List<usage_response>> GetUsageAsync()
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
 			List<usage_response> results = null;
 			try
@@ -130,6 +130,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<List<models_response>> GetModelsAsync()
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
 			List<models_response> results = null;
 			try
@@ -192,20 +193,56 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var answer = "";
 			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			var id = Guid.NewGuid();
 			item.CancellationTokenSources.Add(cancellationTokenSource);
 			Global.MainControl.InfoPanel.AddTask(id);
-			var notSecure = new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttp;
+			var secure = new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttps;
 			try
 			{
+				// If Text Completion mode.
 				if (modelName.Contains("davinci"))
 				{
-					var messages = new List<string>();
-					messages.Add(prompt + chatLog);
-					var completionsOptions = new CompletionsOptions(messages);
-					completionsOptions.Temperature = (float)creativity;
-					// If not secure then use simple service.
-					if (notSecure)
+					// If Azure service or HTTPS.
+					if (Service.IsAzureOpenAI || secure)
+					{
+						var client = GetAiClient();
+						var messages = new List<string>();
+						messages.Add(prompt + chatLog);
+						var completionsOptions = new CompletionsOptions(messages);
+						completionsOptions.Temperature = (float)creativity;
+						if (Service.ResponseStreaming)
+						{
+							var response = await client.GetCompletionsStreamingAsync(modelName, completionsOptions, cancellationTokenSource.Token);
+							using (var streamingChatCompletions = response.Value)
+							{
+								var choicesEnumerator = streamingChatCompletions
+									.GetChoicesStreaming(cancellationTokenSource.Token)
+									.GetAsyncEnumerator(cancellationTokenSource.Token);
+								while (await choicesEnumerator.MoveNextAsync())
+								{
+									var choice = choicesEnumerator.Current;
+									var messagesEnumerator = choice
+										.GetTextStreaming(cancellationTokenSource.Token)
+										.GetAsyncEnumerator(cancellationTokenSource.Token);
+									while (await messagesEnumerator.MoveNextAsync())
+										answer += messagesEnumerator.Current;
+								}
+							}
+						}
+						else
+						{
+							var response = await client.GetCompletionsAsync(modelName, completionsOptions, cancellationTokenSource.Token);
+							foreach (var choice in response.Value.Choices)
+							{
+								answer += choice.Text;
+								// Pick first first answer.
+								break;
+							}
+						}
+					}
+					// Could be local non-secure HTTP connection.
+					else
 					{
 						var request = new text_completion_request
 						{
@@ -221,38 +258,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							foreach (var chatChoice in dataItem.choices)
 								answer += chatChoice.text;
 					}
-					else if (Service.ResponseStreaming)
-					{
-						var client = GetAiClient();
-						var response = await client.GetCompletionsStreamingAsync(modelName, completionsOptions, cancellationTokenSource.Token);
-						using (var streamingChatCompletions = response.Value)
-						{
-							var choicesEnumerator = streamingChatCompletions
-								.GetChoicesStreaming(cancellationTokenSource.Token)
-								.GetAsyncEnumerator(cancellationTokenSource.Token);
-							while (await choicesEnumerator.MoveNextAsync())
-							{
-								var choice = choicesEnumerator.Current;
-								var messagesEnumerator = choice
-									.GetTextStreaming(cancellationTokenSource.Token)
-									.GetAsyncEnumerator(cancellationTokenSource.Token);
-								while (await messagesEnumerator.MoveNextAsync())
-									answer += messagesEnumerator.Current;
-							}
-						}
-					}
-					else
-					{
-						var client = GetAiClient();
-						var response = await client.GetCompletionsAsync(modelName, completionsOptions, cancellationTokenSource.Token);
-						foreach (var choice in response.Value.Choices)
-						{
-							answer += choice.Text;
-							// Pick first first answer.
-							break;
-						}
-					}
 				}
+				// If Chat Completion mode.
 				else
 				{
 					var messages = new List<ChatMessage>();
@@ -266,10 +273,45 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							.Select(x => new ChatMessage(x.Role.ToString(), x.Content) { Name = ClientHelper.UserName })
 							.ToList();
 					}
-					var chatCompletionsOptions = new ChatCompletionsOptions(messages);
-					chatCompletionsOptions.Temperature = (float)creativity;
-					// If not secure then use simple service.
-					if (notSecure)
+					// If Azure service or HTTPS.
+					if (Service.IsAzureOpenAI || secure)
+					{
+						var chatCompletionsOptions = new ChatCompletionsOptions(messages);
+						chatCompletionsOptions.Temperature = (float)creativity;
+						if (Service.ResponseStreaming)
+						{
+							var client = GetAiClient();
+							var response = await client.GetChatCompletionsStreamingAsync(modelName, chatCompletionsOptions, cancellationTokenSource.Token);
+							using (var streamingChatCompletions = response.Value)
+							{
+								var choicesEnumerator = streamingChatCompletions
+									.GetChoicesStreaming(cancellationTokenSource.Token)
+									.GetAsyncEnumerator(cancellationTokenSource.Token);
+								while (await choicesEnumerator.MoveNextAsync())
+								{
+									var choice = choicesEnumerator.Current;
+									var messagesEnumerator = choice
+										.GetMessageStreaming(cancellationTokenSource.Token)
+										.GetAsyncEnumerator(cancellationTokenSource.Token);
+									while (await messagesEnumerator.MoveNextAsync())
+										answer += messagesEnumerator.Current.Content;
+								}
+							}
+						}
+						// Could be local non-secure HTTP connection.
+						else
+						{
+							var client = GetAiClient();
+							var response = await client.GetChatCompletionsAsync(modelName, chatCompletionsOptions, cancellationTokenSource.Token);
+							foreach (ChatChoice chatChoice in response.Value.Choices)
+							{
+								answer += chatChoice.Message.Content;
+								// Pick first first answer.
+								break;
+							}
+						}
+					}
+					else
 					{
 						var request = new chat_completion_request
 						{
@@ -288,37 +330,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += (chatChoice.message ?? chatChoice.delta).content;
-					}
-					else if (Service.ResponseStreaming)
-					{
-						var client = GetAiClient();
-						var response = await client.GetChatCompletionsStreamingAsync(modelName, chatCompletionsOptions, cancellationTokenSource.Token);
-						using (var streamingChatCompletions = response.Value)
-						{
-							var choicesEnumerator = streamingChatCompletions
-								.GetChoicesStreaming(cancellationTokenSource.Token)
-								.GetAsyncEnumerator(cancellationTokenSource.Token);
-							while (await choicesEnumerator.MoveNextAsync())
-							{
-								var choice = choicesEnumerator.Current;
-								var messagesEnumerator = choice
-									.GetMessageStreaming(cancellationTokenSource.Token)
-									.GetAsyncEnumerator(cancellationTokenSource.Token);
-								while (await messagesEnumerator.MoveNextAsync())
-									answer += messagesEnumerator.Current.Content;
-							}
-						}
-					}
-					else
-					{
-						var client = GetAiClient();
-						var response = await client.GetChatCompletionsAsync(modelName, chatCompletionsOptions, cancellationTokenSource.Token);
-						foreach (ChatChoice chatChoice in response.Value.Choices)
-						{
-							answer += chatChoice.Message.Content;
-							// Pick first first answer.
-							break;
-						}
 					}
 				}
 			}

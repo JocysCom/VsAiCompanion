@@ -35,6 +35,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool ResponseStreaming { get => _ResponseStreaming; set => SetProperty(ref _ResponseStreaming, value); }
 		bool _ResponseStreaming;
 
+		/// <summary>Stream response data as it becomes available.</summary>
+		[DefaultValue(600)]
+		public int ResponseTimeout { get => _ResponseTimeout; set => SetProperty(ref _ResponseTimeout, value); }
+		int _ResponseTimeout;
+
 		/// <summary>Configure for Microsoft Azure OpenAI.</summary>
 		[DefaultValue(false)]
 		public bool IsAzureOpenAI { get => _IsAzureOpenAI; set => SetProperty(ref _IsAzureOpenAI, value); }

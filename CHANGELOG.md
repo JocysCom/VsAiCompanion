@@ -1,7 +1,9 @@
-2023-09-06 v1.1.6
+2023-09-07 v1.1.6
 
-- Fix: Task cloning, stopping sending.
-- New: Added support for streaming replies and typing indications.
+- Fixed: Task cloning, stop sending.
+- New: Added support for streaming replies.
+- New: Added service timeout option.
+- New: Warning when API URL is insecure and not local.
 - Update: Improved support for Azure OpenAI.
 - Update: Improved support for GPT4All.
 

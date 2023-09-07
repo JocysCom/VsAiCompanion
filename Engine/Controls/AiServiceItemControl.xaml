@@ -2,6 +2,7 @@
 	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.AiServiceItemControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
@@ -63,6 +64,7 @@
 		<Label Grid.Row="3" Content="Open AI Base URL" />
 		<TextBox
 			Name="OpenAiBaseUrlTextBox"
+			TextChanged="OpenAiBaseUrlTextBox_TextChanged"
 			Grid.Row="3"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
@@ -81,8 +83,10 @@
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Orientation="Horizontal">
-			<CheckBox Content="Response Streaming" IsChecked="{Binding ResponseStreaming}" />
 			<CheckBox Content="Is Azure OpenAI" IsChecked="{Binding IsAzureOpenAI}" />
+			<CheckBox Content="Response Streaming" IsChecked="{Binding ResponseStreaming}" />
+			<JcControls:NumericUpDown Value="{Binding ResponseTimeout}" />
+			<Label Content="Response Timeout" />
 		</StackPanel>
 
 	</Grid>
