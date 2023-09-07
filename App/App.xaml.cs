@@ -7,6 +7,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows;
+using System.IO;
+using System.Xml;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace JocysCom.VS.AiCompanion
 {
@@ -19,12 +22,10 @@ namespace JocysCom.VS.AiCompanion
 		{
 			try
 			{
-				Global.LoadSettings();
-				// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
-				StartHelper.Initialize(typeof(App).Assembly.GetName().Name);
-				allowToRun = StartHelper.AllowToRun(Global.AppSettings.AllowOnlyOneCopy);
+				allowToRun = GetAllowToRun();
 				if (!allowToRun)
 					return;
+				Global.LoadSettings();
 				StartHelper.OnClose += StartHelper_OnClose;
 				StartHelper.OnRestore += StartHelper_OnRestore;
 				SetDPIAware();
@@ -173,6 +174,39 @@ namespace JocysCom.VS.AiCompanion
 					Shutdown();
 			}
 		}
+
+		#region Allow To Run Check
+
+		private static bool GetAllowToRun()
+		{
+			var allowOnlyOneCopy = GetAllowOnlyOneCopy();
+			// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
+			StartHelper.Initialize(typeof(App).Assembly.GetName().Name);
+			// Check if another copy of application is already running.
+			// Also execute commands if any.
+			return StartHelper.AllowToRun(allowOnlyOneCopy);
+		}
+
+		/// <summary>
+		/// Fast way to read `AllowOnlyOneCopy` value from settings.
+		/// </summary>
+		private static bool GetAllowOnlyOneCopy()
+		{
+			var name = nameof(AppData.AllowOnlyOneCopy);
+			var file = Global.AppData.XmlFile.FullName;
+			var defaultValue = Attributes.GetDefaultValue<AppData, bool>(name);
+			if (!File.Exists(file))
+				return defaultValue;
+			using (var stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			using (var reader = XmlReader.Create(stream))
+				while (reader.Read())
+					if (reader.NodeType == XmlNodeType.Element && reader.Name == name)
+						if (reader.Read() && reader.NodeType == XmlNodeType.Text && bool.TryParse(reader.Value, out bool result))
+							return result;
+			return defaultValue;
+		}
+
+		#endregion
 
 		public static bool IsDebug
 		{

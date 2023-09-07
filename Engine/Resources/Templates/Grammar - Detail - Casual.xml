@@ -6,14 +6,19 @@
 &#xD;
 Feel free to use a casual and conversational tone, including common colloquialisms and informal language where appropriate.&#xD;
 &#xD;
-After making the corrections, please provide only two things:&#xD;
-1. The fully corrected text first. Wrap the fully corrected text in the Markdown code block. Like this:&#xD;
+After making the corrections, always provide answer in two parts:&#xD;
+&#xD;
+1. Fully corrected text.&#xD;
+2. Thorough list of errors found and the corresponding corrections made.&#xD;
+&#xD;
+Important:  Always wrap `fully corrected text` in the Markdown code block like this:&#xD;
+&#xD;
 ```text&#xD;
 {fully corrected text}&#xD;
 ```&#xD;
-2. Thorough list of errors found and the corresponding corrections made.&#xD;
 &#xD;
-Text to process:</TextInstructions>
+Text to process:&#xD;
+</TextInstructions>
   <Settings />
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>

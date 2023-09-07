@@ -16,8 +16,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.0.115</AssemblyVersion>
-		<FileVersion>1.0.115</FileVersion>
+		<AssemblyVersion>1.1.6</AssemblyVersion>
+		<FileVersion>1.1.6</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
@@ -37,6 +37,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.7" />
+		<PackageReference Include="Azure.Identity" Version="1.10.0" />
 		<PackageReference Include="SharpVectors" Version="1.8.1" />
 		<PackageReference Include="System.Text.Json" Version="7.0.3" />
 	</ItemGroup>
@@ -135,11 +137,6 @@
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<None Remove="Resources\MainWindowCommand.png" />
-	</ItemGroup>
-
-
-	<ItemGroup>
-		<Compile Include="..\Resources\Clients\OpenAI.ApiClient.ApiClient.cs" Link="Companions\ChatGPT\OpenAI.ApiClient.ApiClient.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

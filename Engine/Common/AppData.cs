@@ -201,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Name = "GPT4All (Local Machine)",
 					AiModels = new string[0],
 					DefaultAiModel = "GPT4All Falcon",
-					BaseUrl = "https://localhost:4891/v1/",
+					BaseUrl = "http://localhost:4891/v1/",
 					ModelFilter = "",
 				},
 				//// Add LocalGPT Service. Currently incompatible with OpenAI API.
@@ -233,6 +233,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					DefaultAiModel = "gpt-3.5-turbo-16k",
 					BaseUrl = "https://api.cognitive.microsoft.com/v1/",
 					ModelFilter = "",
+					IsAzureOpenAI = true,
 				}
 			};
 

@@ -7,9 +7,9 @@ using System.Windows;
 using System;
 using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
-using OpenAI;
 using System.Text.Json.Serialization;
 using JocysCom.ClassLibrary.Configuration;
+using Azure.AI.OpenAI;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
@@ -23,6 +23,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string GenerateTitleTaskName = "® System - Generate Title";
 		public const string FormatMessageTaskName = "® System - Format Message";
 		public const string DefaultIconEmbeddedResource = "document_gear.svg";
+
+		public static string JoinMessageParts(params string[] args)
+		{
+			return string.Join("\r\n\r\n", args.Where(x => !string.IsNullOrEmpty(x)));
+		}
 
 		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null, string overrideText = null)
 		{
@@ -152,9 +157,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				};
 				m.Attachments.Add(a2);
 			}
-			var messageForAI = $"{m.BodyInstructions}\r\n\r\n{m.Body}";
+			var messageForAI = JoinMessageParts(m.BodyInstructions, m.Body );
 			var chatLogForAI = "";
-			var chatLogMessages = new List<ChatCompletionRequestMessage>();
+			var chatLogMessages = new List<ChatMessage>();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
 			var reqTokens = CountTokens(messageForAI);
 			// Mark message as preview is preview.
@@ -208,8 +213,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				}
 				if (lines.Count > 0)
 				{
-					var text = "Possible sensitive data has been detected. Do you want to send these files to AI?";
-					text += "\r\n\r\n" + string.Join("\r\n", lines);
+					var text = JoinMessageParts(
+						"Possible sensitive data has been detected. Do you want to send these files to AI?",
+						string.Join("\r\n", lines)
+					);
 					var caption = $"{Global.Info.Product} - Send Files";
 					var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 					if (result != MessageBoxResult.Yes)
@@ -219,9 +226,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			// ShowDocumentsAttachedWarning
 			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
 			{
-				var text = "Do you want to send these files to AI?";
 				var files = fileItems.Select(x => x.FullName).ToList();
-				text += "\r\n\r\n" + string.Join("\r\n", files);
+				var text = JoinMessageParts(
+					"Do you want to send these files to AI?",
+					string.Join("\r\n", files)
+				);
 				var caption = $"{Global.Info.Product} - Send Files";
 				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 				if (result != MessageBoxResult.Yes)
@@ -280,15 +289,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		}
 
-		public static ChatCompletionRequestMessage ConvertToRequestMessage(MessageHistoryItem item)
+		public static ChatMessage ConvertToRequestMessage(MessageHistoryItem item)
 		{
-			return new ChatCompletionRequestMessage()
+			return new ChatMessage()
 			{
 				Name = item.User,
 				Content = item.Body,
 				Role = item.Type == MessageType.Out
-					? ChatCompletionRequestMessageRole.user
-					: ChatCompletionRequestMessageRole.assistant,
+					? ChatRole.User
+					: ChatRole.Assistant
 			};
 		}
 
@@ -313,9 +322,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				{
 					Date = x.Date,
 					User = x.User,
-					Body = $"{x.BodyInstructions}".Trim().Length == 0
-						? $"{x.Body}"
-						: $"{x.BodyInstructions}\r\n\r\n{x.Body}",
+					Body = JoinMessageParts(x.BodyInstructions, x.Body),
 					Type = x.Type,
 				}).ToList();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
@@ -337,23 +344,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == FormatMessageTaskName);
 			if (rItem == null)
 				return text;
-			var messages = new List<ChatCompletionRequestMessage>();
+			var messages = new List<ChatMessage>();
 			// Crate a copy in order not to add to existing list.
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new ChatCompletionRequestMessage()
+				messages.Add(new ChatMessage()
 				{
 					Name = SystemName,
 					Content = rItem.TextInstructions,
-					Role = ChatCompletionRequestMessageRole.system
+					Role = ChatRole.System
 				});
 				// Supply data for processing.
-				messages.Add(new ChatCompletionRequestMessage()
+				messages.Add(new ChatMessage()
 				{
 					Name = UserName,
 					Content = text,
-					Role = ChatCompletionRequestMessageRole.user
+					Role = ChatRole.User
 				});
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				// Send body and context data.
@@ -388,11 +395,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new ChatCompletionRequestMessage()
+				messages.Add(new ChatMessage()
 				{
 					Name = SystemName,
 					Content = rItem.TextInstructions,
-					Role = ChatCompletionRequestMessageRole.system
+					Role = ChatRole.System
 				});
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				// Send body and context data.

@@ -296,16 +296,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			catch { }
 			var client = new Companions.ChatGPT.Client(aiService);
-			var models = await client.GetModels();
-			var modelCodes = models
-				.OrderByDescending(x => x.Id)
-				.Select(x => x.Id)
+			var models = await client.GetModelsAsync();
+			var modelCodes = models?.FirstOrDefault()?.data.ToArray()
+				.OrderByDescending(x => x.id)
+				.Select(x => x.id)
 				.ToArray();
-			if (filterRx != null)
-				modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
 			// If models found then...
-			if (modelCodes.Any())
+			if (modelCodes?.Any() == true)
 			{
+				if (filterRx != null)
+					modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
 				// Remove all old models.
 				var serviceModels = Global.AppSettings.AiModels.Where(x => x.AiServiceId == aiService.Id).ToList();
 				foreach (var serviceModel in serviceModels)
@@ -387,7 +387,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				throw new ArgumentNullException(nameof(type));
 			return
 				type == typeof(string)
-				|| type.IsPrimitive
+				// Note: Every Primitive type (such as int, double, bool, char, etc.) is a ValueType. 
+				|| type.IsValueType
 				|| type.IsSerializable;
 		}
 
@@ -416,23 +417,32 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				// Get destination property and skip if not found.
 				var tp = targetProperties.FirstOrDefault(x => Equals(x.Name, sp.Name));
-				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
-					continue;
 				if (!sp.CanRead || !tp.CanWrite)
 					continue;
+				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
+					continue;
+				var useJson = sp.PropertyType.IsSerializable && !sp.PropertyType.IsValueType;
 				// Get source value.
 				var sValue = sp.GetValue(source, null);
+				if (useJson)
+					sValue = JsonSerializer.Serialize(sValue);
 				var update = true;
 				// If can read target value.
 				if (tp.CanRead)
 				{
 					// Get target value.
 					var dValue = tp.GetValue(target, null);
+					if (useJson)
+						dValue = JsonSerializer.Serialize(dValue);
 					// Update only if values are different.
 					update = !Equals(sValue, dValue);
 				}
 				if (update)
+				{
+					if (useJson)
+						sValue = JsonSerializer.Deserialize(sValue as string, tp.PropertyType);
 					tp.SetValue(target, sValue, null);
+				}
 			}
 		}
 

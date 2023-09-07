@@ -202,11 +202,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_item.PropertyChanged -= _item_PropertyChanged;
 					_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
 				}
+				// Make sure that custom AiModel old and new item is available to select.
+				AppHelper.UpdateModelCodes(item?.AiService, AiModels, item?.AiModel, oldItem?.AiModel);
 				// Set new item.
 				_item = item ?? AppHelper.GetNewTemplateItem();
-				// Make sure that even custom AiModel old and new item is available to select.
-				AppHelper.UpdateModelCodes(_item?.AiService, AiModels, _item?.AiModel, oldItem?.AiModel);
+				// This will trigger AiCompanionComboBox_SelectionChanged event.
+				AiCompanionComboBox.SelectionChanged -= AiCompanionComboBox_SelectionChanged;
 				DataContext = _item;
+				AiCompanionComboBox.SelectionChanged += AiCompanionComboBox_SelectionChanged;
 				_item.PropertyChanged += _item_PropertyChanged;
 				var aiServiceId = _item.AiServiceId;
 				if (aiServiceId == Guid.Empty)
