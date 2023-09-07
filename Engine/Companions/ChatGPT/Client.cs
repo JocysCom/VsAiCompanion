@@ -118,7 +118,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
 			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
-			var results = await GetAsync<usage_response>(usageUrl);
+			var results = await GetAsync<usage_response>(usageUrl, cancellationToken: cancellationTokenSource.Token);
 			Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
 			return results;
 		}
@@ -127,7 +127,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
 			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
-			var results = await GetAsync<models_response>(modelsUrl);
+			var results = await GetAsync<models_response>(modelsUrl, cancellationToken: cancellationTokenSource.Token);
 			Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
 			return results;
 		}
