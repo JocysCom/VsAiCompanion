@@ -137,6 +137,7 @@
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<None Remove="Resources\MainWindowCommand.png" />
+		<None Remove="Resources\PromptItems.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -184,6 +185,7 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
 	  <EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
+	  <EmbeddedResource Include="Resources\PromptItems.xml" />
 	</ItemGroup>
 
 	<ItemGroup>

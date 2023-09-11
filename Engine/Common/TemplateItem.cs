@@ -3,7 +3,6 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Media;

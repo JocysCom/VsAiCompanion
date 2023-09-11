@@ -1,0 +1,266 @@
+﻿<Data Version="0">
+  <Items>
+    <PromptItem>
+      <Name>Tone</Name>
+      <Pattern>Please use {option} tone.</Pattern>
+      <Options>
+        <Option>friendly</Option>
+        <Option>sarcastic</Option>
+        <Option>professional</Option>
+        <Option>polite</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Format</Name>
+      <Pattern>Please write the content in {option} format.</Pattern>
+      <Options>
+        <Option>essay</Option>
+        <Option>dialogue</Option>
+        <Option>list</Option>
+        <Option>Q&amp;A</Option>
+        <Option>story</Option>
+        <Option>poem</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Context</Name>
+      <Pattern>Please write based on {option} context.</Pattern>
+      <Options>
+        <Option>historical event</Option>
+        <Option>future prediction</Option>
+        <Option>tech review</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Role</Name>
+      <Pattern>Please behave like a {option}.</Pattern>
+      <Options>
+        <Option>helpful assistant</Option>
+        <Option>Shakespearean character</Option>
+        <Option>sci-fi storyteller</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Instruction</Name>
+      <Pattern>Please {option} the given content.</Pattern>
+      <Options>
+        <Option>summarize</Option>
+        <Option>translate</Option>
+        <Option>elaborate</Option>
+        <Option>argue</Option>
+        <Option>compare</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Temperature</Name>
+      <Pattern>Please generate responses with {option} creativity.</Pattern>
+      <Options>
+        <Option>low</Option>
+        <Option>high</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Length</Name>
+      <Pattern>Please limit the response length to {option} tokens.</Pattern>
+      <Options>
+        <Option>short</Option>
+        <Option>medium</Option>
+        <Option>long</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Experiment</Name>
+      <Pattern>Please write in a {option} style.</Pattern>
+      <Options>
+        <Option>modern</Option>
+        <Option>traditional</Option>
+        <Option>slang-infused</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Protagonist</Name>
+      <Pattern>Please add a {option} to the content.</Pattern>
+      <Options>
+        <Option>central character</Option>
+        <Option>narrator</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Scenario</Name>
+      <Pattern>Please write in the scenario of {option}.</Pattern>
+      <Options>
+        <Option>alien explaining Earth</Option>
+        <Option>Shakespeare vs Einstein</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Nature</Name>
+      <Pattern>Please write content that is {option}.</Pattern>
+      <Options>
+        <Option>fact-based</Option>
+        <Option>imaginative</Option>
+        <Option>fictional</Option>
+        <Option>science-based</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Perspective</Name>
+      <Pattern>Please use {option} perspective.</Pattern>
+      <Options>
+        <Option>first person</Option>
+        <Option>second person</Option>
+        <Option>third person</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Timeframe</Name>
+      <Pattern>Please write for the {option} timeframe.</Pattern>
+      <Options>
+        <Option>past</Option>
+        <Option>present</Option>
+        <Option>future</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Style</Name>
+      <Pattern>Please write in {option} style.</Pattern>
+      <Options>
+        <Option>standard English</Option>
+        <Option>old English</Option>
+        <Option>technical jargon</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Emotion</Name>
+      <Pattern>Please reflect {option} emotion in writing.</Pattern>
+      <Options>
+        <Option>optimistic</Option>
+        <Option>anxious</Option>
+        <Option>neutral</Option>
+        <Option>excited</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>References</Name>
+      <Pattern>Please {option} regional or pop culture references.</Pattern>
+      <Options>
+        <Option>include</Option>
+        <Option>exclude</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Audience</Name>
+      <Pattern>Please write for {option}.</Pattern>
+      <Options>
+        <Option>business professionals</Option>
+        <Option>children</Option>
+        <Option>general public</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Quotes</Name>
+      <Pattern>Please {option} dialogues or quotes in the content.</Pattern>
+      <Options>
+        <Option>include</Option>
+        <Option>exclude</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Statement</Name>
+      <Pattern>Please provide a {option} as a response.</Pattern>
+      <Options>
+        <Option>request</Option>
+        <Option>question</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Detail</Name>
+      <Pattern>Please provide {option} in the response.</Pattern>
+      <Options>
+        <Option>expanded explanation</Option>
+        <Option>short summary</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Problem</Name>
+      <Pattern>Please {option} or discuss {option}.</Pattern>
+      <Options>
+        <Option>solve a problem</Option>
+        <Option>discuss a concept</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Creativity</Name>
+      <Pattern>Please create a {option}.</Pattern>
+      <Options>
+        <Option>poem</Option>
+        <Option>story</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Simplicity</Name>
+      <Pattern>Please {option}.</Pattern>
+      <Options>
+        <Option>simplification of complex concepts</Option>
+        <Option>use of technical jargon</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Logic</Name>
+      <Pattern>Please provide a {option} of the content.</Pattern>
+      <Options>
+        <Option>logical breakdown</Option>
+        <Option>critical review</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Imagery</Name>
+      <Pattern>Please use {option} in writing.</Pattern>
+      <Options>
+        <Option>vivid and descriptive language</Option>
+        <Option>literal and straightforward language</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Terminology</Name>
+      <Pattern>Please use {option} in the content.</Pattern>
+      <Options>
+        <Option>industry-specific terms</Option>
+        <Option>avoidance of technical terms</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Counterarguments</Name>
+      <Pattern>Please provide {option} to specific points.</Pattern>
+      <Options>
+        <Option>counterarguments</Option>
+        <Option>rebuttals</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Hypotheses</Name>
+      <Pattern>Please {option} specific hypotheses.</Pattern>
+      <Options>
+        <Option>generate</Option>
+        <Option>evaluate</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Predictions</Name>
+      <Pattern>Please {option} predictions.</Pattern>
+      <Options>
+        <Option>make</Option>
+        <Option>base on given data or scenarios</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Recommendations</Name>
+      <Pattern>Please {option}.</Pattern>
+      <Options>
+        <Option>provide advice</Option>
+        <Option>give suggestions based on given context</Option>
+      </Options>
+    </PromptItem>
+  </Items>
+  <IsFolderMonitored>false</IsFolderMonitored>
+</Data>

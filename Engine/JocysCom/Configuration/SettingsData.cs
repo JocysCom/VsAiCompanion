@@ -96,6 +96,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			_XmlFile = new FileInfo(path);
 		}
 
+
+		[XmlIgnore]
+		public bool IsSavePending { get; set; }
+
 		[XmlIgnore]
 		public bool UseSeparateFiles { get; set; }
 
@@ -200,6 +204,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
 				}
 			}
+			IsSavePending = false;
 			SetFileMonitoring(true);
 		}
 
@@ -462,6 +467,7 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#endregion
 
+		[XmlIgnore]
 		public bool ClearWhenLoading = false;
 
 		void LoadAndValidateData(IList<T> data)
@@ -607,7 +613,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			return Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
 		}
 
-		SettingsData<T> DeserializeData(byte[] bytes, bool compressed)
+		public SettingsData<T> DeserializeData(byte[] bytes, bool compressed)
 		{
 			if (compressed)
 				bytes = SettingsHelper.Decompress(bytes);
