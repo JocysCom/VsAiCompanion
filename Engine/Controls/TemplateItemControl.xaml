@@ -29,6 +29,7 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -63,6 +64,17 @@
 					SelectionChanged="AiCompanionComboBox_SelectionChanged" />
 				<Label VerticalAlignment="Center" Content="Model" />
 				<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
+				<Button
+					Name="ModelRefreshButton"
+					Grid.Row="1"
+					Grid.Column="3"
+					Margin="3,0,3,0"
+					Click="ModelRefreshButton_Click"
+					ToolTip="Refresh Models">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Refresh}" />
+					</StackPanel>
+				</Button>
 				<CheckBox Name="IsPreviewCheckBox" Content="Preview" IsChecked="{Binding IsPreview}" />
 				<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
 				<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
@@ -332,6 +344,15 @@
 				Grid.ColumnSpan="3"
 				Margin="5,3,0,3"
 				Orientation="Horizontal">
+				<Controls:PromptsControl x:Name="PromptsPanel" />
+			</StackPanel>
+			<!--  Row 5  -->
+			<StackPanel
+				Grid.Row="5"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				Margin="5,3,0,3"
+				Orientation="Horizontal">
 				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory, ElementName=This}" />
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
@@ -342,9 +363,8 @@
 					</TextBlock>
 				</CheckBox>
 			</StackPanel>
-
 			<StackPanel
-				Grid.Row="4"
+				Grid.Row="5"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
 				HorizontalAlignment="Right"

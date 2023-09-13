@@ -37,12 +37,12 @@
 			<Button
 				Name="ModelRefreshButton"
 				Grid.Row="1"
+				ToolTip="Refresh Models"
 				Grid.Column="3"
 				Margin="3,0,3,0"
 				Click="ModelRefreshButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" />
-					<Label Content="Refresh" />
 				</StackPanel>
 			</Button>
 			<CheckBox Checked="CheckBox_Checked" Content="Is Default AI Service" IsChecked="{Binding IsDefault}" />

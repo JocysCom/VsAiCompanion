@@ -220,6 +220,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 				AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 				IconPanel.BindData(_item);
+				PromptsPanel.BindData(_item);
 				OnPropertyChanged(nameof(SendChatHistory));
 				ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
 				ChatPanel.IsBusy = _item.IsBusy;
@@ -486,5 +487,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-	}
+		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			await AppHelper.UpdateModelsFromAPI(_item.AiService);
+		}
+    }
 }
