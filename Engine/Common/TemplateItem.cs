@@ -3,7 +3,6 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Media;
@@ -164,6 +163,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[XmlIgnore]
 		public object Tag;
+
 		public string IconData { get => _IconData; set => SetProperty(ref _IconData, value); }
 		string _IconData;
 
@@ -184,6 +184,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 			IconType = type;
 			IconData = base64;
 		}
+
+		#region Prompting
+
+		/// <summary>Show Prompting</summary>
+		[DefaultValue(false)]
+		public bool ShowPrompting { get => _ShowPrompting; set => SetProperty(ref _ShowPrompting, value); }
+		bool _ShowPrompting;
+
+		[DefaultValue("Role")]
+		public string PromptName { get => _PromptName; set => SetProperty(ref _PromptName, value); }
+		string _PromptName;
+
+		[DefaultValue("helpful assistant")]
+		public string PromptOption { get => _PromptOption; set => SetProperty(ref _PromptOption, value); }
+		string _PromptOption;
+
+		#endregion
 
 		#region ■ HTTP Client
 

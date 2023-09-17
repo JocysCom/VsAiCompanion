@@ -5,6 +5,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -48,6 +49,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static SettingsData<AppData> AppData =
 			new SettingsData<AppData>(null, true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
+		public static SettingsData<PromptItem> PromptItems =
+			new SettingsData<PromptItem>($"{nameof(PromptItems)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
+
 		public static SettingsData<TemplateItem> Templates =
 			new SettingsData<TemplateItem>($"{nameof(Templates)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
@@ -55,10 +59,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			};
 
 		public static SettingsData<TemplateItem> Tasks =
-		new SettingsData<TemplateItem>($"{nameof(Tasks)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
-		{
-			UseSeparateFiles = true,
-		};
+			new SettingsData<TemplateItem>($"{nameof(Tasks)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			{
+				UseSeparateFiles = true,
+			};
 
 		public static SortableBindingList<TemplateItem> GetItems(ItemType type)
 		{
@@ -111,6 +115,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 			OnSaveSettings?.Invoke(null, EventArgs.Empty);
 			AppData.Save();
+			PromptItems.Save();
 			Templates.Save();
 			Tasks.Save();
 		}
@@ -128,16 +133,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Load app data.
 			AppData.OnValidateData += AppData_OnValidateData;
 			AppData.Load();
-			if (DefaultAppDataAdded)
+			if (AppData.IsSavePending)
 				AppData.Save();
+			// Load Prompt items.
+			PromptItems.OnValidateData += PromptItems_OnValidateData;
+			PromptItems.Load();
+			if (PromptItems.IsSavePending)
+				PromptItems.Save();
+			// Load templates.
 			Templates.OnValidateData += Templates_OnValidateData;
 			Templates.Load();
-			if (DefaultTemplatesAdded)
+			if (Templates.IsSavePending)
 				Templates.Save();
+			// Load tasks.
 			Tasks.OnValidateData += Tasks_OnValidateData;
 			Tasks.Load();
-			if (DefaultTasksAdded)
+			if (Tasks.IsSavePending)
 				Tasks.Save();
+			// Enable template and task folder monitoring.
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
 			// If old settings version then reset templates.
@@ -148,6 +161,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		class prompt_item
+		{
+			public string title { get; set; }
+			public string pattern { get; set; }
+			public string[] options { get; set; }
+		}
+
+		private static void PromptItems_OnValidateData(object sender, SettingsData<PromptItem>.SettingsDataEventArgs e)
+		{
+			var data = (SettingsData<PromptItem>)sender;
+			if (e.Items.Count == 0)
+			{
+				// Find data as embedded resource with the same file name and load.
+				data.ResetToDefault();
+			}
+		}
 
 		public static void ResetTemplates()
 		{
@@ -165,27 +194,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(AppSettings, false, exclude);
 		}
 
-		private static bool DefaultAppDataAdded = false;
-		private static bool DefaultTemplatesAdded = false;
-		private static bool DefaultTasksAdded = false;
-
 		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)
 		{
+			var data = sender as ISettingsData;
 			if (e.Items.Count == 0)
 			{
 				e.Items.Add(new AppData());
-				DefaultTemplatesAdded = true;
+				data.IsSavePending = true;
 			}
 			var appSettings = e.Items.FirstOrDefault();
 			if (appSettings.AiServices == null || appSettings.AiServices.Count == 0)
 			{
 				appSettings.AiServices = Engine.AppData.GetDefaultAiServices();
-				DefaultTemplatesAdded = true;
+				data.IsSavePending = true;
 			}
 			if (appSettings.AiModels == null || appSettings.AiModels.Count == 0)
 			{
 				appSettings.AiModels = Engine.AppData.GetDefaultOpenAiModels();
-				DefaultTemplatesAdded = true;
+				data.IsSavePending = true;
 			}
 			if (appSettings.AiServiceData == null)
 			{
@@ -217,7 +243,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private static void Templates_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
 		{
-			var sd = (SettingsData<TemplateItem>)sender;
+			var data = (SettingsData<TemplateItem>)sender;
 			if (e.Items.Count == 0)
 			{
 				var asm = typeof(Global).Assembly;
@@ -227,10 +253,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				foreach (var key in keys)
 				{
 					var bytes = Helper.GetResource<byte[]>(key, asm);
-					var item = sd.DeserializeItem(bytes, false);
+					var item = data.DeserializeItem(bytes, false);
 					e.Items.Add(item);
 				}
-				DefaultTemplatesAdded = true;
+				data.IsSavePending = true;
 				return;
 			}
 			// Check reserved templates used for some automation.
@@ -244,12 +270,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				foreach (var key in keys)
 				{
 					var bytes = Helper.GetResource<byte[]>(key, asm);
-					var item = sd.DeserializeItem(bytes, false);
+					var item = data.DeserializeItem(bytes, false);
 					e.Items.Add(item);
 				}
-				DefaultTemplatesAdded = true;
+				data.IsSavePending = true;
 			}
-			DefaultTemplatesAdded |= FixTempalteItems(e.Items);
+			data.IsSavePending |= FixTempalteItems(e.Items);
 		}
 
 		private static void Tasks_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
@@ -275,10 +301,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 						e.Items.Add(task);
 					}
 				}
-				DefaultTemplatesAdded = true;
-				DefaultTasksAdded = true;
+				sd.IsSavePending = true;
 			}
-			DefaultTemplatesAdded |= FixTempalteItems(e.Items);
+			sd.IsSavePending |= FixTempalteItems(e.Items);
 		}
 
 		public static void ClearItems()

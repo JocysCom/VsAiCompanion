@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -37,8 +39,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			Global.AiModelsUpdated += Global_AiModelsUpdated;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
+			PromptsPanel.AddPromptButton.Click += PromptsPanel_AddPromptButton_Click;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			UpdateSpellCheck();
+		}
+
+		private void PromptsPanel_AddPromptButton_Click(object sender, RoutedEventArgs e)
+		{
+			var promptItem = Global.PromptItems.Items.FirstOrDefault(x => x.Name == _item?.PromptName);
+			if (promptItem == null)
+				return;
+			var promptString = string.Format(promptItem.Pattern, _item?.PromptOption);
+			InsertText(ChatPanel.DataTextBox, promptString, false, true);
 		}
 
 		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
@@ -91,12 +103,40 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		#region SpellCheck
+
 		void UpdateSpellCheck()
 		{
 			var isEnabled = Global.AppSettings.IsSpellCheckEnabled;
-			SpellCheck.SetIsEnabled(ChatPanel.DataTextBox, isEnabled);
-			SpellCheck.SetIsEnabled(ChatPanel.DataInstructionsTextBox, isEnabled);
+			UpdateSpellCheckForTextBox(ChatPanel.DataTextBox, isEnabled);
+			UpdateSpellCheckForTextBox(ChatPanel.DataInstructionsTextBox, isEnabled);
 		}
+
+		private void UpdateSpellCheckForTextBox(TextBox box, bool isEnabled)
+		{
+			box.PreviewTextInput -= TextBox_PreviewTextInput;
+			if (isEnabled)
+				box.PreviewTextInput += TextBox_PreviewTextInput;
+			SpellCheck.SetIsEnabled(box, isEnabled);
+		}
+
+		private async void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			var box = (TextBox)sender;
+			if (box.SpellCheck.IsEnabled)
+				box.SpellCheck.IsEnabled = false;
+			if (box == ChatPanel.DataTextBox)
+				await Helper.Delay(EnableOnDataTextBox);
+			if (box == ChatPanel.DataInstructionsTextBox)
+				await Helper.Delay(EnableOnDataInstructionsTextBox);
+		}
+
+		void EnableOnDataTextBox()
+			=> ChatPanel.DataTextBox.SpellCheck.IsEnabled = true;
+		void EnableOnDataInstructionsTextBox()
+			=> ChatPanel.DataInstructionsTextBox.SpellCheck.IsEnabled = true;
+
+		#endregion
 
 		private void Global_OnSaveSettings(object sender, EventArgs e)
 		{
@@ -220,6 +260,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 				AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 				IconPanel.BindData(_item);
+				PromptsPanel.BindData(_item);
 				OnPropertyChanged(nameof(SendChatHistory));
 				ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
 				ChatPanel.IsBusy = _item.IsBusy;
@@ -363,7 +404,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_item.UseMacros = true;
 		}
 
-		public static void InsertText(TextBox box, string s, bool activate = false)
+		public static void InsertText(TextBox box, string s, bool activate = false, bool addSpace = false)
 		{
 			// Check if we need to set the control active
 			if (activate)
@@ -378,6 +419,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else
 			{
+				// If cursor at the end
+				if (box.Text.Length > 0 && box.Text.Last() != ' ' && cursorPosition == box.Text.Length && addSpace)
+					s = " " + s;
 				// Insert the text at the cursor position
 				box.Text = box.Text.Insert(cursorPosition, s);
 				// Set the cursor after the inserted text
@@ -420,7 +464,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(IsPreviewCheckBox, ClientHelper.PreviewModeMessage);
 			AppHelper.AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
 			AppHelper.AddHelp(AutoFormatMessageCheckBox, "Use AI to automatically format your message using markdown.");
-			AppHelper.AddHelp(AutoGenerateTitleCheckBox, "Use AI to to automatically generate chat title.");
+			//AppHelper.AddHelp(AutoGenerateTitleCheckBox, "Use AI to to automatically generate chat title.");
+			AppHelper.AddHelp(ShowPromptingCheckBox, "Guide and shape the AI's output in your desired style." +
+				" You can select a 'Prompt' category such as Tone, Format, Context, Role, or Instruction," +
+				" and then choose an option within that category to define how the AI should approach the content creation.");
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
@@ -486,5 +533,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			await AppHelper.UpdateModelsFromAPI(_item.AiService);
+		}
 	}
 }
