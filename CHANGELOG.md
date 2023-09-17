@@ -1,3 +1,7 @@
+2023-09-17 v1.1.12
+
+- New: Prompting feature that helps to customize the AI's output.
+
 2023-09-07 v1.1.6
 
 - Fixed: Task cloning, stop sending.
