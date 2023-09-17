@@ -14,10 +14,12 @@
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
+			<BooleanToVisibilityConverter x:Key="_BooleanToVisibilityConverter" />
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -338,14 +340,17 @@
 				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" Visibility="Collapsed" />
 			</Border>
 			<!--  Row 4  -->
-			<StackPanel
+			<Border
 				Grid.Row="4"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
-				Margin="5,3,0,3"
-				Orientation="Horizontal">
-				<Controls:PromptsControl x:Name="PromptsPanel" />
-			</StackPanel>
+				BorderBrush="{StaticResource BorderDark}"
+				BorderThickness="0,0,0,1"
+				Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
+				<StackPanel Margin="5,3,0,3" Orientation="Horizontal">
+					<Controls:PromptsControl x:Name="PromptsPanel" />
+				</StackPanel>
+			</Border>
 			<!--  Row 5  -->
 			<StackPanel
 				Grid.Row="5"
@@ -353,9 +358,9 @@
 				Grid.ColumnSpan="3"
 				Margin="5,3,0,3"
 				Orientation="Horizontal">
-				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory, ElementName=This}" />
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
-				<CheckBox Name="AutoGenerateTitleCheckBox" Content="Regenerate Title" IsChecked="{Binding AutoGenerateTitle}" />
+				<CheckBox Name="ShowPromptingCheckBox" Content="Show Prompting" IsChecked="{Binding ShowPrompting}" />
+				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory, ElementName=This}" />
 				<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}">
 					<TextBlock VerticalAlignment="Center">
 						<Run Text="Auto" />

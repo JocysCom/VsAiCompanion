@@ -230,10 +230,19 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		static ConcurrentDictionary<Delegate, CancellationTokenSource> DelayActions = new ConcurrentDictionary<Delegate, CancellationTokenSource>();
 
+
 		/// <summary>
 		/// Delay some frequently repeatable actions.
 		/// </summary>
-		public static async Task Delay(Action action, int delay = 500)
+		public static async Task Delay(Action action, int? delay = null)
+		{
+			await _Delay(action, delay);
+		}
+
+		/// <summary>
+		/// Delay some frequently repeatable actions.
+		/// </summary>
+		private static async Task _Delay(Delegate action, int? delay = null, params object[] args)
 		{
 			var source = new CancellationTokenSource();
 			// Replace any previous CancellationTokenSource with a new one.
@@ -250,14 +259,14 @@ namespace JocysCom.ClassLibrary
 					return source;
 				}
 			);
-			await Task.Delay(delay);
+			await Task.Delay(delay ?? 500);
 			lock (action)
 			{
 				// If new delayed operation was started then return.
 				if (source.Token.IsCancellationRequested)
 					return;
 				System.Diagnostics.Debug.WriteLine("Invoke");
-				action.Invoke();
+				action.DynamicInvoke(args);
 			}
 		}
 

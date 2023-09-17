@@ -37,10 +37,10 @@
 			<Button
 				Name="ModelRefreshButton"
 				Grid.Row="1"
-				ToolTip="Refresh Models"
 				Grid.Column="3"
 				Margin="3,0,3,0"
-				Click="ModelRefreshButton_Click">
+				Click="ModelRefreshButton_Click"
+				ToolTip="Refresh Models">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" />
 				</StackPanel>
@@ -64,11 +64,11 @@
 		<Label Grid.Row="3" Content="Open AI Base URL" />
 		<TextBox
 			Name="OpenAiBaseUrlTextBox"
-			TextChanged="OpenAiBaseUrlTextBox_TextChanged"
 			Grid.Row="3"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
-			Text="{Binding BaseUrl}" />
+			Text="{Binding BaseUrl}"
+			TextChanged="OpenAiBaseUrlTextBox_TextChanged" />
 
 		<Label Grid.Row="4" Content="Model Filter" />
 		<TextBox

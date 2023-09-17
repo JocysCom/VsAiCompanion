@@ -5,11 +5,36 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
+	Loaded="This_Loaded"
 	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
 	<Grid>
 		<StackPanel Orientation="Horizontal">
-			<ComboBox Name="PromptNameComboBox" ItemsSource="{Binding PromptNames, ElementName=This}" SelectedValue="{Binding _item.PromptName, ElementName=This}" />
-			<ComboBox Name="PromptOptionComboBox" ItemsSource="{Binding PromptOptions, ElementName=This}" SelectedValue="{Binding _item.PromptOption, ElementName=This}" />
+			<ComboBox Name="PromptNameComboBox" ItemsSource="{Binding PromptNames, ElementName=This}" SelectedValue="{Binding PromptName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<Label
+				Padding="6,3,0,3"
+				VerticalAlignment="Center"
+				Content="Prompting:"
+				Opacity="0.4" />
+			<Label Name="PatternStartLabel" />
+			<ComboBox Name="PromptOptionComboBox" ItemsSource="{Binding PromptOptions, ElementName=This}" SelectedValue="{Binding PromptOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<Label Name="PatternEndLabel" />
+			<Button
+				Name="AddPromptButton"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Top"
+				x:FieldModifier="public"
+				Click="AddPromptButton_Click">
+				<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+			</Button>
 		</StackPanel>
 	</Grid>
 </UserControl>

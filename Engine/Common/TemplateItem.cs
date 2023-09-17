@@ -185,10 +185,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			IconData = base64;
 		}
 
-		#region Current Prompting item
+		#region Prompting
 
+		/// <summary>Show Prompting</summary>
+		[DefaultValue(false)]
+		public bool ShowPrompting { get => _ShowPrompting; set => SetProperty(ref _ShowPrompting, value); }
+		bool _ShowPrompting;
+
+		[DefaultValue("Role")]
 		public string PromptName { get => _PromptName; set => SetProperty(ref _PromptName, value); }
 		string _PromptName;
+
+		[DefaultValue("helpful assistant")]
 		public string PromptOption { get => _PromptOption; set => SetProperty(ref _PromptOption, value); }
 		string _PromptOption;
 

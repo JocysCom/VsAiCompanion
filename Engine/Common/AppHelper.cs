@@ -372,6 +372,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		public static void AddHelp(Control control, string head, string body)
+		{
+			Global.MainControl.InfoPanel.HelpProvider.Add(control, head, body);
+		}
+
 		public static void AddHelp(ContentControl control, string help)
 		{
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
