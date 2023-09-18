@@ -58,14 +58,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			if (item.AutoFormatMessage)
 				itemText = await FormatMessage(item, itemText);
-			var m = new MessageItem(UserName, itemText, MessageType.Out);
-			m.BodyInstructions = item.TextInstructions;
 			var vsData = AppHelper.GetMacroValues();
+			// Prepare instructions.
+			var instructions = item.TextInstructions;
 			if (item.UseMacros)
-			{
-				m.BodyInstructions = AppHelper.ReplaceMacros(m.BodyInstructions, vsData);
+				instructions = AppHelper.ReplaceMacros(instructions, vsData);
+			var m = new MessageItem(UserName, itemText, MessageType.Out);
+			m.BodyInstructions = instructions;
+			if (item.UseMacros)
 				m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
-			}
 			var fileItems = new List<DocItem>();
 			var at = item.AttachContext;
 			// If data from clipboard.
@@ -289,26 +290,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		}
 
-		public static ChatMessage ConvertToRequestMessage(MessageHistoryItem item)
+		public static ChatMessage ConvertToRequestMessage(chat_completion_message item)
 		{
 			return new ChatMessage()
 			{
-				Name = item.User,
-				Content = item.Body,
-				Role = item.Type == MessageType.Out
-					? ChatRole.User
-					: ChatRole.Assistant
+				Name = item.name,
+				Content = item.content,
+				Role = new ChatRole(item.role.ToString()),
 			};
 		}
 
 		public static JsonSerializerOptions ChatLogOptions = new JsonSerializerOptions
 		{
 			WriteIndented = true,
+			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
 			// Serialize enums as string for AI to understand.
 			Converters = { new JsonStringEnumConverter() }
 		};
 
-		public static List<MessageHistoryItem> GetMessagesToSend(TemplateItem item, MessageItem lastMessage = null)
+		public static List<chat_completion_message> GetMessagesToSend(TemplateItem item, MessageItem lastMessage = null)
 		{
 			var messages = item.Messages.ToList();
 			if (lastMessage != null)
@@ -318,12 +318,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				.Where(x => x.Type == MessageType.Out || x.Type == MessageType.In)
 				// Exclude all preview messages.
 				.Where(x => !x.IsPreview)
-				.Select(x => new MessageHistoryItem()
+				.Select(x => new chat_completion_message()
 				{
-					Date = x.Date,
-					User = x.User,
-					Body = JoinMessageParts(x.BodyInstructions, x.Body),
-					Type = x.Type,
+					//name = x.User,
+					content = JoinMessageParts(x.BodyInstructions, x.Body),
+					role = x.Type == MessageType.Out ? message_role.user : message_role.assistant,
 				}).ToList();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
 			// Split 50%/50% between request and response.

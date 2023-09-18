@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Reflection;
 using JocysCom.ClassLibrary.Collections;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -137,13 +138,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		/// <param name="messages"></param>
 		/// <param name="availableTokens"></param>
-		public static List<MessageHistoryItem> GetMessages(
-			List<MessageHistoryItem> messages,
+		public static List<chat_completion_message> GetMessages(
+			List<chat_completion_message> messages,
 			int availableTokens,
 			JsonSerializerOptions options
 		)
 		{
-			var target = new List<MessageHistoryItem>();
+			var target = new List<chat_completion_message>();
 			if (messages.Count == 0)
 				return target;
 			var source = messages.ToList();

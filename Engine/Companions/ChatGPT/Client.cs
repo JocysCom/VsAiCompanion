@@ -343,7 +343,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				item.CancellationTokenSources.Remove(cancellationTokenSource);
 				MessageDone?.Invoke(this, EventArgs.Empty);
 			}
-			return answer;
+			return answer.TrimStart();
 		}
 
 

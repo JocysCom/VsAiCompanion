@@ -468,6 +468,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(ShowPromptingCheckBox, "Guide and shape the AI's output in your desired style." +
 				" You can select a 'Prompt' category such as Tone, Format, Context, Role, or Instruction," +
 				" and then choose an option within that category to define how the AI should approach the content creation.");
+			AppHelper.AddHelp(IsSystemInstructionsCheckBox,
+				"If checked, instructions will be sent as a system message." +
+				" Otherwise, they will be added to the user's message.");
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)

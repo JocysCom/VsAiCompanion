@@ -1,4 +1,6 @@
-﻿namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
+﻿using System.ComponentModel;
+
+namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
 	public class chat_completion_message: base_item
 	{
@@ -8,6 +10,7 @@
 
 		public string name { get; set; }
 
+		[DefaultValue(function_call.none)]
 		public function_call function_call { get; set; }
 
 	}
