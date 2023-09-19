@@ -9,7 +9,6 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Text.Json.Serialization;
 using JocysCom.ClassLibrary.Configuration;
-using Azure.AI.OpenAI;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
@@ -158,13 +157,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				};
 				m.Attachments.Add(a2);
 			}
-			var messageForAI = JoinMessageParts(m.BodyInstructions, m.Body );
+			var messageForAI = JoinMessageParts(m.BodyInstructions, m.Body);
 			var chatLogForAI = "";
-			var chatLogMessages = new List<ChatMessage>();
+			var chatLogMessages = new List<chat_completion_message>();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
 			var reqTokens = CountTokens(messageForAI);
 			// Mark message as preview is preview.
 			m.IsPreview = item.IsPreview;
+			if (item.Messages == null)
+				item.Messages = new BindingList<MessageItem>();
+
 			// Attach chat history at the end (use left tokens).
 			if (at.HasFlag(AttachmentType.ChatHistory))
 			{
@@ -174,13 +176,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				a0.Type = AttachmentType.ChatHistory;
 				var options = new JsonSerializerOptions();
 				options.WriteIndented = true;
-				if (item.Messages == null)
-					item.Messages = new BindingList<MessageItem>();
 				// Attach message body to the bottom of the chat instead.
 				messageForAI = "";
 				var messagesToSend = GetMessagesToSend(item, m);
 				// Prepare messages for API.
-				chatLogMessages = messagesToSend.Select(x => ConvertToRequestMessage(x)).ToList();
+				chatLogMessages = messagesToSend.ToList();
 				var json = JsonSerializer.Serialize(messagesToSend, ChatLogOptions);
 				a0.Data = $"```json\r\n{json}\r\n```";
 				a0.IsMarkdown = true;
@@ -290,16 +290,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		}
 
-		public static ChatMessage ConvertToRequestMessage(chat_completion_message item)
-		{
-			return new ChatMessage()
-			{
-				Name = item.name,
-				Content = item.content,
-				Role = new ChatRole(item.role.ToString()),
-			};
-		}
-
 		public static JsonSerializerOptions ChatLogOptions = new JsonSerializerOptions
 		{
 			WriteIndented = true,
@@ -313,23 +303,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var messages = item.Messages.ToList();
 			if (lastMessage != null)
 				messages.Add(lastMessage);
-			var messageHistory = messages
-				// Include only chat messages.
-				.Where(x => x.Type == MessageType.Out || x.Type == MessageType.In)
-				// Exclude all preview messages.
-				.Where(x => !x.IsPreview)
-				.Select(x => new chat_completion_message()
+			var completionMessages = new List<chat_completion_message>();
+			foreach (var message in messages)
+			{
+				// Skip preview messages.
+				if (message.IsPreview)
+					continue;
+				if (message.Type == MessageType.In)
 				{
-					//name = x.User,
-					content = JoinMessageParts(x.BodyInstructions, x.Body),
-					role = x.Type == MessageType.Out ? message_role.user : message_role.assistant,
-				}).ToList();
+					// Add AI assitant message.
+					completionMessages.Add(new chat_completion_message(message_role.assistant, message.Body));
+					continue;
+				}
+				if (message.Type == MessageType.Out)
+				{
+					// Add system message.
+					if (item.IsSystemInstructions && !string.IsNullOrEmpty(message.BodyInstructions))
+						completionMessages.Add(new chat_completion_message(message_role.system, message.BodyInstructions));
+					// Add user message.
+					var userContent = item.IsSystemInstructions
+						? message.Body
+						: JoinMessageParts(message.BodyInstructions, message.Body);
+					completionMessages.Add(new chat_completion_message(message_role.user, userContent));
+				}
+			}
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
 			// Split 50%/50% between request and response.
 			var maxRequesTokens = maxTokens / 2;
-			var usedTokens = lastMessage == null ? 0 : CountTokens(lastMessage.BodyInstructions);
+			var usedTokens = lastMessage == null ? 0 : CountTokens(JoinMessageParts(lastMessage.BodyInstructions, lastMessage.Body));
 			var availableTokens = maxRequesTokens - usedTokens;
-			var messagesToSend = AppHelper.GetMessages(messageHistory, availableTokens, ChatLogOptions);
+			var messagesToSend = AppHelper.GetMessages(completionMessages, availableTokens, ChatLogOptions);
 			return messagesToSend;
 		}
 
@@ -343,24 +346,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == FormatMessageTaskName);
 			if (rItem == null)
 				return text;
-			var messages = new List<ChatMessage>();
+			var messages = new List<chat_completion_message>();
 			// Crate a copy in order not to add to existing list.
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new ChatMessage()
-				{
-					Name = SystemName,
-					Content = rItem.TextInstructions,
-					Role = ChatRole.System
-				});
+				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				// Supply data for processing.
-				messages.Add(new ChatMessage()
-				{
-					Name = UserName,
-					Content = text,
-					Role = ChatRole.User
-				});
+				messages.Add(new chat_completion_message(message_role.user, text));
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				// Send body and context data.
 				var response = await client.QueryAI(
@@ -389,17 +382,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				return;
 			if (item.Messages.Count == 0)
 				return;
-			var messages = GetMessagesToSend(item).Select(x => ConvertToRequestMessage(x)).ToList();
+			var messages = GetMessagesToSend(item).ToList();
 			// Crate a copy in order not to add to existing list.
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new ChatMessage()
-				{
-					Name = SystemName,
-					Content = rItem.TextInstructions,
-					Role = ChatRole.System
-				});
+				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				// Send body and context data.
 				var response = await client.QueryAI(

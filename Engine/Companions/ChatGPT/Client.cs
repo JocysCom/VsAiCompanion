@@ -186,7 +186,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<string> QueryAI(
 				string modelName,
 				string prompt, string chatLog,
-				List<ChatMessage> messagesToSend,
+				List<chat_completion_message> messagesToSend,
 				double creativity,
 				TemplateItem item
 			)
@@ -265,12 +265,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var messages = new List<ChatMessage>();
 					if (messagesToSend.Count == 0)
 					{
-						messages.Add(new ChatMessage(ChatRole.User, prompt) { Name = ClientHelper.UserName });
+						messages.Add(new ChatMessage(ChatRole.User, prompt));
 					}
 					else
 					{
 						messages = messagesToSend
-							.Select(x => new ChatMessage(x.Role.ToString(), x.Content) { Name = ClientHelper.UserName })
+							.Select(x => new ChatMessage(new ChatRole(x.role.ToString()), x.content))
 							.ToList();
 					}
 					// If Azure service or HTTPS.
