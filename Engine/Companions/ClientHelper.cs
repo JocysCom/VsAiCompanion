@@ -9,6 +9,7 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Text.Json.Serialization;
 using JocysCom.ClassLibrary.Configuration;
+using Azure.AI.OpenAI;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
@@ -204,9 +205,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (item.Messages == null)
 				item.Messages = new BindingList<MessageItem>();
 
+
 			// Attach chat history at the end (use left tokens).
 			if (at.HasFlag(AttachmentType.ChatHistory))
 			{
+				if (Client.IsTextCompletionMode(item.AiModel))
+				{
+					// whole chat will be attached as text.
+				}
+				else
+				{
+					// Chat history msut be sent as messages.
+				}
+
+
 				var a0 = new MessageAttachments();
 				a0.Title = Global.AppSettings.ContextChatTitle;
 				a0.Instructions = Global.AppSettings.ContextChatInstructions;

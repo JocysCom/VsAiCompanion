@@ -201,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			try
 			{
 				// If Text Completion mode.
-				if (modelName.Contains("davinci"))
+				if (IsTextCompletionMode(modelName))
 				{
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
@@ -346,8 +346,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return answer.TrimStart();
 		}
 
-
-
+		public static bool IsTextCompletionMode(string modelName)
+		{
+			return modelName.Contains("davinci");
+		}
 
 		public static int GetMaxTokens(string modelName)
 		{
