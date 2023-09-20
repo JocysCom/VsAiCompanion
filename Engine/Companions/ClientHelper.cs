@@ -28,6 +28,43 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return string.Join("\r\n\r\n", args.Where(x => !string.IsNullOrEmpty(x)));
 		}
 
+		public static string ConvertAttachmentToString(MessageAttachments a)
+		{
+			var s = "";
+			s += $"\r\n\r\n{a.Title}";
+			if (!string.IsNullOrEmpty(a.Instructions))
+				s += $"\r\n\r\n{a.Instructions}";
+			s += $"\r\n\r\n{a.Data}";
+			s = s.Trim('\r', '\n');
+			return s;
+		}
+
+		public static List<chat_completion_message> ConvertMessageItemToChatMessage(TemplateItem item, MessageItem message)
+		{
+			var completionMessages = new List<chat_completion_message>();
+			// Skip preview messages.
+			if (message.IsPreview)
+				return completionMessages;
+			if (message.Type == MessageType.In)
+			{
+				// Add AI assitant message.
+				completionMessages.Add(new chat_completion_message(message_role.assistant, message.Body));
+				return completionMessages;
+			}
+			if (message.Type == MessageType.Out)
+			{
+				// Add system message.
+				if (item.IsSystemInstructions && !string.IsNullOrEmpty(message.BodyInstructions))
+					completionMessages.Add(new chat_completion_message(message_role.system, message.BodyInstructions));
+				// Add user message.
+				var userContent = item.IsSystemInstructions
+					? message.Body
+					: JoinMessageParts(message.BodyInstructions, message.Body);
+				completionMessages.Add(new chat_completion_message(message_role.user, userContent));
+			}
+			return completionMessages;
+		}
+
 		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null, string overrideText = null)
 		{
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
@@ -178,26 +215,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				options.WriteIndented = true;
 				// Attach message body to the bottom of the chat instead.
 				messageForAI = "";
-				var messagesToSend = GetMessagesToSend(item, m);
 				// Prepare messages for API.
-				chatLogMessages = messagesToSend.ToList();
-				var json = JsonSerializer.Serialize(messagesToSend, ChatLogOptions);
+				chatLogMessages = GetMessagesToSend(item, m);
+				var json = JsonSerializer.Serialize(chatLogMessages, ChatLogOptions);
 				a0.Data = $"```json\r\n{json}\r\n```";
 				a0.IsMarkdown = true;
 				m.Attachments.Add(a0);
 			}
 			foreach (var a in m.Attachments)
 			{
-				var aText = "";
-				aText += $"\r\n\r\n{a.Title}";
-				if (!string.IsNullOrEmpty(a.Instructions))
-					aText += $"\r\n\r\n{a.Instructions}";
-				aText += $"\r\n\r\n{a.Data}";
-				aText = aText.Trim('\r', '\n');
 				if (a.Type == AttachmentType.ChatHistory)
-					chatLogForAI += aText;
+					chatLogForAI += ConvertAttachmentToString(a);
 				else
-					messageForAI += aText;
+					messageForAI += ConvertAttachmentToString(a);
 			}
 			// ShowSensitiveDataWarning
 			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
@@ -303,30 +333,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var messages = item.Messages.ToList();
 			if (lastMessage != null)
 				messages.Add(lastMessage);
-			var completionMessages = new List<chat_completion_message>();
-			foreach (var message in messages)
-			{
-				// Skip preview messages.
-				if (message.IsPreview)
-					continue;
-				if (message.Type == MessageType.In)
-				{
-					// Add AI assitant message.
-					completionMessages.Add(new chat_completion_message(message_role.assistant, message.Body));
-					continue;
-				}
-				if (message.Type == MessageType.Out)
-				{
-					// Add system message.
-					if (item.IsSystemInstructions && !string.IsNullOrEmpty(message.BodyInstructions))
-						completionMessages.Add(new chat_completion_message(message_role.system, message.BodyInstructions));
-					// Add user message.
-					var userContent = item.IsSystemInstructions
-						? message.Body
-						: JoinMessageParts(message.BodyInstructions, message.Body);
-					completionMessages.Add(new chat_completion_message(message_role.user, userContent));
-				}
-			}
+			var completionMessages = messages.SelectMany(x=> ConvertMessageItemToChatMessage(item, x)).ToList();
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
 			// Split 50%/50% between request and response.
 			var maxRequesTokens = maxTokens / 2;
