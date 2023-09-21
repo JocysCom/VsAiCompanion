@@ -204,36 +204,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			m.IsPreview = item.IsPreview;
 			if (item.Messages == null)
 				item.Messages = new BindingList<MessageItem>();
-
-
-			// Attach chat history at the end (use left tokens).
-			if (at.HasFlag(AttachmentType.ChatHistory))
-			{
-				if (Client.IsTextCompletionMode(item.AiModel))
-				{
-					// whole chat will be attached as text.
-				}
-				else
-				{
-					// Chat history msut be sent as messages.
-				}
-
-
-				var a0 = new MessageAttachments();
-				a0.Title = Global.AppSettings.ContextChatTitle;
-				a0.Instructions = Global.AppSettings.ContextChatInstructions;
-				a0.Type = AttachmentType.ChatHistory;
-				var options = new JsonSerializerOptions();
-				options.WriteIndented = true;
-				// Attach message body to the bottom of the chat instead.
-				messageForAI = "";
-				// Prepare messages for API.
-				chatLogMessages = GetMessagesToSend(item, m);
-				var json = JsonSerializer.Serialize(chatLogMessages, ChatLogOptions);
-				a0.Data = $"```json\r\n{json}\r\n```";
-				a0.IsMarkdown = true;
-				m.Attachments.Add(a0);
-			}
 			foreach (var a in m.Attachments)
 			{
 				if (a.Type == AttachmentType.ChatHistory)
@@ -279,10 +249,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (result != MessageBoxResult.Yes)
 					return;
 			}
+
+			// Prepaer list of messages to send.
+			if (at.HasFlag(AttachmentType.ChatHistory))
+			{
+				if (Client.IsTextCompletionMode(item.AiModel))
+				{
+					var a0 = new MessageAttachments();
+					a0.Title = Global.AppSettings.ContextChatTitle;
+					a0.Instructions = Global.AppSettings.ContextChatInstructions;
+					a0.Type = AttachmentType.ChatHistory;
+					var options = new JsonSerializerOptions();
+					options.WriteIndented = true;
+					// Attach message body to the bottom of the chat instead.
+					messageForAI = "";
+					// Prepare messages for API.
+					chatLogMessages = GetMessagesToSend(item, m);
+					var json = JsonSerializer.Serialize(chatLogMessages, ChatLogOptions);
+					a0.Data = $"```json\r\n{json}\r\n```";
+					a0.IsMarkdown = true;
+					m.Attachments.Add(a0);
+
+					// Must contain all attachments + chat attachments.
+					chatLogMessages = ConvertMessageItemToChatMessage(item, m);
+				}
+				else
+				{
+					// 
+					chatLogMessages = GetMessagesToSend(item, m);
+				}
+			}
+			else
+			{
+				// Must contain all attachments.
+				chatLogMessages = ConvertMessageItemToChatMessage(item, m);
+			}
+
+
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
 			executeBeforeAddMessage?.Invoke();
 			item.Messages.Add(m);
+
+
+
+
 			var msgTokens = CountTokens(messageForAI);
 			if (item.IsPreview)
 			{
