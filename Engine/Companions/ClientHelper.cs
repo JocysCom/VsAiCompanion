@@ -28,38 +28,45 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return string.Join("\r\n\r\n", args.Where(x => !string.IsNullOrEmpty(x)));
 		}
 
-		public static string ConvertAttachmentToString(MessageAttachments a)
+		public static string ConvertAttachmentsToString(params MessageAttachments[] attachments)
 		{
 			var s = "";
-			s += $"\r\n\r\n{a.Title}";
-			if (!string.IsNullOrEmpty(a.Instructions))
-				s += $"\r\n\r\n{a.Instructions}";
-			s += $"\r\n\r\n{a.Data}";
-			s = s.Trim('\r', '\n');
+			foreach (var a in attachments)
+			{
+				s += $"\r\n\r\n{a.Title}:";
+				if (!string.IsNullOrEmpty(a.Instructions))
+					s += $"\r\n\r\n{a.Instructions}";
+				s += $"\r\n\r\n{a.Data}";
+				s = s.Trim('\r', '\n');
+			}
 			return s;
 		}
 
-		public static List<chat_completion_message> ConvertMessageItemToChatMessage(TemplateItem item, MessageItem message)
+		public static List<chat_completion_message> ConvertMessageItemToChatMessage(TemplateItem item, MessageItem message, bool includeAttachments)
 		{
 			var completionMessages = new List<chat_completion_message>();
 			// Skip preview messages.
 			if (message.IsPreview)
 				return completionMessages;
+			var body = message.Body;
+			if (includeAttachments && (message.Type == MessageType.In || message.Type == MessageType.Out))
+				body = JoinMessageParts(body, ConvertAttachmentsToString(message.Attachments.ToArray()));
 			if (message.Type == MessageType.In)
 			{
 				// Add AI assitant message.
-				completionMessages.Add(new chat_completion_message(message_role.assistant, message.Body));
+				completionMessages.Add(new chat_completion_message(message_role.assistant, body));
 				return completionMessages;
 			}
 			if (message.Type == MessageType.Out)
 			{
+
 				// Add system message.
 				if (item.IsSystemInstructions && !string.IsNullOrEmpty(message.BodyInstructions))
 					completionMessages.Add(new chat_completion_message(message_role.system, message.BodyInstructions));
 				// Add user message.
 				var userContent = item.IsSystemInstructions
-					? message.Body
-					: JoinMessageParts(message.BodyInstructions, message.Body);
+					? body
+					: JoinMessageParts(message.BodyInstructions, body);
 				completionMessages.Add(new chat_completion_message(message_role.user, userContent));
 			}
 			return completionMessages;
@@ -194,22 +201,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				};
 				m.Attachments.Add(a2);
 			}
-			var messageForAI = JoinMessageParts(m.BodyInstructions, m.Body);
-			var chatLogForAI = "";
-			var chatLogMessages = new List<chat_completion_message>();
-			var maxTokens = Client.GetMaxTokens(item.AiModel);
-			var reqTokens = CountTokens(messageForAI);
 			// Mark message as preview is preview.
 			m.IsPreview = item.IsPreview;
 			if (item.Messages == null)
 				item.Messages = new BindingList<MessageItem>();
-			foreach (var a in m.Attachments)
-			{
-				if (a.Type == AttachmentType.ChatHistory)
-					chatLogForAI += ConvertAttachmentToString(a);
-				else
-					messageForAI += ConvertAttachmentToString(a);
-			}
 			// ShowSensitiveDataWarning
 			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
 			{
@@ -249,11 +244,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					return;
 			}
 
-
-			if (Client.IsTextCompletionMode(item.AiModel))
+			// Get current message with all attachments.
+			var chatLogMessages = ConvertMessageItemToChatMessage(item, m, includeAttachments: true);
+			// Prepare list of messages to send.
+			if (item.AttachContext.HasFlag(AttachmentType.ChatHistory))
 			{
-				// Prepaer list of messages to send.
-				if (at.HasFlag(AttachmentType.ChatHistory))
+				// Get tokens available.
+				var tokensLeftForChatHistory = GetAvailableTokens(item.AiModel, chatLogMessages);
+				var historyMessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item, x, false)).ToList();
+				var attachMessages = AppHelper.GetMessages(historyMessages, tokensLeftForChatHistory, ChatLogOptions);
+				if (Client.IsTextCompletionMode(item.AiModel) && attachMessages.Count > 0)
 				{
 					var a0 = new MessageAttachments();
 					a0.Title = Global.AppSettings.ContextChatTitle;
@@ -261,42 +261,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					a0.Type = AttachmentType.ChatHistory;
 					var options = new JsonSerializerOptions();
 					options.WriteIndented = true;
-					// Attach message body to the bottom of the chat instead.
-					messageForAI = "";
-					// Prepare messages for API.
-					chatLogMessages = GetMessagesToSend(item, m);
-					var json = JsonSerializer.Serialize(chatLogMessages, ChatLogOptions);
+					var json = JsonSerializer.Serialize(attachMessages, ChatLogOptions);
 					a0.Data = $"```json\r\n{json}\r\n```";
 					a0.IsMarkdown = true;
-					m.Attachments.Add(a0);
-
-					// Must contain all attachments + chat attachments.
-					chatLogMessages = ConvertMessageItemToChatMessage(item, m);
-				}
-			}
-			else
-			{
-				// Prepare list of messages to send (message must contain all attachments).
-				if (at.HasFlag(AttachmentType.ChatHistory))
-				{
-					chatLogMessages = GetMessagesToSend(item, m);
+					var body = chatLogMessages.Last().content;
+					chatLogMessages.Last().content = JoinMessageParts(body, ConvertAttachmentsToString(a0));
 				}
 				else
 				{
-					// Must contain all attachments.
-					chatLogMessages = ConvertMessageItemToChatMessage(item, m);
+					foreach (var attachMessage in attachMessages)
+						chatLogMessages.Insert(0, attachMessage);
 				}
 			}
-
+			var maxTokens = Client.GetMaxTokens(item.AiModel);
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
 			executeBeforeAddMessage?.Invoke();
 			item.Messages.Add(m);
-
-
-
-
-			var msgTokens = CountTokens(messageForAI);
+			var msgTokens = CountTokens(chatLogMessages, ChatLogOptions);
 			if (item.IsPreview)
 			{
 				var message = new MessageItem(SystemName, PreviewModeMessage);
@@ -320,8 +302,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					// Send body and context data.
 					var response = await client.QueryAI(
 						item.AiModel,
-						messageForAI,
-						chatLogForAI,
 						chatLogMessages,
 						item.Creativity,
 						item
@@ -342,7 +322,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			// If item type task, then allow to do auto removal.
 			if (Global.Tasks.Items.Contains(item) && item.AutoRemove)
 				_ = Global.MainControl.Dispatcher.BeginInvoke(new Action(() => { _ = Global.Tasks.Items.Remove(item); }));
-
 		}
 
 		public static JsonSerializerOptions ChatLogOptions = new JsonSerializerOptions
@@ -353,19 +332,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			Converters = { new JsonStringEnumConverter() }
 		};
 
-		public static List<chat_completion_message> GetMessagesToSend(TemplateItem item, MessageItem lastMessage = null)
+		public static int GetAvailableTokens(string aiModel, List<chat_completion_message> messages = null)
 		{
-			var messages = item.Messages.ToList();
-			if (lastMessage != null)
-				messages.Add(lastMessage);
-			var completionMessages = messages.SelectMany(x=> ConvertMessageItemToChatMessage(item, x)).ToList();
-			var maxTokens = Client.GetMaxTokens(item.AiModel);
+			var maxTokens = Client.GetMaxTokens(aiModel);
 			// Split 50%/50% between request and response.
 			var maxRequesTokens = maxTokens / 2;
-			var usedTokens = lastMessage == null ? 0 : CountTokens(JoinMessageParts(lastMessage.BodyInstructions, lastMessage.Body));
+			var usedTokens = CountTokens(messages, ChatLogOptions);
 			var availableTokens = maxRequesTokens - usedTokens;
-			var messagesToSend = AppHelper.GetMessages(completionMessages, availableTokens, ChatLogOptions);
-			return messagesToSend;
+			return availableTokens;
 		}
 
 		#region Reserved Tempalte Functions
@@ -390,8 +364,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// Send body and context data.
 				var response = await client.QueryAI(
 					rItem.AiModel,
-					"",
-					"",
 					messages,
 					rItem.Creativity,
 					item
@@ -414,7 +386,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				return;
 			if (item.Messages.Count == 0)
 				return;
-			var messages = GetMessagesToSend(item).ToList();
+			var availableTokens = GetAvailableTokens(item.AiModel, null);
+			var allmessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item, x, false)).ToList();
+			var messages = AppHelper.GetMessages(allmessages, availableTokens, ChatLogOptions);
 			// Crate a copy in order not to add to existing list.
 			try
 			{
@@ -424,8 +398,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// Send body and context data.
 				var response = await client.QueryAI(
 					rItem.AiModel,
-					"",
-					"",
 					messages,
 					rItem.Creativity,
 					item
@@ -480,6 +452,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 		}
 
+		public static int CountTokens(object item, JsonSerializerOptions options)
+		{
+			var json = JsonSerializer.Serialize(item, options);
+			return CountTokens(json);
+		}
 
 		public static int CountTokens(string s)
 		{

@@ -185,7 +185,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
 		public async Task<string> QueryAI(
 				string modelName,
-				string prompt, string chatLog,
 				List<chat_completion_message> messagesToSend,
 				double creativity,
 				TemplateItem item
@@ -203,12 +202,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Text Completion mode.
 				if (IsTextCompletionMode(modelName))
 				{
+					var prompt = messagesToSend.First().content;
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
 						var client = GetAiClient();
 						var messages = new List<string>();
-						messages.Add(prompt + chatLog);
+						messages.Add(prompt);
 						var completionsOptions = new CompletionsOptions(messages);
 						completionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
@@ -247,8 +247,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var request = new text_completion_request
 						{
 							model = modelName,
+							prompt = prompt,
 							temperature = (float)creativity,
-							prompt = prompt + chatLog,
 							stream = Service.ResponseStreaming,
 							max_tokens = GetMaxTokens(modelName),
 
@@ -262,17 +262,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Chat Completion mode.
 				else
 				{
-					var messages = new List<ChatMessage>();
-					if (messagesToSend.Count == 0)
-					{
-						messages.Add(new ChatMessage(ChatRole.User, prompt));
-					}
-					else
-					{
-						messages = messagesToSend
-							.Select(x => new ChatMessage(new ChatRole(x.role.ToString()), x.content))
-							.ToList();
-					}
+					var messages = messagesToSend.Select(x => new ChatMessage(new ChatRole(x.role.ToString()), x.content));
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{

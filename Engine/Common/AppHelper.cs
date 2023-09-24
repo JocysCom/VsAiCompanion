@@ -18,6 +18,8 @@ using System.Reflection;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Windows.Input;
+using SharpVectors.Renderers.Wpf;
+using SharpVectors.Dom.Events;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -125,54 +127,60 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Clipboard.SetText(text);
 		}
 
-		public static int CountTokens(object item, JsonSerializerOptions options)
+
+		public static List<chat_completion_message[]> GetMessageGroups(List<chat_completion_message> source)
 		{
-			var json = JsonSerializer.Serialize(item, options);
-			return ClientHelper.CountTokens(json);
+			var messageGroups = new List<chat_completion_message[]>();
+			var group = new List<chat_completion_message>();
+			foreach (var message in source)
+			{
+				group.Add(message);
+				// Every group will be completed with an answer from the AI assistant.
+				if (message.role == message_role.assistant)
+				{
+					messageGroups.Add(group.ToArray());
+					group.Clear();
+				}
+			}
+			return messageGroups;
 		}
 
 		/// <summary>
-		/// Return lis of messages, but do not exceed availableTokens.
-		/// Priorityu of adding messages:
-		/// Last message. First message. All mesages beginning from the end.
+		/// Return list of messages, but do not exceed availableTokens.
+		/// First message. All mesages beginning from the end.
 		/// </summary>
 		/// <param name="messages"></param>
 		/// <param name="availableTokens"></param>
 		public static List<chat_completion_message> GetMessages(
 			List<chat_completion_message> messages,
 			int availableTokens,
-			JsonSerializerOptions options
+			JsonSerializerOptions serializerOptions
 		)
 		{
 			var target = new List<chat_completion_message>();
 			if (messages.Count == 0)
 				return target;
-			var source = messages.ToList();
-			int currentTokens = 0;
-			var firstMessageInChat = source.First();
-			// Reverse order (begin adding latest messages first)
-			source.Reverse();
-			var firstMessageInChatTokens = CountTokens(firstMessageInChat, options);
-			for (int i = 0; i < source.Count; i++)
+			var groups = GetMessageGroups(messages);
+			// Try to include first messages.
+			var firstGroup = groups.First();
+			availableTokens -= ClientHelper.CountTokens(firstGroup, serializerOptions);
+			if (availableTokens < 0)
+				return target;
+			groups.Remove(firstGroup);
+			target.AddRange(firstGroup);
+			// Reverse order (begin adding latest messages groups first)
+			groups.Reverse();
+			var middleGroups = new List<chat_completion_message[]>();
+			for (int i = 0; i < groups.Count; i++)
 			{
-				var item = source[i];
-				var itemTokens = CountTokens(item, options);
-				var hasSpaceForLastItemAfterAdd = currentTokens + itemTokens + firstMessageInChatTokens < availableTokens;
-				// If first item was added already and
-				// this is not the last item and 
-				// won't be able to last item then...
-				if (i > 0 && item != firstMessageInChat && !hasSpaceForLastItemAfterAdd)
-				{
-					target.Add(firstMessageInChat);
+				var group = groups[i];
+				availableTokens -= ClientHelper.CountTokens(group, serializerOptions);
+				if (availableTokens < 0)
 					break;
-				}
-				var hasSpaceForThisItem = currentTokens + itemTokens < availableTokens;
-				if (!hasSpaceForThisItem)
-					break;
-				target.Add(item);
+				middleGroups.Add(group);
 			}
-			// Reverse the result to maintain the original order
-			target.Reverse();
+			middleGroups.Reverse();
+			target.AddRange(middleGroups.SelectMany(x => x));
 			return target;
 		}
 
