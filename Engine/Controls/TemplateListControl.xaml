@@ -174,7 +174,6 @@
 			AutoGenerateColumns="False"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			ClipToBounds="True"
-			HorizontalGridLinesBrush="{StaticResource BorderDark}"
 			IsReadOnly="False"
 			Loaded="MainDataGrid_Loaded"
 			MouseDoubleClick="MainDataGrid_MouseDoubleClick"
