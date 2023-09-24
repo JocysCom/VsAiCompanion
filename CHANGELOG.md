@@ -1,3 +1,8 @@
+2023-09-24 v1.1.16
+
+- New: Option to toggle between user and system message instructions.
+- Update: Minor user interface enhancements and theme update.
+
 2023-09-17 v1.1.12
 
 - New: Prompting feature that helps to customize the AI's output.
