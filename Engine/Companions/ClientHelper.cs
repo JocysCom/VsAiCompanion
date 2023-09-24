@@ -42,7 +42,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return s;
 		}
 
-		public static List<chat_completion_message> ConvertMessageItemToChatMessage(TemplateItem item, MessageItem message, bool includeAttachments)
+		public static List<chat_completion_message> ConvertMessageItemToChatMessage(bool isSystemInstructions, MessageItem message, bool includeAttachments)
 		{
 			var completionMessages = new List<chat_completion_message>();
 			// Skip preview messages.
@@ -61,10 +61,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			{
 
 				// Add system message.
-				if (item.IsSystemInstructions && !string.IsNullOrEmpty(message.BodyInstructions))
+				if (isSystemInstructions && !string.IsNullOrEmpty(message.BodyInstructions))
 					completionMessages.Add(new chat_completion_message(message_role.system, message.BodyInstructions));
 				// Add user message.
-				var userContent = item.IsSystemInstructions
+				var userContent = isSystemInstructions
 					? body
 					: JoinMessageParts(message.BodyInstructions, body);
 				completionMessages.Add(new chat_completion_message(message_role.user, userContent));
@@ -245,16 +245,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 
 			// Get current message with all attachments.
-			var chatLogMessages = ConvertMessageItemToChatMessage(item, m, includeAttachments: true);
+			var chatLogMessages = ConvertMessageItemToChatMessage(item.IsSystemInstructions, m, includeAttachments: true);
 			// Prepare list of messages to send.
 			if (item.AttachContext.HasFlag(AttachmentType.ChatHistory))
 			{
 				// Get tokens available.
 				var tokensLeftForChatHistory = GetAvailableTokens(item.AiModel, chatLogMessages);
-				var historyMessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item, x, false)).ToList();
+				var historyMessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
 				var attachMessages = AppHelper.GetMessages(historyMessages, tokensLeftForChatHistory, ChatLogOptions);
+				chatLogMessages = attachMessages.Concat(chatLogMessages).ToList();
 				if (Client.IsTextCompletionMode(item.AiModel) && attachMessages.Count > 0)
 				{
+					// Create attachment.
 					var a0 = new MessageAttachments();
 					a0.Title = Global.AppSettings.ContextChatTitle;
 					a0.Instructions = Global.AppSettings.ContextChatInstructions;
@@ -264,13 +266,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					var json = JsonSerializer.Serialize(attachMessages, ChatLogOptions);
 					a0.Data = $"```json\r\n{json}\r\n```";
 					a0.IsMarkdown = true;
-					var body = chatLogMessages.Last().content;
-					chatLogMessages.Last().content = JoinMessageParts(body, ConvertAttachmentsToString(a0));
-				}
-				else
-				{
-					foreach (var attachMessage in attachMessages)
-						chatLogMessages.Insert(0, attachMessage);
+					// Update messages.
+					var message = ConvertMessageItemToChatMessage(false, m, includeAttachments: true);
+					var content = JoinMessageParts(message[0].content, ConvertAttachmentsToString(a0));
+					chatLogMessages.Clear();
+					chatLogMessages.Add(new chat_completion_message(message_role.user, content));
 				}
 			}
 			var maxTokens = Client.GetMaxTokens(item.AiModel);
@@ -387,7 +387,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (item.Messages.Count == 0)
 				return;
 			var availableTokens = GetAvailableTokens(item.AiModel, null);
-			var allmessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item, x, false)).ToList();
+			var allmessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
 			var messages = AppHelper.GetMessages(allmessages, availableTokens, ChatLogOptions);
 			// Crate a copy in order not to add to existing list.
 			try

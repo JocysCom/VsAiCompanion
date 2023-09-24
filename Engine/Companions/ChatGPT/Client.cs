@@ -202,14 +202,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Text Completion mode.
 				if (IsTextCompletionMode(modelName))
 				{
-					var prompt = messagesToSend.First().content;
+					var prompts = messagesToSend.Select(x=>x.content).ToArray();
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
 						var client = GetAiClient();
-						var messages = new List<string>();
-						messages.Add(prompt);
-						var completionsOptions = new CompletionsOptions(messages);
+						var completionsOptions = new CompletionsOptions(prompts);
 						completionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
 						{
@@ -247,7 +245,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var request = new text_completion_request
 						{
 							model = modelName,
-							prompt = prompt,
+							prompt = ClientHelper.JoinMessageParts(prompts),
 							temperature = (float)creativity,
 							stream = Service.ResponseStreaming,
 							max_tokens = GetMaxTokens(modelName),
