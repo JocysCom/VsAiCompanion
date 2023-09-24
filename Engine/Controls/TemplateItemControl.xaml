@@ -86,6 +86,7 @@
 					Maximum="150"
 					Minimum="50"
 					TickFrequency="10"
+					TickPlacement="BottomRight"
 					ValueChanged="ZoomSlider_ValueChanged"
 					Value="100" />
 				<!--  Value="{Binding Creativity}"  -->
