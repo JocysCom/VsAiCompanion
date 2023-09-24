@@ -490,6 +490,43 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region TextBox Functions
+
+		public static void SetText(TextBox box, string s)
+		{
+			int caretIndex = box.CaretIndex;
+			// trim end and leave caret position unchanged
+			box.Text = s;
+			box.CaretIndex = caretIndex < box.Text.Length ? caretIndex : box.Text.Length;
+		}
+
+		public static void InsertText(TextBox box, string s, bool activate = false, bool addSpace = false)
+		{
+			// Check if we need to set the control active
+			if (activate)
+				box.Focus();
+			// Save the current position of the cursor
+			var cursorPosition = box.CaretIndex;
+			// Check if there is a selected text to replace
+			if (box.SelectionLength > 0)
+			{
+				// Replace the selected text
+				box.SelectedText = s;
+			}
+			else
+			{
+				// If cursor at the end
+				if (box.Text.Length > 0 && box.Text.Last() != ' ' && cursorPosition == box.Text.Length && addSpace)
+					s = " " + s;
+				// Insert the text at the cursor position
+				box.Text = box.Text.Insert(cursorPosition, s);
+				// Set the cursor after the inserted text
+				box.CaretIndex = cursorPosition + s.Length;
+			}
+		}
+
+		#endregion
+
 	}
 
 }

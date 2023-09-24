@@ -51,7 +51,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (promptItem == null)
 				return;
 			var promptString = string.Format(promptItem.Pattern, _item?.PromptOption);
-			InsertText(ChatPanel.DataTextBox, promptString, false, true);
+			AppHelper.InsertText(ChatPanel.DataTextBox, promptString, false, true);
 		}
 
 		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
@@ -298,11 +298,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					var containsDataHeader = text.Contains(TextToProcess) || text.EndsWith(":");
 					if (_item.IsSystemInstructions && text.Contains(TextToProcess))
 					{
-						_item.TextInstructions = text.Replace(TextToProcess, "").TrimEnd();
+						var s = text.Replace(TextToProcess, "").TrimEnd();
+						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
 					}
 					else if (!_item.IsSystemInstructions && !containsDataHeader && !string.IsNullOrEmpty(text))
 					{
-						_item.TextInstructions = ClientHelper.JoinMessageParts(text, TextToProcess);
+						var s = ClientHelper.JoinMessageParts(text, TextToProcess);
+						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
 					}
 					break;
 				default:
@@ -417,35 +419,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var item = (PropertyItem)cb.SelectedItem;
 			cb.SelectedIndex = alwaysSelectedIndex;
-			InsertText(ChatPanel.DataTextBox, "{" + item.Key + "}");
+			AppHelper.InsertText(ChatPanel.DataTextBox, "{" + item.Key + "}");
 			// Enable use of macros.
 			if (!_item.UseMacros)
 				_item.UseMacros = true;
-		}
-
-		public static void InsertText(TextBox box, string s, bool activate = false, bool addSpace = false)
-		{
-			// Check if we need to set the control active
-			if (activate)
-				box.Focus();
-			// Save the current position of the cursor
-			var cursorPosition = box.CaretIndex;
-			// Check if there is a selected text to replace
-			if (box.SelectionLength > 0)
-			{
-				// Replace the selected text
-				box.SelectedText = s;
-			}
-			else
-			{
-				// If cursor at the end
-				if (box.Text.Length > 0 && box.Text.Last() != ' ' && cursorPosition == box.Text.Length && addSpace)
-					s = " " + s;
-				// Insert the text at the cursor position
-				box.Text = box.Text.Insert(cursorPosition, s);
-				// Set the cursor after the inserted text
-				box.CaretIndex = cursorPosition + s.Length;
-			}
 		}
 
 		#endregion
