@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Controls.Chat;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +17,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -449,6 +449,42 @@ namespace JocysCom.VS.AiCompanion.Engine
 						sValue = JsonSerializer.Deserialize(sValue as string, tp.PropertyType);
 					tp.SetValue(target, sValue, null);
 				}
+			}
+		}
+
+		#endregion
+
+		#region Keep Focus on TextBox
+
+		private static IInputElement lastFocusedElement;
+		private static void Control_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			// Save the currently focused input element (if TextBox only).
+			lastFocusedElement = Keyboard.FocusedElement as TextBox;
+		}
+		private static void Control_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			// Enqueue the action on the dispatcher.
+			// This will ensure the action will be executed after the UI has finished processing events.
+			Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+				lastFocusedElement?.Focus()));
+		}
+
+		public static void EnableKeepFocusOnMouseClick(params UIElement[] controls)
+		{
+			foreach (var control in controls)
+			{
+				control.PreviewMouseDown += Control_PreviewMouseDown;
+				control.PreviewMouseUp += Control_PreviewMouseUp;
+			}
+		}
+
+		public static void DisableKeepFocusOnMouseClick(params UIElement[] controls)
+		{
+			foreach (var control in controls)
+			{
+				control.PreviewMouseDown -= Control_PreviewMouseDown;
+				control.PreviewMouseUp -= Control_PreviewMouseUp;
 			}
 		}
 

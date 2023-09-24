@@ -9,7 +9,6 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Text.Json.Serialization;
 using JocysCom.ClassLibrary.Configuration;
-using Azure.AI.OpenAI;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
@@ -250,10 +249,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					return;
 			}
 
-			// Prepaer list of messages to send.
-			if (at.HasFlag(AttachmentType.ChatHistory))
+
+			if (Client.IsTextCompletionMode(item.AiModel))
 			{
-				if (Client.IsTextCompletionMode(item.AiModel))
+				// Prepaer list of messages to send.
+				if (at.HasFlag(AttachmentType.ChatHistory))
 				{
 					var a0 = new MessageAttachments();
 					a0.Title = Global.AppSettings.ContextChatTitle;
@@ -273,18 +273,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					// Must contain all attachments + chat attachments.
 					chatLogMessages = ConvertMessageItemToChatMessage(item, m);
 				}
-				else
-				{
-					// 
-					chatLogMessages = GetMessagesToSend(item, m);
-				}
 			}
 			else
 			{
-				// Must contain all attachments.
-				chatLogMessages = ConvertMessageItemToChatMessage(item, m);
+				// Prepare list of messages to send (message must contain all attachments).
+				if (at.HasFlag(AttachmentType.ChatHistory))
+				{
+					chatLogMessages = GetMessagesToSend(item, m);
+				}
+				else
+				{
+					// Must contain all attachments.
+					chatLogMessages = ConvertMessageItemToChatMessage(item, m);
+				}
 			}
-
 
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.

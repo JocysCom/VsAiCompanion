@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -42,6 +41,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			PromptsPanel.AddPromptButton.Click += PromptsPanel_AddPromptButton_Click;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			UpdateSpellCheck();
+			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
+			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
 		}
 
 		private void PromptsPanel_AddPromptButton_Click(object sender, RoutedEventArgs e)
@@ -86,7 +87,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.FocusDataTextBox();
 			}
 		}
-
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -279,15 +279,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		// Move to settings later.
+		public const string TextToProcess = "Text to process:";
+
 		private void _item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(TemplateItem.IsBusy))
+			switch (e.PropertyName)
 			{
-				ChatPanel.IsBusy = _item.IsBusy;
-				ChatPanel.UpdateButtons();
+				case nameof(TemplateItem.IsBusy):
+					ChatPanel.IsBusy = _item.IsBusy;
+					ChatPanel.UpdateButtons();
+					break;
+				case nameof(TemplateItem.Creativity):
+					OnPropertyChanged(nameof(CreativityName));
+					break;
+				case nameof(TemplateItem.IsSystemInstructions):
+					var text = _item.TextInstructions.Trim();
+					var containsDataHeader = text.Contains(TextToProcess) || text.EndsWith(":");
+					if (_item.IsSystemInstructions && text.Contains(TextToProcess))
+					{
+						_item.TextInstructions = text.Replace(TextToProcess, "").TrimEnd();
+					}
+					else if (!_item.IsSystemInstructions && !containsDataHeader && !string.IsNullOrEmpty(text))
+					{
+						_item.TextInstructions = ClientHelper.JoinMessageParts(text, TextToProcess);
+					}
+					break;
+				default:
+					break;
 			}
-			else if (e.PropertyName == nameof(TemplateItem.Creativity))
-				OnPropertyChanged(nameof(CreativityName));
 		}
 
 		private void ListToggleButton_Click(object sender, RoutedEventArgs e)
@@ -371,7 +391,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			InitMacros();
 		}
-
 
 		void InitMacros()
 		{
