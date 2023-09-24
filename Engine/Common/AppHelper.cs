@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Controls.Chat;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +16,10 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Reflection;
 using JocysCom.ClassLibrary.Collections;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using System.Windows.Input;
+using SharpVectors.Renderers.Wpf;
+using SharpVectors.Dom.Events;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -124,54 +127,60 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Clipboard.SetText(text);
 		}
 
-		public static int CountTokens(object item, JsonSerializerOptions options)
+
+		public static List<chat_completion_message[]> GetMessageGroups(List<chat_completion_message> source)
 		{
-			var json = JsonSerializer.Serialize(item, options);
-			return ClientHelper.CountTokens(json);
+			var messageGroups = new List<chat_completion_message[]>();
+			var group = new List<chat_completion_message>();
+			foreach (var message in source)
+			{
+				group.Add(message);
+				// Every group will be completed with an answer from the AI assistant.
+				if (message.role == message_role.assistant)
+				{
+					messageGroups.Add(group.ToArray());
+					group.Clear();
+				}
+			}
+			return messageGroups;
 		}
 
 		/// <summary>
-		/// Return lis of messages, but do not exceed availableTokens.
-		/// Priorityu of adding messages:
-		/// Last message. First message. All mesages beginning from the end.
+		/// Return list of messages, but do not exceed availableTokens.
+		/// First message. All mesages beginning from the end.
 		/// </summary>
 		/// <param name="messages"></param>
 		/// <param name="availableTokens"></param>
-		public static List<MessageHistoryItem> GetMessages(
-			List<MessageHistoryItem> messages,
+		public static List<chat_completion_message> GetMessages(
+			List<chat_completion_message> messages,
 			int availableTokens,
-			JsonSerializerOptions options
+			JsonSerializerOptions serializerOptions
 		)
 		{
-			var target = new List<MessageHistoryItem>();
+			var target = new List<chat_completion_message>();
 			if (messages.Count == 0)
 				return target;
-			var source = messages.ToList();
-			int currentTokens = 0;
-			var firstMessageInChat = source.First();
-			// Reverse order (begin adding latest messages first)
-			source.Reverse();
-			var firstMessageInChatTokens = CountTokens(firstMessageInChat, options);
-			for (int i = 0; i < source.Count; i++)
+			var groups = GetMessageGroups(messages);
+			// Try to include first messages.
+			var firstGroup = groups.First();
+			availableTokens -= ClientHelper.CountTokens(firstGroup, serializerOptions);
+			if (availableTokens < 0)
+				return target;
+			groups.Remove(firstGroup);
+			target.AddRange(firstGroup);
+			// Reverse order (begin adding latest messages groups first)
+			groups.Reverse();
+			var middleGroups = new List<chat_completion_message[]>();
+			for (int i = 0; i < groups.Count; i++)
 			{
-				var item = source[i];
-				var itemTokens = CountTokens(item, options);
-				var hasSpaceForLastItemAfterAdd = currentTokens + itemTokens + firstMessageInChatTokens < availableTokens;
-				// If first item was added already and
-				// this is not the last item and 
-				// won't be able to last item then...
-				if (i > 0 && item != firstMessageInChat && !hasSpaceForLastItemAfterAdd)
-				{
-					target.Add(firstMessageInChat);
+				var group = groups[i];
+				availableTokens -= ClientHelper.CountTokens(group, serializerOptions);
+				if (availableTokens < 0)
 					break;
-				}
-				var hasSpaceForThisItem = currentTokens + itemTokens < availableTokens;
-				if (!hasSpaceForThisItem)
-					break;
-				target.Add(item);
+				middleGroups.Add(group);
 			}
-			// Reverse the result to maintain the original order
-			target.Reverse();
+			middleGroups.Reverse();
+			target.AddRange(middleGroups.SelectMany(x => x));
 			return target;
 		}
 
@@ -448,6 +457,79 @@ namespace JocysCom.VS.AiCompanion.Engine
 						sValue = JsonSerializer.Deserialize(sValue as string, tp.PropertyType);
 					tp.SetValue(target, sValue, null);
 				}
+			}
+		}
+
+		#endregion
+
+		#region Keep Focus on TextBox
+
+		private static IInputElement lastFocusedElement;
+		private static void Control_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			// Save the currently focused input element (if TextBox only).
+			lastFocusedElement = Keyboard.FocusedElement as TextBox;
+		}
+		private static void Control_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			// Enqueue the action on the dispatcher.
+			// This will ensure the action will be executed after the UI has finished processing events.
+			Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+				lastFocusedElement?.Focus()));
+		}
+
+		public static void EnableKeepFocusOnMouseClick(params UIElement[] controls)
+		{
+			foreach (var control in controls)
+			{
+				control.PreviewMouseDown += Control_PreviewMouseDown;
+				control.PreviewMouseUp += Control_PreviewMouseUp;
+			}
+		}
+
+		public static void DisableKeepFocusOnMouseClick(params UIElement[] controls)
+		{
+			foreach (var control in controls)
+			{
+				control.PreviewMouseDown -= Control_PreviewMouseDown;
+				control.PreviewMouseUp -= Control_PreviewMouseUp;
+			}
+		}
+
+		#endregion
+
+		#region TextBox Functions
+
+		public static void SetText(TextBox box, string s)
+		{
+			int caretIndex = box.CaretIndex;
+			// trim end and leave caret position unchanged
+			box.Text = s;
+			box.CaretIndex = caretIndex < box.Text.Length ? caretIndex : box.Text.Length;
+		}
+
+		public static void InsertText(TextBox box, string s, bool activate = false, bool addSpace = false)
+		{
+			// Check if we need to set the control active
+			if (activate)
+				box.Focus();
+			// Save the current position of the cursor
+			var cursorPosition = box.CaretIndex;
+			// Check if there is a selected text to replace
+			if (box.SelectionLength > 0)
+			{
+				// Replace the selected text
+				box.SelectedText = s;
+			}
+			else
+			{
+				// If cursor at the end
+				if (box.Text.Length > 0 && box.Text.Last() != ' ' && cursorPosition == box.Text.Length && addSpace)
+					s = " " + s;
+				// Insert the text at the cursor position
+				box.Text = box.Text.Insert(cursorPosition, s);
+				// Set the cursor after the inserted text
+				box.CaretIndex = cursorPosition + s.Length;
 			}
 		}
 

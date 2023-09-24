@@ -185,8 +185,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
 		public async Task<string> QueryAI(
 				string modelName,
-				string prompt, string chatLog,
-				List<ChatMessage> messagesToSend,
+				List<chat_completion_message> messagesToSend,
 				double creativity,
 				TemplateItem item
 			)
@@ -201,15 +200,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			try
 			{
 				// If Text Completion mode.
-				if (modelName.Contains("davinci"))
+				if (IsTextCompletionMode(modelName))
 				{
+					var prompts = messagesToSend.Select(x=>x.content).ToArray();
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
 						var client = GetAiClient();
-						var messages = new List<string>();
-						messages.Add(prompt + chatLog);
-						var completionsOptions = new CompletionsOptions(messages);
+						var completionsOptions = new CompletionsOptions(prompts);
 						completionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
 						{
@@ -247,8 +245,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var request = new text_completion_request
 						{
 							model = modelName,
+							prompt = ClientHelper.JoinMessageParts(prompts),
 							temperature = (float)creativity,
-							prompt = prompt + chatLog,
 							stream = Service.ResponseStreaming,
 							max_tokens = GetMaxTokens(modelName),
 
@@ -262,17 +260,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Chat Completion mode.
 				else
 				{
-					var messages = new List<ChatMessage>();
-					if (messagesToSend.Count == 0)
-					{
-						messages.Add(new ChatMessage(ChatRole.User, prompt) { Name = ClientHelper.UserName });
-					}
-					else
-					{
-						messages = messagesToSend
-							.Select(x => new ChatMessage(x.Role.ToString(), x.Content) { Name = ClientHelper.UserName })
-							.ToList();
-					}
+					var messages = messagesToSend.Select(x => new ChatMessage(new ChatRole(x.role.ToString()), x.content));
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
@@ -343,11 +331,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				item.CancellationTokenSources.Remove(cancellationTokenSource);
 				MessageDone?.Invoke(this, EventArgs.Empty);
 			}
-			return answer;
+			return answer.TrimStart();
 		}
 
-
-
+		public static bool IsTextCompletionMode(string modelName)
+		{
+			return modelName.Contains("davinci");
+		}
 
 		public static int GetMaxTokens(string modelName)
 		{

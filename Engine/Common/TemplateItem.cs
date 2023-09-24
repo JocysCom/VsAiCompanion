@@ -51,6 +51,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool ShowInstructions { get => _ShowInstructions; set => SetProperty(ref _ShowInstructions, value); }
 		bool _ShowInstructions;
 
+		/// <summary>If true then instructions will be sent as System message, otherwise will be added the the used message.</summary>
+		[DefaultValue(false)]
+		public bool IsSystemInstructions { get => _IsSystemInstructions; set => SetProperty(ref _IsSystemInstructions, value); }
+		bool _IsSystemInstructions;
+
 		[DefaultValue("")]
 		public string Text { get => _Text ?? ""; set => SetProperty(ref _Text, value); }
 		string _Text;

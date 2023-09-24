@@ -9,7 +9,6 @@ using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Text.Json.Serialization;
 using JocysCom.ClassLibrary.Configuration;
-using Azure.AI.OpenAI;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
@@ -27,6 +26,50 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public static string JoinMessageParts(params string[] args)
 		{
 			return string.Join("\r\n\r\n", args.Where(x => !string.IsNullOrEmpty(x)));
+		}
+
+		public static string ConvertAttachmentsToString(params MessageAttachments[] attachments)
+		{
+			var s = "";
+			foreach (var a in attachments)
+			{
+				s += $"\r\n\r\n{a.Title}:";
+				if (!string.IsNullOrEmpty(a.Instructions))
+					s += $"\r\n\r\n{a.Instructions}";
+				s += $"\r\n\r\n{a.Data}";
+				s = s.Trim('\r', '\n');
+			}
+			return s;
+		}
+
+		public static List<chat_completion_message> ConvertMessageItemToChatMessage(bool isSystemInstructions, MessageItem message, bool includeAttachments)
+		{
+			var completionMessages = new List<chat_completion_message>();
+			// Skip preview messages.
+			if (message.IsPreview)
+				return completionMessages;
+			var body = message.Body;
+			if (includeAttachments && (message.Type == MessageType.In || message.Type == MessageType.Out))
+				body = JoinMessageParts(body, ConvertAttachmentsToString(message.Attachments.ToArray()));
+			if (message.Type == MessageType.In)
+			{
+				// Add AI assitant message.
+				completionMessages.Add(new chat_completion_message(message_role.assistant, body));
+				return completionMessages;
+			}
+			if (message.Type == MessageType.Out)
+			{
+
+				// Add system message.
+				if (isSystemInstructions && !string.IsNullOrEmpty(message.BodyInstructions))
+					completionMessages.Add(new chat_completion_message(message_role.system, message.BodyInstructions));
+				// Add user message.
+				var userContent = isSystemInstructions
+					? body
+					: JoinMessageParts(message.BodyInstructions, body);
+				completionMessages.Add(new chat_completion_message(message_role.user, userContent));
+			}
+			return completionMessages;
 		}
 
 		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null, string overrideText = null)
@@ -58,14 +101,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			if (item.AutoFormatMessage)
 				itemText = await FormatMessage(item, itemText);
-			var m = new MessageItem(UserName, itemText, MessageType.Out);
-			m.BodyInstructions = item.TextInstructions;
 			var vsData = AppHelper.GetMacroValues();
+			// Prepare instructions.
+			var instructions = item.TextInstructions;
 			if (item.UseMacros)
-			{
-				m.BodyInstructions = AppHelper.ReplaceMacros(m.BodyInstructions, vsData);
+				instructions = AppHelper.ReplaceMacros(instructions, vsData);
+			var m = new MessageItem(UserName, itemText, MessageType.Out);
+			m.BodyInstructions = instructions;
+			if (item.UseMacros)
 				m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
-			}
 			var fileItems = new List<DocItem>();
 			var at = item.AttachContext;
 			// If data from clipboard.
@@ -157,47 +201,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				};
 				m.Attachments.Add(a2);
 			}
-			var messageForAI = JoinMessageParts(m.BodyInstructions, m.Body );
-			var chatLogForAI = "";
-			var chatLogMessages = new List<ChatMessage>();
-			var maxTokens = Client.GetMaxTokens(item.AiModel);
-			var reqTokens = CountTokens(messageForAI);
 			// Mark message as preview is preview.
 			m.IsPreview = item.IsPreview;
-			// Attach chat history at the end (use left tokens).
-			if (at.HasFlag(AttachmentType.ChatHistory))
-			{
-				var a0 = new MessageAttachments();
-				a0.Title = Global.AppSettings.ContextChatTitle;
-				a0.Instructions = Global.AppSettings.ContextChatInstructions;
-				a0.Type = AttachmentType.ChatHistory;
-				var options = new JsonSerializerOptions();
-				options.WriteIndented = true;
-				if (item.Messages == null)
-					item.Messages = new BindingList<MessageItem>();
-				// Attach message body to the bottom of the chat instead.
-				messageForAI = "";
-				var messagesToSend = GetMessagesToSend(item, m);
-				// Prepare messages for API.
-				chatLogMessages = messagesToSend.Select(x => ConvertToRequestMessage(x)).ToList();
-				var json = JsonSerializer.Serialize(messagesToSend, ChatLogOptions);
-				a0.Data = $"```json\r\n{json}\r\n```";
-				a0.IsMarkdown = true;
-				m.Attachments.Add(a0);
-			}
-			foreach (var a in m.Attachments)
-			{
-				var aText = "";
-				aText += $"\r\n\r\n{a.Title}";
-				if (!string.IsNullOrEmpty(a.Instructions))
-					aText += $"\r\n\r\n{a.Instructions}";
-				aText += $"\r\n\r\n{a.Data}";
-				aText = aText.Trim('\r', '\n');
-				if (a.Type == AttachmentType.ChatHistory)
-					chatLogForAI += aText;
-				else
-					messageForAI += aText;
-			}
+			if (item.Messages == null)
+				item.Messages = new BindingList<MessageItem>();
 			// ShowSensitiveDataWarning
 			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
 			{
@@ -236,11 +243,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (result != MessageBoxResult.Yes)
 					return;
 			}
+
+			// Get current message with all attachments.
+			var chatLogMessages = ConvertMessageItemToChatMessage(item.IsSystemInstructions, m, includeAttachments: true);
+			// Prepare list of messages to send.
+			if (item.AttachContext.HasFlag(AttachmentType.ChatHistory))
+			{
+				// Get tokens available.
+				var tokensLeftForChatHistory = GetAvailableTokens(item.AiModel, chatLogMessages);
+				var historyMessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
+				var attachMessages = AppHelper.GetMessages(historyMessages, tokensLeftForChatHistory, ChatLogOptions);
+				chatLogMessages = attachMessages.Concat(chatLogMessages).ToList();
+				if (Client.IsTextCompletionMode(item.AiModel) && attachMessages.Count > 0)
+				{
+					// Create attachment.
+					var a0 = new MessageAttachments();
+					a0.Title = Global.AppSettings.ContextChatTitle;
+					a0.Instructions = Global.AppSettings.ContextChatInstructions;
+					a0.Type = AttachmentType.ChatHistory;
+					var options = new JsonSerializerOptions();
+					options.WriteIndented = true;
+					var json = JsonSerializer.Serialize(attachMessages, ChatLogOptions);
+					a0.Data = $"```json\r\n{json}\r\n```";
+					a0.IsMarkdown = true;
+					// Update messages.
+					var message = ConvertMessageItemToChatMessage(false, m, includeAttachments: true);
+					var content = JoinMessageParts(message[0].content, ConvertAttachmentsToString(a0));
+					chatLogMessages.Clear();
+					chatLogMessages.Add(new chat_completion_message(message_role.user, content));
+				}
+			}
+			var maxTokens = Client.GetMaxTokens(item.AiModel);
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
 			executeBeforeAddMessage?.Invoke();
 			item.Messages.Add(m);
-			var msgTokens = CountTokens(messageForAI);
+			var msgTokens = CountTokens(chatLogMessages, ChatLogOptions);
 			if (item.IsPreview)
 			{
 				var message = new MessageItem(SystemName, PreviewModeMessage);
@@ -264,8 +302,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					// Send body and context data.
 					var response = await client.QueryAI(
 						item.AiModel,
-						messageForAI,
-						chatLogForAI,
 						chatLogMessages,
 						item.Creativity,
 						item
@@ -286,52 +322,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			// If item type task, then allow to do auto removal.
 			if (Global.Tasks.Items.Contains(item) && item.AutoRemove)
 				_ = Global.MainControl.Dispatcher.BeginInvoke(new Action(() => { _ = Global.Tasks.Items.Remove(item); }));
-
-		}
-
-		public static ChatMessage ConvertToRequestMessage(MessageHistoryItem item)
-		{
-			return new ChatMessage()
-			{
-				Name = item.User,
-				Content = item.Body,
-				Role = item.Type == MessageType.Out
-					? ChatRole.User
-					: ChatRole.Assistant
-			};
 		}
 
 		public static JsonSerializerOptions ChatLogOptions = new JsonSerializerOptions
 		{
 			WriteIndented = true,
+			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
 			// Serialize enums as string for AI to understand.
 			Converters = { new JsonStringEnumConverter() }
 		};
 
-		public static List<MessageHistoryItem> GetMessagesToSend(TemplateItem item, MessageItem lastMessage = null)
+		public static int GetAvailableTokens(string aiModel, List<chat_completion_message> messages = null)
 		{
-			var messages = item.Messages.ToList();
-			if (lastMessage != null)
-				messages.Add(lastMessage);
-			var messageHistory = messages
-				// Include only chat messages.
-				.Where(x => x.Type == MessageType.Out || x.Type == MessageType.In)
-				// Exclude all preview messages.
-				.Where(x => !x.IsPreview)
-				.Select(x => new MessageHistoryItem()
-				{
-					Date = x.Date,
-					User = x.User,
-					Body = JoinMessageParts(x.BodyInstructions, x.Body),
-					Type = x.Type,
-				}).ToList();
-			var maxTokens = Client.GetMaxTokens(item.AiModel);
+			var maxTokens = Client.GetMaxTokens(aiModel);
 			// Split 50%/50% between request and response.
 			var maxRequesTokens = maxTokens / 2;
-			var usedTokens = lastMessage == null ? 0 : CountTokens(lastMessage.BodyInstructions);
+			var usedTokens = CountTokens(messages, ChatLogOptions);
 			var availableTokens = maxRequesTokens - usedTokens;
-			var messagesToSend = AppHelper.GetMessages(messageHistory, availableTokens, ChatLogOptions);
-			return messagesToSend;
+			return availableTokens;
 		}
 
 		#region Reserved Tempalte Functions
@@ -344,30 +352,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == FormatMessageTaskName);
 			if (rItem == null)
 				return text;
-			var messages = new List<ChatMessage>();
+			var messages = new List<chat_completion_message>();
 			// Crate a copy in order not to add to existing list.
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new ChatMessage()
-				{
-					Name = SystemName,
-					Content = rItem.TextInstructions,
-					Role = ChatRole.System
-				});
+				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				// Supply data for processing.
-				messages.Add(new ChatMessage()
-				{
-					Name = UserName,
-					Content = text,
-					Role = ChatRole.User
-				});
+				messages.Add(new chat_completion_message(message_role.user, text));
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				// Send body and context data.
 				var response = await client.QueryAI(
 					rItem.AiModel,
-					"",
-					"",
 					messages,
 					rItem.Creativity,
 					item
@@ -390,23 +386,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				return;
 			if (item.Messages.Count == 0)
 				return;
-			var messages = GetMessagesToSend(item).Select(x => ConvertToRequestMessage(x)).ToList();
+			var availableTokens = GetAvailableTokens(item.AiModel, null);
+			var allmessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
+			var messages = AppHelper.GetMessages(allmessages, availableTokens, ChatLogOptions);
 			// Crate a copy in order not to add to existing list.
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new ChatMessage()
-				{
-					Name = SystemName,
-					Content = rItem.TextInstructions,
-					Role = ChatRole.System
-				});
+				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				// Send body and context data.
 				var response = await client.QueryAI(
 					rItem.AiModel,
-					"",
-					"",
 					messages,
 					rItem.Creativity,
 					item
@@ -461,6 +452,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 		}
 
+		public static int CountTokens(object item, JsonSerializerOptions options)
+		{
+			var json = JsonSerializer.Serialize(item, options);
+			return CountTokens(json);
+		}
 
 		public static int CountTokens(string s)
 		{

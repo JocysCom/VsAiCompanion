@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -42,6 +41,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			PromptsPanel.AddPromptButton.Click += PromptsPanel_AddPromptButton_Click;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			UpdateSpellCheck();
+			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
+			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
 		}
 
 		private void PromptsPanel_AddPromptButton_Click(object sender, RoutedEventArgs e)
@@ -50,7 +51,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (promptItem == null)
 				return;
 			var promptString = string.Format(promptItem.Pattern, _item?.PromptOption);
-			InsertText(ChatPanel.DataTextBox, promptString, false, true);
+			AppHelper.InsertText(ChatPanel.DataTextBox, promptString, false, true);
 		}
 
 		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
@@ -86,7 +87,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.FocusDataTextBox();
 			}
 		}
-
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -279,15 +279,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		// Move to settings later.
+		public const string TextToProcess = "Text to process:";
+
 		private void _item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(TemplateItem.IsBusy))
+			switch (e.PropertyName)
 			{
-				ChatPanel.IsBusy = _item.IsBusy;
-				ChatPanel.UpdateButtons();
+				case nameof(TemplateItem.IsBusy):
+					ChatPanel.IsBusy = _item.IsBusy;
+					ChatPanel.UpdateButtons();
+					break;
+				case nameof(TemplateItem.Creativity):
+					OnPropertyChanged(nameof(CreativityName));
+					break;
+				case nameof(TemplateItem.IsSystemInstructions):
+					var text = _item.TextInstructions.Trim();
+					var containsDataHeader = text.Contains(TextToProcess) || text.EndsWith(":");
+					if (_item.IsSystemInstructions && text.Contains(TextToProcess))
+					{
+						var s = text.Replace(TextToProcess, "").TrimEnd();
+						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
+					}
+					else if (!_item.IsSystemInstructions && !containsDataHeader && !string.IsNullOrEmpty(text))
+					{
+						var s = ClientHelper.JoinMessageParts(text, TextToProcess);
+						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
+					}
+					break;
+				default:
+					break;
 			}
-			else if (e.PropertyName == nameof(TemplateItem.Creativity))
-				OnPropertyChanged(nameof(CreativityName));
 		}
 
 		private void ListToggleButton_Click(object sender, RoutedEventArgs e)
@@ -372,7 +394,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitMacros();
 		}
 
-
 		void InitMacros()
 		{
 			AddKeys(SelectionComboBox, null, AppHelper.GetReplaceMacrosSelection());
@@ -398,35 +419,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var item = (PropertyItem)cb.SelectedItem;
 			cb.SelectedIndex = alwaysSelectedIndex;
-			InsertText(ChatPanel.DataTextBox, "{" + item.Key + "}");
+			AppHelper.InsertText(ChatPanel.DataTextBox, "{" + item.Key + "}");
 			// Enable use of macros.
 			if (!_item.UseMacros)
 				_item.UseMacros = true;
-		}
-
-		public static void InsertText(TextBox box, string s, bool activate = false, bool addSpace = false)
-		{
-			// Check if we need to set the control active
-			if (activate)
-				box.Focus();
-			// Save the current position of the cursor
-			var cursorPosition = box.CaretIndex;
-			// Check if there is a selected text to replace
-			if (box.SelectionLength > 0)
-			{
-				// Replace the selected text
-				box.SelectedText = s;
-			}
-			else
-			{
-				// If cursor at the end
-				if (box.Text.Length > 0 && box.Text.Last() != ' ' && cursorPosition == box.Text.Length && addSpace)
-					s = " " + s;
-				// Insert the text at the cursor position
-				box.Text = box.Text.Insert(cursorPosition, s);
-				// Set the cursor after the inserted text
-				box.CaretIndex = cursorPosition + s.Length;
-			}
 		}
 
 		#endregion
@@ -468,6 +464,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(ShowPromptingCheckBox, "Guide and shape the AI's output in your desired style." +
 				" You can select a 'Prompt' category such as Tone, Format, Context, Role, or Instruction," +
 				" and then choose an option within that category to define how the AI should approach the content creation.");
+			AppHelper.AddHelp(IsSystemInstructionsCheckBox,
+				"If checked, instructions will be sent as a system message." +
+				" Otherwise, they will be added to the user's message.");
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
