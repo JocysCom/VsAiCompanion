@@ -142,6 +142,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 					group.Clear();
 				}
 			}
+			// If no messages were added because no message ends with the assistant message, then add all messages.
+			if (messageGroups.Count == 0 && source.Count > 0)
+				messageGroups.Add(source.ToArray());
 			return messageGroups;
 		}
 
