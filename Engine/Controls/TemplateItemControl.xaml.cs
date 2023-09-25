@@ -536,5 +536,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await AppHelper.UpdateModelsFromAPI(_item.AiService);
 		}
-	}
+
+		private void CodeButton_Click(object sender, RoutedEventArgs e)
+		{
+
+        }
+    }
 }

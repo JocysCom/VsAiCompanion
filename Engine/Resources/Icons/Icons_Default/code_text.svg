@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g>
+        <g>
+            <rect id="curve1" x="64" y="0" width="384" height="512" style="fill:url(#_Linear1);"/>
+            <g id="curve0" transform="matrix(1,0,0,1,-8,-8)">
+                <path d="M112,48L224,48L224,64L112,64L112,48ZM112,336L224,336L224,352L112,352L112,336ZM112,464L336,464L336,480L112,480L112,464ZM112,432L224,432L224,448L112,448L112,432ZM160,400L304,400L304,416L160,416L160,400ZM160,368L400,368L400,384L160,384L160,368ZM112,304L272,304L272,320L112,320L112,304ZM160,208L272,208L272,224L160,224L160,208ZM112,272L224,272L224,288L112,288L112,272ZM160,240L352,240L352,256L160,256L160,240ZM160,176L304,176L304,192L160,192L160,176ZM224,144L336,144L336,160L224,160L224,144ZM224,112L416,112L416,128L224,128L224,112ZM160,80L336,80L336,96L160,96L160,80Z" style="fill:url(#_Linear2);"/>
+            </g>
+        </g>
+        <g id="TEXT---Text" serif:id="TEXT - Text" transform="matrix(1.20833,0,0,1.45455,-53.3333,-360.727)">
+            <rect x="64" y="336" width="384" height="176" style="fill:rgb(82,186,216);"/>
+        </g>
+        <g id="TXT---Text" serif:id="TXT - Text" transform="matrix(0.976647,0,0,0.964333,-21.7148,-84.3283)">
+            <g transform="matrix(196.591,0,0,199.101,110.898,423.69)">
+                <path d="M0.551,-0.584L0.363,-0.584L0.363,-0L0.198,-0L0.198,-0.584L0.014,-0.584L0.014,-0.711L0.551,-0.711L0.551,-0.584Z" style="fill:white;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(196.591,0,0,199.101,221.289,423.69)">
+                <path d="M0.316,-0.471L0.434,-0.711L0.624,-0.711L0.42,-0.358L0.64,-0L0.439,-0L0.318,-0.245L0.197,-0L0.007,-0L0.216,-0.358L0.012,-0.711L0.201,-0.711L0.316,-0.471Z" style="fill:white;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(196.591,0,0,199.101,346.75,423.69)">
+                <path d="M0.551,-0.584L0.363,-0.584L0.363,-0L0.198,-0L0.198,-0.584L0.014,-0.584L0.014,-0.711L0.551,-0.711L0.551,-0.584Z" style="fill:white;fill-rule:nonzero;"/>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(310.858,512.001,-512.001,310.858,64,0)"><stop offset="0" style="stop-color:rgb(243,250,254);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(199,232,251);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(225.819,432.001,-432.001,225.819,112,48)"><stop offset="0" style="stop-color:rgb(135,149,165);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(115,129,145);stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>
