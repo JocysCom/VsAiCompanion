@@ -336,7 +336,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public static bool IsTextCompletionMode(string modelName)
 		{
-			return modelName.Contains("davinci");
+			return modelName.Contains("davinci") || modelName.Contains("instruct");
 		}
 
 		public static int GetMaxTokens(string modelName)

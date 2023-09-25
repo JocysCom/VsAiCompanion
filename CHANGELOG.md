@@ -1,3 +1,8 @@
+2023-09-25 v1.1.18
+
+- Fixed: Crashed when sending the message.
+- Fixed: Incorrect service being called for instruct models.
+
 2023-09-24 v1.1.16
 
 - New: Option to toggle between user and system message instructions.
