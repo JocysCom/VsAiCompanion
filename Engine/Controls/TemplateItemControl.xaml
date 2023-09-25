@@ -382,6 +382,7 @@
 						HorizontalAlignment="Right"
 						VerticalAlignment="Center"
 						Click="CodeButton_Click"
+						Tag="SQL"
 						ToolTip="Insert SQL Block">
 						<ContentControl Content="{StaticResource Icon_code_sql}" Focusable="False" />
 					</Button>
@@ -390,7 +391,9 @@
 						HorizontalAlignment="Right"
 						VerticalAlignment="Center"
 						Click="CodeButton_Click"
+						Tag="XML"
 						ToolTip="Insert XML Block">
+
 						<ContentControl Content="{StaticResource Icon_code_xml}" Focusable="False" />
 					</Button>
 					<Button
@@ -398,6 +401,7 @@
 						HorizontalAlignment="Right"
 						VerticalAlignment="Center"
 						Click="CodeButton_Click"
+						Tag="CSharp"
 						ToolTip="Insert C# Block">
 						<ContentControl Content="{StaticResource Icon_code_csharp}" Focusable="False" />
 					</Button>
@@ -406,6 +410,7 @@
 						HorizontalAlignment="Right"
 						VerticalAlignment="Center"
 						Click="CodeButton_Click"
+						Tag="TypeScript"
 						ToolTip="Insert TypeScript Block">
 						<ContentControl Content="{StaticResource Icon_code_typescript}" Focusable="False" />
 					</Button>
@@ -414,6 +419,7 @@
 						HorizontalAlignment="Right"
 						VerticalAlignment="Center"
 						Click="CodeButton_Click"
+						Tag="JavaScript"
 						ToolTip="Insert JavaScript Block">
 						<ContentControl Content="{StaticResource Icon_code_javascript}" Focusable="False" />
 					</Button>
@@ -422,6 +428,7 @@
 						HorizontalAlignment="Right"
 						VerticalAlignment="Center"
 						Click="CodeButton_Click"
+						Tag="Text"
 						ToolTip="Insert TEXT Block">
 						<ContentControl Content="{StaticResource Icon_code_text}" Focusable="False" />
 					</Button>
@@ -430,6 +437,7 @@
 						HorizontalAlignment="Right"
 						VerticalAlignment="Center"
 						Click="CodeButton_Click"
+						Tag="Log"
 						ToolTip="Insert LOG Block">
 						<ContentControl Content="{StaticResource Icon_code_log}" Focusable="False" />
 					</Button>

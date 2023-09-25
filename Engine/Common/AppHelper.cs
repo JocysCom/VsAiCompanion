@@ -467,7 +467,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Keep Focus on TextBox
 
-		private static IInputElement lastFocusedElement;
+		public static IInputElement lastFocusedElement;
 		private static void Control_PreviewMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			// Save the currently focused input element (if TextBox only).

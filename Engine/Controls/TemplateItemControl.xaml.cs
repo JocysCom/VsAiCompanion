@@ -539,7 +539,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CodeButton_Click(object sender, RoutedEventArgs e)
 		{
-
+			var button = (Button)sender;
+			var code = button.Tag as string;
+			if (string.IsNullOrEmpty(code))
+				return;
+			//var box = AppHelper.lastFocusedElement as TextBox;
+			var box = ChatPanel.DataTextBox;
+			if (box == null)
+				return;
+			AppHelper.InsertText(box, $"\r\n```{code}\r\n```\r\n", true, false);
         }
     }
 }
