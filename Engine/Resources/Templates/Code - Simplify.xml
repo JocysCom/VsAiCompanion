@@ -1,0 +1,35 @@
+﻿<TemplateItem>
+  <Name>Code - Simplify</Name>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IconType>.svg</IconType>
+  <TextInstructions>Simplify, refactor, and enhance the performance of the given code while preserving all essential comments.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACsVV247TMBB95yuMJSSQ0onHt9jZLUhkASGVi8QCgrfSZttAmlRJti1/zzibonYX&#xD;
+EIhb2ipzJjOemXPs9PTBblWyTd60RV2NOYLgLK9m9byoFmP++vzxyHHWdtNqPi3rKh/zquYP7t86&#xD;
+vX32Ijt/9/IRazcL9vL1w8nTjPFRHL9VWRyfnZ+xV2+eMASM40fPOePLrluncbzdbmGroG4W8ZNm&#xD;
+ul4WszamwDgEUlJMiyHCvJtzKhFW3hbzbkltCXGHs2VeLJbdHm2KfPuw3o25YIJJTV9+OAdyRpNV&#xD;
+7fgbtaUQItQaQtJdWVSfvhWI3vu4f9qHpu16OiMO1k3e5s0m3+cTKC6O8nsPzOpVHNj7XFLSRVGW&#xD;
+o+ayzNN8k1f1fH4yK4v1saftmvpTPqKC+Wy6Tpv6sjpyfqyL6ti7Krq8KQu6pQjmhHhjdJ0uWNdM&#xD;
+q/aiblZjvpp2TbG7K0Bo6xITifA5APeGrO9mSgRFV594YB/m9bnrabdk8zF/hgosRlKCMEmGEqz0&#xD;
+AVlnGemrEvyKBCi/DzQgrI7QgVVMgrZJROsY5wIwLrJghcuubAPGIFMgMIk0mESS7WWwhVKZBSN1&#xD;
+JMFoyzygp3IMZSQz1OAE1WOYgE7sECKJDGqXco3OCHhrwqKhMHGKvq/m92BogwCxMDRIPXtlh9YP&#xD;
+h39/JH/aLD7cpTBDlZW6N2jYe6Wghq9+e/+o3/ypXO9OeHygULz443IRNzSI9BOyMLDkHbUZWHJE&#xD;
+MI3qksCSIWIU8TkJdtKbKjCRJI6AFxQkB8KkMHsQCEuyAK4I86QWekrCiG7SEdKApqfMeTfp0RXw&#xD;
+GcVrT7QoUOhJREh0MjTbS9pbxyyPajqlRfc5FYC/yBzSFnTaR6O9cf0+UoLEpS2LzoNG+X1Oab9O&#xD;
+XIQ4QRoaj7dBRW/SnxMff1n8Gx1fd0gjAdHRAyJP+x/uCkspliYATSM7QCcndGINbe8BDCHv/9J8&#xD;
+11r7PclUOPQ3JfsXst0Y7ffloxcUCml+PM3/kLDv4EjGPeiN0/DHe//WF+KbzXZ4CAAA</IconData>
+</TemplateItem>
