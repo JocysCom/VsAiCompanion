@@ -18,12 +18,12 @@
 	</UserControl.Resources>
 	<Grid>
 		<StackPanel Orientation="Horizontal">
-			<ComboBox Name="PromptNameComboBox" ItemsSource="{Binding PromptNames, ElementName=This}" SelectedValue="{Binding PromptName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-			<Label
-				Padding="5,0,0,0"
-				VerticalAlignment="Center"
-				Content="Prompting:"
-				Opacity="0.4" />
+			<ComboBox
+				Name="PromptNameComboBox"
+				Margin="3,3,6,3"
+				ItemsSource="{Binding PromptNames, ElementName=This}"
+				SelectedValue="{Binding PromptName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<Label VerticalAlignment="Center" Content="Prompting:" Opacity="0.4" />
 			<Label Name="PatternStartLabel" VerticalAlignment="Center" />
 			<ComboBox Name="PromptOptionComboBox" ItemsSource="{Binding PromptOptions, ElementName=This}" SelectedValue="{Binding PromptOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			<Label Name="PatternEndLabel" VerticalAlignment="Center" />
