@@ -571,7 +571,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var caretIndex = box.CaretIndex;
 			var clipboardText = isCtrlDown
 				? $"{box.SelectedText}"
-				: RemoveIdent(Global.GetClipboard()?.Data ?? "");
+				: JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.Data ?? "");
 			var prefix = "";
 			// Add new line if caret is not on the new line.
 			if (caretIndex > 0 && box.Text[caretIndex - 1] != '\n')
@@ -587,25 +587,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? caretIndex + prefix.Length
 				: caretIndex + text.Length;
 			AppHelper.SetCaret(box, newIndex);
-		}
-
-		public static string RemoveIdent(string s)
-		{
-			s = s.Trim('\n', '\r', ' ', '\t').Replace("\r\n", "\n");
-			var lines = s.Split('\n');
-			var minIndent = lines
-				// Ignore first trimmed line.
-				.Where((x, i) => i > 0 && !string.IsNullOrWhiteSpace(x))
-				.Min(x => x.Length - x.TrimStart(' ', '\t').Length);
-			for (var i = 0; i < lines.Length; i++)
-			{
-				if (lines[i].Length > minIndent)
-					// Don't trim first line.
-					lines[i] = lines[i].Substring(i == 0 ? 0 : minIndent);
-				else if (string.IsNullOrWhiteSpace(lines[i]))
-					lines[i] = "";
-			}
-			return string.Join(Environment.NewLine, lines);
 		}
 
 	}
