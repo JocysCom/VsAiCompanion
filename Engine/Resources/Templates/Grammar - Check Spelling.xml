@@ -9,7 +9,7 @@ After making the corrections, always provide answer in two parts:&#xD;
 1. Fully corrected text.&#xD;
 2. Thorough list of errors found and the corresponding corrections made.&#xD;
 &#xD;
-Important:  Always wrap `fully corrected text` in the Markdown code block like this:&#xD;
+Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
 &#xD;
 ```text&#xD;
 {fully corrected text}&#xD;
