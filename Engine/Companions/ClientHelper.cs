@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls.Chat;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
-using System;
-using JocysCom.ClassLibrary.Controls.Chat;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
-using System.Text.Json.Serialization;
-using JocysCom.ClassLibrary.Configuration;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions
 {
@@ -45,9 +45,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public static List<chat_completion_message> ConvertMessageItemToChatMessage(bool isSystemInstructions, MessageItem message, bool includeAttachments)
 		{
 			var completionMessages = new List<chat_completion_message>();
-			// Skip preview messages.
-			if (message.IsPreview)
-				return completionMessages;
 			var body = message.Body;
 			if (includeAttachments && (message.Type == MessageType.In || message.Type == MessageType.Out))
 				body = JoinMessageParts(body, ConvertAttachmentsToString(message.Attachments.ToArray()));
@@ -251,7 +248,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			{
 				// Get tokens available.
 				var tokensLeftForChatHistory = GetAvailableTokens(item.AiModel, chatLogMessages);
-				var historyMessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
+				var historyMessages = item.Messages
+					// Exclude preview messages from the history.
+					.Where(x => !x.IsPreview)
+					.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
 				var attachMessages = AppHelper.GetMessages(historyMessages, tokensLeftForChatHistory, ChatLogOptions);
 				chatLogMessages = attachMessages.Concat(chatLogMessages).ToList();
 				if (Client.IsTextCompletionMode(item.AiModel) && attachMessages.Count > 0)
@@ -387,7 +387,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (item.Messages.Count == 0)
 				return;
 			var availableTokens = GetAvailableTokens(item.AiModel, null);
-			var allmessages = item.Messages.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
+			var allmessages = item.Messages
+				// Exclude preview messages from the history.
+				//.Where(x => !x.IsPreview)
+				.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
 			var messages = AppHelper.GetMessages(allmessages, availableTokens, ChatLogOptions);
 			// Crate a copy in order not to add to existing list.
 			try
@@ -493,7 +496,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				count++;  // count the last word if the string doesn't end with a punctuation or a whitespace
 			return count;
 		}
-
 
 	}
 }

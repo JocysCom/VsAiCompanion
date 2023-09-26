@@ -467,6 +467,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(IsSystemInstructionsCheckBox,
 				"If checked, instructions will be sent as a system message." +
 				" Otherwise, they will be added to the user's message.");
+			var codeButtons = ControlsHelper.GetAll<Button>(CodeButtonsPanel);
+			foreach (var codeButton in codeButtons)
+			{
+				var languageDisplayName = codeButton.ToolTip;
+				codeButton.ToolTip = $"Paste {languageDisplayName} code block";
+				AppHelper.AddHelp(codeButton,
+					$"Paste from your clipboard as an `{languageDisplayName}` code block. Hold CTRL to wrap selected text into `{languageDisplayName}` code block."
+				);
+			}
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
@@ -539,18 +548,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CodeButton_Click(object sender, RoutedEventArgs e)
 		{
+			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 			var button = (Button)sender;
-			var code = button.Tag as string;
-			if (string.IsNullOrEmpty(code))
+			var language = button.Tag as string;
+			if (string.IsNullOrEmpty(language))
 				return;
 			//var box = AppHelper.lastFocusedElement as TextBox;
 			var box = ChatPanel.DataTextBox;
 			if (box == null)
 				return;
 			var caretIndex = box.CaretIndex;
-			var clipboardText = Global.GetClipboard()?.Data;
-			var prefix = $"\r\n```{code}\r\n";
-			var suffix = $"```\r\n";
+			var clipboardText = isCtrlDown
+				? $"{box.SelectedText}"
+				: RemoveIdent(Global.GetClipboard()?.Data ?? "");
+			var prefix = "";
+			// Add new line if caret is not on the new line.
+			if (caretIndex > 0 && box.Text[caretIndex - 1] != '\n')
+				prefix += $"\r\n";
+			prefix += $"```{language}\r\n";
+			var suffix = $"\r\n```";
+			// Add new line if caret is not at the end of the line.
+			if (caretIndex < box.Text.Length && box.Text[caretIndex] != '\r')
+				suffix += $"\r\n";
 			var text = $"{prefix}{clipboardText}{suffix}";
 			AppHelper.InsertText(box, text, true, false);
 			var newIndex = string.IsNullOrEmpty(clipboardText)
@@ -558,5 +577,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: caretIndex + text.Length;
 			AppHelper.SetCaret(box, newIndex);
 		}
+
+		public static string RemoveIdent(string s)
+		{
+			s = s.Trim('\n', '\r', ' ', '\t').Replace("\r\n", "\n");
+			var lines = s.Split('\n');
+			var minIndent = lines
+				// Ignore first trimmed line.
+				.Where((x, i) => i > 0 && !string.IsNullOrWhiteSpace(x))
+				.Min(x => x.Length - x.TrimStart(' ', '\t').Length);
+			for (var i = 0; i < lines.Length; i++)
+			{
+				if (lines[i].Length > minIndent)
+					// Don't trim first line.
+					lines[i] = lines[i].Substring(i == 0 ? 0 : minIndent);
+				else if (string.IsNullOrWhiteSpace(lines[i]))
+					lines[i] = "";
+			}
+			return string.Join(Environment.NewLine, lines);
+		}
+
 	}
 }

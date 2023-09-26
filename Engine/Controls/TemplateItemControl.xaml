@@ -376,72 +376,84 @@
 				BorderBrush="{StaticResource BorderDark}"
 				BorderThickness="0,0,0,1"
 				Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
-				<StackPanel Margin="5,3,0,3" Orientation="Horizontal">
-					<Button
-						Margin="0,3,3,3"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Center"
-						Click="CodeButton_Click"
-						Tag="SQL"
-						ToolTip="Insert SQL Block">
-						<ContentControl Content="{StaticResource Icon_code_sql}" Focusable="False" />
-					</Button>
-					<Button
-						Margin="0,3,3,3"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Center"
-						Click="CodeButton_Click"
-						Tag="XML"
-						ToolTip="Insert XML Block">
+				<StackPanel Orientation="Horizontal">
+					<Border
+						Grid.Row="4"
+						Grid.Column="0"
+						Grid.ColumnSpan="3"
+						BorderBrush="{StaticResource BorderDark}"
+						BorderThickness="0,0,1,0"
+						Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
+						<StackPanel x:Name="CodeButtonsPanel" Margin="5,3,5,3" Orientation="Horizontal">
+							<Button
+								Margin="0,3,3,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
+								Tag="SQL"
+								ToolTip="SQL">
+								<ContentControl Content="{StaticResource Icon_code_sql}" Focusable="False" />
+							</Button>
+							<Button
+								Margin="0,3,3,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
+								Tag="XML"
+								ToolTip="XML">
 
-						<ContentControl Content="{StaticResource Icon_code_xml}" Focusable="False" />
-					</Button>
-					<Button
-						Margin="0,3,3,3"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Center"
-						Click="CodeButton_Click"
-						Tag="CSharp"
-						ToolTip="Insert C# Block">
-						<ContentControl Content="{StaticResource Icon_code_csharp}" Focusable="False" />
-					</Button>
-					<Button
-						Margin="0,3,3,3"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Center"
-						Click="CodeButton_Click"
-						Tag="TypeScript"
-						ToolTip="Insert TypeScript Block">
-						<ContentControl Content="{StaticResource Icon_code_typescript}" Focusable="False" />
-					</Button>
-					<Button
-						Margin="0,3,3,3"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Center"
-						Click="CodeButton_Click"
-						Tag="JavaScript"
-						ToolTip="Insert JavaScript Block">
-						<ContentControl Content="{StaticResource Icon_code_javascript}" Focusable="False" />
-					</Button>
-					<Button
-						Margin="0,3,3,3"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Center"
-						Click="CodeButton_Click"
-						Tag="Text"
-						ToolTip="Insert TEXT Block">
-						<ContentControl Content="{StaticResource Icon_code_text}" Focusable="False" />
-					</Button>
-					<Button
-						Margin="0,3,3,3"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Center"
-						Click="CodeButton_Click"
-						Tag="Log"
-						ToolTip="Insert LOG Block">
-						<ContentControl Content="{StaticResource Icon_code_log}" Focusable="False" />
-					</Button>
-					<Controls:PromptsControl x:Name="PromptsPanel" />
+								<ContentControl Content="{StaticResource Icon_code_xml}" Focusable="False" />
+							</Button>
+							<Button
+								Margin="0,3,3,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
+								Tag="CSharp"
+								ToolTip="C#">
+								<ContentControl Content="{StaticResource Icon_code_csharp}" Focusable="False" />
+							</Button>
+							<Button
+								Margin="0,3,3,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
+								Tag="TypeScript"
+								ToolTip="TypeScript">
+								<ContentControl Content="{StaticResource Icon_code_typescript}" Focusable="False" />
+							</Button>
+							<Button
+								Margin="0,3,3,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
+								Tag="JavaScript"
+								ToolTip="JavaScript">
+								<ContentControl Content="{StaticResource Icon_code_javascript}" Focusable="False" />
+							</Button>
+							<Button
+								Margin="0,3,3,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
+								Tag="Text"
+								ToolTip="Text">
+								<ContentControl Content="{StaticResource Icon_code_text}" Focusable="False" />
+							</Button>
+							<Button
+								Margin="0,3,3,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
+								Tag="Log"
+								ToolTip="Log">
+								<ContentControl Content="{StaticResource Icon_code_log}" Focusable="False" />
+							</Button>
+						</StackPanel>
+					</Border>
+					<StackPanel Margin="5,3,5,3" Orientation="Horizontal">
+						<Controls:PromptsControl x:Name="PromptsPanel" />
+					</StackPanel>
 				</StackPanel>
 			</Border>
 			<!--  Row 5  -->
