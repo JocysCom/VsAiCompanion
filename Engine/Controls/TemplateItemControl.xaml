@@ -436,18 +436,18 @@
 								HorizontalAlignment="Right"
 								VerticalAlignment="Center"
 								Click="CodeButton_Click"
-								Tag="Text"
-								ToolTip="Text">
-								<ContentControl Content="{StaticResource Icon_code_text}" Focusable="False" />
+								Tag="Log"
+								ToolTip="Log">
+								<ContentControl Content="{StaticResource Icon_code_log}" Focusable="False" />
 							</Button>
 							<Button
 								Margin="0,3,3,3"
 								HorizontalAlignment="Right"
 								VerticalAlignment="Center"
 								Click="CodeButton_Click"
-								Tag="Log"
-								ToolTip="Log">
-								<ContentControl Content="{StaticResource Icon_code_log}" Focusable="False" />
+								Tag="Text"
+								ToolTip="Text">
+								<ContentControl Content="{StaticResource Icon_code_text}" Focusable="False" />
 							</Button>
 						</StackPanel>
 					</Border>

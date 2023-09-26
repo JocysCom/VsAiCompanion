@@ -52,8 +52,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var promptItem = Global.PromptItems.Items.FirstOrDefault(x => x.Name == _item?.PromptName);
 			if (promptItem == null)
 				return;
+			var box = _item.ShowInstructions
+				? LastFocusedForCodeTextBox ?? ChatPanel.DataInstructionsTextBox
+				: ChatPanel.DataTextBox;
 			var promptString = string.Format(promptItem.Pattern, _item?.PromptOption);
-			AppHelper.InsertText(ChatPanel.DataTextBox, promptString, false, true);
+			AppHelper.InsertText(box, promptString, false, true);
 		}
 
 		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
@@ -562,9 +565,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var language = button.Tag as string;
 			if (string.IsNullOrEmpty(language))
 				return;
-			var box = LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox;
-			if (box == null)
-				return;
+			var box = _item.ShowInstructions
+				? LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox
+				: ChatPanel.DataTextBox;
 			var caretIndex = box.CaretIndex;
 			var clipboardText = isCtrlDown
 				? $"{box.SelectedText}"

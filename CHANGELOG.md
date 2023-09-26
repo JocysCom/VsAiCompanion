@@ -1,7 +1,13 @@
-2023-09-25 v1.1.18
+2023-09-26 v1.2.6
 
-- Fixed: Crashed when sending the message.
-- Fixed: Incorrect service being called for instruct models.
+- Fix: Crash when attempting to send a preview message.
+- New: Button toolbar for pasting and inserting markdown language blocks.
+- Update: Minor user interface enhancements and theme updates.
+
+- 2023-09-25 v1.1.18
+
+- Fix: Crashed when sending the message.
+- Fix: Incorrect service being called for instruct models.
 
 2023-09-24 v1.1.16
 
@@ -14,7 +20,7 @@
 
 2023-09-07 v1.1.6
 
-- Fixed: Task cloning, stop sending.
+- Fix: Task cloning, stop sending.
 - New: Added support for streaming replies.
 - New: Added service timeout option.
 - New: Warning when API URL is insecure and not local.
