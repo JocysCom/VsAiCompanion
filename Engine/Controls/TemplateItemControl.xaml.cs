@@ -29,6 +29,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.OnStop += ChatPanel_OnStop;
 			ChatPanel.MessagesPanel.WebBrowserDataLoaded += MessagesPanel_WebBrowserDataLoaded;
 			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += MessagesPanel_ScriptingHandler_OnMessageAction;
+			ChatPanel.DataTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
+			ChatPanel.DataInstructionsTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -50,8 +52,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var promptItem = Global.PromptItems.Items.FirstOrDefault(x => x.Name == _item?.PromptName);
 			if (promptItem == null)
 				return;
+			var box = _item.ShowInstructions
+				? LastFocusedForCodeTextBox ?? ChatPanel.DataInstructionsTextBox
+				: ChatPanel.DataTextBox;
 			var promptString = string.Format(promptItem.Pattern, _item?.PromptOption);
-			AppHelper.InsertText(ChatPanel.DataTextBox, promptString, false, true);
+			AppHelper.InsertText(box, promptString, false, true);
 		}
 
 		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
@@ -467,6 +472,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(IsSystemInstructionsCheckBox,
 				"If checked, instructions will be sent as a system message." +
 				" Otherwise, they will be added to the user's message.");
+			var codeButtons = ControlsHelper.GetAll<Button>(CodeButtonsPanel);
+			foreach (var codeButton in codeButtons)
+			{
+				var languageDisplayName = codeButton.ToolTip;
+				codeButton.ToolTip = $"Paste {languageDisplayName} code block";
+				AppHelper.AddHelp(codeButton,
+					$"Paste from your clipboard as an `{languageDisplayName}` code block. Hold CTRL to wrap selected text into `{languageDisplayName}` code block."
+				);
+			}
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
@@ -536,5 +550,44 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await AppHelper.UpdateModelsFromAPI(_item.AiService);
 		}
+
+		private TextBox LastFocusedForCodeTextBox;
+
+		private void ChatPanel_DataTextBox_GotFocus(object sender, RoutedEventArgs e)
+		{
+			LastFocusedForCodeTextBox = (TextBox)sender;
+		}
+
+		private void CodeButton_Click(object sender, RoutedEventArgs e)
+		{
+			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+			var button = (Button)sender;
+			var language = button.Tag as string;
+			if (string.IsNullOrEmpty(language))
+				return;
+			var box = _item.ShowInstructions
+				? LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox
+				: ChatPanel.DataTextBox;
+			var caretIndex = box.CaretIndex;
+			var clipboardText = isCtrlDown
+				? $"{box.SelectedText}"
+				: JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.Data ?? "");
+			var prefix = "";
+			// Add new line if caret is not on the new line.
+			if (caretIndex > 0 && box.Text[caretIndex - 1] != '\n')
+				prefix += $"\r\n";
+			prefix += $"```{language}\r\n";
+			var suffix = $"\r\n```";
+			// Add new line if caret is not at the end of the line.
+			if (caretIndex < box.Text.Length && box.Text[caretIndex] != '\r')
+				suffix += $"\r\n";
+			var text = $"{prefix}{clipboardText}{suffix}";
+			AppHelper.InsertText(box, text, true, false);
+			var newIndex = string.IsNullOrEmpty(clipboardText)
+				? caretIndex + prefix.Length
+				: caretIndex + text.Length;
+			AppHelper.SetCaret(box, newIndex);
+		}
+
 	}
 }

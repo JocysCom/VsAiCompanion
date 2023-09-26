@@ -72,7 +72,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (parts.Length != 2)
 				return;
 			PatternStartLabel.Content = parts[0];
-			PatternEndLabel.Content = parts[1];
+			var part1 = parts[1].TrimEnd(' ', '.');
+			PatternEndLabel.Content = part1;
+			PatternEndLabel.Visibility = string.IsNullOrEmpty(part1)
+				? System.Windows.Visibility.Collapsed
+				: System.Windows.Visibility.Visible;
 		}
 
 		void SetOptions(string promptName)

@@ -467,7 +467,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Keep Focus on TextBox
 
-		private static IInputElement lastFocusedElement;
+		public static IInputElement lastFocusedElement;
 		private static void Control_PreviewMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			// Save the currently focused input element (if TextBox only).
@@ -508,7 +508,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			int caretIndex = box.CaretIndex;
 			// trim end and leave caret position unchanged
 			box.Text = s;
-			box.CaretIndex = caretIndex < box.Text.Length ? caretIndex : box.Text.Length;
+			SetCaret(box, caretIndex);
+		}
+
+		public static void SetCaret(TextBox box, int index)
+		{
+			box.CaretIndex = index < box.Text.Length ? index : box.Text.Length;
 		}
 
 		public static void InsertText(TextBox box, string s, bool activate = false, bool addSpace = false)
