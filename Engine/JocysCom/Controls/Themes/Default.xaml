@@ -250,21 +250,6 @@
 		</Setter>
 	</Style>
 
-	<!--  DockPanel  -->
-	<!--<Style TargetType="DockPanel">
-		    <Setter Property="Margin" Value="8" />
-	    </Style>-->
-
-	<!--  DropDown ContentPresenter  -->
-	<Style x:Key="DropDownComboBox" TargetType="ComboBox">
-		<Setter Property="HorizontalAlignment" Value="Left" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
-		<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-		<Setter Property="Margin" Value="3" />
-	</Style>
-
 	<!--  DropDown Control Border  -->
 	<Style x:Key="DropDownControlBorder" TargetType="Border">
 		<Setter Property="Height" Value="26" />
@@ -273,21 +258,6 @@
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 		<Setter Property="CornerRadius" Value="5" />
-	</Style>
-
-	<!--  DropDown Label  -->
-	<Style x:Key="DropDownLabel" TargetType="Label">
-		<Setter Property="Margin" Value="0,0,5,0" />
-		<Setter Property="Padding" Value="0" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-	</Style>
-
-	<!--  DropDown ContentPresenter  -->
-	<Style x:Key="DropDownContentPresenter" TargetType="ContentPresenter">
-		<Setter Property="Margin" Value="5,0,26,0" />
-		<Setter Property="HorizontalAlignment" Value="Left" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="IsHitTestVisible" Value="False" />
 	</Style>
 
 	<!--  DropDown Control Triangle  -->
@@ -963,7 +933,8 @@
 							</MultiTrigger.Conditions>
 							<Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="{StaticResource BackgroundDarkSelected}" />
 						</MultiTrigger>
-						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}, Path=Content, Mode=OneTime}" Value="">
+						<DataTrigger Binding="{Binding Path=Content, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=OneTime}" Value="">
+							<!--<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}, Path=Content, Mode=OneTime}" Value="">-->
 							<Setter TargetName="contentPresenter" Property="Visibility" Value="Collapsed" />
 						</DataTrigger>
 					</ControlTemplate.Triggers>
@@ -1320,6 +1291,25 @@
 		Removed static resource link to "<BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>" from style which caused memory leak.
 	-->
 
+	<!--  ComboBox Style  -->
+	<Style x:Key="ComboBox_Style" TargetType="ComboBox">
+		<Setter Property="HorizontalAlignment" Value="Left" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="SnapsToDevicePixels" Value="True" />
+		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
+		<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
+		<Setter Property="Margin" Value="3" />
+	</Style>
+
+	<!--  ComboBox ContentPresenter  -->
+	<Style x:Key="ComboBoxContentPresenter" TargetType="ContentPresenter">
+		<Setter Property="Margin" Value="0,0,5,0" />
+		<Setter Property="HorizontalAlignment" Value="Left" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="IsHitTestVisible" Value="False" />
+	</Style>
+
 	<!--  ComboBoxItem  -->
 	<Style x:Key="ComboBoxItem_Default" TargetType="ComboBoxItem">
 		<Setter Property="Template">
@@ -1343,52 +1333,46 @@
 		</Setter>
 	</Style>
 
-	<!--  ComboBoxTogleButton (SelectedItem) and (Arrow)  -->
-	<Style x:Key="ComboBoxToggleButton_Default" TargetType="ToggleButton">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="ToggleButton">
-					<Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition />
-								<ColumnDefinition Width="16" />
-							</Grid.ColumnDefinitions>
-							<Label Name="ComboBoxLabel" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Tag}" Style="{StaticResource DropDownLabel}" />
-							<Path Style="{StaticResource DropDownControlTriangle}" />
-						</Grid>
-					</Border>
-					<!--  Triggers  -->
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsMouseOver" Value="True">
-							<Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-
 	<!--  ComboBox  -->
-	<Style x:Key="ComboBox_Default" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
+	<Style x:Key="ComboBox_Default" BasedOn="{StaticResource ComboBox_Style}" TargetType="ComboBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ComboBox">
-					<Grid>
-						<!--  Toggle Button settings  -->
+					<StackPanel>
+						<!--  Toggle Button (SelectedItem) and (Arrow)  -->
 						<ToggleButton
 							Name="ToggleButton"
 							ClickMode="Press"
 							Focusable="false"
-							IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-							Style="{StaticResource ComboBoxToggleButton_Default}" />
-						<!--  Selected item settings  -->
-						<ContentPresenter
-							Name="ContentSite"
-							Content="{TemplateBinding SelectionBoxItem}"
-							ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-							Style="{StaticResource DropDownContentPresenter}" />
+							IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+							<ToggleButton.Template>
+								<ControlTemplate TargetType="ToggleButton">
+									<!--  Border  -->
+									<Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
+										<Grid>
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition />
+												<ColumnDefinition Width="16" />
+											</Grid.ColumnDefinitions>
+											<!--  Selected Item  -->
+											<ContentPresenter
+												Name="ContentSite"
+												Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=SelectionBoxItem}"
+												ContentTemplateSelector="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=ItemTemplateSelector}"
+												Style="{StaticResource ComboBoxContentPresenter}" />
+											<!--  Triangle  -->
+											<Path Style="{StaticResource DropDownControlTriangle}" />
+										</Grid>
+									</Border>
+									<!--  Triggers  -->
+									<ControlTemplate.Triggers>
+										<Trigger Property="IsMouseOver" Value="True">
+											<Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+										</Trigger>
+									</ControlTemplate.Triggers>
+								</ControlTemplate>
+							</ToggleButton.Template>
+						</ToggleButton>
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
@@ -1410,7 +1394,7 @@
 								</ScrollViewer>
 							</Grid>
 						</Popup>
-					</Grid>
+					</StackPanel>
 					<!--  Triggers  -->
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsEnabled" Value="False">
@@ -1422,89 +1406,47 @@
 		</Setter>
 	</Style>
 
-	<!--  ComboBox Static TogleButton (SelectedItem Triangle)  -->
-	<Style x:Key="ComboBoxToggleButton_Static" TargetType="ToggleButton">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="ToggleButton">
-					<Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition />
-								<ColumnDefinition Width="16" />
-							</Grid.ColumnDefinitions>
-							<Label Name="ComboBoxLabel" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" Style="{StaticResource DropDownLabel}" />
-							<Path Style="{StaticResource DropDownControlTriangle}" />
-						</Grid>
-					</Border>
-					<!--  Triggers  -->
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsMouseOver" Value="True">
-							<Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-						</Trigger>
-						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" Value="">
-							<Setter TargetName="ComboBoxLabel" Property="Visibility" Value="Collapsed" />
-							<Setter TargetName="DropDownControlBorder" Property="Width" Value="26" />
-						</DataTrigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-
-	<!--  ComboBox Dynamic TogleButton (SelectedItem Triangle)  -->
-	<Style x:Key="ComboBoxToggleButton_Dynamic" TargetType="ToggleButton">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="ToggleButton">
-					<Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition />
-								<ColumnDefinition Width="16" />
-							</Grid.ColumnDefinitions>
-							<Label Name="ComboBoxLabel" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text}" Style="{StaticResource DropDownLabel}" />
-							<Path Style="{StaticResource DropDownControlTriangle}" />
-						</Grid>
-					</Border>
-					<!--  Triggers  -->
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsMouseOver" Value="True">
-							<Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-						</Trigger>
-						<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text}" Value="">
-							<Setter TargetName="ComboBoxLabel" Property="Visibility" Value="Collapsed" />
-							<Setter TargetName="DropDownControlBorder" Property="Width" Value="26" />
-						</DataTrigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-
-	<!--  ComboBox Static  -->
-	<Style x:Key="ComboBox_Static" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
-		<Setter Property="IsEditable" Value="True" />
-		<Setter Property="IsReadOnly" Value="True" />
-		<Setter Property="Text" Value="" />
+	<!--  ComboBox Static - Text="Value" or Text=""  -->
+	<Style x:Key="ComboBox_Static" BasedOn="{StaticResource ComboBox_Style}" TargetType="ComboBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ComboBox">
-					<Grid>
-						<!--  Toggle Button settings  -->
+					<StackPanel>
+						<!--  Toggle Button (SelectedItem) and (Arrow)  -->
 						<ToggleButton
 							Name="ToggleButton"
 							ClickMode="Press"
 							Focusable="false"
-							IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-							Style="{StaticResource ComboBoxToggleButton_Static}" />
-						<!--  Selected item settings  -->
-						<ContentPresenter
-							Name="ContentSite"
-							Content="{TemplateBinding SelectionBoxItem}"
-							ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-							Style="{StaticResource DropDownContentPresenter}" />
+							IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+							<ToggleButton.Template>
+								<ControlTemplate TargetType="ToggleButton">
+									<!--  Border  -->
+									<Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
+										<Grid>
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition />
+												<ColumnDefinition Width="16" />
+											</Grid.ColumnDefinitions>
+											<!--  Static Selected Item  -->
+											<ContentPresenter Name="ContentSite" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" Style="{StaticResource ComboBoxContentPresenter}" />
+											<!--  Triangle  -->
+											<Path Style="{StaticResource DropDownControlTriangle}" />
+										</Grid>
+									</Border>
+									<!--  Triggers  -->
+									<ControlTemplate.Triggers>
+										<Trigger Property="IsMouseOver" Value="True">
+											<Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+										</Trigger>
+										<!--  Static Trigger - if (Text="") Width="26"  -->
+										<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" Value="">
+											<Setter TargetName="ContentSite" Property="Visibility" Value="Collapsed" />
+											<Setter TargetName="DropDownControlBorder" Property="Width" Value="26" />
+										</DataTrigger>
+									</ControlTemplate.Triggers>
+								</ControlTemplate>
+							</ToggleButton.Template>
+						</ToggleButton>
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
@@ -1526,7 +1468,7 @@
 								</ScrollViewer>
 							</Grid>
 						</Popup>
-					</Grid>
+					</StackPanel>
 					<!--  Triggers  -->
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsEnabled" Value="False">
@@ -1538,30 +1480,47 @@
 		</Setter>
 	</Style>
 
-	<!--  ComboBox Dynamic  -->
-	<Style x:Key="ComboBox_Dynamic" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
-		<Setter Property="IsEditable" Value="True" />
-		<Setter Property="IsReadOnly" Value="True" />
-		<Setter Property="Text" Value="" />
-		<Setter Property="Margin" Value="3" />
+	<!--  ComboBox Dynamic - Text="Value" or Text=""  -->
+	<Style x:Key="ComboBox_Dynamic" BasedOn="{StaticResource ComboBox_Style}" TargetType="ComboBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ComboBox">
-					<Grid>
-						<!--  Toggle Button settings  -->
+					<StackPanel>
+						<!--  Toggle Button (SelectedItem) and (Arrow)  -->
 						<ToggleButton
 							Name="ToggleButton"
 							ClickMode="Press"
 							Focusable="false"
-							IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-							Style="{StaticResource ComboBoxToggleButton_Dynamic}" />
-						<!--  Selected item settings  -->
-						<ContentPresenter
-							Name="ContentSite"
-							Content="{TemplateBinding SelectionBoxItem}"
-							ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-							Style="{StaticResource DropDownContentPresenter}" />
+							IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+							<ToggleButton.Template>
+								<ControlTemplate TargetType="ToggleButton">
+									<!--  Border  -->
+									<Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
+										<Grid>
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition />
+												<ColumnDefinition Width="16" />
+											</Grid.ColumnDefinitions>
+											<!--  Dynamic Selected Item  -->
+											<ContentPresenter Name="ContentSite" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text}" Style="{StaticResource ComboBoxContentPresenter}" />
+											<!--  Triangle  -->
+											<Path Style="{StaticResource DropDownControlTriangle}" />
+										</Grid>
+									</Border>
+									<!--  Triggers  -->
+									<ControlTemplate.Triggers>
+										<Trigger Property="IsMouseOver" Value="True">
+											<Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+										</Trigger>
+										<!--  Dynamic Trigger - if (Text="") Width="26"  -->
+										<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text}" Value="">
+											<Setter TargetName="ContentSite" Property="Visibility" Value="Collapsed" />
+											<Setter TargetName="DropDownControlBorder" Property="Width" Value="26" />
+										</DataTrigger>
+									</ControlTemplate.Triggers>
+								</ControlTemplate>
+							</ToggleButton.Template>
+						</ToggleButton>
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
@@ -1583,7 +1542,7 @@
 								</ScrollViewer>
 							</Grid>
 						</Popup>
-					</Grid>
+					</StackPanel>
 					<!--  Triggers  -->
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsEnabled" Value="False">
@@ -1595,12 +1554,7 @@
 		</Setter>
 	</Style>
 
-	<!--  ComboBoxTextBox  -->
-	<!--<ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
-			<Border x:Name="PART_ContentHost" />
-		</ControlTemplate>-->
-
-	<!--  ComboBox Default  -->
+	<!--  ListView Default  -->
 	<!--<Style TargetType="ListView">
         <Setter Property="Background" Value="{StaticResource Color.Black.4}"/>
         <Setter Property="Foreground" Value="Black"/>
