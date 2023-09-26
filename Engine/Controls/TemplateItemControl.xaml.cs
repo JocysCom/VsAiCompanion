@@ -547,7 +547,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var box = ChatPanel.DataTextBox;
 			if (box == null)
 				return;
-			AppHelper.InsertText(box, $"\r\n```{code}\r\n```\r\n", true, false);
-        }
-    }
+			var caretIndex = box.CaretIndex;
+			var clipboardText = Global.GetClipboard()?.Data;
+			var prefix = $"\r\n```{code}\r\n";
+			var suffix = $"```\r\n";
+			var text = $"{prefix}{clipboardText}{suffix}";
+			AppHelper.InsertText(box, text, true, false);
+			var newIndex = string.IsNullOrEmpty(clipboardText)
+				? caretIndex + prefix.Length
+				: caretIndex + text.Length;
+			AppHelper.SetCaret(box, newIndex);
+		}
+	}
 }
