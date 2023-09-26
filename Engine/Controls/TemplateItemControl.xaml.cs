@@ -29,6 +29,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.OnStop += ChatPanel_OnStop;
 			ChatPanel.MessagesPanel.WebBrowserDataLoaded += MessagesPanel_WebBrowserDataLoaded;
 			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += MessagesPanel_ScriptingHandler_OnMessageAction;
+			ChatPanel.DataTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
+			ChatPanel.DataInstructionsTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -546,6 +548,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await AppHelper.UpdateModelsFromAPI(_item.AiService);
 		}
 
+		private TextBox LastFocusedForCodeTextBox;
+
+		private void ChatPanel_DataTextBox_GotFocus(object sender, RoutedEventArgs e)
+		{
+			LastFocusedForCodeTextBox = (TextBox)sender;
+		}
+
 		private void CodeButton_Click(object sender, RoutedEventArgs e)
 		{
 			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
@@ -553,8 +562,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var language = button.Tag as string;
 			if (string.IsNullOrEmpty(language))
 				return;
-			//var box = AppHelper.lastFocusedElement as TextBox;
-			var box = ChatPanel.DataTextBox;
+			var box = LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox;
 			if (box == null)
 				return;
 			var caretIndex = box.CaretIndex;
