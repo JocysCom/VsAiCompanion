@@ -376,10 +376,12 @@ namespace JocysCom.ClassLibrary.Text
 		{
 			s = s.Trim('\n', '\r', ' ', '\t').Replace("\r\n", "\n");
 			var lines = s.Split('\n');
-			var minIndent = lines
+			var checkLines = lines
 				// Ignore first trimmed line.
-				.Where((x, i) => i > 0 && !string.IsNullOrWhiteSpace(x))
-				.Min(x => x.Length - x.TrimStart(' ', '\t').Length);
+				.Where((x, i) => i > 0 && !string.IsNullOrWhiteSpace(x)).ToArray();
+			if (checkLines.Length == 0)
+				return s;
+			var minIndent = checkLines.Min(x => x.Length - x.TrimStart(' ', '\t').Length);
 			for (var i = 0; i < lines.Length; i++)
 			{
 				if (lines[i].Length > minIndent)
