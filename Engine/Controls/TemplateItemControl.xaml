@@ -386,7 +386,7 @@
 						Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
 						<StackPanel x:Name="CodeButtonsPanel" Margin="5,3,5,3" Orientation="Horizontal">
 							<Button
-								Margin="5,3,3,3"
+								Margin="3,3,3,3"
 								HorizontalAlignment="Right"
 								VerticalAlignment="Center"
 								Click="CodeButton_Click"
@@ -441,7 +441,7 @@
 								<ContentControl Content="{StaticResource Icon_code_log}" Focusable="False" />
 							</Button>
 							<Button
-								Margin="0,3,5,3"
+								Margin="0,3,3,3"
 								HorizontalAlignment="Right"
 								VerticalAlignment="Center"
 								Click="CodeButton_Click"
