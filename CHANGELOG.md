@@ -2,6 +2,7 @@
 
 - Fix: Crash when attempting to send a preview message.
 - New: Button toolbar for pasting and inserting markdown language blocks.
+- New: Added "Code - Simplify" template.
 - Update: Minor user interface enhancements and theme updates.
 
 - 2023-09-25 v1.1.18
