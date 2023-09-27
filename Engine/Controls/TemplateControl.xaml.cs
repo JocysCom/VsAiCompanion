@@ -45,6 +45,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set
 			{
 				_ItemControlType = value;
+				if (ControlsHelper.IsDesignMode(this))
+					return;
 				ListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
 				// Update panel settings.
 				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;

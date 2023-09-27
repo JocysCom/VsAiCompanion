@@ -59,6 +59,15 @@
 				</TabItem.Header>
 				<controls:TemplateControl x:Name="TemplatesPanel" ItemControlType="Template" />
 			</TabItem>
+			<TabItem x:Name="FineTuningTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_settings}" />
+						<Label Content="Fine-Tuning" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:FineTuningControl x:Name="FineTuningPanel" />
+			</TabItem>
 			<TabItem x:Name="OptionsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
