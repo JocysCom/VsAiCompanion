@@ -418,6 +418,15 @@
 								HorizontalAlignment="Right"
 								VerticalAlignment="Center"
 								Click="CodeButton_Click"
+								Tag="PowerShell"
+								ToolTip="PowerShell">
+								<ContentControl Content="{StaticResource Icon_code_powershell}" Focusable="False" />
+							</Button>
+							<Button
+								Margin="0,3,3,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
 								Tag="TypeScript"
 								ToolTip="TypeScript">
 								<ContentControl Content="{StaticResource Icon_code_typescript}" Focusable="False" />
