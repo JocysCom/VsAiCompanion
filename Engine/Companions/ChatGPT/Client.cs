@@ -1,18 +1,18 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System;
-using System.Net.Http.Headers;
-using System.Linq;
-using System.Collections.Generic;
-using Azure.Core;
+﻿using Azure;
 using Azure.AI.OpenAI;
-using Azure;
+using Azure.Core;
 using Azure.Identity;
-using System.Text;
-using System.Text.Json.Serialization;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -202,7 +202,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Text Completion mode.
 				if (IsTextCompletionMode(modelName))
 				{
-					var prompts = messagesToSend.Select(x=>x.content).ToArray();
+					var prompts = messagesToSend.Select(x => x.content).ToArray();
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
@@ -342,12 +342,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public static int GetMaxTokens(string modelName)
 		{
 			modelName = modelName.ToLowerInvariant();
-			if (modelName.Contains("gpt-4-32k"))
-				return 32768;
+			if (modelName.Contains("-64k"))
+				return 64 * 1024;
+			if (modelName.Contains("-32k"))
+				return 32 * 1024;
+			if (modelName.Contains("-16k"))
+				return 16 * 1024;
 			if (modelName.Contains("gpt-4"))
 				return 8192;
-			if (modelName.Contains("gpt-3-16k") || modelName.Contains("gpt-16k"))
-				return 16384;
 			if (modelName.Contains("gpt-35-turbo"))
 				return 4096;
 			if (modelName.Contains("gpt"))
