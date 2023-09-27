@@ -11,5 +11,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			InitializeComponent();
 		}
+
+		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+        }
+
+		private void ValidateButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
+
+		private void UploadButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
+
+		private void CreateModel_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
 	}
 }

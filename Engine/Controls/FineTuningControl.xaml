@@ -2,14 +2,16 @@
 	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.FineTuningControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="450"
-	d:DesignWidth="800"
+	d:DesignHeight="250"
+	d:DesignWidth="600"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
+			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
@@ -18,6 +20,99 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid>
-		<StackPanel />
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0" Margin="3,0,3,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Label Margin="0,6,0,0" VerticalAlignment="Center" Content="Data Folder" />
+			<TextBox
+				Name="DataFolderTextBox"
+				Grid.Column="1"
+				Margin="6,6,6,0"
+				VerticalAlignment="Center"
+				IsReadOnly="True" />
+			<Button
+				Name="OpenButton"
+				Grid.Column="2"
+				Margin="0,6,3,0"
+				Click="OpenButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_FolderOpen}" />
+					<Label Content="Open..." />
+				</StackPanel>
+			</Button>
+		</Grid>
+		<StackPanel Grid.Row="1" Orientation="Horizontal">
+			<Button
+				Name="ValidateButton"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Top"
+				x:FieldModifier="public"
+				Click="ValidateButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+					<Label Content="Validate" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="UploadButton"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Top"
+				x:FieldModifier="public"
+				Click="UploadButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Export}" Focusable="False" />
+					<Label Content="Upload" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="CreateModelButton"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Top"
+				x:FieldModifier="public"
+				Click="CreateModel_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+					<Label Content="Create a fine-tuned model" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+		<Border
+			Grid.Row="2"
+			Grid.Column="0"
+			VerticalAlignment="Stretch"
+			Background="{StaticResource BackgroundLight}">
+			<StackPanel VerticalAlignment="Bottom">
+				<TextBox
+					Name="LogTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
+			</StackPanel>
+		</Border>
+
 	</Grid>
 </UserControl>
