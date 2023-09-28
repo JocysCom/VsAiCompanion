@@ -1,5 +1,5 @@
 ﻿<TemplateItem>
-  <Name>AI Tuning - Step 1 - Convert to Messages</Name>
+  <Name>® AI Tuning - Step 1 - Convert to Messages</Name>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Convert the supplied text to JSONL (JSON Lines) format, which is used for fine-tuning AI models. Please adhere to the following specification for the reply:&#xD;

@@ -1,5 +1,5 @@
 ﻿<TemplateItem>
-  <Name>AI Tuning - Step 3 - Split Messages</Name>
+  <Name>® AI Tuning - Step 3 - Split Messages</Name>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Data will be supplied in a JSONL (JSON Lines) format. This specification of must be used for user prompt and assistant answer:&#xD;
