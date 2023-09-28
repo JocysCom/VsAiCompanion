@@ -33,57 +33,18 @@ Expected answer is this:&#xD;
 ```&#xD;
 </TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Text>This reserved task using AI to process messages for fine-tuning an AI model.</Text>
   <Settings />
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages>
     <MessageItem>
-      <Id>6624943c50384d34bcc7b6efe2db8da1</Id>
-      <User>User</User>
-      <BodyInstructions>Data will be supplied in a JSONL (JSON Lines) format. This specification of must be used for user prompt and assistant answer:&#xD;
-&#xD;
-```JSON&#xD;
-{&#xD;
-  "object": {&#xD;
-    "messages": [&#xD;
-      {&#xD;
-        "role": "string",&#xD;
-        "content": "string"&#xD;
-      }&#xD;
-    ]&#xD;
-  }&#xD;
-}&#xD;
-```&#xD;
-&#xD;
-Reply with the same JSONL specification format.&#xD;
-&#xD;
-Analyze the user prompt and assistant's answer. Remove irrelevant content from the assistant's answer and place it in a new  the new `assistant` content of new `messages` object. Create a new `user` prompt for the new `assistant` content.&#xD;
-&#xD;
-```JSON&#xD;
-{"messages": [{"role": "system", "content": "Please behave line a helful assistant"}, {"role": "user", "content": "What is the capital of France?"}, {"role": "assistant", "content": "The capital of France is Paris. The capital of Germany is Berlin."}]}&#xD;
-```&#xD;
-&#xD;
-Expected answer is this:&#xD;
-&#xD;
-```JSON&#xD;
-{"messages": [{"role": "system", "content": "Please behave line a helful assistant"}, {"role": "user", "content": "What is the capital of France?"}, {"role": "assistant", "content": "The capital of France is Paris."}]},&#xD;
-{"messages": [{"role": "system", "content": "Please behave line a helful assistant"}, {"role": "user", "content": "What is the capital of Germany?"}, {"role": "assistant", "content": "The capital of Germany is Berlin."}]}&#xD;
-```&#xD;
-</BodyInstructions>
-      <Body>{"messages": [{"role": "system", "content": "Please behave line a helful assistant"}, {"role": "user", "content": "What is the capital of Estonia?"}, {"role": "assistant", "content": "The capital of France is Paris. The capital of Estonia is Tallinn."}]}</Body>
+      <Id>198d0ee69d6649d69a365ec22788a0e7</Id>
+      <Body>This reserved task using AI to process messages for fine-tuning an AI model.</Body>
       <Attachments />
-      <Date>2023-09-28T10:24:35.3257644+01:00</Date>
-      <Type>Out</Type>
-      <IsEnabled>false</IsEnabled>
-    </MessageItem>
-    <MessageItem>
-      <Id>0eecdf061e554f918687283b9b32d3a4</Id>
-      <User>Ai</User>
-      <Body>{"messages": [{"role": "system", "content": "Please behave line a helpful assistant"}, {"role": "user", "content": "What is the capital of Estonia?"}, {"role": "assistant", "content": "The capital of Estonia is Tallinn."}]},
-{"messages": [{"role": "system", "content": "Please behave line a helpful assistant"}, {"role": "user", "content": "What is the capital of France?"}, {"role": "assistant", "content": "The capital of France is Paris."}]}</Body>
-      <Attachments />
-      <Date>2023-09-28T10:24:41.2691991+01:00</Date>
-      <Type>In</Type>
+      <Date>2023-09-28T15:02:16.1566823+01:00</Date>
+      <User>System</User>
+      <Type>Information</Type>
       <IsEnabled>false</IsEnabled>
     </MessageItem>
   </Messages>

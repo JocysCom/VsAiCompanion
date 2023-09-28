@@ -3,10 +3,21 @@
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Data will be supplied in a JSONL (JSON Lines) format. Check if the question matches the answer. Update the question to match the answer.</TextInstructions>
+  <Text>This reserved task using AI to process messages for fine-tuning an AI model.</Text>
   <Settings />
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>
-  <Messages />
+  <Messages>
+    <MessageItem>
+      <Id>621cb809662e4c17920e29bdbb72756e</Id>
+      <User>System</User>
+      <Type>Information</Type>
+      <Body>This reserved task using AI to process messages for fine-tuning an AI model.</Body>
+      <Attachments />
+      <Date>2023-09-28T15:02:12.5356797+01:00</Date>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+  </Messages>
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>
   <AutoOperation>None</AutoOperation>
