@@ -1,0 +1,43 @@
+﻿<TemplateItem>
+  <Name>AI Tuning - Step 5 - Resolve Conflicts</Name>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IconType>.svg</IconType>
+  <Settings />
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsFavorite>false</IsFavorite>
+  <IsChecked>false</IsChecked>
+  <IsEnabled>false</IsEnabled>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACtVY247bNhB9L9B/IJSXBDBl3kkFdh4aFGkf2gAN8gGyRK/VyJIha9fefH1nKNm1&#xD;
+F7KxqpsF1oBNzpDDOWc4vHm2fbgjD77ZFnU1j3jMo59/IvDZr8tqO49Wbbt5P53udrt4J+O6uZsK&#xD;
+xtgUjE77vd+XRfVtqDdPkmQaWiOyK/J2NY80FxFZ+eJu1fbCQ+F3v9T7ecQII6DBb/ShG3/WFm3p&#xD;
+P2R11TZ1STZp5UtSgDibdi19t9xvs4FeZNnUa9KuPPkdpF/3G98Uvsp8nIH6E/1Yl6XPWuAek4/1&#xD;
+5rFBVGTxSH7/8+Pnv76QT+vFb+Qt8imqrG62aPYunk2Dt6Pn5bavBxnI+rT51KQ5eGrJngOviDxC&#xD;
+oVxE9gJKbWIrrNKgRlGxWAkO0l1v9LUqWgj+/dY3XzZp5j9XX7c+IkU+j7K6rBvKD+E5et229YbU&#xD;
+y+XWt8EfyjR0nkdvEp6ydBlNrxrxJ0aW26U7N5pNz8k9k7YUHW8uTMy561kbFUMqjWEtxrE2iTVO&#xD;
+jGStvVlY83+w7ieb8yTmiezn2iYxrAg1hrUcx3qRZybnI1kv+GKR2VtYG9XRloL1vJmLjdU9b+ls&#xD;
+LIQZw1uN470Mn5G8PfPW57fwFsw9IS60AOLqnPgI3vpV8JZaPOEtE3PbhJtXQdz161tKc9jVVMyN&#xD;
+O/JOYm3dGN52HG/lF2Y5dlvjIvHe35ToQj0hLoy7jbh7FcSlcU+IK27ixJmedwLTr+0I2snYPM8Y&#xD;
+G7uhZ9wpxm6ab9sv8FAJ8x004UjjeIphXJ5/Y2EvsLpzB+vb3cIaT+0z0kHxXznzV8FZwnUUFzFU&#xD;
+OVexTYRLDokuYudwEw8hMCaGVY6Nzw/ByDubX+pMj7695CLlN91UE3egHaLgFAYkbO4KlrploQVF&#xD;
+rWK4vY8JgHyBAGRaCvGs6xs+XY7PldkdWRZlOY+qugLQWKfNfennkX/wVZ3n6Kapv/lDj06i/UOO&#xD;
+HxXoKks382hx37Zn2r/rAp6V66L1zVEfpLKAAm+JR3Webldp06SP8+hMdxKpJbzv6DJdF+XjETSq&#xD;
+dv1r8kS1Lb4fYbd+39K0ylYYrAOTR+S5LvZ0Ufoqp+s69+9JVTfrtDydsdkmbVcEpvMPbibKlcqx&#xD;
+CcuSCSMgW/zhpmQT6VTGJgmhFmRCOzXtOlPsjSpquyJY0M6EJsSiBkeC4nufO/fNg4fU6efnvinf&#xD;
+vunz6d35NB/hwZt5Ai8tGJmbsVB6i2DQ9T+jCZ0H0IkBdOISuqvBC+5pQIyROAB7irmDfIL4Wuz4&#xD;
+ADp5ER3EDu6xGbxPNThTbiJ4rLFUDvygmlBUgUxop6Z9ZxRDW1cLBqGNBANQ4DhQnMFjA/DUJXhC&#xD;
+m5eFlwyg05fQwT3jZdG5AXTm6tRKk3EbHEoxgSNOYykFOEM1pBWoQCa0U9O+M4qhrasFg9BGggEo&#xD;
+cBwoTtHZAXT26sy+JDozgM5dndmXRKcH0CWX0MG9fOJge9AS3SWwwchQJLg1aEmUhCrpFKEPVCn0&#xD;
+wSL0AUtIO4lSMITvKRg1tPuyi3mm1A9FM3gWXDwMJPzPpCcc3uC6pAIGFbK04EOBOmMYf/ghuMQY&#xD;
+Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD;
+5xAGeS1FuBYZlx1TNeFhXDURePaiGhIYvQsFe1RQw3BdAoMY2rpaMAhtJBiAAseB4jsJk//j/ZyE&#xD;
+4Xh8vNHccPPv3Xc2vYPaDP+g//APE7kSZtsXAAA=</IconData>
+</TemplateItem>
