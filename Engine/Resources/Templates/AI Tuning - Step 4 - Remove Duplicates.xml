@@ -2,6 +2,7 @@
   <Name>AI Tuning - Step 4 - Remove Duplicates</Name>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
+  <TextInstructions>Data will be supplied in a JSONL (JSON Lines) format. You will be given a message and its possible duplicates. If a message is a duplicate and is a less detailed copy of the other message, mark the message content with the prefix `OBSOLETE`.</TextInstructions>
   <Settings />
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>

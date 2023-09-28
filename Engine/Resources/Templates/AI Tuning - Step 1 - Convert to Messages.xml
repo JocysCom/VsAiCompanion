@@ -2,6 +2,21 @@
   <Name>AI Tuning - Step 1 - Convert to Messages</Name>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
+  <TextInstructions>Convert the supplied text to JSONL (JSON Lines) format, which is used for fine-tuning AI models. Please adhere to the following specification for the reply:&#xD;
+&#xD;
+```JSON&#xD;
+{&#xD;
+  "object": {&#xD;
+    "messages": [&#xD;
+      {&#xD;
+        "role": "string",&#xD;
+        "content": "string"&#xD;
+      }&#xD;
+    ]&#xD;
+  }&#xD;
+}&#xD;
+```&#xD;
+</TextInstructions>
   <Settings />
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>

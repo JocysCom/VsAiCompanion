@@ -2,6 +2,7 @@
   <Name>AI Tuning - Step 2 - Validate Questions</Name>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
+  <TextInstructions>Data will be supplied in a JSONL (JSON Lines) format. Check if the question matches the answer. Update the question to match the answer.</TextInstructions>
   <Settings />
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>

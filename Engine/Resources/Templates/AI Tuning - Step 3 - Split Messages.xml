@@ -32,7 +32,6 @@ Expected answer is this:&#xD;
 {"messages": [{"role": "system", "content": "Please behave line a helful assistant"}, {"role": "user", "content": "What is the capital of Germany?"}, {"role": "assistant", "content": "The capital of Germany is Berlin."}]}&#xD;
 ```&#xD;
 </TextInstructions>
-  <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Settings />
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
