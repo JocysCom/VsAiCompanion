@@ -37,6 +37,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_code_typescript = nameof(Icon_code_typescript);
 		public const string Icon_code_xml = nameof(Icon_code_xml);
 		public const string Icon_contract = nameof(Icon_contract);
+		public const string Icon_control_panel = nameof(Icon_control_panel);
 		public const string Icon_copy = nameof(Icon_copy);
 		public const string Icon_debug = nameof(Icon_debug);
 		public const string Icon_dictionary = nameof(Icon_dictionary);
@@ -75,6 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_pieces = nameof(Icon_pieces);
 		public const string Icon_radar = nameof(Icon_radar);
 		public const string Icon_reticle = nameof(Icon_reticle);
+		public const string Icon_settings = nameof(Icon_settings);
 		public const string Icon_shield = nameof(Icon_shield);
 		public const string Icon_spellcheck = nameof(Icon_spellcheck);
 		public const string Icon_Task = nameof(Icon_Task);
