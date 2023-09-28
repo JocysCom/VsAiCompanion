@@ -190,6 +190,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			IconData = base64;
 		}
 
+		#region Markdown Languages
+
+
+		#endregion
+
 		#region Prompting
 
 		/// <summary>Show Prompting</summary>
