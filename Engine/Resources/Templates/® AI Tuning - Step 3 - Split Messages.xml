@@ -40,10 +40,10 @@ Expected answer is this:&#xD;
   <Messages>
     <MessageItem>
       <Id>198d0ee69d6649d69a365ec22788a0e7</Id>
+      <User>System</User>
       <Body>This reserved task using AI to process messages for fine-tuning an AI model.</Body>
       <Attachments />
       <Date>2023-09-28T15:02:16.1566823+01:00</Date>
-      <User>System</User>
       <Type>Information</Type>
       <IsEnabled>false</IsEnabled>
     </MessageItem>

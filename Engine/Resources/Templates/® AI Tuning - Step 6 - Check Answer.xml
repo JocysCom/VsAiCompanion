@@ -10,10 +10,10 @@
   <Messages>
     <MessageItem>
       <Id>f935b5c95e784c2399b00b28e3cfb2b5</Id>
+      <User>System</User>
       <Body>This reserved task using AI to process messages for fine-tuning an AI model.</Body>
       <Attachments />
       <Date>2023-09-28T15:02:31.3833437+01:00</Date>
-      <User>System</User>
       <Type>Information</Type>
       <IsEnabled>false</IsEnabled>
     </MessageItem>
