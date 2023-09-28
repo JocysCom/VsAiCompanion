@@ -192,6 +192,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Markdown Languages
 
+		[DefaultValue("JSON")]
+		public string MarkdownLanguageName { get => _MarkdownLanguageName; set => SetProperty(ref _MarkdownLanguageName, value); }
+		string _MarkdownLanguageName;
 
 		#endregion
 

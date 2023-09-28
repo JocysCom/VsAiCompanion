@@ -3,7 +3,7 @@
 - Fix: The letter 's' will be trimmed in the messages window.
 - Fix: Invalid maximum token size for models.
 - New: Added new "Language" prompting template.
-- New: Button to insert a "PowerShell" markdown language block.
+- New: Button to insert custom and "PowerShell" markdown language block.
 
 2023-09-26 v1.2.6
 

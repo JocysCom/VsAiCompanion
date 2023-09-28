@@ -24,6 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			MarkdownLanguageNameComboBox.ItemsSource = Global.AppSettings.MarkdownLanguageNames.Split(',');
 			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
@@ -569,6 +570,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 			var button = (Button)sender;
 			var language = button.Tag as string;
+			if (language == "Custom")
+				language = MarkdownLanguageNameComboBox.SelectedItem as string ?? ""; 
 			if (string.IsNullOrEmpty(language))
 				return;
 			var box = _item.ShowInstructions

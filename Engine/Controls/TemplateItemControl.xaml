@@ -385,6 +385,17 @@
 						BorderThickness="0,0,1,0"
 						Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
 						<StackPanel x:Name="CodeButtonsPanel" Margin="5,3,5,3" Orientation="Horizontal">
+							<ComboBox Name="MarkdownLanguageNameComboBox" Margin="3,3,0,3" SelectedValue="{Binding MarkdownLanguageName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<Button
+								Margin="3,3,0,3"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Center"
+								Click="CodeButton_Click"
+								Tag="Custom"
+								ToolTip="Custom">
+								<ContentControl Content="{StaticResource Icon_code_custom}" Focusable="False" />
+							</Button>
+
 							<Button
 								Margin="3,3,3,3"
 								HorizontalAlignment="Right"
