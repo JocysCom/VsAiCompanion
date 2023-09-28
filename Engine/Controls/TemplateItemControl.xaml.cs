@@ -39,6 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			Global.AiModelsUpdated += Global_AiModelsUpdated;
+			Global.PromptingUpdated += Global_PromptingUpdated;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 			PromptsPanel.AddPromptButton.Click += PromptsPanel_AddPromptButton_Click;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
@@ -187,6 +188,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
+		}
+
+		private void Global_PromptingUpdated(object sender, EventArgs e)
+		{
+			PromptsPanel.BindData(_item);
 		}
 
 		#endregion

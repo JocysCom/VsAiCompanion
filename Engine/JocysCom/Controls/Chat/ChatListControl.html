@@ -331,7 +331,7 @@
 			//var rx = new RegExp("([^ ])([ ]{0,1})(\\r?\\n)", "g");
 			//body = body.replace(rx, "$1  $3");
 			// Add support for markdown.
-			var spacesRx = new RegExp("[\r\n\s]+$", "g")
+			var spacesRx = new RegExp("\\s+$", "g")
 			body = body.replace(spacesRx, "");
 			// Make sure characters like `<` or `>` are not treated as HTML element characters.
 			body = ConvertForDisplayAsHtml(body);
@@ -678,11 +678,11 @@
 			renderer.code = function (code, lang, escaped) {
 				lang = lang ? lang.toLowerCase() : undefined;
 				// Remove trailing spaces from the code.
-				var spacesRx = new RegExp("[\r\n\s]+$", "g")
+				var spacesRx = new RegExp("\\s+$", "g")
 				code = code.replace(spacesRx, "");
 				// Remove trailing spaces from converted code.
 				var html = originalCodeFunction.call(this, code, lang, escaped);
-				spacesRx = new RegExp("[\r\n\s]+</code>", "g")
+				spacesRx = new RegExp("\\s+</code>", "g")
 				html = html.replace(spacesRx, "</code>");
 				if (boxedCode) {
 					var id = generateGUID();

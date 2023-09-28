@@ -182,6 +182,13 @@
 							<Label Content="Reset Templates Settings" />
 						</StackPanel>
 					</Button>
+					<Button Name="ResetPromptingButton" HorizontalAlignment="Stretch" Click="ResetPromptingButton_Click">
+						<StackPanel HorizontalAlignment="Left" Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="Reset Prompting Settings" />
+						</StackPanel>
+					</Button>
+
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Margin="3,0,0,3" Header="Sending Message">
