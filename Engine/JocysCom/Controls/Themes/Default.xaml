@@ -10,7 +10,6 @@
 	-->
 	<!--  Colors  -->
 
-
 	<SolidColorBrush x:Key="BackgroundWhite" Color="#ffffff" />
 	<SolidColorBrush x:Key="BackgroundLight" Color="#f0f0f0" />
 	<SolidColorBrush x:Key="BackgroundDark" Color="#dedede" />
@@ -55,6 +54,10 @@
 	<SolidColorBrush x:Key="SolidColorBrush_270D">#6700D6</SolidColorBrush>
 	<SolidColorBrush x:Key="SolidColorBrush_300D">#D600D6</SolidColorBrush>
 	<SolidColorBrush x:Key="SolidColorBrush_330D">#D60067</SolidColorBrush>
+
+	<Style TargetType="Canvas">
+		<Setter Property="SnapsToDevicePixels" Value="False" />
+	</Style>
 
 	<!--  Focus Visual Style  -->
 	<Style x:Key="FocusVisualStyle_Default">
