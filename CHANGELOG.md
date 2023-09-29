@@ -1,3 +1,8 @@
+2023-09-29 v1.2.13
+
+- Update: Hide the prompting bar by default.
+- Update: Require hold CTRL key to paste a markdown block from the clipboard.
+
 2023-09-28 v1.2.11
 
 - Fix: The letter 's' will be trimmed in the messages window.

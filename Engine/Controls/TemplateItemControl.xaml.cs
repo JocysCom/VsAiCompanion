@@ -485,7 +485,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var languageDisplayName = codeButton.ToolTip;
 				codeButton.ToolTip = $"Paste {languageDisplayName} code block";
 				AppHelper.AddHelp(codeButton,
-					$"Paste from your clipboard as an `{languageDisplayName}` code block. Hold CTRL to wrap selected text into `{languageDisplayName}` code block."
+					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
 		}
@@ -579,8 +579,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: ChatPanel.DataTextBox;
 			var caretIndex = box.CaretIndex;
 			var clipboardText = isCtrlDown
-				? $"{box.SelectedText}"
-				: JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.Data ?? "");
+				? JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.Data ?? "")
+				: $"{box.SelectedText}";
 			var prefix = "";
 			// Add new line if caret is not on the new line.
 			if (caretIndex > 0 && box.Text[caretIndex - 1] != '\n')

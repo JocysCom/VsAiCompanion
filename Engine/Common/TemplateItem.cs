@@ -201,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#region Prompting
 
 		/// <summary>Show Prompting</summary>
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		public bool ShowPrompting { get => _ShowPrompting; set => SetProperty(ref _ShowPrompting, value); }
 		bool _ShowPrompting;
 
