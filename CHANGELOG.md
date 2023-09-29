@@ -1,3 +1,15 @@
+2023-09-29 v1.2.13
+
+- Update: Hide the prompting bar by default.
+- Update: Require hold CTRL key to paste a markdown block from the clipboard.
+
+2023-09-28 v1.2.11
+
+- Fix: The letter 's' will be trimmed in the messages window.
+- Fix: Invalid maximum token size for models.
+- New: Added new "Language" prompting template.
+- New: Button to insert custom and "PowerShell" markdown language block.
+
 2023-09-26 v1.2.6
 
 - Fix: Crash when attempting to send a preview message.

@@ -7,9 +7,9 @@ The AI Companion is a tool that analyzes your project files and works alongside 
 Data submitted via the OpenAI API is not used to train or improve its models, unless customers explicitly decide to share their data. Web Chat is limited to 4K tokens, while AI models on API can process data 4-8 times larger.
 
 ### Download
-Digitally Signed Standalone/Portable Application v1.2.6 (2023-09-26)
+Digitally Signed Standalone/Portable Application v1.2.13 (2023-09-29)
 
-[Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.2.6/JocysCom.VS.AiCompanion.App.zip)
+[Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.2.13/JocysCom.VS.AiCompanion.App.zip)
 
 Install Visual Studio Extension from <a href="https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion">VS AI Companion - Visual Studio Marketplace</a> or install by using Visual Studio Extension Manager.
 

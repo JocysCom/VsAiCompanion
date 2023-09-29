@@ -152,6 +152,38 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsEmpty =>
 			false;
 
+		public string MarkdownLanguageNames { get; set; } =
+			"ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex," +
+			"AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL," +
+			"BBCode,BBJ,BNF,BQN,BSL,Bash,Basic,Batch,Bicep,Birb,Bison,Brainfuck,BrightScript,Bro," +
+			"C,CFScript,CIL,CMake,COBOL,CSHTML,CSP,CSS,CSS-Extras,CSV,Chaiscript,CilkC,CilkCpp,Clike,Clojure,CoffeeScript,Concurnas,Cooklang,Coq,Cpp,Crystal,Csharp,Cue,Cypher," +
+			"D,DAX,DNS-Zone-File,Dart,DataWeave,Dhall,Diff,Django,Docker,Dot," +
+			"EBNF,EJS,ERB,EditorConfig,Eiffel,Elixir,Elm,Erlang,Excel-Formula," +
+			"FORTRAN,FTL,Factor,False,Firestore-Security-Rules,Flow,Fsharp," +
+			"GAP,GCode,GEDCOM,GLSL,GML,GN,GdScript,Gettext,Gherkin,Git,Go,Go-Module,Gradle,Graphql,Groovy," +
+			"HCL,HLSL,HPKP,HSTS,HTTP,Haml,Handlebars,Haskell,Haxe,Hoon," +
+			"ICU-Message-Format,IECSt,INI,IchigoJam,Icon,Idris,Ignore,Inform7,Io," +
+			"J,JEXL,JQ,JS-Extras,JS-Templates,JSDoc,JSON,JSON5,JSONP,JSStackTrace,JSX," +
+			"Java,JavaDoc,JavaDocLike,JavaScript,JavaStackTrace,Jolie,Julia," +
+			"KeepALIVED,Keyman,Kotlin,Kumir,Kusto," +
+			"LLVM,LOLCode,Latex,Latte,Less,LilyPond,Linker-Script,Liquid,Lisp,LiveScript,Log,Lua," +
+			"MAXScript,MEL,Magma,Makefile,Markdown,Markup,Markup-Templating,Mata,Matlab,Mermaid,MetaFont,Mizar,MongoDB,Monkey,MoonScript," +
+			"N1QL,N4JS,NASM,NSIS,Nand2Tetris-HDL,Naniscript,Neon,Nevod,Nginx,Nim,Nix," +
+			"OCaml,ObjectiveC,Odin,OpenCL,OpenQASM,Oz," +
+			"PCAxis,PHP,PHP-Extras,PHPDoc,PLSQL,PSL,PariGP,Parser,Pascal,PascalIGO,PeopleCode,Perl,Plant-UML,PowerQuery," +
+			"PowerShell,Processing,Prolog,PromQL,Properties,Protobuf,Pug,Puppet,Pure,PureBasic,PureScript,Python," +
+			"Q,QML,QSharp,Qore," +
+			"R,REST,RIP,Racket,Reason,Regex,Rego,RenPY,Rescript,Roboconf,RobotFramework,Ruby,Rust," +
+			"SAS,SCSS,SML,SPARQL,SQF,SQL,Sass,Scala,Scheme,Shell-Session,Smali,SmallTalk,Smarty,Solidity," +
+			"Solution-File,Soy,Splunk-SPL,Squirrel,Stan,Stata,Stylus,SuperCollider,Swift,Systemd," +
+			"T4-CS,T4-Templating,T4-VB,TAP,TOML,TSX,TT2,Tcl,Textile,Tremor,Turtle,Twig,TypeScript,TypoScript," +
+			"UORazor,URI,UnrealScript," +
+			"V,VBNet,VHDL,Vala,Velocity,Verilog,Vim,Visual-Basic," +
+			"WASM,WGSL,WarpScript,Web-IDL,Wiki,Wolfram,Wren," +
+			"XML,XQuery,Xeora,Xojo," +
+			"YAML,Yang,ZigetLua";
+
+
 		#region ■ ITrayManagerSettings
 
 		[DefaultValue(false)]

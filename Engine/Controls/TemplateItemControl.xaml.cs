@@ -24,6 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			MarkdownLanguageNameComboBox.ItemsSource = Global.AppSettings.MarkdownLanguageNames.Split(',');
 			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
@@ -39,6 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			Global.AiModelsUpdated += Global_AiModelsUpdated;
+			Global.PromptingUpdated += Global_PromptingUpdated;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 			PromptsPanel.AddPromptButton.Click += PromptsPanel_AddPromptButton_Click;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
@@ -187,6 +189,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
+		}
+
+		private void Global_PromptingUpdated(object sender, EventArgs e)
+		{
+			PromptsPanel.BindData(_item);
 		}
 
 		#endregion
@@ -478,7 +485,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var languageDisplayName = codeButton.ToolTip;
 				codeButton.ToolTip = $"Paste {languageDisplayName} code block";
 				AppHelper.AddHelp(codeButton,
-					$"Paste from your clipboard as an `{languageDisplayName}` code block. Hold CTRL to wrap selected text into `{languageDisplayName}` code block."
+					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
 		}
@@ -563,6 +570,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 			var button = (Button)sender;
 			var language = button.Tag as string;
+			if (language == "Custom")
+				language = MarkdownLanguageNameComboBox.SelectedItem as string ?? ""; 
 			if (string.IsNullOrEmpty(language))
 				return;
 			var box = _item.ShowInstructions
@@ -570,8 +579,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: ChatPanel.DataTextBox;
 			var caretIndex = box.CaretIndex;
 			var clipboardText = isCtrlDown
-				? $"{box.SelectedText}"
-				: JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.Data ?? "");
+				? JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.Data ?? "")
+				: $"{box.SelectedText}";
 			var prefix = "";
 			// Add new line if caret is not on the new line.
 			if (caretIndex > 0 && box.Text[caretIndex - 1] != '\n')

@@ -128,6 +128,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void TriggerAiModelsUpdated()
 			=> AiModelsUpdated?.Invoke(null, EventArgs.Empty);
 
+		/// <summary>
+		/// Subscribed by controls that need to refresh when the source data is updated.
+		/// </summary>
+		public static event EventHandler PromptingUpdated;
+		public static void TriggerPromptingUpdated()
+			=> PromptingUpdated?.Invoke(null, EventArgs.Empty);
+
 		public static void LoadSettings()
 		{
 			// Load app data.
