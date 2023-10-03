@@ -1,0 +1,46 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.AiModelBoxControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<StackPanel Orientation="Horizontal">
+		<Label
+			Grid.Row="0"
+			Grid.Column="1"
+			VerticalAlignment="Center"
+			Content="Service" />
+		<ComboBox
+			Name="AiCompanionComboBox"
+			x:FieldModifier="public"
+			DisplayMemberPath="Name"
+			SelectedValue="{Binding AiServiceId}"
+			SelectedValuePath="Id"
+			SelectionChanged="AiCompanionComboBox_SelectionChanged" />
+		<Label VerticalAlignment="Center" Content="Model" />
+		<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
+		<Button
+			Name="ModelRefreshButton"
+			Grid.Row="1"
+			Grid.Column="3"
+			Margin="3,0,3,0"
+			Click="ModelRefreshButton_Click"
+			ToolTip="Refresh Models">
+			<StackPanel>
+				<ContentControl Content="{StaticResource Icon_Refresh}" />
+			</StackPanel>
+		</Button>
+	</StackPanel>
+</UserControl>

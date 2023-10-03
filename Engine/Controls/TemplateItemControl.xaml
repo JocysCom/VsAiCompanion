@@ -52,31 +52,7 @@
 					Focusable="False">
 					<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 				</Button>
-				<Label
-					Grid.Row="0"
-					Grid.Column="1"
-					VerticalAlignment="Center"
-					Content="Service" />
-
-				<ComboBox
-					Name="AiCompanionComboBox"
-					DisplayMemberPath="Name"
-					SelectedValue="{Binding AiServiceId}"
-					SelectedValuePath="Id"
-					SelectionChanged="AiCompanionComboBox_SelectionChanged" />
-				<Label VerticalAlignment="Center" Content="Model" />
-				<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
-				<Button
-					Name="ModelRefreshButton"
-					Grid.Row="1"
-					Grid.Column="3"
-					Margin="3,0,3,0"
-					Click="ModelRefreshButton_Click"
-					ToolTip="Refresh Models">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Refresh}" />
-					</StackPanel>
-				</Button>
+				<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" />
 				<CheckBox Name="IsPreviewCheckBox" Content="Preview" IsChecked="{Binding IsPreview}" />
 				<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
 				<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
