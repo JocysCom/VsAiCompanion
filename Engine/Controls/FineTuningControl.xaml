@@ -23,9 +23,11 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Grid Grid.Row="0" Margin="3,0,3,0">
+		<local:AiModelBoxControl Grid.Row="0" x:Name="AiModelBoxPanel" />
+		<Grid Grid.Row="1" Margin="3,0,3,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -53,7 +55,7 @@
 				</StackPanel>
 			</Button>
 		</Grid>
-		<StackPanel Grid.Row="1" Orientation="Horizontal">
+		<StackPanel Grid.Row="2" Orientation="Horizontal">
 			<Button
 				Name="ValidateButton"
 				HorizontalAlignment="Right"
@@ -89,7 +91,7 @@
 			</Button>
 		</StackPanel>
 		<Border
-			Grid.Row="2"
+			Grid.Row="3"
 			Grid.Column="0"
 			VerticalAlignment="Stretch"
 			Background="{StaticResource BackgroundLight}">
@@ -113,6 +115,5 @@
 				</TextBox>
 			</StackPanel>
 		</Border>
-
 	</Grid>
 </UserControl>

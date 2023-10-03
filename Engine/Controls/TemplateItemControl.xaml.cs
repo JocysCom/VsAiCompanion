@@ -25,7 +25,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MarkdownLanguageNameComboBox.ItemsSource = Global.AppSettings.MarkdownLanguageNames.Split(',');
-			AiModelBoxPanel.AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
 			Global.PromptingUpdated += Global_PromptingUpdated;
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;

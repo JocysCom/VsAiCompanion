@@ -17,12 +17,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
 			Global.AiModelsUpdated += Global_AiModelsUpdated;
 		}
 
-		public TemplateItem _item;
+		public IAiServiceModel _item;
 
-		public void BindData(TemplateItem item)
+		public void BindData(IAiServiceModel item)
 		{
 			if (item == null)
 			{

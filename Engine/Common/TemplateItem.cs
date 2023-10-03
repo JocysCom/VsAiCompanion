@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class TemplateItem : ISettingsItem, INotifyPropertyChanged, ISettingsItemFile
+	public class TemplateItem : ISettingsItem, INotifyPropertyChanged, ISettingsItemFile, IAiServiceModel
 	{
 		public TemplateItem()
 		{
@@ -34,9 +34,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public string TemplateName { get => _TemplateName; set => SetProperty(ref _TemplateName, value); }
 		string _TemplateName;
-
-		public string AiModel { get => _AiModel; set => SetProperty(ref _AiModel, value); }
-		string _AiModel;
 
 		public string IconType { get => _IconType; set => SetProperty(ref _IconType, value); }
 		string _IconType;
@@ -78,16 +75,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore]
 		public DrawingImage Icon { get => _Icon; }
 		DrawingImage _Icon;
-
-		public Guid AiServiceId
-		{
-			get => _AiServiceId;
-			set => SetProperty(ref _AiServiceId, value);
-		}
-		Guid _AiServiceId;
-
-		public AiService AiService =>
-			Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
 
 		public string StatusText { get => _StatusText; set => SetProperty(ref _StatusText, value); }
 		string _StatusText;
@@ -159,9 +146,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			set => SetProperty(ref _IsChecked, value);
 		}
 		bool _IsChecked;
-
-		public bool IsEnabled { get => _IsEnabled; set => SetProperty(ref _IsEnabled, value); }
-		bool _IsEnabled;
 
 		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
 		ItemType _ItemType;
@@ -241,6 +225,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 		#region ■ ISettingsItem
+
+		public bool IsEnabled { get => _IsEnabled; set => SetProperty(ref _IsEnabled, value); }
+		bool _IsEnabled;
+
 		bool ISettingsItem.Enabled { get => IsEnabled; set => IsEnabled = value; }
 
 		public bool IsEmpty =>
@@ -255,6 +243,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[XmlIgnore]
 		DateTime ISettingsItemFile.WriteTime { get; set; }
+
+		#endregion
+
+		#region ■ IAiServiceModel
+
+		public Guid AiServiceId
+		{
+			get => _AiServiceId;
+			set => SetProperty(ref _AiServiceId, value);
+		}
+		Guid _AiServiceId;
+
+		public AiService AiService =>
+			Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
+
+		public string AiModel { get => _AiModel; set => SetProperty(ref _AiModel, value); }
+		string _AiModel;
 
 		#endregion
 

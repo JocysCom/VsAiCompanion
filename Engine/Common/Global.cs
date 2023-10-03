@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -64,6 +65,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+
+		public static SettingsData<FineTune> FineTunes =
+			new SettingsData<FineTune>($"{nameof(FineTunes)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 		public static SortableBindingList<TemplateItem> GetItems(ItemType type)
 		{
 			switch (type)
@@ -118,6 +122,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			PromptItems.Save();
 			Templates.Save();
 			Tasks.Save();
+			FineTunes.Save();
 		}
 
 		/// <summary>
@@ -157,6 +162,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Tasks.Load();
 			if (Tasks.IsSavePending)
 				Tasks.Save();
+			// Load fine tune settings.
+			// Load tasks.
+			FineTunes.OnValidateData += FineTuneSettings_OnValidateData;
+			FineTunes.Load();
+			if (FineTunes.IsSavePending)
+				FineTunes.Save();
+
+
 			// Enable template and task folder monitoring.
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
@@ -165,6 +178,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				AppData.Version = 2;
 				ResetTemplates();
+			}
+		}
+
+		private static void FineTuneSettings_OnValidateData(object sender, SettingsData<FineTune>.SettingsDataEventArgs e)
+		{
+			var data = (SettingsData<FineTune>)sender;
+			if (e.Items.Count == 0)
+			{
+				e.Items.Add(new FineTune()
+				{
+					Name = "Default"
+				});
+				data.IsSavePending = true;
 			}
 		}
 
