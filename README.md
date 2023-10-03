@@ -4,7 +4,10 @@ This is a free and open-source project for people who have an [OpenAI API](https
 The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application. It's like a Swiss Army Knife of AI for developers.
 
 ### Why Use Tools Utilizing API Instead of Web Chat GPT?
-Data submitted via the OpenAI API is not used to train or improve its models, unless customers explicitly decide to share their data. Web Chat is limited to 4K tokens, while AI models on API can process data 4-8 times larger.
+
+- Data submitted via the API is not used to train or improve its models, unless customers explicitly decide to share their data.
+- Web Chat is limited to 4K tokens, while AI models on API can process data 4-8 times larger.
+- API provides access to more recent and smarter AI models.
 
 ### Download
 Digitally Signed Standalone/Portable Application v1.2.13 (2023-09-29)
