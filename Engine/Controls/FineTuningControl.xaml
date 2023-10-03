@@ -26,7 +26,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<local:AiModelBoxControl Grid.Row="0" x:Name="AiModelBoxPanel" />
+		<local:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
 		<Grid Grid.Row="1" Margin="3,0,3,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
@@ -34,8 +34,8 @@
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 			<Label Margin="0,6,0,0" VerticalAlignment="Center" Content="Data Folder" />
 			<TextBox
@@ -95,25 +95,22 @@
 			Grid.Column="0"
 			VerticalAlignment="Stretch"
 			Background="{StaticResource BackgroundLight}">
-			<StackPanel VerticalAlignment="Bottom">
-				<TextBox
-					Name="LogTextBox"
-					Margin="0"
-					Padding="6"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					VerticalContentAlignment="Top"
-					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-					BorderThickness="0"
-					IsReadOnly="True"
-					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					ScrollViewer.VerticalScrollBarVisibility="Auto"
-					TextWrapping="Wrap">
-					<TextBox.Resources>
-						<Style TargetType="Border" />
-					</TextBox.Resources>
-				</TextBox>
-			</StackPanel>
+			<TextBox
+				Name="LogTextBox"
+				Margin="3"
+				Padding="6"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+				BorderThickness="1"
+				IsReadOnly="True"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				TextWrapping="Wrap">
+				<TextBox.Resources>
+					<Style TargetType="Border" />
+				</TextBox.Resources>
+			</TextBox>
 		</Border>
 	</Grid>
 </UserControl>
