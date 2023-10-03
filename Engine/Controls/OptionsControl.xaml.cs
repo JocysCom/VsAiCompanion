@@ -67,12 +67,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.ResetTemplates();
 		}
 
+		private void ResetPromptingButton_Click(object sender, RoutedEventArgs e)
+		{
+			var text = $"Do you want to reset the prompting templates? Please note that this will delete all custom prompting templates!";
+			var caption = $"{Global.Info.Product} - Reset Prompting Templates";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+			if (result != MessageBoxResult.Yes)
+				return;
+			Global.PromptItems.ResetToDefault();
+			Global.PromptItems.Save();
+			Global.TriggerPromptingUpdated();
+		}
+
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, "Enable spell check for the chat textbox and certain option text boxes.");
 		}
+
 	}
 
 }

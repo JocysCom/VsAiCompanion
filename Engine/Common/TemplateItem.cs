@@ -190,10 +190,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			IconData = base64;
 		}
 
+		#region Markdown Languages
+
+		[DefaultValue("JSON")]
+		public string MarkdownLanguageName { get => _MarkdownLanguageName; set => SetProperty(ref _MarkdownLanguageName, value); }
+		string _MarkdownLanguageName;
+
+		#endregion
+
 		#region Prompting
 
 		/// <summary>Show Prompting</summary>
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		public bool ShowPrompting { get => _ShowPrompting; set => SetProperty(ref _ShowPrompting, value); }
 		bool _ShowPrompting;
 
