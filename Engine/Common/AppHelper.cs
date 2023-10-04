@@ -20,6 +20,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Windows.Input;
 using SharpVectors.Renderers.Wpf;
 using SharpVectors.Dom.Events;
+using System.Text.Json.Nodes;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -318,16 +319,42 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				if (filterRx != null)
 					modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
-				// Remove all old models.
+				// Remove all old models of AiService.
 				var serviceModels = Global.AppSettings.AiModels.Where(x => x.AiServiceId == aiService.Id).ToList();
 				foreach (var serviceModel in serviceModels)
 					Global.AppSettings.AiModels.Remove(serviceModel);
-				// Add all new models.
+				// Add all new models of AiService.
 				foreach (var modelCode in modelCodes)
-					Global.AppSettings.AiModels.Add(new AiModel(modelCode, aiService.Id));
+				{
+					var aiModel = new AiModel(modelCode, aiService.Id);
+					// Detect if AI model can be finetuned.
+					var model = models.First().data.FirstOrDefault(x => x.id == modelCode);
+					aiModel.AllowFineTuning = GetPermission(model, "allow_fine_tuning") ?? false;
+					Global.AppSettings.AiModels.Add(aiModel);
+				}
 				// This will inform all forms that models changed.
 				Global.TriggerAiModelsUpdated();
 			}
+		}
+
+		public static bool? GetPermission(model model, string name)
+		{
+			JsonElement permissions;
+			if (!model.additional_properties.TryGetValue("permission", out permissions) || permissions.ValueKind != JsonValueKind.Array)
+				return null;
+			foreach (JsonElement element in permissions.EnumerateArray())
+			{
+				if (element.ValueKind != JsonValueKind.Object)
+					continue;
+				JsonElement allowFineTuning;
+				if (element.TryGetProperty(name, out allowFineTuning))
+				{
+					bool value;
+					if (bool.TryParse(allowFineTuning.GetRawText(), out value))
+						return value;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>
