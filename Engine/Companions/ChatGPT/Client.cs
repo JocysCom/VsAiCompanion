@@ -41,6 +41,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return client;
 		}
 
+		static JsonSerializerOptions JsonOptions
+		{
+			get
+			{
+				if (_JsonOptions == null)
+				{
+					_JsonOptions = new JsonSerializerOptions();
+					_JsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+					_JsonOptions.Converters.Add(new UnixTimestampConverter());
+					_JsonOptions.Converters.Add(new JsonStringEnumConverter());
+				}
+				return _JsonOptions;
+			}
+		}
+		static JsonSerializerOptions _JsonOptions;
+
+		public static T Deserialize<T>(string json)
+			=> JsonSerializer.Deserialize<T>(json, JsonOptions);
+
+		public static string Serialize(object o)
+			=> JsonSerializer.Serialize(o, JsonOptions);
+
 		public async Task<List<T>> GetAsync<T>(
 			string operationPath, object o = null, bool stream = false, CancellationToken cancellationToken = default
 		)
@@ -49,10 +71,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
 			var client = GetClient();
 			client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
-			var options = new JsonSerializerOptions();
-			options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
-			options.Converters.Add(new UnixTimestampConverter());
-			options.Converters.Add(new JsonStringEnumConverter());
 			HttpResponseMessage response;
 			var completionOption = stream
 				? HttpCompletionOption.ResponseHeadersRead
@@ -68,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			else
 			{
-				var json = JsonSerializer.Serialize(o, options);
+				var json = Serialize(o);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 				request.Method = HttpMethod.Post;
 				request.Content = content;
@@ -91,7 +109,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							if (dataStartIndex < 0)
 								continue;
 							var jsonLine = line.Substring(dataStartIndex);
-							var responseObject = JsonSerializer.Deserialize<T>(jsonLine, options);
+							var responseObject = Deserialize<T>(jsonLine);
 							list.Add(responseObject);
 						}
 					}
@@ -100,7 +118,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			else
 			{
 				var responseBody = await response.Content.ReadAsStringAsync();
-				var responseObject = JsonSerializer.Deserialize<T>(responseBody, options);
+				var responseObject = Deserialize<T>(responseBody);
 				list.Add(responseObject);
 			}
 			return list;
