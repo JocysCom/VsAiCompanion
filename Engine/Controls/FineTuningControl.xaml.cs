@@ -38,10 +38,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			LogTextBox.Clear();
 			var filePath = Path.Combine(DataFolderTextBox.Text, "data.jsonl");
-			ValidateJsonlFile(filePath);
+			ValidateJsonlFile(filePath, Client.IsTextCompletionMode(Item.AiModel));
 		}
 
-		public bool ValidateJsonlFile(string filePath)
+		public bool ValidateJsonlFile(string filePath, bool isTextCompletionMode)
 		{
 			var i = 0;
 			foreach (string line in File.ReadLines(filePath))
@@ -49,7 +49,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				i++;
 				try
 				{
-					var request = Client.Deserialize<chat_completion_request>(line);
+					if (isTextCompletionMode)
+					{
+						var request = Client.Deserialize<text_completion_request>(line);
+					}
+					else
+					{
+						var request = Client.Deserialize<chat_completion_request>(line);
+					}
 					// Validate further if necessary
 				}
 				catch (JsonException ex)
