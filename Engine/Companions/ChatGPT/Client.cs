@@ -26,6 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		private const string modelsUrl = "models";
 		private const string chatCompletions = "chat/completions";
 		private const string completions = "completions";
+		private const string files = "files";
 		private readonly AiService Service;
 
 		public HttpClient GetClient()
@@ -201,12 +202,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// Query AI
 		/// </summary>
 		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
-		public async Task<string> QueryAI(
-				string modelName,
-				List<chat_completion_message> messagesToSend,
-				double creativity,
-				TemplateItem item
+		public async Task<string> GetFiles(
+				string file,
+				string purpose
 			)
+		{
+			return "";
+		}
+
+		/// <summary>
+		/// Query AI
+		/// </summary>
+		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
+		public async Task<string> QueryAI(
+			string modelName,
+			List<chat_completion_message> messagesToSend,
+			double creativity,
+			TemplateItem item
+		)
 		{
 			var answer = "";
 			var cancellationTokenSource = new CancellationTokenSource();
