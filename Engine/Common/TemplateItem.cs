@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class TemplateItem : ISettingsItem, INotifyPropertyChanged, ISettingsItemFile, IAiServiceModel
+	public class TemplateItem : ISettingsItem, INotifyPropertyChanged, ISettingsItemFile, IAiServiceModel, ICancellationTokens
 	{
 		public TemplateItem()
 		{
@@ -199,9 +199,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		#region ■ HTTP Client
-
-		/// <summary>Show Instructions</summary>
+		#region ■ ICancellationTokens
 
 		[XmlIgnore, DefaultValue(false)]
 		public bool IsBusy { get => _IsBusy; set => SetProperty(ref _IsBusy, value); }

@@ -3,13 +3,38 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using JocysCom.ClassLibrary.Configuration;
+using System.Threading;
+using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class FineTune : INotifyPropertyChanged, ISettingsItem, IAiServiceModel
+	public class FineTune : INotifyPropertyChanged, ISettingsItem, IAiServiceModel, ICancellationTokens
 	{
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
+
+		#region ■ ICancellationTokens
+
+		[XmlIgnore, DefaultValue(false)]
+		public bool IsBusy { get => _IsBusy; set => SetProperty(ref _IsBusy, value); }
+		bool _IsBusy;
+
+		[XmlIgnore, DefaultValue(null)]
+		public BindingList<CancellationTokenSource> CancellationTokenSources { get => _CancellationTokenSources; set => SetProperty(ref _CancellationTokenSources, value); }
+		BindingList<CancellationTokenSource> _CancellationTokenSources;
+
+		public void StopClients()
+		{
+			var clients = CancellationTokenSources.ToArray();
+			try
+			{
+				foreach (var client in clients)
+					client.Cancel();
+			}
+			catch { }
+		}
+
+		#endregion
 
 		#region ■ ISettingsItem
 

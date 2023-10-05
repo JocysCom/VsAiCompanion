@@ -64,63 +64,19 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-		<Border Grid.Row="1" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,1,0,1">
-			<Grid Background="White">
-				<TextBox
-					x:Name="SearchTextBox"
-					Margin="0,0,0,0"
-					Padding="24,0,4,0"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					VerticalContentAlignment="Center"
-					AcceptsReturn="True"
-					Background="White"
-					BorderThickness="0"
-					PreviewKeyDown="SearchTextBox_PreviewKeyDown"
-					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					ScrollViewer.VerticalScrollBarVisibility="Auto"
-					TextChanged="SearchTextBox_TextChanged"
-					TextWrapping="Wrap" />
-				<Button
-					Name="FilterButton"
-					Margin="0"
-					Padding="0"
-					HorizontalAlignment="Left"
-					VerticalAlignment="Stretch"
-					Background="Transparent"
-					Click="FilterButton_Click"
-					Opacity="0.5">
-					<ContentControl Content="{StaticResource Icon_find_gray}" Focusable="False" />
-				</Button>
-				<TextBlock
-					Margin="0"
-					Padding="26,0,5,0"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Center"
-					IsHitTestVisible="False"
-					Opacity="0.5"
-					Text="Search the list">
-					<TextBlock.Style>
-						<Style TargetType="TextBlock">
-							<Setter Property="Padding" Value="26,0,5,0" />
-							<Setter Property="VerticalAlignment" Value="Stretch" />
-							<Setter Property="Visibility" Value="Collapsed" />
-							<Style.Triggers>
-								<MultiDataTrigger>
-									<MultiDataTrigger.Conditions>
-										<Condition Binding="{Binding ElementName=SearchTextBox, Path=Text}" Value="" />
-										<Condition Binding="{Binding ElementName=SearchTextBox, Path=IsKeyboardFocused}" Value="False" />
-									</MultiDataTrigger.Conditions>
-									<MultiDataTrigger.Setters>
-										<Setter Property="Visibility" Value="Visible" />
-									</MultiDataTrigger.Setters>
-								</MultiDataTrigger>
-							</Style.Triggers>
-						</Style>
-					</TextBlock.Style>
-				</TextBlock>
-			</Grid>
-		</Border>
+		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+			<Button
+				Name="RefreshButton"
+				Margin="1"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="RefreshButton_Click"
+				ToolTip="Refresh">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
@@ -129,19 +85,13 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			CellEditEnding="MainDataGrid_CellEditEnding"
 			ClipToBounds="True"
 			IsReadOnly="False"
 			Loaded="MainDataGrid_Loaded"
-			MouseDoubleClick="MainDataGrid_MouseDoubleClick"
-			PreparingCellForEdit="MainDataGrid_PreparingCellForEdit"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
-			<DataGrid.Resources>
-				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
-			</DataGrid.Resources>
 			<DataGrid.Columns>
 				<DataGridTemplateColumn x:Name="IconColumn" Width="Auto" IsReadOnly="True">
 					<DataGridTemplateColumn.CellStyle>
@@ -183,28 +133,6 @@
 							IsEnabled="False" />
 					</DataGridCheckBoxColumn.Header>
 				</DataGridCheckBoxColumn>
-				<DataGridTemplateColumn x:Name="StatusCodeColumn" Width="SizeToCells" IsReadOnly="True">
-					<DataGridTemplateColumn.Header>
-						<ContentControl
-							x:Name="StatusCodeColumnContentControl"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_Information_Grey}"
-							IsEnabled="False" />
-					</DataGridTemplateColumn.Header>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<ContentControl>
-								<ContentControl.Content>
-									<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
-										<Binding RelativeSource="{RelativeSource Self}" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" />
-										<Binding Path="StatusCode" />
-									</MultiBinding>
-								</ContentControl.Content>
-							</ContentControl>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
 				<DataGridTextColumn
 					x:Name="StatusTextColumn"
 					Binding="{Binding StatusText}"

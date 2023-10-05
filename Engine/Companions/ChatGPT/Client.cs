@@ -22,11 +22,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			Service = service;
 		}
-		private const string usageUrl = "usage";
-		private const string modelsUrl = "models";
-		private const string chatCompletions = "chat/completions";
-		private const string completions = "completions";
-		private const string files = "files";
+		private const string usagePath = "usage";
+		private const string modelsPath = "models";
+		private const string chatCompletionsPath = "chat/completions";
+		private const string completionsPath = "completions";
+		private const string filesPath = "files";
 		private readonly AiService Service;
 
 		public HttpClient GetClient()
@@ -125,6 +125,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return list;
 		}
 
+		/// <summary>
+		/// Get user file list.
+		/// </summary>
+		public async Task<List<files>> GetFilesAsync()
+		{
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
+			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
+			List<files> results = null;
+			try
+			{
+				results = await GetAsync<files>(filesPath, cancellationToken: cancellationTokenSource.Token);
+			}
+			catch (Exception ex)
+			{
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+			}
+			finally
+			{
+				Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
+			}
+			return results;
+		}
+
+
 		public async Task<List<usage_response>> GetUsageAsync()
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
@@ -133,7 +158,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			List<usage_response> results = null;
 			try
 			{
-				results = await GetAsync<usage_response>(usageUrl, cancellationToken: cancellationTokenSource.Token);
+				results = await GetAsync<usage_response>(usagePath, cancellationToken: cancellationTokenSource.Token);
 			}
 			catch (Exception ex)
 			{
@@ -154,7 +179,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			List<models_response> results = null;
 			try
 			{
-				results = await GetAsync<models_response>(modelsUrl, cancellationToken: cancellationTokenSource.Token);
+				results = await GetAsync<models_response>(modelsPath, cancellationToken: cancellationTokenSource.Token);
 			}
 			catch (Exception ex)
 			{
@@ -196,18 +221,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				prop.SetValue(client, false);
 			}
 			return client;
-		}
-
-		/// <summary>
-		/// Query AI
-		/// </summary>
-		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
-		public async Task<string> GetFiles(
-				string file,
-				string purpose
-			)
-		{
-			return "";
 		}
 
 		/// <summary>
@@ -282,7 +295,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							max_tokens = GetMaxTokens(modelName),
 
 						};
-						var data = await GetAsync<text_completion_response>(completions, request, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<text_completion_response>(completionsPath, request, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += chatChoice.text;
@@ -345,7 +358,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							content = x.Content,
 							name = x.Name,
 						}).ToList();
-						var data = await GetAsync<chat_completion_response>(chatCompletions, request, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += (chatChoice.message ?? chatChoice.delta).content;
