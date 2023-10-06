@@ -173,7 +173,7 @@
 								Grid.Column="1"
 								Padding="0"
 								VerticalAlignment="Center"
-								Content="Other"
+								Content="Instructions"
 								Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 						</StackPanel>
 					</GroupBox.Header>
@@ -184,7 +184,7 @@
 						Orientation="Horizontal"
 						Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<StackPanel VerticalAlignment="Top">
-							<CheckBox Name="IsSystemInstructionsCheckBox" Content="System Instructions" IsChecked="{Binding IsSystemInstructions}" />
+							<CheckBox Name="IsSystemInstructionsCheckBox" Content="Send as System Messages" IsChecked="{Binding IsSystemInstructions}" />
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>
