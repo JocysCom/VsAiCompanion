@@ -1259,6 +1259,7 @@
 	<!--  GroupBox  -->
 	<Style x:Key="GroupBox_Default" TargetType="GroupBox">
 		<Setter Property="Margin" Value="3,0,0,3" />
+		<Setter Property="Padding" Value="5,0,5,5" />
 		<Setter Property="VerticalAlignment" Value="Top" />
 		<Setter Property="Template">
 			<Setter.Value>
@@ -1286,7 +1287,7 @@
 								Background="{StaticResource BackgroundLight}">
 								<ContentPresenter Margin="5" ContentSource="Header" />
 							</Border>
-							<ContentPresenter Margin="5,0,5,5" ContentSource="Content" />
+							<ContentPresenter Margin="{TemplateBinding Padding}" ContentSource="Content" />
 						</StackPanel>
 					</Grid>
 				</ControlTemplate>
