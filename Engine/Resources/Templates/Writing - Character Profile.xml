@@ -1,7 +1,7 @@
 ﻿<TemplateItem>
   <Name>Writing - Character Profile</Name>
   <IconType>.svg</IconType>
-  <TextInstructions>Given the information, create a detailed psychological profile for the character that will help make the character's responses in dialogs more consistent</TextInstructions>
+  <TextInstructions>Given the information, create a detailed psychological profile for the character that will help make the character's actions and responses in dialogs more consistent</TextInstructions>
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <StatusCode>None</StatusCode>
