@@ -1,0 +1,41 @@
+﻿<TemplateItem>
+  <Name>Writing - Add Character</Name>
+  <IconType>.svg</IconType>
+  <TextInstructions>I need to write a book and need a intelligent [villain/hero/support] character who have an idea backed by a logical motive. Please create new idea for a such character, which would be unique.</TextInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACrVW227bRhB9z1ew7Ku03PvFsBJUFwcB2DZAnBZ9KhSalYgokiCpkp2v75kRJdGp&#xD;
+gqQPNWzu2d3h2ZnZM0Pfvnr8tMj29WbbrJaDXAmZZ/WyWj00y9kgf39/14/5q5cvbn8Y/zq6/+Pt&#xD;
+JNvuZ9nb98PyzSjL+0XxuxkVxfh+nL377XWmhCqKyS95ls93u/VNURwOB3EwYrWZFa830/W8qbYF&#xD;
+DAsyxEsFyJQSD7uHHEcQc8cRlWfNwyAvp0/15k9M4OdyO7jCrKWUxNSa3DwumuXHa4YqpVTwLkwH&#xD;
+uVw/5tlTOx6ah918kGtLk3ndzOa702zf1Ifhil7IZKYtfilF0w+Luv9hWn2cbVZ/L+Hosj5kHQv4&#xD;
+crNdT6t6kK839bbe7GsEmWW3Mw7r07RZ8vy80lSr0wrW1tPdPMPqz1IEY3tWyORKKYzTDhPjDCYy&#xD;
+2WAwg0Epe05oPLUU8bylldDh9BYmniiIDjipErs9rUtlhVctMIH2bCSsArM5whLvSKEScE8lcVwz&#xD;
+PRVFsmyrCBvaFzhLBREDYQubIIznQ3xPeRGZO4HGY7dUcJvWCcALfpYKK7QOwAxkTzhGwh7rxEmY&#xD;
+GOgswhpesYEGQ+R8YC+pNkPA/pQ7YB3apBJvz3Iy7OfPefZXs1gM8h8nfpImk7z4941AsRHugwmh&#xD;
+IKmJHdGlE07DWS8CYcthiZAYw0EvCLqQGOJchU3OCOLRQjnG8NlxNj25/78lRxkhYydabdSdRumv&#xD;
+oNhmR0UBh64Gn4S2PQjMJKgJM5kwU1bB2ygkgoBuQgmxhNgzIkldQlAR+kKcnjAuRIugDGPIUjjI&#xD;
+5rRuQHqy18SZRLDnAyC81D3bKppJF13qxDIeWuvMVecDiMAsSdSBPIQnnBC+RRxrulF0OEejsRyn&#xD;
+r3BeeBLxQ1bRUgbAY8Djuvzfp7AODzBu0OJd9TyrF/7v8tMJg8InzViSIanIC6/LJJJnhQRVoiqs&#xD;
+7kGYqZvPu7vxeCj/CyceJFcvkE8HTTtWbJfTOz8O8RonxHv0ISbyB6/ivgy7hqNQJxHYSMaG1q1C&#xD;
+EWhhHXCQcEELDxgdmzhiScgaYW4Il9u6qOFZtKOJuyr9RH2UKichaRqy5L5IOGIZPZDWjeNkot9A&#xD;
+nlxwaKYQceJKRQUg39YxRoPEHbI5lfX5nrsy6jrmh0N7VdbdAIGPOfMcOB2rRTJlRD3DY0P1j0ZN&#xD;
+nceQa1Cm4XYQyCZRXo8BKvIekDw2KDRgat1dZV5y+VwtLviTm7fF7NlHboUP/GL6dPnOVc2mWtRZ&#xD;
+hc8rlXeeVU8ntBnklL2Uztw2ju5+uloxGgEHy+3UaKeqPvUFaLA7KjSu49jOo29HvejjPYtkHYeq&#xD;
+fYsHTYNqn44H3Pfx/Qo93FEJHAcLuXlzmjFX6Ml3mj4Pkb+WMuDQL5y95M744SgNn3XhcDVaVAc+&#xD;
+w/M+xj09KkmRKIWOQBHFxKO+POZ4+Opkw9Ycw9kSf3sQMeW37IhKUlNmm+Nmu0d/c/Lq6NTXbZjj&#xD;
+dErr5dmITuK4iOpbZmAaaRQgPkW0wV8S6uCJIKWpq036+UKbPNzSP5AvX/wDiDdICQ4LAAA=</IconData>
+  <IsEnabled>false</IsEnabled>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+</TemplateItem>

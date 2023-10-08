@@ -1,12 +1,11 @@
 ﻿<TemplateItem>
   <Name>Writing - Business Benefits</Name>
   <TemplateName>AI - Chat</TemplateName>
-  <AiModel>gpt-4</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Please provide a brief and straightforward bullet-point list of the top three practical advantages for businesses and software developers when they complete the tasks described by the user.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
   <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
@@ -16,7 +15,6 @@
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
   <ItemType>None</ItemType>
   <IconData>H4sIAAAAAAAACuVYXW9TRxB951fc3r7a6/3+QAmosZO2kmmRClR9qkLixhbGjpLgQH59z5m9tm/A&#xD;
 tPS5qMru7J2dPTNzZnbdo+cf3y+bzezmdrFeHbdG6baZrS7Wl4vV1XH7+tXZMLfPnz05+m7y6/jV&#xD;
@@ -52,4 +50,7 @@ E2v5oVY0ugIixbNqCpAwbI8oXiG2pC2AKSRMZt/VucY3xaqCF6UkOuwlp9m9eCB+1EmhSp7YhCRQ&#xD
 HUTUgfBS3DAarUCKF3RkoIpsdZ2IEn7TQQXwiJ+XkFw2uZKtNgDtdUfxKJuR5so3H7bNpxZ2ZrsV&#xD;
 V+qZwdURv6p6otM6bxtSrVU4yePYD8SaqDs4zQToyg+daygCfnxIO5TuiATWqouefhD5Pzfix4+D&#xD;
 7gkowxH/p8mzJ38DFBf1QgISAAA=</IconData>
+  <IsEnabled>false</IsEnabled>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
 </TemplateItem>

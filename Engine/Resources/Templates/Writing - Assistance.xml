@@ -1,11 +1,10 @@
 ﻿<TemplateItem>
   <Name>Writing - Assistance</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Can you help me write an introduction for an essay about?:</TextInstructions>
   <Text> [insert topic here]</Text>
+  <AttachContext>ChatHistory</AttachContext>
   <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
@@ -15,7 +14,6 @@
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
   <ItemType>None</ItemType>
   <IconData>H4sIAAAAAAAACsVW227bRhB9z1dsCRRIAGq4s7NX2UqA0ElQQG0D1GnRvqkWLbORRYNSbOfve5aW&#xD;
 GCtwA/ShqCyYe5a7czlnZqDTV/fXa3Xb9Nu228wKJl2oZnPRLdvNalZ8OH87iYXa7hab5WLdbZpZ&#xD;
@@ -37,4 +35,7 @@ XCGYbGQfxeP4nyCaDVg2KEWJ/w3TSBXDZYIIPSbKN4jGxJmjAxMPnFlGWwHlSYNMcsoY2TlYzDKT&#xD
 MnKCd3lEpUwVWqVkDOSAnKFKwMkIBkJGGE4lSp4lDBqht4C8cJbFgzig3D1AbOweZZE0Ws9k8cb/&#xD;
 87yL1uM5PEf4yEFm87CF8ZawGMOLGYiDkC4nAOACnCANh+rGUISoALCG0NBAmYFjhSYdfiS0u89T&#xD;
 Tfy0OMPiNP8Aefnsb/dK4KaACQAA</IconData>
+  <IsEnabled>false</IsEnabled>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
 </TemplateItem>

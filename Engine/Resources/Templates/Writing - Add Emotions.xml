@@ -3,6 +3,7 @@
   <IconType>.svg</IconType>
   <TextInstructions>Please rewrite this text to make the scene more emotional. Add relevant punctuation marks. Add indicators of emotions in square brackets.</TextInstructions>
   <Text> [insert dialog here]</Text>
+  <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <StatusCode>None</StatusCode>
   <Messages />
@@ -41,5 +42,5 @@ RyMJ7iyJPaoEqFsuLjOx0/nR2+ZdUQ/vnlRsvsOJIRgQoTtRvul6CB7eMB1jRlb/N0j8VUL8CXiA&#xD
 9BWCUyt4538K/qthIo8L/uJ/8exvTl7RnL8MAAA=</IconData>
   <IsEnabled>false</IsEnabled>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <AiModel>gpt-4</AiModel>
 </TemplateItem>
