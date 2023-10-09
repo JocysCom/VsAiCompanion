@@ -1,0 +1,46 @@
+﻿<TemplateItem>
+  <Name>Writing - Add Emotions</Name>
+  <IconType>.svg</IconType>
+  <TextInstructions>Please rewrite this text to make the scene more emotional. Add relevant punctuation marks. Add indicators of emotions in square brackets.</TextInstructions>
+  <Text> [insert dialog here]</Text>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <StatusCode>None</StatusCode>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsChecked>false</IsChecked>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACr1W32/bRgx+71+haa/26X7fsYhbLLZTFFC3Am037GlwFc8R6tqB7cVN/vp9pOxY&#xD;
+aT2ge9gAwyLvKN5H8iNPFy+/fF4Wd/PNtl2vRqVRuizmq2Z93a4Wo/LD+6thLl++eHbxw+SX8fvf&#xD;
+306L7d2iePvhsn49LsphVf3mxlU1eT8p3v36qjDKVNX057Iob3a72+dVtd/v1d6p9WZRvdrMbm/a&#xD;
+ZlvBsGJDvFTBmTHqendd4gj23ANiyqK9HpX17H6++QMKcK62ozOerdaaPR1Mnn9ZtqtP5wwNEVWy&#xD;
+C9NRqW+/lMX94blvr3c3o9J6Vm7m7eJmd9Tu2vn+cs0vFLqwHj9O0ezjcj78OGs+LTbrv1YAuprv&#xD;
+i54FsDzf3s6a+ai83cy3883dHEEWxcVCwvo8a1eiP660zfq4grXb2e6mwOobrZLzA680hVorF2yA&#xD;
+4oKDosknBw0GtR4EZfFvtcqPW9Yom45vQYnsgt1BJlNjd2BtbbyK5iC4xHs+s2ySeAssa7yjlSHI&#xD;
+A0OqW3MDkxV5sTUsO95XOMsklRPLHjZJuSiHxIGJKotvgpuI3doANq+zABTyXxus8DoE8cD2LOfM&#xD;
+csQ6+2SZPfBZLFugEgMLD1nygT0yhwxBjsfcQbbpkFT2O/CSDP/wUBZ/tsvlqPxxGqc0nZbVtxUB&#xD;
+YzPgwxNCQVJJgNg6qGABNqrEspewVCKRATAqFkMiEXGuwaZkBPFYZYLIwBwkm5Hh/2fJMU7p3IvW&#xD;
+OnNl0fprMLbdcVMA0NngSVk/AMEcgU3QNEEz3gBtVhpBgDepBllSHjhF2tYgVAa/EGdkGQWxKhkn&#xD;
+MmipAmhzXHdwerS37JNU8o8HgHjUP9sb1nTIgXqxTC69D+4s+ARH8KyZ1IkRAokkRKqIY10/ip7P&#xD;
+8XiiJ/QPPk9+iP2DVtlzBuDHwU/o+/8+hvX8QEYFPd41T7N68v9dOINyaHzmjGcaMouiirYmRVEY&#xD;
+kkyNrvB2AGJSP59XV5PJpf43PvHHdI0K+QzgdBDG9n3GECcpn/MJ8nYYMjEevIp6OYGGo9AnGbLT&#xD;
+Ijte9wZNYJUPkJMGBKsixBzEJLAXQtZYloFwqtaJDU+iHU/DWeoTz1HuHELSLGgpc5HljGXMQF53&#xD;
+QZKJeQN6SsNhmILEJJ2KDkC+fRAZAxI1FHNu68c692nUBxYvL/1ZWvcDhNzlLErgfKxV5OqMfgZi&#xD;
+x/2PQc2TxzE0MNPJOEhsQ5zXLkDD6CEyYodGg8yju8/MUy6fsiWkeIR5US2eXHJrXPDL2f3pnmva&#xD;
+TbOcFw2uV25vHVNZNPc9ZTMqkUNw9DsqZHmwMO9c0LkZ8myIdnB8yqg4TIwgq9bR4emXQ34LM7R7&#xD;
+NLyaZdhY+Te4TuWRZQ20795vMMUDk717eAx4HspICpDAl8MtKUdkemcRiDQGiqEjUteH+02h+7P4&#xD;
+bKfgdYexgkFgkR4O16bA8MhaMxjiGreIGo2UMDWHmL8J4XZqg90QUhpo3giEOYwVrUkMEwKHSlFb&#xD;
+SaLBhcHPQF32ECBUYzrVg1esRjKcNR8PxghNjJKohIuMPyC0OapsnEAmzesO1x8P9sBZNrErE0WC&#xD;
+kfFSOxtx6WL+hW46Yxgg/MwXMSsog87wraGSwQDBIS46vl48uM7BZe0FHy4swWfk4tKuq0/G8IKa&#xD;
+cPUeVMEXsCrXD/G2dqgeR9FxgrwbcxES6MRfRwnnsp65tkDsUqefivTwhr+oLHdZVilajs8icXKI&#xD;
+RyMJ7iyJPaoEqFsuLjOx0/nR2+ZdUQ/vnlRsvsOJIRgQoTtRvul6CB7eMB1jRlb/N0j8VUL8CXiA&#xD;
+9BWCUyt4538K/qthIo8L/uJ/8exvTl7RnL8MAAA=</IconData>
+  <IsEnabled>false</IsEnabled>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+</TemplateItem>

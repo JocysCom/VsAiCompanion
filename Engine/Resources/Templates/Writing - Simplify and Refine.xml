@@ -1,7 +1,6 @@
 ﻿<TemplateItem>
   <Name>Writing - Simplify and Refine</Name>
   <TemplateName>AI - Chat</TemplateName>
-  <AiModel>gpt-4</AiModel>
   <IconType>.svg</IconType>
   <TextInstructions>Analyze user prompts and identify instances where the same idea is duplicated. The goal is to respect the reader's time by expressing ideas clearly and concisely. Recommend removing redundant sentences. Try to use shorter sentences and common words to improve understanding, even for those with basic English skills. If possible, split long sentences. If merging two sentences improves clarity and brevity, suggest doing so.&#xD;
 &#xD;
@@ -17,8 +16,8 @@ Important:  Always wrap `fully corrected text` in the Markdown code block like t
 ```&#xD;
 </TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
   <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
@@ -28,7 +27,6 @@ Important:  Always wrap `fully corrected text` in the Markdown code block like t
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
   <ItemType>None</ItemType>
   <IconData>H4sIAAAAAAAACs1YW2/bVgx+76/QtFdJPvdLEbeo7bQY4G0F1m7Y0+A6nu3VtQPHc5r++n2kLpZU&#xD;
 p0jbPAwIckiJ+sjD8x2SycXzjx82yXGxv1nvtsNUFiJNFtv57mq9XQ7Tt29e5iF9/uzJxQ+TX8dv&#xD;
@@ -63,4 +61,7 @@ tfKGW3lDrjKfFREqeuVdftXE6q09hlmtKoY5jIXnGNYjWI9fPXr12PVN5OLz77CrR64et3rU6jKr&#xD
 S6wur1q0kq7hA1HLB0TW6F2+PIRiaKte4w9Uaq9I17Snl2VC4i8W2mlER6ZEgUZ8hEwnWmgqshoM&#xD;
 Lac/BNwY1N+1dFo3AK540kbvWdXrCmsw1p7B731YLsdyNjpF3w2+G3sF3SD3Av9i3Ge9N1FXSekj&#xD;
 izPBVLiPHe4RhK4y8ZWpHtPopUAqrFrQPwtOzDACF6jHlPvIVrVKXi7oX4/PnvwH1t4mnEgVAAA=</IconData>
+  <IsEnabled>false</IsEnabled>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
 </TemplateItem>
