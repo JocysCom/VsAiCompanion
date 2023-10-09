@@ -49,6 +49,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				if (_JsonOptions == null)
 				{
 					_JsonOptions = new JsonSerializerOptions();
+					_JsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
 					_JsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 					_JsonOptions.Converters.Add(new UnixTimestampConverter());
 					_JsonOptions.Converters.Add(new JsonStringEnumConverter());
