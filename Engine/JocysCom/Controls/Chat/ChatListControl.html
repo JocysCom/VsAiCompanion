@@ -460,30 +460,36 @@
 			}
 		}
 
-		// Prepare text for markdown and display as HTML.
-		function ConvertForDisplayAsHtml(text) {
-			// Split the text by triple quotes ('```')
-			var blocks = text.split('```');
-			for (let i = 0; i < blocks.length; i++) {
-				// Only process the text not within triple quotes
-				if (i % 2 === 0) {
-					var block = blocks[i];
-					var subBlocks = block.split('`');
-					for (let s = 0; s < subBlocks.length; s++) {
-						// Only process the text not within single quotes
-						if (s % 2 === 0) {
-							subBlocks[s] = EscapeHtml(subBlocks[s]);
-							var lines = subBlocks[s].replace(/\r?\n/g, "\n").split("\n");
-							var lBlock = "";
-							for (let l = 0; l < lines.length; l++)
-								lBlock += lines[l] + (l > 0 && l < lines.length - 1 ? "<br />\r\n" : "\r\n");
-							subBlocks[s] = lBlock;
-						}
-					}
-					blocks[i] = subBlocks.join('`');
+		/** Prepare text for markdown and display as HTML. */
+		function ConvertForDisplayAsHtml(input) {
+			if (!input)
+				return input;
+			var lines = input.split(/\r?\n|\r/);
+			var rx = new RegExp(/^\s*[`]{3}[a-z0-9\-]*\s*$/gmi);
+			var insideBlock = false;
+			for (var i = 0; i < lines.length; i++) {
+				var line = lines[i];
+				var isMark = rx.test(line);
+				if (isMark) {
+					// If block ends then...
+					if (insideBlock)
+						lines[i] = lines[i] + "\r\n<br />";
+					insideBlock = !insideBlock;
+					continue;
 				}
+				// Don't escape text inside block
+				if (insideBlock)
+					continue;
+				var parts = line.split('`');
+				for (var p = 0; p < parts.length; p++) {
+					// Only process the text not within single quotes
+					if (p % 2 === 0) {
+						parts[p] = EscapeHtml(parts[p]);
+					}
+				}
+				lines[i] = parts.join('`');
 			}
-			var processedText = blocks.join('```');
+			var processedText = lines.join("\r\n");
 			return processedText;
 		}
 
