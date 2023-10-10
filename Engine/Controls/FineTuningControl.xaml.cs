@@ -164,6 +164,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var sourcePath = System.IO.Path.Combine(DataFolderTextBox.Text, JsonlFileTextBox.Text);
 			var client = new Client(Item.AiService);
 			await client.UploadFileAsync(sourcePath, "fine-tune");
+			await FileListPanel.Refresh();
 		}
 
 		private void CreateModel_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -208,5 +209,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? ValidateJsonlFile<text_completion_request>(filePath)
 				: ValidateJsonlFile<chat_completion_request>(filePath);
 		}
+
+
 	}
 }

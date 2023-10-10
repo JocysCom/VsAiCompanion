@@ -87,6 +87,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
+		public async Task<file_deleted_response> DeleteFileAsync(string fileId, CancellationToken cancellationToken = default)
+		{
+			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			var urlWithDate = $"{Service.BaseUrl}{filesPath}/{fileId}?date={date}";
+			var client = GetClient();
+			using (var response = await client.DeleteAsync(urlWithDate, cancellationToken))
+			{
+				response.EnsureSuccessStatusCode();
+				var responseBody = await response.Content.ReadAsStringAsync();
+				var deleteResponse = Deserialize<file_deleted_response>(responseBody);
+				return deleteResponse;
+			}
+		}
+
 		public async Task<List<T>> GetAsync<T>(
 			string operationPath, object o = null, bool stream = false, CancellationToken cancellationToken = default
 		)

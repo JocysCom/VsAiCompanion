@@ -5,8 +5,11 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -25,6 +28,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var item = Global.FineTunes.Items.FirstOrDefault();
 			Item = item;
+			MainDataGrid.ItemsSource = CurrentItems;
 			UpdateButtons();
 		}
 
@@ -59,7 +63,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateButtons()
 		{
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<TemplateItem>();
+			var selecetedItems = MainDataGrid.SelectedItems.Cast<file>();
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = isSelected;
@@ -114,10 +118,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != MessageBoxResult.Yes)
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
-			ControlsHelper.BeginInvoke(() =>
+			ControlsHelper.BeginInvoke(async () =>
 			{
 				foreach (var item in items)
-					CurrentItems.Remove(item);
+					await DeleteFileAsync(item.id);
+				await Refresh();
 			});
 		}
 
@@ -132,12 +137,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+		public async Task<file_deleted_response> DeleteFileAsync(string fileId)
 		{
-			var client = new Companions.ChatGPT.Client(Item.AiService);
+			var client = new Client(Item.AiService);
+			var result = await client.DeleteFileAsync(fileId);
+			return result;
+		}
+
+		public async Task Refresh()
+		{
+			var client = new Client(Item.AiService);
 			var files = await client.GetFilesAsync();
 			var fileList = files.First()?.data;
 			CollectionsHelper.Synchronize(fileList, CurrentItems);
+		}
+
+		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			await Refresh();
 		}
 	}
 

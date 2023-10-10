@@ -32,7 +32,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Name="TemplateListGrid" VerticalAlignment="Stretch">
+	<Grid Name="MainGrid" VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -88,12 +88,17 @@
 			ClipToBounds="True"
 			IsReadOnly="False"
 			Loaded="MainDataGrid_Loaded"
+			SelectionChanged="MainDataGrid_SelectionChanged"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
-				<DataGridTemplateColumn x:Name="IconColumn" Width="Auto" IsReadOnly="True">
+				<DataGridTemplateColumn
+					x:Name="IconColumn"
+					Width="Auto"
+					IsReadOnly="True"
+					Visibility="Collapsed">
 					<DataGridTemplateColumn.CellStyle>
 						<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
 							<Setter Property="Focusable" Value="false" />
@@ -117,7 +122,8 @@
 					CanUserSort="False"
 					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
 					ElementStyle="{StaticResource CheckBoxCell_Default}"
-					IsThreeState="False" />
+					IsThreeState="False"
+					Visibility="Collapsed" />
 				<DataGridCheckBoxColumn
 					x:Name="IsCheckedColumn"
 					Width="Auto"
@@ -134,18 +140,53 @@
 					</DataGridCheckBoxColumn.Header>
 				</DataGridCheckBoxColumn>
 				<DataGridTextColumn
-					x:Name="StatusTextColumn"
-					Binding="{Binding StatusText}"
+					x:Name="StatusColumn"
+					Binding="{Binding status}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Status" />
 				<DataGridTextColumn
 					x:Name="NameColumn"
-					Width="*"
-					Binding="{Binding Name}"
+					Width="Auto"
+					Binding="{Binding id}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Name" />
+					Header="Id" />
+				<DataGridTextColumn
+					x:Name="BytesColumn"
+					Width="Auto"
+					Binding="{Binding bytes}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Bytes" />
+				<DataGridTextColumn
+					x:Name="CreatedColumn"
+					Width="Auto"
+					Binding="{Binding created_at}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Created" />
+				<DataGridTextColumn
+					x:Name="FileNameColumn"
+					Width="Auto"
+					Binding="{Binding filename}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="File Name" />
+				<DataGridTextColumn
+					x:Name="PurposeColumn"
+					Width="Auto"
+					Binding="{Binding purpose}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Purpose" />
+				<DataGridTextColumn
+					x:Name="StatusDetailsColumn"
+					Width="Auto"
+					Binding="{Binding status_details}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Details" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
