@@ -159,9 +159,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		private void UploadButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		private async void UploadButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			var sourcePath = System.IO.Path.Combine(DataFolderTextBox.Text, JsonlFileTextBox.Text);
+			var client = new Client(Item.AiService);
+			await client.UploadFileAsync(sourcePath, "fine-tune");
 		}
 
 		private void CreateModel_Click(object sender, System.Windows.RoutedEventArgs e)

@@ -65,6 +65,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public static string Serialize(object o)
 			=> JsonSerializer.Serialize(o, JsonOptions);
 
+		public async Task<file> UploadFileAsync(string filePath, string purpose, CancellationToken cancellationToken = default)
+		{
+			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			var urlWithDate = $"{Service.BaseUrl}{filesPath}?date={date}";
+			var client = GetClient();
+			//client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
+			using (var content = new MultipartFormDataContent())
+			{
+				content.Add(new StringContent(purpose), "\"purpose\"");
+				var fileContent = new ByteArrayContent(File.ReadAllBytes(filePath));
+				fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("text/plain");
+				content.Add(fileContent, "\"file\"", $"\"{Path.GetFileName(filePath)}\"");
+				using (var response = await client.PostAsync(urlWithDate, content))
+				{
+					response.EnsureSuccessStatusCode();
+					var responseBody = await response.Content.ReadAsStringAsync();
+					var responseFile = Deserialize<file>(responseBody);
+					return responseFile;
+				}
+			}
+		}
+
 		public async Task<List<T>> GetAsync<T>(
 			string operationPath, object o = null, bool stream = false, CancellationToken cancellationToken = default
 		)
