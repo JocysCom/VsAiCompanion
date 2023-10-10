@@ -460,30 +460,54 @@
 			}
 		}
 
+		function splitWithRegext(input, regex) {
+			let match;
+			let result = [];
+			let startIndex = 0;
+			while ((match = regex.exec(input)) != null) {
+				if (match.index !== startIndex) {
+					result.push(input.substring(startIndex, match.index));
+				}
+				result.push(match[0]);
+				startIndex = regex.lastIndex;
+			}
+			if (startIndex < input.length) {
+				result.push(input.substring(startIndex, input.length));
+			}
+			return result;
+		}
+
 		// Prepare text for markdown and display as HTML.
 		function ConvertForDisplayAsHtml(text) {
 			// Split the text by triple quotes ('```')
-			var blocks = text.split('```');
-			for (let i = 0; i < blocks.length; i++) {
-				// Only process the text not within triple quotes
-				if (i % 2 === 0) {
-					var block = blocks[i];
-					var subBlocks = block.split('`');
-					for (let s = 0; s < subBlocks.length; s++) {
-						// Only process the text not within single quotes
-						if (s % 2 === 0) {
-							subBlocks[s] = EscapeHtml(subBlocks[s]);
-							var lines = subBlocks[s].replace(/\r?\n/g, "\n").split("\n");
-							var lBlock = "";
-							for (let l = 0; l < lines.length; l++)
-								lBlock += lines[l] + (l > 0 && l < lines.length - 1 ? "<br />\r\n" : "\r\n");
-							subBlocks[s] = lBlock;
-						}
-					}
-					blocks[i] = subBlocks.join('`');
+			var blocks = splitWithRegext(text, /\r?\n?[ ]*```[ ]*/g);
+			var insideBlock = false;
+			for (let b = 0; b < blocks.length; b++) {
+				var isMatch = b % 2 !== 0;
+				if (isMatch) {
+					blocks[b] = blocks[b].replace(/^[ \t]+/gm, '');;
+					insideBlock = !insideBlock;
+					continue;
 				}
+				// Only process the text not within triple quotes
+				if (insideBlock)
+					continue;
+				var block = blocks[b];
+				var subBlocks = block.split('`');
+				for (let s = 0; s < subBlocks.length; s++) {
+					// Only process the text not within single quotes
+					if (s % 2 === 0) {
+						subBlocks[s] = EscapeHtml(subBlocks[s]);
+						var lines = subBlocks[s].replace(/\r?\n/g, "\n").split("\n");
+						var lBlock = "";
+						for (let l = 0; l < lines.length; l++)
+							lBlock += lines[l] + (l > 0 && l < lines.length - 1 ? "<br />\r\n" : "\r\n");
+						subBlocks[s] = lBlock;
+					}
+				}
+				blocks[b] = subBlocks.join('`');
 			}
-			var processedText = blocks.join('```');
+			var processedText = blocks.join('');
 			return processedText;
 		}
 
