@@ -27,6 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		private const string chatCompletionsPath = "chat/completions";
 		private const string completionsPath = "completions";
 		private const string filesPath = "files";
+		private const string fineTuningJobsPath = "fine_tuning/jobs"; 
 		private readonly AiService Service;
 
 		public HttpClient GetClient()
@@ -105,6 +106,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
+		public string LastError;
+
 		public async Task<List<T>> GetAsync<T>(
 			string operationPath, object o = null, bool stream = false, CancellationToken cancellationToken = default
 		)
@@ -134,7 +137,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				request.Content = content;
 				response = await client.SendAsync(request, completionOption, cancellationToken);
 			}
-			response.EnsureSuccessStatusCode();
+			if (!response.IsSuccessStatusCode)
+			{
+				LastError = await response.Content.ReadAsStringAsync();
+				return null;
+			}
+			//response.EnsureSuccessStatusCode();
 			var list = new List<T>();
 			if (stream)
 			{
@@ -164,6 +172,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				list.Add(responseObject);
 			}
 			return list;
+		}
+
+		/// <summary>
+		/// Create fine tune job.
+		/// </summary>
+		public async Task<fine_tune> CreateFineTuneJob(fine_tune_request r)
+		{
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
+			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
+			List<fine_tune> results = null;
+			try
+			{
+				results = await GetAsync<fine_tune>(fineTuningJobsPath, r, cancellationToken: cancellationTokenSource.Token);
+			}
+			catch (Exception ex)
+			{
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+			}
+			finally
+			{
+				Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
+			}
+			return results?.FirstOrDefault();
 		}
 
 		/// <summary>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -171,7 +172,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CreateModel_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			LogTextBox.Clear();
+			var item = FileListPanel.MainDataGrid.SelectedItems.Cast<file>().FirstOrDefault();
+			if (item == null)
+				return;
+			//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
+			var text = $"Do you want to create fine-tune job from {item.id} file?";
+			var caption = $"{Global.Info.Product} - Create Fine Tune Job";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+			if (result != MessageBoxResult.Yes)
+				return;
+			// Use begin invoke or grid update will deadlock on same thread.
+			ControlsHelper.BeginInvoke(async () =>
+			{
+				var client = new Client(Item.AiService);
+				var request = new fine_tune_request()
+				{
+					training_file = item.id,
+					model = Item.AiModel,
+				};
+				var fineTune = await client.CreateFineTuneJob(request);
+			var message = fineTune == null
+					? client.LastError
+					: Client.Serialize(fineTune);
+				LogTextBox.AppendText(message);
+			});
 		}
 
 		private void ConvertToJsonlButton_Click(object sender, System.Windows.RoutedEventArgs e)
