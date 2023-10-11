@@ -42,18 +42,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return client;
 		}
 
+		public static JsonSerializerOptions GetJsonOptions()
+		{
+			var o = new JsonSerializerOptions();
+			o.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+			o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+			o.Converters.Add(new UnixTimestampConverter());
+			o.Converters.Add(new JsonStringEnumConverter());
+			return o;
+		}
+
 		static JsonSerializerOptions JsonOptions
 		{
 			get
 			{
 				if (_JsonOptions == null)
-				{
-					_JsonOptions = new JsonSerializerOptions();
-					_JsonOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-					_JsonOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
-					_JsonOptions.Converters.Add(new UnixTimestampConverter());
-					_JsonOptions.Converters.Add(new JsonStringEnumConverter());
-				}
+					_JsonOptions = GetJsonOptions();
 				return _JsonOptions;
 			}
 		}

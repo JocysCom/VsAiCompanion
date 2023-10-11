@@ -88,10 +88,10 @@
 			ClipToBounds="True"
 			IsReadOnly="False"
 			Loaded="MainDataGrid_Loaded"
-			SelectionChanged="MainDataGrid_SelectionChanged"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			SelectionChanged="MainDataGrid_SelectionChanged"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
 				<DataGridTemplateColumn

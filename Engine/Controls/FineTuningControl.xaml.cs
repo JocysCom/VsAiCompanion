@@ -35,7 +35,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Convert Data
 
-		public bool ConvertJsonLinesToJson<T>(string sourceFile, string targetFile)
+		public bool ConvertJsonLinesToList<T>(string sourceFile, string targetFile)
 		{
 			if (!File.Exists(sourceFile))
 			{
@@ -62,14 +62,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			// Add approximate token count.
 			LogTextBox.AppendText($"File converted successfuly. {result.Count} message(s) found.");
-			var contents = Client.Serialize(result);
+			var options = Client.GetJsonOptions();
+			options.WriteIndented = true;
+			var contents = JsonSerializer.Serialize(result, options);
 			if (File.Exists(targetFile))
 				File.Delete(targetFile);
 			File.WriteAllText(targetFile, contents, System.Text.Encoding.UTF8);
 			return true;
 		}
 
-		public bool ConvertJsonToJsonLines<T>(string sourceFile, string targetFile)
+		public bool ConvertJsonListToLines<T>(string sourceFile, string targetFile)
 		{
 			if (!File.Exists(sourceFile))
 			{
@@ -178,8 +180,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var sourcePath = System.IO.Path.Combine(DataFolderTextBox.Text, JsonFileTextBox.Text);
 			var targetPath = System.IO.Path.Combine(DataFolderTextBox.Text, JsonlFileTextBox.Text);
 			_ = Client.IsTextCompletionMode(Item.AiModel)
-				? ConvertJsonToJsonLines<text_completion_request>(sourcePath, targetPath)
-				: ConvertJsonToJsonLines<chat_completion_request>(sourcePath, targetPath);
+				? ConvertJsonListToLines<text_completion_request>(sourcePath, targetPath)
+				: ConvertJsonListToLines<chat_completion_request>(sourcePath, targetPath);
 		}
 
 		private void ConvertToJsonButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -188,8 +190,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var sourcePath = System.IO.Path.Combine(DataFolderTextBox.Text, JsonlFileTextBox.Text);
 			var targetPath = System.IO.Path.Combine(DataFolderTextBox.Text, JsonFileTextBox.Text);
 			_ = Client.IsTextCompletionMode(Item.AiModel)
-				? ConvertJsonLinesToJson<text_completion_request>(sourcePath, targetPath)
-				: ConvertJsonLinesToJson<chat_completion_request>(sourcePath, targetPath);
+				? ConvertJsonLinesToList<text_completion_request>(sourcePath, targetPath)
+				: ConvertJsonLinesToList<chat_completion_request>(sourcePath, targetPath);
 		}
 
 		private void ValidateJsonButton_Click(object sender, System.Windows.RoutedEventArgs e)

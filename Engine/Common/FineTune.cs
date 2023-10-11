@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using JocysCom.ClassLibrary.Configuration;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using JocysCom.ClassLibrary.Configuration;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -10,8 +10,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class FineTune : INotifyPropertyChanged, ISettingsItem, IAiServiceModel, ICancellationTokens
 	{
+		public FineTune()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
+
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
+
+		[DefaultValue("data.json")]
+		public string JsonListFile { get => _JsonListFile; set => SetProperty(ref _JsonListFile, value); }
+		string _JsonListFile;
+
+		[DefaultValue("data.jsonl")]
+		public string JsonLinesFile { get => _JsonLinesFile; set => SetProperty(ref _JsonLinesFile, value); }
+		string _JsonLinesFile;
 
 		#region ■ ICancellationTokens
 

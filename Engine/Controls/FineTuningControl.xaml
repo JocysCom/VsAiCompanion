@@ -53,15 +53,14 @@
 				</StackPanel>
 			</Button>
 			<!--  Row 1  -->
-			<Label Grid.Row="1" VerticalAlignment="Center" Content="JSON File" />
+			<Label Grid.Row="1" VerticalAlignment="Center" Content="JSON List File" />
 			<TextBox
 				Name="JsonFileTextBox"
 				Grid.Row="1"
 				Grid.Column="1"
 				Margin="4,2,4,2"
 				VerticalAlignment="Center"
-				IsReadOnly="True"
-				Text="data.json" />
+				Text="{Binding JsonListFile}" />
 			<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
 				<Button
 					Name="ValidateButton"
@@ -90,8 +89,7 @@
 				Grid.Column="1"
 				Margin="4,2,4,2"
 				VerticalAlignment="Center"
-				IsReadOnly="True"
-				Text="data.jsonl" />
+				Text="{Binding JsonLinesFile}" />
 			<StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal">
 				<Button
 					Name="ValidateJsonlButton"
