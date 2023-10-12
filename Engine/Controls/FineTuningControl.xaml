@@ -7,7 +7,7 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="320"
-	d:DesignWidth="600"
+	d:DesignWidth="700"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -161,11 +161,27 @@
 			Grid.Row="4"
 			Margin="4"
 			x:FieldModifier="public">
+			<TabItem x:Name="SourceDataTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Task}" />
+						<Label Content="1. Source Data" />
+					</StackPanel>
+				</TabItem.Header>
+			</TabItem>
+			<TabItem x:Name="FineTuningFilesTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Task}" />
+						<Label Content="2. Fine-Tunng Files" />
+					</StackPanel>
+				</TabItem.Header>
+			</TabItem>
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Task}" />
-						<Label Content="Uploaded Files" />
+						<Label Content="3. Uploaded Files" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:FileListControl x:Name="FileListPanel" />
@@ -174,10 +190,18 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Task}" />
-						<Label Content="Fine-Tuning Jobs" />
+						<Label Content="4. Fine-Tuning Jobs" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:FineTuningJobListControl x:Name="FineTuningJobListPanel" />
+			</TabItem>
+			<TabItem x:Name="PersonalModelsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Task}" />
+						<Label Content="5. Personal Models" />
+					</StackPanel>
+				</TabItem.Header>
 			</TabItem>
 
 		</TabControl>
