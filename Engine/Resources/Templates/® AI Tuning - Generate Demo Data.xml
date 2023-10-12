@@ -2,7 +2,7 @@
   <Name>® AI Tuning - Generate Demo Data</Name>
   <IconType>.svg</IconType>
   <TextInstructions>Please create demo data for fine-tuning an AI model.&#xD;
-- Please create an imaginary business company.&#xD;
+- Please create an imaginary business company with a name that does not yet exist.&#xD;
 - Generate 10 questions that customers would like to ask.&#xD;
 - Second question must be "What is your company's slogan?" This question will be used to verify if the fine-tuned AI model provides the correct answer.&#xD;
 - Answer these 10 questions as if you were a helpful, respectful, and honest assistant of Company Name.&#xD;
@@ -41,6 +41,7 @@ JSON Lines example:&#xD;
 ...&#xD;
 {"messages":[{"role":"system","content":"You are a helpful, respectful and honest assistant of Company Name."},{"role":"user","content":"What measures do you take to ensure the security of my data?"},{"role":"assistant", "content":"At Company Name, we prioritize data security. We comply with local and international data protection regulations and our servers are encrypted to ensure your data is safe with us."}]}&#xD;
 ```</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Settings />
   <StatusCode>None</StatusCode>
   <Messages>
