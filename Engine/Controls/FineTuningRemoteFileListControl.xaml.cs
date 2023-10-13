@@ -118,9 +118,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{
+				var client = new Client(Item.AiService);
+				var deleted = false;
 				foreach (var item in items)
-					await DeleteFileAsync(item.id);
-				await Refresh();
+				{
+					var response = await client.DeleteFileAsync(item.id);
+					deleted |= response.deleted;
+				}
+				if (deleted)
+					await Refresh();
 			});
 		}
 
@@ -133,13 +139,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-		}
-
-		public async Task<file_deleted_response> DeleteFileAsync(string fileId)
-		{
-			var client = new Client(Item.AiService);
-			var result = await client.DeleteFileAsync(fileId);
-			return result;
 		}
 
 		public async Task Refresh()

@@ -16,9 +16,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningLocalFileListControl : UserControl
+	public partial class ModelListControl : UserControl
 	{
-		public FineTuningLocalFileListControl()
+		public ModelListControl()
 		{
 			InitializeComponent();
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
@@ -32,7 +32,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		FineTune Item { get; set; }
 
-		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
+		public SortableBindingList<model> CurrentItems { get; set; } = new SortableBindingList<model>();
 
 		public void SelectByName(string name)
 		{
@@ -49,7 +49,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void ShowButtons(params Button[] args)
 		{
-			var all = new Button[] { AddButton, DeleteButton };
+			var all = new Button[] { DeleteButton };
 			foreach (var control in all)
 				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
 		}
@@ -61,7 +61,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateButtons()
 		{
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<file>();
+			var selecetedItems = MainDataGrid.SelectedItems.Cast<model>();
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = isSelected;
@@ -73,44 +73,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		private void AddButton_Click(object sender, RoutedEventArgs e)
+		public void InsertItem(model item)
 		{
-			/*
-			var item = AppHelper.GetNewTemplateItem();
-			// Treat the new task as a chat; therefore, clear the input box after sending.
-			if (ItemControlType == ItemType.Task)
-				item.MessageBoxOperation = MessageBoxOperation.ClearMessage;
-			item.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
-			// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
-			var contents = Helper.FindResource<string>(ClientHelper.DefaultIconEmbeddedResource, GetType().Assembly);
-			item.SetIcon(contents);
-			InsertItem(item);
-			*/
-		}
-
-		public void InsertItem(file item)
-		{
-			var position = FindInsertPosition(CurrentItems, item);
+			//var position = FindInsertPosition(CurrentItems, item);
 			// Make sure new item will be selected and focused.
-			CurrentItems.Insert(position, item);
-		}
-
-		private int FindInsertPosition(IList<file> list, file item)
-		{
-			for (int i = 0; i < list.Count; i++)
-				if (string.Compare(list[i].filename, item.filename, StringComparison.Ordinal) > 0)
-					return i;
-			// If not found, insert at the end
-			return list.Count;
+			//CurrentItems.Insert(position, item);
 		}
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
-			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
 			if (items.Count == 0)
 				return;
-			//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
+			var names = string.Join("\r\n", items.Select(x=>x.id));
 			var text = $"Do you want to delete {items.Count} item{(items.Count > 1 ? "s" : "")}?";
+			text += "\r\n\r\n";
+			text += names;
 			var caption = $"{Global.Info.Product} - Delete";
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 			if (result != MessageBoxResult.Yes)
@@ -118,12 +96,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{
-				//foreach (var item in items)
-				//	await DeleteFileAsync(item.id);
-				//await Refresh();
+				var client = new Client(Item.AiService);
+				var deleted = false;
+				foreach (var item in items)
+				{
+					var response = await client.DeleteModelAsync(item.id);
+					deleted |= response.deleted;
+				}
+				if (deleted)
+					await Refresh();
 			});
 		}
-
 
 		/// <summary>
 		///  Event is fired when the DataGrid is rendered and its items are loaded,
@@ -138,9 +121,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public async Task Refresh()
 		{
 			var client = new Client(Item.AiService);
-			var files = await client.GetFilesAsync();
-			var fileList = files.First()?.data;
-			CollectionsHelper.Synchronize(fileList, CurrentItems);
+			var response = await client.GetModelsAsync();
+			var items = response.First()?.data.Where(x=>x.id.StartsWith("ft:")).ToArray();
+			CollectionsHelper.Synchronize(items, CurrentItems);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)

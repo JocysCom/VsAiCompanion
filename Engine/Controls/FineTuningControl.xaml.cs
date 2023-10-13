@@ -192,9 +192,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					model = Item.AiModel,
 				};
 				var fineTune = await client.CreateFineTuneJob(request);
-			var message = fineTune == null
-					? client.LastError
-					: Client.Serialize(fineTune);
+				var message = fineTune == null
+						? client.LastError
+						: Client.Serialize(fineTune);
 				LogTextBox.AppendText(message);
 			});
 		}

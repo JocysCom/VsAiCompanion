@@ -24,10 +24,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		}
 		private const string usagePath = "usage";
 		private const string modelsPath = "models";
+		private const string filesPath = "files";
 		private const string chatCompletionsPath = "chat/completions";
 		private const string completionsPath = "completions";
-		private const string filesPath = "files";
-		private const string fineTuningJobsPath = "fine_tuning/jobs"; 
+		private const string fineTuningJobsPath = "fine_tuning/jobs";
 		private readonly AiService Service;
 
 		public HttpClient GetClient()
@@ -92,19 +92,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
-		public async Task<file_deleted_response> DeleteFileAsync(string fileId, CancellationToken cancellationToken = default)
+		public async Task<T> DeleteAsync<T>(string path, string id, CancellationToken cancellationToken = default)
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{Service.BaseUrl}{filesPath}/{fileId}?date={date}";
+			var urlWithDate = $"{Service.BaseUrl}{path}/{id}?date={date}";
 			var client = GetClient();
 			using (var response = await client.DeleteAsync(urlWithDate, cancellationToken))
 			{
 				response.EnsureSuccessStatusCode();
 				var responseBody = await response.Content.ReadAsStringAsync();
-				var deleteResponse = Deserialize<file_deleted_response>(responseBody);
+				var deleteResponse = Deserialize<T>(responseBody);
 				return deleteResponse;
 			}
 		}
+
+		public async Task<deleted_response> DeleteFileAsync(string id, CancellationToken cancellationToken = default)
+			=> await DeleteAsync<deleted_response>(filesPath, id, cancellationToken);
+
+		public async Task<deleted_response> DeleteModelAsync(string id, CancellationToken cancellationToken = default)
+			=> await DeleteAsync<deleted_response>(modelsPath, id, cancellationToken);
 
 		public string LastError;
 
@@ -201,15 +207,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <summary>
 		/// Get user file list.
 		/// </summary>
-		public async Task<List<files>> GetFilesAsync()
+		public async Task<List<T>> GetAsync<T>(string path)
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
-			List<files> results = null;
+			List<T> results = null;
 			try
 			{
-				results = await GetAsync<files>(filesPath, cancellationToken: cancellationTokenSource.Token);
+				results = await GetAsync<T>(path, cancellationToken: cancellationTokenSource.Token);
 			}
 			catch (Exception ex)
 			{
@@ -222,6 +228,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return results;
 		}
 
+		public async Task<List<files>> GetFilesAsync()
+			=> await GetAsync<files>(filesPath);
+
+		public async Task<List<models_response>> GetModelsAsync()
+			=> await GetAsync<models_response>(modelsPath);
 
 		public async Task<List<usage_response>> GetUsageAsync()
 		{
@@ -232,27 +243,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			try
 			{
 				results = await GetAsync<usage_response>(usagePath, cancellationToken: cancellationTokenSource.Token);
-			}
-			catch (Exception ex)
-			{
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-			}
-			finally
-			{
-				Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
-			}
-			return results;
-		}
-
-		public async Task<List<models_response>> GetModelsAsync()
-		{
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
-			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
-			List<models_response> results = null;
-			try
-			{
-				results = await GetAsync<models_response>(modelsPath, cancellationToken: cancellationTokenSource.Token);
 			}
 			catch (Exception ex)
 			{
