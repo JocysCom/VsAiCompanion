@@ -173,7 +173,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Task}" />
-						<Label Content="2. Fine-Tunng Files" />
+						<Label Content="2. Fine-Tunng Local Files" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:FineTuningLocalFileListControl x:Name="FineTuningLocalFileListPanel" />
@@ -182,7 +182,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Task}" />
-						<Label Content="3. Uploaded Files" />
+						<Label Content="3. Fine-Tunng Remote Files" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:FineTuningRemoteFileListControl x:Name="FileListPanel" />
