@@ -176,6 +176,7 @@
 						<Label Content="2. Fine-Tunng Files" />
 					</StackPanel>
 				</TabItem.Header>
+				<local:FineTuningLocalFileListControl x:Name="FineTuningLocalFileListPanel" />
 			</TabItem>
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -184,7 +185,7 @@
 						<Label Content="3. Uploaded Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<local:FileListControl x:Name="FileListPanel" />
+				<local:FineTuningRemoteFileListControl x:Name="FileListPanel" />
 			</TabItem>
 			<TabItem x:Name="FineTuningJobsTabItem" x:FieldModifier="public">
 				<TabItem.Header>

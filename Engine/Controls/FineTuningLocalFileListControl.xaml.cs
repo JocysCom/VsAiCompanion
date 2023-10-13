@@ -16,9 +16,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FileListControl : UserControl
+	public partial class FineTuningLocalFileListControl : UserControl
 	{
-		public FileListControl()
+		public FineTuningLocalFileListControl()
 		{
 			InitializeComponent();
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
