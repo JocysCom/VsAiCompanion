@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -54,11 +55,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
-		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
-		}
-
 		void UpdateButtons()
 		{
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<model>();
@@ -85,7 +81,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
 			if (items.Count == 0)
 				return;
-			var names = string.Join("\r\n", items.Select(x=>x.id));
+			var names = string.Join("\r\n", items.Select(x => x.id));
 			var text = $"Do you want to delete {items.Count} item{(items.Count > 1 ? "s" : "")}?";
 			text += "\r\n\r\n";
 			text += names;
@@ -122,7 +118,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var client = new Client(Item.AiService);
 			var response = await client.GetModelsAsync();
-			var items = response.First()?.data.Where(x=>x.id.StartsWith("ft:")).ToArray();
+			var items = response.First()?.data
+				.OrderBy(x=> x.id.StartsWith("ft:") ? 0 : 1)
+				.ThenBy(x=>x.id)
+				.ToArray();
 			CollectionsHelper.Synchronize(items, CurrentItems);
 		}
 
@@ -130,6 +129,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await Refresh();
 		}
+
+		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
+		}
+
+		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+			=> ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(sender, e);
+
 	}
 
 }
