@@ -807,7 +807,7 @@ namespace JocysCom.ClassLibrary.Controls
 			return LoadedControls.Contains(code);
 		}
 
-		#region File Exporer Behaviour
+		#region File Explorer Behaviour
 
 		/*
 		Behavior:
