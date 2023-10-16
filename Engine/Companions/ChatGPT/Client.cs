@@ -281,7 +281,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			OpenAIClient client;
 			if (Service.IsAzureOpenAI)
 			{
-				client = string.IsNullOrEmpty(Service.ApiAccessKey)
+				client = string.IsNullOrEmpty(Service.ApiSecretKey)
 					? new OpenAIClient(endpoint, new DefaultAzureCredential())
 					: new OpenAIClient(endpoint, new AzureKeyCredential(Service.ApiSecretKey));
 			}
@@ -289,7 +289,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
 				var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
-				if (string.IsNullOrEmpty(Service.ApiAccessKey))
+				if (string.IsNullOrEmpty(Service.ApiSecretKey))
 				{
 					// TODO: Allow HTTP localhost connections.
 					// Bearer token authentication is not permitted for non TLS protected (https) endpoints.
