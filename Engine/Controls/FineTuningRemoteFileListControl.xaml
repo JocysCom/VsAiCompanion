@@ -124,21 +124,21 @@
 					ElementStyle="{StaticResource CheckBoxCell_Default}"
 					IsThreeState="False"
 					Visibility="Collapsed" />
-				<DataGridCheckBoxColumn
-					x:Name="IsCheckedColumn"
-					Width="Auto"
-					Binding="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					CanUserSort="False"
-					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
-					ElementStyle="{StaticResource CheckBoxCell_Default}">
-					<DataGridCheckBoxColumn.Header>
+				<!--  Used for File Explorer selection behaviour.  -->
+				<DataGridTemplateColumn x:Name="IsCheckedColumn" Width="Auto" CanUserSort="False">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<CheckBox x:Name="IsCheckedCheckBox" IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGridRow}}" PreviewMouseDown="CheckBox_PreviewMouseDown" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<DataGridTemplateColumn.Header>
 						<CheckBox
 							x:Name="IsCheckedColumnCheckBox"
 							Margin="0"
 							Padding="0"
 							IsEnabled="False" />
-					</DataGridCheckBoxColumn.Header>
-				</DataGridCheckBoxColumn>
+					</DataGridTemplateColumn.Header>
+				</DataGridTemplateColumn>
 				<DataGridTextColumn
 					x:Name="StatusColumn"
 					Binding="{Binding status}"

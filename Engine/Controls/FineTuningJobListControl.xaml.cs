@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -147,6 +148,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await Refresh();
 		}
+		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+			=> ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(sender, e);
+
 	}
 
 }

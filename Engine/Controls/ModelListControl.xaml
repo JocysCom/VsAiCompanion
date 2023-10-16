@@ -113,7 +113,7 @@
 					ElementStyle="{StaticResource CheckBoxCell_Default}"
 					IsThreeState="False"
 					Visibility="Collapsed" />
-				<!--  Used for File Explorer selection behaviour  -->
+				<!--  Used for File Explorer selection behaviour.  -->
 				<DataGridTemplateColumn x:Name="IsCheckedColumn" Width="Auto" CanUserSort="False">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
