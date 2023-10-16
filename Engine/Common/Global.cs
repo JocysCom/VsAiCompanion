@@ -4,10 +4,9 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Windows;
-using System.Windows.Markup;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -86,6 +85,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Template: return Templates;
 				default: return new SettingsData<TemplateItem>();
 			}
+		}
+
+		public static DirectoryInfo GetPath(FineTune item, params string[] args)
+		{
+			var itemPath = new string[] { AppData.XmlFile.Directory.FullName, "FineTune", item.Name };
+			var paths = itemPath.Concat(args).ToArray();
+			var path = System.IO.Path.Combine(paths);
+			return new DirectoryInfo(path);
 		}
 
 		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)

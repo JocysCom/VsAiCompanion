@@ -170,20 +170,20 @@
 				</TabItem.Header>
 				<local:FineTuningSourceDataControl x:Name="FineTuningSourceDataPanel" />
 			</TabItem>
-			<TabItem x:Name="FineTuningFilesTabItem" x:FieldModifier="public">
+			<TabItem x:Name="FineTuningTuningDataTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Task}" />
-						<Label Content="2. Fine-Tunng Local Files" />
+						<Label Content="2. Tuning Data" />
 					</StackPanel>
 				</TabItem.Header>
-				<local:FineTuningLocalFileListControl x:Name="FineTuningLocalFileListPanel" />
+				<local:FineTuningTuningDataControl x:Name="FineTuningTuningDataPanel" />
 			</TabItem>
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Task}" />
-						<Label Content="3. Fine-Tunng Remote Files" />
+						<Label Content="3. Remote Files" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:FineTuningRemoteFileListControl x:Name="FileListPanel" />
@@ -192,7 +192,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Task}" />
-						<Label Content="4. Fine-Tuning Jobs" />
+						<Label Content="4. Jobs" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:FineTuningJobListControl x:Name="FineTuningJobListPanel" />
@@ -201,7 +201,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Task}" />
-						<Label Content="5. Fine-Tuning Models" />
+						<Label Content="5. Models" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:ModelListControl x:Name="ModelListPanel" />

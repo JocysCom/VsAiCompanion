@@ -15,6 +15,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
+		public static string TuningData = "TuningData";
+
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 

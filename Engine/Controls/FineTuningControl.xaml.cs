@@ -23,7 +23,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Item = item;
 			DataContext = item;
 			AiModelBoxPanel.BindData(item);
-			var di = new DirectoryInfo(Global.AppData.XmlFile.Directory.FullName + $"\\FineTune\\{item.Name}");
+			var di = Global.GetPath(item);
 			DataFolderTextBox.Text = di.FullName;
 			if (!di.Exists)
 				di.Create();
