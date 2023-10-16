@@ -5,6 +5,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningJobListControl : UserControl
+	public partial class FineTuningJobListControl : UserControl, IBindData<FineTune>
 	{
 		public FineTuningJobListControl()
 		{
@@ -26,12 +27,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var item = Global.FineTunes.Items.FirstOrDefault();
-			Item = item;
+			Data = item;
 			MainDataGrid.ItemsSource = CurrentItems;
 			UpdateButtons();
 		}
-
-		FineTune Item { get; set; }
 
 		public SortableBindingList<fine_tuning_job> CurrentItems { get; set; } = new SortableBindingList<fine_tuning_job>();
 
@@ -66,12 +65,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = isSelected;
-		}
-
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -125,6 +118,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			});
 		}
 
+		public async Task Refresh()
+		{
+			var client = new Client(Data.AiService);
+			var request = new fine_tuning_jobs_request();
+			request.limit = 1000;
+			var response = await client.GetFineTuningJobsAsync(request);
+			var items = response.First()?.data;
+			CollectionsHelper.Synchronize(items, CurrentItems);
+			MustRefresh = false;
+		}
+
+		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			await Refresh();
+		}
+		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+			=> ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(sender, e);
 
 		/// <summary>
 		///  Event is fired when the DataGrid is rendered and its items are loaded,
@@ -136,23 +146,52 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		public async Task Refresh()
+		private async void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			var client = new Client(Item.AiService);
-			var request = new fine_tuning_jobs_request();
-			request.limit = 1000;
-			var response = await client.GetFineTuningJobsAsync(request);
-			//var response = await client.GetFineTuningJobsAsync(null);
-			var items = response.First()?.data;
-			CollectionsHelper.Synchronize(items, CurrentItems);
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			if (MustRefresh && IsVisible)
+				await Refresh();
 		}
 
-		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+		#region IBindData
+
+		[Category("Main")]
+
+		public FineTune Data
 		{
-			await Refresh();
+			get => _Data;
+			set
+			{
+				if (_Data == value)
+					return;
+				if (_Data != null)
+				{
+					_Data.PropertyChanged -= _Data_PropertyChanged;
+				}
+				if (value != null)
+				{
+					value.PropertyChanged += _Data_PropertyChanged;
+				}
+				_Data = value;
+				MustRefresh = true;
+			}
 		}
-		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-			=> ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(sender, e);
+		public FineTune _Data;
+
+		public bool MustRefresh;
+
+		private async void _Data_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(_Data.AiService))
+			{
+				if (Global.IsGoodSettings(_Data.AiService))
+					await Refresh();
+			}
+		}
+
+		#endregion
+
 
 	}
 

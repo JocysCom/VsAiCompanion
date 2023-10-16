@@ -72,7 +72,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null, string overrideText = null)
 		{
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
-			if (Global.IsIncompleteSettings(item.AiService))
+			if (!Global.IsGoodSettings(item.AiService, true))
 				return;
 			if (item.IsBusy)
 				return;

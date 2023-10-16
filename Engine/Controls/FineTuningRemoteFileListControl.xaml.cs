@@ -5,6 +5,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningRemoteFileListControl : UserControl
+	public partial class FineTuningRemoteFileListControl : UserControl, IBindData<FineTune>
 	{
 		public FineTuningRemoteFileListControl()
 		{
@@ -26,12 +27,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var item = Global.FineTunes.Items.FirstOrDefault();
-			Item = item;
+			Data = item;
 			MainDataGrid.ItemsSource = CurrentItems;
 			UpdateButtons();
 		}
-
-		FineTune Item { get; set; }
 
 		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
 
@@ -66,12 +65,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = isSelected;
-		}
-
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -117,9 +110,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != MessageBoxResult.Yes)
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
-			ControlsHelper.BeginInvoke(async () =>
+			ControlsHelper.BeginInvoke((Action)(async () =>
 			{
-				var client = new Client(Item.AiService);
+				var client = new Client((AiService)this.Data.AiService);
 				var deleted = false;
 				foreach (var item in items)
 				{
@@ -128,9 +121,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				if (deleted)
 					await Refresh();
-			});
+			}));
 		}
 
+		public async Task Refresh()
+		{
+			var client = new Client(Data.AiService);
+			var files = await client.GetFilesAsync();
+			var fileList = files.First()?.data;
+			CollectionsHelper.Synchronize(fileList, CurrentItems);
+			MustRefresh = false;
+		}
+
+		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			await Refresh();
+		}
+
+		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+			=> ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(sender, e);
 
 		/// <summary>
 		///  Event is fired when the DataGrid is rendered and its items are loaded,
@@ -142,21 +151,52 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		public async Task Refresh()
+		private async void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			var client = new Client(Item.AiService);
-			var files = await client.GetFilesAsync();
-			var fileList = files.First()?.data;
-			CollectionsHelper.Synchronize(fileList, CurrentItems);
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			if (MustRefresh && IsVisible)
+				await Refresh();
 		}
 
-		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+		#region IBindData
+
+		[Category("Main")]
+
+		public FineTune Data
 		{
-			await Refresh();
+			get => _Data;
+			set
+			{
+				if (_Data == value)
+					return;
+				if (_Data != null)
+				{
+					_Data.PropertyChanged -= _Data_PropertyChanged;
+				}
+				if (value != null)
+				{
+					value.PropertyChanged += _Data_PropertyChanged;
+				}
+				_Data = value;
+				MustRefresh = true;
+			}
+		}
+		public FineTune _Data;
+
+		public bool MustRefresh;
+
+		private async void _Data_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(_Data.AiService))
+			{
+				if (Global.IsGoodSettings(_Data.AiService))
+					await Refresh();
+			}
 		}
 
-		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-			=> ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(sender, e);
+		#endregion
+
 
 	}
 

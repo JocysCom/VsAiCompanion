@@ -109,12 +109,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
-		public async Task<deleted_response> DeleteFileAsync(string id, CancellationToken cancellationToken = default)
-			=> await DeleteAsync<deleted_response>(filesPath, id, cancellationToken);
-
-		public async Task<deleted_response> DeleteModelAsync(string id, CancellationToken cancellationToken = default)
-			=> await DeleteAsync<deleted_response>(modelsPath, id, cancellationToken);
-
 		public string LastError;
 
 		public async Task<List<T>> GetAsync<T>(
@@ -192,33 +186,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		}
 
 		/// <summary>
-		/// Create fine tune job.
+		/// Get Data from API with the spinner busy indicator.
 		/// </summary>
-		public async Task<fine_tune> CreateFineTuneJob(fine_tune_request r)
-		{
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
-			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
-			List<fine_tune> results = null;
-			try
-			{
-				results = await GetAsync<fine_tune>(fineTuningJobsPath, r, cancellationToken: cancellationTokenSource.Token);
-			}
-			catch (Exception ex)
-			{
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-			}
-			finally
-			{
-				Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
-			}
-			return results?.FirstOrDefault();
-		}
-
-		/// <summary>
-		/// Get user file list.
-		/// </summary>
-		public async Task<List<T>> GetAsync<T>(string path)
+		public async Task<List<T>> GetAsyncWithTask<T>(string path, object request = null, bool useGet = false)
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
@@ -226,7 +196,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			List<T> results = null;
 			try
 			{
-				results = await GetAsync<T>(path, cancellationToken: cancellationTokenSource.Token);
+				results = await GetAsync<T>(path, request, useGet, cancellationToken: cancellationTokenSource.Token);
 			}
 			catch (Exception ex)
 			{
@@ -238,37 +208,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			return results;
 		}
+		public async Task<deleted_response> DeleteFileAsync(string id, CancellationToken cancellationToken = default)
+			=> await DeleteAsync<deleted_response>(filesPath, id, cancellationToken);
 
 		public async Task<List<files>> GetFilesAsync()
-			=> await GetAsync<files>(filesPath);
+			=> await GetAsyncWithTask<files>(filesPath);
+
+		public async Task<fine_tune> CreateFineTuneJob(fine_tune_request r)
+			=> (await GetAsyncWithTask<fine_tune>(fineTuningJobsPath, r))?.FirstOrDefault();
 
 		public async Task<List<fine_tuning_jobs_response>> GetFineTuningJobsAsync(fine_tuning_jobs_request request)
-		=> await GetAsync<fine_tuning_jobs_response>(fineTuningJobsPath, request, true);
-
+		=> await GetAsyncWithTask<fine_tuning_jobs_response>(fineTuningJobsPath, request, true);
 
 		public async Task<List<models_response>> GetModelsAsync()
-			=> await GetAsync<models_response>(modelsPath);
+			=> await GetAsyncWithTask<models_response>(modelsPath);
+
+		public async Task<deleted_response> DeleteModelAsync(string id, CancellationToken cancellationToken = default)
+			=> await DeleteAsync<deleted_response>(modelsPath, id, cancellationToken);
 
 		public async Task<List<usage_response>> GetUsageAsync()
-		{
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
-			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
-			List<usage_response> results = null;
-			try
-			{
-				results = await GetAsync<usage_response>(usagePath, cancellationToken: cancellationTokenSource.Token);
-			}
-			catch (Exception ex)
-			{
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-			}
-			finally
-			{
-				Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
-			}
-			return results;
-		}
+			=> await GetAsyncWithTask<usage_response>(usagePath);
 
 		public event EventHandler MessageDone;
 

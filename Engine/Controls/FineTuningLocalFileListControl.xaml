@@ -87,7 +87,7 @@
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
 			ClipToBounds="True"
-			IsReadOnly="False"
+			IsReadOnly="True"
 			Loaded="MainDataGrid_Loaded"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"

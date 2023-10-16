@@ -168,6 +168,7 @@
 						<Label Content="1. Source Data" />
 					</StackPanel>
 				</TabItem.Header>
+				<local:FineTuningSourceDataControl x:Name="FineTuningSourceDataPanel" />
 			</TabItem>
 			<TabItem x:Name="FineTuningFilesTabItem" x:FieldModifier="public">
 				<TabItem.Header>

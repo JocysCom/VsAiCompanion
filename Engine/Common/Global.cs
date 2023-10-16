@@ -88,7 +88,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static bool IsIncompleteSettings(AiService item)
+		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)
 		{
 			var itemsRequired = new List<string>();
 			if (string.IsNullOrEmpty(item.BaseUrl))
@@ -103,13 +103,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (string.IsNullOrEmpty(item.ApiOrganizationId))
 					itemsRequired.Add("API Organization ID");
 			}
-			if (itemsRequired.Count > 0)
+			if (redirectToSettings && itemsRequired.Count > 0)
 			{
 				MainControl.MainTabControl.SelectedItem = MainControl.OptionsTabItem;
 				var s = string.Join(" and ", itemsRequired);
 				MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, $"Please provide the {s}.");
 			}
-			return itemsRequired.Count > 0;
+			return itemsRequired.Count == 0;
 		}
 
 		public static event EventHandler OnSaveSettings;

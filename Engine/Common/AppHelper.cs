@@ -297,7 +297,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		public static async Task UpdateModelsFromAPI(AiService aiService)
 		{
-			if (Global.IsIncompleteSettings(aiService))
+			if (!Global.IsGoodSettings(aiService, true))
 				return;
 			Regex filterRx = null;
 			try
