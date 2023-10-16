@@ -33,7 +33,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		FineTune Item { get; set; }
 
-		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
+		public SortableBindingList<fine_tuning_job> CurrentItems { get; set; } = new SortableBindingList<fine_tuning_job>();
 
 		public void SelectByName(string name)
 		{
@@ -62,7 +62,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateButtons()
 		{
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<file>();
+			var selecetedItems = MainDataGrid.SelectedItems.Cast<fine_tuning_job>();
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = isSelected;
@@ -89,17 +89,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			*/
 		}
 
-		public void InsertItem(file item)
+		public void InsertItem(fine_tuning_job item)
 		{
 			var position = FindInsertPosition(CurrentItems, item);
 			// Make sure new item will be selected and focused.
 			CurrentItems.Insert(position, item);
 		}
 
-		private int FindInsertPosition(IList<file> list, file item)
+		private int FindInsertPosition(IList<fine_tuning_job> list, fine_tuning_job item)
 		{
 			for (int i = 0; i < list.Count; i++)
-				if (string.Compare(list[i].filename, item.filename, StringComparison.Ordinal) > 0)
+				if (string.Compare(list[i].id, item.id, StringComparison.Ordinal) > 0)
 					return i;
 			// If not found, insert at the end
 			return list.Count;
@@ -107,7 +107,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
-			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			var items = MainDataGrid.SelectedItems.Cast<fine_tuning_job>().ToList();
 			if (items.Count == 0)
 				return;
 			//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
@@ -139,9 +139,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public async Task Refresh()
 		{
 			var client = new Client(Item.AiService);
-			var files = await client.GetFilesAsync();
-			var fileList = files.First()?.data;
-			CollectionsHelper.Synchronize(fileList, CurrentItems);
+			var request = new fine_tuning_jobs_request();
+			request.limit = 1000;
+			//var response = await client.GetFineTuningJobsAsync(request);
+			var response = await client.GetFineTuningJobsAsync(null);
+			var items = response.First()?.data;
+			CollectionsHelper.Synchronize(items, CurrentItems);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)

@@ -60,7 +60,7 @@
 				ToolTip="Delete">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-					<Label x:Name="DeleteButtonLabel" Content="Delete" Visibility="Collapsed" />
+					<Label x:Name="DeleteButtonLabel" Content="Delete" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -74,6 +74,7 @@
 				ToolTip="Refresh">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+					<Label x:Name="RefreshButtonLabel" Content="Refresh" />
 				</StackPanel>
 			</Button>
 		</StackPanel>

@@ -231,6 +231,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<List<files>> GetFilesAsync()
 			=> await GetAsync<files>(filesPath);
 
+		public async Task<List<fine_tuning_jobs_response>> GetFineTuningJobsAsync(fine_tuning_jobs_request request)
+		=> await GetAsync<fine_tuning_jobs_response>(fineTuningJobsPath, request);
+
+
 		public async Task<List<models_response>> GetModelsAsync()
 			=> await GetAsync<models_response>(modelsPath);
 

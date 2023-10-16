@@ -60,7 +60,7 @@
 				ToolTip="Delete">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-					<Label x:Name="DeleteButtonLabel" Content="Delete" Visibility="Collapsed" />
+					<Label x:Name="DeleteButtonLabel" Content="Delete" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -74,6 +74,7 @@
 				ToolTip="Refresh">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+					<Label x:Name="RefreshButtonLabel" Content="Refresh" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -153,12 +154,12 @@
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Id" />
 				<DataGridTextColumn
-					x:Name="BytesColumn"
+					x:Name="ObjectColumn"
 					Width="Auto"
-					Binding="{Binding bytes}"
+					Binding="{Binding object}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Bytes" />
+					Header="Object" />
 				<DataGridTextColumn
 					x:Name="CreatedColumn"
 					Width="Auto"
@@ -166,27 +167,6 @@
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Created" />
-				<DataGridTextColumn
-					x:Name="FileNameColumn"
-					Width="Auto"
-					Binding="{Binding filename}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="File Name" />
-				<DataGridTextColumn
-					x:Name="PurposeColumn"
-					Width="Auto"
-					Binding="{Binding purpose}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Purpose" />
-				<DataGridTextColumn
-					x:Name="StatusDetailsColumn"
-					Width="Auto"
-					Binding="{Binding status_details}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Details" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
