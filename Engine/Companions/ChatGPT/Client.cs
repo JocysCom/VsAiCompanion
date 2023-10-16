@@ -3,7 +3,9 @@ using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -13,6 +15,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -115,7 +118,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public string LastError;
 
 		public async Task<List<T>> GetAsync<T>(
-			string operationPath, object o = null, bool stream = false, CancellationToken cancellationToken = default
+			string operationPath, object o = null, bool useGet = false, bool stream = false, CancellationToken cancellationToken = default
 		)
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
@@ -127,13 +130,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				? HttpCompletionOption.ResponseHeadersRead
 				: HttpCompletionOption.ResponseContentRead;
 			var request = new HttpRequestMessage();
-			request.RequestUri = new Uri(urlWithDate);
 			if (o == null)
 			{
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 				request.Method = HttpMethod.Get;
-				response = await client.SendAsync(request, completionOption, cancellationToken);
+			}
+			else if (useGet)
+			{
+				var parameters = ConvertToNameValueCollection(o, true);
+				if (parameters.Count > 0)
+					urlWithDate += "&" + parameters.ToString();
+				client.DefaultRequestHeaders.Accept.Clear();
+				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				request.Method = HttpMethod.Get;
 			}
 			else
 			{
@@ -141,8 +151,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 				request.Method = HttpMethod.Post;
 				request.Content = content;
-				response = await client.SendAsync(request, completionOption, cancellationToken);
 			}
+			request.RequestUri = new Uri(urlWithDate);
+			response = await client.SendAsync(request, completionOption, cancellationToken);
 			if (!response.IsSuccessStatusCode)
 			{
 				LastError = await response.Content.ReadAsStringAsync();
@@ -232,7 +243,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			=> await GetAsync<files>(filesPath);
 
 		public async Task<List<fine_tuning_jobs_response>> GetFineTuningJobsAsync(fine_tuning_jobs_request request)
-		=> await GetAsync<fine_tuning_jobs_response>(fineTuningJobsPath, request);
+		=> await GetAsync<fine_tuning_jobs_response>(fineTuningJobsPath, request, true);
 
 
 		public async Task<List<models_response>> GetModelsAsync()
@@ -362,7 +373,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							max_tokens = GetMaxTokens(modelName),
 
 						};
-						var data = await GetAsync<text_completion_response>(completionsPath, request, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<text_completion_response>(completionsPath, request, false, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += chatChoice.text;
@@ -425,7 +436,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							content = x.Content,
 							name = x.Name,
 						}).ToList();
-						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, false, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += (chatChoice.message ?? chatChoice.delta).content;
@@ -477,6 +488,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				return 2048;
 			return 2049; // Default for other models
 		}
+
+		#region Convert to Name Value Collection
+
+		public NameValueCollection ConvertToNameValueCollection(object o, bool escapeForUrl = false)
+		{
+			var collection = HttpUtility.ParseQueryString(string.Empty);
+			var props = o.GetType().GetProperties();
+			// Get all properties of the object
+			foreach (var prop in props)
+			{
+				// Get property value
+				var value = prop.GetValue(o);
+				// If value is default for its type, skip serialization
+				if (value == null || value.Equals(GetDefault(prop.PropertyType)))
+					continue;
+				// Convert property value to Json string
+				var jsonValue = System.Text.Json.JsonSerializer.Serialize(value);
+				// If escapeForUrl flag is set, URL encode the name and value
+				var key = escapeForUrl ? Uri.EscapeDataString(prop.Name) : prop.Name;
+				var val = escapeForUrl ? Uri.EscapeDataString(jsonValue) : jsonValue;
+				// Add property name and value to the collection
+				collection[key] = val;
+			}
+			return collection;
+		}
+
+
+		private static ConcurrentDictionary<Type, object> _defaultValuesCache = new ConcurrentDictionary<Type, object>();
+
+		private static object GetDefault(Type type)
+		{
+			return _defaultValuesCache.GetOrAdd(type, t => (t.IsValueType ? Activator.CreateInstance(t) : null));
+		}
+
+		#endregion
+
 
 	}
 

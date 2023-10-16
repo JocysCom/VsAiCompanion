@@ -1,26 +1,23 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using System.Text.Json;
-using JocysCom.VS.AiCompanion.Engine.Companions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using System.Reflection;
-using JocysCom.ClassLibrary.Collections;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Windows.Input;
-using SharpVectors.Renderers.Wpf;
-using SharpVectors.Dom.Events;
-using System.Text.Json.Nodes;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {

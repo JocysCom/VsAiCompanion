@@ -141,8 +141,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var client = new Client(Item.AiService);
 			var request = new fine_tuning_jobs_request();
 			request.limit = 1000;
-			//var response = await client.GetFineTuningJobsAsync(request);
-			var response = await client.GetFineTuningJobsAsync(null);
+			var response = await client.GetFineTuningJobsAsync(request);
+			//var response = await client.GetFineTuningJobsAsync(null);
 			var items = response.First()?.data;
 			CollectionsHelper.Synchronize(items, CurrentItems);
 		}
