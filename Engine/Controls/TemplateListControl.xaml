@@ -184,7 +184,13 @@
 			SelectionMode="Extended">
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
+
+				<Style x:Key="TextBlockCellMarginRight3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+					<Setter Property="Margin" Value="3,0,3,0" />
+				</Style>
 			</DataGrid.Resources>
+
+			<!--  Columns  -->
 			<DataGrid.Columns>
 				<DataGridTemplateColumn x:Name="IconColumn" Width="Auto" IsReadOnly="True">
 					<DataGridTemplateColumn.CellStyle>
@@ -198,6 +204,7 @@
 								x:Name="IconImage"
 								Width="16"
 								Height="16"
+								Margin="3,0,3,0"
 								Source="{Binding Icon}"
 								Style="{StaticResource ImageCell_Default}" />
 						</DataTemplate>
@@ -252,19 +259,16 @@
 					x:Name="StatusTextColumn"
 					Binding="{Binding StatusText}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
+					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
 					Header="Status" />
 				<DataGridTextColumn
 					x:Name="NameColumn"
 					Width="*"
 					Binding="{Binding Name}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
+					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
 					Header="Name" />
 			</DataGrid.Columns>
-			<DataGrid.CellStyle>
-				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
-			</DataGrid.CellStyle>
 		</DataGrid>
 	</Grid>
 </UserControl>
