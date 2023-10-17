@@ -105,7 +105,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			if (items.Count == 0)
 				return;
-			if (!AppHelper.AllowDelete(items.Select(x => x.id).ToArray()))
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
 				return;
 			foreach (var item in items)
 			{
@@ -419,6 +419,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void UploadButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>();
+			if (!AppHelper.AllowAction(AllowAction.Upload, items.Select(x => x.filename).ToArray()))
+				return;
 			foreach (var item in items)
 			{
 				var sourcePath = Global.GetPath(Data, FineTune.TuningData, item.filename);

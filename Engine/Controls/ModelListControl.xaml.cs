@@ -74,7 +74,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
 			if (items.Count == 0)
 				return;
-			if (!AppHelper.AllowDelete(items.Select(x => x.id).ToArray()))
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>

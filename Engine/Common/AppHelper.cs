@@ -420,20 +420,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Dialogs
 
-		public static bool AllowDelete(params string[] args)
+		public static bool AllowAction(string actionName, params string[] args)
 		{
 			var names = string.Join("\r\n", args);
-			var text = $"Do you want to delete {args.Length} item{(args.Length > 1 ? "s" : "")}?";
+			var text = $"Do you want to {actionName.ToString().ToLower()} {args.Length} item{(args.Length > 1 ? "s" : "")}?";
 			text += "\r\n\r\n";
 			text += names;
-			var caption = $"{Global.Info.Product} - Delete";
+			var caption = $"{Global.Info.Product} - {actionName}";
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 			return result == MessageBoxResult.Yes;
 		}
 
+
+		public static bool AllowAction(AllowAction actionName, params string[] args)
+		{
+			return AllowAction(actionName.ToString(), args);
+		}
+
 		#endregion
 
-		#region Copy Properties
+			#region Copy Properties
 
 		public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 

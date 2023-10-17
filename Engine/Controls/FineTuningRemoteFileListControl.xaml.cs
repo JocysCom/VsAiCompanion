@@ -103,20 +103,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			if (items.Count == 0)
 				return;
-			if (!AppHelper.AllowDelete(items.Select(x => x.id).ToArray()))
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => $"{x.id} - {x.filename}").ToArray()))
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{
 				var client = new Client(Data.AiService);
-				var deleted = false;
 				foreach (var item in items)
 				{
 					var response = await client.DeleteFileAsync(item.id);
-					deleted |= response.deleted;
+					if (response.deleted)
+						CurrentItems.Remove(item);
 				}
-				if (deleted)
-					await Refresh();
 			});
 		}
 
@@ -196,19 +194,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void HelpButton_Click(object sender, RoutedEventArgs e)
 		{
 			ControlsHelper.OpenUrl("https://platform.openai.com/docs/api-reference/files");
-        }
+		}
 
 		private void CreateModel_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			if (!AppHelper.AllowAction($"create fine-tune job{(items.Count > 1 ? "s" : "")} from ", items.Select(x => x.filename).ToArray()))
+				return;
 			foreach (var item in items)
 			{
-				//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
-				var text = $"Do you want to create fine-tune job from {item.id} file?";
-				var caption = $"{Global.Info.Product} - Create Fine Tune Job";
-				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-				if (result != MessageBoxResult.Yes)
-					return;
 				// Use begin invoke or grid update will deadlock on same thread.
 				ControlsHelper.BeginInvoke(async () =>
 				{
