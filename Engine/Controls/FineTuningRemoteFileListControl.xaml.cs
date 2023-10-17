@@ -197,7 +197,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-	}
+		private void HelpButton_Click(object sender, RoutedEventArgs e)
+		{
+			ControlsHelper.OpenUrl("https://platform.openai.com/docs/api-reference/files");
+        }
+    }
 
 }
 

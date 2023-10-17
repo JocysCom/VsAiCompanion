@@ -66,6 +66,19 @@
 		</StackPanel>
 		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
 			<Button
+				Name="HelpButton"
+				Margin="1"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="HelpButton_Click"
+				ToolTip="Help">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Question}" Focusable="False" />
+					<Label x:Name="HelpButtonLabel" Content="Help" />
+				</StackPanel>
+			</Button>
+			<Separator Style="{StaticResource MainSeparator}" />
+			<Button
 				Name="RefreshButton"
 				Margin="1"
 				x:FieldModifier="public"
