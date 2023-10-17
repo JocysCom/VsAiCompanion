@@ -199,7 +199,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void CreateModel_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
-			if (!AppHelper.AllowAction($"create fine-tune job{(items.Count > 1 ? "s" : "")} from ", items.Select(x => x.filename).ToArray()))
+			if (!AppHelper.AllowAction($"create job{(items.Count > 1 ? "s" : "")} to fine tune \"{Data.AiModel}\" custom model from ", items.Select(x => x.filename).ToArray()))
 				return;
 			foreach (var item in items)
 			{
