@@ -418,6 +418,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
 		}
 
+		#region Dialogs
+
+		public static bool AllowDelete(params string[] args)
+		{
+			var names = string.Join("\r\n", args);
+			var text = $"Do you want to delete {args.Length} item{(args.Length > 1 ? "s" : "")}?";
+			text += "\r\n\r\n";
+			text += names;
+			var caption = $"{Global.Info.Product} - Delete";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+			return result == MessageBoxResult.Yes;
+		}
+
+		#endregion
+
 		#region Copy Properties
 
 		public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;

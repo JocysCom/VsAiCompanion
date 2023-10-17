@@ -87,12 +87,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static DirectoryInfo GetPath(FineTune item, params string[] args)
+		public static string GetPath(FineTune item, params string[] args)
 		{
 			var itemPath = new string[] { AppData.XmlFile.Directory.FullName, "FineTune", item.Name };
 			var paths = itemPath.Concat(args).ToArray();
 			var path = System.IO.Path.Combine(paths);
-			return new DirectoryInfo(path);
+			return path;
 		}
 
 		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)

@@ -56,11 +56,41 @@
 				Margin="1"
 				x:FieldModifier="public"
 				Background="Transparent"
-				Click="DeleteButton_Click"
-				ToolTip="Delete">
+				Click="DeleteButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
 					<Label x:Name="DeleteButtonLabel" Content="Delete" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="ValidateButton"
+				Margin="1"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="ValidateButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+					<Label Content="Validate" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="ConvertToJsonlButton"
+				Margin="1"
+				Background="Transparent"
+				Click="ConvertButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_translate}" Focusable="False" />
+					<Label x:Name="ConvertLabel" Content="Convert" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="UploadButton"
+				Margin="1"
+				Background="Transparent"
+				Click="UploadButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Export}" Focusable="False" />
+					<Label Content="Upload" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -70,8 +100,7 @@
 				Margin="1"
 				x:FieldModifier="public"
 				Background="Transparent"
-				Click="HelpButton_Click"
-				ToolTip="Help">
+				Click="HelpButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Question}" Focusable="False" />
 					<Label x:Name="HelpButtonLabel" Content="Help" />
@@ -83,8 +112,7 @@
 				Margin="1"
 				x:FieldModifier="public"
 				Background="Transparent"
-				Click="RefreshButton_Click"
-				ToolTip="Refresh">
+				Click="RefreshButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
 					<Label x:Name="RefreshButtonLabel" Content="Refresh" />

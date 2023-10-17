@@ -74,13 +74,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
 			if (items.Count == 0)
 				return;
-			var names = string.Join("\r\n", items.Select(x => x.id));
-			var text = $"Do you want to delete {items.Count} item{(items.Count > 1 ? "s" : "")}?";
-			text += "\r\n\r\n";
-			text += names;
-			var caption = $"{Global.Info.Product} - Delete";
-			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-			if (result != MessageBoxResult.Yes)
+			if (!AppHelper.AllowDelete(items.Select(x => x.id).ToArray()))
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>

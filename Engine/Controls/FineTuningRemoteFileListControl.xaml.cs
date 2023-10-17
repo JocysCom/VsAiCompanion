@@ -103,16 +103,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			if (items.Count == 0)
 				return;
-			//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
-			var text = $"Do you want to delete {items.Count} item{(items.Count > 1 ? "s" : "")}?";
-			var caption = $"{Global.Info.Product} - Delete";
-			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-			if (result != MessageBoxResult.Yes)
+			if (!AppHelper.AllowDelete(items.Select(x => x.id).ToArray()))
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
-			ControlsHelper.BeginInvoke((Action)(async () =>
+			ControlsHelper.BeginInvoke(async () =>
 			{
-				var client = new Client((AiService)this.Data.AiService);
+				var client = new Client(Data.AiService);
 				var deleted = false;
 				foreach (var item in items)
 				{
@@ -121,7 +117,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				if (deleted)
 					await Refresh();
-			}));
+			});
 		}
 
 		public async Task Refresh()
@@ -201,7 +197,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			ControlsHelper.OpenUrl("https://platform.openai.com/docs/api-reference/files");
         }
-    }
+
+		private void CreateModel_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			foreach (var item in items)
+			{
+				//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
+				var text = $"Do you want to create fine-tune job from {item.id} file?";
+				var caption = $"{Global.Info.Product} - Create Fine Tune Job";
+				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+				if (result != MessageBoxResult.Yes)
+					return;
+				// Use begin invoke or grid update will deadlock on same thread.
+				ControlsHelper.BeginInvoke(async () =>
+				{
+					var client = new Client(Data.AiService);
+					var request = new fine_tune_request()
+					{
+						training_file = item.id,
+						model = Data.AiModel,
+					};
+					var fineTune = await client.CreateFineTuneJob(request);
+					var message = fineTune == null
+							? client.LastError
+							: Client.Serialize(fineTune);
+					//LogTextBox.AppendText(message);
+				});
+			}
+		}
+
+	}
 
 }
 

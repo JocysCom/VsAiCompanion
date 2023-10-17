@@ -63,6 +63,18 @@
 					<Label x:Name="DeleteButtonLabel" Content="Delete" />
 				</StackPanel>
 			</Button>
+			<Button
+				Name="CreateModelButton"
+				Margin="1"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="CreateModel_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+					<Label Content="Create a model from File" />
+				</StackPanel>
+			</Button>
+
 		</StackPanel>
 		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
 			<Button
