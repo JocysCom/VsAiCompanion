@@ -79,7 +79,7 @@
 				Background="Transparent"
 				Click="ConvertButton_Click">
 				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_translate}" Focusable="False" />
+					<ContentControl Content="{StaticResource Icon_objects_exchange}" Focusable="False" />
 					<Label x:Name="ConvertLabel" Content="Convert" />
 				</StackPanel>
 			</Button>
