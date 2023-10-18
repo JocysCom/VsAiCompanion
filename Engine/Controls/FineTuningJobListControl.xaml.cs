@@ -106,12 +106,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
-			ControlsHelper.BeginInvoke(async () =>
-			{
-				//foreach (var item in items)
-				//	await DeleteFileAsync(item.id);
-				//await Refresh();
-			});
+			//ControlsHelper.BeginInvoke(async () =>
+			//{
+			//	foreach (var item in items)
+			//		await DeleteFileAsync(item.id);
+			//	await Refresh();
+			//});
 		}
 
 		public async Task Refresh()

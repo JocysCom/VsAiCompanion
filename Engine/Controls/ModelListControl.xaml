@@ -6,7 +6,7 @@
 	xmlns:converters="clr-namespace:JocysCom.VS.AiCompanion.Engine.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	Name="TemplateListUserControl"
+	x:Name="This"
 	d:DesignHeight="270"
 	d:DesignWidth="480"
 	Loaded="UserControl_Loaded"
@@ -15,8 +15,8 @@
 		<VisualBrush>
 			<VisualBrush.Visual>
 				<Border
-					Width="{Binding ActualWidth, ElementName=TemplateListUserControl}"
-					Height="{Binding ActualHeight, ElementName=TemplateListUserControl}"
+					Width="{Binding ActualWidth, ElementName=This}"
+					Height="{Binding ActualHeight, ElementName=This}"
 					Background="White"
 					CornerRadius="0,0,0,5"
 					SnapsToDevicePixels="True" />
@@ -25,6 +25,9 @@
 	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
+			<Style x:Key="AddSpacing" TargetType="FrameworkElement">
+				<Setter Property="Margin" Value="0,0,0,0" />
+			</Style>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
@@ -38,10 +41,14 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal">
+		<StackPanel
+			Grid.Row="0"
+			Margin="3,3,0,0"
+			HorizontalAlignment="Left"
+			Orientation="Horizontal">
 			<Button
 				Name="DeleteButton"
-				Margin="1"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="DeleteButton_Click"
@@ -52,10 +59,15 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+		<StackPanel
+			Grid.Row="0"
+			Margin="3,3,0,0"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal"
+			Style="{Binding AddSpacing}">
 			<Button
 				Name="HelpButton"
-				Margin="1"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="HelpButton_Click"
@@ -68,7 +80,7 @@
 			<Separator Style="{StaticResource MainSeparator}" />
 			<Button
 				Name="RefreshButton"
-				Margin="1"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="RefreshButton_Click"
