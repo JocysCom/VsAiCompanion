@@ -87,7 +87,7 @@
 					<Label x:Name="ConvertLabel" Content="Convert To" />
 				</StackPanel>
 			</Button>
-			<ComboBox Name="ConvertTypeComboBox" ItemsSource="{Binding ConvertTypes, ElementName=This}" SelectedValue="{Binding ConvertType, ElementName=This}" />
+			<ComboBox Name="ConvertTypeComboBox" Margin="0,0,3,3" SelectedValue="{Binding ConvertType, ElementName=This}" />
 			<Button
 				Name="UploadButton"
 				Margin="0,0,3,3"

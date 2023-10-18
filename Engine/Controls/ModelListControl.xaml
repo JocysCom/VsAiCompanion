@@ -25,9 +25,6 @@
 	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
-			<Style x:Key="AddSpacing" TargetType="FrameworkElement">
-				<Setter Property="Margin" Value="0,0,0,0" />
-			</Style>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
@@ -63,8 +60,7 @@
 			Grid.Row="0"
 			Margin="3,3,0,0"
 			HorizontalAlignment="Right"
-			Orientation="Horizontal"
-			Style="{Binding AddSpacing}">
+			Orientation="Horizontal">
 			<Button
 				Name="HelpButton"
 				Margin="0,0,3,3"

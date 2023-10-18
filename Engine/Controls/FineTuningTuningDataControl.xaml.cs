@@ -30,11 +30,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var item = Global.FineTunes.Items.FirstOrDefault();
 			Data = item;
 			MainDataGrid.ItemsSource = CurrentItems;
+			ConvertTypeComboBox.ItemsSource = ConvertTypes;
 			UpdateButtons();
 		}
 
 		public BindingList<string> ConvertTypes = new BindingList<string>() { "Json", "Excel", "JsonL" };
-		private string ConvertType { get; set; } = "Excel";
+		public string ConvertType { get; set; } = "Excel";
 
 		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
 
