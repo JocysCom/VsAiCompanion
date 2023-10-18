@@ -439,7 +439,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-			#region Copy Properties
+		#region Copy Properties
 
 		public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
