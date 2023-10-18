@@ -26,7 +26,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_clipboard_checks = nameof(Icon_clipboard_checks);
 		public const string Icon_clipboard_check_edit = nameof(Icon_clipboard_check_edit);
 		public const string Icon_clipboard_paste = nameof(Icon_clipboard_paste);
+		public const string Icon_cloud_download = nameof(Icon_cloud_download);
 		public const string Icon_cloud_gear = nameof(Icon_cloud_gear);
+		public const string Icon_cloud_upload = nameof(Icon_cloud_upload);
 		public const string Icon_code = nameof(Icon_code);
 		public const string Icon_code_csharp = nameof(Icon_code_csharp);
 		public const string Icon_code_custom = nameof(Icon_code_custom);
