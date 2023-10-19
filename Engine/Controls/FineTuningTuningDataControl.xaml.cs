@@ -30,12 +30,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var item = Global.FineTunes.Items.FirstOrDefault();
 			Data = item;
 			MainDataGrid.ItemsSource = CurrentItems;
-			ConvertTypeComboBox.ItemsSource = ConvertTypes;
+			ConvertTypeComboBox.ItemsSource = Enum.GetValues(typeof(ConvertType));
 			UpdateButtons();
 		}
 
-		public BindingList<string> ConvertTypes = new BindingList<string>() { "Json", "Excel", "JsonL" };
-		public string ConvertType { get; set; } = "Excel";
+		public ConvertType ConvertType { get; set; } = ConvertType.JSON;
 
 		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
 
@@ -133,7 +132,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var di = new DirectoryInfo(path);
 			if (!di.Exists)
 				di.Create();
-			var dirFiles = di.GetFiles("*.json*");
+			var dirFiles = di.GetFiles("*.jsonl");
 			var files = dirFiles.Select(x => new file()
 			{
 				id = x.Name,
@@ -303,23 +302,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void ConvertButton_Click(object sender, RoutedEventArgs e)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>();
+			var convertType = ConvertTypeComboBox.SelectedItem as ConvertType?;
+			if (convertType == null)
+				return;
 			foreach (var item in items)
 			{
 				var sourcePath = Global.GetPath(Data, FineTune.TuningData, item.filename);
 				var fi = new FileInfo(sourcePath);
-				var ext = System.IO.Path.GetExtension(item.filename).ToLower();
 				string status_details = null;
-				if (ext == ".json")
+				if (convertType == Engine.ConvertType.JSON)
 				{
-					var targetPath = Global.GetPath(Data, FineTune.TuningData, Path.GetFileNameWithoutExtension(fi.Name) + ".jsonl");
+					var targetPath = Global.GetPath(Data, FineTune.SourceData, Path.GetFileNameWithoutExtension(fi.Name) + ".jsonl");
 					_ = Client.IsTextCompletionMode(Data.AiModel)
 						? ConvertJsonListToLines<text_completion_request>(sourcePath, targetPath, out status_details)
 						: ConvertJsonListToLines<chat_completion_request>(sourcePath, targetPath, out status_details);
 
 				}
-				if (ext == ".jsonl")
+				if (convertType == Engine.ConvertType.JSONL)
 				{
-					var targetPath = Global.GetPath(Data, FineTune.TuningData, Path.GetFileNameWithoutExtension(fi.Name) + ".json");
+					var targetPath = Global.GetPath(Data, FineTune.SourceData, Path.GetFileNameWithoutExtension(fi.Name) + ".json");
 					_ = Client.IsTextCompletionMode(Data.AiModel)
 						? ConvertJsonLinesToList<text_completion_request>(sourcePath, targetPath, out status_details)
 						: ConvertJsonLinesToList<chat_completion_request>(sourcePath, targetPath, out status_details);
