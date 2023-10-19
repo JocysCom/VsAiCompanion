@@ -34,7 +34,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateButtons();
 		}
 
-		public ConvertType ConvertType { get; set; } = ConvertType.JSON;
+		public ConvertType ConvertType { get; set; } = ConvertType.None;
 
 		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
 
