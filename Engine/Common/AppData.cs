@@ -236,6 +236,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 					BaseUrl = "http://localhost:4891/v1/",
 					ModelFilter = "",
 				},
+				// Add GPT4All Service
+				new AiService()
+				{
+					Id = AppHelper.GetGuid(nameof(AiService), "LM Studio (Local Machine)"),
+					Name = "LM Studio (Local Machine)",
+					AiModels = new string[0],
+					DefaultAiModel = "Mistral",
+					BaseUrl = "http://localhost:1234/v1/",
+					ModelFilter = "",
+				},
 				//// Add LocalGPT Service. Currently incompatible with OpenAI API.
 				//new AiService()
 				//{
