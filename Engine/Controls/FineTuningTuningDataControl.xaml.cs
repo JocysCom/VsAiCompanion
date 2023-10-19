@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
@@ -30,18 +31,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var item = Global.FineTunes.Items.FirstOrDefault();
 			Data = item;
 			MainDataGrid.ItemsSource = CurrentItems;
-			ConvertTypeComboBox.ItemsSource = Enum.GetValues(typeof(ConvertType));
+			ConvertTypeComboBox.ItemsSource = Attributes.GetDictionary<ConvertType>();
 			UpdateButtons();
 		}
-
-		public ConvertType ConvertType { get; set; } = ConvertType.None;
 
 		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
 
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
 		}
 
 		public void ShowColumns(params DataGridColumn[] args)
@@ -301,12 +300,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Convert
 
-		private void ConvertButton_Click(object sender, RoutedEventArgs e)
+		public ConvertType ConvertType { get; set; } = ConvertType.None;
+
+		private void ConvertTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var items = MainDataGrid.SelectedItems.Cast<file>();
-			var convertType = ConvertTypeComboBox.SelectedItem as ConvertType?;
-			if (convertType == null)
+			var box = (ComboBox)sender;
+			var convertType = e.AddedItems.Cast<KeyValuePair<ConvertType, string>>().FirstOrDefault().Key;
+			if (convertType == ConvertType.None)
 				return;
+			box.SelectedValue = ConvertType.None;
+			// Convert.
+			var items = MainDataGrid.SelectedItems.Cast<file>();
 			foreach (var item in items)
 			{
 				var sourcePath = Global.GetPath(Data, FineTune.TuningData, item.filename);
@@ -330,6 +334,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				item.status_details = $"{DateTime.Now}: {status_details}";
 			}
 			Refresh();
+
+		}
+
+		private void ConvertButton_Click(object sender, RoutedEventArgs e)
+		{
 		}
 
 		public bool ConvertJsonLinesToList<T>(string sourceFile, string targetFile, out string status_details)

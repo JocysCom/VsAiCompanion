@@ -37,7 +37,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
 		}
 
 		public void ShowColumns(params DataGridColumn[] args)
