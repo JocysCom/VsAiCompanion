@@ -120,11 +120,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public async Task Refresh()
 		{
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.filename));
 			var client = new Client(Data.AiService);
 			var files = await client.GetFilesAsync();
 			var fileList = files.First()?.data;
 			CollectionsHelper.Synchronize(fileList, CurrentItems);
 			MustRefresh = false;
+			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), selection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)

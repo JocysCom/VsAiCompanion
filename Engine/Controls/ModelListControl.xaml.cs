@@ -93,6 +93,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public async Task Refresh()
 		{
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(model.id));
 			var client = new Client(Data.AiService);
 			var response = await client.GetModelsAsync();
 			var items = response.First()?.data
@@ -101,6 +102,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				.ToArray();
 			CollectionsHelper.Synchronize(items, CurrentItems);
 			MustRefresh = false;
+			ControlsHelper.SetSelection(MainDataGrid, nameof(model.id), selection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)

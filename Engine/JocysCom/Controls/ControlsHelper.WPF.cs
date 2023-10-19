@@ -639,11 +639,13 @@ namespace JocysCom.ClassLibrary.Controls
 
 		[Obsolete]
 		public static void RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, bool selectFirst = true)
-		{
-			RestoreSelection(grid, keyPropertyName, list, selectFirst ? 0 : -1);
-		}
+			=> SetSelection(grid, keyPropertyName, list, selectFirst ? 0 : -1);
 
-		public static bool RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
+		[Obsolete]
+		public static void RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
+			=> SetSelection(grid, keyPropertyName, list, selectIndex);
+
+		public static bool SetSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
 		{
 			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));

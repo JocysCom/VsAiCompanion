@@ -6,8 +6,11 @@ namespace JocysCom.VS.AiCompanion.Engine
     {
 		[Description("Convert To:")]
 		None = 0,
+		[Description("JSON")]
 		JSON,
+		[Description("JSON Lines")]
 		JSONL,
+		[Description("Excel")]
 		Excel
-    }
+	}
 }

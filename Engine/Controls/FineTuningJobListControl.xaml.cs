@@ -116,6 +116,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public async Task Refresh()
 		{
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(fine_tuning_job.id));
 			var client = new Client(Data.AiService);
 			var request = new fine_tuning_jobs_request();
 			request.limit = 1000;
@@ -123,6 +124,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = response.First()?.data;
 			CollectionsHelper.Synchronize(items, CurrentItems);
 			MustRefresh = false;
+			ControlsHelper.SetSelection(MainDataGrid, nameof(fine_tuning_job.id), selection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
