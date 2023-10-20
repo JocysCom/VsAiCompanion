@@ -32,7 +32,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			CurrentItems = Global.GetItems(ItemControlType);
 			ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			// Configure converter.
-			var gridFormattingConverter = MainDataGrid.Resources.Values.Cast<Converters.ItemFormattingConverter>().First();
+			var gridFormattingConverter = MainDataGrid.Resources.Values.OfType<Converters.ItemFormattingConverter>().First();
 			gridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
 			UpdateButtons();
 		}

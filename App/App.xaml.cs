@@ -25,6 +25,9 @@ namespace JocysCom.VS.AiCompanion
 				allowToRun = GetAllowToRun();
 				if (!allowToRun)
 					return;
+				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 				Global.LoadSettings();
 				StartHelper.OnClose += StartHelper_OnClose;
 				StartHelper.OnRestore += StartHelper_OnRestore;
@@ -40,6 +43,27 @@ namespace JocysCom.VS.AiCompanion
 				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
 				throw;
 			}
+		}
+
+		private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+		{
+			var s = $"TaskScheduler_UnobservedTaskException\r\n{e.Exception}";
+			//MessageBox.Show(s);
+			//System.Diagnostics.Debug.WriteLine(s);
+		}
+
+		private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+		{
+			var s = $"CurrentDomain_FirstChanceException\r\n{e.Exception}";
+			//MessageBox.Show(s);
+			//System.Diagnostics.Debug.WriteLine(s);
+		}
+
+		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			var s = $"CurrentDomain_UnhandledException\r\n{e.ExceptionObject}";
+			//MessageBox.Show(s);
+			//System.Diagnostics.Debug.WriteLine(s);
 		}
 
 		private async void Items_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
