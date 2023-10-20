@@ -105,7 +105,7 @@
 						<Label Content="3. Remote Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<local:FineTuningRemoteFileListControl x:Name="FileListPanel" />
+				<local:FineTuningRemoteDataControl x:Name="FineTuningRemoteDataPanel" />
 			</TabItem>
 			<TabItem x:Name="FineTuningJobsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -123,7 +123,7 @@
 						<Label Content="5. Models" />
 					</StackPanel>
 				</TabItem.Header>
-				<local:ModelListControl x:Name="ModelListPanel" />
+				<local:FineTuningModelListControl x:Name="FineTuningModelListPanel" />
 			</TabItem>
 		</TabControl>
 	</Grid>

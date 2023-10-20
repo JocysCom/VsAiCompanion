@@ -12,15 +12,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class ModelListControl : UserControl, IBindData<FineTune>
+	public partial class FineTuningModelListControl : UserControl, IBindData<FineTune>
 	{
-		public ModelListControl()
+		public FineTuningModelListControl()
 		{
 			InitializeComponent();
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
@@ -37,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
 		}
 
 		public void ShowColumns(params DataGridColumn[] args)
@@ -91,9 +92,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			});
 		}
 
+		public void SaveSelection()
+		{
+			// Save selection.
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(model.id));
+			if (selection.Count > 0 || Data.FineTuningModelListSelection == null)
+				Data.FineTuningModelListSelection = selection;
+		}
+
 		public async Task Refresh()
 		{
-			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(model.id));
+			SaveSelection();
 			var client = new Client(Data.AiService);
 			var response = await client.GetModelsAsync();
 			var items = response.First()?.data
@@ -102,7 +111,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				.ToArray();
 			CollectionsHelper.Synchronize(items, CurrentItems);
 			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(model.id), selection, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(model.id), Data.FineTuningModelListSelection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -113,6 +122,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
+			SaveSelection();
 		}
 
 		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)

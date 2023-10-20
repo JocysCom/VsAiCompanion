@@ -60,6 +60,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
+			SaveSelection();
 		}
 
 		void UpdateButtons()
@@ -125,9 +126,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Refresh();
 		}
 
+		public void SaveSelection()
+		{
+			// Save selection.
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.id));
+			if (selection.Count > 0 || Data.FineTuningSourceDataSelection == null)
+				Data.FineTuningSourceDataSelection = selection;
+		}
+
 		public void Refresh()
 		{
-			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.id));
+			SaveSelection();
 			var path = Global.GetPath(Data, FineTune.SourceData);
 			var di = new DirectoryInfo(path);
 			if (!di.Exists)
@@ -145,7 +154,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Refresh items because DataGrid items don't implement the INotifyPropertyChanged interface.
 			MainDataGrid.Items.Refresh();
 			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), selection, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), Data.FineTuningSourceDataSelection, 0);
 		}
 
 		private void RefreshButton_Click(object sender, RoutedEventArgs e)

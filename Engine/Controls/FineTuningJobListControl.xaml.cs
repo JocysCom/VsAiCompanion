@@ -57,6 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
+			SaveSelection();
 		}
 
 		void UpdateButtons()
@@ -114,9 +115,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//});
 		}
 
+		public void SaveSelection()
+		{
+			// Save selection.
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(fine_tuning_job.id));
+			if (selection.Count > 0 || Data.FineTuningJobListSelection == null)
+				Data.FineTuningJobListSelection = selection;
+		}
+
 		public async Task Refresh()
 		{
-			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(fine_tuning_job.id));
+			SaveSelection();
 			var client = new Client(Data.AiService);
 			var request = new fine_tuning_jobs_request();
 			request.limit = 1000;
@@ -124,7 +133,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = response.First()?.data;
 			CollectionsHelper.Synchronize(items, CurrentItems);
 			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(fine_tuning_job.id), selection, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(fine_tuning_job.id), Data.FineTuningJobListSelection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)

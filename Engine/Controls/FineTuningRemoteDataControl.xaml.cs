@@ -18,9 +18,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningRemoteFileListControl : UserControl, IBindData<FineTune>
+	public partial class FineTuningRemoteDataControl : UserControl, IBindData<FineTune>
 	{
-		public FineTuningRemoteFileListControl()
+		public FineTuningRemoteDataControl()
 		{
 			InitializeComponent();
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
@@ -57,6 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
+			SaveSelection();
 		}
 
 		void UpdateButtons()
@@ -118,15 +119,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			});
 		}
 
+		public void SaveSelection()
+		{
+			// Save selection.
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.filename));
+			if (selection.Count > 0 || Data.FineTuningRemoteDataSelection == null)
+				Data.FineTuningRemoteDataSelection = selection;
+		}
+
 		public async Task Refresh()
 		{
-			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.filename));
+			SaveSelection();
 			var client = new Client(Data.AiService);
 			var files = await client.GetFilesAsync();
 			var fileList = files.First()?.data;
 			CollectionsHelper.Synchronize(fileList, CurrentItems);
 			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), selection, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), Data.FineTuningRemoteDataSelection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
