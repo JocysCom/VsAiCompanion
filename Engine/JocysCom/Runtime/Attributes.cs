@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -57,7 +58,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var ap = type.IsEnum
 				? (ICustomAttributeProvider)type.GetField(Enum.GetName(type, o))
 				: type;
-			if (ap is null)
+			if (!(ap is null))
 			{
 				var attributes = ap.GetCustomAttributes(typeof(DescriptionAttribute), !type.IsEnum);
 				// If atribute is present then return value.
@@ -174,6 +175,19 @@ namespace JocysCom.ClassLibrary.Runtime
 				var value = ((DefaultValueAttribute)da[0]).Value;
 				p.SetValue(o, value, null);
 			}
+		}
+
+		/// <summary>
+		/// Get a dictionary where the key is an enum and the value is the value of the description attribute.
+		/// </summary>
+		public static Dictionary<T, string> GetDictionary<T>(T[] keys = null) where T : Enum
+		{
+			if (keys == null)
+				keys = (T[])Enum.GetValues(typeof(T));
+			var dict = new Dictionary<T, string>();
+			foreach (var key in keys)
+				dict[key] = GetDescription(key);
+			return dict;
 		}
 
 	}
