@@ -220,7 +220,10 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 		/// </summary>
 		private void _ScriptingHandler_OnMessageAction(object sender, string[] e)
 		{
-			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e[1]);
+			var actionString = e[1];
+			if (string.IsNullOrEmpty(actionString))
+				return;
+			var action = (MessageAction)Enum.Parse(typeof(MessageAction), actionString);
 			if (action == MessageAction.Loaded)
 			{
 				LoadingLabel.Visibility = Visibility.Collapsed;

@@ -726,7 +726,10 @@
 
 		window.onload = function () {
 
-			isInsideApp = typeof window.external.MessageAction !== "undefined";
+			// This will call external `MessageAction` function without arguments.
+			//isInsideApp = typeof window.external.MessageAction !== "undefined";
+			// Correct way to check for existence of the external function.
+			isInsideApp = ('MessageAction' in window.external)
 			if (isInsideApp)
 				window.external.MessageAction("0", "Loaded", "");
 

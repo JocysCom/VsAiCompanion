@@ -22,12 +22,12 @@ namespace JocysCom.VS.AiCompanion
 		{
 			try
 			{
-				allowToRun = GetAllowToRun();
-				if (!allowToRun)
-					return;
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+				allowToRun = GetAllowToRun();
+				if (!allowToRun)
+					return;
 				Global.LoadSettings();
 				StartHelper.OnClose += StartHelper_OnClose;
 				StartHelper.OnRestore += StartHelper_OnRestore;
