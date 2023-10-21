@@ -43,6 +43,76 @@ $systemPromptContent =
 	#" Ensure that the information is accurate, structured, and supports the user's inquiry fully. " +
 	#" If a question does not make any sense, or is not factually coherent, explain why instead of answering something incorrect. " +
 	#" If you don't know the answer to a question, please don't share false information."
+# ----------------------------------------------------------------------------
+# Show menu
+# ----------------------------------------------------------------------------
+function ShowOptionsMenu {
+	param($items, $title)
+	#----------------------------------------------------------
+	# Get local configurations.
+	$keys = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	$dic = @{}
+	if ("$title" -eq "") { $title = "Options:" }
+	Write-Host $title
+	Write-Host
+	[int]$i = 0
+	foreach ($item in $items) {
+		if ("$item" -eq "") { 
+			Write-Host
+			continue
+		}
+		$key = $keys[$i] 
+		$dic["$key"] = $item
+		Write-Host "	$key - $item"
+		$i++
+	}
+	Write-Host
+	$m = Read-Host -Prompt "Type option and press ENTER to continue"
+	$m = $m.ToUpper()
+	return $dic[$m.ToUpper()]
+}
+#------------------------------------------------------------------------------
+# Select fine tuning settings.
+[DirectoryInfo]$scriptDi = New-Object DirectoryInfo $scriptPath
+[string[]]$fineTuningNames = $scriptDi.GetDirectories("*.*") | ForEach-Object { $_.Name }
+$fineTuningName = ShowOptionsMenu $fineTuningNames "Select Fine-Tuning Settings"
+# Select folder with files.
+[DirectoryInfo]$fineTuningDi = New-Object DirectoryInfo "$scriptPath\\$fineTuningName"
+[string[]]$dataFolderNames = $fineTuningDi.GetDirectories("*.*") | ForEach-Object { $_.Name }
+$dataFolderName = ShowOptionsMenu $dataFolderNames "Select Data Folder"
+# Select file.
+[DirectoryInfo]$dataFolderDi = New-Object DirectoryInfo "$scriptPath\\$fineTuningName\\$dataFolderName"
+[string[]]$dataFileNames = $dataFolderDi.GetFiles("*.*") | ForEach-Object { $_.Name }
+$dataFileName = ShowOptionsMenu $dataFileNames "Select Data File"
+$dataFileNameExt = [Path]::GetExtension($dataFileName).ToLower()
+$dataFileNameBase = [Path]::GetFileNameWithoutExtension($dataFileName)
+$sourceFileName = "$scriptPath\\$fineTuningName\\$dataFolderName\\$dataFileName"
+$targteFileNameBase = "$scriptPath\\$fineTuningName\\$dataFolderName\\$dataFileNameBase"
+# Select conversion type.
+$convert_JSON2RTF = "JSON to RTF"
+$convert_JSON2CSV = "JSON to CSV"
+$convert_JSON2XLS = "JSON to XLS"
+$convert_RTF2JSON = "JSON to RTF"
+$convert_CSV2JSON = "JSON to CSV"
+$convert_XLS2JSON = "JSON to XLS"
+$convertTypes = @();
+$convertTypes += $convert_JSON2RTF
+$convertTypes += $convert_JSON2CSV
+$convertTypes += $convert_JSON2XLS
+$convertTypes += $convert_RTF2JSON
+$convertTypes += $convert_CSV2JSON
+$convertTypes += $convert_XLS2JSON
+$convertType = ShowOptionsMenu $convertTypes "Select Convert Type"
+
+if ($convertType -eq $convert_JSON2RTF){
+	$targteFileName = "$targteFileNameBase.rtf"
+	Convert-JSON2RTF $sourceFileName $targteFileName
+}
+if ($convertType -eq $convert_JSON2CSV){
+	$targteFileName = "$targteFileNameBase.csv"
+	Convert-JSON2CSV $sourceFileName $targteFileName
+}
+return
 #------------------------------------------------------------------------------
 # Fix column names first.
 $dataFile = "$scriptPath\$dataFileBaseName.xlsx"
