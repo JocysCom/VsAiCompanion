@@ -180,6 +180,7 @@
 		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\*.*" />
 		<EmbeddedResource Include="Resources\BuildDate.*" />
 		<EmbeddedResource Include="Resources\Templates\*.xml" />
+		<EmbeddedResource Include="Resources\FineTune\**\*.*" />
 	</ItemGroup>
 
 	<ItemGroup>
