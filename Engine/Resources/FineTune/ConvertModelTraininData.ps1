@@ -1,6 +1,16 @@
 using namespace System
 using namespace System.IO
 # ----------------------------------------------------------------------------
+# Declare command line parameters
+param(
+	[string]$ConversionType,
+    [string]$FineTuningName,
+    [string]$DataFolderName,
+    [string]$SourceFileName,
+    [string]$TargetFileName,
+	[string]$SystemPromptContent
+)
+# ----------------------------------------------------------------------------
 # Include other scripts
 Invoke-Expression -Command: (Get-Content -Path ".\ConvertJsonHelper.ps1" -Raw)
 Invoke-Expression -Command: (Get-Content -Path ".\ConvertRtfHelper.ps1" -Raw)
@@ -31,9 +41,8 @@ $companyName = "Company Name"
 $dataFolder = "ModelTrainingData"
 $dataFileBaseName = "data"
 $saveAsSeparateFiles = $false
-$saveAsRtf = $true
 $saveAsOpenAiJson = $true
-$systemPromptContent =
+$SystemPromptContent =
 	"You are a helpful, respectful and honest assistant of $companyName."
 	# +
 	#" Always answer as helpfully as possible, providing comprehensive and detailed information while being safe." +
@@ -72,45 +81,89 @@ function ShowOptionsMenu {
 	return $dic[$m.ToUpper()]
 }
 #------------------------------------------------------------------------------
-# Select fine tuning settings.
-[DirectoryInfo]$scriptDi = New-Object DirectoryInfo $scriptPath
-[string[]]$fineTuningNames = $scriptDi.GetDirectories("*.*") | ForEach-Object { $_.Name }
-$fineTuningName = ShowOptionsMenu $fineTuningNames "Select Fine-Tuning Settings"
-# Select folder with files.
-[DirectoryInfo]$fineTuningDi = New-Object DirectoryInfo "$scriptPath\\$fineTuningName"
-[string[]]$dataFolderNames = $fineTuningDi.GetDirectories("*.*") | ForEach-Object { $_.Name }
-$dataFolderName = ShowOptionsMenu $dataFolderNames "Select Data Folder"
-# Select file.
-[DirectoryInfo]$dataFolderDi = New-Object DirectoryInfo "$scriptPath\\$fineTuningName\\$dataFolderName"
-[string[]]$dataFileNames = $dataFolderDi.GetFiles("*.*") | ForEach-Object { $_.Name }
-$dataFileName = ShowOptionsMenu $dataFileNames "Select Data File"
-$dataFileNameExt = [Path]::GetExtension($dataFileName).ToLower()
-$dataFileNameBase = [Path]::GetFileNameWithoutExtension($dataFileName)
-$sourceFileName = "$scriptPath\\$fineTuningName\\$dataFolderName\\$dataFileName"
-$targteFileNameBase = "$scriptPath\\$fineTuningName\\$dataFolderName\\$dataFileNameBase"
-# Select conversion type.
-$convert_JSON2RTF = "JSON to RTF"
-$convert_JSON2CSV = "JSON to CSV"
-$convert_JSON2XLS = "JSON to XLS"
-$convert_RTF2JSON = "JSON to RTF"
-$convert_CSV2JSON = "JSON to CSV"
-$convert_XLS2JSON = "JSON to XLS"
-$convertTypes = @();
-$convertTypes += $convert_JSON2RTF
-$convertTypes += $convert_JSON2CSV
-$convertTypes += $convert_JSON2XLS
-$convertTypes += $convert_RTF2JSON
-$convertTypes += $convert_CSV2JSON
-$convertTypes += $convert_XLS2JSON
-$convertType = ShowOptionsMenu $convertTypes "Select Convert Type"
-
-if ($convertType -eq $convert_JSON2RTF){
-	$targteFileName = "$targteFileNameBase.rtf"
-	Convert-JSON2RTF $sourceFileName $targteFileName
+if ("$ConversionType" -eq ""){
+	# Select conversion type.
+	$conversion_JSON2RTF = "JSON to RTF"
+	$conversion_JSON2CSV = "JSON to CSV"
+	$conversion_JSON2XLS = "JSON to XLS"
+	$conversion_RTF2JSON = "RTF to JSON"
+	$conversion_CSV2JSON = "CSV to JSON"
+	$conversion_XLS2JSON = "XLS to JSON"
+	$conversion_JSON2JSONL = "JSON to JSONL"
+	$conversion_JSONL2JSON = "JSONL to JSON"
+	# Create array.
+	$conversionTypes = @();
+	$conversionTypes += $conversion_JSON2RTF
+	$conversionTypes += $conversion_JSON2CSV
+	$conversionTypes += $conversion_JSON2XLS
+	$conversionTypes += $conversion_RTF2JSON
+	$conversionTypes += $conversion_CSV2JSON
+	$conversionTypes += $conversion_XLS2JSON
+	$conversionTypes += $conversion_JSON2JSONL
+	$conversionTypes += $conversion_JSONL2JSON
+	$ConversionType = ShowOptionsMenu $conversionTypes "Select Conversion Type"
+	# Create dictionary
+	$ConversionExtensions = @{}
+	# Store source file pattern and target file extension value as array.
+	$ConversionExtensions[$conversion_JSON2RTF] = @("*.json", ".rtf")
+	$ConversionExtensions[$conversion_JSON2CSV] = @("*.json", ".csv")
+	$ConversionExtensions[$conversion_JSON2XLS] = @("*.json", ".xls")
+	$ConversionExtensions[$conversion_RTF2JSON] = @("*.rtf",  ".rtf")
+	$ConversionExtensions[$conversion_CSV2JSON] = @("*.csv",  ".csv")
+	$ConversionExtensions[$conversion_XLS2JSON] = @("*.xls*", ".xls")
+	$ConversionExtensions[$conversion_JSON2JSONL] = @("*.json", ".jsonl")
+	$ConversionExtensions[$conversion_JSONL2JSON] = @("*.jsonl", ".json")
 }
-if ($convertType -eq $convert_JSON2CSV){
-	$targteFileName = "$targteFileNameBase.csv"
-	Convert-JSON2CSV $sourceFileName $targteFileName
+if ("$FineTuningName" -eq ""){
+	# Select fine tuning settings.
+	[DirectoryInfo]$scriptDi = New-Object DirectoryInfo $scriptPath
+	[string[]]$fineTuningMenuNames = $scriptDi.GetDirectories("*.*") | ForEach-Object { $_.Name }
+	$FineTuningName = ShowOptionsMenu $fineTuningMenuNames "Select Fine-Tuning Settings"
+}
+if ("$DataFolderName" -eq ""){
+	# Select folder with files.
+	[DirectoryInfo]$fineTuningDi = New-Object DirectoryInfo "$scriptPath\$FineTuningName"
+	[string[]]$dataFolderMenuNames = $fineTuningDi.GetDirectories("*.*") | ForEach-Object { $_.Name }
+	$DataFolderName = ShowOptionsMenu $dataFolderMenuNames "Select Data Folder"
+}
+if ("$SourceFileName" -eq ""){
+	# Select file.
+	[DirectoryInfo]$sourceFolderDi = New-Object DirectoryInfo "$scriptPath\$FineTuningName\$DataFolderName"
+	[string]$sourceFilePattern = $ConversionExtensions[$ConversionType][0];
+	[string[]]$sourceFileMenuNames = $sourceFolderDi.GetFiles($sourceFilePattern) | ForEach-Object { $_.Name }
+	$sourceFileMenuName = ShowOptionsMenu $sourceFileMenuNames "Select Source Data File"
+	$sourceFileBase = [Path]::GetFileNameWithoutExtension($sourceFileMenuName)
+	$SourceFileName = "$scriptPath\$FineTuningName\$DataFolderName\$sourceFileMenuName"
+}
+if ("$TargetFileName" -eq ""){
+	$targteFileNameBase = "$scriptPath\$FineTuningName\$DataFolderName\$sourceFileBase"
+	$targteFileNameExt = $ConversionExtensions[$ConversionType][1]
+	$TargetFileName = "$($targteFileNameBase)$($targteFileNameExt)"
+}
+#------------------------------------------------------------------------------
+if ($ConversionType -eq $conversion_JSON2RTF){
+	Convert-JSON2RTF $SourceFileName $TargetFileName
+}
+if ($ConversionType -eq $conversion_JSON2CSV){
+	Convert-JSON2CSV $SourceFileName $TargetFileName
+}
+if ($ConversionType -eq $conversion_JSON2XLS){
+	Convert-JSON2XLS $SourceFileName $TargetFileName
+}
+if ($ConversionType -eq $conversion_RTF2JSON){
+	Convert-RTF2JSON $SourceFileName $TargetFileName
+}
+if ($ConversionType -eq $conversion_CSV2JSON){
+	Convert-CSV2JSON $SourceFileName $TargetFileName
+}
+if ($ConversionType -eq $conversion_XLS2JSON){
+	Convert-XLS2JSON $SourceFileName $TargetFileName
+}
+if ($ConversionType -eq $conversion_JSON2JSONL){
+	Convert-JSON2JSONL $SourceFileName $TargetFileName
+}
+if ($ConversionType -eq $conversion_JSONL2JSON){
+	Convert-JSONL2JSON $SourceFileName $TargetFileName
 }
 return
 #------------------------------------------------------------------------------
@@ -129,10 +182,6 @@ $answerColumns = Get-ColumnNames $sheet "answer"
 Write-Host "Question columns: $promptColumns"
 Write-Host "Answer columns: $answerColumns"
 DisposeExcel
-
-#Convert-JSON2RTF "data-demo.json" "data-demo.rtf"
-#Convert-JSON2XLSX "data-demo.json" "data-demo.xlsx"
-#Convert-JSON2CSV "data-demo.json" "data-demo.csv"
 return
 #------------------------------------------------------------------------------
 if (-not [Directory]::Exists("$dataFolder")) {
@@ -146,9 +195,6 @@ if ($saveAsSeparateFiles) {
 		Write-Host "Create Directory: $sd"
 		$null = [Directory]::CreateDirectory($sd)
 	}
-}
-
-if ($saveAsRtf) {
 }
 
 # Begin assembling data.
@@ -175,7 +221,7 @@ for ($r = 2; $r -le $rowMax; $r++) {
 				# Add `system` message.
 				[chat_completion_message]$sm = [chat_completion_message]::new()
 				$sm.role = "system"
-				$sm.content = $systemPromptContent
+				$sm.content = $SystemPromptContent
 				$null = $request.messages.Add($sm)
 				# Add `user` message.
 				[chat_completion_message]$um = [chat_completion_message]::new()
@@ -197,11 +243,6 @@ for ($r = 2; $r -le $rowMax; $r++) {
 				$jsonFile = "$dataFileBaseName-{0:0000}.json" -f $i
 				$jsonData | Out-File "$dataFolder\$jsonFile"
 			}
-			if ($saveAsRtf) {
-				Add-RtfLine $rtfContent $prompt $true
-				Add-RtfLine $rtfContent $answer
-				Add-RtfLine $rtfContent "`r`n"
-			}
 			# Report progress.
 			$i++
 			Write-Progress -Activity "Save in Progress" -Status "$r/$rowMax Complete:" -PercentComplete ($r * 100 / $rowMax)
@@ -214,11 +255,6 @@ if ($saveAsOpenAiJson) {
 	# Save OpenAI fine-tuning content.
 	$openAiJsonString = $requestList | ConvertTo-Json -Depth 5
 	$openAiJsonString | Out-File "$dataFolder\$dataFileBaseName.json"
-}
-
-if ($saveAsRtf) {
-	# Save RTF content.
-	$rtfContent.SaveFile("$dataFolder\$dataFileBaseName.rtf")
 }
 #------------------------------------------------------------------------------
 DisposeExcel
