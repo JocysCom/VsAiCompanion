@@ -31,7 +31,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var item = Global.FineTunes.Items.FirstOrDefault();
 			Data = item;
 			MainDataGrid.ItemsSource = CurrentItems;
-			ConvertTypeComboBox.ItemsSource = Attributes.GetDictionary<ConvertType>();
+			ConvertTypeComboBox.ItemsSource = Attributes.GetDictionary<ConvertTargetType>();
 			UpdateButtons();
 		}
 
@@ -309,30 +309,38 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Convert
 
-		public ConvertType ConvertType { get; set; } = ConvertType.None;
+		public ConvertTargetType ConvertType { get; set; } = ConvertTargetType.None;
 
 		private void ConvertTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var box = (ComboBox)sender;
-			var convertType = e.AddedItems.Cast<KeyValuePair<ConvertType, string>>().FirstOrDefault().Key;
-			if (convertType == ConvertType.None)
+			var convertType = e.AddedItems.Cast<KeyValuePair<ConvertTargetType, string>>().FirstOrDefault().Key;
+			if (convertType == ConvertTargetType.None)
 				return;
-			box.SelectedValue = ConvertType.None;
+			box.SelectedValue = ConvertTargetType.None;
 			// Convert.
 			var items = MainDataGrid.SelectedItems.Cast<file>();
 			foreach (var item in items)
 			{
+
 				var sourcePath = Global.GetPath(Data, FineTune.SourceData, item.filename);
 				var fi = new FileInfo(sourcePath);
 				var ext = System.IO.Path.GetExtension(item.filename).ToLower();
 				string status_details = null;
 				if (ext == ".json")
 				{
-					var targetPath = Global.GetPath(Data, FineTune.SourceData, Path.GetFileNameWithoutExtension(fi.Name) + ".jsonl");
-					_ = Client.IsTextCompletionMode(Data.AiModel)
-						? ConvertJsonListToLines<text_completion_request>(sourcePath, targetPath, out status_details)
-						: ConvertJsonListToLines<chat_completion_request>(sourcePath, targetPath, out status_details);
-
+					if (convertType == ConvertTargetType.RTF)
+					{
+						var scriptPath = Global.FineTunesPath;
+						//ConvertHelper.ConvertModelTrainingData(scriptPath);
+					}
+					else if (convertType == ConvertTargetType.JSONL)
+					{
+						var targetPath = Global.GetPath(Data, FineTune.SourceData, Path.GetFileNameWithoutExtension(fi.Name) + ".jsonl");
+						_ = Client.IsTextCompletionMode(Data.AiModel)
+							? ConvertJsonListToLines<text_completion_request>(sourcePath, targetPath, out status_details)
+							: ConvertJsonListToLines<chat_completion_request>(sourcePath, targetPath, out status_details);
+					}
 				}
 				if (ext == ".jsonl")
 				{

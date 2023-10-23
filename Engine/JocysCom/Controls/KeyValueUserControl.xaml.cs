@@ -52,7 +52,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.RestoreSelection(MainDataGrid, nameof(KeyValue.Key), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(KeyValue.Key), list, 0);
 		}
 
 		public void ShowColumns(params DataGridColumn[] args)

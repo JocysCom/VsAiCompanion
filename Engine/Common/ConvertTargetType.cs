@@ -2,7 +2,8 @@
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-    public enum ConvertType
+    public enum ConvertTargetType
+
     {
 		[Description("Convert To:")]
 		None = 0,
@@ -11,6 +12,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[Description("JSON Lines")]
 		JSONL,
 		[Description("Excel")]
-		Excel
+		Excel,
+		[Description("RTF")]
+		RTF,
 	}
 }

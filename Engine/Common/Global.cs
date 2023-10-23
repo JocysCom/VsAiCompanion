@@ -87,9 +87,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		public static string FineTunesPath
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, "FineTune");
+
 		public static string GetPath(FineTune item, params string[] args)
 		{
-			var itemPath = new string[] { AppData.XmlFile.Directory.FullName, "FineTune", item.Name };
+			var itemPath = new string[] { FineTunesPath, item.Name };
 			var paths = itemPath.Concat(args).ToArray();
 			var path = System.IO.Path.Combine(paths);
 			return path;
