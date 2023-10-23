@@ -12,8 +12,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[Description("JSON Lines")]
 		JSONL,
 		[Description("Excel")]
-		Excel,
+		XLS,
 		[Description("RTF")]
 		RTF,
+		[Description("CSV")]
+		CSV,
 	}
 }

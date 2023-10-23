@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -226,88 +225,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.OpenUrl("https://platform.openai.com/docs/guides/fine-tuning/preparing-your-dataset");
 		}
 
-		#region Validate
-
 		private void ValidateButton_Click(object sender, RoutedEventArgs e)
 		{
-			var items = MainDataGrid.SelectedItems.Cast<file>();
-			foreach (var item in items)
-			{
-				var filePath = Global.GetPath(Data, FineTune.TuningData, item.filename);
-				var ext = System.IO.Path.GetExtension(item.filename).ToLower();
-				string status_details = null;
-				if (ext == ".json")
-				{
-					_ = Client.IsTextCompletionMode(Data.AiModel)
-						? ValidateJsonFile<List<text_completion_request>>(filePath, out status_details)
-						: ValidateJsonFile<List<chat_completion_request>>(filePath, out status_details);
-				}
-				if (ext == ".jsonl")
-				{
-					_ = Client.IsTextCompletionMode(Data.AiModel)
-						? ValidateJsonlFile<text_completion_request>(filePath, out status_details)
-						: ValidateJsonlFile<chat_completion_request>(filePath, out status_details);
-				}
-				item.status_details = $"{DateTime.Now}: {status_details}";
-			}
+			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
+			var sourcePath = Global.GetPath(Data, FineTune.TuningData);
+			FileValidateHelper.Validate(sourcePath, items, Data.AiModel);
 			// Refresh items because DataGrid items don't implement the INotifyPropertyChanged interface.
 			MainDataGrid.Items.Refresh();
 		}
-
-		public bool ValidateJsonlFile<T>(string filePath, out string status_details)
-		{
-			if (!File.Exists(filePath))
-			{
-				status_details = $"File {filePath} don't exists!";
-				return false;
-			}
-			var i = 0;
-			foreach (string line in File.ReadLines(filePath))
-			{
-				i++;
-				try
-				{
-					var request = Client.Deserialize<T>(line);
-					// Validate further if necessary
-				}
-				catch (JsonException ex)
-				{
-					// Handle the exception for an invalid JSON line
-					status_details = ex.Message;
-					return false;
-				}
-			}
-			// Add approximate token count.
-			status_details = $"Validated successfuly. {i} line(s) found.";
-			return true;
-		}
-
-		public bool ValidateJsonFile<T>(string filePath, out string status_details)
-		{
-			if (!File.Exists(filePath))
-			{
-				status_details = $"File {filePath} don't exists!";
-				return false;
-			}
-			var content = File.ReadAllText(filePath);
-			try
-			{
-				var request = Client.Deserialize<T>(content);
-			}
-			catch (JsonException ex)
-			{
-				// Handle the exception for an invalid JSON line
-				status_details = ex.Message;
-				return false;
-			}
-			// Add approximate token count.
-			status_details = $"Validated successfuly.";
-			return true;
-		}
-
-		#endregion
-
-		#region Convert
 
 		public ConvertTargetType ConvertType { get; set; } = ConvertTargetType.None;
 
@@ -319,127 +244,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			box.SelectedValue = ConvertTargetType.None;
 			// Convert.
-			var items = MainDataGrid.SelectedItems.Cast<file>();
-			foreach (var item in items)
-			{
-				var sourcePath = Global.GetPath(Data, FineTune.TuningData, item.filename);
-				var fi = new FileInfo(sourcePath);
-				string status_details = null;
-				if (convertType == Engine.ConvertTargetType.JSON)
-				{
-					var targetPath = Global.GetPath(Data, FineTune.SourceData, Path.GetFileNameWithoutExtension(fi.Name) + ".jsonl");
-					_ = Client.IsTextCompletionMode(Data.AiModel)
-						? ConvertJsonListToLines<text_completion_request>(sourcePath, targetPath, out status_details)
-						: ConvertJsonListToLines<chat_completion_request>(sourcePath, targetPath, out status_details);
-
-				}
-				if (convertType == Engine.ConvertTargetType.JSONL)
-				{
-					var targetPath = Global.GetPath(Data, FineTune.SourceData, Path.GetFileNameWithoutExtension(fi.Name) + ".json");
-					_ = Client.IsTextCompletionMode(Data.AiModel)
-						? ConvertJsonLinesToList<text_completion_request>(sourcePath, targetPath, out status_details)
-						: ConvertJsonLinesToList<chat_completion_request>(sourcePath, targetPath, out status_details);
-				}
-				item.status_details = $"{DateTime.Now}: {status_details}";
-			}
+			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
+			var sourcePath = Global.GetPath(Data, FineTune.TuningData);
+			FileConvertHelper.ConvertFile(sourcePath, FineTune.TuningData, items, convertType, Data.AiModel);
 			Refresh();
 
 		}
-
-		private void ConvertButton_Click(object sender, RoutedEventArgs e)
-		{
-		}
-
-		public bool ConvertJsonLinesToList<T>(string sourceFile, string targetFile, out string status_details)
-		{
-			if (!File.Exists(sourceFile))
-			{
-				status_details = $"File {sourceFile} don't exists!";
-				return false;
-			}
-			var i = 0;
-			var items = new List<T>();
-			foreach (string line in File.ReadLines(sourceFile))
-			{
-				i++;
-				try
-				{
-					var request = Client.Deserialize<T>(line);
-					items.Add(request);
-					// Validate further if necessary
-				}
-				catch (JsonException ex)
-				{
-					// Handle the exception for an invalid JSON line
-					status_details = ex.Message;
-					return false;
-				}
-			}
-			var options = Client.GetJsonOptions();
-			options.WriteIndented = true;
-			var contents = JsonSerializer.Serialize(items, options);
-			if (!AllowToWrite(targetFile))
-			{
-				status_details = "Overwrite denied.";
-				return false;
-			}
-			File.WriteAllText(targetFile, contents, System.Text.Encoding.UTF8);
-			// Add approximate token count.
-			status_details = $"File converted successfuly. {items.Count} message(s) found.";
-			return true;
-		}
-
-		public bool AllowToWrite(string targetFile)
-		{
-			var tfi = new FileInfo(targetFile);
-			if (!tfi.Exists)
-				return true;
-			var text = $"Do you want to overwrite {tfi.Name} file?";
-			var caption = $"{Global.Info.Product} - Overwrite";
-			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-			if (result != MessageBoxResult.Yes)
-				return false;
-			File.Delete(targetFile);
-			return true;
-		}
-
-		public bool ConvertJsonListToLines<T>(string sourceFile, string targetFile, out string status_details)
-		{
-			if (!File.Exists(sourceFile))
-			{
-				status_details = $"File {sourceFile} does not exist.";
-				return false;
-			}
-			try
-			{
-				var jsonData = File.ReadAllText(sourceFile, System.Text.Encoding.UTF8);
-				var data = Client.Deserialize<List<T>>(jsonData);
-				if (!AllowToWrite(targetFile))
-				{
-					status_details = "Overwrite denied.";
-					return false;
-				}
-				using (var writer = File.CreateText(targetFile))
-				{
-					foreach (var item in data)
-					{
-						var jsonLine = Client.Serialize(item);
-						writer.WriteLine(jsonLine);
-					}
-				}
-				status_details = $"File converted successfully. {data.Count} message(s) found.";
-				return true;
-			}
-			catch (JsonException ex)
-			{
-				// Handle the exception for an invalid JSON line
-				status_details = ex.Message;
-				return false;
-			}
-		}
-
-
-		#endregion
 
 		private async void UploadButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
