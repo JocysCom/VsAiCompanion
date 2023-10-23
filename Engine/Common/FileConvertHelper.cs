@@ -3,6 +3,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Policy;
 using System.Text.Json;
 using System.Windows;
 
@@ -84,88 +85,78 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void ConvertFile(
 			string fineTuneItemPath, string sourceDataName,
 			file[] items, ConvertTargetType targetType, string aiModel,
-			string systemPromptContent = null)
+			string systemPromptContent = null
+		)
 		{
+			var sourceToJsonTypes = new Dictionary<string, ConversionType>()
+			{
+				{ ".xls", ConversionType.XLS2JSON},
+				{ ".csv", ConversionType.CSV2JSON},
+				{ ".rtf", ConversionType.RTF2JSON},
+				{ ".jsonl", ConversionType.JSONL2JSON},
+			};
+			var targetTypeToExtension = new Dictionary<ConvertTargetType, string>()
+			{
+				{ ConvertTargetType.JSON, ".json" },
+				{ ConvertTargetType.JSONL, ".jsonl" },
+				{ ConvertTargetType.XLS, ".xls" },
+				{ ConvertTargetType.RTF, ".rtf" },
+				{ ConvertTargetType.CSV, ".csv" },
+			};
+			var jsonToOtherType = new Dictionary<ConvertTargetType, ConversionType>()
+			{
+				{ ConvertTargetType.JSONL, ConversionType.JSON2JSONL },
+				{ ConvertTargetType.XLS, ConversionType.JSON2XLS },
+				{ ConvertTargetType.RTF, ConversionType.JSON2RTF },
+				{ ConvertTargetType.CSV, ConversionType.JSON2CSV },
+			};
+			// Process files.
 			foreach (var item in items)
 			{
 				var sourceExt = Path.GetExtension(item.filename).ToLower();
+				var targetExt = targetTypeToExtension[targetType];
+				// If nothing to convert then continue.
+				if (sourceExt == targetExt)
+					continue;
 				var sourceBase = Path.GetFileNameWithoutExtension(item.filename);
 				var sourceFullPath = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
 				var targetSourceDataFullPathBase = Path.Combine(fineTuneItemPath, FineTune.SourceData, sourceBase);
 				var targetTuningDataFullPathBase = Path.Combine(fineTuneItemPath, FineTune.TuningData, sourceBase);
 				var jsonTempFile = targetTuningDataFullPathBase + ".tmp.json";
 				string status_details = null;
-				bool useTemp = false;
-				// All conversions will be done via JSON file.
-				ConversionType? convert = null;
-				if (sourceExt == ".xls")
+				// If can convert to JSON then...
+				if (sourceToJsonTypes.ContainsKey(sourceExt))
 				{
-					convert = ConversionType.XLS2JSON;
-					useTemp = targetType != ConvertTargetType.JSON && targetType != ConvertTargetType.XLS;
-				}
-				if (sourceExt == ".csv")
-				{
-					convert = ConversionType.CSV2JSON;
-					useTemp = targetType != ConvertTargetType.JSON && targetType != ConvertTargetType.CSV;
-				}
-				if (sourceExt == ".rtf")
-				{
-					convert = ConversionType.RTF2JSON;
-					useTemp = targetType != ConvertTargetType.JSON && targetType != ConvertTargetType.RTF;
-				}
-				if (sourceExt == ".jsonl")
-				{
-					convert = ConversionType.JSONL2JSON;
-					useTemp = targetType != ConvertTargetType.JSON && targetType != ConvertTargetType.JSONL;
-				}
-				// Convert to JSON.
-				if (convert.HasValue)
-				{
-					var targetFullPath = targetType == ConvertTargetType.JSON
-						? targetSourceDataFullPathBase + ".json" : jsonTempFile;
+					// Convert to temp file.
 					if (sourceExt == ".jsonl")
 					{
 						_ = Client.IsTextCompletionMode(aiModel)
-						? ConvertJsonLinesToList<text_completion_request>(sourceFullPath,
-							targetFullPath, out status_details)
-						: ConvertJsonLinesToList<chat_completion_request>(sourceFullPath,
-							targetFullPath, out status_details);
+						? ConvertJsonLinesToList<text_completion_request>(sourceFullPath, jsonTempFile, out status_details)
+						: ConvertJsonLinesToList<chat_completion_request>(sourceFullPath, jsonTempFile, out status_details);
 					}
 					else
 					{
-						ConvertModelTrainingData(convert.Value, sourceFullPath, targetFullPath, systemPromptContent);
+						ConvertModelTrainingData(sourceToJsonTypes[sourceExt], sourceFullPath, jsonTempFile, systemPromptContent);
 					}
 				}
-				// Change source if temp JSON was created.
-				if (useTemp)
+				// Get target file.
+				var targetFile = targetType == ConvertTargetType.JSONL
+					? targetTuningDataFullPathBase + targetExt
+					: targetSourceDataFullPathBase + targetExt;
+				// If target is JSON Lines file.
+				if (targetType == ConvertTargetType.JSONL)
 				{
-					// Conversion to other type will continue.
-					sourceExt = ".json";
-					sourceFullPath = jsonTempFile;
+					_ = Client.IsTextCompletionMode(aiModel)
+						? ConvertJsonListToLines<text_completion_request>(jsonTempFile, targetFile, out status_details)
+						: ConvertJsonListToLines<chat_completion_request>(jsonTempFile, targetFile, out status_details);
 				}
-				if (sourceExt == ".json")
+				else if (targetType == ConvertTargetType.JSON)
 				{
-					switch (targetType)
-					{
-						case ConvertTargetType.JSONL:
-							_ = Client.IsTextCompletionMode(aiModel)
-								? ConvertJsonListToLines<text_completion_request>(sourceFullPath,
-									targetTuningDataFullPathBase + ".jsonl", out status_details)
-								: ConvertJsonListToLines<chat_completion_request>(sourceFullPath,
-									targetTuningDataFullPathBase + ".jsonl", out status_details);
-							break;
-						case ConvertTargetType.XLS:
-							ConvertModelTrainingData(ConversionType.JSON2XLS, sourceFullPath, targetSourceDataFullPathBase + ".xls", systemPromptContent);
-							break;
-						case ConvertTargetType.RTF:
-							ConvertModelTrainingData(ConversionType.JSON2RTF, sourceFullPath, targetSourceDataFullPathBase + ".rtf", systemPromptContent);
-							break;
-						case ConvertTargetType.CSV:
-							ConvertModelTrainingData(ConversionType.JSON2CSV, sourceFullPath, targetSourceDataFullPathBase + ".csv", systemPromptContent);
-							break;
-						default:
-							break;
-					}
+					File.Move(jsonTempFile, targetFile);
+				}
+				else
+				{
+					ConvertModelTrainingData(jsonToOtherType[targetType], jsonTempFile, targetFile, systemPromptContent);
 				}
 				item.status_details = $"{DateTime.Now}: {status_details}";
 				if (File.Exists(jsonTempFile))
