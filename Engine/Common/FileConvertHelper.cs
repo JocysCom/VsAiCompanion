@@ -82,6 +82,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 			*/
 		}
 
+		public static Dictionary<string, ConvertTargetType[]> ConvertToTypesAvailable = new Dictionary<string, ConvertTargetType[]>()
+		{
+			{ ".csv",
+				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.JSONL, ConvertTargetType.XLS, ConvertTargetType.RTF }
+			},
+			{ ".xls",
+				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.JSONL, ConvertTargetType.RTF, ConvertTargetType.CSV }
+			},
+			{ ".rtf",
+				new ConvertTargetType[] { }
+			},
+			{ ".json",
+				new ConvertTargetType[] { ConvertTargetType.JSONL, ConvertTargetType.XLS, ConvertTargetType.RTF, ConvertTargetType.CSV }
+			},
+			{ ".jsonl",
+				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.XLS, ConvertTargetType.RTF, ConvertTargetType.CSV }
+			}
+		};
+
 		public static void ConvertFile(
 			string fineTuneItemPath, string sourceDataName,
 			file[] items, ConvertTargetType targetType, string aiModel,

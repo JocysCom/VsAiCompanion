@@ -30,7 +30,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var item = Global.FineTunes.Items.FirstOrDefault();
 			Data = item;
 			MainDataGrid.ItemsSource = CurrentItems;
-			ConvertTypeComboBox.ItemsSource = Attributes.GetDictionary<ConvertTargetType>();
 			UpdateButtons();
 		}
 
@@ -69,6 +68,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = isSelected;
 			ValidateButton.IsEnabled = isSelected;
+			var item = selecetedItems.FirstOrDefault();
+			List<ConvertTargetType> convertTypes = new List<ConvertTargetType>() { ConvertTargetType.None };
+			// Allow only if one item is selected.
+			if (item != null && selecetedItems.Count() == 1)
+			{
+				var ext = Path.GetExtension(item.filename).ToLower();
+				if (FileConvertHelper.ConvertToTypesAvailable.ContainsKey(ext))
+				{
+					var addTypes = FileConvertHelper.ConvertToTypesAvailable[ext];
+					convertTypes.AddRange(addTypes);
+				}
+			}
+			ConvertTypeComboBox.ItemsSource = Attributes.GetDictionary(convertTypes.ToArray());
+			ConvertTypeComboBox.IsReadOnly = selecetedItems.Count() != 1;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
