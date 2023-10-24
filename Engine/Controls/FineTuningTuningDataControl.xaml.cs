@@ -258,7 +258,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			box.SelectedValue = ConvertTargetType.None;
 			// Convert.
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
-			var sourcePath = Global.GetPath(Data, FineTune.TuningData);
+			var sourcePath = Global.GetPath(Data);
 			FileConvertHelper.ConvertFile(sourcePath, FineTune.TuningData, items, convertType, Data.AiModel);
 			Refresh();
 
