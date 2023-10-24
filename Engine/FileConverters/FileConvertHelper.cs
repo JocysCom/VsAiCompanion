@@ -121,6 +121,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{ ConvertTargetType.JSONL, ".jsonl" },
 				{ ConvertTargetType.XLS, ".xls" },
 				{ ConvertTargetType.RTF, ".rtf" },
+				{ ConvertTargetType.DOCX, ".docx" },
 				{ ConvertTargetType.CSV, ".csv" },
 			};
 			var jsonToOtherType = new Dictionary<ConvertTargetType, ConversionType>()
@@ -178,9 +179,15 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{
 					File.Move(jsonTempFile, targetFile);
 				}
-				else
+				else if (targetType == ConvertTargetType.RTF)
 				{
-					ConvertModelTrainingData(jsonToOtherType[targetType], sourceFile, targetFile, systemPromptContent);
+					var o = JsonFileConverter.ReadFromJson(sourceFile);
+					JsonFileConverter.WriteAsRtf(targetFile, o);
+				}
+				else if (targetType == ConvertTargetType.DOCX)
+				{
+					var o = JsonFileConverter.ReadFromJson(sourceFile);
+					JsonFileConverter.WriteAsDocx(targetFile, o);
 				}
 				item.status_details = $"{DateTime.Now}: {status_details}";
 				if (File.Exists(jsonTempFile))

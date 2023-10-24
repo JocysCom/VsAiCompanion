@@ -8,7 +8,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
-	internal class JsonConverter
+	internal class JsonFileConverter
 	{
 
 		public static void WriteAsXml(string path, List<chat_completion_request> o)
@@ -76,8 +76,8 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		static void AddDocxParagraph(Body body, string text = null, bool isBold = false)
 		{
-			Paragraph para = body.AppendChild(new Paragraph());
-			Run run = para.AppendChild(new Run());
+			var para = body.AppendChild(new Paragraph());
+			var run = para.AppendChild(new Run());
 			if (!string.IsNullOrEmpty(text))
 			{
 				run.AppendChild(new Text(text));
@@ -100,15 +100,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					foreach (var message in request.messages)
 					{
 						if (message.role == message_role.user)
-						{
 							AddDocxParagraph(mainPart.Document.Body, message.content, true);
-							AddDocxParagraph(mainPart.Document.Body);
-						}
 						if (message.role == message_role.assistant)
-						{
 							AddDocxParagraph(mainPart.Document.Body, message.content);
-							AddDocxParagraph(mainPart.Document.Body);
-						}
 					}
 				}
 				mainPart.Document.Save();
