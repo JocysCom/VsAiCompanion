@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
-    public enum ConvertTargetType
+	public enum ConvertTargetType
 
-    {
+	{
 		[Description("Convert To:")]
 		None = 0,
 		[Description("JSON")]

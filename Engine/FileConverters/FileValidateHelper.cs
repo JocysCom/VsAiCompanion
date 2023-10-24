@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
 	public static class FileValidateHelper
 	{

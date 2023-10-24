@@ -4,6 +4,7 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Engine.FileConverters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

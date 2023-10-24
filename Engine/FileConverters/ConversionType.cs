@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
 	public enum ConversionType
 	{

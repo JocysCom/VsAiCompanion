@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Windows;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
 
 
@@ -211,7 +211,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			try
 			{
-				var jsonData = File.ReadAllText(sourceFile, System.Text.Encoding.UTF8);
+				var jsonData = File.ReadAllText(sourceFile, Encoding.UTF8);
 				var data = Client.Deserialize<List<T>>(jsonData);
 				if (!AllowToWrite(targetFile))
 				{
@@ -270,7 +270,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				status_details = "Overwrite denied.";
 				return false;
 			}
-			File.WriteAllText(targetFile, contents, System.Text.Encoding.UTF8);
+			File.WriteAllText(targetFile, contents, Encoding.UTF8);
 			// Add approximate token count.
 			status_details = $"File converted successfuly. {items.Count} message(s) found.";
 			return true;
