@@ -11,13 +11,13 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 		JSON,
 		[Description("JSON Lines (*.jsonl)")]
 		JSONL,
-		[Description("Microsoft Excel (*xlsx)")]
-		XLSX,
 		[Description("Rich Text Format (*.rtf)")]
 		RTF,
 		[Description("Comman Separated Values (*.csv)")]
 		CSV,
-		[Description("Word Document (*.docx)")]
+		[Description("Microsoft Excel Worksheet (*xlsx)")]
+		XLSX,
+		[Description("Microsoft Word Document (*.docx)")]
 		DOCX,
 	}
 }
