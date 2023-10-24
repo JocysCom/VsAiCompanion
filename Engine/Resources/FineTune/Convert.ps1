@@ -11,12 +11,6 @@ param(
 	[string]$SystemPromptContent
 )
 # ----------------------------------------------------------------------------
-# Include other scripts
-Invoke-Expression -Command: (Get-Content -Path ".\ConvertJsonHelper.ps1" -Raw)
-Invoke-Expression -Command: (Get-Content -Path ".\ConvertRtfHelper.ps1" -Raw)
-Invoke-Expression -Command: (Get-Content -Path ".\ConvertTextHelper.ps1" -Raw)
-Invoke-Expression -Command: (Get-Content -Path ".\ConvertExcelHelper.ps1" -Raw)
-# ----------------------------------------------------------------------------
 # Get current command path.
 [string]$current = $MyInvocation.MyCommand.Path
 # Get calling command path.
@@ -34,6 +28,13 @@ $global:scriptPath = $file.Directory.FullName
 Write-Host "Script Path:    $scriptPath"
 [Environment]::CurrentDirectory = $scriptPath
 Set-Location $scriptPath
+#------------------------------------------------------------------------------
+# Include other scripts
+# ----------------------------------------------------------------------------
+Invoke-Expression -Command: (Get-Content -Path ".\ConvertJsonHelper.ps1" -Raw)
+Invoke-Expression -Command: (Get-Content -Path ".\ConvertRtfHelper.ps1" -Raw)
+Invoke-Expression -Command: (Get-Content -Path ".\ConvertTextHelper.ps1" -Raw)
+Invoke-Expression -Command: (Get-Content -Path ".\ConvertExcelHelper.ps1" -Raw)
 #------------------------------------------------------------------------------
 # Script
 #------------------------------------------------------------------------------
@@ -81,7 +82,10 @@ function ShowOptionsMenu {
 	return $dic[$m.ToUpper()]
 }
 #------------------------------------------------------------------------------
-if ("$ConversionType" -eq ""){
+# Don't asks for options if one of the main options are empty.
+$askOptions = "$ConversionType" -eq "" -or "$SourceFileName" -eq "" -or "$TargetFileName" -eq ""
+#------------------------------------------------------------------------------
+if ($askOptions -and "$ConversionType" -eq ""){
 	# Select conversion type.
 	$conversion_JSON2RTF = "JSON to RTF"
 	$conversion_JSON2CSV = "JSON to CSV"
@@ -114,19 +118,19 @@ if ("$ConversionType" -eq ""){
 	$ConversionExtensions[$conversion_JSON2JSONL] = @("*.json", ".jsonl")
 	$ConversionExtensions[$conversion_JSONL2JSON] = @("*.jsonl", ".json")
 }
-if ("$FineTuningName" -eq ""){
+if ($askOptions -and "$FineTuningName" -eq ""){
 	# Select fine tuning settings.
 	[DirectoryInfo]$scriptDi = New-Object DirectoryInfo $scriptPath
 	[string[]]$fineTuningMenuNames = $scriptDi.GetDirectories("*.*") | ForEach-Object { $_.Name }
 	$FineTuningName = ShowOptionsMenu $fineTuningMenuNames "Select Fine-Tuning Settings"
 }
-if ("$DataFolderName" -eq ""){
+if ($askOptions -and "$DataFolderName" -eq ""){
 	# Select folder with files.
 	[DirectoryInfo]$fineTuningDi = New-Object DirectoryInfo "$scriptPath\$FineTuningName"
 	[string[]]$dataFolderMenuNames = $fineTuningDi.GetDirectories("*.*") | ForEach-Object { $_.Name }
 	$DataFolderName = ShowOptionsMenu $dataFolderMenuNames "Select Data Folder"
 }
-if ("$SourceFileName" -eq ""){
+if ($askOptions -and "$SourceFileName" -eq ""){
 	# Select file.
 	[DirectoryInfo]$sourceFolderDi = New-Object DirectoryInfo "$scriptPath\$FineTuningName\$DataFolderName"
 	[string]$sourceFilePattern = $ConversionExtensions[$ConversionType][0];
@@ -135,7 +139,7 @@ if ("$SourceFileName" -eq ""){
 	$sourceFileBase = [Path]::GetFileNameWithoutExtension($sourceFileMenuName)
 	$SourceFileName = "$scriptPath\$FineTuningName\$DataFolderName\$sourceFileMenuName"
 }
-if ("$TargetFileName" -eq ""){
+if ($askOptions -and "$TargetFileName" -eq ""){
 	$targteFileNameBase = "$scriptPath\$FineTuningName\$DataFolderName\$sourceFileBase"
 	$targteFileNameExt = $ConversionExtensions[$ConversionType][1]
 	$TargetFileName = "$($targteFileNameBase)$($targteFileNameExt)"

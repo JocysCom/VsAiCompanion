@@ -1,9 +1,9 @@
-﻿using JocysCom.ClassLibrary.Processes;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+﻿using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Security.Policy;
+using System.Text;
 using System.Text.Json;
 using System.Windows;
 
@@ -21,8 +21,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			string systemPromptContent
 		)
 		{
+			var scriptPath = Path.Combine(Global.FineTunesPath, "Convert.ps1");
 			return ConvertModelTrainingData(
-				null, conversionType,
+				scriptPath, conversionType,
 				null, null, sourceFileName, targetFileName, systemPromptContent);
 		}
 
@@ -40,11 +41,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			string systemPromptContent
 		)
 		{
-			var arguments = $"-ConversionType \"{conversionType}\" -FineTuningName \"{fineTuningName}\" -DataFolderName \"{dataFolderName}\" -SourceFileName \"{sourceFileName}\" -TargetFileName \"{targetFileName}\" -SystemPromptContent \"{systemPromptContent}\"";
-			using (var shell = new HiddenShell())
-				return shell.ExecuteCommand($"PowerShell -ExecutionPolicy Bypass -File \"{scriptPath}\" {arguments}");
+			//var arguments = $"-ConversionType \"{conversionType}\" -FineTuningName \"{fineTuningName}\" -DataFolderName \"{dataFolderName}\" -SourceFileName \"{sourceFileName}\" -TargetFileName \"{targetFileName}\" -SystemPromptContent \"{systemPromptContent}\"";
+			//using (var shell = new HiddenShell())
+			//	return shell.ExecuteCommand($"PowerShell -ExecutionPolicy Bypass -File \"{scriptPath}\" {arguments}");
 
-			/*
+
 			var processInfo = new ProcessStartInfo();
 			processInfo.FileName = "PowerShell.exe";
 			processInfo.RedirectStandardOutput = true;
@@ -79,7 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			string outputString = output.ToString();
 			string errorsString = errors.ToString();
 			return outputString + errorsString;
-			*/
+
 		}
 
 		public static Dictionary<string, ConvertTargetType[]> ConvertToTypesAvailable = new Dictionary<string, ConvertTargetType[]>()
@@ -141,7 +142,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var sourceFullPath = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
 				var targetSourceDataFullPathBase = Path.Combine(fineTuneItemPath, FineTune.SourceData, sourceBase);
 				var targetTuningDataFullPathBase = Path.Combine(fineTuneItemPath, FineTune.TuningData, sourceBase);
-				var jsonTempFile = targetTuningDataFullPathBase + ".tmp.json";
+				var jsonTempFile = targetSourceDataFullPathBase + ".tmp.json";
 				string status_details = null;
 				// If can convert to JSON then...
 				if (sourceToJsonTypes.ContainsKey(sourceExt))
@@ -158,7 +159,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 						ConvertModelTrainingData(sourceToJsonTypes[sourceExt], sourceFullPath, jsonTempFile, systemPromptContent);
 					}
 				}
-				// Get target file.
+				// Set source and target
+				var sourceFile = sourceExt == ".json"
+					? sourceFullPath
+					: jsonTempFile;
 				var targetFile = targetType == ConvertTargetType.JSONL
 					? targetTuningDataFullPathBase + targetExt
 					: targetSourceDataFullPathBase + targetExt;
@@ -166,16 +170,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (targetType == ConvertTargetType.JSONL)
 				{
 					_ = Client.IsTextCompletionMode(aiModel)
-						? ConvertJsonListToLines<text_completion_request>(jsonTempFile, targetFile, out status_details)
-						: ConvertJsonListToLines<chat_completion_request>(jsonTempFile, targetFile, out status_details);
+						? ConvertJsonListToLines<text_completion_request>(sourceFile, targetFile, out status_details)
+						: ConvertJsonListToLines<chat_completion_request>(sourceFile, targetFile, out status_details);
 				}
+				// Note: Source was not JSON.
 				else if (targetType == ConvertTargetType.JSON)
 				{
 					File.Move(jsonTempFile, targetFile);
 				}
 				else
 				{
-					ConvertModelTrainingData(jsonToOtherType[targetType], jsonTempFile, targetFile, systemPromptContent);
+					ConvertModelTrainingData(jsonToOtherType[targetType], sourceFile, targetFile, systemPromptContent);
 				}
 				item.status_details = $"{DateTime.Now}: {status_details}";
 				if (File.Exists(jsonTempFile))
