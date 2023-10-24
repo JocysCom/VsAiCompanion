@@ -4,7 +4,8 @@ using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using DocumentFormat.OpenXml.Wordprocessing;
+using wp = DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
@@ -72,19 +73,19 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		#endregion
 
-		#region Word Document (*.docx)
+		#region Microsoft Word Document (*.docx)
 
-		static void AddDocxParagraph(Body body, string text = null, bool isBold = false)
+		static void AddDocxParagraph(wp.Body body, string text = null, bool isBold = false)
 		{
-			var para = body.AppendChild(new Paragraph());
-			var run = para.AppendChild(new Run());
+			var para = body.AppendChild(new wp.Paragraph());
+			var run = para.AppendChild(new wp.Run());
 			if (!string.IsNullOrEmpty(text))
 			{
-				run.AppendChild(new Text(text));
+				run.AppendChild(new wp.Text(text));
 				if (isBold)
 				{
-					run.RunProperties = new RunProperties();
-					run.RunProperties.AppendChild(new Bold());
+					run.RunProperties = new wp.RunProperties();
+					run.RunProperties.AppendChild(new wp.Bold());
 				}
 			}
 		}
@@ -94,7 +95,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			using (var wordDocument = WordprocessingDocument.Create(path, WordprocessingDocumentType.Document))
 			{
 				var mainPart = wordDocument.AddMainDocumentPart();
-				mainPart.Document = new Document(new Body());
+				mainPart.Document = new wp.Document(new wp.Body());
 				foreach (var request in o)
 				{
 					foreach (var message in request.messages)
@@ -112,5 +113,57 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		#endregion
 
+		#region Microsoft Excel (*.xlsx)
+
+		public static void WriteAsXlsx(string path, List<chat_completion_request> o)
+		{
+			using (var spreadsheet = SpreadsheetDocument.Create(path, SpreadsheetDocumentType.Workbook))
+			{
+				var workbookPart = spreadsheet.AddWorkbookPart();
+				workbookPart.Workbook = new Workbook();
+
+				var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+				var workSheet = new Worksheet();
+				worksheetPart.Worksheet = workSheet;
+
+				var sheets = spreadsheet.WorkbookPart.Workbook.AppendChild(new Sheets());
+				var sheet = new Sheet() { Id = spreadsheet.WorkbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet 1" };
+				sheets.Append(sheet);
+
+				SheetData sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
+
+				// Column headers
+				var headerRow = new Row();
+				var headerCell1 = new Cell() { DataType = CellValues.String, CellValue = new CellValue("user") };
+				var headerCell2 = new Cell() { DataType = CellValues.String, CellValue = new CellValue("assistant") };
+				headerRow.Append(headerCell1, headerCell2);
+				sheetData.Append(headerRow);
+
+				foreach (var request in o)
+				{
+					var row = new Row();
+					foreach (var message in request.messages)
+					{
+						var cell = new Cell();
+						if (message.role == message_role.user)
+						{
+							cell.DataType = CellValues.String;
+							cell.CellValue = new CellValue(message.content);
+							row.Append(cell);
+						}
+						if (message.role == message_role.assistant)
+						{
+							cell.DataType = CellValues.String;
+							cell.CellValue = new CellValue(message.content);
+							row.Append(cell);
+						}
+					}
+					sheetData.Append(row);
+				}
+				workbookPart.Workbook.Save();
+			}
+		}
+
+		#endregion
 	}
 }

@@ -86,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 		public static Dictionary<string, ConvertTargetType[]> ConvertToTypesAvailable = new Dictionary<string, ConvertTargetType[]>()
 		{
 			{ ".csv",
-				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.JSONL, ConvertTargetType.XLS, ConvertTargetType.RTF }
+				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.JSONL, ConvertTargetType.XLSX, ConvertTargetType.RTF }
 			},
 			{ ".xls",
 				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.JSONL, ConvertTargetType.RTF, ConvertTargetType.CSV }
@@ -95,10 +95,10 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				new ConvertTargetType[] { }
 			},
 			{ ".json",
-				new ConvertTargetType[] { ConvertTargetType.JSONL, ConvertTargetType.XLS, ConvertTargetType.RTF, ConvertTargetType.CSV }
+				new ConvertTargetType[] { ConvertTargetType.JSONL, ConvertTargetType.XLSX, ConvertTargetType.RTF, ConvertTargetType.CSV }
 			},
 			{ ".jsonl",
-				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.XLS, ConvertTargetType.RTF, ConvertTargetType.CSV }
+				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.XLSX, ConvertTargetType.RTF, ConvertTargetType.CSV }
 			}
 		};
 
@@ -119,7 +119,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			{
 				{ ConvertTargetType.JSON, ".json" },
 				{ ConvertTargetType.JSONL, ".jsonl" },
-				{ ConvertTargetType.XLS, ".xls" },
+				{ ConvertTargetType.XLSX, ".xlsx" },
 				{ ConvertTargetType.RTF, ".rtf" },
 				{ ConvertTargetType.DOCX, ".docx" },
 				{ ConvertTargetType.CSV, ".csv" },
@@ -127,7 +127,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			var jsonToOtherType = new Dictionary<ConvertTargetType, ConversionType>()
 			{
 				{ ConvertTargetType.JSONL, ConversionType.JSON2JSONL },
-				{ ConvertTargetType.XLS, ConversionType.JSON2XLS },
+				{ ConvertTargetType.XLSX, ConversionType.JSON2XLS },
 				{ ConvertTargetType.RTF, ConversionType.JSON2RTF },
 				{ ConvertTargetType.CSV, ConversionType.JSON2CSV },
 			};
@@ -188,6 +188,11 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{
 					var o = JsonFileConverter.ReadFromJson(sourceFile);
 					JsonFileConverter.WriteAsDocx(targetFile, o);
+				}
+				else if (targetType == ConvertTargetType.XLSX)
+				{
+					var o = JsonFileConverter.ReadFromJson(sourceFile);
+					JsonFileConverter.WriteAsXlsx(targetFile, o);
 				}
 				item.status_details = $"{DateTime.Now}: {status_details}";
 				if (File.Exists(jsonTempFile))
@@ -282,8 +287,6 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			status_details = $"File converted successfuly. {items.Count} message(s) found.";
 			return true;
 		}
-
-
 
 	}
 }

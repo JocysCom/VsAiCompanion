@@ -7,15 +7,15 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 	{
 		[Description("Convert To:")]
 		None = 0,
-		[Description("JSON")]
+		[Description("JSON (*.json)")]
 		JSON,
-		[Description("JSON Lines")]
+		[Description("JSON Lines (*.jsonl)")]
 		JSONL,
-		[Description("Excel")]
-		XLS,
+		[Description("Microsoft Excel (*xlsx)")]
+		XLSX,
 		[Description("Rich Text Format (*.rtf)")]
 		RTF,
-		[Description("CSV")]
+		[Description("Comman Separated Values (*.csv)")]
 		CSV,
 		[Description("Word Document (*.docx)")]
 		DOCX,
