@@ -34,10 +34,10 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+		<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
 			<Button
 				Name="AddButton"
-				Margin="1"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="AddButton_Click"
@@ -49,7 +49,7 @@
 			</Button>
 			<Button
 				Name="EditButton"
-				Margin="1"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="EditButton_Click"
@@ -61,7 +61,7 @@
 			</Button>
 			<Button
 				Name="DeleteButton"
-				Margin="1"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="DeleteButton_Click"

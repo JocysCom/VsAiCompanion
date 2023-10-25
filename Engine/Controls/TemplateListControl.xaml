@@ -38,10 +38,14 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal">
+		<StackPanel
+			Grid.Row="0"
+			Margin="3,3,0,0"
+			HorizontalAlignment="Left"
+			Orientation="Horizontal">
 			<Button
 				Name="AddButton"
-				Margin="3,3,0,3"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="AddButton_Click"
@@ -53,7 +57,7 @@
 			</Button>
 			<Button
 				Name="EditButton"
-				Margin="3,3,0,3"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="EditButton_Click"
@@ -65,7 +69,7 @@
 			</Button>
 			<Button
 				Name="DeleteButton"
-				Margin="3"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="DeleteButton_Click"
@@ -76,10 +80,14 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+		<StackPanel
+			Grid.Row="0"
+			Margin="3,3,0,0"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal">
 			<Button
 				Name="GenerateTitleButton"
-				Margin="3,3,0,3"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="GenerateTitleButton_Click"
@@ -90,6 +98,7 @@
 			</Button>
 			<Button
 				Name="CopyButton"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="CopyButton_Click"
@@ -98,7 +107,7 @@
 			</Button>
 			<Button
 				Name="PasteButton"
-				Margin="3"
+				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="PasteButton_Click"

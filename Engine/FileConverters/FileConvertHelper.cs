@@ -64,9 +64,10 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					continue;
 				var sourceBase = Path.GetFileNameWithoutExtension(item.filename);
 				var sourceFullName = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
-				var targetFullName = targetType == ConvertTargetType.JSONL
-						? Path.Combine(fineTuneItemPath, FineTune.SourceData, sourceBase + targetExt)
-						: Path.Combine(fineTuneItemPath, FineTune.TuningData, sourceBase + targetExt);
+				var targetFolder = targetType == ConvertTargetType.JSONL
+					? FineTune.TuningData
+					: FineTune.SourceData;
+				var targetFullName = Path.Combine(fineTuneItemPath, targetFolder, sourceBase + targetExt);
 				if (Client.IsTextCompletionMode(aiModel))
 					Convert<text_completion_item>(sourceFullName, targetFullName);
 				else
@@ -86,7 +87,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					items = ReadFromJsonl<T>(sourcePath);
 					break;
 				case ".json":
-					ReadFromJson<T>(sourcePath);
+					items = ReadFromJson<T>(sourcePath);
 					break;
 				default:
 					break;
@@ -377,7 +378,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 						csv.WriteField(assistantContent);
 						csv.NextRecord();
 					}
-					else if(request is text_completion_item tr)
+					else if (request is text_completion_item tr)
 					{
 						csv.WriteField(tr.prompt);
 						csv.WriteField(tr.completion);
