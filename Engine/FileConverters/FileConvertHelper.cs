@@ -19,33 +19,16 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 	internal class FileConvertHelper
 	{
 
-
-		public static Dictionary<string, ConvertTargetType[]> ConvertToTypesAvailable = new Dictionary<string, ConvertTargetType[]>()
+		public static ConvertTargetType[] AllExcept(params ConvertTargetType[] args)
 		{
-			{ ".csv",
-				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.JSONL, ConvertTargetType.XLSX, ConvertTargetType.RTF }
-			},
-			{ ".xls",
-				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.JSONL, ConvertTargetType.RTF, ConvertTargetType.CSV }
-			},
-			{ ".rtf",
-				new ConvertTargetType[] { }
-			},
-			{ ".json",
-				new ConvertTargetType[] { ConvertTargetType.JSONL, ConvertTargetType.XLSX, ConvertTargetType.RTF, ConvertTargetType.CSV }
-			},
-			{ ".jsonl",
-				new ConvertTargetType[] { ConvertTargetType.JSON, ConvertTargetType.XLSX, ConvertTargetType.RTF, ConvertTargetType.CSV }
-			}
-		};
+			return ((ConvertTargetType[])Enum.GetValues(typeof(ConvertTargetType)))
+				.Except(new ConvertTargetType[] { ConvertTargetType.None })
+				.Except(args)
+				.ToArray();
+		}
 
-		public static void ConvertFile(
-			string fineTuneItemPath, string sourceDataName,
-			file[] items, ConvertTargetType targetType, string aiModel,
-			string systemPromptContent = null
-		)
-		{
-			var targetTypeToExtension = new Dictionary<ConvertTargetType, string>()
+		public static Dictionary<ConvertTargetType, string> targetTypeToExtension =
+			new Dictionary<ConvertTargetType, string>
 			{
 				{ ConvertTargetType.JSON, ".json" },
 				{ ConvertTargetType.JSONL, ".jsonl" },
@@ -54,6 +37,17 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{ ConvertTargetType.DOCX, ".docx" },
 				{ ConvertTargetType.CSV, ".csv" },
 			};
+
+
+		public static Dictionary<string, ConvertTargetType[]> ConvertToTypesAvailable =
+			targetTypeToExtension.ToDictionary(k => k.Value, v => AllExcept(v.Key));
+
+		public static void ConvertFile(
+			string fineTuneItemPath, string sourceDataName,
+			file[] items, ConvertTargetType targetType, string aiModel,
+			string systemPromptContent = null
+		)
+		{
 			// Process files.
 			foreach (var item in items)
 			{

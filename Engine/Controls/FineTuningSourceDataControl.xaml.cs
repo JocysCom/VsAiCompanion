@@ -141,7 +141,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var di = new DirectoryInfo(path);
 			if (!di.Exists)
 				di.Create();
-			var dirFiles = di.GetFiles("*.json*");
+			var dirFiles = di.GetFiles("*.*");
 			var files = dirFiles.Select(x => new file()
 			{
 				id = x.Name,
