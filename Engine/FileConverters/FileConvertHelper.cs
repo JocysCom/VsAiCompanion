@@ -2,14 +2,15 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System.Text.Json;
 using System.Windows;
 using wp = DocumentFormat.OpenXml.Wordprocessing;
+using System.Data;
+using System.Globalization;
+using CsvHelper;
+using System.Linq;
+using System;
 
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
@@ -18,62 +19,6 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 	internal class FileConvertHelper
 	{
 
-
-		/// <summary>
-		/// Convert data files.
-		/// </summary>
-		/// <param name="scriptPath">Full path to ConvertModelTraininData.ps1</param>
-		public static string ConvertModelTrainingData(
-			string scriptPath,
-			ConversionType conversionType,
-			string fineTuningName,
-			string dataFolderName,
-			string sourceFileName,
-			string targetFileName,
-			string systemPromptContent
-		)
-		{
-			//var arguments = $"-ConversionType \"{conversionType}\" -FineTuningName \"{fineTuningName}\" -DataFolderName \"{dataFolderName}\" -SourceFileName \"{sourceFileName}\" -TargetFileName \"{targetFileName}\" -SystemPromptContent \"{systemPromptContent}\"";
-			//using (var shell = new HiddenShell())
-			//	return shell.ExecuteCommand($"PowerShell -ExecutionPolicy Bypass -File \"{scriptPath}\" {arguments}");
-
-
-			var processInfo = new ProcessStartInfo();
-			processInfo.FileName = "PowerShell.exe";
-			processInfo.RedirectStandardOutput = true;
-			processInfo.RedirectStandardError = true;
-			processInfo.UseShellExecute = false;
-			processInfo.CreateNoWindow = true;
-			processInfo.Arguments = $"-ExecutionPolicy ByPass -File \"{scriptPath}\" " +
-				$"-ConversionType \"{conversionType}\" " +
-				$"-FineTuningName \"{fineTuningName}\" " +
-				$"-DataFolderName \"{dataFolderName}\" " +
-				$"-SourceFileName \"{sourceFileName}\" " +
-				$"-TargetFileName \"{targetFileName}\" " +
-				$"-SystemPromptContent \"{systemPromptContent}\"";
-			var process = new Process();
-			process.StartInfo = processInfo;
-			var output = new StringBuilder();
-			var errors = new StringBuilder();
-			process.OutputDataReceived += (sender, e) =>
-			{
-				if (!string.IsNullOrEmpty(e.Data))
-					output.AppendLine(e.Data);
-			};
-			process.ErrorDataReceived += (sender, e) =>
-			{
-				if (!string.IsNullOrEmpty(e.Data))
-					errors.AppendLine(e.Data);
-			};
-			process.Start();
-			process.BeginOutputReadLine();
-			process.BeginErrorReadLine();
-			process.WaitForExit();
-			string outputString = output.ToString();
-			string errorsString = errors.ToString();
-			return outputString + errorsString;
-
-		}
 
 		public static Dictionary<string, ConvertTargetType[]> ConvertToTypesAvailable = new Dictionary<string, ConvertTargetType[]>()
 		{
@@ -100,13 +45,6 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			string systemPromptContent = null
 		)
 		{
-			var sourceToJsonTypes = new Dictionary<string, ConversionType>()
-			{
-				{ ".xls", ConversionType.XLS2JSON},
-				{ ".csv", ConversionType.CSV2JSON},
-				{ ".rtf", ConversionType.RTF2JSON},
-				{ ".jsonl", ConversionType.JSONL2JSON},
-			};
 			var targetTypeToExtension = new Dictionary<ConvertTargetType, string>()
 			{
 				{ ConvertTargetType.JSON, ".json" },
@@ -115,13 +53,6 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{ ConvertTargetType.RTF, ".rtf" },
 				{ ConvertTargetType.DOCX, ".docx" },
 				{ ConvertTargetType.CSV, ".csv" },
-			};
-			var jsonToOtherType = new Dictionary<ConvertTargetType, ConversionType>()
-			{
-				{ ConvertTargetType.JSONL, ConversionType.JSON2JSONL },
-				{ ConvertTargetType.XLSX, ConversionType.JSON2XLS },
-				{ ConvertTargetType.RTF, ConversionType.JSON2RTF },
-				{ ConvertTargetType.CSV, ConversionType.JSON2CSV },
 			};
 			// Process files.
 			foreach (var item in items)
@@ -132,63 +63,59 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				if (sourceExt == targetExt)
 					continue;
 				var sourceBase = Path.GetFileNameWithoutExtension(item.filename);
-				var sourceFullPath = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
-				var targetSourceDataFullPathBase = Path.Combine(fineTuneItemPath, FineTune.SourceData, sourceBase);
-				var targetTuningDataFullPathBase = Path.Combine(fineTuneItemPath, FineTune.TuningData, sourceBase);
-				var jsonTempFile = targetSourceDataFullPathBase + ".tmp.json";
-				string status_details = null;
-				// If can convert to JSON then...
-				if (sourceToJsonTypes.ContainsKey(sourceExt))
-				{
-					// Convert to temp file.
-					if (sourceExt == ".jsonl")
-					{
-						_ = Client.IsTextCompletionMode(aiModel)
-						? ConvertJsonLinesToList<text_completion_request>(sourceFullPath, jsonTempFile, out status_details)
-						: ConvertJsonLinesToList<chat_completion_request>(sourceFullPath, jsonTempFile, out status_details);
-					}
-					else
-					{
-						//ConvertModelTrainingData(sourceToJsonTypes[sourceExt], sourceFullPath, jsonTempFile, systemPromptContent);
-					}
-				}
-				// Set source and target
-				var sourceFile = sourceExt == ".json"
-					? sourceFullPath
-					: jsonTempFile;
-				var targetFile = targetType == ConvertTargetType.JSONL
-					? targetTuningDataFullPathBase + targetExt
-					: targetSourceDataFullPathBase + targetExt;
-				// If target is JSON Lines file.
-				if (targetType == ConvertTargetType.JSONL)
-				{
-					_ = Client.IsTextCompletionMode(aiModel)
-						? ConvertJsonListToLines<text_completion_request>(sourceFile, targetFile, out status_details)
-						: ConvertJsonListToLines<chat_completion_request>(sourceFile, targetFile, out status_details);
-				}
-				// Note: Source was not JSON.
-				else if (targetType == ConvertTargetType.JSON)
-				{
-					File.Move(jsonTempFile, targetFile);
-				}
-				else if (targetType == ConvertTargetType.RTF)
-				{
-					var o = ReadFromJson<chat_completion_request>(sourceFile);
-					WriteAsRtf(targetFile, o);
-				}
-				else if (targetType == ConvertTargetType.DOCX)
-				{
-					var o = ReadFromJson<chat_completion_request>(sourceFile);
-					WriteAsDocx(targetFile, o);
-				}
-				else if (targetType == ConvertTargetType.XLSX)
-				{
-					var o = ReadFromJson<chat_completion_request>(sourceFile);
-					WriteAsXlsx(targetFile, o);
-				}
-				item.status_details = $"{DateTime.Now}: {status_details}";
-				if (File.Exists(jsonTempFile))
-					File.Delete(jsonTempFile);
+				var sourceFullName = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
+				var targetFullName = targetType == ConvertTargetType.JSONL
+						? Path.Combine(fineTuneItemPath, FineTune.SourceData, sourceBase + targetExt)
+						: Path.Combine(fineTuneItemPath, FineTune.TuningData, sourceBase + targetExt);
+				if (Client.IsTextCompletionMode(aiModel))
+					Convert<text_completion_item>(sourceFullName, targetFullName);
+				else
+					Convert<chat_completion_request>(sourceFullName, targetFullName);
+			}
+		}
+
+		public static void Convert<T>(string sourcePath, string targetPath)
+		{
+			var sourceExt = Path.GetExtension(sourcePath).ToLower();
+			var targetExt = Path.GetExtension(targetPath).ToLower();
+			List<T> items = null;
+			// Read from file.
+			switch (sourceExt)
+			{
+				case ".jsonl":
+					items = ReadFromJsonl<T>(sourcePath);
+					break;
+				case ".json":
+					ReadFromJson<T>(sourcePath);
+					break;
+				default:
+					break;
+			}
+			if (items == null)
+				MessageBox.Show($"Failed to read from from {sourcePath}!");
+			// Write to file.
+			switch (targetExt)
+			{
+				case ".jsonl":
+					WriteToJsonl(targetPath, items);
+					break;
+				case ".json":
+					WriteToJson(targetPath, items);
+					break;
+				case ".xlsx":
+					WriteToXlsx(targetPath, items);
+					break;
+				case ".rtf":
+					WriteToRtf(targetPath, items);
+					break;
+				case ".docx":
+					WriteToDocx(targetPath, items);
+					break;
+				case ".csv":
+					WriteToCsv(targetPath, items);
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -208,88 +135,31 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		#region Java Script Object Notation Lines (*.jsonl)
 
-		public static bool ConvertJsonListToLines<T>(string sourceFile, string targetFile, out string status_details)
+		public static string WriteToJsonl<T>(string path, List<T> o)
 		{
-			if (!File.Exists(sourceFile))
-			{
-				status_details = $"File {sourceFile} does not exist.";
-				return false;
-			}
-			try
-			{
-				var jsonData = File.ReadAllText(sourceFile, Encoding.UTF8);
-				var data = Client.Deserialize<List<T>>(jsonData);
-				if (!AllowToWrite(targetFile))
-				{
-					status_details = "Overwrite denied.";
-					return false;
-				}
-				using (var writer = File.CreateText(targetFile))
-				{
-					foreach (var item in data)
-					{
-						var jsonLine = Client.Serialize(item);
-						writer.WriteLine(jsonLine);
-					}
-				}
-				status_details = $"File converted successfully. {data.Count} message(s) found.";
-				return true;
-			}
-			catch (JsonException ex)
-			{
-				// Handle the exception for an invalid JSON line
-				status_details = ex.Message;
-				return false;
-			}
+			using (var writer = File.CreateText(path))
+				foreach (var item in o)
+					writer.WriteLine(Client.Serialize(item));
+			return null;
 		}
 
-		public static bool ConvertJsonLinesToList<T>(string sourceFile, string targetFile, out string status_details)
+		public static List<T> ReadFromJsonl<T>(string path)
 		{
-			if (!File.Exists(sourceFile))
-			{
-				status_details = $"File {sourceFile} don't exists!";
-				return false;
-			}
-			var i = 0;
 			var items = new List<T>();
-			foreach (string line in File.ReadLines(sourceFile))
-			{
-				i++;
-				try
-				{
-					var request = Client.Deserialize<T>(line);
-					items.Add(request);
-					// Validate further if necessary
-				}
-				catch (JsonException ex)
-				{
-					// Handle the exception for an invalid JSON line
-					status_details = ex.Message;
-					return false;
-				}
-			}
-			var options = Client.GetJsonOptions();
-			options.WriteIndented = true;
-			var contents = JsonSerializer.Serialize(items, options);
-			if (!AllowToWrite(targetFile))
-			{
-				status_details = "Overwrite denied.";
-				return false;
-			}
-			File.WriteAllText(targetFile, contents, Encoding.UTF8);
-			// Add approximate token count.
-			status_details = $"File converted successfuly. {items.Count} message(s) found.";
-			return true;
+			foreach (string line in File.ReadLines(path))
+				items.Add(Client.Deserialize<T>(line));
+			return items;
 		}
 
 		#endregion
 
 		#region Java Script Object Notation (*.json)
 
-		public static void WriteAsJson(string path, List<chat_completion_request> o)
+		public static string WriteToJson<T>(string path, List<T> o)
 		{
 			var contents = Client.Serialize(o);
 			File.WriteAllText(path, contents);
+			return null;
 		}
 
 		public static List<T> ReadFromJson<T>(string path)
@@ -329,23 +199,33 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			rtf.AppendText("\n");
 		}
 
-		public static void WriteAsRtf(string path, List<chat_completion_request> o)
+		public static void WriteToRtf<T>(string path, List<T> o)
 		{
 			var rtf = new System.Windows.Forms.RichTextBox();
 			foreach (var request in o)
 			{
-				foreach (var message in request.messages)
+				if (request is chat_completion_request cr)
 				{
-					if (message.role == message_role.user)
+					foreach (var message in cr.messages)
 					{
-						AddRtfLine(rtf, message.content, true);
-						AddRtfLine(rtf);
+						if (message.role == message_role.user)
+						{
+							AddRtfLine(rtf, message.content, true);
+							AddRtfLine(rtf);
+						}
+						if (message.role == message_role.assistant)
+						{
+							AddRtfLine(rtf, message.content);
+							AddRtfLine(rtf);
+						}
 					}
-					if (message.role == message_role.assistant)
-					{
-						AddRtfLine(rtf, message.content);
-						AddRtfLine(rtf);
-					}
+				}
+				if (request is text_completion_item tr)
+				{
+					AddRtfLine(rtf, tr.prompt, true);
+					AddRtfLine(rtf);
+					AddRtfLine(rtf, tr.completion);
+					AddRtfLine(rtf);
 				}
 			}
 			rtf.SaveFile(path, System.Windows.Forms.RichTextBoxStreamType.RichText);
@@ -370,7 +250,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			}
 		}
 
-		public static void WriteAsDocx(string path, List<chat_completion_request> o)
+		public static void WriteToDocx<T>(string path, List<T> o)
 		{
 			using (var wordDocument = WordprocessingDocument.Create(path, WordprocessingDocumentType.Document))
 			{
@@ -378,12 +258,20 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				mainPart.Document = new wp.Document(new wp.Body());
 				foreach (var request in o)
 				{
-					foreach (var message in request.messages)
+					if (request is chat_completion_request cr)
 					{
-						if (message.role == message_role.user)
-							AddDocxParagraph(mainPart.Document.Body, message.content, true);
-						if (message.role == message_role.assistant)
-							AddDocxParagraph(mainPart.Document.Body, message.content);
+						foreach (var message in cr.messages)
+						{
+							if (message.role == message_role.user)
+								AddDocxParagraph(mainPart.Document.Body, message.content, true);
+							if (message.role == message_role.assistant)
+								AddDocxParagraph(mainPart.Document.Body, message.content);
+						}
+					}
+					if (request is text_completion_item tr)
+					{
+						AddDocxParagraph(mainPart.Document.Body, tr.prompt, true);
+						AddDocxParagraph(mainPart.Document.Body, tr.completion);
 					}
 				}
 				mainPart.Document.Save();
@@ -395,7 +283,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		#region Microsoft Excel Worksheet (*.xlsx)
 
-		public static void WriteAsXlsx(string path, List<chat_completion_request> o)
+		public static void WriteToXlsx<T>(string path, List<T> o)
 		{
 			using (var spreadsheet = SpreadsheetDocument.Create(path, SpreadsheetDocumentType.Workbook))
 			{
@@ -422,21 +310,34 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				foreach (var request in o)
 				{
 					var row = new Row();
-					foreach (var message in request.messages)
+					if (request is chat_completion_request cr)
+					{
+						foreach (var message in cr.messages)
+						{
+							var cell = new Cell();
+							if (message.role == message_role.user)
+							{
+								cell.DataType = CellValues.String;
+								cell.CellValue = new CellValue(message.content);
+								row.Append(cell);
+							}
+							if (message.role == message_role.assistant)
+							{
+								cell.DataType = CellValues.String;
+								cell.CellValue = new CellValue(message.content);
+								row.Append(cell);
+							}
+						}
+					}
+					if (request is text_completion_item tr)
 					{
 						var cell = new Cell();
-						if (message.role == message_role.user)
-						{
-							cell.DataType = CellValues.String;
-							cell.CellValue = new CellValue(message.content);
-							row.Append(cell);
-						}
-						if (message.role == message_role.assistant)
-						{
-							cell.DataType = CellValues.String;
-							cell.CellValue = new CellValue(message.content);
-							row.Append(cell);
-						}
+						cell.DataType = CellValues.String;
+						cell.CellValue = new CellValue(tr.prompt);
+						row.Append(cell);
+						cell.DataType = CellValues.String;
+						cell.CellValue = new CellValue(tr.completion);
+						row.Append(cell);
 					}
 					sheetData.Append(row);
 				}
@@ -446,6 +347,82 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		#endregion
 
+		#region Comma Separated Values (*.csv)
+
+		public static void WriteToCsv<T>(string path, List<T> o)
+		{
+			var isChat = typeof(T) == typeof(chat_completion_request);
+			using (var writer = new StreamWriter(path))
+			using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+			{
+				if (isChat)
+				{
+					csv.WriteField(message_role.user);
+					csv.WriteField(message_role.assistant);
+					csv.NextRecord();
+				}
+				else
+				{
+					csv.WriteField(nameof(text_completion_item.prompt));
+					csv.WriteField(nameof(text_completion_item.completion));
+					csv.NextRecord();
+				}
+				foreach (var request in o)
+				{
+					if (request is chat_completion_request cr)
+					{
+						var userContet = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
+						var assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
+						csv.WriteField(userContet);
+						csv.WriteField(assistantContent);
+						csv.NextRecord();
+					}
+					else if(request is text_completion_item tr)
+					{
+						csv.WriteField(tr.prompt);
+						csv.WriteField(tr.completion);
+						csv.NextRecord();
+					}
+				}
+			}
+		}
+
+		public static List<T> ReadFromCsv<T>(string path)
+		{
+			var list = new List<T>();
+			var isChat = typeof(T) == typeof(chat_completion_message);
+			using (var reader = new StreamReader(path))
+			{
+				var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+				csv.Read(); // Must call this to read the header record.
+				csv.ReadHeader();
+				var columns = csv.HeaderRecord;
+				var indexes = columns.Select(name => csv.GetFieldIndex(name)).ToArray();
+				while (csv.Read())
+				{
+					var items = new List<string>();
+					foreach (var i in indexes)
+						items.Add(csv.GetField(i));
+					var item = (T)Activator.CreateInstance(typeof(T));
+					if (item is chat_completion_request cr)
+					{
+						cr.messages = new List<chat_completion_message>();
+						cr.messages.Add(new chat_completion_message(message_role.user, items[0]));
+						cr.messages.Add(new chat_completion_message(message_role.user, items[1]));
+					}
+					else if (item is text_completion_item tr)
+					{
+						tr.prompt = items[0];
+						tr.completion = items[1];
+					}
+					list.Add(item);
+				}
+			}
+			return list;
+
+		}
+
+		#endregion
 
 	}
 }
