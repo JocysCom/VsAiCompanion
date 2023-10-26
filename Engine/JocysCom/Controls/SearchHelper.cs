@@ -15,6 +15,11 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public BindingList<T> FilteredList { get; private set; }
 
+		public SearchHelper()
+		{
+
+		}
+
 		public SearchHelper(
 			Func<T, bool> predicate,
 			Func<ListChangedEventArgs, bool> filterPredicate = null,

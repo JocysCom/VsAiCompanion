@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -232,12 +233,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Fix name to make sure that it is not same as existing names.
 		/// </summary>
-		public static void FixName(IFileListItem copy, IEnumerable<IFileListItem> items)
+		public static void FixName(IFileListItem copy, IBindingList items)
 		{
 			var newName = copy.Name;
 			for (int i = 1; i < int.MaxValue; i++)
 			{
-				var sameFound = items.Any(x => string.Equals(x.Name, newName, StringComparison.OrdinalIgnoreCase));
+				var sameFound = items.Cast<IFileListItem>().Any(x => string.Equals(x.Name, newName, StringComparison.OrdinalIgnoreCase));
 				// If item with the same name not found then...
 				if (!sameFound)
 					break;

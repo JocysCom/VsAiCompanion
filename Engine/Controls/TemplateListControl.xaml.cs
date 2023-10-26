@@ -28,8 +28,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			CurrentItems = Global.GetItems(ItemControlType);
-			ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			SourceItems = Global.GetItems(ItemControlType);
 			// Configure converter.
 			var gridFormattingConverter = MainDataGrid.Resources.Values.OfType<Converters.ItemFormattingConverter>().First();
 			gridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
@@ -40,7 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> UpdateButtons();
 
 		bool selectionsUpdating = false;
-		private void CurrentItems_ListChanged(object sender, ListChangedEventArgs e)
+		private void SourceItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			ControlsHelper.BeginInvoke(() =>
 			{
@@ -94,7 +93,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return value;
 		}
 
-		public SortableBindingList<TemplateItem> CurrentItems { get; set; } = new SortableBindingList<TemplateItem>();
+		public IBindingList SourceItems { get; set; }
+
+		public SortableBindingList<IFileListItem> CurrentItems { get; set; } = new SortableBindingList<IFileListItem>();
 
 		#region ■ Properties
 
@@ -117,12 +118,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
 				// Update other controls.
 				MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-				CurrentItems.ListChanged -= CurrentItems_ListChanged;
-				CurrentItems = Global.GetItems(value);
+				SourceItems.ListChanged -= SourceItems_ListChanged;
+				SourceItems = Global.GetItems(value);
 				InitSearch();
 				// Re-attach events.
 				MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-				CurrentItems.ListChanged += CurrentItems_ListChanged;
+				SourceItems.ListChanged += SourceItems_ListChanged;
 				ShowColumns(IconColumn, NameColumn);
 				ShowButtons(AddButton, EditButton, DeleteButton);
 			}
@@ -168,28 +169,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		System.Windows.Forms.SaveFileDialog ExportSaveFileDialog;
-
-		private void ExportButton_Click(object sender, RoutedEventArgs e)
-		{
-			var dialog = ExportSaveFileDialog;
-			dialog.DefaultExt = "*.csv";
-			dialog.Filter = "Data (*.csv)|*.csv|All files (*.*)|*.*";
-			dialog.FilterIndex = 1;
-			dialog.RestoreDirectory = true;
-			if (string.IsNullOrEmpty(dialog.FileName))
-				dialog.FileName = $"{ItemControlType}";
-			//if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = ;
-			dialog.Title = "Export Data File";
-			var result = dialog.ShowDialog();
-			if (result == System.Windows.Forms.DialogResult.OK)
-			{
-				var table = ConvertToTable(CurrentItems);
-				var data = JocysCom.ClassLibrary.Files.CsvHelper.Write(table);
-				System.IO.File.WriteAllText(dialog.FileName, data);
-			}
-		}
-
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
@@ -231,26 +210,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			DeleteButton.IsEnabled = isSelected;
 		}
 
-		/// <summary>
-		/// Convert List to DataTable. Can be used to pass data into stored procedures. 
-		/// </summary>
-		public static DataTable ConvertToTable<T>(IEnumerable<T> list)
-		{
-			if (list == null) return null;
-			var table = new DataTable();
-			var props = typeof(T).GetProperties().Where(x => x.CanRead).ToArray();
-			foreach (var prop in props)
-				table.Columns.Add(prop.Name, prop.PropertyType);
-			var values = new object[props.Length];
-			foreach (T item in list)
-			{
-				for (int i = 0; i < props.Length; i++)
-					values[i] = props[i].GetValue(item, null);
-				table.Rows.Add(values);
-			}
-			return table;
-		}
-
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
@@ -274,22 +233,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void InsertItem(IFileListItem item)
 		{
-			var position = FindInsertPosition(CurrentItems, item);
+			var position = FindInsertPosition(SourceItems.Cast<IFileListItem>().ToList(), item);
 			// Make sure new item will be selected and focused.
 			PanelSettings.ListSelection = new List<string>() { item.Name };
 			PanelSettings.ListSelectedIndex = position;
-			if (item is TemplateItem tiItem)
-			{
-				CurrentItems.Insert(position, tiItem);
-			}
-			else
-			{
-				//CurrentItems.Insert(position, tiItem);
-			}
+			SourceItems.Insert(position, item);
 			SettingsData.Save();
 		}
 
-		private int FindInsertPosition(IList<TemplateItem> list, IFileListItem item)
+		private int FindInsertPosition(IList<IFileListItem> list, IFileListItem item)
 		{
 			for (int i = 0; i < list.Count; i++)
 				if (string.Compare(list[i].Name, item.Name, StringComparison.Ordinal) > 0)
@@ -355,7 +307,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				var textBox = e.EditingElement as TextBox;
 				var newName = textBox.Text.Trim();
-				var item = (TemplateItem)e.Row.Item;
+				var item = (IFileListItem)e.Row.Item;
 				var list = ItemControlType == ItemType.Template
 					? Global.Templates
 					: Global.Tasks;
@@ -384,7 +336,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				var xml = Clipboard.GetText();
 				var item = Serializer.DeserializeFromXmlString<TemplateItem>(xml);
-				AppHelper.FixName(item, CurrentItems);
+				AppHelper.FixName(item, SourceItems);
 				InsertItem(item);
 			}
 			catch (Exception ex)
@@ -439,7 +391,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						(x.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
 				}
 			}, null, new SortableBindingList<IFileListItem>());
-			_SearchHelper.SetSource(CurrentItems);
+			_SearchHelper.SetSource(SourceItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
 			MainDataGrid.ItemsSource = _SearchHelper.FilteredList;
 		}
