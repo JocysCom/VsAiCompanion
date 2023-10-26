@@ -109,7 +109,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (ControlsHelper.IsDesignMode(this))
 					return;
 				// Get settings.
-				SettingsData.FilesChanged -= SettingsData_FilesChanged;
+				if (SettingsData != null)
+					SettingsData.FilesChanged -= SettingsData_FilesChanged;
 				SettingsData = Global.GetSettings(value);
 				SettingsData.FilesChanged += SettingsData_FilesChanged;
 				// Update panel settings.
@@ -128,13 +129,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ShowButtons(AddButton, EditButton, DeleteButton);
 			}
 		}
+		private ItemType _ItemControlType;
 
 		private void SettingsData_FilesChanged(object sender, EventArgs e)
 		{
 			Dispatcher.BeginInvoke(new Action(() =>
 			{
 				// Reload data from the disk.
-				SettingsData.Load();
+				if (SettingsData != null)
+					SettingsData.Load();
 			}));
 		}
 
@@ -144,10 +147,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.SetSelection(MainDataGrid, nameof(IFileListItem.Name), list, 0);
 		}
 
-		private ItemType _ItemControlType;
-
 		TaskSettings PanelSettings { get; set; } = new TaskSettings();
-		ISettingsData SettingsData { get; set; } = new SettingsData<TemplateItem>();
+		ISettingsData SettingsData { get; set; }
 
 		private void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -220,15 +221,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = AppHelper.GetNewTemplateItem();
-			// Treat the new task as a chat; therefore, clear the input box after sending.
-			if (ItemControlType == ItemType.Task)
-				item.MessageBoxOperation = MessageBoxOperation.ClearMessage;
-			item.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
-			// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
-			var contents = Helper.FindResource<string>(ClientHelper.DefaultIconEmbeddedResource, GetType().Assembly);
-			item.SetIcon(contents);
-			InsertItem(item);
+			IFileListItem item = null;
+			if (ItemControlType == ItemType.Template || ItemControlType == ItemType.Task)
+			{
+				var ti = AppHelper.GetNewTemplateItem();
+				item = ti;
+				// Treat the new task as a chat; therefore, clear the input box after sending.
+				if (ItemControlType == ItemType.Task)
+					ti.MessageBoxOperation = MessageBoxOperation.ClearMessage;
+			}
+			if (item != null)
+			{
+				item.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
+				// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
+				var contents = Helper.FindResource<string>(ClientHelper.DefaultIconEmbeddedResource, GetType().Assembly);
+				item.SetIcon(contents);
+				InsertItem(item);
+			}
 		}
 
 		public void InsertItem(IFileListItem item)
@@ -238,7 +247,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			PanelSettings.ListSelection = new List<string>() { item.Name };
 			PanelSettings.ListSelectedIndex = position;
 			SourceItems.Insert(position, item);
-			SettingsData.Save();
+			if (SettingsData != null)
+				SettingsData.Save();
 		}
 
 		private int FindInsertPosition(IList<IFileListItem> list, IFileListItem item)
@@ -265,11 +275,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(() =>
 			{
-				var list = ItemControlType == ItemType.Template
-					? Global.Templates
-					: Global.Tasks;
 				foreach (var item in items)
-					list.DeleteItem(item);
+					SettingsData.DeleteItem(item);
 			});
 		}
 
@@ -379,6 +386,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_SearchHelper = new SearchHelper<IFileListItem>((x) =>
 			{
 				var s = SearchTextBox.Text;
+				// Item type specific code.
 				if (x is TemplateItem ti)
 				{
 					return string.IsNullOrEmpty(s) ||
@@ -427,12 +435,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = MainDataGrid.SelectedItems.Cast<TemplateItem>().FirstOrDefault();
+			var item = MainDataGrid.SelectedItems.Cast<IFileListItem>().FirstOrDefault();
 			if (item == null)
 				return;
-			var task = ClientHelper.GenerateTitle(item);
-			// Assign task to property to make sure it is not garbage collected.
-			item.GenerateTitleTask = task;
+			// Item type specific code.
+			if (ItemControlType == ItemType.Task || ItemControlType == ItemType.Template)
+			{
+				var ti = (TemplateItem)item;
+				var task = ClientHelper.GenerateTitle(ti);
+				// Assign task to property to make sure it is not garbage collected.
+				ti.GenerateTitleTask = task;
+			}
 		}
 	}
 

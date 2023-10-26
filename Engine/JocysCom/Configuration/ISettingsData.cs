@@ -15,5 +15,6 @@ namespace JocysCom.ClassLibrary.Configuration
 		IList Items { get; }
 		event EventHandler FilesChanged;
 		bool IsSavePending { get; set; }
+		void DeleteItem(ISettingsItemFile itemFile);
 	}
 }
