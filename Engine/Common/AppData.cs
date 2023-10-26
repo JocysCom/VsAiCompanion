@@ -62,12 +62,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private TaskSettings _TemplateData;
 
+		public TaskSettings FineTuningData
+		{
+			get => _FineTuningData = _FineTuningData ?? new TaskSettings();
+			set => SetProperty(ref _FineTuningData, value);
+		}
+		private TaskSettings _FineTuningData;
+
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
 			switch (type)
 			{
 				case ItemType.Task: return TaskData;
 				case ItemType.Template: return TemplateData;
+				case ItemType.FineTune: return FineTuningData;
 				default: return new TaskSettings();
 			}
 		}

@@ -36,7 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
 			//SelectionRadioButton.IsEnabled = Global.GetSelection != null;
-			BindData();
+			Item = null;
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
@@ -228,13 +228,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		Dictionary<MessageBoxOperation, string> _MessageBoxOperations;
 
 		TemplateItem _item;
-		object bindLock = new object();
-
-		public void BindData(TemplateItem item = null)
+		public TemplateItem Item
 		{
-			lock (bindLock)
-			{
-				if (Equals(item, _item))
+			get => _item;
+			set {
+				if (Equals(value, _item))
 					return;
 				var oldItem = _item;
 				// Update from previous settings.
@@ -244,9 +242,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
 				}
 				// Make sure that custom AiModel old and new item is available to select.
-				AppHelper.UpdateModelCodes(item?.AiService, AiModelBoxPanel.AiModels, item?.AiModel, oldItem?.AiModel);
+				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
 				// Set new item.
-				_item = item ?? AppHelper.GetNewTemplateItem();
+				_item = value ?? AppHelper.GetNewTemplateItem();
 				// This will trigger AiCompanionComboBox_SelectionChanged event.
 				AiModelBoxPanel.BindData(null);
 				DataContext = _item;
@@ -263,7 +261,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.UpdateButtons();
 				System.Diagnostics.Debug.WriteLine($"Bound Item: {_item.Name}");
 				// AutoSend once enabled then...
-				if (ItemControlType == ItemType.Task && _item.AutoSend)
+				if (DataType == ItemType.Task && _item.AutoSend)
 				{
 					// Disable auto-send so that it won't trigger every time item is bound.
 					_item.AutoSend = false;
@@ -317,12 +315,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#region ■ Properties
 
 		[Category("Main"), DefaultValue(ItemType.None)]
-		public ItemType ItemControlType
+		public ItemType DataType
 		{
-			get => _ItemControlType;
+			get => _DataType;
 			set
 			{
-				_ItemControlType = value;
+				_DataType = value;
 				// Update panel settings.
 				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
 				PanelSettings = Global.AppSettings.GetTaskSettings(value);
@@ -335,7 +333,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				OnPropertyChanged(nameof(TemplateItemVisibility));
 			}
 		}
-		private ItemType _ItemControlType;
+		private ItemType _DataType;
 
 		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 
@@ -365,7 +363,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
 		public Visibility TemplateItemVisibility
-			=> PanelSettings.IsBarPanelVisible && _ItemControlType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
+			=> PanelSettings.IsBarPanelVisible && _DataType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
 
 		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -545,7 +543,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var button = (Button)sender;
 			var language = button.Tag as string;
 			if (language == "Custom")
-				language = MarkdownLanguageNameComboBox.SelectedItem as string ?? ""; 
+				language = MarkdownLanguageNameComboBox.SelectedItem as string ?? "";
 			if (string.IsNullOrEmpty(language))
 				return;
 			var box = _item.ShowInstructions

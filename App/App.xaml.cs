@@ -126,7 +126,7 @@ namespace JocysCom.VS.AiCompanion
 			TrayManager.RestoreFromTray();
 			Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksTabItem;
 			Global.MainControl.TasksPanel.ListPanel.SelectByName(item.Name);
-			Global.MainControl.TasksPanel.ItemPanel.ChatPanel.FocusDataTextBox();
+			Global.MainControl.TasksPanel.TemplateItemPanel.ChatPanel.FocusDataTextBox();
 		}
 
 		private void StartHelper_OnRestore(object sender, EventArgs e)

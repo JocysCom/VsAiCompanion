@@ -8,9 +8,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for FineTuningControl.xaml
 	/// </summary>
-	public partial class FineTuningControl : UserControl
+	public partial class FineTuningItemControl : UserControl
 	{
-		public FineTuningControl()
+		public FineTuningItemControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
@@ -26,7 +26,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				di.Create();
 		}
 
-		FineTune Item { get; set; }
+		public FineTune Item { get; set; }
+
+		public ItemType DataType { get; set; }
 
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
 			=> ControlsHelper.OpenUrl(DataFolderTextBox.Text);
@@ -38,7 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ConvertToJsonButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-		
+
 		}
 
 
