@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class TemplateItem : ISettingsItem, INotifyPropertyChanged, ISettingsItemFile, IAiServiceModel, ICancellationTokens
+	public class TemplateItem : IFileListItem, ISettingsItem, IAiServiceModel, ICancellationTokens
 	{
 		public TemplateItem()
 		{

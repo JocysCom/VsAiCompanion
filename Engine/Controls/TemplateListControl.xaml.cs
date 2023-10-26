@@ -47,12 +47,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				if (e.ListChangedType == ListChangedType.ItemChanged)
 				{
-					if (!selectionsUpdating && e.PropertyDescriptor?.Name == nameof(TemplateItem.IsChecked))
+					if (!selectionsUpdating && e.PropertyDescriptor?.Name == nameof(IFileListItem.IsChecked))
 					{
 						selectionsUpdating = true;
-						var selectedItems = MainDataGrid.SelectedItems.Cast<TemplateItem>().ToList();
+						var selectedItems = MainDataGrid.SelectedItems.Cast<IFileListItem>().ToList();
 						// Get updated item.
-						var item = (TemplateItem)MainDataGrid.Items[e.NewIndex];
+						var item = (IFileListItem)MainDataGrid.Items[e.NewIndex];
 						if (selectedItems.Contains(item))
 						{
 							// Update other items to same value.
@@ -73,7 +73,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var template = (FrameworkElement)values[1];
 			var cell = (DataGridCell)(template ?? sender).Parent;
 			var value = values[2];
-			var item = (TemplateItem)cell.DataContext;
+			var item = (IFileListItem)cell.DataContext;
 			// Format ConnectionClassColumn value.
 			// Format StatusCodeColumn value.
 			if (cell.Column == StatusCodeColumn)
@@ -141,7 +141,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.SetSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(ISettingsItemFile.Name), list, 0);
 		}
 
 		private ItemType _ItemControlType;
@@ -202,14 +202,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (MainDataGrid.SelectedIndex >= 0)
 			{
 				// Remember selection.
-				PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(TemplateItem.Name));
+				PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(IFileListItem.Name));
 				PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
 			}
 			else
 			{
 				// Try to restore selection.
 				ControlsHelper.SetSelection(
-					MainDataGrid, nameof(TemplateItem.Name),
+					MainDataGrid, nameof(IFileListItem.Name),
 					PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
 				);
 			}
@@ -220,7 +220,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		void UpdateButtons()
 		{
 			var allowEnable = true;
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<TemplateItem>();
+			var selecetedItems = MainDataGrid.SelectedItems.Cast<IFileListItem>();
 			var isSelected = selecetedItems.Count() > 0;
 			if (ItemControlType == ItemType.Template)
 			{
@@ -294,7 +294,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
-			var items = MainDataGrid.SelectedItems.Cast<TemplateItem>().ToList();
+			var items = MainDataGrid.SelectedItems.Cast<IFileListItem>().ToList();
 			if (items.Count == 0)
 				return;
 			//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
@@ -365,7 +365,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CopyButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = MainDataGrid.SelectedItems.Cast<TemplateItem>().FirstOrDefault();
+			var item = MainDataGrid.SelectedItems.Cast<IFileListItem>().FirstOrDefault();
 			if (item == null)
 				return;
 			var text = Serializer.SerializeToXmlString(item, null, true);
@@ -400,7 +400,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var list = PanelSettings.ListSelection;
 			if (list?.Count > 0)
-				ControlsHelper.SetSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
+				ControlsHelper.SetSelection(MainDataGrid, nameof(IFileListItem.Name), list, 0);
 			SearchTextBox.Text = PanelSettings.SearchText;
 		}
 
@@ -434,7 +434,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			// Try to restore selection.
 			ControlsHelper.SetSelection(
-				MainDataGrid, nameof(TemplateItem.Name),
+				MainDataGrid, nameof(IFileListItem.Name),
 				PanelSettings.ListSelection, 0
 			);
 		}

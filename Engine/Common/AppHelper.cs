@@ -232,7 +232,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Fix name to make sure that it is not same as existing names.
 		/// </summary>
-		public static void FixName(TemplateItem copy, IEnumerable<TemplateItem> items)
+		public static void FixName(IFileListItem copy, IEnumerable<TemplateItem> items)
 		{
 			var newName = copy.Name;
 			for (int i = 1; i < int.MaxValue; i++)
