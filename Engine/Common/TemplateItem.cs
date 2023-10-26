@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Xml.Serialization;
 
@@ -120,6 +121,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public bool AutoFormatCode { get => _AutoFormatCode; set => SetProperty(ref _AutoFormatCode, value); }
 		bool _AutoFormatCode;
+
+		[XmlIgnore]
+		public Task GenerateTitleTask;
 
 		[DefaultValue(false)]
 		public bool AutoGenerateTitle { get => _AutoGenerateTitle; set => SetProperty(ref _AutoGenerateTitle, value); }

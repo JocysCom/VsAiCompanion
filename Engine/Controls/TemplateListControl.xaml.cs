@@ -11,7 +11,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -141,7 +140,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.SetSelection(MainDataGrid, nameof(ISettingsItemFile.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(IFileListItem.Name), list, 0);
 		}
 
 		private ItemType _ItemControlType;
@@ -273,17 +272,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InsertItem(item);
 		}
 
-		public void InsertItem(TemplateItem item)
+		public void InsertItem(IFileListItem item)
 		{
 			var position = FindInsertPosition(CurrentItems, item);
 			// Make sure new item will be selected and focused.
 			PanelSettings.ListSelection = new List<string>() { item.Name };
 			PanelSettings.ListSelectedIndex = position;
-			CurrentItems.Insert(position, item);
+			if (item is TemplateItem tiItem)
+			{
+				CurrentItems.Insert(position, tiItem);
+			}
+			else
+			{
+				//CurrentItems.Insert(position, tiItem);
+			}
 			SettingsData.Save();
 		}
 
-		private int FindInsertPosition(IList<TemplateItem> list, TemplateItem item)
+		private int FindInsertPosition(IList<TemplateItem> list, IFileListItem item)
 		{
 			for (int i = 0; i < list.Count; i++)
 				if (string.Compare(list[i].Name, item.Name, StringComparison.Ordinal) > 0)
@@ -418,13 +424,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void InitSearch()
 		{
-			_SearchHelper = new SearchHelper<TemplateItem>((x) =>
+			_SearchHelper = new SearchHelper<IFileListItem>((x) =>
 			{
 				var s = SearchTextBox.Text;
-				return string.IsNullOrEmpty(s) ||
-					(x.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1 ||
-					(x.Text ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
-			}, null, new SortableBindingList<TemplateItem>());
+				if (x is TemplateItem ti)
+				{
+					return string.IsNullOrEmpty(s) ||
+						(ti.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1 ||
+						(ti.Text ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
+				}
+				else
+				{
+					return string.IsNullOrEmpty(s) ||
+						(x.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
+				}
+			}, null, new SortableBindingList<IFileListItem>());
 			_SearchHelper.SetSource(CurrentItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
 			MainDataGrid.ItemsSource = _SearchHelper.FilteredList;
@@ -439,7 +453,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			);
 		}
 
-		private SearchHelper<TemplateItem> _SearchHelper;
+		private SearchHelper<IFileListItem> _SearchHelper;
 
 		private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
@@ -459,14 +473,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_SearchHelper.Filter();
 		}
 
-		Task TitleTask;
-
 		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
 		{
 			var item = MainDataGrid.SelectedItems.Cast<TemplateItem>().FirstOrDefault();
 			if (item == null)
 				return;
-			TitleTask = ClientHelper.GenerateTitle(item);
+			var task = ClientHelper.GenerateTitle(item);
+			// Assign task to property to make sure it is not garbage collected.
+			item.GenerateTitleTask = task;
 		}
 	}
 

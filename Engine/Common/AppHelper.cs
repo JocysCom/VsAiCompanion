@@ -232,7 +232,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Fix name to make sure that it is not same as existing names.
 		/// </summary>
-		public static void FixName(IFileListItem copy, IEnumerable<TemplateItem> items)
+		public static void FixName(IFileListItem copy, IEnumerable<IFileListItem> items)
 		{
 			var newName = copy.Name;
 			for (int i = 1; i < int.MaxValue; i++)
@@ -388,6 +388,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return item;
 		}
 
+		public static FineTune GetNewFineTuning()
+		{
+			var item = new FineTune();
+			return item;
+		}
 
 		/// <summary>
 		/// Set custom dictionary for spell check.
