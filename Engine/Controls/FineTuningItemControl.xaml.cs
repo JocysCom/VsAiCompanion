@@ -26,7 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				di.Create();
 		}
 
-		public FineTune Item { get; set; }
+		public FineTuningItem Item { get; set; }
 
 		public ItemType DataType { get; set; }
 

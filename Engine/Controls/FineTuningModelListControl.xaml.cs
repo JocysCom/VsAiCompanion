@@ -19,7 +19,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningModelListControl : UserControl, IBindData<FineTune>
+	public partial class FineTuningModelListControl : UserControl, IBindData<FineTuningItem>
 	{
 		public FineTuningModelListControl()
 		{
@@ -150,7 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		[Category("Main")]
 
-		public FineTune Data
+		public FineTuningItem Data
 		{
 			get => _Data;
 			set
@@ -169,7 +169,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				MustRefresh = true;
 			}
 		}
-		public FineTune _Data;
+		public FineTuningItem _Data;
 
 		public bool MustRefresh;
 

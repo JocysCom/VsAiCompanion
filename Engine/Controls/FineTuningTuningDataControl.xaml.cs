@@ -20,7 +20,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningTuningDataControl : UserControl, IBindData<FineTune>
+	public partial class FineTuningTuningDataControl : UserControl, IBindData<FineTuningItem>
 	{
 		public FineTuningTuningDataControl()
 		{
@@ -125,7 +125,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			foreach (var item in items)
 			{
-				var path = Global.GetPath(Data, FineTune.TuningData, item.filename);
+				var path = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
 				var fi = new FileInfo(path);
 				if (fi.Exists)
 				{
@@ -150,7 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void Refresh()
 		{
 			SaveSelection();
-			var path = Global.GetPath(Data, FineTune.TuningData);
+			var path = Global.GetPath(Data, FineTuningItem.TuningData);
 			var di = new DirectoryInfo(path);
 			if (!di.Exists)
 				di.Create();
@@ -199,7 +199,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		[Category("Main")]
 
-		public FineTune Data
+		public FineTuningItem Data
 		{
 			get => _Data;
 			set
@@ -218,7 +218,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				MustRefresh = true;
 			}
 		}
-		public FineTune _Data;
+		public FineTuningItem _Data;
 
 		public bool MustRefresh;
 
@@ -242,7 +242,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void ValidateButton_Click(object sender, RoutedEventArgs e)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
-			var sourcePath = Global.GetPath(Data, FineTune.TuningData);
+			var sourcePath = Global.GetPath(Data, FineTuningItem.TuningData);
 			FileValidateHelper.Validate(sourcePath, items, Data.AiModel);
 			// Refresh items because DataGrid items don't implement the INotifyPropertyChanged interface.
 			MainDataGrid.Items.Refresh();
@@ -260,7 +260,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Convert.
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
 			var sourcePath = Global.GetPath(Data);
-			FileConvertHelper.ConvertFile(sourcePath, FineTune.TuningData, items, convertType, Data.AiModel);
+			FileConvertHelper.ConvertFile(sourcePath, FineTuningItem.TuningData, items, convertType, Data.AiModel);
 			Refresh();
 
 		}
@@ -272,7 +272,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			foreach (var item in items)
 			{
-				var sourcePath = Global.GetPath(Data, FineTune.TuningData, item.filename);
+				var sourcePath = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
 				var client = new Client(Data.AiService);
 				await client.UploadFileAsync(sourcePath, "fine-tune");
 			}

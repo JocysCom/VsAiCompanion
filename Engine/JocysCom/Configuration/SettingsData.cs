@@ -137,7 +137,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		[XmlIgnore]
-		System.Collections.IList ISettingsData.Items { get { return Items; } }
+		IBindingList ISettingsData.Items { get { return Items; } }
 
 		public delegate void ApplyOrderDelegate(SettingsData<T> source);
 

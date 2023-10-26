@@ -389,9 +389,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return item;
 		}
 
-		public static FineTune GetNewFineTuning()
+		public static FineTuningItem GetNewFineTuning()
 		{
-			var item = new FineTune();
+			var item = new FineTuningItem();
 			return item;
 		}
 

@@ -28,7 +28,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			SourceItems = Global.GetItems(ItemType);
+			SourceItems = Global.GetSettings(DataType).Items;
 			// Configure converter.
 			var gridFormattingConverter = MainDataGrid.Resources.Values.OfType<Converters.ItemFormattingConverter>().First();
 			gridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
@@ -100,12 +100,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#region ■ Properties
 
 		[Category("Main"), DefaultValue(ItemType.None)]
-		public ItemType ItemType
+		public ItemType DataType
 		{
-			get => _ItemControlType;
+			get => _DataType;
 			set
 			{
-				_ItemControlType = value;
+				_DataType = value;
 				if (ControlsHelper.IsDesignMode(this))
 					return;
 				// Get settings.
@@ -120,16 +120,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Update other controls.
 				MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
 				SourceItems.ListChanged -= SourceItems_ListChanged;
-				SourceItems = Global.GetItems(value);
+				SourceItems = Global.GetSettings(value).Items;
 				InitSearch();
 				// Re-attach events.
 				MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
 				SourceItems.ListChanged += SourceItems_ListChanged;
 				ShowColumns(IconColumn, NameColumn);
-				ShowButtons(AddButton, EditButton, DeleteButton);
+				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid);
+				if (DataType != ItemType.Template && DataType != ItemType.Task)
+					buttons = buttons.Except(new Button[] { GenerateTitleButton }).ToArray();
+				ShowButtons(buttons);
 			}
 		}
-		private ItemType _ItemControlType;
+		private ItemType _DataType;
 
 		private void SettingsData_FilesChanged(object sender, EventArgs e)
 		{
@@ -163,8 +166,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void ShowButtons(params Button[] args)
 		{
-			var all = new Button[] { AddButton, EditButton, DeleteButton };
-			foreach (var control in all)
+			var controls = ControlsHelper.GetAll<Button>(TemplateListGrid);
+			foreach (var control in controls)
 				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
@@ -201,7 +204,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var allowEnable = true;
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<IFileListItem>();
 			var isSelected = selecetedItems.Count() > 0;
-			if (ItemType == ItemType.Template)
+			if (DataType == ItemType.Template)
 			{
 				// Count updatable references.
 				allowEnable = selecetedItems.Count(x => x.StatusCode == MessageBoxImage.Information) > 0;
@@ -222,12 +225,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
 			IFileListItem item = null;
-			if (ItemType == ItemType.Template || ItemType == ItemType.Task)
+			if (DataType == ItemType.Template || DataType == ItemType.Task)
 			{
 				var ti = AppHelper.GetNewTemplateItem();
 				item = ti;
 				// Treat the new task as a chat; therefore, clear the input box after sending.
-				if (ItemType == ItemType.Task)
+				if (DataType == ItemType.Task)
 					ti.MessageBoxOperation = MessageBoxOperation.ClearMessage;
 			}
 			if (item != null)
@@ -315,10 +318,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var textBox = e.EditingElement as TextBox;
 				var newName = textBox.Text.Trim();
 				var item = (IFileListItem)e.Row.Item;
-				var list = ItemType == ItemType.Template
-					? Global.Templates
-					: Global.Tasks;
-				var error = list.RenameItem(item, newName);
+				var settingsData = Global.GetSettings(DataType);
+				var error = settingsData.RenameItem(item, newName);
 				if (!string.IsNullOrEmpty(error))
 				{
 					MessageBox.Show(error);
@@ -439,7 +440,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (item == null)
 				return;
 			// Item type specific code.
-			if (ItemType == ItemType.Task || ItemType == ItemType.Template)
+			if (DataType == ItemType.Task || DataType == ItemType.Template)
 			{
 				var ti = (TemplateItem)item;
 				var task = ClientHelper.GenerateTitle(ti);

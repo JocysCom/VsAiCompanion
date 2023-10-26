@@ -38,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else if (DataType == ItemType.FineTune)
 			{
-				FineTuningItemPanel.Item = (FineTune)item;
+				FineTuningItemPanel.Item = (FineTuningItem)item;
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				PanelSettings = Global.AppSettings.GetTaskSettings(value);
 				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
 				// Update child control types.
-				ListPanel.ItemType = value;
+				ListPanel.DataType = value;
 				ListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
 				OnPropertyChanged(nameof(ListPanelVisibility));
 			}

@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary;
-using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
@@ -65,17 +64,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			};
 
 
-		public static SettingsData<FineTune> FineTunes =
-			new SettingsData<FineTune>($"{nameof(FineTunes)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
-		public static SortableBindingList<TemplateItem> GetItems(ItemType type)
-		{
-			switch (type)
+		public static SettingsData<FineTuningItem> FineTunes =
+			new SettingsData<FineTuningItem>($"{nameof(FineTunes)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
-				case ItemType.Task: return Tasks.Items;
-				case ItemType.Template: return Templates.Items;
-				default: return new SortableBindingList<TemplateItem>();
-			}
-		}
+				UseSeparateFiles = true,
+			};
 
 		public static ISettingsData GetSettings(ItemType type)
 		{
@@ -83,6 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				case ItemType.Task: return Tasks;
 				case ItemType.Template: return Templates;
+				case ItemType.FineTune: return FineTunes;
 				default: return new SettingsData<TemplateItem>();
 			}
 		}
@@ -90,7 +84,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static string FineTunesPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, "FineTune");
 
-		public static string GetPath(FineTune item, params string[] args)
+		public static string GetPath(FineTuningItem item, params string[] args)
 		{
 			var itemPath = new string[] { FineTunesPath, item.Name };
 			var paths = itemPath.Concat(args).ToArray();
@@ -191,12 +185,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		private static void FineTuneSettings_OnValidateData(object sender, SettingsData<FineTune>.SettingsDataEventArgs e)
+		private static void FineTuneSettings_OnValidateData(object sender, SettingsData<FineTuningItem>.SettingsDataEventArgs e)
 		{
-			var data = (SettingsData<FineTune>)sender;
+			var data = (SettingsData<FineTuningItem>)sender;
 			if (e.Items.Count == 0)
 			{
-				e.Items.Add(new FineTune()
+				e.Items.Add(new FineTuningItem()
 				{
 					Name = "Default"
 				});
