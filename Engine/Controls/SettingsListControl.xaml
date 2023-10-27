@@ -61,7 +61,7 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="EditButton_Click"
-				ToolTip="Edit">
+				ToolTip="Edit (F2)">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
 					<Label x:Name="EditButtonLabel" Content="Edit" Visibility="Collapsed" />
@@ -186,6 +186,7 @@
 			Loaded="MainDataGrid_Loaded"
 			MouseDoubleClick="MainDataGrid_MouseDoubleClick"
 			PreparingCellForEdit="MainDataGrid_PreparingCellForEdit"
+			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
