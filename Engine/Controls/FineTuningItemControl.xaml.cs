@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System.IO;
-using System.Linq;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -15,18 +14,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var item = Global.FineTunes.Items.FirstOrDefault();
-			Item = item;
-			DataContext = item;
-			AiModelBoxPanel.BindData(item);
-			var path = Global.GetPath(item);
-			var di = new DirectoryInfo(path);
-			DataFolderTextBox.Text = di.FullName;
-			if (!di.Exists)
-				di.Create();
 		}
 
-		public FineTuningItem Item { get; set; }
+		public FineTuningItem Item
+		{
+			get => _Item;
+			set
+			{
+				_Item = value;
+				DataContext = value;
+				AiModelBoxPanel.BindData(value);
+				IconPanel.BindData(value);
+				if (value != null)
+				{
+					var path = Global.GetPath(value);
+					var di = new DirectoryInfo(path);
+					DataFolderTextBox.Text = di.FullName;
+					if (!di.Exists)
+						di.Create();
+				}
+			}
+		}
+		FineTuningItem _Item;
 
 		public ItemType DataType { get; set; }
 

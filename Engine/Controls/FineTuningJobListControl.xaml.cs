@@ -99,41 +99,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return list.Count;
 		}
 
-		private void DeleteButton_Click(object sender, RoutedEventArgs e)
-		{
-			var items = MainDataGrid.SelectedItems.Cast<fine_tuning_job>().ToList();
-			if (items.Count == 0)
-				return;
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
-				return;
-			// Use begin invoke or grid update will deadlock on same thread.
-			//ControlsHelper.BeginInvoke(async () =>
-			//{
-			//	foreach (var item in items)
-			//		await DeleteFileAsync(item.id);
-			//	await Refresh();
-			//});
-		}
-
 		public void SaveSelection()
 		{
 			// Save selection.
 			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(fine_tuning_job.id));
 			if (selection.Count > 0 || Data.FineTuningJobListSelection == null)
 				Data.FineTuningJobListSelection = selection;
-		}
-
-		public async Task Refresh()
-		{
-			SaveSelection();
-			var client = new Client(Data.AiService);
-			var request = new fine_tuning_jobs_request();
-			request.limit = 1000;
-			var response = await client.GetFineTuningJobsAsync(request);
-			var items = response.First()?.data;
-			CollectionsHelper.Synchronize(items, CurrentItems);
-			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(fine_tuning_job.id), Data.FineTuningJobListSelection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -204,7 +175,41 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			ControlsHelper.OpenUrl("https://platform.openai.com/docs/api-reference/fine-tuning");
 		}
-    }
+
+		public async Task Refresh()
+		{
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
+			SaveSelection();
+			var client = new Client(Data.AiService);
+			var request = new fine_tuning_jobs_request();
+			request.limit = 1000;
+			var response = await client.GetFineTuningJobsAsync(request);
+			var items = response.First()?.data;
+			CollectionsHelper.Synchronize(items, CurrentItems);
+			MustRefresh = false;
+			ControlsHelper.SetSelection(MainDataGrid, nameof(fine_tuning_job.id), Data.FineTuningJobListSelection, 0);
+		}
+
+		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			var items = MainDataGrid.SelectedItems.Cast<fine_tuning_job>().ToList();
+			if (items.Count == 0)
+				return;
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
+				return;
+			// Use begin invoke or grid update will deadlock on same thread.
+			//ControlsHelper.BeginInvoke(async () =>
+			//{
+			//	foreach (var item in items)
+			//		await DeleteFileAsync(item.id);
+			//	await Refresh();
+			//});
+		}
+
+	}
 
 }
 

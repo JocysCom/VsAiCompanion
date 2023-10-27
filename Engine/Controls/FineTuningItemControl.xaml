@@ -27,7 +27,6 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<local:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
 		<Grid Grid.Row="1" Margin="3,0,3,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
@@ -36,17 +35,46 @@
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-			<Label VerticalAlignment="Center" Content="Data Folder" />
+
+			<local:IconUserControl
+				x:Name="IconPanel"
+				Grid.Row="0"
+				Grid.RowSpan="2"
+				Grid.Column="0"
+				Width="64"
+				Height="64"
+				VerticalAlignment="Center"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+
+			<local:AiModelBoxControl
+				x:Name="AiModelBoxPanel"
+				Grid.Row="0"
+				Grid.Column="1"
+				Grid.ColumnSpan="3" />
+
+
+			<Label
+				Grid.Row="1"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				VerticalAlignment="Center"
+				Content="Data Folder" />
 			<TextBox
 				Name="DataFolderTextBox"
-				Grid.Column="1"
-				Margin="4,2,4,2"
-				VerticalAlignment="Center"
+				Grid.Row="1"
+				Grid.Column="2"
+				Margin="4,0,4,0"
 				IsReadOnly="True" />
-			<Button Name="OpenButton" Grid.Column="2" Click="OpenButton_Click">
+			<Button
+				Name="OpenButton"
+				Grid.Row="1"
+				Grid.Column="3"
+				HorizontalAlignment="Center"
+				Click="OpenButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
 					<Label Content="Open..." />

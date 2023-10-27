@@ -231,7 +231,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public TemplateItem Item
 		{
 			get => _item;
-			set {
+			set
+			{
 				if (Equals(value, _item))
 					return;
 				var oldItem = _item;
@@ -510,7 +511,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void SetZoom()
 		{
-			ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
+			Dispatcher.Invoke(() =>
+			{
+				ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
+			});
 		}
 
 		public bool SendChatHistory

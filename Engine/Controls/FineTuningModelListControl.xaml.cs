@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Markup;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -70,48 +69,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//CurrentItems.Insert(position, item);
 		}
 
-		private void DeleteButton_Click(object sender, RoutedEventArgs e)
-		{
-			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
-			if (items.Count == 0)
-				return;
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
-				return;
-			// Use begin invoke or grid update will deadlock on same thread.
-			ControlsHelper.BeginInvoke(async () =>
-			{
-				var client = new Client(Data.AiService);
-				var deleted = false;
-				foreach (var item in items)
-				{
-					var response = await client.DeleteModelAsync(item.id);
-					deleted |= response.deleted;
-				}
-				if (deleted)
-					await Refresh();
-			});
-		}
-
 		public void SaveSelection()
 		{
 			// Save selection.
 			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(model.id));
 			if (selection.Count > 0 || Data.FineTuningModelListSelection == null)
 				Data.FineTuningModelListSelection = selection;
-		}
-
-		public async Task Refresh()
-		{
-			SaveSelection();
-			var client = new Client(Data.AiService);
-			var response = await client.GetModelsAsync();
-			var items = response.First()?.data
-				.OrderBy(x => x.id.StartsWith("ft:") ? 0 : 1)
-				.ThenBy(x => x.id)
-				.ToArray();
-			CollectionsHelper.Synchronize(items, CurrentItems);
-			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(model.id), Data.FineTuningModelListSelection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -189,7 +152,49 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.OpenUrl("https://platform.openai.com/docs/api-reference/models");
 
 		}
-    }
+
+		public async Task Refresh()
+		{
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
+			SaveSelection();
+			var client = new Client(Data.AiService);
+			var response = await client.GetModelsAsync();
+			var items = response.First()?.data
+				.OrderBy(x => x.id.StartsWith("ft:") ? 0 : 1)
+				.ThenBy(x => x.id)
+				.ToArray();
+			CollectionsHelper.Synchronize(items, CurrentItems);
+			MustRefresh = false;
+			ControlsHelper.SetSelection(MainDataGrid, nameof(model.id), Data.FineTuningModelListSelection, 0);
+		}
+
+		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
+			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
+			if (items.Count == 0)
+				return;
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
+				return;
+			// Use begin invoke or grid update will deadlock on same thread.
+			ControlsHelper.BeginInvoke(async () =>
+			{
+				var client = new Client(Data.AiService);
+				var deleted = false;
+				foreach (var item in items)
+				{
+					var response = await client.DeleteModelAsync(item.id);
+					deleted |= response.deleted;
+				}
+				if (deleted)
+					await Refresh();
+			});
+		}
+
+
+	}
 
 }
 

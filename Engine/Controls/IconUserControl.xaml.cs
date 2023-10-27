@@ -1,6 +1,4 @@
-﻿using JocysCom.VS.AiCompanion;
-using JocysCom.VS.AiCompanion.Engine.Converters;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -16,12 +14,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 		}
 
+		IFileListItem _item;
 
-		TemplateItem _item;
-
-		public void BindData(TemplateItem item = null)
+		public void BindData(IFileListItem item = null)
 		{
-			_item = item ?? AppHelper.GetNewTemplateItem();
+			IconEditButton.Visibility = item == null
+				? Visibility.Hidden
+				: Visibility.Visible;
+			_item = item;
 			DataContext = item;
 		}
 
@@ -52,7 +52,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
 			var contents = System.IO.File.ReadAllText(dialog.FileNames[0]);
-			_item.SetIcon(contents);
+			_item?.SetIcon(contents);
 		}
 
 		private void UserControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)

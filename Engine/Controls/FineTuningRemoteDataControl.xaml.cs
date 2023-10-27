@@ -99,45 +99,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return list.Count;
 		}
 
-		private void DeleteButton_Click(object sender, RoutedEventArgs e)
-		{
-			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
-			if (items.Count == 0)
-				return;
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => $"{x.id} - {x.filename}").ToArray()))
-				return;
-			// Use begin invoke or grid update will deadlock on same thread.
-			ControlsHelper.BeginInvoke(async () =>
-			{
-				var client = new Client(Data.AiService);
-				foreach (var item in items)
-				{
-					var response = await client.DeleteFileAsync(item.id);
-					if (response.deleted)
-						CurrentItems.Remove(item);
-				}
-			});
-		}
-
 		public void SaveSelection()
 		{
 			// Save selection.
 			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.filename));
 			if (selection.Count > 0 || Data.FineTuningRemoteDataSelection == null)
 				Data.FineTuningRemoteDataSelection = selection;
-		}
-
-		public async Task Refresh()
-		{
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
-				return;
-			SaveSelection();
-			var client = new Client(Data.AiService);
-			var files = await client.GetFilesAsync();
-			var fileList = files.First()?.data;
-			CollectionsHelper.Synchronize(fileList, CurrentItems);
-			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), Data.FineTuningRemoteDataSelection, 0);
 		}
 
 		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -233,6 +200,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				});
 			}
 		}
+
+		public async Task Refresh()
+		{
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
+			SaveSelection();
+			var client = new Client(Data.AiService);
+			var files = await client.GetFilesAsync();
+			var fileList = files.First()?.data;
+			CollectionsHelper.Synchronize(fileList, CurrentItems);
+			MustRefresh = false;
+			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), Data.FineTuningRemoteDataSelection, 0);
+		}
+
+		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			if (items.Count == 0)
+				return;
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => $"{x.id} - {x.filename}").ToArray()))
+				return;
+			// Use begin invoke or grid update will deadlock on same thread.
+			ControlsHelper.BeginInvoke(async () =>
+			{
+				var client = new Client(Data.AiService);
+				foreach (var item in items)
+				{
+					var response = await client.DeleteFileAsync(item.id);
+					if (response.deleted)
+						CurrentItems.Remove(item);
+				}
+			});
+		}
+
 
 	}
 
