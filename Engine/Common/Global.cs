@@ -92,6 +92,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return path;
 		}
 
+		#region Validation
+
+		public static void SetWithTimeout(MessageBoxImage image, string content = null, params object[] args)
+		{
+			MainControl.InfoPanel.SetWithTimeout(image, content, args);
+		}
+
+		public static bool ValidateServiceAndModel(AiService service, string model)
+		{
+			if (service == null)
+			{
+				SetWithTimeout(MessageBoxImage.Warning, "Please select AI model");
+				return false;
+			}
+			return true;
+		}
+
 		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)
 		{
 			var itemsRequired = new List<string>();
@@ -111,10 +128,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				MainControl.MainTabControl.SelectedItem = MainControl.OptionsTabItem;
 				var s = string.Join(" and ", itemsRequired);
-				MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, $"Please provide the {s}.");
+				SetWithTimeout(MessageBoxImage.Warning, $"Please provide the {s}.");
 			}
 			return itemsRequired.Count == 0;
 		}
+
+		#endregion
 
 		public static event EventHandler OnSaveSettings;
 

@@ -78,7 +78,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				return;
 			if (string.IsNullOrEmpty(item.AiModel))
 			{
-				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
+				Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
 				return;
 			}
 			// If task panel then allow to use AutoClear.
@@ -161,7 +161,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var doc = Global.GetSelectedErrorDocument();
 				if (doc == null)
 				{
-					Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
+					Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
 					return;
 				}
 				else

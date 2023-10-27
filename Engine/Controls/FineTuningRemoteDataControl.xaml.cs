@@ -129,6 +129,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public async Task Refresh()
 		{
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
 			SaveSelection();
 			var client = new Client(Data.AiService);
 			var files = await client.GetFilesAsync();
