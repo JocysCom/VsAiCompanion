@@ -116,58 +116,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return list.Count;
 		}
 
-		private void DeleteButton_Click(object sender, RoutedEventArgs e)
-		{
-			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
-			if (items.Count == 0)
-				return;
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
-				return;
-			foreach (var item in items)
-			{
-				var path = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
-				var fi = new FileInfo(path);
-				if (fi.Exists)
-				{
-					try
-					{
-						fi.Delete();
-					}
-					catch { }
-				}
-			}
-			Refresh();
-		}
-
 		public void SaveSelection()
 		{
 			// Save selection.
 			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.filename));
 			if (selection.Count > 0 || Data.FineTuningTuningDataSelection == null)
 				Data.FineTuningTuningDataSelection = selection;
-		}
-
-		public void Refresh()
-		{
-			SaveSelection();
-			var path = Global.GetPath(Data, FineTuningItem.TuningData);
-			var di = new DirectoryInfo(path);
-			if (!di.Exists)
-				di.Create();
-			var dirFiles = di.GetFiles("*.jsonl");
-			var files = dirFiles.Select(x => new file()
-			{
-				id = x.Name,
-				created_at = x.LastWriteTime,
-				bytes = x.Length,
-				filename = x.Name,
-				purpose = System.IO.Path.GetExtension(x.Name).ToLower() == ".jsonl" ? "fine-tuning" : null,
-			}).ToList();
-			CollectionsHelper.Synchronize(files, CurrentItems);
-			// Refresh items because DataGrid items don't implement the INotifyPropertyChanged interface.
-			MainDataGrid.Items.Refresh();
-			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), Data.FineTuningTuningDataSelection, 0);
 		}
 
 		private void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -265,10 +219,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
+		public void Refresh()
+		{
+			SaveSelection();
+			var path = Global.GetPath(Data, FineTuningItem.TuningData);
+			var di = new DirectoryInfo(path);
+			if (!di.Exists)
+				di.Create();
+			var dirFiles = di.GetFiles("*.jsonl");
+			var files = dirFiles.Select(x => new file()
+			{
+				id = x.Name,
+				created_at = x.LastWriteTime,
+				bytes = x.Length,
+				filename = x.Name,
+				purpose = System.IO.Path.GetExtension(x.Name).ToLower() == ".jsonl" ? "fine-tuning" : null,
+			}).ToList();
+			CollectionsHelper.Synchronize(files, CurrentItems);
+			// Refresh items because DataGrid items don't implement the INotifyPropertyChanged interface.
+			MainDataGrid.Items.Refresh();
+			MustRefresh = false;
+			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), Data.FineTuningTuningDataSelection, 0);
+		}
+
+
 		private async void UploadButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>();
 			if (!AppHelper.AllowAction(AllowAction.Upload, items.Select(x => x.filename).ToArray()))
+				return;
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
 				return;
 			foreach (var item in items)
 			{
@@ -276,6 +256,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var client = new Client(Data.AiService);
 				await client.UploadFileAsync(sourcePath, "fine-tune");
 			}
+		}
+
+		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			if (items.Count == 0)
+				return;
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
+				return;
+			foreach (var item in items)
+			{
+				var path = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
+				var fi = new FileInfo(path);
+				if (fi.Exists)
+				{
+					try
+					{
+						fi.Delete();
+					}
+					catch { }
+				}
+			}
+			Refresh();
 		}
 
 	}

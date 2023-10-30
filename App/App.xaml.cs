@@ -1,15 +1,15 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine;
 using System;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.IO;
 using System.Xml;
-using JocysCom.ClassLibrary.Runtime;
 
 namespace JocysCom.VS.AiCompanion
 {
@@ -28,14 +28,17 @@ namespace JocysCom.VS.AiCompanion
 				allowToRun = GetAllowToRun();
 				if (!allowToRun)
 					return;
+				// Create tray manager first.
+				TrayManager = new TrayManager();
+				TrayManager.OnExitClick += TrayManager_OnExitClick;
+				// Error in this can casue Message box display whith will call OnStartup(StartupEventArgs e)
+				// Which use tray manager.
 				Global.LoadSettings();
 				StartHelper.OnClose += StartHelper_OnClose;
 				StartHelper.OnRestore += StartHelper_OnRestore;
 				SetDPIAware();
 				System.Windows.Forms.Application.EnableVisualStyles();
 				System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-				TrayManager = new TrayManager();
-				TrayManager.OnExitClick += TrayManager_OnExitClick;
 			}
 			catch (Exception ex)
 			{

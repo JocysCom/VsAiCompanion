@@ -450,7 +450,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void SetZoom()
 		{
-			ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
+			Dispatcher.Invoke(() =>
+			{
+				ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
+			});
 		}
 
 		public bool SendChatHistory

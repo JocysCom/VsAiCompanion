@@ -448,6 +448,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ti.GenerateTitleTask = task;
 			}
 		}
+
+		private bool IsGridInEditMode(DataGrid grid)
+		{
+			if (grid == null)
+				return false;
+			foreach (var item in grid.Items)
+			{
+				var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+				if (row != null && row.IsEditing)
+					return true;
+			}
+			return false;
+		}
+
+		private void MainDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			var grid = (DataGrid)sender;
+			if (e.Key == Key.Enter)
+			{
+				// Commit manually and supress selection of next row.
+				if (grid.CurrentCell != null && IsGridInEditMode(grid))
+				{
+					e.Handled = true;
+					grid.CommitEdit(DataGridEditingUnit.Cell, true);
+					grid.CommitEdit(DataGridEditingUnit.Row, true);
+				}
+			}
+		}
 	}
 
 	#endregion

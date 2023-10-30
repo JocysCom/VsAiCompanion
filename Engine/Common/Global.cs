@@ -101,12 +101,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static bool ValidateServiceAndModel(AiService service, string model)
 		{
+			var messages = new List<string>();
 			if (service == null)
-			{
-				SetWithTimeout(MessageBoxImage.Warning, "Please select AI model");
-				return false;
-			}
-			return true;
+				SetWithTimeout(MessageBoxImage.Warning, "Please select AI Service.");
+			if (string.IsNullOrEmpty(model))
+				SetWithTimeout(MessageBoxImage.Warning, "Please select AI Model.");
+			if (messages.Any())
+				SetWithTimeout(MessageBoxImage.Warning, string.Join(" ", messages));
+			return !messages.Any();
 		}
 
 		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)
