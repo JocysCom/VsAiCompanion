@@ -231,7 +231,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public TemplateItem Item
 		{
 			get => _item;
-			set {
+			set
+			{
 				if (Equals(value, _item))
 					return;
 				var oldItem = _item;
@@ -306,12 +307,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private void ListToggleButton_Click(object sender, RoutedEventArgs e)
-		{
-			PanelSettings.IsListPanelVisible = !PanelSettings.IsListPanelVisible;
-			UpdateListToggleButtonIcon();
-		}
-
 		#region ■ Properties
 
 		[Category("Main"), DefaultValue(ItemType.None)]
@@ -334,50 +329,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 		private ItemType _DataType;
-
-		TaskSettings PanelSettings { get; set; } = new TaskSettings();
-
-		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))
-			{
-				OnPropertyChanged(nameof(BarPanelVisibility));
-				OnPropertyChanged(nameof(TemplateItemVisibility));
-				UpdateBarToggleButtonIcon();
-			}
-			if (e.PropertyName == nameof(PanelSettings.ChatPanelZoom))
-			{
-				await Helper.Delay(SetZoom);
-			}
-		}
-
-		public void UpdateListToggleButtonIcon()
-		{
-			var rt = new RotateTransform();
-			rt.Angle = PanelSettings.IsListPanelVisible ? 0 : 180;
-			ListToggleButton.RenderTransform = rt;
-			ListToggleButton.RenderTransformOrigin = new Point(0.5, 0.5);
-		}
-
-		public Visibility BarPanelVisibility
-			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
-
-		public Visibility TemplateItemVisibility
-			=> PanelSettings.IsBarPanelVisible && _DataType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
-
-		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
-		{
-			PanelSettings.IsBarPanelVisible = !PanelSettings.IsBarPanelVisible;
-			UpdateListToggleButtonIcon();
-		}
-
-		public void UpdateBarToggleButtonIcon()
-		{
-			var rt = new RotateTransform();
-			rt.Angle = PanelSettings.IsBarPanelVisible ? 90 : 270;
-			BarToggleButton.RenderTransform = rt;
-			BarToggleButton.RenderTransformOrigin = new Point(0.5, 0.5);
-		}
 
 		#endregion
 
@@ -418,17 +369,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!_item.UseMacros)
 				_item.UseMacros = true;
 		}
-
-		#endregion
-
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-
 
 		#endregion
 
@@ -569,6 +509,70 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: caretIndex + text.Length;
 			AppHelper.SetCaret(box, newIndex);
 		}
+
+		#region PanelSettings
+
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
+
+		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))
+			{
+				OnPropertyChanged(nameof(BarPanelVisibility));
+				OnPropertyChanged(nameof(TemplateItemVisibility));
+				UpdateBarToggleButtonIcon();
+			}
+			if (e.PropertyName == nameof(PanelSettings.ChatPanelZoom))
+			{
+				await Helper.Delay(SetZoom);
+			}
+		}
+
+		private void ListToggleButton_Click(object sender, RoutedEventArgs e)
+		{
+			PanelSettings.IsListPanelVisible = !PanelSettings.IsListPanelVisible;
+			UpdateListToggleButtonIcon();
+		}
+
+		public void UpdateListToggleButtonIcon()
+		{
+			var rt = new RotateTransform();
+			rt.Angle = PanelSettings.IsListPanelVisible ? 0 : 180;
+			ListToggleButton.RenderTransform = rt;
+			ListToggleButton.RenderTransformOrigin = new Point(0.5, 0.5);
+		}
+
+		public Visibility BarPanelVisibility
+			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+		public Visibility TemplateItemVisibility
+			=> PanelSettings.IsBarPanelVisible && _DataType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
+
+		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
+		{
+			PanelSettings.IsBarPanelVisible = !PanelSettings.IsBarPanelVisible;
+			UpdateListToggleButtonIcon();
+		}
+
+		public void UpdateBarToggleButtonIcon()
+		{
+			var rt = new RotateTransform();
+			rt.Angle = PanelSettings.IsBarPanelVisible ? 90 : 270;
+			BarToggleButton.RenderTransform = rt;
+			BarToggleButton.RenderTransformOrigin = new Point(0.5, 0.5);
+		}
+
+
+		#endregion
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
 
 	}
 }

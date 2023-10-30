@@ -27,7 +27,25 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<local:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
+		<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+			<Button
+				Name="ListToggleButton"
+				HorizontalAlignment="Left"
+				Click="ListToggleButton_Click"
+				Focusable="False">
+				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+			</Button>
+			<local:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
+		</StackPanel>
+		<Button
+			Name="BarToggleButton"
+			Grid.Row="0"
+			Grid.Column="0"
+			HorizontalAlignment="Right"
+			Click="BarToggleButton_Click"
+			Focusable="False">
+			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+		</Button>
 		<Grid Grid.Row="1" Margin="3,0,3,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
