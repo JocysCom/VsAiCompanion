@@ -46,7 +46,7 @@
 			Focusable="False">
 			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 		</Button>
-		<Grid Grid.Row="1" Margin="3,0,3,0">
+		<Grid Grid.Row="1" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -58,39 +58,30 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-
 			<local:IconUserControl
 				x:Name="IconPanel"
 				Grid.Row="0"
-				Grid.RowSpan="2"
+				Grid.RowSpan="3"
 				Grid.Column="0"
 				Width="64"
 				Height="64"
-				VerticalAlignment="Center"
+				Margin="3"
+				VerticalAlignment="Top"
 				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-
-			<local:AiModelBoxControl
-				x:Name="AiModelBoxPanel"
+			<!--  Folder  -->
+			<Label
 				Grid.Row="0"
 				Grid.Column="1"
-				Grid.ColumnSpan="3" />
-
-
-			<Label
-				Grid.Row="1"
-				Grid.Column="1"
-				Grid.ColumnSpan="2"
 				VerticalAlignment="Center"
 				Content="Data Folder" />
 			<TextBox
 				Name="DataFolderTextBox"
-				Grid.Row="1"
+				Grid.Row="0"
 				Grid.Column="2"
-				Margin="4,0,4,0"
 				IsReadOnly="True" />
 			<Button
 				Name="OpenButton"
-				Grid.Row="1"
+				Grid.Row="0"
 				Grid.Column="3"
 				HorizontalAlignment="Center"
 				Click="OpenButton_Click">
@@ -99,6 +90,18 @@
 					<Label Content="Open..." />
 				</StackPanel>
 			</Button>
+			<!--  System message content  -->
+			<Label
+				Grid.Row="1"
+				Grid.Column="1"
+				VerticalAlignment="Center"
+				Content="System Message" />
+			<TextBox
+				Name="SystemMessageTextBox"
+				Grid.Row="1"
+				Grid.Column="2"
+				Width="Auto"
+				Text="{Binding SystemMessage}" />
 		</Grid>
 		<Border
 			Grid.Row="3"

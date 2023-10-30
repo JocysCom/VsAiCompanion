@@ -21,6 +21,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string JsonLinesFile { get => _JsonLinesFile; set => SetProperty(ref _JsonLinesFile, value); }
 		string _JsonLinesFile;
 
+		[DefaultValue("")]
+		public string SystemMessage { get => _SystemMessage; set => SetProperty(ref _SystemMessage, value); }
+		string _SystemMessage;
+
 		#region App Settings Selections
 
 		public List<string> FineTuningSourceDataSelection { get => _FineTuningSourceDataSelection; set => SetProperty(ref _FineTuningSourceDataSelection, value); }
