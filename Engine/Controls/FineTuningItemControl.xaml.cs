@@ -1,7 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,6 +29,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				DataContext = value;
 				AiModelBoxPanel.BindData(value);
 				IconPanel.BindData(value);
+				FineTuningSourceDataPanel.Data = value;
+				FineTuningTuningDataPanel.Data = value;
+				FineTuningRemoteDataPanel.Data = value;
+				FineTuningJobListPanel.Data = value;
+				FineTuningModelListPanel.Data = value;
 				if (value != null)
 				{
 					var path = Global.GetPath(value);

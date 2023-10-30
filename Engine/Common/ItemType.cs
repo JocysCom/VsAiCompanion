@@ -5,6 +5,6 @@
 		None = 0,
 		Task = 1,
 		Template = 2,
-		FineTune = 3,
+		FineTuning = 3,
 	}
 }

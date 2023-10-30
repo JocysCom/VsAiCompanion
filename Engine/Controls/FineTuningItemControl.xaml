@@ -7,6 +7,7 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="320"
+	x:Name="This"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
 	<UserControl.Resources>

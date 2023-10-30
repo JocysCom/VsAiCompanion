@@ -36,7 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				TemplateItemPanel.Item = (TemplateItem)item;
 			}
-			else if (DataType == ItemType.FineTune)
+			else if (DataType == ItemType.FineTuning)
 			{
 				FineTuningItemPanel.Item = (FineTuningItem)item;
 			}
@@ -58,7 +58,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					TemplateItemPanel.DataType = value;
 					TemplateItemPanel.Visibility = Visibility.Visible;
 				}
-				else if (value == ItemType.FineTune)
+				else if (value == ItemType.FineTuning)
 				{
 					FineTuningItemPanel.DataType = value;
 					FineTuningItemPanel.Visibility = Visibility.Visible;

@@ -28,8 +28,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var item = Global.FineTunes.Items.FirstOrDefault();
-			Data = item;
 			MainDataGrid.ItemsSource = CurrentItems;
 			UpdateButtons();
 		}
@@ -170,6 +168,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				_Data = value;
 				MustRefresh = true;
+				if (IsVisible)
+					Refresh();
 			}
 		}
 		public FineTuningItem _Data;

@@ -64,8 +64,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			};
 
 
-		public static SettingsData<FineTuningItem> FineTunes =
-			new SettingsData<FineTuningItem>($"{nameof(FineTunes)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+		public static SettingsData<FineTuningItem> FineTunings =
+			new SettingsData<FineTuningItem>($"{nameof(ItemType.FineTuning)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
 				UseSeparateFiles = true,
 			};
@@ -76,13 +76,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				case ItemType.Task: return Tasks;
 				case ItemType.Template: return Templates;
-				case ItemType.FineTune: return FineTunes;
+				case ItemType.FineTuning: return FineTunings;
 				default: return new SettingsData<TemplateItem>();
 			}
 		}
 
 		public static string FineTunesPath
-			=> Path.Combine(AppData.XmlFile.Directory.FullName, "FineTune");
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(ItemType.FineTuning));
 
 		public static string GetPath(FineTuningItem item, params string[] args)
 		{
@@ -103,9 +103,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var messages = new List<string>();
 			if (service == null)
-				SetWithTimeout(MessageBoxImage.Warning, "Please select AI Service.");
+				messages.Add("Please select AI Service.");
 			if (string.IsNullOrEmpty(model))
-				SetWithTimeout(MessageBoxImage.Warning, "Please select AI Model.");
+				messages.Add("Please select AI Model.");
 			if (messages.Any())
 				SetWithTimeout(MessageBoxImage.Warning, string.Join(" ", messages));
 			return !messages.Any();
@@ -147,7 +147,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			PromptItems.Save();
 			Templates.Save();
 			Tasks.Save();
-			FineTunes.Save();
+			FineTunings.Save();
 		}
 
 		/// <summary>
@@ -189,10 +189,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Tasks.Save();
 			// Load fine tune settings.
 			// Load tasks.
-			FineTunes.OnValidateData += FineTuneSettings_OnValidateData;
-			FineTunes.Load();
-			if (FineTunes.IsSavePending)
-				FineTunes.Save();
+			FineTunings.OnValidateData += FineTuneSettings_OnValidateData;
+			FineTunings.Load();
+			if (FineTunings.IsSavePending)
+				FineTunings.Save();
 
 
 			// Enable template and task folder monitoring.

@@ -75,7 +75,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				case ItemType.Task: return TaskData;
 				case ItemType.Template: return TemplateData;
-				case ItemType.FineTune: return FineTuningData;
+				case ItemType.FineTuning: return FineTuningData;
 				default: return new TaskSettings();
 			}
 		}
