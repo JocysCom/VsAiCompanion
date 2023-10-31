@@ -56,6 +56,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Global_AiModelsUpdated(object sender, EventArgs e)
 		{
+			if (_item == null)
+				return;
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}

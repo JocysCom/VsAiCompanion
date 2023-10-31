@@ -468,7 +468,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (e.Key == Key.Enter)
 			{
 				// Commit manually and supress selection of next row.
-				if (grid.CurrentCell != null && IsGridInEditMode(grid))
+				if (IsGridInEditMode(grid))
 				{
 					e.Handled = true;
 					grid.CommitEdit(DataGridEditingUnit.Cell, true);

@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -48,6 +51,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(100)]
 		public int ChatPanelZoom { get => _ChatPanelZoom; set => SetProperty(ref _ChatPanelZoom, value); }
 		private int _ChatPanelZoom;
+
+		#region Helper Functions
+
+		public void UpdateBarToggleButtonIcon(Button button, bool toggle = false)
+		{
+			if (toggle)
+				IsBarPanelVisible = !IsBarPanelVisible;
+			var rt = new RotateTransform();
+			rt.Angle = IsBarPanelVisible ? 90 : 270;
+			button.RenderTransform = rt;
+			button.RenderTransformOrigin = new Point(0.5, 0.5);
+		}
+
+		public void UpdateListToggleButtonIcon(Button button, bool toggle = false)
+		{
+			if (toggle)
+				IsListPanelVisible = !IsListPanelVisible;
+			var rt = new RotateTransform();
+			rt.Angle = IsListPanelVisible ? 0 : 180;
+			button.RenderTransform = rt;
+			button.RenderTransformOrigin = new Point(0.5, 0.5);
+		}
+
+		#endregion
 
 		#region ■ INotifyPropertyChanged
 
