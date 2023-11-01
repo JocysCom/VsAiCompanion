@@ -4,14 +4,13 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
 	/// <summary>
 	/// Interaction logic for FineTuningControl.xaml
 	/// </summary>
-	public partial class FineTuningItemControl : UserControl
+	public partial class FineTuningItemControl : UserControl, INotifyPropertyChanged
 	{
 		public FineTuningItemControl()
 		{
@@ -58,10 +57,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				PanelSettings = Global.AppSettings.GetTaskSettings(value);
 				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
 				// Update the rest.
-				UpdateBarToggleButtonIcon();
-				UpdateListToggleButtonIcon();
+				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
+				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
 				OnPropertyChanged(nameof(BarPanelVisibility));
-				OnPropertyChanged(nameof(TemplateItemVisibility));
 			}
 		}
 		private ItemType _DataType;
@@ -87,44 +85,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))
 			{
+				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
 				OnPropertyChanged(nameof(BarPanelVisibility));
-				OnPropertyChanged(nameof(TemplateItemVisibility));
-				UpdateBarToggleButtonIcon();
 			}
 		}
 
 		private void ListToggleButton_Click(object sender, RoutedEventArgs e)
 		{
-			PanelSettings.IsListPanelVisible = !PanelSettings.IsListPanelVisible;
-			UpdateListToggleButtonIcon();
-		}
-
-		public void UpdateListToggleButtonIcon()
-		{
-			var rt = new RotateTransform();
-			rt.Angle = PanelSettings.IsListPanelVisible ? 0 : 180;
-			ListToggleButton.RenderTransform = rt;
-			ListToggleButton.RenderTransformOrigin = new Point(0.5, 0.5);
+			PanelSettings.UpdateListToggleButtonIcon(ListToggleButton, true);
 		}
 
 		public Visibility BarPanelVisibility
 			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
-		public Visibility TemplateItemVisibility
-			=> PanelSettings.IsBarPanelVisible && _DataType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
-
 		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
 		{
-			PanelSettings.IsBarPanelVisible = !PanelSettings.IsBarPanelVisible;
-			UpdateBarToggleButtonIcon();
-		}
-
-		public void UpdateBarToggleButtonIcon()
-		{
-			var rt = new RotateTransform();
-			rt.Angle = PanelSettings.IsBarPanelVisible ? 90 : 270;
-			BarToggleButton.RenderTransform = rt;
-			BarToggleButton.RenderTransformOrigin = new Point(0.5, 0.5);
+			PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton, true);
 		}
 
 		#endregion

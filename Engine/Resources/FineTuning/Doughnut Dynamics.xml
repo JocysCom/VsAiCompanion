@@ -59,6 +59,7 @@ ZPn4FkYkWwwVOtEcLH0CrCaBdXlx/e6HS/zfde/+D3+md8aXJwAA</IconData>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-3.5-turbo</AiModel>
   <IsEnabled>false</IsEnabled>
+  <SystemMessage>You are a helpful, respectful and honest assistant of Doughnut Dynamics.</SystemMessage>
   <FineTuningSourceDataSelection>
     <string>demo-data-Doughnut-Dynamics.csv</string>
   </FineTuningSourceDataSelection>

@@ -306,12 +306,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				filterRx = new Regex(aiService.ModelFilter);
 			}
 			catch { }
-			var client = new Companions.ChatGPT.Client(aiService);
-			var models = await client.GetModelsAsync();
-			var modelCodes = models?.FirstOrDefault()?.data.ToArray()
-				.OrderByDescending(x => x.id)
-				.Select(x => x.id)
+			var client = new Client(aiService);
+			var response = await client.GetModelsAsync();
+			var models = response.FirstOrDefault()?.data
+				.OrderBy(x => x.id.StartsWith("ft:") ? 0 : 1)
+				.ThenBy(x => x.id)
 				.ToArray();
+			var modelCodes = models?.Select(x => x.id).ToArray();
 			// If models found then...
 			if (modelCodes?.Any() == true)
 			{
@@ -326,7 +327,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					var aiModel = new AiModel(modelCode, aiService.Id);
 					// Detect if AI model can be finetuned.
-					var model = models.First().data.FirstOrDefault(x => x.id == modelCode);
+					var model = response.First().data.FirstOrDefault(x => x.id == modelCode);
 					aiModel.AllowFineTuning = GetPermission(model, "allow_fine_tuning") ?? false;
 					Global.AppSettings.AiModels.Add(aiModel);
 				}
