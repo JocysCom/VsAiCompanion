@@ -116,7 +116,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
 		{
 			PanelSettings.IsBarPanelVisible = !PanelSettings.IsBarPanelVisible;
-			UpdateListToggleButtonIcon();
+			UpdateBarToggleButtonIcon();
 		}
 
 		public void UpdateBarToggleButtonIcon()

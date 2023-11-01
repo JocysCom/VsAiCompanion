@@ -193,8 +193,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			});
 		}
 
-
+		private void CreateTask_Click(object sender, RoutedEventArgs e)
+		{
+			var item = MainDataGrid.SelectedItems.Cast<model>().FirstOrDefault();
+			if (item == null)
+				return;
+			var task = AppHelper.GetNewTemplateItem();
+			// Treat the new task as a chat; therefore, clear the input box after sending.
+			task.MessageBoxOperation = MessageBoxOperation.ClearMessage;
+			task.AttachContext = AttachmentType.ChatHistory;
+			task.Name = $"{Data.Name}_{DateTime.Now:yyyyMMdd_HHmmss}";
+			task.SetIcon(Data.IconData);
+			task.IsSystemInstructions = true;
+			task.TextInstructions = Data.SystemMessage;
+			Global.InsertTask(task, ItemType.Task);
+		}
 	}
-
 }
-

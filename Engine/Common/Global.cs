@@ -81,6 +81,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		public static void InsertTask(IFileListItem item, ItemType type)
+		{
+			if (type != ItemType.Task && type != ItemType.Template)
+				return;
+			AppHelper.FixName(item, Tasks.Items);
+			var panel = type == ItemType.Task
+				? MainControl.TasksPanel.ListPanel
+				: MainControl.TemplatesPanel.ListPanel;
+			panel.InsertItem(item);
+		}
+
 		public static string FineTunesPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(ItemType.FineTuning));
 

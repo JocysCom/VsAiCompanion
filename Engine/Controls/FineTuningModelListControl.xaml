@@ -55,6 +55,18 @@
 					<Label x:Name="DeleteButtonLabel" Content="Delete" />
 				</StackPanel>
 			</Button>
+			<Button
+				Name="CreateModelButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="CreateTask_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+					<Label Content="Create a Task from Model" />
+				</StackPanel>
+			</Button>
+
 		</StackPanel>
 		<StackPanel
 			Grid.Row="0"

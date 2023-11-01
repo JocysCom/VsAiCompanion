@@ -38,7 +38,11 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal" Margin="3,3,0,0">
+		<StackPanel
+			Grid.Row="0"
+			Margin="3,3,0,0"
+			HorizontalAlignment="Left"
+			Orientation="Horizontal">
 			<Button
 				Name="AddButton"
 				Margin="0,0,3,3"
@@ -71,12 +75,16 @@
 				Click="CreateModel_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-					<Label Content="Create a model from File" />
+					<Label Content="Create a Job and Model from File" />
 				</StackPanel>
 			</Button>
 
 		</StackPanel>
-		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal" Margin="3,3,0,0">
+		<StackPanel
+			Grid.Row="0"
+			Margin="3,3,0,0"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal">
 			<Button
 				Name="HelpButton"
 				Margin="0,0,3,3"
