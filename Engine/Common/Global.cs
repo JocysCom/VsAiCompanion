@@ -81,7 +81,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static void InsertTask(IFileListItem item, ItemType type)
+		public static void InsertItem(IFileListItem item, ItemType type)
 		{
 			if (type != ItemType.Task && type != ItemType.Template)
 				return;
@@ -92,12 +92,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			panel.InsertItem(item);
 		}
 
-		public static string FineTunesPath
+		public static string FineTuningPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(ItemType.FineTuning));
 
 		public static string GetPath(FineTuningItem item, params string[] args)
 		{
-			var itemPath = new string[] { FineTunesPath, item.Name };
+			var itemPath = new string[] { FineTuningPath, item.Name };
 			var paths = itemPath.Concat(args).ToArray();
 			var path = System.IO.Path.Combine(paths);
 			return path;
@@ -202,10 +202,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Load tasks.
 			FineTunings.OnValidateData += FineTuneSettings_OnValidateData;
 			FineTunings.Load();
-			if (FineTunings.IsSavePending)
-				FineTunings.Save();
-
-
+			FineTunings.Load();
+			if (FineTunings.IsLoadPending)
+				FineTunings.Load();
 			// Enable template and task folder monitoring.
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
@@ -220,14 +219,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private static void FineTuneSettings_OnValidateData(object sender, SettingsData<FineTuningItem>.SettingsDataEventArgs e)
 		{
 			var data = (SettingsData<FineTuningItem>)sender;
-			if (e.Items.Count == 0)
-			{
-				e.Items.Add(new FineTuningItem()
-				{
-					Name = "Default"
-				});
-				data.IsSavePending = true;
-			}
+			if (e.Items.Count != 0)
+				return;
+			var asm = typeof(Global).Assembly;
+			var keys = asm.GetManifestResourceNames()
+				.Where(x => x.Contains("FineTuning.zip"))
+				.ToList();
+			AppHelper.ExtractFiles("FineTuning", FineTuningPath);
+			// Trigger reload of data.
+			data.IsLoadPending = true;
 		}
 
 		class prompt_item

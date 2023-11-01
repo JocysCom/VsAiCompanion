@@ -44,11 +44,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void AiCompanionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
+			if (_item == null)
+				return;
+				AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
 
 		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
+			if (_item == null)
+				return;
 			await AppHelper.UpdateModelsFromAPI(_item.AiService);
 		}
 

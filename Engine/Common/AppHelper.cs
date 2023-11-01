@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -594,6 +595,47 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		#endregion
+
+		#region ■ Extract Helper
+
+		/// <summary>
+		/// Extract resource files
+		/// </summary>
+		/// <param name="source">Resource prefix.</param>
+		/// <param name="target">Target folder to extract.</param>
+		/// <param name="overwrite">Overwrite files at target.</param>
+		public static void ExtractFiles(string source, string target, Assembly assembly = null)
+		{
+			// Get list of resources to extract.
+			assembly = assembly ?? Assembly.GetExecutingAssembly();
+			var pattern = string.Format(".Resources.{0}.zip", source);
+			var resourceName = assembly.GetManifestResourceNames().Where(x => x.Contains(pattern)).First();
+			var sr = assembly.GetManifestResourceStream(resourceName);
+			if (sr == null)
+				return;
+			var bytes = new byte[sr.Length];
+			sr.Read(bytes, 0, bytes.Length);
+			// Open an existing zip file for reading.
+			var zip = ZipStorer.Open(sr, FileAccess.Read);
+			// Read the central directory collection
+			var dir = zip.ReadCentralDir();
+			// Look for the desired file.
+			foreach (ZipStorer.ZipFileEntry entry in dir)
+			{
+				var fileName = System.IO.Path.Combine(target, entry.FilenameInZip.Replace("/", "\\"));
+				zip.ExtractFile(entry, fileName);
+			}
+			zip.Close();
+		}
+
+		static string GetDevConPath()
+		{
+			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
+			return string.Format("devcon.{0}.exe", paString);
+		}
+
+		#endregion
+
 
 	}
 

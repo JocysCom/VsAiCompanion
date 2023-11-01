@@ -102,6 +102,9 @@ namespace JocysCom.ClassLibrary.Configuration
 		public bool IsSavePending { get; set; }
 
 		[XmlIgnore]
+		public bool IsLoadPending { get; set; }
+
+		[XmlIgnore]
 		public bool UseSeparateFiles { get; set; }
 
 		[XmlIgnore]

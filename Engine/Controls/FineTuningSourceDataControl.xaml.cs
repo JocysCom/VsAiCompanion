@@ -103,6 +103,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void SaveSelection()
 		{
+			if (Data == null)
+				return;
 			// Save selection.
 			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.id));
 			if (selection.Count > 0 || Data.FineTuningSourceDataSelection == null)
@@ -208,6 +210,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void Refresh()
 		{
+			if (Data == null)
+				return;
 			SaveSelection();
 			var path = Global.GetPath(Data, FineTuningItem.SourceData);
 			var di = new DirectoryInfo(path);

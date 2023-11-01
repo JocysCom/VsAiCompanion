@@ -206,7 +206,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			task.SetIcon(Data.IconData);
 			task.IsSystemInstructions = true;
 			task.TextInstructions = Data.SystemMessage;
-			Global.InsertTask(task, ItemType.Task);
+			Global.InsertItem(task, ItemType.Task);
 		}
 	}
 }
