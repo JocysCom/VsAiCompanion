@@ -242,30 +242,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), Data.FineTuningTuningDataSelection, 0);
 		}
 
-
-		private async void UploadButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			var items = MainDataGrid.SelectedItems.Cast<file>();
-			if (!AppHelper.AllowAction(AllowAction.Upload, items.Select(x => x.filename).ToArray()))
-				return;
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
-				return;
-			foreach (var item in items)
-			{
-				var sourcePath = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
-				var client = new Client(Data.AiService);
-				await client.UploadFileAsync(sourcePath, "fine-tune");
-			}
-		}
-
-		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		public List<file> GetWithAllow(AllowAction action, bool checkData)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			if (items.Count == 0)
-				return;
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
-				return;
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
+				return null;
+			if (checkData && !Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return null;
+			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
+				return null;
+			return items;
+		}
+
+		private void UploadButton_Click(object sender, System.Windows.RoutedEventArgs e)
+			=> Upload();
+
+		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+			=> Delete();
+
+		#region Actions
+
+		private void Delete()
+		{
+			var items = GetWithAllow(AllowAction.Delete, false);
+			if (items == null)
 				return;
 			foreach (var item in items)
 			{
@@ -283,11 +283,64 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Refresh();
 		}
 
-		private void OpenButton_Click(object sender, RoutedEventArgs e)
+		private void Open()
 		{
+			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			foreach (var item in items)
+			{
+				var path = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
+				var fi = new FileInfo(path);
+				if (fi.Exists)
+				{
+					try
+					{
+						ControlsHelper.OpenUrl(fi.FullName);
+					}
+					catch { }
+				}
+			}
+		}
 
-        }
-    }
+		private void Upload()
+		{
+			var items = GetWithAllow(AllowAction.Upload, true);
+			if (items == null)
+				return;
+			// Use begin invoke or grid update will deadlock on same thread.
+			_ = ControlsHelper.BeginInvoke(async () =>
+			{
+				foreach (var item in items)
+				{
+					var sourcePath = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
+					var client = new Client(Data.AiService);
+					var ext = Path.GetExtension(item.filename).ToLower();
+					var purpose = ext == ".jsonl"
+						? Client.FineTuningPurpose
+						: "";
+					await client.UploadFileAsync(sourcePath, purpose);
+					if (!string.IsNullOrEmpty(client.LastError))
+						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				}
+				Global.RaiseOnFilesUpladed();
+			});
+		}
+
+		#endregion
+
+		private void OpenButton_Click(object sender, RoutedEventArgs e)
+			=> Open();
+
+
+		private void MainDataGrid_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+			=> Open();
+
+		private void MainDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			var isEditMode = AppHelper.IsGridInEditMode((DataGrid)sender);
+			if (!isEditMode && e.Key == Key.Delete)
+				Delete();
+		}
+	}
 
 }
 

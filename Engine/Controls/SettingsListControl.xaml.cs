@@ -129,7 +129,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid);
 				if (DataType != ItemType.Template && DataType != ItemType.Task)
 					buttons = buttons.Except(new Button[] { GenerateTitleButton }).ToArray();
-				ShowButtons(buttons);
+				AppHelper.ShowButtons(TemplateListGrid, buttons);
 			}
 		}
 		private ItemType _DataType;
@@ -161,13 +161,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var all = MainDataGrid.Columns.ToArray();
 			foreach (var control in all)
-				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
-		}
-
-		public void ShowButtons(params Button[] args)
-		{
-			var controls = ControlsHelper.GetAll<Button>(TemplateListGrid);
-			foreach (var control in controls)
 				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
@@ -271,15 +264,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void Delete()
 		{
 			var items = MainDataGrid.SelectedItems.Cast<IFileListItem>().ToList();
-			if (items.Count == 0)
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.Name).ToArray()))
 				return;
-			//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
-			var text = $"Do you want to delete {items.Count} item{(items.Count > 1 ? "s" : "")}?";
-			var caption = $"{Global.Info.Product} - Delete";
-			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-			if (result != MessageBoxResult.Yes)
-				return;
-
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(() =>
 			{
@@ -453,33 +439,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private bool IsGridInEditMode(DataGrid grid)
-		{
-			if (grid == null)
-				return false;
-			foreach (var item in grid.Items)
-			{
-				var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-				if (row != null && row.IsEditing)
-					return true;
-			}
-			return false;
-		}
-
 		private void MainDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
+			var isEditMode = AppHelper.IsGridInEditMode((DataGrid)sender);
 			var grid = (DataGrid)sender;
 			if (e.Key == Key.Enter)
 			{
 				// Commit manually and supress selection of next row.
-				if (IsGridInEditMode(grid))
+				if (isEditMode)
 				{
 					e.Handled = true;
 					grid.CommitEdit(DataGridEditingUnit.Cell, true);
 					grid.CommitEdit(DataGridEditingUnit.Row, true);
 				}
 			}
-			if (e.Key == Key.Delete)
+			if (!isEditMode && e.Key == Key.Delete)
 				Delete();
 		}
 	}

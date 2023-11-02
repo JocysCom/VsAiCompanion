@@ -169,27 +169,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.SetSelection(MainDataGrid, nameof(model.id), Data.FineTuningModelListSelection, 0);
 		}
 
-		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		public List<model> GetWithAllow(AllowAction action)
 		{
 			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
-				return;
+				return null;
 			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
 			if (items.Count == 0)
+				return null;
+			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
+				return null;
+			return items;
+		}
+
+		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			var items = GetWithAllow(AllowAction.Delete);
+			if (items == null)
 				return;
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
-				return;
+			var client = new Client(Data.AiService);
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{
-				var client = new Client(Data.AiService);
-				var deleted = false;
 				foreach (var item in items)
 				{
 					var response = await client.DeleteModelAsync(item.id);
-					deleted |= response.deleted;
+					if (response?.deleted == true)
+						CurrentItems.Remove(item);
 				}
-				if (deleted)
-					await Refresh();
 			});
 		}
 
@@ -202,8 +208,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Treat the new task as a chat; therefore, clear the input box after sending.
 			task.MessageBoxOperation = MessageBoxOperation.ClearMessage;
 			task.AttachContext = AttachmentType.ChatHistory;
-			task.Name = $"{Data.Name}_Assistant_{DateTime.Now:yyyyMMdd_HHmmss}";
-			task.SetIcon(Data.IconData);
+			task.Name = $"{Data.Name} Assistant ({DateTime.Now:yyyyMMdd_HHmmss})";
+			task.IconData = Data.IconData;
+			task.AiServiceId = Data.AiServiceId;
+			task.AiModel = item.id;
 			task.IsSystemInstructions = true;
 			task.TextInstructions = Data.SystemMessage;
 			Global.InsertItem(task, ItemType.Task);

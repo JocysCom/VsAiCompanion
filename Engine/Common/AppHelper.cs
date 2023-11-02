@@ -636,6 +636,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Controls Helper
+
+		public static void ShowButtons(Panel panel, params Button[] args)
+		{
+			var controls = ControlsHelper.GetAll<Button>(panel);
+			foreach (var control in controls)
+				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		public static bool IsGridInEditMode(DataGrid grid)
+		{
+			if (grid == null)
+				return false;
+			foreach (var item in grid.Items)
+			{
+				var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+				if (row != null && row.IsEditing)
+					return true;
+			}
+			return false;
+		}
+
+		#endregion
 
 	}
 

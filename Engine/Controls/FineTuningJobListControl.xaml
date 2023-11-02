@@ -56,15 +56,15 @@
 				</StackPanel>
 			</Button>
 			<Button
-				Name="DeleteButton"
+				Name="CancelButton"
 				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
-				Click="DeleteButton_Click"
-				ToolTip="Delete">
+				Click="CancelButton_Click"
+				ToolTip="Cancel">
 				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-					<Label x:Name="DeleteButtonLabel" Content="Delete" />
+					<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+					<Label x:Name="CancelButtonLabel" Content="Cancel" />
 				</StackPanel>
 			</Button>
 		</StackPanel>

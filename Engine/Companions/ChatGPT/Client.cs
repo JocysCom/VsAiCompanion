@@ -31,6 +31,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		private const string chatCompletionsPath = "chat/completions";
 		private const string completionsPath = "completions";
 		private const string fineTuningJobsPath = "fine_tuning/jobs";
+
+		public const string FineTuningPurpose = "fine-tune";
+
 		private readonly AiService Service;
 
 		public HttpClient GetClient()
@@ -87,8 +90,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				content.Add(fileContent, "\"file\"", $"\"{Path.GetFileName(filePath)}\"");
 				using (var response = await client.PostAsync(urlWithDate, content))
 				{
-					response.EnsureSuccessStatusCode();
 					var responseBody = await response.Content.ReadAsStringAsync();
+					if (!response.IsSuccessStatusCode)
+					{
+						LastError = responseBody;
+						return null;
+					}
 					var responseFile = Deserialize<file>(responseBody);
 					return responseFile;
 				}
@@ -102,8 +109,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var client = GetClient();
 			using (var response = await client.DeleteAsync(urlWithDate, cancellationToken))
 			{
-				response.EnsureSuccessStatusCode();
 				var responseBody = await response.Content.ReadAsStringAsync();
+				if (!response.IsSuccessStatusCode)
+				{
+					LastError = responseBody;
+					return default;
+				}
 				var deleteResponse = Deserialize<T>(responseBody);
 				return deleteResponse;
 			}
@@ -112,7 +123,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public string LastError;
 
 		public async Task<List<T>> GetAsync<T>(
-			string operationPath, object o = null, bool useGet = false, bool stream = false, CancellationToken cancellationToken = default
+			string operationPath, object o = null, HttpMethod overrideHttpMethod = null, bool stream = false, CancellationToken cancellationToken = default
 		)
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
@@ -128,9 +139,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				request.Method = HttpMethod.Get;
+				request.Method = overrideHttpMethod ?? HttpMethod.Get;
 			}
-			else if (useGet)
+			else if (overrideHttpMethod == HttpMethod.Get)
 			{
 				var parameters = ConvertToNameValueCollection(o, true);
 				if (parameters.Count > 0)
@@ -188,7 +199,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <summary>
 		/// Get Data from API with the spinner busy indicator.
 		/// </summary>
-		public async Task<List<T>> GetAsyncWithTask<T>(string path, object request = null, bool useGet = false)
+		public async Task<List<T>> GetAsyncWithTask<T>(string path, object request = null, HttpMethod overrideHttpMethod = null)
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
@@ -196,7 +207,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			List<T> results = null;
 			try
 			{
-				results = await GetAsync<T>(path, request, useGet, cancellationToken: cancellationTokenSource.Token);
+				results = await GetAsync<T>(path, request, overrideHttpMethod, cancellationToken: cancellationTokenSource.Token);
 			}
 			catch (Exception ex)
 			{
@@ -211,6 +222,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<deleted_response> DeleteFileAsync(string id, CancellationToken cancellationToken = default)
 			=> await DeleteAsync<deleted_response>(filesPath, id, cancellationToken);
 
+		public async Task<deleted_response> DeleteFineTuningJobAsync(string id, CancellationToken cancellationToken = default)
+			=> await DeleteAsync<deleted_response>(fineTuningJobsPath, id, cancellationToken);
+
+		public async Task<fine_tune> CancelFineTuningJobAsync(string id, CancellationToken cancellationToken = default)
+		{
+			var path = $"{fineTuningJobsPath}/{id}/cancel";
+			var result = await GetAsync<fine_tune>(path, null, HttpMethod.Post, false, cancellationToken);
+			return result?.FirstOrDefault();
+		}
+
 		public async Task<List<files>> GetFilesAsync()
 			=> await GetAsyncWithTask<files>(filesPath);
 
@@ -218,7 +239,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			=> (await GetAsyncWithTask<fine_tune>(fineTuningJobsPath, r))?.FirstOrDefault();
 
 		public async Task<List<fine_tuning_jobs_response>> GetFineTuningJobsAsync(fine_tuning_jobs_request request)
-		=> await GetAsyncWithTask<fine_tuning_jobs_response>(fineTuningJobsPath, request, true);
+		=> await GetAsyncWithTask<fine_tuning_jobs_response>(fineTuningJobsPath, request, HttpMethod.Get);
 
 		public async Task<List<models_response>> GetModelsAsync()
 			=> await GetAsyncWithTask<models_response>(modelsPath);
@@ -332,7 +353,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							max_tokens = GetMaxTokens(modelName),
 
 						};
-						var data = await GetAsync<text_completion_response>(completionsPath, request, false, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += chatChoice.text;
@@ -395,7 +416,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							content = x.Content,
 							name = x.Name,
 						}).ToList();
-						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, false, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += (chatChoice.message ?? chatChoice.delta).content;

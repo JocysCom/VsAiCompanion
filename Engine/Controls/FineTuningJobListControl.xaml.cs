@@ -27,7 +27,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MainDataGrid.ItemsSource = CurrentItems;
+			Global.OnFineTuningJobCreated += Global_OnFineTuningJobCreated;
 			UpdateButtons();
+		}
+
+		private void Global_OnFineTuningJobCreated(object sender, EventArgs e)
+		{
+			TryRefresh();
 		}
 
 		public SortableBindingList<fine_tuning_job> CurrentItems { get; set; } = new SortableBindingList<fine_tuning_job>();
@@ -45,13 +51,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
-		public void ShowButtons(params Button[] args)
-		{
-			var all = new Button[] { AddButton, DeleteButton };
-			foreach (var control in all)
-				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
-		}
-
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
@@ -63,7 +62,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<fine_tuning_job>();
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
-			DeleteButton.IsEnabled = isSelected;
+			CancelButton.IsEnabled = isSelected;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -126,8 +125,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			if (MustRefresh && IsVisible)
-				await Refresh();
+			TryRefresh();
 		}
 
 		#region IBindData
@@ -191,24 +189,65 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.SetSelection(MainDataGrid, nameof(fine_tuning_job.id), Data.FineTuningJobListSelection, 0);
 		}
 
-		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		public List<fine_tuning_job> GetWithAllow(AllowAction action)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<fine_tuning_job>().ToList();
 			if (items.Count == 0)
-				return;
+				return null;
 			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
-				return;
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.id).ToArray()))
-				return;
-			// Use begin invoke or grid update will deadlock on same thread.
-			//ControlsHelper.BeginInvoke(async () =>
-			//{
-			//	foreach (var item in items)
-			//		await DeleteFileAsync(item.id);
-			//	await Refresh();
-			//});
+				return null;
+			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
+				return null;
+			return items;
 		}
 
+		/// <summary>
+		///  Delete is not allowed.
+		/// </summary>
+		private void Delete()
+		{
+			var items = GetWithAllow(AllowAction.Delete);
+			if (items == null)
+				return;
+			var client = new Client(Data.AiService);
+			// Use begin invoke or grid update will deadlock on same thread.
+			ControlsHelper.BeginInvoke(async () =>
+			{
+				foreach (var item in items)
+				{
+					var response = await client.DeleteFineTuningJobAsync(item.id);
+					if (response?.deleted == true)
+						CurrentItems.Remove(item);
+
+				}
+			});
+		}
+
+		private void CancelButton_Click(object sender, RoutedEventArgs e)
+		{
+			var items = GetWithAllow(AllowAction.Cancel);
+			if (items == null)
+				return;
+			// Use begin invoke or grid update will deadlock on same thread.
+			ControlsHelper.BeginInvoke(async () =>
+			{
+				foreach (var item in items)
+				{
+					var client = new Client(Data.AiService);
+					var response = await client.CancelFineTuningJobAsync(item.id);
+					if (!string.IsNullOrEmpty(client.LastError))
+						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				}
+				await Refresh();
+			});
+		}
+
+		public void TryRefresh()
+		{
+			MustRefresh = true;
+			if (IsVisible)
+				Dispatcher.BeginInvoke((Action)(async () => await Refresh()));
+		}
 	}
 
 }

@@ -7,5 +7,6 @@
 		Delete,
 		Upload,
 		Update,
+		Cancel,
 	}
 }

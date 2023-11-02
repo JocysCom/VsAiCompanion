@@ -27,7 +27,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MainDataGrid.ItemsSource = CurrentItems;
+			Global.OnFilesUpladed += Global_OnFilesUpladed;
 			UpdateButtons();
+		}
+
+		private void Global_OnFilesUpladed(object sender, EventArgs e)
+		{
+			TryRefresh();
 		}
 
 		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
@@ -45,13 +51,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
-		public void ShowButtons(params Button[] args)
-		{
-			var all = new Button[] { AddButton, DeleteButton };
-			foreach (var control in all)
-				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
-		}
-
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
@@ -64,6 +63,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = isSelected;
+			CreateModelButton.IsEnabled = isSelected;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -131,6 +131,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				await Refresh();
 		}
 
+		public void TryRefresh()
+		{
+			MustRefresh = true;
+			if (IsVisible)
+				Dispatcher.BeginInvoke((Action)(async () => await Refresh()));
+		}
+
 		#region IBindData
 
 		[Category("Main")]
@@ -151,9 +158,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					value.PropertyChanged += _Data_PropertyChanged;
 				}
 				_Data = value;
-				MustRefresh = true;
-				if (IsVisible)
-					Dispatcher.BeginInvoke((Action)(async () => await Refresh()));
+				TryRefresh();
 			}
 		}
 		public FineTuningItem _Data;
@@ -177,29 +182,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		private void CreateModel_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
-			if (!AppHelper.AllowAction($"create job{(items.Count > 1 ? "s" : "")} to fine tune \"{Data.AiModel}\" custom model from ", items.Select(x => x.filename).ToArray()))
-				return;
-			foreach (var item in items)
-			{
-				// Use begin invoke or grid update will deadlock on same thread.
-				ControlsHelper.BeginInvoke(async () =>
-				{
-					var client = new Client(Data.AiService);
-					var request = new fine_tune_request()
-					{
-						training_file = item.id,
-						model = Data.AiModel,
-					};
-					var fineTune = await client.CreateFineTuneJob(request);
-					var message = fineTune == null
-							? client.LastError
-							: Client.Serialize(fineTune);
-					//LogTextBox.AppendText(message);
-				});
-			}
-		}
+			=> CreateJobAndModel();
 
 		public async Task Refresh()
 		{
@@ -215,28 +198,82 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+			=> Delete();
+
+
+		#region Actions
+
+		public List<file> GetWithAllow(AllowAction action)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			if (items.Count == 0)
-				return;
+				return null;
 			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
-				return;
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => $"{x.id} - {x.filename}").ToArray()))
+				return null;
+			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
+				return null;
+			return items;
+		}
+
+		public void Delete()
+		{
+			var items = GetWithAllow(AllowAction.Delete);
+			if (items == null)
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{
-				var client = new Client(Data.AiService);
 				foreach (var item in items)
 				{
+					var client = new Client(Data.AiService);
 					var response = await client.DeleteFileAsync(item.id);
-					if (response.deleted)
+					if (!string.IsNullOrEmpty(client.LastError))
+						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					if (response?.deleted == true)
 						CurrentItems.Remove(item);
 				}
 			});
 		}
 
+		void CreateJobAndModel()
+		{
+			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+				return;
+			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			if (!AppHelper.AllowAction($"create job{(items.Count > 1 ? "s" : "")} to fine tune \"{Data.AiModel}\" custom model from ", items.Select(x => x.filename).ToArray()))
+				return;
+			foreach (var item in items)
+			{
+				// Use begin invoke or grid update will deadlock on same thread.
+				ControlsHelper.BeginInvoke(async () =>
+				{
+					var client = new Client(Data.AiService);
+					var request = new fine_tune_request()
+					{
+						training_file = item.id,
+						model = Data.AiModel,
+					};
+					var fineTune = await client.CreateFineTuneJob(request);
+					if (!string.IsNullOrEmpty(client.LastError))
+						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					if (fineTune != null)
+					{
+						Client.Serialize(fineTune);
+					}
+					Global.RaiseOnFineTuningJobCreated();
+				});
+			}
 
+		}
+
+		#endregion
+
+		private void MainDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			var isEditMode = AppHelper.IsGridInEditMode((DataGrid)sender);
+			if (!isEditMode && e.Key == Key.Delete)
+				Delete();
+		}
 	}
 
 }

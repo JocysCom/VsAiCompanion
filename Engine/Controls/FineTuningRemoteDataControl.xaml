@@ -49,7 +49,8 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="AddButton_Click"
-				ToolTip="Add New">
+				ToolTip="Add New"
+				Visibility="Collapsed">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
 					<Label x:Name="AddButtonLabel" Content="Add New" Visibility="Collapsed" />
@@ -126,6 +127,7 @@
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionChanged="MainDataGrid_SelectionChanged"
+			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
 				<DataGridTemplateColumn

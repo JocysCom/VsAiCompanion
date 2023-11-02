@@ -150,10 +150,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static event EventHandler OnSaveSettings;
 
+		public static void RaiseOnSaveSettings()
+			=> OnSaveSettings?.Invoke(null, EventArgs.Empty);
+
+		public static event EventHandler OnFilesUpladed;
+
+		public static void RaiseOnFilesUpladed()
+			=> OnFilesUpladed?.Invoke(null, EventArgs.Empty);
+
+		public static event EventHandler OnFineTuningJobCreated;
+
+		public static void RaiseOnFineTuningJobCreated()
+			=> OnFineTuningJobCreated?.Invoke(null, EventArgs.Empty);
+
 		public static void SaveSettings()
 		{
-
-			OnSaveSettings?.Invoke(null, EventArgs.Empty);
+			RaiseOnSaveSettings();
 			AppData.Save();
 			PromptItems.Save();
 			Templates.Save();
