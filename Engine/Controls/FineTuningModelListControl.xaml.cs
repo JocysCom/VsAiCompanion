@@ -202,7 +202,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Treat the new task as a chat; therefore, clear the input box after sending.
 			task.MessageBoxOperation = MessageBoxOperation.ClearMessage;
 			task.AttachContext = AttachmentType.ChatHistory;
-			task.Name = $"{Data.Name}_{DateTime.Now:yyyyMMdd_HHmmss}";
+			task.Name = $"{Data.Name}_Assistant_{DateTime.Now:yyyyMMdd_HHmmss}";
 			task.SetIcon(Data.IconData);
 			task.IsSystemInstructions = true;
 			task.TextInstructions = Data.SystemMessage;

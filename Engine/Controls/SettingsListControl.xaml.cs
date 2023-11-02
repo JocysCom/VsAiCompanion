@@ -265,6 +265,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
+			Delete();
+		}
+
+		private void Delete()
+		{
 			var items = MainDataGrid.SelectedItems.Cast<IFileListItem>().ToList();
 			if (items.Count == 0)
 				return;
@@ -282,7 +287,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					SettingsData.DeleteItem(item);
 			});
 		}
-
 
 		#region Grid Editing
 
@@ -475,6 +479,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					grid.CommitEdit(DataGridEditingUnit.Row, true);
 				}
 			}
+			if (e.Key == Key.Delete)
+				Delete();
 		}
 	}
 

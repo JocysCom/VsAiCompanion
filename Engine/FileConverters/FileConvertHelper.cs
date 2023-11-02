@@ -87,7 +87,10 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					break;
 			}
 			if (items == null)
+			{
 				MessageBox.Show($"Failed to read from from {sourcePath}!");
+				return;
+			}
 			// Write to file.
 			switch (targetExt)
 			{
