@@ -10,9 +10,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
-		public static string TuningData = "TuningData";
-		public static string SourceData = "SourceData";
-
 		[DefaultValue("data.json")]
 		public string JsonListFile { get => _JsonListFile; set => SetProperty(ref _JsonListFile, value); }
 		string _JsonListFile;

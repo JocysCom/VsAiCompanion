@@ -138,7 +138,7 @@
 						<Label Content="1. Source Data" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningSourceDataControl x:Name="FineTuningSourceDataPanel" />
+				<Controls:FineTuningLocalDataControl x:Name="FineTuningSourceDataPanel"  FolderType="SourceData" />
 			</TabItem>
 			<TabItem x:Name="FineTuningTuningDataTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -147,7 +147,7 @@
 						<Label Content="2. Tuning Data" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningTuningDataControl x:Name="FineTuningTuningDataPanel" />
+				<Controls:FineTuningLocalDataControl x:Name="FineTuningTuningDataPanel" FolderType="TuningData" />
 			</TabItem>
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>

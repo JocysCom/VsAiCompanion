@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.FineTuningTuningDataControl"
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.FineTuningLocalDataControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
@@ -49,7 +49,8 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="AddButton_Click"
-				ToolTip="Add New">
+				ToolTip="Add New"
+				Visibility="Collapsed">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
 					<Label x:Name="AddButtonLabel" Content="Add New" Visibility="Collapsed" />
@@ -147,12 +148,12 @@
 			ClipToBounds="True"
 			IsReadOnly="True"
 			Loaded="MainDataGrid_Loaded"
+			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionChanged="MainDataGrid_SelectionChanged"
-			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
 				<DataGridTemplateColumn

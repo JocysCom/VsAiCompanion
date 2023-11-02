@@ -11,6 +11,7 @@ using System.Globalization;
 using CsvHelper;
 using System.Linq;
 using System;
+using System.Text;
 
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
@@ -59,9 +60,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				var sourceBase = Path.GetFileNameWithoutExtension(item.filename);
 				var sourceFullName = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
 				var targetFolder = targetType == ConvertTargetType.JSONL
-					? FineTuningItem.TuningData
-					: FineTuningItem.SourceData;
-				var targetFullName = Path.Combine(fineTuneItemPath, targetFolder, sourceBase + targetExt);
+					? FineTuningFolderType.TuningData
+					: FineTuningFolderType.SourceData;
+				var targetFullName = Path.Combine(fineTuneItemPath, targetFolder.ToString(), sourceBase + targetExt);
 				if (Client.IsTextCompletionMode(aiModel))
 					Convert<text_completion_item>(sourceFullName, targetFullName);
 				else
@@ -184,49 +185,44 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		#region Rich Text Format (*.rtf)
 
-		static void AddRtfLine(System.Windows.Forms.RichTextBox rtf, string text = null, bool isBold = false)
+		static void AddRtfLine(StringBuilder rtf, string text = null, bool isBold = false)
 		{
 			if (!string.IsNullOrEmpty(text))
 			{
-				int startPos = rtf.Text.Length;
-				rtf.AppendText(text);
-				rtf.Select(startPos, text.Length);
 				if (isBold)
-					rtf.SelectionFont = new System.Drawing.Font(rtf.Font, System.Drawing.FontStyle.Bold);
+					rtf.AppendLine(@"{\b " + text + @"\b0}");
+				else
+					rtf.AppendLine(text);
 			}
-			rtf.AppendText("\n");
+			else
+			{
+				rtf.AppendLine();
+			}
 		}
 
 		public static void WriteToRtf<T>(string path, List<T> o)
 		{
-			var rtf = new System.Windows.Forms.RichTextBox();
+			var rtf = new StringBuilder(@"{\rtf1\ansi");
+			var boldFont = new System.Drawing.Font(System.Windows.Forms.Control.DefaultFont, System.Drawing.FontStyle.Bold);
 			foreach (var request in o)
 			{
 				if (request is chat_completion_request cr)
 				{
 					foreach (var message in cr.messages)
 					{
-						if (message.role == message_role.user)
-						{
-							AddRtfLine(rtf, message.content, true);
-							AddRtfLine(rtf);
-						}
-						if (message.role == message_role.assistant)
-						{
-							AddRtfLine(rtf, message.content);
-							AddRtfLine(rtf);
-						}
+						AddRtfLine(rtf, message.content, message.role == message_role.user);
 					}
 				}
-				if (request is text_completion_item tr)
+				else if (request is text_completion_item tr)
 				{
 					AddRtfLine(rtf, tr.prompt, true);
-					AddRtfLine(rtf);
 					AddRtfLine(rtf, tr.completion);
-					AddRtfLine(rtf);
 				}
 			}
-			rtf.SaveFile(path, System.Windows.Forms.RichTextBoxStreamType.RichText);
+			rtf.Append(@"}");
+			var rtb = new System.Windows.Forms.RichTextBox();
+			rtb.Rtf = rtf.ToString();
+			rtb.SaveFile(path, System.Windows.Forms.RichTextBoxStreamType.RichText);
 		}
 
 		#endregion

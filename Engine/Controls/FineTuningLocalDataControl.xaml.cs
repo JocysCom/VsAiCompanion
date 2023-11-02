@@ -20,9 +20,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningTuningDataControl : UserControl, IBindData<FineTuningItem>
+	public partial class FineTuningLocalDataControl : UserControl, IBindData<FineTuningItem>
 	{
-		public FineTuningTuningDataControl()
+		public FineTuningLocalDataControl()
 		{
 			InitializeComponent();
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
@@ -47,13 +47,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
-		public void ShowButtons(params Button[] args)
-		{
-			var all = new Button[] { AddButton, DeleteButton };
-			foreach (var control in all)
-				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
-		}
-
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
@@ -64,14 +57,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<file>();
 			var isSelected = selecetedItems.Count() > 0;
-			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			DeleteButton.IsEnabled = isSelected;
 			ValidateButton.IsEnabled = isSelected;
-			var item = selecetedItems.FirstOrDefault();
-			List<ConvertTargetType> convertTypes = new List<ConvertTargetType>() { ConvertTargetType.None };
+			OpenButton.IsEnabled = isSelected;
+			UploadButton.IsEnabled = isSelected;
+			var isOneItemSelected = selecetedItems.Count() == 1;
+			ConvertTypeComboBox.IsEnabled = isOneItemSelected;
+			var convertTypes = new List<ConvertTargetType>() { ConvertTargetType.None };
 			// Allow only if one item is selected.
-			if (item != null && selecetedItems.Count() == 1)
+			if (isOneItemSelected)
 			{
+				var item = selecetedItems.FirstOrDefault();
 				var ext = Path.GetExtension(item.filename).ToLower();
 				if (FileConvertHelper.ConvertToTypesAvailable.ContainsKey(ext))
 				{
@@ -80,7 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 			}
 			ConvertTypeComboBox.ItemsSource = Attributes.GetDictionary(convertTypes.ToArray());
-			ConvertTypeComboBox.IsReadOnly = selecetedItems.Count() != 1;
+			ConvertTypeComboBox.IsReadOnly = isOneItemSelected && convertTypes.Count > 1;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -116,16 +112,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void SaveSelection()
 		{
+			if (Data == null)
+				return;
 			// Save selection.
-			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.filename));
-			if (selection.Count > 0 || Data.FineTuningTuningDataSelection == null)
-				Data.FineTuningTuningDataSelection = selection;
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.id));
+			if (selection.Count > 0 || Data.FineTuningSourceDataSelection == null)
+				Data.FineTuningSourceDataSelection = selection;
 		}
 
 		private void RefreshButton_Click(object sender, RoutedEventArgs e)
 		{
 			Refresh();
 		}
+
 		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
 			=> ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(sender, e);
 
@@ -193,10 +192,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.OpenUrl("https://platform.openai.com/docs/guides/fine-tuning/preparing-your-dataset");
 		}
 
+		#region ■ Properties
+
+		[Category("Main"), DefaultValue(FineTuningFolderType.None)]
+		public FineTuningFolderType FolderType { get; set; }
+
+		#endregion
+
 		private void ValidateButton_Click(object sender, RoutedEventArgs e)
 		{
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
-			var sourcePath = Global.GetPath(Data, FineTuningItem.TuningData);
+			var sourcePath = Global.GetPath(Data, FolderType.ToString());
 			FileValidateHelper.Validate(sourcePath, items, Data.AiModel);
 			// Refresh items because DataGrid items don't implement the INotifyPropertyChanged interface.
 			MainDataGrid.Items.Refresh();
@@ -213,33 +219,39 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			box.SelectedValue = ConvertTargetType.None;
 			// Convert.
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
-			var sourcePath = Global.GetPath(Data);
-			FileConvertHelper.ConvertFile(sourcePath, FineTuningItem.TuningData, items, convertType, Data.AiModel);
+			var fineTuneItemPath = Global.GetPath(Data);
+			FileConvertHelper.ConvertFile(fineTuneItemPath, FolderType.ToString(), items, convertType, Data.AiModel);
 			Refresh();
-
 		}
 
 		public void Refresh()
 		{
+			if (Data == null)
+				return;
 			SaveSelection();
-			var path = Global.GetPath(Data, FineTuningItem.TuningData);
+			var path = Global.GetPath(Data, FolderType.ToString());
 			var di = new DirectoryInfo(path);
 			if (!di.Exists)
 				di.Create();
-			var dirFiles = di.GetFiles("*.jsonl");
+			var filePattern = "*.*";
+			if (FolderType == FineTuningFolderType.TuningData)
+				filePattern = "*.jsonl";
+			var dirFiles = di.GetFiles(filePattern);
 			var files = dirFiles.Select(x => new file()
 			{
 				id = x.Name,
 				created_at = x.LastWriteTime,
 				bytes = x.Length,
 				filename = x.Name,
-				purpose = System.IO.Path.GetExtension(x.Name).ToLower() == ".jsonl" ? "fine-tuning" : null,
+				purpose = Path.GetExtension(x.Name).ToLower() == ".jsonl"
+					? "fine-tuning"
+					: null,
 			}).ToList();
 			CollectionsHelper.Synchronize(files, CurrentItems);
 			// Refresh items because DataGrid items don't implement the INotifyPropertyChanged interface.
 			MainDataGrid.Items.Refresh();
 			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), Data.FineTuningTuningDataSelection, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), Data.FineTuningSourceDataSelection, 0);
 		}
 
 		public List<file> GetWithAllow(AllowAction action, bool checkData)
@@ -260,6 +272,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
 			=> Delete();
 
+
 		#region Actions
 
 		private void Delete()
@@ -269,7 +282,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			foreach (var item in items)
 			{
-				var path = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
+				var path = Global.GetPath(Data, FolderType.ToString(), item.filename);
 				var fi = new FileInfo(path);
 				if (fi.Exists)
 				{
@@ -288,7 +301,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			foreach (var item in items)
 			{
-				var path = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
+				var path = Global.GetPath(Data, FolderType.ToString(), item.filename);
 				var fi = new FileInfo(path);
 				if (fi.Exists)
 				{
@@ -311,7 +324,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				foreach (var item in items)
 				{
-					var sourcePath = Global.GetPath(Data, FineTuningItem.TuningData, item.filename);
+					var sourcePath = Global.GetPath(Data, FolderType.ToString(), item.filename);
 					var client = new Client(Data.AiService);
 					var ext = Path.GetExtension(item.filename).ToLower();
 					var purpose = ext == ".jsonl"

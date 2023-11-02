@@ -123,11 +123,11 @@
 			ClipToBounds="True"
 			IsReadOnly="True"
 			Loaded="MainDataGrid_Loaded"
+			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionChanged="MainDataGrid_SelectionChanged"
-			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
 				<DataGridTemplateColumn
