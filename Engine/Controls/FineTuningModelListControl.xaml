@@ -62,8 +62,8 @@
 				Background="Transparent"
 				Click="CreateTask_Click">
 				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-					<Label Content="Create a Task from Model" />
+					<ContentControl Content="{StaticResource Icon_user_comment}" Focusable="False" />
+					<Label Content="Create an Assistant Task from Model" />
 				</StackPanel>
 			</Button>
 

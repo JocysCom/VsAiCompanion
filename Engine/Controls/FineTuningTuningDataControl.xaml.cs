@@ -283,7 +283,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Refresh();
 		}
 
-	}
+		private void OpenButton_Click(object sender, RoutedEventArgs e)
+		{
+
+        }
+    }
 
 }
 

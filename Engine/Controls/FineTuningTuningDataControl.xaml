@@ -67,6 +67,18 @@
 				</StackPanel>
 			</Button>
 			<Button
+				Name="OpenButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="OpenButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_button_trend_up}" Focusable="False" />
+					<Label x:Name="OpenButtonLabel" Content="Open" />
+				</StackPanel>
+			</Button>
+
+			<Button
 				Name="ValidateButton"
 				Margin="0,0,3,3"
 				x:FieldModifier="public"
