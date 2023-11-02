@@ -38,10 +38,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
 
-		public void SelectByName(string name)
+		public void SelectById(string id)
 		{
-			var list = new List<string>() { name };
-			ControlsHelper.SetSelection(MainDataGrid, nameof(TemplateItem.Name), list, 0);
+			var list = new List<string>() { id };
+			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), list, 0);
 		}
 
 		public void ShowColumns(params DataGridColumn[] args)
@@ -99,7 +99,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void SaveSelection()
 		{
 			// Save selection.
-			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.filename));
+			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.id));
 			if (selection.Count > 0 || Data.FineTuningRemoteDataSelection == null)
 				Data.FineTuningRemoteDataSelection = selection;
 		}
@@ -193,7 +193,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var fileList = files.First()?.data;
 			CollectionsHelper.Synchronize(fileList, CurrentItems);
 			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(file.filename), Data.FineTuningRemoteDataSelection, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), Data.FineTuningRemoteDataSelection, 0);
 		}
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
