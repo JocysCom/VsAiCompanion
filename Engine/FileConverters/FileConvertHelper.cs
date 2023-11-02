@@ -339,6 +339,50 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			}
 		}
 
+		public static List<T> ReadFromXlsx<T>(string path) where T : class
+		{
+			var result = new List<T>();
+			using (var spreadsheet = SpreadsheetDocument.Open(path, false))
+			{
+				var workbookPart = spreadsheet.WorkbookPart;
+				var worksheetPart = workbookPart.WorksheetParts.First();
+				var sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+				// Skip the header row.
+				foreach (var row in sheetData.Elements<Row>().Skip(1))
+				{
+					var cells = row.Elements<Cell>().ToList();
+					if (typeof(T) == typeof(chat_completion_request))
+					{
+						var cr = new chat_completion_request { messages = new List<chat_completion_message>() };
+						var message = new chat_completion_message();
+						if (cells[0].CellValue != null)
+						{
+							message.role = message_role.user;
+							message.content = cells[0].CellValue.InnerText;
+							cr.messages.Add(message);
+						}
+						if (cells[1].CellValue != null)
+						{
+							message.role = message_role.assistant;
+							message.content = cells[1].CellValue.InnerText;
+							cr.messages.Add(message);
+						}
+						result.Add(cr as T);
+					}
+					else if (typeof(T) == typeof(text_completion_item))
+					{
+						var tr = new text_completion_item();
+						if (cells[0].CellValue != null)
+							tr.prompt = cells[0].CellValue.InnerText;
+						if (cells[1].CellValue != null)
+							tr.completion = cells[1].CellValue.InnerText;
+						result.Add(tr as T);
+					}
+				}
+			}
+			return result;
+		}
+
 		#endregion
 
 		#region Comma Separated Values (*.csv)
