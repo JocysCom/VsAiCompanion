@@ -12,6 +12,7 @@ using CsvHelper;
 using System.Linq;
 using System;
 using System.Text;
+using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
@@ -159,7 +160,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		public static string WriteToJson<T>(string path, List<T> o)
 		{
-			var contents = Client.Serialize(o);
+			var options = Client.GetJsonOptions();
+			options.WriteIndented = true;
+			var contents = JsonSerializer.Serialize(o, options);
 			File.WriteAllText(path, contents);
 			return null;
 		}
