@@ -70,7 +70,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			}
 		}
 
-		public static void Convert<T>(string sourcePath, string targetPath)
+		public static void Convert<T>(string sourcePath, string targetPath) where T : class
 		{
 			var sourceExt = Path.GetExtension(sourcePath).ToLower();
 			var targetExt = Path.GetExtension(targetPath).ToLower();
@@ -83,6 +83,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					break;
 				case ".json":
 					items = ReadFromJson<T>(sourcePath);
+					break;
+				case ".xlsx":
+					items = ReadFromXlsx<T>(sourcePath);
 					break;
 				default:
 					break;
@@ -354,15 +357,16 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					if (typeof(T) == typeof(chat_completion_request))
 					{
 						var cr = new chat_completion_request { messages = new List<chat_completion_message>() };
-						var message = new chat_completion_message();
 						if (cells[0].CellValue != null)
 						{
+							var message = new chat_completion_message();
 							message.role = message_role.user;
 							message.content = cells[0].CellValue.InnerText;
 							cr.messages.Add(message);
 						}
 						if (cells[1].CellValue != null)
 						{
+							var message = new chat_completion_message();
 							message.role = message_role.assistant;
 							message.content = cells[1].CellValue.InnerText;
 							cr.messages.Add(message);
