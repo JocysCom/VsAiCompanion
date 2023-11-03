@@ -138,7 +138,7 @@
 						<Label Content="1. Source Data" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningLocalDataControl x:Name="FineTuningSourceDataPanel"  FolderType="SourceData" />
+				<Controls:FineTuningLocalDataControl x:Name="FineTuningSourceDataPanel" FolderType="SourceData" />
 			</TabItem>
 			<TabItem x:Name="FineTuningTuningDataTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -170,7 +170,7 @@
 			<TabItem x:Name="PersonalModelsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_Task}" />
+						<ContentControl Content="{StaticResource Icon_settings}" />
 						<Label Content="5. Models" />
 					</StackPanel>
 				</TabItem.Header>
