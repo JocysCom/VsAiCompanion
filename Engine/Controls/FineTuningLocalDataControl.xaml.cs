@@ -220,7 +220,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Convert.
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
 			var fineTuneItemPath = Global.GetPath(Data);
-			FileConvertHelper.ConvertFile(fineTuneItemPath, FolderType.ToString(), items, convertType, Data.AiModel);
+			FileConvertHelper.ConvertFile(fineTuneItemPath, FolderType.ToString(), items, convertType, Data.AiModel, Data.SystemMessage);
 			Refresh();
 		}
 

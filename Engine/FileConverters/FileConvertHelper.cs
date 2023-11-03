@@ -1,18 +1,18 @@
-﻿using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
+﻿using CsvHelper;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Windows;
-using wp = DocumentFormat.OpenXml.Wordprocessing;
 using System.Data;
 using System.Globalization;
-using CsvHelper;
+using System.IO;
 using System.Linq;
-using System;
 using System.Text;
 using System.Text.Json;
+using System.Windows;
+using wp = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
@@ -47,7 +47,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 		public static void ConvertFile(
 			string fineTuneItemPath, string sourceDataName,
 			file[] items, ConvertTargetType targetType, string aiModel,
-			string systemPromptContent = null
+			string systemMessage = null
 		)
 		{
 			// Process files.
@@ -65,13 +65,24 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					: FineTuningFolderType.SourceData;
 				var targetFullName = Path.Combine(fineTuneItemPath, targetFolder.ToString(), sourceBase + targetExt);
 				if (Client.IsTextCompletionMode(aiModel))
-					Convert<text_completion_item>(sourceFullName, targetFullName);
+				{
+					Convert<text_completion_item>(sourceFullName, targetFullName, null);
+				}
 				else
-					Convert<chat_completion_request>(sourceFullName, targetFullName);
+				{
+					Convert<chat_completion_request>(sourceFullName, targetFullName, (r) =>
+					{
+						if (string.IsNullOrEmpty(systemMessage))
+							return;
+						if (r.messages.Any(x => x.role == message_role.system))
+							return;
+						r.messages.Insert(0, new chat_completion_message(message_role.system, systemMessage));
+					});
+				}
 			}
 		}
 
-		public static void Convert<T>(string sourcePath, string targetPath) where T : class
+		public static void Convert<T>(string sourcePath, string targetPath, Action<T> process) where T : class
 		{
 			var sourceExt = Path.GetExtension(sourcePath).ToLower();
 			var targetExt = Path.GetExtension(targetPath).ToLower();
@@ -96,6 +107,10 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				MessageBox.Show($"Failed to read from from {sourcePath}!");
 				return;
 			}
+			// Process items.
+			if (process != null)
+				foreach (var item in items)
+					process(item);
 			// Write to file.
 			switch (targetExt)
 			{
@@ -345,47 +360,91 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			}
 		}
 
+		private static string GetExcelColumnName(Cell cell)
+		{
+			return new string(cell.CellReference
+				.ToString()
+				.ToCharArray()
+				.Where(char.IsLetter)
+				.ToArray());
+		}
+
+		static string GetCellValue(Cell cell, SharedStringTablePart stringTablePart)
+		{
+			return cell.DataType != null && cell.DataType.Value == CellValues.SharedString
+				? stringTablePart.SharedStringTable.ChildElements[int.Parse(cell.CellValue.InnerXml)].InnerText
+				: cell.CellValue?.InnerXml;
+		}
+
 		public static List<T> ReadFromXlsx<T>(string path) where T : class
 		{
 			var result = new List<T>();
 			using (var spreadsheet = SpreadsheetDocument.Open(path, false))
 			{
 				var workbookPart = spreadsheet.WorkbookPart;
+				var stringTablePart = workbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
 				var worksheetPart = workbookPart.WorksheetParts.First();
 				var sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+				var rows = sheetData.Elements<Row>().ToList();
+				// if no rows found in the Excel.
+				if (rows.Count < 1)
+					return result;
+				var headerRow = rows[0];
+				var headerCells = headerRow.Elements<Cell>().ToList();
+				var promptNames = new string[] { "prompt", "user", "question" };
+				var answerNames = new string[] { "answer", "assistant" };
+				var columns = headerCells.ToDictionary(
+					k => GetCellValue(k, stringTablePart)?.ToLower(),
+					v => v);
+				var promptColumns = columns.Where(x => promptNames.Any(n => x.Key.Contains(n))).Select(x => x.Value).ToArray();
+				var answerColumns = columns.Where(x => answerNames.Any(n => x.Key.Contains(n))).Select(x => x.Value).ToArray();
+				// If prompt or answer column not found in the Excel then return.
+				if (promptColumns.Length == 0 || answerColumns.Length == 0)
+					return result;
+				var promptColumnNames = promptColumns.Select(x => GetExcelColumnName(x)).ToArray();
+				var answerColumnNames = answerColumns.Select(x => GetExcelColumnName(x)).ToArray();
 				// Skip the header row.
-				foreach (var row in sheetData.Elements<Row>().Skip(1))
+				foreach (var row in rows.Skip(1))
 				{
+					// Get cells with values.
 					var cells = row.Elements<Cell>().ToList();
-					if (typeof(T) == typeof(chat_completion_request))
+					var columnCells = cells.ToDictionary(k => GetExcelColumnName(k), v => v);
+					foreach (var p in promptColumnNames)
 					{
-						var cr = new chat_completion_request { messages = new List<chat_completion_message>() };
-						if (cells[0].CellValue != null)
+						// Continue if cell is empty.
+						if (!columnCells.ContainsKey(p))
+							continue;
+						var promtText = GetCellValue(columnCells[p], stringTablePart) ?? "";
+						if (string.IsNullOrEmpty(promtText.Trim()))
+							continue;
+						foreach (var a in answerColumnNames)
 						{
-							var message = new chat_completion_message();
-							message.role = message_role.user;
-							message.content = cells[0].CellValue.InnerText;
-							cr.messages.Add(message);
+							// Continue if cell is empty.
+							if (!columnCells.ContainsKey(a))
+								continue;
+							var answerText = GetCellValue(columnCells[a], stringTablePart) ?? "";
+							if (string.IsNullOrEmpty(answerText.Trim()))
+								continue;
+							if (typeof(T) == typeof(chat_completion_request))
+							{
+								var cr = new chat_completion_request { messages = new List<chat_completion_message>() };
+								var pMessage = new chat_completion_message(message_role.user, promtText);
+								cr.messages.Add(pMessage);
+								var aMessage = new chat_completion_message(message_role.assistant, answerText);
+								cr.messages.Add(aMessage);
+								result.Add(cr as T);
+							}
+							else if (typeof(T) == typeof(text_completion_item))
+							{
+								var tr = new text_completion_item();
+								tr.prompt = promtText;
+								tr.completion = answerText;
+								result.Add(tr as T);
+							}
 						}
-						if (cells[1].CellValue != null)
-						{
-							var message = new chat_completion_message();
-							message.role = message_role.assistant;
-							message.content = cells[1].CellValue.InnerText;
-							cr.messages.Add(message);
-						}
-						result.Add(cr as T);
-					}
-					else if (typeof(T) == typeof(text_completion_item))
-					{
-						var tr = new text_completion_item();
-						if (cells[0].CellValue != null)
-							tr.prompt = cells[0].CellValue.InnerText;
-						if (cells[1].CellValue != null)
-							tr.completion = cells[1].CellValue.InnerText;
-						result.Add(tr as T);
 					}
 				}
+
 			}
 			return result;
 		}
