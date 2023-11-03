@@ -134,7 +134,7 @@
 			<TabItem x:Name="SourceDataTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_Task}" />
+						<ContentControl Content="{StaticResource Icon_folder_open_doc}" />
 						<Label Content="1. Source Data" />
 					</StackPanel>
 				</TabItem.Header>
@@ -143,7 +143,7 @@
 			<TabItem x:Name="FineTuningTuningDataTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_Task}" />
+						<ContentControl Content="{StaticResource Icon_folder_open_doc_settings}" />
 						<Label Content="2. Tuning Data" />
 					</StackPanel>
 				</TabItem.Header>
@@ -152,7 +152,7 @@
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_Task}" />
+						<ContentControl Content="{StaticResource Icon_cloud_folder}" />
 						<Label Content="3. Remote Files" />
 					</StackPanel>
 				</TabItem.Header>
@@ -161,7 +161,7 @@
 			<TabItem x:Name="FineTuningJobsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_Task}" />
+						<ContentControl Content="{StaticResource Icon_todo_list}" />
 						<Label Content="4. Jobs" />
 					</StackPanel>
 				</TabItem.Header>

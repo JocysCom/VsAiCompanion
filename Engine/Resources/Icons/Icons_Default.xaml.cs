@@ -28,6 +28,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_clipboard_check_edit = nameof(Icon_clipboard_check_edit);
 		public const string Icon_clipboard_paste = nameof(Icon_clipboard_paste);
 		public const string Icon_cloud_download = nameof(Icon_cloud_download);
+		public const string Icon_cloud_folder = nameof(Icon_cloud_folder);
 		public const string Icon_cloud_gear = nameof(Icon_cloud_gear);
 		public const string Icon_cloud_upload = nameof(Icon_cloud_upload);
 		public const string Icon_code = nameof(Icon_code);
@@ -58,7 +59,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_find_gray = nameof(Icon_find_gray);
 		public const string Icon_find_text = nameof(Icon_find_text);
 		public const string Icon_first_aid_box = nameof(Icon_first_aid_box);
+		public const string Icon_folder3_document = nameof(Icon_folder3_document);
 		public const string Icon_folders = nameof(Icon_folders);
+		public const string Icon_folder_network = nameof(Icon_folder_network);
+		public const string Icon_folder_open_doc = nameof(Icon_folder_open_doc);
+		public const string Icon_folder_open_doc_settings = nameof(Icon_folder_open_doc_settings);
 		public const string Icon_font_decrease = nameof(Icon_font_decrease);
 		public const string Icon_font_increase = nameof(Icon_font_increase);
 		public const string Icon_fried_egg_bacon = nameof(Icon_fried_egg_bacon);
@@ -83,9 +88,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_settings = nameof(Icon_settings);
 		public const string Icon_shield = nameof(Icon_shield);
 		public const string Icon_spellcheck = nameof(Icon_spellcheck);
-		public const string Icon_Task = nameof(Icon_Task);
+		public const string Icon_task = nameof(Icon_task);
 		public const string Icon_teacher = nameof(Icon_teacher);
 		public const string Icon_Template = nameof(Icon_Template);
+		public const string Icon_todo_list = nameof(Icon_todo_list);
+		public const string Icon_todo_list_time = nameof(Icon_todo_list_time);
 		public const string Icon_translate = nameof(Icon_translate);
 		public const string Icon_user = nameof(Icon_user);
 		public const string Icon_user_comment = nameof(Icon_user_comment);
