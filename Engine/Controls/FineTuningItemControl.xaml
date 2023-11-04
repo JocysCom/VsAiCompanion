@@ -78,7 +78,8 @@
 				Name="DataFolderTextBox"
 				Grid.Row="0"
 				Grid.Column="2"
-				IsReadOnly="True" />
+				IsReadOnly="True"
+				Text="{Binding DataFolderPath, ElementName=This}" />
 			<Button
 				Name="OpenButton"
 				Grid.Row="0"

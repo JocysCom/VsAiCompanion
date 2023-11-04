@@ -24,7 +24,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			get => _Item;
 			set
 			{
+				if (_Item != null)
+				{
+					_Item.PropertyChanged -= _Item_PropertyChanged;
+				}
 				_Item = value;
+				if (value != null)
+				{
+					var path = Global.GetPath(value);
+					if (!Directory.Exists(path))
+						Directory.CreateDirectory(path);
+					_Item.PropertyChanged += _Item_PropertyChanged;
+				}
 				DataContext = value;
 				AiModelBoxPanel.BindData(value);
 				IconPanel.BindData(value);
@@ -33,17 +44,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				FineTuningRemoteDataPanel.Data = value;
 				FineTuningJobListPanel.Data = value;
 				FineTuningModelListPanel.Data = value;
-				if (value != null)
-				{
-					var path = Global.GetPath(value);
-					var di = new DirectoryInfo(path);
-					DataFolderTextBox.Text = di.FullName;
-					if (!di.Exists)
-						di.Create();
-				}
+				OnPropertyChanged(nameof(DataFolderPath));
 			}
 		}
+
+		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(FineTuningItem.Name))
+				OnPropertyChanged(nameof(DataFolderPath));
+		}
+
 		FineTuningItem _Item;
+
+		public string DataFolderPath
+		{
+			get => Item == null ? "" : Global.GetPath(Item);
+			set { }
+		}
+
 
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
