@@ -136,6 +136,7 @@
 		<None Remove="Resources\BuildDate.*" />
 		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
 		<None Remove="Resources\FineTuning.zip" />
+		<None Remove="Resources\FineTuningHelp.rtf" />
 		<None Remove="Resources\IconExperience.License.txt" />
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
@@ -175,6 +176,7 @@
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
+		<EmbeddedResource Include="Resources\FineTuningHelp.rtf" />
 		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
 		<Content Include="Resources\MainWindowCommand.png" />

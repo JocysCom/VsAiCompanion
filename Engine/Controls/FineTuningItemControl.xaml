@@ -131,7 +131,30 @@
 			x:Name="MainTabControl"
 			Grid.Row="4"
 			Margin="4"
-			x:FieldModifier="public">
+			x:FieldModifier="public"
+			SelectionChanged="MainTabControl_SelectionChanged">
+			<TabItem Name="HelpTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Question}" />
+						<Label Content="Help" />
+					</StackPanel>
+				</TabItem.Header>
+				<RichTextBox x:Name="HelpRichTextBox">
+					<RichTextBox.OpacityMask>
+						<VisualBrush>
+							<VisualBrush.Visual>
+								<Border
+									Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
+									Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
+									Background="White"
+									CornerRadius="0,5,5,5"
+									SnapsToDevicePixels="True" />
+							</VisualBrush.Visual>
+						</VisualBrush>
+					</RichTextBox.OpacityMask>
+				</RichTextBox>
+			</TabItem>
 			<TabItem x:Name="SourceDataTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

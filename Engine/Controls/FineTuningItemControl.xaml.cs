@@ -132,5 +132,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		bool HelpInit;
+
+		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
+			{
+				HelpInit = true;
+				var bytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("FineTuningHelp.rtf");
+				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+			}
+
+		}
 	}
 }
