@@ -5,7 +5,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 	public enum ConvertTargetType
 
 	{
-		[Description("Convert To:")]
+		[Description("Convert To")]
 		None = 0,
 		[Description("JSON (*.json)")]
 		JSON,
