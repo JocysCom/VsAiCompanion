@@ -2,7 +2,9 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using HtmlAgilityPack;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using RtfPipe;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -98,6 +100,12 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				case ".docx":
 					items = ReadFromDocx<T>(sourcePath);
 					break;
+				case ".rtf":
+					items = ReadFromRtf<T>(sourcePath);
+					break;
+				case ".csv":
+					items = ReadFromCsv<T>(sourcePath);
+					break;
 				default:
 					break;
 			}
@@ -122,11 +130,11 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				case ".xlsx":
 					WriteToXlsx(targetPath, items);
 					break;
-				case ".rtf":
-					WriteToRtf(targetPath, items);
-					break;
 				case ".docx":
 					WriteToDocx(targetPath, items);
+					break;
+				case ".rtf":
+					WriteToRtf(targetPath, items);
 					break;
 				case ".csv":
 					WriteToCsv(targetPath, items);
@@ -223,7 +231,6 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 		public static void WriteToRtf<T>(string path, List<T> o)
 		{
 			var rtf = new StringBuilder(@"{\rtf1\ansi");
-			var boldFont = new System.Drawing.Font(System.Windows.Forms.Control.DefaultFont, System.Drawing.FontStyle.Bold);
 			foreach (var request in o)
 			{
 				if (request is chat_completion_request cr)
@@ -243,6 +250,60 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			var rtb = new System.Windows.Forms.RichTextBox();
 			rtb.Rtf = rtf.ToString();
 			rtb.SaveFile(path, System.Windows.Forms.RichTextBoxStreamType.RichText);
+		}
+
+		public static List<T> ReadFromRtf<T>(string path) where T : class
+		{
+			var list = new List<T>();
+			string rtfContent = File.ReadAllText(path);
+			var html = Rtf.ToHtml(rtfContent);
+			HtmlDocument htmlDoc = new HtmlDocument();
+			htmlDoc.LoadHtml(html);
+			var nodes = htmlDoc.DocumentNode.DescendantsAndSelf();
+			chat_completion_request cr = null;
+			text_completion_item tr = null;
+			foreach (var node in nodes)
+			{
+				if (node.NodeType != HtmlNodeType.Text)
+					continue;
+				var parentNodeName = node.ParentNode?.Name;
+				var content = node.InnerHtml.Trim();
+				if (string.IsNullOrEmpty(content))
+					continue;
+				var role = (parentNodeName == "b" || parentNodeName == "strong") ? message_role.user : message_role.assistant;
+				if (typeof(T) == typeof(chat_completion_request))
+				{
+					if (role == message_role.user && cr == null)
+					{
+						cr = new chat_completion_request();
+						cr.messages = new List<chat_completion_message>();
+						cr.messages.Add(new chat_completion_message(role, content));
+					}
+					else if (role == message_role.assistant && cr != null)
+					{
+						cr.messages.Add(new chat_completion_message(role, content));
+						list.Add(cr as T);
+						// Reset.
+						cr = null;
+					}
+				}
+				else if (typeof(T) == typeof(text_completion_item))
+				{
+					if (role == message_role.user && tr == null)
+					{
+						tr = new text_completion_item();
+						tr.prompt = content;
+					}
+					else if (role == message_role.assistant && tr != null)
+					{
+						tr.completion = content;
+						list.Add(tr as T);
+						// Reset.
+						tr = null;
+					}
+				}
+			}
+			return list;
 		}
 
 		#endregion
