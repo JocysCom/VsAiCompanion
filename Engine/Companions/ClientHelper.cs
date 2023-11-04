@@ -21,7 +21,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string AiName = "Ai";
 		public const string GenerateTitleTaskName = "® System - Generate Title";
 		public const string FormatMessageTaskName = "® System - Format Message";
-		public const string DefaultIconEmbeddedResource = "document_gear.svg";
+		public const string DefaultTaskItemIconEmbeddedResource = "document_gear.svg";
+		public const string DefaultFineTuningIconEmbeddedResource = "control_panel.svg";
 
 		public static string JoinMessageParts(params string[] args)
 		{

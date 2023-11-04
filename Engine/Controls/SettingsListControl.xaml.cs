@@ -221,19 +221,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (DataType == ItemType.Template || DataType == ItemType.Task)
 			{
 				var ti = AppHelper.GetNewTemplateItem();
-				item = ti;
 				// Treat the new task as a chat; therefore, clear the input box after sending.
 				if (DataType == ItemType.Task)
 					ti.MessageBoxOperation = MessageBoxOperation.ClearMessage;
+				ti.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
+				// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
+				var contents = Helper.FindResource<string>(ClientHelper.DefaultTaskItemIconEmbeddedResource, GetType().Assembly);
+				ti.SetIcon(contents);
+				item = ti;
+			}
+			if (DataType == ItemType.FineTuning)
+			{
+				var ti = AppHelper.GetNewFineTuningItem();
+				ti.Name = $"Name {DateTime.Now:yyyyMMdd_HHmmss}";
+				// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
+				var contents = Helper.FindResource<string>(ClientHelper.DefaultFineTuningIconEmbeddedResource, GetType().Assembly);
+				ti.SetIcon(contents);
+				item = ti;
 			}
 			if (item != null)
-			{
-				item.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
-				// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
-				var contents = Helper.FindResource<string>(ClientHelper.DefaultIconEmbeddedResource, GetType().Assembly);
-				item.SetIcon(contents);
 				InsertItem(item);
-			}
 		}
 
 		public void InsertItem(IFileListItem item)

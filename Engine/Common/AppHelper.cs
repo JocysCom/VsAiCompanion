@@ -340,6 +340,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static bool? GetPermission(model model, string name)
 		{
 			JsonElement permissions;
+			if (model.additional_properties == null)
+				return null;
 			if (!model.additional_properties.TryGetValue("permission", out permissions) || permissions.ValueKind != JsonValueKind.Array)
 				return null;
 			foreach (JsonElement element in permissions.EnumerateArray())
@@ -384,6 +386,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static TemplateItem GetNewTemplateItem()
 		{
 			var item = new TemplateItem();
+			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
+				Global.AppSettings.AiServices.FirstOrDefault(); ;
+			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
+			item.AiModel = defaultAiService.DefaultAiModel;
+			return item;
+		}
+
+		public static FineTuningItem GetNewFineTuningItem()
+		{
+			var item = new FineTuningItem();
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
 				Global.AppSettings.AiServices.FirstOrDefault(); ;
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
