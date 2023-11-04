@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
@@ -41,7 +42,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (FolderType != FineTuningFolderType.TuningData)
 				return;
 			ControlsHelper.EnsureTabItemSelected(this);
-			// Remove selection.
+			// Remove selection. Selection will be restored from bound item data.
 			MainDataGrid.SelectedIndex = -1;
 			Refresh();
 		}
@@ -53,7 +54,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (FolderType != FineTuningFolderType.SourceData)
 				return;
 			ControlsHelper.EnsureTabItemSelected(this);
-			// Remove selection.
+			// Remove selection. Selection will be restored from bound item data.
 			MainDataGrid.SelectedIndex = -1;
 			Refresh();
 		}
@@ -366,6 +367,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Use begin invoke or grid update will deadlock on same thread.
 			_ = ControlsHelper.BeginInvoke(async () =>
 			{
+				var selection = new List<string>();
 				foreach (var item in items)
 				{
 					var sourcePath = Global.GetPath(Data, FolderType.ToString(), item.filename);
@@ -374,10 +376,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					var purpose = ext == ".jsonl"
 						? Client.FineTuningPurpose
 						: "";
-					await client.UploadFileAsync(sourcePath, purpose);
+					var file = await client.UploadFileAsync(sourcePath, purpose);
 					if (!string.IsNullOrEmpty(client.LastError))
 						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					if (file != null)
+						selection.Add(file.id);
 				}
+				Data.FineTuningRemoteDataSelection = selection;
 				Global.RaiseOnFilesUploaded();
 			});
 		}

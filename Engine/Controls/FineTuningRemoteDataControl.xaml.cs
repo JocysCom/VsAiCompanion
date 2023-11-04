@@ -33,6 +33,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Global_OnFilesUpladed(object sender, EventArgs e)
 		{
+			if (Data == null)
+				return;
+			ControlsHelper.EnsureTabItemSelected(this);
+			// Remove selection. Selection will be restored from bound item data.
+			MainDataGrid.SelectedIndex = -1;
 			TryRefresh();
 		}
 
