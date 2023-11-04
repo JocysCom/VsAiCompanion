@@ -1081,47 +1081,56 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_cloud_download" p1:Shared="False" Tag="SHA256_4239813037120134478EF65313424AF4F15B3F8C3AD9B90EEF8ACD8BF44B8EF5" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Canvas Width="512" Height="512">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_cloud" x:Shared="False" Tag="SHA256_1AFAFDB7A1F98213CBC4274E270BD3BD341EBF0831C0C432FFDD716CD9F24410">
+    <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
       </Canvas.RenderTransform>
-      <Canvas.Resources>
-        <RadialGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" Center="112,82" GradientOrigin="112,82" RadiusX="520.67147" RadiusY="520.67147">
-          <RadialGradientBrush.GradientStops>
-            <GradientStopCollection>
-              <GradientStop Color="#FFFFFF" Offset="0" />
-              <GradientStop Color="#C5E7FB" Offset="0.67843" />
-              <GradientStop Color="#89CFF7" Offset="1" />
-            </GradientStopCollection>
-          </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-        <LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-2" MappingMode="Absolute" StartPoint="160,288" EndPoint="352,468">
-          <LinearGradientBrush.GradientStops>
-            <GradientStopCollection>
-              <GradientStop Color="#76D926" Offset="0" />
-              <GradientStop Color="#5BA71E" Offset="1" />
-            </GradientStopCollection>
-          </LinearGradientBrush.GradientStops>
-        </LinearGradientBrush>
-      </Canvas.Resources>
+      <Canvas.Resources />
       <!--Unknown tag: metadata-->
       <!--Unknown tag: sodipodi:namedview-->
       <Canvas>
-        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{StaticResource color-1}" StrokeThickness="1" StrokeMiterLimit="10" StrokeDashArray="" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF5D9CEC">
           <Path.Data>
-            <PathGeometry Figures="M0 288c0 -62 33 -99.5 80 -118.5c0 -0.5 0 -1 0 -1.5c0 -75 61 -136 136 -136c53.5 0 99.5 31 122 75.5c13.5 -7 29.5 -11.5 46 -11.5c53 0 96 43 96 96c0 17 -4.5 33 -12.5 47c27 17 44.5 37.5 44.5 81c0 48 -47.5 96 -96 96l-288 0c-66.5 0 -128 -61.5 -128 -128z" FillRule="EvenOdd" />
+            <PathGeometry Figures="M6.1365 19h1.3498h6.072h1.1765h3.4505h0.698c2.5746 -0.2822 4.07 -2.518 4.07 -5.3087c0 -2.9874 -2.3643 -5.404 -5.2808 -5.404c-0.7705 0 -1.5017 0.1704 -2.1618 0.4743c-0.9199 -2.2236 -3.0032 -3.7763 -5.4275 -3.7763c-2.9978 0 -5.4746 2.3734 -5.8737 5.455c-1.8313 0.5695 -3.1587 2.2503 -3.1587 4.2356C1.0508 18.0479 3.7807 18.8344 6.1365 19z" FillRule="EvenOdd" />
           </Path.Data>
         </Path>
-        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{StaticResource color-2}" StrokeThickness="1" StrokeMiterLimit="10" StrokeDashArray="" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF4B89DC">
           <Path.Data>
-            <PathGeometry Figures="M208 288l96 0l0 128l48 0l-96 96l-96 -96l48 0z" FillRule="EvenOdd" />
+            <PathGeometry Figures="M17.6726 8.2873c-0.7705 0 -1.5017 0.1704 -2.1618 0.4743c-0.2084 -0.5039 -0.4772 -0.9728 -0.7955 -1.3975L8.9029 19h4.6555h1.1765h3.4505h0.698c2.5746 -0.2822 4.07 -2.518 4.07 -5.3087C22.9534 10.7039 20.5891 8.2873 17.6726 8.2873z" FillRule="EvenOdd" />
           </Path.Data>
         </Path>
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_cloud_folder" x:Shared="False" Tag="SHA256_29FB1CED3924D327E7A93DA002F51D6D88FEA72115048CF616AA0AC6E04403F7">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_cloud_download" x:Shared="False" Tag="SHA256_EEA28A2AF3BC8E7F1B0964E617FE1FBAF6199F90DEC0A148F0603CD2440A498C">
+    <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
+      <Canvas.RenderTransform>
+        <TranslateTransform X="0" Y="0" />
+      </Canvas.RenderTransform>
+      <Canvas.Resources />
+      <!--Unknown tag: metadata-->
+      <!--Unknown tag: sodipodi:namedview-->
+      <Canvas>
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF5D9CEC">
+          <Path.Data>
+            <PathGeometry Figures="M17.6726 4.2873c-0.7705 0 -1.5017 0.1704 -2.1618 0.4743c-0.9199 -2.2236 -3.0032 -3.7763 -5.4275 -3.7763c-2.9978 0 -5.4746 2.3734 -5.8737 5.4549c-1.8313 0.5695 -3.1587 2.2503 -3.1587 4.2356c0 3.3721 2.7298 4.1586 5.0857 4.3242h1.3498H10v-3.601c0 -0.7583 0.6587 -1.399 1.4385 -1.399h1.1988c0.7642 0 1.3627 0.6145 1.3627 1.399V15h0.7349h3.4505h0.698c2.5746 -0.2822 4.07 -2.518 4.07 -5.3088C22.9534 6.7039 20.5891 4.2873 17.6726 4.2873z" FillRule="EvenOdd" />
+          </Path.Data>
+        </Path>
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF4B89DC">
+          <Path.Data>
+            <PathGeometry Figures="M10 15H8.9029L10 12.8036V15zM17.6726 4.2873c-0.7705 0 -1.5017 0.1704 -2.1618 0.4743c-0.2084 -0.5039 -0.4772 -0.9728 -0.7955 -1.3975L11.9 10h0.7373c0.7642 0 1.3627 0.6145 1.3627 1.399V15h0.7349h3.4505h0.698c2.5746 -0.2822 4.07 -2.518 4.07 -5.3088C22.9534 6.7039 20.5891 4.2873 17.6726 4.2873z" FillRule="EvenOdd" />
+          </Path.Data>
+        </Path>
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF36BC9B">
+          <Path.Data>
+            <PathGeometry Figures="M12.3227 22.8828l5.1925 -5.1925c0.1554 -0.1554 0.1554 -0.4097 0 -0.5651l-0.8477 -0.8477c-0.1554 -0.1554 -0.4282 -0.1554 -0.5836 0L13 19.3429V11.399c0 -0.2198 -0.1429 -0.399 -0.3627 -0.399h-1.1988c-0.2198 0 -0.4385 0.1792 -0.4385 0.399v7.9395l-3.0416 -3.061c-0.1554 -0.1554 -0.4 -0.1554 -0.5554 0l-0.8428 0.8477c-0.1554 0.1554 -0.153 0.4097 0.0024 0.5651l4.346 4.3448l0.8483 0.8477C11.9123 23.0382 12.1672 23.0382 12.3227 22.8828z" FillRule="NonZero" />
+          </Path.Data>
+        </Path>
+      </Canvas>
+    </Canvas>
+  </Viewbox>
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_cloud_folder" x:Shared="False" Tag="SHA256_A324A20F27010360CDECA563A0A3252DE17CBDF5683645E051D729F3650BF99B">
     <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -1202,41 +1211,28 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_cloud_upload" p1:Shared="False" Tag="SHA256_93C2632CEA95E23821D96319CFECFF60EDCA9C59D66F8EE089226E7E66E246D1" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Canvas Width="512" Height="512">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_cloud_upload" x:Shared="False" Tag="SHA256_7E2F01F822BB3EEF459618C7112CD886CF9ED5E5C43CAE88FCCD49B594C67C7C">
+    <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
       </Canvas.RenderTransform>
-      <Canvas.Resources>
-        <RadialGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" Center="112,82" GradientOrigin="112,82" RadiusX="520.67147" RadiusY="520.67147">
-          <RadialGradientBrush.GradientStops>
-            <GradientStopCollection>
-              <GradientStop Color="#FFFFFF" Offset="0" />
-              <GradientStop Color="#C5E7FB" Offset="0.67843" />
-              <GradientStop Color="#89CFF7" Offset="1" />
-            </GradientStopCollection>
-          </RadialGradientBrush.GradientStops>
-        </RadialGradientBrush>
-        <LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-2" MappingMode="Absolute" StartPoint="160,288" EndPoint="305,464">
-          <LinearGradientBrush.GradientStops>
-            <GradientStopCollection>
-              <GradientStop Color="#EF5C51" Offset="0" />
-              <GradientStop Color="#C73429" Offset="1" />
-            </GradientStopCollection>
-          </LinearGradientBrush.GradientStops>
-        </LinearGradientBrush>
-      </Canvas.Resources>
+      <Canvas.Resources />
       <!--Unknown tag: metadata-->
       <!--Unknown tag: sodipodi:namedview-->
       <Canvas>
-        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{StaticResource color-1}" StrokeThickness="1" StrokeMiterLimit="10" StrokeDashArray="" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF5D9CEC">
           <Path.Data>
-            <PathGeometry Figures="M0 288c0 -62 33 -99.5 80 -118.5c0 -0.5 0 -1 0 -1.5c0 -75 61 -136 136 -136c53.5 0 99.5 31 122 75.5c13.5 -7 29.5 -11.5 46 -11.5c53 0 96 43 96 96c0 17 -4.5 33 -12.5 47c27 17 44.5 37.5 44.5 81c0 48 -47.5 96 -96 96l-288 0c-66.5 0 -128 -61.5 -128 -128z" FillRule="EvenOdd" />
+            <PathGeometry Figures="M17.6726 4.2873c-0.7705 0 -1.5017 0.1704 -2.1618 0.4743c-0.9199 -2.2236 -3.0032 -3.7763 -5.4275 -3.7763c-2.9978 0 -5.4746 2.3734 -5.8737 5.4549c-1.8313 0.5695 -3.1587 2.2503 -3.1587 4.2356c0 3.3721 2.7298 4.1586 5.0857 4.3242h0.2197l4.5907 -4.5906c0.2639 -0.264 0.6156 -0.4094 0.9901 -0.4094c0.3744 0 0.7261 0.1454 0.9901 0.4093L17.5202 15h0.6652h0.698c2.5746 -0.2822 4.07 -2.518 4.07 -5.3088C22.9534 6.7039 20.5891 4.2873 17.6726 4.2873z" FillRule="EvenOdd" />
           </Path.Data>
         </Path>
-        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="{StaticResource color-2}" StrokeThickness="1" StrokeMiterLimit="10" StrokeDashArray="" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF4B89DC">
           <Path.Data>
-            <PathGeometry Figures="M208 512l96 0l0 -128l48 0l-96 -96l-96 96l48 0z" FillRule="EvenOdd" />
+            <PathGeometry Figures="M17.6726 4.2873c-0.7705 0 -1.5017 0.1704 -2.1618 0.4743c-0.2084 -0.5039 -0.4772 -0.9728 -0.7955 -1.3975l-3.3839 6.7743c0.1866 -0.0896 0.392 -0.1383 0.6055 -0.1383c0.3744 0 0.7261 0.1454 0.9901 0.4093L17.5202 15h0.6652h0.698c2.5746 -0.2822 4.07 -2.518 4.07 -5.3088C22.9534 6.7039 20.5891 4.2873 17.6726 4.2873z" FillRule="EvenOdd" />
+          </Path.Data>
+        </Path>
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FFDB4453">
+          <Path.Data>
+            <PathGeometry Figures="M11.6539 11.1166L6.4614 16.309c-0.1554 0.1554 -0.1554 0.4097 0 0.5651l0.8477 0.8477c0.1554 0.1554 0.4399 0.1554 0.5953 0L11 14.6564v7.9439c0 0.2198 0.1195 0.3997 0.3393 0.3997h1.1988c0.2198 0 0.4619 -0.1799 0.4619 -0.3997v-7.9395l3.0299 3.061c0.1554 0.1554 0.3941 0.1554 0.5495 0l0.8399 -0.8477c0.1554 -0.1554 0.1515 -0.4097 -0.0039 -0.5651l-4.3467 -4.3448l-0.8487 -0.8477C12.0646 10.9611 11.8093 10.9611 11.6539 11.1166z" FillRule="NonZero" />
           </Path.Data>
         </Path>
       </Canvas>
@@ -4305,7 +4301,7 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_folder3_document" x:Shared="False" Tag="SHA256_85F21E0EECA36E25530FDB1D90853409F8BCCFD8E574779689A9FCBC36CFF2C4">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_folder3_document" x:Shared="False" Tag="SHA256_DA2B265DDD3326BED54EABD23EF24DDB118D037609C9FB1E34C954098193EAAE">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -4467,7 +4463,7 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_folder_network" x:Shared="False" Tag="SHA256_DE182747F1E751846D3DD49D646F35DED4699D7209B6DCBED36D663AAB97E28A">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_folder_network" x:Shared="False" Tag="SHA256_2DF1BA6A87C40EBA97609F09AE90BF9ACE757566433B937564CCCA8BDCB0A267">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -4539,7 +4535,7 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_folder_open_doc" x:Shared="False" Tag="SHA256_830112E328B51142A63362759FE93382B7745B513AFE0A482DAC8C7D3F1B0C39">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_folder_open_doc" x:Shared="False" Tag="SHA256_594EA13FBBE05A187327CB78A030821B4B6098F4EE4937083169F497DDD1FBD1">
     <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -4567,7 +4563,7 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_folder_open_doc_settings" x:Shared="False" Tag="SHA256_EC6A7039FD627BC33AAEE0A6BEDA1DCEFC7FDD4532581DC387CE9006FB623F47">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_folder_open_doc_settings" x:Shared="False" Tag="SHA256_DA262C5AB84B21EF3D4BF0E24AE8619CD48AB284A2930DC323F596A829AB2401">
     <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -6226,7 +6222,7 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_task" x:Shared="False" Tag="SHA256_6C9DEC0BBBEDC9D28D11690D277C20CEB9DB3097D72D40219B4287FF707B4055">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_task" x:Shared="False" Tag="SHA256_C94CF671A7E95FAAA00956340A11D66727291C5954F1FB6B967CA570F8E1B740">
     <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -6458,7 +6454,7 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_todo_list" x:Shared="False" Tag="SHA256_45F7797CF6BE2F5D51AFB957E403141467A4792005849C208A35E214BF238623">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_todo_list" p1:Shared="False" Tag="SHA256_45F7797CF6BE2F5D51AFB957E403141467A4792005849C208A35E214BF238623" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
     <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -6501,7 +6497,7 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_todo_list_time" x:Shared="False" Tag="SHA256_5627A0D9369AC4B41A40FC4209AEBA19768AC663FD62A2FD45E170250046165F">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_todo_list_time" p1:Shared="False" Tag="SHA256_5627A0D9369AC4B41A40FC4209AEBA19768AC663FD62A2FD45E170250046165F" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
     <Canvas Width="24" Height="24" Canvas.Left="0" Canvas.Top="0">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
