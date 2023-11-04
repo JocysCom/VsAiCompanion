@@ -17,7 +17,6 @@ using wp = DocumentFormat.OpenXml.Wordprocessing;
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
 
-
 	internal class FileConvertHelper
 	{
 
@@ -95,6 +94,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					break;
 				case ".xlsx":
 					items = ReadFromXlsx<T>(sourcePath);
+					break;
+				case ".docx":
+					items = ReadFromDocx<T>(sourcePath);
 					break;
 				default:
 					break;
@@ -290,6 +292,59 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				wordDocument.Dispose();
 			}
 		}
+
+		public static List<T> ReadFromDocx<T>(string path) where T : class
+		{
+			var list = new List<T>();
+			using (var doc = WordprocessingDocument.Open(path, false))
+			{
+				var mainPart = doc.MainDocumentPart;
+				chat_completion_request cr = null;
+				text_completion_item tr = null;
+				foreach (wp.Paragraph paragraph in mainPart.Document.Body)
+				{
+					var content = paragraph.InnerText.Trim();
+					if (string.IsNullOrEmpty(content))
+						continue;
+					var role = paragraph.Descendants<wp.Bold>().Any()
+						? message_role.user
+						: message_role.assistant;
+					if (typeof(T) == typeof(chat_completion_request))
+					{
+						if (role == message_role.user && cr == null)
+						{
+							cr = new chat_completion_request();
+							cr.messages = new List<chat_completion_message>();
+							cr.messages.Add(new chat_completion_message(role, content));
+						}
+						else if (role == message_role.assistant && cr != null)
+						{
+							cr.messages.Add(new chat_completion_message(role, content));
+							list.Add(cr as T);
+							// Reset.
+							cr = null;
+						}
+					}
+					else if (typeof(T) == typeof(text_completion_item))
+					{
+						if (role == message_role.user && tr == null)
+						{
+							tr = new text_completion_item();
+							tr.prompt = content;
+						}
+						else if (role == message_role.assistant && tr != null)
+						{
+							tr.completion = content;
+							list.Add(tr as T);
+							// Reset.
+							tr = null;
+						}
+					}
+				}
+			}
+			return list;
+		}
+
 
 		#endregion
 
