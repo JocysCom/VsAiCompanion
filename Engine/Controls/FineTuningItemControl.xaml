@@ -176,7 +176,7 @@
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_cloud_folder}" />
+						<ContentControl Content="{StaticResource Icon_cloud}" />
 						<Label Content="3. Remote Files" />
 					</StackPanel>
 				</TabItem.Header>
