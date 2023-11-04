@@ -40,15 +40,5 @@
 			ResizeDirection="Columns"
 			Style="{StaticResource GridSplitterVertical}"
 			Visibility="{Binding ListPanelVisibility, ElementName=This}" />
-		<local:TemplateItemControl
-			x:Name="TemplateItemPanel"
-			Grid.Column="2"
-			x:FieldModifier="public"
-			Visibility="Collapsed" />
-		<local:FineTuningItemControl
-			x:Name="FineTuningItemPanel"
-			Grid.Column="2"
-			x:FieldModifier="public"
-			Visibility="Collapsed" />
 	</Grid>
 </UserControl>

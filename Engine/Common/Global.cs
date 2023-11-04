@@ -148,20 +148,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Events;
+
 		public static event EventHandler OnSaveSettings;
+		public static event EventHandler OnFilesUpdaded;
+		public static event EventHandler OnFineTuningJobCreated;
+		public static event EventHandler OnSourceDataFilesUpdated;
+		public static event EventHandler OnTuningDataFilesUpdated;
 
 		public static void RaiseOnSaveSettings()
 			=> OnSaveSettings?.Invoke(null, EventArgs.Empty);
 
-		public static event EventHandler OnFilesUpladed;
-
-		public static void RaiseOnFilesUpladed()
-			=> OnFilesUpladed?.Invoke(null, EventArgs.Empty);
-
-		public static event EventHandler OnFineTuningJobCreated;
+		public static void RaiseOnFilesUploaded()
+			=> OnFilesUpdaded?.Invoke(null, EventArgs.Empty);
 
 		public static void RaiseOnFineTuningJobCreated()
 			=> OnFineTuningJobCreated?.Invoke(null, EventArgs.Empty);
+
+		public static void RaiseOnSourceDataFilesUpdated()
+			=> OnSourceDataFilesUpdated?.Invoke(null, EventArgs.Empty);
+
+		public static void RaiseOnTuningDataFilesUpdated()
+			=> OnTuningDataFilesUpdated?.Invoke(null, EventArgs.Empty);
+
+		#endregion
 
 		public static void SaveSettings()
 		{

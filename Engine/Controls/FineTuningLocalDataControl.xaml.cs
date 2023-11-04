@@ -29,7 +29,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MainDataGrid.ItemsSource = CurrentItems;
+			Global.OnSourceDataFilesUpdated += Global_OnSourceDataFilesUpdated;
+			Global.OnTuningDataFilesUpdated += Global_OnTuningDataFilesUpdated;
 			UpdateButtons();
+		}
+
+		private void Global_OnTuningDataFilesUpdated(object sender, EventArgs e)
+		{
+			if (Data == null)
+				return;
+			if (FolderType != FineTuningFolderType.TuningData)
+				return;
+			ControlsHelper.EnsureTabItemSelected(this);
+			// Remove selection.
+			MainDataGrid.SelectedIndex = -1;
+			Refresh();
+		}
+
+		private void Global_OnSourceDataFilesUpdated(object sender, EventArgs e)
+		{
+			if (Data == null)
+				return;
+			if (FolderType != FineTuningFolderType.SourceData)
+				return;
+			ControlsHelper.EnsureTabItemSelected(this);
+			// Remove selection.
+			MainDataGrid.SelectedIndex = -1;
+			Refresh();
 		}
 
 		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
@@ -219,9 +245,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			box.SelectedValue = ConvertTargetType.None;
 			// Convert.
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToArray();
+			if (items.Length == 0)
+				return;
+			var item = items.First();
 			var fineTuneItemPath = Global.GetPath(Data);
-			FileConvertHelper.ConvertFile(fineTuneItemPath, FolderType.ToString(), items, convertType, Data.AiModel, Data.SystemMessage);
-			Refresh();
+			var targetFullName = FileConvertHelper.ConvertFile(fineTuneItemPath, FolderType.ToString(), item, convertType, Data.AiModel, Data.SystemMessage);
+			if (string.IsNullOrEmpty(targetFullName))
+				return;
+			var targetName = Path.GetFileName(targetFullName);
+			var targetFolder = convertType == ConvertTargetType.JSONL
+			? FineTuningFolderType.TuningData
+			: FineTuningFolderType.SourceData;
+			if (targetFolder == FineTuningFolderType.SourceData)
+			{
+				Data.FineTuningSourceDataSelection = new List<string>() { targetName };
+				Global.RaiseOnSourceDataFilesUpdated();
+			}
+			else if (targetFolder == FineTuningFolderType.TuningData)
+			{
+				Data.FineTuningTuningDataSelection = new List<string>() { targetName };
+				Global.RaiseOnTuningDataFilesUpdated();
+			}
 		}
 
 		public void Refresh()
@@ -334,7 +378,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (!string.IsNullOrEmpty(client.LastError))
 						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 				}
-				Global.RaiseOnFilesUpladed();
+				Global.RaiseOnFilesUploaded();
 			});
 		}
 

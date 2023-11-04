@@ -44,6 +44,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region ■ Properties
 
+		public TemplateItemControl TemplateItemPanel;
+		FineTuningItemControl FineTuningItemPanel;
+
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
 		{
@@ -51,17 +54,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set
 			{
 				_DataType = value;
-				TemplateItemPanel.Visibility = Visibility.Collapsed;
-				FineTuningItemPanel.Visibility = Visibility.Collapsed;
 				if (value == ItemType.Task || value == ItemType.Template)
 				{
-					TemplateItemPanel.DataType = value;
-					TemplateItemPanel.Visibility = Visibility.Visible;
+					if (TemplateItemPanel == null)
+					{
+						var control = new TemplateItemControl();
+						Grid.SetColumn(control, 2);
+						MainGrid.Children.Add(control);
+						control.DataType = value;
+						control.Visibility = Visibility.Visible;
+						TemplateItemPanel = control;
+					}
 				}
 				else if (value == ItemType.FineTuning)
 				{
-					FineTuningItemPanel.DataType = value;
-					FineTuningItemPanel.Visibility = Visibility.Visible;
+					if (FineTuningItemPanel == null)
+					{
+						var control = new FineTuningItemControl();
+						Grid.SetColumn(control, 2);
+						MainGrid.Children.Add(control);
+						control.DataType = value;
+						control.Visibility = Visibility.Visible;
+						FineTuningItemPanel = control;
+					}
 				}
 				else
 					return;

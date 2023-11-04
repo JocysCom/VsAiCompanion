@@ -27,7 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MainDataGrid.ItemsSource = CurrentItems;
-			Global.OnFilesUpladed += Global_OnFilesUpladed;
+			Global.OnFilesUpdaded += Global_OnFilesUpladed;
 			UpdateButtons();
 		}
 

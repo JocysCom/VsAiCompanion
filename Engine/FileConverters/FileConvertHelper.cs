@@ -44,42 +44,39 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 		public static Dictionary<string, ConvertTargetType[]> ConvertToTypesAvailable =
 			targetTypeToExtension.ToDictionary(k => k.Value, v => AllExcept(v.Key));
 
-		public static void ConvertFile(
+		public static string ConvertFile(
 			string fineTuneItemPath, string sourceDataName,
-			file[] items, ConvertTargetType targetType, string aiModel,
+			file item, ConvertTargetType targetType, string aiModel,
 			string systemMessage = null
 		)
 		{
-			// Process files.
-			foreach (var item in items)
+			var sourceExt = Path.GetExtension(item.filename).ToLower();
+			var targetExt = targetTypeToExtension[targetType];
+			// If nothing to convert then continue.
+			if (sourceExt == targetExt)
+				return null;
+			var sourceBase = Path.GetFileNameWithoutExtension(item.filename);
+			var sourceFullName = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
+			var targetFolder = targetType == ConvertTargetType.JSONL
+				? FineTuningFolderType.TuningData
+				: FineTuningFolderType.SourceData;
+			var targetFullName = Path.Combine(fineTuneItemPath, targetFolder.ToString(), sourceBase + targetExt);
+			if (Client.IsTextCompletionMode(aiModel))
 			{
-				var sourceExt = Path.GetExtension(item.filename).ToLower();
-				var targetExt = targetTypeToExtension[targetType];
-				// If nothing to convert then continue.
-				if (sourceExt == targetExt)
-					continue;
-				var sourceBase = Path.GetFileNameWithoutExtension(item.filename);
-				var sourceFullName = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
-				var targetFolder = targetType == ConvertTargetType.JSONL
-					? FineTuningFolderType.TuningData
-					: FineTuningFolderType.SourceData;
-				var targetFullName = Path.Combine(fineTuneItemPath, targetFolder.ToString(), sourceBase + targetExt);
-				if (Client.IsTextCompletionMode(aiModel))
-				{
-					Convert<text_completion_item>(sourceFullName, targetFullName, null);
-				}
-				else
-				{
-					Convert<chat_completion_request>(sourceFullName, targetFullName, (r) =>
-					{
-						if (string.IsNullOrEmpty(systemMessage))
-							return;
-						if (r.messages.Any(x => x.role == message_role.system))
-							return;
-						r.messages.Insert(0, new chat_completion_message(message_role.system, systemMessage));
-					});
-				}
+				Convert<text_completion_item>(sourceFullName, targetFullName, null);
 			}
+			else
+			{
+				Convert<chat_completion_request>(sourceFullName, targetFullName, (r) =>
+				{
+					if (string.IsNullOrEmpty(systemMessage))
+						return;
+					if (r.messages.Any(x => x.role == message_role.system))
+						return;
+					r.messages.Insert(0, new chat_completion_message(message_role.system, systemMessage));
+				});
+			}
+			return targetFullName;
 		}
 
 		public static void Convert<T>(string sourcePath, string targetPath, Action<T> process) where T : class
