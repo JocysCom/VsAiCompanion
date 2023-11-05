@@ -59,9 +59,9 @@ namespace JocysCom.VS.AiCompanion
 		private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
 		{
 			var s = $"CurrentDomain_FirstChanceException\r\n{e.Exception}";
-			MessageBox.Show(s);
-			System.Diagnostics.Debug.WriteLine(s);
-			System.Console.WriteLine(s);
+			//MessageBox.Show(s);
+			//System.Diagnostics.Debug.WriteLine(s);
+			//System.Console.WriteLine(s);
 
 		}
 
