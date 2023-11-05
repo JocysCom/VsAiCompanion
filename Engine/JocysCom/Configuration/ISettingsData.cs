@@ -15,7 +15,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		IBindingList Items { get; }
 		event EventHandler FilesChanged;
 		bool IsSavePending { get; set; }
-		void DeleteItem(ISettingsItemFile itemFile);
+		string DeleteItem(ISettingsItemFile itemFile);
 		string RenameItem(ISettingsItemFile itemFile, string newName);
 	}
 }

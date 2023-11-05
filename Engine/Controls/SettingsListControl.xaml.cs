@@ -277,7 +277,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.BeginInvoke(() =>
 			{
 				foreach (var item in items)
-					SettingsData.DeleteItem(item);
+				{
+					var error = SettingsData.DeleteItem(item);
+					if (!string.IsNullOrEmpty(error))
+						Global.ShowError(error);
+				}
 			});
 		}
 
@@ -346,9 +350,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			catch (Exception ex)
 			{
-				var form = new MessageBoxWindow();
-				ControlsHelper.CheckTopMost(form);
-				form.ShowDialog(ex.Message);
+				Global.ShowError(ex.Message);
 				return;
 			}
 		}

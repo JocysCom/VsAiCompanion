@@ -494,16 +494,36 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Returns new name.
 		/// </summary>
-		public void DeleteItem(ISettingsItemFile itemFile)
+		public string DeleteItem(ISettingsItemFile itemFile)
 		{
 			lock (saveReadFileLock)
 			{
 				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
 				var oldPath = GetItemFileFullName(oldName);
 				var fi = new FileInfo(oldPath);
-				if (fi.Exists)
-					fi.Delete();
+				// Rename folder if folder with the same name exists.
+				var folderPath = Path.Combine(fi.Directory.FullName, oldName);
+
+				try
+				{
+					if (Directory.Exists(folderPath))
+						Directory.Delete(folderPath, true);
+				}
+				catch (Exception ex)
+				{
+					return ex.Message;
+				}
+				try
+				{
+					if (fi.Exists)
+						fi.Delete();
+				}
+				catch (Exception ex)
+				{
+					return ex.Message;
+				}
 				Items.Remove((T)itemFile);
+				return null;
 			}
 		}
 

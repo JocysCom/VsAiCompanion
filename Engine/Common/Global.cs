@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
@@ -79,6 +80,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.FineTuning: return FineTunings;
 				default: return new SettingsData<TemplateItem>();
 			}
+		}
+
+		public static void ShowError(string message)
+		{
+			var form = new MessageBoxWindow();
+			ControlsHelper.CheckTopMost(form);
+			form.ShowDialog(message);
 		}
 
 		public static void InsertItem(IFileListItem item, ItemType type)
@@ -273,7 +281,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var items = Templates.Items.ToArray();
 			foreach (var item in items)
-				Templates.DeleteItem(item);
+			{
+				var error = Templates.DeleteItem(item);
+				if (!string.IsNullOrEmpty(error))
+					ShowError(error);
+			}
 			Templates.Load();
 			Templates.Save();
 		}
