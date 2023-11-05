@@ -446,10 +446,18 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 				SheetData sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
 
+				// Declaration of column attributes
+				Columns columns = new Columns();
+				columns.Append(new Column() { Min = 1, Max = 2, Width = 60, CustomWidth = true });
+				worksheetPart.Worksheet.InsertBefore(columns, sheetData);
+
+				// Declaration of style for wrapping
+				var wrapStyleIndex = AddCellStyle(workbookPart, true);
+
 				// Column headers
 				var headerRow = new Row();
-				var headerCell1 = new Cell() { DataType = CellValues.String, CellValue = new CellValue("user") };
-				var headerCell2 = new Cell() { DataType = CellValues.String, CellValue = new CellValue("assistant") };
+				var headerCell1 = new Cell() { DataType = CellValues.String, CellValue = new CellValue("user"), StyleIndex = wrapStyleIndex };
+				var headerCell2 = new Cell() { DataType = CellValues.String, CellValue = new CellValue("assistant"), StyleIndex = wrapStyleIndex };
 				headerRow.Append(headerCell1, headerCell2);
 				sheetData.Append(headerRow);
 
@@ -460,7 +468,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					{
 						foreach (var message in cr.messages)
 						{
-							var cell = new Cell();
+							var cell = new Cell() { StyleIndex = wrapStyleIndex };
 							if (message.role == message_role.user)
 							{
 								cell.DataType = CellValues.String;
@@ -477,7 +485,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					}
 					if (request is text_completion_item tr)
 					{
-						var cell = new Cell();
+						var cell = new Cell() { StyleIndex = wrapStyleIndex };
 						cell.DataType = CellValues.String;
 						cell.CellValue = new CellValue(tr.prompt);
 						row.Append(cell);
@@ -489,6 +497,57 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				}
 				workbookPart.Workbook.Save();
 			}
+		}
+
+
+		public static uint AddCellStyle(WorkbookPart workbookPart, bool wrapText)
+		{
+			var workbookStylesPart = workbookPart.WorkbookStylesPart;
+			if (workbookStylesPart == null)
+			{
+				workbookStylesPart = workbookPart.AddNewPart<WorkbookStylesPart>();
+			}
+			var stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+			if (stylesheet == null)
+			{
+				stylesheet = new Stylesheet();
+				workbookStylesPart.Stylesheet = stylesheet;
+			}
+			if (stylesheet.Fonts == null)
+			{
+				stylesheet.Fonts = new Fonts(new DocumentFormat.OpenXml.Spreadsheet.Font());
+			}
+			if (stylesheet.Fills == null)
+				stylesheet.Fills = new Fills(
+					new Fill(new PatternFill { PatternType = PatternValues.None }),
+					new Fill(new PatternFill { PatternType = PatternValues.Gray125 })
+				);
+			if (stylesheet.Borders == null)
+				stylesheet.Borders = new Borders(new Border());
+			if (stylesheet.CellStyleFormats == null)
+				stylesheet.CellStyleFormats = new CellStyleFormats(new CellFormat());
+			if (stylesheet.CellFormats == null)
+				stylesheet.CellFormats = new CellFormats();
+			if (stylesheet.CellStyles == null)
+				stylesheet.CellStyles = new CellStyles();
+			if (stylesheet.DifferentialFormats == null)
+				stylesheet.DifferentialFormats = new DifferentialFormats(new CellFormat());
+			if (stylesheet.TableStyles == null)
+				stylesheet.TableStyles = new TableStyles();
+			// Create a new cell style and add it to the stylesheet
+			var format = new CellFormat();
+			format.Alignment = new Alignment();
+			format.Alignment.WrapText = wrapText;
+			stylesheet.CellFormats.Append(format);
+			uint formatId = (uint)stylesheet.CellFormats.Count() - 1;
+			var cellStyle = new CellStyle()
+			{
+				Name = "Wrapped",
+				FormatId = formatId,
+				BuiltinId = 0,
+			};
+			stylesheet.CellStyles.Append(cellStyle);
+			return formatId;
 		}
 
 		private static string GetExcelColumnName(Cell cell, int columnIndex)
