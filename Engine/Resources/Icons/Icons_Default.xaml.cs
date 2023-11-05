@@ -76,6 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_list_style_numbered = nameof(Icon_list_style_numbered);
 		public const string Icon_magnifying_glass = nameof(Icon_magnifying_glass);
 		public const string Icon_map_location2 = nameof(Icon_map_location2);
+		public const string Icon_media_stop = nameof(Icon_media_stop);
 		public const string Icon_navigate_left2 = nameof(Icon_navigate_left2);
 		public const string Icon_navigate_right2 = nameof(Icon_navigate_right2);
 		public const string Icon_nav_plain = nameof(Icon_nav_plain);
@@ -93,10 +94,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_teacher = nameof(Icon_teacher);
 		public const string Icon_Template = nameof(Icon_Template);
 		public const string Icon_todo_list = nameof(Icon_todo_list);
+		public const string Icon_todo_list_add = nameof(Icon_todo_list_add);
 		public const string Icon_todo_list_time = nameof(Icon_todo_list_time);
 		public const string Icon_translate = nameof(Icon_translate);
 		public const string Icon_user = nameof(Icon_user);
+		public const string Icon_user_add = nameof(Icon_user_add);
 		public const string Icon_user_comment = nameof(Icon_user_comment);
+		public const string Icon_user_group = nameof(Icon_user_group);
 		public const string Icon_user_group_emoticon = nameof(Icon_user_group_emoticon);
 		public const string Icon_Visual_Studio = nameof(Icon_Visual_Studio);
 		public const string Icon_warning = nameof(Icon_warning);
