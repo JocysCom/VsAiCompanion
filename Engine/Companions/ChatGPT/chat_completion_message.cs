@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -12,8 +13,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			this.content = content;
 		}
 
+		[JsonInclude]
+		[JsonIgnore(Condition = JsonIgnoreCondition.Never)]
 		public message_role role { get; set; }
 
+		[JsonInclude]
+		[JsonIgnore(Condition = JsonIgnoreCondition.Never)]
 		public string content { get; set; }
 
 		public string name { get; set; }

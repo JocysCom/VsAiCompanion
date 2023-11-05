@@ -1,15 +1,15 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine;
 using System;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.IO;
 using System.Xml;
-using JocysCom.ClassLibrary.Runtime;
 
 namespace JocysCom.VS.AiCompanion
 {
@@ -22,17 +22,23 @@ namespace JocysCom.VS.AiCompanion
 		{
 			try
 			{
+				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 				allowToRun = GetAllowToRun();
 				if (!allowToRun)
 					return;
+				// Create tray manager first.
+				TrayManager = new TrayManager();
+				TrayManager.OnExitClick += TrayManager_OnExitClick;
+				// Error in this can casue Message box display whith will call OnStartup(StartupEventArgs e)
+				// Which use tray manager.
 				Global.LoadSettings();
 				StartHelper.OnClose += StartHelper_OnClose;
 				StartHelper.OnRestore += StartHelper_OnRestore;
 				SetDPIAware();
 				System.Windows.Forms.Application.EnableVisualStyles();
 				System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-				TrayManager = new TrayManager();
-				TrayManager.OnExitClick += TrayManager_OnExitClick;
 			}
 			catch (Exception ex)
 			{
@@ -40,6 +46,27 @@ namespace JocysCom.VS.AiCompanion
 				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
 				throw;
 			}
+		}
+
+		private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+		{
+			var s = $"TaskScheduler_UnobservedTaskException\r\n{e.Exception}";
+			//MessageBox.Show(s);
+			//System.Diagnostics.Debug.WriteLine(s);
+		}
+
+		private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+		{
+			var s = $"CurrentDomain_FirstChanceException\r\n{e.Exception}";
+			//MessageBox.Show(s);
+			//System.Diagnostics.Debug.WriteLine(s);
+		}
+
+		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			var s = $"CurrentDomain_UnhandledException\r\n{e.ExceptionObject}";
+			//MessageBox.Show(s);
+			//System.Diagnostics.Debug.WriteLine(s);
 		}
 
 		private async void Items_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
@@ -102,7 +129,7 @@ namespace JocysCom.VS.AiCompanion
 			TrayManager.RestoreFromTray();
 			Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksTabItem;
 			Global.MainControl.TasksPanel.ListPanel.SelectByName(item.Name);
-			Global.MainControl.TasksPanel.ItemPanel.ChatPanel.FocusDataTextBox();
+			Global.MainControl.TasksPanel.TemplateItemPanel.ChatPanel.FocusDataTextBox();
 		}
 
 		private void StartHelper_OnRestore(object sender, EventArgs e)

@@ -9,11 +9,16 @@ namespace JocysCom.ClassLibrary.Controls
 {
 	public class SearchHelper<T>
 	{
-		private BindingList<T> SourceList;
+		private IBindingList SourceList;
 		private Func<T, bool> Predicate;
 		private Func<ListChangedEventArgs, bool> FilterPredicate;
 
 		public BindingList<T> FilteredList { get; private set; }
+
+		public SearchHelper()
+		{
+
+		}
 
 		public SearchHelper(
 			Func<T, bool> predicate,
@@ -26,7 +31,7 @@ namespace JocysCom.ClassLibrary.Controls
 			FilterPredicate = filterPredicate;
 		}
 
-		public void SetSource(BindingList<T> source)
+		public void SetSource(IBindingList source)
 		{
 			if (SourceList != null)
 				SourceList.ListChanged -= SourceList_ListChanged;
@@ -64,7 +69,7 @@ namespace JocysCom.ClassLibrary.Controls
 				// If new filter operation was started then return.
 				if (cts.Token.IsCancellationRequested)
 					return;
-				var filteredSourceList = new BindingList<T>(SourceList.Where(item => Predicate(item)).ToList());
+				var filteredSourceList = new BindingList<T>(SourceList.Cast<T>().Where(item => Predicate(item)).ToList());
 				Synchronize(filteredSourceList, FilteredList);
 				Synchronized?.Invoke(this, EventArgs.Empty);
 			}

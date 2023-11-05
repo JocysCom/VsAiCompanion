@@ -104,6 +104,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			try
 			{
+				if (string.IsNullOrEmpty(text))
+					return null;
 				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
 				var user = "AppContext";
 				return JocysCom.ClassLibrary.Security.Encryption.Encrypt(text, user);
@@ -119,6 +121,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			try
 			{
+				if (string.IsNullOrEmpty(base64))
+					return null;
 				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
 				var user = "AppContext";
 				return JocysCom.ClassLibrary.Security.Encryption.Decrypt(base64, user);

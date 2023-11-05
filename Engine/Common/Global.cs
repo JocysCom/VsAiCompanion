@@ -1,11 +1,11 @@
 ﻿using JocysCom.ClassLibrary;
-using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -64,15 +64,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
-		public static SortableBindingList<TemplateItem> GetItems(ItemType type)
-		{
-			switch (type)
+
+		public static SettingsData<FineTuningItem> FineTunings =
+			new SettingsData<FineTuningItem>($"{nameof(ItemType.FineTuning)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
-				case ItemType.Task: return Tasks.Items;
-				case ItemType.Template: return Templates.Items;
-				default: return new SortableBindingList<TemplateItem>();
-			}
-		}
+				UseSeparateFiles = true,
+			};
 
 		public static ISettingsData GetSettings(ItemType type)
 		{
@@ -80,11 +77,67 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				case ItemType.Task: return Tasks;
 				case ItemType.Template: return Templates;
+				case ItemType.FineTuning: return FineTunings;
 				default: return new SettingsData<TemplateItem>();
 			}
 		}
 
-		public static bool IsIncompleteSettings(AiService item)
+		public static void ShowError(string message)
+		{
+			var form = new MessageBoxWindow();
+			ControlsHelper.CheckTopMost(form);
+			form.ShowDialog(message);
+		}
+
+		public static void InsertItem(IFileListItem item, ItemType type)
+		{
+			if (type != ItemType.Task && type != ItemType.Template)
+				return;
+			AppHelper.FixName(item, Tasks.Items);
+			var panel = type == ItemType.Task
+				? MainControl.TasksPanel.ListPanel
+				: MainControl.TemplatesPanel.ListPanel;
+			panel.InsertItem(item);
+		}
+
+		public static string FineTuningPath
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(ItemType.FineTuning));
+
+		public static string GetPath(FineTuningItem item, params string[] args)
+		{
+			var itemPath = new string[] { FineTuningPath, item.Name };
+			var paths = itemPath.Concat(args).ToArray();
+			var path = System.IO.Path.Combine(paths);
+			return path;
+		}
+
+		#region Validation
+
+		public static void SetWithTimeout(MessageBoxImage image, string content = null, params object[] args)
+		{
+			MainControl.InfoPanel.SetWithTimeout(image, content, args);
+		}
+
+		public static bool ValidateServiceAndModel(IAiServiceModel am)
+		{
+			if (am == null)
+				return false;
+			return ValidateServiceAndModel(am.AiService, am.AiModel);
+		}
+
+		public static bool ValidateServiceAndModel(AiService service, string model)
+		{
+			var messages = new List<string>();
+			if (service == null)
+				messages.Add("Please select AI Service.");
+			if (string.IsNullOrEmpty(model))
+				messages.Add("Please select AI Model.");
+			if (messages.Any())
+				SetWithTimeout(MessageBoxImage.Warning, string.Join(" ", messages));
+			return !messages.Any();
+		}
+
+		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)
 		{
 			var itemsRequired = new List<string>();
 			if (string.IsNullOrEmpty(item.BaseUrl))
@@ -99,25 +152,50 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (string.IsNullOrEmpty(item.ApiOrganizationId))
 					itemsRequired.Add("API Organization ID");
 			}
-			if (itemsRequired.Count > 0)
+			if (redirectToSettings && itemsRequired.Count > 0)
 			{
 				MainControl.MainTabControl.SelectedItem = MainControl.OptionsTabItem;
 				var s = string.Join(" and ", itemsRequired);
-				MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, $"Please provide the {s}.");
+				SetWithTimeout(MessageBoxImage.Warning, $"Please provide the {s}.");
 			}
-			return itemsRequired.Count > 0;
+			return itemsRequired.Count == 0;
 		}
 
+		#endregion
+
+		#region Events;
+
 		public static event EventHandler OnSaveSettings;
+		public static event EventHandler OnFilesUpdaded;
+		public static event EventHandler OnFineTuningJobCreated;
+		public static event EventHandler OnSourceDataFilesUpdated;
+		public static event EventHandler OnTuningDataFilesUpdated;
+
+		public static void RaiseOnSaveSettings()
+			=> OnSaveSettings?.Invoke(null, EventArgs.Empty);
+
+		public static void RaiseOnFilesUploaded()
+			=> OnFilesUpdaded?.Invoke(null, EventArgs.Empty);
+
+		public static void RaiseOnFineTuningJobCreated()
+			=> OnFineTuningJobCreated?.Invoke(null, EventArgs.Empty);
+
+		public static void RaiseOnSourceDataFilesUpdated()
+			=> OnSourceDataFilesUpdated?.Invoke(null, EventArgs.Empty);
+
+		public static void RaiseOnTuningDataFilesUpdated()
+			=> OnTuningDataFilesUpdated?.Invoke(null, EventArgs.Empty);
+
+		#endregion
 
 		public static void SaveSettings()
 		{
-
-			OnSaveSettings?.Invoke(null, EventArgs.Empty);
+			RaiseOnSaveSettings();
 			AppData.Save();
 			PromptItems.Save();
 			Templates.Save();
 			Tasks.Save();
+			FineTunings.Save();
 		}
 
 		/// <summary>
@@ -157,6 +235,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Tasks.Load();
 			if (Tasks.IsSavePending)
 				Tasks.Save();
+			// Load fine tune settings.
+			// Load tasks.
+			FineTunings.OnValidateData += FineTuneSettings_OnValidateData;
+			FineTunings.Load();
+			FineTunings.Load();
+			if (FineTunings.IsLoadPending)
+				FineTunings.Load();
 			// Enable template and task folder monitoring.
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
@@ -166,6 +251,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AppData.Version = 2;
 				ResetTemplates();
 			}
+		}
+
+		private static void FineTuneSettings_OnValidateData(object sender, SettingsData<FineTuningItem>.SettingsDataEventArgs e)
+		{
+			var data = (SettingsData<FineTuningItem>)sender;
+			if (e.Items.Count != 0)
+				return;
+			var asm = typeof(Global).Assembly;
+			var keys = asm.GetManifestResourceNames()
+				.Where(x => x.Contains("FineTuning.zip"))
+				.ToList();
+			AppHelper.ExtractFiles("FineTuning", FineTuningPath);
+			// Trigger reload of data.
+			data.IsLoadPending = true;
 		}
 
 		class prompt_item
@@ -189,7 +288,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var items = Templates.Items.ToArray();
 			foreach (var item in items)
-				Templates.DeleteItem(item);
+			{
+				var error = Templates.DeleteItem(item);
+				if (!string.IsNullOrEmpty(error))
+					ShowError(error);
+			}
 			Templates.Load();
 			Templates.Save();
 		}

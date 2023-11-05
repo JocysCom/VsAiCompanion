@@ -24,6 +24,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 
+		public bool AllowFineTuning { get => _AllowFineTuning; set => SetProperty(ref _AllowFineTuning, value); }
+		bool _AllowFineTuning;
+
 		public Guid AiServiceId { get => _AiServiceId; set => SetProperty(ref _AiServiceId, value); }
 		Guid _AiServiceId;
 

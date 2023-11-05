@@ -3,7 +3,9 @@ using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -13,6 +15,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -22,10 +25,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			Service = service;
 		}
-		private const string usageUrl = "usage";
-		private const string modelsUrl = "models";
-		private const string chatCompletions = "chat/completions";
-		private const string completions = "completions";
+		private const string usagePath = "usage";
+		private const string modelsPath = "models";
+		private const string filesPath = "files";
+		private const string chatCompletionsPath = "chat/completions";
+		private const string completionsPath = "completions";
+		private const string fineTuningJobsPath = "fine_tuning/jobs";
+
+		public const string FineTuningPurpose = "fine-tune";
+
 		private readonly AiService Service;
 
 		public HttpClient GetClient()
@@ -41,40 +49,122 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return client;
 		}
 
+		public static JsonSerializerOptions GetJsonOptions()
+		{
+			var o = new JsonSerializerOptions();
+			o.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+			o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+			o.Converters.Add(new UnixTimestampConverter());
+			o.Converters.Add(new JsonStringEnumConverter());
+			return o;
+		}
+
+		static JsonSerializerOptions JsonOptions
+		{
+			get
+			{
+				if (_JsonOptions == null)
+					_JsonOptions = GetJsonOptions();
+				return _JsonOptions;
+			}
+		}
+		static JsonSerializerOptions _JsonOptions;
+
+		public static T Deserialize<T>(string json)
+			=> JsonSerializer.Deserialize<T>(json, JsonOptions);
+
+		public static string Serialize(object o)
+			=> JsonSerializer.Serialize(o, JsonOptions);
+
+		public async Task<file> UploadFileAsync(string filePath, string purpose, CancellationToken cancellationToken = default)
+		{
+			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			var urlWithDate = $"{Service.BaseUrl}{filesPath}?date={date}";
+			var client = GetClient();
+			//client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
+			using (var content = new MultipartFormDataContent())
+			{
+				content.Add(new StringContent(purpose), "\"purpose\"");
+				var fileContent = new ByteArrayContent(File.ReadAllBytes(filePath));
+				fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("text/plain");
+				content.Add(fileContent, "\"file\"", $"\"{Path.GetFileName(filePath)}\"");
+				using (var response = await client.PostAsync(urlWithDate, content))
+				{
+					var responseBody = await response.Content.ReadAsStringAsync();
+					if (!response.IsSuccessStatusCode)
+					{
+						LastError = responseBody;
+						return null;
+					}
+					var responseFile = Deserialize<file>(responseBody);
+					return responseFile;
+				}
+			}
+		}
+
+		public async Task<T> DeleteAsync<T>(string path, string id, CancellationToken cancellationToken = default)
+		{
+			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			var urlWithDate = $"{Service.BaseUrl}{path}/{id}?date={date}";
+			var client = GetClient();
+			using (var response = await client.DeleteAsync(urlWithDate, cancellationToken))
+			{
+				var responseBody = await response.Content.ReadAsStringAsync();
+				if (!response.IsSuccessStatusCode)
+				{
+					LastError = responseBody;
+					return default;
+				}
+				var deleteResponse = Deserialize<T>(responseBody);
+				return deleteResponse;
+			}
+		}
+
+		public string LastError;
+
 		public async Task<List<T>> GetAsync<T>(
-			string operationPath, object o = null, bool stream = false, CancellationToken cancellationToken = default
+			string operationPath, object o = null, HttpMethod overrideHttpMethod = null, bool stream = false, CancellationToken cancellationToken = default
 		)
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
 			var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
 			var client = GetClient();
 			client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
-			var options = new JsonSerializerOptions();
-			options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
-			options.Converters.Add(new UnixTimestampConverter());
-			options.Converters.Add(new JsonStringEnumConverter());
 			HttpResponseMessage response;
 			var completionOption = stream
 				? HttpCompletionOption.ResponseHeadersRead
 				: HttpCompletionOption.ResponseContentRead;
 			var request = new HttpRequestMessage();
-			request.RequestUri = new Uri(urlWithDate);
 			if (o == null)
 			{
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				request.Method = overrideHttpMethod ?? HttpMethod.Get;
+			}
+			else if (overrideHttpMethod == HttpMethod.Get)
+			{
+				var parameters = ConvertToNameValueCollection(o, true);
+				if (parameters.Count > 0)
+					urlWithDate += "&" + parameters.ToString();
+				client.DefaultRequestHeaders.Accept.Clear();
+				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 				request.Method = HttpMethod.Get;
-				response = await client.SendAsync(request, completionOption, cancellationToken);
 			}
 			else
 			{
-				var json = JsonSerializer.Serialize(o, options);
+				var json = Serialize(o);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 				request.Method = HttpMethod.Post;
 				request.Content = content;
-				response = await client.SendAsync(request, completionOption, cancellationToken);
 			}
-			response.EnsureSuccessStatusCode();
+			request.RequestUri = new Uri(urlWithDate);
+			response = await client.SendAsync(request, completionOption, cancellationToken);
+			if (!response.IsSuccessStatusCode)
+			{
+				LastError = await response.Content.ReadAsStringAsync();
+				return null;
+			}
+			//response.EnsureSuccessStatusCode();
 			var list = new List<T>();
 			if (stream)
 			{
@@ -91,7 +181,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							if (dataStartIndex < 0)
 								continue;
 							var jsonLine = line.Substring(dataStartIndex);
-							var responseObject = JsonSerializer.Deserialize<T>(jsonLine, options);
+							var responseObject = Deserialize<T>(jsonLine);
 							list.Add(responseObject);
 						}
 					}
@@ -100,21 +190,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			else
 			{
 				var responseBody = await response.Content.ReadAsStringAsync();
-				var responseObject = JsonSerializer.Deserialize<T>(responseBody, options);
+				var responseObject = Deserialize<T>(responseBody);
 				list.Add(responseObject);
 			}
 			return list;
 		}
 
-		public async Task<List<usage_response>> GetUsageAsync()
+		/// <summary>
+		/// Get Data from API with the spinner busy indicator.
+		/// </summary>
+		public async Task<List<T>> GetAsyncWithTask<T>(string path, object request = null, HttpMethod overrideHttpMethod = null)
 		{
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
-			List<usage_response> results = null;
+			List<T> results = null;
 			try
 			{
-				results = await GetAsync<usage_response>(usageUrl, cancellationToken: cancellationTokenSource.Token);
+				results = await GetAsync<T>(path, request, overrideHttpMethod, cancellationToken: cancellationTokenSource.Token);
 			}
 			catch (Exception ex)
 			{
@@ -125,28 +218,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
 			}
 			return results;
+		}
+		public async Task<deleted_response> DeleteFileAsync(string id, CancellationToken cancellationToken = default)
+			=> await DeleteAsync<deleted_response>(filesPath, id, cancellationToken);
+
+		public async Task<deleted_response> DeleteFineTuningJobAsync(string id, CancellationToken cancellationToken = default)
+			=> await DeleteAsync<deleted_response>(fineTuningJobsPath, id, cancellationToken);
+
+		public async Task<fine_tune> CancelFineTuningJobAsync(string id, CancellationToken cancellationToken = default)
+		{
+			var path = $"{fineTuningJobsPath}/{id}/cancel";
+			var result = await GetAsync<fine_tune>(path, null, HttpMethod.Post, false, cancellationToken);
+			return result?.FirstOrDefault();
 		}
 
+		public async Task<List<files>> GetFilesAsync()
+			=> await GetAsyncWithTask<files>(filesPath);
+
+		public async Task<fine_tune> CreateFineTuneJob(fine_tune_request r)
+			=> (await GetAsyncWithTask<fine_tune>(fineTuningJobsPath, r))?.FirstOrDefault();
+
+		public async Task<List<fine_tuning_jobs_response>> GetFineTuningJobsAsync(fine_tuning_jobs_request request)
+		=> await GetAsyncWithTask<fine_tuning_jobs_response>(fineTuningJobsPath, request, HttpMethod.Get);
+
 		public async Task<List<models_response>> GetModelsAsync()
-		{
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
-			Global.MainControl.InfoPanel.AddTask(cancellationTokenSource);
-			List<models_response> results = null;
-			try
-			{
-				results = await GetAsync<models_response>(modelsUrl, cancellationToken: cancellationTokenSource.Token);
-			}
-			catch (Exception ex)
-			{
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-			}
-			finally
-			{
-				Global.MainControl.InfoPanel.RemoveTask(cancellationTokenSource);
-			}
-			return results;
-		}
+			=> await GetAsyncWithTask<models_response>(modelsPath);
+
+		public async Task<deleted_response> DeleteModelAsync(string id, CancellationToken cancellationToken = default)
+			=> await DeleteAsync<deleted_response>(modelsPath, id, cancellationToken);
+
+		public async Task<List<usage_response>> GetUsageAsync()
+			=> await GetAsyncWithTask<usage_response>(usagePath);
 
 		public event EventHandler MessageDone;
 
@@ -159,7 +261,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			OpenAIClient client;
 			if (Service.IsAzureOpenAI)
 			{
-				client = string.IsNullOrEmpty(Service.ApiAccessKey)
+				client = string.IsNullOrEmpty(Service.ApiSecretKey)
 					? new OpenAIClient(endpoint, new DefaultAzureCredential())
 					: new OpenAIClient(endpoint, new AzureKeyCredential(Service.ApiSecretKey));
 			}
@@ -167,7 +269,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
 				var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
-				if (string.IsNullOrEmpty(Service.ApiAccessKey))
+				if (string.IsNullOrEmpty(Service.ApiSecretKey))
 				{
 					// TODO: Allow HTTP localhost connections.
 					// Bearer token authentication is not permitted for non TLS protected (https) endpoints.
@@ -184,11 +286,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// </summary>
 		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
 		public async Task<string> QueryAI(
-				string modelName,
-				List<chat_completion_message> messagesToSend,
-				double creativity,
-				TemplateItem item
-			)
+			string modelName,
+			List<chat_completion_message> messagesToSend,
+			double creativity,
+			TemplateItem item
+		)
 		{
 			var answer = "";
 			var cancellationTokenSource = new CancellationTokenSource();
@@ -251,7 +353,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							max_tokens = GetMaxTokens(modelName),
 
 						};
-						var data = await GetAsync<text_completion_response>(completions, request, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += chatChoice.text;
@@ -314,7 +416,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							content = x.Content,
 							name = x.Name,
 						}).ToList();
-						var data = await GetAsync<chat_completion_response>(chatCompletions, request, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 								answer += (chatChoice.message ?? chatChoice.delta).content;
@@ -366,6 +468,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				return 2048;
 			return 2049; // Default for other models
 		}
+
+		#region Convert to Name Value Collection
+
+		public NameValueCollection ConvertToNameValueCollection(object o, bool escapeForUrl = false)
+		{
+			var collection = HttpUtility.ParseQueryString(string.Empty);
+			var props = o.GetType().GetProperties();
+			// Get all properties of the object
+			foreach (var prop in props)
+			{
+				// Get property value
+				var value = prop.GetValue(o);
+				// If value is default for its type, skip serialization
+				if (value == null || value.Equals(GetDefault(prop.PropertyType)))
+					continue;
+				// Convert property value to Json string
+				var jsonValue = System.Text.Json.JsonSerializer.Serialize(value);
+				// If escapeForUrl flag is set, URL encode the name and value
+				var key = escapeForUrl ? Uri.EscapeDataString(prop.Name) : prop.Name;
+				var val = escapeForUrl ? Uri.EscapeDataString(jsonValue) : jsonValue;
+				// Add property name and value to the collection
+				collection[key] = val;
+			}
+			return collection;
+		}
+
+
+		private static ConcurrentDictionary<Type, object> _defaultValuesCache = new ConcurrentDictionary<Type, object>();
+
+		private static object GetDefault(Type type)
+		{
+			return _defaultValuesCache.GetOrAdd(type, t => (t.IsValueType ? Activator.CreateInstance(t) : null));
+		}
+
+		#endregion
+
 
 	}
 

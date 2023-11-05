@@ -97,7 +97,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (isOK)
 					Global.MainControl.InfoPanel.Reset();
 				else
-					Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, $"OpenAI's base URL for '{_Item?.Name}' is not local and does not use HTTPS!");
+					Global.SetWithTimeout(MessageBoxImage.Error, $"OpenAI's base URL for '{_Item?.Name}' is not local and does not use HTTPS!");
 			}
 
 		}

@@ -84,9 +84,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var copy = item.Copy(true);
 			// Hide instructions box by default on Tasks.
 			copy.ShowInstructions = false;
-			var panel = Global.MainControl.TasksPanel.ListPanel;
-			AppHelper.FixName(copy, Global.Tasks.Items);
-			panel.InsertItem(copy);
+			Global.InsertItem(copy, ItemType.Task);
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)

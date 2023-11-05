@@ -1,16 +1,13 @@
-﻿using JocysCom.ClassLibrary.Configuration;
-using JocysCom.ClassLibrary.Controls.Chat;
-using System;
+﻿using JocysCom.ClassLibrary.Controls.Chat;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Windows.Media;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class TemplateItem : ISettingsItem, INotifyPropertyChanged, ISettingsItemFile
+	public class TemplateItem : FileListItem
 	{
 		public TemplateItem()
 		{
@@ -29,17 +26,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
-		string _Name;
-
 		public string TemplateName { get => _TemplateName; set => SetProperty(ref _TemplateName, value); }
 		string _TemplateName;
-
-		public string AiModel { get => _AiModel; set => SetProperty(ref _AiModel, value); }
-		string _AiModel;
-
-		public string IconType { get => _IconType; set => SetProperty(ref _IconType, value); }
-		string _IconType;
 
 		/// <summary>Instructions that will be included at the start of every message.</summary>
 		[DefaultValue("")]
@@ -74,26 +62,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public ChatSettings Settings { get => _Settings; set => SetProperty(ref _Settings, value); }
 		ChatSettings _Settings;
-
-		[XmlIgnore]
-		public DrawingImage Icon { get => _Icon; }
-		DrawingImage _Icon;
-
-		public Guid AiServiceId
-		{
-			get => _AiServiceId;
-			set => SetProperty(ref _AiServiceId, value);
-		}
-		Guid _AiServiceId;
-
-		public AiService AiService =>
-			Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
-
-		public string StatusText { get => _StatusText; set => SetProperty(ref _StatusText, value); }
-		string _StatusText;
-
-		public System.Windows.MessageBoxImage StatusCode { get => _StatusCode; set => SetProperty(ref _StatusCode, value); }
-		System.Windows.MessageBoxImage _StatusCode;
 
 		public BindingList<MessageItem> Messages
 		{
@@ -134,6 +102,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool AutoFormatCode { get => _AutoFormatCode; set => SetProperty(ref _AutoFormatCode, value); }
 		bool _AutoFormatCode;
 
+		[XmlIgnore]
+		public Task GenerateTitleTask;
+
 		[DefaultValue(false)]
 		public bool AutoGenerateTitle { get => _AutoGenerateTitle; set => SetProperty(ref _AutoGenerateTitle, value); }
 		bool _AutoGenerateTitle;
@@ -153,24 +124,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseMacros { get => _UseMacros; set => SetProperty(ref _UseMacros, value); }
 		bool _UseMacros;
 
-		public bool IsChecked
-		{
-			get => _IsChecked;
-			set => SetProperty(ref _IsChecked, value);
-		}
-		bool _IsChecked;
-
-		public bool IsEnabled { get => _IsEnabled; set => SetProperty(ref _IsEnabled, value); }
-		bool _IsEnabled;
-
 		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
 		ItemType _ItemType;
 
 		[XmlIgnore]
 		public object Tag;
 
-		public string IconData { get => _IconData; set => SetProperty(ref _IconData, value); }
-		string _IconData;
 
 		public TemplateItem Copy(bool newId)
 		{
@@ -182,12 +141,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			foreach (var message in messages)
 				copy.Messages.Add(message);
 			return copy;
-		}
-		public void SetIcon(string contents, string type = ".svg")
-		{
-			var base64 = Converters.SvgHelper.GetBase64(contents);
-			IconType = type;
-			IconData = base64;
 		}
 
 		#region Markdown Languages
@@ -215,74 +168,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		#region ■ HTTP Client
-
-		/// <summary>Show Instructions</summary>
-
-		[XmlIgnore, DefaultValue(false)]
-		public bool IsBusy { get => _IsBusy; set => SetProperty(ref _IsBusy, value); }
-		bool _IsBusy;
-
-		[XmlIgnore, DefaultValue(null)]
-		public BindingList<CancellationTokenSource> CancellationTokenSources { get => _CancellationTokenSources; set => SetProperty(ref _CancellationTokenSources, value); }
-		BindingList<CancellationTokenSource> _CancellationTokenSources;
-
-		public void StopClients()
-		{
-			var clients = CancellationTokenSources.ToArray();
-			try
-			{
-				foreach (var client in clients)
-					client.Cancel();
-			}
-			catch { }
-		}
-
-		#endregion
-
-		#region ■ ISettingsItem
-		bool ISettingsItem.Enabled { get => IsEnabled; set => IsEnabled = value; }
-
-		public bool IsEmpty =>
-			string.IsNullOrEmpty(Name);
-
-		#endregion
-
-		#region ■ ISettingsItemFile
-
-		[XmlIgnore]
-		string ISettingsItemFile.BaseName { get => Name; set => Name = value; }
-
-		[XmlIgnore]
-		DateTime ISettingsItemFile.WriteTime { get; set; }
-
-		#endregion
-
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
-		{
-			if (Equals(property, value))
-				return;
-			if (propertyName == nameof(IconData))
-			{
-				var svgContent = Converters.SvgHelper.GetContent((string)(object)value);
-				_Icon = Converters.SvgHelper.LoadSvgFromString(svgContent);
-				OnPropertyChanged(nameof(Icon));
-			}
-			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-			((ISettingsItemFile)this).WriteTime = DateTime.Now;
-		}
-
-		#endregion
 
 	}
 }

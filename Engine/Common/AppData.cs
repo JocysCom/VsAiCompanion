@@ -62,12 +62,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private TaskSettings _TemplateData;
 
+		public TaskSettings FineTuningData
+		{
+			get => _FineTuningData = _FineTuningData ?? new TaskSettings();
+			set => SetProperty(ref _FineTuningData, value);
+		}
+		private TaskSettings _FineTuningData;
+
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
 			switch (type)
 			{
 				case ItemType.Task: return TaskData;
 				case ItemType.Template: return TemplateData;
+				case ItemType.FineTuning: return FineTuningData;
 				default: return new TaskSettings();
 			}
 		}
@@ -234,6 +242,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 					AiModels = new string[0],
 					DefaultAiModel = "GPT4All Falcon",
 					BaseUrl = "http://localhost:4891/v1/",
+					ModelFilter = "",
+				},
+				// Add GPT4All Service
+				new AiService()
+				{
+					Id = AppHelper.GetGuid(nameof(AiService), "LM Studio (Local Machine)"),
+					Name = "LM Studio (Local Machine)",
+					AiModels = new string[0],
+					DefaultAiModel = "Mistral",
+					BaseUrl = "http://localhost:1234/v1/",
 					ModelFilter = "",
 				},
 				//// Add LocalGPT Service. Currently incompatible with OpenAI API.

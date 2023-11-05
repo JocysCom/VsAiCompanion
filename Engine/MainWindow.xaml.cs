@@ -13,6 +13,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 	{
 		public MainWindow()
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;
 			ControlsHelper.InitInvokeContext();
 			Topmost = Global.AppSettings.AppAlwaysOnTop;

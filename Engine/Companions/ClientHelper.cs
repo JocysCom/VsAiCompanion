@@ -21,7 +21,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string AiName = "Ai";
 		public const string GenerateTitleTaskName = "® System - Generate Title";
 		public const string FormatMessageTaskName = "® System - Format Message";
-		public const string DefaultIconEmbeddedResource = "document_gear.svg";
+		public const string DefaultTaskItemIconEmbeddedResource = "document_gear.svg";
+		public const string DefaultFineTuningIconEmbeddedResource = "control_panel.svg";
 
 		public static string JoinMessageParts(params string[] args)
 		{
@@ -72,13 +73,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null, string overrideText = null)
 		{
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
-			if (Global.IsIncompleteSettings(item.AiService))
+			if (!Global.IsGoodSettings(item.AiService, true))
+				return;
+			if (!Global.ValidateServiceAndModel(item))
 				return;
 			if (item.IsBusy)
 				return;
 			if (string.IsNullOrEmpty(item.AiModel))
 			{
-				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
+				Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
 				return;
 			}
 			// If task panel then allow to use AutoClear.
@@ -91,7 +94,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					item.Text = "";
 				if (item.MessageBoxOperation == MessageBoxOperation.ResetMessage)
 				{
-					var template = Global.GetItems(ItemType.Template).Where(x => x.Name == item.TemplateName).FirstOrDefault();
+					var template = Global.GetSettings(ItemType.Template).Items
+						.Cast<TemplateItem>()
+						.Where(x => x.Name == item.TemplateName)
+						.FirstOrDefault();
 					if (template != null)
 						item.Text = template.Text;
 				}
@@ -158,7 +164,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var doc = Global.GetSelectedErrorDocument();
 				if (doc == null)
 				{
-					Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
+					Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
 					return;
 				}
 				else

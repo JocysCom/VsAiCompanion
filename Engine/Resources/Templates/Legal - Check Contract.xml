@@ -1,12 +1,22 @@
 ﻿<TemplateItem>
   <Name>Legal - Check Contract</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
   <IconType>.svg</IconType>
-  <TextInstructions>Analyze the contract or terms and conditions provided. Identify any deceptive language, loopholes, or missing parts that can unfairly benefit one party.&#xD;
+  <TextInstructions>Analyze the contract or terms and conditions provided. Identify any deceptive language, loopholes, or missing parts that can unfairly benefit one party. For example, try to identify "golden handcuffs," which are financial incentives given to employees to prevent them from leaving a company because the employee would have to pay them back. Reply with this format identifying as possible disadvantageous practices as possible.&#xD;
 &#xD;
-Data for processing:</TextInstructions>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+```text&#xD;
+# Identified practice name: &lt;practice name&gt;&#xD;
+&#xD;
+## Identified disadvantaged side: &lt;side in the contract&gt;&#xD;
+&#xD;
+### Text:&#xD;
+&#xD;
+&lt;text where the practice was detected&gt;&#xD;
+&#xD;
+Explanation:&#xD;
+&#xD;
+&lt;explanation&gt;&#xD;
+```</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <StatusCode>None</StatusCode>
   <Messages />
   <AutoSend>false</AutoSend>
@@ -16,7 +26,6 @@ Data for processing:</TextInstructions>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
   <ItemType>None</ItemType>
   <IconData>H4sIAAAAAAAACrVZ247bRhJ9z1c0mJcEIKm+s2lIflhj4c3DboAN8gEURc5owxEHFOfmr99T1aQi&#xD;
 GRrbHCcGNCSb3V11Tp2qasnr4+ONeGyG474/bBKVq+QHgX/Pd93huElux/H+3Wr19PSUP5m8H25W&#xD;
@@ -56,4 +65,7 @@ wlJ4E0vck7mC4QYFhWXCHtkCTTuKiEQaE2WO6HfAgMwtaie1Wm6GsVJyR/VcPwy5EvwbwjHlM3oX&#xD
 P3DhSwV+bKPdo6HJTMxiFi1SiBmnrp9CWaCLKGbOiHCPKsPmYtml5jsVjFjHYz3nTS6+Xcz8zD+z&#xD;
 LPha4dN4JgQErvnzEQ7mY2ygIC6FGrUN3sXTKUcu1ipGTGWM1TadJC/9u/rlR34xgOvVzfsf1vQf&#xD;
 O+//D5vhz0ASGgAA</IconData>
+  <IsEnabled>false</IsEnabled>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
 </TemplateItem>

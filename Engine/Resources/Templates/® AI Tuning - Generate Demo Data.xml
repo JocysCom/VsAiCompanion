@@ -1,0 +1,110 @@
+﻿<TemplateItem>
+  <Name>® AI Tuning - Generate Demo Data</Name>
+  <IconType>.svg</IconType>
+  <TextInstructions>Please create demo data for fine-tuning an AI model.&#xD;
+- Please create an imaginary business company with a name that does not yet exist.&#xD;
+- Generate 10 questions that customers would like to ask.&#xD;
+- Second question must be "What is your company's slogan?" This question will be used to verify if the fine-tuned AI model provides the correct answer.&#xD;
+- Answer these 10 questions as if you were a helpful, respectful, and honest assistant of Company Name.&#xD;
+- Convert the terms 'system', 'user', and 'assistant' into a JSON string.&#xD;
+- Respond with JSONL (JSON Lines) format. There will be 10 lines, each containing 3 messages: one from the `system`, one from the `user`, and one from the `assistant`.&#xD;
+- The message format can be expressed using these C# classes:&#xD;
+&#xD;
+Make sure to use the correct JSON format with proper quotation marks. JSONL (JSON Lines) format must not contain empty lines:&#xD;
+&#xD;
+```JSON&#xD;
+{&#xD;
+  "definitions": {&#xD;
+    "message_role": {&#xD;
+      "type": "string",&#xD;
+      "enum": ["system", "user", "assistant", "function"]&#xD;
+    },&#xD;
+    "chat_completion_message": {&#xD;
+      "type": "object",&#xD;
+      "properties": {&#xD;
+        "role": {&#xD;
+          "$ref": "#/definitions/message_role"&#xD;
+        },&#xD;
+        "content": {&#xD;
+          "type": "string"&#xD;
+        }&#xD;
+      },&#xD;
+      "required": ["role", "content"]&#xD;
+    },&#xD;
+    "chat_completion_request": {&#xD;
+      "type": "object",&#xD;
+      "properties": {&#xD;
+        "messages": {&#xD;
+          "type": "array",&#xD;
+          "items": {&#xD;
+            "$ref": "#/definitions/chat_completion_message"&#xD;
+          }&#xD;
+        }&#xD;
+      },&#xD;
+      "required": ["messages"]&#xD;
+    }&#xD;
+  }&#xD;
+}&#xD;
+```&#xD;
+&#xD;
+&#xD;
+JSON Lines example:&#xD;
+&#xD;
+&#xD;
+```JSONL&#xD;
+{"messages":[{"role":"system","content":"You are a helpful, respectful and honest assistant of Company Name."},{"role":"user","content":"What is the name of your company?"},{"role":"assistant","content":"The name of our company is GlowTech."}]}&#xD;
+{"messages":[{"role":"system","content":"You are a helpful, respectful and honest assistant of Company Name"},{"role":"user","content":"What is your company's slogan?"},{"role":"assistant","content":"Slogan of Company Name is 'Building success together, step by step.'"}]}&#xD;
+{"messages":[{"role":"system","content":"You are a helpful, respectful and honest assistant of Company Name."},{"role":"user","content":"What measures do you take to ensure the security of my data?"},{"role":"assistant","content":"At Company Name, we prioritize data security. We comply with local and international data protection regulations and our servers are encrypted to ensure your data is safe with us."}]}&#xD;
+```&#xD;
+</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Settings />
+  <StatusCode>None</StatusCode>
+  <Messages>
+    <MessageItem>
+      <Id>f935b5c95e784c2399b00b28e3cfb2b5</Id>
+      <User>System</User>
+      <Body>This reserved task using AI to process messages for fine-tuning an AI model.</Body>
+      <Attachments />
+      <Date>2023-09-28T15:02:31.3833437+01:00</Date>
+      <Type>Information</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsFavorite>false</IsFavorite>
+  <IsChecked>false</IsChecked>
+  <ItemType>None</ItemType>
+  <IconData>H4sIAAAAAAAACtVY247bNhB9L9B/IJSXBDBl3kkFdh4aFGkf2gAN8gGyRK/VyJIha9fefH1nKNm1&#xD;
+F7KxqpsF1oBNzpDDOWc4vHm2fbgjD77ZFnU1j3jMo59/IvDZr8tqO49Wbbt5P53udrt4J+O6uZsK&#xD;
+xtgUjE77vd+XRfVtqDdPkmQaWiOyK/J2NY80FxFZ+eJu1fbCQ+F3v9T7ecQII6DBb/ShG3/WFm3p&#xD;
+P2R11TZ1STZp5UtSgDibdi19t9xvs4FeZNnUa9KuPPkdpF/3G98Uvsp8nIH6E/1Yl6XPWuAek4/1&#xD;
+5rFBVGTxSH7/8+Pnv76QT+vFb+Qt8imqrG62aPYunk2Dt6Pn5bavBxnI+rT51KQ5eGrJngOviDxC&#xD;
+oVxE9gJKbWIrrNKgRlGxWAkO0l1v9LUqWgj+/dY3XzZp5j9XX7c+IkU+j7K6rBvKD+E5et229YbU&#xD;
+y+XWt8EfyjR0nkdvEp6ydBlNrxrxJ0aW26U7N5pNz8k9k7YUHW8uTMy561kbFUMqjWEtxrE2iTVO&#xD;
+jGStvVlY83+w7ieb8yTmiezn2iYxrAg1hrUcx3qRZybnI1kv+GKR2VtYG9XRloL1vJmLjdU9b+ls&#xD;
+LIQZw1uN470Mn5G8PfPW57fwFsw9IS60AOLqnPgI3vpV8JZaPOEtE3PbhJtXQdz161tKc9jVVMyN&#xD;
+O/JOYm3dGN52HG/lF2Y5dlvjIvHe35ToQj0hLoy7jbh7FcSlcU+IK27ixJmedwLTr+0I2snYPM8Y&#xD;
+G7uhZ9wpxm6ab9sv8FAJ8x004UjjeIphXJ5/Y2EvsLpzB+vb3cIaT+0z0kHxXznzV8FZwnUUFzFU&#xD;
+OVexTYRLDokuYudwEw8hMCaGVY6Nzw/ByDubX+pMj7695CLlN91UE3egHaLgFAYkbO4KlrploQVF&#xD;
+rWK4vY8JgHyBAGRaCvGs6xs+XY7PldkdWRZlOY+qugLQWKfNfennkX/wVZ3n6Kapv/lDj06i/UOO&#xD;
+HxXoKks382hx37Zn2r/rAp6V66L1zVEfpLKAAm+JR3Webldp06SP8+hMdxKpJbzv6DJdF+XjETSq&#xD;
+dv1r8kS1Lb4fYbd+39K0ylYYrAOTR+S5LvZ0Ufoqp+s69+9JVTfrtDydsdkmbVcEpvMPbibKlcqx&#xD;
+CcuSCSMgW/zhpmQT6VTGJgmhFmRCOzXtOlPsjSpquyJY0M6EJsSiBkeC4nufO/fNg4fU6efnvinf&#xD;
+vunz6d35NB/hwZt5Ai8tGJmbsVB6i2DQ9T+jCZ0H0IkBdOISuqvBC+5pQIyROAB7irmDfIL4Wuz4&#xD;
+ADp5ER3EDu6xGbxPNThTbiJ4rLFUDvygmlBUgUxop6Z9ZxRDW1cLBqGNBANQ4DhQnMFjA/DUJXhC&#xD;
+m5eFlwyg05fQwT3jZdG5AXTm6tRKk3EbHEoxgSNOYykFOEM1pBWoQCa0U9O+M4qhrasFg9BGggEo&#xD;
+cBwoTtHZAXT26sy+JDozgM5dndmXRKcH0CWX0MG9fOJge9AS3SWwwchQJLg1aEmUhCrpFKEPVCn0&#xD;
+wSL0AUtIO4lSMITvKRg1tPuyi3mm1A9FM3gWXDwMJPzPpCcc3uC6pAIGFbK04EOBOmMYf/ghuMQY&#xD;
+Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD;
+5xAGeS1FuBYZlx1TNeFhXDURePaiGhIYvQsFe1RQw3BdAoMY2rpaMAhtJBiAAseB4jsJk//j/ZyE&#xD;
+4Xh8vNHccPPv3Xc2vYPaDP+g//APE7kSZtsXAAA=</IconData>
+  <IsEnabled>false</IsEnabled>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+</TemplateItem>

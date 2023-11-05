@@ -1,5 +1,4 @@
-﻿using JocysCom.VS.AiCompanion;
-using JocysCom.VS.AiCompanion.Engine.Converters;
+﻿using JocysCom.ClassLibrary.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,15 +13,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public IconUserControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			UpdateButtons();
 		}
 
+		IFileListItem _item;
 
-		TemplateItem _item;
-
-		public void BindData(TemplateItem item = null)
+		public void BindData(IFileListItem item = null)
 		{
-			_item = item ?? AppHelper.GetNewTemplateItem();
+			_item = item;
 			DataContext = item;
+			UpdateButtons();
+		}
+
+		private void UpdateButtons()
+		{
+			// Edit button is always visible if icon is not set.
+			IconEditButton.Visibility = _item?.Icon == null
+				? Visibility.Visible
+				: Visibility.Hidden;
 		}
 
 		private void LoadSvgFromFile(string filePath)
@@ -52,7 +62,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
 			var contents = System.IO.File.ReadAllText(dialog.FileNames[0]);
-			_item.SetIcon(contents);
+			_item?.SetIcon(contents);
 		}
 
 		private void UserControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -72,7 +82,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Grid_MouseLeave(object sender, MouseEventArgs e)
 		{
-			IconEditButton.Visibility = Visibility.Hidden;
+			UpdateButtons();
 		}
 	}
 }

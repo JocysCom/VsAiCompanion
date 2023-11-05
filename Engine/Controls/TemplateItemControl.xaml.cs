@@ -10,7 +10,6 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -25,7 +24,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MarkdownLanguageNameComboBox.ItemsSource = Global.AppSettings.MarkdownLanguageNames.Split(',');
-			AiModelBoxPanel.AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
 			Global.PromptingUpdated += Global_PromptingUpdated;
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
@@ -37,7 +35,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
 			//SelectionRadioButton.IsEnabled = Global.GetSelection != null;
-			BindData();
+			Item = null;
 			InitMacros();
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
@@ -72,7 +70,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void MessagesPanel_ScriptingHandler_OnMessageAction(object sender, string[] e)
 		{
-			var action = (MessageAction)Enum.Parse(typeof(MessageAction), e[1]);
+			var actionString = e[1];
+			if (string.IsNullOrEmpty(actionString))
+				return;
+			var action = (MessageAction)Enum.Parse(typeof(MessageAction), actionString);
 			if (action != MessageAction.Use && action != MessageAction.Edit && action != MessageAction.Regenerate)
 				return;
 			var id = e[0];
@@ -226,13 +227,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		Dictionary<MessageBoxOperation, string> _MessageBoxOperations;
 
 		TemplateItem _item;
-		object bindLock = new object();
-
-		public void BindData(TemplateItem item = null)
+		public TemplateItem Item
 		{
-			lock (bindLock)
+			get => _item;
+			set
 			{
-				if (Equals(item, _item))
+				if (Equals(value, _item))
 					return;
 				var oldItem = _item;
 				// Update from previous settings.
@@ -242,9 +242,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
 				}
 				// Make sure that custom AiModel old and new item is available to select.
-				AppHelper.UpdateModelCodes(item?.AiService, AiModelBoxPanel.AiModels, item?.AiModel, oldItem?.AiModel);
+				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
 				// Set new item.
-				_item = item ?? AppHelper.GetNewTemplateItem();
+				_item = value ?? AppHelper.GetNewTemplateItem();
 				// This will trigger AiCompanionComboBox_SelectionChanged event.
 				AiModelBoxPanel.BindData(null);
 				DataContext = _item;
@@ -261,7 +261,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.UpdateButtons();
 				System.Diagnostics.Debug.WriteLine($"Bound Item: {_item.Name}");
 				// AutoSend once enabled then...
-				if (ItemControlType == ItemType.Task && _item.AutoSend)
+				if (DataType == ItemType.Task && _item.AutoSend)
 				{
 					// Disable auto-send so that it won't trigger every time item is bound.
 					_item.AutoSend = false;
@@ -306,78 +306,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private void ListToggleButton_Click(object sender, RoutedEventArgs e)
-		{
-			PanelSettings.IsListPanelVisible = !PanelSettings.IsListPanelVisible;
-			UpdateListToggleButtonIcon();
-		}
-
 		#region ■ Properties
 
 		[Category("Main"), DefaultValue(ItemType.None)]
-		public ItemType ItemControlType
+		public ItemType DataType
 		{
-			get => _ItemControlType;
+			get => _DataType;
 			set
 			{
-				_ItemControlType = value;
+				_DataType = value;
 				// Update panel settings.
 				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
 				PanelSettings = Global.AppSettings.GetTaskSettings(value);
 				ZoomSlider.Value = PanelSettings.ChatPanelZoom;
 				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
 				// Update the rest.
-				UpdateBarToggleButtonIcon();
-				UpdateListToggleButtonIcon();
+				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
+				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
 				OnPropertyChanged(nameof(BarPanelVisibility));
 				OnPropertyChanged(nameof(TemplateItemVisibility));
 			}
 		}
-		private ItemType _ItemControlType;
-
-		TaskSettings PanelSettings { get; set; } = new TaskSettings();
-
-		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))
-			{
-				OnPropertyChanged(nameof(BarPanelVisibility));
-				OnPropertyChanged(nameof(TemplateItemVisibility));
-				UpdateBarToggleButtonIcon();
-			}
-			if (e.PropertyName == nameof(PanelSettings.ChatPanelZoom))
-			{
-				await Helper.Delay(SetZoom);
-			}
-		}
-
-		public void UpdateListToggleButtonIcon()
-		{
-			var rt = new RotateTransform();
-			rt.Angle = PanelSettings.IsListPanelVisible ? 0 : 180;
-			ListToggleButton.RenderTransform = rt;
-			ListToggleButton.RenderTransformOrigin = new Point(0.5, 0.5);
-		}
-
-		public Visibility BarPanelVisibility
-			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
-
-		public Visibility TemplateItemVisibility
-			=> PanelSettings.IsBarPanelVisible && _ItemControlType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
-
-		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
-		{
-			PanelSettings.IsBarPanelVisible = !PanelSettings.IsBarPanelVisible;
-			UpdateListToggleButtonIcon();
-		}
-
-		public void UpdateBarToggleButtonIcon()
-		{
-			var rt = new RotateTransform();
-			rt.Angle = PanelSettings.IsBarPanelVisible ? 90 : 270;
-			BarToggleButton.RenderTransform = rt;
-			BarToggleButton.RenderTransformOrigin = new Point(0.5, 0.5);
-		}
+		private ItemType _DataType;
 
 		#endregion
 
@@ -418,17 +368,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!_item.UseMacros)
 				_item.UseMacros = true;
 		}
-
-		#endregion
-
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-
 
 		#endregion
 
@@ -510,7 +449,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void SetZoom()
 		{
-			ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
+			Dispatcher.Invoke(() =>
+			{
+				ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
+			});
 		}
 
 		public bool SendChatHistory
@@ -543,7 +485,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var button = (Button)sender;
 			var language = button.Tag as string;
 			if (language == "Custom")
-				language = MarkdownLanguageNameComboBox.SelectedItem as string ?? ""; 
+				language = MarkdownLanguageNameComboBox.SelectedItem as string ?? "";
 			if (string.IsNullOrEmpty(language))
 				return;
 			var box = _item.ShowInstructions
@@ -569,6 +511,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: caretIndex + text.Length;
 			AppHelper.SetCaret(box, newIndex);
 		}
+
+		#region PanelSettings
+
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
+
+		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))
+			{
+				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
+				OnPropertyChanged(nameof(BarPanelVisibility));
+				OnPropertyChanged(nameof(TemplateItemVisibility));
+			}
+			if (e.PropertyName == nameof(PanelSettings.ChatPanelZoom))
+			{
+				await Helper.Delay(SetZoom);
+			}
+		}
+
+		private void ListToggleButton_Click(object sender, RoutedEventArgs e)
+		{
+			PanelSettings.UpdateListToggleButtonIcon(ListToggleButton, true);
+		}
+
+		public Visibility BarPanelVisibility
+			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+		public Visibility TemplateItemVisibility
+			=> PanelSettings.IsBarPanelVisible && _DataType == ItemType.Template ? Visibility.Visible : Visibility.Collapsed;
+
+		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
+		{
+			PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton, true);
+		}
+
+		#endregion
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
 
 	}
 }

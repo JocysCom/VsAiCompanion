@@ -1,3 +1,8 @@
+2023-11-05 v1.3.6
+
+- New: Added a new feature to fine-tune custom models.
+- New: Added new templates for "Writing".
+
 2023-09-29 v1.2.13
 
 - Update: Hide the prompting bar by default.

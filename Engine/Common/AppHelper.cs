@@ -1,25 +1,25 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using System.Text.Json;
-using JocysCom.VS.AiCompanion.Engine.Companions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using System.Reflection;
-using JocysCom.ClassLibrary.Collections;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Windows.Input;
-using SharpVectors.Renderers.Wpf;
-using SharpVectors.Dom.Events;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -234,12 +234,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Fix name to make sure that it is not same as existing names.
 		/// </summary>
-		public static void FixName(TemplateItem copy, IEnumerable<TemplateItem> items)
+		public static void FixName(IFileListItem copy, IBindingList items)
 		{
 			var newName = copy.Name;
 			for (int i = 1; i < int.MaxValue; i++)
 			{
-				var sameFound = items.Any(x => string.Equals(x.Name, newName, StringComparison.OrdinalIgnoreCase));
+				var sameFound = items.Cast<IFileListItem>().Any(x => string.Equals(x.Name, newName, StringComparison.OrdinalIgnoreCase));
 				// If item with the same name not found then...
 				if (!sameFound)
 					break;
@@ -299,7 +299,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		public static async Task UpdateModelsFromAPI(AiService aiService)
 		{
-			if (Global.IsIncompleteSettings(aiService))
+			if (!Global.IsGoodSettings(aiService, true))
 				return;
 			Regex filterRx = null;
 			try
@@ -307,27 +307,56 @@ namespace JocysCom.VS.AiCompanion.Engine
 				filterRx = new Regex(aiService.ModelFilter);
 			}
 			catch { }
-			var client = new Companions.ChatGPT.Client(aiService);
-			var models = await client.GetModelsAsync();
-			var modelCodes = models?.FirstOrDefault()?.data.ToArray()
-				.OrderByDescending(x => x.id)
-				.Select(x => x.id)
+			var client = new Client(aiService);
+			var response = await client.GetModelsAsync();
+			var models = response.FirstOrDefault()?.data
+				.OrderBy(x => x.id.StartsWith("ft:") ? 0 : 1)
+				.ThenBy(x => x.id)
 				.ToArray();
+			var modelCodes = models?.Select(x => x.id).ToArray();
 			// If models found then...
 			if (modelCodes?.Any() == true)
 			{
 				if (filterRx != null)
 					modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
-				// Remove all old models.
+				// Remove all old models of AiService.
 				var serviceModels = Global.AppSettings.AiModels.Where(x => x.AiServiceId == aiService.Id).ToList();
 				foreach (var serviceModel in serviceModels)
 					Global.AppSettings.AiModels.Remove(serviceModel);
-				// Add all new models.
+				// Add all new models of AiService.
 				foreach (var modelCode in modelCodes)
-					Global.AppSettings.AiModels.Add(new AiModel(modelCode, aiService.Id));
+				{
+					var aiModel = new AiModel(modelCode, aiService.Id);
+					// Detect if AI model can be finetuned.
+					var model = response.First().data.FirstOrDefault(x => x.id == modelCode);
+					aiModel.AllowFineTuning = GetPermission(model, "allow_fine_tuning") ?? false;
+					Global.AppSettings.AiModels.Add(aiModel);
+				}
 				// This will inform all forms that models changed.
 				Global.TriggerAiModelsUpdated();
 			}
+		}
+
+		public static bool? GetPermission(model model, string name)
+		{
+			JsonElement permissions;
+			if (model.additional_properties == null)
+				return null;
+			if (!model.additional_properties.TryGetValue("permission", out permissions) || permissions.ValueKind != JsonValueKind.Array)
+				return null;
+			foreach (JsonElement element in permissions.EnumerateArray())
+			{
+				if (element.ValueKind != JsonValueKind.Object)
+					continue;
+				JsonElement allowFineTuning;
+				if (element.TryGetProperty(name, out allowFineTuning))
+				{
+					bool value;
+					if (bool.TryParse(allowFineTuning.GetRawText(), out value))
+						return value;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -364,6 +393,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return item;
 		}
 
+		public static FineTuningItem GetNewFineTuningItem()
+		{
+			var item = new FineTuningItem();
+			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
+				Global.AppSettings.AiServices.FirstOrDefault(); ;
+			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
+			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
+			return item;
+		}
+
+		public static FineTuningItem GetNewFineTuning()
+		{
+			var item = new FineTuningItem();
+			return item;
+		}
 
 		/// <summary>
 		/// Set custom dictionary for spell check.
@@ -393,6 +437,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
 		}
+
+		#region Dialogs
+
+		public static bool AllowAction(string actionName, params string[] args)
+		{
+			var names = string.Join("\r\n", args);
+			var text = $"Do you want to {actionName.ToString().ToLower()} {args.Length} item{(args.Length > 1 ? "s" : "")}?";
+			text += "\r\n\r\n";
+			text += names;
+			var caption = $"{Global.Info.Product} - {actionName}";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+			return result == MessageBoxResult.Yes;
+		}
+
+
+		public static bool AllowAction(AllowAction actionName, params string[] args)
+		{
+			return AllowAction(actionName.ToString(), args);
+		}
+
+		#endregion
 
 		#region Copy Properties
 
@@ -539,6 +604,97 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Set the cursor after the inserted text
 				box.CaretIndex = cursorPosition + s.Length;
 			}
+		}
+
+		#endregion
+
+		#region ■ Extract Helper
+
+		/// <summary>
+		/// Extract resource files
+		/// </summary>
+		/// <param name="source">Resource prefix.</param>
+		/// <param name="target">Target folder to extract.</param>
+		/// <param name="overwrite">Overwrite files at target.</param>
+		public static void ExtractFiles(string source, string target, Assembly assembly = null)
+		{
+			// Get list of resources to extract.
+			assembly = assembly ?? Assembly.GetExecutingAssembly();
+			var pattern = string.Format(".Resources.{0}.zip", source);
+			var resourceName = assembly.GetManifestResourceNames().Where(x => x.Contains(pattern)).First();
+			var sr = assembly.GetManifestResourceStream(resourceName);
+			if (sr == null)
+				return;
+			var bytes = new byte[sr.Length];
+			sr.Read(bytes, 0, bytes.Length);
+			// Open an existing zip file for reading.
+			var zip = ZipStorer.Open(sr, FileAccess.Read);
+			// Read the central directory collection
+			var dir = zip.ReadCentralDir();
+			// Look for the desired file.
+			foreach (ZipStorer.ZipFileEntry entry in dir)
+			{
+				var fileName = System.IO.Path.Combine(target, entry.FilenameInZip.Replace("/", "\\"));
+				zip.ExtractFile(entry, fileName);
+			}
+			zip.Close();
+		}
+
+		public static byte[] ExtractFile(string source, string filenameInZip, Assembly assembly = null)
+		{
+			// Get list of resources to extract.
+			assembly = assembly ?? Assembly.GetExecutingAssembly();
+			var resourceName = assembly.GetManifestResourceNames().Where(x => x.EndsWith(source)).First();
+			var sr = assembly.GetManifestResourceStream(resourceName);
+			if (sr == null)
+				return null;
+			var bytes = new byte[sr.Length];
+			sr.Read(bytes, 0, bytes.Length);
+			// Open an existing zip file for reading.
+			var zip = ZipStorer.Open(sr, FileAccess.Read);
+			// Read the central directory collection
+			var dir = zip.ReadCentralDir();
+			// Look for the desired file.
+			foreach (ZipStorer.ZipFileEntry entry in dir)
+			{
+				if (entry.FilenameInZip != filenameInZip)
+					continue;
+				byte[] file;
+				if (zip.ExtractFile(entry, out file))
+					return file;
+			}
+			zip.Close();
+			return null;
+		}
+
+		static string GetDevConPath()
+		{
+			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
+			return string.Format("devcon.{0}.exe", paString);
+		}
+
+		#endregion
+
+		#region Controls Helper
+
+		public static void ShowButtons(Panel panel, params Button[] args)
+		{
+			var controls = ControlsHelper.GetAll<Button>(panel);
+			foreach (var control in controls)
+				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		public static bool IsGridInEditMode(DataGrid grid)
+		{
+			if (grid == null)
+				return false;
+			foreach (var item in grid.Items)
+			{
+				var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+				if (row != null && row.IsEditing)
+					return true;
+			}
+			return false;
 		}
 
 		#endregion

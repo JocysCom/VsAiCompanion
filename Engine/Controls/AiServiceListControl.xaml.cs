@@ -53,7 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.RestoreSelection(MainDataGrid, nameof(AiService.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(AiService.Name), list, 0);
 		}
 
 		public void ShowColumns(params DataGridColumn[] args)
@@ -86,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			else
 			{
 				// Try to restore selection.
-				ControlsHelper.RestoreSelection(
+				ControlsHelper.SetSelection(
 					MainDataGrid, nameof(TemplateItem.Name),
 					PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
 				);
@@ -201,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var list = PanelSettings.ListSelection;
-			ControlsHelper.RestoreSelection(MainDataGrid, nameof(TemplateItem.Name), list, PanelSettings.ListSelectedIndex);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(TemplateItem.Name), list, PanelSettings.ListSelectedIndex);
 		}
 	}
 

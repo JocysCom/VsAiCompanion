@@ -864,5 +864,29 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+		public static void EnsureTabItemSelected(FrameworkElement control)
+		{
+			var parent = control.Parent as FrameworkElement;
+			while (parent != null)
+			{
+				if (parent is TabItem tabItem)
+				{
+					tabItem.IsSelected = true;
+				}
+				else if (parent is TabControl tabControl)
+				{
+					foreach (TabItem item in tabControl.Items)
+					{
+						if (item.Content == control)
+						{
+							item.IsSelected = true;
+							break;
+						}
+					}
+				}
+				parent = parent.Parent as FrameworkElement;
+			}
+		}
+
 	}
 }

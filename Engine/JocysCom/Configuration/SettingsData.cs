@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using JocysCom.ClassLibrary.Collections;
 using System.ComponentModel;
+using DocumentFormat.OpenXml.Bibliography;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -102,6 +103,9 @@ namespace JocysCom.ClassLibrary.Configuration
 		public bool IsSavePending { get; set; }
 
 		[XmlIgnore]
+		public bool IsLoadPending { get; set; }
+
+		[XmlIgnore]
 		public bool UseSeparateFiles { get; set; }
 
 		[XmlIgnore]
@@ -137,7 +141,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		[XmlIgnore]
-		System.Collections.IList ISettingsData.Items { get { return Items; } }
+		IBindingList ISettingsData.Items { get { return Items; } }
 
 		public delegate void ApplyOrderDelegate(SettingsData<T> source);
 
@@ -397,6 +401,36 @@ namespace JocysCom.ClassLibrary.Configuration
 			return path;
 		}
 
+		public string RenameFolder(string currentPath, string newFolderName)
+		{
+			try
+			{
+				// If directory don't exists
+				if (!Directory.Exists(currentPath))
+					return null;
+				var directoryInfo = new DirectoryInfo(currentPath);
+				var parentDirectory = directoryInfo.Parent.FullName;
+				var newPath = Path.Combine(parentDirectory, newFolderName);
+				// check if the new folder name is different from the current one (ignoring the case)
+				if (string.Equals(directoryInfo.Name, newFolderName, StringComparison.OrdinalIgnoreCase))
+				{
+					// rename to temp folder first if only the casing is changed
+					var tempPath = Path.Combine(parentDirectory, Guid.NewGuid().ToString());
+					directoryInfo.MoveTo(tempPath);
+				}
+				else if (Directory.Exists(newPath))
+				{
+					return "File with the same name already exists.";
+				}
+				directoryInfo.MoveTo(newPath);
+			}
+			catch (Exception ex)
+			{
+				return "An error occurred: " + ex.Message;
+			}
+			return null;
+		}
+
 		/// <summary>
 		/// Returns error.
 		/// </summary>
@@ -421,9 +455,16 @@ namespace JocysCom.ClassLibrary.Configuration
 				SetFileMonitoring(false);
 				try
 				{
-					// If only case changed then rename to temp file first.
+					// Rename folder if folder with the same name exists.
+					var folderPath= Path.Combine(file.Directory.FullName, oldName);
+					var error = RenameFolder(folderPath, newName);
+					if (!string.IsNullOrEmpty(error))
+						return error;
+					// Rename file.
+					// If only case changed then...
 					if (string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
 					{
+						// rename to temp file first.
 						var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
 						file.MoveTo(tempFilePath);
 					}
@@ -453,16 +494,36 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Returns new name.
 		/// </summary>
-		public void DeleteItem(ISettingsItemFile itemFile)
+		public string DeleteItem(ISettingsItemFile itemFile)
 		{
 			lock (saveReadFileLock)
 			{
 				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
 				var oldPath = GetItemFileFullName(oldName);
 				var fi = new FileInfo(oldPath);
-				if (fi.Exists)
-					fi.Delete();
+				// Rename folder if folder with the same name exists.
+				var folderPath = Path.Combine(fi.Directory.FullName, oldName);
+
+				try
+				{
+					if (Directory.Exists(folderPath))
+						Directory.Delete(folderPath, true);
+				}
+				catch (Exception ex)
+				{
+					return ex.Message;
+				}
+				try
+				{
+					if (fi.Exists)
+						fi.Delete();
+				}
+				catch (Exception ex)
+				{
+					return ex.Message;
+				}
 				Items.Remove((T)itemFile);
+				return null;
 			}
 		}
 

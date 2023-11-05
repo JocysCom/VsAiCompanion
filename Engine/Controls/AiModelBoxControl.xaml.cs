@@ -17,12 +17,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
 			Global.AiModelsUpdated += Global_AiModelsUpdated;
 		}
 
-		public TemplateItem _item;
+		public IAiServiceModel _item;
 
-		public void BindData(TemplateItem item)
+		public void BindData(IAiServiceModel item)
 		{
 			if (item == null)
 			{
@@ -43,11 +44,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void AiCompanionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
+			if (_item == null)
+				return;
+				AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
 
 		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
+			if (_item == null)
+				return;
 			await AppHelper.UpdateModelsFromAPI(_item.AiService);
 		}
 
@@ -55,6 +60,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Global_AiModelsUpdated(object sender, EventArgs e)
 		{
+			if (_item == null)
+				return;
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}

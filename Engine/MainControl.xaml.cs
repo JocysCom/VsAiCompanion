@@ -18,6 +18,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public MainControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			SeverityConverter = new SeverityToImageConverter();
 			var ai = new AssemblyInfo(typeof(MainControl).Assembly);
 			InfoPanel.DefaultHead = ai.GetTitle(true, false, true, false, false);
@@ -56,19 +58,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (e.AddedItems.Count > 0)
 			{
 				// Workaround: Make ChatPanel visible, which will trigger rendering and freezing XAML UI for moment.
-				if (e.AddedItems[0] == TasksTabItem && TasksPanel.ItemPanel.ChatPanel.Visibility != Visibility.Visible)
+				if (e.AddedItems[0] == TasksTabItem && TasksPanel.TemplateItemPanel.ChatPanel.Visibility != Visibility.Visible)
 				{
 					// Delay to allow XAML UI to render.
 					await Task.Delay(200);
 					// Show Web Browser now, to allow data loading and rendering.
-					TasksPanel.ItemPanel.ChatPanel.Visibility = Visibility.Visible;
+					TasksPanel.TemplateItemPanel.ChatPanel.Visibility = Visibility.Visible;
 				}
-				if (e.AddedItems[0] == TemplatesTabItem && TemplatesPanel.ItemPanel.ChatPanel.Visibility != Visibility.Visible)
+				if (e.AddedItems[0] == TemplatesTabItem && TemplatesPanel.TemplateItemPanel.ChatPanel.Visibility != Visibility.Visible)
 				{
 					// Delay to allow XAML UI to render.
 					await Task.Delay(200);
 					// Show Web Browser now, to allow data loading and rendering.
-					TemplatesPanel.ItemPanel.ChatPanel.Visibility = Visibility.Visible;
+					TemplatesPanel.TemplateItemPanel.ChatPanel.Visibility = Visibility.Visible;
 				}
 			}
 		}

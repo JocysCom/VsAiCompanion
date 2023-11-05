@@ -47,7 +47,7 @@
 						<Label Content="Tasks" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:TemplateControl x:Name="TasksPanel" x:FieldModifier="public" ItemControlType="Task" />
+				<controls:SettingsControl x:Name="TasksPanel" x:FieldModifier="public" DataType="Task" />
 			</TabItem>
 
 			<TabItem x:Name="TemplatesTabItem">
@@ -57,7 +57,16 @@
 						<Label Content="Templates" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:TemplateControl x:Name="TemplatesPanel" ItemControlType="Template" />
+				<controls:SettingsControl x:Name="TemplatesPanel" DataType="Template" />
+			</TabItem>
+			<TabItem x:Name="FineTuningTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_settings}" />
+						<Label Content="Fine-Tuning" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:SettingsControl x:Name="FineTuningPanel" x:FieldModifier="public" DataType="FineTuning" />
 			</TabItem>
 			<TabItem x:Name="OptionsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
