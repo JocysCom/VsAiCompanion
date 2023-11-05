@@ -13,7 +13,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 		JSONL,
 		[Description("Rich Text Format (*.rtf)")]
 		RTF,
-		[Description("Comman Separated Values (*.csv)")]
+		[Description("Comma Separated Values (*.csv)")]
 		CSV,
 		[Description("Microsoft Excel Worksheet (*xlsx)")]
 		XLSX,
