@@ -620,8 +620,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			// Get list of resources to extract.
 			assembly = assembly ?? Assembly.GetExecutingAssembly();
-			var pattern = string.Format(".Resources.{0}.zip", source);
-			var resourceName = assembly.GetManifestResourceNames().Where(x => x.Contains(pattern)).First();
+			var resourceName = assembly.GetManifestResourceNames().Where(x => x.EndsWith(source)).First();
 			var sr = assembly.GetManifestResourceStream(resourceName);
 			if (sr == null)
 				return;

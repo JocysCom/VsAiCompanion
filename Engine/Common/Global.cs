@@ -258,11 +258,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var data = (SettingsData<FineTuningItem>)sender;
 			if (e.Items.Count != 0)
 				return;
-			var asm = typeof(Global).Assembly;
-			var keys = asm.GetManifestResourceNames()
-				.Where(x => x.Contains("FineTuning.zip"))
-				.ToList();
-			AppHelper.ExtractFiles("FineTuning", FineTuningPath);
+			AppHelper.ExtractFiles("FineTuning.zip", FineTuningPath);
 			// Trigger reload of data.
 			data.IsLoadPending = true;
 		}

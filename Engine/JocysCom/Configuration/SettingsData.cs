@@ -294,7 +294,7 @@ namespace JocysCom.ClassLibrary.Configuration
 							if (UseSeparateFiles)
 							{
 								data = new SettingsData<T>();
-								var files = di.GetFiles();
+								var files = di.GetFiles("*" + fi.Extension);
 								for (int i = 0; i < files.Length; i++)
 								{
 									var file = files[i];
@@ -455,7 +455,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				try
 				{
 					// Rename folder if folder with the same name exists.
-					var folderPath= Path.Combine(file.Directory.FullName, oldName);
+					var folderPath = Path.Combine(file.Directory.FullName, oldName);
 					var error = RenameFolder(folderPath, newName);
 					if (!string.IsNullOrEmpty(error))
 						return error;
