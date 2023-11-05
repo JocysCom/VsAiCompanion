@@ -137,8 +137,9 @@
 		<None Remove="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<None Remove="Resources\BuildDate.*" />
 		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
+		<None Remove="Resources\Documents.zip" />
 		<None Remove="Resources\FineTuning.zip" />
-		<None Remove="Resources\FineTuningHelp.rtf" />
+		<None Remove="Resources\FineTuningHelp.zip" />
 		<None Remove="Resources\IconExperience.License.txt" />
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
@@ -177,8 +178,8 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
+		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
-		<EmbeddedResource Include="Resources\FineTuningHelp.rtf" />
 		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
 		<Content Include="Resources\MainWindowCommand.png" />
@@ -209,7 +210,7 @@
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="PowerShell.exe -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;&#xD;&#xA;PowerShell.exe -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;&#xD;&#xA;PowerShell.exe -file &quot;$(ProjectDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\FineTuning&quot; &quot;$(ProjectDir)Resources\FineTuning.zip&quot;&#xD;&#xA;" />
+		<Exec Command="PowerShell.exe -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;&#xD;&#xA;PowerShell.exe -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;&#xD;&#xA;PowerShell.exe -file &quot;$(ProjectDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\FineTuning&quot; &quot;$(ProjectDir)Resources\FineTuning.zip&quot;&#xD;&#xA;PowerShell.exe -file &quot;$(ProjectDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot;&#xD;&#xA;&#xD;&#xA;" />
 	</Target>
 
 </Project>

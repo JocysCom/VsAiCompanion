@@ -487,7 +487,8 @@
 						parts[p] = EscapeHtml(parts[p]);
 					}
 				}
-				lines[i] = parts.join('`');
+				// Add extra new line for markdown to add `<br />` correcly.
+				lines[i] = parts.join('`') + "\r\n";
 			}
 			var processedText = lines.join("\r\n");
 			return processedText;

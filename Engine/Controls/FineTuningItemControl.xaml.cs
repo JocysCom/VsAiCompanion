@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -139,7 +140,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
 			{
 				HelpInit = true;
-				var bytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("FineTuningHelp.rtf");
+				var bytes = AppHelper.ExtractFile("Documents.zip", "FineTuningHelp.rtf");
 				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
 			}
 

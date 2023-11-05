@@ -640,6 +640,33 @@ namespace JocysCom.VS.AiCompanion.Engine
 			zip.Close();
 		}
 
+		public static byte[] ExtractFile(string source, string filenameInZip, Assembly assembly = null)
+		{
+			// Get list of resources to extract.
+			assembly = assembly ?? Assembly.GetExecutingAssembly();
+			var resourceName = assembly.GetManifestResourceNames().Where(x => x.EndsWith(source)).First();
+			var sr = assembly.GetManifestResourceStream(resourceName);
+			if (sr == null)
+				return null;
+			var bytes = new byte[sr.Length];
+			sr.Read(bytes, 0, bytes.Length);
+			// Open an existing zip file for reading.
+			var zip = ZipStorer.Open(sr, FileAccess.Read);
+			// Read the central directory collection
+			var dir = zip.ReadCentralDir();
+			// Look for the desired file.
+			foreach (ZipStorer.ZipFileEntry entry in dir)
+			{
+				if (entry.FilenameInZip != filenameInZip)
+					continue;
+				byte[] file;
+				if (zip.ExtractFile(entry, out file))
+					return file;
+			}
+			zip.Close();
+			return null;
+		}
+
 		static string GetDevConPath()
 		{
 			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
