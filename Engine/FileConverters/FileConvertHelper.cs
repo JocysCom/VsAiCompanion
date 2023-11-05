@@ -59,8 +59,8 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			var sourceBase = Path.GetFileNameWithoutExtension(item.filename);
 			var sourceFullName = Path.Combine(fineTuneItemPath, sourceDataName, item.filename);
 			var targetFolder = targetType == ConvertTargetType.JSONL
-				? FineTuningFolderType.TuningData
-				: FineTuningFolderType.SourceData;
+				? FineTuningFolderType.TuningFiles
+				: FineTuningFolderType.SourceFiles;
 			var targetFullName = Path.Combine(fineTuneItemPath, targetFolder.ToString(), sourceBase + targetExt);
 			if (Client.IsTextCompletionMode(aiModel))
 			{

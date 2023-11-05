@@ -3,7 +3,7 @@
     public enum FineTuningFolderType
     {
 		None,
-		SourceData,
-		TuningData,
+		SourceFiles,
+		TuningFiles,
 	}
 }

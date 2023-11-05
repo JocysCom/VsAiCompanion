@@ -51,7 +51,7 @@
 				Click="CancelButton_Click"
 				ToolTip="Cancel">
 				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+					<ContentControl Content="{StaticResource Icon_media_stop}" Focusable="False" />
 					<Label x:Name="CancelButtonLabel" Content="Cancel Job" />
 				</StackPanel>
 			</Button>

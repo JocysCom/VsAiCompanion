@@ -162,7 +162,7 @@
 						<Label Content="1. Source Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningLocalDataControl x:Name="FineTuningSourceDataPanel" FolderType="SourceData" />
+				<Controls:FineTuningLocalFilesControl x:Name="FineTuningSourceDataPanel" FolderType="SourceData" />
 			</TabItem>
 			<TabItem x:Name="FineTuningTuningDataTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -171,7 +171,7 @@
 						<Label Content="2. Tuning Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningLocalDataControl x:Name="FineTuningTuningDataPanel" FolderType="TuningData" />
+				<Controls:FineTuningLocalFilesControl x:Name="FineTuningTuningDataPanel" FolderType="TuningData" />
 			</TabItem>
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -180,7 +180,7 @@
 						<Label Content="3. Remote Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningRemoteDataControl x:Name="FineTuningRemoteDataPanel" />
+				<Controls:FineTuningRemoteFilesControl x:Name="FineTuningRemoteDataPanel" />
 			</TabItem>
 			<TabItem x:Name="FineTuningJobsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -194,7 +194,7 @@
 			<TabItem x:Name="PersonalModelsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_settings}" />
+						<ContentControl Content="{StaticResource Icon_user_group}" />
 						<Label Content="5. Models" />
 					</StackPanel>
 				</TabItem.Header>

@@ -18,9 +18,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningRemoteDataControl : UserControl, IBindData<FineTuningItem>
+	public partial class FineTuningRemoteFilesControl : UserControl, IBindData<FineTuningItem>
 	{
-		public FineTuningRemoteDataControl()
+		public FineTuningRemoteFilesControl()
 		{
 			InitializeComponent();
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;

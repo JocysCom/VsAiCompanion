@@ -21,9 +21,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class FineTuningLocalDataControl : UserControl, IBindData<FineTuningItem>
+	public partial class FineTuningLocalFilesControl : UserControl, IBindData<FineTuningItem>
 	{
-		public FineTuningLocalDataControl()
+		public FineTuningLocalFilesControl()
 		{
 			InitializeComponent();
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
@@ -39,7 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (Data == null)
 				return;
-			if (FolderType != FineTuningFolderType.TuningData)
+			if (FolderType != FineTuningFolderType.TuningFiles)
 				return;
 			ControlsHelper.EnsureTabItemSelected(this);
 			// Remove selection. Selection will be restored from bound item data.
@@ -51,7 +51,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (Data == null)
 				return;
-			if (FolderType != FineTuningFolderType.SourceData)
+			if (FolderType != FineTuningFolderType.SourceFiles)
 				return;
 			ControlsHelper.EnsureTabItemSelected(this);
 			// Remove selection. Selection will be restored from bound item data.
@@ -87,7 +87,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			DeleteButton.IsEnabled = isSelected;
 			ValidateButton.IsEnabled = isSelected;
 			OpenButton.IsEnabled = isSelected;
-			UploadButton.Visibility = FolderType == FineTuningFolderType.TuningData ? Visibility.Visible : Visibility.Collapsed;
+			UploadButton.Visibility = FolderType == FineTuningFolderType.TuningFiles ? Visibility.Visible : Visibility.Collapsed;
 			UploadButton.IsEnabled = isSelected;
 			var isOneItemSelected = selecetedItems.Count() == 1;
 			ConvertTypeComboBox.IsEnabled = isOneItemSelected;
@@ -256,14 +256,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var targetName = Path.GetFileName(targetFullName);
 			var targetFolder = convertType == ConvertTargetType.JSONL
-			? FineTuningFolderType.TuningData
-			: FineTuningFolderType.SourceData;
-			if (targetFolder == FineTuningFolderType.SourceData)
+			? FineTuningFolderType.TuningFiles
+			: FineTuningFolderType.SourceFiles;
+			if (targetFolder == FineTuningFolderType.SourceFiles)
 			{
 				Data.FineTuningSourceDataSelection = new List<string>() { targetName };
 				Global.RaiseOnSourceDataFilesUpdated();
 			}
-			else if (targetFolder == FineTuningFolderType.TuningData)
+			else if (targetFolder == FineTuningFolderType.TuningFiles)
 			{
 				Data.FineTuningTuningDataSelection = new List<string>() { targetName };
 				Global.RaiseOnTuningDataFilesUpdated();
@@ -280,7 +280,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!di.Exists)
 				di.Create();
 			var filePattern = "*.*";
-			if (FolderType == FineTuningFolderType.TuningData)
+			if (FolderType == FineTuningFolderType.TuningFiles)
 				filePattern = "*.jsonl";
 			var dirFiles = di.GetFiles(filePattern);
 			var files = dirFiles.Select(x => new file()
