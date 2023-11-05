@@ -57,7 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<model>();
 			var isSelected = selecetedItems.Count() > 0;
 			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
-			DeleteButton.IsEnabled = isSelected;
+			DeleteButton.IsEnabled = selecetedItems.Any(x => (x.id ?? "").StartsWith("ft:"));
 		}
 
 		public void InsertItem(model item)

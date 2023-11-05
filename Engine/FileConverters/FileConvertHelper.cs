@@ -80,40 +80,58 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			return targetFullName;
 		}
 
+		public static bool TryReadFrom<T>(string sourcePath, out List<T> result, out string error) where T : class
+		{
+			result = null;
+			error = null;
+			try
+			{
+				var sourceExt = Path.GetExtension(sourcePath).ToLower();
+				// Read from file.
+				switch (sourceExt)
+				{
+					case ".jsonl":
+						result = ReadFromJsonl<T>(sourcePath);
+						break;
+					case ".json":
+						result = ReadFromJson<T>(sourcePath);
+						break;
+					case ".xlsx":
+						result = ReadFromXlsx<T>(sourcePath);
+						break;
+					case ".docx":
+						result = ReadFromDocx<T>(sourcePath);
+						break;
+					case ".rtf":
+						result = ReadFromRtf<T>(sourcePath);
+						break;
+					case ".csv":
+						result = ReadFromCsv<T>(sourcePath);
+						break;
+					default:
+						throw new Exception($"Extension {sourceExt} unknonw!");
+				}
+			}
+			catch (Exception ex)
+			{
+				error = ex.Message;
+			}
+			if (result == null)
+				error = $"Failed to read from from {sourcePath}!";
+			return string.IsNullOrEmpty(error);
+		}
+
 		public static void Convert<T>(string sourcePath, string targetPath, Action<T> process) where T : class
 		{
-			var sourceExt = Path.GetExtension(sourcePath).ToLower();
-			var targetExt = Path.GetExtension(targetPath).ToLower();
-			List<T> items = null;
-			// Read from file.
-			switch (sourceExt)
+			List<T> items;
+			string error;
+			TryReadFrom(sourcePath, out items, out error);
+			if (!string.IsNullOrEmpty(error))
 			{
-				case ".jsonl":
-					items = ReadFromJsonl<T>(sourcePath);
-					break;
-				case ".json":
-					items = ReadFromJson<T>(sourcePath);
-					break;
-				case ".xlsx":
-					items = ReadFromXlsx<T>(sourcePath);
-					break;
-				case ".docx":
-					items = ReadFromDocx<T>(sourcePath);
-					break;
-				case ".rtf":
-					items = ReadFromRtf<T>(sourcePath);
-					break;
-				case ".csv":
-					items = ReadFromCsv<T>(sourcePath);
-					break;
-				default:
-					break;
-			}
-			if (items == null)
-			{
-				MessageBox.Show($"Failed to read from from {sourcePath}!");
+				MessageBox.Show(error);
 				return;
 			}
+			var targetExt = Path.GetExtension(targetPath).ToLower();
 			// Process items.
 			if (process != null)
 				foreach (var item in items)

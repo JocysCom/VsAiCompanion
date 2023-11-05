@@ -155,23 +155,23 @@
 					</RichTextBox.OpacityMask>
 				</RichTextBox>
 			</TabItem>
-			<TabItem x:Name="SourceDataTabItem" x:FieldModifier="public">
+			<TabItem x:Name="SourceFilesTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_folder_open_doc}" />
 						<Label Content="1. Source Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningLocalFilesControl x:Name="FineTuningSourceDataPanel" FolderType="SourceData" />
+				<Controls:FineTuningLocalFilesControl x:Name="SourceFilesPanel" FolderType="SourceFiles" />
 			</TabItem>
-			<TabItem x:Name="FineTuningTuningDataTabItem" x:FieldModifier="public">
+			<TabItem x:Name="TuningFilesTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_folder_open_doc_settings}" />
 						<Label Content="2. Tuning Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningLocalFilesControl x:Name="FineTuningTuningDataPanel" FolderType="TuningData" />
+				<Controls:FineTuningLocalFilesControl x:Name="TuningFilesPanel" FolderType="TuningFiles" />
 			</TabItem>
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -180,25 +180,29 @@
 						<Label Content="3. Remote Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningRemoteFilesControl x:Name="FineTuningRemoteDataPanel" />
+				<Controls:FineTuningRemoteFilesControl x:Name="RemoteFilesPanel" />
 			</TabItem>
-			<TabItem x:Name="FineTuningJobsTabItem" x:FieldModifier="public">
+			<TabItem
+				x:Name="TuningJobsTabItem"
+				Height="25"
+				VerticalAlignment="Top"
+				x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_todo_list}" />
 						<Label Content="4. Tuning Jobs" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningJobListControl x:Name="FineTuningJobListPanel" />
+				<Controls:FineTuningJobListControl x:Name="TuningJobsListPanel" />
 			</TabItem>
-			<TabItem x:Name="PersonalModelsTabItem" x:FieldModifier="public">
+			<TabItem x:Name="ModelsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_user_group}" />
 						<Label Content="5. Models" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningModelListControl x:Name="FineTuningModelListPanel" />
+				<Controls:FineTuningModelListControl x:Name="ModelsPanel" />
 			</TabItem>
 		</TabControl>
 	</Grid>

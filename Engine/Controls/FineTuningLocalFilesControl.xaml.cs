@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using JocysCom.ClassLibrary;
+﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
@@ -29,11 +28,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			_FilesMonitor = new FilesMonitor();
 			MainDataGrid.ItemsSource = CurrentItems;
 			Global.OnSourceDataFilesUpdated += Global_OnSourceDataFilesUpdated;
 			Global.OnTuningDataFilesUpdated += Global_OnTuningDataFilesUpdated;
 			UpdateButtons();
+			_FilesMonitor.FilesChanged += _FilesMonitor_FilesChanged;
 		}
+
+		private void _FilesMonitor_FilesChanged(object sender, EventArgs e)
+		{
+			Dispatcher.BeginInvoke(new Action(() =>
+			{
+				TryRefresh();
+			}));
+		}
+
+		FilesMonitor _FilesMonitor;
 
 		private void Global_OnTuningDataFilesUpdated(object sender, EventArgs e)
 		{
@@ -86,7 +97,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isSelected = selecetedItems.Count() > 0;
 			DeleteButton.IsEnabled = isSelected;
 			ValidateButton.IsEnabled = isSelected;
-			OpenButton.IsEnabled = isSelected;
+			OpenFileButton.IsEnabled = isSelected;
 			UploadButton.Visibility = FolderType == FineTuningFolderType.TuningFiles ? Visibility.Visible : Visibility.Collapsed;
 			UploadButton.IsEnabled = isSelected;
 			var isOneItemSelected = selecetedItems.Count() == 1;
@@ -187,16 +198,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					return;
 				if (_Data != null)
 				{
+					_FilesMonitor.SetFileMonitoring(false);
 					_Data.PropertyChanged -= _Data_PropertyChanged;
 				}
 				if (value != null)
 				{
+
 					value.PropertyChanged += _Data_PropertyChanged;
+					var path = Global.GetPath(value, FolderType.ToString());
+					_FilesMonitor.SetFileMonitoring(true, path, "*.*");
 				}
 				_Data = value;
-				MustRefresh = true;
-				if (IsVisible)
-					Refresh();
+				TryRefresh();
 			}
 		}
 		public FineTuningItem _Data;
@@ -210,6 +223,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (Global.IsGoodSettings(_Data.AiService))
 					Refresh();
 			}
+		}
+
+		public void TryRefresh()
+		{
+			MustRefresh = true;
+			if (IsVisible)
+				Refresh();
 		}
 
 
@@ -390,10 +410,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		private void OpenButton_Click(object sender, RoutedEventArgs e)
-			=> Open();
-
-
 		private void MainDataGrid_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
 			=> Open();
 
@@ -403,6 +419,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!isEditMode && e.Key == Key.Delete)
 				Delete();
 		}
+
+		private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+		{
+			Open();
+		}
+
+		private void OpenFolderButton_Click(object sender, RoutedEventArgs e)
+		{
+			var path = Global.GetPath(Data, FolderType.ToString());
+			ControlsHelper.OpenUrl(path);
+		}
+
 	}
 
 }

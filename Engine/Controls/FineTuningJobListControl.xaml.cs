@@ -61,8 +61,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<fine_tuning_job>();
 			var isSelected = selecetedItems.Count() > 0;
-			//var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
-			CancelButton.IsEnabled = isSelected;
+			var endStates = new List<string> { "failed", "succeeded" };
+			var containsNonEndStateItems = selecetedItems
+				.Any(x => !string.IsNullOrEmpty(x.status) && !endStates.Contains(x.status));
+			CancelButton.IsEnabled = containsNonEndStateItems;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)

@@ -39,11 +39,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				DataContext = value;
 				AiModelBoxPanel.BindData(value);
 				IconPanel.BindData(value);
-				FineTuningSourceDataPanel.Data = value;
-				FineTuningTuningDataPanel.Data = value;
-				FineTuningRemoteDataPanel.Data = value;
-				FineTuningJobListPanel.Data = value;
-				FineTuningModelListPanel.Data = value;
+				SourceFilesPanel.Data = value;
+				TuningFilesPanel.Data = value;
+				RemoteFilesPanel.Data = value;
+				TuningJobsListPanel.Data = value;
+				ModelsPanel.Data = value;
 				OnPropertyChanged(nameof(DataFolderPath));
 			}
 		}

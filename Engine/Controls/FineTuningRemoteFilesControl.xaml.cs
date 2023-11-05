@@ -67,7 +67,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<file>();
 			var isSelected = selecetedItems.Count() > 0;
 			DeleteButton.IsEnabled = isSelected;
-			CreateModelButton.IsEnabled = isSelected;
+			CreateModelButton.IsEnabled = selecetedItems.Any(x=>x.purpose == Client.FineTuningPurpose);
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
