@@ -52,7 +52,7 @@
 				ToolTip="Cancel">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
-					<Label x:Name="CancelButtonLabel" Content="Cancel" />
+					<Label x:Name="CancelButtonLabel" Content="Cancel Job" />
 				</StackPanel>
 			</Button>
 		</StackPanel>

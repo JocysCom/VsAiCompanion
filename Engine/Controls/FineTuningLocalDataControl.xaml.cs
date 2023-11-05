@@ -87,6 +87,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			DeleteButton.IsEnabled = isSelected;
 			ValidateButton.IsEnabled = isSelected;
 			OpenButton.IsEnabled = isSelected;
+			UploadButton.Visibility = FolderType == FineTuningFolderType.TuningData ? Visibility.Visible : Visibility.Collapsed;
 			UploadButton.IsEnabled = isSelected;
 			var isOneItemSelected = selecetedItems.Count() == 1;
 			ConvertTypeComboBox.IsEnabled = isOneItemSelected;

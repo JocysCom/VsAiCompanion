@@ -61,7 +61,8 @@
 				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
-				Click="DeleteButton_Click">
+				Click="DeleteButton_Click"
+				Visibility="Collapsed">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
 					<Label x:Name="DeleteButtonLabel" Content="Delete" />
