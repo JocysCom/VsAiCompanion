@@ -1,7 +1,7 @@
 # Jocys.com VS AI Companion
 This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci...) subscription, also run Open AI on their local machine ([GPT4All](https://gpt4all.io/)), as well as those who run AI on-premises or on Azure Cloud.
 
-The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application. It's like a Swiss Army Knife of AI for developers.
+The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application. It's like a Swiss Army Knife of AI for developers. Application allows you to easily create custom, fine-tuned AI models for company chatbots or virtual employees.
 
 ### Why Use Tools Utilizing API Instead of Web Chat GPT?
 
@@ -85,4 +85,13 @@ Template: Custom - Historical Events
 Template: Translate - English to Klingon:
 
 <img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_Task_Translate.png"  width="600" height="600">
+
+Fine-Tuning: Create Custom Model
+
+<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_FineTuning.png"  width="600" height="416">
+
+Fine-Tuning: Create Assistant (Virtual Employee)
+
+<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_FineTuning_Assistant.png"  width="600" height="416">
+
 
