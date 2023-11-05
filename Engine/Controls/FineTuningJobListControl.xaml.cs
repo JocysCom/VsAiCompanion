@@ -185,7 +185,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var request = new fine_tuning_jobs_request();
 			request.limit = 1000;
 			var response = await client.GetFineTuningJobsAsync(request);
-			var items = response.First()?.data;
+			var items = response?.FirstOrDefault()?.data ?? new List<fine_tuning_job>();
 			CollectionsHelper.Synchronize(items, CurrentItems);
 			MustRefresh = false;
 			ControlsHelper.SetSelection(MainDataGrid, nameof(fine_tuning_job.id), Data.FineTuningJobListSelection, 0);

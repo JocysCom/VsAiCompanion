@@ -197,7 +197,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SaveSelection();
 			var client = new Client(Data.AiService);
 			var files = await client.GetFilesAsync();
-			var fileList = files?.FirstOrDefault()?.data;
+			var fileList = files?.FirstOrDefault()?.data ?? new List<file>();
 			CollectionsHelper.Synchronize(fileList, CurrentItems);
 			MustRefresh = false;
 			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), Data.FineTuningRemoteDataSelection, 0);
