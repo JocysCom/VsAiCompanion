@@ -190,7 +190,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public async Task Refresh()
 		{
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+			if (Data == null)
+				return;
+			if (!Global.ValidateServiceAndModel(Data))
 				return;
 			SaveSelection();
 			var client = new Client(Data.AiService);
@@ -212,7 +214,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			if (items.Count == 0)
 				return null;
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+			if (!Global.ValidateServiceAndModel(Data))
 				return null;
 			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
 				return null;
@@ -241,7 +243,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void CreateJobAndModel()
 		{
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+			if (!Global.ValidateServiceAndModel(Data))
 				return;
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			if (!AppHelper.AllowAction($"create job{(items.Count > 1 ? "s" : "")} to fine tune \"{Data.AiModel}\" custom model from ", items.Select(x => x.filename).ToArray()))

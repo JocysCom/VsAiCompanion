@@ -75,7 +75,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
 			if (!Global.IsGoodSettings(item.AiService, true))
 				return;
-			if (!Global.ValidateServiceAndModel(item.AiService, item.AiModel))
+			if (!Global.ValidateServiceAndModel(item))
 				return;
 			if (item.IsBusy)
 				return;

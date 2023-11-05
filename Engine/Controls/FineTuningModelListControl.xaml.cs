@@ -155,7 +155,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public async Task Refresh()
 		{
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+			if (!Global.ValidateServiceAndModel(Data))
 				return;
 			SaveSelection();
 			var client = new Client(Data.AiService);
@@ -171,7 +171,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public List<model> GetWithAllow(AllowAction action)
 		{
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+			if (!Global.ValidateServiceAndModel(Data))
 				return null;
 			var items = MainDataGrid.SelectedItems.Cast<model>().ToList();
 			if (items.Count == 0)

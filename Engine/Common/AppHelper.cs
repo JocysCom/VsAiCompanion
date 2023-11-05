@@ -399,7 +399,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
 				Global.AppSettings.AiServices.FirstOrDefault(); ;
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
-			item.AiModel = defaultAiService.DefaultAiModel;
+			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
 			return item;
 		}
 

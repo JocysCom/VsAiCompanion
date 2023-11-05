@@ -118,6 +118,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			MainControl.InfoPanel.SetWithTimeout(image, content, args);
 		}
 
+		public static bool ValidateServiceAndModel(IAiServiceModel am)
+		{
+			if (am == null)
+				return false;
+			return ValidateServiceAndModel(am.AiService, am.AiModel);
+		}
+
 		public static bool ValidateServiceAndModel(AiService service, string model)
 		{
 			var messages = new List<string>();

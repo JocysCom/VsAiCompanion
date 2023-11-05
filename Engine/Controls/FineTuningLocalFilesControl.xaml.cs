@@ -327,7 +327,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
 			if (items.Count == 0)
 				return null;
-			if (checkData && !Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+			if (checkData && !Global.ValidateServiceAndModel(Data))
 				return null;
 			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
 				return null;

@@ -178,7 +178,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public async Task Refresh()
 		{
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+			if (!Global.ValidateServiceAndModel(Data))
 				return;
 			SaveSelection();
 			var client = new Client(Data.AiService);
@@ -196,7 +196,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = MainDataGrid.SelectedItems.Cast<fine_tuning_job>().ToList();
 			if (items.Count == 0)
 				return null;
-			if (!Global.ValidateServiceAndModel(Data.AiService, Data.AiModel))
+			if (!Global.ValidateServiceAndModel(Data))
 				return null;
 			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
 				return null;
