@@ -491,13 +491,27 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			}
 		}
 
-		private static string GetExcelColumnName(Cell cell)
+		private static string GetExcelColumnName(Cell cell, int columnIndex)
 		{
-			return new string(cell.CellReference
-				.ToString()
-				.ToCharArray()
-				.Where(char.IsLetter)
-				.ToArray());
+			return cell.CellReference == null
+				? GetExcelColumnName(columnIndex)
+				: new string(cell.CellReference
+					.ToString()
+					.ToCharArray()
+					.Where(char.IsLetter)
+					.ToArray());
+		}
+		private static string GetExcelColumnName(int columnIndex)
+		{
+			const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			string columnName = "";
+			while (columnIndex > 0)
+			{
+				var m = (columnIndex - 1) % 26;
+				columnIndex = (columnIndex - m) / 26;
+				columnName = letters[m] + columnName;
+			}
+			return columnName;
 		}
 
 		static string GetCellValue(Cell cell, SharedStringTablePart stringTablePart)
@@ -527,19 +541,20 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				var columns = headerCells.ToDictionary(
 					k => GetCellValue(k, stringTablePart)?.ToLower(),
 					v => v);
+				var columnValues = columns.Values.ToList();
 				var promptColumns = columns.Where(x => promptNames.Any(n => x.Key.Contains(n))).Select(x => x.Value).ToArray();
 				var answerColumns = columns.Where(x => answerNames.Any(n => x.Key.Contains(n))).Select(x => x.Value).ToArray();
 				// If prompt or answer column not found in the Excel then return.
 				if (promptColumns.Length == 0 || answerColumns.Length == 0)
 					return result;
-				var promptColumnNames = promptColumns.Select(x => GetExcelColumnName(x)).ToArray();
-				var answerColumnNames = answerColumns.Select(x => GetExcelColumnName(x)).ToArray();
+				var promptColumnNames = promptColumns.Select(x => GetExcelColumnName(x, columnValues.IndexOf(x) + 1)).ToArray();
+				var answerColumnNames = answerColumns.Select(x => GetExcelColumnName(x, columnValues.IndexOf(x) + 1)).ToArray();
 				// Skip the header row.
 				foreach (var row in rows.Skip(1))
 				{
 					// Get cells with values.
 					var cells = row.Elements<Cell>().ToList();
-					var columnCells = cells.ToDictionary(k => GetExcelColumnName(k), v => v);
+					var columnCells = cells.ToDictionary(k => GetExcelColumnName(k, cells.IndexOf(k) + 1), v => v);
 					foreach (var p in promptColumnNames)
 					{
 						// Continue if cell is empty.

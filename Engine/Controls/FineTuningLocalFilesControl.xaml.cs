@@ -206,6 +206,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 					value.PropertyChanged += _Data_PropertyChanged;
 					var path = Global.GetPath(value, FolderType.ToString());
+					if (!Directory.Exists(path))
+						Directory.CreateDirectory(path);
 					_FilesMonitor.SetFileMonitoring(true, path, "*.*");
 				}
 				_Data = value;

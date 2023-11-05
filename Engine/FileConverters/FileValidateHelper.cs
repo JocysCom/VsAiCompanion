@@ -27,7 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				}
 				else
 				{
-					List<text_completion_item> result;
+					List<chat_completion_request> result;
 					var success = FileConvertHelper.TryReadFrom(sourcePath, out result, out error);
 					status_details = success
 						? $"Validated successfuly. {result.Count} item(s) found."
