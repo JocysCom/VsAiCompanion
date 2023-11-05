@@ -12,7 +12,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using JocysCom.ClassLibrary.Collections;
 using System.ComponentModel;
-using DocumentFormat.OpenXml.Bibliography;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
