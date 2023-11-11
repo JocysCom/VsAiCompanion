@@ -115,6 +115,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			catch (Exception ex)
 			{
 				error = ex.Message;
+				return false;
 			}
 			if (result == null)
 				error = $"Failed to read from from {sourcePath}!";
@@ -128,7 +129,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			TryReadFrom(sourcePath, out items, out error);
 			if (!string.IsNullOrEmpty(error))
 			{
-				MessageBox.Show(error);
+				Global.ShowError(error);
 				return;
 			}
 			var targetExt = Path.GetExtension(targetPath).ToLower();
