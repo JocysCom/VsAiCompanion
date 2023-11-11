@@ -239,6 +239,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ti.SetIcon(contents);
 				item = ti;
 			}
+			if (DataType == ItemType.Assistant)
+			{
+				var ti = AppHelper.GetNewAssistantItem();
+				ti.Name = $"Assistant {DateTime.Now:yyyyMMdd_HHmmss}";
+				// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
+				var contents = Helper.FindResource<string>(ClientHelper.DefaultAssistantIconEmbeddedResource, GetType().Assembly);
+				ti.SetIcon(contents);
+				item = ti;
+			}
+
+
 			if (item != null)
 				InsertItem(item);
 		}

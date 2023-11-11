@@ -23,6 +23,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string FormatMessageTaskName = "® System - Format Message";
 		public const string DefaultTaskItemIconEmbeddedResource = "document_gear.svg";
 		public const string DefaultFineTuningIconEmbeddedResource = "control_panel.svg";
+		public const string DefaultAssistantIconEmbeddedResource = "user_comment.svg";
 
 		public static string JoinMessageParts(params string[] args)
 		{

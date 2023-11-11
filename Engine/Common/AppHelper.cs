@@ -387,7 +387,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var item = new TemplateItem();
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
-				Global.AppSettings.AiServices.FirstOrDefault(); ;
+				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService.DefaultAiModel;
 			return item;
@@ -397,7 +397,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var item = new FineTuningItem();
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
-				Global.AppSettings.AiServices.FirstOrDefault(); ;
+				Global.AppSettings.AiServices.FirstOrDefault();
+			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
+			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
+			return item;
+		}
+
+		public static AssistantItem GetNewAssistantItem()
+		{
+			var item = new AssistantItem();
+			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
+				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
 			return item;

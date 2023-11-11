@@ -315,6 +315,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set
 			{
 				_DataType = value;
+				if (ControlsHelper.IsDesignMode(this))
+					return;
 				// Update panel settings.
 				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
 				PanelSettings = Global.AppSettings.GetTaskSettings(value);

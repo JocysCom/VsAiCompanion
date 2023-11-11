@@ -71,6 +71,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		public static SettingsData<AssistantItem> Assistants =
+			new SettingsData<AssistantItem>($"{nameof(Assistants)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			{
+				UseSeparateFiles = true,
+			};
+
+
 		public static ISettingsData GetSettings(ItemType type)
 		{
 			switch (type)
@@ -78,6 +85,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Task: return Tasks;
 				case ItemType.Template: return Templates;
 				case ItemType.FineTuning: return FineTunings;
+				case ItemType.Assistant: return Assistants;
 				default: return new SettingsData<TemplateItem>();
 			}
 		}
@@ -102,6 +110,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static string FineTuningPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(ItemType.FineTuning));
+
+		public static string AssistantsPath
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(Assistants));
+
+		public static string GetPath(AssistantItem item, params string[] args)
+		{
+			var itemPath = new string[] { AssistantsPath, item.Name };
+			var paths = itemPath.Concat(args).ToArray();
+			var path = System.IO.Path.Combine(paths);
+			return path;
+		}
 
 		public static string GetPath(FineTuningItem item, params string[] args)
 		{
@@ -196,6 +215,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Templates.Save();
 			Tasks.Save();
 			FineTunings.Save();
+			Assistants.Save();
 		}
 
 		/// <summary>
@@ -236,12 +256,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (Tasks.IsSavePending)
 				Tasks.Save();
 			// Load fine tune settings.
-			// Load tasks.
-			FineTunings.OnValidateData += FineTuneSettings_OnValidateData;
+			FineTunings.OnValidateData += FineTunings_OnValidateData;
 			FineTunings.Load();
 			FineTunings.Load();
 			if (FineTunings.IsLoadPending)
 				FineTunings.Load();
+			// Load Assistant settings.
+			Assistants.OnValidateData += Assistants_OnValidateData;
+			Assistants.Load();
+			Assistants.Load();
+			if (Assistants.IsLoadPending)
+				Assistants.Load();
+
+
 			// Enable template and task folder monitoring.
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
@@ -253,7 +280,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		private static void FineTuneSettings_OnValidateData(object sender, SettingsData<FineTuningItem>.SettingsDataEventArgs e)
+		private static void Assistants_OnValidateData(object sender, SettingsData<AssistantItem>.SettingsDataEventArgs e)
+		{
+			var data = (SettingsData<AssistantItem>)sender;
+			if (e.Items.Count != 0)
+				return;
+		}
+
+		private static void FineTunings_OnValidateData(object sender, SettingsData<FineTuningItem>.SettingsDataEventArgs e)
 		{
 			var data = (SettingsData<FineTuningItem>)sender;
 			if (e.Items.Count != 0)
