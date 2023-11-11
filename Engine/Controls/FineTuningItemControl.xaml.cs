@@ -96,7 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private ItemType _DataType;
 
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
-			=> ControlsHelper.OpenUrl(DataFolderTextBox.Text);
+			=> ControlsHelper.OpenUrl(DataFolderPath);
 
 		private void ConvertToJsonlButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
