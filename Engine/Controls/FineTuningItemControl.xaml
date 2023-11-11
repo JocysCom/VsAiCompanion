@@ -79,7 +79,7 @@
 				Grid.Row="0"
 				Grid.Column="2"
 				IsReadOnly="True"
-				Text="{Binding DataFolderPath, ElementName=This}" />
+				Text="{Binding DataFolderPathShow, ElementName=This}" />
 			<Button
 				Name="OpenButton"
 				Grid.Row="0"

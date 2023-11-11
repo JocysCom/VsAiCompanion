@@ -1,21 +1,13 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.IO;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using static System.Environment;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -75,6 +67,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				//TuningJobsListPanel.Data = value;
 				//ModelsPanel.Data = value;
 				OnPropertyChanged(nameof(DataFolderPath));
+				OnPropertyChanged(nameof(DataFolderPathShow));
 			}
 		}
 		AssistantItem _Item;
@@ -82,10 +75,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(FineTuningItem.Name))
+			{
 				OnPropertyChanged(nameof(DataFolderPath));
+				OnPropertyChanged(nameof(DataFolderPathShow));
+			}
 		}
 
+
 		#endregion
+
+		public string DataFolderPathShow
+		{
+			get => AssemblyInfo.ParameterizePath(DataFolderPath, true);
+			set { }
+		}
 
 		public string DataFolderPath
 		{
@@ -132,7 +135,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#endregion
 
 		private void OpenButton_Click(object sender, RoutedEventArgs e)
-			=> ControlsHelper.OpenUrl(DataFolderTextBox.Text);
+			=> ControlsHelper.OpenUrl(DataFolderPath);
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{

@@ -206,7 +206,7 @@ namespace JocysCom.ClassLibrary.IO
 
 		static Dictionary<string, string> _SpecialFolders;
 
-		static Dictionary<string, string> SpecialFolders
+		public static Dictionary<string, string> SpecialFolders
 		{
 			get
 			{

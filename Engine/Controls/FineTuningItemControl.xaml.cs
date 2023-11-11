@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -45,16 +46,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				TuningJobsListPanel.Data = value;
 				ModelsPanel.Data = value;
 				OnPropertyChanged(nameof(DataFolderPath));
+				OnPropertyChanged(nameof(DataFolderPathShow));
 			}
 		}
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(FineTuningItem.Name))
+			{
 				OnPropertyChanged(nameof(DataFolderPath));
+				OnPropertyChanged(nameof(DataFolderPathShow));
+			}
 		}
 
 		FineTuningItem _Item;
+
+		public string DataFolderPathShow
+		{
+			get => AssemblyInfo.ParameterizePath(DataFolderPath, true);
+			set { }
+		}
 
 		public string DataFolderPath
 		{
