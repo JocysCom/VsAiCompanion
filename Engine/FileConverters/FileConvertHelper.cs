@@ -62,13 +62,14 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				? FineTuningFolderType.TuningFiles
 				: FineTuningFolderType.SourceFiles;
 			var targetFullName = Path.Combine(fineTuneItemPath, targetFolder.ToString(), sourceBase + targetExt);
+			bool success;
 			if (Client.IsTextCompletionMode(aiModel))
 			{
-				Convert<text_completion_item>(sourceFullName, targetFullName, null);
+				success = Convert<text_completion_item>(sourceFullName, targetFullName, null);
 			}
 			else
 			{
-				Convert<chat_completion_request>(sourceFullName, targetFullName, (r) =>
+				success = Convert<chat_completion_request>(sourceFullName, targetFullName, (r) =>
 				{
 					if (string.IsNullOrEmpty(systemMessage))
 						return;
@@ -77,7 +78,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					r.messages.Insert(0, new chat_completion_message(message_role.system, systemMessage));
 				});
 			}
-			return targetFullName;
+			return success
+				? targetFullName
+				: null;
 		}
 
 		public static bool TryReadFrom<T>(string sourcePath, out List<T> result, out string error) where T : class
@@ -86,6 +89,12 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			error = null;
 			try
 			{
+				if (!File.Exists(sourcePath))
+				{
+					error = $"The file {sourcePath} does not exist.";
+					return false;
+				}
+
 				var sourceExt = Path.GetExtension(sourcePath).ToLower();
 				// Read from file.
 				switch (sourceExt)
@@ -109,58 +118,66 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 						result = ReadFromCsv<T>(sourcePath);
 						break;
 					default:
-						throw new Exception($"Extension {sourceExt} unknonw!");
+						error = $"The extension {sourceExt} is unknown.";
+						return false;
 				}
 			}
 			catch (Exception ex)
 			{
-				error = ex.Message;
+				error = $"An error occurred while reading the file: {ex.Message}";
 				return false;
 			}
-			if (result == null)
-				error = $"Failed to read from from {sourcePath}!";
-			return string.IsNullOrEmpty(error);
+			return true;
 		}
 
-		public static void Convert<T>(string sourcePath, string targetPath, Action<T> process) where T : class
+		public static bool Convert<T>(string sourcePath, string targetPath, Action<T> process) where T : class
 		{
 			List<T> items;
 			string error;
-			TryReadFrom(sourcePath, out items, out error);
+			var success = TryReadFrom(sourcePath, out items, out error);
 			if (!string.IsNullOrEmpty(error))
-			{
 				Global.ShowError(error);
-				return;
-			}
+			if (!success)
+				return false;
 			var targetExt = Path.GetExtension(targetPath).ToLower();
 			// Process items.
 			if (process != null)
 				foreach (var item in items)
 					process(item);
 			// Write to file.
-			switch (targetExt)
+			try
 			{
-				case ".jsonl":
-					WriteToJsonl(targetPath, items);
-					break;
-				case ".json":
-					WriteToJson(targetPath, items);
-					break;
-				case ".xlsx":
-					WriteToXlsx(targetPath, items);
-					break;
-				case ".docx":
-					WriteToDocx(targetPath, items);
-					break;
-				case ".rtf":
-					WriteToRtf(targetPath, items);
-					break;
-				case ".csv":
-					WriteToCsv(targetPath, items);
-					break;
-				default:
-					break;
+				switch (targetExt)
+				{
+					case ".jsonl":
+						WriteToJsonl(targetPath, items);
+						break;
+					case ".json":
+						WriteToJson(targetPath, items);
+						break;
+					case ".xlsx":
+						WriteToXlsx(targetPath, items);
+						break;
+					case ".docx":
+						WriteToDocx(targetPath, items);
+						break;
+					case ".rtf":
+						WriteToRtf(targetPath, items);
+						break;
+					case ".csv":
+						WriteToCsv(targetPath, items);
+						break;
+					default:
+						Global.ShowError($"The extension {targetExt} is not supported for writing.");
+						return false;
+				}
 			}
+			catch (Exception ex)
+			{
+				Global.ShowError($"An error occurred while writing the file: {ex.Message}");
+				return false;
+			}
+			return true;
 		}
 
 		public static bool AllowToWrite(string targetFile)

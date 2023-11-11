@@ -2,40 +2,50 @@
 using System.Collections.Generic;
 using System;
 using System.IO;
-using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
 	public static class FileValidateHelper
 	{
-
 		public static void Validate(string path, file[] items, string aiModel)
 		{
 			foreach (var item in items)
 			{
-				string status_details;
+				string statusDetails;
 				var sourcePath = Path.Combine(path, item.filename);
 				string error;
-
-				if (Client.IsTextCompletionMode(aiModel))
+				// Check if the file exists before attempting to read.
+				if (!File.Exists(sourcePath))
 				{
-					List<text_completion_response> result;
-					var success = FileConvertHelper.TryReadFrom(sourcePath, out result, out error);
-					status_details = success
-						? $"Validated successfuly. {result.Count} item(s) found."
-						: error;
+					statusDetails = $"{DateTime.Now}: The file {sourcePath} does not exist.";
+					item.status_details = statusDetails;
+					continue;
 				}
-				else
+				try
 				{
-					List<chat_completion_request> result;
-					var success = FileConvertHelper.TryReadFrom(sourcePath, out result, out error);
-					status_details = success
-						? $"Validated successfuly. {result.Count} item(s) found."
-						: error;
+					if (Client.IsTextCompletionMode(aiModel))
+					{
+						List<text_completion_response> result;
+						var success = FileConvertHelper.TryReadFrom(sourcePath, out result, out error);
+						statusDetails = success
+							? $"Validated successfully. {result.Count} item(s) found."
+							: error;
+					}
+					else
+					{
+						List<chat_completion_request> result;
+						var success = FileConvertHelper.TryReadFrom(sourcePath, out result, out error);
+						statusDetails = success
+							? $"Validated successfully. {result.Count} item(s) found."
+							: error;
+					}
 				}
-				item.status_details = $"{DateTime.Now}: {status_details}";
+				catch (Exception ex)
+				{
+					statusDetails = $"{DateTime.Now}: An error occurred during validation: {ex.Message}";
+				}
+				item.status_details = statusDetails;
 			}
 		}
-
 	}
 }
