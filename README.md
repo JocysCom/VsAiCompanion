@@ -10,7 +10,7 @@ The AI Companion is a tool that analyzes your project files and works alongside 
 - API provides access to more recent and smarter AI models.
 
 ### Download
-Digitally Signed Standalone/Portable Application v1.3.6 (2023-11-05)
+Digitally Signed Standalone/Portable Application v1.3.16 (2023-11-12)
 
 [Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.3.6/JocysCom.VS.AiCompanion.App.zip)
 
