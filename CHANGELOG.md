@@ -1,3 +1,10 @@
+2023-11-12 v1.3.16
+
+- Fix: Resolved several potential crashes during file conversions.
+- New: Added the option to use the maximum auto-detected context size.
+- New: Introduced new templates for "Writing" and "AI - Evaluate Morality".
+- Update: Now tool autofocus on the Tasks tab when a new task is created.
+
 2023-11-05 v1.3.6
 
 - New: Added a new feature to fine-tune custom models.
