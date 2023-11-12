@@ -1,23 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Code - Simplify</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Simplify, refactor, and enhance the performance of the given code while preserving all essential comments.</TextInstructions>
-  <IsSystemInstructions>true</IsSystemInstructions>
-  <AttachContext>ActiveDocument</AttachContext>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACn1U226jMBB971dY7ksrYbAJhFJBHrZadfuwrbRVP4CAE7w1dmScQPr1O3bIpdvV&#xD;
 RrKZOTNz5sKQot+t0Y6bXmhVYhYyfIXgN3ZS9SVurd3cR9EwDOEwC7VZRzGlNIKYC7f7UQr1/i9n&#xD;
 lud55K0YDaKxbYlTFmPUcrFu7aTsBB++6bHEFFEEiDt44ekLK6zki8oYPaCOmzVHotaqiA74wafh&#xD;
@@ -30,4 +14,20 @@ UnXrRnbsZO/67MRIlpKrhnS64fdIadNV8uKtFZvKtghe6M+E0oAliWQsDuBIchRoQO6ohBPQmqQ0&#xD
 TAOKSHYXxFmYIsJoCkiahGlNZnMQZxlYZyC4C+w+wsmSzJOAOrp5Ip1YT2TARTzZgYt4MgZXQNyN&#xD;
 4hzsOUrmAUmYy8MysMSOHVYWvGJIebY6qgOWTmTHKr3ytYwsgyIYSwJXPzoXXHsmIAIeT3PuVbpp&#xD;
 fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
+  <Name>Code - Simplify</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Simplify, refactor, and enhance the performance of the given code while preserving all essential comments.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

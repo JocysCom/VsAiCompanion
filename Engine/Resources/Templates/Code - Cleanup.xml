@@ -1,22 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Code - Cleanup</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Cleanup this code.</TextInstructions>
-  <AttachContext>Selection</AttachContext>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACqVW224bRwx9z1dsty8tsJqdGc6FY1gJEMkOCiRtgDot+lQo640kRJYESbGcfH0P&#xD;
 ubKdWx+KGgYWnCU55CHPWZ0/u7tZVbf9br/crMe1M7au+nW3uV6u5+P6zdXliOtnT5+c/zD9bXL1&#xD;
 1+uLan87r16/ef7yl0lVj9r2T5q07fRqWv3+x4vKGde2F7/WVb04HLZnbXs8Hs2RzGY3b1/sZtvF&#xD;
@@ -39,4 +24,19 @@ Tio2dUCmoHVoacYqZTAVqo1D2RbGspSAQDBBdMyHoH1yxAoB2pSUgCHBl/BBEPkIJkKM0T7mpRhZ&#xD
 h1aV3ComFoiL6UUY8IwrMbCh6pJhpWxVjAuIvhIXO4iwtQFpQTZ9ixEouviCKmlILolu0EMORRn1&#xD;
 77I+yN//kPUJuANVxRRREwuXCoaDvNCJgJF9uZaP1PLkLj1+0WzwIV4e5FuPnxW61OftHD855GfD&#xD;
 0yf/AL2C70gECQAA</IconData>
+  <Name>Code - Cleanup</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Cleanup this code.</TextInstructions>
+  <AttachContext>Selection</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

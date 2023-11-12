@@ -1,21 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Convert - KnockoutJS to Angular</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Convert KnockoutJS HTML to Angular in this Microsoft Razor page template. Reply with fully converted code. Code:</TextInstructions>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACm1U227bRhB9z1dsCRRIAFrcmb2ObCVA1k5QQGkDxGnRvqkWLbGhSYFiLOfve5a2&#xD;
 AymIJEBnD+e+Z3jx5uGuVff1sG/6blHQTBeq7m76ddNtFsXn63dnsVD7cdWtV23f1Yui64s3r19c&#xD;
 /HL5R7r+++OV2t9v1MfPb5e/JVWcVdVfJlXV5fWl+vTne0Uzqqqr3wtVbMdxN6+qw+EwO5hZP2yq&#xD;
@@ -33,4 +19,18 @@ LS+DDVkojmIKHNCZ4LZUIAcDAfsMY+AUyGsIw4lT0AWXjEBo3dEEg0uSxwSIdBJ1yIJyqAedoB+J&#xD
 YlAxEuYkWWhQLLrPSwMsiJIFhUs1Al/ksrhrG3NRcRKdiwxhUh4ceQN5QYQ6izFgoGx81BCvydXg&#xD;
 6njJCAaBZ4zlCexL9ggBG8o4r0sWHpZmwilv1BOdubxuGTxu1/PGTUbfHU385+R9Nh82/77Mq2FR&#xD;
 EL06L6ofXgYn75vnwwQu8gv49Yv/ATV8wv6ABgAA</IconData>
+  <Name>Convert - KnockoutJS to Angular</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Convert KnockoutJS HTML to Angular in this Microsoft Razor page template. Reply with fully converted code. Code:</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

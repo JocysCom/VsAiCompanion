@@ -444,12 +444,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public static int GetMaxTokens(string modelName)
 		{
 			modelName = modelName.ToLowerInvariant();
+			if (modelName.Contains("-128k") || modelName.Contains("gpt-4-1106"))
+				return 128 * 1024;
 			if (modelName.Contains("-64k"))
 				return 64 * 1024;
 			if (modelName.Contains("-32k"))
 				return 32 * 1024;
 			if (modelName.Contains("-16k"))
 				return 16 * 1024;
+			if (modelName.Contains("gpt-4"))
+				return 8192;
 			if (modelName.Contains("gpt-4"))
 				return 8192;
 			if (modelName.Contains("gpt-35-turbo"))

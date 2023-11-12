@@ -1,21 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Utility - Explanation of Concepts</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Can you explain in simple terms this complex topic:</TextInstructions>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACq1UW0/bMBh951d4liaBlDq242toQSIwNKnbkAabtresDW1GmlRJaLt/v5NQUMtl&#xD;
 T2vT1P58vnO+i+3h6WZRkFVWN3lVjqhgnJKsnFTTvJyN6M31h4GjpGnTcpoWVZmNaFnR05OD4bvz&#xD;
 L8n1j6sL0qxm5OrmbPwxIXQQht+jJAzPr8/J12+XRDARhhefKaHztl3GYbher9k6YlU9Cy/rdDnP&#xD;
@@ -30,4 +16,18 @@ nsDBOgGzdI6gUIZFXCU4P5IbCEouIKK8BpnH2EDDs0jLJGJdkxyzMkJ62khwWGWJgZRFKUDMnQKf&#xD
 c6ZPwOjAMs6hYqCt94te4lrY7saXDdju0v4Yx2K5edGRYTjb2aB7k6c+CTQJNfYIBAMi0SYkjROP&#xD;
 gU26d7dEHgBSEuAl8B2mnz4Benz37t0fACDs+f9HUk/x75w/3EP9ZRA/O5CvYbsg3sQOuxvr5OAv&#xD;
 ac+lCrEFAAA=</IconData>
+  <Name>Utility - Explanation of Concepts</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Can you explain in simple terms this complex topic:</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

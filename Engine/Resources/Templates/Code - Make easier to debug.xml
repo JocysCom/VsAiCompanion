@@ -1,22 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Code - Make easier to debug</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Make this code easier to debug</TextInstructions>
-  <AttachContext>ActiveDocument</AttachContext>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACs1WbXOiSBD+vr+CY+uqsrUKM7xr4m4hotGo+BKM5ssWwjhgEBBQ1F9/A8ZdE5Pb&#xD;
 urqqu+AL3WP39NPdTw/efN+tfGqL4sQLgxoNGUBTKLBDxwtwjTbvm2WFppLUChzLDwNUo4OQ/v7t&#xD;
 080fDUO7nw10KtliamDWu22Nosss+8BrLNu4b1DjSYuCDGRZvU9TtJumUZVlsyxjMp4JY8y2Yity&#xD;
@@ -39,4 +24,19 @@ DvXu/d3o62ijHdZJct/rrOGqk01adbAfo05fdGNcP7idgzduuzxb51fqYI0iw4jc9ib6urSGxn6a&#xD
 3vaEcGKG6TLMOiLwHx7HC9boV9Z7bq7cjiYNF8vrcdTRcRhtBhN/Oe1MpCX7KBqmYY+mG9VfS2oz&#xD;
 MuPZKLOz7bBpzWJnna0acNQQ7uSlYrJJg8fmcqnP4kfeMBoDLVKUg+y1PCwtUNHCemdkinr81MEY&#xD;
 12ontt2wR2Ld5P+Yv336C+j+p+oxDAAA</IconData>
+  <Name>Code - Make easier to debug</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Make this code easier to debug</TextInstructions>
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

@@ -1,22 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Code - Make more robust</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Make this code more robust</TextInstructions>
-  <AttachContext>ActiveDocument</AttachContext>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACsVV247TMBB95yuMJSSQ0onHt9jZLUhkASGVi8QCgrfSZttAmlRJti1/zzibonYX&#xD;
 EIhb2ipzJjOemXPs9PTBblWyTd60RV2NOYLgLK9m9byoFmP++vzxyHHWdtNqPi3rKh/zquYP7t86&#xD;
 vX32Ijt/9/IRazcL9vL1w8nTjPFRHL9VWRyfnZ+xV2+eMASM40fPOePLrluncbzdbmGroG4W8ZNm&#xD;
@@ -31,4 +16,19 @@ MI3qksCSIWIU8TkJdtKbKjCRJI6AFxQkB8KkMHsQCEuyAK4I86QWekrCiG7SEdKApqfMeTfp0RXw&#xD
 GcVrT7QoUOhJREh0MjTbS9pbxyyPajqlRfc5FYC/yBzSFnTaR6O9cf0+UoLEpS2LzoNG+X1Oab9O&#xD;
 XIQ4QRoaj7dBRW/SnxMff1n8Gx1fd0gjAdHRAyJP+x/uCkspliYATSM7QCcndGINbe8BDCHv/9J8&#xD;
 11r7PclUOPQ3JfsXst0Y7ffloxcUCml+PM3/kLDv4EjGPeiN0/DHe//WF+KbzXZ4CAAA</IconData>
+  <Name>Code - Make more robust</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Make this code more robust</TextInstructions>
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

@@ -254,7 +254,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (item.AttachContext.HasFlag(AttachmentType.ChatHistory))
 			{
 				// Get tokens available.
-				var tokensLeftForChatHistory = GetAvailableTokens(item.AiModel, chatLogMessages);
+				var tokensLeftForChatHistory = GetAvailableTokens(item.AiModel, chatLogMessages, item.UseMaximumContext);
 				var historyMessages = item.Messages
 					// Exclude preview messages from the history.
 					.Where(x => !x.IsPreview)
@@ -339,11 +339,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			Converters = { new JsonStringEnumConverter() }
 		};
 
-		public static int GetAvailableTokens(string aiModel, List<chat_completion_message> messages = null)
+		public static int GetAvailableTokens(string aiModel, List<chat_completion_message> messages = null, bool useMaximumContext = false)
 		{
 			var maxTokens = Client.GetMaxTokens(aiModel);
 			// Split 50%/50% between request and response.
-			var maxRequesTokens = maxTokens / 2;
+			var maxRequesTokens = useMaximumContext
+				? maxTokens
+				: maxTokens / 2;
 			var usedTokens = CountTokens(messages, ChatLogOptions);
 			var availableTokens = maxRequesTokens - usedTokens;
 			return availableTokens;

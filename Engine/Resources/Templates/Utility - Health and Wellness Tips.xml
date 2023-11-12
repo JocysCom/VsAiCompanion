@@ -1,21 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Utility - Health and Wellness Tips</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>What are some exercises for?:</TextInstructions>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACm1U227TQBB971csKyGB5HgvzmWdJq1Ut1RIBirRguAtxG6y1LUj203K33NmbEMq&#xD;
 tUons7MzZ86eGWVx/vxYiH1eN74ql9KEWoq8XFeZLzdLeXf7YeSkaNpVma2KqsyXsqzk+dnJ4s3l&#xD;
 l+T2x82VaPYbcXN3kX5MhBwp9T1KlLq8vRRfv10LExqlrj5LIbdtu5srdTgcwkMUVvVGXder3dav&#xD;
@@ -29,4 +15,18 @@ xRyI44DbkSRg4s0k6YpfM4UHm1gd6ik4T5l5b4m3tQlbRu9fyEjD27sm9Higd+3pitBtBA82hYqW&#xD
 wcwFsXl/KtVrG4PyFBwT2gcaAA+qGy2PqR85TalfBR4U1gNME4zJON4VUGaTwkACtqK/JiUo2FXi&#xD;
 5I50cce6uCNdOIN0IQf8usnhBEnIDCoxG6jEDLuhM+dhHZh1vygsJQ+YtgmmWy443b4N4vJCcx2v&#xD;
 Z4fXrS33YZ4IU2+WP4nCOBrDp3Hg/7VRUC6IaP1/Fgu1wS8f/TadnfwFmPWJOpsFAAA=</IconData>
+  <Name>Utility - Health and Wellness Tips</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>What are some exercises for?:</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

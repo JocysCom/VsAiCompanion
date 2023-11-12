@@ -124,6 +124,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseMacros { get => _UseMacros; set => SetProperty(ref _UseMacros, value); }
 		bool _UseMacros;
 
+		[DefaultValue(false)]
+		public bool UseMaximumContext { get => _UseMaximumContext; set => SetProperty(ref _UseMaximumContext, value); }
+		bool _UseMaximumContext;
+
 		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
 		ItemType _ItemType;
 
@@ -167,6 +171,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _PromptOption;
 
 		#endregion
+
+
 
 
 	}

@@ -1,24 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Code - Smart Search</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Analyse supplied data and find code which feature describe below. Please respond with the full file path, line number and relevant code lines. Use markdown format for the code.&#xD;
-&#xD;
-Code feature to find:</TextInstructions>
-  <Text>Multiplication</Text>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACq1VTY/bRgy951eo6nU0Gs73LNYJuvJuEGDbBsimRU+FI6u2ENU2bMfe5Nf3UZKT&#xD;
 NbLwIShgmMMZDvn4SI6uXz3+22WHZrtr16tJTlLlWbOq1/N2tZjk7x/uipi/evni+qfp79XDX29v&#xD;
 s91hkb19f3P/psryoiz/NFVZTh+m2bs/XmckqSxvf8uzfLnfb67K8ng8yqOR6+2ifL2dbZZtvSth&#xD;
@@ -36,4 +19,21 @@ S51IQxjtbUcyKqRZDPJ/ZN1Mg/nlvNPC90kwLB6BFFQ/AomHSyfLq7Qb11hCSTy0o16kdxSHS5hD&#xD
 yaZnCqjRWyl6RPOBXIcS6BC5TJjzWOHUKseTrmElegwR+fs0rEkhkxHTkOQA+JQNP0QpWX69+AlK&#xD;
 qX+iIgEyOpQUJ64laYpjZLjkyB6dqy3jQKJ4C/Elc8qBZ3QvNlP9tVjnBak094dDUwmtpVIYDIdO&#xD;
 Q/ed53mZK+/8NMSBq+tyge8nfwNfvvgP59JpdtEHAAA=</IconData>
+  <Name>Code - Smart Search</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Analyse supplied data and find code which feature describe below. Please respond with the full file path, line number and relevant code lines. Use markdown format for the code.&#xD;
+&#xD;
+Code feature to find:</TextInstructions>
+  <Text>Multiplication</Text>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

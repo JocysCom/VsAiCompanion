@@ -1,21 +1,7 @@
 ﻿<TemplateItem>
-  <Name>AI - Introduction</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Could you describe your own primary functions, capabilities, and optimal use cases as an AI? Please provide a few examples of scenarios where you could be most effectively used as a list.</TextInstructions>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACu2YW28jxxGF3/0rJgQC2AA5nL5Nz2hXNuBZ2wgwSQxknSB5UySuxJgiBZKW1vn1&#xD;
 +U41yaVsOcgNMQJktQCrZrq7qk+dupCvP3t/v6oeF9vdcrO+nLi6mVSL9fXmZrm+vZx88/bLWTep&#xD;
 dvur9c3VarNeXE7Wm8lnn370+hdvfju8/ePXX1S7x9vq628+H381VJPZfP6HMMznb96+qX73+68q&#xD;
@@ -52,4 +38,18 @@ rAnn3+x+zCpyyrkpE0L0Q5GpMd5XNMouIiek1OlpGunBWcIAmwicXmI99IctRbajxiKTEQ18PSkp&#xD
 M7zZXsfkptNcHMv5Lg7FJG+KH4f1J4WTxjNvX8BXux2Z5cmsH4E5v/3Z0FWJPiByJjoyKJyDww8X&#xD;
 1BEahYHTamgWOrHLB3T43v4MHX9S7KgDOjLxd2r2vwfM7IjMD4FRdc6B+qOxyT37OeH/pPvvY9v/&#xD;
 z1DupJjwWr/FffrR3wDPhk1eixQAAA==</IconData>
+  <Name>AI - Introduction</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Could you describe your own primary functions, capabilities, and optimal use cases as an AI? Please provide a few examples of scenarios where you could be most effectively used as a list.</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>
