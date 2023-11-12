@@ -91,6 +91,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_shield = nameof(Icon_shield);
 		public const string Icon_spellcheck = nameof(Icon_spellcheck);
 		public const string Icon_task = nameof(Icon_task);
+		public const string Icon_task_add = nameof(Icon_task_add);
 		public const string Icon_teacher = nameof(Icon_teacher);
 		public const string Icon_Template = nameof(Icon_Template);
 		public const string Icon_todo_list = nameof(Icon_todo_list);

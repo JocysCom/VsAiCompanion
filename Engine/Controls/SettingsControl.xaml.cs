@@ -40,12 +40,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				FineTuningItemPanel.Item = (FineTuningItem)item;
 			}
+			else if (DataType == ItemType.Assistant)
+			{
+				AssistantItemPanel.Item = (AssistantItem)item;
+			}
 		}
 
 		#region ■ Properties
 
 		public TemplateItemControl TemplateItemPanel;
 		FineTuningItemControl FineTuningItemPanel;
+		AssistantItemControl AssistantItemPanel;
 
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
@@ -54,6 +59,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set
 			{
 				_DataType = value;
+				if (ControlsHelper.IsDesignMode(this))
+					return;
 				if (value == ItemType.Task || value == ItemType.Template)
 				{
 					if (TemplateItemPanel == null)
@@ -76,6 +83,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						control.DataType = value;
 						control.Visibility = Visibility.Visible;
 						FineTuningItemPanel = control;
+					}
+				}
+				else if (value == ItemType.Assistant)
+				{
+					if (AssistantItemPanel == null)
+					{
+						var control = new AssistantItemControl();
+						Grid.SetColumn(control, 2);
+						MainGrid.Children.Add(control);
+						control.DataType = value;
+						control.Visibility = Visibility.Visible;
+						AssistantItemPanel = control;
 					}
 				}
 				else

@@ -1,23 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Code - Document</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>
-  <AttachContext>Selection</AttachContext>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
-  <UseMacros>true</UseMacros>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACu1WbWvbSBD+3l+xJyi0sF7trl5XiRuI0paC71po2nL3zbUVey+yJCTVdv99n1lJ&#xD;
 IYYQjoM7Co1trGdG8/LM7K5G5xfHXcn2RdvZupp7SkiPFdWqXttqM/c+Xb+ZpR7r+mW1XpZ1Vcy9&#xD;
 qvYuXj07/+3qfX7954fXrNtv2IdPl4t3OfNmvv8lyH3/6vqKffz8limhfP/1Hx7ztn3fZL5/OBzE&#xD;
@@ -33,4 +17,20 @@ tCHCkvN0AQzSCVqeoqXRaDagKB+uSRKzwcawmJvF4GvyMZhhUwYyvMv7QM1pwBX2hdIo2Z2IGkfK&#xD
 cqaa439DMSCC6v8kNpuYYUV/iu41U0Y9zGWTO5AEeMuRNHIgYI4BYxQB03yDgLns5hXdoI2oCLiZ&#xD;
 jLtOGv8WCbjrYIFxTENfD95hAkQuTqfdaL+TyMIYxEzdeHeS4RFmJ1xGlqc7/N5mlvFdsa7Qc3r5&#xD;
 evXsB5ofPS18CgAA</IconData>
+  <Name>Code - Document</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>
+  <AttachContext>Selection</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMacros>true</UseMacros>
+  <ItemType>None</ItemType>
 </TemplateItem>

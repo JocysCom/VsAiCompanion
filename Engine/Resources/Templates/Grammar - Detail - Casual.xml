@@ -1,37 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Grammar - Detail - Casual</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. The text may consist of complete sentences, phrases, or standalone titles. Additionally, rewrite any sentences that could be clearer by using more common words to enhance understanding. Make sure the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
-&#xD;
-Feel free to use a casual and conversational tone, including common colloquialisms and informal language where appropriate.&#xD;
-&#xD;
-After making the corrections, always provide answer in two parts:&#xD;
-&#xD;
-1. Fully corrected text.&#xD;
-2. Thorough list of errors found and the corresponding corrections made.&#xD;
-&#xD;
-Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
-&#xD;
-```text&#xD;
-{fully corrected text}&#xD;
-```&#xD;
-&#xD;
-Text to process:&#xD;
-</TextInstructions>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAM1Y227bRhB9z1csmJcE4FI7e+UGkh8aFGke0gAN8gEURVlsKNGgaFvO13dml5Ql&#xD;
 Q3bN5qUBIi5nL3POmcsyme/vrtld1e3rdrdIIIPkDcM/h22z2y+STd/ffJjN7u/vs3uVtd31TAoh&#xD;
 ZrjnZNmHQ1PvflxaDN77WZhN2H296jeLxIBM2Kaqrzf98HJXV/e/tYdFIphgaKG/yVU4ft7XfVNd&#xD;
@@ -60,4 +30,34 @@ Bd2hU4fVR58naVDBUIpxGVR1gzZYoyJmLN7dJDJGAMtTY8r6EAiXuhCXOG3yVMWOjKBjfXHpmQwD&#xD
 NiYn6UTlQf2ZRkyGXAqFw0OuyrDDxlnEHYJbhqdgAbGkOiMHaCaydEpQDIUKjoMLuloiKQpHOCys&#xD;
 wm5Ovkg7lJ9ylzk6lTQsgTI/NGuReryGCBwIR8cFj3JsJSqEgkZWUtBj4CmqGGkKLA2ie+FSa18K&#xD;
 MYaK6IVrJN4GOfnwoSnacOnRtAyaSUX3aShQSSqehkhcCFF+DNF8dn31Zk7/03T1Dx+FsbWjEgAA</IconData>
+  <Name>Grammar - Detail - Casual</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. The text may consist of complete sentences, phrases, or standalone titles. Additionally, rewrite any sentences that could be clearer by using more common words to enhance understanding. Make sure the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
+&#xD;
+Feel free to use a casual and conversational tone, including common colloquialisms and informal language where appropriate.&#xD;
+&#xD;
+After making the corrections, always provide answer in two parts:&#xD;
+&#xD;
+1. Fully corrected text.&#xD;
+2. Thorough list of errors found and the corresponding corrections made.&#xD;
+&#xD;
+Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
+&#xD;
+```text&#xD;
+{fully corrected text}&#xD;
+```&#xD;
+&#xD;
+Text to process:&#xD;
+</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

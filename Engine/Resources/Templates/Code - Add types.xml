@@ -1,22 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Code - Add types</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Add types to this code. Code:</TextInstructions>
-  <AttachContext>Selection</AttachContext>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAM1W3Y6bOBS+71NY7k0rgfEv2KMwFztadXuxW2mrPgAxJqElOAJmkvTp1zYkG6aZ&#xD;
 ziKtVhsp4fyf830GTlb90wY8ma6vbZtDggh8A9znuGvaPofbYdjfJcnhcEAHhmy3SSjGOHE5V2F3&#xD;
 x6Zuv90KJkqpJHghONTlsM2hIBSCrak322FSnmpz+MUec4gBBs7iv/A+lF8N9dCYe7v+avTQg1rb&#xD;
@@ -34,4 +19,19 @@ IfgncUwLbhDSvAWcXd/H+8f35wxOB/XYNe/eTov5/eywL3MyQSO3ybTMxkEzHsWM+kmFK+weV9HE&#xD
 QaSSjZITdEzSiCoQRvUxIdoL12OIG2PQF8agVERhNTTKD0JD10hhHafKQ5UjDZkbzguEeaNQ1+2y&#xD;
 G+3YC+1w5B7WhnAHNuXh6i44cm8t13fU4sl7bmGb08a2XN3owpd0merPy7q/Mj+WFS9xJWUoHM/m&#xD;
 vjmuuHUrpJe6q2Rz/2bl/z/f/wXeDncHeQsAAA==</IconData>
+  <Name>Code - Add types</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Add types to this code. Code:</TextInstructions>
+  <AttachContext>Selection</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

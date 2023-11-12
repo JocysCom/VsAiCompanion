@@ -1,0 +1,20 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>yinyang icon</title>
+    <desc>yinyang icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="16" y1="16" x2="352.6698" y2="455.31" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#cbe9fb"/>
+        </linearGradient>
+        <linearGradient x1="136" y1="16" x2="456.0005" y2="464" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#51616f"/>
+            <stop offset="1" stop-color="#36414a"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M256,16c1,0 2,0 3,0c16,0.5 31,4 44.5,10c107,22 187.5,116.5 187.5,230c0,130 -105,235 -235,235l0,5l0,0l0,0c-132.5,0 -240,-107.5 -240,-240c0,-132.5 107.5,-240 240,-240z" id="curve1" fill="url(#color-1)"/>
+        <path d="M259,496c-67.5,1 -123,-52 -123,-120c0,-66.5 53.5,-120 120,-120c66.5,0 120,-53.5 120,-120c0,-66.5 -53.5,-120 -120,-120c132.5,0 240,108 240,240c0,132 -106,238.5 -237,240z M256,88c26.5,0 48,21.5 48,48c0,26.5 -21.5,48 -48,48c-26.5,0 -48,-21.5 -48,-48c0,-26.5 21.5,-48 48,-48z M256,320c-26.5,0 -48,21.5 -48,48c0,26.5 21.5,48 48,48c26.5,0 48,-21.5 48,-48c0,-26.5 -21.5,-48 -48,-48z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

@@ -1,21 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Utility - Language Learning</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACn1Z225jxxF891cwzCtFzv2yWNmItWsjwDox4HWCPAWyxEiEGUmQ5NXaX5/qqj6K&#xD;
 dmMEEEQMOWemL9VVPXNef/Xx38fVh/39w+H25nQdt2G92t9c3F4ebq5O1z++/+ZkrL/68ovXf3jz&#xD;
 17P3//j+7erhw9Xq+x+/fvfns9X6ZLf7ez7b7d68f7P64W/fruI27nZv/7Jera8fH+9e7XZPT0/b&#xD;
@@ -69,4 +55,18 @@ LI5NXl8cZolbBD2wzhY6F3vaJPpDumRpcalmWK/V5Rq31bwJVsVVXSvgNlK3q/BegV9uxdn/UGWo&#xD
 ZGpJ0fMrGiK8/OJkYOKD0lSsWASaiwtHXSG5bls3YR4JO+pAIcrKZptn9oKgYiGcVKeBE2N0QzzK&#xD;
 otrxOuDTk6y/FsArgDLOvvnT2/99BbC8R8ALB5DBO308v9Lw1xDL2wh/YaH3F8/vJs4+fzehcdwM&#xD;
 u7YGb3+yxf9/U4GcfZPwUusW72IOj/a6B+iX1a93V3jtZK+OvvziPzT3qFsIGwAA</IconData>
+  <Name>Utility - Language Learning</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

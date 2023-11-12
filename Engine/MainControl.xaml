@@ -68,6 +68,16 @@
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="FineTuningPanel" x:FieldModifier="public" DataType="FineTuning" />
 			</TabItem>
+			<TabItem x:Name="AssistantsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_user_group}" />
+						<Label Content="Assistants" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:SettingsControl x:Name="AssistantsPanel" x:FieldModifier="public" DataType="Assistant" />
+			</TabItem>
+
 			<TabItem x:Name="OptionsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

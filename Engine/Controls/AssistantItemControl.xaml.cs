@@ -1,26 +1,47 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.IO;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using static System.Environment;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
 	/// <summary>
-	/// Interaction logic for FineTuningControl.xaml
+	/// Interaction logic for AssistantItemUserControl.xaml
 	/// </summary>
-	public partial class FineTuningItemControl : UserControl, INotifyPropertyChanged
+	public partial class AssistantItemControl : UserControl, INotifyPropertyChanged
 	{
-		public FineTuningItemControl()
+		public AssistantItemControl()
 		{
 			InitializeComponent();
-			if (ControlsHelper.IsDesignMode(this))
-				return;
 		}
 
-		public FineTuningItem Item
+		[Category("Main"), DefaultValue(ItemType.None)]
+		public ItemType DataType
+		{
+			get => _DataType;
+			set
+			{
+				_DataType = value;
+				// Update panel settings.
+				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
+				PanelSettings = Global.AppSettings.GetTaskSettings(value);
+				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
+				// Update the rest.
+				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
+				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
+				OnPropertyChanged(nameof(BarPanelVisibility));
+			}
+		}
+		private ItemType _DataType;
+
+		#region Item
+		public AssistantItem Item
 		{
 			get => _Item;
 			set
@@ -40,15 +61,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				DataContext = value;
 				AiModelBoxPanel.BindData(value);
 				IconPanel.BindData(value);
-				SourceFilesPanel.Data = value;
-				TuningFilesPanel.Data = value;
-				RemoteFilesPanel.Data = value;
-				TuningJobsListPanel.Data = value;
-				ModelsPanel.Data = value;
+				// SourceFilesPanel.Data = value;
+				//TuningFilesPanel.Data = value;
+				//RemoteFilesPanel.Data = value;
+				//TuningJobsListPanel.Data = value;
+				//ModelsPanel.Data = value;
 				OnPropertyChanged(nameof(DataFolderPath));
 				OnPropertyChanged(nameof(DataFolderPathShow));
 			}
 		}
+		AssistantItem _Item;
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -59,7 +81,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		FineTuningItem _Item;
+
+		#endregion
 
 		public string DataFolderPathShow
 		{
@@ -73,40 +96,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set { }
 		}
 
-
-		[Category("Main"), DefaultValue(ItemType.None)]
-		public ItemType DataType
-		{
-			get => _DataType;
-			set
-			{
-				_DataType = value;
-				if (ControlsHelper.IsDesignMode(this))
-					return;
-				// Update panel settings.
-				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
-				PanelSettings = Global.AppSettings.GetTaskSettings(value);
-				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
-				// Update the rest.
-				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
-				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
-				OnPropertyChanged(nameof(BarPanelVisibility));
-			}
-		}
-		private ItemType _DataType;
-
-		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
-			=> ControlsHelper.OpenUrl(DataFolderPath);
-
-		private void ConvertToJsonlButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			LogTextBox.Clear();
-		}
-
-		private void ConvertToJsonButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-
-		}
 
 		#region PanelSettings
 
@@ -136,19 +125,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		bool HelpInit;
-
-		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
-			{
-				HelpInit = true;
-				var bytes = AppHelper.ExtractFile("Documents.zip", "FineTuningHelp.rtf");
-				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
-			}
-
-		}
-
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -158,5 +134,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void OpenButton_Click(object sender, RoutedEventArgs e)
+			=> ControlsHelper.OpenUrl(DataFolderPath);
+
+		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
+		}
 	}
 }

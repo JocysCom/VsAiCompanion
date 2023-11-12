@@ -1,0 +1,42 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACr1W227bRhB9z1ds2VdpufeLYSWILk4LsG2AOi36VCgyK7FWRIFSJTtf3zNLSaRR&#xD;
+pUhfahjk2eXs7JnZM6O9ffP0ac0OZbOr6s0ok1xkrNws6odqsxxlH+7vhiF78/rV7TfTnyb3v72f&#xD;
+sd1hyd5/GBffT1g2zPNf9STPp/dT9vMv75jkMs9nP2YsW+3325s8Px6P/Kh53Szzd818u6oWuxyG&#xD;
+ORliUQ5nUvKH/UOGLchzj4jMWPUwyor5c9n8jgF4bnajK56VEII8nUxuntbV5vGaoYwx5ukrTEeZ&#xD;
+2D5l7Pn0PlYP+9UoU4YGq7Jarvbn0aEqj+OaFjDBlME/pWj+cV0OP84Xj8um/msDopvyyHoW4HKz&#xD;
+284X5SjbNuWubA4lgmTsdpnC+jSvNml8makW9XkGc9v5fsUw+4PgXpuB4SLaQnBtlcVAW42BiMZr&#xD;
+jGBQiIHlCk8leLh8UpIrf16FgSMX5A44ygJfB0oVEuP0lJY7DcCFJpygJEhAhQGengy5SdgEwl4R&#xD;
+VsCWgMQqLCUoEnSEC0kr6EkspcfuJ97A7hwRsPKnUKXjYWASRfP5c8b+qNbrUfbtzM3ibJbl/8wT&#xD;
+dBQQAjyBCkKNiaIqLLcKFBxRt5hwCceEPWGC1scEsa/kLQ6ukIpTUMBtehw3+v/Kk9RchF7gSss7&#xD;
+hdqsIalqT6oFt6t5iFyZARSgI44bIxExkkaCUeACm3PpfQGd+DDQPApVQA1BDhRCdoRxNop7ECQM&#xD;
+3XCr42Vew+nZXpHPyL25bBC5jf29jaSRsMHGXizTsTFWXyXv4QieRcByTwzBREGpIR0ottX9KHo+&#xD;
+J5OpmMYv+Oz8RPKPlAdDGYAfDT+27//rxNbzAxxItUHKl1nt/H8VT6hBtyIzpEiZhOpUEXl0ECoU&#xD;
+JAsUiIGOcBb9fN7dTadj8V984uEkYeTTQt7IJwqz79NZN/Xhmk/PdcshROKDpTgvnahhK5RMANYi&#xD;
+YU3zhmpDcWOBvQAFxR1gsMnEkpeIrBFOvaE7rU4NL6KdzOxV6UdqdFQ5EUlTkCUVlyEcUvFJmtc2&#xD;
+JROtJ3b1CRHHVIuoAOTbpBJ1vpA4w2TuZO+c+zLqE3Pjsbkq636AwG3OXAqctlU86iKgnsFYo6qA&#xD;
+NTUhTdSgTJ3agSebSHltA5TEHpAYaxQacEB36Suzy+VLtVjvzjRv8+WLX6Eav8Dr+fOVHyKlwWqg&#xD;
+zGoIt2YxxM+KQesWAyA0LzxV0LYbOX1oLZNFa9s36exWrdnZ3+lrMr1YHshmgs4GGl7C7vJOU4lZ&#xD;
+F+Pbt2M1nn6hcn00Dtbf0TJH20I0aVfTBhEu2BkKIag2BBV9eplEG4fVe66GaEgBfbLz/6+9W/RL&#xD;
+qykXe7qQSJfuI/Q6XUd8dxdxvQOkv35w9fp5WW/Ytq42e1yRqMbTzz1TKDth0avTAKFqyCogIuEZ&#xD;
+NWtJUoTgtbEM88qp9F1571jrRUCDKlz21m48ieOM7fZN/VgOcZcq/8SuuM9U+7LpcSrX62q7K9kC&#xD;
+cWF36wNiWVB0aAgm6Iw1dKMCFWeBU1KCgi6vl/lJpul1S5e916/+BqRDkBu6CgAA</IconData>
+  <Name>Writing - Story Picture</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Given the psychological profile of the character and the storyline, please create and describe a potential scene for illustration for the main story point. The description should depict an imaginary photograph in great detail, as it will serve as instructions for the AI which will generate the image from it.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+</TemplateItem>

@@ -1,22 +1,7 @@
 ﻿<TemplateItem>
-  <Name>Code - Find a bug</Name>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IconType>.svg</IconType>
-  <TextInstructions>Find a bug or issue in this code.</TextInstructions>
-  <AttachContext>ActiveDocument</AttachContext>
-  <Settings />
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <StatusCode>None</StatusCode>
-  <Messages />
-  <AutoSend>false</AutoSend>
-  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
-  <AutoOperation>None</AutoOperation>
-  <AutoRemove>false</AutoRemove>
-  <AutoFormatCode>false</AutoFormatCode>
-  <IsPreview>false</IsPreview>
   <IsChecked>false</IsChecked>
-  <IsEnabled>false</IsEnabled>
-  <ItemType>None</ItemType>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACtVWbW/bNhD+3l/BCRjQADLF4zuduAWqvmCAtxVYumH95tmKrdWRDNmNk3+/h7Rc&#xD;
 2InTZe2nxbHFOx7vnnulLl7eXi/ZTdWt67YZZcRFxqpm2s7qZj7KPly+HfiMrTeTZjZZtk01ypo2&#xD;
 e/ni2cUPr38tL/98/4atb+bs/YdX459Klg2K4g9VFsXry9fst9/fMeJUFG9+yVi22GxWw6LYbrd8&#xD;
@@ -38,4 +23,19 @@ jQbvCv0VtXMJY7X/nu2vrnS3D2l1e+RjslPMnwBaxMvKO9VjRxol1JtcfB16j9hjAOlxvFZicdAX&#xD
 R5AU882+4I76ZncG9/yRGDrO2/+rO/uSolSIChXFFaavOelNtcSr0LpiU7zOoTeDCRmb3qW1IuDv&#xD;
 wMe1orACFz4pLO+3jTRoRtQuvsdt899Bow280gg+kqKEC+E07GndTZc9asU9uR1qTBWHl9EuvoYa&#xD;
 Su/P9xr8MORfRfqFSIuL+NL64tk/Wc5GkLQLAAA=</IconData>
+  <Name>Code - Find a bug</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Find a bug or issue in this code.</TextInstructions>
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
 </TemplateItem>

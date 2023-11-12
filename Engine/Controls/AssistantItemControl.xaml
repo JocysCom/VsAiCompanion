@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.FineTuningItemControl"
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.AssistantItemControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
@@ -162,47 +162,6 @@
 						<Label Content="1. Source Files" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningLocalFilesControl x:Name="SourceFilesPanel" FolderType="SourceFiles" />
-			</TabItem>
-			<TabItem x:Name="TuningFilesTabItem" x:FieldModifier="public">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_folder_open_doc_settings}" />
-						<Label Content="2. Tuning Files" />
-					</StackPanel>
-				</TabItem.Header>
-				<Controls:FineTuningLocalFilesControl x:Name="TuningFilesPanel" FolderType="TuningFiles" />
-			</TabItem>
-			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_cloud}" />
-						<Label Content="3. Remote Files" />
-					</StackPanel>
-				</TabItem.Header>
-				<Controls:FineTuningRemoteFilesControl x:Name="RemoteFilesPanel" />
-			</TabItem>
-			<TabItem
-				x:Name="TuningJobsTabItem"
-				Height="25"
-				VerticalAlignment="Top"
-				x:FieldModifier="public">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_todo_list}" />
-						<Label Content="4. Tuning Jobs" />
-					</StackPanel>
-				</TabItem.Header>
-				<Controls:FineTuningJobListControl x:Name="TuningJobsListPanel" />
-			</TabItem>
-			<TabItem x:Name="ModelsTabItem" x:FieldModifier="public">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_user_group}" />
-						<Label Content="5. Models" />
-					</StackPanel>
-				</TabItem.Header>
-				<Controls:FineTuningModelListControl x:Name="ModelsPanel" />
 			</TabItem>
 		</TabControl>
 	</Grid>

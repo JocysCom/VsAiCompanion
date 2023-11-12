@@ -192,6 +192,7 @@
 						Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<StackPanel VerticalAlignment="Top">
 							<CheckBox Name="IsSystemInstructionsCheckBox" Content="Send as System Messages" IsChecked="{Binding IsSystemInstructions}" />
+							<CheckBox Name="UseMaximumContextCheckBox" Content="Use Maximum Context" IsChecked="{Binding UseMaximumContext}" />
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>

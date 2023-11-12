@@ -1,7 +1,6 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -85,6 +84,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Hide instructions box by default on Tasks.
 			copy.ShowInstructions = false;
 			Global.InsertItem(copy, ItemType.Task);
+			Global.RaiseOnTasksUpdated();
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)

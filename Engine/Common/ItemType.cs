@@ -6,5 +6,6 @@
 		Task = 1,
 		Template = 2,
 		FineTuning = 3,
+		Assistant = 4,
 	}
 }

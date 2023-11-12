@@ -25,6 +25,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			InfoPanel.DefaultHead = ai.GetTitle(true, false, true, false, false);
 			InfoPanel.DefaultBody = ai.Description;
 			InfoPanel.Reset();
+			// Temporary: Hide "Assistants" feature for release users.
+			AssistantsTabItem.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 		}
 
 		private void MainWindowPanel_Unloaded(object sender, RoutedEventArgs e)
