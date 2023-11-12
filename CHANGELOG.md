@@ -1,3 +1,7 @@
+2023-11-12 v1.3.17
+
+- Update: Updated some templates.
+
 2023-11-12 v1.3.16
 
 - Fix: Resolved several potential crashes during file conversions.
