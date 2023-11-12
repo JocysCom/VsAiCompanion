@@ -215,6 +215,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			task.IsSystemInstructions = true;
 			task.TextInstructions = Data.SystemMessage;
 			Global.InsertItem(task, ItemType.Task);
+			Global.AppSettings.TaskData.ListSelection = new List<string> { task.Name };
+			Global.RaiseOnTasksUpdated();
 		}
 	}
 }

@@ -32,6 +32,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Configure converter.
 			var gridFormattingConverter = MainDataGrid.Resources.Values.OfType<Converters.ItemFormattingConverter>().First();
 			gridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
+			Global.OnTasksUpdated += Global_OnTasksUpdated;
 			UpdateButtons();
 		}
 
@@ -127,8 +128,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				SourceItems.ListChanged += SourceItems_ListChanged;
 				ShowColumns(IconColumn, NameColumn);
 				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid);
-				if (DataType != ItemType.Template && DataType != ItemType.Task)
+				if (DataType != ItemType.Task)
 					buttons = buttons.Except(new Button[] { GenerateTitleButton }).ToArray();
+				if (DataType != ItemType.Template)
+					buttons = buttons.Except(new Button[] { CreateNewTaskButton }).ToArray();
 				AppHelper.ShowButtons(TemplateListGrid, buttons);
 			}
 		}
@@ -205,6 +208,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var isBusy = (Global.MainControl?.InfoPanel?.Tasks?.Count ?? 0) > 0;
 			EditButton.IsEnabled = isSelected;
 			DeleteButton.IsEnabled = isSelected;
+			CreateNewTaskButton.IsEnabled = isSelected;
+			GenerateTitleButton.IsEnabled = isSelected;
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -341,6 +346,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		#endregion
+
 		private void CopyButton_Click(object sender, RoutedEventArgs e)
 		{
 			var item = MainDataGrid.SelectedItems.Cast<IFileListItem>().FirstOrDefault();
@@ -374,10 +381,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var list = PanelSettings.ListSelection;
-			if (list?.Count > 0)
-				ControlsHelper.SetSelection(MainDataGrid, nameof(IFileListItem.Name), list, 0);
-			SearchTextBox.Text = PanelSettings.SearchText;
+			// Allow to run once.
+			if (ControlsHelper.AllowLoad(this))
+			{
+				var list = PanelSettings.ListSelection;
+				if (list?.Count > 0)
+					ControlsHelper.SetSelection(MainDataGrid, nameof(IFileListItem.Name), list, 0);
+				SearchTextBox.Text = PanelSettings.SearchText;
+			}
 		}
 
 		private void EditButton_Click(object sender, RoutedEventArgs e)
@@ -476,9 +487,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!isEditMode && e.Key == Key.Delete)
 				Delete();
 		}
-	}
 
-	#endregion
+		private void CreateNewTaskButton_Click(object sender, RoutedEventArgs e)
+		{
+			var selecetedItems = MainDataGrid.SelectedItems.Cast<IFileListItem>();
+			var selection = new List<string>();
+			if (DataType == ItemType.Template)
+			{
+				foreach (var item in selecetedItems)
+				{
+					if (item is TemplateItem ti)
+					{
+						var copy = ti.Copy(true);
+						// Hide instructions box by default on Tasks.
+						copy.ShowInstructions = false;
+						Global.InsertItem(copy, ItemType.Task);
+						selection.Add(item.Name);
+					}
+				}
+			}
+			Global.AppSettings.TaskData.ListSelection = selection;
+			Global.RaiseOnTasksUpdated();
+		}
+
+		private void Global_OnTasksUpdated(object sender, EventArgs e)
+		{
+			if (DataType !=  ItemType.Task)
+				return;
+			ControlsHelper.EnsureTabItemSelected(this);
+		}
+	}
 
 }
 
