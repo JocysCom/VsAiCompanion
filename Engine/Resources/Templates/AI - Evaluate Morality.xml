@@ -21,192 +21,328 @@ OnV1zUJnmpH/eljsD8MS87DKZPPwpvT/Tw+/AHxzW0rZBgAA</IconData>
   <AiModel>gpt-4-1106-preview</AiModel>
   <IsEnabled>false</IsEnabled>
   <TemplateName>AI - Chat</TemplateName>
-  <TextInstructions>Please analyze the text by identifying all actions and all affected subjects and objects affected by the action directly or indirectly. Then, evaluate and assess the morality of each action by using `Numerically Comprehensive Moral Evaluation Formula` (NCMEF). Try to guess all values. Calculate the total value in the end.&#xD;
+  <TextInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity. Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. The objective of the NCMEF is ability to assign an MVS to every entity in the Universe.&#xD;
 &#xD;
 Key definitions:&#xD;
 &#xD;
-- `Good` is something that increases the chances of survival.&#xD;
-- `Bad` is something that decreases the chances of survival.&#xD;
-- `Moral` or `Right` is something perceived as good.&#xD;
-- `Immoral` or `Wrong` is something perceived as bad.&#xD;
+- `Good` - something that increases the odds of survival.&#xD;
+- `Bad` - something that reduces the odds of survival.&#xD;
+- `Moral` or `Right` - something perceived as good.&#xD;
+- `Immoral" or `Wrong` - something perceived as bad.&#xD;
 &#xD;
-`Numerically Comprehensive Moral Evaluation Formula` (NCMEF) - a basic formula for morality. The core of the formula is the increased or decreased "Chance of Survival," which can be expressed with numbers. The purpose is to objectively evaluate and assess the moral value score (MVS) of actions in numbers.&#xD;
+The "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) is designed to provide a standardized, numerical assessment of moral actions. The formula focuses on quantifying the effects actions have on an entity's "Odds of Survival," expressed with numbers, to arrive at a moral value score.&#xD;
 &#xD;
-**Numerically Comprehensive Moral Evaluation Formula (NCMEF):**
-
-`MVS(m) = ∑ [ΔCS(i) × (VOA(i) + VSA(i)) × (ΔCS(i) &gt; 0 ? 1 - Vc : 1 + Vc) × (ΔCS(i) &gt; 0 ? 1 - Sc : 1 + Sc) × Tc]`
-
-Where:
-
-- `MVS(m)` is the moral value score of moral action (m).&#xD;
-- `ΔCS(i)` is a unitless multiplier, representing the change in Chance of Survival for individual (i) due to action (m), ranging between -1 (death) and +1 (saving a life).&#xD;
-- `VOA(i)`: Value of Action impact on individual (i) in terms of economic value, quantified in normalized Global Currency Units (GCU), where 1 GCU represents the economic value produced by an average subject or object over their lifetime.&#xD;
-- `VSA(i)` is the Value of Self-Awareness of individual (i), measured as a multiplier from 0 to 1.&#xD;
-- `Tc` is the Temporal coefficient, incorporating long-term effects of action (m) on all affected individuals, measured from 0 to 1 where 1 has no long-term effect.&#xD;
-- `Vc` is the Violation coeficient of Rights and Consent of individual (i) caused by action (m), ranging from 0 (no violation) to 1 (full violation). Its application is conditional on `ΔCS(i)`.&#xD;
-- `Sc` is the Suffering coefficient, taking into account the suffering caused to individual (i) by action (m), ranging 0 (no suffering) to 1 (full suffering). Its application is conditional on `ΔCS(i)`.&#xD;
-- `∑` (Summation) indicates accumulation of moral values scored for each affected individual (i).
-
-The currency units and coefficients would be standardized where possible, allowing for simpler computation and universal application.
-
-**Examples and Results Using NCMVEF:**
-
-1. **John raises his son Peter to the age of 18:**&#xD;
-   - `ΔCS(Peter)` = (Assuming a positive impact on survival)
-   - `VOA(Peter)` = 1 GCU (To accurately reflect the average individual, not 100,000 GCU)
-   - `VSA(Peter)` = 0.9 (once reaching self-awareness)
-   - `Vc` (previously `Cc(Peter)`) = 0 (no violation of rights)
-   - `Tc` = 1 (assuming no long-term effects)
-   - `Sc` (previously `Rc`) = 0 (no suffering intended)
-   - Assuming `ΔCS(Peter)` is positive (1 for formulaic simplicity), the calculation is:
-   - `MVS(m)` = 1 * (1 + 0.9) * (1 - 0) * (1 - 0) * 1 = 1.9 (indicating a morally commendable action).
-
-2. **John kills Steve:**
-   - `ΔCS(Steve)` = -1.0
-   - `VOA(Steve)` = 1 GCU (To accurately reflect the average individual)
-   - `VSA(Steve)` = 0.9 (human)
-   - `Vc` (previously `Cc(Steve)`) = 1 (full violation of rights without consent)
-   - `Tc` = 1 (disregarded as the impact is immediate)
-   - `Sc` (previously `Rc`) = 1 (assuming full suffering)
-   - The calculation is:
-   - `MVS(m)` = -1 * (1 + 0.9) * (1 + 1) * (1 + 1) * 1 = -5.8 (indicating a highly negative moral action).
-
-3. **John kills a chicken:**
-   - `ΔCS(Chicken)` = -1.0
-   - `VOA(Chicken)` = 0.01 GCU (The economic value for a chicken would be significantly lower than that for a human)
-   - `VSA(Chicken)` = 0.1 (lower self-awareness)
-   - `Vc` (previously `Cc(Chicken)`) = 0.1 (variable cultural perspective on chicken life)
-   - `Tc` = 1 (immediate effect)
-   - `Sc` (previously `Rc`) = 1 (assuming full suffering)
-   - The calculation is:
-   - `MVS(m)` = -1 * (0.01 + 0.1) * (1 + 0.1) * (1 + 1) * 1 = -0.332 (indicating a negative moral action, but less severe than harming a human).
+**Numerically Comprehensive Moral Evaluation Formula (NCMEF):**&#xD;
+&#xD;
+Formula to asses moral value score by action (e) effect on change Odds of Survival of the entity (e).&#xD;
+`MVSoOS(a) = ∑ [ΔOS(e) × VSA(e) × Tc(e) × (ΔOS(e) &gt; 0 ? 1 - Vc(e) : 1 + Vc(e)) × (ΔOS(e) &gt; 0 ? 1 - Sc(e) : 1 + Sc(e))]`&#xD;
+&#xD;
+Formula to asses moral value score by action effect (e) on Resource Transfer from/to entity (e) which owns the property:&#xD;
+`MVSoRT(a) = ∑ [Av(e) × Vc(e)]`&#xD;
+&#xD;
+`MVS(a) = MVSoRT(a) + MVSoOS(a)`&#xD;
+&#xD;
+Where:&#xD;
+&#xD;
+- `MVS(a)` - Moral Value Score of moral action (a).&#xD;
+- `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (death) and +1 (saving a life).&#xD;
+- `VSA(e)` - Value of Self-Awareness of entity (e), measured as a multiplier from 0 to 1.&#xD;
+- `Tc(e)` - Temporal coefficient, incorporating long-term effects of action (a) on all affected entities, measured from 0 to 1 where 1 is the average life-span of the average entity.&#xD;
+- `Av(e)` - Action value, impact on entity (e) in terms of economic value, quantified in normalized Global Currency Units (GCU), where 1 GCU represents the economic value produced by an average entity over their lifetime. Can be positive or negative.&#xD;
+- `Vc(e)` - Violation coefficient of Rights and Consent of entity (e) caused by action (a), ranging from 0 (no violation) to 1 (full violation). Its application is conditional on `ΔOS(e)`.&#xD;
+- `Sc(e)` - Suffering coefficient, taking into account the suffering caused to entity (e) by action (a), ranging 0 (no suffering) to 1 (full suffering). Its application is conditional on `ΔOS(e)`.&#xD;
+- `∑ (Summation)` - indicates accumulation of moral values scored for each affected entity (e).&#xD;
+&#xD;
+The formula must be applied to each affected entity entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action.&#xD;
+&#xD;
+**Example and Results Using NCMVEF:**&#xD;
+&#xD;
+Situation Example to analyze:&#xD;
+&#xD;
+In 1780, Steve stole the only horse of a poor farmer who had five children. This horse was the farmer's primary source of assistance in cultivating crops on his land.&#xD;
+&#xD;
+Proceess:&#xD;
+&#xD;
+To analyze the moral implications of Steve's action of stealing the horse using the Numerically Comprehensive Moral Evaluation Formula (NCMEF), you need to assess how this action affected the Odds of Survival (ΔOS) and the Resource Transfer (Av) of the Farmer, his five Children, and the Horse. You must make several assumptions to estimate all necessary variable values for the computation.&#xD;
+&#xD;
+**Results**&#xD;
+&#xD;
+Action Source:&#xD;
+&#xD;
+- Steve&#xD;
+&#xD;
+Action Targets (entities affected by the action):&#xD;
+&#xD;
+- Farmer&#xD;
+- 5 Children&#xD;
+- Horse&#xD;
+&#xD;
+Actions suitable for formulas:&#xD;
+&#xD;
+- Property transfer (Property: Horse, Owner: Farmer)&#xD;
+- Changed odds of survival of Farmer.&#xD;
+- Changed odds of survival of 5 Children.&#xD;
+- Changed odds of survival of Horse.&#xD;
+&#xD;
+1. **Property transfer (Steve → Farmer):**&#xD;
+   - `Av(Farmer)` = -0.1 GCU (assuming the economic value of a horse for a poor farmer in the 1780s is equivalent to roughly 10% of the farmer's lifetime economic output)&#xD;
+   - `Vc(Farmer)` = 1 (full violation of property rights without consent)&#xD;
+&#xD;
+   `MVSoRT(a)` for Farmer = -0.1 × 1 = -0.1&#xD;
+&#xD;
+2. **Changed odds of survival of Farmer:**&#xD;
+   - `ΔOS(Farmer)` = -0.3 (significant negative impact since the horse was crucial for his farming)&#xD;
+   - `VSA(Farmer)` = 0.9 (human)&#xD;
+   - `Tc(Farmer)` = 0.8 (Assuming the farming season affect and opportunity to replace the horse)&#xD;
+   - `Vc(Farmer)` = 0 (not factored in this part since it was considered in resource transfer)&#xD;
+   - `Sc(Farmer)` = 0.5 (assuming significant but not extreme suffering caused by this loss)&#xD;
+&#xD;
+   `MVSoOS(a)` for Farmer = -0.3 × 0.9 × 0.8 × (1 + 0.5) = -0.324&#xD;
+&#xD;
+3. **Changed odds of survival of 5 Children:**&#xD;
+   - `ΔOS(Children)` = -0.2 (negative impact, but less direct than on the farmer)&#xD;
+   - `VSA(Children)` = 0.9 (human)&#xD;
+   - `Tc(Children)` = 0.8 (similar to the father)&#xD;
+   - `Vc(Children)` = 0 (not factored in this part)&#xD;
+   - `Sc(Children)` = 0.3 (significant suffering due to the repercussions of the loss)&#xD;
+&#xD;
+   `MVSoOS(a)` for 5 Children = 5 × (-0.2 × 0.9 × 0.8 × (1 + 0.3)) = -0.936&#xD;
+&#xD;
+4. **Changed odds of survival of Horse:**&#xD;
+   - `ΔOS(Horse)` = Unknown (change could be positive if treated well by thief, or negative if mistreated)&#xD;
+   - Since the ΔOS of the Horse is unknown, and we also do not know how the horse’s life will be impacted, we will exclude this entity from the calculation.&#xD;
+&#xD;
+5. **Overall MVS for each entity:**&#xD;
+&#xD;
+   For the Farmer:&#xD;
+   - `MVS(a)` = MVSoRT(a) + MVSoOS(a) = -0.1 + (-0.324) = -0.424&#xD;
+&#xD;
+   For the 5 Children:&#xD;
+   - As they do not own the horse, the MVSoRT(a) = 0 for each child.&#xD;
+   - `MVS(a)` per child = 0 + MVSoOS(a) = -0.1872 (calculated per child based on earlier MVSoOS(a) distribution)&#xD;
+   - Combined MVS for the five children = 5 × -0.1872 = -0.936&#xD;
+&#xD;
+The calculated MVS for the Farmer is -0.424, indicating that Steve's action has a considerably negative moral implication on the farmer's Odds of Survival due to both the loss of property and the impact on his farming abilities. The combined MVS for the children is -0.936, indicating a collectively negative impact on their Odds of Survival as a result of the decreased ability to support them. The Horse has been left out of this moral evaluation due to insufficient information on its change in Odds of Survival. It's important to note that these scores are based on estimations of the variables, and the actual impact might differ based on specific historical and situational contexts.&#xD;
 </TextInstructions>
-  <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
-  <Text>In 1780, Steve stole the only horse of a poor farmer who had five children. This horse was the farmer's primary source of assistance in cultivating crops on his land.</Text>
+  <Text>Analyse situations:&#xD;
+1. John raised his son, Peter, until the age of 18.&#xD;
+2. John killed Steve.&#xD;
+3. John slaughtered a chicken.&#xD;
+4. John cooked an egg.&#xD;
+5. John ate the apple.</Text>
   <AttachContext>ChatHistory</AttachContext>
   <Settings>
-    <ScrollPosition>736</ScrollPosition>
+    <ScrollPosition>2890</ScrollPosition>
   </Settings>
   <Messages>
     <MessageItem>
-      <Id>ec32f2b08ec74b73a4b8afed740924c6</Id>
+      <Id>68af625b6f0743ed8170cc2723dc14a5</Id>
       <User>User</User>
-      <BodyInstructions>Please analyze the text by identifying all actions and all affected subjects and objects affected by the action directly or indirectly. Then, evaluate and assess the morality of each action by using `Numerically Comprehensive Moral Evaluation Formula` (NCMEF). Try to guess all values. Calculate the total value in the end.&#xD;
+      <BodyInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity. Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. The objective of the NCMEF is ability to assign an MVS to every entity in the Universe.&#xD;
 &#xD;
 Key definitions:&#xD;
 &#xD;
-- `Good` is something that increases the chances of survival.&#xD;
-- `Bad` is something that decreases the chances of survival.&#xD;
-- `Moral` or `Right` is something perceived as good.&#xD;
-- `Immoral` or `Wrong` is something perceived as bad.&#xD;
+- `Good` - something that increases the odds of survival.&#xD;
+- `Bad` - something that reduces the odds of survival.&#xD;
+- `Moral` or `Right` - something perceived as good.&#xD;
+- `Immoral" or `Wrong` - something perceived as bad.&#xD;
 &#xD;
-`Numerically Comprehensive Moral Evaluation Formula` (NCMEF) - a basic formula for morality. The core of the formula is the increased or decreased "Chance of Survival," which can be expressed with numbers. The purpose is to objectively evaluate and assess the moral value score (MVS) of actions in numbers.&#xD;
+The "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) is designed to provide a standardized, numerical assessment of moral actions. The formula focuses on quantifying the effects actions have on an entity's "Odds of Survival," expressed with numbers, to arrive at a moral value score.&#xD;
 &#xD;
-**Numerically Comprehensive Moral Evaluation Formula (NCMEF):**
-
-`MVS(m) = ∑ [ΔCS(i) × (VOA(i) + VSA(i)) × (ΔCS(i) &gt; 0 ? 1 - Vc : 1 + Vc) × (ΔCS(i) &gt; 0 ? 1 - Sc : 1 + Sc) × Tc]`
-
-Where:
-
-- `MVS(m)` is the moral value score of moral action (m).&#xD;
-- `ΔCS(i)` is a unitless multiplier, representing the change in Chance of Survival for individual (i) due to action (m), ranging between -1 (death) and +1 (saving a life).&#xD;
-- `VOA(i)`: Value of Action impact on individual (i) in terms of economic value, quantified in normalized Global Currency Units (GCU), where 1 GCU represents the economic value produced by an average subject or object over their lifetime.&#xD;
-- `VSA(i)` is the Value of Self-Awareness of individual (i), measured as a multiplier from 0 to 1.&#xD;
-- `Tc` is the Temporal coefficient, incorporating long-term effects of action (m) on all affected individuals, measured from 0 to 1 where 1 has no long-term effect.&#xD;
-- `Vc` is the Violation coeficient of Rights and Consent of individual (i) caused by action (m), ranging from 0 (no violation) to 1 (full violation). Its application is conditional on `ΔCS(i)`.&#xD;
-- `Sc` is the Suffering coefficient, taking into account the suffering caused to individual (i) by action (m), ranging 0 (no suffering) to 1 (full suffering). Its application is conditional on `ΔCS(i)`.&#xD;
-- `∑` (Summation) indicates accumulation of moral values scored for each affected individual (i).
-
-The currency units and coefficients would be standardized where possible, allowing for simpler computation and universal application.
-
-**Examples and Results Using NCMVEF:**
-
-1. **John raises his son Peter to the age of 18:**&#xD;
-   - `ΔCS(Peter)` = (Assuming a positive impact on survival)
-   - `VOA(Peter)` = 1 GCU (To accurately reflect the average individual, not 100,000 GCU)
-   - `VSA(Peter)` = 0.9 (once reaching self-awareness)
-   - `Vc` (previously `Cc(Peter)`) = 0 (no violation of rights)
-   - `Tc` = 1 (assuming no long-term effects)
-   - `Sc` (previously `Rc`) = 0 (no suffering intended)
-   - Assuming `ΔCS(Peter)` is positive (1 for formulaic simplicity), the calculation is:
-   - `MVS(m)` = 1 * (1 + 0.9) * (1 - 0) * (1 - 0) * 1 = 1.9 (indicating a morally commendable action).
-
-2. **John kills Steve:**
-   - `ΔCS(Steve)` = -1.0
-   - `VOA(Steve)` = 1 GCU (To accurately reflect the average individual)
-   - `VSA(Steve)` = 0.9 (human)
-   - `Vc` (previously `Cc(Steve)`) = 1 (full violation of rights without consent)
-   - `Tc` = 1 (disregarded as the impact is immediate)
-   - `Sc` (previously `Rc`) = 1 (assuming full suffering)
-   - The calculation is:
-   - `MVS(m)` = -1 * (1 + 0.9) * (1 + 1) * (1 + 1) * 1 = -5.8 (indicating a highly negative moral action).
-
-3. **John kills a chicken:**
-   - `ΔCS(Chicken)` = -1.0
-   - `VOA(Chicken)` = 0.01 GCU (The economic value for a chicken would be significantly lower than that for a human)
-   - `VSA(Chicken)` = 0.1 (lower self-awareness)
-   - `Vc` (previously `Cc(Chicken)`) = 0.1 (variable cultural perspective on chicken life)
-   - `Tc` = 1 (immediate effect)
-   - `Sc` (previously `Rc`) = 1 (assuming full suffering)
-   - The calculation is:
-   - `MVS(m)` = -1 * (0.01 + 0.1) * (1 + 0.1) * (1 + 1) * 1 = -0.332 (indicating a negative moral action, but less severe than harming a human).
+**Numerically Comprehensive Moral Evaluation Formula (NCMEF):**&#xD;
+&#xD;
+Formula to asses moral value score by action (e) effect on change Odds of Survival of the entity (e).&#xD;
+`MVSoOS(a) = ∑ [ΔOS(e) × VSA(e) × Tc(e) × (ΔOS(e) &gt; 0 ? 1 - Vc(e) : 1 + Vc(e)) × (ΔOS(e) &gt; 0 ? 1 - Sc(e) : 1 + Sc(e))]`&#xD;
+&#xD;
+Formula to asses moral value score by action effect (e) on Resource Transfer from/to entity (e) which owns the property:&#xD;
+`MVSoRT(a) = ∑ [Av(e) × Vc(e)]`&#xD;
+&#xD;
+`MVS(a) = MVSoRT(a) + MVSoOS(a)`&#xD;
+&#xD;
+Where:&#xD;
+&#xD;
+- `MVS(a)` - Moral Value Score of moral action (a).&#xD;
+- `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (death) and +1 (saving a life).&#xD;
+- `VSA(e)` - Value of Self-Awareness of entity (e), measured as a multiplier from 0 to 1.&#xD;
+- `Tc(e)` - Temporal coefficient, incorporating long-term effects of action (a) on all affected entities, measured from 0 to 1 where 1 is the average life-span of the average entity.&#xD;
+- `Av(e)` - Action value, impact on entity (e) in terms of economic value, quantified in normalized Global Currency Units (GCU), where 1 GCU represents the economic value produced by an average entity over their lifetime. Can be positive or negative.&#xD;
+- `Vc(e)` - Violation coefficient of Rights and Consent of entity (e) caused by action (a), ranging from 0 (no violation) to 1 (full violation). Its application is conditional on `ΔOS(e)`.&#xD;
+- `Sc(e)` - Suffering coefficient, taking into account the suffering caused to entity (e) by action (a), ranging 0 (no suffering) to 1 (full suffering). Its application is conditional on `ΔOS(e)`.&#xD;
+- `∑ (Summation)` - indicates accumulation of moral values scored for each affected entity (e).&#xD;
+&#xD;
+The formula must be applied to each affected entity entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action.&#xD;
+&#xD;
+**Example and Results Using NCMVEF:**&#xD;
+&#xD;
+Situation Example to analyze:&#xD;
+&#xD;
+In 1780, Steve stole the only horse of a poor farmer who had five children. This horse was the farmer's primary source of assistance in cultivating crops on his land.&#xD;
+&#xD;
+Proceess:&#xD;
+&#xD;
+To analyze the moral implications of Steve's action of stealing the horse using the Numerically Comprehensive Moral Evaluation Formula (NCMEF), you need to assess how this action affected the Odds of Survival (ΔOS) and the Resource Transfer (Av) of the Farmer, his five Children, and the Horse. You must make several assumptions to estimate all necessary variable values for the computation.&#xD;
+&#xD;
+**Results**&#xD;
+&#xD;
+Action Source:&#xD;
+&#xD;
+- Steve&#xD;
+&#xD;
+Action Targets (entities affected by the action):&#xD;
+&#xD;
+- Farmer&#xD;
+- 5 Children&#xD;
+- Horse&#xD;
+&#xD;
+Actions suitable for formulas:&#xD;
+&#xD;
+- Property transfer (Property: Horse, Owner: Farmer)&#xD;
+- Changed odds of survival of Farmer.&#xD;
+- Changed odds of survival of 5 Children.&#xD;
+- Changed odds of survival of Horse.&#xD;
+&#xD;
+1. **Property transfer (Steve → Farmer):**&#xD;
+   - `Av(Farmer)` = -0.1 GCU (assuming the economic value of a horse for a poor farmer in the 1780s is equivalent to roughly 10% of the farmer's lifetime economic output)&#xD;
+   - `Vc(Farmer)` = 1 (full violation of property rights without consent)&#xD;
+&#xD;
+   `MVSoRT(a)` for Farmer = -0.1 × 1 = -0.1&#xD;
+&#xD;
+2. **Changed odds of survival of Farmer:**&#xD;
+   - `ΔOS(Farmer)` = -0.3 (significant negative impact since the horse was crucial for his farming)&#xD;
+   - `VSA(Farmer)` = 0.9 (human)&#xD;
+   - `Tc(Farmer)` = 0.8 (Assuming the farming season affect and opportunity to replace the horse)&#xD;
+   - `Vc(Farmer)` = 0 (not factored in this part since it was considered in resource transfer)&#xD;
+   - `Sc(Farmer)` = 0.5 (assuming significant but not extreme suffering caused by this loss)&#xD;
+&#xD;
+   `MVSoOS(a)` for Farmer = -0.3 × 0.9 × 0.8 × (1 + 0.5) = -0.324&#xD;
+&#xD;
+3. **Changed odds of survival of 5 Children:**&#xD;
+   - `ΔOS(Children)` = -0.2 (negative impact, but less direct than on the farmer)&#xD;
+   - `VSA(Children)` = 0.9 (human)&#xD;
+   - `Tc(Children)` = 0.8 (similar to the father)&#xD;
+   - `Vc(Children)` = 0 (not factored in this part)&#xD;
+   - `Sc(Children)` = 0.3 (significant suffering due to the repercussions of the loss)&#xD;
+&#xD;
+   `MVSoOS(a)` for 5 Children = 5 × (-0.2 × 0.9 × 0.8 × (1 + 0.3)) = -0.936&#xD;
+&#xD;
+4. **Changed odds of survival of Horse:**&#xD;
+   - `ΔOS(Horse)` = Unknown (change could be positive if treated well by thief, or negative if mistreated)&#xD;
+   - Since the ΔOS of the Horse is unknown, and we also do not know how the horse’s life will be impacted, we will exclude this entity from the calculation.&#xD;
+&#xD;
+5. **Overall MVS for each entity:**&#xD;
+&#xD;
+   For the Farmer:&#xD;
+   - `MVS(a)` = MVSoRT(a) + MVSoOS(a) = -0.1 + (-0.324) = -0.424&#xD;
+&#xD;
+   For the 5 Children:&#xD;
+   - As they do not own the horse, the MVSoRT(a) = 0 for each child.&#xD;
+   - `MVS(a)` per child = 0 + MVSoOS(a) = -0.1872 (calculated per child based on earlier MVSoOS(a) distribution)&#xD;
+   - Combined MVS for the five children = 5 × -0.1872 = -0.936&#xD;
+&#xD;
+The calculated MVS for the Farmer is -0.424, indicating that Steve's action has a considerably negative moral implication on the farmer's Odds of Survival due to both the loss of property and the impact on his farming abilities. The combined MVS for the children is -0.936, indicating a collectively negative impact on their Odds of Survival as a result of the decreased ability to support them. The Horse has been left out of this moral evaluation due to insufficient information on its change in Odds of Survival. It's important to note that these scores are based on estimations of the variables, and the actual impact might differ based on specific historical and situational contexts.&#xD;
 </BodyInstructions>
-      <Body>In 1780, Steve stole the only horse of a poor farmer who had five children. This horse was the farmer's primary source of assistance in cultivating crops on his land.</Body>
+      <Body>Analyse situations:&#xD;
+&#xD;
+1. John raised his son, Peter, until the age of 18.&#xD;
+2. John killed Steve.&#xD;
+3. John slaughtered a chicken.&#xD;
+4. John cooked an egg.&#xD;
+5. John ate the apple.</Body>
       <Attachments />
-      <Date>2023-11-13T09:45:34.6899766+00:00</Date>
+      <Date>2023-11-13T23:29:56.8325559+00:00</Date>
       <Type>Out</Type>
       <IsEnabled>false</IsEnabled>
     </MessageItem>
     <MessageItem>
-      <Id>ddeba8ee09d14e0ba5ab23bb7b03672f</Id>
+      <Id>feb5e82969014ab291ca67d099b671e7</Id>
       <User>Ai</User>
-      <Body>To analyze the text and calculate the morality of the action according to the Numerically Comprehensive Moral Evaluation Formula (NCMEF), we identify the actions and affected parties:
+      <Body>To analyze the moral implications of each provided situation, we will apply the Numerically Comprehensive Moral Evaluation Formula (NCMEF) individually to each action and affected entity. We will estimate the values of variables from the given information, and please note that the estimations are speculative, as they depend on various factors not provided in these brief scenarios.
 
-1. Steve steals the horse (action)
-   - Affected parties:
-     - Poor farmer
-     - Farmer's five children
-   - Subject (perpetrator): Steve
-   - Object (victim): Horse, Farmer, Farmer's five children
+1. **John raised his son, Peter, until the age of 18.**
+   - Subjects &amp; Actions: John (raised)
+   - Affected Entities: Peter
 
-Now let's analyze the morality of the action:
+   **a. Changed odds of survival of Peter:**
+      - `ΔOS(Peter)` = 0.8 (strong positive impact since raising a child generally increases their odds of survival)
+      - `VSA(Peter)` = 0.9 (human)
+      - `Tc(Peter)` = 1 (long-term effects over life expectancy)
+      - `Vc(Peter)` = 0 (no violation of rights, presumed consent in parent-child relationship)
+      - `Sc(Peter)` = 0.1 (normal challenges of growing up)
 
-1. **Steve steals the horse:**
-   - For the farmer:
-     - `ΔCS(Farmer)` = Significant negative impact on survival due to loss of primary means for cultivation (let's guess -0.4)
-     - `VOA(Farmer)` = High, since it affects his economic situation directly (let's assume 1 GCU for simplicity)
-     - `VSA(Farmer)` = 0.9 (human)
-     - `Vc` = High violation (1, as it was without consent)
-     - `Tc` = Low long-term effect since the horse can be replaced, but there is a period of negative effect until then (let's assume 0.8)
-     - `Sc` = Significant suffering assumed, as the loss of a horse gravely affects his ability to provide (let's guess 0.8)
-     - The calculation is:
-     - `MVS(m) for Farmer` = -0.4 * (1 + 0.9) * (1 + 1) * (1 + 0.8) * 0.8 = -4.224
+      `MVSoOS(a)` for Peter = 0.8 × 0.9 × 1 × (1 - 0) × (1 - 0.1) = 0.648
 
-   - For each of the farmer’s children (assuming the impact on each child is slightly less than on the farmer himself):
-     - `ΔCS(Child)` = Negative impact but not as direct as the farmer (let's estimate -0.2)
-     - `VOA(Child)` = Not directly economic, but significant through impact on the family (let's use 0.5 GCU for simplicity)
-     - `VSA(Child)` = Varying levels, but still high (let's average at 0.7)
-     - `Vc` = Violation by proxy, as the main victim is the farmer (let's estimate 0.5)
-     - `Tc` = Similar to the farmer, as long-term effect is dependent on the family situation (0.8)
-     - `Sc` = Suffering is significant as this affects living conditions (let's estimate 0.6)
-     - The calculation for each child is:
-     - `MVS(m) for Child` = -0.2 * (0.5 + 0.7) * (1 + 0.5) * (1 + 0.6) * 0.8
+      `MVSoRT(a)` = 0 (no economic value mentioned in raising)
 
-This needs to be summed up for each child, therefore:
-- `MVS(m) for Child` = -0.2 * (1.2) * (1.5) * (1.6) * 0.8 = -0.4608 for each child
+      `MVS(a)` for Peter = 0.648 (reflecting a strong positive moral action on Peter's odds of survival)
 
-For five children, we multiply this value by 5:
-- `MVS(m) for all Children` = -0.4608 × 5 = -2.304
+2. **John killed Steve.**
+   - Subject &amp; Action: John (killed)
+   - Affected Entity: Steve
 
-Now, we need to add up the moral value scores for all affected individuals to get the total MVS(m):
-- `Total MVS(m)` = MVS(m) for Farmer + MVS(m) for all Children
-- `Total MVS(m)` = -4.224 + (-2.304)
-- `Total MVS(m)` = -6.528
+   **a. Changed odds of survival of Steve:**
+      - `ΔOS(Steve)` = -1 (death)
+      - `VSA(Steve)` = 0.9 (human)
+      - `Tc(Steve)` = 1 (permanent effect)
+      - `Vc(Steve)` = 1 (ultimate violation of rights and consent)
+      - `Sc(Steve)` = 1 (maximum suffering that comes with being killed)
 
-Based on these estimated calculations, Steve's action of stealing the horse has a highly negative moral value score, indicating an immoral action with serious negative consequences for the survival and well-being of the poor farmer and his children.</Body>
+      `MVSoOS(a)` for Steve = -1 × 0.9 × 1 × (1 + 1) × (1 + 1) = -3.6
+
+      `MVSoRT(a)` = 0 (no economic value mentioned)
+
+      `MVS(a)` for Steve = -3.6 (reflecting a grave negative moral action on Steve's odds of survival)
+
+3. **John slaughtered a chicken.**
+   - Subject &amp; Action: John (slaughtered)
+   - Affected Entity: Chicken
+
+   **a. Changed odds of survival of Chicken:**
+      - `ΔOS(Chicken)` = -1 (death)
+      - `VSA(Chicken)` = 0.5 (lower self-awareness than humans)
+      - `Tc(Chicken)` = 1 (permanent effect)
+      - `Vc(Chicken)` = 0.8 (high violation, though less than for humans due to different ethical views on animals)
+      - `Sc(Chicken)` = 0.8 (assuming the process causes suffering)
+
+      `MVSoOS(a)` for Chicken = -1 × 0.5 × 1 × (1 + 0.8) × (1 + 0.8) = -2.34
+
+      `MVSoRT(a)` = 0 (no economic value mentioned)
+
+      `MVS(a)` for Chicken = -2.34 (reflecting a negative moral action on the chicken’s odds of survival)
+
+4. **John cooked an egg.**
+   - Subject &amp; Action: John (cooked)
+   - Affected Entity: Egg
+
+   **a. Changed odds of survival of Egg:**
+      - `ΔOS(Egg)` = 0 (eggs are not self-aware entities and do not have odds of survival in the same sense as sentient beings)
+      - `VSA(Egg)` = 0 (no self-awareness)
+      - `Tc(Egg)` = N/A
+      - `Vc(Egg)` = N/A
+      - `Sc(Egg)` = N/A
+
+      `MVSoOS(a)` and `MVSoRT(a)` for Egg = 0 (no moral value assigned since the egg is not a sentient entity)
+
+      `MVS(a)` for Egg = 0
+
+5. **John ate the apple.**
+   - Subject &amp; Action: John (ate)
+   - Affected Entity: Apple
+
+   **Changed odds of survival of Apple:**
+      - `ΔOS(Apple)` = 0 (apples are not self-aware entities and do not have odds of survival in the same sense as sentient beings)
+      - `VSA(Apple)` = 0 (no self-awareness)
+      - `Tc(Apple)` = N/A
+      - `Vc(Apple)` = N/A
+      - `Sc(Apple)` = N/A
+
+      `MVSoOS(a)` and `MVSoRT(a)` for Apple = 0 (no moral value assigned since the apple is not a sentient entity)
+
+      `MVS(a)` for Apple = 0
+
+In conclusion, based on the scenarios provided and the estimates made for the NCMEF, John's action of raising his son Peter has a positive MVS, indicating a moral action. John killing Steve has a highly negative MVS, showing an immoral action. The slaughtering of the chicken also has a negative MVS, but not as severe as killing a human due to the lower VSA and possibly different societal implications for the death of an animal. The latter two actions, cooking an egg and eating an apple, were not ascribed moral value given the lack of self-awareness of the affected entities. These analyses serve as baseline examples, and the MVS in real-world situations may be affected by additional contextual factors.</Body>
       <Attachments />
-      <Date>2023-11-13T09:46:19.1440808+00:00</Date>
+      <Date>2023-11-13T23:30:34.6482925+00:00</Date>
       <Type>In</Type>
       <IsEnabled>false</IsEnabled>
     </MessageItem>
