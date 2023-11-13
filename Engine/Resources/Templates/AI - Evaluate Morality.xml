@@ -81,7 +81,9 @@ The currency units and coefficients would be standardized where possible, allowi
   <IsSystemInstructions>true</IsSystemInstructions>
   <Text>In 1780, Steve stole the only horse of a poor farmer who had five children. This horse was the farmer's primary source of assistance in cultivating crops on his land.</Text>
   <AttachContext>ChatHistory</AttachContext>
-  <Settings />
+  <Settings>
+    <ScrollPosition>2034</ScrollPosition>
+  </Settings>
   <Messages>
     <MessageItem>
       <Id>ae425c84ebfd4f7a831bbfdf0aacc433</Id>
