@@ -163,6 +163,16 @@
 					</StackPanel>
 				</TabItem.Header>
 			</TabItem>
+			<TabItem x:Name="AssistantsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_user_group}" />
+						<Label Content="1. Assitants" />
+					</StackPanel>
+				</TabItem.Header>
+			</TabItem>
+
+
 		</TabControl>
 	</Grid>
 </UserControl>
