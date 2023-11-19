@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "JocysCom.VS.AiCompanion.ClientGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"$(SolutionDir)Clients\\OpenAI\\openapi.yaml\" \"$(SolutionDir)Clients\\OpenAI\""
+    }
+  }
+}
