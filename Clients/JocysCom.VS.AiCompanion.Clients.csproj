@@ -12,4 +12,8 @@
     <Folder Include="OpenAI\Enums\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="7.0.3" />
+  </ItemGroup>
+
 </Project>

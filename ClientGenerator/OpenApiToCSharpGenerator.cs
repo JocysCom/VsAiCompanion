@@ -11,7 +11,9 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 
 		private const string BaseNamespace = "JocysCom.VS.AiCompanion.Clients.OpenAI.Models";
 
-		private Dictionary<string, string> overideClassNames = new Dictionary<string, string>() {
+		public string base_class = "base_item";
+
+		public Dictionary<string, string> overideClassNames = new Dictionary<string, string>() {
 			{"embedding", "embedding_item" }
 		};
 
@@ -48,6 +50,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				FoundClasses = FoundClasses.Except(schemaAliasMapping.Keys).ToList();
 				PopulateBaseProperties();
 				// Iterate through enums
+				FilesBefore = Directory.GetFiles(outputDirectory + "\\Enums", "*.cs").ToList();
 				foreach (var schema in FoundEnums)
 				{
 					var id = schema.Reference.Id;
@@ -55,7 +58,9 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 					string filePath = Path.Combine(outputDirectory + "\\Enums", GetCSharpClassName(id) + ".cs");
 					SaveToFile(filePath, csharpClassContent);
 				}
+				CleanupFiles(outputDirectory + "\\Enums");
 				// Iterate through classes, noting aliases and generating classes
+				FilesBefore = Directory.GetFiles(outputDirectory + "\\Models", "*.cs").ToList();
 				foreach (var schema in FoundClasses)
 				{
 					var id = schema.Reference.Id;
@@ -63,7 +68,19 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 					string filePath = Path.Combine(outputDirectory + "\\Models", GetCSharpClassName(id) + ".cs");
 					SaveToFile(filePath, csharpClassContent);
 				}
+				CleanupFiles(outputDirectory + "\\Models");
 			}
+		}
+
+		public List<string> FilesBefore = new List<string>();
+		public List<string> FilesAfter = new List<string>();
+
+		public void CleanupFiles(string folder)
+		{
+			FilesAfter = Directory.GetFiles(folder, "*.cs").ToList();
+			var filesToDelete = FilesBefore.Except(FilesAfter);
+			foreach (var file in filesToDelete)
+				File.Delete(file);
 		}
 
 		#region Populate Base Properties
@@ -303,7 +320,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			{
 				// Normal class generation with properties.
 				var baseSchema = FindBaseSchema(schema);
-				var baseClassName = GetCSharpClassName(baseSchema?.Reference?.Id ?? "");
+				var baseClassName = GetCSharpClassName(baseSchema?.Reference?.Id ?? base_class);
 				sb.AppendLine($"    public class {className}{(!string.IsNullOrEmpty(baseClassName) ? $" : {baseClassName}" : "")}");
 			}
 			sb.AppendLine("    {");
@@ -472,7 +489,12 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		private OpenApiSchema? FindBaseSchema(OpenApiSchema schema)
 		{
 			var currentSchemaPropertyNames = new HashSet<string>(schema.Properties.Keys);
-			var candidateSchemas = knownSchemas.Concat(FoundClasses).Except(new[] { schema }).ToList();
+			var candidateSchemas = knownSchemas
+				.Concat(FoundClasses)
+				.Except(new[] { schema })
+				// Must have properties.
+				.Where(x=>x.Properties.Count > 0)
+				.ToList();
 
 			OpenApiSchema? baseSchema = null;
 			int maxMatchingProperties = -1;
