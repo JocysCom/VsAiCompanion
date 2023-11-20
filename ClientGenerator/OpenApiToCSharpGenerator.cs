@@ -6,6 +6,10 @@ using Microsoft.OpenApi.Any;
 
 namespace JocysCom.VS.AiCompanion.ClientGenerator
 {
+
+	/// <summary>
+	/// Try to generate models and classes like they are described on OpenAI page.
+	/// </summary>
 	public class OpenApiToCSharpGenerator
 	{
 
@@ -493,7 +497,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				.Concat(FoundClasses)
 				.Except(new[] { schema })
 				// Must have properties.
-				.Where(x=>x.Properties.Count > 0)
+				.Where(x => x.Properties.Count > 0)
 				.ToList();
 
 			OpenApiSchema? baseSchema = null;

@@ -159,11 +159,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			SaveSelection();
 			var client = new Client(Data.AiService);
-			var response = await client.GetModelsAsync();
-			var models = response?.FirstOrDefault()?.data?
-				.OrderBy(x => x.id.StartsWith("ft:") ? 0 : 1)
-				.ThenBy(x => x.id)
-				.ToArray() ?? Array.Empty<model>();
+			var models = await client.GetModels();
 			CollectionsHelper.Synchronize(models, CurrentItems);
 			MustRefresh = false;
 			ControlsHelper.SetSelection(MainDataGrid, nameof(model.id), Data.FineTuningModelListSelection, 0);

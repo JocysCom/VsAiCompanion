@@ -244,6 +244,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public async Task<List<models_response>> GetModelsAsync()
 			=> await GetAsyncWithTask<models_response>(modelsPath);
 
+		public async Task<model[]> GetModels()
+		{
+			var response = await GetModelsAsync();
+			return response?.FirstOrDefault()?.data
+				.OrderBy(x => x.id.StartsWith("ft:") ? 0 : 1)
+				.ThenBy(x => x.id)
+				.ToArray() ?? Array.Empty<model>();
+		}
+
 		public async Task<deleted_response> DeleteModelAsync(string id, CancellationToken cancellationToken = default)
 			=> await DeleteAsync<deleted_response>(modelsPath, id, cancellationToken);
 
