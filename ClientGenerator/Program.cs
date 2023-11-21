@@ -31,7 +31,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			Console.WriteLine($"Generating client models to {outputDirectory}");
 			var yamlContents = File.ReadAllText(yamlFilePath);
 			generator.GenerateModelsFromOpenApiYaml(yamlContents, outputDirectory);
-			generator.GenerateClientFromOpenApiYaml(yamlContents, outputDirectory);
+			//generator.GenerateClientFromOpenApiYaml(yamlContents, outputDirectory);
 		}
 	}
 }

@@ -344,7 +344,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 					{
 						propertySchema = primarySchema;
 					}
-					var propertyType = GetCSharpTypeName(propertySchema);
+					var propertyType = GetCSharpType(propertySchema);
 					//sb.AppendLine($"        /// <summary>");
 					//sb.AppendLine($"        /// Gets or sets the {propertyName}.");
 					//sb.AppendLine($"        /// </summary>");
@@ -383,32 +383,44 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// <param name="schema">The schema to get the C# type for.</param>
 		/// <param name="enableNullable">Determines whether nullable suffix is allowed for value types.</param>
 		/// <returns>String representation of the corresponding C# type.</returns>
-		private string GetCSharpTypeName(OpenApiSchema schema, bool enableNullable = false)
+		private string GetCSharpType(OpenApiSchema schema, bool enableNullable = false)
 		{
 			var csType = "object";
 			// Handle simple types
 			if (schema.Type == "string")
 				csType = "string";
-			if (schema.Type == "integer")
+			else if (schema.Type == "integer")
 				csType = schema.Format == "int64" ? "long" : "int";
-			if (schema.Type == "boolean")
+			else if (schema.Type == "boolean")
 				csType = "bool";
-			if (schema.Type == "number")
+			else if (schema.Type == "number")
 				csType = schema.Format == "float" ? "float" : "double";
+			else if (schema.Type == "array" && schema.Items != null)
+				csType = $"List<{GetCSharpType(schema.Items, enableNullable)}>";
+
 			// Handle complex types
+			// Check if it is a reference to another complex type such as classes or enums
 			if (schema.Reference != null)
 			{
 				var primarySchema = GetPrimarySchemaByAlias(schema);
-				csType = GetCSharpClassName(primarySchema.Reference.Id);
+				var refId = GetCSharpClassName(primarySchema.Reference.Id);
+				if (FoundEnums.Any(e => e.Reference?.Id == refId))
+				{
+					// It's an enum reference
+					csType = refId;
+				}
+				else
+				{
+					// It's a class reference
+					csType = refId;
+				}
 			}
-			// Handle arrays
-			if (schema.Type == "array" && schema.Items != null)
-				csType = $"List<{GetCSharpTypeName(schema.Items, enableNullable)}>";
-			var isValueType = numericTypes.Contains(csType) ||
-				(schema.Enum != null && schema.Enum.Any());
-			// Handle nullable types for reference types or if nullable is enabled for value types
+			// Determine if the type is a numeric value type
+			var isValueType = numericTypes.Contains(csType);
+			// Handle nullable types for value types
 			if (schema.Nullable && (enableNullable || isValueType))
 				csType += "?";
+
 			return csType;
 		}
 
