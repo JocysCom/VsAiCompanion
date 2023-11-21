@@ -29,7 +29,9 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 
 			var generator = new OpenApiToCSharpGenerator();
 			Console.WriteLine($"Generating client models to {outputDirectory}");
-			generator.GenerateModelsFromOpenApiYaml(File.ReadAllText(yamlFilePath), outputDirectory);
+			var yamlContents = File.ReadAllText(yamlFilePath);
+			generator.GenerateModelsFromOpenApiYaml(yamlContents, outputDirectory);
+			generator.GenerateClientFromOpenApiYaml(yamlContents, outputDirectory);
 		}
 	}
 }

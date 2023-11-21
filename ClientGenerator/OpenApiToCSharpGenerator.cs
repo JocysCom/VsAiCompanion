@@ -10,7 +10,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 	/// <summary>
 	/// Try to generate models and classes like they are described on OpenAI page.
 	/// </summary>
-	public class OpenApiToCSharpGenerator
+	public partial class OpenApiToCSharpGenerator
 	{
 
 		private const string BaseNamespace = "JocysCom.VS.AiCompanion.Clients.OpenAI.Models";
@@ -161,7 +161,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			while (foundNewPrimary);
 		}
 
-		public OpenApiSchema GetPrimaryShemaByAlias(OpenApiSchema schema)
+		public OpenApiSchema GetPrimarySchemaByAlias(OpenApiSchema schema)
 		{
 			return schemaAliasMapping.ContainsKey(schema)
 				? schemaAliasMapping[schema]
@@ -182,8 +182,8 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				{
 					OpenApiSchema schemaA = FoundClasses[a];
 					OpenApiSchema schemaB = FoundClasses[b];
-					schemaA = GetPrimaryShemaByAlias(schemaA);
-					schemaB = GetPrimaryShemaByAlias(schemaB);
+					schemaA = GetPrimarySchemaByAlias(schemaA);
+					schemaB = GetPrimarySchemaByAlias(schemaB);
 					if (schemaA != schemaB && AreSchemasAliases(schemaA, schemaB))
 					{
 						OpenApiSchema primarySchema = ChoosePrimarySchema(schemaA, schemaB);
@@ -344,7 +344,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 					{
 						propertySchema = primarySchema;
 					}
-					var propertyType = GetCSharpType(propertySchema);
+					var propertyType = GetCSharpTypeName(propertySchema);
 					//sb.AppendLine($"        /// <summary>");
 					//sb.AppendLine($"        /// Gets or sets the {propertyName}.");
 					//sb.AppendLine($"        /// </summary>");
@@ -383,7 +383,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// <param name="schema">The schema to get the C# type for.</param>
 		/// <param name="enableNullable">Determines whether nullable suffix is allowed for value types.</param>
 		/// <returns>String representation of the corresponding C# type.</returns>
-		private string GetCSharpType(OpenApiSchema schema, bool enableNullable = false)
+		private string GetCSharpTypeName(OpenApiSchema schema, bool enableNullable = false)
 		{
 			var csType = "object";
 			// Handle simple types
@@ -398,12 +398,12 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			// Handle complex types
 			if (schema.Reference != null)
 			{
-				var primarySchema = GetPrimaryShemaByAlias(schema);
+				var primarySchema = GetPrimarySchemaByAlias(schema);
 				csType = GetCSharpClassName(primarySchema.Reference.Id);
 			}
 			// Handle arrays
 			if (schema.Type == "array" && schema.Items != null)
-				csType = $"List<{GetCSharpType(schema.Items, enableNullable)}>";
+				csType = $"List<{GetCSharpTypeName(schema.Items, enableNullable)}>";
 			var isValueType = numericTypes.Contains(csType) ||
 				(schema.Enum != null && schema.Enum.Any());
 			// Handle nullable types for reference types or if nullable is enabled for value types
