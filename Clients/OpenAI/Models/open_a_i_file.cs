@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
     public class open_a_i_file : fine_tuning_job_event

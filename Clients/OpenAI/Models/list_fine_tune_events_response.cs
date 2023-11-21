@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
     public class list_fine_tune_events_response : error_response

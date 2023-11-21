@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
     public class delete_assistant_file_response : list_fine_tune_events_response

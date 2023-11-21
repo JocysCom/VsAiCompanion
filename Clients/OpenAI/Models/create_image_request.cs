@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
     public class create_image_request : create_image_variation_request
@@ -6,7 +7,7 @@ namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 
         public string quality { get; set; }
 
-        public string? style { get; set; }
+        public string style { get; set; }
 
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 namespace JocysCom.VS.AiCompanion.Clients.OpenAI.Models
 {
     public class create_translation_response : base_item

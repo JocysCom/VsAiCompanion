@@ -304,7 +304,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			var sb = new StringBuilder();
 			var className = GetCSharpClassName(schema.Reference.Id);
 			//sb.AppendLine("using System;");
-			//sb.AppendLine("using System.Collections.Generic;");
+			sb.AppendLine("using System.Collections.Generic;");
 			//sb.AppendLine();
 			sb.AppendLine($"namespace {BaseNamespace}");
 			sb.AppendLine("{");
@@ -344,7 +344,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 					{
 						propertySchema = primarySchema;
 					}
-					var propertyType = GetCSharpType(propertySchema);
+					var propertyType = GetCSharpTypeName(propertySchema);
 					//sb.AppendLine($"        /// <summary>");
 					//sb.AppendLine($"        /// Gets or sets the {propertyName}.");
 					//sb.AppendLine($"        /// </summary>");
@@ -383,7 +383,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		/// <param name="schema">The schema to get the C# type for.</param>
 		/// <param name="enableNullable">Determines whether nullable suffix is allowed for value types.</param>
 		/// <returns>String representation of the corresponding C# type.</returns>
-		private string GetCSharpType(OpenApiSchema schema, bool enableNullable = false)
+		private string GetCSharpTypeName(OpenApiSchema schema, bool enableNullable = false)
 		{
 			var csType = "object";
 			// Handle simple types
@@ -396,7 +396,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			else if (schema.Type == "number")
 				csType = schema.Format == "float" ? "float" : "double";
 			else if (schema.Type == "array" && schema.Items != null)
-				csType = $"List<{GetCSharpType(schema.Items, enableNullable)}>";
+				csType = $"List<{GetCSharpTypeName(schema.Items, enableNullable)}>";
 
 			// Handle complex types
 			// Check if it is a reference to another complex type such as classes or enums
