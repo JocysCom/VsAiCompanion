@@ -1,7 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
 using System.Text;
-using Microsoft.OpenApi.Readers;
-using Microsoft.OpenApi.Any;
 
 namespace JocysCom.VS.AiCompanion.ClientGenerator
 {
@@ -12,28 +10,16 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 	public partial class OpenApiToCSharpGenerator
 	{
 
-		public void GenerateClientFromOpenApiYaml(string yamlContent, string outputPath)
+		public void GenerateClient(OpenApiDocument document, string outputPath)
 		{
-			// Parse the YAML into an OpenAPI document object
-			using var stream = new MemoryStream(Encoding.UTF8.GetBytes(yamlContent));
-			var reader = new OpenApiStreamReader();
-			var openApiDocument = reader.Read(stream, out var diagnostic);
-
-			if (diagnostic.Errors.Count > 0)
-			{
-				// Handle errors in parsing the YAML content
-				return;
-			}
-
 			// Initialize a string builder to construct the IClient interface
 			var sb = new StringBuilder();
 			sb.AppendLine(BaseNamespace);
 			sb.AppendLine();
 			sb.AppendLine("public interface IClient");
 			sb.AppendLine("{");
-
 			// Iterate through each path and method in the OpenAPI document
-			foreach (var path in openApiDocument.Paths)
+			foreach (var path in document.Paths)
 			{
 				foreach (var operation in path.Value.Operations)
 				{

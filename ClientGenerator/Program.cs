@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace JocysCom.VS.AiCompanion.ClientGenerator
+﻿namespace JocysCom.VS.AiCompanion.ClientGenerator
 {
 	internal class Program
 	{
@@ -30,8 +27,11 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			var generator = new OpenApiToCSharpGenerator();
 			Console.WriteLine($"Generating client models to {outputDirectory}");
 			var yamlContents = File.ReadAllText(yamlFilePath);
-			generator.GenerateModelsFromOpenApiYaml(yamlContents, outputDirectory);
-			//generator.GenerateClientFromOpenApiYaml(yamlContents, outputDirectory);
+			var document = YamlHelper.ConvertToDocument(yamlContents);
+			if (document == null)
+				return;
+			generator.GenerateModels(document, outputDirectory);
+			generator.GenerateClient(document, outputDirectory);
 		}
 	}
 }
