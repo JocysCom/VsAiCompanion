@@ -1,4 +1,6 @@
-﻿namespace JocysCom.VS.AiCompanion.ClientGenerator
+﻿using System.Text;
+
+namespace JocysCom.VS.AiCompanion.ClientGenerator
 {
 	public static class WriteHelper
 	{
@@ -36,8 +38,26 @@
 		{
 			var isDifferent = IsDifferent(path, bytes);
 			if (isDifferent)
+			{
 				File.WriteAllBytes(path, bytes);
+				Console.WriteLine($"Saved: {path}");
+			}
+			else
+			{
+				Console.WriteLine($"Same:  {path}");
+			}
 			return isDifferent;
+		}
+
+		/// <summary>
+		/// Write generated C# content to the file.
+		/// </summary>
+		/// <param name="path">Path to the C# file.</param>
+		/// <param name="contents">C# file contents to write.</param>
+		public static void SaveToFile(string path, string contents)
+		{
+			var bytes = Encoding.UTF8.GetBytes(contents);
+			WriteIfDifferent(path, bytes);
 		}
 
 	}

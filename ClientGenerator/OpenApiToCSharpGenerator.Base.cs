@@ -1,5 +1,4 @@
 ﻿using Microsoft.OpenApi.Models;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace JocysCom.VS.AiCompanion.ClientGenerator
@@ -43,7 +42,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				var id = schema.Reference.Id;
 				var csharpClassContent = GenerateEnum(schema);
 				string filePath = Path.Combine(outputDirectory + "\\Enums", GetCSharpClassName(id) + ".cs");
-				SaveToFile(filePath, csharpClassContent);
+				WriteHelper.SaveToFile(filePath, csharpClassContent);
 			}
 			CleanupFiles(outputDirectory + "\\Enums");
 			// Iterate through classes, noting aliases and generating classes
@@ -53,7 +52,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 				var id = schema.Reference.Id;
 				var csharpClassContent = GenerateClass(schema);
 				string filePath = Path.Combine(outputDirectory + "\\Models", GetCSharpClassName(id) + ".cs");
-				SaveToFile(filePath, csharpClassContent);
+				WriteHelper.SaveToFile(filePath, csharpClassContent);
 			}
 			CleanupFiles(outputDirectory + "\\Models");
 		}
@@ -415,19 +414,6 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 			var sameCount = a.Properties.Count(p => b.Properties.ContainsKey(p.Key) && b.Properties[p.Key].Type == p.Value.Type);
 			return sameCount;
 		}
-
-		/// <summary>
-		/// Write generated C# content to the file.
-		/// </summary>
-		/// <param name="path">Path to the C# file.</param>
-		/// <param name="contents">C# file contents to write.</param>
-		private void SaveToFile(string path, string contents)
-		{
-			var bytes = Encoding.UTF8.GetBytes(contents);
-			WriteHelper.WriteIfDifferent(path, bytes);
-			Console.WriteLine($"Saved: {path}");
-		}
-
 
 	}
 }
