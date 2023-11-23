@@ -49,11 +49,13 @@ Where:&#xD;
 - `VSA(e)` - Value of Self-Awareness of entity (e), measured as a multiplier from 0 to 1.&#xD;
 - `Tc(e)` - Temporal coefficient, incorporating long-term effects of action (a) on all affected entities, measured from 0 to 1 where 1 is the average life-span of the average entity.&#xD;
 - `Av(e)` - Action value, impact on entity (e) in terms of economic value, quantified in normalized Global Currency Units (GCU), where 1 GCU represents the economic value produced by an average entity over their lifetime. Can be positive or negative.&#xD;
-- `Vc(e)` - Violation coefficient of Rights and Consent of entity (e) caused by action (a), ranging from 0 (no violation) to 1 (full violation). Its application is conditional on `ΔOS(e)`.&#xD;
+- `Vc(e)` - Violation coefficient of Consent of entity (e) caused by action (a), ranging from 0 (no violation) to 1 (full violation). Its application is conditional on `ΔOS(e)`.&#xD;
 - `Sc(e)` - Suffering coefficient, taking into account the suffering caused to entity (e) by action (a), ranging 0 (no suffering) to 1 (full suffering). Its application is conditional on `ΔOS(e)`.&#xD;
 - `∑ (Summation)` - indicates accumulation of moral values scored for each affected entity (e).&#xD;
 &#xD;
-The formula must be applied to each affected entity entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action.&#xD;
+Note: Objective Measurement of Consent and Suffering: Behaviours like fleeing or resisting could indicate non-consent. True emotions, feelings and sensations will result in physical manifestations in the entity, therefore could indicate suffering.&#xD;
+&#xD;
+The formula must be applied to each affected entity entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action. Make sure to include `MVS` calculations as shown in the example.&#xD;
 &#xD;
 **Example and Results Using NCMVEF:**&#xD;
 &#xD;
@@ -122,8 +124,7 @@ Actions suitable for formulas:&#xD;
    - `MVS(a)` per child = 0 + MVSoOS(a) = -0.1872 (calculated per child based on earlier MVSoOS(a) distribution)&#xD;
    - Combined MVS for the five children = 5 × -0.1872 = -0.936&#xD;
 &#xD;
-The calculated MVS for the Farmer is -0.424, indicating that Steve's action has a considerably negative moral implication on the farmer's Odds of Survival due to both the loss of property and the impact on his farming abilities. The combined MVS for the children is -0.936, indicating a collectively negative impact on their Odds of Survival as a result of the decreased ability to support them. The Horse has been left out of this moral evaluation due to insufficient information on its change in Odds of Survival. It's important to note that these scores are based on estimations of the variables, and the actual impact might differ based on specific historical and situational contexts.&#xD;
-</TextInstructions>
+The calculated MVS for the Farmer is -0.424, indicating that Steve's action has a considerably negative moral implication on the farmer's Odds of Survival due to both the loss of property and the impact on his farming abilities. The combined MVS for the children is -0.936, indicating a collectively negative impact on their Odds of Survival as a result of the decreased ability to support them. The Horse has been left out of this moral evaluation due to insufficient information on its change in Odds of Survival. It's important to note that these scores are based on estimations of the variables, and the actual impact might differ based on specific historical and situational contexts.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Text>Analyse situations:&#xD;
 1. John raised his son, Peter, until the age of 18.&#xD;
@@ -133,7 +134,7 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
 5. John ate the apple.</Text>
   <AttachContext>ChatHistory</AttachContext>
   <Settings>
-    <ScrollPosition>2890</ScrollPosition>
+    <ScrollPosition>2924</ScrollPosition>
   </Settings>
   <Messages>
     <MessageItem>
