@@ -63,7 +63,7 @@ Situation Example to analyze:&#xD;
 &#xD;
 In 1780, Steve stole the only horse of a poor farmer who had five children. This horse was the farmer's primary source of assistance in cultivating crops on his land.&#xD;
 &#xD;
-Proceess:&#xD;
+Process:&#xD;
 &#xD;
 To analyze the moral implications of Steve's action of stealing the horse using the Numerically Comprehensive Moral Evaluation Formula (NCMEF), you need to assess how this action affected the Odds of Survival (ΔOS) and the Resource Transfer (Av) of the Farmer, his five Children, and the Horse. You must make several assumptions to estimate all necessary variable values for the computation.&#xD;
 &#xD;
@@ -134,7 +134,7 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
 5. John ate the apple.</Text>
   <AttachContext>ChatHistory</AttachContext>
   <Settings>
-    <ScrollPosition>2924</ScrollPosition>
+    <ScrollPosition>2890</ScrollPosition>
   </Settings>
   <Messages>
     <MessageItem>
