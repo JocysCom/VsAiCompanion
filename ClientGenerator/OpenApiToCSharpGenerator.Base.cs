@@ -15,7 +15,8 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		public string base_class = "base_item";
 
 		public Dictionary<string, string> overideClassNames = new Dictionary<string, string>() {
-			{"embedding", "embedding_item" }
+			{"embedding", "embedding_item" },
+			{"open_a_i_file", "file" },
 		};
 
 		private List<OpenApiSchema> knownSchemas = new List<OpenApiSchema>();

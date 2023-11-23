@@ -14,7 +14,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		{
 			// Initialize a string builder to construct the IClient interface
 			var sb = new StringBuilder();
-			sb.AppendLine(BaseNamespace);
+			sb.AppendLine($"using {BaseNamespace};");
 			sb.AppendLine();
 			sb.AppendLine("public interface IClient");
 			sb.AppendLine("{");
@@ -44,6 +44,7 @@ namespace JocysCom.VS.AiCompanion.ClientGenerator
 		{
 			// Extract the method name from operation ID or generate a new one based on the path and operation type
 			var methodName = operation.OperationId ?? $"{operationType}{path.Replace("/", string.Empty)}";
+			methodName = GetCSharpTypeName(methodName);
 
 			// Extract return type (check for primary schema if it's an alias)
 			string returnType = "void"; // Default return type if none is specified
