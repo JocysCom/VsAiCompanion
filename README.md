@@ -10,9 +10,9 @@ The AI Companion is a tool that analyzes your project files and works alongside 
 - API provides access to more recent and smarter AI models.
 
 ### Download
-Digitally Signed Standalone/Portable Application v1.3.17 (2023-11-12)
+Digitally Signed Standalone/Portable Application v1.3.20 (2023-11-26)
 
-[Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.3.17/JocysCom.VS.AiCompanion.App.zip)
+[Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.3.20/JocysCom.VS.AiCompanion.App.zip)
 
 Install Visual Studio Extension from <a href="https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion">VS AI Companion - Visual Studio Marketplace</a> or install by using Visual Studio Extension Manager.
 
