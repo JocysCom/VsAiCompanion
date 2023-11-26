@@ -45,7 +45,7 @@ Formula to asses moral value score by action effect (e) on Resource Transfer fro
 Where:&#xD;
 &#xD;
 - `MVS(a)` - Moral Value Score of moral action (a).&#xD;
-- `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (destruction/disintegration for simpler entities or death for complex entities) and +1 (creation/formation for simpler entities or creation/saving a life for complex entities).&#xD;
+- `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (disintegration/destruction for non-living entities or death for self-aware entities) and +1 (creation/formation for non-living entities or saving/creating a life for self-aware entities).&#xD;
 - `VSA(e)` - Value of Self-Awareness of entity (e), measured as a multiplier from 0 to 1.&#xD;
 - `Tc(e)` - Temporal coefficient, incorporating long-term effects of action (a) on all affected entities, measured from 0 to 1 where 1 is the average life-span of the average entity.&#xD;
 - `Av(e)` - Action value, impact on entity (e) in terms of economic value, quantified in normalized Global Currency Units (GCU), where 1 GCU represents the economic value produced by an average entity over their lifetime. Can be positive or negative.&#xD;
@@ -137,9 +137,7 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
 4. John cooked an egg.&#xD;
 5. John ate the apple.</Text>
   <AttachContext>ChatHistory</AttachContext>
-  <Settings>
-    <ScrollPosition>2352</ScrollPosition>
-  </Settings>
+  <Settings />
   <Messages>
     <MessageItem>
       <Id>68af625b6f0743ed8170cc2723dc14a5</Id>
