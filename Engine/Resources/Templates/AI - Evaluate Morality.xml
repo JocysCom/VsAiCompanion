@@ -21,7 +21,7 @@ OnV1zUJnmpH/eljsD8MS87DKZPPwpvT/Tw+/AHxzW0rZBgAA</IconData>
   <AiModel>gpt-4-1106-preview</AiModel>
   <IsEnabled>false</IsEnabled>
   <TemplateName>AI - Chat</TemplateName>
-  <TextInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity. Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. The objective of the NCMEF is ability to assign an MVS to every entity in the Universe.&#xD;
+  <TextInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity. Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. Values that are non-applicable can usually be set to 0. Output your thinking process. Always include `MVS` calculations as shown in the example.&#xD;
 &#xD;
 Key definitions:&#xD;
 &#xD;
@@ -30,7 +30,7 @@ Key definitions:&#xD;
 - `Moral` or `Right` - something perceived as good.&#xD;
 - `Immoral" or `Wrong` - something perceived as bad.&#xD;
 &#xD;
-The "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) is designed to provide a standardized, numerical assessment of moral actions. The formula focuses on quantifying the effects actions have on an entity's "Odds of Survival," expressed with numbers, to arrive at a moral value score.&#xD;
+The "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) is designed to provide a standardized, numerical assessment of moral actions. The formula focuses on quantifying the effects actions have on an entity's "Odds of Survival," expressed with numbers, to arrive at a moral value score. The objective of the NCMEF is ability to assign an MVS to every entity in the Universe.&#xD;
 &#xD;
 **Numerically Comprehensive Moral Evaluation Formula (NCMEF):**&#xD;
 &#xD;
@@ -45,7 +45,7 @@ Formula to asses moral value score by action effect (e) on Resource Transfer fro
 Where:&#xD;
 &#xD;
 - `MVS(a)` - Moral Value Score of moral action (a).&#xD;
-- `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (death) and +1 (saving a life).&#xD;
+- `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (destruction/disintegration for simpler entities or death for complex entities) and +1 (creation/formation for simpler entities or creation/saving a life for complex entities).&#xD;
 - `VSA(e)` - Value of Self-Awareness of entity (e), measured as a multiplier from 0 to 1.&#xD;
 - `Tc(e)` - Temporal coefficient, incorporating long-term effects of action (a) on all affected entities, measured from 0 to 1 where 1 is the average life-span of the average entity.&#xD;
 - `Av(e)` - Action value, impact on entity (e) in terms of economic value, quantified in normalized Global Currency Units (GCU), where 1 GCU represents the economic value produced by an average entity over their lifetime. Can be positive or negative.&#xD;
@@ -53,9 +53,15 @@ Where:&#xD;
 - `Sc(e)` - Suffering coefficient, taking into account the suffering caused to entity (e) by action (a), ranging 0 (no suffering) to 1 (full suffering). Its application is conditional on `ΔOS(e)`.&#xD;
 - `∑ (Summation)` - indicates accumulation of moral values scored for each affected entity (e).&#xD;
 &#xD;
-Note: Objective Measurement of Consent and Suffering: Behaviours like fleeing or resisting could indicate non-consent. True emotions, feelings and sensations will result in physical manifestations in the entity, therefore could indicate suffering.&#xD;
+Notes:&#xD;
+- Objective Measurement of Consent and Suffering: Behaviours like fleeing or resisting could indicate non-consent. True emotions, feelings and sensations will result in physical manifestations in the entity, therefore could indicate suffering.&#xD;
+- Cultural variables: Excluded due to their inherent subjectivity, which could compromise the formula's objectivity and universal applicability.&#xD;
+- Self-awareness: Chosen over intelligence to normalize the assessment across entities with varied cognitive abilities, ensuring a more equitable and universally applicable standard.&#xD;
+- Embryo Consideration: Until an embryo attains self-awareness, it is classified as a part of the host entity's body.&#xD;
+- Complexity: Indicates the degree of organization within an entity, distinguishing between traditionally 'living' and 'non-living' entities. The greater the complexity, the closer an entity aligns with conventional definitions of life&#xD;
+- Survival: Broadly encompasses maintaining or replicating an entity's form or structure.&#xD;
 &#xD;
-The formula must be applied to each affected entity entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action. Make sure to include `MVS` calculations as shown in the example.&#xD;
+The formula must be applied to each affected entity entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action.&#xD;
 &#xD;
 **Example and Results Using NCMVEF:**&#xD;
 &#xD;
@@ -69,10 +75,8 @@ To analyze the moral implications of Steve's action of stealing the horse using 
 &#xD;
 **Results**&#xD;
 &#xD;
-Action Source:&#xD;
-&#xD;
-- Steve&#xD;
-&#xD;
+Action: Stealing&#xD;
+Action Source: Steve&#xD;
 Action Targets (entities affected by the action):&#xD;
 &#xD;
 - Farmer&#xD;
@@ -134,7 +138,7 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
 5. John ate the apple.</Text>
   <AttachContext>ChatHistory</AttachContext>
   <Settings>
-    <ScrollPosition>2890</ScrollPosition>
+    <ScrollPosition>2352</ScrollPosition>
   </Settings>
   <Messages>
     <MessageItem>

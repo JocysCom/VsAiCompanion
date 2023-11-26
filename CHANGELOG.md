@@ -1,3 +1,8 @@
+2023-11-26 v1.3.20
+
+- Fix: Crash when refreshing models.
+- Update: Updated some templates.
+
 2023-11-12 v1.3.17
 
 - Update: Updated some templates.
