@@ -81,6 +81,8 @@ function InstallGit {
 # ----------------------------------------------------------------------------
 # Install Git Large File Storage (LFS) Extension
 # ----------------------------------------------------------------------------
+# You can use GIT from Visual Studio.
+# C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd
 # https://git-lfs.com/
 $gitLfsLink = "https://github.com/git-lfs/git-lfs/releases/download/v3.4.0/git-lfs-windows-v3.4.0.exe"
 $gitLfsFile = ".\Data\Downloads\git-lfs-windows-v3.4.0.exe"
@@ -128,10 +130,10 @@ function CloneModelRepository {
 # https://lmstudio.ai/
 $lmStudioLink = "https://s3.amazonaws.com/releases.lmstudio.ai/0.2.8/LM+Studio-0.2.8+Setup.exe"
 $lmStudioFile = ".\Data\Downloads\LM+Studio-0.2.8+Setup.exe"
-function DownloadCuda {
-	DownloadFile $lmStudioLink $lmStudioLink
+function DownloadLmStudio {
+	DownloadFile $lmStudioLink $lmStudioFile
 }
-function InstallCuda {
+function InstallLmStudio {
 	Start-Process -FilePath $lmStudioFile
 }
 # ----------------------------------------------------------------------------
