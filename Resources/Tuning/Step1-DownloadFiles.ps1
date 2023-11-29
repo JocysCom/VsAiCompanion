@@ -107,15 +107,24 @@ function InstallCuda {
 # ----------------------------------------------------------------------------
 # Install Python Libraries
 # ----------------------------------------------------------------------------
+# PyTorch is a Python package that provides two high-level features:
+# - Tensor computation (like NumPy) with strong GPU acceleration.
+# - Deep neural networks built on a tape-based autograd system.
+# https://pypi.org/project/transformers/
 function InstallPythonTorch {
 	python -m pip install torch torchvision torchaudio
 }
+# Transformers is a library maintained by Hugging Face and the community, for state-of-the-art Machine Learning for Pytorch, TensorFlow and JAX.
 function InstallPythonTransformers {
 	python -m pip install transformers
 }
 # ----------------------------------------------------------------------------
 # Clone AI Model Repository
 # ----------------------------------------------------------------------------
+# AI Model File Formats:
+# GGUF / GGML: These are file formats for quantized models created by Georgi Gerganov. GGML, now called GGUF.
+#              Use the CPU to run a Large Language Model (LLM) but also offload some of its layers to the GPU for a speedup.
+# GPTQ: Focused on GPU usage. GPTQ is suitable if you have a lot of VRAM.
 function CloneModelRepository {
 	# if you want to clone without large files – just their pointers
 	# prepend your git clone with the following env var:
