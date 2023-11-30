@@ -1,5 +1,3 @@
-# Step3-2-API-Test.ps1
-
 # Define the API endpoint
 $apiUrl = "http://localhost:5000/predict"
 

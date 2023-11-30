@@ -1,5 +1,5 @@
 import torch
-from transformers import GPT2Tokenizer, GPT2ForSequenceClassification, Trainer, TrainingArguments
+from transformers import GPT2Tokenizer, GPT2LMHeadModel, Trainer, TrainingArguments
 from datasets import load_from_disk
 
 def get_device():
@@ -7,7 +7,6 @@ def get_device():
         return 'cuda'
     else:
         return 'cpu'
-    
 device = get_device()
 
 # Specify the actual model and tokenized data paths
@@ -18,15 +17,15 @@ TOKENIZED_DATA_DIR = './Data/tokenized_data'
 tokenizer = GPT2Tokenizer.from_pretrained(MODEL_PATH)
 tokenizer.pad_token = tokenizer.eos_token  # Set pad_token to eos_token for GPT-2
 
-# Load the pre-trained model for sequence classification
-model = GPT2ForSequenceClassification.from_pretrained(MODEL_PATH, num_labels=2)  # Assuming binary classification
+# Load the pre-trained GPT-2 generative model
+model = GPT2LMHeadModel.from_pretrained(MODEL_PATH)
 model.config.pad_token_id = tokenizer.eos_token_id  # Make sure the model recognizes the pad token
 model.to(device)
 
 # Load the tokenized datasets
 tokenized_datasets = load_from_disk(TOKENIZED_DATA_DIR)
 
-# Define training arguments
+# Define training arguments tailored for language generation
 training_args = TrainingArguments(
     output_dir='./Fine-Tuned/Model',
     overwrite_output_dir=True,
@@ -35,8 +34,12 @@ training_args = TrainingArguments(
     num_train_epochs=3,
     logging_dir='./Logs',
     logging_steps=100,
-    save_strategy="no",  # Save strategy set to 'no' to prevent saving checkpoints
-    save_total_limit=1  # Limit the total amount of checkpoints, keeping only the best one
+    save_strategy="steps",
+    save_steps=500,
+    evaluation_strategy="steps",
+    warmup_steps=100,
+    weight_decay=0.01,
+    prediction_loss_only=True,  # For language modelling, we are typically only interested in the loss
 )
 
 # Initialize and train the model
@@ -52,7 +55,7 @@ if __name__ == '__main__':
     # Train the model using the tokenized data
     train_model(training_args, model, tokenized_datasets)
 
-    # Saving the model may be moved out of `train_model` to make it more explicit
+    # If you wish to save checkpoints during training, consider defining a save strategy in TrainingArguments
+    # Otherwise, save the final model and tokenizer
     model.save_pretrained(training_args.output_dir)
-    # Save the tokenizer if you have made any changes or updates
     tokenizer.save_pretrained(training_args.output_dir)

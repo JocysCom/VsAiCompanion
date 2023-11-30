@@ -1,5 +1,3 @@
-# Step1-0-SaveTrustedRootCertificates.ps1
-
 # The hostname from which to retrieve the corporate certificate
 $HostName = 'huggingface.co'
 $Port = 443
