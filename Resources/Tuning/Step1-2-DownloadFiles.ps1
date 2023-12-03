@@ -133,9 +133,14 @@ function InstallPythonAccelerate {
 	python -m pip install accelerate
 }
 # Flask required for API deploy.
-# https://pypi.org/project/Flask/
+# https://pypi.org/project/flask/
 function InstallPythonFlask {
 	python -m pip install flask
+}
+# Sentencepiece and protobuf required for LLaMA preprocessing data.
+# https://pypi.org/project/sentencepiece/
+function InstallPythonSentencepiece {
+	python -m pip install sentencepiece protobuf
 }
 # ----------------------------------------------------------------------------
 # Clone AI Model Repository
@@ -181,10 +186,11 @@ $mip2 = "Install Python Transformers"
 $mids = "Install Python Datasets"
 $miaa = "Install Python Accelerate"
 $mifl = "Install Python Flask"
+$mipsp = "Install Python Sentencepiece"
 $mcr = "Clone Model Repository"
 $mdlms = "Download LM Studio"
 $milms = "Install  LM Studio"
-$menuItems = @( $mdp, $mip, $mdg, $mig, $mdgl, $migl, $mdc, $mic, $mipc, $mip1, $mip2, $mids, $miaa, $mifl, $mcr, $mdlms, $milms )
+$menuItems = @( $mdp, $mip, $mdg, $mig, $mdgl, $migl, $mdc, $mic, $mipc, $mip1, $mip2, $mids, $miaa, $mifl, $mipsp, $mcr, $mdlms, $milms )
 $option = ShowOptionsMenu $menuItems  "Select Option:"
 if ("$option" -eq "") {
 	return
@@ -206,6 +212,7 @@ switch ($option) {
 	$mids { InstallPythonDatasets }
 	$miaa { InstallPythonAccelerate }
 	$mifl { InstallPythonFlask }
+	$mipsp  { InstallPythonSentencepiece }
 	$mcr { CloneModelRepository }
 	$mdlms { DownloadLmStudio }
 	$milms { InstallLmStudio }

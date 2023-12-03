@@ -1,22 +1,19 @@
 # This script preprocesses the training data for fine-tuning a GPT-2 model. It loads the GPT-2 tokenizer, sets the padding token, and defines a preprocess_function which tokenizes and organizes the messages from users and assistants into input and output pairs. This preprocess_function is then applied to the loaded dataset using the map function from the Hugging Face datasets library, followed by saving the tokenized datasets to disk. The script handles tokenization, sequence padding, and truncation. It is meant to be executed as the main program, performing preprocessing and saving the ready-to-use data for training.
 
 from datasets import load_dataset
-from transformers import GPT2Tokenizer
+from transformers import AutoTokenizer
 
 # Define paths
-MODEL_PATH = './Models/OpenAI/GPT2/'
+MODEL_NAME = 'microsoft/Orca-2-7b'
 DATA_PATH = './Data/data.jsonl'
 TOKENIZED_DATA_DIR = './Data/tokenized_data'
 
-# Load tokenizer and set padding token
-tokenizer = GPT2Tokenizer.from_pretrained(MODEL_PATH)
-tokenizer.pad_token = tokenizer.eos_token
+# Load tokenizer specific to the Orca-2-7b model
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 def preprocess_function(examples):
     inputs, targets = [], []
-    # Iterate through each example in the batch
     for example in examples['messages']:
-        # Since 'messages' is a batch, 'example' is a list of dictionaries now
         input_text, target_text = "", ""
         last_role = None
         for message in example:
@@ -36,15 +33,14 @@ def preprocess_function(examples):
                     input_text += text
             last_role = message['role']
         
-        # Don't forget to add the last target_text to targets if the last message was from the assistant
         if last_role == "assistant":
             inputs.append(input_text)
             targets.append(target_text)
-            
+    
     # Tokenize and pad the sequences to the same length
     model_inputs = tokenizer(inputs, max_length=512, padding="max_length", truncation=True)
-    # With the new version you can just use tokenizer(..., text_target=targets)
-    labels = tokenizer(text_target=targets, max_length=512, padding="max_length", truncation=True)["input_ids"]
+    # With the tokenizer we can directly use 'labels' parameter for the targets
+    labels = tokenizer(targets, max_length=512, padding="max_length", truncation=True)["input_ids"]
 
     model_inputs["labels"] = labels
     return model_inputs
