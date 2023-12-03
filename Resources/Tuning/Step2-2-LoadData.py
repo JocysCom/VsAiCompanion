@@ -1,3 +1,5 @@
+# This script defines a function for loading training data from a .jsonl file format and preparing it to be used for fine-tuning. The script uses the datasets module from Hugging Face to perform this task. The function load_data is provided with a path to the training data file, which defaults to ./Data/data.jsonl, and returns a loaded dataset object. The actual usage of this dataset, such as saving it to a file or continuing with the processing, is implied in comments but not explicitly implemented in the script.
+
 from datasets import load_dataset
 
 # Define the path to the training data

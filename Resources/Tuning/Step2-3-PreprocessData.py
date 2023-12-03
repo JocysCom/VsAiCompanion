@@ -1,3 +1,5 @@
+# This script preprocesses the training data for fine-tuning a GPT-2 model. It loads the GPT-2 tokenizer, sets the padding token, and defines a preprocess_function which tokenizes and organizes the messages from users and assistants into input and output pairs. This preprocess_function is then applied to the loaded dataset using the map function from the Hugging Face datasets library, followed by saving the tokenized datasets to disk. The script handles tokenization, sequence padding, and truncation. It is meant to be executed as the main program, performing preprocessing and saving the ready-to-use data for training.
+
 from datasets import load_dataset
 from transformers import GPT2Tokenizer
 
