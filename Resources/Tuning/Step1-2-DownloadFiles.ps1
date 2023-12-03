@@ -114,13 +114,28 @@ function InstallPythonCertificates {
 # PyTorch is a Python package that provides two high-level features:
 # - Tensor computation (like NumPy) with strong GPU acceleration.
 # - Deep neural networks built on a tape-based autograd system.
-# https://pypi.org/project/transformers/
+# https://pypi.org/project/torch/
 function InstallPythonTorch {
 	python -m pip install torch torchvision torchaudio
 }
 # Transformers is a library maintained by Hugging Face and the community, for state-of-the-art Machine Learning for Pytorch, TensorFlow and JAX.
+# https://pypi.org/project/transformers/
 function InstallPythonTransformers {
 	python -m pip install transformers
+}
+# HuggingFace community-driven open-source library of datasets
+# https://pypi.org/project/datasets/
+function InstallPythonDatasets {
+	python -m pip install datasets
+}
+# https://pypi.org/project/accelerate/
+function InstallPythonAccelerate {
+	python -m pip install accelerate
+}
+# Flask required for API deploy.
+# https://pypi.org/project/Flask/
+function InstallPythonFlask {
+	python -m pip install flask
 }
 # ----------------------------------------------------------------------------
 # Clone AI Model Repository
@@ -163,10 +178,13 @@ $mic = "Install  CUDA"
 $mipc = "Install Python Certificates"
 $mip1 = "Install Python Torch"
 $mip2 = "Install Python Transformers"
+$mids = "Install Python Datasets"
+$miaa = "Install Python Accelerate"
+$mifl = "Install Python Flask"
 $mcr = "Clone Model Repository"
 $mdlms = "Download LM Studio"
 $milms = "Install  LM Studio"
-$menuItems = @( $mdp, $mip, $mdg, $mig, $mdgl, $migl, $mdc, $mic, $mipc, $mip1, $mip2, $mcr, $mdlms, $milms )
+$menuItems = @( $mdp, $mip, $mdg, $mig, $mdgl, $migl, $mdc, $mic, $mipc, $mip1, $mip2, $mids, $miaa, $mifl, $mcr, $mdlms, $milms )
 $option = ShowOptionsMenu $menuItems  "Select Option:"
 if ("$option" -eq "") {
 	return
@@ -182,8 +200,12 @@ switch ($option) {
 	$migl { InstallGitLfs }
 	$mdc { DownloadCuda }
 	$mic { InstallCuda }
+	$mipc { InstallPythonCertificates }
 	$mip1 { InstallPythonTorch }
 	$mip2 { InstallPythonTransformers }
+	$mids { InstallPythonDatasets }
+	$miaa { InstallPythonAccelerate }
+	$mifl { InstallPythonFlask }
 	$mcr { CloneModelRepository }
 	$mdlms { DownloadLmStudio }
 	$milms { InstallLmStudio }

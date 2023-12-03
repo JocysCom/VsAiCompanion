@@ -4,8 +4,10 @@ from transformers import GPT2LMHeadModel, GPT2Tokenizer
 # Path to the .pem file that contains the trusted root certificates
 CERT_FILE_PATH = './Data/trusted_root_certificates.pem'
 
-# Configure requests to use the additional certificates for TLS connections
-os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(CERT_FILE_PATH)
+# Only set the REQUESTS_CA_BUNDLE environment variable if the certificate file exists and is not empty
+if os.path.exists(CERT_FILE_PATH) and os.path.getsize(CERT_FILE_PATH) > 0:
+    os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(CERT_FILE_PATH)
+
 os.environ['HF_HUB_DISABLE_SYMLINKS_WARNING'] = '1'
 
 def download_model(model_name, model_path):

@@ -41,9 +41,9 @@ def preprocess_function(examples):
             
     # Tokenize and pad the sequences to the same length
     model_inputs = tokenizer(inputs, max_length=512, padding="max_length", truncation=True)
-    with tokenizer.as_target_tokenizer():
-        labels = tokenizer(targets, max_length=512, padding="max_length", truncation=True)["input_ids"]
-    
+    # With the new version you can just use tokenizer(..., text_target=targets)
+    labels = tokenizer(text_target=targets, max_length=512, padding="max_length", truncation=True)["input_ids"]
+
     model_inputs["labels"] = labels
     return model_inputs
 
