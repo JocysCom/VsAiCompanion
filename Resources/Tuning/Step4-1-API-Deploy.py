@@ -1,5 +1,5 @@
 # Import necessary libraries for model loading and Flask API
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request, jsonify
 import torch
 
@@ -7,8 +7,8 @@ import torch
 MODEL_PATH = './Fine-Tuned/Model'
 
 # Load the trained tokenizer and model from the fine-tuned model directory
-tokenizer = GPT2Tokenizer.from_pretrained(MODEL_PATH)
-model = GPT2LMHeadModel.from_pretrained(MODEL_PATH)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
 model.eval()  # Set the model to evaluation mode
 
 app = Flask(__name__)
@@ -19,10 +19,15 @@ def predict():
     user_input = json_data['text']
 
     # Tokenize input for the model
-    inputs = tokenizer.encode(user_input, return_tensors='pt')
+    inputs = tokenizer(user_input, return_tensors='pt')
 
     # Generate a sequence of text from the model based on the input
-    outputs = model.generate(inputs, max_length=50, pad_token_id=tokenizer.eos_token_id, num_return_sequences=1)
+    outputs = model.generate(
+        inputs['input_ids'],
+        max_length=50,
+        pad_token_id=tokenizer.eos_token_id,
+        num_return_sequences=1
+    )
 
     # Decode the generated tokens to a string
     response_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
