@@ -1,14 +1,20 @@
 # Import necessary libraries for model loading and Flask API
+import json
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request, jsonify
 import torch
 
+# Load configuration from a JSON file
+with open('Step0-1-Config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+
 # Define the path to the fine-tuned generative model
-MODEL_PATH = './Fine-Tuned/Model'
+NEW_OUTPUT_DIR = config.get('NEW_OUTPUT_DIR')
 
 # Load the trained tokenizer and model from the fine-tuned model directory
-tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+tokenizer = AutoTokenizer.from_pretrained(NEW_OUTPUT_DIR)
+model = AutoModelForCausalLM.from_pretrained(NEW_OUTPUT_DIR)
 model.eval()  # Set the model to evaluation mode
 
 app = Flask(__name__)

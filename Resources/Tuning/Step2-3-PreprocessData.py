@@ -1,15 +1,31 @@
 # This script preprocesses the training data for fine-tuning a GPT-2 model. It loads the GPT-2 tokenizer, sets the padding token, and defines a preprocess_function which tokenizes and organizes the messages from users and assistants into input and output pairs. This preprocess_function is then applied to the loaded dataset using the map function from the Hugging Face datasets library, followed by saving the tokenized datasets to disk. The script handles tokenization, sequence padding, and truncation. It is meant to be executed as the main program, performing preprocessing and saving the ready-to-use data for training.
 
+import os
+import json
 from datasets import load_dataset
 from transformers import AutoTokenizer
 
-# Define paths
-MODEL_NAME = 'microsoft/Orca-2-7b'
-DATA_PATH = './Data/data.jsonl'
-TOKENIZED_DATA_DIR = './Data/tokenized_data'
+# Load configuration from a JSON file
+with open('Step0-1-Config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+# Path to the .pem file that contains the trusted root certificates
+CERT_FILE_PATH = config.get('CERT_FILE_PATH')
+# Customize this path as necessary
+CACHE_DIR = config.get('CACHE_DIR')
+# Specify the model name (as from Hugging Face Model Hub)
+MODEL_NAME = config.get('MODEL_NAME')
+# Path to the .pem file that contains the trusted root certificates
+DATA_PATH = config.get('DATA_PATH')
+# Specify the path to tokenized data
+TOKENIZED_DATA_DIR = config.get('TOKENIZED_DATA_DIR')
+
+# Only set the REQUESTS_CA_BUNDLE environment variable if the certificate file exists and is not empty
+if os.path.exists(CERT_FILE_PATH) and os.path.getsize(CERT_FILE_PATH) > 0:
+    os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(CERT_FILE_PATH)
 
 # Load tokenizer specific to the Orca-2-7b model
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir=CACHE_DIR)
 
 def preprocess_function(examples):
     inputs, targets = [], []

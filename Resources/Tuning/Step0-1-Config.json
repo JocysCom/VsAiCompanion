@@ -1,0 +1,9 @@
+{
+	"MODEL_NAME": "microsoft/Orca-2-7b",
+	"CERT_FILE_PATH": "./Data/trusted_root_certificates.pem",
+	"CACHE_DIR": "./Data/model_cache",
+	"DATA_PATH": "./Data/data.jsonl",
+	"TOKENIZED_DATA_DIR": "./Data/tokenized_data",
+	"NEW_CACHE_DIR": "./Data/new_model_cache",
+	"NEW_OUTPUT_DIR": "./Fine-Tuned/Model"
+}
