@@ -2,7 +2,7 @@
 
 import os
 import json
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk, concatenate_datasets
 from transformers import AutoTokenizer
 
 # Load configuration from a JSON file
@@ -62,11 +62,19 @@ def preprocess_function(examples):
     return model_inputs
 
 if __name__ == '__main__':
-    # Load the dataset from the jsonl file
-    raw_datasets = load_dataset('json', data_files=DATA_PATH)
-
-    # Preprocess the dataset and store it in TOKENIZED_DATA_DIR
-    tokenized_datasets = raw_datasets.map(preprocess_function, batched=True, remove_columns=['messages'])
-    tokenized_datasets.save_to_disk(TOKENIZED_DATA_DIR)
-
-    print(f"Tokenized datasets saved to {TOKENIZED_DATA_DIR}")
+    # Load the saved tokenized dataset
+    existing_tokenized_data = load_from_disk(TOKENIZED_DATA_DIR)
+    
+    # Load the extra raw data
+    extra_data = load_dataset('json', data_files=DATA_PATH)['train']
+    
+    # Tokenize the extra raw data
+    extra_tokenized_data = extra_data.map(preprocess_function, batched=True, remove_columns=['messages'])
+    
+    # Combine the existing tokenized data with the extra tokenized data
+    combined_tokenized_datasets = concatenate_datasets([existing_tokenized_data, extra_tokenized_data])
+    
+    # Save the combined tokenized data to disk for training
+    combined_tokenized_datasets.save_to_disk(TOKENIZED_DATA_DIR)
+    
+    print(f"Combined tokenized datasets saved to {TOKENIZED_DATA_DIR}")

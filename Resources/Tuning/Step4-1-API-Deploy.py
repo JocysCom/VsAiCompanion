@@ -22,14 +22,17 @@ app = Flask(__name__)
 @app.route('/predict', methods=['POST'])
 def predict():
     json_data = request.json
-    user_input = json_data['text']
+    # Extracting both system and user messages from the JSON input
+    system_input = json_data['messages'][0]['content'] if json_data['messages'][0]['role'] == "system" else ""
+    user_input = json_data['messages'][1]['content'] if json_data['messages'][1]['role'] == "user" else ""
+    input_text = system_input + " " + user_input
 
     # Tokenize input for the model
-    inputs = tokenizer(user_input, return_tensors='pt')
+    inputs = tokenizer.encode(input_text, return_tensors='pt')
 
-    # Generate a sequence of text from the model based on the input
+    # Generate a sequence of text from the model based on the tokenized input
     outputs = model.generate(
-        inputs['input_ids'],
+        inputs,
         max_length=50,
         pad_token_id=tokenizer.eos_token_id,
         num_return_sequences=1

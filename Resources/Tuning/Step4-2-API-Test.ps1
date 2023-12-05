@@ -4,13 +4,25 @@
 $apiUrl = "http://localhost:5000/predict"
 
 function SendMessage {
-	param([string]$userMessage)
-	# Define the body with the text you want to get a prediction for
-	$body = @{ text = $userMessage } | ConvertTo-Json
-	# Send a POST request to the API endpoint
-	$response = Invoke-WebRequest -Uri $apiUrl -Method Post -Body $body -ContentType "application/json"
-	# Display the response content
-	$response.Content
+    param([string]$userMessage)
+    # Define the JSON body with the system content and the text you want to get a prediction for
+    $body = @{
+        messages = @(
+            @{
+                role = "system"
+                content = "You are a helpful, respectful and honest assistant of Doughnut Dynamics."
+            },
+            @{
+                role = "user"
+                content = $userMessage
+            }
+        )
+    } | ConvertTo-Json -Depth 3
+    
+    # Send a POST request to the API endpoint
+    $response = Invoke-WebRequest -Uri $apiUrl -Method Post -Body $body -ContentType "application/json"
+    # Display the response content
+    $response.Content
 }
 
 SendMessage "Who are you?"

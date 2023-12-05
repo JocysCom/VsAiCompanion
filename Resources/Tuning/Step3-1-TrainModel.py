@@ -19,7 +19,7 @@ MODEL_NAME = config.get('MODEL_NAME')
 # Specify the path to tokenized data
 TOKENIZED_DATA_DIR = config.get('TOKENIZED_DATA_DIR')
 # Define where you would like to cache models and tokenizers.
-NEW_CACHE_DIR = config.get('NEW_CACHE_DIR')
+CACHE_DIR = config.get('CACHE_DIR')
 # Define where you would like to save the fine-tuned model and tokenizer.
 NEW_OUTPUT_DIR = config.get('NEW_OUTPUT_DIR')
 
@@ -67,11 +67,9 @@ def get_training_arguments():
 device = get_device()
 
 # Load the tokenizer and model specific to the Orca-2-7b
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir=NEW_CACHE_DIR)
-model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, cache_dir=NEW_CACHE_DIR)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir=CACHE_DIR)
+model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, cache_dir=CACHE_DIR)
 
-#tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-#model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 model.to(device)
 
 # Load the tokenized datasets from disk
