@@ -4,5 +4,6 @@
 	"CACHE_DIR": "./Data/model_cache",
 	"DATA_PATH": "./Data/data.jsonl",
 	"TOKENIZED_DATA_DIR": "./Data/tokenized_data",
-	"NEW_OUTPUT_DIR": "./Fine-Tuned/Model"
+	"NEW_OUTPUT_DIR": "./Fine-Tuned/Model",
+	"OUTPUT_MAX_LENGTH": 2048
 }

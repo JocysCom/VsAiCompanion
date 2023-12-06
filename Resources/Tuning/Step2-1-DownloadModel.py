@@ -1,4 +1,4 @@
-# This script is responsible for downloading the pre-trained model and its tokenizer using the transformers library by Hugging Face. It defines a function download_model that takes a model name and a path to save the model and tokenizer. It controls the handling of certificate files for HTTP requests and sets environment variables accordingly. The script finally downloads and saves the GPT-2 model and tokenizer to a specified path on the local file system.
+# This script is responsible for downloading the pre-trained model and its tokenizer using the transformers library by Hugging Face. It defines a function download_model that takes a model name and a path to save the model and tokenizer. It controls the handling of certificate files for HTTP requests and sets environment variables accordingly. The script finally downloads and saves the model and tokenizer to a specified path on the local file system.
 
 # Note: run this in console as Administrator to cash same files with symlinks.
 
