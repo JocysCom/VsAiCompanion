@@ -18,7 +18,13 @@ $global:scriptPath = $file.Directory.FullName
 Set-Location $scriptPath
 # ----------------------------------------------------------------------------
 # Place corporate trusted root certificates here for `pip` tool.
-$env:PIP_CERT="./Data/trusted_root_certificates.pem"
+$ca_path = "./Data/trusted_root_certificates.pem"
+# Check if file does not exist or its content is effectively empty (ignoring whitespace)
+if (-not (Test-Path $ca_path) -or [String]::IsNullOrWhiteSpace((Get-Content $ca_path -Raw))) {
+    $env:PIP_CERT=$null
+} else {
+    $env:PIP_CERT=$ca_path
+}
 # ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
