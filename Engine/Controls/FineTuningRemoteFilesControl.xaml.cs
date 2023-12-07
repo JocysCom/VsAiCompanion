@@ -6,6 +6,7 @@ using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.Files;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -205,9 +206,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), Data.FineTuningRemoteDataSelection, 0);
 		}
 
-		private void DeleteButton_Click(object sender, RoutedEventArgs e)
-			=> Delete();
-
+		private void DeleteButton_Click(object sender, RoutedEventArgs e) =>
+			Dispatcher.BeginInvoke(new Action(async () => await Delete()));
 
 		#region Actions
 
@@ -223,24 +223,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return items;
 		}
 
-		public void Delete()
+		public async Task Delete() // Changed return type to Task instead of void
 		{
 			var items = GetWithAllow(AllowAction.Delete);
 			if (items == null)
 				return;
-			// Use begin invoke or grid update will deadlock on same thread.
-			ControlsHelper.BeginInvoke(async () =>
+			var errors = new ConcurrentBag<string>();
+			// Create tasks for each item.
+			var tasks = items.Select(DeleteItemAsync).ToList();
+			// Await all tasks to complete.
+			await Task.WhenAll(tasks);
+			if (errors.Any())
 			{
-				foreach (var item in items)
-				{
-					var client = new Client(Data.AiService);
-					var response = await client.DeleteFileAsync(item.id);
-					if (!string.IsNullOrEmpty(client.LastError))
-						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-					if (response?.deleted == true)
-						CurrentItems.Remove(item);
-				}
-			});
+				var message = string.Join("\r\n", errors);
+				Dispatcher.Invoke(() =>
+					MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error));
+			}
+			// Define the async method for processing items.
+			async Task DeleteItemAsync(file item)
+			{
+				var client = new Client(Data.AiService);
+				var response = await client.DeleteFileAsync(item.id);
+				if (!string.IsNullOrEmpty(client.LastError))
+					errors.Add(client.LastError);
+				if (response?.deleted == true)
+					Dispatcher.Invoke(() => CurrentItems.Remove(item));
+			}
 		}
 
 		void CreateJobAndModel()
@@ -280,7 +288,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var isEditMode = AppHelper.IsGridInEditMode((DataGrid)sender);
 			if (!isEditMode && e.Key == Key.Delete)
-				Delete();
+				Dispatcher.BeginInvoke(new Action(async () => await Delete()));
 		}
 
 		private void MainDataGrid_ContextMenu_Copy(object sender, RoutedEventArgs e) =>
