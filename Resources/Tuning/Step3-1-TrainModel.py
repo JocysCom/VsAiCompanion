@@ -7,6 +7,7 @@ import torch
 import json
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments
 from datasets import load_from_disk
+import gc
 
 # Load configuration from a JSON file
 with open('Step0-1-Config.json', 'r') as config_file:
@@ -35,6 +36,8 @@ def get_device():
     print(f"Tensor Cores: {supports_tensor_cores()}") 
     # Check for available GPU
     if torch.cuda.is_available():
+        gc.collect()
+        torch.cuda.empty_cache()
         device = torch.device("cuda:0")  # Use the second GPU (indexing starts at 0)
     else:
         device = torch.device("cpu")
@@ -50,15 +53,20 @@ def supports_tensor_cores():
 
 # Function to get training arguments with fp16 set if Tensor Cores are supported
 def get_training_arguments():
+    # Check if the device has Tensor Cores which support FP16
     use_fp16 = supports_tensor_cores()
-    # Define training arguments tailored for Orca-2-7b
+    # Define training arguments
     training_args = TrainingArguments(
         output_dir=NEW_OUTPUT_DIR,
         overwrite_output_dir=True,
         do_train=True,
-        per_device_train_batch_size=2,
-        per_device_eval_batch_size=2,
+        # Further reduce batch size if necessary
+        per_device_train_batch_size=1,
+        per_device_eval_batch_size=1,
+        # Adjust based on GPU memory after running tests
         gradient_accumulation_steps=4,
+        # If your sequences are too long, decreasing this can help
+        # max_seq_length=128 or another lower value
         num_train_epochs=3,
         logging_dir='./Logs',
         logging_steps=100,
@@ -67,9 +75,15 @@ def get_training_arguments():
         evaluation_strategy="steps",
         warmup_steps=100,
         weight_decay=0.01,
-        fp16=use_fp16,  # Enable mixed precision training if Tensor Cores are supported
-        # You may want to omit prediction_loss_only or set additional parameters for Orca
+        # You may reduce the number of dataloading workers if memory is an issue
+        # dataloader_num_workers=1 or 0
+        fp16=use_fp16,
+        # Additional parameters may be set as necessary
+        # You can uncomment this if you want the script to clear the CUDA cache
+        # disable_tqdm=False,
     )
+    # Uncommend and add to the script if you want to force clear CUDA cache
+    # torch.cuda.empty_cache()
     return training_args
 
 device = get_device()
