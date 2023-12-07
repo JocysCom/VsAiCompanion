@@ -17,7 +17,7 @@ CERT_FILE_PATH = config.get('CERT_FILE_PATH')
 # Specify the model name (as from Hugging Face Model Hub)
 MODEL_NAME = config.get('MODEL_NAME')
 # Specify the path to tokenized data
-TOKENIZED_DATA_COMBINED_DIR = config.get('TOKENIZED_DATA_COMBINED_DIR')
+TOKENIZED_DATA_OUTPUT_DIR = config.get('TOKENIZED_DATA_OUTPUT_DIR')
 # Define where you would like to cache models and tokenizers.
 CACHE_DIR = config.get('CACHE_DIR')
 # Define where you would like to save the fine-tuned model and tokenizer.
@@ -28,11 +28,16 @@ if os.path.exists(CERT_FILE_PATH) and os.path.getsize(CERT_FILE_PATH) > 0:
     os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(CERT_FILE_PATH)
 
 def get_device():
+    # Should print the number of available CUDA devices
+    print(f"CUDA Devices Count: {torch.cuda.device_count()}")
+    # Should print the name of the CUDA device, likely your NVIDIA GPU
+    print(f"CUDA Device Name: {torch.cuda.get_device_name(0)}") 
     # Check for available GPU
     if torch.cuda.is_available():
-        return 'cuda'
+        device = torch.device("cuda:0")  # Use the second GPU (indexing starts at 0)
     else:
-        return 'cpu'
+        device = torch.device("cpu")
+    return device
     
 # Function to check if the GPU supports Tensor Cores
 def supports_tensor_cores():
@@ -50,7 +55,9 @@ def get_training_arguments():
         output_dir=NEW_OUTPUT_DIR,
         overwrite_output_dir=True,
         do_train=True,
-        per_device_train_batch_size=4,
+        per_device_train_batch_size=2,
+        per_device_eval_batch_size=2,
+        gradient_accumulation_steps=4,
         num_train_epochs=3,
         logging_dir='./Logs',
         logging_steps=100,
@@ -73,7 +80,7 @@ model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, cache_dir=CACHE_DIR)
 model.to(device)
 
 # Load the tokenized datasets from disk
-tokenized_datasets = load_from_disk(TOKENIZED_DATA_COMBINED_DIR)
+tokenized_datasets = load_from_disk(TOKENIZED_DATA_OUTPUT_DIR)
 
 # Use the get_training_arguments function to configure training
 training_args = get_training_arguments()

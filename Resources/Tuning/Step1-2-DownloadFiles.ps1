@@ -17,6 +17,9 @@ $global:scriptPath = $file.Directory.FullName
 [Environment]::CurrentDirectory = $scriptPath
 Set-Location $scriptPath
 # ----------------------------------------------------------------------------
+# Place corporate trusted root certificates here for `pip` tool.
+$env:PIP_CERT="./Data/trusted_root_certificates.pem"
+# ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
 function DownloadFile {
@@ -109,38 +112,41 @@ function InstallCuda {
 # ----------------------------------------------------------------------------
 function InstallPythonCertificates {
 	# Python package for providing Mozilla's CA Bundle.
-	pip install --upgrade certifi
+	pip3 install --upgrade certifi
 }
 # PyTorch is a Python package that provides two high-level features:
 # - Tensor computation (like NumPy) with strong GPU acceleration.
 # - Deep neural networks built on a tape-based autograd system.
 # https://pypi.org/project/torch/
 function InstallPythonTorch {
-	python -m pip install torch torchvision torchaudio
+	# Install python with NVidia CUDA support
+	pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 }
 # Transformers is a library maintained by Hugging Face and the community, for state-of-the-art Machine Learning for Pytorch, TensorFlow and JAX.
 # https://pypi.org/project/transformers/
 function InstallPythonTransformers {
-	python -m pip install transformers
+	pip3 install transformers
 }
 # HuggingFace community-driven open-source library of datasets
 # https://pypi.org/project/datasets/
 function InstallPythonDatasets {
-	python -m pip install datasets
+	pip3 install datasets
 }
 # https://pypi.org/project/accelerate/
 function InstallPythonAccelerate {
-	python -m pip install accelerate
+	pip3 install accelerate
+	# `scikit-learn` Required by Split Data script.
+	pip3 install scikit-learn
 }
 # Flask required for API deploy.
 # https://pypi.org/project/flask/
 function InstallPythonFlask {
-	python -m pip install flask
+	pip3 install flask
 }
 # Sentencepiece and protobuf required for LLaMA preprocessing data.
 # https://pypi.org/project/sentencepiece/
 function InstallPythonSentencepiece {
-	python -m pip install sentencepiece protobuf
+	pip3 install sentencepiece protobuf
 }
 # ----------------------------------------------------------------------------
 # Clone AI Model Repository

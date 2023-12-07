@@ -1,0 +1,48 @@
+openapi: 3.0.0
+info:
+  title: Fine-tuning Data Structure
+  description: An OpenAPI specification describing the structure of conversation data used for fine-tuning models.
+  version: 1.0.0
+paths:
+  /conversations/{conversationId}:
+    get:
+      summary: Get conversation messages by ID
+      operationId: getConversationMessages
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          description: Unique identifier for the conversation
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of messages within the conversation specified by the ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+components:
+  schemas:
+    Message:
+      type: object
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum: [system, user, assistant]
+          description: The role of the entity in the conversation.
+        content:
+          type: string
+          description: The textual content of the message.
+    Conversation:
+      type: object
+      required:
+        - messages
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'

@@ -8,17 +8,15 @@ from datasets import load_from_disk
 with open('Step0-1-Config.json', 'r') as config_file:
     config = json.load(config_file)
 
-# Specify the path to tokenized data
-TOKENIZED_DATA_COMBINED_DIR = config.get('TOKENIZED_DATA_COMBINED_DIR')
 # Define where you would like to save the fine-tuned model and tokenizer.
-NEW_OUTPUT_DIR = config.get('NEW_OUTPUT_DIR')
+NEW_OUTPUT_DIR = config['NEW_OUTPUT_DIR']
 
 # Load tokenizer and model specific to the Orca-2-7b
 tokenizer = AutoTokenizer.from_pretrained(NEW_OUTPUT_DIR)
 model = AutoModelForCausalLM.from_pretrained(NEW_OUTPUT_DIR)
 
 # Load the tokenized data that was used for training, to get the train_dataset
-tokenized_datasets = load_from_disk(TOKENIZED_DATA_COMBINED_DIR)
+tokenized_datasets = load_from_disk(config['TOKENIZED_DATA_OUTPUT_DIR'])
 train_dataset = tokenized_datasets["train"]
 
 # Initialize TrainingArguments

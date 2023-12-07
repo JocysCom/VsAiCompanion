@@ -2,82 +2,80 @@
 
 import os
 import json
-from datasets import load_dataset, load_from_disk, concatenate_datasets
 from transformers import AutoTokenizer
+from datasets import load_from_disk, DatasetDict, Dataset
 
 # Load configuration from a JSON file
 with open('Step0-1-Config.json', 'r') as config_file:
     config = json.load(config_file)
 
-# Path to the .pem file that contains the trusted root certificates
-CERT_FILE_PATH = config.get('CERT_FILE_PATH')
-# Customize this path as necessary
-CACHE_DIR = config.get('CACHE_DIR')
-# Specify the model name (as from Hugging Face Model Hub)
-MODEL_NAME = config.get('MODEL_NAME')
-# Path to the .pem file that contains the trusted root certificates
-DATA_PATH = config.get('DATA_PATH')
-# Specify the path to tokenized data
-TOKENIZED_DATA_DIR = config.get('TOKENIZED_DATA_DIR')
-# Specify the path to tokenized data plus new JSONL data.
-TOKENIZED_DATA_COMBINED_DIR = config.get('TOKENIZED_DATA_COMBINED_DIR')
-
 
 # Only set the REQUESTS_CA_BUNDLE environment variable if the certificate file exists and is not empty
-if os.path.exists(CERT_FILE_PATH) and os.path.getsize(CERT_FILE_PATH) > 0:
-    os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(CERT_FILE_PATH)
+if os.path.exists(config['CERT_FILE_PATH']) and os.path.getsize(config['CERT_FILE_PATH']) > 0:
+    os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(config['CERT_FILE_PATH'])
 
-# Load tokenizer specific to the Orca-2-7b model
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir=CACHE_DIR)
-
-def preprocess_function(examples):
-    inputs, targets = [], []
+def preprocess_function(examples, tokenizer):
+    # Tokenize each example using the format mentioned in the JSONL data
+    input_texts = []
+    target_texts = []
+    # Note: examples['messages'] is a list containing dictionary with a key 'messages'
     for example in examples['messages']:
-        input_text, target_text = "", ""
-        last_role = None
-        for message in example:
-            if last_role is None or message['role'] == last_role:
-                text = message['content'] + tokenizer.eos_token
-                if message['role'] == "user":
-                    input_text += text
-                else:
-                    target_text += text
-            else:
-                inputs.append(input_text)
-                targets.append(target_text)
-                if message['role'] == "user":
-                    input_text = target_text + text
-                    target_text = ""
-                else:
-                    input_text += text
-            last_role = message['role']
-        
-        if last_role == "assistant":
-            inputs.append(input_text)
-            targets.append(target_text)
-    
-    # Tokenize and pad the sequences to the same length
-    model_inputs = tokenizer(inputs, max_length=512, padding="max_length", truncation=True)
-    # With the tokenizer we can directly use 'labels' parameter for the targets
-    labels = tokenizer(targets, max_length=512, padding="max_length", truncation=True)["input_ids"]
+        input_text = ''
+        target_text = ''
+        # The actual 'message' is wrapped in a dictionary under 'messages' key
+        for msg in example['messages']:
+            if msg['role'] == 'user':
+                input_text += msg['content'] + ' '
+            elif msg['role'] == 'assistant':
+                target_text += msg['content'] + ' '
+        input_texts.append(input_text.strip())
+        target_texts.append(target_text.strip())
 
-    model_inputs["labels"] = labels
-    return model_inputs
+    # Tokenize texts
+    inputs = tokenizer(input_texts, padding='max_length', truncation=True, return_tensors='np')
+    with tokenizer.as_target_tokenizer():
+        labels = tokenizer(target_texts, padding='max_length', truncation=True, return_tensors='np')['input_ids']
+    # We can't return NumPy arrays, so we have to convert them to lists
+    inputs = {k: v.tolist() for k, v in inputs.items()}
+    inputs['labels'] = labels.tolist()
+    return inputs
+
+def tokenize_datasets(tokenizer, dataset_dict):
+    # Apply a map function to preprocess and tokenize the data from DatasetDict
+    tokenized_dataset_dict = DatasetDict()
+    for split, dataset in dataset_dict.items():
+        tokenized_dataset_dict[split] = dataset.map(
+            lambda examples: preprocess_function(examples, tokenizer), batched=True, remove_columns=dataset.column_names
+        )
+    return tokenized_dataset_dict
+
+def main():
+    # Variables for subdirectories of each split
+    combined_dir = config['TOKENIZED_DATA_COMBINED_DIR']
+    train_dir = os.path.join(combined_dir, 'train')
+    validation_dir = os.path.join(combined_dir, 'validation')
+    test_dir = os.path.join(combined_dir, 'test')
+    
+    # Manually load each dataset subset
+    train_dataset = Dataset.load_from_disk(train_dir)
+    validation_dataset = Dataset.load_from_disk(validation_dir)
+    test_dataset = Dataset.load_from_disk(test_dir)
+    
+    # Create a new DatasetDict
+    datasets = DatasetDict({
+        'train': train_dataset,
+        'validation': validation_dataset,
+        'test': test_dataset
+    })
+    
+    # Initialize the tokenizer for the specified model
+    tokenizer = AutoTokenizer.from_pretrained(config['MODEL_NAME'], cache_dir=config['CACHE_DIR'])
+    
+    # Tokenize the datasets for each split ('train', 'validation', 'test')
+    tokenized_datasets = tokenize_datasets(tokenizer, datasets)
+    
+    # Save the tokenized datasets to disk for future loading
+    tokenized_datasets.save_to_disk(config['TOKENIZED_DATA_OUTPUT_DIR'])
 
 if __name__ == '__main__':
-    # Load the saved tokenized dataset
-    existing_tokenized_data = load_from_disk(TOKENIZED_DATA_DIR)
-    
-    # Load the extra raw data
-    extra_data = load_dataset('json', data_files=DATA_PATH)['train']
-    
-    # Tokenize the extra raw data
-    extra_tokenized_data = extra_data.map(preprocess_function, batched=True, remove_columns=['messages'])
-    
-    # Combine the existing tokenized data with the extra tokenized data
-    combined_tokenized_datasets = concatenate_datasets([existing_tokenized_data, extra_tokenized_data])
-    
-    # Save the combined tokenized data to a new directory for training
-    combined_tokenized_datasets.save_to_disk(TOKENIZED_DATA_COMBINED_DIR)
-    
-    print(f"Combined tokenized datasets saved to {TOKENIZED_DATA_COMBINED_DIR}")
+    main()
