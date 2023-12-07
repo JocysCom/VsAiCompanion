@@ -1,0 +1,19 @@
+I have uploaded the AI model training scripts. Please analyze them in the following order:
+
+```
+﻿"filename"	"id"
+"Step2-1-DownloadModel.py"	"file-UrmKEDYNTSuGcvik5EYqpdGt"
+"Step2-2-LoadData.py"	"file-ZTriAhrxTSaWCUXZ2CzNAVaH"
+"Step2-3-PreprocessData.py"	"file-SSVvSjvxUYBFcHgi4P9kLkLY"
+"Step3-1-TrainModel.py"	"file-6n0RPZ9pFW0jd7ZQ2Ugjfd97"
+"Step3-2-SaveModel.py"	"file-nl73aMzniy1w4E6J3FU8gXiD"
+"Step4-1-API-Deploy.py"	"file-LThYA8onBpx9XU47vSNjBKWR"
+"Step4-2-API-Test.ps1"	"file-Alnt5FrCTE8VUK1gecTU07gP"
+```
+
+There is a problem running `` script:
+
+```log
+```
+
+Please find a solution using a step-by-step thinking process.

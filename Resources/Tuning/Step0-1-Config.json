@@ -3,7 +3,11 @@
 	"CERT_FILE_PATH": "./Data/trusted_root_certificates.pem",
 	"CACHE_DIR": "./Data/model_cache",
 	"DATA_PATH": "./Data/data.jsonl",
+	"DATA_TRAIN_PATH": "./Data/data.train.jsonl",
+	"DATA_VALIDATION_PATH": "./Data/data.validation.jsonl",
+	"DATA_TEST_PATH": "./Data/data.test.jsonl",
 	"TOKENIZED_DATA_DIR": "./Data/tokenized_data",
+	"TOKENIZED_DATA_COMBINED_DIR": "./Data/tokenized_data_combined",
 	"NEW_OUTPUT_DIR": "./Fine-Tuned/Model",
 	"OUTPUT_MAX_LENGTH": 2048
 }

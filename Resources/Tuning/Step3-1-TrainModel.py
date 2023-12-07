@@ -17,7 +17,7 @@ CERT_FILE_PATH = config.get('CERT_FILE_PATH')
 # Specify the model name (as from Hugging Face Model Hub)
 MODEL_NAME = config.get('MODEL_NAME')
 # Specify the path to tokenized data
-TOKENIZED_DATA_DIR = config.get('TOKENIZED_DATA_DIR')
+TOKENIZED_DATA_COMBINED_DIR = config.get('TOKENIZED_DATA_COMBINED_DIR')
 # Define where you would like to cache models and tokenizers.
 CACHE_DIR = config.get('CACHE_DIR')
 # Define where you would like to save the fine-tuned model and tokenizer.
@@ -73,7 +73,7 @@ model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, cache_dir=CACHE_DIR)
 model.to(device)
 
 # Load the tokenized datasets from disk
-tokenized_datasets = load_from_disk(TOKENIZED_DATA_DIR)
+tokenized_datasets = load_from_disk(TOKENIZED_DATA_COMBINED_DIR)
 
 # Use the get_training_arguments function to configure training
 training_args = get_training_arguments()

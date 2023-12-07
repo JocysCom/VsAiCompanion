@@ -19,6 +19,9 @@ MODEL_NAME = config.get('MODEL_NAME')
 DATA_PATH = config.get('DATA_PATH')
 # Specify the path to tokenized data
 TOKENIZED_DATA_DIR = config.get('TOKENIZED_DATA_DIR')
+# Specify the path to tokenized data plus new JSONL data.
+TOKENIZED_DATA_COMBINED_DIR = config.get('TOKENIZED_DATA_COMBINED_DIR')
+
 
 # Only set the REQUESTS_CA_BUNDLE environment variable if the certificate file exists and is not empty
 if os.path.exists(CERT_FILE_PATH) and os.path.getsize(CERT_FILE_PATH) > 0:
@@ -74,7 +77,7 @@ if __name__ == '__main__':
     # Combine the existing tokenized data with the extra tokenized data
     combined_tokenized_datasets = concatenate_datasets([existing_tokenized_data, extra_tokenized_data])
     
-    # Save the combined tokenized data to disk for training
-    combined_tokenized_datasets.save_to_disk(TOKENIZED_DATA_DIR)
+    # Save the combined tokenized data to a new directory for training
+    combined_tokenized_datasets.save_to_disk(TOKENIZED_DATA_COMBINED_DIR)
     
-    print(f"Combined tokenized datasets saved to {TOKENIZED_DATA_DIR}")
+    print(f"Combined tokenized datasets saved to {TOKENIZED_DATA_COMBINED_DIR}")
