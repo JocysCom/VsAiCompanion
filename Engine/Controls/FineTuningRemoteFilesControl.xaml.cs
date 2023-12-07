@@ -2,6 +2,8 @@
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Data;
+using JocysCom.ClassLibrary.Files;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
@@ -67,7 +69,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<file>();
 			var isSelected = selecetedItems.Count() > 0;
 			DeleteButton.IsEnabled = isSelected;
-			CreateModelButton.IsEnabled = selecetedItems.Any(x=>x.purpose == Client.FineTuningPurpose);
+			CreateModelButton.IsEnabled = selecetedItems.Any(x => x.purpose == Client.FineTuningPurpose);
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -280,6 +282,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!isEditMode && e.Key == Key.Delete)
 				Delete();
 		}
+
+		private void MainDataGrid_ContextMenu_Copy(object sender, RoutedEventArgs e) =>
+			MainDataGrid_ContextMenu_Copy(false);
+
+		private void MainDataGrid_ContextMenu_CopyWithHeaders(object sender, RoutedEventArgs e) =>
+			MainDataGrid_ContextMenu_Copy(true);
+
+		private void MainDataGrid_ContextMenu_CopyIdFileName(object sender, RoutedEventArgs e) =>
+				MainDataGrid_ContextMenu_Copy(true, nameof(file.id), nameof(file.filename));
+
+		void MainDataGrid_ContextMenu_Copy(bool withHeaders, params string[] columns)
+		{
+			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
+			var table = SqlHelper.ConvertToTable(items, columns);
+			var text = JocysCom.ClassLibrary.Files.CsvHelper.Write(table, withHeaders, "\t", CsvQuote.Strings);
+			Clipboard.SetText(text);
+		}
+
 	}
 
 }
