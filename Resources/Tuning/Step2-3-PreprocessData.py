@@ -15,14 +15,12 @@ if os.path.exists(config['CERT_FILE_PATH']) and os.path.getsize(config['CERT_FIL
     os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(config['CERT_FILE_PATH'])
 
 def preprocess_function(examples, tokenizer):
-    # Tokenize each example using the format mentioned in the JSONL data
     input_texts = []
     target_texts = []
-    # Note: examples['messages'] is a list containing dictionary with a key 'messages'
+    # Loop over each example to extract the messages
     for example in examples['messages']:
         input_text = ''
         target_text = ''
-        # The actual 'message' is wrapped in a dictionary under 'messages' key
         for msg in example['messages']:
             if msg['role'] == 'user':
                 input_text += msg['content'] + ' '
@@ -31,14 +29,21 @@ def preprocess_function(examples, tokenizer):
         input_texts.append(input_text.strip())
         target_texts.append(target_text.strip())
 
-    # Tokenize texts
-    inputs = tokenizer(input_texts, padding='max_length', truncation=True, return_tensors='np')
-    with tokenizer.as_target_tokenizer():
-        labels = tokenizer(target_texts, padding='max_length', truncation=True, return_tensors='np')['input_ids']
-    # We can't return NumPy arrays, so we have to convert them to lists
-    inputs = {k: v.tolist() for k, v in inputs.items()}
-    inputs['labels'] = labels.tolist()
-    return inputs
+    # Tokenize input texts and generate attention masks
+    tokenized_inputs = tokenizer(input_texts, padding='max_length', truncation=True)
+    
+    # Tokenize target texts without the attention mask as they are not needed for labels
+    tokenized_targets = tokenizer(target_texts, padding='max_length', truncation=True)
+
+    # Since `tokenized_targets` will include both `input_ids` and `attention_mask`, 
+    # we will only use the `input_ids` which serve as the labels during training.
+    tokenized_data = {
+        'input_ids': tokenized_inputs['input_ids'],
+        'attention_mask': tokenized_inputs['attention_mask'],
+        'labels': tokenized_targets['input_ids']
+    }
+    
+    return tokenized_data
 
 def tokenize_datasets(tokenizer, dataset_dict):
     # Apply a map function to preprocess and tokenize the data from DatasetDict

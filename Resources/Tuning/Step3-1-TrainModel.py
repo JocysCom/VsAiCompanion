@@ -32,6 +32,7 @@ def get_device():
     print(f"CUDA Devices Count: {torch.cuda.device_count()}")
     # Should print the name of the CUDA device, likely your NVIDIA GPU
     print(f"CUDA Device Name: {torch.cuda.get_device_name(0)}") 
+    print(f"Tensor Cores: {supports_tensor_cores()}") 
     # Check for available GPU
     if torch.cuda.is_available():
         device = torch.device("cuda:0")  # Use the second GPU (indexing starts at 0)
