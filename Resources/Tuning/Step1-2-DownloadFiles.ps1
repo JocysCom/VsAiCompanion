@@ -123,15 +123,18 @@ function InstallPythonCertificates {
 # PyTorch is a Python package that provides two high-level features:
 # - Tensor computation (like NumPy) with strong GPU acceleration.
 # - Deep neural networks built on a tape-based autograd system.
+# https://pytorch.org/get-started/locally/
 # https://pypi.org/project/torch/
 function InstallPythonTorch {
 	# Install python with NVidia CUDA support
-	pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+	#pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+	pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 }
 # Transformers is a library maintained by Hugging Face and the community, for state-of-the-art Machine Learning for Pytorch, TensorFlow and JAX.
 # https://pypi.org/project/transformers/
 function InstallPythonTransformers {
 	pip3 install transformers
+	pip3 install Tensorflow
 }
 # HuggingFace community-driven open-source library of datasets
 # https://pypi.org/project/datasets/

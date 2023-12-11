@@ -5,9 +5,17 @@
 import os
 import torch
 import json
+import logging
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments
 from datasets import load_from_disk
 import gc
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Log the starting of the training process
+logger.info("Starting the training process...")
 
 # Load configuration from a JSON file
 with open('Step0-1-Config.json', 'r') as config_file:
@@ -35,11 +43,19 @@ def get_device():
     print(f"CUDA Device Name: {torch.cuda.get_device_name(0)}") 
     print(f"Tensor Cores: {supports_tensor_cores()}") 
     # Check for available GPU
-    if torch.cuda.is_available():
-        gc.collect()
-        torch.cuda.empty_cache()
+    if torch.cuda.is_available() & config["USE_GPU_CUDA"]:
+        logger.info("Use GPU")
         device = torch.device("cuda:0")  # Use the second GPU (indexing starts at 0)
+        # Create a tensor on GPU
+        x = torch.randn(3, 3).cuda()
+        # Perform some operations on the tensor
+        y = x * 2 + 1
+        # Move the tensor back to CPU
+        z = y.cpu()
+        print(z)
     else:
+        # Log the starting of the training process
+        logger.info("Use CPU")
         device = torch.device("cpu")
     return device
     
@@ -54,7 +70,7 @@ def supports_tensor_cores():
 # Function to get training arguments with fp16 set if Tensor Cores are supported
 def get_training_arguments():
     # Check if the device has Tensor Cores which support FP16
-    use_fp16 = supports_tensor_cores()
+    use_fp16 = supports_tensor_cores() & config["USE_GPU_TENSOR"]
     # Define training arguments
     training_args = TrainingArguments(
         output_dir=NEW_OUTPUT_DIR,
@@ -92,10 +108,18 @@ device = get_device()
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir=CACHE_DIR)
 model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, cache_dir=CACHE_DIR)
 
+# Ensure the model and tokenizer are correctly loaded
+if not model or not tokenizer:
+    raise ValueError("The model or tokenizer could not be loaded. Please check the MODEL_NAME and paths.")
+
 model.to(device)
 
 # Load the tokenized datasets from disk
 tokenized_datasets = load_from_disk(TOKENIZED_DATA_OUTPUT_DIR)
+
+# Check if 'train' split is available in tokenized datasets
+if 'train' not in tokenized_datasets:
+    raise ValueError("The 'train' split does not exist in the tokenized datasets. Please ensure that the dataset has been properly split and tokenized.")
 
 # Use the get_training_arguments function to configure training
 training_args = get_training_arguments()
@@ -116,3 +140,6 @@ if __name__ == '__main__':
     # Save the final model and tokenizer
     model.save_pretrained(training_args.output_dir)
     tokenizer.save_pretrained(training_args.output_dir)
+
+# Log the completion of the training process
+logger.info("Training process completed. Saving the model and tokenizer...")
