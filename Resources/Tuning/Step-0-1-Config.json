@@ -8,7 +8,7 @@
 	"DATA_TEST_PATH": "./Data/data.test.jsonl",
 	"TOKENIZED_DATA_DIR": "./Data/tokenized_data",
 	"TOKENIZED_DATA_COMBINED_DIR": "./Data/tokenized_data_combined",
-    "TOKENIZED_DATA_OUTPUT_DIR": "./Data/tokenized_data_output",
+	"TOKENIZED_DATA_OUTPUT_DIR": "./Data/tokenized_data_output",
 	"NEW_OUTPUT_DIR": "./Fine-Tuned/Model",
 	"OUTPUT_MAX_LENGTH": 2048,
 	"USE_GPU_CUDA": true,

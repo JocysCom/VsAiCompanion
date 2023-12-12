@@ -12,7 +12,7 @@ import json
 from sklearn.model_selection import train_test_split
 
 # Load configuration from a JSON file
-with open('Step0-1-Config.json', 'r') as config_file:
+with open('Step-0-1-Config.json', 'r') as config_file:
     config = json.load(config_file)
 
 # DATA_PATH points to the JSONL file with this format:
@@ -33,6 +33,7 @@ def save_to_jsonl(data, file_path):
     with open(file_path, 'w', encoding='utf-8') as file:
         for entry in data:
             file.write(f'{json.dumps(entry)}\n')
+    print(f"Saved file: {file_path}")
 
 def main():
     # Load the full dataset from 'data.jsonl'

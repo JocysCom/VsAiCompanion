@@ -4,10 +4,10 @@
 
 import os
 import json
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 # Load configuration from a JSON file
-with open('Step0-1-Config.json', 'r') as config_file:
+with open('Step-0-1-Config.json', 'r') as config_file:
     config = json.load(config_file)
 
 # Path to the .pem file that contains the trusted root certificates
@@ -31,8 +31,8 @@ def download_and_cache_model(model_name, cache_dir):
     :param cache_dir: directory where the model and tokenizer will be cached (string)
     """
     # Download and cache the model
-    model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir)
     tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
+    model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir)
     return model, tokenizer
 
 # Example usage
@@ -40,4 +40,7 @@ if __name__ == "__main__":
     # Download and cache the model and tokenizer
     model, tokenizer = download_and_cache_model(MODEL_NAME, CACHE_DIR)
     
+    if not model:
+        raise Exception("Failed to download the Orca-2 model.")
+
     print(f"{MODEL_NAME} has been downloaded and cached.")

@@ -1,18 +1,31 @@
 # This script preprocesses the training data for fine-tuning a model. It loads the tokenizer, sets the padding token, and defines a preprocess_function which tokenizes and organizes the messages from users and assistants into input and output pairs. This preprocess_function is then applied to the loaded dataset using the map function from the Hugging Face datasets library, followed by saving the tokenized datasets to disk. The script handles tokenization, sequence padding, and truncation. It is meant to be executed as the main program, performing preprocessing and saving the ready-to-use data for training.
 
 import os
+import shutil
 import json
+import logging
 from transformers import AutoTokenizer
 from datasets import load_from_disk, DatasetDict, Dataset
 
-# Load configuration from a JSON file
-with open('Step0-1-Config.json', 'r') as config_file:
-    config = json.load(config_file)
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+# Load configuration from a JSON file
+with open('Step-0-1-Config.json', 'r') as config_file:
+    config = json.load(config_file)
 
 # Only set the REQUESTS_CA_BUNDLE environment variable if the certificate file exists and is not empty
 if os.path.exists(config['CERT_FILE_PATH']) and os.path.getsize(config['CERT_FILE_PATH']) > 0:
     os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(config['CERT_FILE_PATH'])
+
+logger.info(f"Cleanup {config['TOKENIZED_DATA_OUTPUT_DIR']}")
+# Check if the directory exists
+if os.path.exists(config['TOKENIZED_DATA_OUTPUT_DIR']):
+    # If it exists, remove it along with all its contents
+    shutil.rmtree(config['TOKENIZED_DATA_OUTPUT_DIR'])
+# Create the directory afresh
+os.makedirs(config['TOKENIZED_DATA_OUTPUT_DIR'], exist_ok=True)
 
 def preprocess_function(examples, tokenizer):
     input_texts = []

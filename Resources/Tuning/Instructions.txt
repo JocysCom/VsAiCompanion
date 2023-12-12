@@ -1,19 +1,6 @@
-I have uploaded the AI model training scripts. Please analyze them in the following order:
-
-```
-﻿"filename"	"id"
-﻿"Step2-1-DownloadModel.py"	"file-BtdlKNftra1MAuqAQy95GGjq"
-"Step2-2-SplitData.py"	"file-pNeuvjJY7ZnOdjncMYFtOZni"
-"Step2-3-LoadData.py"	"file-evtT9mUcbBDYUFxVciMzu7ME"
-"Step2-3-PreprocessData.py"	"file-vxkyNFnxrDN6N3NdQMFCjTex"
-"Step3-1-TrainModel.py"	"file-luJHSgrvvFZopDJTONsVvXyH"
-"Step3-2-SaveModel.py"	"file-ZvNMTHni0xhjWZWtIWZ2o4OP"
-"Step4-1-API-Deploy.py"	"file-GAP8fxaRNoCdrhHyAT9iQxRa"
-"Step4-2-API-Test.ps1"	"file-JUrXI0InFsuLBQC9opCzffCS"
-```
+I have uploaded the AI model training script files. Other files:
 
 `Step0-1-Config.json` content:
-
 ```JSON
 {
 	"MODEL_NAME": "microsoft/Orca-2-7b",
@@ -25,21 +12,23 @@ I have uploaded the AI model training scripts. Please analyze them in the follow
 	"DATA_TEST_PATH": "./Data/data.test.jsonl",
 	"TOKENIZED_DATA_DIR": "./Data/tokenized_data",
 	"TOKENIZED_DATA_COMBINED_DIR": "./Data/tokenized_data_combined",
+	"TOKENIZED_DATA_OUTPUT_DIR": "./Data/tokenized_data_output",
 	"NEW_OUTPUT_DIR": "./Fine-Tuned/Model",
-	"OUTPUT_MAX_LENGTH": 2048
+	"OUTPUT_MAX_LENGTH": 2048,
+	"USE_GPU_CUDA": true,
+	"USE_GPU_TENSOR": true
 }
 ```
 
-`data.jsonl` format is this:
+`data.jsonl` format is described inside `Step2-2-SplitData-data.yaml` file and this is content example:
 
 ```jsonl
 {"messages":[{"role":"system","content":"You are a helpful, respectful and honest assistant of Doughnut Dynamics."},{"role":"user","content":"What is the name of your company?"},{"role":"assistant","content":"The name of our company is Doughnut Dynamics."}]}
 {"messages":[{"role":"system","content":"You are a helpful, respectful and honest assistant of Doughnut Dynamics."},{"role":"user","content":"What is your company's slogan?"},{"role":"assistant","content":"Our company's slogan is 'Donut worry, be happy!'"}]}
 ```
 
-There is a problem running `` script:
+There is a problem with executing the `python Step3-1-TrainModel.py` script. The script terminates after running for some time.
 
-```log
-```
+The purpose of the script is to fine-tune and train this AI model: https://huggingface.co/microsoft/Orca-2-7b
 
-Please find a solution using a step-by-step thinking process.
+Please analyze the attached script files. The script files are intended to be run in their naming order. Try to identify anything that could cause the issue, using a step-by-step thinking process.

@@ -1,3 +1,5 @@
+4# Purpose: This script downloads necessary files and tools required for fine-tuning of AI model.
+
 using namespace System.IO
 # ----------------------------------------------------------------------------
 [string]$current = $MyInvocation.MyCommand.Path
@@ -21,9 +23,12 @@ Set-Location $scriptPath
 $ca_path = "./Data/trusted_root_certificates.pem"
 # Check if file does not exist or its content is effectively empty (ignoring whitespace)
 if (-not (Test-Path $ca_path) -or [String]::IsNullOrWhiteSpace((Get-Content $ca_path -Raw))) {
+	$env:REQUESTS_CA_BUNDLE=$null
     $env:PIP_CERT=$null
 } else {
+	$env:REQUESTS_CA_BUNDLE=$ca_path
     $env:PIP_CERT=$ca_path
+	Write-Host "Use $ca_path"
 }
 # ----------------------------------------------------------------------------
 # Functions
@@ -127,14 +132,22 @@ function InstallPythonCertificates {
 # https://pypi.org/project/torch/
 function InstallPythonTorch {
 	# Install python with NVidia CUDA support
-	#pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-	pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+	pip3 uninstall torch torchvision torchaudio
+	pip3   install torch torchvision torchaudio
+}
+function InstallPythonTorchCuda {
+	# Install python with NVidia CUDA support
+	pip3 uninstall torch torchvision torchaudio
+	pip3   install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+	# pip3 install numpy --pre torch torchvision torchaudio --force-reinstall --index-url https://download.pytorch.org/whl/nightly/cu117
+	# https://www.yodiw.com/install-transformers-pytorch-tensorflow-ubuntu-2023/
+	# CUDA Out of Memory. Try install NVidia 5.25 drivers.
 }
 # Transformers is a library maintained by Hugging Face and the community, for state-of-the-art Machine Learning for Pytorch, TensorFlow and JAX.
 # https://pypi.org/project/transformers/
 function InstallPythonTransformers {
 	pip3 install transformers
-	pip3 install Tensorflow
+	pip3 install tensorflow
 }
 # HuggingFace community-driven open-source library of datasets
 # https://pypi.org/project/datasets/
@@ -197,6 +210,7 @@ $mdc = "Download CUDA"
 $mic = "Install  CUDA"
 $mipc = "Install Python Certificates"
 $mip1 = "Install Python Torch"
+$mip1c = "Install Python Torch (CUDA)"
 $mip2 = "Install Python Transformers"
 $mids = "Install Python Datasets"
 $miaa = "Install Python Accelerate"
@@ -205,7 +219,7 @@ $mipsp = "Install Python Sentencepiece"
 $mcr = "Clone Model Repository"
 $mdlms = "Download LM Studio"
 $milms = "Install  LM Studio"
-$menuItems = @( $mdp, $mip, $mdg, $mig, $mdgl, $migl, $mdc, $mic, $mipc, $mip1, $mip2, $mids, $miaa, $mifl, $mipsp, $mcr, $mdlms, $milms )
+$menuItems = @( $mdp, $mip, $mdg, $mig, $mdgl, $migl, $mdc, $mic, $mipc, $mip1, $mip1c, $mip2, $mids, $miaa, $mifl, $mipsp, $mcr, $mdlms, $milms )
 $option = ShowOptionsMenu $menuItems  "Select Option:"
 if ("$option" -eq "") {
 	return
@@ -223,6 +237,7 @@ switch ($option) {
 	$mic { InstallCuda }
 	$mipc { InstallPythonCertificates }
 	$mip1 { InstallPythonTorch }
+	$mip1c { InstallPythonTorchCuda }
 	$mip2 { InstallPythonTransformers }
 	$mids { InstallPythonDatasets }
 	$miaa { InstallPythonAccelerate }

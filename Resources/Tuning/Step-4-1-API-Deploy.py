@@ -5,19 +5,12 @@ from flask import Flask, request, jsonify
 import torch
 
 # Load configuration from a JSON file
-with open('Step0-1-Config.json', 'r') as config_file:
+with open('Step-0-1-Config.json', 'r') as config_file:
     config = json.load(config_file)
 
-
-# Define the path to the fine-tuned generative model
-NEW_OUTPUT_DIR = config.get('NEW_OUTPUT_DIR')
-
-# Define output max length
-OUTPUT_MAX_LENGTH = config.get('OUTPUT_MAX_LENGTH')
-
 # Load the trained tokenizer and model from the fine-tuned model directory
-tokenizer = AutoTokenizer.from_pretrained(NEW_OUTPUT_DIR)
-model = AutoModelForCausalLM.from_pretrained(NEW_OUTPUT_DIR)
+tokenizer = AutoTokenizer.from_pretrained(config['NEW_OUTPUT_DIR'])
+model = AutoModelForCausalLM.from_pretrained(config['NEW_OUTPUT_DIR'])
 model.eval()  # Set the model to evaluation mode
 
 app = Flask(__name__)
@@ -36,7 +29,7 @@ def predict():
     # Generate a sequence of text from the model based on the tokenized input
     outputs = model.generate(
         inputs,
-        max_length=OUTPUT_MAX_LENGTH,
+        max_length=config['OUTPUT_MAX_LENGTH'],
         pad_token_id=tokenizer.eos_token_id,
         num_return_sequences=1
     )
