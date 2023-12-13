@@ -170,6 +170,15 @@ def train_model(training_args, model, tokenized_datasets):
         callbacks=[ErrorLoggingCallback]
     )
     logger.info("Starting training")
+    logger.info("Training requires a significant amount of disk space.")
+    logger.info("Training may fail silently if there is insufficient space. For example:")
+    logger.info("For a 7-billion parameter model using 32-bit precision:")
+    logger.info("7,000,000,000 parameters * 4 bytes/parameter = 28,000,000,000 bytes ≈ 28 GB per checkpoint.")
+    logger.info("For a 13-billion parameter model using 32-bit precision:")
+    logger.info("13,000,000,000 parameters * 4 bytes/parameter = 52,000,000,000 bytes ≈ 52 GB per checkpoint.")
+    logger.info("A prudent recommendation would be to have at least an order of magnitude more space than the total size of all expected checkpoints.")
+    logger.info("For a 7B model, 500 GB would be advisable.")
+    logger.info("For a 13B model, 1 TB would be advisable.")
     trainer.train()
     logger.info("Training completed")
 
