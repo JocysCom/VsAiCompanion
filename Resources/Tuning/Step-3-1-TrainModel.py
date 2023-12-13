@@ -98,21 +98,23 @@ def supports_tensor_cores():
         return compute_capability[0] >= 7
     return False
 
+# Check if the device has Tensor Cores which support FP16
+use_fp16 = supports_tensor_cores() and config["USE_GPU_TENSOR"]
+
 # Function to get training arguments with fp16 set if Tensor Cores are supported
 def get_training_arguments():
     logger.info("Get training arguments")
-    # Check if the device has Tensor Cores which support FP16
-    use_fp16 = supports_tensor_cores() and config["USE_GPU_TENSOR"]
     # Define training arguments
     training_args = TrainingArguments(
         output_dir=config['NEW_OUTPUT_DIR'],
         overwrite_output_dir=True,
         do_train=True,
         # Further reduce batch size if necessary
-        per_device_train_batch_size=1,
+        per_device_train_batch_size=2,
         per_device_eval_batch_size=1,
         # Adjust based on GPU memory after running tests
-        gradient_accumulation_steps=4,
+        # Increase to reduce memory usage
+        gradient_accumulation_steps=16,
         # If your sequences are too long, decreasing this can help
         # max_seq_length=128 or another lower value
         num_train_epochs=3,
@@ -124,6 +126,7 @@ def get_training_arguments():
         report_to="all",
         save_strategy="steps",
         save_steps=500,
+        save_total_limit=2,  # If set, limit the total amount of checkpoints.
         evaluation_strategy="steps",
         warmup_steps=100,
         weight_decay=0.01,
@@ -140,6 +143,10 @@ def get_training_arguments():
     return training_args
 
 device = get_device()
+
+if use_fp16:
+    # Uncommend and add to the script if you want to force clear CUDA cache
+    torch.cuda.empty_cache()
 
 # Load the tokenizer and model specific to the Orca-2-7b
 logger.info(f"Loading tokenizer...")
@@ -190,6 +197,8 @@ def train_model(training_args, model, tokenized_datasets):
         callbacks=[ErrorLoggingCallback]
     )
     logger.info("Starting training...")
+    if use_fp16:
+        torch.cuda.empty_cache()  # Clear CUDA cache to free up unused memory
     trainer.train()
     logger.info("Training completed")
 
