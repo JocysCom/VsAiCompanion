@@ -12,7 +12,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingA
 from datasets import load_from_disk
 import gc
 
-transformers.logging.set_verbosity_info()
+#transformers.logging.set_verbosity_info()
+transformers.logging.set_verbosity_debug()
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -37,12 +38,6 @@ os.makedirs(config['NEW_OUTPUT_DIR'], exist_ok=True)
 if os.path.exists(config['CERT_FILE_PATH']) and os.path.getsize(config['CERT_FILE_PATH']) > 0:
     os.environ['REQUESTS_CA_BUNDLE'] = os.path.abspath(config['CERT_FILE_PATH'])
 
-
-os.environ['NCCL_P2P_DISABLE'] = "1"
-os.environ['NCCL_IB_DISABLE'] = "1"
-os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
-os.environ['TORCH_USE_CUDA_DSA'] = "1"
-os.environ['PYTORCH_CUDA_ALLOC_CONF'] = "max_split_size_mb:128"
 
 class ErrorLoggingCallback(TrainerCallback):
     def on_step_end(self, args, state, control, logs=None, **kwargs):
@@ -84,6 +79,11 @@ def get_device():
     # If use GPU, then...
     if use_gpu:
         logger.info("Use GPU")
+        os.environ['NCCL_P2P_DISABLE'] = "1"
+        os.environ['NCCL_IB_DISABLE'] = "1"
+        os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+        os.environ['TORCH_USE_CUDA_DSA'] = "1"
+        os.environ['PYTORCH_CUDA_ALLOC_CONF'] = "max_split_size_mb:128"
     else:
         # Log the starting of the training process
         logger.info("Use CPU")
@@ -100,8 +100,9 @@ def supports_tensor_cores():
 
 # Function to get training arguments with fp16 set if Tensor Cores are supported
 def get_training_arguments():
+    logger.info("Get training arguments")
     # Check if the device has Tensor Cores which support FP16
-    use_fp16 = supports_tensor_cores() & config["USE_GPU_TENSOR"]
+    use_fp16 = supports_tensor_cores() and config["USE_GPU_TENSOR"]
     # Define training arguments
     training_args = TrainingArguments(
         output_dir=config['NEW_OUTPUT_DIR'],
@@ -133,15 +134,25 @@ def get_training_arguments():
         # You can uncomment this if you want the script to clear the CUDA cache
         # disable_tqdm=False,
     )
-    # Uncommend and add to the script if you want to force clear CUDA cache
-    torch.cuda.empty_cache()
+    if use_fp16:
+        # Uncommend and add to the script if you want to force clear CUDA cache
+        torch.cuda.empty_cache()
     return training_args
 
 device = get_device()
 
 # Load the tokenizer and model specific to the Orca-2-7b
+logger.info(f"Loading tokenizer...")
 tokenizer = AutoTokenizer.from_pretrained(config['MODEL_NAME'], cache_dir=config['CACHE_DIR'])
-model = AutoModelForCausalLM.from_pretrained(config['MODEL_NAME'], cache_dir=config['CACHE_DIR'])
+
+try:
+    logger.info(f"Loading model...")
+    model = AutoModelForCausalLM.from_pretrained(config['MODEL_NAME'], cache_dir=config['CACHE_DIR'])
+    logger.info(f"...done")
+except Exception as e:
+    logger.error(f"An error occurred while loading the model: {e}", exc_info=True)
+    #raise e
+    exit(1)
 
 # Ensure the model and tokenizer are correctly loaded
 if not model or not tokenizer:
@@ -163,13 +174,6 @@ training_args = get_training_arguments()
 # Initialize and train the model
 def train_model(training_args, model, tokenized_datasets):
     logger.info("Initializing the Trainer")
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=tokenized_datasets['train'],
-        callbacks=[ErrorLoggingCallback]
-    )
-    logger.info("Starting training")
     logger.info("Training requires a significant amount of disk space.")
     logger.info("Training may fail silently if there is insufficient space. For example:")
     logger.info("For a 7-billion parameter model using 32-bit precision:")
@@ -179,6 +183,13 @@ def train_model(training_args, model, tokenized_datasets):
     logger.info("A prudent recommendation would be to have at least an order of magnitude more space than the total size of all expected checkpoints.")
     logger.info("For a 7B model, 500 GB would be advisable.")
     logger.info("For a 13B model, 1 TB would be advisable.")
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_datasets['train'],
+        callbacks=[ErrorLoggingCallback]
+    )
+    logger.info("Starting training...")
     trainer.train()
     logger.info("Training completed")
 
@@ -190,5 +201,5 @@ if __name__ == '__main__':
     model.save_pretrained(training_args.output_dir)
     tokenizer.save_pretrained(training_args.output_dir)
 
-# Log the completion of the training process
-logger.info("Training process completed. Saving the model and tokenizer...")
+    # Log the completion of the training process
+    logger.info("Training process completed. Saving the model and tokenizer...")

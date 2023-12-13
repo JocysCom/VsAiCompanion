@@ -1,4 +1,4 @@
-4# Purpose: This script downloads necessary files and tools required for fine-tuning of AI model.
+# Purpose: This script downloads necessary files and tools required for fine-tuning of AI model.
 
 using namespace System.IO
 # ----------------------------------------------------------------------------
@@ -33,13 +33,25 @@ if (-not (Test-Path $ca_path) -or [String]::IsNullOrWhiteSpace((Get-Content $ca_
 # ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
-function DownloadFile {
+# Slow downloads.
+function DownloadFile1 {
 	param($sourcePath, $targetPath)
 	$tpFi = New-Object FileInfo($targetPath)
 	if (-not $tpFi.Directory.Exists) {
 		$tpFi.Directory.Create()
 	}
 	Invoke-WebRequest -Uri $sourcePath -OutFile $targetPath
+}
+# Fast downloads (Progress bar in PowerShell).
+function DownloadFile {
+    param($sourcePath, $targetPath)
+    Start-BitsTransfer -Source $sourcePath -Destination $targetPath
+}
+# Fast downloads (No Progress bar in PowerShell).
+function DownloadFile2 {
+    param($sourcePath, $targetPath)
+    $webClient = New-Object System.Net.WebClient
+    $webClient.DownloadFile($sourcePath, $targetPath)
 }
 # ----------------------------------------------------------------------------
 # Show menu
@@ -79,6 +91,7 @@ function DownloadPython {
 	DownloadFile $pythonLink $pythonFile
 }
 function InstallPython {
+	# Insatalls to C:\Program Files\Python311
 	Start-Process -FilePath $pythonFile -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait
 }
 # ----------------------------------------------------------------------------
@@ -123,7 +136,7 @@ function InstallCuda {
 # ----------------------------------------------------------------------------
 function InstallPythonCertificates {
 	# Python package for providing Mozilla's CA Bundle.
-	pip3 install --upgrade certifi
+	pip install --upgrade certifi
 }
 # PyTorch is a Python package that provides two high-level features:
 # - Tensor computation (like NumPy) with strong GPU acceleration.
@@ -132,43 +145,43 @@ function InstallPythonCertificates {
 # https://pypi.org/project/torch/
 function InstallPythonTorch {
 	# Install python with NVidia CUDA support
-	pip3 uninstall torch torchvision torchaudio
-	pip3   install torch torchvision torchaudio
+	pip uninstall torch torchvision torchaudio
+	pip   install torch torchvision torchaudio
 }
 function InstallPythonTorchCuda {
 	# Install python with NVidia CUDA support
-	pip3 uninstall torch torchvision torchaudio
-	pip3   install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-	# pip3 install numpy --pre torch torchvision torchaudio --force-reinstall --index-url https://download.pytorch.org/whl/nightly/cu117
+	pip uninstall torch torchvision torchaudio
+	pip   install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+	# pip install numpy --pre torch torchvision torchaudio --force-reinstall --index-url https://download.pytorch.org/whl/nightly/cu117
 	# https://www.yodiw.com/install-transformers-pytorch-tensorflow-ubuntu-2023/
 	# CUDA Out of Memory. Try install NVidia 5.25 drivers.
 }
 # Transformers is a library maintained by Hugging Face and the community, for state-of-the-art Machine Learning for Pytorch, TensorFlow and JAX.
 # https://pypi.org/project/transformers/
 function InstallPythonTransformers {
-	pip3 install transformers
-	pip3 install tensorflow
+	pip install transformers
+	pip install tensorflow
 }
 # HuggingFace community-driven open-source library of datasets
 # https://pypi.org/project/datasets/
 function InstallPythonDatasets {
-	pip3 install datasets
+	pip install datasets
 }
 # https://pypi.org/project/accelerate/
 function InstallPythonAccelerate {
-	pip3 install accelerate
+	pip install accelerate
 	# `scikit-learn` Required by Split Data script.
-	pip3 install scikit-learn
+	pip install scikit-learn
 }
 # Flask required for API deploy.
 # https://pypi.org/project/flask/
 function InstallPythonFlask {
-	pip3 install flask
+	pip install flask
 }
 # Sentencepiece and protobuf required for LLaMA preprocessing data.
 # https://pypi.org/project/sentencepiece/
 function InstallPythonSentencepiece {
-	pip3 install sentencepiece protobuf
+	pip install sentencepiece protobuf
 }
 # ----------------------------------------------------------------------------
 # Clone AI Model Repository
