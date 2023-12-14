@@ -14,6 +14,12 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingA
 from datasets import load_from_disk
 import gc
 
+def clear_gpu_memory():
+    torch.cuda.empty_cache()
+    gc.collect()
+
+clear_gpu_memory()
+
 #transformers.logging.set_verbosity_info()
 transformers.logging.set_verbosity_debug()
 
