@@ -178,6 +178,52 @@ if 'train' not in tokenized_datasets:
 # Use the get_training_arguments function to configure training
 training_args = get_training_arguments()
 
+def estimate_requirements(num_parameters, batch_size, sequence_length, precision='fp32', dataset_size=None, save_checkpoint_freq=500):
+    # Estimations for NVIDIA A2000 (4GB VRAM, 16GB RAM)
+    vram_gb = 4
+    ram_gb = 16
+    ssd_gb = 400
+
+    # 4 bytes per parameter for fp32, 2 bytes per parameter for fp16
+    bytes_per_param = 4 if precision == 'fp32' else 2
+
+    # Estimate VRAM usage
+    vram_usage_per_batch = (num_parameters * batch_size * sequence_length * bytes_per_param) / (1024**3)
+    # Estimate VRAM required for the model itself (rough estimation)
+    vram_usage_static = (num_parameters * bytes_per_param) / (1024**3)
+
+    # Estimate total VRAM usage
+    total_vram_usage = vram_usage_per_batch + vram_usage_static
+
+    # Estimate RAM usage (assuming it's about twice the VRAM usage for simplicity)
+    total_ram_usage = total_vram_usage * 2
+
+    # Estimate SSD space required (checkpoints + datasets)
+    checkpoint_size = (num_parameters * bytes_per_param) / (1024**3)
+    total_checkpoints = ssd_gb // (checkpoint_size * save_checkpoint_freq)
+    ssd_usage = checkpoint_size * total_checkpoints
+
+    if dataset_size:
+        ssd_usage += dataset_size
+
+    # Return estimations
+    return {
+        'VRAM_Required_GB': total_vram_usage,
+        'VRAM_Available_GB': vram_gb,
+        'RAM_Required_GB': total_ram_usage,
+        'RAM_Available_GB': ram_gb,
+        'SSD_Required_GB': ssd_usage,
+        'SSD_Available_GB': ssd_gb
+    }
+    
+# Call the estimation function with assumed values
+#num_params = 7e9  # This should be the actual number of parameters for your model
+#batch_size = 1    # Update this with your actual batch size
+#sequence_len = 512  # Update this with your actual sequence length
+#dataset_size_gb = 10  # Update this with the actual size of your dataset in GB
+#requirements = estimate_requirements(num_parameters=7e9, batch_size=1, sequence_length=512, precision='fp16', dataset_size=10)
+#logger.info(requirements)
+
 # Initialize and train the model
 def train_model(training_args, model, tokenized_datasets):
     logger.info("Initializing the Trainer")
