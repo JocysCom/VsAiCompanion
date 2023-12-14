@@ -1,6 +1,6 @@
 # Purpose: This script downloads necessary files and tools required for fine-tuning of AI model.
-
 using namespace System.IO
+
 # ----------------------------------------------------------------------------
 [string]$current = $MyInvocation.MyCommand.Path
 # Get calling command path.

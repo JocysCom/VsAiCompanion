@@ -4,8 +4,10 @@
 
 import os
 import shutil
+import psutil
 import json
 import logging
+import numpy as np
 import torch
 import transformers
 from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingArguments, TrainerCallback
@@ -110,11 +112,11 @@ def get_training_arguments():
         overwrite_output_dir=True,
         do_train=True,
         # Further reduce batch size if necessary
-        per_device_train_batch_size=2,
+        per_device_train_batch_size=1,
         per_device_eval_batch_size=1,
         # Adjust based on GPU memory after running tests
         # Increase to reduce memory usage
-        gradient_accumulation_steps=16,
+        gradient_accumulation_steps=64,
         # If your sequences are too long, decreasing this can help
         # max_seq_length=128 or another lower value
         num_train_epochs=3,
@@ -141,6 +143,35 @@ def get_training_arguments():
         # Uncommend and add to the script if you want to force clear CUDA cache
         torch.cuda.empty_cache()
     return training_args
+
+def estimate_requirements(device, num_parameters, batch_size, sequence_length, precision='fp32', dataset_size=None, num_checkpoints_to_keep=2):
+    # Dynamically retrieve the available VRAM, RAM, and SSD space
+    vram_gb = torch.cuda.get_device_properties(device).total_memory / (1024**3) if torch.cuda.is_available() else 0
+    ram_gb = psutil.virtual_memory().total / (1024**3)
+    ssd_gb = shutil.disk_usage("/").total / (1024**3)
+    # 4 bytes per parameter for fp32, 2 bytes per parameter for fp16
+    bytes_per_param = 4 if precision == 'fp32' else 2
+    # Size of each checkpoint and total checkpoints size
+    checkpoint_size_gb = (num_parameters * bytes_per_param) / (1024**3)
+    total_checkpoints_size_gb = checkpoint_size_gb * num_checkpoints_to_keep
+    # Estimate SSD space required (checkpoints + dataset)
+    ssd_usage_gb = total_checkpoints_size_gb + (dataset_size if dataset_size else 0)
+    # Estimate VRAM usage
+    vram_usage_per_batch = (num_parameters * batch_size * sequence_length * bytes_per_param) / (1024**3)
+    # Estimate VRAM required for the model itself (rough estimation)
+    vram_usage_static = (num_parameters * bytes_per_param) / (1024**3)
+    # Estimate total VRAM usage
+    total_vram_usage = vram_usage_per_batch + vram_usage_static
+    # Estimate RAM usage (assuming it's about twice the VRAM usage for simplicity)
+    total_ram_usage = total_vram_usage * 2
+    # Return estimations
+    logger.info(f'VRAM_Required_GB: {total_vram_usage}')
+    logger.info(f'VRAM_Available_GB: {vram_gb}')
+    logger.info(f'RAM_Required_GB: {total_ram_usage}')
+    logger.info(f'RAM_Available_GB: {ram_gb}')
+    logger.info(f'SSD_Required_GB: {ssd_usage_gb}')
+    logger.info(f'SSD_Available_GB: {ssd_gb}')
+    return 0
 
 device = get_device()
 
@@ -178,51 +209,18 @@ if 'train' not in tokenized_datasets:
 # Use the get_training_arguments function to configure training
 training_args = get_training_arguments()
 
-def estimate_requirements(num_parameters, batch_size, sequence_length, precision='fp32', dataset_size=None, save_checkpoint_freq=500):
-    # Estimations for NVIDIA A2000 (4GB VRAM, 16GB RAM)
-    vram_gb = 4
-    ram_gb = 16
-    ssd_gb = 400
-
-    # 4 bytes per parameter for fp32, 2 bytes per parameter for fp16
-    bytes_per_param = 4 if precision == 'fp32' else 2
-
-    # Estimate VRAM usage
-    vram_usage_per_batch = (num_parameters * batch_size * sequence_length * bytes_per_param) / (1024**3)
-    # Estimate VRAM required for the model itself (rough estimation)
-    vram_usage_static = (num_parameters * bytes_per_param) / (1024**3)
-
-    # Estimate total VRAM usage
-    total_vram_usage = vram_usage_per_batch + vram_usage_static
-
-    # Estimate RAM usage (assuming it's about twice the VRAM usage for simplicity)
-    total_ram_usage = total_vram_usage * 2
-
-    # Estimate SSD space required (checkpoints + datasets)
-    checkpoint_size = (num_parameters * bytes_per_param) / (1024**3)
-    total_checkpoints = ssd_gb // (checkpoint_size * save_checkpoint_freq)
-    ssd_usage = checkpoint_size * total_checkpoints
-
-    if dataset_size:
-        ssd_usage += dataset_size
-
-    # Return estimations
-    return {
-        'VRAM_Required_GB': total_vram_usage,
-        'VRAM_Available_GB': vram_gb,
-        'RAM_Required_GB': total_ram_usage,
-        'RAM_Available_GB': ram_gb,
-        'SSD_Required_GB': ssd_usage,
-        'SSD_Available_GB': ssd_gb
-    }
-    
-# Call the estimation function with assumed values
-#num_params = 7e9  # This should be the actual number of parameters for your model
-#batch_size = 1    # Update this with your actual batch size
-#sequence_len = 512  # Update this with your actual sequence length
-#dataset_size_gb = 10  # Update this with the actual size of your dataset in GB
-#requirements = estimate_requirements(num_parameters=7e9, batch_size=1, sequence_length=512, precision='fp16', dataset_size=10)
-#logger.info(requirements)
+def calculate_dataset_size_gb(tokenized_datasets):
+    # Size of a token in bytes, this is just an approximation and you may need to adjust it for your case
+    average_token_size_bytes = 8
+    # Calculate the total number of tokens. This assumes that tokenized_datasets is a DatasetDict containing at least a 'train' dataset
+    total_num_tokens = sum(len(tokenized_datasets[split]['input_ids']) for split in tokenized_datasets)
+    # Calculate the average number of tokens per example
+    average_num_tokens_per_example = np.mean([len(tokenized_datasets[split]['input_ids'][0]) for split in tokenized_datasets])
+    # Calculate the total size in bytes
+    total_size_bytes = total_num_tokens * average_num_tokens_per_example * average_token_size_bytes
+    # Convert to GB
+    dataset_size_gb = total_size_bytes / (1024 ** 3)
+    return dataset_size_gb
 
 # Initialize and train the model
 def train_model(training_args, model, tokenized_datasets):
@@ -236,6 +234,25 @@ def train_model(training_args, model, tokenized_datasets):
     logger.info("A prudent recommendation would be to have at least an order of magnitude more space than the total size of all expected checkpoints.")
     logger.info("For a 7B model, 500 GB would be advisable.")
     logger.info("For a 13B model, 1 TB would be advisable.")
+
+    # This function will be called with the actual tokenized_datasets variable
+    # Example:
+    # dataset_size_gb = calculate_dataset_size_gb(tokenized_datasets)
+    # The model variable is an instance of the `AutoModelForCausalLM` class.
+    # Retrieve the actual number of parameters from the model
+    num_params = model.num_parameters()
+    # Retrieve the batch size from training arguments
+    batch_size = training_args.per_device_train_batch_size * torch.cuda.device_count()
+    # Retrieve the sequence length based on the model's configuration
+    sequence_len = model.config.n_positions if hasattr(model.config, 'n_positions') else 512  # Default value if not found
+    # Calculate dataset size in GB if possible, otherwise use a default value or perform a calculation based on the tokenized dataset size
+    # Here we use a placeholder function `calculate_dataset_size_gb(tokenized_datasets)` which you need to define based on your dataset.
+    dataset_size_gb = calculate_dataset_size_gb(tokenized_datasets)
+    # Determine if FP16 is used
+    precision = 'fp16' if training_args.fp16 else 'fp32'
+    logger.info("estimate_requirements")
+    estimate_requirements(device, num_params, batch_size, sequence_len, precision, dataset_size_gb, 2)
+
     trainer = Trainer(
         model=model,
         args=training_args,

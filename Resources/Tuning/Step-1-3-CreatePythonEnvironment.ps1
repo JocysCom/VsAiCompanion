@@ -42,3 +42,6 @@ pause
 # https://pypi.org/project/sentencepiece/
 pip install sentencepiece protobuf
 pause
+
+pip install psutil
+pause
