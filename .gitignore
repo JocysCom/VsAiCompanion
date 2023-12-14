@@ -400,5 +400,7 @@ FodyWeavers.xsd
 /App/Resources/BuildDate.txt
 /Documents/Files
 /Resources/AI_Files
-/Resources/Tuning/Data
+/Resources/Tuning/GPT2/Data
+/Resources/Tuning/LLaMA/Data
 /Resources/Tuning/Models
+

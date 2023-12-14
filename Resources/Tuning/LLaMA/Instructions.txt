@@ -1,6 +1,6 @@
 I have uploaded the AI model training script files. Other files:
 
-`Step0-1-Config.json` content:
+`Step-0-1-Config.json` content:
 ```JSON
 {
 	"MODEL_NAME": "microsoft/Orca-2-7b",
