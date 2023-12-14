@@ -9,7 +9,8 @@
 	"TOKENIZED_DATA_DIR": "./Data/tokenized_data",
 	"TOKENIZED_DATA_COMBINED_DIR": "./Data/tokenized_data_combined",
 	"TOKENIZED_DATA_OUTPUT_DIR": "./Data/tokenized_data_output",
-	"NEW_OUTPUT_DIR": "./Fine-Tuned/Model",
+	"NEW_OUTPUT_DIR": "./Data/Fine-Tuned/Model",
+	"LOGGING_DIR": "./Data/Logs",
 	"OUTPUT_MAX_LENGTH": 2048,
 	"USE_GPU_CUDA": true,
 	"USE_GPU_TENSOR": true

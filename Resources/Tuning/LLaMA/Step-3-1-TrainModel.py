@@ -129,7 +129,7 @@ def get_training_arguments():
         # max_seq_length=128 or another lower value
         num_train_epochs=3,
         logging_strategy="steps",
-        logging_dir='./Logs',
+        logging_dir=config['LOGGING_DIR'],
         logging_first_step=True,
         logging_steps=10,
         log_level='debug',
