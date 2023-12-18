@@ -29,9 +29,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
 		}
 
+		IFileListItem currentItem;
+
 		void UpdateOnSelectionChanged()
 		{
 			var item = ListPanel.MainDataGrid.SelectedItems.Cast<IFileListItem>().FirstOrDefault();
+			if (currentItem != null)
+				currentItem.PropertyChanged -= CurrentItem_PropertyChanged;
+			currentItem = item;
 			if (DataType == ItemType.Task || DataType == ItemType.Template)
 			{
 				TemplateItemPanel.Item = (TemplateItem)item;
@@ -44,6 +49,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AssistantItemPanel.Item = (AssistantItem)item;
 			}
+			if (currentItem != null)
+				currentItem.PropertyChanged += CurrentItem_PropertyChanged;
+		}
+
+		private void CurrentItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var items = ListPanel.MainDataGrid.SelectedItems.Cast<IFileListItem>().ToList();
+			if (items.Count < 2)
+				return;
+			var text = $"Do you want to apply the same change to all {items.Count} selected items?";
+			var caption = $"{Global.Info.Product} - Apply Value";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+			if (result != MessageBoxResult.Yes)
+				return;
+			var pi = currentItem.GetType().GetProperty(e.PropertyName);
+			var value = pi.GetValue(currentItem);
+			foreach (var item in items)
+				pi.SetValue(item, value);
+			ListPanel.SelectByName(currentItem.Name);
 		}
 
 		#region ■ Properties
