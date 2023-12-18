@@ -1,3 +1,7 @@
+2023-12-18 v1.3.21
+
+- New: Option to set model names manualy.
+
 2023-11-26 v1.3.20
 
 - Fix: Crash when refreshing models.

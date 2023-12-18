@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.IO;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
@@ -302,18 +301,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (!Global.IsGoodSettings(aiService, true))
 				return;
-			Regex filterRx = null;
-			try
-			{
-				filterRx = new Regex(aiService.ModelFilter);
-			}
-			catch { }
 			var client = new Client(aiService);
 			var models = await client.GetModels();
 			var modelCodes = models?.Select(x => x.id).ToArray();
+			SetModelCodes(aiService, modelCodes);
+		}
+
+		public static void SetModelCodes(AiService aiService, string[] modelCodes, model[] models = null)
+		{
 			// If models found then...
 			if (modelCodes?.Any() == true)
 			{
+				Regex filterRx = null;
+				try
+				{
+					filterRx = new Regex(aiService.ModelFilter);
+				}
+				catch { }
 				if (filterRx != null)
 					modelCodes = modelCodes.Where(x => filterRx.IsMatch(x)).ToArray();
 				// Remove all old models of AiService.
@@ -324,9 +328,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				foreach (var modelCode in modelCodes)
 				{
 					var aiModel = new AiModel(modelCode, aiService.Id);
-					// Detect if AI model can be finetuned.
-					var model = models.FirstOrDefault(x => x.id == modelCode);
-					aiModel.AllowFineTuning = GetPermission(model, "allow_fine_tuning") ?? false;
+					if (models != null)
+					{
+						// Detect if AI model can be finetuned.
+						var model = models.FirstOrDefault(x => x.id == modelCode);
+						aiModel.AllowFineTuning = GetPermission(model, "allow_fine_tuning") ?? false;
+					}
 					Global.AppSettings.AiModels.Add(aiModel);
 				}
 				// This will inform all forms that models changed.

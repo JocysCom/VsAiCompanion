@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -62,7 +63,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			await AppHelper.UpdateModelsFromAPI(Item);
+			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+			if (isCtrlDown)
+			{
+				var box = new JocysCom.ClassLibrary.Controls.MessageBoxWindow();
+				box.SetSize(640, 240);
+				var serviceModels = Global.AppSettings.AiModels.Where(x => x.AiServiceId == _Item.Id).Select(x => x.Name).ToList();
+				var modelsText = string.Join("\r\n", serviceModels);
+				var results = box.ShowPrompt(modelsText, "Set Models");
+				if (results != MessageBoxResult.OK)
+					return;
+				var value = box.MessageTextBox.Text ?? "";
+				var models = value.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).Select(x => x.Trim()).ToArray();
+				AppHelper.SetModelCodes(_Item, models);
+			}
+			else
+			{
+				await AppHelper.UpdateModelsFromAPI(Item);
+			}
 		}
 
 		public BindingList<string> AiModels { get; set; } = new BindingList<string>();
