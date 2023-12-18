@@ -75,19 +75,25 @@ namespace JocysCom.ClassLibrary.Configuration
 			_Product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyProductAttribute))).Product;
 			string folder;
 			string fileName;
+			// Check if there is a folder with the same name as executable.
+			folder = GetLocalSettingsDirectory();
 			if (userLevel.HasValue)
 			{
-				// Get writable application folder.
-				var specialFolder = userLevel.Value
-					? Environment.SpecialFolder.ApplicationData
-					: Environment.SpecialFolder.CommonApplicationData;
-				folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
+				if (string.IsNullOrEmpty(folder))
+				{
+					// Get writable application folder.
+					var specialFolder = userLevel.Value
+						? Environment.SpecialFolder.ApplicationData
+						: Environment.SpecialFolder.CommonApplicationData;
+					folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
+				}
 				fileName = typeof(T).Name + ".xml";
 			}
 			else
 			{
 				var fullName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-				folder = System.IO.Path.GetDirectoryName(fullName);
+				if (string.IsNullOrEmpty(folder))
+					folder = System.IO.Path.GetDirectoryName(fullName);
 				fileName = System.IO.Path.GetFileNameWithoutExtension(fullName) + ".xml";
 			}
 			// If override file name is set then override the file name.
@@ -95,6 +101,17 @@ namespace JocysCom.ClassLibrary.Configuration
 				fileName = overrideFileName;
 			var path = Path.Combine(folder, fileName);
 			_XmlFile = new FileInfo(path);
+		}
+
+		public string GetLocalSettingsDirectory()
+		{
+			var moduleFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+			var fi = new FileInfo(moduleFileName);
+			var path = Path.Combine(fi.Directory.FullName, System.IO.Path.GetFileNameWithoutExtension(fi.Name));
+			var di = new DirectoryInfo(path);
+			return di.Exists
+				? di.FullName
+				: null;
 		}
 
 
