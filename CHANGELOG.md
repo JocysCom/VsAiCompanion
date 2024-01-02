@@ -1,6 +1,6 @@
 2024-01-02 v1.3.24
 
-- New: Option to set model names manualy.
+- New: Option to set model names manually.
 - New: Allow settings to be stored in the program folder.
 - New: Enable bulk changes to the list items when more than one is selected.
 
