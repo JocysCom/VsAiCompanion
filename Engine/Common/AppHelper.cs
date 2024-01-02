@@ -294,16 +294,39 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-		/// <summary>
-		/// Download models from API service.
-		/// </summary>
-		public static async Task UpdateModelsFromAPI(AiService aiService)
+		public static async Task UpdateModels(AiService aiService)
 		{
-			if (!Global.IsGoodSettings(aiService, true))
-				return;
-			var client = new Client(aiService);
-			var models = await client.GetModels();
-			var modelCodes = models?.Select(x => x.id).ToArray();
+			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+			string[] modelCodes;
+			if (isCtrlDown)
+			{
+				var box = new MessageBoxWindow();
+				box.SetSize(640, 240);
+				var serviceModels = Global.AppSettings.AiModels
+					.Where(x => x.AiServiceId == aiService.Id)
+					.Select(x => x.Name)
+					.Concat(new string[] { aiService.DefaultAiModel })
+					.Distinct()
+					.ToList();
+				var modelsText = string.Join("\r\n", serviceModels);
+				var results = box.ShowPrompt(modelsText, "Set Models");
+				if (results != MessageBoxResult.OK)
+					return;
+				var value = box.MessageTextBox.Text ?? "";
+				modelCodes = value
+					.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+					.Select(x => x.Trim())
+					.ToArray();
+			}
+			else
+			{
+				// Download models from API service.
+				if (!Global.IsGoodSettings(aiService, true))
+					return;
+				var client = new Client(aiService);
+				var models = await client.GetModels();
+				modelCodes = models?.Select(x => x.id).ToArray();
+			}
 			SetModelCodes(aiService, modelCodes);
 		}
 

@@ -40,7 +40,7 @@
 				Grid.Column="3"
 				Margin="3,0,3,0"
 				Click="ModelRefreshButton_Click"
-				ToolTip="Refresh Models">
+				ToolTip="Click to refresh. Use CTRL+Click to set manually.">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" />
 				</StackPanel>

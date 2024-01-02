@@ -1,4 +1,4 @@
-2023-12-18 v1.3.23
+2024-01-02 v1.3.24
 
 - New: Option to set model names manualy.
 - New: Allow settings to be stored in the program folder.

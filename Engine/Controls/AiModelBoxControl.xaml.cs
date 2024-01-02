@@ -46,14 +46,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (_item == null)
 				return;
-				AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
+			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
 
 		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (_item == null)
 				return;
-			await AppHelper.UpdateModelsFromAPI(_item.AiService);
+			await AppHelper.UpdateModels(_item.AiService);
 		}
 
 		public BindingList<string> AiModels { get; set; } = new BindingList<string>();
