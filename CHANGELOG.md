@@ -1,3 +1,7 @@
+2024-01-17 v1.3.26
+
+- Add "Maximize" and "Restore" buttons to the message and instructions textbox.
+
 2024-01-02 v1.3.24
 
 - New: Option to set model names manually.

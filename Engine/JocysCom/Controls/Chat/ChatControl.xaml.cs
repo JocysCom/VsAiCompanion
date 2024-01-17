@@ -1,7 +1,9 @@
-﻿using System.Windows.Controls;
-using System.Windows.Input;
-using System;
+﻿using System;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace JocysCom.ClassLibrary.Controls.Chat
 {
@@ -18,7 +20,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			UpdateControlButtons();
 			UpdateButtons();
 		}
-		
+
 		public void FocusDataTextBox()
 		{
 			Dispatcher.BeginInvoke(new Action(() =>
@@ -179,6 +181,8 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 
 		private void UpdateMaxSize()
 		{
+			if (SuspendUpdateMaxSize)
+				return;
 			var maxHeight = ActualHeight;
 			DataInstructionsTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
 			DataTextBox.MaxHeight = Math.Round(maxHeight * 0.4);
@@ -198,6 +202,86 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 				OnStop?.Invoke(sender, e);
 			}
 		}
+
+		#region Maximize/Restore TextBox
+
+		private void ExpandInstructionsButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			ExpandButton(InstructionsGrid, DataInstructionsTextBox, ExpandInstructionsButton, ExpandInstructionsButtonContent);
+		}
+
+		private void ExpandMessageButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			ExpandButton(MessageInputGrid, DataTextBox, ExpandMessageButton, ExpandMessageButtonContent);
+		}
+
+		private void DataInstructionsTextBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			if (e.OriginalSource is ScrollViewer sv)
+			{
+				var isVisible = sv.ComputedVerticalScrollBarVisibility == Visibility.Visible;
+				ExpandInstructionsButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+				ExpandInstructionsButton.Margin = new Thickness(3, 3, 3 + SystemParameters.VerticalScrollBarWidth, 3);
+			}
+		}
+
+		private void DataTextBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			if (e.OriginalSource is ScrollViewer sv)
+			{
+				var isVisible = sv.ComputedVerticalScrollBarVisibility == Visibility.Visible;
+				ExpandMessageButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+				ExpandMessageButton.Margin = new Thickness(3, 3, 3 + SystemParameters.VerticalScrollBarWidth, 3);
+			}
+		}
+
+		public bool SuspendUpdateMaxSize;
+		public int MaximizedControl;
+
+		FrameworkElement _prevParent;
+		FrameworkElement _prevElement;
+		int _prevIndex;
+
+		public void ExpandButton(FrameworkElement element, TextBox textBox, Button button, ContentControl buttonContent)
+		{
+			if (_prevElement == null)
+			{
+				SuspendUpdateMaxSize = true;
+				textBox.MaxHeight = double.MaxValue;
+				MainGrid.Visibility = Visibility.Collapsed;
+				Maximize(element, ControlGrid);
+				buttonContent.Content = Resources["Icon_Minimize"];
+			}
+			else
+			{
+				SuspendUpdateMaxSize = false;
+				MainGrid.Visibility = Visibility.Visible;
+				Restore(_prevElement);
+				buttonContent.Content = Resources["Icon_Maximize"];
+			}
+		}
+
+		private void Maximize(FrameworkElement element, Panel parent)
+		{
+			_prevParent = VisualTreeHelper.GetParent(element) as FrameworkElement;
+			if (_prevParent is Panel panel)
+				_prevIndex = panel.Children.IndexOf(element);
+			Panel parentPanel = element.Parent as Panel;
+			parentPanel.Children.Remove(element);
+			parent.Children.Add(element);
+			_prevElement = element;
+		}
+
+		private void Restore(FrameworkElement element)
+		{
+			var currentParent = element.Parent as Panel;
+			currentParent.Children.Remove(element);
+			if (_prevParent is Panel panel)
+				panel.Children.Insert(_prevIndex, element);
+			_prevElement = null;
+		}
+
+		#endregion
 
 	}
 
