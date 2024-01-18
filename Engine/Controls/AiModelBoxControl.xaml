@@ -4,6 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	mc:Ignorable="d">
@@ -21,7 +22,7 @@
 			Grid.Row="0"
 			Grid.Column="1"
 			VerticalAlignment="Center"
-			Content="Service" />
+			Content="{x:Static locales:Resources.Service}" />
 		<ComboBox
 			Name="AiCompanionComboBox"
 			x:FieldModifier="public"
@@ -29,7 +30,7 @@
 			SelectedValue="{Binding AiServiceId}"
 			SelectedValuePath="Id"
 			SelectionChanged="AiCompanionComboBox_SelectionChanged" />
-		<Label VerticalAlignment="Center" Content="Model" />
+		<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Model}" />
 		<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
 		<Button
 			Name="ModelRefreshButton"
@@ -37,7 +38,7 @@
 			Grid.Column="3"
 			Margin="3,0,3,0"
 			Click="ModelRefreshButton_Click"
-			ToolTip="Click to refresh. Use CTRL+Click to set manually.">
+			ToolTip="{x:Static locales:Resources.ModelRefreshButton_ToolTip}">
 			<StackPanel>
 				<ContentControl Content="{StaticResource Icon_Refresh}" />
 			</StackPanel>
