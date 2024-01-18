@@ -220,7 +220,8 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			if (e.OriginalSource is ScrollViewer sv)
 			{
 				var isVisible = sv.ComputedVerticalScrollBarVisibility == Visibility.Visible;
-				ExpandInstructionsButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+				var isMax = _prevElement == InstructionsGrid;
+				ExpandInstructionsButton.Visibility = isVisible || isMax ? Visibility.Visible : Visibility.Collapsed;
 				ExpandInstructionsButton.Margin = new Thickness(3, 3, 3 + SystemParameters.VerticalScrollBarWidth, 3);
 			}
 		}
@@ -230,7 +231,8 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			if (e.OriginalSource is ScrollViewer sv)
 			{
 				var isVisible = sv.ComputedVerticalScrollBarVisibility == Visibility.Visible;
-				ExpandMessageButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+				var isMax = _prevElement == MessageInputGrid;
+				ExpandMessageButton.Visibility = isVisible || isMax ? Visibility.Visible : Visibility.Collapsed;
 				ExpandMessageButton.Margin = new Thickness(3, 3, 3 + SystemParameters.VerticalScrollBarWidth, 3);
 			}
 		}
@@ -258,6 +260,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 				MainGrid.Visibility = Visibility.Visible;
 				Restore(_prevElement);
 				buttonContent.Content = Resources["Icon_Maximize"];
+				UpdateMaxSize();
 			}
 		}
 
