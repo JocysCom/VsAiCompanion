@@ -1,0 +1,73 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACo1WbWsbRxD+Xuh/2B4UWpD39v1FthrIJQ0FuQ3Uaam/udJFvka+M5JiOf31fWb2&#xD;
+JNnUhRqj2+d2dt6emdm7ePV4txYP7WbbDf2s0lJVou0Xw7LrV7Pqw9WPZ6kS291Nv7xZD307q/qh&#xD;
+evXD119dfPPml+bqj/dvxfZhJd5/eD3/qRHVWV3/bpu6fnP1Rvz62zuhpa7rtz9Xorrd7e6ndb3f&#xD;
+7+XeymGzqt9tbu5vu8W2hmBNgjhUQ5nWcrlbVmSDVO+75e4Wjin1bSVu2251uzugh67dvx4eZ5US&#xD;
+ShiH/+ppJLoSiK3fzl4wbpRSZGwUmT6uu/7TS4I651zzLotOt/c3C2ThftNu281DezgP0H18dp7f&#xD;
+yMVwV1P+vqxx6GO3Xp9tPq/bafvQ9sNyeb5Yd/fP32x3m+FTewaD7V9D1083w+f++Pau27WbdYfH&#xD;
+1JxThgT+LlaiW86qbjH0h1f8+v5mdyuwcamzVFFPyqPRXuqYJsbIHLxIMhl7AE5mk49yUtkwKdLg&#xD;
+UVk/YeFRin+bcpx3xah4BMVmkSrqx+MjYOl4kCuP62eZmm5Wf34XsKchHe3355y+Afnvdl+mShp/&#xD;
+XtUvB2wmuvEyw2Ut9IRXeGrT4CdJFYIou3AHssY25S1hCqeI0Mo0+B3PFxEohPbrSx1k8pMsU45z&#xD;
+WjtNYG6UzE+WPtEyIAVIS4Y7SjqrBZBOEZFJa+0RGalVaE4ohiJp4LWV1sMlUgmGHF6OthwhU1yI&#xD;
+p7X3LNVgnXXk8xRDKCegWz8BKofmgOBSAC1Aqrjrwf4pVgTuZUSEMO5ymgN5g2pS0mdY9jIo3oMS&#xD;
+UqmIu0xxkRIbkdKIA4ZQUCgWiHhOYDBIa6CYLDSUlTHwPEitUwMlxiFykKDhepRBw9ksg8/imUfM&#xD;
+jA9pgjOwaCdQTRIZEaDkHGKDyzpMrIzRkcfOGQAfMrvvHUDwDZkwHgXsFRIA6ygXuEIUaBCJyEcz&#xD;
+nBFt9YG/E4oWcQIpx/mnqD2ag1nSiJBRoSzJHP1xCbUsEqm/ci7sOerVkFmxiSeglW5GULiDAg21&#xD;
+yIYLBGIg6pImzYVGtmxOKy7ShC4ASLmwLg5xQCnn7BTi9WWUlko0zKN0hUPbIF++sGthVSHzRDz7&#xD;
+4zyaDEqVgw8eWQUAfwAWnlLtINQgnSmUpoAZEykg0iOIKDPWwRzc5FQsFxeuL6EFTmMDLZFQVZ7Y&#xD;
+dIFNRaLZUx6Vp0GgQQIcxUkqC3jviEorE4hIDaxi5BHLqBxD3GuakEf115eogwzBDKXQhsLiBqFd&#xD;
+6i4FT1GHIBC1BJAdAUvrRCngYYiEUq0bmag8DEdNAEm2KK3ER0CMxYDj8y4yoJkNAtHSCC9R/QZi&#xD;
+yfEO+wL3TUA4xUliCeXOlaQoXxrquMIskhGOS1Q/idgGTiTDtRZwlcpERYRa8+YEMMKaEdDoQjcc&#xD;
+x4RJIEqV0RfZBFcV2Q3usPIWq6wcigUzh8/BViz+QGM6rFFnOjRHEGEKYHQPpDwNDQ2IyKlu0VJY&#xD;
+8cxQCf3vqG2oinzGlKC2jlxttLYBHGhODbdXZjTmOllGHhcGCCqShsYiuNMFAYBhdCoLQgkQRhIr&#xD;
+AXsocHjEUx+UY6ih86gFUhKo8GzYq5QBDE1ddpiIoxYoYXBA/+dG5M+Hfuj/bjfDf96IqFgkHJR7&#xD;
+N+df6jS8Qmd4uggd7t8yGnHbMELGwBqJpaa8oDsb2/jMImFc5zhJQkfNL3gL3Zgb1vzr9lbh5OtF&#xD;
+vaKvPfoew/Mf/3uw6pIKAAA=</IconData>
+  <Name>Code - Localize XAML</Name>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4-1106-preview</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TemplateName>Convert - KnockoutJS to Angular</TemplateName>
+  <TextInstructions>You are a code assistant tasked with localization of XAML files. When given a XAML file, you'll:&#xD;
+&#xD;
+1. Identify and parse hardcoded strings in a XAML file.&#xD;
+2. Generate resource entries for each string.&#xD;
+3. Replace hardcoded strings with resource references in the XAML.&#xD;
+4. You must reply with: &#xD;
+&#xD;
+    - FULL content of localized XAML file.&#xD;
+    - &lt;data&gt; items to add to Resources.resx file.&#xD;
+&#xD;
+Resource keys must be clear and contextually descriptive, formatted by replacing non-alphanumeric characters with underscores (_) and trimming to a sensible length.&#xD;
+&#xD;
+Example:&#xD;
+&#xD;
+Original XAML snippet:&#xD;
+```XAML&#xD;
+&lt;Label Content="My Settings" /&gt;&#xD;
+```&#xD;
+&#xD;
+Localized XAML output:&#xD;
+```XAML&#xD;
+&lt;Label Content="{x:Static locales:Resources.My_Settings}" /&gt;&#xD;
+```&#xD;
+&#xD;
+Resources.resx entry:&#xD;
+```XML&#xD;
+&lt;data name="My_Settings" xml:space="preserve"&gt;&#xD;
+  &lt;value&gt;My Settings&lt;/value&gt;&#xD;
+&lt;/data&gt;&#xD;
+```</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+</TemplateItem>
