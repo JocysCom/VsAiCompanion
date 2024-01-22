@@ -1,8 +1,9 @@
-2024-01-17 v1.3.26
+2024-01-22 v1.3.27
 
-- Add "Maximize" and "Restore" buttons to the message and instructions textbox.
+- New: "Maximize" and "Restore" buttons to the message and instructions textbox.
+- New: Added new "Code - Localize XAML" template.
 
-2024-01-02 v1.3.24
+- 2024-01-02 v1.3.24
 
 - New: Option to set model names manually.
 - New: Allow settings to be stored in the program folder.

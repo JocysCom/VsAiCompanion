@@ -61,6 +61,87 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Axialis Icon Set Licenses.
+        /// </summary>
+        public static string Axialis_Icon_Set_Licenses {
+            get {
+                return ResourceManager.GetString("Axialis_Icon_Set_Licenses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changes.
+        /// </summary>
+        public static string Changes {
+            get {
+                return ResourceManager.GetString("Changes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Company Product.
+        /// </summary>
+        public static string Company_Product {
+            get {
+                return ResourceManager.GetString("Company_Product", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GitHub Project.
+        /// </summary>
+        public static string GitHub_Project {
+            get {
+                return ResourceManager.GetString("GitHub_Project", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IconExperience License.
+        /// </summary>
+        public static string IconExperience_License {
+            get {
+                return ResourceManager.GetString("IconExperience_License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jocys.com.
+        /// </summary>
+        public static string Jocys_com_Label {
+            get {
+                return ResourceManager.GetString("Jocys_com_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to License.
+        /// </summary>
+        public static string License {
+            get {
+                return ResourceManager.GetString("License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Market Place.
+        /// </summary>
+        public static string Market_Place {
+            get {
+                return ResourceManager.GetString("Market_Place", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Model.
         /// </summary>
         public static string Model {
