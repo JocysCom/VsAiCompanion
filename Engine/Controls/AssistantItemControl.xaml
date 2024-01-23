@@ -5,6 +5,7 @@
 	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="320"
@@ -73,7 +74,7 @@
 				Grid.Row="0"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="Data Folder" />
+				Content="{x:Static locales:Resources.Data_Folder}" />
 			<TextBox
 				Name="DataFolderTextBox"
 				Grid.Row="0"
@@ -88,7 +89,7 @@
 				Click="OpenButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
-					<Label Content="Open..." />
+					<Label Content="{x:Static locales:Resources.Open}" />
 				</StackPanel>
 			</Button>
 			<!--  System message content  -->
@@ -96,7 +97,7 @@
 				Grid.Row="1"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="System Message" />
+				Content="{x:Static locales:Resources.System_Message}" />
 			<TextBox
 				Name="SystemMessageTextBox"
 				Grid.Row="1"
@@ -137,7 +138,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Question}" />
-						<Label Content="Help" />
+						<Label Content="{x:Static locales:Resources.Help}" />
 					</StackPanel>
 				</TabItem.Header>
 				<RichTextBox x:Name="HelpRichTextBox">
@@ -159,7 +160,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_folder_open_doc}" />
-						<Label Content="1. Source Files" />
+						<Label Content="{x:Static locales:Resources.Source_Files}" />
 					</StackPanel>
 				</TabItem.Header>
 			</TabItem>
@@ -167,12 +168,10 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_user_group}" />
-						<Label Content="1. Assitants" />
+						<Label Content="{x:Static locales:Resources.Assistants}" />
 					</StackPanel>
 				</TabItem.Header>
 			</TabItem>
-
-
 		</TabControl>
 	</Grid>
 </UserControl>

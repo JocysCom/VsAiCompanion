@@ -61,6 +61,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add New.
+        /// </summary>
+        public static string Add_New {
+            get {
+                return ResourceManager.GetString("Add_New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1. Assistants.
+        /// </summary>
+        public static string Assistants {
+            get {
+                return ResourceManager.GetString("Assistants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Axialis Icon Set Licenses.
         /// </summary>
         public static string Axialis_Icon_Set_Licenses {
@@ -88,11 +106,47 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Data Folder.
+        /// </summary>
+        public static string Data_Folder {
+            get {
+                return ResourceManager.GetString("Data_Folder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default AI Model.
+        /// </summary>
+        public static string Default_AI_Model {
+            get {
+                return ResourceManager.GetString("Default_AI_Model", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
             }
         }
         
@@ -106,11 +160,38 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IconExperience License.
         /// </summary>
         public static string IconExperience_License {
             get {
                 return ResourceManager.GetString("IconExperience_License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Azure OpenAI.
+        /// </summary>
+        public static string Is_Azure_OpenAI {
+            get {
+                return ResourceManager.GetString("Is_Azure_OpenAI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Default AI Service.
+        /// </summary>
+        public static string Is_Default_AI_Service {
+            get {
+                return ResourceManager.GetString("Is_Default_AI_Service", resourceCulture);
             }
         }
         
@@ -151,11 +232,83 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click to refresh. Use CTRL+Click to set manually..
+        ///   Looks up a localized string similar to Model Filter.
+        /// </summary>
+        public static string Model_Filter {
+            get {
+                return ResourceManager.GetString("Model_Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to refresh models. Use CTRL+Click to set manually..
         /// </summary>
         public static string ModelRefreshButton_ToolTip {
             get {
                 return ResourceManager.GetString("ModelRefreshButton_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open....
+        /// </summary>
+        public static string Open {
+            get {
+                return ResourceManager.GetString("Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open AI Base URL.
+        /// </summary>
+        public static string Open_AI_Base_URL {
+            get {
+                return ResourceManager.GetString("Open_AI_Base_URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenAI API Key.
+        /// </summary>
+        public static string OpenAI_API_Key {
+            get {
+                return ResourceManager.GetString("OpenAI_API_Key", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenAI API Organization ID.
+        /// </summary>
+        public static string OpenAI_API_Organization_ID {
+            get {
+                return ResourceManager.GetString("OpenAI_API_Organization_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Response Streaming.
+        /// </summary>
+        public static string Response_Streaming {
+            get {
+                return ResourceManager.GetString("Response_Streaming", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Response Timeout.
+        /// </summary>
+        public static string Response_Timeout {
+            get {
+                return ResourceManager.GetString("Response_Timeout", resourceCulture);
             }
         }
         
@@ -165,6 +318,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Service {
             get {
                 return ResourceManager.GetString("Service", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1. Source Files.
+        /// </summary>
+        public static string Source_Files {
+            get {
+                return ResourceManager.GetString("Source_Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System Message.
+        /// </summary>
+        public static string System_Message {
+            get {
+                return ResourceManager.GetString("System_Message", resourceCulture);
             }
         }
     }
