@@ -106,6 +106,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create an Assistant Task from Model.
+        /// </summary>
+        public static string Create_an_Assistant_Task_from_Model {
+            get {
+                return ResourceManager.GetString("Create_an_Assistant_Task_from_Model", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created.
+        /// </summary>
+        public static string Created {
+            get {
+                return ResourceManager.GetString("Created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Data Folder.
         /// </summary>
         public static string Data_Folder {
@@ -174,6 +192,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string IconExperience_License {
             get {
                 return ResourceManager.GetString("IconExperience_License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id.
+        /// </summary>
+        public static string Id {
+            get {
+                return ResourceManager.GetString("Id", resourceCulture);
             }
         }
         
@@ -259,6 +286,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Object.
+        /// </summary>
+        public static string Object {
+            get {
+                return ResourceManager.GetString("Object", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open....
         /// </summary>
         public static string Open {
@@ -291,6 +327,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string OpenAI_API_Organization_ID {
             get {
                 return ResourceManager.GetString("OpenAI_API_Organization_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Owner.
+        /// </summary>
+        public static string Owner {
+            get {
+                return ResourceManager.GetString("Owner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string Refresh {
+            get {
+                return ResourceManager.GetString("Refresh", resourceCulture);
             }
         }
         
