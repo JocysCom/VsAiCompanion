@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls.Chat;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -172,7 +173,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		public BindingList<string> Attachments { get => _Attachments; set => SetProperty(ref _Attachments, value); }
+		BindingList<string> _Attachments;
 
+		#region Selections
+
+		public List<string> AttachmentsSelection { get => _AttachmentsDataSelection; set => SetProperty(ref _AttachmentsDataSelection, value); }
+		List<string> _AttachmentsDataSelection;
+
+		#endregion
 
 
 	}

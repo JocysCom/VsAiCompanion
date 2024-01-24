@@ -38,6 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public List<string> FineTuningModelListSelection { get => _FineTuningModelListSelection; set => SetProperty(ref _FineTuningModelListSelection, value); }
 		List<string> _FineTuningModelListSelection;
+
 		#endregion
 
 	}

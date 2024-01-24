@@ -5,6 +5,7 @@
 		Create,
 		Insert,
 		Delete,
+		Remove,
 		Upload,
 		Update,
 		Cancel,
