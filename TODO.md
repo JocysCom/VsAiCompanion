@@ -8,4 +8,5 @@
 - Add: Add support for file attachments in messages (embedded content or uploads).
 - Add: Option for AI to monitor messages and provide tooltips.
 - Add: Option for AI to utilize `System.Windows.Automation` tools to enhance its capabilities.
-- Add: Pption for AI to generate and execute PS1/C# code with the user's approval.
+- Add: Option for AI to generate and execute PS1/C# code with the user's approval.
+- Add: Option for perpetual, autonomous cycle of data acquisition, processing, and model improvement.
