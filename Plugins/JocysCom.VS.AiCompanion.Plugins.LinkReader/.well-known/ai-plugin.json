@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Link Reader",
+  "name_for_model": "link_reader",
+  "description_for_human": "Read any links: webpage, youtube, PDF, PPT, image, Word doc etc; OCR image; Search & browse web.",
+  "description_for_model": "This plugin reads web links and and returns the output.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "/swagger/v1/swagger.json"
+  },
+  "logo_url": "/logo.png",
+  "contact_email": "support@jocys.com",
+  "legal_info_url": "/legal"
+}
