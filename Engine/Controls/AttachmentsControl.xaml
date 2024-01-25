@@ -5,6 +5,7 @@
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:converters="clr-namespace:JocysCom.VS.AiCompanion.Engine.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="270"
@@ -49,10 +50,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="AddButton_Click"
-				ToolTip="Add New">
+				ToolTip="{x:Static locales:Resources.Add}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-					<Label x:Name="AddButtonLabel" Content="Add..." />
+					<Label x:Name="AddButtonLabel" Content="{x:Static locales:Resources.Add}" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -61,10 +62,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="RemoveButton_Click"
-				ToolTip="Delete">
+				ToolTip="{x:Static locales:Resources.Delete}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-					<Label x:Name="RemoveButtonLabel" Content="Delete" />
+					<Label x:Name="RemoveButtonLabel" Content="{x:Static locales:Resources.Delete}" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -80,10 +81,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="RefreshButton_Click"
-				ToolTip="Refresh">
+				ToolTip="{x:Static locales:Resources.Refresh}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
-					<Label x:Name="RefreshButtonLabel" Content="Refresh" />
+					<Label x:Name="RefreshButtonLabel" Content="{x:Static locales:Resources.Refresh}" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -106,9 +107,9 @@
 			SelectionMode="Extended">
 			<DataGrid.ContextMenu>
 				<ContextMenu>
-					<MenuItem Click="MainDataGrid_ContextMenu_Copy" Header="Copy" />
-					<MenuItem Click="MainDataGrid_ContextMenu_CopyWithHeaders" Header="Copy with Headers" />
-					<MenuItem Click="MainDataGrid_ContextMenu_CopyIdFileName" Header="Copy: Id, File Name" />
+					<MenuItem Click="MainDataGrid_ContextMenu_Copy" Header="{x:Static locales:Resources.Copy}" />
+					<MenuItem Click="MainDataGrid_ContextMenu_CopyWithHeaders" Header="{x:Static locales:Resources.Copy_with_Headers}" />
+					<MenuItem Click="MainDataGrid_ContextMenu_CopyIdFileName" Header="{x:Static locales:Resources.Copy_Id_File_Name}" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
@@ -162,14 +163,14 @@
 					Binding="{Binding status}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Status" />
+					Header="{x:Static locales:Resources.Status}" />
 				<DataGridTextColumn
 					x:Name="FileNameColumn"
 					Width="Auto"
 					Binding="{Binding Id}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="File Name" />
+					Header="{x:Static locales:Resources.File_Name}" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />

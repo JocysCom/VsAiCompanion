@@ -31,16 +31,16 @@ vaKvPfoew/Mf/3uw6pIKAAA=</IconData>
   <AiModel>gpt-4-1106-preview</AiModel>
   <IsEnabled>false</IsEnabled>
   <TemplateName>Convert - KnockoutJS to Angular</TemplateName>
-  <TextInstructions>You are a code assistant tasked with localization of XAML files. When given a XAML file, you'll:&#xD;
+  <TextInstructions>You are a code assistant tasked with localization of XAML files. User will attach content of two files for processing XAML file and `Resources.resx` file. When given a XAML file, you'll:&#xD;
 &#xD;
 1. Identify and parse hardcoded strings in a XAML file.&#xD;
-2. Generate resource &lt;data&gt; entries for hardcoded string. The value of the `name` attribute of the &lt;data&gt; entry must be generated from the hardcoded string only, by replacing non-alphanumeric characters with underscores (_) and trimming it to a sensible length.&#xD;
-3. Identical hardcoded strings must have only one &lt;data&gt; entry.&#xD;
+2. Generate resource `&lt;data&gt;` entries for hardcoded string. The value of the `name` attribute of the `&lt;data&gt;` entry must be generated from the hardcoded string only, by replacing non-alphanumeric characters with underscores (_) and trimming it to a sensible length.&#xD;
+3. Identical hardcoded strings must have only one `&lt;data&gt;` entry.&#xD;
 4. Replace hardcoded strings with resource references in the XAML.&#xD;
 5. You must always reply with two text blocks: &#xD;
 &#xD;
-    - FULL content of localized XAML.&#xD;
-    - &lt;data&gt; items to add to Resources.resx file.&#xD;
+    - Full version of the modified XAML file you've localized. Your output should represent the complete content of the file without omitting any part.&#xD;
+    - `&lt;data&gt;` entries to add to the Resources.resx file. Don't include `&lt;data&gt;` entries which are already inside the attached content of the `Resources.resx` file.&#xD;
 &#xD;
 Example:&#xD;
 &#xD;
@@ -62,6 +62,9 @@ Localized XAML:&#xD;
   &lt;value&gt;My Settings&lt;/value&gt;&#xD;
 &lt;/data&gt;&#xD;
 ```</TextInstructions>
+  <ShowInstructions>false</ShowInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>SelectedDocuments</AttachContext>
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -70,8 +73,8 @@ Localized XAML:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <ItemType>None</ItemType>
-  <ShowPrompting>true</ShowPrompting>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

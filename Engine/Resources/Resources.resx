@@ -180,6 +180,9 @@ value   : The object must be serialized into a byte array
 	<data name="Response_Timeout" xml:space="preserve">
 <value>Response Timeout</value>
 </data>
+	<data name="Add" xml:space="preserve">
+<value>Add...</value>
+</data>
 	<data name="Add_New" xml:space="preserve">
 <value>Add New</value>
 </data>
@@ -192,22 +195,10 @@ value   : The object must be serialized into a byte array
 	<data name="Name" xml:space="preserve">
 <value>Name</value>
 </data>
-	<data name="Data_Folder" xml:space="preserve">
-<value>Data Folder</value>
-</data>
-	<data name="Open" xml:space="preserve">
-<value>Open...</value>
-</data>
-	<data name="System_Message" xml:space="preserve">
-<value>System Message</value>
-</data>
 	<data name="Help" xml:space="preserve">
 <value>Help</value>
 </data>
-	<data name="Source_Files" xml:space="preserve">
-<value>1. Source Files</value>
-</data>
-	<data name="Assistants" xml:space="preserve">
+	<data name="_1_Assistants" xml:space="preserve">
 <value>1. Assistants</value>
 </data>
 	<data name="Create_an_Assistant_Task_from_Model" xml:space="preserve">
@@ -228,4 +219,45 @@ value   : The object must be serialized into a byte array
 	<data name="Owner" xml:space="preserve">
 <value>Owner</value>
 </data>
+	<data name="Copy" xml:space="preserve">
+  <value>Copy</value>
+</data>
+	<data name="Copy_with_Headers" xml:space="preserve">
+  <value>Copy with Headers</value>
+</data>
+	<data name="Copy_Id_File_Name" xml:space="preserve">
+  <value>Copy: Id, File Name</value>
+</data>
+	<data name="Status" xml:space="preserve">
+  <value>Status</value>
+</data>
+	<data name="File_Name" xml:space="preserve">
+  <value>File Name</value>
+</data>
+
+	<data name="Data_Folder" xml:space="preserve">
+  <value>Data Folder</value>
+</data>
+	<data name="Open" xml:space="preserve">
+  <value>Open...</value>
+</data>
+	<data name="System_Message" xml:space="preserve">
+  <value>System Message</value>
+</data>
+	<data name="_1_Source_Files" xml:space="preserve">
+  <value>1. Source Files</value>
+</data>
+	<data name="_2_Tuning_Files" xml:space="preserve">
+  <value>2. Tuning Files</value>
+</data>
+	<data name="_3_Remote_Files" xml:space="preserve">
+  <value>3. Remote Files</value>
+</data>
+	<data name="_4_Tuning_Jobs" xml:space="preserve">
+  <value>4. Tuning Jobs</value>
+</data>
+	<data name="_5_Models" xml:space="preserve">
+  <value>5. Models</value>
+</data>
+
 </root>

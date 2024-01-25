@@ -160,7 +160,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_folder_open_doc}" />
-						<Label Content="{x:Static locales:Resources.Source_Files}" />
+						<Label Content="{x:Static locales:Resources._1_Source_Files}" />
 					</StackPanel>
 				</TabItem.Header>
 			</TabItem>
@@ -168,7 +168,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_user_group}" />
-						<Label Content="{x:Static locales:Resources.Assistants}" />
+						<Label Content="{x:Static locales:Resources._1_Assistants}" />
 					</StackPanel>
 				</TabItem.Header>
 			</TabItem>

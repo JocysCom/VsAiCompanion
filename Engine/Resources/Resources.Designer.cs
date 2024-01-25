@@ -61,20 +61,74 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 1. Assistants.
+        /// </summary>
+        public static string _1_Assistants {
+            get {
+                return ResourceManager.GetString("_1_Assistants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1. Source Files.
+        /// </summary>
+        public static string _1_Source_Files {
+            get {
+                return ResourceManager.GetString("_1_Source_Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2. Tuning Files.
+        /// </summary>
+        public static string _2_Tuning_Files {
+            get {
+                return ResourceManager.GetString("_2_Tuning_Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3. Remote Files.
+        /// </summary>
+        public static string _3_Remote_Files {
+            get {
+                return ResourceManager.GetString("_3_Remote_Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 4. Tuning Jobs.
+        /// </summary>
+        public static string _4_Tuning_Jobs {
+            get {
+                return ResourceManager.GetString("_4_Tuning_Jobs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 5. Models.
+        /// </summary>
+        public static string _5_Models {
+            get {
+                return ResourceManager.GetString("_5_Models", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add....
+        /// </summary>
+        public static string Add {
+            get {
+                return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add New.
         /// </summary>
         public static string Add_New {
             get {
                 return ResourceManager.GetString("Add_New", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 1. Assistants.
-        /// </summary>
-        public static string Assistants {
-            get {
-                return ResourceManager.GetString("Assistants", resourceCulture);
             }
         }
         
@@ -102,6 +156,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Company_Product {
             get {
                 return ResourceManager.GetString("Company_Product", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        public static string Copy {
+            get {
+                return ResourceManager.GetString("Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy: Id, File Name.
+        /// </summary>
+        public static string Copy_Id_File_Name {
+            get {
+                return ResourceManager.GetString("Copy_Id_File_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy with Headers.
+        /// </summary>
+        public static string Copy_with_Headers {
+            get {
+                return ResourceManager.GetString("Copy_with_Headers", resourceCulture);
             }
         }
         
@@ -165,6 +246,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Edit {
             get {
                 return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File Name.
+        /// </summary>
+        public static string File_Name {
+            get {
+                return ResourceManager.GetString("File_Name", resourceCulture);
             }
         }
         
@@ -376,11 +466,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1. Source Files.
+        ///   Looks up a localized string similar to Status.
         /// </summary>
-        public static string Source_Files {
+        public static string Status {
             get {
-                return ResourceManager.GetString("Source_Files", resourceCulture);
+                return ResourceManager.GetString("Status", resourceCulture);
             }
         }
         
