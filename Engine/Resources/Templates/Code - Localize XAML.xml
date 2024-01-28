@@ -28,7 +28,7 @@ N+df6jS8Qmd4uggd7t8yGnHbMELGwBqJpaa8oDsb2/jMImFc5zhJQkfNL3gL3Zgb1vzr9lbh5OtF&#xD
 vaKvPfoew/Mf/3uw6pIKAAA=</IconData>
   <Name>Code - Localize XAML</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4-1106-preview</AiModel>
+  <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TemplateName>Convert - KnockoutJS to Angular</TemplateName>
   <TextInstructions>You are a code assistant tasked with localization of XAML files. User will attach content of two files for processing XAML file and `Resources.resx` file. When given a XAML file, you'll:&#xD;
@@ -64,7 +64,7 @@ Localized XAML:&#xD;
 ```</TextInstructions>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
-  <AttachContext>SelectedDocuments</AttachContext>
+  <AttachContext>OpenDocuments</AttachContext>
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
