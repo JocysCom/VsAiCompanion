@@ -359,7 +359,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							prompt = ClientHelper.JoinMessageParts(prompts),
 							temperature = (float)creativity,
 							stream = Service.ResponseStreaming,
-							max_tokens = GetMaxTokens(modelName),
+							max_tokens = GetMaxInputTokens(modelName),
 
 						};
 						var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
@@ -417,7 +417,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							model = modelName,
 							temperature = (float)creativity,
 							stream = Service.ResponseStreaming,
-							max_tokens = GetMaxTokens(modelName),
+							max_tokens = GetMaxInputTokens(modelName),
 						};
 						request.messages = messages.Select(x => new chat_completion_message()
 						{
@@ -450,22 +450,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return modelName.Contains("davinci") || modelName.Contains("instruct");
 		}
 
-		public static int GetMaxTokens(string modelName)
+		public static int GetMaxInputTokens(string modelName)
 		{
 			modelName = modelName.ToLowerInvariant();
-			if (modelName.Contains("-128k") || modelName.Contains("gpt-4-1106"))
+			// All GPT-4 preview models support 128K tokens (2024-01-28).
+			if (modelName.Contains("-128k") || (modelName.Contains("gpt-4") && modelName.Contains("preview")))
 				return 128 * 1024;
 			if (modelName.Contains("-64k"))
 				return 64 * 1024;
 			if (modelName.Contains("-32k"))
 				return 32 * 1024;
-			if (modelName.Contains("-16k"))
+			if (modelName.Contains("-16k") || modelName.Contains("gpt-3.5-turbo-1106"))
 				return 16 * 1024;
 			if (modelName.Contains("gpt-4"))
 				return 8192;
-			if (modelName.Contains("gpt-4"))
-				return 8192;
-			if (modelName.Contains("gpt-35-turbo"))
+			if (modelName.Contains("gpt-3.5-turbo"))
 				return 4096;
 			if (modelName.Contains("gpt"))
 				return 4097; // Default for gpt

@@ -292,12 +292,16 @@
 			Clipboard: 1,
 			Selection: 2,
 			ActiveDocument: 4,
+			OpenDocuments: 8192,
 			SelectedDocuments: 8,
 			ActiveProject: 16,
 			SelectedProject: 32,
 			Solution: 64,
-			SelectedError: 128,
 			ChatHistory: 256,
+			Error: 512,
+			ErrorDocument: 1024,
+			Exception: 2048,
+			ExceptionDocuments: 4096,
 		}
 
 		function enumToString(value, enumObject) {

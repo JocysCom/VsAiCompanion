@@ -152,6 +152,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var adAttachment = new MessageAttachments(AttachmentType.ActiveDocument, ad.Language, ad.Data);
 				m.Attachments.Add(adAttachment);
 			}
+			if (at.HasFlag(AttachmentType.OpenDocuments))
+				fileItems.AddRange(Global.GetOpenDocuments());
 			if (at.HasFlag(AttachmentType.SelectedDocuments))
 				fileItems.AddRange(Global.GetSelectedDocuments());
 			if (at.HasFlag(AttachmentType.ActiveProject))
@@ -280,7 +282,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					chatLogMessages.Add(new chat_completion_message(message_role.user, content));
 				}
 			}
-			var maxTokens = Client.GetMaxTokens(item.AiModel);
+			var maxTokens = Client.GetMaxInputTokens(item.AiModel);
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
 			executeBeforeAddMessage?.Invoke();
@@ -341,7 +343,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		public static int GetAvailableTokens(string aiModel, List<chat_completion_message> messages = null, bool useMaximumContext = false)
 		{
-			var maxTokens = Client.GetMaxTokens(aiModel);
+			var maxTokens = Client.GetMaxInputTokens(aiModel);
 			// Split 50%/50% between request and response.
 			var maxRequesTokens = useMaximumContext
 				? maxTokens

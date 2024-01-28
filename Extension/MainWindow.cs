@@ -1,5 +1,4 @@
-﻿using EnvDTE;
-using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine;
 using Microsoft.VisualStudio.Shell;
 using System;
@@ -49,6 +48,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.GetActiveProject = SolutionHelper.GetDocumentsOfProjectOfActiveDocument;
 			Global.GetSelectedProject = SolutionHelper.GetDocumentsOfProjectOfSelectedDocument;
 			Global.GetSelectedDocuments = SolutionHelper.GetDocumentsSelectedInExplorer;
+			Global.GetOpenDocuments = SolutionHelper.GetOpenDocuments;
 			// Get or Set single document.
 			Global.GetActiveDocument = SolutionHelper.GetActiveDocument;
 			Global.SetActiveDocument = SolutionHelper.SetActiveDocument;

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -79,11 +80,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var items = Enum.GetValues(typeof(T))
 				.Cast<AttachmentType>()
+				.OrderBy(x => GetOrder(x))
 				.Select(e => new CheckBoxViewModel
 				{
 					Description = GetDescription(e),
 					Value = e
-				}).ToList();
+				})
+				.ToList();
 			Data.Clear();
 			items.ForEach(e => Data.Add(e));
 			items[0].Description = "None";
@@ -96,6 +99,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var attribute = field.GetCustomAttribute<DescriptionAttribute>();
 			return attribute?.Description ?? value.ToString();
 
+		}
+
+		public static int GetOrder(Enum value)
+		{
+			var field = value.GetType().GetField(value.ToString());
+			var attribute = field.GetCustomAttribute<JsonPropertyOrderAttribute>();
+			return attribute?.Order ?? int.MaxValue;
 		}
 
 		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

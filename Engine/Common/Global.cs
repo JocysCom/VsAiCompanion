@@ -21,6 +21,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static Action<List<DocItem>> SetSelectedProject = (x) => { };
 		public static Func<List<DocItem>> GetSelectedDocuments = () => new List<DocItem>();
 		public static Action<List<DocItem>> SetSelectedDocuments = (x) => { };
+		public static Func<List<DocItem>> GetOpenDocuments = () => new List<DocItem>();
+		public static Action<List<DocItem>> SetOpenDocuments = (x) => { };
 		// Get or Set single document.
 		public static Func<DocItem> GetActiveDocument = () => new DocItem();
 		public static Action<string> SetActiveDocument = (x) => { };

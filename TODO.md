@@ -12,4 +12,3 @@
 - Add: Option for perpetual, autonomous cycle of data acquisition, processing, and model improvement.
 - Add: Option for secondary AI to check and validate actions of primary AI.
 - Add: Enable plugins to respond with any content type (MIME).
-- Add: "Open Documents" support to Attachments.

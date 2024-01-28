@@ -198,6 +198,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						AttachmentType.Clipboard,
 						AttachmentType.Selection,
 						AttachmentType.ActiveDocument,
+						AttachmentType.OpenDocuments,
 						AttachmentType.SelectedDocuments,
 						AttachmentType.ActiveProject,
 						AttachmentType.SelectedProject,

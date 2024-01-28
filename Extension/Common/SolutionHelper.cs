@@ -5,11 +5,9 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
@@ -290,6 +288,48 @@ namespace JocysCom.VS.AiCompanion.Extension
 						items.Add(new DocItem("", file, "Project Item"));
 					}
 				}
+			}
+			LoadData(items);
+			return items;
+		}
+
+		public static List<DocItem> GetOpenDocuments()
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
+			if (dte == null || dte.Documents == null)
+				return new List<DocItem>();
+
+			var items = new List<DocItem>();
+			foreach (Document doc in dte.Documents)
+			{
+				// Initialize DocItem with basic properties
+				var docItem = new DocItem
+				{
+					FullName = doc.FullName,
+					Name = doc.Name,
+					Type = doc.Type,
+					// Assume text until proven otherwise
+					IsText = true
+				};
+				// Attempt to get the ProjectItem associated with the document, if available
+				try
+				{
+					ProjectItem projectItem = doc.ProjectItem;
+					if (projectItem != null)
+					{
+						docItem.Kind = projectItem.Kind;
+						// Attempt to access language via CodeModel
+						var codeModel = projectItem.FileCodeModel;
+						if (codeModel != null)
+							docItem.Language = codeModel.Language;
+					}
+				}
+				catch
+				{
+					// Failed to retrieve ProjectItem or its properties;
+				}
+				items.Add(docItem);
 			}
 			LoadData(items);
 			return items;
