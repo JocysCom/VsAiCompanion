@@ -293,6 +293,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return items;
 		}
 
+		/// <summary>
+		/// Get documents that are open in Visual Studio.
+		/// </summary>
 		public static List<DocItem> GetOpenDocuments()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
@@ -303,6 +306,18 @@ namespace JocysCom.VS.AiCompanion.Extension
 			var items = new List<DocItem>();
 			foreach (Document doc in dte.Documents)
 			{
+				bool hasVisibleWindow = false;
+				foreach (Window win in doc.Windows)
+				{
+					if (win.Visible)
+					{
+						hasVisibleWindow = true;
+						break;
+					}
+				}
+				// If no visible window is associated, skip adding the document
+				if (!hasVisibleWindow)
+					continue;
 				// Initialize DocItem with basic properties
 				var docItem = new DocItem
 				{
@@ -327,7 +342,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				}
 				catch
 				{
-					// Failed to retrieve ProjectItem or its properties;
+					// Failed to retrieve ProjectItem or its properties
 				}
 				items.Add(docItem);
 			}
