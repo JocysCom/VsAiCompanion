@@ -171,6 +171,12 @@ function KillDeveloperTasks {
 	& TaskKill.exe @("/F", "/T", "/IM", "iisexpresstray.exe")
 	# Kill Integrated Development Environment (IDE) for Microsoft's Visual Studio.
 	& TaskKill.exe @("/F", "/T", "/IM", "devenv.exe")
+	# Kill Visual Studio Test Host.
+	& TaskKill.exe @("/F", "/T", "/IM", "testhost.exe")
+	# Kill GIT Cache.
+	& TaskKill.exe @("/F", "/T", "/IM", "TGitCache.exe")
+	# Kill SVN Cache.
+	& TaskKill.exe @("/F", "/T", "/IM", "TSVNCache.exe")
 }
 # ----------------------------------------------------------------------------
 function ClearCache {

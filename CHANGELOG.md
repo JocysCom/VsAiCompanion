@@ -1,4 +1,4 @@
-2024-01-22 v1.3.27
+2024-01-22 v1.3.28
 
 - New: "Maximize" and "Restore" buttons to the message and instructions textbox.
 - New: Added new "Code - Localize XAML" template.
