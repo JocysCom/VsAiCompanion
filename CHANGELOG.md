@@ -1,8 +1,8 @@
 2024-01-28 v1.3.28
 
+- Fix: Maximum token value for preview models.
 - New: "Maximize" and "Restore" buttons to the message and instructions textbox.
 - New: Added new "Code - Localize XAML" template.
-- Fix: Maximum token value for preview models.
 - New: Visual Studio "Open Documents" added to attachment types.
 
 2024-01-02 v1.3.24
