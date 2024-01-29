@@ -133,6 +133,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AI API Services.
+        /// </summary>
+        public static string AI_API_Services {
+            get {
+                return ResourceManager.GetString("AI_API_Services", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow Only One Copy.
+        /// </summary>
+        public static string Allow_Only_One_Copy {
+            get {
+                return ResourceManager.GetString("Allow_Only_One_Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to App Always on Top.
+        /// </summary>
+        public static string App_Always_on_Top {
+            get {
+                return ResourceManager.GetString("App_Always_on_Top", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Axialis Icon Set Licenses.
         /// </summary>
         public static string Axialis_Icon_Set_Licenses {
@@ -142,11 +169,65 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bar Always on Top.
+        /// </summary>
+        public static string Bar_Always_on_Top {
+            get {
+                return ResourceManager.GetString("Bar_Always_on_Top", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bytes.
+        /// </summary>
+        public static string Bytes {
+            get {
+                return ResourceManager.GetString("Bytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel Job.
+        /// </summary>
+        public static string Cancel_Job {
+            get {
+                return ResourceManager.GetString("Cancel_Job", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changes.
         /// </summary>
         public static string Changes {
             get {
                 return ResourceManager.GetString("Changes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chat.
+        /// </summary>
+        public static string Chat {
+            get {
+                return ResourceManager.GetString("Chat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chat_Instructions .
+        /// </summary>
+        public static string Chat_Instructions {
+            get {
+                return ResourceManager.GetString("Chat_Instructions", resourceCulture);
             }
         }
         
@@ -187,6 +268,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create a Job and Model from File.
+        /// </summary>
+        public static string Create_a_Job_and_Model_from_File {
+            get {
+                return ResourceManager.GetString("Create_a_Job_and_Model_from_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create an Assistant Task from Model.
         /// </summary>
         public static string Create_an_Assistant_Task_from_Model {
@@ -201,6 +291,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Created {
             get {
                 return ResourceManager.GetString("Created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data.
+        /// </summary>
+        public static string Data {
+            get {
+                return ResourceManager.GetString("Data", resourceCulture);
             }
         }
         
@@ -241,6 +340,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Details.
+        /// </summary>
+        public static string Details {
+            get {
+                return ResourceManager.GetString("Details", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string Edit {
@@ -250,11 +358,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable Spell Check.
+        /// </summary>
+        public static string Enable_Spell_Check {
+            get {
+                return ResourceManager.GetString("Enable_Spell_Check", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File Name.
         /// </summary>
         public static string File_Name {
             get {
                 return ResourceManager.GetString("File_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Files.
+        /// </summary>
+        public static string Files {
+            get {
+                return ResourceManager.GetString("Files", resourceCulture);
             }
         }
         
@@ -340,6 +466,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minimize on Close.
+        /// </summary>
+        public static string Minimize_on_Close {
+            get {
+                return ResourceManager.GetString("Minimize_on_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimize to Tray.
+        /// </summary>
+        public static string Minimize_to_Tray {
+            get {
+                return ResourceManager.GetString("Minimize_to_Tray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Model.
         /// </summary>
         public static string Model {
@@ -403,6 +547,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open File.
+        /// </summary>
+        public static string Open_File {
+            get {
+                return ResourceManager.GetString("Open_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OpenAI API Key.
         /// </summary>
         public static string OpenAI_API_Key {
@@ -421,6 +574,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Other.
+        /// </summary>
+        public static string Other {
+            get {
+                return ResourceManager.GetString("Other", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Owner.
         /// </summary>
         public static string Owner {
@@ -430,11 +592,74 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paste.
+        /// </summary>
+        public static string Paste {
+            get {
+                return ResourceManager.GetString("Paste", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prompting.
+        /// </summary>
+        public static string Prompting {
+            get {
+                return ResourceManager.GetString("Prompting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purpose.
+        /// </summary>
+        public static string Purpose {
+            get {
+                return ResourceManager.GetString("Purpose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Refresh.
         /// </summary>
         public static string Refresh {
             get {
                 return ResourceManager.GetString("Refresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Application Settings.
+        /// </summary>
+        public static string Reset_Application_Settings {
+            get {
+                return ResourceManager.GetString("Reset_Application_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Prompting Settings.
+        /// </summary>
+        public static string Reset_Prompting_Settings {
+            get {
+                return ResourceManager.GetString("Reset_Prompting_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Settings.
+        /// </summary>
+        public static string Reset_Settings {
+            get {
+                return ResourceManager.GetString("Reset_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Templates Settings.
+        /// </summary>
+        public static string Reset_Templates_Settings {
+            get {
+                return ResourceManager.GetString("Reset_Templates_Settings", resourceCulture);
             }
         }
         
@@ -457,11 +682,74 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search the list.
+        /// </summary>
+        public static string Search_the_list {
+            get {
+                return ResourceManager.GetString("Search_the_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sending Message.
+        /// </summary>
+        public static string Sending_Message {
+            get {
+                return ResourceManager.GetString("Sending_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Service.
         /// </summary>
         public static string Service {
             get {
                 return ResourceManager.GetString("Service", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings Folder.
+        /// </summary>
+        public static string Settings_Folder {
+            get {
+                return ResourceManager.GetString("Settings_Folder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Documents Attached Warning.
+        /// </summary>
+        public static string Show_Documents_Attached_Warning {
+            get {
+                return ResourceManager.GetString("Show_Documents_Attached_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Sensitive Data Warning.
+        /// </summary>
+        public static string Show_Sensitive_Data_Warning {
+            get {
+                return ResourceManager.GetString("Show_Sensitive_Data_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standalone Program.
+        /// </summary>
+        public static string Standalone_Program {
+            get {
+                return ResourceManager.GetString("Standalone_Program", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start with Windows.
+        /// </summary>
+        public static string Start_with_Windows {
+            get {
+                return ResourceManager.GetString("Start_with_Windows", resourceCulture);
             }
         }
         
@@ -480,6 +768,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string System_Message {
             get {
                 return ResourceManager.GetString("System_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Templates.
+        /// </summary>
+        public static string Templates {
+            get {
+                return ResourceManager.GetString("Templates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title for Attached Context.
+        /// </summary>
+        public static string Title_for_Attached_Context {
+            get {
+                return ResourceManager.GetString("Title_for_Attached_Context", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload.
+        /// </summary>
+        public static string Upload {
+            get {
+                return ResourceManager.GetString("Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use [Enter] to send the message.
+        /// </summary>
+        public static string Use_Enter_to_send_the_message {
+            get {
+                return ResourceManager.GetString("Use_Enter_to_send_the_message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validate.
+        /// </summary>
+        public static string Validate {
+            get {
+                return ResourceManager.GetString("Validate", resourceCulture);
             }
         }
     }

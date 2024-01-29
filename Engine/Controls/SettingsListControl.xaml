@@ -5,6 +5,7 @@
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:converters="clr-namespace:JocysCom.VS.AiCompanion.Engine.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Name="TemplateListUserControl"
 	d:DesignHeight="270"
@@ -49,10 +50,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="AddButton_Click"
-				ToolTip="Add New">
+				ToolTip="{x:Static locales:Resources.Add_New}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-					<Label x:Name="AddButtonLabel" Content="Add New" Visibility="Collapsed" />
+					<Label x:Name="AddButtonLabel" Content="{x:Static locales:Resources.Add_New}" Visibility="Collapsed" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -61,10 +62,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="EditButton_Click"
-				ToolTip="Edit (F2)">
+				ToolTip="{x:Static locales:Resources.Edit}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
-					<Label x:Name="EditButtonLabel" Content="Edit" Visibility="Collapsed" />
+					<Label x:Name="EditButtonLabel" Content="{x:Static locales:Resources.Edit}" Visibility="Collapsed" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -73,10 +74,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="DeleteButton_Click"
-				ToolTip="Delete">
+				ToolTip="{x:Static locales:Resources.Delete}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-					<Label x:Name="DeleteButtonLabel" Content="Delete" Visibility="Collapsed" />
+					<Label x:Name="DeleteButtonLabel" Content="{x:Static locales:Resources.Delete}" Visibility="Collapsed" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -91,7 +92,7 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="CreateNewTaskButton_Click"
-				ToolTip="Create new Task from Template">
+				ToolTip="{x:Static locales:Resources.Create_an_Assistant_Task_from_Model}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_task_add}" Focusable="False" />
 				</StackPanel>
@@ -102,7 +103,7 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="GenerateTitleButton_Click"
-				ToolTip="Use AI to automatically generate title">
+				ToolTip="{x:Static locales:Resources.Title_for_Attached_Context}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_document_title_refresh}" Focusable="False" />
 				</StackPanel>
@@ -113,7 +114,7 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="CopyButton_Click"
-				ToolTip="Copy">
+				ToolTip="{x:Static locales:Resources.Copy}">
 				<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" />
 			</Button>
 			<Button
@@ -122,7 +123,7 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="PasteButton_Click"
-				ToolTip="Paste">
+				ToolTip="{x:Static locales:Resources.Paste}">
 				<ContentControl Content="{StaticResource Icon_clipboard_paste}" Focusable="False" />
 			</Button>
 		</StackPanel>
@@ -161,7 +162,7 @@
 					VerticalAlignment="Center"
 					IsHitTestVisible="False"
 					Opacity="0.5"
-					Text="Search the list">
+					Text="{x:Static locales:Resources.Search_the_list}">
 					<TextBlock.Style>
 						<Style TargetType="TextBlock">
 							<Setter Property="Padding" Value="26,0,5,0" />
@@ -280,14 +281,14 @@
 					Binding="{Binding StatusText}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
-					Header="Status" />
+					Header="{x:Static locales:Resources.Status}" />
 				<DataGridTextColumn
 					x:Name="NameColumn"
 					Width="*"
 					Binding="{Binding Name}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
-					Header="Name" />
+					Header="{x:Static locales:Resources.Name}" />
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>

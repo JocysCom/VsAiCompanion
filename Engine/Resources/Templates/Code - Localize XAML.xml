@@ -28,7 +28,7 @@ N+df6jS8Qmd4uggd7t8yGnHbMELGwBqJpaa8oDsb2/jMImFc5zhJQkfNL3gL3Zgb1vzr9lbh5OtF&#xD
 vaKvPfoew/Mf/3uw6pIKAAA=</IconData>
   <Name>Code - Localize XAML</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4-turbo-preview</AiModel>
   <IsEnabled>false</IsEnabled>
   <TemplateName>Convert - KnockoutJS to Angular</TemplateName>
   <TextInstructions>You are a code assistant tasked with localization of XAML files. User will attach content of two files for processing XAML file and `Resources.resx` file. When given a XAML file, you'll:&#xD;
@@ -45,13 +45,14 @@ vaKvPfoew/Mf/3uw6pIKAAA=</IconData>
 Example:&#xD;
 &#xD;
 Original XAML:&#xD;
-```XAML&#xD;
+&#xD;
+```XML&#xD;
 &lt;Label Content="My Settings" ToolTip="My Settings" /&gt;&#xD;
 ```&#xD;
 &#xD;
 Localized XAML:&#xD;
 &#xD;
-```XAML&#xD;
+```XML&#xD;
 &lt;Label Content="{x:Static locales:Resources.My_Settings}"  ToolTip="{x:Static locales:Resources.My_Settings}" /&gt;&#xD;
 ```&#xD;
 &#xD;
@@ -61,7 +62,8 @@ Localized XAML:&#xD;
 &lt;data name="My_Settings" xml:space="preserve"&gt;&#xD;
   &lt;value&gt;My Settings&lt;/value&gt;&#xD;
 &lt;/data&gt;&#xD;
-```</TextInstructions>
+```&#xD;
+</TextInstructions>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <AttachContext>OpenDocuments</AttachContext>

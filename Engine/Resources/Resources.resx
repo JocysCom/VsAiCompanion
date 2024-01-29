@@ -220,44 +220,156 @@ value   : The object must be serialized into a byte array
 <value>Owner</value>
 </data>
 	<data name="Copy" xml:space="preserve">
-  <value>Copy</value>
+<value>Copy</value>
 </data>
 	<data name="Copy_with_Headers" xml:space="preserve">
-  <value>Copy with Headers</value>
+<value>Copy with Headers</value>
 </data>
 	<data name="Copy_Id_File_Name" xml:space="preserve">
-  <value>Copy: Id, File Name</value>
+<value>Copy: Id, File Name</value>
 </data>
 	<data name="Status" xml:space="preserve">
-  <value>Status</value>
+<value>Status</value>
 </data>
 	<data name="File_Name" xml:space="preserve">
-  <value>File Name</value>
+<value>File Name</value>
 </data>
 
 	<data name="Data_Folder" xml:space="preserve">
-  <value>Data Folder</value>
+<value>Data Folder</value>
 </data>
 	<data name="Open" xml:space="preserve">
-  <value>Open...</value>
+<value>Open...</value>
 </data>
 	<data name="System_Message" xml:space="preserve">
-  <value>System Message</value>
+<value>System Message</value>
 </data>
 	<data name="_1_Source_Files" xml:space="preserve">
-  <value>1. Source Files</value>
+<value>1. Source Files</value>
 </data>
 	<data name="_2_Tuning_Files" xml:space="preserve">
-  <value>2. Tuning Files</value>
+<value>2. Tuning Files</value>
 </data>
 	<data name="_3_Remote_Files" xml:space="preserve">
-  <value>3. Remote Files</value>
+<value>3. Remote Files</value>
 </data>
 	<data name="_4_Tuning_Jobs" xml:space="preserve">
-  <value>4. Tuning Jobs</value>
+<value>4. Tuning Jobs</value>
 </data>
 	<data name="_5_Models" xml:space="preserve">
-  <value>5. Models</value>
+<value>5. Models</value>
+</data>
+	<data name="Cancel" xml:space="preserve">
+<value>Cancel</value>
+</data>
+	<data name="Cancel_Job" xml:space="preserve">
+<value>Cancel Job</value>
+</data>
+	<data name="Open_File" xml:space="preserve">
+<value>Open File</value>
+</data>
+	<data name="Validate" xml:space="preserve">
+<value>Validate</value>
+</data>
+	<data name="Upload" xml:space="preserve">
+<value>Upload</value>
+</data>
+	<data name="Bytes" xml:space="preserve">
+<value>Bytes</value>
+</data>
+	<data name="Purpose" xml:space="preserve">
+<value>Purpose</value>
+</data>
+	<data name="Details" xml:space="preserve">
+<value>Details</value>
+</data>
+	<data name="Create_a_Job_and_Model_from_File" xml:space="preserve">
+<value>Create a Job and Model from File</value>
+</data>
+	<data name="Settings_Folder" xml:space="preserve">
+<value>Settings Folder</value>
+</data>
+	<data name="AI_API_Services" xml:space="preserve">
+<value>AI API Services</value>
+</data>
+	<data name="Title_for_Attached_Context" xml:space="preserve">
+<value>Title for Attached Context</value>
+</data>
+	<data name="Standalone_Program" xml:space="preserve">
+<value>Standalone Program</value>
+</data>
+	<data name="App_Always_on_Top" xml:space="preserve">
+<value>App Always on Top</value>
+</data>
+	<data name="Bar_Always_on_Top" xml:space="preserve">
+<value>Bar Always on Top</value>
+</data>
+	<data name="Minimize_to_Tray" xml:space="preserve">
+<value>Minimize to Tray</value>
+</data>
+	<data name="Minimize_on_Close" xml:space="preserve">
+<value>Minimize on Close</value>
+</data>
+	<data name="Allow_Only_One_Copy" xml:space="preserve">
+<value>Allow Only One Copy</value>
+</data>
+	<data name="Start_with_Windows" xml:space="preserve">
+<value>Start with Windows</value>
+</data>
+	<data name="Reset_Settings" xml:space="preserve">
+<value>Reset Settings</value>
+</data>
+	<data name="Reset_Application_Settings" xml:space="preserve">
+<value>Reset Application Settings</value>
+</data>
+	<data name="Reset_Templates_Settings" xml:space="preserve">
+<value>Reset Templates Settings</value>
+</data>
+	<data name="Reset_Prompting_Settings" xml:space="preserve">
+<value>Reset Prompting Settings</value>
+</data>
+	<data name="Sending_Message" xml:space="preserve">
+<value>Sending Message</value>
+</data>
+	<data name="Show_Documents_Attached_Warning" xml:space="preserve">
+<value>Show Documents Attached Warning</value>
+</data>
+	<data name="Show_Sensitive_Data_Warning" xml:space="preserve">
+<value>Show Sensitive Data Warning</value>
+</data>
+	<data name="Use_Enter_to_send_the_message" xml:space="preserve">
+<value>Use [Enter] to send the message</value>
+</data>
+	<data name="Other" xml:space="preserve">
+<value>Other</value>
+</data>
+	<data name="Enable_Spell_Check" xml:space="preserve">
+<value>Enable Spell Check</value>
+</data>
+	<data name="Data" xml:space="preserve">
+<value>Data</value>
+</data>
+
+	<data name="Files" xml:space="preserve">
+<value>Files</value>
+</data>
+	<data name="Chat" xml:space="preserve">
+<value>Chat</value>
+</data>
+	<data name="Chat_Instructions" xml:space="preserve">
+<value>Chat_Instructions </value>
+</data>
+	<data name="Prompting" xml:space="preserve">
+  <value>Prompting</value>
+</data>
+	<data name="Templates" xml:space="preserve">
+  <value>Templates</value>
+</data>
+	<data name="Search_the_list" xml:space="preserve">
+  <value>Search the list</value>
+</data>
+	<data name="Paste" xml:space="preserve">
+  <value>Paste</value>
 </data>
 
 </root>

@@ -5,6 +5,7 @@
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:converters="clr-namespace:JocysCom.VS.AiCompanion.Engine.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="270"
@@ -49,11 +50,11 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="AddButton_Click"
-				ToolTip="Add New"
+				ToolTip="{x:Static locales:Resources.Add_New}"
 				Visibility="Collapsed">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-					<Label x:Name="AddButtonLabel" Content="Add New" Visibility="Collapsed" />
+					<Label x:Name="AddButtonLabel" Content="{x:Static locales:Resources.Add_New}" Visibility="Collapsed" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -62,10 +63,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="DeleteButton_Click"
-				ToolTip="Delete">
+				ToolTip="{x:Static locales:Resources.Delete}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-					<Label x:Name="DeleteButtonLabel" Content="Delete" />
+					<Label x:Name="DeleteButtonLabel" Content="{x:Static locales:Resources.Delete}" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -73,10 +74,11 @@
 				Margin="0,0,3,3"
 				x:FieldModifier="public"
 				Background="Transparent"
-				Click="CreateModel_Click">
+				Click="CreateModel_Click"
+				ToolTip="Create a Job and Model from File">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_todo_list_add}" Focusable="False" />
-					<Label Content="Create a Job and Model from File" />
+					<Label Content="{x:Static locales:Resources.Create_an_Assistant_Task_from_Model}" />
 				</StackPanel>
 			</Button>
 
@@ -92,10 +94,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="HelpButton_Click"
-				ToolTip="Help">
+				ToolTip="{x:Static locales:Resources.Help}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Question}" Focusable="False" />
-					<Label x:Name="HelpButtonLabel" Content="Help" />
+					<Label x:Name="HelpButtonLabel" Content="{x:Static locales:Resources.Help}" />
 				</StackPanel>
 			</Button>
 			<Separator Style="{StaticResource MainSeparator}" />
@@ -105,10 +107,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="RefreshButton_Click"
-				ToolTip="Refresh">
+				ToolTip="{x:Static locales:Resources.Refresh}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
-					<Label x:Name="RefreshButtonLabel" Content="Refresh" />
+					<Label x:Name="RefreshButtonLabel" Content="{x:Static locales:Resources.Refresh}" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -131,9 +133,9 @@
 			SelectionMode="Extended">
 			<DataGrid.ContextMenu>
 				<ContextMenu>
-					<MenuItem Click="MainDataGrid_ContextMenu_Copy" Header="Copy" />
-					<MenuItem Click="MainDataGrid_ContextMenu_CopyWithHeaders" Header="Copy with Headers" />
-					<MenuItem Click="MainDataGrid_ContextMenu_CopyIdFileName" Header="Copy: Id, File Name" />
+					<MenuItem Click="MainDataGrid_ContextMenu_Copy" Header="{x:Static locales:Resources.Copy}" />
+					<MenuItem Click="MainDataGrid_ContextMenu_CopyWithHeaders" Header="{x:Static locales:Resources.Copy_with_Headers}" />
+					<MenuItem Click="MainDataGrid_ContextMenu_CopyIdFileName" Header="{x:Static locales:Resources.Copy_Id_File_Name}" />
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
@@ -187,49 +189,49 @@
 					Binding="{Binding status}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Status" />
+					Header="{x:Static locales:Resources.Status}" />
 				<DataGridTextColumn
 					x:Name="NameColumn"
 					Width="Auto"
 					Binding="{Binding id}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Id" />
+					Header="{x:Static locales:Resources.Id}" />
 				<DataGridTextColumn
 					x:Name="BytesColumn"
 					Width="Auto"
 					Binding="{Binding bytes}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Bytes" />
+					Header="{x:Static locales:Resources.Bytes}" />
 				<DataGridTextColumn
 					x:Name="CreatedColumn"
 					Width="Auto"
 					Binding="{Binding created_at}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Created" />
+					Header="{x:Static locales:Resources.Created}" />
 				<DataGridTextColumn
 					x:Name="FileNameColumn"
 					Width="Auto"
 					Binding="{Binding filename}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="File Name" />
+					Header="{x:Static locales:Resources.File_Name}" />
 				<DataGridTextColumn
 					x:Name="PurposeColumn"
 					Width="Auto"
 					Binding="{Binding purpose}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Purpose" />
+					Header="{x:Static locales:Resources.Purpose}" />
 				<DataGridTextColumn
 					x:Name="StatusDetailsColumn"
 					Width="Auto"
 					Binding="{Binding status_details}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Details" />
+					Header="{x:Static locales:Resources.Details}" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />

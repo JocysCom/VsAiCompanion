@@ -5,6 +5,7 @@
 	xmlns:Controls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
@@ -36,7 +37,7 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-			<Label Margin="0,6,0,0" VerticalAlignment="Center" Content="Settings Folder" />
+			<Label Margin="0,6,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.Settings_Folder}" />
 			<TextBox
 				Name="SettingsFolderTextBox"
 				Grid.Column="1"
@@ -50,7 +51,7 @@
 				Click="OpenButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_FolderOpen}" />
-					<Label Content="Open..." />
+					<Label Content="{x:Static locales:Resources.Open}" />
 				</StackPanel>
 			</Button>
 		</Grid>
@@ -67,14 +68,14 @@
 							Height="12"
 							VerticalAlignment="Center"
 							Content="{StaticResource Icon_cloud_gear}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="AI API Services" />
+						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.AI_API_Services}" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:AiServiceControl x:Name="ItemPanel" x:FieldModifier="public" />
 			</TabItem>
 		</TabControl>
 
-		<GroupBox Grid.Row="2" Margin="3,0,3,0" Header="Title for Attached Context">
+		<GroupBox Grid.Row="2" Margin="3,0,3,0" Header="{x:Static locales:Resources.Title_for_Attached_Context}">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -92,7 +93,7 @@
 					Grid.Row="0"
 					Grid.Column="0"
 					VerticalAlignment="Center"
-					Content="Data" />
+					Content="{x:Static locales:Resources.Data}" />
 				<TextBox
 					Name="ContextDataTitleTextBox"
 					Grid.Row="0"
@@ -103,7 +104,7 @@
 					Grid.Row="0"
 					Grid.Column="2"
 					VerticalAlignment="Center"
-					Content="Files" />
+					Content="{x:Static locales:Resources.Files}" />
 				<TextBox
 					Name="ContextFileTitleTextBox"
 					Grid.Row="0"
@@ -114,7 +115,7 @@
 					Grid.Row="1"
 					Grid.Column="0"
 					VerticalAlignment="Center"
-					Content="Chat" />
+					Content="{x:Static locales:Resources.Chat}" />
 				<TextBox
 					Name="ContextChatTitleTextBox"
 					Grid.Row="1"
@@ -125,7 +126,7 @@
 					Grid.Row="2"
 					Grid.Column="0"
 					VerticalAlignment="Center"
-					Content="Chat Instructions" />
+					Content="{x:Static locales:Resources.Chat_Instructions}" />
 				<TextBox
 					Name="ContextChatInstructionsTextBox"
 					Grid.Row="2"
@@ -143,22 +144,22 @@
 			</Grid>
 		</GroupBox>
 		<WrapPanel Grid.Row="3">
-			<GroupBox Margin="3,0,0,3" Header="Standalone Progam">
+			<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Standalone_Program}">
 				<WrapPanel Orientation="Vertical">
-					<CheckBox Name="AppAlwaysOnTopCheckBox" Content="App Always on Top" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="AppAlwaysOnTopCheckBox" Content="{x:Static locales:Resources.App_Always_on_Top}" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox
 						Name="BarAlwaysOnTopCheckBox"
-						Content="Bar Always on Top"
+						Content="{x:Static locales:Resources.Bar_Always_on_Top}"
 						IsChecked="{Binding BarAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						Visibility="Collapsed" />
-					<CheckBox Name="MinimizeToTrayBox" Content="Minimize to Tray" IsChecked="{Binding MinimizeToTray, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-					<CheckBox Name="MinimizeOnCloseTrayBox" Content="Minimize on Close" IsChecked="{Binding MinimizeOnClose, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-					<CheckBox Name="AllowOnlyOneCopyBox" Content="Allow Only One Copy" IsChecked="{Binding AllowOnlyOneCopy, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="MinimizeToTrayBox" Content="{x:Static locales:Resources.Minimize_to_Tray}" IsChecked="{Binding MinimizeToTray, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="MinimizeOnCloseTrayBox" Content="{x:Static locales:Resources.Minimize_on_Close}" IsChecked="{Binding MinimizeOnClose, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="AllowOnlyOneCopyBox" Content="{x:Static locales:Resources.Allow_Only_One_Copy}" IsChecked="{Binding AllowOnlyOneCopy, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<StackPanel Orientation="Horizontal">
 						<CheckBox
 							Name="StartWithWindowsBox"
 							VerticalAlignment="Center"
-							Content="Start with Windows"
+							Content="{x:Static locales:Resources.Start_with_Windows}"
 							IsChecked="{Binding StartWithWindows, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						<ComboBox
 							Name="StartWithWindowsStateBox"
@@ -168,12 +169,12 @@
 					</StackPanel>
 				</WrapPanel>
 			</GroupBox>
-			<GroupBox Margin="3,0,0,3" VerticalAlignment="Top" Header="Reset Settings">
+			<GroupBox Margin="3,0,0,3" VerticalAlignment="Top" Header="{x:Static locales:Resources.Reset_Settings}">
 				<StackPanel>
 					<Button Name="ResetApplicationSettingsButton" Click="ResetApplicationSettingsButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="Reset Application Settings" />
+							<Label Content="{x:Static locales:Resources.Reset_Application_Settings}" />
 						</StackPanel>
 					</Button>
 					<Button
@@ -183,7 +184,7 @@
 						Click="ResetTemplatesButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="Reset Templates Settings" />
+							<Label Content="{x:Static locales:Resources.Reset_Templates_Settings}" />
 						</StackPanel>
 					</Button>
 					<Button
@@ -193,22 +194,22 @@
 						Click="ResetPromptingButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="Reset Prompting Settings" />
+							<Label Content="{x:Static locales:Resources.Reset_Prompting_Settings}" />
 						</StackPanel>
 					</Button>
 
 				</StackPanel>
 			</GroupBox>
-			<GroupBox Margin="3,0,0,3" Header="Sending Message">
+			<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Sending_Message}">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-					<CheckBox Name="ShowDocumentsAttachedWarningCheckBox" Content="Show Documents Attached Warning" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-					<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="Show Sensitive Data Warning" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-					<CheckBox Name="UseEnterToSendMessageCheckBox" Content="Use [Enter] to send the message" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="ShowDocumentsAttachedWarningCheckBox" Content="{x:Static locales:Resources.Show_Documents_Attached_Warning}" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="{x:Static locales:Resources.Show_Sensitive_Data_Warning}" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="UseEnterToSendMessageCheckBox" Content="{x:Static locales:Resources.Use_Enter_to_send_the_message}" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
-			<GroupBox Margin="3,0,3,3" Header="Other">
+			<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Other}">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-					<CheckBox Name="IsSpellCheckEnabledCheckBox" Content="Enable Spell Check" IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="IsSpellCheckEnabledCheckBox" Content="{x:Static locales:Resources.Enable_Spell_Check}" IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
 

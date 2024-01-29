@@ -5,6 +5,7 @@
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:converters="clr-namespace:JocysCom.VS.AiCompanion.Engine.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="270"
@@ -49,10 +50,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="CancelButton_Click"
-				ToolTip="Cancel">
+				ToolTip="{x:Static locales:Resources.Cancel}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_media_stop}" Focusable="False" />
-					<Label x:Name="CancelButtonLabel" Content="Cancel Job" />
+					<Label x:Name="CancelButtonLabel" Content="{x:Static locales:Resources.Cancel_Job}" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -67,10 +68,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="HelpButton_Click"
-				ToolTip="Help">
+				ToolTip="{x:Static locales:Resources.Help}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Question}" Focusable="False" />
-					<Label x:Name="HelpButtonLabel" Content="Help" />
+					<Label x:Name="HelpButtonLabel" Content="{x:Static locales:Resources.Help}" />
 				</StackPanel>
 			</Button>
 			<Separator Style="{StaticResource MainSeparator}" />
@@ -80,10 +81,10 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="RefreshButton_Click"
-				ToolTip="Refresh">
+				ToolTip="{x:Static locales:Resources.Refresh}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
-					<Label x:Name="RefreshButtonLabel" Content="Refresh" />
+					<Label x:Name="RefreshButtonLabel" Content="{x:Static locales:Resources.Refresh}" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -154,28 +155,28 @@
 					Binding="{Binding status}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Status" />
+					Header="{x:Static locales:Resources.Status}" />
 				<DataGridTextColumn
 					x:Name="NameColumn"
 					Width="Auto"
 					Binding="{Binding id}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Id" />
+					Header="{x:Static locales:Resources.Id}" />
 				<DataGridTextColumn
 					x:Name="ObjectColumn"
 					Width="Auto"
 					Binding="{Binding object}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Object" />
+					Header="{x:Static locales:Resources.Object}" />
 				<DataGridTextColumn
 					x:Name="CreatedColumn"
 					Width="Auto"
 					Binding="{Binding created_at}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Created" />
+					Header="{x:Static locales:Resources.Created}" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
