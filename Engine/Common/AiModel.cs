@@ -30,6 +30,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public Guid AiServiceId { get => _AiServiceId; set => SetProperty(ref _AiServiceId, value); }
 		Guid _AiServiceId;
 
+		[DefaultValue(0)]
+		public int MaxInputTokens { get => _MaxInputTokens; set => SetProperty(ref _MaxInputTokens, value); }
+		int _MaxInputTokens;
+
 		#region ■ INotifyPropertyChanged
 
 		// CWE-502: Deserialization of Untrusted Data

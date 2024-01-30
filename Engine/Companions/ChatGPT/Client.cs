@@ -298,7 +298,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			string modelName,
 			List<chat_completion_message> messagesToSend,
 			double creativity,
-			TemplateItem item
+			TemplateItem item,
+			int maxInputTokens
 		)
 		{
 			var answer = "";
@@ -359,7 +360,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							prompt = ClientHelper.JoinMessageParts(prompts),
 							temperature = (float)creativity,
 							stream = Service.ResponseStreaming,
-							max_tokens = GetMaxInputTokens(modelName),
+							max_tokens = maxInputTokens,
 
 						};
 						var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
@@ -417,7 +418,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							model = modelName,
 							temperature = (float)creativity,
 							stream = Service.ResponseStreaming,
-							max_tokens = GetMaxInputTokens(modelName),
+							max_tokens = maxInputTokens,
 						};
 						request.messages = messages.Select(x => new chat_completion_message()
 						{
@@ -450,8 +451,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return modelName.Contains("davinci") || modelName.Contains("instruct");
 		}
 
-		public static int GetMaxInputTokens(string modelName)
+		public static int GetMaxInputTokens(TemplateItem item)
 		{
+			var modelName = item.AiModel;
+			// Try to get max input tokens value from the settings.
+			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x =>
+				x.AiServiceId == item.AiServiceId && x.Name == item.AiModel);
+			if (aiModel != null && aiModel.MaxInputTokens != 0)
+				return aiModel.MaxInputTokens;
+			// Autodetect.
 			modelName = modelName.ToLowerInvariant();
 			// All GPT-4 preview models support 128K tokens (2024-01-28).
 			if (modelName.Contains("-128k") || (modelName.Contains("gpt-4") && modelName.Contains("preview")))

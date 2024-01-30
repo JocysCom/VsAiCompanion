@@ -256,7 +256,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (item.AttachContext.HasFlag(AttachmentType.ChatHistory))
 			{
 				// Get tokens available.
-				var tokensLeftForChatHistory = GetAvailableTokens(item.AiModel, chatLogMessages, item.UseMaximumContext);
+				var tokensLeftForChatHistory = GetAvailableTokens(item, chatLogMessages, item.UseMaximumContext);
 				var historyMessages = item.Messages
 					// Exclude preview messages from the history.
 					.Where(x => !x.IsPreview)
@@ -282,7 +282,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					chatLogMessages.Add(new chat_completion_message(message_role.user, content));
 				}
 			}
-			var maxTokens = Client.GetMaxInputTokens(item.AiModel);
+			var maxTokens = Client.GetMaxInputTokens(item);
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
 			executeBeforeAddMessage?.Invoke();
@@ -308,12 +308,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						_ = GenerateTitle(item);
 					}
 					var client = new Companions.ChatGPT.Client(item.AiService);
+					var maxInputTokens = Client.GetMaxInputTokens(item);
 					// Send body and context data.
 					var response = await client.QueryAI(
 						item.AiModel,
 						chatLogMessages,
 						item.Creativity,
-						item
+						item,
+						maxInputTokens
 					);
 					if (response != null)
 					{
@@ -341,9 +343,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			Converters = { new JsonStringEnumConverter() }
 		};
 
-		public static int GetAvailableTokens(string aiModel, List<chat_completion_message> messages = null, bool useMaximumContext = false)
+		public static int GetAvailableTokens(TemplateItem item, List<chat_completion_message> messages = null, bool useMaximumContext = false)
 		{
-			var maxTokens = Client.GetMaxInputTokens(aiModel);
+			var maxTokens = Client.GetMaxInputTokens(item);
 			// Split 50%/50% between request and response.
 			var maxRequesTokens = useMaximumContext
 				? maxTokens
@@ -372,12 +374,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// Supply data for processing.
 				messages.Add(new chat_completion_message(message_role.user, text));
 				var client = new Companions.ChatGPT.Client(item.AiService);
+				var maxInputTokens = Client.GetMaxInputTokens(rItem);
 				// Send body and context data.
 				var response = await client.QueryAI(
 					rItem.AiModel,
 					messages,
 					rItem.Creativity,
-					item
+					item,
+					maxInputTokens
 				);
 				return response ?? text;
 			}
@@ -397,7 +401,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				return;
 			if (item.Messages.Count == 0)
 				return;
-			var availableTokens = GetAvailableTokens(item.AiModel, null);
+			var availableTokens = GetAvailableTokens(item, null);
 			var allmessages = item.Messages
 				// Exclude preview messages from the history.
 				//.Where(x => !x.IsPreview)
@@ -409,12 +413,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// Add instructions to generate title to existing messages.
 				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				var client = new Companions.ChatGPT.Client(item.AiService);
+				var maxInputTokens = Client.GetMaxInputTokens(rItem);
 				// Send body and context data.
 				var response = await client.QueryAI(
 					rItem.AiModel,
 					messages,
 					rItem.Creativity,
-					item
+					item,
+					maxInputTokens
 				);
 				if (response != null)
 				{
