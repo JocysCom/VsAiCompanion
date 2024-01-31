@@ -6,6 +6,7 @@
 - Add: UI Language and Chat Language options.
 - Add: Application Localization.
 - Add: Add support for file attachments in messages (embedded content or uploads).
+- Add: Allow to edit or open and add AI or human descriptions to linked context attachments.
 - Add: Option for AI to monitor messages and provide tooltips.
 - Add: Option for AI to utilize `System.Windows.Automation` tools to enhance its capabilities.
 - Add: Option for AI to generate and execute PS1/C# code with the user's approval.
