@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	public class chat_completion_message: base_item
+	public class chat_completion_message : base_item
 	{
 		public chat_completion_message() { }
 
@@ -22,9 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public string content { get; set; }
 
 		public string name { get; set; }
-
-		[DefaultValue(function_call.none)]
-		public function_call function_call { get; set; }
+		public List<chat_completion_message_tool_call> tool_calls { get; set; } = new List<chat_completion_message_tool_call>();
 
 	}
 }
