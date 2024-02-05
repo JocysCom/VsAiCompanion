@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers
+namespace JocysCom.VS.AiCompanion.Plugins.LinkReader.Controllers
 {
 	/// <summary>
 	/// Read URL links and return the results.
@@ -30,35 +29,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers
 			}
 			try
 			{
-				string output = await GetWebPageContents(url);
+				string output = await LinkReaderHelper.GetWebPageContents(url);
 				return Ok(output);
 			}
 			catch (Exception ex)
 			{
 				// Log the exception as needed
 				return StatusCode(500, $"An error occurred while reading the link: {ex.Message}");
-			}
-		}
-
-
-		public static async Task<string> GetWebPageContents(string url)
-		{
-			using (var client = new HttpClient())
-			{
-				try
-				{
-					var response = await client.GetAsync(url);
-					if (response.IsSuccessStatusCode)
-					{
-						string content = await response.Content.ReadAsStringAsync();
-						return content;
-					}
-					return $"Error: Unable to fetch the page. Status Code: {response.StatusCode}";
-				}
-				catch (Exception ex)
-				{
-					return $"Error: {ex.Message}";
-				}
 			}
 		}
 

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Diagnostics;
 
 namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers
 {
@@ -30,7 +29,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers
 			}
 			try
 			{
-				string output = RunPowerShellScript(script);
+				string output = PowerShellExecutorHelper.RunPowerShellScript(script);
 				return Ok(output);
 			}
 			catch (Exception ex)
@@ -40,25 +39,5 @@ namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers
 			}
 		}
 
-		private string RunPowerShellScript(string script)
-		{
-			ProcessStartInfo startInfo = new ProcessStartInfo
-			{
-				FileName = "powershell.exe",
-				Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
-				RedirectStandardOutput = true,
-				UseShellExecute = false,
-				CreateNoWindow = true
-			};
-
-			using (Process process = new Process())
-			{
-				process.StartInfo = startInfo;
-				process.Start();
-				string output = process.StandardOutput.ReadToEnd();
-				process.WaitForExit();
-				return output;
-			}
-		}
 	}
 }

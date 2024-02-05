@@ -132,9 +132,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
 		ItemType _ItemType;
 
+		[DefaultValue(false)]
+		public bool UsePlugins { get => _UsePlugins; set => SetProperty(ref _UsePlugins, value); }
+		bool _UsePlugins;
+
 		[XmlIgnore]
 		public object Tag;
-
 
 		public TemplateItem Copy(bool newId)
 		{

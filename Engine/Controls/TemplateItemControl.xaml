@@ -193,6 +193,7 @@
 						<StackPanel VerticalAlignment="Top">
 							<CheckBox Name="IsSystemInstructionsCheckBox" Content="Send as System Messages" IsChecked="{Binding IsSystemInstructions}" />
 							<CheckBox Name="UseMaximumContextCheckBox" Content="Use Maximum Context" IsChecked="{Binding UseMaximumContext}" />
+							<CheckBox Name="UsePluginsContextCheckBox" Content="Use Plugins" IsChecked="{Binding UsePlugins}" />
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>
