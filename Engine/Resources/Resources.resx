@@ -371,5 +371,70 @@ value   : The object must be serialized into a byte array
 	<data name="Paste" xml:space="preserve">
   <value>Paste</value>
 </data>
-
+	<data name="Preview" xml:space="preserve">
+  <value>Preview</value>
+</data>
+	<data name="Creativity" xml:space="preserve">
+  <value>Creativity</value>
+</data>
+	<data name="Show_Icon_in_Toolbar" xml:space="preserve">
+  <value>Show Icon in Toolbar</value>
+</data>
+	<data name="Automation" xml:space="preserve">
+  <value>Automation</value>
+</data>
+	<data name="Send_on_Create" xml:space="preserve">
+  <value>Send on Create</value>
+</data>
+	<data name="Remove_on_Complete" xml:space="preserve">
+  <value>Remove on Complete</value>
+</data>
+	<data name="Auto_Generate_Title" xml:space="preserve">
+  <value>Auto-Generate Title</value>
+</data>
+	<data name="Send_as_System_Messages" xml:space="preserve">
+  <value>Send as System Messages</value>
+</data>
+	<data name="Use_Maximum_Context" xml:space="preserve">
+  <value>Use Maximum Context</value>
+</data>
+	<data name="Visual_Studio_Extension_Options" xml:space="preserve">
+  <value>Visual Studio Extension Options</value>
+</data>
+	<data name="Attachments" xml:space="preserve">
+  <value>Attachments</value>
+</data>
+	<data name="Use_Macros" xml:space="preserve">
+  <value>Use Macros</value>
+</data>
+	<data name="Environment" xml:space="preserve">
+  <value>Environment</value>
+</data>
+	<data name="Selection" xml:space="preserve">
+  <value>Selection</value>
+</data>
+	<data name="Date" xml:space="preserve">
+  <value>Date</value>
+</data>
+	<data name="Document" xml:space="preserve">
+  <value>Document</value>
+</data>
+	<data name="Format_Code" xml:space="preserve">
+  <value>Format Code</value>
+</data>
+	<data name="Show_Instructions" xml:space="preserve">
+  <value>Show Instructions</value>
+</data>
+	<data name="Show_Prompting" xml:space="preserve">
+  <value>Show Prompting</value>
+</data>
+	<data name="Send_Chat_History" xml:space="preserve">
+  <value>Send Chat History</value>
+</data>
+	<data name="Auto_Markdown" xml:space="preserve">
+  <value>Auto Markdown</value>
+</data>
+	<data name="Instructions" xml:space="preserve">
+  <value>Instructions</value>
+</data>
 </root>
