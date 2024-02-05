@@ -426,10 +426,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							content = x.Content,
 							name = x.Name,
 						}).ToList();
+
 						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
-								answer += (chatChoice.message ?? chatChoice.delta).content;
+							{
+								var responseMessage = chatChoice.message;
+								answer += (responseMessage ?? chatChoice.delta).content;
+								// Check if the model wanted to call a function
+								if (responseMessage.tool_calls != null)
+									foreach (var toolCall in responseMessage.tool_calls)
+									{
+										if (toolCall.type == chat_completion_tool_type.function)
+										{
+											// Call the function
+											var functionName = toolCall.function.name;
+											var functionParams = toolCall.function.parameters;
+											//https://platform.openai.com/docs/guides/function-calling?lang=node.js
+										}
+									}
+							}
 					}
 				}
 			}

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -6,7 +7,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 	{
 		public List<chat_completion_message> messages { get; set; } = new List<chat_completion_message>();
-		public List<chat_completion_function> functions { get; set; }
-		public function_call function_call { get; set; }
+		public List<chat_completion_tool> tools { get; set; }
+
+		[DefaultValue(tool_choice.auto)]
+		public tool_choice tool_choice { get; set; }
 	}
 }
