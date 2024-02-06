@@ -303,6 +303,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		)
 		{
 			var answer = "";
+			var toolArgumentsUpdate = "";
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			var id = Guid.NewGuid();
@@ -319,30 +320,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					if (Service.IsAzureOpenAI || secure)
 					{
 						var client = GetAiClient();
-						var completionsOptions = new CompletionsOptions(prompts);
+						var completionsOptions = new CompletionsOptions(modelName, prompts);
 						completionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
 						{
-							var response = await client.GetCompletionsStreamingAsync(modelName, completionsOptions, cancellationTokenSource.Token);
-							using (var streamingChatCompletions = response.Value)
+							var response = await client.GetCompletionsStreamingAsync(completionsOptions, cancellationTokenSource.Token);
+							using (var streamingChatCompletions = response)
 							{
 								var choicesEnumerator = streamingChatCompletions
-									.GetChoicesStreaming(cancellationTokenSource.Token)
+									.AsAsyncEnumerable()
 									.GetAsyncEnumerator(cancellationTokenSource.Token);
 								while (await choicesEnumerator.MoveNextAsync())
 								{
-									var choice = choicesEnumerator.Current;
-									var messagesEnumerator = choice
-										.GetTextStreaming(cancellationTokenSource.Token)
-										.GetAsyncEnumerator(cancellationTokenSource.Token);
-									while (await messagesEnumerator.MoveNextAsync())
-										answer += messagesEnumerator.Current;
+									var completions = choicesEnumerator.Current;
+									foreach (var choice in completions.Choices)
+										answer += choice.Text;
 								}
 							}
 						}
 						else
 						{
-							var response = await client.GetCompletionsAsync(modelName, completionsOptions, cancellationTokenSource.Token);
+							var response = await client.GetCompletionsAsync(completionsOptions, cancellationTokenSource.Token);
 							foreach (var choice in response.Value.Choices)
 							{
 								answer += choice.Text;
@@ -372,29 +370,62 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Chat Completion mode.
 				else
 				{
-					var messages = messagesToSend.Select(x => new ChatMessage(new ChatRole(x.role.ToString()), x.content));
+					var messages = new List<ChatRequestMessage>();
+					foreach (var messageToSend in messagesToSend)
+					{
+						switch (messageToSend.role)
+						{
+							case message_role.user:
+								messages.Add(new ChatRequestUserMessage(messageToSend.content));
+								break;
+							case message_role.assistant:
+								messages.Add(new ChatRequestAssistantMessage(messageToSend.content));
+								break;
+							case message_role.system:
+								messages.Add(new ChatRequestSystemMessage(messageToSend.content));
+								break;
+						}
+					}
+
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
-						var chatCompletionsOptions = new ChatCompletionsOptions(messages);
+						var chatCompletionsOptions = new ChatCompletionsOptions(modelName, messages);
+						Plugins.PluginsManager.ProvideTools(item, chatCompletionsOptions);
 						chatCompletionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
 						{
 							var client = GetAiClient();
-							var response = await client.GetChatCompletionsStreamingAsync(modelName, chatCompletionsOptions, cancellationTokenSource.Token);
-							using (var streamingChatCompletions = response.Value)
+							var response = await client.GetChatCompletionsStreamingAsync(chatCompletionsOptions, cancellationTokenSource.Token);
+							using (var streamingChatCompletions = response)
 							{
 								var choicesEnumerator = streamingChatCompletions
-									.GetChoicesStreaming(cancellationTokenSource.Token)
+									.AsAsyncEnumerable()
 									.GetAsyncEnumerator(cancellationTokenSource.Token);
 								while (await choicesEnumerator.MoveNextAsync())
 								{
 									var choice = choicesEnumerator.Current;
-									var messagesEnumerator = choice
-										.GetMessageStreaming(cancellationTokenSource.Token)
-										.GetAsyncEnumerator(cancellationTokenSource.Token);
-									while (await messagesEnumerator.MoveNextAsync())
-										answer += messagesEnumerator.Current.Content;
+									answer += choice.ContentUpdate;
+									if (choice.ToolCallUpdate != null)
+									{
+										if (choice.ToolCallUpdate is StreamingFunctionToolCallUpdate sf)
+										{
+											if (!string.IsNullOrEmpty(sf.Id))
+											{
+												toolArgumentsUpdate += $"{{\r\n";
+												toolArgumentsUpdate += $"\"id\": \"{sf.Id}\",\r\n";
+												toolArgumentsUpdate += $"\"name\": \"{sf.Name}\",\r\n";
+												toolArgumentsUpdate += $"\"parameters\": ";
+											}
+											toolArgumentsUpdate += sf.ArgumentsUpdate;
+										}
+									}
+								}
+								if (!string.IsNullOrEmpty(toolArgumentsUpdate))
+								{
+									var json = toolArgumentsUpdate + "\r\n}";
+									Plugins.PluginsManager.ProcessPlugins(item, json);
+									answer += "AI is Calling Function: \r\n```JSON\r\n" + json + "\r\n```\r\n";
 								}
 							}
 						}
@@ -402,7 +433,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						else
 						{
 							var client = GetAiClient();
-							var response = await client.GetChatCompletionsAsync(modelName, chatCompletionsOptions, cancellationTokenSource.Token);
+							var response = await client.GetChatCompletionsAsync(chatCompletionsOptions, cancellationTokenSource.Token);
 							foreach (ChatChoice chatChoice in response.Value.Choices)
 							{
 								answer += chatChoice.Message.Content;
@@ -420,12 +451,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							stream = Service.ResponseStreaming,
 							max_tokens = maxInputTokens,
 						};
-						request.messages = messages.Select(x => new chat_completion_message()
+						request.messages = new List<chat_completion_message>();
+						foreach (var message in messages)
 						{
-							role = (message_role)Enum.Parse(typeof(message_role), x.Role.ToString()),
-							content = x.Content,
-							name = x.Name,
-						}).ToList();
+							chat_completion_message msg = null;
+							if (message is ChatRequestUserMessage userMessage)
+								msg = new chat_completion_message { role = message_role.user, content = userMessage.Content, name = userMessage.Name };
+							else if (message is ChatRequestAssistantMessage assistantMessage)
+								msg = new chat_completion_message { role = message_role.assistant, content = assistantMessage.Content, name = assistantMessage.Name };
+							else if (message is ChatRequestSystemMessage systemMessage)
+								msg = new chat_completion_message { role = message_role.system, content = systemMessage.Content, name = systemMessage.Name };
+							if (msg != null)
+								request.messages.Add(msg);
+
+						}
 						Plugins.PluginsManager.ProvideTools(item, request);
 						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)

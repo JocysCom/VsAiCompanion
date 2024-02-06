@@ -186,7 +186,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		public DataOperation[] AutoOperations => (DataOperation[])Enum.GetValues(typeof(DataOperation));
+		public DataOperation[] AutoOperations
+			=> (DataOperation[])Enum.GetValues(typeof(DataOperation));
+		public Dictionary<ToolCallApprovalProcess, string> PluginApprovalProcesses
+			=> ControlsHelper.GetDictionary((ToolCallApprovalProcess[])Enum.GetValues(typeof(ToolCallApprovalProcess)));
+		public Dictionary<string, string> PluginApprovalTemplates
+			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
 		public Dictionary<AttachmentType, string> DataTypes
 		{

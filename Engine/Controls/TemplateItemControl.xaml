@@ -193,7 +193,59 @@
 						<StackPanel VerticalAlignment="Top">
 							<CheckBox Name="IsSystemInstructionsCheckBox" Content="Send as System Messages" IsChecked="{Binding IsSystemInstructions}" />
 							<CheckBox Name="UseMaximumContextCheckBox" Content="Use Maximum Context" IsChecked="{Binding UseMaximumContext}" />
-							<CheckBox Name="UsePluginsContextCheckBox" Content="Use Plugins" IsChecked="{Binding UsePlugins}" />
+						</StackPanel>
+					</StackPanel>
+				</GroupBox>
+
+
+
+				<GroupBox
+					Grid.Row="1"
+					Grid.Column="1"
+					Margin="0,0,3,3"
+					VerticalAlignment="Stretch"
+					Visibility="{Binding BarPanelVisibility, ElementName=This}">
+					<GroupBox.Header>
+						<StackPanel Orientation="Horizontal">
+							<Label
+								Grid.Row="2"
+								Grid.Column="1"
+								Padding="0"
+								VerticalAlignment="Center"
+								Content="Plugins"
+								Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+						</StackPanel>
+					</GroupBox.Header>
+					<StackPanel
+						Grid.Row="2"
+						Grid.Column="2"
+						Grid.ColumnSpan="2"
+						Orientation="Horizontal"
+						Visibility="{Binding BarPanelVisibility, ElementName=This}">
+						<StackPanel VerticalAlignment="Top">
+							<CheckBox Name="PluginsEnableContextCheckBox" Content="Use Plugins" IsChecked="{Binding PluginsEnable}" />
+							<StackPanel Orientation="Horizontal">
+								<Label Content="Plugins Approval" />
+								<ComboBox
+									Name="PluginApprovalProcessComboBox"
+									Margin="6,0,3,0"
+									VerticalAlignment="Top"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding PluginApprovalProcesses, ElementName=This}"
+									SelectedValue="{Binding PluginApprovalProcess}"
+									SelectedValuePath="Key" />
+							</StackPanel>
+							<StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+								<Label Content="Approval Template" />
+								<ComboBox
+									Name="PluginApprovalTemplateComboBox"
+									Margin="6,0,3,0"
+									VerticalAlignment="Top"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding PluginApprovalTemplates, ElementName=This}"
+									SelectedValue="{Binding PluginApprovalTemplate}"
+									SelectedValuePath="Key" />
+							</StackPanel>
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>

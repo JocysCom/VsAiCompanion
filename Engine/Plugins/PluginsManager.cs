@@ -1,4 +1,6 @@
-﻿using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+﻿using Azure.AI.OpenAI;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
@@ -10,6 +12,77 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 	public class PluginsManager
 	{
 
+		#region Microsoft's Reinvention of the Wheel
+
+		/// <summary>
+		/// Add completion tools to chat completion message request for OpenAI GPT.
+		/// </summary>
+		/// <param name="item">Template item with settings.</param>
+		/// <param name="option">Chat completion options</param>
+		public static void ProvideTools(TemplateItem item, ChatCompletionsOptions options)
+		{
+			if (!item.PluginsEnabled)
+				return;
+			// Define GetWebPageContents.
+			options.ToolChoice = ChatCompletionsToolChoice.Auto;
+			var getWebPageContentsFunction = new FunctionDefinition()
+			{
+				Name = "GetWebPageContents",
+				Description = "Use to retrieve content of websites by URL.",
+				// Define the JSON Schema for the function parameter
+				Parameters = BinaryData.FromObjectAsJson(new
+				{
+					type = "object", // Since you are describing a function parameter, use 'object'
+					properties = new
+					{
+						url = new
+						{
+							type = "string",
+							description = "URL which points to the resource."
+						}
+					},
+					// Define required parameters.
+					required = new[] { "url" }
+				})
+			};
+			var getWebPageContentsTool = new ChatCompletionsFunctionToolDefinition(getWebPageContentsFunction);
+			options.Tools.Add(getWebPageContentsTool);
+			// Defining RunPowerShellScript tool
+			var runPowerShellScriptFunction = new FunctionDefinition
+			{
+				Name = nameof(AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper.RunPowerShellScript),
+				Description = "Execute a PowerShell script on user computer.",
+				// Define the JSON Schema for the function parameter
+				Parameters = BinaryData.FromObjectAsJson(new
+				{
+					type = "object", // Since you are describing a function parameter, use 'object'
+					properties = new
+					{
+						script = new
+						{
+							type = "string",
+							description = "PowerShell script to execute"
+						}
+					},
+					// Define required parameters.
+					required = new[] { "string" }
+				})
+			};
+			var runPowerShellScriptTool = new ChatCompletionsFunctionToolDefinition(runPowerShellScriptFunction);
+			options.Tools.Add(runPowerShellScriptTool);
+		}
+
+		public static void ProcessPlugins(TemplateItem item, string json)
+		{
+			if (!item.PluginsEnabled)
+				return;
+			var function = Client.Deserialize<chat_completion_function>(json);
+		}
+
+		#endregion
+
+		#region Classic API
+
 		/// <summary>
 		/// Add completion tools to chat completion message request for OpenAI GPT.
 		/// </summary>
@@ -17,7 +90,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		/// <param name="request">Chat completion request</param>
 		public static void ProvideTools(TemplateItem item, chat_completion_request request)
 		{
-			if (!item.UsePlugins)
+			if (!item.PluginsEnabled)
 				return;
 			if (request.tools == null)
 				request.tools = new List<chat_completion_tool>();
@@ -81,7 +154,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 
 		public static void ProcessPlugins(TemplateItem item, chat_completion_message message)
 		{
-			if (!item.UsePlugins)
+			if (!item.PluginsEnabled)
 				return;
 			if (message.tool_calls == null)
 				return;
@@ -115,6 +188,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 				}
 			}
 		}
+
+		#endregion
 
 	}
 }

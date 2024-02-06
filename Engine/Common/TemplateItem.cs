@@ -132,9 +132,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
 		ItemType _ItemType;
 
+		#region Plugins
+
 		[DefaultValue(false)]
-		public bool UsePlugins { get => _UsePlugins; set => SetProperty(ref _UsePlugins, value); }
-		bool _UsePlugins;
+		public bool PluginsEnabled { get => _PluginsEnabled; set => SetProperty(ref _PluginsEnabled, value); }
+		bool _PluginsEnabled;
+
+		[DefaultValue(ToolCallApprovalProcess.User)]
+		public ToolCallApprovalProcess PluginApprovalProcess { get => _PluginApprovalProcess; set => SetProperty(ref _PluginApprovalProcess, value); }
+		ToolCallApprovalProcess _PluginApprovalProcess;
+
+		[DefaultValue(Companions.ClientHelper.PluginApprovalTaskName)]
+		public string PluginApprovalTemplate { get => _PluginApprovalTemplate; set => SetProperty(ref _PluginApprovalTemplate, value); }
+		string _PluginApprovalTemplate;
+
+		#endregion
 
 		[XmlIgnore]
 		public object Tag;
