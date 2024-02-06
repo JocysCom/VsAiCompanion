@@ -223,7 +223,7 @@
 						Orientation="Horizontal"
 						Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<StackPanel VerticalAlignment="Top">
-							<CheckBox Name="PluginsEnableContextCheckBox" Content="Use Plugins" IsChecked="{Binding PluginsEnable}" />
+							<CheckBox Name="PluginsEnableContextCheckBox" Content="Plugins Enabled" IsChecked="{Binding PluginsEnabled}" />
 							<StackPanel Orientation="Horizontal">
 								<Label Content="Plugins Approval" />
 								<ComboBox

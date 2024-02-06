@@ -424,7 +424,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								if (!string.IsNullOrEmpty(toolArgumentsUpdate))
 								{
 									var json = toolArgumentsUpdate + "\r\n}";
-									Plugins.PluginsManager.ProcessPlugins(item, json);
+									await Plugins.PluginsManager.ProcessPlugins(item, json);
 									answer += "AI is Calling Function: \r\n```JSON\r\n" + json + "\r\n```\r\n";
 								}
 							}
