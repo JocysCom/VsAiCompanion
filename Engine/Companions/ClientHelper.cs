@@ -310,14 +310,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					}
 					var client = new Companions.ChatGPT.Client(item.AiService);
 					var maxInputTokens = Client.GetMaxInputTokens(item);
-					// Send body and context data.
-					var response = await client.QueryAI(
+					// Send body and context data. Make sure it runs on NON-UI thread.
+					var response = await Task.Run(async () => await client.QueryAI(
 						item.AiModel,
 						chatLogMessages,
 						item.Creativity,
 						item,
 						maxInputTokens
-					);
+					)).ConfigureAwait(true);
 					if (response != null)
 					{
 						var message = new MessageItem(AiName, response, MessageType.In);
@@ -376,14 +376,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				messages.Add(new chat_completion_message(message_role.user, text));
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				var maxInputTokens = Client.GetMaxInputTokens(rItem);
-				// Send body and context data.
-				var response = await client.QueryAI(
+				// Send body and context data. Make sure it runs on NON-UI thread.
+				var response = await Task.Run(async () => await client.QueryAI(
 					rItem.AiModel,
 					messages,
 					rItem.Creativity,
 					item,
 					maxInputTokens
-				);
+				)).ConfigureAwait(true);
 				return response ?? text;
 			}
 			catch (Exception ex)
@@ -415,14 +415,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				var maxInputTokens = Client.GetMaxInputTokens(rItem);
-				// Send body and context data.
-				var response = await client.QueryAI(
+				// Send body and context data. Make sure it runs on NON-UI thread.
+				var response = await Task.Run(async () => await client.QueryAI(
 					rItem.AiModel,
 					messages,
 					rItem.Creativity,
 					item,
 					maxInputTokens
-				);
+				)).ConfigureAwait(true);
 				if (response != null)
 				{
 					response = SettingsData<object>.RemoveInvalidFileNameChars(response);

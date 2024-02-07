@@ -307,8 +307,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			var id = Guid.NewGuid();
-			item.CancellationTokenSources.Add(cancellationTokenSource);
-			Global.MainControl.InfoPanel.AddTask(id);
+			Global.MainControl.Dispatcher.Invoke(() =>
+			{
+				item.CancellationTokenSources.Add(cancellationTokenSource);
+				Global.MainControl.InfoPanel.AddTask(id);
+			});
 			var secure = new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttps;
 			try
 			{
@@ -391,7 +394,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					if (Service.IsAzureOpenAI || secure)
 					{
 						var chatCompletionsOptions = new ChatCompletionsOptions(modelName, messages);
-						Plugins.PluginsManager.ProvideTools(item, chatCompletionsOptions);
+						Global.MainControl.Dispatcher.Invoke(() =>
+						{
+							Plugins.PluginsManager.ProvideTools(item, chatCompletionsOptions);
+						});
 						chatCompletionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
 						{
@@ -424,7 +430,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								if (!string.IsNullOrEmpty(toolArgumentsUpdate))
 								{
 									var json = toolArgumentsUpdate + "\r\n}";
-									await Plugins.PluginsManager.ProcessPlugins(item, json);
+									await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+									{
+										await Plugins.PluginsManager.ProcessPlugins(item, json);
+									});
 									answer += "AI is Calling Function: \r\n```JSON\r\n" + json + "\r\n```\r\n";
 								}
 							}
@@ -465,15 +474,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								request.messages.Add(msg);
 
 						}
-						Plugins.PluginsManager.ProvideTools(item, request);
+						Global.MainControl.Dispatcher.Invoke(() =>
+						{
+							Plugins.PluginsManager.ProvideTools(item, request);
+						});
 						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 							{
 								var responseMessage = chatChoice.message;
 								answer += (responseMessage ?? chatChoice.delta).content;
-								// Check if the model wanted to call a function
-								Plugins.PluginsManager.ProcessPlugins(item, responseMessage);
+								Global.MainControl.Dispatcher.Invoke(() =>
+								{
+									// Check if the model wanted to call a function
+									Plugins.PluginsManager.ProcessPlugins(item, responseMessage);
+								});
 							}
 					}
 				}
@@ -484,8 +499,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			finally
 			{
-				Global.MainControl.InfoPanel.RemoveTask(id);
-				item.CancellationTokenSources.Remove(cancellationTokenSource);
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					Global.MainControl.InfoPanel.RemoveTask(id);
+					item.CancellationTokenSources.Remove(cancellationTokenSource);
+				});
 				MessageDone?.Invoke(this, EventArgs.Empty);
 			}
 			return answer.TrimStart();
