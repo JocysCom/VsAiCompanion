@@ -2,6 +2,7 @@
 using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
+using JocysCom.ClassLibrary.Controls.Chat;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -294,7 +295,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// Query AI
 		/// </summary>
 		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
-		public async Task<string> QueryAI(
+		public async Task<List<MessageItem>> QueryAI(
 			string modelName,
 			List<chat_completion_message> messagesToSend,
 			double creativity,
@@ -302,7 +303,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			int maxInputTokens
 		)
 		{
+			var messageItems = new List<MessageItem>();
+			var messageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			var answer = "";
+			var autoReplyContent = "";
 			var toolArgumentsUpdate = "";
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
@@ -432,9 +436,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									var json = toolArgumentsUpdate + "\r\n}";
 									await Global.MainControl.Dispatcher.InvokeAsync(async () =>
 									{
-										await Plugins.PluginsManager.ProcessPlugins(item, json);
+										autoReplyContent = await Plugins.PluginsManager.ProcessPlugins(item, json);
 									});
-									answer += "AI is Calling Function: \r\n```JSON\r\n" + json + "\r\n```\r\n";
+									answer += "AI Function Call";
+									var attachment = new MessageAttachments(AttachmentType.None, "JSON", json);
+									attachment.Title = "AI Function Call";
+									messageItem.Attachments.Add(attachment);
 								}
 							}
 						}
@@ -506,7 +513,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				});
 				MessageDone?.Invoke(this, EventArgs.Empty);
 			}
-			return answer.TrimStart();
+			messageItem.Body = answer;
+			messageItems.Add(messageItem);
+			if (!string.IsNullOrEmpty(autoReplyContent))
+			{
+
+				var autoReplyItem = new MessageItem(ClientHelper.UserName, "AI Function results", MessageType.Out);
+				var attachment = new MessageAttachments(AttachmentType.None, "", autoReplyContent);
+				attachment.Title = "AI Function results";
+				autoReplyItem.Attachments.Add(attachment);
+				messageItems.Add(autoReplyItem);
+			}
+			return messageItems;
 		}
 
 		public static bool IsTextCompletionMode(string modelName)

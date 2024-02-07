@@ -66,12 +66,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		/// </summary>
 		/// <param name="item">User settings.</param>
 		/// <param name="json">function as JSON</param>
-		public static async Task ProcessPlugins(TemplateItem item, string json)
+		public static async Task<string> ProcessPlugins(TemplateItem item, string json)
 		{
 			if (!item.PluginsEnabled)
-				return;
+				return null;
 			if (!ApproveExecution(item, json))
-				return;
+				return null;
 			lock (PluginFunctions)
 			{
 				if (!PluginFunctions.Any())
@@ -81,7 +81,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 			// Assuming the parameters JSON is a single string. Adjust if the structure is different.
 			var parameter = function.parameters.additional_properties.FirstOrDefault().Value.GetString();
 			if (parameter == null)
-				return;
+				return null;
 			if (PluginFunctions.TryGetValue(function.name, out System.Reflection.MethodInfo methodInfo))
 			{
 				object classInstance = null;
@@ -102,8 +102,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 					{
 						var result = await stringTask;
 						// Assuming you want to do something with the result here...
-						MessageBox.Show(result, "Execution Results", MessageBoxButton.OK, MessageBoxImage.Information);
-						Console.WriteLine(result);
+						//MessageBox.Show(result, "Execution Results", MessageBoxButton.OK, MessageBoxImage.Information);
+						//Console.WriteLine(result);
+						return result;
 					}
 				}
 				else
@@ -111,8 +112,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 					// It's a synchronous method.
 					var result = (string)methodInfo.Invoke(classInstance, new object[] { parameter });
 					// Assuming you want to do something with the result here...
-					MessageBox.Show(result, "Execution Results", MessageBoxButton.OK, MessageBoxImage.Information);
-					Console.WriteLine(result);
+					//MessageBox.Show(result, "Execution Results", MessageBoxButton.OK, MessageBoxImage.Information);
+					//Console.WriteLine(result);
+					return result;
 				}
 			}
 			else
@@ -120,6 +122,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 				// Handle the case where the methodInfo is not found for the given functionName
 				MessageBox.Show($"The function '{function.name}' was not found.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
+			return null;
 		}
 
 		#endregion

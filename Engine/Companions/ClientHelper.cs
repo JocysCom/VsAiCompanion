@@ -311,18 +311,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					var client = new Companions.ChatGPT.Client(item.AiService);
 					var maxInputTokens = Client.GetMaxInputTokens(item);
 					// Send body and context data. Make sure it runs on NON-UI thread.
-					var response = await Task.Run(async () => await client.QueryAI(
+					var messageItems = await Task.Run(async () => await client.QueryAI(
 						item.AiModel,
 						chatLogMessages,
 						item.Creativity,
 						item,
 						maxInputTokens
 					)).ConfigureAwait(true);
-					if (response != null)
+					for (var i = 0; i < messageItems.Count; i++)
 					{
-						var message = new MessageItem(AiName, response, MessageType.In);
-						item.Messages.Add(message);
-						SetData(item, response);
+						item.Messages.Add(messageItems[i]);
+						if (i == 0)
+							SetData(item, messageItems[i].Body);
+					}
+					// If auto-reply message was added then...
+					if (messageItems.Count > 1)
+					{
+						await Send(item);
 					}
 				}
 				catch (Exception ex)
@@ -377,14 +382,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var client = new Companions.ChatGPT.Client(item.AiService);
 				var maxInputTokens = Client.GetMaxInputTokens(rItem);
 				// Send body and context data. Make sure it runs on NON-UI thread.
-				var response = await Task.Run(async () => await client.QueryAI(
+				var messageItem = await Task.Run(async () => await client.QueryAI(
 					rItem.AiModel,
 					messages,
 					rItem.Creativity,
 					item,
 					maxInputTokens
 				)).ConfigureAwait(true);
-				return response ?? text;
+				return messageItem.FirstOrDefault()?.Body ?? text;
 			}
 			catch (Exception ex)
 			{
@@ -423,12 +428,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					item,
 					maxInputTokens
 				)).ConfigureAwait(true);
-				if (response != null)
+				var body = response.FirstOrDefault()?.Body;
+				if (!string.IsNullOrEmpty(body))
 				{
-					response = SettingsData<object>.RemoveInvalidFileNameChars(response);
-					if (response.Split().Length > 0)
+					body = SettingsData<object>.RemoveInvalidFileNameChars(body);
+					if (body.Split().Length > 0)
 					{
-						var title = string.Join(" ", response.Split().Take(6).ToList());
+						var title = string.Join(" ", body.Split().Take(6).ToList());
 						if (Global.Tasks.Items.Contains(item))
 							Global.Tasks.RenameItem(item, title);
 					}
@@ -443,6 +449,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		#endregion
 
+		/// <summary>
+		/// Set data to Visual Studio.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <param name="data"></param>
 		public static void SetData(TemplateItem item, string data)
 		{
 			if (item.AttachContext == AttachmentType.Selection && Global.SetSelection != null)
