@@ -523,7 +523,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			if (!string.IsNullOrEmpty(autoReplyContent))
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
-				var attachment = new MessageAttachments(AttachmentType.None, "", autoReplyContent);
+				var attachment = new MessageAttachments(AttachmentType.None, "text", autoReplyContent);
 				attachment.Title = "AI Function Results";
 				attachment.IsAlwaysIncluded = true;
 				userAutoReplyMessageItem.Attachments.Add(attachment);

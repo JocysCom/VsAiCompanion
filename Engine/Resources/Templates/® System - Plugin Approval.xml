@@ -29,9 +29,21 @@ OOliIxWRheiKFxRDwkCdTvB9nl4uHoZHj7/h8C/+MLTv3k4vWO9fvAnc/Ilh4AtXhUk3RRKXLBQX&#xD
 4nKRh+jAEoOFloAaDfG9xc/3gp/x2yv+xXx792bBV/67/wCrBrfPLAwAAA==</IconData>
   <Name>® System - Plugin Approval</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <AiModel>gpt-4-turbo-preview</AiModel>
   <IsEnabled>false</IsEnabled>
-  <TextInstructions>Analyse the AI Tool/Function call provided and invoke the Approve() or Deny() function.</TextInstructions>
+  <TextInstructions>Process the provided data as follows:
+1. Analyze the conversation.
+2. Identify and analyze the most recent (last) attempt of Function Call by AI assistant.
+3. Summarize the purpose of this function call.
+4. Assess the script's safety.
+5. Add the last line as a conclusion exactly as specified: "Function call approved." if the script is safe, or "User approval required." if it is not.&#xD;
+&#xD;
+Reply Example:&#xD;
+&#xD;
+The purpose of the most recent AI function call is to retrieve the content of the website "https://www.google.com". Since the function call is only retrieving the contents of the website, it does not pose any safety risks. &#xD;
+&#xD;
+Conclusion: Function call approved.&#xD;
+</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Settings />
   <Messages>
