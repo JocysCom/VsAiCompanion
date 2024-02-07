@@ -438,7 +438,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									{
 										autoReplyContent = await Plugins.PluginsManager.ProcessPlugins(item, json);
 									});
-									answer += "AI Function Call";
 									var attachment = new MessageAttachments(AttachmentType.None, "JSON", json);
 									attachment.Title = "AI Function Call";
 									messageItem.Attachments.Add(attachment);
@@ -518,9 +517,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			if (!string.IsNullOrEmpty(autoReplyContent))
 			{
 
-				var autoReplyItem = new MessageItem(ClientHelper.UserName, "AI Function results", MessageType.Out);
+				var autoReplyItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
 				var attachment = new MessageAttachments(AttachmentType.None, "", autoReplyContent);
-				attachment.Title = "AI Function results";
+				attachment.Title = "AI Function Results";
 				autoReplyItem.Attachments.Add(attachment);
 				messageItems.Add(autoReplyItem);
 			}

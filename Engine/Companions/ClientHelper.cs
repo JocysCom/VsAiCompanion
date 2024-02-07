@@ -72,7 +72,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return completionMessages;
 		}
 
-		public async static Task Send(TemplateItem item, Action executeBeforeAddMessage = null, string overrideText = null)
+		public async static Task Send(TemplateItem item,
+			Action executeBeforeAddMessage = null,
+			string overrideText = null,
+			MessageItem overrideMessage = null
+			)
 		{
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
 			if (!Global.IsGoodSettings(item.AiService, true))
@@ -86,150 +90,168 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
 				return;
 			}
-			// If task panel then allow to use AutoClear.
-			var isTask = Global.Tasks.Items.Contains(item);
-			// Message is added. Cleanup now.
-			var itemText = overrideText ?? item.Text;
-			if (isTask)
+			MessageItem m;
+			if (overrideMessage == null)
 			{
-				if (item.MessageBoxOperation == MessageBoxOperation.ClearMessage)
-					item.Text = "";
-				if (item.MessageBoxOperation == MessageBoxOperation.ResetMessage)
+				if (item.Messages == null)
+					item.Messages = new BindingList<MessageItem>();
+				// If task panel then allow to use AutoClear.
+				var isTask = Global.Tasks.Items.Contains(item);
+				// Message is added. Cleanup now.
+				var itemText = overrideText ?? item.Text;
+				if (isTask)
 				{
-					var template = Global.GetSettings(ItemType.Template).Items
-						.Cast<TemplateItem>()
-						.Where(x => x.Name == item.TemplateName)
-						.FirstOrDefault();
-					if (template != null)
-						item.Text = template.Text;
+					if (item.MessageBoxOperation == MessageBoxOperation.ClearMessage)
+						item.Text = "";
+					if (item.MessageBoxOperation == MessageBoxOperation.ResetMessage)
+					{
+						var template = Global.GetSettings(ItemType.Template).Items
+							.Cast<TemplateItem>()
+							.Where(x => x.Name == item.TemplateName)
+							.FirstOrDefault();
+						if (template != null)
+							item.Text = template.Text;
+					}
 				}
-			}
-			if (item.AutoFormatMessage)
-				itemText = await FormatMessage(item, itemText);
-			var vsData = AppHelper.GetMacroValues();
-			// Prepare instructions.
-			var instructions = item.TextInstructions;
-			if (item.UseMacros)
-				instructions = AppHelper.ReplaceMacros(instructions, vsData);
-			var m = new MessageItem(UserName, itemText, MessageType.Out);
-			m.BodyInstructions = instructions;
-			if (item.UseMacros)
-				m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
-			var fileItems = new List<DocItem>();
-			var at = item.AttachContext;
-			// If data from clipboard.
-			if (at.HasFlag(AttachmentType.Clipboard))
-			{
-				var clip = AppHelper.GetClipboard();
-				var clipAttachment = new MessageAttachments()
+
+				if (item.AutoFormatMessage)
+					itemText = await FormatMessage(item, itemText);
+				var vsData = AppHelper.GetMacroValues();
+				// Prepare instructions.
+				var instructions = item.TextInstructions;
+				if (item.UseMacros)
+					instructions = AppHelper.ReplaceMacros(instructions, vsData);
+				m = new MessageItem(UserName, itemText, MessageType.Out);
+				m.BodyInstructions = instructions;
+				if (item.UseMacros)
+					m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
+				var fileItems = new List<DocItem>();
+				var at = item.AttachContext;
+				// If data from clipboard.
+				if (at.HasFlag(AttachmentType.Clipboard))
 				{
-					Title = Global.AppSettings.ContextDataTitle,
-					Type = item.AttachContext,
-					Data = clip.Data,
-				};
-				m.Attachments.Add(clipAttachment);
-			}
-			// If text selection in Visual Studio.
-			if (at.HasFlag(AttachmentType.Selection))
-			{
-				var ad = Global.GetSelection();
-				var adAttachment = new MessageAttachments(AttachmentType.Selection, ad.Language, ad.Data);
-				m.Attachments.Add(adAttachment);
-			}
-			// If selected error in Visual Studio.
-			if (at.HasFlag(AttachmentType.Error))
-			{
-				var err = Global.GetSelectedError();
-				if (!string.IsNullOrEmpty(err?.Description))
-				{
-					var errorAttachment = new MessageAttachments(AttachmentType.Error, err);
-					m.Attachments.Add(errorAttachment);
+					var clip = AppHelper.GetClipboard();
+					var clipAttachment = new MessageAttachments()
+					{
+						Title = Global.AppSettings.ContextDataTitle,
+						Type = item.AttachContext,
+						Data = clip.Data,
+					};
+					m.Attachments.Add(clipAttachment);
 				}
-			}
-			// If active open document in Visual Studio.
-			if (at.HasFlag(AttachmentType.ActiveDocument))
-			{
-				var ad = Global.GetActiveDocument();
-				var adAttachment = new MessageAttachments(AttachmentType.ActiveDocument, ad.Language, ad.Data);
-				m.Attachments.Add(adAttachment);
-			}
-			if (at.HasFlag(AttachmentType.OpenDocuments))
-				fileItems.AddRange(Global.GetOpenDocuments());
-			if (at.HasFlag(AttachmentType.SelectedDocuments))
-				fileItems.AddRange(Global.GetSelectedDocuments());
-			if (at.HasFlag(AttachmentType.ActiveProject))
-				fileItems.AddRange(Global.GetActiveProject());
-			if (at.HasFlag(AttachmentType.SelectedProject))
-				fileItems.AddRange(Global.GetSelectedProject());
-			if (at.HasFlag(AttachmentType.Solution))
-				fileItems.AddRange(Global.GetSolution());
-			if (at.HasFlag(AttachmentType.ErrorDocument))
-			{
-				var doc = Global.GetSelectedErrorDocument();
-				if (doc == null)
+				// If text selection in Visual Studio.
+				if (at.HasFlag(AttachmentType.Selection))
 				{
-					Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
-					return;
+					var ad = Global.GetSelection();
+					var adAttachment = new MessageAttachments(AttachmentType.Selection, ad.Language, ad.Data);
+					m.Attachments.Add(adAttachment);
 				}
-				else
+				// If selected error in Visual Studio.
+				if (at.HasFlag(AttachmentType.Error))
 				{
-					fileItems.Add(doc);
+					var err = Global.GetSelectedError();
+					if (!string.IsNullOrEmpty(err?.Description))
+					{
+						var errorAttachment = new MessageAttachments(AttachmentType.Error, err);
+						m.Attachments.Add(errorAttachment);
+					}
 				}
-			}
-			if (at.HasFlag(AttachmentType.Exception))
-			{
-				var ei = Global.GetCurrentException();
-				if (!string.IsNullOrEmpty(ei?.Message))
+				// If active open document in Visual Studio.
+				if (at.HasFlag(AttachmentType.ActiveDocument))
 				{
-					var exceptionAttachment = new MessageAttachments(AttachmentType.Exception, ei);
-					m.Attachments.Add(exceptionAttachment);
+					var ad = Global.GetActiveDocument();
+					var adAttachment = new MessageAttachments(AttachmentType.ActiveDocument, ad.Language, ad.Data);
+					m.Attachments.Add(adAttachment);
 				}
-			}
-			if (at.HasFlag(AttachmentType.ExceptionDocuments))
-			{
-				// Get files for exception.
-				var exceptionFiles = Global.GetCurrentExceptionDocuments();
-				// Extract files if exception info was pasted manually inside the message.
-				var messagePaths = AppHelper.ExtractFilePaths(itemText);
-				var uniquePaths = messagePaths
-					.Where(x => exceptionFiles.All(y => !x.Equals(y.FullName, StringComparison.OrdinalIgnoreCase)));
-				var messageFiles = uniquePaths.Select(x => new DocItem(null, x)).ToList();
-				fileItems.AddRange(exceptionFiles);
-				fileItems.AddRange(messageFiles);
-			}
-			// Attach files as message attachments at the end.
-			if (fileItems.Count > 0)
-			{
-				var a2 = new MessageAttachments()
+				if (at.HasFlag(AttachmentType.OpenDocuments))
+					fileItems.AddRange(Global.GetOpenDocuments());
+				if (at.HasFlag(AttachmentType.SelectedDocuments))
+					fileItems.AddRange(Global.GetSelectedDocuments());
+				if (at.HasFlag(AttachmentType.ActiveProject))
+					fileItems.AddRange(Global.GetActiveProject());
+				if (at.HasFlag(AttachmentType.SelectedProject))
+					fileItems.AddRange(Global.GetSelectedProject());
+				if (at.HasFlag(AttachmentType.Solution))
+					fileItems.AddRange(Global.GetSolution());
+				if (at.HasFlag(AttachmentType.ErrorDocument))
 				{
-					Title = Global.AppSettings.ContextFileTitle,
-					Type = item.AttachContext,
-					Data = DocItem.ConvertFile(fileItems),
-				};
-				m.Attachments.Add(a2);
-			}
-			// Mark message as preview is preview.
-			m.IsPreview = item.IsPreview;
-			if (item.Messages == null)
-				item.Messages = new BindingList<MessageItem>();
-			// ShowSensitiveDataWarning
-			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
-			{
-				var lines = new List<string>();
-				foreach (var fileItem in fileItems)
-				{
-					if (string.IsNullOrEmpty(fileItem.Data))
-						continue;
-					var word = AppHelper.ContainsSensitiveData(fileItem.Data);
-					if (string.IsNullOrEmpty(word))
-						continue;
-					lines.Add($"Word '{word}' in File: {fileItem.FullName}\r\n");
+					var doc = Global.GetSelectedErrorDocument();
+					if (doc == null)
+					{
+						Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
+						return;
+					}
+					else
+					{
+						fileItems.Add(doc);
+					}
 				}
-				if (lines.Count > 0)
+				if (at.HasFlag(AttachmentType.Exception))
 				{
+					var ei = Global.GetCurrentException();
+					if (!string.IsNullOrEmpty(ei?.Message))
+					{
+						var exceptionAttachment = new MessageAttachments(AttachmentType.Exception, ei);
+						m.Attachments.Add(exceptionAttachment);
+					}
+				}
+				if (at.HasFlag(AttachmentType.ExceptionDocuments))
+				{
+					// Get files for exception.
+					var exceptionFiles = Global.GetCurrentExceptionDocuments();
+					// Extract files if exception info was pasted manually inside the message.
+					var messagePaths = AppHelper.ExtractFilePaths(itemText);
+					var uniquePaths = messagePaths
+						.Where(x => exceptionFiles.All(y => !x.Equals(y.FullName, StringComparison.OrdinalIgnoreCase)));
+					var messageFiles = uniquePaths.Select(x => new DocItem(null, x)).ToList();
+					fileItems.AddRange(exceptionFiles);
+					fileItems.AddRange(messageFiles);
+				}
+				// Attach files as message attachments at the end.
+				if (fileItems.Count > 0)
+				{
+					var a2 = new MessageAttachments()
+					{
+						Title = Global.AppSettings.ContextFileTitle,
+						Type = item.AttachContext,
+						Data = DocItem.ConvertFile(fileItems),
+					};
+					m.Attachments.Add(a2);
+				}
+				// Mark message as preview is preview.
+				m.IsPreview = item.IsPreview;
+				// ShowSensitiveDataWarning
+				if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
+				{
+					var lines = new List<string>();
+					foreach (var fileItem in fileItems)
+					{
+						if (string.IsNullOrEmpty(fileItem.Data))
+							continue;
+						var word = AppHelper.ContainsSensitiveData(fileItem.Data);
+						if (string.IsNullOrEmpty(word))
+							continue;
+						lines.Add($"Word '{word}' in File: {fileItem.FullName}\r\n");
+					}
+					if (lines.Count > 0)
+					{
+						var text = JoinMessageParts(
+							"Possible sensitive data has been detected. Do you want to send these files to AI?",
+							string.Join("\r\n", lines)
+						);
+						var caption = $"{Global.Info.Product} - Send Files";
+						var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+						if (result != MessageBoxResult.Yes)
+							return;
+					}
+				}
+				// ShowDocumentsAttachedWarning
+				if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
+				{
+					var files = fileItems.Select(x => x.FullName).ToList();
 					var text = JoinMessageParts(
-						"Possible sensitive data has been detected. Do you want to send these files to AI?",
-						string.Join("\r\n", lines)
+						"Do you want to send these files to AI?",
+						string.Join("\r\n", files)
 					);
 					var caption = $"{Global.Info.Product} - Send Files";
 					var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -237,20 +259,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						return;
 				}
 			}
-			// ShowDocumentsAttachedWarning
-			if (fileItems.Count > 0 && Global.AppSettings.ShowDocumentsAttachedWarning)
+			else
 			{
-				var files = fileItems.Select(x => x.FullName).ToList();
-				var text = JoinMessageParts(
-					"Do you want to send these files to AI?",
-					string.Join("\r\n", files)
-				);
-				var caption = $"{Global.Info.Product} - Send Files";
-				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
-				if (result != MessageBoxResult.Yes)
-					return;
+				m = overrideMessage;
 			}
-
 			// Get current message with all attachments.
 			var chatLogMessages = ConvertMessageItemToChatMessage(item.IsSystemInstructions, m, includeAttachments: true);
 			// Prepare list of messages to send.
@@ -318,16 +330,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						item,
 						maxInputTokens
 					)).ConfigureAwait(true);
-					for (var i = 0; i < messageItems.Count; i++)
+					// If assistant message was received.
+					var assistantMessage = messageItems.FirstOrDefault();
+					if (assistantMessage != null)
 					{
-						item.Messages.Add(messageItems[i]);
-						if (i == 0)
-							SetData(item, messageItems[i].Body);
+						item.Messages.Add(assistantMessage);
+						// Automation.
+						SetData(item, assistantMessage.Body);
 					}
 					// If auto-reply message was added then...
-					if (messageItems.Count > 1)
+					var userMessage = messageItems.Skip(1).FirstOrDefault();
+					if (userMessage != null)
 					{
-						await Send(item);
+						await Send(item, overrideMessage: userMessage);
 					}
 				}
 				catch (Exception ex)
