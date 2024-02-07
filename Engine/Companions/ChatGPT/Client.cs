@@ -304,7 +304,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		)
 		{
 			var messageItems = new List<MessageItem>();
-			var messageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
+			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			var answer = "";
 			var autoReplyContent = "";
 			var toolArgumentsUpdate = "";
@@ -434,13 +434,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								if (!string.IsNullOrEmpty(toolArgumentsUpdate))
 								{
 									var json = toolArgumentsUpdate + "\r\n}";
-									await Global.MainControl.Dispatcher.InvokeAsync(async () =>
-									{
-										autoReplyContent = await Plugins.PluginsManager.ProcessPlugins(item, json);
-									});
+									// Create message attachment first.
 									var attachment = new MessageAttachments(AttachmentType.None, "JSON", json);
 									attachment.Title = "AI Function Call";
-									messageItem.Attachments.Add(attachment);
+									attachment.IsAlwaysIncluded = true;
+									assistantMessageItem.Attachments.Add(attachment);
+									messageItems.Add(assistantMessageItem);
+									Global.MainControl.Dispatcher.Invoke(() =>
+									{
+										item.Messages.Add(assistantMessageItem);
+									});
+									// Process function calls.
+									autoReplyContent = await Plugins.PluginsManager.ProcessPlugins(item, json);
 								}
 							}
 						}
@@ -512,16 +517,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				});
 				MessageDone?.Invoke(this, EventArgs.Empty);
 			}
-			messageItem.Body = answer;
-			messageItems.Add(messageItem);
+			assistantMessageItem.Body = answer;
+			if (!messageItems.Contains(assistantMessageItem))
+				messageItems.Add(assistantMessageItem);
 			if (!string.IsNullOrEmpty(autoReplyContent))
 			{
-
-				var autoReplyItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
+				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
 				var attachment = new MessageAttachments(AttachmentType.None, "", autoReplyContent);
 				attachment.Title = "AI Function Results";
-				autoReplyItem.Attachments.Add(attachment);
-				messageItems.Add(autoReplyItem);
+				attachment.IsAlwaysIncluded = true;
+				userAutoReplyMessageItem.Attachments.Add(attachment);
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					messageItems.Add(userAutoReplyMessageItem);
+				});
 			}
 			return messageItems;
 		}

@@ -45,12 +45,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return s;
 		}
 
-		public static List<chat_completion_message> ConvertMessageItemToChatMessage(bool isSystemInstructions, MessageItem message, bool includeAttachments)
+		public static List<chat_completion_message> ConvertMessageItemToChatMessage(bool isSystemInstructions, MessageItem message, bool? includeAttachments = null)
 		{
 			var completionMessages = new List<chat_completion_message>();
 			var body = message.Body;
-			if (includeAttachments && (message.Type == MessageType.In || message.Type == MessageType.Out))
-				body = JoinMessageParts(body, ConvertAttachmentsToString(message.Attachments.ToArray()));
+			if (message.Type == MessageType.In || message.Type == MessageType.Out)
+			{
+				var attachments = Array.Empty<MessageAttachments>();
+				if (includeAttachments == true)
+					attachments = message.Attachments.ToArray();
+				if (includeAttachments == null)
+					attachments = message.Attachments.Where(x => x.IsAlwaysIncluded).ToArray();
+				if (attachments.Length > 0)
+					body = JoinMessageParts(body, ConvertAttachmentsToString(attachments));
+			}
 			if (message.Type == MessageType.In)
 			{
 				// Add AI assitant message.
@@ -273,7 +281,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var historyMessages = item.Messages
 					// Exclude preview messages from the history.
 					.Where(x => !x.IsPreview)
-					.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
+					.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, includeAttachments: null)).ToList();
 				var attachMessages = AppHelper.GetMessages(historyMessages, tokensLeftForChatHistory, ChatLogOptions);
 				chatLogMessages = attachMessages.Concat(chatLogMessages).ToList();
 				if (Client.IsTextCompletionMode(item.AiModel) && attachMessages.Count > 0)
@@ -334,7 +342,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					var assistantMessage = messageItems.FirstOrDefault();
 					if (assistantMessage != null)
 					{
-						item.Messages.Add(assistantMessage);
+						// Workaround: Re-add 
+						//if (item.Messages.Contains(assistantMessage) && assistantMessage.Attachments.Count > 1)
+						//	item.Messages.Remove(assistantMessage);
+						if (!item.Messages.Contains(assistantMessage))
+							item.Messages.Add(assistantMessage);
 						// Automation.
 						SetData(item, assistantMessage.Body);
 					}
@@ -460,6 +472,46 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
 				item.Messages.Add(message);
 			}
+		}
+
+		public async static Task<string> EvaluateToolExecutionSafety(TemplateItem item)
+		{
+			/// Try to get reserved template to generate title.
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == item.PluginApprovalTemplate);
+			if (rItem == null)
+				return null;
+			if (item.Messages.Count == 0)
+				return null;
+			var availableTokens = GetAvailableTokens(item, null);
+			var allmessages = item.Messages
+				// Exclude preview messages from the history.
+				//.Where(x => !x.IsPreview)
+				.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, includeAttachments: null)).ToList();
+			var messages = AppHelper.GetMessages(allmessages, availableTokens, ChatLogOptions);
+			// Create a copy in order not to add to existing list.
+			try
+			{
+				// Add instructions to generate title to existing messages.
+				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
+				var client = new Companions.ChatGPT.Client(item.AiService);
+				var maxInputTokens = Client.GetMaxInputTokens(rItem);
+				// Send body and context data. Make sure it runs on NON-UI thread.
+				var response = await Task.Run(async () => await client.QueryAI(
+					rItem.AiModel,
+					messages,
+					rItem.Creativity,
+					item,
+					maxInputTokens
+				)).ConfigureAwait(true);
+				var body = response.FirstOrDefault()?.Body;
+				return body;
+			}
+			catch (Exception ex)
+			{
+				var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
+				item.Messages.Add(message);
+			}
+			return null;
 		}
 
 		#endregion

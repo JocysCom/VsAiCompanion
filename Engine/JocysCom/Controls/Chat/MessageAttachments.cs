@@ -28,6 +28,14 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			IsMarkdown = true;
 		}
 
+
+		/// <summary>
+		/// If true, the attachment will always be included as part of the body.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool IsAlwaysIncluded { get => _IsAlwaysIncluded; set => SetProperty(ref _IsAlwaysIncluded, value); }
+		bool _IsAlwaysIncluded;
+
 		public bool IsMarkdown { get => _IsMarkdown; set => SetProperty(ref _IsMarkdown, value); }
 		bool _IsMarkdown;
 
