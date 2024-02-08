@@ -505,10 +505,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			return
-				type == typeof(string)
 				// Note: Every Primitive type (such as int, double, bool, char, etc.) is a ValueType. 
-				|| type.IsValueType
-				|| type.IsSerializable;
+				type.IsPublic && (
+					type == typeof(string) ||
+					type.IsValueType ||
+					// Type has parameterless constructor.
+					type.GetConstructor(Type.EmptyTypes) != null
+				);
 		}
 
 		/// <summary>Cache data for speed.</summary>
@@ -540,7 +543,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					continue;
 				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
 					continue;
-				var useJson = sp.PropertyType.IsSerializable && !sp.PropertyType.IsValueType;
+				// If type is not value type and has parameterless constructor.
+				var useJson = !sp.PropertyType.IsValueType && sp.PropertyType.IsPublic && sp.PropertyType.GetConstructor(Type.EmptyTypes) != null;
 				// Get source value.
 				var sValue = sp.GetValue(source, null);
 				if (useJson)

@@ -3,6 +3,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -19,28 +20,64 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 
 		#region Manage Functions
 
+		/// <summary>
+		/// Store method names with method info.
+		/// </summary>
 		public static Dictionary<string, System.Reflection.MethodInfo> PluginFunctions = new Dictionary<string, System.Reflection.MethodInfo>();
 
-		private static void AddMethods<T>()
+		/// <summary>
+		/// Add all methods of the type.
+		/// </summary>
+		private static void AddMethods(Type type)
 		{
-			var type = typeof(T);
 			var bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 			var methods = type.GetMethods(bindingFlags);
 			foreach (var method in methods)
 				PluginFunctions.Add(method.Name, method);
 		}
 
+		/// <summary>
+		///  Register plugins.
+		/// </summary>
 		public static void RegisterPluginFunctions()
 		{
-			AddMethods<AiCompanion.Plugins.LinkReader.LinkReaderHelper>();
-			AddMethods<AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper>();
-			AddMethods<JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper>();
+			AddMethods(typeof(AiCompanion.Plugins.LinkReader.LinkReaderHelper));
+			AddMethods(typeof(AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper));
+			AddMethods(typeof(JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper));
 		}
 
-		public static void AskForApproval()
+		/// <summary>
+		/// Load Microsoft.NET.Sdk.Web libraries and include all public API methods from classes tagged with the[ApiController] attribute.
+		/// </summary>
+		/// <param name="path">Path to the folder with DLLs.</param>
+		public static void LoadPluginFunctions(string path)
 		{
+			var dllFiles = Directory.GetFiles(path, "*.dll");
+			foreach (var dllFile in dllFiles)
+			{
+				Assembly assembly;
+				try
+				{
+					assembly = Assembly.LoadFrom(dllFile);
+				}
+				catch (Exception ex)
+				{
+					// Handle or log exceptions such as bad format, file not found, etc.
+					Console.WriteLine($"Could not load assembly {dllFile}: {ex.Message}");
+					continue;
+				}
+				// Assuming you only want classes directly tagged with [ApiController]
+				// Adjust BindingFlags if you need to search for non-public types etc.
+				var controllerTypes = assembly.GetTypes();
+				//.Where(type => type.GetCustomAttributes<Controller>().Any());
 
+				foreach (var type in controllerTypes)
+				{
+					AddMethods(type); // Reuse your existing method to add methods of the type
+				}
+			}
 		}
+
 
 		public static async Task<bool> ApproveExecution(TemplateItem item, string json)
 		{

@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
-using wp = DocumentFormat.OpenXml.Wordprocessing;
+using WP = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 {
@@ -346,17 +346,17 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 
 		#region Microsoft Word Document (*.docx)
 
-		static void AddDocxParagraph(wp.Body body, string text = null, bool isBold = false)
+		static void AddDocxParagraph(WP.Body body, string text = null, bool isBold = false)
 		{
-			var para = body.AppendChild(new wp.Paragraph());
-			var run = para.AppendChild(new wp.Run());
+			var para = body.AppendChild(new WP.Paragraph());
+			var run = para.AppendChild(new WP.Run());
 			if (!string.IsNullOrEmpty(text))
 			{
-				run.AppendChild(new wp.Text(text));
+				run.AppendChild(new WP.Text(text));
 				if (isBold)
 				{
-					run.RunProperties = new wp.RunProperties();
-					run.RunProperties.AppendChild(new wp.Bold());
+					run.RunProperties = new WP.RunProperties();
+					run.RunProperties.AppendChild(new WP.Bold());
 				}
 			}
 		}
@@ -366,7 +366,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			using (var wordDocument = WordprocessingDocument.Create(path, WordprocessingDocumentType.Document))
 			{
 				var mainPart = wordDocument.AddMainDocumentPart();
-				mainPart.Document = new wp.Document(new wp.Body());
+				mainPart.Document = new WP.Document(new WP.Body());
 				foreach (var request in o)
 				{
 					if (request is chat_completion_request cr)
@@ -398,12 +398,12 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				var mainPart = doc.MainDocumentPart;
 				chat_completion_request cr = null;
 				text_completion_item tr = null;
-				foreach (wp.Paragraph paragraph in mainPart.Document.Body)
+				foreach (WP.Paragraph paragraph in mainPart.Document.Body)
 				{
 					var content = paragraph.InnerText.Trim();
 					if (string.IsNullOrEmpty(content))
 						continue;
-					var role = paragraph.Descendants<wp.Bold>().Any()
+					var role = paragraph.Descendants<WP.Bold>().Any()
 						? message_role.user
 						: message_role.assistant;
 					if (typeof(T) == typeof(chat_completion_request))

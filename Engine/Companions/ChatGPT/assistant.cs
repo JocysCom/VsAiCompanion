@@ -5,7 +5,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 	/// <summary>
 	/// Represents an assistant that can call the model and use tools.
 	/// </summary>
-	public partial class assistant : base_object
+	public partial class @assistant : base_object
 	{
 		/// <summary>
 		/// Name of the assistant.
