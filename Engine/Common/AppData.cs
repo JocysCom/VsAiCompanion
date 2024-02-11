@@ -1,7 +1,10 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Plugins;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
@@ -152,6 +155,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private SortableBindingList<AiService> _AiServices;
 		private object _AiServicesLock = new object();
 
+
+		public SortableBindingList<PluginItem> Plugins
+		{
+			get
+			{
+				lock (_PluginsLock)
+				{
+					if (_Plugins == null || _Plugins.Count == 0)
+						_Plugins = new SortableBindingList<PluginItem>();
+					return _Plugins;
+				}
+			}
+			set => _Plugins = value;
+		}
+		private SortableBindingList<PluginItem> _Plugins;
+		private object _PluginsLock = new object();
+
 		public SortableBindingList<AiModel> AiModels
 		{
 			get
@@ -222,6 +242,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 		#region ■ Helper Functions
+
+		public static SortableBindingList<PluginItem> RefreshPlugins(IList<PluginItem> old)
+		{
+			var list = new SortableBindingList<PluginItem>();
+			foreach (var plugin in PluginsManager.PluginFunctions)
+			{
+				var item = new PluginItem(plugin.Value);
+				var oldItem = old?.FirstOrDefault(x => x.Id == item.Id);
+				// Only the enable property can be modified by the user at the moment.
+				if (oldItem != null)
+					item.IsEnabled = oldItem.IsEnabled;
+				list.Add(item);
+			}
+			return list;
+		}
 
 		public static Guid OpenAiServiceId
 			=> AppHelper.GetGuid(nameof(AiService), OpenAiName);

@@ -84,6 +84,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_objects_exchange = nameof(Icon_objects_exchange);
 		public const string Icon_painters_palette = nameof(Icon_painters_palette);
 		public const string Icon_photo_portrait = nameof(Icon_photo_portrait);
+		public const string Icon_piece = nameof(Icon_piece);
+		public const string Icon_piece2 = nameof(Icon_piece2);
 		public const string Icon_pieces = nameof(Icon_pieces);
 		public const string Icon_radar = nameof(Icon_radar);
 		public const string Icon_reticle = nameof(Icon_reticle);

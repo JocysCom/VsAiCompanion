@@ -349,6 +349,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				data.IsSavePending = true;
 			}
 			var appSettings = e.Items.FirstOrDefault();
+			// Always refresh plugins.
+			appSettings.Plugins = Engine.AppData.RefreshPlugins(appSettings.Plugins);
+			// Check app services.
 			if (appSettings.AiServices == null || appSettings.AiServices.Count == 0)
 			{
 				appSettings.AiServices = Engine.AppData.GetDefaultAiServices();
@@ -364,7 +367,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var d = new AiServiceSettings();
 				d.ListSelection = new List<string> { Engine.AppData.OpenAiName };
 				appSettings.AiServiceData = d;
-
 			}
 			// Fix OpenAI Id
 			var openAiService = appSettings.AiServices.FirstOrDefault(x => x.Name == Engine.AppData.OpenAiName);

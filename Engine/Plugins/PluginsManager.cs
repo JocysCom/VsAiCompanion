@@ -25,7 +25,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		/// <summary>
 		/// Store method names with method info.
 		/// </summary>
-		public static Dictionary<string, System.Reflection.MethodInfo> PluginFunctions = new Dictionary<string, System.Reflection.MethodInfo>();
+		public static Dictionary<string, System.Reflection.MethodInfo> PluginFunctions
+		{
+			get
+			{
+				lock (PluginFunctionsLock)
+				{
+					if (_PluginFunctions == null)
+						_PluginFunctions = new Dictionary<string, System.Reflection.MethodInfo>();
+					if (_PluginFunctions.Count == 0)
+					{
+						AddMethods(typeof(LinkReaderHelper));
+						AddMethods(typeof(PowerShellExecutorHelper));
+						AddMethods(typeof(AutoContinueHelper));
+
+					}
+					return _PluginFunctions;
+				}
+			}
+		}
+		static Dictionary<string, System.Reflection.MethodInfo> _PluginFunctions;
+		static object PluginFunctionsLock = new object();
 
 		/// <summary>
 		/// Add all methods of the type.
@@ -35,17 +55,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 			var bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 			var methods = type.GetMethods(bindingFlags);
 			foreach (var method in methods)
-				PluginFunctions.Add(method.Name, method);
-		}
-
-		/// <summary>
-		///  Register plugins.
-		/// </summary>
-		public static void RegisterPluginFunctions()
-		{
-			AddMethods(typeof(LinkReaderHelper));
-			AddMethods(typeof(PowerShellExecutorHelper));
-			AddMethods(typeof(AutoContinueHelper));
+				_PluginFunctions.Add(method.Name, method);
 		}
 
 		/// <summary>
@@ -133,11 +143,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 				return null;
 			if (!await ApproveExecution(item, json))
 				return null;
-			lock (PluginFunctions)
-			{
-				if (!PluginFunctions.Any())
-					RegisterPluginFunctions();
-			}
 			var function = Client.Deserialize<chat_completion_function>(json);
 			// Assuming the parameters JSON is a single string. Adjust if the structure is different.
 			var parameter = function.parameters.additional_properties.FirstOrDefault().Value.GetString();
@@ -200,11 +205,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		{
 			if (!item.PluginsEnabled)
 				return;
-			lock (PluginFunctions)
-			{
-				if (!PluginFunctions.Any())
-					RegisterPluginFunctions();
-			}
 			options.ToolChoice = ChatCompletionsToolChoice.Auto;
 			lock (ToolDefinitions)
 			{
@@ -288,15 +288,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		{
 			if (!item.PluginsEnabled)
 				return;
-			// Ensure PluginFunctions are registered before accessing them
-			if (!PluginFunctions.Any())
-			{
-				lock (PluginFunctions)
-				{
-					if (!PluginFunctions.Any())
-						RegisterPluginFunctions();
-				}
-			}
 			request.tool_choice = tool_choice.auto;
 			if (CompletionTools.Count == 0)
 			{
