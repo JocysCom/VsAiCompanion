@@ -1,12 +1,16 @@
 ﻿using System.Diagnostics;
 
-namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor
+namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
+
+	/// <summary>
+	/// Helps AI to execute scripts.
+	/// </summary>
 	public class PowerShellExecutorHelper
 	{
 
 		/// <summary>
-		/// Execute a PowerShell script
+		/// Use to execute a PowerShell script on user computer.
 		/// </summary>
 		/// <param name="script">The PowerShell script to be executed.</param>
 		/// <returns>The output of the executed PowerShell script.</returns>

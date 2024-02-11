@@ -1,6 +1,8 @@
 ﻿using Azure.AI.OpenAI;
+using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,9 +43,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		/// </summary>
 		public static void RegisterPluginFunctions()
 		{
-			AddMethods(typeof(AiCompanion.Plugins.LinkReader.LinkReaderHelper));
-			AddMethods(typeof(AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper));
-			AddMethods(typeof(JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper));
+			AddMethods(typeof(LinkReaderHelper));
+			AddMethods(typeof(PowerShellExecutorHelper));
+			AddMethods(typeof(AutoContinueHelper));
 		}
 
 		/// <summary>
@@ -187,6 +189,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 
 		#region Microsoft's Reinvention of the Wheel
 
+		static List<ChatCompletionsFunctionToolDefinition> ToolDefinitions = new List<ChatCompletionsFunctionToolDefinition>();
+
 		/// <summary>
 		/// Add completion tools to chat completion message request for OpenAI GPT.
 		/// </summary>
@@ -196,58 +200,84 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		{
 			if (!item.PluginsEnabled)
 				return;
-			// Define GetWebPageContents.
+			lock (PluginFunctions)
+			{
+				if (!PluginFunctions.Any())
+					RegisterPluginFunctions();
+			}
 			options.ToolChoice = ChatCompletionsToolChoice.Auto;
-			var getWebPageContentsFunction = new FunctionDefinition()
+			lock (ToolDefinitions)
 			{
-				Name = "GetWebPageContents",
-				Description = "Use to retrieve content of websites by URL.",
-				// Define the JSON Schema for the function parameter
-				Parameters = BinaryData.FromObjectAsJson(new
+				if (ToolDefinitions.Count == 0)
 				{
-					type = "object", // Since you are describing a function parameter, use 'object'
-					properties = new
+					foreach (var kv in PluginFunctions)
 					{
-						url = new
+						var requiredParams = new List<string>();
+						// Get Method Info
+						var mi = kv.Value;
+						var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
+						var miParams = mi.GetParameters();
+						var parametersObject = new Dictionary<string, object>();
+						foreach (var pi in miParams)
 						{
-							type = "string",
-							description = "URL which points to the resource."
+							var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
+							if (!pi.IsOptional)
+								requiredParams.Add(pi.Name);
+							parametersObject.Add(pi.Name, new
+							{
+								type = GetJsonType(pi.ParameterType),
+								description = paramText
+							});
 						}
-					},
-					// Define required parameters.
-					required = new[] { "url" }
-				})
-			};
-			var getWebPageContentsTool = new ChatCompletionsFunctionToolDefinition(getWebPageContentsFunction);
-			options.Tools.Add(getWebPageContentsTool);
-			// Defining RunPowerShellScript tool
-			var runPowerShellScriptFunction = new FunctionDefinition
-			{
-				Name = nameof(AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper.RunPowerShellScript),
-				Description = "Execute a PowerShell script on user computer.",
-				// Define the JSON Schema for the function parameter
-				Parameters = BinaryData.FromObjectAsJson(new
-				{
-					type = "object", // Since you are describing a function parameter, use 'object'
-					properties = new
-					{
-						script = new
+						// Create and add function definition.
+						var function = new FunctionDefinition()
 						{
-							type = "string",
-							description = "PowerShell script to execute"
-						}
-					},
-					// Define required parameters.
-					required = new[] { "string" }
-				})
-			};
-			var runPowerShellScriptTool = new ChatCompletionsFunctionToolDefinition(runPowerShellScriptFunction);
-			options.Tools.Add(runPowerShellScriptTool);
+							Name = mi.Name,
+							Description = summaryText,
+							Parameters = BinaryData.FromObjectAsJson(new
+							{
+								// Defining structure for function parameters.
+								type = "object",
+								properties = parametersObject,
+								required = requiredParams.ToArray(),
+							})
+						};
+						var tool = new ChatCompletionsFunctionToolDefinition(function);
+						ToolDefinitions.Add(tool);
+					}
+				}
+				foreach (var tool in ToolDefinitions)
+					options.Tools.Add(tool);
+			}
+		}
+
+		public static string GetJsonType(Type type)
+		{
+			// Nullable types should be treated based on their underlying type.
+			var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+			if (underlyingType == typeof(string))
+				return "string";
+			else if (underlyingType == typeof(int) || underlyingType == typeof(long) || underlyingType == typeof(short) || underlyingType == typeof(byte))
+				return "integer";
+			else if (underlyingType == typeof(bool))
+				return "boolean";
+			else if (underlyingType == typeof(double) || underlyingType == typeof(float) || underlyingType == typeof(decimal))
+				return "number";
+			else if (underlyingType.IsArray || (typeof(System.Collections.IEnumerable).IsAssignableFrom(underlyingType) && underlyingType != typeof(string)))
+				return "array";
+			else if (underlyingType == typeof(object))
+				return "object";
+			else if (underlyingType.IsClass)
+				return "object";
+			else
+				return "object";
 		}
 
 		#endregion
 
 		#region Classic API
+
+		static List<chat_completion_tool> CompletionTools = new List<chat_completion_tool>();
 
 		/// <summary>
 		/// Add completion tools to chat completion message request for OpenAI GPT.
@@ -258,64 +288,69 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		{
 			if (!item.PluginsEnabled)
 				return;
-			if (request.tools == null)
-				request.tools = new List<chat_completion_tool>();
-			// Define GetWebPageContents.
-			var getWebPageContentsTool = new chat_completion_tool
+			// Ensure PluginFunctions are registered before accessing them
+			if (!PluginFunctions.Any())
 			{
-				type = chat_completion_tool_type.function,
-				function = new chat_completion_function
+				lock (PluginFunctions)
 				{
-					description = "Use to retrieve content of websites by URL.",
-					name = nameof(AiCompanion.Plugins.LinkReader.LinkReaderHelper.GetWebPageContents),
-					parameters = new base_item
+					if (!PluginFunctions.Any())
+						RegisterPluginFunctions();
+				}
+			}
+			request.tool_choice = tool_choice.auto;
+			if (CompletionTools.Count == 0)
+			{
+				lock (CompletionTools)
+				{
+					if (CompletionTools.Count == 0)
 					{
-						additional_properties = new Dictionary<string, JsonElement>
+						foreach (var kv in PluginFunctions)
 						{
-							// Assuming the URL is a string. Adjust if necessary.
-							["url"] = JsonSerializer.SerializeToElement("")
+							var mi = kv.Value;
+							var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
+							var requiredParams = new List<string>();
+							var props = new Dictionary<string, object>();
+							foreach (var pi in mi.GetParameters())
+							{
+								var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
+								if (!pi.IsOptional)
+									requiredParams.Add(pi.Name);
+								props[pi.Name] = new
+								{
+									type = GetJsonType(pi.ParameterType),
+									description = paramText
+								};
+							}
+							var function = new chat_completion_function()
+							{
+								name = mi.Name,
+								description = summaryText,
+								parameters = new base_item
+								{
+									additional_properties = new Dictionary<string, JsonElement>
+									{
+										["parameters"] = JsonDocument.Parse(JsonSerializer.Serialize(new
+										{
+											type = "object",
+											properties = props,
+											required = requiredParams
+										})).RootElement
+									}
+								}
+							};
+							var tool = new chat_completion_tool()
+							{
+								type = chat_completion_tool_type.function,
+								function = function,
+							};
+							CompletionTools.Add(tool);
 						}
 					}
 				}
-			};
-			request.tools.Add(getWebPageContentsTool);
-			// Defining RunPowerShellScript tool
-			var runPowerShellScriptTool = new chat_completion_tool
-			{
-				type = chat_completion_tool_type.function,
-				function = new chat_completion_function
-				{
-					description = "Execute a PowerShell script.",
-					name = nameof(AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper.RunPowerShellScript),
-					parameters = new base_item
-					{
-						additional_properties = new Dictionary<string, JsonElement>
-						{
-							// Assuming the script is a string. Adjust if necessary.
-							["script"] = JsonSerializer.SerializeToElement("")
-						}
-					}
-				}
-			};
-			request.tools.Add(runPowerShellScriptTool);
-			// New AutoContinue tool setup
-			var autoContinueTool = new chat_completion_tool
-			{
-				type = chat_completion_tool_type.function,
-				function = new chat_completion_function
-				{
-					description = "Use it to ask user for permission to continue working on the task.",
-					name = nameof(JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper.AutoContinue),
-					parameters = new base_item
-					{
-						additional_properties = new Dictionary<string, JsonElement>
-						{
-							// Assuming the message is a string. Adjust if necessary.
-							["message"] = JsonSerializer.SerializeToElement("")
-						}
-					}
-				}
-			};
+			}
+			// No need to lock here as we are only reading from CompletionTools
+			foreach (var tool in CompletionTools)
+				request.tools.Add(tool);
 		}
 
 		public static void ProcessPlugins(TemplateItem item, chat_completion_message message)
@@ -332,25 +367,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 					var functionName = toolCall.function.name;
 					var functionParams = toolCall.function.parameters;
 					//https://platform.openai.com/docs/guides/function-calling?lang=node.js
-					switch (functionName)
-					{
-						case nameof(AiCompanion.Plugins.LinkReader.LinkReaderHelper.GetWebPageContents):
-							var url = toolCall.function.parameters.additional_properties["url"].Deserialize<string>();
-							var content = AiCompanion.Plugins.LinkReader.LinkReaderHelper.GetWebPageContents(url);
-							break;
-						case nameof(AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper.RunPowerShellScript):
-							// Before running script analyse it with another AI and show evaluation results to the user with option to cancel.
-							var script = toolCall.function.parameters.additional_properties["script"].Deserialize<string>();
-							var output = AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper.RunPowerShellScript(script);
-							break;
-						case nameof(JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper.AutoContinue):
-							var msg = toolCall.function.parameters.additional_properties["message"].Deserialize<string>();
-							var response = JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper.AutoContinue(msg);
-							break;
-						default:
-							break;
-					}
-
 				}
 			}
 		}

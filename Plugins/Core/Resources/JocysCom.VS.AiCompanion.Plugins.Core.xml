@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JocysCom.VS.AiCompanion.Plugins.Core</name>
+    </assembly>
+    <members>
+        <member name="T:JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper">
+            <summary>
+            Helps AI to auto-continue on the task.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper.AutoContinue(System.String)">
+            <summary>
+            Use when you can't provide an answer in one response and need to split the answer.
+            Use after reply when user asks to generate answers with permission to continue.
+            Continue with the next part of the reply after this function call return "Please continue".
+            </summary>
+            <returns>The output message to reply from the user.</returns>
+            <param name="reserved">Reserved. Send empty string as a value.</param>
+            <exception cref="T:System.Exception">Error message explaining why execution failed.</exception>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.LinkReaderHelper">
+            <summary>
+            Helps AI to read links.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.LinkReaderHelper.GetWebPageContents(System.String)">
+            <summary>
+            Use to retrieve content of websites by URL.
+            </summary>
+            <param name="url">URL which points to the resource.</param>
+            <returns>The output of request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.PowerShellExecutorHelper">
+            <summary>
+            Helps AI to execute scripts.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.PowerShellExecutorHelper.RunPowerShellScript(System.String)">
+            <summary>
+            Use to execute a PowerShell script on user computer.
+            </summary>
+            <param name="script">The PowerShell script to be executed.</param>
+            <returns>The output of the executed PowerShell script.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+            <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
+        </member>
+    </members>
+</doc>

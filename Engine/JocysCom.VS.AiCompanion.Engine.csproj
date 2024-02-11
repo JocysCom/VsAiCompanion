@@ -198,16 +198,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Include="..\Plugins\LinkReader\LinkReaderHelper.cs" Link="Plugins\LinkReaderHelper.cs" />
-	  <Compile Include="..\Plugins\PowerShellExecutor\PowerShellExecutorHelper.cs" Link="Plugins\PowerShellExecutorHelper.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
 	  <EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
 	  <EmbeddedResource Include="Resources\Icons\Icons_Default\user_comment.svg" />
 	  <EmbeddedResource Include="Resources\Icons\Templates\control_panel.svg" />
 	  <EmbeddedResource Include="Resources\PromptItems.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -2,13 +2,16 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace JocysCom.VS.AiCompanion.Plugins.LinkReader
+namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
+	/// <summary>
+	/// Helps AI to read links.
+	/// </summary>
 	public class LinkReaderHelper
 	{
 
 		/// <summary>
-		/// Read the link by supplied url.
+		/// Use to retrieve content of websites by URL.
 		/// </summary>
 		/// <param name="url">URL which points to the resource.</param>
 		/// <returns>The output of request.</returns>

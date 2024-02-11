@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+		<Nullable>disable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<Title>Jocys.com AI Companion Core Plugins</Title>
+		<Description>Core Plugins for AI Companion.</Description>
+		<Copyright>Jocys.com</Copyright>
+		<Product>AI Companion Core Plugins</Product>
+		<Company>Jocys.com</Company>
+		<Authors>Jocys.com Team</Authors>
+		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
+		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<AssemblyVersion>1.3.29</AssemblyVersion>
+		<FileVersion>1.3.29</FileVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\*.xml" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<Reference Include="System.Net.Http" />
+	</ItemGroup>
+
+</Project>

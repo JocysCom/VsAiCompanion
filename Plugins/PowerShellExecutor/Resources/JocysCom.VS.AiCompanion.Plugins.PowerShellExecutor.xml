@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor</name>
+    </assembly>
+    <members>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers.PowerShellExecutorController">
+            <summary>
+            Execute PowerShell scripts and return the results.
+            Allows AI to execute PowerShell scripts on the local machine.
+            Use this API with caution due to security risks.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers.PowerShellExecutorController.ExecuteScript(System.String)">
+            <summary>
+            Execute a PowerShell script
+            </summary>
+            <param name="script">The PowerShell script to be executed.</param>
+            <returns>The output of the executed PowerShell script.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+            <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.PowerShellExecutorHelper.RunPowerShellScript(System.String)">
+            <summary>
+            Execute a PowerShell script
+            </summary>
+            <param name="script">The PowerShell script to be executed.</param>
+            <returns>The output of the executed PowerShell script.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+            <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
+        </member>
+    </members>
+</doc>

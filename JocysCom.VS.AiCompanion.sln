@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Plu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Plugins.LinkReader", "Plugins\LinkReader\JocysCom.VS.AiCompanion.Plugins.LinkReader.csproj", "{32369DE1-526F-4D11-BE1F-0E292A3E6C1D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Plugins.Core", "Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj", "{6D58A35D-FA37-4761-AE81-F1DD89829E1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -174,6 +176,22 @@ Global
 		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D}.Release|x64.Build.0 = Release|Any CPU
 		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D}.Release|x86.ActiveCfg = Release|Any CPU
 		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D}.Release|x86.Build.0 = Release|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Debug|arm64.Build.0 = Debug|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Debug|x64.Build.0 = Debug|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Debug|x86.Build.0 = Debug|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Release|arm64.ActiveCfg = Release|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Release|arm64.Build.0 = Release|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Release|x64.ActiveCfg = Release|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Release|x64.Build.0 = Release|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Release|x86.ActiveCfg = Release|Any CPU
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,6 +199,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5E4F30D7-5EE6-4068-8A8B-6095257D6554} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
 		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
+		{6D58A35D-FA37-4761-AE81-F1DD89829E1E} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBFF2296-DB1F-4D4F-B14D-BE266743B9AE}

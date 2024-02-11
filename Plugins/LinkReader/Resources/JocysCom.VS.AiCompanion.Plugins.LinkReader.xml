@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JocysCom.VS.AiCompanion.Plugins.LinkReader</name>
+    </assembly>
+    <members>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.LinkReader.Controllers.LinkReaderController">
+            <summary>
+            Read URL links and return the results.
+            Allows AI to browse on the Internet.
+            Use this API with caution due to security risks.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.LinkReader.Controllers.LinkReaderController.ReadLink(System.String)">
+            <summary>
+            Read the link.
+            </summary>
+            <param name="url">URL which points to the resource.</param>
+            <returns>The output of request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.LinkReader.LinkReaderHelper.GetWebPageContents(System.String)">
+            <summary>
+            Read the link by supplied url.
+            </summary>
+            <param name="url">URL which points to the resource.</param>
+            <returns>The output of request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
+    </members>
+</doc>

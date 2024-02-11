@@ -1,18 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-	  <TargetFramework>net8.0-windows7.0</TargetFramework>
-    <Nullable>disable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Description>A plugin that allows the user to read wen links using ChatGPT.</Description>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Description>A plugin that allows the user to read wen links using ChatGPT.</Description>
+		<DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DebugType>embedded</DebugType>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include=".well-known\ai-plugin.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\*.xml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
+	<ItemGroup>
+	  <Compile Include="..\Core\LinkReaderHelper.cs" Link="LinkReaderHelper.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+
+		<Content Include=".well-known\ai-plugin.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\PublishProfiles\" />
+	</ItemGroup>
 
 </Project>
