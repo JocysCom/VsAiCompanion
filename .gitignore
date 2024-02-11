@@ -404,3 +404,5 @@ FodyWeavers.xsd
 /Resources/Tuning/LLaMA/Data
 /Resources/Tuning/Models
 
+/Plugins/LinkReader/.config
+/Plugins/PowerShellExecutor/.config
