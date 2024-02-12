@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
 		<Nullable>disable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
@@ -20,7 +20,11 @@
 		<IncludeNativeLibrariesForSelfExtract>True</IncludeNativeLibrariesForSelfExtract>
 	</PropertyGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<Reference Include="System.configuration" />
+	</ItemGroup>
+
+		<ItemGroup>
 		<None Remove="Resources\BuildDate.*" />
 	</ItemGroup>
 

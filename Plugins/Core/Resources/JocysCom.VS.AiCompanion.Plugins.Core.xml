@@ -34,8 +34,19 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.PowerShellExecutorHelper">
             <summary>
-            Helps AI to execute scripts.
+            Helps AI to execute applications and scripts.
             </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.PowerShellExecutorHelper.StartProcess(System.String,System.String,System.String)">
+            <summary>
+            Use to execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
+            </summary>
+            <param name="fileName">Application or document to start.</param>
+            <param name="arguments">Command-line arguments to use when starting the application.</param>
+            <param name="workingDirectory">The working directory for the process to be started. Default is empty string.</param>
+            <returns>The output of the started process.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+            <remarks>Be cautious with executing process requesys received via API due to security risks.</remarks>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.PowerShellExecutorHelper.RunPowerShellScript(System.String)">
             <summary>

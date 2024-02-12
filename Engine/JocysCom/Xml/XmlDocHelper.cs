@@ -1,35 +1,40 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
-using System.Linq;
-using System.Collections.Concurrent;
 using System.Xml.Serialization;
 
-namespace JocysCom.ClassLibrary.Xml {
+namespace JocysCom.ClassLibrary.Xml
+{
 
-	public static partial class XmlDocHelper {
+	public static partial class XmlDocHelper
+	{
 
 		#region Methods
 
-		public static string GetSummaryText(MemberInfo mi) {
+		public static string GetSummaryText(MemberInfo mi)
+		{
 			var member = GetMemberDoc(mi);
 			// Get <summary> of the property first.
 			var text = member?.summary ?? "";
 			// If not set then...
 			if (!string.IsNullOrEmpty(text))
 				return text;
-			if (mi.MemberType == MemberTypes.Property) {
+			if (mi.MemberType == MemberTypes.Property)
+			{
 				//	Get class  summary.
 				var pi = mi as PropertyInfo;
 				text = GetSummary(pi.PropertyType);
 			}
 			return text;
 		}
-		public static string GetParamText(MethodInfo mi, ParameterInfo pi) {
+		public static string GetParamText(MethodInfo mi, ParameterInfo pi)
+		{
 			var member = GetMemberDoc(mi);
 			var text = member?.param.Where(x => x.name == pi.Name).Select(x => x.value).FirstOrDefault() ?? "";
 			if (!string.IsNullOrEmpty(text))
@@ -39,7 +44,8 @@ namespace JocysCom.ClassLibrary.Xml {
 			return text;
 		}
 
-		public static string GetReturnText(MethodInfo mi) {
+		public static string GetReturnText(MethodInfo mi)
+		{
 			var member = GetMemberDoc(mi);
 			var text = member?.returns.Select(x => x.value).FirstOrDefault() ?? "";
 			if (!string.IsNullOrEmpty(text))
@@ -49,7 +55,8 @@ namespace JocysCom.ClassLibrary.Xml {
 			return text;
 		}
 
-		public static string GetSummary(Type type) {
+		public static string GetSummary(Type type)
+		{
 			var ti = type.GetTypeInfo();
 			var typeMember = GetMemberDoc(ti);
 			var summary = typeMember?.summary ?? "";
@@ -59,7 +66,8 @@ namespace JocysCom.ClassLibrary.Xml {
 		#endregion
 
 		/// <summary>Retrieve the XML comments for a type or a member of a type.</summary>
-		public static XmlDocMember GetMemberDoc(MemberInfo mi) {
+		public static XmlDocMember GetMemberDoc(MemberInfo mi)
+		{
 			var declType = (mi is Type) ? ((Type)mi) : mi.DeclaringType;
 			var doc = GetXmlDoc(declType.Assembly);
 			if (doc is null)
@@ -72,7 +80,8 @@ namespace JocysCom.ClassLibrary.Xml {
 			var typeName = declType.FullName.Replace("+", ".");
 			// Based on the member type, get the correct name.
 			var name = "";
-			switch (mi.MemberType) {
+			switch (mi.MemberType)
+			{
 				case MemberTypes.NestedType:
 				case MemberTypes.TypeInfo:
 					name += "T:" + typeName;
@@ -108,46 +117,28 @@ namespace JocysCom.ClassLibrary.Xml {
 		/// <summary>Generates a parameter string used when searching XML comment files.</summary>
 		/// <param name="parameters">List of parameters to a member.</param>
 		/// <returns>A parameter string used when searching XML comment files.</returns>
-		private static string CreateParamsDescription(ParameterInfo[] parameters) {
-			var pars = new Dictionary<string, Type>();
-			var keys = new string[parameters.Length];
-			pars.Keys.CopyTo(keys, 0);
-			for (var i = 0; i < keys.Length; i++)
-				pars.Add(parameters[i].ParameterType.FullName, parameters[i].ParameterType);
-			// Return the parameter list description
-			return CreateParamsDescription(pars);
-		}
-
-		/// <summary>Generates a parameter string used when searching XML comment files.</summary>
-		/// <param name="parameters">List of parameters to a member.</param>
-		/// <returns>A parameter string used when searching XML comment files.</returns>
-		private static string CreateParamsDescription(Dictionary<string, Type> parameters) {
+		private static string CreateParamsDescription(ParameterInfo[] parameters)
+		{
 			var paramDesc = new StringBuilder();
-			// If there are parameters then we need to construct a list
-			var keys = new string[parameters.Keys.Count];
-			parameters.Keys.CopyTo(keys, 0);
-			if (keys.Length > 0) {
-				// Start the list.
-				paramDesc.Append("(");
-				// For each parameter, append the type of the parameter.
-				// Separate all items with commas.
-				for (var i = 0; i < keys.Length; i++) {
-					var key = keys[i];
-					var paramType = parameters[key];
-					var paramName = key;
-					// Handle special case where ref parameter ends in & but XML docs use @.
-					// Pointer parameters end in * in both type representation and XML comments representation.
-					if (paramName.EndsWith("&")) paramName = paramName.Substring(0, paramName.Length - 1) + "@";
-					// Handle multidimensional arrays
-					if (paramType.IsArray && paramType.GetArrayRank() > 1)
-						paramName = paramName.Replace(",", "0:,").Replace("]", "0:]");
-					// Append the fixed up parameter name
-					paramDesc.Append(paramName);
-					if (i != parameters.Keys.Count - 1) paramDesc.Append(",");
-				}
-				// End the list.
-				paramDesc.Append(")");
+			// Start the list.
+			paramDesc.Append("(");
+			for (var i = 0; i < parameters.Length; i++)
+			{
+				if (i > 0)
+					paramDesc.Append(",");
+				var paramType = parameters[i].ParameterType;
+				var paramName = paramType.FullName;
+				// Handle special case where ref parameter ends in & but XML docs use @.
+				// Pointer parameters end in * in both type representation and XML comments representation.
+				if (paramName.EndsWith("&")) paramName = paramName.Substring(0, paramName.Length - 1) + "@";
+				// Handle multidimensional arrays
+				if (paramType.IsArray && paramType.GetArrayRank() > 1)
+					paramName = paramName.Replace(",", "0:,").Replace("]", "0:]");
+				// Append the fixed up parameter name
+				paramDesc.Append(paramName);
 			}
+			// End the list.
+			paramDesc.Append(")");
 			// Return the parameter list description
 			return paramDesc.ToString();
 		}
@@ -163,7 +154,8 @@ namespace JocysCom.ClassLibrary.Xml {
 		private static readonly ConcurrentDictionary<Assembly, XmlDocument> XmlDocumentCache = new ConcurrentDictionary<Assembly, XmlDocument>();
 
 		/// <summary>Get XML Doc.</summary>
-		public static XmlDoc GetXmlDoc(Assembly assembly, bool cache = true) {
+		public static XmlDoc GetXmlDoc(Assembly assembly, bool cache = true)
+		{
 			if (assembly is null)
 				return null;
 			if (!cache)
@@ -172,7 +164,8 @@ namespace JocysCom.ClassLibrary.Xml {
 			return XmlDocCache.GetOrAdd(assembly, x => _GetXmlDoc(x));
 		}
 
-		private static XmlDoc _GetXmlDoc(Assembly assembly) {
+		private static XmlDoc _GetXmlDoc(Assembly assembly)
+		{
 			var xml = GetXmlDocument(assembly);
 			if (xml is null)
 				return null;
@@ -180,7 +173,8 @@ namespace JocysCom.ClassLibrary.Xml {
 		}
 
 		/// <summary>Get XML Document.</summary>
-		public static XmlDocument GetXmlDocument(Assembly a, bool cache = true) {
+		public static XmlDocument GetXmlDocument(Assembly a, bool cache = true)
+		{
 			if (a is null)
 				return null;
 			if (!cache)
@@ -189,7 +183,8 @@ namespace JocysCom.ClassLibrary.Xml {
 			return XmlDocumentCache.GetOrAdd(a, x => _GetXmlDocument(x));
 		}
 
-		private static XmlDocument _GetXmlDocument(Assembly assembly) {
+		private static XmlDocument _GetXmlDocument(Assembly assembly)
+		{
 			var path = GetXmlDocumentationPath(assembly);
 			if (path is null)
 				return null;
@@ -201,7 +196,8 @@ namespace JocysCom.ClassLibrary.Xml {
 		}
 
 		/// <summary>Gets XML document file path by assembly.</summary>
-		public static string GetXmlDocumentationPath(Assembly assembly) {
+		public static string GetXmlDocumentationPath(Assembly assembly)
+		{
 			var locations = new string[]
 			{
 				// Location of the assembly.
@@ -210,7 +206,8 @@ namespace JocysCom.ClassLibrary.Xml {
 				RuntimeEnvironment.GetRuntimeDirectory() + Path.GetFileName(assembly.Location)
 			};
 			// Checks locations.
-			foreach (var location in locations) {
+			foreach (var location in locations)
+			{
 				var xmlPath = Path.ChangeExtension(location, ".xml");
 				// If XML file found then...
 				if (File.Exists(xmlPath))
@@ -225,21 +222,24 @@ namespace JocysCom.ClassLibrary.Xml {
 
 	#region Helper Classes
 
-	public class XmlDocName {
+	public class XmlDocName
+	{
 		public string type;
 		public string name;
 	}
 
 	[Serializable]
 	[XmlType(AnonymousType = true)]
-	public class XmlDocAssembly {
+	public class XmlDocAssembly
+	{
 		public string name { get; set; }
 	}
 
 	[Serializable]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("doc")]
-	public class XmlDoc {
+	public class XmlDoc
+	{
 		public XmlDocAssembly assembly;
 
 		[XmlArrayItem("member")]
@@ -250,7 +250,8 @@ namespace JocysCom.ClassLibrary.Xml {
 	[Serializable]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("param")]
-	public partial class XmlDocParam {
+	public partial class XmlDocParam
+	{
 		[XmlAttribute]
 		public string name;
 
@@ -261,7 +262,8 @@ namespace JocysCom.ClassLibrary.Xml {
 	[Serializable]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot("member")]
-	public class XmlDocMember {
+	public class XmlDocMember
+	{
 		[XmlAttribute]
 		public string name { get; set; }
 

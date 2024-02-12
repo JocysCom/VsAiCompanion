@@ -508,8 +508,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			catch (Exception ex)
 			{
-				var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
-				item.Messages.Add(message);
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
+					item.Messages.Add(message);
+				});
 			}
 			return null;
 		}

@@ -38,7 +38,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 						AddMethods(typeof(LinkReaderHelper));
 						AddMethods(typeof(PowerShellExecutorHelper));
 						AddMethods(typeof(AutoContinueHelper));
-
 					}
 					return _PluginFunctions;
 				}

@@ -332,10 +332,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						if (Service.ResponseStreaming)
 						{
 							var response = await client.GetCompletionsStreamingAsync(completionsOptions, cancellationTokenSource.Token);
-							using (var streamingChatCompletions = response)
+							using (StreamingResponse<Completions> streamingChatCompletions = response)
 							{
 								var choicesEnumerator = streamingChatCompletions
-									.AsAsyncEnumerable()
+									.EnumerateValues()
 									.GetAsyncEnumerator(cancellationTokenSource.Token);
 								while (await choicesEnumerator.MoveNextAsync())
 								{
@@ -409,8 +409,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							var response = await client.GetChatCompletionsStreamingAsync(chatCompletionsOptions, cancellationTokenSource.Token);
 							using (var streamingChatCompletions = response)
 							{
-								var choicesEnumerator = streamingChatCompletions
-									.AsAsyncEnumerable()
+								var choicesEnumerator =
+									streamingChatCompletions
+									.EnumerateValues()
 									.GetAsyncEnumerator(cancellationTokenSource.Token);
 								while (await choicesEnumerator.MoveNextAsync())
 								{
@@ -612,7 +613,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		}
 
 		#endregion
-
 
 	}
 

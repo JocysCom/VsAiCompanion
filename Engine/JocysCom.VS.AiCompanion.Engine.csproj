@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!--
@@ -43,12 +43,15 @@
 	<ItemGroup>
 		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.13" />
 		<PackageReference Include="Azure.Identity" Version="1.10.4" />
-		<PackageReference Include="CsvHelper" Version="30.1.0" />
+		<PackageReference Include="CsvHelper" Version="31.0.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
 		<PackageReference Include="RtfPipe" Version="2.0.7677.4303" />
 		<PackageReference Include="SharpVectors" Version="1.8.3" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
 		<PackageReference Include="System.Text.Json" Version="8.0.1" />
+		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">
