@@ -332,11 +332,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						if (Service.ResponseStreaming)
 						{
 							var response = await client.GetCompletionsStreamingAsync(completionsOptions, cancellationTokenSource.Token);
-							using (StreamingResponse<Completions> streamingChatCompletions = response)
+							using (var streamingChatCompletions = response)
 							{
-								var choicesEnumerator = streamingChatCompletions
-									.EnumerateValues()
-									.GetAsyncEnumerator(cancellationTokenSource.Token);
+								var iae = (IAsyncEnumerable<Completions>)streamingChatCompletions;
+								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
 								while (await choicesEnumerator.MoveNextAsync())
 								{
 									var completions = choicesEnumerator.Current;
@@ -400,19 +399,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var chatCompletionsOptions = new ChatCompletionsOptions(modelName, messages);
 						Global.MainControl.Dispatcher.Invoke(() =>
 						{
-							Plugins.PluginsManager.ProvideTools(item, chatCompletionsOptions);
+							if (item.PluginsEnabled)
+								Plugins.PluginsManager.ProvideTools(item, chatCompletionsOptions);
 						});
 						chatCompletionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
 						{
 							var client = GetAiClient();
 							var response = await client.GetChatCompletionsStreamingAsync(chatCompletionsOptions, cancellationTokenSource.Token);
-							using (var streamingChatCompletions = response)
+							using (StreamingResponse<StreamingChatCompletionsUpdate> streamingChatCompletions = response)
 							{
-								var choicesEnumerator =
-									streamingChatCompletions
-									.EnumerateValues()
-									.GetAsyncEnumerator(cancellationTokenSource.Token);
+								var iae = (IAsyncEnumerable<StreamingChatCompletionsUpdate>)streamingChatCompletions;
+								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
 								while (await choicesEnumerator.MoveNextAsync())
 								{
 									var choice = choicesEnumerator.Current;
@@ -446,7 +444,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 										item.Messages.Add(assistantMessageItem);
 									});
 									// Process function calls.
-									autoReplyContent = await Plugins.PluginsManager.ProcessPlugins(item, json);
+									if (item.PluginsEnabled)
+										autoReplyContent = await Plugins.PluginsManager.ProcessPlugins(item, json);
 								}
 							}
 						}
@@ -488,7 +487,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						}
 						Global.MainControl.Dispatcher.Invoke(() =>
 						{
-							Plugins.PluginsManager.ProvideTools(item, request);
+							if (item.PluginsEnabled)
+								Plugins.PluginsManager.ProvideTools(item, request);
 						});
 						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
@@ -499,7 +499,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								Global.MainControl.Dispatcher.Invoke(() =>
 								{
 									// Check if the model wanted to call a function
-									Plugins.PluginsManager.ProcessPlugins(item, responseMessage);
+									if (item.PluginsEnabled)
+										Plugins.PluginsManager.ProcessPlugins(item, responseMessage);
 								});
 							}
 					}
