@@ -100,10 +100,10 @@
     <PackageReference Include="Microsoft.Build">
       <Version>17.8.3</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.7.37357" ExcludeAssets="runtime">
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.8.37222" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.7.2196">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.9.3168">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -111,7 +111,7 @@
       <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>8.0.1</Version>
+      <Version>8.0.2</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Extensions">
       <Version>4.5.4</Version>

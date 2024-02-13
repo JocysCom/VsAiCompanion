@@ -306,7 +306,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var messageItems = new List<MessageItem>();
 			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			var answer = "";
-			var autoReplyContent = "";
+			var functionResults = new List<MessageAttachments>();
 			var toolArgumentsUpdate = "";
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
@@ -334,7 +334,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							var response = await client.GetCompletionsStreamingAsync(completionsOptions, cancellationTokenSource.Token);
 							using (var streamingChatCompletions = response)
 							{
-								var iae = (IAsyncEnumerable<Completions>)streamingChatCompletions;
+								//var iae = (IAsyncEnumerable<Completions>)streamingChatCompletions;
+								var iae = streamingChatCompletions.AsAsyncEnumerable();
 								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
 								while (await choicesEnumerator.MoveNextAsync())
 								{
@@ -409,7 +410,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							var response = await client.GetChatCompletionsStreamingAsync(chatCompletionsOptions, cancellationTokenSource.Token);
 							using (StreamingResponse<StreamingChatCompletionsUpdate> streamingChatCompletions = response)
 							{
-								var iae = (IAsyncEnumerable<StreamingChatCompletionsUpdate>)streamingChatCompletions;
+								//var iae = (IAsyncEnumerable<StreamingChatCompletionsUpdate>)streamingChatCompletions;
+								var iae = streamingChatCompletions.AsAsyncEnumerable();
 								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
 								while (await choicesEnumerator.MoveNextAsync())
 								{
@@ -448,7 +450,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									});
 									// Process function calls.
 									if (item.PluginsEnabled)
-										autoReplyContent = await Plugins.PluginsManager.ProcessPlugins(item, json);
+									{
+										foreach (var function in functions)
+										{
+											var functionResultContent = await Plugins.PluginsManager.ProcessPlugins(item, function);
+											var fnAttachment = new MessageAttachments(AttachmentType.None, "text", functionResultContent);
+											fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
+											fnAttachment.IsAlwaysIncluded = true;
+											functionResults.Add(fnAttachment);
+										}
+									}
 								}
 							}
 						}
@@ -525,13 +536,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			assistantMessageItem.Body = answer;
 			if (!messageItems.Contains(assistantMessageItem))
 				messageItems.Add(assistantMessageItem);
-			if (!string.IsNullOrEmpty(autoReplyContent))
+			if (functionResults.Count > 0)
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
-				var attachment = new MessageAttachments(AttachmentType.None, "text", autoReplyContent);
-				attachment.Title = "AI Function Results";
-				attachment.IsAlwaysIncluded = true;
-				userAutoReplyMessageItem.Attachments.Add(attachment);
+				userAutoReplyMessageItem.Attachments.AddRange(functionResults);
 				Global.MainControl.Dispatcher.Invoke(() =>
 				{
 					messageItems.Add(userAutoReplyMessageItem);

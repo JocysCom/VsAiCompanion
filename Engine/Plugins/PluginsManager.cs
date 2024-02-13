@@ -90,7 +90,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		}
 
 
-		public static async Task<bool> ApproveExecution(TemplateItem item, string json)
+		public static async Task<bool> ApproveExecution(TemplateItem item, chat_completion_function function)
 		{
 			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
 				return false;
@@ -123,7 +123,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 				var text = "Do you want to execute function submitted by AI?";
 				if (!string.IsNullOrEmpty(assistantEvaluation))
 					text += assistantEvaluation;
-				text += "\r\n\r\n" + json;
+				text += "\r\n\r\n" + Client.Serialize(function);
 				var caption = $"{Global.Info.Product} - Plugin Function Approval";
 				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 				return result == MessageBoxResult.Yes;
@@ -136,13 +136,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		/// </summary>
 		/// <param name="item">User settings.</param>
 		/// <param name="json">function as JSON</param>
-		public static async Task<string> ProcessPlugins(TemplateItem item, string json)
+		public static async Task<string> ProcessPlugins(TemplateItem item, chat_completion_function function)
 		{
 			if (!item.PluginsEnabled)
 				return null;
-			if (!await ApproveExecution(item, json))
+			if (!await ApproveExecution(item, function))
 				return null;
-			var function = Client.Deserialize<chat_completion_function>(json);
 			// Extract parameters as a dictionary.
 			var parameters = function.parameters.additional_properties;
 			if (parameters == null)
@@ -245,19 +244,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 								description = paramText
 							});
 						}
-						// Create and add function definition.
-						var function = new FunctionDefinition()
+						// Serialize the parameters object to a JSON string then create a BinaryData instance.
+						var serializedParameters = JsonSerializer.Serialize(new
 						{
-							Name = mi.Name,
-							Description = summaryText,
-							Parameters = BinaryData.FromObjectAsJson(new
-							{
-								// Defining structure for function parameters.
-								type = "object",
-								properties = parametersObject,
-								required = requiredParams.ToArray(),
-							})
-						};
+							type = "object",
+							properties = parametersObject,
+							required = requiredParams.ToArray(),
+						});
+						var binaryParamaters = BinaryData.FromString(serializedParameters);
+						// Create and add function definition.
+						var function = new FunctionDefinition();
+						function.Name = mi.Name;
+						function.Description = summaryText;
+						function.Parameters = binaryParamaters;
 						var tool = new ChatCompletionsFunctionToolDefinition(function);
 						ToolDefinitions.Add(tool);
 					}
