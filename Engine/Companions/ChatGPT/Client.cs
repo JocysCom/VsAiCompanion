@@ -421,10 +421,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 										{
 											if (!string.IsNullOrEmpty(sf.Id))
 											{
+												if (!string.IsNullOrEmpty(toolArgumentsUpdate))
+													toolArgumentsUpdate += "\r\n},\r\n";
 												toolArgumentsUpdate += $"{{\r\n";
-												toolArgumentsUpdate += $"\"id\": \"{sf.Id}\",\r\n";
-												toolArgumentsUpdate += $"\"name\": \"{sf.Name}\",\r\n";
-												toolArgumentsUpdate += $"\"parameters\": ";
+												toolArgumentsUpdate += $"\t\"id\": \"{sf.Id}\",\r\n";
+												toolArgumentsUpdate += $"\t\"name\": \"{sf.Name}\",\r\n";
+												toolArgumentsUpdate += $"\t\"parameters\": ";
 											}
 											toolArgumentsUpdate += sf.ArgumentsUpdate;
 										}
@@ -432,7 +434,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								}
 								if (!string.IsNullOrEmpty(toolArgumentsUpdate))
 								{
-									var json = toolArgumentsUpdate + "\r\n}";
+									var json = "[\r\n" + toolArgumentsUpdate + "\r\n}\r\n]";
+									var functions = Deserialize<chat_completion_function[]>(json);
 									// Create message attachment first.
 									var attachment = new MessageAttachments(AttachmentType.None, "JSON", json);
 									attachment.Title = "AI Function Call";

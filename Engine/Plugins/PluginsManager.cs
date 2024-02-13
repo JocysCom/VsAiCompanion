@@ -143,41 +143,58 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 			if (!await ApproveExecution(item, json))
 				return null;
 			var function = Client.Deserialize<chat_completion_function>(json);
-			// Assuming the parameters JSON is a single string. Adjust if the structure is different.
-			var parameter = function.parameters.additional_properties.FirstOrDefault().Value.GetString();
-			if (parameter == null)
-				return null;
-			if (PluginFunctions.TryGetValue(function.name, out System.Reflection.MethodInfo methodInfo))
+			// Extract parameters as a dictionary.
+			var parameters = function.parameters.additional_properties;
+			if (parameters == null)
+				parameters = new Dictionary<string, JsonElement>();
+			System.Reflection.MethodInfo methodInfo;
+			if (PluginFunctions.TryGetValue(function.name, out methodInfo))
 			{
 				object classInstance = null;
 				// If the method is not static, create an instance of the class.
 				if (!methodInfo.IsStatic)
-				{
 					classInstance = Activator.CreateInstance(methodInfo.DeclaringType);
+
+				// Prepare an array of parameters for the method invocation.
+				var methodParams = methodInfo.GetParameters();
+				object[] invokeParams = new object[methodParams.Length];
+				for (int i = 0; i < methodParams.Length; i++)
+				{
+					var param = methodParams[i];
+					JsonElement jsonElement;
+					if (parameters.TryGetValue(param.Name, out jsonElement))
+					{
+						invokeParams[i] = jsonElement.Deserialize(param.ParameterType);
+					}
+					else if (param.HasDefaultValue)
+					{
+						invokeParams[i] = param.DefaultValue;
+					}
+					else
+					{
+						// Handle missing required parameter.
+						MessageBox.Show($"The required parameter '{param.Name}' is missing for the function '{function.name}'.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
+						return null;
+					}
 				}
 				// Check if the method is asynchronous (returns a Task or Task<string>)
 				if (typeof(Task).IsAssignableFrom(methodInfo.ReturnType))
 				{
 					// It's an async method. Await the task.
-					var task = (Task)methodInfo.Invoke(classInstance, new object[] { parameter });
+					var task = (Task)methodInfo.Invoke(classInstance, invokeParams);
 					await task.ConfigureAwait(false); // Ensure you await the task
-													  // If the method returns a Task<string>, get the result.
+
+					// If the method returns a Task<string>, get the result.
 					if (task is Task<string> stringTask)
 					{
 						var result = await stringTask;
-						// Assuming you want to do something with the result here...
-						//MessageBox.Show(result, "Execution Results", MessageBoxButton.OK, MessageBoxImage.Information);
-						//Console.WriteLine(result);
 						return result;
 					}
 				}
 				else
 				{
 					// It's a synchronous method.
-					var result = (string)methodInfo.Invoke(classInstance, new object[] { parameter });
-					// Assuming you want to do something with the result here...
-					//MessageBox.Show(result, "Execution Results", MessageBoxButton.OK, MessageBoxImage.Information);
-					//Console.WriteLine(result);
+					var result = (string)methodInfo.Invoke(classInstance, invokeParams);
 					return result;
 				}
 			}
