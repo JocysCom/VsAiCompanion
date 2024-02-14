@@ -186,13 +186,23 @@ namespace JocysCom.ClassLibrary.Xml
 		private static XmlDocument _GetXmlDocument(Assembly assembly)
 		{
 			var path = GetXmlDocumentationPath(assembly);
-			if (path is null)
-				return null;
-			//var sr = new StreamReader(path);
 			var xml = new XmlDocument();
-			xml.Load(path);
-			//xml.Load(sr);
-			return xml;
+			if (!(path is null))
+			{
+				xml.Load(path);
+				return xml;
+			}
+			var resourceName = assembly.GetName().Name + ".xml";
+			var resourceFullName = assembly.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(resourceName));
+			if (string.IsNullOrEmpty(resourceFullName))
+				return null;
+			var stream = assembly.GetManifestResourceStream(resourceFullName);
+			using (var reader = new StreamReader(stream))
+			{
+				var xmlString = reader.ReadToEnd();
+				xml.LoadXml(xmlString);
+				return xml;
+			}
 		}
 
 		/// <summary>Gets XML document file path by assembly.</summary>
