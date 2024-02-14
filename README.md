@@ -94,4 +94,11 @@ Fine-Tuning: Create Assistant (Virtual Employee)
 
 <img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_FineTuning_Assistant.png"  width="600" height="416">
 
+Plugins: Allow AI to run applications and scripts on your machine.
+
+<img alt="Plugins" src="Documents/Images/JocysComVsAiCompanion_Plugins.png"  width="600" height="546">
+
+Plugins: Ask AI about solution, changed files or the code.
+
+<img alt="Plugins" src="Documents/Images/JocysComVsAiCompanion_Plugins_Chat.png"  width="600" height="680">
 
