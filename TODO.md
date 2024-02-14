@@ -14,3 +14,4 @@
 - Add: Option for secondary AI to check and validate actions of primary AI.
 - Add: Enable plugins to respond with any content type (MIME).
 - Fix: Update template files on modification instead of app minimization.
+- Fix: Save settings files only if they are newer (multiple apps sharing the same files).
