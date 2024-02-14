@@ -4,12 +4,12 @@
         <name>JocysCom.VS.AiCompanion.Plugins.Core</name>
     </assembly>
     <members>
-        <member name="T:JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper">
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.AutoContinueHelper">
             <summary>
             Helps AI to auto-continue on the task.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Engine.Plugins.AutoContinueHelper.AutoContinue(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.AutoContinueHelper.AutoContinue(System.String)">
             <summary>
             Use when you can't provide an answer in one response and need to split the answer.
             Use after reply when user asks to generate answers with permission to continue.

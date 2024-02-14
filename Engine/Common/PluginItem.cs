@@ -4,7 +4,7 @@ using JocysCom.VS.AiCompanion.Engine.Plugins;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Media;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -18,8 +18,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			AssemblyName = mi.DeclaringType.Assembly.GetName().FullName;
-			Id = mi.DeclaringType.FullName;
+			Namespace = mi.DeclaringType.Namespace;
+			Class = mi.DeclaringType.Name;
 			Name = mi.Name;
+			Id = (mi.DeclaringType.FullName + "." + mi.Name).Trim('.');
 			Description = XmlDocHelper.GetSummaryText(mi);
 			if (Params == null)
 				Params = new BindingList<PluginParam>();
@@ -37,27 +39,49 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		/// <summary>Enable Plugin</summary>
 		[DefaultValue(false)]
-		public bool IsEnabled { get => _IsEnabled; set => SetProperty(ref _IsEnabled, value); }
+		public bool IsEnabled
+		{
+			get => _IsEnabled;
+			set => SetProperty(ref _IsEnabled, value);
+		}
 		bool _IsEnabled;
 
 		[DefaultValue("")]
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
 
-		[XmlIgnore]
-		public DrawingImage Icon { get => _Icon; }
-		DrawingImage _Icon;
+		//[XmlIgnore]
+		//public DrawingImage Icon { get => _Icon; }
+		//DrawingImage _Icon;
 
 		[XmlIgnore]
 		public BindingList<PluginParam> Params { get => _Params; set => SetProperty(ref _Params, value); }
 		BindingList<PluginParam> _Params;
 
+
+		[XmlIgnore]
+		public string Namespace { get => _Namespace; set => SetProperty(ref _Namespace, value); }
+		string _Namespace;
+
+		[XmlIgnore]
+		public string Class { get => _Class; set => SetProperty(ref _Class, value); }
+		string _Class;
+
 		[XmlIgnore]
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 
+		public static readonly Regex RxMultiSpace = new Regex("[ \r\n\t\u00A0]+");
+
 		[XmlIgnore]
-		public string Description { get => _Description; set => SetProperty(ref _Description, value); }
+		public string Description
+		{
+			get => _Description; set
+			{
+				var v = RxMultiSpace.Replace(value ?? "", " ").Trim();
+				SetProperty(ref _Description, v);
+			}
+		}
 		string _Description;
 
 		[XmlIgnore]

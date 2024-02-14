@@ -97,7 +97,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#region  Spell Check
 
 		/// <summary>Allow only one standalone copy.</summary>
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		public bool IsSpellCheckEnabled { get => _IsSpellCheckEnabled; set => SetProperty(ref _IsSpellCheckEnabled, value); }
 		private bool _IsSpellCheckEnabled;
 

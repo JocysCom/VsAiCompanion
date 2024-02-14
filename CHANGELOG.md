@@ -1,3 +1,10 @@
+2024-02-14 v1.4.6
+
+- New: Plugin Feature. You can allow AI to run apps and scripts. Disabled by default.
+- New: "System - Plugin Approval" template. Assess action safety with a secondary AI.
+- Update: Upgraded the standalone app to .NET 8.0.
+- Update: Updated NuGet Packages.
+
 2024-01-28 v1.3.28
 
 - Fix: Maximum token value for preview models.

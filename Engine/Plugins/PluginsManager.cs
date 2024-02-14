@@ -131,6 +131,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 			return false;
 		}
 
+		public static bool AllowPlugin(string functionName)
+		{
+			var currentPlugin = Global.AppSettings.Plugins.FirstOrDefault(x => x.Name == functionName);
+			return currentPlugin?.IsEnabled == true;
+		}
+
 		/// <summary>
 		/// Call functions requester by OpenAI API.
 		/// </summary>
@@ -140,7 +146,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		{
 			if (!item.PluginsEnabled)
 				return null;
-			if (!await ApproveExecution(item, function))
+			if (!AllowPlugin(function.name))
 				return null;
 			// Extract parameters as a dictionary.
 			var parameters = function.parameters.additional_properties;
@@ -149,6 +155,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 			System.Reflection.MethodInfo methodInfo;
 			if (PluginFunctions.TryGetValue(function.name, out methodInfo))
 			{
+				if (!await ApproveExecution(item, function))
+					return null;
 				object classInstance = null;
 				// If the method is not static, create an instance of the class.
 				if (!methodInfo.IsStatic)
@@ -209,8 +217,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 
 		#region Microsoft's Reinvention of the Wheel
 
-		static List<ChatCompletionsFunctionToolDefinition> ToolDefinitions = new List<ChatCompletionsFunctionToolDefinition>();
-
 		/// <summary>
 		/// Add completion tools to chat completion message request for OpenAI GPT.
 		/// </summary>
@@ -220,49 +226,49 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		{
 			if (!item.PluginsEnabled)
 				return;
-			options.ToolChoice = ChatCompletionsToolChoice.Auto;
-			lock (ToolDefinitions)
+			var ToolDefinitions = new List<ChatCompletionsFunctionToolDefinition>();
+			foreach (var kv in PluginFunctions)
 			{
-				if (ToolDefinitions.Count == 0)
+				if (!AllowPlugin(kv.Key))
+					continue;
+				var requiredParams = new List<string>();
+				// Get Method Info
+				var mi = kv.Value;
+				var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
+				var miParams = mi.GetParameters();
+				var parametersObject = new Dictionary<string, object>();
+				foreach (var pi in miParams)
 				{
-					foreach (var kv in PluginFunctions)
+					var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
+					if (!pi.IsOptional)
+						requiredParams.Add(pi.Name);
+					parametersObject.Add(pi.Name, new
 					{
-						var requiredParams = new List<string>();
-						// Get Method Info
-						var mi = kv.Value;
-						var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
-						var miParams = mi.GetParameters();
-						var parametersObject = new Dictionary<string, object>();
-						foreach (var pi in miParams)
-						{
-							var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
-							if (!pi.IsOptional)
-								requiredParams.Add(pi.Name);
-							parametersObject.Add(pi.Name, new
-							{
-								type = GetJsonType(pi.ParameterType),
-								description = paramText
-							});
-						}
-						// Serialize the parameters object to a JSON string then create a BinaryData instance.
-						var serializedParameters = JsonSerializer.Serialize(new
-						{
-							type = "object",
-							properties = parametersObject,
-							required = requiredParams.ToArray(),
-						});
-						var binaryParamaters = BinaryData.FromString(serializedParameters);
-						// Create and add function definition.
-						var function = new FunctionDefinition();
-						function.Name = mi.Name;
-						function.Description = summaryText;
-						function.Parameters = binaryParamaters;
-						var tool = new ChatCompletionsFunctionToolDefinition(function);
-						ToolDefinitions.Add(tool);
-					}
+						type = GetJsonType(pi.ParameterType),
+						description = paramText
+					});
 				}
+				// Serialize the parameters object to a JSON string then create a BinaryData instance.
+				var serializedParameters = JsonSerializer.Serialize(new
+				{
+					type = "object",
+					properties = parametersObject,
+					required = requiredParams.ToArray(),
+				});
+				var binaryParamaters = BinaryData.FromString(serializedParameters);
+				// Create and add function definition.
+				var function = new FunctionDefinition();
+				function.Name = mi.Name;
+				function.Description = summaryText;
+				function.Parameters = binaryParamaters;
+				var tool = new ChatCompletionsFunctionToolDefinition(function);
+				ToolDefinitions.Add(tool);
+			}
+			if (ToolDefinitions.Any())
+			{
 				foreach (var tool in ToolDefinitions)
 					options.Tools.Add(tool);
+				options.ToolChoice = ChatCompletionsToolChoice.Auto;
 			}
 		}
 
@@ -292,8 +298,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 
 		#region Classic API
 
-		static List<chat_completion_tool> CompletionTools = new List<chat_completion_tool>();
-
 		/// <summary>
 		/// Add completion tools to chat completion message request for OpenAI GPT.
 		/// </summary>
@@ -303,60 +307,57 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 		{
 			if (!item.PluginsEnabled)
 				return;
-			request.tool_choice = tool_choice.auto;
-			if (CompletionTools.Count == 0)
+			var CompletionTools = new List<chat_completion_tool>();
+			foreach (var kv in PluginFunctions)
 			{
-				lock (CompletionTools)
+				if (!AllowPlugin(kv.Key))
+					continue;
+				var mi = kv.Value;
+				var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
+				var requiredParams = new List<string>();
+				var props = new Dictionary<string, object>();
+				foreach (var pi in mi.GetParameters())
 				{
-					if (CompletionTools.Count == 0)
+					var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
+					if (!pi.IsOptional)
+						requiredParams.Add(pi.Name);
+					props[pi.Name] = new
 					{
-						foreach (var kv in PluginFunctions)
+						type = GetJsonType(pi.ParameterType),
+						description = paramText
+					};
+				}
+				var function = new chat_completion_function()
+				{
+					name = mi.Name,
+					description = summaryText,
+					parameters = new base_item
+					{
+						additional_properties = new Dictionary<string, JsonElement>
 						{
-							var mi = kv.Value;
-							var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
-							var requiredParams = new List<string>();
-							var props = new Dictionary<string, object>();
-							foreach (var pi in mi.GetParameters())
+							["parameters"] = JsonDocument.Parse(JsonSerializer.Serialize(new
 							{
-								var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
-								if (!pi.IsOptional)
-									requiredParams.Add(pi.Name);
-								props[pi.Name] = new
-								{
-									type = GetJsonType(pi.ParameterType),
-									description = paramText
-								};
-							}
-							var function = new chat_completion_function()
-							{
-								name = mi.Name,
-								description = summaryText,
-								parameters = new base_item
-								{
-									additional_properties = new Dictionary<string, JsonElement>
-									{
-										["parameters"] = JsonDocument.Parse(JsonSerializer.Serialize(new
-										{
-											type = "object",
-											properties = props,
-											required = requiredParams
-										})).RootElement
-									}
-								}
-							};
-							var tool = new chat_completion_tool()
-							{
-								type = chat_completion_tool_type.function,
-								function = function,
-							};
-							CompletionTools.Add(tool);
+								type = "object",
+								properties = props,
+								required = requiredParams
+							})).RootElement
 						}
 					}
-				}
+				};
+				var tool = new chat_completion_tool()
+				{
+					type = chat_completion_tool_type.function,
+					function = function,
+				};
+				CompletionTools.Add(tool);
 			}
-			// No need to lock here as we are only reading from CompletionTools
-			foreach (var tool in CompletionTools)
-				request.tools.Add(tool);
+			if (CompletionTools.Any())
+			{
+				// No need to lock here as we are only reading from CompletionTools
+				foreach (var tool in CompletionTools)
+					request.tools.Add(tool);
+				request.tool_choice = tool_choice.auto;
+			}
 		}
 
 		public static void ProcessPlugins(TemplateItem item, chat_completion_message message)

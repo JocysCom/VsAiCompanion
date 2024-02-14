@@ -23,5 +23,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		public SortableBindingList<PluginItem> CurrentItems { get; set; }
+
 	}
 }

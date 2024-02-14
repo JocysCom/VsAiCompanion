@@ -350,7 +350,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			var appSettings = e.Items.FirstOrDefault();
 			// Always refresh plugins.
-			appSettings.Plugins = Engine.AppData.RefreshPlugins(appSettings.Plugins);
+			var newPluginsList = Engine.AppData.RefreshPlugins(appSettings.Plugins);
+			ClassLibrary.Collections.CollectionsHelper.Synchronize(newPluginsList, appSettings.Plugins);
 			// Check app services.
 			if (appSettings.AiServices == null || appSettings.AiServices.Count == 0)
 			{

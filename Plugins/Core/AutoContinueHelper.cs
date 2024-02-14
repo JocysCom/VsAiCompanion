@@ -1,4 +1,4 @@
-﻿namespace JocysCom.VS.AiCompanion.Engine.Plugins
+﻿namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 
 	/// <summary>

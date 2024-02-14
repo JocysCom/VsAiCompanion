@@ -4,6 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="450"
@@ -16,28 +17,111 @@
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
+			<DataTemplate x:Key="MyItemTemplate">
+				<GroupBox Margin="3,0,3,3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+					<GroupBox.Header>
+						<CheckBox
+							Name="UseMacrosCheckBox"
+							Margin="-4"
+							Content="Enable Plugin"
+							IsChecked="{Binding IsEnabled}" />
+					</GroupBox.Header>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="auto" />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<ContentControl
+							Name="RightIcon"
+							Width="48"
+							Height="48"
+							Margin="4,4,8,4"
+							Padding="0"
+							VerticalAlignment="Top"
+							Content="{StaticResource Icon_piece}" />
+						<StackPanel Grid.Column="1" VerticalAlignment="Top">
+							<StackPanel Margin="0,4,4,4" Orientation="Horizontal">
+								<Label
+									Name="NamespaceLabel"
+									Margin="0"
+									Padding="0"
+									Content="{Binding Namespace}"
+									FontWeight="Bold"
+									Foreground="#000000" />
+								<Label
+									Name="NamesapceDotLabel"
+									Margin="0"
+									Padding="0"
+									Content="."
+									FontWeight="Bold"
+									Foreground="#808080" />
+								<Label
+									Name="ClassLabel"
+									Margin="0"
+									Padding="0"
+									Content="{Binding Class}"
+									FontWeight="Bold"
+									Foreground="#2B91AF" />
+								<Label
+									Name="ClassDotLabel"
+									Margin="0"
+									Padding="0"
+									Content="."
+									FontWeight="Bold"
+									Foreground="#808080" />
+								<Label
+									Name="NameLabel"
+									Margin="0"
+									Padding="0"
+									Content="{Binding Name}"
+									FontWeight="Bold"
+									Foreground="#74531F" />
+							</StackPanel>
+							<TextBlock
+								Name="AboutDescriptionLabel"
+								Margin="0,0,4,4"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Top"
+								Text="{Binding Description}"
+								TextWrapping="Wrap" />
+						</StackPanel>
+					</Grid>
+				</GroupBox>
+			</DataTemplate>
+
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<DataGrid
-		x:Name="MainDataGrid"
-		Height="Auto"
-		HorizontalAlignment="Stretch"
-		VerticalAlignment="Stretch"
-		x:FieldModifier="public"
-		AutoGenerateColumns="False"
-		ClipToBounds="True"
-		IsReadOnly="False"
-		ScrollViewer.CanContentScroll="True"
-		ScrollViewer.HorizontalScrollBarVisibility="Auto"
-		ScrollViewer.VerticalScrollBarVisibility="Auto"
-		SelectionMode="Extended">
-		<DataGrid.Columns>
-			<DataGridTextColumn Binding="{Binding Id}" Header="ID" />
-			<DataGridTextColumn Binding="{Binding Name}" Header="Name" />
-			<DataGridTextColumn Binding="{Binding IsEnabled}" Header="Enabled" />
-			<DataGridTextColumn Binding="{Binding Description}" Header="Description" />
-		</DataGrid.Columns>
-
-	</DataGrid>
-
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Border Margin="4" Background="#ffe0e0" CornerRadius="5">
+			<TextBlock
+				Name="AboutDescriptionLabel"
+				Padding="16"
+				Foreground="#800000"
+				TextWrapping="Wrap">
+				WARNING: Granting AI the capability to run applications and scripts can lead to security risks.
+				Be cautious and only allow trusted AI models to execute processes on your system.
+				Manually approve function calls or employ advanced AI for the approval process.
+			</TextBlock>
+		</Border>
+		<ItemsControl
+			x:Name="MainDataGrid"
+			Grid.Row="1"
+			Height="Auto"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			x:FieldModifier="public"
+			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+			ClipToBounds="True"
+			ItemTemplate="{StaticResource MyItemTemplate}"
+			ScrollViewer.CanContentScroll="True"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
+			ScrollViewer.VerticalScrollBarVisibility="Auto" />
+	</Grid>
 </UserControl>
