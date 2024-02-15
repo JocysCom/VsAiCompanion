@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -150,14 +151,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// If text selection in Visual Studio.
 				if (at.HasFlag(AttachmentType.Selection))
 				{
-					var ad = Global.GetSelection();
+					var ad = Global._SolutionHelper.GetSelection();
 					var adAttachment = new MessageAttachments(AttachmentType.Selection, ad.Language, ad.Data);
 					m.Attachments.Add(adAttachment);
 				}
 				// If selected error in Visual Studio.
 				if (at.HasFlag(AttachmentType.Error))
 				{
-					var err = Global.GetSelectedError();
+					var err = Global._SolutionHelper.GetSelectedError();
 					if (!string.IsNullOrEmpty(err?.Description))
 					{
 						var errorAttachment = new MessageAttachments(AttachmentType.Error, err);
@@ -167,23 +168,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				// If active open document in Visual Studio.
 				if (at.HasFlag(AttachmentType.ActiveDocument))
 				{
-					var ad = Global.GetActiveDocument();
+					var ad = Global._SolutionHelper.GetActiveDocument();
 					var adAttachment = new MessageAttachments(AttachmentType.ActiveDocument, ad.Language, ad.Data);
 					m.Attachments.Add(adAttachment);
 				}
 				if (at.HasFlag(AttachmentType.OpenDocuments))
-					fileItems.AddRange(Global.GetOpenDocuments());
+					fileItems.AddRange(Global._SolutionHelper.GetOpenDocuments());
 				if (at.HasFlag(AttachmentType.SelectedDocuments))
-					fileItems.AddRange(Global.GetSelectedDocuments());
+					fileItems.AddRange(Global._SolutionHelper.GetDocumentsSelectedInExplorer());
 				if (at.HasFlag(AttachmentType.ActiveProject))
-					fileItems.AddRange(Global.GetActiveProject());
+					fileItems.AddRange(Global._SolutionHelper.GetDocumentsOfProjectOfActiveDocument());
 				if (at.HasFlag(AttachmentType.SelectedProject))
-					fileItems.AddRange(Global.GetSelectedProject());
+					fileItems.AddRange(Global._SolutionHelper.GetDocumentsOfProjectOfSelectedDocument());
 				if (at.HasFlag(AttachmentType.Solution))
-					fileItems.AddRange(Global.GetSolution());
+					fileItems.AddRange(Global._SolutionHelper.GetAllSolutionDocuments());
 				if (at.HasFlag(AttachmentType.ErrorDocument))
 				{
-					var doc = Global.GetSelectedErrorDocument();
+					var doc = Global._SolutionHelper.GetSelectedErrorDocument();
 					if (doc == null)
 					{
 						Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
@@ -196,7 +197,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				}
 				if (at.HasFlag(AttachmentType.Exception))
 				{
-					var ei = Global.GetCurrentException();
+					var ei = Global._SolutionHelper.GetCurrentException();
 					if (!string.IsNullOrEmpty(ei?.Message))
 					{
 						var exceptionAttachment = new MessageAttachments(AttachmentType.Exception, ei);
@@ -206,7 +207,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (at.HasFlag(AttachmentType.ExceptionDocuments))
 				{
 					// Get files for exception.
-					var exceptionFiles = Global.GetCurrentExceptionDocuments();
+					var exceptionFiles = Global._SolutionHelper.GetCurrentExceptionDocuments();
 					// Extract files if exception info was pasted manually inside the message.
 					var messagePaths = AppHelper.ExtractFilePaths(itemText);
 					var uniquePaths = messagePaths
@@ -526,31 +527,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		/// <param name="data"></param>
 		public static void SetData(TemplateItem item, string data)
 		{
-			if (item.AttachContext == AttachmentType.Selection && Global.SetSelection != null)
+			if (item.AttachContext == AttachmentType.Selection && Global.IsVsExtesion)
 			{
 				var vsData = AppHelper.GetMacroValues();
 				var code = AppHelper.GetCodeFromReply(data);
 				if (item.AutoOperation == DataOperation.Replace)
-					Global.SetSelection(code);
+					Global._SolutionHelper.SetSelection(code);
 				if (item.AutoOperation == DataOperation.InsertBefore)
-					Global.SetSelection(code + vsData.Selection.Data);
+					Global._SolutionHelper.SetSelection(code + vsData.Selection.Data);
 				if (item.AutoOperation == DataOperation.InsertAfter)
-					Global.SetSelection(vsData.Selection.Data + code);
+					Global._SolutionHelper.SetSelection(vsData.Selection.Data + code);
 				if (item.AutoFormatCode)
-					Global.EditFormatSelection();
+					Global._SolutionHelper.EditFormatSelection();
 			}
-			else if (item.AttachContext == AttachmentType.ActiveDocument && Global.SetActiveDocument != null)
+			else if (item.AttachContext == AttachmentType.ActiveDocument && Global.IsVsExtesion)
 			{
 				var vsData = AppHelper.GetMacroValues();
 				var code = AppHelper.GetCodeFromReply(data);
 				if (item.AutoOperation == DataOperation.Replace)
-					Global.SetActiveDocument(code);
+					Global._SolutionHelper.SetActiveDocument(code);
 				if (item.AutoOperation == DataOperation.InsertBefore)
-					Global.SetActiveDocument(code + vsData.Selection.Data);
+					Global._SolutionHelper.SetActiveDocument(code + vsData.Selection.Data);
 				if (item.AutoOperation == DataOperation.InsertAfter)
-					Global.SetActiveDocument(vsData.Selection.Data + code);
+					Global._SolutionHelper.SetActiveDocument(vsData.Selection.Data + code);
 				if (item.AutoFormatCode)
-					Global.EditFormatDocument();
+					Global._SolutionHelper.EditFormatDocument();
 			}
 		}
 

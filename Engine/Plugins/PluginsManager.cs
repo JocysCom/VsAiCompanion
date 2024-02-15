@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,6 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 						AddMethods(typeof(LinkReaderHelper));
 						AddMethods(typeof(PowerShellExecutorHelper));
 						AddMethods(typeof(AutoContinueHelper));
+						AddMethods(typeof(VisualStudioHelper));
 					}
 					return _PluginFunctions;
 				}
@@ -200,8 +202,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 				}
 				else
 				{
+					string result = null;
+					if (methodInfo.DeclaringType.Name == nameof(VisualStudioHelper))
+					{
+						Global.MainControl.Dispatcher.Invoke(() =>
+						{
+							var o = methodInfo.Invoke(classInstance, invokeParams);
+							if (o is DocItem di)
+								result = di.Data;
+							if (o is string s)
+								result = s;
+						});
+					}
+					else
+					{
+						result = (string)methodInfo.Invoke(classInstance, invokeParams);
+					}
 					// It's a synchronous method.
-					var result = (string)methodInfo.Invoke(classInstance, invokeParams);
 					return result;
 				}
 			}

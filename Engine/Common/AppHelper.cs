@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -37,10 +38,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static MacroValues GetMacroValues()
 		{
 			var mv = new MacroValues();
-			if (Global.GetSelection != null)
-				mv.Selection = Global.GetSelection();
-			if (Global.GetActiveDocument != null)
-				mv.Document = Global.GetActiveDocument() ?? new DocItem();
+			if (Global.IsVsExtesion)
+				mv.Selection = Global._SolutionHelper.GetSelection();
+			if (Global.IsVsExtesion)
+				mv.Document = Global._SolutionHelper.GetActiveDocument() ?? new DocItem();
 			return mv;
 		}
 

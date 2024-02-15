@@ -1,15 +1,25 @@
-﻿using System.Text;
-using System;
-using System.IO;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 {
+	/// <summary>
+	/// Visual Studio Document Item.
+	/// </summary>
 	public class DocItem
 	{
+
+		/// <summary>
+		/// Visual Studio Document Item.
+		/// </summary>
 		public DocItem() { }
 
+		/// <summary>
+		/// Visual Studio Document Item.
+		/// </summary>
 		public DocItem(string contents, string path = "", string type = "")
 		{
 			Data = contents;
@@ -56,11 +66,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		public bool IsFile => Kind == PhysicalFile_guid;
 
+		/// <summary>
+		/// True if content is text.
+		/// </summary>
 		public bool IsText { get; set; }
 
 		/// <summary>Document type.</summary>
 		public string Type { get; set; }
 
+		/// <summary>
+		/// Convert to flat string representation.
+		/// </summary>
+		/// <param name="items">Item to convert.</param>
 		public static string ConvertFile(List<DocItem> items)
 		{
 			var sb = new StringBuilder();
@@ -82,6 +99,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Load content into `Data` property.
+		/// </summary>
+		/// <param name="maxSize">Maximum bytes to load.</param>
 		public long LoadData(long maxSize = long.MaxValue)
 		{
 			// Don't load non files.
@@ -119,6 +140,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return 0;
 		}
 
+		/// <summary>
+		///  Convert string representation back to DocItem.
+		/// </summary>
+		/// <param name="s">Content to convert</param>
+		/// <returns></returns>
 		public static List<DocItem> ConvertFile(string s)
 		{
 			var items = new List<DocItem>();
@@ -135,18 +161,33 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return items;
 		}
 
+		/// <summary>
+		/// Return true if content of the file is binary.
+		/// </summary>
+		/// <param name="fileName">File to check.</param>
+		/// <param name="bytesToCheck">Maximum amount of bytes to check.</param>
 		public static bool IsBinary(string fileName, long bytesToCheck = long.MaxValue)
 		{
 			using (var stream = File.OpenRead(fileName))
 				return IsBinary(stream, bytesToCheck);
 		}
 
+		/// <summary>
+		/// Return true if content is binary.
+		/// </summary>
+		/// <param name="data">Bytes to check.</param>
+		/// <param name="bytesToCheck">Maximum amount of bytes to check.</param>
 		public static bool IsBinary(byte[] data, long bytesToCheck = long.MaxValue)
 		{
 			using (var stream = new MemoryStream(data))
 				return IsBinary(stream, bytesToCheck);
 		}
 
+		/// <summary>
+		/// Return true if sram content is binary.
+		/// </summary>
+		/// <param name="stream">Stream to check.</param>
+		/// <param name="bytesToCheck">Maximum amount of bytes to check.</param>
 		public static bool IsBinary(Stream stream, long bytesToCheck = long.MaxValue)
 		{
 			long bytesChecked = 0;

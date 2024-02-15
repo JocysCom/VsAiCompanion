@@ -36,8 +36,8 @@
 						</Grid.ColumnDefinitions>
 						<ContentControl
 							Name="RightIcon"
-							Width="48"
-							Height="48"
+							Width="32"
+							Height="32"
 							Margin="4,4,8,4"
 							Padding="0"
 							VerticalAlignment="Top"

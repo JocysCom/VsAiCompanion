@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using System;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {

@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel;
@@ -44,31 +45,15 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.LoadSettings();
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			// Get or Set multiple documents.
-			Global.GetSolution = SolutionHelper.GetAllSolutionDocuments;
-			Global.GetActiveProject = SolutionHelper.GetDocumentsOfProjectOfActiveDocument;
-			Global.GetSelectedProject = SolutionHelper.GetDocumentsOfProjectOfSelectedDocument;
-			Global.GetSelectedDocuments = SolutionHelper.GetDocumentsSelectedInExplorer;
-			Global.GetOpenDocuments = SolutionHelper.GetOpenDocuments;
-			// Get or Set single document.
-			Global.GetActiveDocument = SolutionHelper.GetActiveDocument;
-			Global.SetActiveDocument = SolutionHelper.SetActiveDocument;
-			Global.GetSelection = SolutionHelper.GetSelection;
-			Global.SetSelection = SolutionHelper.SetSelection;
+			Global._SolutionHelper = new SolutionHelper();
+			VisualStudioHelper.Current = Global._SolutionHelper;
+			Global.IsVsExtesion = true;
 			Global.GetClipboard = AppHelper.GetClipboard;
 			Global.SetClipboard = AppHelper.SetClipboard;
 			Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;
 			//Global.GetEnvironmentProperties = SolutionHelper.GetEnvironmentProperties;
 			//Global.GetReservedProperties = SolutionHelper.GetReservedProperties;
 			//Global.GetOtherProperties = SolutionHelper.GetOtherProperties;
-			// Get Errors
-			Global.GetSelectedError = SolutionHelper.GetSelectedError;
-			Global.GetSelectedErrorDocument = SolutionHelper.GetSelectedErrorDocument;
-			Global.GetCurrentException = SolutionHelper.GetCurrentException;
-			Global.GetCurrentExceptionDocuments = SolutionHelper.GetCurrentExceptionDocuments;
-			// Format code
-			Global.EditFormatDocument = SolutionHelper.EditFormatDocument;
-			Global.EditFormatSelection = SolutionHelper.EditFormatSelection;
-			Global.IsVsExtesion = true;
 			// Create controls.
 			var control = new Engine.MainControl();
 			control.Unloaded += Control_Unloaded;

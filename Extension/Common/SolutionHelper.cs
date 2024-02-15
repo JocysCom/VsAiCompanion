@@ -1,6 +1,7 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using JocysCom.VS.AiCompanion.Engine;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -11,7 +12,7 @@ using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
-	public static partial class SolutionHelper
+	public partial class SolutionHelper : ISolutionHelper
 	{
 
 		public static DTE2 GetCurrentService()
@@ -235,13 +236,15 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return items;
 		}
 
-		public static List<DocItem> GetDocumentsOfProjectOfActiveDocument()
+		/// <inheritdoc />
+		public IList<DocItem> GetDocumentsOfProjectOfActiveDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			return GetDocumentsByProject(GetProjectOfActiveDocument());
 		}
 
-		public static List<DocItem> GetDocumentsOfProjectOfSelectedDocument()
+		/// <inheritdoc />
+		public IList<DocItem> GetDocumentsOfProjectOfSelectedDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			return GetDocumentsByProject(GetProjectOfSelectedDocument());
@@ -270,7 +273,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			}
 		}
 
-		public static List<DocItem> GetDocumentsSelectedInExplorer()
+		/// <inheritdoc />
+		public IList<DocItem> GetDocumentsSelectedInExplorer()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var items = new List<DocItem>();
@@ -293,10 +297,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return items;
 		}
 
-		/// <summary>
-		/// Get documents that are open in Visual Studio.
-		/// </summary>
-		public static List<DocItem> GetOpenDocuments()
+		/// <inheritdoc />
+		public IList<DocItem> GetOpenDocuments()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
@@ -350,7 +352,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return items;
 		}
 
-		public static List<DocItem> GetAllSolutionDocuments()
+		/// <inheritdoc />
+		public IList<DocItem> GetAllSolutionDocuments()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var items = new List<DocItem>();
@@ -458,7 +461,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return GetTextDocument()?.Language;
 		}
 
-		public static DocItem GetActiveDocument()
+		/// <inheritdoc />
+		public DocItem GetActiveDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var td = GetTextDocument();
@@ -471,21 +475,19 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return di;
 		}
 
-		public static void SetActiveDocument(string data)
+		/// <inheritdoc />
+		public void SetActiveDocument(string contents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var td = GetTextDocument();
 			if (td == null)
 				return;
 			var point = td.StartPoint.CreateEditPoint();
-			point.ReplaceText(td.EndPoint, data, (int)vsEPReplaceTextOptions.vsEPReplaceTextAutoformat);
+			point.ReplaceText(td.EndPoint, contents, (int)vsEPReplaceTextOptions.vsEPReplaceTextAutoformat);
 		}
 
-		/// <summary>
-		/// Get selection contents.
-		/// </summary>
-		/// <returns>Selection contents.</returns>
-		public static DocItem GetSelection()
+		/// <inheritdoc />
+		public DocItem GetSelection()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var doc = GetTextDocument();
@@ -497,11 +499,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return di;
 		}
 
-		/// <summary>
-		/// Set selection contents.
-		/// </summary>
-		/// <returns>Selection contents.</returns>
-		public static void SetSelection(string contents)
+		/// <inheritdoc />
+		public void SetSelection(string contents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var document = GetTextDocument();
@@ -524,7 +523,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 		//	return errors;
 		//}
 
-		public static DocItem GetSelectedErrorDocument()
+		/// <inheritdoc />
+		public DocItem GetSelectedErrorDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var ei = GetSelectedError();
@@ -535,7 +535,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return di;
 		}
 
-		public static Engine.ErrorItem GetSelectedError()
+		public Plugins.Core.VsFunctions.ErrorItem GetSelectedError()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			if (!(Package.GetGlobalService(typeof(SVsErrorList)) is IVsTaskList2 tasks))
@@ -553,7 +553,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				task.get_Text(out string description);
 				var category = new VSTASKCATEGORY[1];
 				task.Category(category);
-				return new Engine.ErrorItem
+				return new Plugins.Core.VsFunctions.ErrorItem
 				{
 					File = file,
 					Line = line,
@@ -567,7 +567,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		#region Exception
 
-		public static ExceptionInfo GetCurrentException()
+		/// <inheritdoc />
+		public ExceptionInfo GetCurrentException()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
@@ -600,7 +601,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return ei;
 		}
 
-		public static List<DocItem> GetCurrentExceptionDocuments()
+		/// <inheritdoc />
+		public IList<DocItem> GetCurrentExceptionDocuments()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var details = GetCurrentException().ToString();
@@ -613,14 +615,16 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		#region Formatting
 
-		public static void EditFormatDocument()
+		/// <inheritdoc />
+		public void EditFormatDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
 			dte?.ExecuteCommand("Edit.FormatDocument");
 		}
 
-		public static void EditFormatSelection()
+		/// <inheritdoc />
+		public void EditFormatSelection()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;

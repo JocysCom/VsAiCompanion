@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,32 +13,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public static class Global
 	{
+
+		public static ISolutionHelper _SolutionHelper;
+
 		// Get or Set multiple documents.
-		public static Func<List<DocItem>> GetSolution = () => new List<DocItem>();
 		public static Action<List<DocItem>> SetSolution = (x) => { };
 		public static Func<List<DocItem>> GetActiveProject = () => new List<DocItem>();
 		public static Action<List<DocItem>> SetActiveProject = (x) => { };
-		public static Func<List<DocItem>> GetSelectedProject = () => new List<DocItem>();
 		public static Action<List<DocItem>> SetSelectedProject = (x) => { };
 		public static Func<List<DocItem>> GetSelectedDocuments = () => new List<DocItem>();
 		public static Action<List<DocItem>> SetSelectedDocuments = (x) => { };
 		public static Func<List<DocItem>> GetOpenDocuments = () => new List<DocItem>();
 		public static Action<List<DocItem>> SetOpenDocuments = (x) => { };
 		// Get or Set single document.
-		public static Func<DocItem> GetActiveDocument = () => new DocItem();
-		public static Action<string> SetActiveDocument = (x) => { };
-		public static Func<DocItem> GetSelection = () => new DocItem();
-		public static Action<string> SetSelection = (x) => { };
 		public static Func<DocItem> GetClipboard = () => new DocItem();
 		public static Action<string> SetClipboard = (x) => { };
-		// Errors.
-		public static Func<ErrorItem> GetSelectedError = () => new ErrorItem();
-		public static Func<DocItem> GetSelectedErrorDocument = () => new DocItem();
-		public static Func<ExceptionInfo> GetCurrentException = () => new ExceptionInfo();
-		public static Func<List<DocItem>> GetCurrentExceptionDocuments = () => new List<DocItem>();
-		// Format code.
-		public static Action EditFormatDocument = () => { };
-		public static Action EditFormatSelection = () => { };
 		// Get solution properties (macros).
 		public static Func<List<PropertyItem>> GetEnvironmentProperties = () => new List<PropertyItem>();
 		public static Func<List<PropertyItem>> GetReservedProperties = () => new List<PropertyItem>();
