@@ -117,7 +117,7 @@
 					</GroupBox>
 					<CheckBox
 						Name="IsFavoriteCheckBox"
-						Margin="-1,-4,0,0"
+						Margin="-1,0,0,0"
 						HorizontalAlignment="Center"
 						Content="Show Icon in Toolbar"
 						IsChecked="{Binding IsFavorite}"
@@ -196,9 +196,6 @@
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>
-
-
-
 				<GroupBox
 					Grid.Row="1"
 					Grid.Column="1"
@@ -206,48 +203,43 @@
 					VerticalAlignment="Stretch"
 					Visibility="{Binding BarPanelVisibility, ElementName=This}">
 					<GroupBox.Header>
-						<StackPanel Orientation="Horizontal">
-							<Label
-								Grid.Row="2"
-								Grid.Column="1"
-								Padding="0"
-								VerticalAlignment="Center"
-								Content="Plugins"
-								Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-						</StackPanel>
+						<CheckBox
+							Name="PluginsEnableContextCheckBox"
+							Margin="-4"
+							Content="Use Plugins"
+							IsChecked="{Binding PluginsEnabled}" />
 					</GroupBox.Header>
-					<StackPanel
-						Grid.Row="2"
-						Grid.Column="2"
-						Grid.ColumnSpan="2"
-						Orientation="Horizontal"
-						Visibility="{Binding BarPanelVisibility, ElementName=This}">
-						<StackPanel VerticalAlignment="Top">
-							<CheckBox Name="PluginsEnableContextCheckBox" Content="Plugins Enabled" IsChecked="{Binding PluginsEnabled}" />
-							<StackPanel Orientation="Horizontal">
-								<Label Content="Plugins Approval" />
-								<ComboBox
-									Name="PluginApprovalProcessComboBox"
-									Margin="6,0,3,0"
-									VerticalAlignment="Top"
-									DisplayMemberPath="Value"
-									ItemsSource="{Binding PluginApprovalProcesses, ElementName=This}"
-									SelectedValue="{Binding PluginApprovalProcess}"
-									SelectedValuePath="Key" />
-							</StackPanel>
-							<StackPanel Margin="0,6,0,0" Orientation="Horizontal">
-								<Label Content="Approval Template" />
-								<ComboBox
-									Name="PluginApprovalTemplateComboBox"
-									Margin="6,0,3,0"
-									VerticalAlignment="Top"
-									DisplayMemberPath="Value"
-									ItemsSource="{Binding PluginApprovalTemplates, ElementName=This}"
-									SelectedValue="{Binding PluginApprovalTemplate}"
-									SelectedValuePath="Key" />
-							</StackPanel>
-						</StackPanel>
-					</StackPanel>
+					<Grid Grid.Row="2" Grid.ColumnSpan="4">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<Label Content="Approval Type" />
+						<Label Grid.Row="1" Margin="0,6,0,0" Content="Approval Template" />
+						<ComboBox
+							Name="PluginApprovalProcessComboBox"
+							Grid.Column="1"
+							Margin="3,0,3,0"
+							VerticalAlignment="Top"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginApprovalProcesses, ElementName=This}"
+							SelectedValue="{Binding PluginApprovalProcess}"
+							SelectedValuePath="Key" />
+						<ComboBox
+							Name="PluginApprovalTemplateComboBox"
+							Grid.Row="1"
+							Grid.Column="1"
+							Margin="3,6,3,3"
+							VerticalAlignment="Top"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginApprovalTemplates, ElementName=This}"
+							SelectedValue="{Binding PluginApprovalTemplate}"
+							SelectedValuePath="Key" />
+					</Grid>
 				</GroupBox>
 			</WrapPanel>
 			<!--  Row 2  -->

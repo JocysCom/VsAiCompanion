@@ -19,9 +19,14 @@
             <returns>The output of request.</returns>
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.LinkReader.LinkReaderHelper.GetWebPageContents(System.String)">
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.LinkReaderHelper">
             <summary>
-            Read the link by supplied url.
+            Helps AI to read links.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.LinkReaderHelper.GetWebPageContents(System.String)">
+            <summary>
+            Use to retrieve content of websites by URL.
             </summary>
             <param name="url">URL which points to the resource.</param>
             <returns>The output of request.</returns>
