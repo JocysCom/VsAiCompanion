@@ -4,7 +4,6 @@ using JocysCom.VS.AiCompanion.Engine.Plugins;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -22,17 +21,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Class = mi.DeclaringType.Name;
 			Name = mi.Name;
 			Id = (mi.DeclaringType.FullName + "." + mi.Name).Trim('.');
-			Description = XmlDocHelper.GetSummaryText(mi);
+			Description = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetSummaryText(mi));
 			if (Params == null)
 				Params = new BindingList<PluginParam>();
+			var index = 0;
 			foreach (var pi in mi.GetParameters())
 			{
-				var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
+				var paramText = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetParamText(mi, pi));
 				var pp = new PluginParam();
 				pp.Name = pi.Name;
 				pp.IsOptional = pi.IsOptional;
 				pp.Description = paramText;
 				pp.Type = PluginsManager.GetJsonType(pi.ParameterType);
+				pp.Index = index++;
 				Params.Add(pp);
 			}
 		}
@@ -71,17 +72,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 
-		public static readonly Regex RxMultiSpace = new Regex("[ \r\n\t\u00A0]+");
-
 		[XmlIgnore]
-		public string Description
-		{
-			get => _Description; set
-			{
-				var v = RxMultiSpace.Replace(value ?? "", " ").Trim();
-				SetProperty(ref _Description, v);
-			}
-		}
+		public string Description { get => _Description; set => SetProperty(ref _Description, value); }
 		string _Description;
 
 		[XmlIgnore]

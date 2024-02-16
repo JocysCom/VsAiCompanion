@@ -17,7 +17,7 @@
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
-			<DataTemplate x:Key="MyItemTemplate">
+			<DataTemplate x:Key="PluginItemTemplate">
 				<GroupBox Margin="3,0,3,3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 					<GroupBox.Header>
 						<CheckBox
@@ -87,6 +87,73 @@
 								VerticalAlignment="Top"
 								Text="{Binding Description}"
 								TextWrapping="Wrap" />
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<ItemsControl
+									x:Name="ParamsDataGrid"
+									HorizontalAlignment="Stretch"
+									VerticalAlignment="Stretch"
+									Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+									ClipToBounds="True"
+									ItemsSource="{Binding Params}">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<StackPanel Grid.Row="{Binding Index}" Orientation="Horizontal">
+												<Label
+													Grid.Row="{Binding Index}"
+													Grid.Column="0"
+													Margin="24,0,0,0"
+													Padding="0"
+													Content="{Binding Type}"
+													FontWeight="Bold"
+													Foreground="#2B91AF" />
+												<Label
+													Grid.Row="{Binding Index}"
+													Grid.Column="1"
+													Margin="4,0,0,0"
+													Padding="0"
+													Content="{Binding Name}"
+													FontWeight="Bold" />
+												<Label
+													Grid.Row="{Binding Index}"
+													Grid.Column="2"
+													Margin="4,0,0,0"
+													Padding="0"
+													Content="{Binding IsOptional}"
+													FontWeight="Bold"
+													Foreground="#808080" />
+												<TextBlock
+													Grid.Row="{Binding Index}"
+													Grid.Column="3"
+													Margin="4,0,0,0"
+													Padding="0"
+													HorizontalAlignment="Stretch"
+													VerticalAlignment="Top"
+													Text="{Binding Description}"
+													TextWrapping="Wrap" />
+											</StackPanel>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+
+							</Grid>
+
+
 						</StackPanel>
 					</Grid>
 				</GroupBox>
@@ -118,7 +185,7 @@
 				x:FieldModifier="public"
 				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 				ClipToBounds="True"
-				ItemTemplate="{StaticResource MyItemTemplate}"
+				ItemTemplate="{StaticResource PluginItemTemplate}"
 				ScrollViewer.CanContentScroll="True" />
 		</ScrollViewer>
 	</Grid>

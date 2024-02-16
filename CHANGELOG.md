@@ -1,3 +1,8 @@
+2024-02-16 v1.4.8
+
+- Fix: App crashes when clicking on header.
+- Fix: Issue with plugins not scrolling.
+
 2024-02-14 v1.4.6
 
 - New: Plugin Feature. You can allow AI to run apps and scripts. Disabled by default.

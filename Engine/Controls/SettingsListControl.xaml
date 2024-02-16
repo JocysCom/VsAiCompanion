@@ -192,6 +192,8 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
+			CanUserResizeColumns="False"
+			CanUserSortColumns="False"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			ClipToBounds="True"
 			IsReadOnly="False"

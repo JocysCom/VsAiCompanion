@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -33,6 +34,7 @@ namespace JocysCom.ClassLibrary.Xml
 			}
 			return text;
 		}
+
 		public static string GetParamText(MethodInfo mi, ParameterInfo pi)
 		{
 			var member = GetMemberDoc(mi);
@@ -63,14 +65,48 @@ namespace JocysCom.ClassLibrary.Xml
 			return summary;
 		}
 
+		public static readonly Regex RxMultiSpace = new Regex("[ \r\n\t\u00A0]+", RegexOptions.Compiled);
+
+		public static string RemoveSpaces(string s)
+		{
+			if (string.IsNullOrEmpty(s))
+				return s;
+			return RxMultiSpace.Replace(s, " ").Trim();
+		}
+
 		#endregion
 
 		/// <summary>Retrieve the XML comments for a type or a member of a type.</summary>
 		public static XmlDocMember GetMemberDoc(MemberInfo mi)
 		{
+			var memberDoc = _GetMemberDoc(mi);
+			// If summary found or not MethodInfo type then return.
+			if (!string.IsNullOrEmpty(memberDoc?.summary) || !(mi is MethodInfo methodInfo))
+				return memberDoc;
+			foreach (var intf in methodInfo.DeclaringType.GetInterfaces())
+			{
+				// Generate the method signature to look for in the XML documentation.
+				var map = methodInfo.DeclaringType.GetInterfaceMap(intf);
+				for (int i = 0; i < map.TargetMethods.Length; i++)
+				{
+					if (map.TargetMethods[i] != methodInfo)
+						continue;
+					// Generate the name according to the XML documentation convention.
+					var interfaceMethod = map.InterfaceMethods[i];
+					var iMemberDoc = _GetMemberDoc(interfaceMethod);
+					if (iMemberDoc != null)
+						return iMemberDoc;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>Retrieve the XML comments for a type or a member of a type.</summary>
+		private static XmlDocMember _GetMemberDoc(MemberInfo mi)
+		{
 			var declType = (mi is Type) ? ((Type)mi) : mi.DeclaringType;
-			var doc = GetXmlDoc(declType.Assembly);
-			if (doc is null)
+			var xmlDoc = GetXmlDoc(declType.Assembly);
+			if (xmlDoc is null)
 				return null;
 			var generics = declType.GetGenericArguments();
 			if (generics.Length > 0)
@@ -109,7 +145,7 @@ namespace JocysCom.ClassLibrary.Xml
 				default:
 					return null;
 			}
-			return doc.members.FirstOrDefault(x => x.name == name);
+			return xmlDoc.members.FirstOrDefault(x => x.name == name);
 		}
 
 		#region Parameters
@@ -121,7 +157,8 @@ namespace JocysCom.ClassLibrary.Xml
 		{
 			var paramDesc = new StringBuilder();
 			// Start the list.
-			paramDesc.Append("(");
+			if (parameters.Any())
+				paramDesc.Append("(");
 			for (var i = 0; i < parameters.Length; i++)
 			{
 				if (i > 0)
@@ -138,7 +175,8 @@ namespace JocysCom.ClassLibrary.Xml
 				paramDesc.Append(paramName);
 			}
 			// End the list.
-			paramDesc.Append(")");
+			if (parameters.Any())
+				paramDesc.Append(")");
 			// Return the parameter list description
 			return paramDesc.ToString();
 		}
