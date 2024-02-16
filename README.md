@@ -20,8 +20,9 @@ Install Visual Studio Extension from <a href="https://marketplace.visualstudio.c
 https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
 
 ### System Requirements
-- Microsoft .NET 6.0
+- Microsoft .NET 8.0
   https://dotnet.microsoft.com/download/dotnet
+- Visual Studio 2022 17.9+ (use Visual Studio Installer to update)
 
 ### Why was this extension created?
 Existing tools like GitHub CoPilot have limitations when it comes to interacting with AI. I wanted to create an app that could handle common tasks with more in-depth AI guidance and information. This tool does not replace GitHub CoPilot, but rather offers new features. My goal was to create a tool that would assist AI in responding to inquiries about an entire project or in revamping a Visual Studio solution using a different framework. Right now, you have the ability to request a project rewrite, as the extension can send an entire project or solution. However, there are some necessary updates that need to be made in order to save the outcomes.
