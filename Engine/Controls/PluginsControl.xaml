@@ -110,18 +110,16 @@
 				Manually approve function calls or employ advanced AI for the approval process.
 			</TextBlock>
 		</Border>
-		<ItemsControl
-			x:Name="MainDataGrid"
-			Grid.Row="1"
-			Height="Auto"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
-			x:FieldModifier="public"
-			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-			ClipToBounds="True"
-			ItemTemplate="{StaticResource MyItemTemplate}"
-			ScrollViewer.CanContentScroll="True"
-			ScrollViewer.HorizontalScrollBarVisibility="Auto"
-			ScrollViewer.VerticalScrollBarVisibility="Auto" />
+		<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+			<ItemsControl
+				x:Name="MainDataGrid"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				x:FieldModifier="public"
+				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+				ClipToBounds="True"
+				ItemTemplate="{StaticResource MyItemTemplate}"
+				ScrollViewer.CanContentScroll="True" />
+		</ScrollViewer>
 	</Grid>
 </UserControl>
