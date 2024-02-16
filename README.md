@@ -21,7 +21,7 @@ https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
 
 ### System Requirements
 - Microsoft .NET 8.0
-  https://dotnet.microsoft.com/download/dotnet)
+  https://dotnet.microsoft.com/download/dotnet
 - For VS Extension: Visual Studio 2022 17.9+ (update through Visual Studio Installer)
 
 ### Why was this extension created?
