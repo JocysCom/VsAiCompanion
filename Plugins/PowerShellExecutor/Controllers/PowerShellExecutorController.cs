@@ -29,7 +29,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers
 			}
 			try
 			{
-				string output = Core.PowerShellExecutorHelper.RunPowerShellScript(script);
+				string output = Core.Basic.RunPowerShellScript(script);
 				return Ok(output);
 			}
 			catch (Exception ex)

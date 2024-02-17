@@ -16,7 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Include="..\Core\LinkReaderHelper.cs" Link="LinkReaderHelper.cs" />
+	  <Compile Include="..\Core\Basic.cs" Link="Basic.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

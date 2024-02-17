@@ -46,7 +46,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			// Get or Set multiple documents.
 			Global._SolutionHelper = new SolutionHelper();
-			VisualStudioHelper.Current = Global._SolutionHelper;
+			VisualStudio.Current = Global._SolutionHelper;
 			Global.IsVsExtesion = true;
 			Global.GetClipboard = AppHelper.GetClipboard;
 			Global.SetClipboard = AppHelper.SetClipboard;

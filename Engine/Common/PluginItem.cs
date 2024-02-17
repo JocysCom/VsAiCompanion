@@ -19,9 +19,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			AssemblyName = mi.DeclaringType.Assembly.GetName().FullName;
 			Namespace = mi.DeclaringType.Namespace;
 			Class = mi.DeclaringType.Name;
+			ClassFullName = mi.DeclaringType.FullName;
 			Name = mi.Name;
-			Id = (mi.DeclaringType.FullName + "." + mi.Name).Trim('.');
+			Id = (ClassFullName + "." + mi.Name).Trim('.');
 			Description = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetSummaryText(mi));
+			Mi = mi;
 			if (Params == null)
 				Params = new BindingList<PluginParam>();
 			var index = 0;
@@ -51,9 +53,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
 
-		//[XmlIgnore]
-		//public DrawingImage Icon { get => _Icon; }
-		//DrawingImage _Icon;
+		[XmlIgnore]
+		public System.Reflection.MethodInfo Mi { get => _Mi; set => SetProperty(ref _Mi, value); }
+		System.Reflection.MethodInfo _Mi;
 
 		[XmlIgnore]
 		public BindingList<PluginParam> Params { get => _Params; set => SetProperty(ref _Params, value); }
@@ -63,6 +65,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore]
 		public string Namespace { get => _Namespace; set => SetProperty(ref _Namespace, value); }
 		string _Namespace;
+
+		[XmlIgnore]
+		public string ClassFullName { get => _ClassFullName; set => SetProperty(ref _ClassFullName, value); }
+		string _ClassFullName;
 
 		[XmlIgnore]
 		public string Class { get => _Class; set => SetProperty(ref _Class, value); }
@@ -78,8 +84,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[XmlIgnore]
 		public string AssemblyName { get; set; }
-		[XmlIgnore]
-		public string ClassName { get; set; }
 
 		#region INotifyPropertyChanged
 

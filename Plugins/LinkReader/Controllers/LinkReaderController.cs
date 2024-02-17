@@ -29,7 +29,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.LinkReader.Controllers
 			}
 			try
 			{
-				string output = await Core.LinkReaderHelper.GetWebPageContents(url);
+				string output = await Core.Basic.GetWebPageContents(url);
 				return Ok(output);
 			}
 			catch (Exception ex)

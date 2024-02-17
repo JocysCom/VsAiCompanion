@@ -4,12 +4,12 @@
         <name>JocysCom.VS.AiCompanion.Plugins.Core</name>
     </assembly>
     <members>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.AutoContinueHelper">
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Basic">
             <summary>
             Helps AI to auto-continue on the task.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.AutoContinueHelper.AutoContinue(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue(System.String)">
             <summary>
             Use when you can't provide an answer in one response and need to split the answer.
             Use after reply when user asks to generate answers with permission to continue.
@@ -19,12 +19,7 @@
             <param name="reserved">Reserved. Send empty string as a value.</param>
             <exception cref="T:System.Exception">Error message explaining why execution failed.</exception>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.LinkReaderHelper">
-            <summary>
-            Helps AI to read links.
-            </summary>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.LinkReaderHelper.GetWebPageContents(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContents(System.String)">
             <summary>
             Use to retrieve content of websites by URL.
             </summary>
@@ -32,12 +27,7 @@
             <returns>The output of request.</returns>
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.PowerShellExecutorHelper">
-            <summary>
-            Helps AI to execute applications and scripts.
-            </summary>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.PowerShellExecutorHelper.StartProcess(System.String,System.String,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess(System.String,System.String,System.String)">
             <summary>
             Use to execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
             </summary>
@@ -48,7 +38,7 @@
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
             <remarks>Be cautious with executing process requesys received via API due to security risks.</remarks>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.PowerShellExecutorHelper.RunPowerShellScript(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.RunPowerShellScript(System.String)">
             <summary>
             Use to execute a PowerShell script on user computer.
             </summary>
@@ -57,59 +47,59 @@
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
             <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper">
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
             <summary>
             Use to get selection or document content from Visual Studio.
             </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.Current">
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.Current">
             <summary>
             Current Visual Solution helper.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.EditFormatDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.EditFormatSelection">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetActiveDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetActiveDocument">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetAllSolutionDocuments">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetCurrentException">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetCurrentExceptionDocuments">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentExceptionDocuments">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetDocumentsOfProjectOfActiveDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfActiveDocument">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetDocumentsOfProjectOfSelectedDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetDocumentsSelectedInExplorer">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetOpenDocuments">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetSelectedError">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedError">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetSelectedErrorDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrorDocument">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.GetSelection">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.SetActiveDocument(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetActiveDocument(System.String)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudioHelper.SetSelection(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
             <inheritdoc />
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem">

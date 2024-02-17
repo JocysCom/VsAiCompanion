@@ -36,10 +36,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 						_PluginFunctions = new Dictionary<string, System.Reflection.MethodInfo>();
 					if (_PluginFunctions.Count == 0)
 					{
-						AddMethods(typeof(LinkReaderHelper));
-						AddMethods(typeof(PowerShellExecutorHelper));
-						AddMethods(typeof(AutoContinueHelper));
-						AddMethods(typeof(VisualStudioHelper));
+						AddMethods(typeof(Basic));
+						AddMethods(typeof(VisualStudio));
 					}
 					return _PluginFunctions;
 				}
@@ -203,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 				else
 				{
 					string result = null;
-					if (methodInfo.DeclaringType.Name == nameof(VisualStudioHelper))
+					if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
 					{
 						Global.MainControl.Dispatcher.Invoke(() =>
 						{

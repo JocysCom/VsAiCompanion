@@ -6,7 +6,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// <summary>
 	/// Use to get selection or document content from Visual Studio.
 	/// </summary>
-	public partial class VisualStudioHelper : ISolutionHelper
+	public partial class VisualStudio : ISolutionHelper
 	{
 		/// <summary>
 		/// Current Visual Solution helper.
