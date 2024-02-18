@@ -1,7 +1,9 @@
-2024-02-16 v1.4.8
+2024-02-16 v1.4.15
 
 - Fix: App crashes when clicking on header.
 - Fix: Issue with plugins not scrolling.
+- Fix: Make sure system templates are recreated if missing.
+- New: VS plugins. Mention "selection" or "open document" and AI will know how to get the code.
 
 2024-02-14 v1.4.6
 

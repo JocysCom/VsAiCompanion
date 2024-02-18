@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
@@ -609,6 +610,43 @@ namespace JocysCom.VS.AiCompanion.Extension
 			var files = AppHelper.ExtractFilePaths(details);
 			var items = files.Select(x => new DocItem(null, x)).ToList();
 			return items;
+		}
+
+		public Dictionary<string, JsonElement> GetEnvironmentContext()
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var list = new Dictionary<string, JsonElement>();
+			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
+			if (dte == null)
+				return list;
+			var majorVersion = dte.Version; // This gets you the "17.0" part
+			var fullVersion = GetVisualStudioVersion() ?? majorVersion;
+			list.Add("DTE Version", JsonSerializer.SerializeToElement(fullVersion));
+			return list;
+		}
+
+		public static string GetVisualStudioVersion()
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			try
+			{
+				// Get the IVsShell service
+				IVsShell shellService = Package.GetGlobalService(typeof(SVsShell)) as IVsShell;
+				if (shellService == null)
+					return null;
+				// Get the version information
+				shellService.GetProperty((int)__VSSPROPID5.VSSPROPID_ReleaseVersion, out object versionObj);
+				var versionString = versionObj?.ToString() ?? "";
+				var pattern = @"\d+\.\d+";
+				// Using Regex to find match in the input string
+				var match = Regex.Match(versionString, pattern);
+				if (match.Success)
+					return match.Value;
+			}
+			catch
+			{
+			}
+			return null;
 		}
 
 		#endregion

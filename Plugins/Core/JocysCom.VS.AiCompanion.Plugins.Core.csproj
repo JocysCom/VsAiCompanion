@@ -23,6 +23,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="System.Text.Json" Version="8.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<EmbeddedResource Include="Resources\*.xml" />
 	</ItemGroup>
 

@@ -133,6 +133,9 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
             <inheritdoc />
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext">
+            <inheritdoc />
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem">
             <summary>
             Visual Studio Document Item.
@@ -379,6 +382,11 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.EditFormatSelection">
             <summary>
             Formats the currently selected code fragment in the active Document according to the solution's code style settings.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetEnvironmentContext">
+            <summary>
+            Get information about current Visual Studio environment.
             </summary>
         </member>
     </members>

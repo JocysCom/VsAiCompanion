@@ -363,8 +363,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				}
 				catch (Exception ex)
 				{
-					var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
-					item.Messages.Add(message);
+					var message = ex.Message;
+					// Workaround: Provide a hint until Microsoft's OpenAI packages are no longer in beta.
+					if (message.Contains("Method not found") && message.Contains("System.Collections.Generic.IAsyncEnumerable"))
+						message += " " + Global.VsExtensionVersionMessage;
+					var msgItem = new MessageItem(SystemName, ex.Message, MessageType.Error);
+					item.Messages.Add(msgItem);
 				}
 			}
 			// If item type task, then allow to do auto removal.

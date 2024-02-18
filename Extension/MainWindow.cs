@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
@@ -48,6 +49,19 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global._SolutionHelper = new SolutionHelper();
 			VisualStudio.Current = Global._SolutionHelper;
 			Global.IsVsExtesion = true;
+			;
+			var vsContext = Global._SolutionHelper.GetEnvironmentContext();
+			if (vsContext.ContainsKey("DTE Version"))
+			{
+				var versionString = vsContext["DTE Version"].Deserialize<string>();
+				Version version;
+				if (Version.TryParse(versionString, out version))
+				{
+					Global.VsVersion = version;
+					Global.ShowExtensionVersionMessageOnError = version < new Version(17, 9);
+				}
+			}
+
 			Global.GetClipboard = AppHelper.GetClipboard;
 			Global.SetClipboard = AppHelper.SetClipboard;
 			Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;

@@ -399,22 +399,34 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return;
 			}
 			// Check reserved templates used for some automation.
-			var rItem = e.Items.FirstOrDefault(x => x.Name == ClientHelper.GenerateTitleTaskName);
-			if (rItem == null)
-			{
-				var asm = typeof(Global).Assembly;
-				var keys = asm.GetManifestResourceNames()
-					.Where(x => x.Contains(ClientHelper.GenerateTitleTaskName))
-					.ToList();
-				foreach (var key in keys)
-				{
-					var bytes = Helper.GetResource<byte[]>(key, asm);
-					var item = data.DeserializeItem(bytes, false);
-					e.Items.Add(item);
-				}
-				data.IsSavePending = true;
-			}
+			MakeSureTempalteExists(data, e.Items,
+				ClientHelper.GenerateTitleTaskName,
+				ClientHelper.FormatMessageTaskName,
+				ClientHelper.PluginApprovalTaskName
+			);
 			data.IsSavePending |= FixTempalteItems(e.Items);
+		}
+
+		private static void MakeSureTempalteExists(SettingsData<TemplateItem> data, IList<TemplateItem> items, params string[] names)
+		{
+			var asm = typeof(Global).Assembly;
+			var resourceNames = asm.GetManifestResourceNames();
+			foreach (var name in names)
+			{
+				// Check reserved templates used for some automation.
+				var rItem = items.FirstOrDefault(x => x.Name == name);
+				if (rItem == null)
+				{
+					var keys = resourceNames.Where(x => x.Contains(name)).ToList();
+					foreach (var key in keys)
+					{
+						var bytes = Helper.GetResource<byte[]>(key, asm);
+						var item = data.DeserializeItem(bytes, false);
+						items.Add(item);
+					}
+					data.IsSavePending = true;
+				}
+			}
 		}
 
 		private static void Tasks_OnValidateData(object sender, SettingsData<TemplateItem>.SettingsDataEventArgs e)
@@ -454,7 +466,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static MainControl MainControl;
 
 		public static bool IsVsExtesion { get; set; }
+		public static Version VsVersion { get; set; }
 		public static string VsExtensionFeatureMessage = "This feature is only available when the application is run as an extension in Visual Studio.";
+		public static string VsExtensionVersionMessage = "This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.";
+		public static bool ShowExtensionVersionMessageOnError;
+
 
 	}
 }

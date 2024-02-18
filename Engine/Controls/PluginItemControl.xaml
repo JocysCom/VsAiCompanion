@@ -40,9 +40,9 @@
 				Padding="0"
 				VerticalAlignment="Top"
 				Content="{Binding Icon}" />
-			<StackPanel Grid.Column="1">
+			<StackPanel Grid.Column="1" HorizontalAlignment="Stretch" Orientation="Vertical">
 				<StackPanel Margin="0,4,4,4">
-					<CheckBox Name="UseMacrosCheckBox" Margin="-4" IsChecked="{Binding IsEnabled}">
+					<CheckBox Name="MethodCheckBox" Margin="-4" IsChecked="{Binding IsEnabled}">
 						<CheckBox.Content>
 							<StackPanel>
 								<StackPanel Margin="0" Visibility="Collapsed">
@@ -89,76 +89,57 @@
 				<TextBlock
 					Name="MethodDescriptionLabel"
 					Margin="0,0,4,4"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Top"
 					Text="{Binding Description}"
 					TextWrapping="Wrap" />
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
-					<ItemsControl
-						x:Name="ParamsDataGrid"
-						HorizontalAlignment="Stretch"
-						VerticalAlignment="Stretch"
-						Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-						ClipToBounds="True"
-						ItemsSource="{Binding Params}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<StackPanel Grid.Row="{Binding Index}" Orientation="Horizontal">
-									<Label
-										Grid.Row="{Binding Index}"
-										Grid.Column="0"
-										Margin="24,0,0,0"
-										Padding="0"
-										Content="{Binding Type}"
-										FontWeight="Bold"
-										Foreground="#2B91AF" />
-									<Label
-										Grid.Row="{Binding Index}"
-										Grid.Column="1"
-										Margin="4,0,0,0"
-										Padding="0"
-										Content="{Binding Name}"
-										FontWeight="Bold" />
-									<Label
-										Grid.Row="{Binding Index}"
-										Grid.Column="2"
-										Margin="4,0,0,0"
-										Padding="0"
-										Content="(optional)"
-										FontWeight="Bold"
-										Foreground="#808080"
-										Visibility="{Binding IsOptional, Converter={StaticResource _BoolToVisibilityConverter}}" />
-									<TextBlock
-										x:Name="ParameterDescription"
-										Grid.Row="{Binding Index}"
-										Grid.Column="3"
-										Margin="4,0,0,0"
-										Padding="0"
-										HorizontalAlignment="Stretch"
-										VerticalAlignment="Top"
-										Text="{Binding Description}"
-										TextWrapping="Wrap" />
-								</StackPanel>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-				</Grid>
+				<ItemsControl
+					x:Name="ParamsDataGrid"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+					ClipToBounds="True"
+					ItemsSource="{Binding Params}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Grid.Row="{Binding Index}" Orientation="Horizontal">
+								<Label
+									Grid.Row="{Binding Index}"
+									Grid.Column="0"
+									Margin="24,0,0,0"
+									Padding="0"
+									Content="{Binding Type}"
+									FontWeight="Bold"
+									Foreground="#2B91AF" />
+								<Label
+									Grid.Row="{Binding Index}"
+									Grid.Column="1"
+									Margin="4,0,0,0"
+									Padding="0"
+									Content="{Binding Name}"
+									FontWeight="Bold" />
+								<Label
+									Grid.Row="{Binding Index}"
+									Grid.Column="2"
+									Margin="4,0,0,0"
+									Padding="0"
+									Content="(optional)"
+									FontWeight="Bold"
+									Foreground="#808080"
+									Visibility="{Binding IsOptional, Converter={StaticResource _BoolToVisibilityConverter}}" />
+								<TextBlock
+									x:Name="ParameterDescription"
+									Grid.Row="{Binding Index}"
+									Grid.Column="3"
+									Margin="4,0,0,0"
+									Padding="0"
+									HorizontalAlignment="Stretch"
+									VerticalAlignment="Top"
+									Text="{Binding Description}"
+									TextWrapping="Wrap" />
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+
 			</StackPanel>
 		</Grid>
 	</Border>

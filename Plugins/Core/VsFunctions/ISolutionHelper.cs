@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 {
@@ -118,5 +119,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		[RiskLevel(RiskLevel.Low)]
 		void EditFormatSelection();
+
+
+		/// <summary>
+		/// Get information about current Visual Studio environment.
+		/// </summary>
+		[RiskLevel(RiskLevel.Low)]
+		Dictionary<string, JsonElement> GetEnvironmentContext();
+
 	}
 }

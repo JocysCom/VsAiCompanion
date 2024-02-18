@@ -1,5 +1,6 @@
 ﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -72,6 +73,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <inheritdoc />
 		public void SetSelection(string contents)
 			=> Current.SetSelection(contents);
+
+
+		/// <inheritdoc />
+		public Dictionary<string, JsonElement> GetEnvironmentContext()
+			=> Current.GetEnvironmentContext();
 
 	}
 }
