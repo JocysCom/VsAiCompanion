@@ -1,4 +1,4 @@
-2024-02-16 v1.4.15
+2024-02-18 v1.4.15
 
 - Fix: App crashes when clicking on header.
 - Fix: Issue with plugins not scrolling.
