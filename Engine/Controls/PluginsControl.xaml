@@ -33,6 +33,7 @@
 				WARNING: Granting AI the capability to run applications and scripts can lead to security risks.
 				Be cautious and only allow trusted AI models to execute processes on your system.
 				Manually approve function calls or employ advanced AI for the approval process.
+				Do not leave AI processing unattended when plugins are enabled.
 			</TextBlock>
 		</Border>
 		<TabControl x:Name="MainTabControl" Grid.Row="1" Margin="4,2,4,4">

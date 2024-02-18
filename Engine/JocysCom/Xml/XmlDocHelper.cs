@@ -74,6 +74,26 @@ namespace JocysCom.ClassLibrary.Xml
 			return RxMultiSpace.Replace(s, " ").Trim();
 		}
 
+		public static string ConvertXmlNodesToText(params XmlNode[] nodes)
+		{
+			if (nodes == null)
+				return null;
+			var result = string.Empty;
+			foreach (XmlNode node in nodes)
+				result += node.InnerText;
+			return result;
+		}
+
+		public static string ConvertXmlNodesToXml(params XmlNode[] nodes)
+		{
+			if (nodes == null)
+				return string.Empty;
+			var result = string.Empty;
+			foreach (XmlNode node in nodes)
+				result += node.OuterXml;
+			return result;
+		}
+
 		#endregion
 
 		/// <summary>Retrieve the XML comments for a type or a member of a type.</summary>
@@ -207,6 +227,9 @@ namespace JocysCom.ClassLibrary.Xml
 			var xml = GetXmlDocument(assembly);
 			if (xml is null)
 				return null;
+			//var validator = new Runtime.XmlValidator();
+			//validator.IsValid<XmlDoc>(xml.OuterXml, true);
+			//var exceptions = validator.Exceptions;
 			return Runtime.Serializer.DeserializeFromXml<XmlDoc>(xml);
 		}
 
@@ -315,8 +338,10 @@ namespace JocysCom.ClassLibrary.Xml
 		[XmlAttribute]
 		public string name { get; set; }
 
-		[XmlElement]
-		public string summary { get; set; }
+		[XmlElement("summary")]
+		public XmlNode[] summaryNodes { get; set; }
+
+		public string summary => XmlDocHelper.ConvertXmlNodesToText(summaryNodes);
 
 		[XmlElement("returns")]
 		public List<XmlDocParam> returns { get; set; }

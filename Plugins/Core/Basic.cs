@@ -20,6 +20,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <returns>The output message to reply from the user.</returns>
 		/// <param name="reserved">Reserved. Send empty string as a value.</param>
 		/// <exception cref="System.Exception">Error message explaining why execution failed.</exception>
+		[RiskLevel(RiskLevel.Low)]
 		public static string AutoContinue(string reserved)
 		{
 			return "Please continue.";
@@ -31,6 +32,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="url">URL which points to the resource.</param>
 		/// <returns>The output of request.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
+		[RiskLevel(RiskLevel.Medium)]
 		public static async Task<string> GetWebPageContents(string url)
 		{
 			using (var client = new HttpClient())
@@ -61,6 +63,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <returns>The output of the started process.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		/// <remarks>Be cautious with executing process requesys received via API due to security risks.</remarks>
+		[RiskLevel(RiskLevel.High)]
 		public static string StartProcess(string fileName, string arguments, string workingDirectory)
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo
@@ -90,6 +93,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <returns>The output of the executed PowerShell script.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		/// <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
+		[RiskLevel(RiskLevel.High)]
 		public static string RunPowerShellScript(string script)
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo

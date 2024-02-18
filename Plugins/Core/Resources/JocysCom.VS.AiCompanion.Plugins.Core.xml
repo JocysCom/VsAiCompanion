@@ -47,6 +47,37 @@
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
             <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel">
+            <summary>Risk level</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Unknown">
+            <summary>Unknown</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Low">
+            <summary>Low</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Medium">
+            <summary>Medium</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.High">
+            <summary>High</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute">
+            <summary>
+            Specifies the risk level of a method or a class.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute.Level">
+            <summary>
+            Gets the risk level assigned to the method or class.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute.#ctor(JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel)">
+            <summary>
+            Initializes a new instance of the <see cref="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute"/> class with a specified risk level.
+            </summary>
+            <param name="level">The risk level to be assigned.</param>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
             <summary>
             Use to get selection or document content from Visual Studio.

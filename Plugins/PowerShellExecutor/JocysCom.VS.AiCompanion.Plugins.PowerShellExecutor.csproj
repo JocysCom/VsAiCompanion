@@ -16,6 +16,8 @@
 
 	<ItemGroup>
 	  <Compile Include="..\Core\Basic.cs" Link="Basic.cs" />
+	  <Compile Include="..\Core\Common\RiskLevel.cs" Link="RiskLevel.cs" />
+	  <Compile Include="..\Core\Common\RiskLevelAttribute.cs" Link="RiskLevelAttribute.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

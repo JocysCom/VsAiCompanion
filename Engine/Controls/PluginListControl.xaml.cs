@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -31,11 +32,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await Helper.Delay(UpdateOnListChanged, AppHelper.NavigateDelayMs);
 		}
 
-		public void UpdateOnListChanged()
+		public IList<PluginItem> GetAllMetods()
 		{
 			var methods = Global.AppSettings.Plugins
 				.Where(x => x.Mi.DeclaringType.FullName == ClassFullName)
 				.ToList();
+			return methods;
+		}
+
+		public void UpdateOnListChanged()
+		{
+			var methods = GetAllMetods();
 			ClassLibrary.Collections.CollectionsHelper.Synchronize(methods, CurrentItems, new PluginItemComparer());
 		}
 
@@ -72,6 +79,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		public SortableBindingList<PluginItem> CurrentItems { get; set; }
+
+		private void EnableAllButton_Click(object sender, RoutedEventArgs e)
+		{
+			var methods = GetAllMetods();
+			foreach (var method in methods)
+				method.IsEnabled = true;
+		}
+
+		private void DisableAllButton_Click(object sender, RoutedEventArgs e)
+		{
+			var methods = GetAllMetods();
+			foreach (var method in methods)
+				method.IsEnabled = false;
+		}
+
+		private void ResetToDefault_Click(object sender, RoutedEventArgs e)
+		{
+			var methods = GetAllMetods();
+			foreach (var method in methods)
+				method.IsEnabled =
+					method.RiskLevel == RiskLevel.Low ||
+					method.RiskLevel == RiskLevel.Medium;
+		}
 
 	}
 }

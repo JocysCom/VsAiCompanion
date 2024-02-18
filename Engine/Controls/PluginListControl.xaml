@@ -4,6 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="250"
 	d:DesignWidth="400"
@@ -17,20 +18,65 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-		<ItemsControl
-			x:Name="MainItemsControl"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
-			x:FieldModifier="public"
-			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-			ClipToBounds="True"
-			ScrollViewer.CanContentScroll="True">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<controls:PluginItemControl x:Name="ItemPanel" />
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
-	</ScrollViewer>
+	<Grid VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Border Grid.Row="0" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,0,1">
+			<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
+				<Button
+					Name="EnableAllButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EnableAllButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_checkbox_checked_all}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Enable_All}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="DisableAllButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="DisableAllButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_checkbox_unchecked_all}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Disable_All}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="ResetToDefaultButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="ResetToDefault_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_checkbox_null_all}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Reset_to_Default}" />
+					</StackPanel>
+				</Button>
+
+			</StackPanel>
+		</Border>
+		<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+			<ItemsControl
+				x:Name="MainItemsControl"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				HorizontalContentAlignment="Stretch"
+				x:FieldModifier="public"
+				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+				ClipToBounds="True"
+				ScrollViewer.CanContentScroll="True">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<controls:PluginItemControl x:Name="ItemPanel" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</Grid>
 </UserControl>

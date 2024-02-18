@@ -403,6 +403,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable All.
+        /// </summary>
+        public static string Disable_All {
+            get {
+                return ResourceManager.GetString("Disable_All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Document.
         /// </summary>
         public static string Document {
@@ -417,6 +426,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Edit {
             get {
                 return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable All.
+        /// </summary>
+        public static string Enable_All {
+            get {
+                return ResourceManager.GetString("Enable_All", resourceCulture);
             }
         }
         
@@ -768,6 +786,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Reset_Templates_Settings {
             get {
                 return ResourceManager.GetString("Reset_Templates_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset to Default.
+        /// </summary>
+        public static string Reset_to_Default {
+            get {
+                return ResourceManager.GetString("Reset_to_Default", resourceCulture);
             }
         }
         

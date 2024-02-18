@@ -148,7 +148,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				return (T)attributes[0].Value;
 			return default;
 		}
-		
+
 		#endregion
 
 		/// <summary>
@@ -190,6 +190,36 @@ namespace JocysCom.ClassLibrary.Runtime
 			return dict;
 		}
 
+		/// <summary>
+		/// Find attribute including interfaces.
+		/// </summary>
+		/// <typeparam name="T">Attribute type.</typeparam>
+		/// <param name="methodInfo">Method info.</param>
+		/// <returns></returns>
+		public static T FindCustomAttribute<T>(MethodInfo methodInfo) where T : Attribute
+		{
+			// First, try to get the attribute from the method directly.
+			var attribute = methodInfo.GetCustomAttribute<T>(true);
+			if (attribute != null)
+				return attribute;
+			// If the attribute is not found, search on the interfaces.
+			foreach (var iface in methodInfo.DeclaringType.GetInterfaces())
+			{
+				// Get the interface map for the current interface.
+				var map = methodInfo.DeclaringType.GetInterfaceMap(iface);
+				for (int i = 0; i < map.TargetMethods.Length; i++)
+				{
+					// Check if the current method in the map matches the methodInfo.
+					if (map.TargetMethods[i] != methodInfo)
+						continue;
+					// If it matches, try to get the attribute from the corresponding interface method.
+					attribute = map.InterfaceMethods[i].GetCustomAttribute<T>(true);
+					if (attribute != null)
+						return attribute;
+				}
+			}
+			return null;
+		}
 	}
 
 }

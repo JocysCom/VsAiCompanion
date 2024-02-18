@@ -1,9 +1,12 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Plugins;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -21,6 +24,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Class = mi.DeclaringType.Name;
 			ClassFullName = mi.DeclaringType.FullName;
 			Name = mi.Name;
+			RiskLevel = RiskLevel.Unknown;
+			var rla = Attributes.FindCustomAttribute<RiskLevelAttribute>(mi);
+			if (rla != null)
+				RiskLevel = rla.Level;
+			// Set icon.
+			var iconName = Resources.Icons.Icons_Default.Icon_piece_grey;
+			switch (RiskLevel)
+			{
+				case RiskLevel.Unknown:
+					break;
+				case RiskLevel.Low:
+					iconName = Resources.Icons.Icons_Default.Icon_piece_green;
+					break;
+				case RiskLevel.Medium:
+					iconName = Resources.Icons.Icons_Default.Icon_piece_yellow;
+					break;
+				case RiskLevel.High:
+					iconName = Resources.Icons.Icons_Default.Icon_piece_red;
+					break;
+				default:
+					break;
+			}
+			Icon = Resources.Icons.Icons_Default.Current[iconName] as Viewbox;
 			Id = (ClassFullName + "." + mi.Name).Trim('.');
 			Description = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetSummaryText(mi));
 			Mi = mi;
@@ -53,6 +79,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
 
+
+		[XmlIgnore]
+		public Viewbox Icon { get => _Icon; set => SetProperty(ref _Icon, value); }
+		Viewbox _Icon;
+
 		[XmlIgnore]
 		public System.Reflection.MethodInfo Mi { get => _Mi; set => SetProperty(ref _Mi, value); }
 		System.Reflection.MethodInfo _Mi;
@@ -65,6 +96,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore]
 		public string Namespace { get => _Namespace; set => SetProperty(ref _Namespace, value); }
 		string _Namespace;
+
+		[XmlIgnore]
+		public RiskLevel RiskLevel { get => _RiskLevel; set => SetProperty(ref _RiskLevel, value); }
+		RiskLevel _RiskLevel;
 
 		[XmlIgnore]
 		public string ClassFullName { get => _ClassFullName; set => SetProperty(ref _ClassFullName, value); }

@@ -24,6 +24,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_button_error = nameof(Icon_button_error);
 		public const string Icon_button_trend_up = nameof(Icon_button_trend_up);
 		public const string Icon_chat = nameof(Icon_chat);
+		public const string Icon_checkbox_checked = nameof(Icon_checkbox_checked);
+		public const string Icon_checkbox_checked_all = nameof(Icon_checkbox_checked_all);
+		public const string Icon_checkbox_null = nameof(Icon_checkbox_null);
+		public const string Icon_checkbox_null_all = nameof(Icon_checkbox_null_all);
+		public const string Icon_checkbox_unchecked = nameof(Icon_checkbox_unchecked);
+		public const string Icon_checkbox_unchecked_all = nameof(Icon_checkbox_unchecked_all);
 		public const string Icon_clipboard_checks = nameof(Icon_clipboard_checks);
 		public const string Icon_clipboard_check_edit = nameof(Icon_clipboard_check_edit);
 		public const string Icon_clipboard_paste = nameof(Icon_clipboard_paste);
@@ -84,9 +90,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_objects_exchange = nameof(Icon_objects_exchange);
 		public const string Icon_painters_palette = nameof(Icon_painters_palette);
 		public const string Icon_photo_portrait = nameof(Icon_photo_portrait);
-		public const string Icon_piece = nameof(Icon_piece);
-		public const string Icon_piece2 = nameof(Icon_piece2);
 		public const string Icon_pieces = nameof(Icon_pieces);
+		public const string Icon_piece_blue = nameof(Icon_piece_blue);
+		public const string Icon_piece_green = nameof(Icon_piece_green);
+		public const string Icon_piece_grey = nameof(Icon_piece_grey);
+		public const string Icon_piece_red = nameof(Icon_piece_red);
+		public const string Icon_piece_yellow = nameof(Icon_piece_yellow);
 		public const string Icon_radar = nameof(Icon_radar);
 		public const string Icon_reticle = nameof(Icon_reticle);
 		public const string Icon_settings = nameof(Icon_settings);
