@@ -445,6 +445,6 @@
     <value>Reset to Default</value>
   </data>
   <data name="Enable_spell_check_for_the_chat_textbox" xml:space="preserve">
-    <value>Enable spell check for the chat textbox and certain option text boxes.</value>
+    <value>Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</value>
   </data>
 </root>

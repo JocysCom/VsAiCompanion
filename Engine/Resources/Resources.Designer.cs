@@ -439,7 +439,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable spell check for the chat textbox and certain option text boxes..
+        ///   Looks up a localized string similar to Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app..
         /// </summary>
         public static string Enable_spell_check_for_the_chat_textbox {
             get {
