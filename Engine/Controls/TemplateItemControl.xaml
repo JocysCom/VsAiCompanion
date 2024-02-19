@@ -161,7 +161,7 @@
 						<StackPanel>
 							<CheckBox
 								Name="AutoGenerateTitleCheckBox"
-								Margin="6,0,3,0"
+								Margin="3,0,3,3"
 								Content="Auto-Generate Title"
 								IsChecked="{Binding AutoGenerateTitle}" />
 							<ComboBox
