@@ -396,6 +396,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 			}
+			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.Resources.Enable_spell_check_for_the_chat_textbox);
 			AppHelper.AddHelp(ShowInstructionsCheckBox, "Show instructions that will be included at the start of every message.");
 			AppHelper.AddHelp(AutoSendCheckBox, "Automatically send Task for processing to AI when Task is created from the Template.");
 			AppHelper.AddHelp(IsPreviewCheckBox, ClientHelper.PreviewModeMessage);
@@ -565,5 +566,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void IsSpellCheckEnabledCheckBox_Checked(object sender, RoutedEventArgs e)
+		{
+			Global.AppSettings.IsSpellCheckEnabled = true;
+		}
+
+		private void IsSpellCheckEnabledCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		{
+			Global.AppSettings.IsSpellCheckEnabled = false;
+		}
 	}
 }

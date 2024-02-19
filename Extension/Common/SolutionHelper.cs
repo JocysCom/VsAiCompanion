@@ -10,11 +10,20 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
 	public partial class SolutionHelper : ISolutionHelper
 	{
+
+		/// <summary>
+		/// Switch to Visual Studio Thread.
+		/// </summary>
+		public async Task SwitchToMainThreadAsync()
+		{
+			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+		}
 
 		public static DTE2 GetCurrentService()
 		{

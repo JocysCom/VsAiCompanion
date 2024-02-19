@@ -439,11 +439,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Spell Check.
+        ///   Looks up a localized string similar to Enable spell check for the chat textbox and certain option text boxes..
         /// </summary>
-        public static string Enable_Spell_Check {
+        public static string Enable_spell_check_for_the_chat_textbox {
             get {
-                return ResourceManager.GetString("Enable_Spell_Check", resourceCulture);
+                return ResourceManager.GetString("Enable_spell_check_for_the_chat_textbox", resourceCulture);
             }
         }
         
@@ -930,6 +930,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Show_Sensitive_Data_Warning {
             get {
                 return ResourceManager.GetString("Show_Sensitive_Data_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spell Check.
+        /// </summary>
+        public static string Spell_Check {
+            get {
+                return ResourceManager.GetString("Spell_Check", resourceCulture);
             }
         }
         

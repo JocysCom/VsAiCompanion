@@ -61,7 +61,7 @@
 
 			</StackPanel>
 		</Border>
-		<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 			<ItemsControl
 				x:Name="MainItemsControl"
 				HorizontalAlignment="Stretch"

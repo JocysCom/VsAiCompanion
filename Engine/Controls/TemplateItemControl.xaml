@@ -6,7 +6,9 @@
 	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
 	d:Height="450"
 	d:Width="900"
@@ -148,6 +150,12 @@
 						Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<StackPanel VerticalAlignment="Top">
 							<CheckBox Name="AutoSendCheckBox" Content="Send on Create" IsChecked="{Binding AutoSend}" />
+							<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}">
+								<TextBlock VerticalAlignment="Center">
+									<Run Text="Auto" />
+									<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
+								</TextBlock>
+							</CheckBox>
 							<CheckBox Name="AutoRemoveCheckBox" Content="Remove on Complete" IsChecked="{Binding AutoRemove}" />
 						</StackPanel>
 						<StackPanel>
@@ -515,12 +523,12 @@
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="ShowPromptingCheckBox" Content="Show Prompting" IsChecked="{Binding ShowPrompting}" />
 				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory, ElementName=This}" />
-				<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}">
-					<TextBlock VerticalAlignment="Center">
-						<Run Text="Auto" />
-						<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
-					</TextBlock>
-				</CheckBox>
+				<CheckBox
+					Name="IsSpellCheckEnabledCheckBox"
+					Checked="IsSpellCheckEnabledCheckBox_Checked"
+					Content="{x:Static locales:Resources.Spell_Check}"
+					IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					Unchecked="IsSpellCheckEnabledCheckBox_Unchecked" />
 			</StackPanel>
 			<StackPanel
 				Grid.Row="5"

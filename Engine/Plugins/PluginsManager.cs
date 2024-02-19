@@ -203,8 +203,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 					string result = null;
 					if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
 					{
-						Global.MainControl.Dispatcher.Invoke(() =>
+						await Global.MainControl.Dispatcher.InvokeAsync(async () =>
 						{
+							await Global.SwitchToVisualStudioThreadAsync();
 							var o = methodInfo.Invoke(classInstance, invokeParams);
 							if (o is DocItem di)
 								result = di.Data;

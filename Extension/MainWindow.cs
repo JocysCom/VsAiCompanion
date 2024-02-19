@@ -46,7 +46,10 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.LoadSettings();
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			// Get or Set multiple documents.
-			Global._SolutionHelper = new SolutionHelper();
+			var solutionHelper = new SolutionHelper();
+			Global._SolutionHelper = solutionHelper;
+			Global.SwitchToVisualStudioThreadAsync = solutionHelper.SwitchToMainThreadAsync;
+
 			VisualStudio.Current = Global._SolutionHelper;
 			Global.IsVsExtesion = true;
 			;

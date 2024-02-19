@@ -9,7 +9,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 	/// </summary>
 	public interface ISolutionHelper
 	{
-		// Methods for getting or setting multiple Documents
 
 		/// <summary>
 		/// Retrieves all Documents throughout the entire solution.

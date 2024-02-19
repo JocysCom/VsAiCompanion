@@ -1,4 +1,10 @@
-2024-02-18 v1.4.15
+2024-02-19 v1.4.18
+
+- Fix: Wrap text issue in Plugins' descriptions.
+- Fix: Error report. Add more details.
+- Fix: Issue where some Visual Studio functions would fail.
+
+- 2024-02-18 v1.4.15
 
 - Fix: App crashes when clicking on header.
 - Fix: Issue with plugins not scrolling.

@@ -209,7 +209,7 @@
 			</GroupBox>
 			<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Other}">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-					<CheckBox Name="IsSpellCheckEnabledCheckBox" Content="{x:Static locales:Resources.Enable_Spell_Check}" IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox Name="IsSpellCheckEnabledCheckBox" Content="{x:Static locales:Resources.Spell_Check}" IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
 

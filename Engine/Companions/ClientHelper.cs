@@ -363,12 +363,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				}
 				catch (Exception ex)
 				{
-					var message = ex.Message;
-					// Workaround: Provide a hint until Microsoft's OpenAI packages are no longer in beta.
-					if (message.Contains("Method not found") && message.Contains("System.Collections.Generic.IAsyncEnumerable"))
-						message += " " + Global.VsExtensionVersionMessage;
-					var msgItem = new MessageItem(SystemName, ex.Message, MessageType.Error);
-					item.Messages.Add(msgItem);
+					AddException(item, ex);
 				}
 			}
 			// If item type task, then allow to do auto removal.
@@ -428,10 +423,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			catch (Exception ex)
 			{
-				var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
-				item.Messages.Add(message);
-				return text;
+				AddException(item, ex);
 			}
+			return text;
 		}
 
 		public async static Task GenerateTitle(TemplateItem item)
@@ -477,8 +471,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			catch (Exception ex)
 			{
-				var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
-				item.Messages.Add(message);
+				AddException(item, ex);
 			}
 		}
 
@@ -516,16 +509,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			catch (Exception ex)
 			{
-				Global.MainControl.Dispatcher.Invoke(() =>
-				{
-					var message = new MessageItem(SystemName, ex.Message, MessageType.Error);
-					item.Messages.Add(message);
-				});
+				AddException(item, ex);
 			}
 			return null;
 		}
 
 		#endregion
+
+		public static void AddException(TemplateItem item, Exception ex)
+		{
+			var message = ex.Message;
+			// Workaround: Provide a hint until Microsoft's OpenAI packages are no longer in beta.
+			if (message.Contains("Method not found") && message.Contains("System.Collections.Generic.IAsyncEnumerable"))
+				message += " " + Global.VsExtensionVersionMessage;
+			var msgItem = new MessageItem(SystemName, message, MessageType.Error);
+			msgItem.Attachments.Add(new MessageAttachments(AttachmentType.Error, "log", ex.ToString()));
+			Global.MainControl.Dispatcher.Invoke(() =>
+			{
+				item.Messages.Add(msgItem);
+			});
+		}
 
 		/// <summary>
 		/// Set data to Visual Studio.

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -15,6 +16,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 	{
 
 		public static ISolutionHelper _SolutionHelper;
+		public static Func<Task> SwitchToVisualStudioThreadAsync = () => { return null; };
 
 		// Get or Set multiple documents.
 		public static Action<List<DocItem>> SetSolution = (x) => { };

@@ -83,7 +83,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, "Enable spell check for the chat textbox and certain option text boxes.");
+			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.Resources.Enable_spell_check_for_the_chat_textbox);
 		}
 
 	}
