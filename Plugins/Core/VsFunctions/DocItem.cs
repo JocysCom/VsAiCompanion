@@ -94,6 +94,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 				var type = item.IsText ? "" : "BINARY ";
 				sb.AppendLine($"=== BEGIN {type}FILE: {item.FullName} ===");
 				sb.Append(content);
+				if (!content.EndsWith(Environment.NewLine))
+					sb.AppendLine();
 				sb.AppendLine($"=== END {type}FILE: {item.FullName} ===");
 			}
 			return sb.ToString();

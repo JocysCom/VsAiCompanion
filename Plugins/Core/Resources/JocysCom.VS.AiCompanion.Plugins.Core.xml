@@ -78,6 +78,35 @@
             </summary>
             <param name="level">The risk level to be assigned.</param>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Database">
+            <summary>
+            Execute queries or stored procedures on database.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQuery(System.String,System.String,System.String)">
+            <summary>
+            Execute non query command on database. Return number of rows affected.
+            </summary>
+            <param name="connectionString">Databse connection string.</param>
+            <param name="cmdText">SQL Command Text.</param>
+            <param name="cmdType">SQL Command Type.
+            "Text" = An SQL text command.
+            "StoredProcedure" - The name of a stored procedure.
+            "TableDirect" - The name of a table.
+            </param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTable(System.String,System.String,System.String)">
+            <summary>
+            SQL query command on database. Returns resutls as CSV.
+            </summary>
+            <param name="connectionString">Databse connection string.</param>
+            <param name="cmdText">SQL Command Text.</param>
+            <param name="cmdType">SQL Command Type.
+            "Text" = An SQL text command.
+            "StoredProcedure" - The name of a stored procedure.
+            "TableDirect" - The name of a table.
+            </param>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
             <summary>
             Use to get selection or document content from Visual Studio.

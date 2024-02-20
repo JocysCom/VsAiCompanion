@@ -38,6 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 					{
 						AddMethods(typeof(Basic));
 						AddMethods(typeof(VisualStudio));
+						AddMethods(typeof(Database));
 					}
 					return _PluginFunctions;
 				}
