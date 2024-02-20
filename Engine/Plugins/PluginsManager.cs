@@ -3,7 +3,6 @@ using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core;
-using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -201,24 +200,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Plugins
 				}
 				else
 				{
-					string result = null;
+					object methodResult = null;
 					if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
 					{
 						await Global.MainControl.Dispatcher.InvokeAsync(async () =>
 						{
 							await Global.SwitchToVisualStudioThreadAsync();
-							var o = methodInfo.Invoke(classInstance, invokeParams);
-							if (o is DocItem di)
-								result = di.Data;
-							if (o is string s)
-								result = s;
+							methodResult = methodInfo.Invoke(classInstance, invokeParams);
+
 						});
 					}
 					else
 					{
-						result = (string)methodInfo.Invoke(classInstance, invokeParams);
+						// It's a synchronous method.
+						methodResult = methodInfo.Invoke(classInstance, invokeParams);
 					}
-					// It's a synchronous method.
+					var result = (methodResult is string s)
+						? s
+						: Client.Serialize(methodResult);
 					return result;
 				}
 			}

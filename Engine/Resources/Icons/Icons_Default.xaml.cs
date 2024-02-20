@@ -51,6 +51,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_contract = nameof(Icon_contract);
 		public const string Icon_control_panel = nameof(Icon_control_panel);
 		public const string Icon_copy = nameof(Icon_copy);
+		public const string Icon_database = nameof(Icon_database);
 		public const string Icon_debug = nameof(Icon_debug);
 		public const string Icon_dictionary = nameof(Icon_dictionary);
 		public const string Icon_document_checks = nameof(Icon_document_checks);

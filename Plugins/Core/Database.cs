@@ -20,6 +20,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// "StoredProcedure" - The name of a stored procedure.
 		/// "TableDirect" - The name of a table.
 		/// </param>
+		[RiskLevel(RiskLevel.High)]
 		public int ExecuteNonQuery(string connectionString, string cmdText, string cmdType)
 		{
 			var cmd = new SqlCommand(cmdText);
@@ -38,6 +39,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// "StoredProcedure" - The name of a stored procedure.
 		/// "TableDirect" - The name of a table.
 		/// </param>
+		[RiskLevel(RiskLevel.High)]
 		public string ExecuteDataTable(string connectionString, string cmdText, string cmdType)
 		{
 			var cmd = new SqlCommand(cmdText);

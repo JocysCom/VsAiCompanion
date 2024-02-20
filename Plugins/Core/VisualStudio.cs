@@ -15,11 +15,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public static ISolutionHelper Current;
 
 		/// <inheritdoc />
-		public void EditFormatDocument()
+		public bool EditFormatDocument()
 			=> Current.EditFormatDocument();
 
 		/// <inheritdoc />
-		public void EditFormatSelection()
+		public bool EditFormatSelection()
 			=> Current.EditFormatSelection();
 
 		/// <inheritdoc />
@@ -67,11 +67,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.GetSelection();
 
 		/// <inheritdoc />
-		public void SetActiveDocument(string contents)
+		public bool SetActiveDocument(string contents)
 			=> Current.SetActiveDocument(contents);
 
 		/// <inheritdoc />
-		public void SetSelection(string contents)
+		public bool SetSelection(string contents)
 			=> Current.SetSelection(contents);
 
 

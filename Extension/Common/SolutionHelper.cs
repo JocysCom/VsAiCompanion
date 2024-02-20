@@ -273,7 +273,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 						Name = item.Name,
 						Kind = item.Kind,
 						Language = item.ContainingProject.CodeModel.Language,
-						Data = null // Not populated here. Consider async file read if necessary.
+						ContentData = null // Not populated here. Consider async file read if necessary.
 					};
 					items.Add(docItem);
 				}
@@ -335,7 +335,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				{
 					FullName = doc.FullName,
 					Name = doc.Name,
-					Type = doc.Type,
+					DocumentType = doc.Type,
 					// Assume text until proven otherwise
 					IsText = true
 				};
@@ -486,14 +486,15 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public void SetActiveDocument(string contents)
+		public bool SetActiveDocument(string contents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var td = GetTextDocument();
 			if (td == null)
-				return;
+				return false;
 			var point = td.StartPoint.CreateEditPoint();
 			point.ReplaceText(td.EndPoint, contents, (int)vsEPReplaceTextOptions.vsEPReplaceTextAutoformat);
+			return true;
 		}
 
 		/// <inheritdoc />
@@ -510,15 +511,16 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public void SetSelection(string contents)
+		public bool SetSelection(string contents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var document = GetTextDocument();
 			if (document == null)
-				return;
+				return false;
 			var selection = document.Selection;
 			selection.Delete();
 			selection.Insert(contents, (int)vsInsertFlags.vsInsertFlagsInsertAtEnd);
+			return true;
 		}
 
 		//public static List<ErrorItem> GetErrors()
@@ -663,19 +665,21 @@ namespace JocysCom.VS.AiCompanion.Extension
 		#region Formatting
 
 		/// <inheritdoc />
-		public void EditFormatDocument()
+		public bool EditFormatDocument()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
 			dte?.ExecuteCommand("Edit.FormatDocument");
+			return true;
 		}
 
 		/// <inheritdoc />
-		public void EditFormatSelection()
+		public bool EditFormatSelection()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
 			dte?.ExecuteCommand("Edit.FormatSelection");
+			return true;
 		}
 
 		public static void EditSelect(

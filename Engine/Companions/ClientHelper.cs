@@ -144,7 +144,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					{
 						Title = Global.AppSettings.ContextDataTitle,
 						Type = item.AttachContext,
-						Data = clip.Data,
+						Data = clip.ContentData,
 					};
 					m.Attachments.Add(clipAttachment);
 				}
@@ -154,7 +154,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					if (at.HasFlag(AttachmentType.Selection))
 					{
 						var ad = Global._SolutionHelper.GetSelection();
-						var adAttachment = new MessageAttachments(AttachmentType.Selection, ad.Language, ad.Data);
+						var adAttachment = new MessageAttachments(AttachmentType.Selection, ad.Language, ad.ContentData);
 						m.Attachments.Add(adAttachment);
 					}
 					// If selected error in Visual Studio.
@@ -171,7 +171,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					if (at.HasFlag(AttachmentType.ActiveDocument))
 					{
 						var ad = Global._SolutionHelper.GetActiveDocument();
-						var adAttachment = new MessageAttachments(AttachmentType.ActiveDocument, ad.Language, ad.Data);
+						var adAttachment = new MessageAttachments(AttachmentType.ActiveDocument, ad.Language, ad.ContentData);
 						m.Attachments.Add(adAttachment);
 					}
 					if (at.HasFlag(AttachmentType.OpenDocuments))
@@ -238,9 +238,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					var lines = new List<string>();
 					foreach (var fileItem in fileItems)
 					{
-						if (string.IsNullOrEmpty(fileItem.Data))
+						if (string.IsNullOrEmpty(fileItem.ContentData))
 							continue;
-						var word = AppHelper.ContainsSensitiveData(fileItem.Data);
+						var word = AppHelper.ContainsSensitiveData(fileItem.ContentData);
 						if (string.IsNullOrEmpty(word))
 							continue;
 						lines.Add($"Word '{word}' in File: {fileItem.FullName}\r\n");
@@ -544,9 +544,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (item.AutoOperation == DataOperation.Replace)
 					Global._SolutionHelper.SetSelection(code);
 				if (item.AutoOperation == DataOperation.InsertBefore)
-					Global._SolutionHelper.SetSelection(code + vsData.Selection.Data);
+					Global._SolutionHelper.SetSelection(code + vsData.Selection.ContentData);
 				if (item.AutoOperation == DataOperation.InsertAfter)
-					Global._SolutionHelper.SetSelection(vsData.Selection.Data + code);
+					Global._SolutionHelper.SetSelection(vsData.Selection.ContentData + code);
 				if (item.AutoFormatCode)
 					Global._SolutionHelper.EditFormatSelection();
 			}
@@ -557,9 +557,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (item.AutoOperation == DataOperation.Replace)
 					Global._SolutionHelper.SetActiveDocument(code);
 				if (item.AutoOperation == DataOperation.InsertBefore)
-					Global._SolutionHelper.SetActiveDocument(code + vsData.Selection.Data);
+					Global._SolutionHelper.SetActiveDocument(code + vsData.Selection.ContentData);
 				if (item.AutoOperation == DataOperation.InsertAfter)
-					Global._SolutionHelper.SetActiveDocument(vsData.Selection.Data + code);
+					Global._SolutionHelper.SetActiveDocument(vsData.Selection.ContentData + code);
 				if (item.AutoFormatCode)
 					Global._SolutionHelper.EditFormatDocument();
 			}

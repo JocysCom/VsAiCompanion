@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Use to retrieve content of websites by URL.
+		/// Retrieve content of websites by URL.
 		/// </summary>
 		/// <param name="url">URL which points to the resource.</param>
 		/// <returns>The output of request.</returns>
@@ -55,7 +56,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Use to execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
+		/// Execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
 		/// </summary>
 		/// <param name="fileName">Application or document to start.</param>
 		/// <param name="arguments">Command-line arguments to use when starting the application.</param>
@@ -87,7 +88,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Use to execute a PowerShell script on user computer.
+		/// Execute a PowerShell script on user computer.
 		/// </summary>
 		/// <param name="script">The PowerShell script to be executed.</param>
 		/// <returns>The output of the executed PowerShell script.</returns>
@@ -115,6 +116,45 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 		}
 
+		#region File Operations
+
+		/// <summary>
+		/// Read file information and contents.
+		/// </summary>
+		/// <param name="path">The file to read from.</param>
+		[RiskLevel(RiskLevel.High)]
+		public static DocItem ReadFile(string path)
+		{
+			var di = new DocItem(null, path);
+			di.LoadData();
+			return di;
+		}
+
+		/// <summary>
+		/// Write file text content on user computer.
+		/// Returns `true` if action was successfull.
+		/// </summary>
+		/// <param name="path">The file to write to.</param>
+		/// <param name="contents">The string to write to the file.</param>
+		[RiskLevel(RiskLevel.High)]
+		public static bool WriteFile(string path, string contents)
+		{
+			System.IO.File.WriteAllText(path, contents);
+			return true;
+		}
+
+		/*
+		/// <summary>
+		/// Apply changes based on a basic conceptual "diff" to the content of a file.
+		/// </summary>
+		/// <param name="path">Path of the file to read.</param>
+		/// <param name="diff">Differences to apply.</param>
+		public static bool ApplyDiffToFileContents(string path, string diff)
+		{
+		}
+		*/
+
+		#endregion
 
 	}
 

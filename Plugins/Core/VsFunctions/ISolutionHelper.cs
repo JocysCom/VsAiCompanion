@@ -55,11 +55,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		DocItem GetActiveDocument();
 
 		/// <summary>
-		/// Sets the content if the active Document in the editor.
+		/// Sets the content if the active Document in the editor. Returns `true` if action was successfull.
 		/// </summary>
 		/// <param name="contents">The Document to be made active.</param>
 		[RiskLevel(RiskLevel.Medium)]
-		void SetActiveDocument(string contents);
+		bool SetActiveDocument(string contents);
 
 		/// <summary>
 		/// Retrieves the text currently selected within the active Document.
@@ -68,11 +68,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		DocItem GetSelection();
 
 		/// <summary>
-		/// Sets the selection within the active Document based on the provided data.
+		/// Sets the selection within the active Document based on the provided data. Returns `true` if action was successfull.
 		/// </summary>
 		/// <param name="contents">The selection data to be applied to the active Document.</param>
 		[RiskLevel(RiskLevel.Medium)]
-		void SetSelection(string contents);
+		bool SetSelection(string contents);
 
 		// Methods for getting errors
 
@@ -109,15 +109,17 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 
 		/// <summary>
 		/// Formats the entire content of the currently active Document according to the solution's code style settings.
+		/// Returns `true` if action was successfull.
 		/// </summary>
 		[RiskLevel(RiskLevel.Low)]
-		void EditFormatDocument();
+		bool EditFormatDocument();
 
 		/// <summary>
 		/// Formats the currently selected code fragment in the active Document according to the solution's code style settings.
+		/// Returns `true` if action was successfull.
 		/// </summary>
 		[RiskLevel(RiskLevel.Low)]
-		void EditFormatSelection();
+		bool EditFormatSelection();
 
 
 		/// <summary>

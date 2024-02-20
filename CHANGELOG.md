@@ -1,3 +1,9 @@
+2024-02-20 v1.4.21
+
+- New: Added Database Functions.
+- New: Added the Ability to Read and Write Files.
+- Fix: Content Retrieval from Visual Studio.
+
 2024-02-19 v1.4.18
 
 - Fix: Wrap text issue in Plugins' descriptions.

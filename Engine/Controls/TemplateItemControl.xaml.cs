@@ -502,7 +502,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: ChatPanel.DataTextBox;
 			var caretIndex = box.CaretIndex;
 			var clipboardText = isCtrlDown
-				? JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.Data ?? "")
+				? JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.ContentData ?? "")
 				: $"{box.SelectedText}";
 			var prefix = "";
 			// Add new line if caret is not on the new line.

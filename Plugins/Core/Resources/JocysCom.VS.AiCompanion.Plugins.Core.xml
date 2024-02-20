@@ -21,7 +21,7 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContents(System.String)">
             <summary>
-            Use to retrieve content of websites by URL.
+            Retrieve content of websites by URL.
             </summary>
             <param name="url">URL which points to the resource.</param>
             <returns>The output of request.</returns>
@@ -29,7 +29,7 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess(System.String,System.String,System.String)">
             <summary>
-            Use to execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
+            Execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
             </summary>
             <param name="fileName">Application or document to start.</param>
             <param name="arguments">Command-line arguments to use when starting the application.</param>
@@ -40,12 +40,26 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.RunPowerShellScript(System.String)">
             <summary>
-            Use to execute a PowerShell script on user computer.
+            Execute a PowerShell script on user computer.
             </summary>
             <param name="script">The PowerShell script to be executed.</param>
             <returns>The output of the executed PowerShell script.</returns>
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
             <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFile(System.String)">
+            <summary>
+            Read file information and contents.
+            </summary>
+            <param name="path">The file to read from.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile(System.String,System.String)">
+            <summary>
+            Write file text content on user computer.
+            Returns `true` if action was successfull.
+            </summary>
+            <param name="path">The file to write to.</param>
+            <param name="contents">The string to write to the file.</param>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel">
             <summary>Risk level</summary>
@@ -191,11 +205,6 @@
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.FullName">
             <summary>Full path to the document.</summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Data">
-            <summary>
-            Optional content of the document.
-            </summary>
-        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Error">
             <summary>
             Error
@@ -217,20 +226,18 @@
             True if content is text.
             </summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Type">
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.DocumentType">
             <summary>Document type.</summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ConvertFile(System.Collections.Generic.List{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem})">
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ContentHint">
             <summary>
-            Convert to flat string representation.
+            Hint for AI.
             </summary>
-            <param name="items">Item to convert.</param>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LoadData(System.Int64)">
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ContentData">
             <summary>
-            Load content into `Data` property.
+            Optional content of the document.
             </summary>
-            <param name="maxSize">Maximum bytes to load.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ConvertFile(System.String)">
             <summary>
@@ -259,6 +266,18 @@
             </summary>
             <param name="stream">Stream to check.</param>
             <param name="bytesToCheck">Maximum amount of bytes to check.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ConvertFile(System.Collections.Generic.IList{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem})">
+            <summary>
+            Convert to flat string representation.
+            </summary>
+            <param name="items">Item to convert.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LoadData(System.Int64)">
+            <summary>
+            Load content into `Data` property.
+            </summary>
+            <param name="maxSize">Maximum bytes to load.</param>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem">
             <summary>
@@ -364,7 +383,7 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetActiveDocument(System.String)">
             <summary>
-            Sets the content if the active Document in the editor.
+            Sets the content if the active Document in the editor. Returns `true` if action was successfull.
             </summary>
             <param name="contents">The Document to be made active.</param>
         </member>
@@ -375,7 +394,7 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetSelection(System.String)">
             <summary>
-            Sets the selection within the active Document based on the provided data.
+            Sets the selection within the active Document based on the provided data. Returns `true` if action was successfull.
             </summary>
             <param name="contents">The selection data to be applied to the active Document.</param>
         </member>
@@ -406,16 +425,38 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.EditFormatDocument">
             <summary>
             Formats the entire content of the currently active Document according to the solution's code style settings.
+            Returns `true` if action was successfull.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.EditFormatSelection">
             <summary>
             Formats the currently selected code fragment in the active Document according to the solution's code style settings.
+            Returns `true` if action was successfull.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetEnvironmentContext">
             <summary>
             Get information about current Visual Studio environment.
+            </summary>
+        </member>
+        <member name="M:MakeLinks.IsHardLinked(System.String,System.String)">
+            <summary>
+            Returns 'true' if both files are hard linked.
+            </summary>
+        </member>
+        <member name="M:MakeLinks.UpdateLinkTimeFromFile(System.String,System.String)">
+            <summary>
+            Update creation, last write, and last access time of the link file to match the target file.
+            </summary>
+        </member>
+        <member name="M:MakeLinks.CreateFile(System.String,System.Int32,System.IO.FileShare,System.UInt32,System.IO.FileMode,System.Int32,System.IntPtr)">
+            <summary>
+            https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
+            </summary>
+        </member>
+        <member name="M:MakeLinks.SetFileInformationByHandle(Microsoft.Win32.SafeHandles.SafeFileHandle,System.Int32,MakeLinks.FILE_BASIC_INFO@,System.UInt32)">
+            <summary>
+            https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfileinformationbyhandle
             </summary>
         </member>
     </members>

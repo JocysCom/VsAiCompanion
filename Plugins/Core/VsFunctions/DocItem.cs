@@ -22,7 +22,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		public DocItem(string contents, string path = "", string type = "")
 		{
-			Data = contents;
+			ContentData = contents;
 			IsText = contents != null;
 			if (!string.IsNullOrEmpty(path))
 			{
@@ -46,11 +46,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		public string FullName { get; set; }
 
 		/// <summary>
-		/// Optional content of the document.
-		/// </summary>
-		public string Data { get; set; }
-
-		/// <summary>
 		/// Error
 		/// </summary>
 		public string Error { get; set; }
@@ -72,75 +67,21 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		public bool IsText { get; set; }
 
 		/// <summary>Document type.</summary>
-		public string Type { get; set; }
+		public string DocumentType { get; set; }
 
 		/// <summary>
-		/// Convert to flat string representation.
+		/// Hint for AI.
 		/// </summary>
-		/// <param name="items">Item to convert.</param>
-		public static string ConvertFile(List<DocItem> items)
-		{
-			var sb = new StringBuilder();
-			if (items == null || items.Count == 0)
-				return sb.ToString();
-			foreach (var item in items)
-			{
-				if (sb.Length > 0)
-					sb.AppendLine();
-				item.LoadData();
-				var content = string.IsNullOrEmpty(item.Error)
-					? item.Data
-					: $"Unable to read file: {item.Error}";
-				var type = item.IsText ? "" : "BINARY ";
-				sb.AppendLine($"=== BEGIN {type}FILE: {item.FullName} ===");
-				sb.Append(content);
-				if (!content.EndsWith(Environment.NewLine))
-					sb.AppendLine();
-				sb.AppendLine($"=== END {type}FILE: {item.FullName} ===");
-			}
-			return sb.ToString();
-		}
+		public string ContentHint { get; set; }
+
+		// Place the property with the largest serializable content at the end.
 
 		/// <summary>
-		/// Load content into `Data` property.
+		/// Optional content of the document.
 		/// </summary>
-		/// <param name="maxSize">Maximum bytes to load.</param>
-		public long LoadData(long maxSize = long.MaxValue)
-		{
-			// Don't load non files.
-			if (!IsFile)
-				return 0;
-			if (string.IsNullOrEmpty(FullName))
-				return 0;
-			if (!File.Exists(FullName))
-				return 0;
-			try
-			{
-				var fi = new FileInfo(FullName);
-				if (fi.Length > maxSize)
-				{
-					Error = "File content is too large to display.";
-					return 0;
-				}
-				// Read first 8 KB max to check if file is binary.
-				IsText = !IsBinary(FullName, 1024 * 8);
-				if (IsText)
-				{
-					Data = File.ReadAllText(FullName);
-				}
-				else
-				{
-					var bytes = File.ReadAllBytes(FullName);
-					Data = System.Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
-				}
-				return fi.Length;
-			}
-			catch (Exception ex)
-			{
-				Error = ex.Message;
-			}
-			return 0;
-		}
+		public string ContentData { get; set; }
+
+		#region Methods
 
 		/// <summary>
 		///  Convert string representation back to DocItem.
@@ -156,7 +97,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 			{
 				var item = new DocItem();
 				item.FullName = match.Groups["FullName"].Value;
-				item.Data = match.Groups["Data"].Value;
+				item.ContentData = match.Groups["Data"].Value;
 				item.Name = System.IO.Path.GetFileName(item.FullName);
 				items.Add(item);
 			}
@@ -213,6 +154,80 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 			// then we'll assume it's not a binary file.
 			return false;
 		}
+
+		/// <summary>
+		/// Convert to flat string representation.
+		/// </summary>
+		/// <param name="items">Item to convert.</param>
+		public static string ConvertFile(IList<DocItem> items)
+		{
+			var sb = new StringBuilder();
+			if (items == null || items.Count == 0)
+				return sb.ToString();
+			foreach (var item in items)
+			{
+				if (sb.Length > 0)
+					sb.AppendLine();
+				item.LoadData();
+				var content = string.IsNullOrEmpty(item.Error)
+					? item.ContentData
+					: $"Unable to read file: {item.Error}";
+				var type = item.IsText ? "" : "BINARY ";
+				sb.AppendLine($"=== BEGIN {type}FILE: {item.FullName} ===");
+				sb.Append(content);
+				if (!content.EndsWith(Environment.NewLine))
+					sb.AppendLine();
+				sb.AppendLine($"=== END {type}FILE: {item.FullName} ===");
+			}
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Load content into `Data` property.
+		/// </summary>
+		/// <param name="maxSize">Maximum bytes to load.</param>
+		public long LoadData(long maxSize = long.MaxValue)
+		{
+			// Don't load non files.
+			if (!IsFile)
+				return 0;
+			if (string.IsNullOrEmpty(FullName))
+				return 0;
+			if (!File.Exists(FullName))
+				return 0;
+			try
+			{
+				var fi = new FileInfo(FullName);
+				if (fi.Length > maxSize)
+				{
+					Error = "File content is too large to display.";
+					return 0;
+				}
+				// Read first 8 KB max to check if file is binary.
+				IsText = !IsBinary(FullName, 1024 * 8);
+				if (IsText)
+				{
+					ContentData = File.ReadAllText(FullName);
+					ContentHint = "PlainText"; // Simplified hint, assumes understanding that this is directly readable
+				}
+				else
+				{
+					var bytes = File.ReadAllBytes(FullName);
+					ContentData = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
+					ContentHint = "Base64EncodedBinary"; // Explicitly states the encoding method for binary data
+					return fi.Length;
+				}
+			}
+			catch (Exception ex)
+			{
+				Error = ex.Message;
+			}
+			return 0;
+		}
+
+		#endregion
+
 	}
+
 
 }
