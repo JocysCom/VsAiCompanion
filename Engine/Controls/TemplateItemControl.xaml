@@ -119,7 +119,7 @@
 					</GroupBox>
 					<CheckBox
 						Name="IsFavoriteCheckBox"
-						Margin="-1,0,0,0"
+						Margin="-8,0,0,0"
 						HorizontalAlignment="Center"
 						Content="Show Icon in Toolbar"
 						IsChecked="{Binding IsFavorite}"
@@ -162,7 +162,7 @@
 							<CheckBox
 								Name="AutoGenerateTitleCheckBox"
 								Margin="3,0,3,3"
-								Content="Auto-Generate Title"
+								Content="Generate Title"
 								IsChecked="{Binding AutoGenerateTitle}" />
 							<ComboBox
 								Name="MessageBoxOperationComboBox"
