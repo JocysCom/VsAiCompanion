@@ -10,9 +10,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			Id = methodInfoDeclaringType.FullName;
 			Name = methodInfoDeclaringType.Name;
-			var iconName = "Icon_radar";
+			var iconName = Resources.Icons.Icons_Default.Icon_radar;
 			if (Name.ToLower().Contains("visual") && Name.ToLower().Contains("studio"))
-				iconName = "Icon_Visual_Studio";
+				iconName = Resources.Icons.Icons_Default.Icon_Visual_Studio;
+			//if (Name.ToLower().Contains("Database"))
+			//iconName = Resources.Icons.Icons_Default.data;
+
 			Icon = Engine.Resources.Icons.Icons_Default.Current[iconName];
 		}
 
