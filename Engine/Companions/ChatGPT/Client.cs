@@ -401,7 +401,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						Global.MainControl.Dispatcher.Invoke(() =>
 						{
 							if (item.PluginsEnabled)
-								Plugins.PluginsManager.ProvideTools(item, chatCompletionsOptions);
+								PluginsManager.ProvideTools(item, chatCompletionsOptions);
 						});
 						chatCompletionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
@@ -453,7 +453,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									{
 										foreach (var function in functions)
 										{
-											var functionResultContent = await Plugins.PluginsManager.ProcessPlugins(item, function);
+											var functionResultContent = await PluginsManager.ProcessPlugins(item, function);
 											var fnAttachment = new MessageAttachments(AttachmentType.None, "text", functionResultContent);
 											fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
 											fnAttachment.IsAlwaysIncluded = true;
@@ -502,7 +502,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						Global.MainControl.Dispatcher.Invoke(() =>
 						{
 							if (item.PluginsEnabled)
-								Plugins.PluginsManager.ProvideTools(item, request);
+								PluginsManager.ProvideTools(item, request);
 						});
 						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
@@ -514,7 +514,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								{
 									// Check if the model wanted to call a function
 									if (item.PluginsEnabled)
-										Plugins.PluginsManager.ProcessPlugins(item, responseMessage);
+										PluginsManager.ProcessPlugins(item, responseMessage);
 								});
 							}
 					}

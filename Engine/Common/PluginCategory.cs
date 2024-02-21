@@ -15,6 +15,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				iconName = Resources.Icons.Icons_Default.Icon_Visual_Studio;
 			if (Name.ToLower().Contains("database"))
 				iconName = Resources.Icons.Icons_Default.Icon_database;
+			if (Name.ToLower().Contains("lists"))
+				iconName = Resources.Icons.Icons_Default.Icon_todo_list;
+			if (Name.ToLower().Contains("search"))
+				iconName = Resources.Icons.Icons_Default.Icon_magnifying_glass;
 			Icon = Engine.Resources.Icons.Icons_Default.Current[iconName];
 		}
 

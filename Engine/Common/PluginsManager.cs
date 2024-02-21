@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace JocysCom.VS.AiCompanion.Engine.Plugins
+namespace JocysCom.VS.AiCompanion.Engine
 {
 	/// <summary>
 	/// TODO: use controllers and automatically read plugin info from OpenAPI specification.

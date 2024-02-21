@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.VS.AiCompanion.Engine.Plugins;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

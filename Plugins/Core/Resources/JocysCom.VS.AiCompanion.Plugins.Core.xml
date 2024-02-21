@@ -61,6 +61,20 @@
             <param name="path">The file to write to.</param>
             <param name="contents">The string to write to the file.</param>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Common.ListInfo">
+            <summary>
+            List Info.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Common.ListInfo.Name">
+            <summary>List name.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Common.ListInfo.Description">
+            <summary>List description.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Common.ListInfo.Items">
+            <summary>Dictionary items</summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel">
             <summary>Risk level</summary>
         </member>
@@ -120,6 +134,26 @@
             "StoredProcedure" - The name of a stored procedure.
             "TableDirect" - The name of a table.
             </param>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Lists">
+            <summary>
+            Manage various lists.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Lists.AllLists">
+            <summary>
+            Curent lists. Key is list name, Value is description.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetAllLists">
+            <summary>
+            Get all available lists.
+            </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">
+            <summary>
+            Index and search.
+            </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
             <summary>

@@ -1,7 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
-using JocysCom.VS.AiCompanion.Engine.Plugins;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.ComponentModel;
