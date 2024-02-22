@@ -58,7 +58,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// Sets the content if the active Document in the editor. Returns `true` if action was successfull.
 		/// </summary>
 		/// <param name="contents">The Document to be made active.</param>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.High)]
 		bool SetActiveDocumentContents(string contents);
 
 		/// <summary>
