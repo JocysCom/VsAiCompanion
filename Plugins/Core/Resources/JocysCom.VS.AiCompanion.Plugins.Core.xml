@@ -61,19 +61,43 @@
             <param name="path">The file to write to.</param>
             <param name="contents">The string to write to the file.</param>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Common.ListInfo">
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo">
             <summary>
             List Info.
             </summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Common.ListInfo.Name">
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Name">
             <summary>List name.</summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Common.ListInfo.Description">
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Description">
             <summary>List description.</summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Common.ListInfo.Items">
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Items">
             <summary>Dictionary items</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListItem">
+            <summary>
+            Represents a versatile list item used in various contexts such as TODO lists, environment variable management, and diverse list compilations.
+            Structured as a key-value pair with an optional comment, facilitating a broad spectrum of applications from settings configuration to task management.
+            Aides in organizing data in a simple, yet effective manner, offering hints for creative AI utilization beyond predefined uses.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Key">
+            <summary>
+            The unique identifier or name for the list item.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Value">
+            <summary>
+            The value associated with the key.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Comment">
+            <summary>
+            Optional. Provides additional information about the list item,
+            such as task status (e.g., complete, pending) or extra details for settings and environment variables.
+            It encourages to infer potential statuses or metadata that could enhance data handling or task management strategies creatively.
+            </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel">
             <summary>Risk level</summary>
@@ -137,17 +161,63 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Lists">
             <summary>
-            Manage various lists.
+            Manages various lists.
             </summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Lists.AllLists">
             <summary>
-            Curent lists. Key is list name, Value is description.
+            Property set from the external class.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetAllLists">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetLists">
             <summary>
-            Get all available lists.
+            Retrieves all lists.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.CreateList(System.String,System.String)">
+            <summary>
+            Creates a new list.
+            </summary>
+            <returns>True if the list is created successfully.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList(System.String,System.String)">
+            <summary>
+            Updates an existing list.
+            </summary>
+            <returns>True if the list is updated successfully.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList(System.String)">
+            <summary>
+            Deletes an existing list.
+            </summary>
+            <returns>True if the list is deleted successfully.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList(System.String)">
+            <summary>
+            Clears all items from a list.
+            </summary>
+            <returns>True if the list items are cleared successfully.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.SetListItem(System.String,System.String,System.String,System.String)">
+            <summary>
+            Sets or adds an item to a list.
+            </summary>
+            <returns>True if the item is set or added successfully.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItem(System.String,System.String)">
+            <summary>
+            Retrieves an item from a list.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteListItem(System.String,System.String)">
+            <summary>
+            Deletes an item from a list.
+            </summary>
+            <returns>True if the item is deleted successfully.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems(System.String)">
+            <summary>
+            Retrieves all items from a list.
             </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">

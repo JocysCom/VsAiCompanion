@@ -1,52 +1,146 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 	/// <summary>
-	/// Manage various lists.
+	/// Manages various lists.
 	/// </summary>
 	public partial class Lists
 	{
+		/// <summary>
+		/// Property set from the external class.
+		/// </summary>
+		public static IList<ListInfo> AllLists { get; set; }
+
+		#region List Manipulation
 
 		/// <summary>
-		/// Curent lists. Key is list name, Value is description.
+		/// Retrieves all lists.
 		/// </summary>
-		public static List<ListInfo> AllLists { get; set; }
-
-		/// <summary>
-		/// Get all available lists.
-		/// </summary>
-		public static List<ListInfo> GetAllLists()
+		public static IList<ListInfo> GetLists()
 		{
 			return AllLists;
 		}
 
-		///// <summary>
-		///// Retrieves all items from the specified list.
-		///// </summary>
-		///// <param name="listName"></param>
-		//ReadList(string listName)
-		//{
-		//}
+		/// <summary>
+		/// Creates a new list.
+		/// </summary>
+		/// <returns>True if the list is created successfully.</returns>
+		public static bool CreateList(string listName, string description)
+		{
+			if (AllLists == null) AllLists = new List<ListInfo>();
+			if (AllLists.Any(l => l.Name == listName)) return false; // List already exists
+			AllLists.Add(new ListInfo { Name = listName, Description = description, Items = new List<ListItem>() });
+			return true;
+		}
 
-		/*
+		/// <summary>
+		/// Updates an existing list.
+		/// </summary>
+		/// <returns>True if the list is updated successfully.</returns>
+		public static bool UpdateList(string listName, string description)
+		{
+			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			if (list != null)
+			{
+				list.Description = description;
+				return true;
+			}
+			return CreateList(listName, description); // Create if not exists and return result
+		}
 
-		public static CreateItem(string listName, string item) : Adds an item to a specified list.If the list doesn't exist, it creates it.
+		/// <summary>
+		/// Deletes an existing list.
+		/// </summary>
+		/// <returns>True if the list is deleted successfully.</returns>
+		public static bool DeleteList(string listName)
+		{
+			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			if (list != null)
+			{
+				AllLists.Remove(list);
+				return true;
+			}
+			return false;
+		}
 
+		/// <summary>
+		/// Clears all items from a list.
+		/// </summary>
+		/// <returns>True if the list items are cleared successfully.</returns>
+		public static bool ClearList(string listName)
+		{
+			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			if (list != null)
+			{
+				list.Items.Clear();
+				return true;
+			}
+			return false;
+		}
 
-•ReadList(string listName) : Retrieves all items from the specified list.
+		#endregion
 
+		#region Item Manipulation
 
-•UpdateItem(string listName, int itemId, string newItemValue) : Replaces an item in a list with a new value.
+		/// <summary>
+		/// Sets or adds an item to a list.
+		/// </summary>
+		/// <returns>True if the item is set or added successfully.</returns>
+		public static bool SetListItem(string listName, string key, string value, string comment = "")
+		{
+			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			if (list == null)
+			{
+				CreateList(listName, ""); // Create list if not exists
+				list = AllLists.First(l => l.Name == listName);
+			}
+			var item = list.Items.FirstOrDefault(i => i.Key == key);
+			if (item != null)
+			{
+				item.Value = value;
+				item.Comment = comment;
+			}
+			else list.Items.Add(new ListItem { Key = key, Value = value, Comment = comment });
+			return true;
+		}
 
+		/// <summary>
+		/// Retrieves an item from a list.
+		/// </summary>
+		public static ListItem GetListItem(string listName, string key)
+		{
+			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			return list?.Items.FirstOrDefault(i => i.Key == key);
+		}
 
-•DeleteItem(string listName, int itemId) : Removes an item from a specified list.
+		/// <summary>
+		/// Deletes an item from a list.
+		/// </summary>
+		/// <returns>True if the item is deleted successfully.</returns>
+		public static bool DeleteListItem(string listName, string key)
+		{
+			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			var item = list?.Items.FirstOrDefault(i => i.Key == key);
+			if (item != null)
+			{
+				list.Items.Remove(item);
+				return true;
+			}
+			return false;
+		}
 
+		/// <summary>
+		/// Retrieves all items from a list.
+		/// </summary>
+		public static IList<ListItem> GetListItems(string listName)
+		{
+			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			return list?.Items ?? new List<ListItem>();
+		}
 
-•DeleteList(string listName) : Removes an entire list.
-
-*/
+		#endregion
 
 	}
 }

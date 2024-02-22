@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JocysCom.VS.AiCompanion.Plugins.Core.Common
+namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 
 	/// <summary>
@@ -12,9 +12,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.Common
 		public string Name { get; set; }
 		/// <summary>List description.</summary>
 		public string Description { get; set; }
-
 		/// <summary>Dictionary items</summary>
-		public Dictionary<string, string> Items { get; set; }
-
+		public IList<ListItem> Items { get; set; }
 	}
 }
