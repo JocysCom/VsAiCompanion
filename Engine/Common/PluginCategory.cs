@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.VS.AiCompanion.Plugins.Core;
+using System;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -11,14 +12,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Id = methodInfoDeclaringType.FullName;
 			Name = methodInfoDeclaringType.Name;
 			var iconName = Resources.Icons.Icons_Default.Icon_radar;
-			if (Name.ToLower().Contains("visual") && Name.ToLower().Contains("studio"))
+			if (Name.ToLower().Contains(nameof(VisualStudio).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_Visual_Studio;
-			if (Name.ToLower().Contains("database"))
+			if (Name.ToLower().Contains(nameof(Database).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_database;
-			if (Name.ToLower().Contains("lists"))
+			if (Name.ToLower().Contains(nameof(Lists).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_todo_list;
-			if (Name.ToLower().Contains("search"))
+			if (Name.ToLower().Contains(nameof(Search).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_magnifying_glass;
+			if (Name.ToLower().Contains(nameof(Automation).ToLower()))
+				iconName = Resources.Icons.Icons_Default.Icon_elements_tree;
 			Icon = Engine.Resources.Icons.Icons_Default.Current[iconName];
 		}
 
