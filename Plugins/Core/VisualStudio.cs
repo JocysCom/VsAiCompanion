@@ -67,8 +67,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.GetSelection();
 
 		/// <inheritdoc />
-		public bool SetActiveDocument(string contents)
-			=> Current.SetActiveDocument(contents);
+		public bool SetActiveDocumentContents(string contents)
+			=> Current.SetActiveDocumentContents(contents);
 
 		/// <inheritdoc />
 		public bool SetSelection(string contents)

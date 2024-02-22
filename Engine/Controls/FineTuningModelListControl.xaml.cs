@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -203,7 +204,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var task = AppHelper.GetNewTemplateItem();
 			// Treat the new task as a chat; therefore, clear the input box after sending.
 			task.MessageBoxOperation = MessageBoxOperation.ClearMessage;
-			task.AttachContext = AttachmentType.ChatHistory;
+			task.AttachContext = ContextType.ChatHistory;
 			task.Name = $"{Data.Name} Assistant ({DateTime.Now:yyyyMMdd_HHmmss})";
 			task.IconData = Data.IconData;
 			task.AiServiceId = Data.AiServiceId;

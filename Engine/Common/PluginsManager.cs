@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -104,7 +105,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.MainControl.Dispatcher.Invoke(() =>
 				{
 					var lastMessage = item.Messages.Last();
-					var attachment = new ClassLibrary.Controls.Chat.MessageAttachments(AttachmentType.None, "text", assistantEvaluation);
+					var attachment = new ClassLibrary.Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
 					attachment.Title = "Approval by Secondary AI";
 					attachment.IsAlwaysIncluded = true;
 					lastMessage.Attachments.Add(attachment);

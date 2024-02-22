@@ -274,7 +274,7 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetActiveDocument(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetActiveDocumentContents(System.String)">
             <inheritdoc />
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
@@ -282,6 +282,53 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext">
             <inheritdoc />
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType">
+            <summary>
+            Context type.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.None">
+            <summary>None</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Clipboard">
+            <summary>Clipboard.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Selection">
+            <summary>Selection.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ActiveDocument">
+            <summary>Active open document.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.OpenDocuments">
+            <summary>Open documents.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.SelectedDocuments">
+            <summary>Selected documents in Solution Explorer.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ActiveProject">
+            <summary>Active Project of active document.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.SelectedProject">
+            <summary>Selected Project of selected document in Solution Explorer.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Solution">
+            <summary>Solution.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ChatHistory">
+            <summary>Chat history.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Error">
+            <summary>Error info.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ErrorDocument">
+            <summary>Document related to the error.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Exception">
+            <summary>Exception info.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ExceptionDocuments">
+            <summary>Documents related to exception</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem">
             <summary>
@@ -332,6 +379,9 @@
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.DocumentType">
             <summary>Document type.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ContextType">
+            <summary>Document context type.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ContentHint">
             <summary>
@@ -485,7 +535,7 @@
             </summary>
             <returns>The active Document.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetActiveDocument(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetActiveDocumentContents(System.String)">
             <summary>
             Sets the content if the active Document in the editor. Returns `true` if action was successfull.
             </summary>

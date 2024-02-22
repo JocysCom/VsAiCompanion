@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Chat;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -193,21 +194,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> PluginApprovalTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
-		public Dictionary<AttachmentType, string> DataTypes
+		public Dictionary<ContextType, string> DataTypes
 		{
 			get
 			{
 				if (_DataTypes == null)
 				{
-					var values = new AttachmentType[] {
-						AttachmentType.Clipboard,
-						AttachmentType.Selection,
-						AttachmentType.ActiveDocument,
-						AttachmentType.OpenDocuments,
-						AttachmentType.SelectedDocuments,
-						AttachmentType.ActiveProject,
-						AttachmentType.SelectedProject,
-						AttachmentType.Solution,
+					var values = new ContextType[] {
+						ContextType.Clipboard,
+						ContextType.Selection,
+						ContextType.ActiveDocument,
+						ContextType.OpenDocuments,
+						ContextType.SelectedDocuments,
+						ContextType.ActiveProject,
+						ContextType.SelectedProject,
+						ContextType.Solution,
 					};
 					_DataTypes = ControlsHelper.GetDictionary(values);
 				}
@@ -215,7 +216,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			set => _DataTypes = value;
 		}
-		Dictionary<AttachmentType, string> _DataTypes;
+		Dictionary<ContextType, string> _DataTypes;
 
 		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
 		{
@@ -468,16 +469,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			get
 			{
-				return _item?.AttachContext.HasFlag(AttachmentType.ChatHistory) ?? false;
+				return _item?.AttachContext.HasFlag(ContextType.ChatHistory) ?? false;
 			}
 			set
 			{
 				var item = _item;
 				if (item == null)
 					return;
-				item.AttachContext = item.AttachContext.HasFlag(AttachmentType.ChatHistory)
-					? item.AttachContext & ~AttachmentType.ChatHistory
-					: item.AttachContext |= AttachmentType.ChatHistory;
+				item.AttachContext = item.AttachContext.HasFlag(ContextType.ChatHistory)
+					? item.AttachContext & ~ContextType.ChatHistory
+					: item.AttachContext |= ContextType.ChatHistory;
 			}
 		}
 

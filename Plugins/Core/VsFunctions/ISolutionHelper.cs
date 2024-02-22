@@ -59,7 +59,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="contents">The Document to be made active.</param>
 		[RiskLevel(RiskLevel.Medium)]
-		bool SetActiveDocument(string contents);
+		bool SetActiveDocumentContents(string contents);
 
 		/// <summary>
 		/// Retrieves the text currently selected within the active Document.

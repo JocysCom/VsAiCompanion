@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -68,6 +69,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 
 		/// <summary>Document type.</summary>
 		public string DocumentType { get; set; }
+
+		/// <summary>Document context type.</summary>
+		[DefaultValue(ContextType.None)]
+		public ContextType ContextType { get; set; }
 
 		/// <summary>
 		/// Hint for AI.

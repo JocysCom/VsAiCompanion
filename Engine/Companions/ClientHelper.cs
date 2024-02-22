@@ -137,7 +137,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var fileItems = new List<DocItem>();
 				var at = item.AttachContext;
 				// If data from clipboard.
-				if (at.HasFlag(AttachmentType.Clipboard))
+				if (at.HasFlag(ContextType.Clipboard))
 				{
 					var clip = AppHelper.GetClipboard();
 					var clipAttachment = new MessageAttachments()
@@ -151,40 +151,40 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (Global.IsVsExtesion)
 				{
 					// If text selection in Visual Studio.
-					if (at.HasFlag(AttachmentType.Selection))
+					if (at.HasFlag(ContextType.Selection))
 					{
 						var ad = Global._SolutionHelper.GetSelection();
-						var adAttachment = new MessageAttachments(AttachmentType.Selection, ad.Language, ad.ContentData);
+						var adAttachment = new MessageAttachments(ContextType.Selection, ad.Language, ad.ContentData);
 						m.Attachments.Add(adAttachment);
 					}
 					// If selected error in Visual Studio.
-					if (at.HasFlag(AttachmentType.Error))
+					if (at.HasFlag(ContextType.Error))
 					{
 						var err = Global._SolutionHelper.GetSelectedError();
 						if (!string.IsNullOrEmpty(err?.Description))
 						{
-							var errorAttachment = new MessageAttachments(AttachmentType.Error, err);
+							var errorAttachment = new MessageAttachments(ContextType.Error, err);
 							m.Attachments.Add(errorAttachment);
 						}
 					}
 					// If active open document in Visual Studio.
-					if (at.HasFlag(AttachmentType.ActiveDocument))
+					if (at.HasFlag(ContextType.ActiveDocument))
 					{
 						var ad = Global._SolutionHelper.GetActiveDocument();
-						var adAttachment = new MessageAttachments(AttachmentType.ActiveDocument, ad.Language, ad.ContentData);
+						var adAttachment = new MessageAttachments(ContextType.ActiveDocument, ad.Language, ad.ContentData);
 						m.Attachments.Add(adAttachment);
 					}
-					if (at.HasFlag(AttachmentType.OpenDocuments))
+					if (at.HasFlag(ContextType.OpenDocuments))
 						fileItems.AddRange(Global._SolutionHelper.GetOpenDocuments());
-					if (at.HasFlag(AttachmentType.SelectedDocuments))
+					if (at.HasFlag(ContextType.SelectedDocuments))
 						fileItems.AddRange(Global._SolutionHelper.GetDocumentsSelectedInExplorer());
-					if (at.HasFlag(AttachmentType.ActiveProject))
+					if (at.HasFlag(ContextType.ActiveProject))
 						fileItems.AddRange(Global._SolutionHelper.GetDocumentsOfProjectOfActiveDocument());
-					if (at.HasFlag(AttachmentType.SelectedProject))
+					if (at.HasFlag(ContextType.SelectedProject))
 						fileItems.AddRange(Global._SolutionHelper.GetDocumentsOfProjectOfSelectedDocument());
-					if (at.HasFlag(AttachmentType.Solution))
+					if (at.HasFlag(ContextType.Solution))
 						fileItems.AddRange(Global._SolutionHelper.GetAllSolutionDocuments());
-					if (at.HasFlag(AttachmentType.ErrorDocument))
+					if (at.HasFlag(ContextType.ErrorDocument))
 					{
 						var doc = Global._SolutionHelper.GetSelectedErrorDocument();
 						if (doc == null)
@@ -197,16 +197,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 							fileItems.Add(doc);
 						}
 					}
-					if (at.HasFlag(AttachmentType.Exception))
+					if (at.HasFlag(ContextType.Exception))
 					{
 						var ei = Global._SolutionHelper.GetCurrentException();
 						if (!string.IsNullOrEmpty(ei?.Message))
 						{
-							var exceptionAttachment = new MessageAttachments(AttachmentType.Exception, ei);
+							var exceptionAttachment = new MessageAttachments(ContextType.Exception, ei);
 							m.Attachments.Add(exceptionAttachment);
 						}
 					}
-					if (at.HasFlag(AttachmentType.ExceptionDocuments))
+					if (at.HasFlag(ContextType.ExceptionDocuments))
 					{
 						// Get files for exception.
 						var exceptionFiles = Global._SolutionHelper.GetCurrentExceptionDocuments();
@@ -278,7 +278,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			// Get current message with all attachments.
 			var chatLogMessages = ConvertMessageItemToChatMessage(item.IsSystemInstructions, m, includeAttachments: true);
 			// Prepare list of messages to send.
-			if (item.AttachContext.HasFlag(AttachmentType.ChatHistory))
+			if (item.AttachContext.HasFlag(ContextType.ChatHistory))
 			{
 				// Get tokens available.
 				var tokensLeftForChatHistory = GetAvailableTokens(item, chatLogMessages, item.UseMaximumContext);
@@ -294,7 +294,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					var a0 = new MessageAttachments();
 					a0.Title = Global.AppSettings.ContextChatTitle;
 					a0.Instructions = Global.AppSettings.ContextChatInstructions;
-					a0.Type = AttachmentType.ChatHistory;
+					a0.Type = ContextType.ChatHistory;
 					var options = new JsonSerializerOptions();
 					options.WriteIndented = true;
 					var json = JsonSerializer.Serialize(attachMessages, ChatLogOptions);
@@ -523,7 +523,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (message.Contains("Method not found") && message.Contains("System.Collections.Generic.IAsyncEnumerable"))
 				message += " " + Global.VsExtensionVersionMessage;
 			var msgItem = new MessageItem(SystemName, message, MessageType.Error);
-			msgItem.Attachments.Add(new MessageAttachments(AttachmentType.Error, "log", ex.ToString()));
+			msgItem.Attachments.Add(new MessageAttachments(ContextType.Error, "log", ex.ToString()));
 			Global.MainControl.Dispatcher.Invoke(() =>
 			{
 				item.Messages.Add(msgItem);
@@ -537,7 +537,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		/// <param name="data"></param>
 		public static void SetData(TemplateItem item, string data)
 		{
-			if (item.AttachContext == AttachmentType.Selection && Global.IsVsExtesion)
+			if (item.AttachContext == ContextType.Selection && Global.IsVsExtesion)
 			{
 				var vsData = AppHelper.GetMacroValues();
 				var code = AppHelper.GetCodeFromReply(data);
@@ -550,16 +550,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (item.AutoFormatCode)
 					Global._SolutionHelper.EditFormatSelection();
 			}
-			else if (item.AttachContext == AttachmentType.ActiveDocument && Global.IsVsExtesion)
+			else if (item.AttachContext == ContextType.ActiveDocument && Global.IsVsExtesion)
 			{
 				var vsData = AppHelper.GetMacroValues();
 				var code = AppHelper.GetCodeFromReply(data);
 				if (item.AutoOperation == DataOperation.Replace)
-					Global._SolutionHelper.SetActiveDocument(code);
+					Global._SolutionHelper.SetActiveDocumentContents(code);
 				if (item.AutoOperation == DataOperation.InsertBefore)
-					Global._SolutionHelper.SetActiveDocument(code + vsData.Selection.ContentData);
+					Global._SolutionHelper.SetActiveDocumentContents(code + vsData.Selection.ContentData);
 				if (item.AutoOperation == DataOperation.InsertAfter)
-					Global._SolutionHelper.SetActiveDocument(vsData.Selection.ContentData + code);
+					Global._SolutionHelper.SetActiveDocumentContents(vsData.Selection.ContentData + code);
 				if (item.AutoFormatCode)
 					Global._SolutionHelper.EditFormatDocument();
 			}

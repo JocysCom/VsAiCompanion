@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -20,10 +21,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			private bool _IsChecked;
 
 
-			public AttachmentType Value { get; set; }
+			public ContextType Value { get; set; }
 
-			public Visibility LabelVisibility => Value == AttachmentType.None ? Visibility.Visible : Visibility.Collapsed;
-			public Visibility CheckVisibility => Value != AttachmentType.None ? Visibility.Visible : Visibility.Collapsed;
+			public Visibility LabelVisibility => Value == ContextType.None ? Visibility.Visible : Visibility.Collapsed;
+			public Visibility CheckVisibility => Value != ContextType.None ? Visibility.Visible : Visibility.Collapsed;
 
 			#region ■ INotifyPropertyChanged
 
@@ -47,7 +48,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public EnumComboBox()
 		{
 			InitializeComponent();
-			SetItemSource<AttachmentType>();
+			SetItemSource<ContextType>();
 			Data.ListChanged += List_ListChanged;
 		}
 
@@ -56,8 +57,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (e.PropertyDescriptor?.Name == nameof(CheckBoxViewModel.IsChecked))
 			{
 				var items = ItemsSource.Cast<CheckBoxViewModel>();
-				var top = items.First(x => x.Value == AttachmentType.None);
-				var choice = ItemsSource.Cast<CheckBoxViewModel>().Where(x => x.Value != AttachmentType.None).ToList();
+				var top = items.First(x => x.Value == ContextType.None);
+				var choice = ItemsSource.Cast<CheckBoxViewModel>().Where(x => x.Value != ContextType.None).ToList();
 				var count = choice.Count(x => x.IsChecked);
 				var names = choice.Where(x => x.IsChecked).Select(x => x.Description).ToList();
 				if (count == 0)
@@ -68,7 +69,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					top.Description = This.Text = $"{names.First()} + " + (count - 1).ToString();
 				var value = Data
 					.Where(x => x.IsChecked)
-					.Aggregate(default(AttachmentType), (current, item) => current | item.Value);
+					.Aggregate(default(ContextType), (current, item) => current | item.Value);
 				if (!Equals(SelectedValue, value))
 					SelectedValue = value;
 			}
@@ -79,7 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		void SetItemSource<T>()
 		{
 			var items = Enum.GetValues(typeof(T))
-				.Cast<AttachmentType>()
+				.Cast<ContextType>()
 				.OrderBy(x => GetOrder(x))
 				.Select(e => new CheckBoxViewModel
 				{
@@ -117,23 +118,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#region Binding
 
 		private static readonly new DependencyProperty SelectedValueProperty =
-			DependencyProperty.Register("SelectedValue", typeof(AttachmentType), typeof(EnumComboBox),
-		new FrameworkPropertyMetadata(default(AttachmentType), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
+			DependencyProperty.Register("SelectedValue", typeof(ContextType), typeof(EnumComboBox),
+		new FrameworkPropertyMetadata(default(ContextType), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
 
-		public new AttachmentType SelectedValue
+		public new ContextType SelectedValue
 		{
-			get => (AttachmentType)GetValue(SelectedValueProperty);
+			get => (ContextType)GetValue(SelectedValueProperty);
 			set => SetValue(SelectedValueProperty, value);
 		}
 
 		private static void OnSelectedValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var box = (EnumComboBox)d;
-			var value = (AttachmentType)box.GetValue(SelectedValueProperty);
+			var value = (ContextType)box.GetValue(SelectedValueProperty);
 			var items = (IEnumerable<CheckBoxViewModel>)box.ItemsSource;
 			foreach (var item in items)
 			{
-				var isChecked = item.Value != AttachmentType.None && value.HasFlag(item.Value);
+				var isChecked = item.Value != ContextType.None && value.HasFlag(item.Value);
 				if (item.IsChecked != isChecked)
 					item.IsChecked = isChecked;
 			}

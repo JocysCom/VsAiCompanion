@@ -3,6 +3,7 @@ using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
 using JocysCom.ClassLibrary.Controls.Chat;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -439,7 +440,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									var json = "[\r\n" + toolArgumentsUpdate + "\r\n}\r\n]";
 									var functions = Deserialize<chat_completion_function[]>(json);
 									// Create message attachment first.
-									var attachment = new MessageAttachments(AttachmentType.None, "JSON", json);
+									var attachment = new MessageAttachments(ContextType.None, "JSON", json);
 									attachment.Title = "AI Function Call";
 									attachment.IsAlwaysIncluded = true;
 									assistantMessageItem.Attachments.Add(attachment);
@@ -454,7 +455,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 										foreach (var function in functions)
 										{
 											var functionResultContent = await PluginsManager.ProcessPlugins(item, function);
-											var fnAttachment = new MessageAttachments(AttachmentType.None, "text", functionResultContent);
+											var fnAttachment = new MessageAttachments(ContextType.None, "text", functionResultContent);
 											fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
 											fnAttachment.IsAlwaysIncluded = true;
 											functionResults.Add(fnAttachment);

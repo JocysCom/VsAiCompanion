@@ -7,13 +7,16 @@ using Microsoft.Extensions.Hosting;
 namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers
 {
 
+	/// <summary>Program</summary>
 	public class Program
 	{
+		/// <summary>Main</summary>
 		public static void Main(string[] args)
 		{
 			CreateWebHostBuilder(args).Build().Run();
 		}
 
+		/// <summary>Create web host builder</summary>
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
 				.ConfigureServices((context, services) =>

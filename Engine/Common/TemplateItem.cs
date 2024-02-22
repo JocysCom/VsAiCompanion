@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls.Chat;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -57,9 +58,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Documents files, selction, clipboard.
 		/// </summary>
-		[DefaultValue(AttachmentType.None)]
-		public AttachmentType AttachContext { get => _AttachContext; set => SetProperty(ref _AttachContext, value); }
-		AttachmentType _AttachContext;
+		[DefaultValue(ContextType.None)]
+		public ContextType AttachContext { get => _AttachContext; set => SetProperty(ref _AttachContext, value); }
+		ContextType _AttachContext;
 
 		public ChatSettings Settings { get => _Settings; set => SetProperty(ref _Settings, value); }
 		ChatSettings _Settings;

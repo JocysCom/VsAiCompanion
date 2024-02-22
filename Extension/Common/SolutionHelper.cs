@@ -308,61 +308,6 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public IList<DocItem> GetOpenDocuments()
-		{
-			ThreadHelper.ThrowIfNotOnUIThread();
-			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
-			if (dte == null || dte.Documents == null)
-				return new List<DocItem>();
-
-			var items = new List<DocItem>();
-			foreach (Document doc in dte.Documents)
-			{
-				bool hasVisibleWindow = false;
-				foreach (Window win in doc.Windows)
-				{
-					if (win.Visible)
-					{
-						hasVisibleWindow = true;
-						break;
-					}
-				}
-				// If no visible window is associated, skip adding the document
-				if (!hasVisibleWindow)
-					continue;
-				// Initialize DocItem with basic properties
-				var docItem = new DocItem
-				{
-					FullName = doc.FullName,
-					Name = doc.Name,
-					DocumentType = doc.Type,
-					// Assume text until proven otherwise
-					IsText = true
-				};
-				// Attempt to get the ProjectItem associated with the document, if available
-				try
-				{
-					ProjectItem projectItem = doc.ProjectItem;
-					if (projectItem != null)
-					{
-						docItem.Kind = projectItem.Kind;
-						// Attempt to access language via CodeModel
-						var codeModel = projectItem.FileCodeModel;
-						if (codeModel != null)
-							docItem.Language = codeModel.Language;
-					}
-				}
-				catch
-				{
-					// Failed to retrieve ProjectItem or its properties
-				}
-				items.Add(docItem);
-			}
-			LoadData(items);
-			return items;
-		}
-
-		/// <inheritdoc />
 		public IList<DocItem> GetAllSolutionDocuments()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
@@ -471,22 +416,78 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return GetTextDocument()?.Language;
 		}
 
-		/// <inheritdoc />
-		public DocItem GetActiveDocument()
-		{
-			ThreadHelper.ThrowIfNotOnUIThread();
-			var td = GetTextDocument();
-			if (td == null)
-				return new DocItem("");
-			var startPoint = td.StartPoint.CreateEditPoint();
-			var data = startPoint.GetText(td.EndPoint);
-			var di = new DocItem(data, td.Parent?.FullName, td.Type);
-			di.Language = td.Language;
-			return di;
-		}
+		#region Context: Open Documents
 
 		/// <inheritdoc />
-		public bool SetActiveDocument(string contents)
+		public IList<DocItem> GetOpenDocuments()
+			=> _GetOpenDocuments(true);
+
+		private IList<DocItem> _GetOpenDocuments(bool loadData)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
+			if (dte == null || dte.Documents == null)
+				return new List<DocItem>();
+			var items = new List<DocItem>();
+			foreach (Document doc in dte.Documents)
+			{
+				bool hasVisibleWindow = false;
+				foreach (Window win in doc.Windows)
+				{
+					if (win.Visible)
+					{
+						hasVisibleWindow = true;
+						break;
+					}
+				}
+				// If no visible window is associated, skip adding the document
+				if (!hasVisibleWindow)
+					continue;
+				// Initialize DocItem with basic properties
+				var docItem = new DocItem
+				{
+					FullName = doc.FullName,
+					Name = doc.Name,
+					DocumentType = doc.Type,
+					// Assume text until proven otherwise
+					IsText = true
+				};
+				// Attempt to get the ProjectItem associated with the document, if available
+				try
+				{
+					ProjectItem projectItem = doc.ProjectItem;
+					if (projectItem != null)
+					{
+						docItem.Kind = projectItem.Kind;
+						// Attempt to access language via CodeModel
+						var codeModel = projectItem.FileCodeModel;
+						if (codeModel != null)
+							docItem.Language = codeModel.Language;
+					}
+				}
+				catch
+				{
+					// Failed to retrieve ProjectItem or its properties
+				}
+				items.Add(docItem);
+			}
+			var activeDocs = _GetActiveDocuments(false);
+			AddContextType(activeDocs, items, ContextType.ActiveDocument);
+			if (loadData)
+				LoadData(items);
+			return items;
+		}
+
+		#endregion
+
+		#region Context: Active Document 
+
+		/// <inheritdoc />
+		public DocItem GetActiveDocument()
+			=> _GetActiveDocuments(true).FirstOrDefault() ?? new DocItem("");
+
+		/// <inheritdoc />
+		public bool SetActiveDocumentContents(string contents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var td = GetTextDocument();
@@ -497,6 +498,31 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return true;
 		}
 
+		private IList<DocItem> _GetActiveDocuments(bool loadData)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var items = new List<DocItem>();
+			var td = GetTextDocument();
+			if (td == null)
+				return items;
+			var di = new DocItem("", td.Parent?.FullName, td.Type);
+			di.ContextType = ContextType.ActiveDocument;
+			di.Language = td.Language;
+			if (loadData)
+			{
+				var startPoint = td.StartPoint.CreateEditPoint();
+				var data = startPoint.GetText(td.EndPoint);
+				di.ContentData = data;
+			}
+			di.ContextType = ContextType.ActiveDocument;
+			items.Add(di);
+			return items;
+		}
+
+		#endregion
+
+		#region Context: Selection
+
 		/// <inheritdoc />
 		public DocItem GetSelection()
 		{
@@ -506,6 +532,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				return new DocItem("");
 			var data = doc.Selection?.Text;
 			var di = new DocItem(data, doc.Parent?.FullName, doc.Type);
+			di.ContextType = ContextType.Selection;
 			di.Language = doc.Language;
 			return di;
 		}
@@ -522,6 +549,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			selection.Insert(contents, (int)vsInsertFlags.vsInsertFlagsInsertAtEnd);
 			return true;
 		}
+
+		#endregion
 
 		//public static List<ErrorItem> GetErrors()
 		//{
@@ -623,6 +652,10 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return items;
 		}
 
+		#endregion
+
+		#region Other Functions
+
 		public Dictionary<string, JsonElement> GetEnvironmentContext()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
@@ -658,6 +691,17 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 			}
 			return null;
+		}
+
+		private void AddContextType(IList<DocItem> source, IList<DocItem> target, ContextType contextType)
+		{
+			var sourceNames = source
+				.Select(x => x.FullName)
+				.Where(x => !string.IsNullOrEmpty(x))
+				.ToList();
+			foreach (var item in target)
+				if (sourceNames.Contains(item.FullName))
+					item.ContextType |= contextType;
 		}
 
 		#endregion

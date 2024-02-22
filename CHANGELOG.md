@@ -1,3 +1,7 @@
+2024-02-22 v1.4.24
+
+- Update: Added a "context type" property to documents to improve AI responses.
+
 2024-02-20 v1.4.21
 
 - New: Added Database Functions.
