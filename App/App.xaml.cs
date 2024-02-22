@@ -18,6 +18,9 @@ namespace JocysCom.VS.AiCompanion
 	/// </summary>
 	public partial class App : Application
 	{
+		bool allowOnlyOneCopy;
+		WindowState windowState;
+
 		public App()
 		{
 			try
@@ -25,17 +28,10 @@ namespace JocysCom.VS.AiCompanion
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+				FastReadAppSettings(out allowOnlyOneCopy, out windowState);
 				allowToRun = GetAllowToRun();
 				if (!allowToRun)
 					return;
-				// Create tray manager first.
-				TrayManager = new TrayManager();
-				TrayManager.OnExitClick += TrayManager_OnExitClick;
-				// Error in this can casue Message box display whith will call OnStartup(StartupEventArgs e)
-				// Which use tray manager.
-				Global.LoadSettings();
-				StartHelper.OnClose += StartHelper_OnClose;
-				StartHelper.OnRestore += StartHelper_OnRestore;
 				SetDPIAware();
 				System.Windows.Forms.Application.EnableVisualStyles();
 				System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
@@ -181,6 +177,21 @@ namespace JocysCom.VS.AiCompanion
 			base.OnStartup(e);
 			try
 			{
+				SplashScreenWindow splashScreen = null;
+				if (windowState != WindowState.Minimized)
+				{
+					splashScreen = new SplashScreenWindow();
+					splashScreen.Show();
+				}
+				// Create tray manager first.
+				TrayManager = new TrayManager();
+				TrayManager.OnExitClick += TrayManager_OnExitClick;
+				// Error in this can casue Message box display whith will call OnStartup(StartupEventArgs e)
+				// Which use tray manager.
+				Global.LoadSettings();
+				StartHelper.OnClose += StartHelper_OnClose;
+				StartHelper.OnRestore += StartHelper_OnRestore;
+				// ----------------------------------------------
 				Global.GetClipboard = AppHelper.GetClipboard;
 				Global.SetClipboard = AppHelper.SetClipboard;
 				var window = new Engine.MainWindow();
@@ -194,6 +205,7 @@ namespace JocysCom.VS.AiCompanion
 				TrayManager.ProcessGetCommandLineArgs();
 				Global.Tasks.Items.ListChanged += Items_ListChanged;
 				_ = UpdateTrayMenu();
+				splashScreen?.Close();
 			}
 			catch (Exception ex)
 			{
@@ -208,9 +220,8 @@ namespace JocysCom.VS.AiCompanion
 
 		#region Allow To Run Check
 
-		private static bool GetAllowToRun()
+		private bool GetAllowToRun()
 		{
-			var allowOnlyOneCopy = GetAllowOnlyOneCopy();
 			// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
 			StartHelper.Initialize(typeof(App).Assembly.GetName().Name);
 			// Check if another copy of application is already running.
@@ -221,20 +232,27 @@ namespace JocysCom.VS.AiCompanion
 		/// <summary>
 		/// Fast way to read `AllowOnlyOneCopy` value from settings.
 		/// </summary>
-		private static bool GetAllowOnlyOneCopy()
+		private static void FastReadAppSettings(out bool allowOnlyOneCopy, out WindowState windowState)
 		{
-			var name = nameof(AppData.AllowOnlyOneCopy);
+			var oneCopyName = nameof(AppData.AllowOnlyOneCopy);
+			var windowStateName = nameof(AppData.StartPosition.WindowState);
 			var file = Global.AppData.XmlFile.FullName;
-			var defaultValue = Attributes.GetDefaultValue<AppData, bool>(name);
+			allowOnlyOneCopy = Attributes.GetDefaultValue<AppData, bool>(oneCopyName);
+			windowState = Attributes.GetDefaultValue<PositionSettings, WindowState>(windowStateName);
 			if (!File.Exists(file))
-				return defaultValue;
+				return;
 			using (var stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 			using (var reader = XmlReader.Create(stream))
 				while (reader.Read())
-					if (reader.NodeType == XmlNodeType.Element && reader.Name == name)
+				{
+					if (reader.NodeType == XmlNodeType.Element && reader.Name == oneCopyName)
 						if (reader.Read() && reader.NodeType == XmlNodeType.Text && bool.TryParse(reader.Value, out bool result))
-							return result;
-			return defaultValue;
+							allowOnlyOneCopy = result;
+					if (reader.NodeType == XmlNodeType.Element && reader.Name == windowStateName)
+						if (reader.Read() && reader.NodeType == XmlNodeType.Text && WindowState.TryParse(reader.Value, out WindowState result))
+							windowState = result;
+
+				}
 		}
 
 		#endregion

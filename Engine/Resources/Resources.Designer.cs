@@ -160,6 +160,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Approval Template.
+        /// </summary>
+        public static string Approval_Template {
+            get {
+                return ResourceManager.GetString("Approval_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Approval Type.
+        /// </summary>
+        public static string Approval_Type {
+            get {
+                return ResourceManager.GetString("Approval_Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attachments.
         /// </summary>
         public static string Attachments {

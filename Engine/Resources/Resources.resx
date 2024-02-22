@@ -447,4 +447,10 @@
   <data name="Enable_spell_check_for_the_chat_textbox" xml:space="preserve">
     <value>Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</value>
   </data>
+  <data name="Approval_Template" xml:space="preserve">
+    <value>Approval Template</value>
+  </data>
+  <data name="Approval_Type" xml:space="preserve">
+    <value>Approval Type</value>
+  </data>
 </root>

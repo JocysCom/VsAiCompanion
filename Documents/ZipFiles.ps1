@@ -7,7 +7,12 @@ param (
 	
     # Optional. The search string to match against the names of files.
     [Parameter(Mandatory = $false, Position = 2)]
-    [string] $searchPattern
+    [string] $searchPattern,
+
+    # Optional. Use shell zipper if this parameter is set to true.
+    [Parameter(Mandatory = $false, Position = 3)]
+    [bool] $UseShellToZipFiles = $false
+
 )
 
 if (!(Test-Path -Path $sourceDir)) {
@@ -73,18 +78,88 @@ function CheckAndZipFiles {
         Write-Host "$($name): Source and destination checksums do not match. Updating destination file..."
         if (Test-Path -Path $destFile) { Remove-Item -Path $destFile -Force }
         
-        # Handling optional search pattern for zipping files.
-        if (![string]::IsNullOrEmpty($searchPattern)) {
-            $tempSourceDir = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName()))
-            Get-ChildItem -Path $sourceDir -Recurse -File -Filter $searchPattern | Copy-Item -Destination { Join-Path -Path $tempSourceDir -ChildPath ($_.FullName.Replace($sourceDir, "").TrimStart("\")) } -Container
-            [IO.Compression.ZipFile]::CreateFromDirectory($tempSourceDir.FullName, $destFile)
-            Remove-Item -Path $tempSourceDir -Recurse -Force
+        if ($UseShellToZipFiles) {
+            Compress-ZipFileUsingShell -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern
         } else {
-            [IO.Compression.ZipFile]::CreateFromDirectory($sourceDir, $destFile)
+            Compress-ZipFileUsingCSharp -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern
         }
     } else {
         Write-Host "$($name): Source and destination checksums match. No update needed."
     }
+}
+
+function Compress-ZipFileUsingCSharp {
+    param (
+        [string] $sourceDir,
+        [string] $destFile,
+        [string] $searchPattern
+    )
+    # Handling optional search pattern for zipping files.
+    if (![string]::IsNullOrEmpty($searchPattern)) {
+        $tempSourceDir = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName()))
+        Get-ChildItem -Path $sourceDir -Recurse -File -Filter $searchPattern | Copy-Item -Destination { Join-Path -Path $tempSourceDir -ChildPath ($_.FullName.Replace($sourceDir, "").TrimStart("\")) } -Container
+        [IO.Compression.ZipFile]::CreateFromDirectory($tempSourceDir.FullName, $destFile)
+        Remove-Item -Path $tempSourceDir -Recurse -Force
+    } else {
+        [IO.Compression.ZipFile]::CreateFromDirectory($sourceDir, $destFile)
+    }
+}
+
+function Compress-ZipFileUsingShell {
+    param (
+        [string] $sourceDir,
+        [string] $destFile,
+        [string] $searchPattern
+    )
+    
+    # Ensure the destination directory exists
+    $destDir = [System.IO.Path]::GetDirectoryName($destFile)
+    if (-not (Test-Path $destDir)) {
+        New-Item -ItemType Directory -Path $destDir | Out-Null
+    }
+
+    # Create an empty zip if it doesn't exist
+    if (-not (Test-Path $destFile)) {
+        $null = Set-Content -Path $destFile -Value ("PK" + [char]5 + [char]6 + ("$([char]0)" * 18))
+    }
+
+    # Use Shell Application to manipulate the zip file
+    $shellApplication = new-object -com shell.application
+    $zipPackage = $shellApplication.NameSpace($destFile)
+
+    if (-not $zipPackage) {
+        Write-Error "Failed to create a zip package COM object for the destination file. Check the path and permissions."
+        return
+    }
+
+    if (![string]::IsNullOrEmpty($searchPattern)) {
+        $files = Get-ChildItem -Path $sourceDir -Recurse -File -Filter $searchPattern
+    } else {
+        $files = Get-ChildItem -Path $sourceDir -Recurse
+    }
+
+    foreach ($file in $files) {
+        $path = $file.FullName
+        $zipPackage.CopyHere($path)
+        
+        $maxRetries = 5
+        $retryCount = 0
+        Do {
+            Start-Sleep -Seconds 2
+            $retryCount++
+            if ($retryCount -gt $maxRetries) {
+                Write-Host "Max retries reached. Moving to next file..."
+                break
+            }
+        } While (($shellApplication.NameSpace($destFile).Items() | Where-Object { $_.Path -eq $path }).Count -eq 0)
+    }
+
+
+    # Release COM objects
+    [System.Runtime.InteropServices.Marshal]::ReleaseComObject($zipPackage) | Out-Null
+    [System.Runtime.InteropServices.Marshal]::ReleaseComObject($shellApplication) | Out-Null
+    [GC]::Collect()
+    [GC]::WaitForPendingFinalizers()
 }
 
 #==============================================================

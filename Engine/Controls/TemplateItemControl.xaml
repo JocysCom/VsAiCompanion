@@ -46,35 +46,56 @@
 				Grid.Row="0"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
-				Orientation="Horizontal">
-				<Button
-					Name="ListToggleButton"
-					HorizontalAlignment="Left"
-					Click="ListToggleButton_Click"
-					Focusable="False">
-					<ContentControl Content="{StaticResource Icon_navigate_left2}" />
-				</Button>
-				<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" />
-				<CheckBox Name="IsPreviewCheckBox" Content="Preview" IsChecked="{Binding IsPreview}" />
-				<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
-				<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
-				<Slider
-					Name="ZoomSlider"
-					Width="100"
-					Maximum="150"
-					Minimum="50"
-					TickFrequency="10"
-					TickPlacement="BottomRight"
-					ValueChanged="ZoomSlider_ValueChanged"
-					Value="100" />
-				<!--  Value="{Binding Creativity}"  -->
-				<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
+				Orientation="Vertical">
+				<StackPanel Orientation="Horizontal">
+					<Button
+						Name="ListToggleButton"
+						HorizontalAlignment="Left"
+						Click="ListToggleButton_Click"
+						Focusable="False">
+						<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+					</Button>
+					<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" />
+					<CheckBox Name="IsPreviewCheckBox" Content="Preview" IsChecked="{Binding IsPreview}" />
+					<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
+					<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
+					<Slider
+						Name="ZoomSlider"
+						Width="100"
+						Maximum="150"
+						Minimum="50"
+						TickFrequency="10"
+						TickPlacement="BottomRight"
+						ValueChanged="ZoomSlider_ValueChanged"
+						Value="100" />
+					<!--  Value="{Binding Creativity}"  -->
+					<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox Name="PluginsEnableContextCheckBox" Content="Use Plugins" IsChecked="{Binding PluginsEnabled}" />
+					<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Approval_Type}" />
+					<ComboBox
+						Name="PluginApprovalProcessComboBox"
+						DisplayMemberPath="Value"
+						ItemsSource="{Binding PluginApprovalProcesses, ElementName=This}"
+						SelectedValue="{Binding PluginApprovalProcess}"
+						SelectedValuePath="Key" />
+					<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Approval_Template}" />
+					<ComboBox
+						Name="PluginApprovalTemplateComboBox"
+						DisplayMemberPath="Value"
+						ItemsSource="{Binding PluginApprovalTemplates, ElementName=This}"
+						SelectedValue="{Binding PluginApprovalTemplate}"
+						SelectedValuePath="Key" />
+				</StackPanel>
+
 			</StackPanel>
 			<Button
 				Name="BarToggleButton"
 				Grid.Row="0"
 				Grid.Column="2"
 				HorizontalAlignment="Right"
+				VerticalAlignment="Top"
 				Click="BarToggleButton_Click"
 				Focusable="False">
 				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
@@ -204,51 +225,7 @@
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>
-				<GroupBox
-					Grid.Row="1"
-					Grid.Column="1"
-					Margin="0,0,3,3"
-					VerticalAlignment="Stretch"
-					Visibility="{Binding BarPanelVisibility, ElementName=This}">
-					<GroupBox.Header>
-						<CheckBox
-							Name="PluginsEnableContextCheckBox"
-							Margin="-4"
-							Content="Use Plugins"
-							IsChecked="{Binding PluginsEnabled}" />
-					</GroupBox.Header>
-					<Grid Grid.Row="2" Grid.ColumnSpan="4">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition />
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
-						<Label Content="Approval Type" />
-						<Label Grid.Row="1" Margin="0,6,0,0" Content="Approval Template" />
-						<ComboBox
-							Name="PluginApprovalProcessComboBox"
-							Grid.Column="1"
-							Margin="3,0,3,0"
-							VerticalAlignment="Top"
-							DisplayMemberPath="Value"
-							ItemsSource="{Binding PluginApprovalProcesses, ElementName=This}"
-							SelectedValue="{Binding PluginApprovalProcess}"
-							SelectedValuePath="Key" />
-						<ComboBox
-							Name="PluginApprovalTemplateComboBox"
-							Grid.Row="1"
-							Grid.Column="1"
-							Margin="3,6,3,3"
-							VerticalAlignment="Top"
-							DisplayMemberPath="Value"
-							ItemsSource="{Binding PluginApprovalTemplates, ElementName=This}"
-							SelectedValue="{Binding PluginApprovalTemplate}"
-							SelectedValuePath="Key" />
-					</Grid>
-				</GroupBox>
+
 			</WrapPanel>
 			<!--  Row 2  -->
 			<Grid Grid.Row="2" Grid.ColumnSpan="4">

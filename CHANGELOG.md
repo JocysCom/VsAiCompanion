@@ -1,6 +1,8 @@
 2024-02-22 v1.4.24
 
 - Update: Added a "context type" property to documents to improve AI responses.
+- Update: Updated the item template control.
+- New: Added splash screen to the standalone app.
 
 2024-02-20 v1.4.21
 
