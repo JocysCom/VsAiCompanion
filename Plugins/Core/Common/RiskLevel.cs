@@ -5,12 +5,16 @@
 	public enum RiskLevel : int
 	{
 		/// <summary>Unknown</summary>
-		Unknown = 0,
+		Unknown,
+		/// <summary>None</summary>
+		None,
 		/// <summary>Low</summary>
 		Low,
 		/// <summary>Medium</summary>
 		Medium,
 		/// <summary>High</summary>
 		High,
+		/// <summary>Critical</summary>
+		Critical,
 	}
 }

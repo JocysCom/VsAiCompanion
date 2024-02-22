@@ -31,8 +31,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var iconName = Resources.Icons.Icons_Default.Icon_piece_grey;
 			switch (RiskLevel)
 			{
-				case RiskLevel.Unknown:
-					break;
 				case RiskLevel.Low:
 					iconName = Resources.Icons.Icons_Default.Icon_piece_green;
 					break;

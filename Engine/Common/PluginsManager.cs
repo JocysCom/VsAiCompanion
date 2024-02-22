@@ -38,6 +38,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 						AddMethods(typeof(Basic));
 						AddMethods(typeof(VisualStudio));
 						AddMethods(typeof(Database));
+#if DEBUG
+						AddMethods(typeof(Lists));
+						AddMethods(typeof(Search));
+						AddMethods(typeof(Automation));
+#endif
+
 					}
 					return _PluginFunctions;
 				}

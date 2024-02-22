@@ -4,6 +4,40 @@
         <name>JocysCom.VS.AiCompanion.Plugins.Core</name>
     </assembly>
     <members>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Automation">
+            <summary>
+            Use to navigate via UI of the application.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuOptions(System.String)">
+            <summary>
+            Method to retrieve current menu options or choices.
+            </summary>
+            <param name="menuContext">The context of the menu to retrieve options from.</param>
+            <returns>An array of menu options.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuSelection(System.String)">
+            <summary>
+            Method to see where selection is in the menu.
+            </summary>
+            <param name="menuContext">The context of the menu to check for selection.</param>
+            <returns>The currently selected menu option.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SelectMenuOption(System.String,System.String)">
+            <summary>
+            Method to select a menu option.
+            </summary>
+            <param name="menuContext">The context of the menu where selection will be made.</param>
+            <param name="option">The option to select.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.NavigateToElement(System.String)">
+            <summary>
+            Method to navigate to a specific UI element (e.g., button, field).
+            </summary>
+            <param name="elementIdentifier">The identifier of the element to navigate to.</param>
+            <returns>True if the navigation was successful.</returns>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Basic">
             <summary>
             Helps AI to auto-continue on the task.
@@ -105,6 +139,9 @@
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Unknown">
             <summary>Unknown</summary>
         </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.None">
+            <summary>None</summary>
+        </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Low">
             <summary>Low</summary>
         </member>
@@ -113,6 +150,9 @@
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.High">
             <summary>High</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Critical">
+            <summary>Critical</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute">
             <summary>
@@ -224,6 +264,25 @@
             <summary>
             Index and search.
             </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Search._databasePath">
+            <summary>
+            Database path. Set by external program.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder(System.String,System.String)">
+            <summary>
+            Index a specific folder.
+            </summary>
+            <param name="indexName">Index name.</param>
+            <param name="folderPath">Folder path.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchIndex(System.String,System.String)">
+            <summary>
+            Search an index and return search results.
+            </summary>
+            <param name="indexName">Index name.</param>
+            <param name="searchString">Search string.</param>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
             <summary>
