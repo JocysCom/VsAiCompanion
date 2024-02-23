@@ -41,7 +41,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 						AddMethods(typeof(Database));
 #if DEBUG
 						AddMethods(typeof(Lists));
+
+						Search._databasePath = Global.PluginsSearchPath;
 						AddMethods(typeof(Search));
+
 						AddMethods(typeof(Automation));
 #endif
 

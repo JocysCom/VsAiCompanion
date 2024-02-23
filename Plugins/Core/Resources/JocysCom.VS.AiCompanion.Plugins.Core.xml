@@ -272,7 +272,7 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder(System.String,System.String)">
             <summary>
-            Index a specific folder.
+            Index a specific folder. Returns true if successful.
             </summary>
             <param name="indexName">Index name.</param>
             <param name="folderPath">Folder path.</param>
@@ -404,9 +404,6 @@
             Visual Studio Document Item.
             </summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Language">
-            <summary>Code language of the document.</summary>
-        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Name">
             <summary>
             Name of the document.
@@ -414,16 +411,6 @@
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.FullName">
             <summary>Full path to the document.</summary>
-        </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Error">
-            <summary>
-            Error
-            </summary>
-        </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Kind">
-            <summary>
-            Optional Kind of the document.
-            </summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.IsFile">
             <summary>
@@ -441,6 +428,25 @@
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ContextType">
             <summary>Document context type.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Language">
+            <summary>Code language of the document.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Error">
+            <summary>
+            Error
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Kind">
+            <summary>
+            Optional Kind of the document.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Size">
+            <summary>Content size.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LastWrite">
+            <summary>Content size.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ContentHint">
             <summary>

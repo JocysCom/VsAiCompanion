@@ -35,9 +35,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 
 		private const string PhysicalFile_guid = "{6BB5F8EE-4483-11D3-8BCF-00C04F8EC28C}";
 
-		/// <summary>Code language of the document.</summary>
-		public string Language { get; set; }
-
 		/// <summary>
 		/// Name of the document.
 		/// </summary>
@@ -45,16 +42,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 
 		/// <summary>Full path to the document.</summary>
 		public string FullName { get; set; }
-
-		/// <summary>
-		/// Error
-		/// </summary>
-		public string Error { get; set; }
-
-		/// <summary>
-		/// Optional Kind of the document.
-		/// </summary>
-		public string Kind { get; set; }
 
 		/// <summary>
 		/// If physical file then...
@@ -73,6 +60,28 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>Document context type.</summary>
 		[DefaultValue(ContextType.None)]
 		public ContextType ContextType { get; set; }
+
+		/// <summary>Code language of the document.</summary>
+		public string Language { get; set; }
+
+		/// <summary>
+		/// Error
+		/// </summary>
+		public string Error { get; set; }
+
+		/// <summary>
+		/// Optional Kind of the document.
+		/// </summary>
+		public string Kind { get; set; }
+
+		/// <summary>Content size.</summary>
+		[DefaultValue(null)]
+		public long? Size { get; set; }
+
+		/// <summary>Content size.</summary>
+		[DefaultValue(null)]
+		public DateTime? LastWrite { get; set; }
+
 
 		/// <summary>
 		/// Hint for AI.

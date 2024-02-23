@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,39 +16,47 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Database path. Set by external program.
 		/// </summary>
-		public string _databasePath;
+		public static string _databasePath;
+
+		//public static Dictionary<string, string> GetIndexList() => new Dictionary<string, string>();
 
 		/// <summary>
-		/// Index a specific folder.
+		/// Index a specific folder. Returns true if successful.
 		/// </summary>
 		/// <param name="indexName">Index name.</param>
 		/// <param name="folderPath">Folder path.</param>
 		[RiskLevel(RiskLevel.Low)]
-		public void IndexFolder(string indexName, string folderPath)
+		public static bool IndexFolder(string indexName, string folderPath)
 		{
-			using (var db = new LiteDatabase(_databasePath))
-			{
-				var filesCollection = db.GetCollection<FileData>(indexName);
+			var di = new DirectoryInfo(_databasePath);
+			if (!di.Exists)
+				di.Create();
 
-				// Ensure we have an index on the Path field
-				filesCollection.EnsureIndex(x => x.Path);
+			var connectionString = Path.Combine(_databasePath, indexName + ".db");
+			using (var db = new LiteDatabase(connectionString))
+			{
+				var filesCollection = db.GetCollection<DocItem>(indexName);
+
+				// Ensure we have an index on the Path and Content fields
+				filesCollection.EnsureIndex(x => x.FullName);
+				filesCollection.EnsureIndex(x => x.ContentData);
 
 				foreach (var filePath in Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories))
 				{
 					var fileInfo = new FileInfo(filePath);
-
 					// Insert or update the file document in the LiteDB collection
-					var fileData = new FileData
+					var doc = new DocItem()
 					{
-						Path = fileInfo.FullName,
+						FullName = fileInfo.FullName,
 						Name = fileInfo.Name,
 						Size = fileInfo.Length,
-						LastModified = fileInfo.LastWriteTimeUtc
+						LastWrite = fileInfo.LastWriteTimeUtc,
 					};
-
-					filesCollection.Upsert(fileData);
+					doc.LoadData();
+					filesCollection.Upsert(doc);
 				}
 			}
+			return true;
 		}
 
 		/// <summary>
@@ -56,33 +65,28 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="indexName">Index name.</param>
 		/// <param name="searchString">Search string.</param>
 		[RiskLevel(RiskLevel.Low)]
-		public List<string> SearchIndex(string indexName, string searchString)
+		public static List<string> SearchIndex(string indexName, string searchString)
 		{
-			using (var db = new LiteDatabase(_databasePath))
+			var di = new DirectoryInfo(_databasePath);
+			if (!di.Exists)
+				di.Create();
+			var connectionString = Path.Combine(_databasePath, indexName + ".db");
+			using (var db = new LiteDatabase(connectionString))
 			{
-				var filesCollection = db.GetCollection<FileData>(indexName);
-
-				// Perform the search using a simple string Contains query
-				var results = filesCollection.Find(x => x.Name.Contains(searchString));
-
+				var filesCollection = db.GetCollection<DocItem>(indexName);
+				// Perform the search within the file contents, as well as the file name
+				var results = filesCollection.Find(x =>
+					x.FullName.Contains(searchString) ||
+					x.ContentData.Contains(searchString));
 				// Print out the results
 				foreach (var file in results)
 				{
-					Console.WriteLine($"Found: {file.Path}");
+					Console.WriteLine($"Found: {file.FullName}");
 				}
-				return new List<string>(results.Select(x => x.Path));
+				return new List<string>(results.Select(x => x.FullName));
 			}
 		}
 
-		// A simple POCO (Plain Old CLR Object) to represent a file's data
-		private class FileData
-		{
-			public int Id { get; set; }
-			public string Path { get; set; }
-			public string Name { get; set; }
-			public long Size { get; set; }
-			public DateTime LastModified { get; set; }
-		}
 	}
 
 }

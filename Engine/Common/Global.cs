@@ -108,6 +108,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static string AssistantsPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(Assistants));
 
+		public static string PluginsSearchPath
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(Plugins), nameof(Plugins.Core.Search));
+
 		public static string GetPath(AssistantItem item, params string[] args)
 		{
 			var itemPath = new string[] { AssistantsPath, item.Name };

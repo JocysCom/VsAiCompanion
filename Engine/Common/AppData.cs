@@ -34,6 +34,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool BarAlwaysOnTop { get => _BarAlwaysOnTop; set => SetProperty(ref _BarAlwaysOnTop, value); }
 		private bool _BarAlwaysOnTop;
 
+		[DefaultValue(null)]
+		public string ConfigurationUrl { get => _ConfigurationUrl; set => SetProperty(ref _ConfigurationUrl, value); }
+		private string _ConfigurationUrl;
+
 		#region Positions and Locations
 
 		public PositionSettings StartPosition
