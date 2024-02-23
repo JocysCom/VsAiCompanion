@@ -1340,11 +1340,11 @@
 							CornerRadius="5" />
 						<StackPanel>
 							<Border
-								Margin="10,0,10,0"
+								Margin="10,2,10,2"
 								HorizontalAlignment="Left"
 								VerticalAlignment="Top"
 								Background="{StaticResource BackgroundLight}">
-								<ContentPresenter Margin="5" ContentSource="Header" />
+								<ContentPresenter Margin="5,3,5,3" ContentSource="Header" />
 							</Border>
 							<ContentPresenter Margin="{TemplateBinding Padding}" ContentSource="Content" />
 						</StackPanel>

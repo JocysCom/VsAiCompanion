@@ -42,11 +42,7 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<!--  Row 0  -->
-			<StackPanel
-				Grid.Row="0"
-				Grid.Column="0"
-				Grid.ColumnSpan="3"
-				Orientation="Vertical">
+			<StackPanel Grid.ColumnSpan="3" Orientation="Vertical">
 				<StackPanel Orientation="Horizontal">
 					<Button
 						Name="ListToggleButton"
@@ -56,7 +52,11 @@
 						<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 					</Button>
 					<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" />
-					<CheckBox Name="IsPreviewCheckBox" Content="Preview" IsChecked="{Binding IsPreview}" />
+					<CheckBox
+						Name="IsPreviewCheckBox"
+						VerticalAlignment="Center"
+						Content="Preview"
+						IsChecked="{Binding IsPreview}" />
 					<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
 					<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
 					<Slider
@@ -71,8 +71,14 @@
 					<!--  Value="{Binding Creativity}"  -->
 					<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
 				</StackPanel>
+
 				<StackPanel Orientation="Horizontal">
-					<CheckBox Name="PluginsEnableContextCheckBox" Content="Use Plugins" IsChecked="{Binding PluginsEnabled}" />
+					<CheckBox
+						Name="PluginsEnableContextCheckBox"
+						Margin="4,1,0,0"
+						VerticalAlignment="Center"
+						Content="Use Plugins"
+						IsChecked="{Binding PluginsEnabled}" />
 					<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Approval_Type}" />
 					<ComboBox
 						Name="PluginApprovalProcessComboBox"
@@ -88,7 +94,10 @@
 						SelectedValue="{Binding PluginApprovalTemplate}"
 						SelectedValuePath="Key" />
 				</StackPanel>
-
+				<Border
+				Margin="0,0,0,-1"
+				BorderBrush="{StaticResource BorderDark}"
+				BorderThickness="0,0,0,1" />
 			</StackPanel>
 			<Button
 				Name="BarToggleButton"
@@ -225,7 +234,6 @@
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>
-
 			</WrapPanel>
 			<!--  Row 2  -->
 			<Grid Grid.Row="2" Grid.ColumnSpan="4">
