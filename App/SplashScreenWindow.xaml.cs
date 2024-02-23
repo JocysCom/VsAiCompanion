@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion
 {
@@ -11,5 +12,12 @@ namespace JocysCom.VS.AiCompanion
 		{
 			InitializeComponent();
 		}
+
+		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+		{
+			base.OnMouseLeftButtonDown(e);
+			DragMove();
+		}
+
 	}
 }

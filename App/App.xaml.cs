@@ -35,6 +35,9 @@ namespace JocysCom.VS.AiCompanion
 				SetDPIAware();
 				System.Windows.Forms.Application.EnableVisualStyles();
 				System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+				// Create tray manager first (initialize new default window).
+				TrayManager = new TrayManager();
+				TrayManager.OnExitClick += TrayManager_OnExitClick;
 			}
 			catch (Exception ex)
 			{
@@ -167,6 +170,69 @@ namespace JocysCom.VS.AiCompanion
 				NativeMethods.SetProcessDPIAware();
 		}
 
+		public void LoadMainWindow()
+		{
+			// Error in this can casue Message box display whith will call OnStartup(StartupEventArgs e)
+			// Which use tray manager.
+			Global.LoadSettings();
+			StartHelper.OnClose += StartHelper_OnClose;
+			StartHelper.OnRestore += StartHelper_OnRestore;
+			// ----------------------------------------------
+			Global.GetClipboard = AppHelper.GetClipboard;
+			Global.SetClipboard = AppHelper.SetClipboard;
+			var window = new Engine.MainWindow();
+			TrayManager.SetSettigns(Global.AppSettings);
+			TrayManager.CreateTrayIcon();
+			TrayManager.SetTrayFromWindow(window);
+			TrayManager.SetWindow(window);
+			// Create an instance of the MainWindow from the referenced library
+			// Set it as the main window and show it
+			MainWindow = window;
+			TrayManager.ProcessGetCommandLineArgs();
+			Global.Tasks.Items.ListChanged += Items_ListChanged;
+			_ = UpdateTrayMenu();
+		}
+
+		#region Splash Screen
+
+
+		private static Thread _splashThread;
+		private static SplashScreenWindow _splashScreen;
+
+
+
+		private void StartSplashScreen()
+		{
+			_splashScreen = new SplashScreenWindow();
+			_splashScreen.Show();
+			// DispatcherFrame approach for cleanly exiting
+			System.Windows.Threading.DispatcherFrame frame = new System.Windows.Threading.DispatcherFrame();
+			_splashScreen.Closed += (s, e) => frame.Continue = false;
+			System.Windows.Threading.Dispatcher.PushFrame(frame);
+			// Start the dispatcher processing
+			System.Windows.Threading.Dispatcher.Run();
+		}
+
+		private void CloseSplashScreen()
+		{
+			if (_splashScreen != null)
+			{
+				var operation = _splashScreen.Dispatcher.BeginInvoke(new Action(() =>
+				{
+					_splashScreen.Close();
+					System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
+					{
+						System.Windows.Threading.Dispatcher.ExitAllFrames();
+					}), System.Windows.Threading.DispatcherPriority.Background);
+				}));
+
+				_splashThread.Join();
+				_splashThread = null;
+			}
+		}
+
+		#endregion
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			if (!allowToRun)
@@ -177,35 +243,15 @@ namespace JocysCom.VS.AiCompanion
 			base.OnStartup(e);
 			try
 			{
-				SplashScreenWindow splashScreen = null;
 				if (windowState != WindowState.Minimized)
 				{
-					splashScreen = new SplashScreenWindow();
-					splashScreen.Show();
+					// Start the splash screen on a separate thread
+					_splashThread = new Thread(StartSplashScreen);
+					_splashThread.SetApartmentState(ApartmentState.STA);
+					_splashThread.Start();
 				}
-				// Create tray manager first.
-				TrayManager = new TrayManager();
-				TrayManager.OnExitClick += TrayManager_OnExitClick;
-				// Error in this can casue Message box display whith will call OnStartup(StartupEventArgs e)
-				// Which use tray manager.
-				Global.LoadSettings();
-				StartHelper.OnClose += StartHelper_OnClose;
-				StartHelper.OnRestore += StartHelper_OnRestore;
-				// ----------------------------------------------
-				Global.GetClipboard = AppHelper.GetClipboard;
-				Global.SetClipboard = AppHelper.SetClipboard;
-				var window = new Engine.MainWindow();
-				TrayManager.SetSettigns(Global.AppSettings);
-				TrayManager.CreateTrayIcon();
-				TrayManager.SetTrayFromWindow(window);
-				TrayManager.SetWindow(window);
-				// Create an instance of the MainWindow from the referenced library
-				// Set it as the main window and show it
-				MainWindow = window;
-				TrayManager.ProcessGetCommandLineArgs();
-				Global.Tasks.Items.ListChanged += Items_ListChanged;
-				_ = UpdateTrayMenu();
-				splashScreen?.Close();
+				LoadMainWindow();
+				CloseSplashScreen();
 			}
 			catch (Exception ex)
 			{

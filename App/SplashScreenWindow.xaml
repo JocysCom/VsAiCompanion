@@ -5,8 +5,8 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Title="Jocys.com VS AI Companion"
-	Width="512"
-	Height="512"
+	Width="256"
+	Height="256"
 	AllowsTransparency="True"
 	Background="Transparent"
 	Opacity="0.9"
@@ -23,11 +23,11 @@
 	<Grid>
 		<ContentControl Content="{StaticResource Icon_AiCompanion}" />
 		<Label
-			Margin="0,94,0,0"
+			Margin="0,43,0,0"
 			HorizontalAlignment="Center"
 			VerticalAlignment="Top"
 			Content="AI Companion • Loading..."
-			FontSize="18"
+			FontSize="12"
 			FontWeight="SemiBold"
 			Foreground="White"
 			Opacity="0.5" />
