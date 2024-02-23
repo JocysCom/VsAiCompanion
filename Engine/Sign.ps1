@@ -13,7 +13,7 @@ if (!(Test-Path $modulePath)) {
 
 function Main {
 	Import-Module $modulePath -Force
-	[string]$appName = "Jocys.com VS AI Companion Plugins Core"
+	[string]$appName = "Jocys.com VS AI Companion Engine"
 	[string]$appLink = "https://www.jocys.com"
 	ProcessFile $appName $appLink $TargetPath
 }
