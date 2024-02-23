@@ -20,6 +20,9 @@
 		<RepositoryType>git</RepositoryType>
 		<AssemblyVersion>1.3.29</AssemblyVersion>
 		<FileVersion>1.3.29</FileVersion>
+		<SignAssembly>False</SignAssembly>
+		<DelaySign>False</DelaySign>
+		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,5 +38,17 @@
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.Net.Http" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="JocysCom\MakeLinks.ps1.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="JocysCom\MakeLinks.ps1.cs" />
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
+	</Target>
 
 </Project>

@@ -18,6 +18,7 @@
 			 on the target machine.
 		 -->
 		<IncludeNativeLibrariesForSelfExtract>True</IncludeNativeLibrariesForSelfExtract>
+		<SignAssembly>False</SignAssembly>
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

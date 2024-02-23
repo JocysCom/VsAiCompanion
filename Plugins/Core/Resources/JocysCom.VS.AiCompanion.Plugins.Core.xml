@@ -652,25 +652,5 @@
             Get information about current Visual Studio environment.
             </summary>
         </member>
-        <member name="M:MakeLinks.IsHardLinked(System.String,System.String)">
-            <summary>
-            Returns 'true' if both files are hard linked.
-            </summary>
-        </member>
-        <member name="M:MakeLinks.UpdateLinkTimeFromFile(System.String,System.String)">
-            <summary>
-            Update creation, last write, and last access time of the link file to match the target file.
-            </summary>
-        </member>
-        <member name="M:MakeLinks.CreateFile(System.String,System.Int32,System.IO.FileShare,System.UInt32,System.IO.FileMode,System.Int32,System.IntPtr)">
-            <summary>
-            https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
-            </summary>
-        </member>
-        <member name="M:MakeLinks.SetFileInformationByHandle(Microsoft.Win32.SafeHandles.SafeFileHandle,System.Int32,MakeLinks.FILE_BASIC_INFO@,System.UInt32)">
-            <summary>
-            https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfileinformationbyhandle
-            </summary>
-        </member>
     </members>
 </doc>
