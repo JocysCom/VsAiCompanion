@@ -19,18 +19,18 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>Selection.</summary>
 		[Description("Selection"), JsonPropertyOrder(2)]
 		Selection = 2,
-		/// <summary>Active open document.</summary>
-		[Description("Open Active Document"), JsonPropertyOrder(3)]
-		ActiveDocument = 4,
+		/// <summary>Current active open document.</summary>
+		[Description("Current Document"), JsonPropertyOrder(3)]
+		CurrentDocument = 4,
 		/// <summary>Open documents.</summary>
 		[Description("Open Documents"), JsonPropertyOrder(4)]
 		OpenDocuments = 8192,
 		/// <summary>Selected documents in Solution Explorer.</summary>
 		[Description("Selected Documents"), JsonPropertyOrder(5)]
 		SelectedDocuments = 8,
-		/// <summary>Active Project of active document.</summary>
-		[Description("Active Project"), JsonPropertyOrder(6)]
-		ActiveProject = 16,
+		/// <summary>Current Project of currently active document.</summary>
+		[Description("Current Project"), JsonPropertyOrder(6)]
+		CurrentProject = 16,
 		/// <summary>Selected Project of selected document in Solution Explorer.</summary>
 		[Description("Selected Project"), JsonPropertyOrder(7)]
 		SelectedProject = 32,

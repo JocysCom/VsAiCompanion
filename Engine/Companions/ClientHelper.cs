@@ -160,63 +160,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					// If selected error in Visual Studio.
 					if (at.HasFlag(ContextType.Error))
 					{
-						var err = Global._SolutionHelper.GetSelectedError();
-						if (!string.IsNullOrEmpty(err?.Description))
+						var includeDocItemContents = at.HasFlag(ContextType.ErrorDocument);
+						var errs = Global._SolutionHelper.GetSelectedErrors(true, includeDocItemContents);
+						foreach (var err in errs)
 						{
+							if (string.IsNullOrEmpty(err?.Description))
+								continue;
 							var errorAttachment = new MessageAttachments(ContextType.Error, err);
 							m.Attachments.Add(errorAttachment);
 						}
 					}
 					// If active open document in Visual Studio.
-					if (at.HasFlag(ContextType.ActiveDocument))
+					if (at.HasFlag(ContextType.CurrentDocument))
 					{
-						var ad = Global._SolutionHelper.GetActiveDocument();
-						var adAttachment = new MessageAttachments(ContextType.ActiveDocument, ad.Language, ad.ContentData);
+						var ad = Global._SolutionHelper.GetCurrentDocument(true);
+						var adAttachment = new MessageAttachments(ContextType.CurrentDocument, ad.Language, ad.ContentData);
 						m.Attachments.Add(adAttachment);
 					}
 					if (at.HasFlag(ContextType.OpenDocuments))
-						fileItems.AddRange(Global._SolutionHelper.GetOpenDocuments());
+						fileItems.AddRange(Global._SolutionHelper.GetOpenDocuments(true));
 					if (at.HasFlag(ContextType.SelectedDocuments))
-						fileItems.AddRange(Global._SolutionHelper.GetDocumentsSelectedInExplorer());
-					if (at.HasFlag(ContextType.ActiveProject))
-						fileItems.AddRange(Global._SolutionHelper.GetDocumentsOfProjectOfActiveDocument());
+						fileItems.AddRange(Global._SolutionHelper.GetDocumentsSelectedInExplorer(true));
+					if (at.HasFlag(ContextType.CurrentProject))
+						fileItems.AddRange(Global._SolutionHelper.GetDocumentsOfProjectOfCurrentDocument(true));
 					if (at.HasFlag(ContextType.SelectedProject))
-						fileItems.AddRange(Global._SolutionHelper.GetDocumentsOfProjectOfSelectedDocument());
+						fileItems.AddRange(Global._SolutionHelper.GetDocumentsOfProjectOfSelectedDocument(true));
 					if (at.HasFlag(ContextType.Solution))
-						fileItems.AddRange(Global._SolutionHelper.GetAllSolutionDocuments());
-					if (at.HasFlag(ContextType.ErrorDocument))
-					{
-						var doc = Global._SolutionHelper.GetSelectedErrorDocument();
-						if (doc == null)
-						{
-							Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an error in the Visual Studio Error List.");
-							return;
-						}
-						else
-						{
-							fileItems.Add(doc);
-						}
-					}
+						fileItems.AddRange(Global._SolutionHelper.GetAllSolutionDocuments(true));
 					if (at.HasFlag(ContextType.Exception))
 					{
-						var ei = Global._SolutionHelper.GetCurrentException();
+						var includeDocItemContents = at.HasFlag(ContextType.ExceptionDocuments);
+						var ei = Global._SolutionHelper.GetCurrentException(true, includeDocItemContents);
 						if (!string.IsNullOrEmpty(ei?.Message))
 						{
 							var exceptionAttachment = new MessageAttachments(ContextType.Exception, ei);
 							m.Attachments.Add(exceptionAttachment);
 						}
-					}
-					if (at.HasFlag(ContextType.ExceptionDocuments))
-					{
-						// Get files for exception.
-						var exceptionFiles = Global._SolutionHelper.GetCurrentExceptionDocuments();
-						// Extract files if exception info was pasted manually inside the message.
-						var messagePaths = AppHelper.ExtractFilePaths(itemText);
-						var uniquePaths = messagePaths
-							.Where(x => exceptionFiles.All(y => !x.Equals(y.FullName, StringComparison.OrdinalIgnoreCase)));
-						var messageFiles = uniquePaths.Select(x => new DocItem(null, x)).ToList();
-						fileItems.AddRange(exceptionFiles);
-						fileItems.AddRange(messageFiles);
 					}
 				}
 				// Attach files as message attachments at the end.
@@ -550,16 +529,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (item.AutoFormatCode)
 					Global._SolutionHelper.EditFormatSelection();
 			}
-			else if (item.AttachContext == ContextType.ActiveDocument && Global.IsVsExtesion)
+			else if (item.AttachContext == ContextType.CurrentDocument && Global.IsVsExtesion)
 			{
 				var vsData = AppHelper.GetMacroValues();
 				var code = AppHelper.GetCodeFromReply(data);
 				if (item.AutoOperation == DataOperation.Replace)
-					Global._SolutionHelper.SetActiveDocumentContents(code);
+					Global._SolutionHelper.SetCurrentDocumentContents(code);
 				if (item.AutoOperation == DataOperation.InsertBefore)
-					Global._SolutionHelper.SetActiveDocumentContents(code + vsData.Selection.ContentData);
+					Global._SolutionHelper.SetCurrentDocumentContents(code + vsData.Selection.ContentData);
 				if (item.AutoOperation == DataOperation.InsertAfter)
-					Global._SolutionHelper.SetActiveDocumentContents(vsData.Selection.ContentData + code);
+					Global._SolutionHelper.SetCurrentDocumentContents(vsData.Selection.ContentData + code);
 				if (item.AutoFormatCode)
 					Global._SolutionHelper.EditFormatDocument();
 			}

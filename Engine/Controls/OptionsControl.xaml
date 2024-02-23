@@ -76,7 +76,7 @@
 			</TabItem>
 		</TabControl>
 
-		<GroupBox Grid.Row="2" Margin="3,0,3,0" Header="Enterprise Options">
+		<GroupBox x:Name="EnterpriseOptionsGroupBox" Grid.Row="2" Margin="3,0,3,0" Header="Enterprise Options">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />

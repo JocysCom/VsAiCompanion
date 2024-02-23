@@ -1,3 +1,7 @@
+2024-02-23 v1.4.25
+
+- Fix: Downgraded some packages so that Extension can run on older versions of VS 2022.
+
 2024-02-22 v1.4.24
 
 - Update: Added a "context type" property to documents to improve AI responses.

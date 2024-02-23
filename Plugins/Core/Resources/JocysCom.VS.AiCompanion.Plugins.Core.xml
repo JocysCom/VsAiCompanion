@@ -300,40 +300,40 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetActiveDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument(System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocument(System.String)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments(System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentExceptionDocuments">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException(System.Boolean,System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfActiveDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfCurrentDocument(System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument(System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer(System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments(System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedError">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrorDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrors(System.Boolean,System.Boolean)">
             <inheritdoc />
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetActiveDocumentContents(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents(System.String)">
             <inheritdoc />
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
@@ -356,8 +356,8 @@
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Selection">
             <summary>Selection.</summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ActiveDocument">
-            <summary>Active open document.</summary>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.CurrentDocument">
+            <summary>Current active open document.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.OpenDocuments">
             <summary>Open documents.</summary>
@@ -365,8 +365,8 @@
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.SelectedDocuments">
             <summary>Selected documents in Solution Explorer.</summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ActiveProject">
-            <summary>Active Project of active document.</summary>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.CurrentProject">
+            <summary>Current Project of currently active document.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.SelectedProject">
             <summary>Selected Project of selected document in Solution Explorer.</summary>
@@ -503,30 +503,43 @@
             Code error information.
             </summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.Description">
-            <summary>
-            Error description.
-            </summary>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.ErrorLevel">
+            <summary>Error level</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.Project">
+            <summary>Project.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.File">
-            <summary>
-            Error file.
-            </summary>
+            <summary>Error file.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.Line">
-            <summary>
-            Error line.
-            </summary>
+            <summary>Error line.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.Column">
-            <summary>
-            Error column.
-            </summary>
+            <summary>Error column.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.Description">
+            <summary>Error description.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.Category">
+            <summary>Error categories.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem.DocumentFile">
+            <summary>Document file related to the error.</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel">
             <summary>
-            Error categories.
+            Build Error level.
             </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel.Low">
+            <summary>Low</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel.Medium">
+            <summary>Medium</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel.High">
+            <summary>High</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ExceptionInfo">
             <summary>
@@ -564,45 +577,58 @@
             handling errors, and formatting code.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetAllSolutionDocuments">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetAllSolutionDocuments(System.Boolean)">
             <summary>
             Retrieves all Documents throughout the entire solution.
             </summary>
+            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>A collection of all Documents within the solution.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsOfProjectOfActiveDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsOfProjectOfCurrentDocument(System.Boolean)">
             <summary>
             Retrieves all Documents within the project of the currently active Document.
             </summary>
+            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>A collection of Documents from the same project as the active Document.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsOfProjectOfSelectedDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsOfProjectOfSelectedDocument(System.Boolean)">
             <summary>
             Retrieves all Documents within the project of a Document selected by the user.
             </summary>
+            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>A collection of Documents from the project of the selected Document.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsSelectedInExplorer">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsSelectedInExplorer(System.Boolean)">
             <summary>
             Retrieves all Documents currently selected in the Solution Explorer.
             </summary>
+            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>A collection of Documents selected in the Solution Explorer.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetOpenDocuments">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetOpenDocuments(System.Boolean)">
             <summary>
             Retrieves all Documents that are currently open in the editor.
             </summary>
+            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>A collection of open Documents.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetActiveDocument">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetCurrentDocument(System.Boolean)">
             <summary>
-            Retrieves the Document currently active in the editor.
+            Retrieves the Document currently open and active in the editor.
             </summary>
+            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>The active Document.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetActiveDocumentContents(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetCurrentDocument(System.String)">
             <summary>
-            Sets the content if the active Document in the editor. Returns `true` if action was successfull.
+            Sets document as current. If document is not open, then it opens the document. Returns `true` if action was successfull.
+            </summary>
+            <param name="fullName">Full path to the document.</param>
+            <returns>The active Document.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetCurrentDocumentContents(System.String)">
+            <summary>
+            Sets the content of the currently open and active Document in the editor. Returns `true` if action was successfull.
             </summary>
             <param name="contents">The Document to be made active.</param>
         </member>
@@ -617,29 +643,32 @@
             </summary>
             <param name="contents">The selection data to be applied to the active Document.</param>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetSelectedError">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
             <summary>
-            Retrieves the error currently selected in the Error List Window.
+            Retrieves a list of errors. Results can by filtered.
             </summary>
+            <param name="errorLevel">The error level to filter by. If null, all error levels are considered.</param>
+            <param name="project">The specific project to filter errors by. If null, errors from all projects are considered.</param>
+            <param name="fileName">The specific file name to filter errors by. If null, errors from all files are considered.</param>
+            <param name="includeDocItem">If true, includes the document item associated with each error.</param>
+            <param name="includeDocItemContents">If true, additionally loads the contents of the document item associated with each error. This parameter is effective only if <paramref name="includeDocItem"/> is also true.</param>
+            <returns>A list of <see cref="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem"/> objects representing the filtered errors.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetSelectedErrors(System.Boolean,System.Boolean)">
+            <summary>
+            Retrieves errors currently selected in the Error List Window.
+            </summary>
+            <param name="includeDocItem">Includes the Document associated with the errors.</param>
+            <param name="includeDocItemContents">Includes Document file contents.</param>
             <returns>The selected error information.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetSelectedErrorDocument">
-            <summary>
-            Retrieves the Document associated with the error currently selected in the Error List Window.
-            </summary>
-            <returns>The Document containing the selected error.</returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetCurrentException">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetCurrentException(System.Boolean,System.Boolean)">
             <summary>
             Retrieves information about the currently caught exception, if any.
             </summary>
+            <param name="includeDocItems">Includes the Document associated with the Exception.</param>
+            <param name="includeDocItemsContents">Includes Document file contents.</param>
             <returns>The information about the current exception.</returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetCurrentExceptionDocuments">
-            <summary>
-            Retrieves Documents related to the currently caught exception.
-            </summary>
-            <returns>A collection of Documents associated with the current exception.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.EditFormatDocument">
             <summary>

@@ -41,7 +41,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (Global.IsVsExtesion)
 				mv.Selection = Global._SolutionHelper.GetSelection();
 			if (Global.IsVsExtesion)
-				mv.Document = Global._SolutionHelper.GetActiveDocument() ?? new DocItem();
+				mv.Document = Global._SolutionHelper.GetCurrentDocument(true) ?? new DocItem();
 			return mv;
 		}
 

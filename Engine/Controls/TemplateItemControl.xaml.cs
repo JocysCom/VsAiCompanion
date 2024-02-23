@@ -203,10 +203,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					var values = new ContextType[] {
 						ContextType.Clipboard,
 						ContextType.Selection,
-						ContextType.ActiveDocument,
+						ContextType.CurrentDocument,
 						ContextType.OpenDocuments,
 						ContextType.SelectedDocuments,
-						ContextType.ActiveProject,
+						ContextType.CurrentProject,
 						ContextType.SelectedProject,
 						ContextType.Solution,
 					};

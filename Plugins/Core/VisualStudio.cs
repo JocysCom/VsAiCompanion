@@ -23,52 +23,64 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.EditFormatSelection();
 
 		/// <inheritdoc />
-		public DocItem GetActiveDocument()
-			=> Current.GetActiveDocument();
+		public DocItem GetCurrentDocument(bool includeContents)
+			=> Current.GetCurrentDocument(includeContents);
 
 		/// <inheritdoc />
-		public IList<DocItem> GetAllSolutionDocuments()
-			=> Current.GetAllSolutionDocuments();
+		public bool SetCurrentDocument(string fileName)
+			=> Current.SetCurrentDocument(fileName);
 
 		/// <inheritdoc />
-		public ExceptionInfo GetCurrentException()
-			=> Current.GetCurrentException();
+		public IList<DocItem> GetAllSolutionDocuments(bool includeContents)
+			=> Current.GetAllSolutionDocuments(includeContents);
 
 		/// <inheritdoc />
-		public IList<DocItem> GetCurrentExceptionDocuments()
-			=> Current.GetCurrentExceptionDocuments();
+		public ExceptionInfo GetCurrentException(bool includeDocItem, bool includeDocItemContents)
+			=> Current.GetCurrentException(includeDocItem, includeDocItemContents);
 
 		/// <inheritdoc />
-		public IList<DocItem> GetDocumentsOfProjectOfActiveDocument()
-			=> Current.GetDocumentsOfProjectOfActiveDocument();
+		public IList<DocItem> GetDocumentsOfProjectOfCurrentDocument(bool includeContents)
+			=> Current.GetDocumentsOfProjectOfCurrentDocument(includeContents);
 
 		/// <inheritdoc />
-		public IList<DocItem> GetDocumentsOfProjectOfSelectedDocument()
-			=> Current.GetDocumentsOfProjectOfSelectedDocument();
+		public IList<DocItem> GetDocumentsOfProjectOfSelectedDocument(bool includeContents)
+			=> Current.GetDocumentsOfProjectOfSelectedDocument(includeContents);
 
 		/// <inheritdoc />
-		public IList<DocItem> GetDocumentsSelectedInExplorer()
-			=> Current.GetDocumentsSelectedInExplorer();
+		public IList<DocItem> GetDocumentsSelectedInExplorer(bool includeContents)
+			=> Current.GetDocumentsSelectedInExplorer(includeContents);
 
 		/// <inheritdoc />
-		public IList<DocItem> GetOpenDocuments()
-			=> Current.GetOpenDocuments();
+		public IList<DocItem> GetOpenDocuments(bool includeContents)
+			=> Current.GetOpenDocuments(includeContents);
 
 		/// <inheritdoc />
-		public ErrorItem GetSelectedError()
-			=> Current.GetSelectedError();
+		public IList<ErrorItem> GetErrors(
+			ErrorLevel? errorLevel = null,
+			string project = null,
+			string fileName = null,
+			bool includeDocItem = false,
+			bool includeDocItemContents = false)
+			=> Current.GetErrors(
+				errorLevel,
+				project,
+				fileName,
+				includeDocItem,
+				includeDocItemContents
+			);
+
 
 		/// <inheritdoc />
-		public DocItem GetSelectedErrorDocument()
-			=> Current.GetSelectedErrorDocument();
+		public IList<ErrorItem> GetSelectedErrors(bool includeDocItem, bool includeDocItemContents)
+			=> Current.GetSelectedErrors(includeDocItem, includeDocItemContents);
 
 		/// <inheritdoc />
 		public DocItem GetSelection()
 			=> Current.GetSelection();
 
 		/// <inheritdoc />
-		public bool SetActiveDocumentContents(string contents)
-			=> Current.SetActiveDocumentContents(contents);
+		public bool SetCurrentDocumentContents(string contents)
+			=> Current.SetCurrentDocumentContents(contents);
 
 		/// <inheritdoc />
 		public bool SetSelection(string contents)

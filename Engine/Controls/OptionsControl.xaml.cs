@@ -13,6 +13,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			EnterpriseOptionsGroupBox.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			StartWithWindowsStateBox.ItemsSource = Enum.GetValues(typeof(WindowState));
 			SettingsFolderTextBox.Text = Global.AppData.XmlFile.Directory.FullName;

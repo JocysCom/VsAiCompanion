@@ -229,35 +229,37 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		#region Get Documents
 
-		public static DocItem GetDocumentsBySolution(Solution2 solution)
+		public static DocItem GetDocumentsBySolution(Solution2 solution, bool includeContents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var item = new DocItem("", solution.FullName, "Solution");
-			LoadData(new List<DocItem> { item });
+			if (includeContents)
+				LoadData(new List<DocItem> { item });
 			return item;
 		}
 
-		public static List<DocItem> GetDocumentsByProject(Project project)
+		public static List<DocItem> GetDocumentsByProject(Project project, bool includeContents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var items = new List<DocItem>();
 			RecurseProjectItems(project.ProjectItems, items);
-			LoadData(items);
+			if (includeContents)
+				LoadData(items);
 			return items;
 		}
 
 		/// <inheritdoc />
-		public IList<DocItem> GetDocumentsOfProjectOfActiveDocument()
+		public IList<DocItem> GetDocumentsOfProjectOfCurrentDocument(bool includeContent)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			return GetDocumentsByProject(GetProjectOfActiveDocument());
+			return GetDocumentsByProject(GetProjectOfActiveDocument(), includeContent);
 		}
 
 		/// <inheritdoc />
-		public IList<DocItem> GetDocumentsOfProjectOfSelectedDocument()
+		public IList<DocItem> GetDocumentsOfProjectOfSelectedDocument(bool includeContent)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			return GetDocumentsByProject(GetProjectOfSelectedDocument());
+			return GetDocumentsByProject(GetProjectOfSelectedDocument(), includeContent);
 		}
 
 		private static void RecurseProjectItems(ProjectItems projectItems, List<DocItem> items)
@@ -284,7 +286,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public IList<DocItem> GetDocumentsSelectedInExplorer()
+		public IList<DocItem> GetDocumentsSelectedInExplorer(bool includeContent)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var items = new List<DocItem>();
@@ -303,12 +305,13 @@ namespace JocysCom.VS.AiCompanion.Extension
 					}
 				}
 			}
-			LoadData(items);
+			if (includeContent)
+				LoadData(items);
 			return items;
 		}
 
 		/// <inheritdoc />
-		public IList<DocItem> GetAllSolutionDocuments()
+		public IList<DocItem> GetAllSolutionDocuments(bool includeContent)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var items = new List<DocItem>();
@@ -316,7 +319,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			if (solution == null)
 				return items;
 			// Add the solution file itself
-			items.Add(GetDocumentsBySolution(solution));
+			items.Add(GetDocumentsBySolution(solution, includeContent));
 			// Get all projects (including solution folders)
 			var projects = GetAllProjects();
 			// Add all files in each project or solution folder
@@ -326,12 +329,12 @@ namespace JocysCom.VS.AiCompanion.Extension
 				{
 					// If this is a solution folder, it might be the solution items
 					if (project.Name == "Solution Items")
-						items.AddRange(GetDocumentsByProject(project));
+						items.AddRange(GetDocumentsByProject(project, includeContent));
 				}
 				else
 				{
 					// This is a regular project
-					items.AddRange(GetDocumentsByProject(project));
+					items.AddRange(GetDocumentsByProject(project, includeContent));
 				}
 			}
 			return items;
@@ -419,10 +422,13 @@ namespace JocysCom.VS.AiCompanion.Extension
 		#region Context: Open Documents
 
 		/// <inheritdoc />
-		public IList<DocItem> GetOpenDocuments()
-			=> _GetOpenDocuments(true);
+		public IList<DocItem> GetOpenDocuments(bool includeContent)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			return _GetOpenDocuments(includeContent);
+		}
 
-		private IList<DocItem> _GetOpenDocuments(bool loadData)
+		private IList<DocItem> _GetOpenDocuments(bool includeContent)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
@@ -471,23 +477,63 @@ namespace JocysCom.VS.AiCompanion.Extension
 				}
 				items.Add(docItem);
 			}
-			var activeDocs = _GetActiveDocuments(false);
-			AddContextType(activeDocs, items, ContextType.ActiveDocument);
-			if (loadData)
+			var activeDocs = _GetCurrentDocuments(false);
+			AddContextType(activeDocs, items, ContextType.CurrentDocument);
+			if (includeContent)
 				LoadData(items);
 			return items;
 		}
 
 		#endregion
 
-		#region Context: Active Document 
+		#region Context: Current Document 
 
 		/// <inheritdoc />
-		public DocItem GetActiveDocument()
-			=> _GetActiveDocuments(true).FirstOrDefault() ?? new DocItem("");
+		public DocItem GetCurrentDocument(bool includeContent)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			return _GetCurrentDocuments(includeContent).FirstOrDefault() ?? new DocItem("");
+		}
 
 		/// <inheritdoc />
-		public bool SetActiveDocumentContents(string contents)
+		public bool SetCurrentDocument(string fullName)
+		{
+			// Switch to the main thread as required by most DTE operations.
+			ThreadHelper.ThrowIfNotOnUIThread();
+			try
+			{
+				// Get the DTE2 service.
+				var dte = GetCurrentService();
+				// Iterate through the open documents to find a match.
+				Document documentToActivate = null;
+				foreach (Document doc in dte.Documents)
+				{
+					if (doc.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+					{
+						documentToActivate = doc;
+						break;
+					}
+				}
+				// If a matching document was found, activate it.
+				if (documentToActivate != null)
+				{
+					documentToActivate.Activate();
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				// Log or handle exceptions as necessary.
+				// This catches general exceptions for simplification.
+				// Consider more specific exception handling in a real environment.
+				System.Diagnostics.Debug.WriteLine($"Error setting current document: {ex.Message}");
+			}
+			// Return false if the document was not found or could not be activated.
+			return false;
+		}
+
+		/// <inheritdoc />
+		public bool SetCurrentDocumentContents(string contents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var td = GetTextDocument();
@@ -498,7 +544,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return true;
 		}
 
-		private IList<DocItem> _GetActiveDocuments(bool loadData)
+		private IList<DocItem> _GetCurrentDocuments(bool includeContent)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var items = new List<DocItem>();
@@ -506,15 +552,15 @@ namespace JocysCom.VS.AiCompanion.Extension
 			if (td == null)
 				return items;
 			var di = new DocItem("", td.Parent?.FullName, td.Type);
-			di.ContextType = ContextType.ActiveDocument;
+			di.ContextType = ContextType.CurrentDocument;
 			di.Language = td.Language;
-			if (loadData)
+			if (includeContent)
 			{
 				var startPoint = td.StartPoint.CreateEditPoint();
 				var data = startPoint.GetText(td.EndPoint);
 				di.ContentData = data;
 			}
-			di.ContextType = ContextType.ActiveDocument;
+			di.ContextType = ContextType.CurrentDocument;
 			items.Add(di);
 			return items;
 		}
@@ -552,40 +598,67 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		#endregion
 
-		//public static List<ErrorItem> GetErrors()
-		//{
-		//	ThreadHelper.ThrowIfNotOnUIThread();
-		//	var dte = GetCurrentService();
-		//	var errorList = dte.ToolWindows.ErrorList;
-		//	var errorsCount = errorList.ErrorItems.Count;
-		//	var errors = new List<ErrorItem>();
-		//	for (int i = 0; i < errorsCount; i++)
-		//		errors.Add(errorList.ErrorItems.Item(i + 1));
-		//	return errors;
-		//}
-
 		/// <inheritdoc />
-		public DocItem GetSelectedErrorDocument()
+		public IList<Plugins.Core.VsFunctions.ErrorItem> GetErrors(
+			ErrorLevel? errorLevel = null,
+			string project = null,
+			string fileName = null,
+			bool includeDocItem = false,
+			bool includeDocItemContents = false
+		)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
-			var ei = GetSelectedError();
-			if (ei == null)
-				return null;
-			var di = new DocItem(null, ei.File, "Error Document");
-			di.Kind = di.Kind;
-			return di;
+			// Get the DTE2 service.
+			var dte = GetCurrentService();
+			var errors = new List<Plugins.Core.VsFunctions.ErrorItem>();
+			ErrorList errorList = dte.ToolWindows.ErrorList;
+			ErrorItems errorItems = errorList.ErrorItems;
+			for (int i = 1; i <= errorItems.Count; i++)
+			{
+				var errorItem = errorItems.Item(i);
+				var errLevel = (ErrorLevel)(int)errorItem.ErrorLevel;
+
+				if (errorLevel != null && errorLevel.Value != errLevel)
+					continue;
+				if (!string.IsNullOrEmpty(project) && errorItem.Project != project)
+					continue;
+				if (!string.IsNullOrEmpty(fileName) && errorItem.FileName != fileName)
+					continue;
+				var ei = new Plugins.Core.VsFunctions.ErrorItem
+				{
+					ErrorLevel = errLevel,
+					Project = errorItem.Project,
+					File = errorItem.FileName,
+					Line = errorItem.Line,
+					Column = errorItem.Column,
+					Description = errorItem.Description,
+				};
+				if (includeDocItem || includeDocItemContents)
+				{
+					var di = new DocItem(null, ei.File, "Error Document");
+					di.Kind = di.Kind; // May need actual kind retrieval logic.
+					if (includeDocItemContents)
+						di.LoadData();
+					ei.DocumentFile = di;
+				}
+			}
+			return errors;
 		}
 
-		public Plugins.Core.VsFunctions.ErrorItem GetSelectedError()
+		/// <inheritdoc />
+		public IList<Plugins.Core.VsFunctions.ErrorItem> GetSelectedErrors(bool includeDocItem, bool includeDocItemContents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			if (!(Package.GetGlobalService(typeof(SVsErrorList)) is IVsTaskList2 tasks))
 				return null;
-			tasks.EnumSelectedItems(out IVsEnumTaskItems itemsEnum);
-			var items = new IVsTaskItem[1];
-			var fetched = new uint[1];
-			itemsEnum.Next(1, items, fetched);
-			if (fetched[0] > 0)
+			var errorItems = new List<Plugins.Core.VsFunctions.ErrorItem>();
+			IVsEnumTaskItems itemsEnum;
+			// Filter based on selection
+			tasks.EnumSelectedItems(out itemsEnum);
+			IVsTaskItem[] items = new IVsTaskItem[1];
+			uint[] fetched = new uint[1];
+
+			while (itemsEnum.Next(1, items, fetched) == 0 && fetched[0] > 0)
 			{
 				IVsTaskItem task = items[0];
 				task.Document(out string file);
@@ -594,7 +667,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				task.get_Text(out string description);
 				var category = new VSTASKCATEGORY[1];
 				task.Category(category);
-				return new Plugins.Core.VsFunctions.ErrorItem
+				var ei = new Plugins.Core.VsFunctions.ErrorItem
 				{
 					File = file,
 					Line = line,
@@ -602,14 +675,23 @@ namespace JocysCom.VS.AiCompanion.Extension
 					Description = description,
 					Category = category?.Select(x => x.ToString()).ToArray()
 				};
+				if (includeDocItem || includeDocItemContents)
+				{
+					var di = new DocItem(null, ei.File, "Error Document");
+					di.Kind = di.Kind; // May need actual kind retrieval logic.
+					if (includeDocItemContents)
+						di.LoadData();
+					ei.DocumentFile = di;
+				}
+				errorItems.Add(ei);
 			}
-			return null;
+			return errorItems;
 		}
 
 		#region Exception
 
 		/// <inheritdoc />
-		public ExceptionInfo GetCurrentException()
+		public ExceptionInfo GetCurrentException(bool includeDocItem, bool includeDocItemContents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE2;
@@ -639,17 +721,17 @@ namespace JocysCom.VS.AiCompanion.Extension
 			// Alternative way to get StackTrace.
 			if (string.IsNullOrEmpty(ei.StackTrace))
 				ei.StackTrace = GetStackTrace(dte.Debugger.CurrentThread.StackFrames);
+			if (includeDocItem || includeDocItemContents)
+			{
+				var files = AppHelper.ExtractFilePaths(ei.ToString());
+				var items = files.Select(x => new DocItem(null, x)).ToList();
+				if (includeDocItemContents)
+				{
+					foreach (var item in items)
+						item.LoadData();
+				}
+			}
 			return ei;
-		}
-
-		/// <inheritdoc />
-		public IList<DocItem> GetCurrentExceptionDocuments()
-		{
-			ThreadHelper.ThrowIfNotOnUIThread();
-			var details = GetCurrentException().ToString();
-			var files = AppHelper.ExtractFilePaths(details);
-			var items = files.Select(x => new DocItem(null, x)).ToList();
-			return items;
 		}
 
 		#endregion
