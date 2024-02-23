@@ -4,6 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:JcControlsUc="clr-namespace:JocysCom.ClassLibrary.Controls.UpdateControl"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -77,8 +78,6 @@
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="AssistantsPanel" x:FieldModifier="public" DataType="Assistant" />
 			</TabItem>
-
-
 			<TabItem x:Name="PluginsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -98,6 +97,18 @@
 				</TabItem.Header>
 				<controls:OptionsControl x:Name="OptionsPanel" />
 			</TabItem>
+
+			<TabItem x:Name="UpdatesTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_user_group}" />
+						<Label Content="Updates" />
+					</StackPanel>
+				</TabItem.Header>
+				<JcControlsUc:UpdateUserControl x:Name="UpdatesPanel" x:FieldModifier="public" />
+			</TabItem>
+
+
 			<TabItem>
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

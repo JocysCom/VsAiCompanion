@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using JocysCom.ClassLibrary.Configuration;
+﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -27,6 +27,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			InfoPanel.Reset();
 			// Temporary: Hide "Assistants" feature for release users.
 			AssistantsTabItem.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			UpdatesTabItem.Visibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
 		}
