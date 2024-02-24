@@ -148,7 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		/// <summary>
-		/// Call functions requester by OpenAI API.
+		/// Call functions requeste by OpenAI API.
 		/// </summary>
 		/// <param name="item">User settings.</param>
 		/// <param name="json">function as JSON</param>
@@ -161,6 +161,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			System.Reflection.MethodInfo methodInfo;
 			if (PluginFunctions.TryGetValue(function.name, out methodInfo))
 			{
+				if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
+					return "The request to call the function was denied!";
 				if (!await ApproveExecution(item, function))
 					return null;
 				object classInstance = null;

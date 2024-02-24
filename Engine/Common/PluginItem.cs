@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
@@ -47,7 +48,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Id = (ClassFullName + "." + mi.Name).Trim('.');
 			var summary = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetSummaryText(mi));
 			var returns = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetReturnText(mi));
-			Description = summary + (string.IsNullOrEmpty(returns) ? "" : " Returns: " + returns);
+			var example = XmlDocHelper.GetExampleText(mi);
+			var lines = new List<string>();
+			if (!string.IsNullOrEmpty(summary))
+				lines.Add(summary);
+			if (!string.IsNullOrEmpty(returns))
+				lines.Add("Returns: " + returns);
+			if (!string.IsNullOrEmpty(example))
+				lines.Add(example);
+			Description = string.Join(Environment.NewLine, lines);
 			Mi = mi;
 			if (Params == null)
 				Params = new BindingList<PluginParam>();

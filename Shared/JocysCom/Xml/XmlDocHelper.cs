@@ -35,6 +35,23 @@ namespace JocysCom.ClassLibrary.Xml
 			return text;
 		}
 
+		public static string GetExampleText(MemberInfo mi)
+		{
+			var member = GetMemberDoc(mi);
+			var text = member?.example ?? "";
+			// If not set then...
+			if (!string.IsNullOrEmpty(text))
+				return text;
+			if (mi.MemberType == MemberTypes.Property)
+			{
+				//	Get class  summary.
+				var pi = mi as PropertyInfo;
+				text = GetSummary(pi.PropertyType);
+			}
+			return text;
+		}
+
+
 		public static string GetParamText(MethodInfo mi, ParameterInfo pi)
 		{
 			var member = GetMemberDoc(mi);
@@ -366,8 +383,10 @@ namespace JocysCom.ClassLibrary.Xml
 		[XmlElement("remarks")]
 		public List<XmlDocParam> remarks { get; set; }
 
+		public string example => XmlDocHelper.ConvertXmlNodesToText(exampleNodes);
+
 		[XmlElement("example")]
-		public List<XmlDocParam> example { get; set; }
+		public XmlNode[] exampleNodes { get; set; }
 
 		[XmlElement("param")]
 		public List<XmlDocParam> param { get; set; }

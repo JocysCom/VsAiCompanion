@@ -112,12 +112,19 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		bool SaveDocument(string fileName, string newFileName);
 
 		/// <summary>
-		/// Updates content of the current document by applying a series of changes described in a 'diff' format. 
-		/// This method is ideal for updating content data efficiently when only changes are known,
+		/// Updates content of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
+		/// This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
 		/// especially useful when bandwidth or storage is limited.
 		/// </summary>
-		/// <param name="changes">The string representation of the changes to apply.</param>
+		/// <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
 		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		/// <example>
+		/// 'changes' value Example:
+		/// @@ -14,12 +14,9 @@
+		///  rld 
+		/// -1%0ARemove
+		/// +2%0AAdd
+		/// </example>
 		[RiskLevel(RiskLevel.Medium)]
 		string ApplyCurrentDocumentContentsChanges(string changes);
 
@@ -144,12 +151,19 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		bool SetSelection(string contents);
 
 		/// <summary>
-		/// Updates the selection by applying a series of changes described in a 'diff' format. 
-		/// This method is ideal for updating files efficiently when only changes are known,
+		/// Updates selection of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
+		/// This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
 		/// especially useful when bandwidth or storage is limited.
 		/// </summary>
-		/// <param name="changes">The string representation of the changes to apply.</param>
+		/// <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
 		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		/// <example>
+		/// 'changes' value Example:
+		/// @@ -14,12 +14,9 @@
+		///  rld 
+		/// -1%0ARemove
+		/// +2%0AAdd
+		/// </example>
 		[RiskLevel(RiskLevel.Medium)]
 		string ApplySelectionChanges(string changes);
 

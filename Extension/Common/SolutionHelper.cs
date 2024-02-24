@@ -702,6 +702,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 						di.LoadData();
 					ei.DocumentFile = di;
 				}
+				errors.Add(ei);
 			}
 			return errors;
 		}
@@ -712,7 +713,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			ThreadHelper.ThrowIfNotOnUIThread();
 			if (!(Package.GetGlobalService(typeof(SVsErrorList)) is IVsTaskList2 tasks))
 				return null;
-			var errorItems = new List<Plugins.Core.VsFunctions.ErrorItem>();
+			var errors = new List<Plugins.Core.VsFunctions.ErrorItem>();
 			IVsEnumTaskItems itemsEnum;
 			// Filter based on selection
 			tasks.EnumSelectedItems(out itemsEnum);
@@ -744,9 +745,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 						di.LoadData();
 					ei.DocumentFile = di;
 				}
-				errorItems.Add(ei);
+				errors.Add(ei);
 			}
-			return errorItems;
+			return errors;
 		}
 
 		#region Exception
@@ -977,7 +978,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		#region Build Actions
 
 		/// <inheritdoc />
-		public string BuildSolutionProject(string fileName)
+		public string BuildSolutionProject(string fullName)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			DTE2 dte = GetCurrentService();
@@ -989,7 +990,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Project projectToBuild = null;
 			foreach (Project project in dte.Solution.Projects)
 			{
-				if (project.FullName == fileName)
+				if (project.FullName == fullName)
 				{
 					projectToBuild = project;
 					break;
@@ -997,7 +998,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			}
 
 			if (projectToBuild == null)
-				return $"Project with the name {fileName} could not be found.";
+				return $"Project with the name {fullName} could not be found.";
 			var solutionBuild = dte.Solution.SolutionBuild as SolutionBuild2;
 			if (solutionBuild == null)
 				return "Unable to access the solution build.";

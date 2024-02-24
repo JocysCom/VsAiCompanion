@@ -155,12 +155,19 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> DiffHelper.CompareFilesAndReturnChanges(originalFilePath, modifiedFilePath);
 
 		/// <summary>
-		/// Updates a file by applying a series of changes described in a 'diff' format. 
-		/// This method is ideal for updating files efficiently when only changes are known,
+		/// Updates content of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
+		/// This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
 		/// especially useful when bandwidth or storage is limited.
 		/// </summary>
+		/// <example>
+		/// 'changes' value Example:
+		/// @@ -14,12 +14,9 @@
+		///  rld 
+		/// -1%0ARemove
+		/// +2%0AAdd
+		/// </example>
 		/// <param name="filePath">The path to the file that needs to be updated.</param>
-		/// <param name="changes">The string representation of the changes to apply.</param>
+		/// <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
 		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
 		[RiskLevel(RiskLevel.High)]
 		public static string ApplyFileChanges(string filePath, string changes)

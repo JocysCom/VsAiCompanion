@@ -77,16 +77,15 @@
 						Name="PluginsEnableContextCheckBox"
 						Margin="4,1,0,0"
 						VerticalAlignment="Center"
-						Content="Use Plugins"
+						Content="Use"
 						IsChecked="{Binding PluginsEnabled}" />
-
-					<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Maximum_Risk_Level}" />
 					<ComboBox
 						Name="MaximumRiskLevelComboBox"
 						DisplayMemberPath="Value"
 						ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
 						SelectedValue="{Binding MaxRiskLevel}"
 						SelectedValuePath="Key" />
+					<Label VerticalAlignment="Center" Content="Risk Plugins:" />
 					<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Approval_Type}" />
 					<ComboBox
 						Name="PluginApprovalProcessComboBox"
