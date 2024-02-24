@@ -7,10 +7,9 @@
 	public class Automation
 	{
 		/// <summary>
-		/// Method to retrieve current menu options or choices.
+		/// Retrieve current menu options or choices.
 		/// </summary>
 		/// <param name="menuContext">The context of the menu to retrieve options from.</param>
-		/// <returns>An array of menu options.</returns>
 		[RiskLevel(RiskLevel.Medium)]
 		public static string[] GetCurrentMenuOptions(string menuContext)
 		{
@@ -20,7 +19,7 @@
 		}
 
 		/// <summary>
-		/// Method to see where selection is in the menu.
+		/// Get current selection in the menu.
 		/// </summary>
 		/// <param name="menuContext">The context of the menu to check for selection.</param>
 		/// <returns>The currently selected menu option.</returns>
@@ -32,7 +31,7 @@
 		}
 
 		/// <summary>
-		/// Method to select a menu option.
+		/// Select a menu option.
 		/// </summary>
 		/// <param name="menuContext">The context of the menu where selection will be made.</param>
 		/// <param name="option">The option to select.</param>

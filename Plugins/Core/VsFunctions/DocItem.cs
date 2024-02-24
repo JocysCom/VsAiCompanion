@@ -54,6 +54,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		public bool IsText { get; set; }
 
+		/// <summary>
+		/// True if content is saved.
+		/// </summary>
+		public bool IsSaved { get; set; }
+
 		/// <summary>Document type.</summary>
 		public string DocumentType { get; set; }
 

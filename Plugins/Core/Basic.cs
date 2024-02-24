@@ -18,7 +18,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Use after reply when user asks to generate answers with permission to continue.
 		/// Continue with the next part of the reply after this function call return "Please continue".
 		/// </summary>
-		/// <returns>The output message to reply from the user.</returns>
+		/// <returns>Automatic reply from the user.</returns>
 		/// <param name="reserved">Reserved. Send empty string as a value.</param>
 		/// <exception cref="System.Exception">Error message explaining why execution failed.</exception>
 		[RiskLevel(RiskLevel.Low)]
@@ -31,7 +31,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Retrieve content of websites by URL.
 		/// </summary>
 		/// <param name="url">URL which points to the resource.</param>
-		/// <returns>The output of request.</returns>
+		/// <returns>The output of the request.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		[RiskLevel(RiskLevel.Medium)]
 		public static async Task<string> GetWebPageContents(string url)
@@ -132,10 +132,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		/// <summary>
 		/// Write file text content on user computer.
-		/// Returns `true` if action was successfull.
 		/// </summary>
 		/// <param name="path">The file to write to.</param>
 		/// <param name="contents">The string to write to the file.</param>
+		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.High)]
 		public static bool WriteFile(string path, string contents)
 		{

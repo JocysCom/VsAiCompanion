@@ -15,6 +15,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public static ISolutionHelper Current;
 
 		/// <inheritdoc />
+		public DocItem GetSolution(bool includeContents)
+			=> Current.GetSolution(includeContents);
+
+		/// <inheritdoc />
+		public IList<DocItem> GetSolutionProjects(string fileName, bool includeContents)
+			=> Current.GetSolutionProjects(fileName, includeContents);
+
+		/// <inheritdoc />
 		public bool EditFormatDocument()
 			=> Current.EditFormatDocument();
 
@@ -27,8 +35,20 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.GetCurrentDocument(includeContents);
 
 		/// <inheritdoc />
-		public bool SetCurrentDocument(string fileName)
-			=> Current.SetCurrentDocument(fileName);
+		public bool OpenDocument(string fileName)
+			=> Current.OpenDocument(fileName);
+
+		/// <inheritdoc />
+		public bool SaveDocument(string fileName, string newFileName)
+			=> Current.SaveDocument(fileName, newFileName);
+
+		/// <inheritdoc />
+		public bool CloseDocument(string fileName, bool save)
+			=> Current.CloseDocument(fileName, save);
+
+		/// <inheritdoc />
+		public bool UndoDocument(string fileName)
+			=> Current.UndoDocument(fileName);
 
 		/// <inheritdoc />
 		public IList<DocItem> GetAllSolutionDocuments(bool includeContents)

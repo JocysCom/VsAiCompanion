@@ -45,7 +45,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			Icon = Resources.Icons.Icons_Default.Current[iconName] as Viewbox;
 			Id = (ClassFullName + "." + mi.Name).Trim('.');
-			Description = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetSummaryText(mi));
+			var summary = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetSummaryText(mi));
+			var returns = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetReturnText(mi));
+			Description = summary + (string.IsNullOrEmpty(returns) ? "" : " Returns: " + returns);
 			Mi = mi;
 			if (Params == null)
 				Params = new BindingList<PluginParam>();

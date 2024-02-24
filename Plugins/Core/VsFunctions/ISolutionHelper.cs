@@ -11,6 +11,23 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 	{
 
 		/// <summary>
+		/// Retrieves solution document.
+		/// </summary>
+		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <returns>Soulution document.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		DocItem GetSolution(bool includeContents);
+
+		/// <summary>
+		/// Retrieves projects of the solution.
+		/// </summary>
+		/// <param name="fullName">If specified, then only the specified project document will be retrieved.</param>
+		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <returns>Project documents.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		IList<DocItem> GetSolutionProjects(string fullName, bool includeContents);
+
+		/// <summary>
 		/// Retrieves all Documents throughout the entire solution.
 		/// </summary>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
@@ -61,17 +78,44 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		DocItem GetCurrentDocument(bool includeContents);
 
 		/// <summary>
-		/// Sets document as current. If document is not open, then it opens the document. Returns `true` if action was successfull.
+		/// Open document and make it current active document in the editor.
 		/// </summary>
 		/// <param name="fullName">Full path to the document.</param>
-		/// <returns>The active Document.</returns>
-		[RiskLevel(RiskLevel.Medium)]
-		bool SetCurrentDocument(string fullName);
+		/// <returns>True if the operation was successful.</returns>
+		[RiskLevel(RiskLevel.Low)]
+		bool OpenDocument(string fullName);
 
 		/// <summary>
-		/// Sets the content of the currently open and active Document in the editor. Returns `true` if action was successfull.
+		/// Close document in the editor.
+		/// </summary>
+		/// <param name="fullName">Full path to the document.</param>
+		/// <param name="save">`true` to save document before closing.</param>
+		/// <returns>True if the operation was successful.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		bool CloseDocument(string fullName, bool save);
+
+		/// <summary>
+		/// Undo changes of open document in the editor.
+		/// </summary>
+		/// <param name="fullName">Full path to the document.</param>
+		/// <returns>True if the operation was successful.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		bool UndoDocument(string fullName);
+
+		/// <summary>
+		/// Save open document in the editor.
+		/// </summary>
+		/// <param name="fullName">Full path to the document.</param>
+		/// <param name="newFullName">Full path to the new copy of the document.</param>
+		/// <returns>True if the operation was successful.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		bool SaveDocument(string fullName, string newFullName);
+
+		/// <summary>
+		/// Sets the content of the currently open and active Document in the editor.
 		/// </summary>
 		/// <param name="contents">The Document to be made active.</param>
+		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.High)]
 		bool SetCurrentDocumentContents(string contents);
 
@@ -82,9 +126,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		DocItem GetSelection();
 
 		/// <summary>
-		/// Sets the selection within the active Document based on the provided data. Returns `true` if action was successfull.
+		/// Sets the selection within the active Document based on the provided data.
 		/// </summary>
 		/// <param name="contents">The selection data to be applied to the active Document.</param>
+		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Medium)]
 		bool SetSelection(string contents);
 
@@ -113,7 +158,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeDocItem">Includes the Document associated with the errors.</param>
 		/// <param name="includeDocItemContents">Includes Document file contents.</param>
-		/// <returns>The selected error information.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		IList<ErrorItem> GetSelectedErrors(bool includeDocItem, bool includeDocItemContents);
 
@@ -122,7 +166,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeDocItems">Includes the Document associated with the Exception.</param>
 		/// <param name="includeDocItemsContents">Includes Document file contents.</param>
-		/// <returns>The information about the current exception.</returns>
 		[RiskLevel(RiskLevel.Medium)]
 		ExceptionInfo GetCurrentException(bool includeDocItems, bool includeDocItemsContents);
 
@@ -130,15 +173,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 
 		/// <summary>
 		/// Formats the entire content of the currently active Document according to the solution's code style settings.
-		/// Returns `true` if action was successfull.
 		/// </summary>
+		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		bool EditFormatDocument();
 
 		/// <summary>
 		/// Formats the currently selected code fragment in the active Document according to the solution's code style settings.
-		/// Returns `true` if action was successfull.
 		/// </summary>
+		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		bool EditFormatSelection();
 

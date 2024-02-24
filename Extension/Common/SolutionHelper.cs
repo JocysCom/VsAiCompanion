@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -229,15 +230,6 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		#region Get Documents
 
-		public static DocItem GetDocumentsBySolution(Solution2 solution, bool includeContents)
-		{
-			ThreadHelper.ThrowIfNotOnUIThread();
-			var item = new DocItem("", solution.FullName, "Solution");
-			if (includeContents)
-				LoadData(new List<DocItem> { item });
-			return item;
-		}
-
 		public static List<DocItem> GetDocumentsByProject(Project project, bool includeContents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
@@ -245,6 +237,42 @@ namespace JocysCom.VS.AiCompanion.Extension
 			RecurseProjectItems(project.ProjectItems, items);
 			if (includeContents)
 				LoadData(items);
+			return items;
+		}
+
+		/// <inheritdoc />
+		public DocItem GetSolution(bool includeContents)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var dte = GetCurrentService();
+			if (dte != null && dte.Solution != null)
+			{
+				var solution = dte.Solution as Solution2;
+				var solutionFilePath = solution?.FullName;
+				if (!string.IsNullOrWhiteSpace(solutionFilePath))
+				{
+					var docItem = Convert(solution, includeContents);
+					return docItem;
+				}
+			}
+			return null;
+		}
+
+		/// <inheritdoc />
+		public IList<DocItem> GetSolutionProjects(string fullName, bool includeContents)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var items = new List<DocItem>();
+			var solution = GetCurrentSolution();
+			if (solution == null)
+				return items;
+			foreach (Project project in GetAllProjects())
+			{
+				if (!string.IsNullOrWhiteSpace(fullName) && !project.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+					continue;
+				var docItem = Convert(project, includeContents);
+				items.Add(docItem);
+			}
 			return items;
 		}
 
@@ -269,14 +297,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 				for (short i = 1; i <= item.FileCount; i++)
 				{
-					var docItem = new DocItem
-					{
-						FullName = item.get_FileNames(i),
-						Name = item.Name,
-						Kind = item.Kind,
-						Language = item.ContainingProject.CodeModel.Language,
-						ContentData = null // Not populated here. Consider async file read if necessary.
-					};
+					var docItem = Convert(item, item.FileNames[i], false);
 					items.Add(docItem);
 				}
 				// Recursive call if there are sub-items
@@ -300,13 +321,12 @@ namespace JocysCom.VS.AiCompanion.Extension
 				{
 					for (short i = 1; i <= item.ProjectItem.FileCount; i++)
 					{
-						var file = item.ProjectItem.get_FileNames(i);
-						items.Add(new DocItem("", file, "Project Item"));
+						var fullName = item.ProjectItem.get_FileNames(i);
+						var docItem = Convert(item.ProjectItem, fullName, includeContent);
+						items.Add(docItem);
 					}
 				}
 			}
-			if (includeContent)
-				LoadData(items);
 			return items;
 		}
 
@@ -319,7 +339,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			if (solution == null)
 				return items;
 			// Add the solution file itself
-			items.Add(GetDocumentsBySolution(solution, includeContent));
+			items.AddRange(GetSolution(includeContent));
 			// Get all projects (including solution folders)
 			var projects = GetAllProjects();
 			// Add all files in each project or solution folder
@@ -450,31 +470,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				if (!hasVisibleWindow)
 					continue;
 				// Initialize DocItem with basic properties
-				var docItem = new DocItem
-				{
-					FullName = doc.FullName,
-					Name = doc.Name,
-					DocumentType = doc.Type,
-					// Assume text until proven otherwise
-					IsText = true
-				};
-				// Attempt to get the ProjectItem associated with the document, if available
-				try
-				{
-					ProjectItem projectItem = doc.ProjectItem;
-					if (projectItem != null)
-					{
-						docItem.Kind = projectItem.Kind;
-						// Attempt to access language via CodeModel
-						var codeModel = projectItem.FileCodeModel;
-						if (codeModel != null)
-							docItem.Language = codeModel.Language;
-					}
-				}
-				catch
-				{
-					// Failed to retrieve ProjectItem or its properties
-				}
+				var docItem = Convert(doc, false);
 				items.Add(docItem);
 			}
 			var activeDocs = _GetCurrentDocuments(false);
@@ -496,7 +492,57 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool SetCurrentDocument(string fullName)
+		public bool OpenDocument(string fullName)
+		{
+			return _DocumentAction(fullName, (doc) =>
+			{
+				ThreadHelper.ThrowIfNotOnUIThread();
+				doc.Activate();
+				return true;
+			});
+		}
+
+		/// <inheritdoc />
+		public bool CloseDocument(string fullName, bool save)
+		{
+			return _DocumentAction(fullName, (doc) =>
+			{
+				ThreadHelper.ThrowIfNotOnUIThread();
+				var param = save
+					? vsSaveChanges.vsSaveChangesYes
+					: vsSaveChanges.vsSaveChangesNo;
+				doc.Close(param);
+				return true;
+			});
+		}
+
+		/// <inheritdoc />
+		public bool UndoDocument(string fullName)
+		{
+			return _DocumentAction(fullName, (doc) =>
+			{
+				ThreadHelper.ThrowIfNotOnUIThread();
+				doc.Undo();
+				return true;
+			});
+		}
+
+		/// <inheritdoc />
+		public bool SaveDocument(string fullName, string newName)
+		{
+			return _DocumentAction(fullName, (doc) =>
+			{
+				ThreadHelper.ThrowIfNotOnUIThread();
+				vsSaveStatus status;
+				if (string.IsNullOrEmpty(newName))
+					status = doc.Save();
+				else
+					status = doc.Save(newName);
+				return status == vsSaveStatus.vsSaveSucceeded;
+			});
+		}
+
+		private bool _DocumentAction(string fullName, Func<Document, bool> action)
 		{
 			// Switch to the main thread as required by most DTE operations.
 			ThreadHelper.ThrowIfNotOnUIThread();
@@ -505,30 +551,17 @@ namespace JocysCom.VS.AiCompanion.Extension
 				// Get the DTE2 service.
 				var dte = GetCurrentService();
 				// Iterate through the open documents to find a match.
-				Document documentToActivate = null;
 				foreach (Document doc in dte.Documents)
-				{
 					if (doc.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
-					{
-						documentToActivate = doc;
-						break;
-					}
-				}
-				// If a matching document was found, activate it.
-				if (documentToActivate != null)
-				{
-					documentToActivate.Activate();
-					return true;
-				}
+						return action.Invoke(doc);
 			}
 			catch (Exception ex)
 			{
 				// Log or handle exceptions as necessary.
 				// This catches general exceptions for simplification.
 				// Consider more specific exception handling in a real environment.
-				System.Diagnostics.Debug.WriteLine($"Error setting current document: {ex.Message}");
+				System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
 			}
-			// Return false if the document was not found or could not be activated.
 			return false;
 		}
 
@@ -551,17 +584,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 			var td = GetTextDocument();
 			if (td == null)
 				return items;
-			var di = new DocItem("", td.Parent?.FullName, td.Type);
-			di.ContextType = ContextType.CurrentDocument;
-			di.Language = td.Language;
-			if (includeContent)
-			{
-				var startPoint = td.StartPoint.CreateEditPoint();
-				var data = startPoint.GetText(td.EndPoint);
-				di.ContentData = data;
-			}
-			di.ContextType = ContextType.CurrentDocument;
-			items.Add(di);
+			var docItem = Convert(td, true);
+			docItem.ContextType = ContextType.CurrentDocument | ContextType.OpenDocuments;
+			items.Add(docItem);
 			return items;
 		}
 
@@ -576,11 +601,10 @@ namespace JocysCom.VS.AiCompanion.Extension
 			var doc = GetTextDocument();
 			if (doc == null)
 				return new DocItem("");
-			var data = doc.Selection?.Text;
-			var di = new DocItem(data, doc.Parent?.FullName, doc.Type);
-			di.ContextType = ContextType.Selection;
-			di.Language = doc.Language;
-			return di;
+			var docItem = Convert(doc, false);
+			docItem.ContentData = doc.Selection?.Text;
+			docItem.ContextType = ContextType.Selection;
+			return docItem;
 		}
 
 		/// <inheritdoc />
@@ -877,7 +901,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			var d = new Dictionary<string, string>();
 			if (expressions == null)
 				return d;
-			var items = expressions.Cast<Expression>().ToArray();
+			var items = expressions.Cast<EnvDTE.Expression>().ToArray();
 			for (int m = 0; m < items.Length; m++)
 			{
 				var item = items[m];
@@ -909,6 +933,109 @@ namespace JocysCom.VS.AiCompanion.Extension
 				stackTrace.AppendLine("   at " + functionName);
 			}
 			return stackTrace.ToString();
+		}
+
+		#endregion
+
+		#region Convert to DocItem
+
+		private static DocItem Convert(Solution2 o, bool includeContents)
+		{
+			var solutionFilePath = o.FullName;
+			var docItem = new DocItem
+			{
+				Name = Path.GetFileName(solutionFilePath),
+				FullName = solutionFilePath,
+				Kind = nameof(Solution),
+				Language = "", // The language is not applicable for solution files.
+			};
+			if (includeContents)
+				LoadData(new List<DocItem> { docItem });
+			return docItem;
+		}
+
+		private static DocItem Convert(Project o, bool includeContents)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var docItem = new DocItem
+			{
+				Name = o.Name,
+				FullName = o.FullName,
+				Kind = nameof(Project),
+				Language = o.CodeModel?.Language,
+			};
+			if (includeContents)
+				LoadData(new List<DocItem> { docItem });
+			return docItem;
+		}
+
+		private static DocItem Convert(ProjectItem o, string fullName, bool includeContents)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var docItem = new DocItem
+			{
+				FullName = fullName,
+				Name = o.Name,
+				Kind = o.Kind,
+				Language = o.ContainingProject.CodeModel.Language,
+				IsSaved = o.Saved,
+			};
+			if (includeContents)
+				LoadData(new List<DocItem> { docItem });
+			return docItem;
+		}
+
+		private static DocItem Convert(Document o, bool includeContents)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var docItem = new DocItem
+			{
+				FullName = o.FullName,
+				Name = o.Name,
+				Kind = o.Kind,
+				Language = o.Language,
+				IsSaved = o.Saved,
+				DocumentType = o.Type,
+				// Assume text until proven otherwise
+				IsText = true
+			};
+			// Attempt to get the ProjectItem associated with the document, if available
+			try
+			{
+				ProjectItem projectItem = o.ProjectItem;
+				if (projectItem != null)
+				{
+					docItem.Kind = projectItem.Kind;
+					// Attempt to access language via CodeModel
+					var codeModel = projectItem.FileCodeModel;
+					if (codeModel != null)
+						docItem.Language = codeModel.Language;
+				}
+			}
+			catch
+			{
+				// Failed to retrieve ProjectItem or its properties
+			}
+			if (includeContents)
+				LoadData(new List<DocItem> { docItem });
+			return docItem;
+		}
+
+		private static DocItem Convert(TextDocument td, bool includeContents)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			var docItem = td.Parent == null
+				? new DocItem("", "", td.Type)
+				: Convert(td.Parent, false);
+			docItem.Language = td.Language;
+			// Include current content from the screen.
+			if (includeContents)
+			{
+				var startPoint = td.StartPoint.CreateEditPoint();
+				var data = startPoint.GetText(td.EndPoint);
+				docItem.ContentData = data;
+			}
+			return docItem;
 		}
 
 		#endregion

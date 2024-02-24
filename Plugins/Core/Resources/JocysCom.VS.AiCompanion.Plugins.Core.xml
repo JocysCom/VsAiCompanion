@@ -11,21 +11,20 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuOptions(System.String)">
             <summary>
-            Method to retrieve current menu options or choices.
+            Retrieve current menu options or choices.
             </summary>
             <param name="menuContext">The context of the menu to retrieve options from.</param>
-            <returns>An array of menu options.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuSelection(System.String)">
             <summary>
-            Method to see where selection is in the menu.
+            Get current selection in the menu.
             </summary>
             <param name="menuContext">The context of the menu to check for selection.</param>
             <returns>The currently selected menu option.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SelectMenuOption(System.String,System.String)">
             <summary>
-            Method to select a menu option.
+            Select a menu option.
             </summary>
             <param name="menuContext">The context of the menu where selection will be made.</param>
             <param name="option">The option to select.</param>
@@ -49,7 +48,7 @@
             Use after reply when user asks to generate answers with permission to continue.
             Continue with the next part of the reply after this function call return "Please continue".
             </summary>
-            <returns>The output message to reply from the user.</returns>
+            <returns>Automatic reply from the user.</returns>
             <param name="reserved">Reserved. Send empty string as a value.</param>
             <exception cref="T:System.Exception">Error message explaining why execution failed.</exception>
         </member>
@@ -58,7 +57,7 @@
             Retrieve content of websites by URL.
             </summary>
             <param name="url">URL which points to the resource.</param>
-            <returns>The output of request.</returns>
+            <returns>The output of the request.</returns>
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess(System.String,System.String,System.String)">
@@ -90,10 +89,10 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile(System.String,System.String)">
             <summary>
             Write file text content on user computer.
-            Returns `true` if action was successfull.
             </summary>
             <param name="path">The file to write to.</param>
             <param name="contents">The string to write to the file.</param>
+            <returns>True if the operation was successful.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo">
             <summary>
@@ -294,6 +293,12 @@
             Current Visual Solution helper.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolutionProjects(System.String,System.Boolean)">
+            <inheritdoc />
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument">
             <inheritdoc />
         </member>
@@ -303,7 +308,16 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument(System.Boolean)">
             <inheritdoc />
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocument(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument(System.String,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument(System.String)">
             <inheritdoc />
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments(System.Boolean)">
@@ -421,6 +435,11 @@
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.IsText">
             <summary>
             True if content is text.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.IsSaved">
+            <summary>
+            True if content is saved.
             </summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.DocumentType">
@@ -577,6 +596,21 @@
             handling errors, and formatting code.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetSolution(System.Boolean)">
+            <summary>
+            Retrieves solution document.
+            </summary>
+            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <returns>Soulution document.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetSolutionProjects(System.String,System.Boolean)">
+            <summary>
+            Retrieves projects of the solution.
+            </summary>
+            <param name="fullName">If specified, then only the specified project document will be retrieved.</param>
+            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <returns>Project documents.</returns>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetAllSolutionDocuments(System.Boolean)">
             <summary>
             Retrieves all Documents throughout the entire solution.
@@ -619,18 +653,42 @@
             <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>The active Document.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetCurrentDocument(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.OpenDocument(System.String)">
             <summary>
-            Sets document as current. If document is not open, then it opens the document. Returns `true` if action was successfull.
+            Open document and make it current active document in the editor.
             </summary>
             <param name="fullName">Full path to the document.</param>
-            <returns>The active Document.</returns>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.CloseDocument(System.String,System.Boolean)">
+            <summary>
+            Close document in the editor.
+            </summary>
+            <param name="fullName">Full path to the document.</param>
+            <param name="save">`true` to save document before closing.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.UndoDocument(System.String)">
+            <summary>
+            Undo changes of open document in the editor.
+            </summary>
+            <param name="fullName">Full path to the document.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SaveDocument(System.String,System.String)">
+            <summary>
+            Save open document in the editor.
+            </summary>
+            <param name="fullName">Full path to the document.</param>
+            <param name="newFullName">Full path to the new copy of the document.</param>
+            <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetCurrentDocumentContents(System.String)">
             <summary>
-            Sets the content of the currently open and active Document in the editor. Returns `true` if action was successfull.
+            Sets the content of the currently open and active Document in the editor.
             </summary>
             <param name="contents">The Document to be made active.</param>
+            <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetSelection">
             <summary>
@@ -639,9 +697,10 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetSelection(System.String)">
             <summary>
-            Sets the selection within the active Document based on the provided data. Returns `true` if action was successfull.
+            Sets the selection within the active Document based on the provided data.
             </summary>
             <param name="contents">The selection data to be applied to the active Document.</param>
+            <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
             <summary>
@@ -660,7 +719,6 @@
             </summary>
             <param name="includeDocItem">Includes the Document associated with the errors.</param>
             <param name="includeDocItemContents">Includes Document file contents.</param>
-            <returns>The selected error information.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetCurrentException(System.Boolean,System.Boolean)">
             <summary>
@@ -668,19 +726,18 @@
             </summary>
             <param name="includeDocItems">Includes the Document associated with the Exception.</param>
             <param name="includeDocItemsContents">Includes Document file contents.</param>
-            <returns>The information about the current exception.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.EditFormatDocument">
             <summary>
             Formats the entire content of the currently active Document according to the solution's code style settings.
-            Returns `true` if action was successfull.
             </summary>
+            <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.EditFormatSelection">
             <summary>
             Formats the currently selected code fragment in the active Document according to the solution's code style settings.
-            Returns `true` if action was successfull.
             </summary>
+            <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetEnvironmentContext">
             <summary>
