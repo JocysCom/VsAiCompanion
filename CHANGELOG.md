@@ -1,5 +1,7 @@
-2024-02-23 v1.4.25
+2024-02-24 v1.5.6
 
+- New: Added new Basic and Visual Studio functions.
+- New: Added option for maximum risk level.
 - Fix: Downgraded some packages so that Extension can run on older versions of VS 2022.
 
 2024-02-22 v1.4.24
