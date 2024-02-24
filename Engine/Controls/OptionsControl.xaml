@@ -76,7 +76,14 @@
 			</TabItem>
 		</TabControl>
 
-		<GroupBox x:Name="EnterpriseOptionsGroupBox" Grid.Row="2" Margin="3,0,3,0" Header="Enterprise Options">
+		<GroupBox x:Name="EnterpriseOptionsGroupBox" Grid.Row="2" Margin="3,0,3,0">
+			<GroupBox.Header>
+				<CheckBox
+					Name="UseMacrosCheckBox"
+					Margin="-4"
+					Content="Enterprise Options"
+					IsChecked="{Binding IsEnterprise}" />
+			</GroupBox.Header>
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />

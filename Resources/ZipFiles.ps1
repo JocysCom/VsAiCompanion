@@ -75,10 +75,8 @@ function CheckAndZipFiles {
         }
     }
 
-    $name = [System.IO.Path]::GetFileName($destFile)
-
     if ($checksumsChanged) {
-        Write-Host "$($LogPrefix)$($name): Source and destination checksums do not match. Updating destination file..."
+        Write-Host "$($logPrefix)Source and destination checksums do not match. Updating destination file..."
         if (Test-Path -Path $destFile) { Remove-Item -Path $destFile -Force }
         
         if ($UseShellToZipFiles) {
@@ -87,7 +85,7 @@ function CheckAndZipFiles {
             Compress-ZipFileUsingCSharp -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern
         }
     } else {
-        Write-Host "$($LogPrefix)$($name): Source and destination checksums match. No update needed."
+        Write-Host "$($logPrefix)Source and destination checksums match. No update needed."
     }
 }
 
@@ -131,7 +129,7 @@ function Compress-ZipFileUsingShell {
     $zipPackage = $shellApplication.NameSpace($destFile)
 
     if (-not $zipPackage) {
-        Write-Error "Failed to create a zip package COM object for the destination file. Check the path and permissions."
+        Write-Error "$($logPrefix)Failed to create a zip package COM object for the destination file. Check the path and permissions."
         return
     }
 
@@ -151,7 +149,7 @@ function Compress-ZipFileUsingShell {
             Start-Sleep -Seconds 2
             $retryCount++
             if ($retryCount -gt $maxRetries) {
-                Write-Host "$($LogPrefix)Max retries reached. Moving to next file..."
+                Write-Host "$($logPrefix)Max retries reached. Moving to next file..."
                 break
             }
         } While (($shellApplication.NameSpace($destFile).Items() | Where-Object { $_.Path -eq $path }).Count -eq 0)
@@ -165,6 +163,10 @@ function Compress-ZipFileUsingShell {
     [GC]::WaitForPendingFinalizers()
 }
 
+$destName = [System.IO.Path]::GetFileName($destFile)
+
+$logPrefix = "$($destName): $($LogPrefix)"
+
 #==============================================================
 # Ensure that only one instance of this script can run.
 # Other instances wait for the previous one to complete.
@@ -176,7 +178,7 @@ $mutexCreated = $false
 $mutex = New-Object System.Threading.Mutex($true, $mutexName, [ref] $mutexCreated)
 if (-not $mutexCreated) {
        
-    Write-Host "$($LogPrefix)Another $scriptName instance is running. Waiting..."
+    Write-Host "$($logPrefix)Another instance is running. Waiting..."
     $mutex.WaitOne() > $null  # Wait indefinitely for the mutex
 }
 try {

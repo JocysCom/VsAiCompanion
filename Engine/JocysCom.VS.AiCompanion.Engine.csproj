@@ -172,6 +172,7 @@
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
+		<EmbeddedResource Include="Resources\Settings.zip" />
 		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
 		<Content Include="Resources\MainWindowCommand.png" />
@@ -232,11 +233,11 @@
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="PowerShell.exe -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;&#xD;&#xA;PowerShell.exe -ExecutionPolicy Bypass -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;&#xD;&#xA;PowerShell.exe -ExecutionPolicy Bypass -file &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\FineTuning&quot; &quot;$(ProjectDir)Resources\FineTuning.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -ExecutionPolicy Bypass -file &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;&#xD;&#xA;" />
+		<Exec Command="PowerShell.exe -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;&#xD;&#xA;PowerShell.exe -ExecutionPolicy Bypass -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;&#xD;&#xA;PowerShell.exe -ExecutionPolicy Bypass -file &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\FineTuning&quot; &quot;$(ProjectDir)Resources\FineTuning.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -ExecutionPolicy Bypass -file &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -ExecutionPolicy Bypass -file &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;" />
 	</Target>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
+	  <Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
 	</Target>
 
 </Project>

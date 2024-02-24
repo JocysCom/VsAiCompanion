@@ -34,7 +34,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool BarAlwaysOnTop { get => _BarAlwaysOnTop; set => SetProperty(ref _BarAlwaysOnTop, value); }
 		private bool _BarAlwaysOnTop;
 
-		[DefaultValue(null)]
+		[DefaultValue(false)]
+		public bool IsEnterprise { get => _IsEnterprise; set => SetProperty(ref _IsEnterprise, value); }
+		private bool _IsEnterprise;
+
+		[DefaultValue("http://azuredevops.companyname.com/Projects/_git/Configurations/Settings/AiCompanion.zip")]
 		public string ConfigurationUrl { get => _ConfigurationUrl; set => SetProperty(ref _ConfigurationUrl, value); }
 		private string _ConfigurationUrl;
 

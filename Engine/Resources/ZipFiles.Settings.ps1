@@ -4,5 +4,5 @@ param (
     [string] $LogPrefix = ""
 )
 
-..\..\Resources\ZipFiles.ps1 "$($PSScriptRoot)\Documents" "$($PSScriptRoot)\Documents.zip" -LogPrefix $LogPrefix
+..\..\Resources\ZipFiles.ps1 "$($PSScriptRoot)\Settings" "$($PSScriptRoot)\Settings.zip" -LogPrefix $LogPrefix
 
