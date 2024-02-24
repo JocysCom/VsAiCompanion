@@ -637,7 +637,7 @@
             <summary>
             Retrieves projects of the solution.
             </summary>
-            <param name="fullName">If specified, then only the specified project document will be retrieved.</param>
+            <param name="fileName">If specified, then only the specified project document will be retrieved.</param>
             <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>Project documents.</returns>
         </member>
@@ -687,14 +687,14 @@
             <summary>
             Open document and make it current active document in the editor.
             </summary>
-            <param name="fullName">Full path to the document.</param>
+            <param name="fileName">Full path to the document.</param>
             <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.CloseDocument(System.String,System.Boolean)">
             <summary>
             Close document in the editor.
             </summary>
-            <param name="fullName">Full path to the document.</param>
+            <param name="fileName">Full path to the document.</param>
             <param name="save">`true` to save document before closing.</param>
             <returns>True if the operation was successful.</returns>
         </member>
@@ -702,15 +702,15 @@
             <summary>
             Undo changes of open document in the editor.
             </summary>
-            <param name="fullName">Full path to the document.</param>
+            <param name="fileName">Full path to the document.</param>
             <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SaveDocument(System.String,System.String)">
             <summary>
             Save open document in the editor.
             </summary>
-            <param name="fullName">Full path to the document.</param>
-            <param name="newFullName">Full path to the new copy of the document.</param>
+            <param name="fileName">Full path to the document.</param>
+            <param name="newFileName">Full path to the new copy of the document.</param>
             <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.ApplyCurrentDocumentContentsChanges(System.String)">
@@ -796,7 +796,7 @@
             <summary>
             Triggers a build for the specified project within the solution.
             </summary>
-            <param name="fullName">The full name of the project to build.</param>
+            <param name="fileName">The full name of the project to build.</param>
             <returns>A string indicating the build result.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetOutputContent(System.String)">

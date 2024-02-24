@@ -184,13 +184,10 @@ namespace JocysCom.ClassLibrary.Xml
 				if (i > 0)
 					paramDesc.Append(",");
 				var paramType = parameters[i].ParameterType;
-				var paramName = paramType.FullName;
-				// Handle special case where ref parameter ends in & but XML docs use @.
-				// Pointer parameters end in * in both type representation and XML comments representation.
-				if (paramName.EndsWith("&")) paramName = paramName.Substring(0, paramName.Length - 1) + "@";
-				// Handle multidimensional arrays
-				if (paramType.IsArray && paramType.GetArrayRank() > 1)
-					paramName = paramName.Replace(",", "0:,").Replace("]", "0:]");
+
+				// Check if the type is nullable and format accordingly.
+				string paramName = FormatParamTypeName(paramType);
+
 				// Append the fixed up parameter name
 				paramDesc.Append(paramName);
 			}
@@ -200,6 +197,26 @@ namespace JocysCom.ClassLibrary.Xml
 			// Return the parameter list description
 			return paramDesc.ToString();
 		}
+
+		/// <summary>
+		/// Format the parameter type name.
+		/// </summary>
+		private static string FormatParamTypeName(Type paramType)
+		{
+			if (paramType.IsGenericType && paramType.GetGenericTypeDefinition() == typeof(Nullable<>))
+			{
+				// For nullable types, use a custom format.
+				var innerType = paramType.GetGenericArguments()[0];
+				return $"System.Nullable{{{innerType.FullName}}}";
+			}
+			else
+			{
+				// Default handling for other types.
+				return paramType.FullName;
+			}
+		}
+
+
 
 		#endregion
 

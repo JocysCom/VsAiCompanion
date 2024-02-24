@@ -21,11 +21,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves projects of the solution.
 		/// </summary>
-		/// <param name="fullName">If specified, then only the specified project document will be retrieved.</param>
+		/// <param name="fileName">If specified, then only the specified project document will be retrieved.</param>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>Project documents.</returns>
 		[RiskLevel(RiskLevel.Low)]
-		IList<DocItem> GetSolutionProjects(string fullName, bool includeContents);
+		IList<DocItem> GetSolutionProjects(string fileName, bool includeContents);
 
 		/// <summary>
 		/// Retrieves all Documents throughout the entire solution.
@@ -80,36 +80,36 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Open document and make it current active document in the editor.
 		/// </summary>
-		/// <param name="fullName">Full path to the document.</param>
+		/// <param name="fileName">Full path to the document.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Low)]
-		bool OpenDocument(string fullName);
+		bool OpenDocument(string fileName);
 
 		/// <summary>
 		/// Close document in the editor.
 		/// </summary>
-		/// <param name="fullName">Full path to the document.</param>
+		/// <param name="fileName">Full path to the document.</param>
 		/// <param name="save">`true` to save document before closing.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		bool CloseDocument(string fullName, bool save);
+		bool CloseDocument(string fileName, bool save);
 
 		/// <summary>
 		/// Undo changes of open document in the editor.
 		/// </summary>
-		/// <param name="fullName">Full path to the document.</param>
+		/// <param name="fileName">Full path to the document.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		bool UndoDocument(string fullName);
+		bool UndoDocument(string fileName);
 
 		/// <summary>
 		/// Save open document in the editor.
 		/// </summary>
-		/// <param name="fullName">Full path to the document.</param>
-		/// <param name="newFullName">Full path to the new copy of the document.</param>
+		/// <param name="fileName">Full path to the document.</param>
+		/// <param name="newFileName">Full path to the new copy of the document.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		bool SaveDocument(string fullName, string newFullName);
+		bool SaveDocument(string fileName, string newFileName);
 
 		/// <summary>
 		/// Updates content of the current document by applying a series of changes described in a 'diff' format. 
@@ -214,10 +214,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Triggers a build for the specified project within the solution.
 		/// </summary>
-		/// <param name="fullName">The full name of the project to build.</param>
+		/// <param name="fileName">The full name of the project to build.</param>
 		/// <returns>A string indicating the build result.</returns>
 		[RiskLevel(RiskLevel.High)]
-		string BuildSolutionProject(string fullName);
+		string BuildSolutionProject(string fileName);
 
 		/// <summary>
 		/// Retrieves the content of a specified output window pane in Visual Studio.
