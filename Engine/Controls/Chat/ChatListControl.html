@@ -83,6 +83,17 @@
 			background-size: contain;
 		}
 
+		.item-Automated {
+			display: none;
+		}
+
+		.item-Normal {
+		}
+
+		.item-hide {
+			display: none;
+		}
+
 		.chat-log {
 			width: 100%;
 		}
@@ -391,14 +402,18 @@
 				}
 			}
 
+			var bodyContents = "" + newMessageInstructionsHTML + body;
 			// Replace all placeholders with actual values from the message.
 			var newMessageHTML = messageTemplate
 				.replace(/{Type}/g, messageType[message.Type])
+				.replace(/{Automated}/g, message.IsAutomated ? "Automated" : "Normal")
 				.replace(/{Id}/g, idPrefix + message.Id)
 				.replace(/{User}/g, message.User)
 				.replace(/{Date}/g, FormatDateTime(message.Date))
-				.replace(/{Body}/g, newMessageInstructionsHTML + body)
+				.replace(/{Body}/g, bodyContents)
+				.replace(/{BodyHide}/g, bodyContents === "" ? "item-hide" : "")
 				.replace(/{Data}/g, data)
+				.replace(/{DataHide}/g, data === "" ? "item-hide" : "")
 				.replace(/{Buttons}/g, buttons);
 
 			// Create a new div element and set its innerHTML to the newly created message.
@@ -414,8 +429,18 @@
 
 		function HideRegenerateButtonsExceptLast() {
 			// Get all the buttons inside chatLog
-			var buttons = document.getElementById('chatLog').getElementsByClassName('regenerate-Out');
-			// Hide all buttons
+			var buttons = document.getElementById('chatLog').getElementsByClassName('regenerate-Out')
+			// Hide/Show all buttons
+			var newList = [];
+
+			// Exclude hidden buttons.
+			for (var i = 0; i < buttons.length; i++) {
+				if (buttons[i].classList.contains("item-Automated"))
+					continue;
+				newList.push(buttons[i]);
+			}
+			buttons = newList;
+
 			for (var i = 0; i < buttons.length; i++) {
 				var value = i == buttons.length - 1 ? 'inline-block' : "none";
 				var style = buttons[i].style;
@@ -821,19 +846,19 @@
 	</div>
 	<div style="display: none" id="messageTemplate">
 		<div class="chat-container color-{Type}" id="{Id}">
-			<div class="chat-user icon-{Type}"></div>
+			<div class="chat-user icon-{Type} item-{Automated}"></div>
 			<div class="chat-message color-{Type}">
 				<div class="chat-message-head">
 					<span class="chat-date">{Date}</span>
-					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Use')">Use</button>
-					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Edit')">Edit</button>
+					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Use')">Use</button>
+					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Edit')">Edit</button>
 					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Remove')">Remove</button>
-					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Copy')">Copy</button>
-					<button class="chat-button regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;">Regenerate</button>
+					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')">Copy</button>
+					<button class="chat-button regenerate-{Type} item-{Automated}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;">Regenerate</button>
 					{Buttons}
 				</div>
-				<div class="chat-message-body">{Body}</div>
-				<div class="chat-message-data">{Data}</div>
+				<div class="chat-message-body {BodyHide}">{Body}</div>
+				<div class="chat-message-data {DataHide}">{Data}</div>
 			</div>
 		</div>
 	</div>

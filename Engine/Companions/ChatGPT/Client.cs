@@ -444,6 +444,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									attachment.Title = "AI Function Call";
 									attachment.IsAlwaysIncluded = true;
 									assistantMessageItem.Attachments.Add(attachment);
+									assistantMessageItem.IsAutomated = true;
 									messageItems.Add(assistantMessageItem);
 									Global.MainControl.Dispatcher.Invoke(() =>
 									{
@@ -541,6 +542,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
 				userAutoReplyMessageItem.Attachments.AddRange(functionResults);
+				userAutoReplyMessageItem.IsAutomated = true;
 				Global.MainControl.Dispatcher.Invoke(() =>
 				{
 					messageItems.Add(userAutoReplyMessageItem);

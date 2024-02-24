@@ -41,6 +41,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public bool IsPreview { get => _IsPreview; set => SetProperty(ref _IsPreview, value); }
 		bool _IsPreview;
 
+		[DefaultValue(false)]
+		public bool IsAutomated { get => _IsAutomated; set => SetProperty(ref _IsAutomated, value); }
+		bool _IsAutomated;
+
 		/// <summary>Optional context data: cliboard, selection or Files.</summary>
 		public List<MessageAttachments> Attachments { get => _Attachments; set => SetProperty(ref _Attachments, value); }
 		List<MessageAttachments> _Attachments = new List<MessageAttachments>();
