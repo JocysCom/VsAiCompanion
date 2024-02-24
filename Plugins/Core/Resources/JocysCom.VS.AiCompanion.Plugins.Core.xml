@@ -772,8 +772,8 @@
             <summary>
             Retrieves information about the currently caught exception, if any.
             </summary>
-            <param name="includeDocItems">Includes the Document associated with the Exception.</param>
-            <param name="includeDocItemsContents">Includes Document file contents.</param>
+            <param name="includeDocItem">Includes the Document associated with the Exception.</param>
+            <param name="includeDocItemContents">Includes Document file contents.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.EditFormatDocument">
             <summary>

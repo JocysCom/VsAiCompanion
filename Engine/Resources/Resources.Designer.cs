@@ -457,7 +457,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable_Low_Risk.
+        ///   Looks up a localized string similar to Enable Low Risk.
         /// </summary>
         public static string Enable_Low_Risk {
             get {
@@ -466,7 +466,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable_Medium_Risk.
+        ///   Looks up a localized string similar to Enable Medium Risk.
         /// </summary>
         public static string Enable_Medium_Risk {
             get {
