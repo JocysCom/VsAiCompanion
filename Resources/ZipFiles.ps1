@@ -11,8 +11,11 @@ param (
 
     # Optional. Use shell zipper if this parameter is set to true.
     [Parameter(Mandatory = $false, Position = 3)]
-    [bool] $UseShellToZipFiles = $false
+    [bool] $UseShellToZipFiles = $false,
 
+    # Optional. Use comment for console.
+    [Parameter(Mandatory = $false, Position = 4)]
+    [string] $LogPrefix = ""
 )
 
 if (!(Test-Path -Path $sourceDir)) {
@@ -75,7 +78,7 @@ function CheckAndZipFiles {
     $name = [System.IO.Path]::GetFileName($destFile)
 
     if ($checksumsChanged) {
-        Write-Host "$($name): Source and destination checksums do not match. Updating destination file..."
+        Write-Host "$($LogPrefix)$($name): Source and destination checksums do not match. Updating destination file..."
         if (Test-Path -Path $destFile) { Remove-Item -Path $destFile -Force }
         
         if ($UseShellToZipFiles) {
@@ -84,7 +87,7 @@ function CheckAndZipFiles {
             Compress-ZipFileUsingCSharp -sourceDir $sourceDir -destFile $destFile -searchPattern $searchPattern
         }
     } else {
-        Write-Host "$($name): Source and destination checksums match. No update needed."
+        Write-Host "$($LogPrefix)$($name): Source and destination checksums match. No update needed."
     }
 }
 
@@ -142,13 +145,13 @@ function Compress-ZipFileUsingShell {
         $path = $file.FullName
         $zipPackage.CopyHere($path)
         
-        $maxRetries = 5
+        $maxRetries = 4
         $retryCount = 0
         Do {
             Start-Sleep -Seconds 2
             $retryCount++
             if ($retryCount -gt $maxRetries) {
-                Write-Host "Max retries reached. Moving to next file..."
+                Write-Host "$($LogPrefix)Max retries reached. Moving to next file..."
                 break
             }
         } While (($shellApplication.NameSpace($destFile).Items() | Where-Object { $_.Path -eq $path }).Count -eq 0)
@@ -173,7 +176,7 @@ $mutexCreated = $false
 $mutex = New-Object System.Threading.Mutex($true, $mutexName, [ref] $mutexCreated)
 if (-not $mutexCreated) {
        
-    Write-Host "Another $scriptName instance is running. Waiting..."
+    Write-Host "$($LogPrefix)Another $scriptName instance is running. Waiting..."
     $mutex.WaitOne() > $null  # Wait indefinitely for the mutex
 }
 try {

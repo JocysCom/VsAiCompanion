@@ -40,14 +40,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="JocysCom\MakeLinks.ps1.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="JocysCom\MakeLinks.ps1.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 	</ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿namespace JocysCom.ClassLibrary.Controls
+﻿namespace JocysCom.ClassLibrary
 {
 	public enum ProgressStatus
 	{

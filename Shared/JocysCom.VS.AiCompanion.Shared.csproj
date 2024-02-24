@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
 		<Nullable>disable</Nullable>
@@ -32,6 +30,10 @@
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.Net.Http" />
+		<Reference Include="System.Security" />
+		<Reference Include="System.Data.Entity" />
+		<Reference Include="System.configuration" />
+		<Reference Include="System.Web" />
 	</ItemGroup>
 
 	<ItemGroup>

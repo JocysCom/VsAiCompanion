@@ -4,5 +4,1210 @@
         <name>JocysCom.VS.AiCompanion.Shared</name>
     </assembly>
     <members>
+        <member name="M:JocysCom.ClassLibrary.Collections.CollectionsHelper.Synchronize``1(System.Collections.Generic.IList{``0},System.Collections.Generic.IList{``0},System.Collections.Generic.IEqualityComparer{``0})">
+            <summary>
+            Synchronize source collection to destination.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.WriteAppHeader">
+            <summary>
+            Write application header title to CLI interface.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.WriteAppHelp">
+            <summary>
+            Write help text from help.txt file.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.FindResource``1(System.String,System.Object)">
+            <summary>
+            Get resource from class *.resx file by full name.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.FindResource``1(System.String,System.Reflection.Assembly[])">
+            <summary>
+            Find resource in all loaded assemblies if not specified by full or partial (EndsWith) name.
+            Look inside "Build Action: Embedded Resource".
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.GetResourceKeys(System.Reflection.Assembly)">
+            <summary>
+            Project Build Action: "Resource".
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.GetResourceValue(System.String,System.Reflection.Assembly)">
+            <summary>
+            Project Build Action: "Resource".
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.GetResource``2(System.String)">
+            <summary>
+            Get embedded resource from type (*.resx file).
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.GetResource``1(System.String,System.Reflection.Assembly[])">
+            <summary>
+            Get embedded resource by its full name.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.LongDelay(System.TimeSpan,System.Threading.CancellationToken)">
+            <summary>Allow to delay Task for 292,471,209 years.</summary>
+            <remarks>Usage makes sense if the process won't be recycled before the delay expires.</remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.LongDelay(System.Int64,System.Threading.CancellationToken)">
+            <summary>Allow to delay Task for 292,471,209 years.</summary>
+            <remarks>Usage makes sense if the process won't be recycled before the delay expires.</remarks>
+        </member>
+        <member name="F:JocysCom.ClassLibrary.Helper.DelayActions">
+            <summary>
+            Contain CancellationTokenSource for each function.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.Delay(System.Action,System.Nullable{System.Int32})">
+            <summary>
+            Delay some frequently repeatable actions.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper._Delay(System.Delegate,System.Nullable{System.Int32},System.Object[])">
+            <summary>
+            Delay some frequently repeatable actions.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.IsOverlap``1(System.Nullable{``0},System.Nullable{``0},System.Nullable{``0},System.Nullable{``0},System.Boolean)">
+            <summary>
+            Returns true if two ranges overlap.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.RunSynchronously(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Runs the specified asynchronous function synchronously.
+            </summary>
+            <param name="asyncFunc">The asynchronous function to run.</param>
+            <remarks>
+            This method avoids deadlocks by temporarily removing the current SynchronizationContext,
+            allowing the asynchronous function to execute without waiting for the context to be available.
+            The main disadvantage when compared to the Task.RunSynchronously() method is that
+            it bypasses the Task scheduler, which could lead to potential performance issues.
+            </remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Helper.RunSynchronously``1(System.Func{System.Threading.Tasks.Task{``0}})">
+            <summary>
+            Runs the specified asynchronous function synchronously and returns the result.
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="asyncFunc">The asynchronous function to run.</param>
+            <returns>The result of the asynchronous function.</returns>
+            <remarks>
+            This method avoids deadlocks by temporarily removing the current SynchronizationContext,
+            allowing the asynchronous function to execute without waiting for the context to be available.
+            The main disadvantage when compared to the Task.RunSynchronously() method is that
+            it bypasses the Task scheduler, which could lead to potential performance issues.
+            </remarks>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.ProgressEventArgs.TopIndex">
+            <summary>Current amount of work done by the operation.</summary>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.ProgressEventArgs.TopCount">
+            <summary>Total amount of work required to be done by the operation.</summary>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.ProgressEventArgs.SubIndex">
+            <summary>Current amount of work done by the operation.</summary>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.ProgressEventArgs.SubCount">
+            <summary>Total amount of work required to be done by the operation.</summary>
+        </member>
+        <member name="T:JocysCom.ClassLibrary.ComponentModel.PropertyComparer`1">
+            <summary>
+            Be.Timvw.Framework.ComponentModel
+            http://betimvwframework.codeplex.com/
+            </summary>
+        </member>
+        <member name="T:JocysCom.ClassLibrary.ComponentModel.SortableBindingList`1">
+            <summary>
+            Be.Timvw.Framework.ComponentModel
+            http://betimvwframework.codeplex.com/
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:JocysCom.ClassLibrary.Configuration.Arguments">
+            <summary>
+            Arguments class.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.Arguments.#ctor(System.String[],System.StringComparer)">
+            <summary>
+            Similar classses: Arguments.cs, InstallContext.cs
+            Comparer is case insensitive by default
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.Arguments.GetValue(System.String,System.Boolean)">
+            <summary>
+            Get value by specific key.
+            </summary>
+            <param name="key">The key to locate in the Arguments.</param>
+            <param name="ignoreCase">True to ignore case during key comparison; otherwise, false.</param>
+            <returns>String value.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.Arguments.ContainsKey(System.String,System.Boolean)">
+            <summary>
+            Determines if the Arguments contains a specific key.
+            </summary>
+            <param name="key">The key to locate in the Arguments.</param>
+            <param name="ignoreCase">True to ignore case during key comparison; otherwise, false.</param>
+            <returns>True if the Arguments contains an entry with the specified key; otherwise, false.</returns>
+        </member>
+        <member name="T:JocysCom.ClassLibrary.Configuration.AssemblyInfo.EntryAssemblyAttribute">
+            <summary>
+            Assembly.GetEntryAssembly() returns null in web applications. Mark assembly as the entry assembly
+            by adding this attribute inside Properties\AssemblyInfo.cs file:
+            [assembly: JocysCom.ClassLibrary.Configuration.AssemblyInfo.EntryAssembly]
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.AssemblyInfo.GetBuildDateTime(System.String)">
+            <summary>
+            Read build time from the file. This won't work with deterministic builds.
+            </summary>
+            <remarks>
+            The C# compiler (Roslyn) supports deterministic builds since Visual Studio 2015.
+            This means that compiling assemblies under the same conditions (permalink)
+            would produce byte-for-byte equivalent binaries.
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:JocysCom.ClassLibrary.Configuration.AssemblyInfo.GetBuildDateTime(System.Reflection.Assembly,System.TimeZoneInfo)" -->
+        <member name="M:JocysCom.ClassLibrary.Configuration.AssemblyInfo.GetDateTime(System.Int32,System.TimeZoneInfo)">
+            <summary>
+            Convert the TimeStamp to a DateTime
+            </summary>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.Configuration.ISettingsItemFile.Name">
+            <summary>
+            File name.
+            </summary>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.Configuration.ISettingsItemFile.BaseName">
+            <summary>
+            Map to property which contains base file name.
+            </summary>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.Configuration.ISettingsItemFile.WriteTime">
+            <summary>
+            Map to property which contains last time item was modified.
+            Update on INotifyPropertyChanged.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.#ctor">
+            <summary>
+            Initialize class. Use 'Environment.SpecialFolder.CommonApplicationData' folder, same for all users, to store settings.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.#ctor(System.String,System.Nullable{System.Boolean},System.String,System.Reflection.Assembly)">
+            <summary>
+            Initialize class
+            </summary>
+            <param name="overrideFileName"></param>
+            <param name="userLevel">
+            Defines where to store XML settings file:
+              True  - Environment.SpecialFolder.ApplicationData
+              False - Environment.SpecialFolder.CommonApplicationData
+              Null  - Use ./{ExecutableBaseName}.xml settings file
+            </param>
+            <param name="comment"></param>
+            <param name="assembly">Used to get company and product name.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.Initialize(System.String,System.Nullable{System.Boolean},System.String,System.Reflection.Assembly)">
+            <summary>
+            Initialize class.
+            </summary>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.Configuration.SettingsData`1.Version">
+            <summary>
+            File Version.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.Remove(`0[])">
+            <summary>Remove with SyncRoot lock.</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.Add(`0[])">
+            <summary>Add with SyncRoot lock.</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.RenameItem(JocysCom.ClassLibrary.Configuration.ISettingsItemFile,System.String)">
+            <summary>
+            Returns error.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.DeleteItem(JocysCom.ClassLibrary.Configuration.ISettingsItemFile)">
+            <summary>
+            Returns new name.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.Synchronize(System.Collections.Generic.IList{`0},System.Collections.Generic.IList{`0})">
+            <summary>
+            Synchronize source collection to destination.
+            </summary>
+            <remarks>
+            Same Code:
+            JocysCom\Controls\SearchHelper.cs
+            </remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsData`1.GetHashValues(System.Collections.Generic.IList{`0})">
+            <summary>
+            Return list of items their SHA256 hash.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsHelper.IsDifferent(System.String,System.Byte[])">
+            <summary>
+            Returns true if the file does not exist, the file size is different, or the file contents are different.
+            </summary>
+            <param name="path">File path.</param>
+            <param name="bytes">Contents to compare with the contents of the file.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsHelper.WriteIfDifferent(System.String,System.Byte[])">
+            <summary>
+            Writes the file contents if they are different from the existing file and returns a boolean indicating if the file was written.
+            </summary>
+            <param name="path">File path.</param>
+            <param name="bytes">File contents to be written.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Configuration.SettingsHelper.GetFileContentBytes(System.String,System.Text.Encoding)">
+            <summary>
+            Get file content with encoding header.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.InitInvokeContext">
+            <summary>
+            Call this method from main form constructor for BeginInvoke to work.
+            </summary>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.Controls.ControlsHelper.MainTaskScheduler">
+            <summary>
+            Object that handles the low-level work of queuing tasks onto main User Interface (GUI) thread.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(System.Action,System.Nullable{System.Int32})">
+            <summary>Executes the specified action delegate asynchronously on main Graphical User Interface (GUI) Thread.</summary>
+            <param name="action">The action delegate to execute asynchronously.</param>
+            <returns>The started System.Threading.Tasks.Task.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(System.Delegate,System.Object[])">
+            <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
+            <param name="action">The action delegate to execute asynchronously.</param>
+            <returns>The started System.Threading.Tasks.Task.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.Invoke(System.Action)">
+            <summary>Executes the specified action delegate synchronously on main Graphical User Interface (GUI) Thread.</summary>
+            <param name="action">The action delegate to execute synchronously.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.Invoke(System.Delegate,System.Object[])">
+            <summary>Executes the specified action delegate synchronously on main Graphical User Interface (GUI) Thread.</summary>
+            <param name="action">The delegate to execute synchronously.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.OpenPath(System.String,System.String)">
+            <summary>
+            Open file with associated program.
+            </summary>
+            <param name="path">file to open.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.GetValue``1(System.Object,System.String,System.Reflection.PropertyInfo)">
+            <summary>
+            Get DataViewRow, DataRow or item property value.
+            </summary>
+            <typeparam name="T">Return value type.</typeparam>
+            <param name="item">DataViewRow, DataRow or another type.</param>
+            <param name="keyPropertyName">Data property or column name.</param>
+            <param name="pi">Optional property info cache.</param>
+            <returns></returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.GetPropertyInfo(System.String,System.Object)">
+            <summary>
+             Get Property info 
+            </summary>
+            <param name="keyPropertyName"></param>
+            <param name="item"></param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.IsOnCooldown(System.Object,System.Nullable{System.Int32})">
+            <summary>
+            Returns true if control is on cool-down.
+            </summary>
+            <param name="control">Control to check.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.SetText(System.Windows.Controls.Label,System.String,System.Object[])">
+            <summary>
+            Change value if it is different only.
+            This helps not to trigger control events when doing frequent events.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.SetText(System.Windows.Controls.GroupBox,System.String,System.Object[])">
+            <summary>
+            Change value if it is different only.
+            This helps not to trigger control events when doing frequent events.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.SetText(System.Windows.Controls.TextBox,System.String,System.Object[])">
+            <summary>
+            Change value if it is different only.
+            This helps not to trigger control events when doing frequent events.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.SetText(System.Windows.Controls.TextBlock,System.String,System.Object[])">
+            <summary>
+            Change value if it is different only.
+            This helps not to trigger control events when doing frequent events.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.SetChecked(System.Windows.Controls.Primitives.ToggleButton,System.Boolean)">
+            <summary>
+            Change value if it is different only.
+            This helps not to trigger control events when doing frequent events.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:JocysCom.ClassLibrary.Controls.ControlsHelper.SetEnabled(System.Windows.UIElement,System.Boolean)" -->
+        <!-- Badly formed XML comment ignored for member "M:JocysCom.ClassLibrary.Controls.ControlsHelper.SetVisible(System.Windows.UIElement,System.Boolean)" -->
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.GetParent``1(System.Windows.DependencyObject,System.Boolean)">
+            <summary>
+            Get parent control of specific type.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.GetAll(System.String,System.Windows.DependencyObject,System.Type,System.Boolean)">
+            <summary>
+            Get all child controls with path.
+            Use regex to make shorter tabbed path:
+            var rx = new Regex("[^.]+[.]+");
+            var tabbedPath = rx.Replace(item.Path, "\t");
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.GetAll(System.Windows.DependencyObject,System.Type,System.Boolean)">
+            <summary>
+            Get all child controls.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.GetAll``1(System.Windows.FrameworkElement,System.Boolean)">
+            <summary>
+            Get all child controls.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection``1(System.Windows.Controls.DataGrid,System.String)">
+            <summary>
+            Get list of primary keys of items selected in the grid.
+            </summary>
+            <typeparam name="T">Type of Primary key.</typeparam>
+            <param name="grid">Grid for getting selection</param>
+            <param name="primaryKeyPropertyName">Primary key name.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.AllowLoad(System.Windows.FrameworkElement)">
+            <summary>
+            Returnd false if displayed in desing mode (IDE).
+            Return true if control is not in the list of loaded controls.
+            Add control to the list of loaded controls.
+            IMPORTANT! Must be used in pair with AllowUnload.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.AllowUnload(System.Windows.FrameworkElement)">
+            <summary>
+            Returnd false if displayed in desing mode (IDE).
+            Return true if control is in the list of loaded controls.
+            Remove control from the list of loaded controls.
+            IMPORTANT! Must be used in pair with AllowLoad.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.IsLoaded(System.Windows.FrameworkElement)">
+            <summary>
+            Returnd false if displayed in desing mode (IDE).
+            Return true if control is in the list of loaded controls.
+            Remove control from the list of loaded controls.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(System.Object,System.Windows.Input.MouseButtonEventArgs)">
+            <summary>
+            Workaround: Without this event, "mouse down" will select the checkbox, but "mouse up" will deselect it immediately.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.CheckTopMost(System.Windows.Window)">
+            <summary>
+            Set form TopMost if one of the application forms is top most.
+            </summary>
+            <param name="win"></param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.GetImageSource(System.Drawing.Bitmap)">
+            <summary>
+            Convert Bitmap to image source.
+            </summary>
+            <remarks>
+            Requires NuGet Package on .NET Core: System.Drawing.Common or...
+            set property <UseWindowsForms>true</UseWindowsForms> inside the project.
+            </remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.CenterWindowOnApplication(System.Windows.Window)">
+            <summary>
+            Center window on Owner window.
+            </summary>
+            <param name="window"></param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.TransformToPixels(System.Double,System.Double,System.Int32@,System.Int32@)">
+            <summary>
+            Transforms device independent units (1/96 of an inch) to pixels.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Controls.ControlsHelper.TransformToUnits(System.Int32,System.Int32,System.Double@,System.Double@)">
+            <summary>
+            Transforms device pixels to independent units (1/96 of an inch).
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.SetSessionContext(System.Data.IDbConnection,System.String,System.Object,System.Boolean)">
+            <summary>
+            SQL 2016. Maximum storage space - 256 kilobytes.
+            </summary>
+            <param name="connection">Existing and open database connection.</param>
+            <param name="key">Key name. Up to 128 Unicode characters.</param>
+            <param name="value">Any type.</param>
+            <param name="read_only">If true then can's be cannot be changed unless session ends.</param>
+            <remarks>SELECT SESSION_CONTEXT(N'ID');</remarks>
+            <returns>The number of rows affected.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.GetSessionContext(System.Data.IDbConnection,System.String)">
+            <summary>
+            SQL 2016. Maximum storage space - 256 kilobytes.
+            </summary>
+            <param name="connection">Existing and open database connection.</param>
+            <param name="key">Key name. Up to 128 Unicode characters.</param>
+            <returns>Value.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.FilterConnectionString(System.String)">
+            <summary>Hide connection string password.</summary>
+            <param name="text"></param>
+        </member>
+        <member name="P:JocysCom.ClassLibrary.Data.SqlHelper.Properties">
+            <summary>Cache data for speed.</summary>
+            <remarks>Cache allows for this class to work 20 times faster.</remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.OptimizeBehavior(System.Data.CommandBehavior)">
+            <summary>
+            Optimize CommandBehavior for SqlDataReader.
+            SequentialAccess requires to read results in strict sequence.
+            var v0 = reader.GetString(0);
+            var v1 = reader.GetDateTime(1);
+            var v3 = reader.GetDouble(2);
+            var v4 = reader.GetDouble(3);
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.OptimizeQuery(System.String)">
+            <summary>
+            Optimize SQL Query.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.OptimizeConnection(System.String)">
+            <summary>
+            Optimize SQL connection string for SqlDataReader.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.AddArrayParameters``1(System.Data.SqlClient.SqlCommand,System.String,``0[])">
+            <summary>
+            Add an array of parameters to a SQL command in an IN statement.
+            Example:
+                var cmd = new SqlCommand("SELECT * FROM table WHERE value IN (@values)");
+                SqlHelper.AddArrayParameters(cmd, "@values", new int[] { 1, 2, 3 });
+            </summary>
+            <param name="cmd">The SQL command object to add parameters to.</param>
+            <param name="paramName">Parameter name inside SQL command.</param>
+            <param name="values">The array of strings that need to be added as parameters.</param>
+            <returns>Array of added parameters.</returns>
+            <remarks>
+            An array cannot be simply added as a single parameter to a SQL command.
+            New SQL parameter will be created for each array value.
+            </remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.ConvertToList``1(System.Data.DataTable)">
+            <summary>
+            Convert DataTable to List of objects. Can be used to convert DataTable to list of framework entities. 
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.Convert``1(System.Data.DataRow,System.Reflection.PropertyInfo[],System.Data.DataColumn[])">
+            <summary>Convert DataRow to object.</summary>
+            <param name="propsCache">Optional for cache reasons.</param>
+            <param name="columnsCache">Optional for cache reasons.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.ConvertToTable``1(System.Collections.Generic.IEnumerable{``0},System.String[])">
+            <summary>
+            Convert List to DataTable. Can be used to pass data into stored procedures. 
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.ToSqlCommandString(System.Data.SqlClient.SqlCommand)">
+            <summary>
+            There is no easy way to create SQL string from SqlCommand, because execution does not generate any SQL.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.ParameterValueForSQL(System.Data.SqlClient.SqlParameter)">
+            <summary>
+            Get Parameter value in string for SQL.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Data.SqlHelper.ToBooleanOrDefault(System.Object,System.Boolean)">
+            <summary>
+            Get boolean value from object value.
+            </summary>
+        </member>
+        <member name="T:JocysCom.ClassLibrary.Drawing.IconToImage">
+            <summary>
+            Summary description for IconToImage.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Files.Mime.GetMimeContentType(System.String)">
+            <summary>
+            Get MIME Content Type by file extension. For example ".gif" -> "image/gif".
+            This is needed if you want to stream files thru scripts.
+            For example: getFile.aspx?name=SomePicture.gif
+            </summary>
+            <param name="fileExtension">File extension.</param>
+            <returns>MIME Content Type</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Files.Mime.GetMimeFileExtension(System.String)">
+            <summary>
+            Get MIME file extension by MIME Content Type. For example "image/jpeg" -> ".jpg".
+            This is needed if you want to save embded objects from MIME Message to disk.
+            </summary>
+            <param name="contentType">MIME Content Type</param>
+            <returns></returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Files.Mime.GetProgId(System.String)">
+            <summary>
+            Gets a value that indicates the name of the associated application with the behavior to handle this extension.
+            </summary>
+            <param name="fileExtension">File extension.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Files.Mime.GetFileDescription(System.String)">
+            <summary>
+            Gets a value that determines what the friendly name of the file is.
+            </summary>
+            <param name="fileExtension">File extension.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Files.Mime.GetResourceDataUri(System.String,System.Byte[])">
+            <summary>
+            https://en.wikipedia.org/wiki/Data_URI_scheme
+            </summary>
+        </member>
+        <member name="T:JocysCom.ClassLibrary.IO.PathHelper">
+            <summary>
+            Summary description for PathConvert.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.IO.PathHelper.ValidatePath(System.String)">
+            <summary>
+            Method used to protect from
+            CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+            https://cwe.mitre.org/data/definitions/78.html
+            </summary>
+            <param name="path"></param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.IO.PathHelper.IsPathVirtual(System.String)">
+            <summary>
+            Virtual path starts from "/" or "\" 
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.IO.PathHelper.IsPathPhysical(System.String)">
+            <summary>
+            A physical path is how the OS locates the resource.
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.IO.PathHelper.GetRelativePath(System.String,System.String,System.Boolean)">
+            <summary>
+               root     parent
+            ----------- --------
+                        ..\..\..
+            c:\r1\r2\r3\p1\p2\p3\\
+            c:\r1\r2\r3\a1\file.ext
+                        ----------- 
+                        append
+            Important: if relative is directory then path must end with '\' or '/'.
+            </summary>
+            <param name="relativeTo"></param>
+            <param name="pathTo"></param>
+            <returns></returns>
+        </member>
+        <member name="T:JocysCom.ClassLibrary.Processes.HiddenShell">
+            <summary>
+            Summary description for HiddenShell.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Processes.HiddenShell.Execute(System.String,System.String,System.Text.StringBuilder,System.Text.StringBuilder,System.Int32)">
+            <summary>
+            Execute console command.
+            </summary>
+            <param name="fileName">Console application to execute.</param>
+            <param name="arguments">Arguments.</param>
+            <param name="output">String builder for output.</param>
+            <param name="error">String builder for errors. If null then output will be used.</param>
+            <param name="timeout">Timeout. Default is -1, which represents an infinite time-out.</param>
+            <returns>Exit code. Return null if timeout.</returns>
+        </member>
+        <member name="F:JocysCom.ClassLibrary.Runtime.Attributes.Descriptions">
+            <summary>Cache data for speed.</summary>
+            <remarks>Cache allows for this class to work 20 times faster.</remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(System.Object,System.Boolean)">
+            <summary>
+            Get DescriptionAttribute value from object or enumeration value.
+            </summary>
+            <param name="o">Enumeration value or object</param>
+            <returns>Description, class name, or enumeration property name.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Attributes.GetDefaultValue(System.Object)">
+            <summary>
+            Return default value.
+            </summary>
+            <param name="value">Can be enum value or MemberInfo, PropertyInfo...
+            Enum.Value
+            typeof(ClassName)
+            </param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Attributes.GetByDefaultValue``1(System.String)">
+            <summary>
+            Some enums can be decorated with DefaultValue attribute:
+              [Description("Favourite"), DefaultValue("F")]
+              Favourite,
+            This function will get original Enum value by string default value.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Attributes.GetDefaultValue``2(System.String)">
+            <summary>
+            Return default attribute value.
+            </summary>
+            <typeparam name="T">Source Type</typeparam>
+            <typeparam name="TResult">Return Type</typeparam>
+            <param name="memberName">Member name i.e. property or field name.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Attributes._GetDefaultValue``1(System.Object)">
+            <summary>
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(System.Object,System.Boolean,System.String[])">
+            <summary>
+            Assign property values from their [DefaultValueAttribute] value.
+            </summary>
+            <param name="o">Object to reset properties on.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Attributes.GetDictionary``1(``0[])">
+            <summary>
+            Get a dictionary where the key is an enum and the value is the value of the description attribute.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Attributes.FindCustomAttribute``1(System.Reflection.MethodInfo)">
+            <summary>
+            Find attribute including interfaces.
+            </summary>
+            <typeparam name="T">Attribute type.</typeparam>
+            <param name="methodInfo">Method info.</param>
+            <returns></returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.ReadFile(System.String,System.Int32,System.Int32)">
+            <summary>
+            Read file content in multiple attempts.
+            </summary>
+            <param name="path">The file to open for reading.</param>
+            <param name="attempts">Number of attempts to read from the file. Default 2 times.</param>
+            <param name="waitTime">Wait time between attempts. Default 500ms.</param>
+            <returns>A byte array containing the contents of the file.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.WriteFile(System.String,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Write file content in multiple attempts.
+            </summary>
+            <param name="path">The file to open for writing.</param>
+            <param name="bytes">The bytes to write to the file.</param>
+            <param name="attempts">Number of attempts to write into the file. Default 2 times.</param>
+            <param name="waitTime">Wait time between attempts. Default 500ms.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.SerializeToJson(System.Object,System.Text.Encoding)">
+            <summary>
+            Serialize object to JSON string.
+            </summary>
+            <param name="o">The object to serialize.</param>
+            <param name="encoding">JSON string encoding.</param>
+            <returns>JSON string.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromJson(System.String,System.Type,System.Text.Encoding)">
+            <summary>
+            De-serialize object from JSON string.
+            </summary>
+            <param name="json">JSON string representing object.</param>
+            <param name="type">Type of object.</param>
+            <param name="encoding">JSON string encoding.</param>
+            <returns>The de-serialized object.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromJson``1(System.String,System.Text.Encoding)">
+            <summary>
+            De-serialize object from JSON string.
+            </summary>
+            <param name="json">JSON string representing object.</param>
+            <param name="encoding">JSON string encoding.</param>
+            <returns>The de-serialized object.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.XmlFormat(System.String)">
+            <summary>
+            Reformat XML document.
+            </summary>
+            <param name="xml"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXml(System.Object)">
+            <summary>
+            Serialize object to XML document.
+            </summary>
+            <param name="o">The object to serialize.</param>
+            <returns>XML document</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(System.Object,System.Text.Encoding,System.Boolean,System.String,System.Boolean)">
+            <summary>
+            Serialize object to XML string.
+            </summary>
+            <param name="o">The object to serialize.</param>
+            <param name="encoding">The encoding to use (default is UTF8).</param>
+            <param name="namespaces">Contains the XML namespaces and prefixes that the XmlSerializer  uses to generate qualified names in an XML-document instance.</param>
+            <returns>XML string.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlFile(System.Object,System.String,System.Text.Encoding,System.Boolean,System.String,System.Int32,System.Int32)">
+            <summary>
+            Serialize object to XML file.
+            </summary>
+            <param name="o">The object to serialize.</param>
+            <param name="path">The file name to write to.</param>
+            <param name="encoding">The encoding to use (default is UTF8).</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlBytes(System.Object,System.Text.Encoding,System.Boolean,System.String)">
+            <summary>
+            Serialize object to XML bytes with Byte Order Mark (BOM).
+            </summary>
+            <param name="o">The object to serialize.</param>
+            <param name="path">The file name to write to.</param>
+            <param name="encoding">The encoding to use (default is UTF8).</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXml(System.Xml.XmlDocument,System.Type)">
+            <summary>
+            De-serialize System.Collections.Generic.List to XML document.
+            </summary>
+            <param name="doc">XML document representing object.</param>
+            <param name="type">Type of object.</param>
+            <returns>XML document</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlBytes(System.Byte[],System.Type,System.Text.Encoding)">
+            <summary>
+            De-serialize object from XML bytes. XML bytes can contain Byte Order Mark (BOM).
+            </summary>
+            <param name="xml">XML string representing object.</param>
+            <param name="type">Type of object.</param>
+            <param name="encoding">Encoding to use (default is UTF8) if Byte Order Mark (BOM) is missing.</param>
+            <returns>Object.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString(System.String,System.Type,System.Xml.XmlParserContext,System.Boolean)">
+            <summary>
+            De-serialize object from XML string. XML string must not contain Byte Order Mark (BOM).
+            </summary>
+            <param name="xml">XML string representing object.</param>
+            <param name="type">Type of object.</param>
+            <param name="inputContext">You can use inputContext to add missing namespaces.</param>
+            <returns>Object.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlFile(System.String,System.Type,System.Text.Encoding,System.Int32,System.Int32)">
+            <summary>
+            De-serialize object from XML file.
+            </summary>
+            <param name="filename">The file name to read from.</param>
+            <param name="type">Type of object.</param>
+            <param name="encoding">Encoding to use (default is UTF8) if file Byte Order Mark (BOM) is missing.</param>
+            <returns>Object.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXml``1(System.Xml.XmlDocument)">
+            <summary>
+            De-serialize object from XML Document.
+            </summary>
+            <param name="doc">XML document representing object.</param>
+            <returns>XML document</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString``1(System.String)">
+            <summary>
+            De-serialize object from XML string.
+            </summary>
+            <param name="xml">XML string representing object.</param>
+            <param name="encoding">The encoding to use (default is UTF8).</param>
+            <returns>Object.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlFile``1(System.String,System.Text.Encoding,System.Int32,System.Int32)">
+            <summary>
+            De-serialize object from XML file.
+            </summary>
+            <param name="filename">The file name to read from.</param>
+            <param name="encoding">Specified encoding will be used if file Byte Order Mark (BOM) is missing.</param>
+            <returns>Object.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlBytes``1(System.Byte[],System.Text.Encoding)">
+            <summary>
+            De-serialize object from XML bytes. XML bytes can contain Byte Order Mark (BOM).
+            </summary>
+            <param name="xml">XML string representing object.</param>
+            <param name="type">Type of object.</param>
+            <param name="encoding">The encoding to use (default is UTF8) if Byte Order Mark (BOM) is missing.</param>
+            <returns>Object.</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXsdFile(System.Object,System.String,System.Text.Encoding,System.Boolean,System.Int32,System.Int32)">
+            <summary>
+            Serialize object schema to XSD file.
+            </summary>
+            <param name="o">The object to serialize.</param>
+            <param name="path">The file name to write to.</param>
+            <param name="encoding">The encoding to use (default is UTF8).</param>
+        </member>
+        <member name="T:JocysCom.ClassLibrary.Security.Encryption">
+            <summary>
+            Summary description for Encryption
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.Replace``1(System.String,``0,System.Boolean,System.String)">
+             <summary>
+             Replace {TypeName.PropertyName[:format]} or {customPrefix.propertyName[:format]} pattern with the property value of the object.
+             </summary>
+             <remarks>
+             Example 1: Supply current date. Use {customPrefix.propertyName[:format]}.
+            	var template = "file_{date.Now:yyyyMMdd}.txt";
+             var fileName = JocysCom.ClassLibrary.Text.Helper.Replace(template, DateTime.Now, true, "date");
+            
+             Example 2: Supply profile object. Use {TypeName.PropertyName[:format]}.
+            	var template = "Profile full name: {Profile.first_name} {Profile.last_name}";
+             var fileName = JocysCom.ClassLibrary.Text.Helper.Replace(template, profile);
+             </remarks>
+             <param name="s">String template</param>
+             <param name="o">Object values.</param>
+             <param name="usePrefix">If true then type name or custom prefix, separated by dot, will be used.</param>
+             <param name="customPrefix">Custom prefix string.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.ReplaceDictionary(System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Boolean,System.String)">
+             <summary>
+             Replace {TypeName.PropertyName[:format]} or {customPrefix.propertyName[:format]} pattern with the property value of the object.
+             </summary>
+             <remarks>
+             Example 1: Supply current date. Use {customPrefix.propertyName[:format]}.
+            	var template = "file_{date.Now:yyyyMMdd}.txt";
+             var fileName = JocysCom.ClassLibrary.Text.Helper.Replace(template, DateTime.Now, true, "date");
+            
+             Example 2: Supply profile object. Use {TypeName.PropertyName[:format]}.
+            	var template = "Profile full name: {Profile.first_name} {Profile.last_name}";
+             var fileName = JocysCom.ClassLibrary.Text.Helper.Replace(template, profile);
+             </remarks>
+             <param name="s">String template</param>
+             <param name="o">Object values.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.Replace``1(``0,System.String,System.Boolean,System.String)">
+            <summary>
+            Used to parametrize path. For example:
+            Convert "C:\Program Files\JocysCom\Focus Logger" to
+            "C:\Program Files\{Company}\{Product}"
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.Replace(System.String,System.String,System.String,System.StringComparison)">
+            <summary>Case insensitive replace.</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.IndexOf(System.Byte[],System.Byte[],System.Int32)">
+            <summary>
+            Reports the zero-based index of the first occurrence of the specified value
+            in input. The search starts at a specified byte position.
+            </summary>
+            <param name="input">input bytes.</param>
+            <param name="value">The bytes to seek.</param>
+            <param name="startIndex">The search starting position.</param>
+            <returns>
+            The zero-based index position of value if that byte value is found, or -1 if it is not.
+            </returns>
+            <remarks>This is very fast search.</remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.GetValue(System.String,System.String,System.String)">
+            <summary>
+            Get value from text [name]:\s*[value].
+            </summary>
+            <param name="name">Prefix name.</param>
+            <param name="s">String to get value from.</param>
+            <param name="defaultValue">Override default value.</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.ToLiteral(System.String,System.String)">
+            <summary>
+            Convert string value to an escaped C# string literal.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.WrapText(System.String,System.Int32,System.Boolean)">
+            <summary>
+            Word wraps the given text to fit within the specified width.
+            </summary>
+            <param name="text">Text to be word wrapped</param>
+            <param name="width">Width, in characters, to which the text
+            should be word wrapped</param>
+            <returns>The modified text</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.BreakLine(System.String,System.Int32,System.Int32)">
+            <summary>
+            Locates position to break the given line so as to avoid
+            breaking words.
+            </summary>
+            <param name="text">String that contains line of text</param>
+            <param name="pos">Index where line of text starts</param>
+            <param name="max">Maximum line length</param>
+            <returns>The modified line length</returns>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.IdentText(System.String,System.Int32,System.String)">
+            <summary>
+            Add or remove ident.
+            </summary>
+            <param name="s">String to ident.</param>
+            <param name="tabs">Positive - add ident, negative - remove ident.</param>
+            <param name="ident">Ident character</param>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.IBM437ToUTF8(System.Byte[])">
+            <summary>
+            Convert .NFO file content to Unicode so they can be displayed properly between 'pre' tags on web.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.IBM437ToUTF8(System.String)">
+            <summary>
+            Convert .NFO file content to Unicode so they can be displayed properly between 'pre' tags on web.
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.TimeSpanToString(System.TimeSpan,System.Boolean,System.Boolean,System.Boolean,System.Nullable{System.Int32})">
+            <summary>
+            Convert timespan to string.
+            </summary>
+            <param name="ts">TimeSpan value to convert.</param>
+            <param name="includeMilliseconds">include milliseconds.</param>
+            <param name="useWords">Use words instead of ':' and '.' separator.</param>
+            <param name="useShortWords">Use short words. Applied when useWords = true.</param>
+            <param name="precision">Precision. Applied when useWords = true.</param>
+            <returns></returns>
+        </member>
+        <member name="F:JocysCom.ClassLibrary.Text.Helper.TimeSpanStandard">
+            <summary>Time Span Standard regular expression.</summary>
+            <remarks>
+            Minutes are mandatory with required colon from left or right.
+            Pattern: [-][[dd.]HH:](:mm|mm:)[:ss[.fffffff]]
+            </remarks>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.ConvertTimeSpanStandardToISO8601(System.String)">
+            <summary>
+            Convert JSON TimeSpan format...
+            	From Standard: [-][d.]HH:mm[:ss.fffffff]
+            	To   ISO8601:  P(n)Y(n)M(n)DT(n)H(n)M(n)S
+            </summary>
+        </member>
+        <member name="F:JocysCom.ClassLibrary.Text.Helper.TimeSpanISO8601">
+            <summary>Time Span ISO8601 regular expression</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Text.Helper.ConvertTimeSpanISO8601ToStandard(System.String)">
+            <summary>
+            Convert JSON TimeSpan format...
+            	From ISO8601:  P(n)Y(n)M(n)DT(n)H(n)M(n)S
+            	To   Standard: [-][d.]HH:mm[:ss.fffffff]
+            </summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Xml.XmlDocHelper.GetMemberDoc(System.Reflection.MemberInfo)">
+            <summary>Retrieve the XML comments for a type or a member of a type.</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Xml.XmlDocHelper._GetMemberDoc(System.Reflection.MemberInfo)">
+            <summary>Retrieve the XML comments for a type or a member of a type.</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Xml.XmlDocHelper.CreateParamsDescription(System.Reflection.ParameterInfo[])">
+            <summary>Generates a parameter string used when searching XML comment files.</summary>
+            <param name="parameters">List of parameters to a member.</param>
+            <returns>A parameter string used when searching XML comment files.</returns>
+        </member>
+        <member name="F:JocysCom.ClassLibrary.Xml.XmlDocHelper.XmlDocCache">
+            <summary>XML Document cache.</summary>
+        </member>
+        <member name="F:JocysCom.ClassLibrary.Xml.XmlDocHelper.XmlDocumentCache">
+            <summary>XML Document cache.</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Xml.XmlDocHelper.GetXmlDoc(System.Reflection.Assembly,System.Boolean)">
+            <summary>Get XML Doc.</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Xml.XmlDocHelper.GetXmlDocument(System.Reflection.Assembly,System.Boolean)">
+            <summary>Get XML Document.</summary>
+        </member>
+        <member name="M:JocysCom.ClassLibrary.Xml.XmlDocHelper.GetXmlDocumentationPath(System.Reflection.Assembly)">
+            <summary>Gets XML document file path by assembly.</summary>
+        </member>
+        <member name="T:System.IO.Compression.ZipStorer">
+            <summary>
+            Unique class for compression/decompression file. Represents a Zip file.
+            </summary>
+        </member>
+        <member name="T:System.IO.Compression.ZipStorer.Compression">
+            <summary>
+            Compression method enumeration
+            </summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.Compression.Store">
+            <summary>Uncompressed storage</summary> 
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.Compression.Deflate">
+            <summary>Deflate compression method</summary>
+        </member>
+        <member name="T:System.IO.Compression.ZipStorer.ZipFileEntry">
+            <summary>
+            Represents an entry in Zip file directory
+            </summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.Method">
+            <summary>Compression method</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.FilenameInZip">
+            <summary>Full path and filename as stored in Zip</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.FileSize">
+            <summary>Original file size</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.CompressedSize">
+            <summary>Compressed file size</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.HeaderOffset">
+            <summary>Offset of header information inside Zip storage</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.FileOffset">
+            <summary>Offset of file inside Zip storage</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.HeaderSize">
+            <summary>Size of header information</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.Crc32">
+            <summary>32-bit checksum of entire file</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.ModifyTime">
+            <summary>Last modification time of file</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.Comment">
+            <summary>User comment for file</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ZipFileEntry.EncodeUTF8">
+            <summary>True if UTF8 encoding for filename and comments, false if default (CP 437)</summary>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ZipFileEntry.ToString">
+            <summary>Overriden method</summary>
+            <returns>Filename in Zip</returns>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.EncodeUTF8">
+            <summary>True if UTF8 encoding for filename and comments, false if default (CP 437)</summary>
+        </member>
+        <member name="F:System.IO.Compression.ZipStorer.ForceDeflating">
+            <summary>Force deflate algotithm even if it inflates the stored file. Off by default.</summary>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Create(System.String,System.String)">
+            <summary>
+            Method to create a new storage file
+            </summary>
+            <param name="_filename">Full path of Zip file to create</param>
+            <param name="_comment">General comment for Zip file</param>
+            <returns>A valid ZipStorer object</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Create(System.IO.Stream,System.String,System.Boolean)">
+            <summary>
+            Method to create a new zip storage in a stream
+            </summary>
+            <param name="_stream"></param>
+            <param name="_comment"></param>
+            <param name="_leaveOpen">true to leave the stream open after the ZipStorer object is disposed; otherwise, false (default).</param>
+            <returns>A valid ZipStorer object</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Open(System.String,System.IO.FileAccess)">
+            <summary>
+            Method to open an existing storage file
+            </summary>
+            <param name="_filename">Full path of Zip file to open</param>
+            <param name="_access">File access mode as used in FileStream constructor</param>
+            <returns>A valid ZipStorer object</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Open(System.IO.Stream,System.IO.FileAccess,System.Boolean)">
+            <summary>
+            Method to open an existing storage from stream
+            </summary>
+            <param name="_stream">Already opened stream with zip contents</param>
+            <param name="_access">File access mode for stream operations</param>
+            <param name="_leaveOpen">true to leave the stream open after the ZipStorer object is disposed; otherwise, false (default).</param>
+            <returns>A valid ZipStorer object</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.AddFile(System.IO.Compression.ZipStorer.Compression,System.String,System.String,System.String)">
+            <summary>
+            Add full contents of a file into the Zip storage
+            </summary>
+            <param name="_method">Compression method</param>
+            <param name="_pathname">Full path of file to add to Zip storage</param>
+            <param name="_filenameInZip">Filename and path as desired in Zip directory</param>
+            <param name="_comment">Comment for stored file</param>        
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.AddStream(System.IO.Compression.ZipStorer.Compression,System.String,System.IO.Stream,System.DateTime,System.String)">
+            <summary>
+            Add full contents of a stream into the Zip storage
+            </summary>
+            <param name="_method">Compression method</param>
+            <param name="_filenameInZip">Filename and path as desired in Zip directory</param>
+            <param name="_source">Stream object containing the data to store in Zip</param>
+            <param name="_modTime">Modification time of the data to store</param>
+            <param name="_comment">Comment for stored file</param>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.AddDirectory(System.IO.Compression.ZipStorer.Compression,System.String,System.String,System.String)">
+            <summary>
+            Add full contents of a directory into the Zip storage
+            </summary>
+            <param name="_method">Compression method</param>
+            <param name="_pathname">Full path of directory to add to Zip storage</param>
+            <param name="_pathnameInZip">Path name as desired in Zip directory</param>
+            <param name="_comment">Comment for stored directory</param>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Close">
+            <summary>
+            Updates central directory (if pertinent) and close the Zip storage
+            </summary>
+            <remarks>This is a required step, unless automatic dispose is used</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ReadCentralDir">
+            <summary>
+            Read all the file records in the central directory 
+            </summary>
+            <returns>List of all entries in directory</returns>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ExtractFile(System.IO.Compression.ZipStorer.ZipFileEntry,System.String)">
+            <summary>
+            Copy the contents of a stored file into a physical file
+            </summary>
+            <param name="_zfe">Entry information of file to extract</param>
+            <param name="_filename">Name of file to store uncompressed data</param>
+            <returns>True if success, false if not.</returns>
+            <remarks>Unique compression methods are Store and Deflate</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ExtractFile(System.IO.Compression.ZipStorer.ZipFileEntry,System.IO.Stream)">
+            <summary>
+            Copy the contents of a stored file into an opened stream
+            </summary>
+            <param name="_zfe">Entry information of file to extract</param>
+            <param name="_stream">Stream to store the uncompressed data</param>
+            <returns>True if success, false if not.</returns>
+            <remarks>Unique compression methods are Store and Deflate</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.ExtractFile(System.IO.Compression.ZipStorer.ZipFileEntry,System.Byte[]@)">
+            <summary>
+            Copy the contents of a stored file into a byte array
+            </summary>
+            <param name="_zfe">Entry information of file to extract</param>
+            <param name="_file">Byte array with uncompressed data</param>
+            <returns>True if success, false if not.</returns>
+            <remarks>Unique compression methods are Store and Deflate</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.RemoveEntries(System.IO.Compression.ZipStorer@,System.Collections.Generic.List{System.IO.Compression.ZipStorer.ZipFileEntry})">
+            <summary>
+            Removes one of many files in storage. It creates a new Zip file.
+            </summary>
+            <param name="_zip">Reference to the current Zip object</param>
+            <param name="_zfes">List of Entries to remove from storage</param>
+            <returns>True if success, false if not</returns>
+            <remarks>This method only works for storage of type FileStream</remarks>
+        </member>
+        <member name="M:System.IO.Compression.ZipStorer.Dispose">
+            <summary>
+            Closes the Zip file stream
+            </summary>
+        </member>
     </members>
 </doc>
