@@ -26,17 +26,6 @@
 		<Border Grid.Row="0" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,0,1">
 			<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
 				<Button
-					Name="EnableAllButton"
-					Margin="0,0,3,3"
-					x:FieldModifier="public"
-					Background="Transparent"
-					Click="EnableAllButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_checkbox_checked_all}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Enable_All}" />
-					</StackPanel>
-				</Button>
-				<Button
 					Name="DisableAllButton"
 					Margin="0,0,3,3"
 					x:FieldModifier="public"
@@ -45,6 +34,39 @@
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_checkbox_unchecked_all}" Focusable="False" />
 						<Label Content="{x:Static locales:Resources.Disable_All}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EnableLowRiskButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EnableLowRiskButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_checkbox_checked_all}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Enable_Low_Risk}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EnableMediumRiskButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EnableMediumRiskButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_checkbox_checked_all}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Enable_Medium_Risk}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EnableAllButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EnableAllButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_checkbox_checked_all}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Enable_All}" />
 					</StackPanel>
 				</Button>
 				<Button

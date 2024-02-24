@@ -1,4 +1,5 @@
 ﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using JocysCom.VS.AiCompanion.Shared;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
@@ -122,7 +123,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Read file information and contents.
 		/// </summary>
 		/// <param name="path">The file to read from.</param>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Medium)]
 		public static DocItem ReadFile(string path)
 		{
 			var di = new DocItem(null, path);
@@ -143,16 +144,27 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return true;
 		}
 
-		/*
 		/// <summary>
-		/// Apply changes based on a basic conceptual "diff" to the content of a file.
+		/// Compares two files and returns a textual representation of the changes.
 		/// </summary>
-		/// <param name="path">Path of the file to read.</param>
-		/// <param name="diff">Differences to apply.</param>
-		public static bool ApplyDiffToFileContents(string path, string diff)
-		{
-		}
-		*/
+		/// <param name="originalFilePath">The path to the original file.</param>
+		/// <param name="modifiedFilePath">The path to the modified file.</param>
+		/// <returns>A string detailing the changes made from the original file to the modified file.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public static string CompareFilesAndReturnChanges(string originalFilePath, string modifiedFilePath)
+			=> DiffHelper.CompareFilesAndReturnChanges(originalFilePath, modifiedFilePath);
+
+		/// <summary>
+		/// Updates a file by applying a series of changes described in a 'diff' format. 
+		/// This method is ideal for updating files efficiently when only changes are known,
+		/// especially useful when bandwidth or storage is limited.
+		/// </summary>
+		/// <param name="filePath">The path to the file that needs to be updated.</param>
+		/// <param name="changes">The string representation of the changes to apply.</param>
+		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public static string ApplyFileChanges(string filePath, string changes)
+			=> DiffHelper.PatchFile(filePath, changes);
 
 		#endregion
 

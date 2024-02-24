@@ -112,6 +112,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		bool SaveDocument(string fullName, string newFullName);
 
 		/// <summary>
+		/// Updates content of the current document by applying a series of changes described in a 'diff' format. 
+		/// This method is ideal for updating content data efficiently when only changes are known,
+		/// especially useful when bandwidth or storage is limited.
+		/// </summary>
+		/// <param name="changes">The string representation of the changes to apply.</param>
+		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		string ApplyCurrentDocumentContentsChanges(string changes);
+
+		/// <summary>
 		/// Sets the content of the currently open and active Document in the editor.
 		/// </summary>
 		/// <param name="contents">The Document to be made active.</param>
@@ -120,7 +130,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		bool SetCurrentDocumentContents(string contents);
 
 		/// <summary>
-		/// Retrieves the text currently selected within the active Document.
+		/// Retrieves the selection information and data from the current active open Document.
 		/// </summary>
 		[RiskLevel(RiskLevel.Low)]
 		DocItem GetSelection();
@@ -132,6 +142,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Medium)]
 		bool SetSelection(string contents);
+
+		/// <summary>
+		/// Updates the selection by applying a series of changes described in a 'diff' format. 
+		/// This method is ideal for updating files efficiently when only changes are known,
+		/// especially useful when bandwidth or storage is limited.
+		/// </summary>
+		/// <param name="changes">The string representation of the changes to apply.</param>
+		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		string ApplySelectionChanges(string changes);
 
 		// Methods for getting errors
 
@@ -164,10 +184,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves information about the currently caught exception, if any.
 		/// </summary>
-		/// <param name="includeDocItems">Includes the Document associated with the Exception.</param>
-		/// <param name="includeDocItemsContents">Includes Document file contents.</param>
+		/// <param name="includeDocItem">Includes the Document associated with the Exception.</param>
+		/// <param name="includeDocItemContents">Includes Document file contents.</param>
 		[RiskLevel(RiskLevel.Low)]
-		ExceptionInfo GetCurrentException(bool includeDocItems, bool includeDocItemsContents);
+		ExceptionInfo GetCurrentException(bool includeDocItem, bool includeDocItemContents);
 
 		// Methods for formatting code
 

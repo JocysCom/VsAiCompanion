@@ -169,7 +169,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Approval Type.
+        ///   Looks up a localized string similar to Approval.
         /// </summary>
         public static string Approval_Type {
             get {
@@ -457,6 +457,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable_Low_Risk.
+        /// </summary>
+        public static string Enable_Low_Risk {
+            get {
+                return ResourceManager.GetString("Enable_Low_Risk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable_Medium_Risk.
+        /// </summary>
+        public static string Enable_Medium_Risk {
+            get {
+                return ResourceManager.GetString("Enable_Medium_Risk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app..
         /// </summary>
         public static string Enable_spell_check_for_the_chat_textbox {
@@ -588,6 +606,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Market_Place {
             get {
                 return ResourceManager.GetString("Market_Place", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max Risk Level.
+        /// </summary>
+        public static string Maximum_Risk_Level {
+            get {
+                return ResourceManager.GetString("Maximum_Risk_Level", resourceCulture);
             }
         }
         

@@ -1,4 +1,5 @@
 ﻿using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -138,6 +139,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(false)]
 		public bool PluginsEnabled { get => _PluginsEnabled; set => SetProperty(ref _PluginsEnabled, value); }
 		bool _PluginsEnabled;
+
+		[DefaultValue(RiskLevel.Low)]
+		public RiskLevel MaxRiskLevel { get => _MaxRiskLevel; set => SetProperty(ref _MaxRiskLevel, value); }
+		RiskLevel _MaxRiskLevel;
 
 		[DefaultValue(ToolCallApprovalProcess.User)]
 		public ToolCallApprovalProcess PluginApprovalProcess { get => _PluginApprovalProcess; set => SetProperty(ref _PluginApprovalProcess, value); }

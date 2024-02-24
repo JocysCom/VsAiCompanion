@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
@@ -190,7 +191,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public DataOperation[] AutoOperations
 			=> (DataOperation[])Enum.GetValues(typeof(DataOperation));
 		public Dictionary<ToolCallApprovalProcess, string> PluginApprovalProcesses
-			=> ControlsHelper.GetDictionary((ToolCallApprovalProcess[])Enum.GetValues(typeof(ToolCallApprovalProcess)));
+			=> ClassLibrary.Runtime.Attributes.GetDictionary((ToolCallApprovalProcess[])Enum.GetValues(typeof(ToolCallApprovalProcess)));
+
+		public Dictionary<RiskLevel, string> MaxRiskLevels
+			=> ClassLibrary.Runtime.Attributes.GetDictionary(
+				((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new[] { RiskLevel.Unknown }).ToArray());
+
 		public Dictionary<string, string> PluginApprovalTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
@@ -210,7 +216,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						ContextType.SelectedProject,
 						ContextType.Solution,
 					};
-					_DataTypes = ControlsHelper.GetDictionary(values);
+					_DataTypes = ClassLibrary.Runtime.Attributes.GetDictionary(values);
 				}
 				return _DataTypes;
 			}
@@ -225,7 +231,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (_DataTypes == null)
 				{
 					var values = (MessageBoxOperation[])Enum.GetValues(typeof(MessageBoxOperation));
-					_MessageBoxOperations = ControlsHelper.GetDictionary(values);
+					_MessageBoxOperations = ClassLibrary.Runtime.Attributes.GetDictionary(values);
 				}
 				return _MessageBoxOperations;
 			}

@@ -451,6 +451,15 @@
     <value>Approval Template</value>
   </data>
   <data name="Approval_Type" xml:space="preserve">
-    <value>Approval Type</value>
+    <value>Approval</value>
+  </data>
+  <data name="Enable_Low_Risk" xml:space="preserve">
+    <value>Enable_Low_Risk</value>
+  </data>
+  <data name="Enable_Medium_Risk" xml:space="preserve">
+    <value>Enable_Medium_Risk</value>
+  </data>
+  <data name="Maximum_Risk_Level" xml:space="preserve">
+    <value>Max Risk Level</value>
   </data>
 </root>

@@ -99,9 +99,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var methods = GetAllMetods();
 			foreach (var method in methods)
 				method.IsEnabled =
-					method.RiskLevel == RiskLevel.Low ||
-					method.RiskLevel == RiskLevel.Medium;
+					method.RiskLevel == RiskLevel.None ||
+					method.RiskLevel == RiskLevel.Low;
 		}
 
+		private void EnableLowRiskButton_Click(object sender, RoutedEventArgs e)
+		{
+			var methods = GetAllMetods();
+			foreach (var method in methods)
+				method.IsEnabled =
+					method.RiskLevel == RiskLevel.Low;
+		}
+
+		private void EnableMediumRiskButton_Click(object sender, RoutedEventArgs e)
+		{
+			var methods = GetAllMetods();
+			foreach (var method in methods)
+				method.IsEnabled =
+					method.RiskLevel == RiskLevel.Medium;
+		}
 	}
 }

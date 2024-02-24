@@ -2,6 +2,7 @@
 using EnvDTE80;
 using JocysCom.VS.AiCompanion.Engine;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using JocysCom.VS.AiCompanion.Shared;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -493,9 +494,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool OpenDocument(string fullName)
+		public bool OpenDocument(string fileName)
 		{
-			return _DocumentAction(fullName, (doc) =>
+			return _DocumentAction(fileName, (doc) =>
 			{
 				ThreadHelper.ThrowIfNotOnUIThread();
 				doc.Activate();
@@ -504,9 +505,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool CloseDocument(string fullName, bool save)
+		public bool CloseDocument(string fileName, bool save)
 		{
-			return _DocumentAction(fullName, (doc) =>
+			return _DocumentAction(fileName, (doc) =>
 			{
 				ThreadHelper.ThrowIfNotOnUIThread();
 				var param = save
@@ -518,9 +519,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool UndoDocument(string fullName)
+		public bool UndoDocument(string fileName)
 		{
-			return _DocumentAction(fullName, (doc) =>
+			return _DocumentAction(fileName, (doc) =>
 			{
 				ThreadHelper.ThrowIfNotOnUIThread();
 				doc.Undo();
@@ -529,16 +530,16 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool SaveDocument(string fullName, string newName)
+		public bool SaveDocument(string fileName, string newFileName)
 		{
-			return _DocumentAction(fullName, (doc) =>
+			return _DocumentAction(fileName, (doc) =>
 			{
 				ThreadHelper.ThrowIfNotOnUIThread();
 				vsSaveStatus status;
-				if (string.IsNullOrEmpty(newName))
+				if (string.IsNullOrEmpty(newFileName))
 					status = doc.Save();
 				else
-					status = doc.Save(newName);
+					status = doc.Save(newFileName);
 				return status == vsSaveStatus.vsSaveSucceeded;
 			});
 		}
@@ -565,6 +566,24 @@ namespace JocysCom.VS.AiCompanion.Extension
 			}
 			return false;
 		}
+
+		/// <inheritdoc />
+		public string ApplyCurrentDocumentContentsChanges(string changes)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			try
+			{
+				var docItem = GetCurrentDocument(true);
+				var contents = docItem.ContentData;
+				contents = DiffHelper.PatchContents(contents, changes);
+				return SetSelection(contents) ? "OK" : "Failed";
+			}
+			catch (Exception ex)
+			{
+				return ex.Message;
+			}
+		}
+
 
 		/// <inheritdoc />
 		public bool SetCurrentDocumentContents(string contents)
@@ -619,6 +638,23 @@ namespace JocysCom.VS.AiCompanion.Extension
 			selection.Delete();
 			selection.Insert(contents, (int)vsInsertFlags.vsInsertFlagsInsertAtEnd);
 			return true;
+		}
+
+		/// <inheritdoc />
+		public string ApplySelectionChanges(string changes)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			try
+			{
+				var docItem = GetSelection();
+				var contents = docItem.ContentData;
+				contents = DiffHelper.PatchContents(contents, changes);
+				return SetSelection(contents) ? "OK" : "Failed";
+			}
+			catch (Exception ex)
+			{
+				return ex.Message;
+			}
 		}
 
 		#endregion
@@ -941,7 +977,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		#region Build Actions
 
 		/// <inheritdoc />
-		public string BuildSolutionProject(string fullName)
+		public string BuildSolutionProject(string fileName)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			DTE2 dte = GetCurrentService();
@@ -953,7 +989,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Project projectToBuild = null;
 			foreach (Project project in dte.Solution.Projects)
 			{
-				if (project.FullName == fullName)
+				if (project.FullName == fileName)
 				{
 					projectToBuild = project;
 					break;
@@ -961,7 +997,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			}
 
 			if (projectToBuild == null)
-				return $"Project with the name {fullName} could not be found.";
+				return $"Project with the name {fileName} could not be found.";
 			var solutionBuild = dte.Solution.SolutionBuild as SolutionBuild2;
 			if (solutionBuild == null)
 				return "Unable to access the solution build.";

@@ -6,9 +6,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 	{
 		[Description("User")]
 		User = 0,
-		[Description("Assistant and User")]
+		[Description("User When AI Denies")]
 		UserWhenAssitantDenies,
-		[Description("Assistant")]
+		[Description("AI Assitant")]
 		Assistant,
 		[Description("Allow All")]
 		AllowAll,

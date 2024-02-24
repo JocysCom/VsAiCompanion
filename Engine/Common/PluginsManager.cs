@@ -141,10 +141,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return false;
 		}
 
-		public static bool AllowPlugin(string functionName)
+		public static bool AllowPlugin(string functionName, RiskLevel maxRiskLevel)
 		{
 			var currentPlugin = Global.AppSettings.Plugins.FirstOrDefault(x => x.Name == functionName);
-			return currentPlugin?.IsEnabled == true;
+			return currentPlugin?.IsEnabled == true && currentPlugin.RiskLevel <= maxRiskLevel;
 		}
 
 		/// <summary>
@@ -156,12 +156,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (!item.PluginsEnabled)
 				return null;
-			if (!AllowPlugin(function.name))
+			if (!AllowPlugin(function.name, item.MaxRiskLevel))
 				return null;
-			// Extract parameters as a dictionary.
-			var parameters = function.parameters.additional_properties;
-			if (parameters == null)
-				parameters = new Dictionary<string, JsonElement>();
 			System.Reflection.MethodInfo methodInfo;
 			if (PluginFunctions.TryGetValue(function.name, out methodInfo))
 			{
@@ -179,6 +175,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					var param = methodParams[i];
 					JsonElement jsonElement;
+					// Extract parameters as a dictionary.
+					var parameters = function.parameters.additional_properties;
+					if (parameters == null)
+						parameters = new Dictionary<string, JsonElement>();
 					if (parameters.TryGetValue(param.Name, out jsonElement))
 					{
 						invokeParams[i] = jsonElement.Deserialize(param.ParameterType);
@@ -255,7 +255,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var ToolDefinitions = new List<ChatCompletionsFunctionToolDefinition>();
 			foreach (var kv in PluginFunctions)
 			{
-				if (!AllowPlugin(kv.Key))
+				if (!AllowPlugin(kv.Key, item.MaxRiskLevel))
 					continue;
 				var requiredParams = new List<string>();
 				// Get Method Info
@@ -336,7 +336,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var CompletionTools = new List<chat_completion_tool>();
 			foreach (var kv in PluginFunctions)
 			{
-				if (!AllowPlugin(kv.Key))
+				if (!AllowPlugin(kv.Key, item.MaxRiskLevel))
 					continue;
 				var mi = kv.Value;
 				var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });

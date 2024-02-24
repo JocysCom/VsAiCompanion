@@ -103,9 +103,17 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.SetCurrentDocumentContents(contents);
 
 		/// <inheritdoc />
+		public string ApplyCurrentDocumentContentsChanges(string changes)
+			=> Current.ApplyCurrentDocumentContentsChanges(changes);
+
+		/// <inheritdoc />
 		public bool SetSelection(string contents)
 			=> Current.SetSelection(contents);
 
+
+		/// <inheritdoc />
+		public string ApplySelectionChanges(string changes)
+			=> Current.ApplySelectionChanges(changes);
 
 		/// <inheritdoc />
 		public Dictionary<string, JsonElement> GetEnvironmentContext()

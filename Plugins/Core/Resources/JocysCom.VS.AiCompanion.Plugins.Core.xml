@@ -94,6 +94,24 @@
             <param name="contents">The string to write to the file.</param>
             <returns>True if the operation was successful.</returns>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges(System.String,System.String)">
+            <summary>
+            Compares two files and returns a textual representation of the changes.
+            </summary>
+            <param name="originalFilePath">The path to the original file.</param>
+            <param name="modifiedFilePath">The path to the modified file.</param>
+            <returns>A string detailing the changes made from the original file to the modified file.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ApplyFileChanges(System.String,System.String)">
+            <summary>
+            Updates a file by applying a series of changes described in a 'diff' format. 
+            This method is ideal for updating files efficiently when only changes are known,
+            especially useful when bandwidth or storage is limited.
+            </summary>
+            <param name="filePath">The path to the file that needs to be updated.</param>
+            <param name="changes">The string representation of the changes to apply.</param>
+            <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo">
             <summary>
             List Info.
@@ -350,7 +368,13 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents(System.String)">
             <inheritdoc />
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplyCurrentDocumentContentsChanges(System.String)">
+            <inheritdoc />
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplySelectionChanges(System.String)">
             <inheritdoc />
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext">
@@ -689,6 +713,15 @@
             <param name="newFullName">Full path to the new copy of the document.</param>
             <returns>True if the operation was successful.</returns>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.ApplyCurrentDocumentContentsChanges(System.String)">
+            <summary>
+            Updates content of the current document by applying a series of changes described in a 'diff' format. 
+            This method is ideal for updating content data efficiently when only changes are known,
+            especially useful when bandwidth or storage is limited.
+            </summary>
+            <param name="changes">The string representation of the changes to apply.</param>
+            <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetCurrentDocumentContents(System.String)">
             <summary>
             Sets the content of the currently open and active Document in the editor.
@@ -698,7 +731,7 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetSelection">
             <summary>
-            Retrieves the text currently selected within the active Document.
+            Retrieves the selection information and data from the current active open Document.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetSelection(System.String)">
@@ -707,6 +740,15 @@
             </summary>
             <param name="contents">The selection data to be applied to the active Document.</param>
             <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.ApplySelectionChanges(System.String)">
+            <summary>
+            Updates the selection by applying a series of changes described in a 'diff' format. 
+            This method is ideal for updating files efficiently when only changes are known,
+            especially useful when bandwidth or storage is limited.
+            </summary>
+            <param name="changes">The string representation of the changes to apply.</param>
+            <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
             <summary>
