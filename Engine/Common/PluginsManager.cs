@@ -114,7 +114,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.MainControl.Dispatcher.Invoke(() =>
 				{
 					var lastMessage = item.Messages.Last();
-					var attachment = new ClassLibrary.Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
+					var attachment = new Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
 					attachment.Title = "Approval by Secondary AI";
 					attachment.IsAlwaysIncluded = true;
 					lastMessage.Attachments.Add(attachment);

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace JocysCom.ClassLibrary.Controls.Chat
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
 	public class ChatSettings
 	{

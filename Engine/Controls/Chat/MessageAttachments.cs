@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
-namespace JocysCom.ClassLibrary.Controls.Chat
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
 	public class MessageAttachments : INotifyPropertyChanged
 	{

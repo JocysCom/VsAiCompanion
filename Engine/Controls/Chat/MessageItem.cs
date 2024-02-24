@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
-namespace JocysCom.ClassLibrary.Controls.Chat
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
 	public class MessageItem : ISettingsItem, INotifyPropertyChanged
 	{

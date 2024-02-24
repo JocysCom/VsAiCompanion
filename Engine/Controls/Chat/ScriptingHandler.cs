@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace JocysCom.ClassLibrary.Controls.Chat
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
 	[ComVisible(true)]
 	public class ScriptingHandler

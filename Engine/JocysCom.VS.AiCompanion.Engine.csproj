@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!--
@@ -20,8 +20,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.4.24</AssemblyVersion>
-		<FileVersion>1.4.24</FileVersion>
+		<AssemblyVersion>1.4.25</AssemblyVersion>
+		<FileVersion>1.4.25</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
@@ -100,23 +100,6 @@
 	<ItemGroup>
 		<None Remove="AiCompanion.svg" />
 		<None Remove="App.ico" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl.html" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl.html.zip" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\core.min.js" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\extend_ie.js" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\IconError.svg" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\IconIn.svg" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\IconInformation.svg" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\IconOut.svg" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\IconQuestion.svg" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\IconWarning.svg" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\marked.cjs" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\marked.esm.js" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\marked.min.js" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\prism.css" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\prism.js" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\UserIn.svg" />
-		<None Remove="JocysCom\Controls\Chat\ChatListControl\UserOut.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Add.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Cancel.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Delete.svg" />
@@ -195,8 +178,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl.html" />
-		<EmbeddedResource Include="JocysCom\Controls\Chat\ChatListControl\*.*" />
+		<None Remove="JocysCom\Controls\Chat\ChatListControl.html" />
+		<None Remove="JocysCom\Controls\Chat\ChatListControl\*.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Controls\Chat\ChatListControl.html" />
+		<EmbeddedResource Include="Controls\Chat\ChatListControl\*.*" />
 		<EmbeddedResource Include="Resources\BuildDate.*" />
 		<EmbeddedResource Include="Resources\Templates\*.xml" />
 	</ItemGroup>

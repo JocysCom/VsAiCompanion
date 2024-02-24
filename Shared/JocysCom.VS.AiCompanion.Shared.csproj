@@ -9,10 +9,10 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<Title>Jocys.com AI Companion Core Plugins</Title>
-		<Description>Core Plugins for AI Companion.</Description>
+		<Title>Jocys.com AI Companion Shared Classes</Title>
+		<Description>Shared Classes for AI Companion.</Description>
 		<Copyright>Jocys.com</Copyright>
-		<Product>AI Companion Core Plugins</Product>
+		<Product>AI Companion Shared Classes</Product>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
@@ -26,13 +26,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="LiteDB" Version="5.0.19" />
 		<PackageReference Include="System.Text.Json" Version="8.0.2" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\*.xml" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
@@ -45,10 +40,6 @@
 
 	<ItemGroup>
 	  <None Include="JocysCom\MakeLinks.ps1.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

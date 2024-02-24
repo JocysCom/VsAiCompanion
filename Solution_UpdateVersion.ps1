@@ -228,6 +228,8 @@ function GetConfigurationFiles
 {
 	# First record will be used to identify current version.
 	[Config[]]$items = @()
+	$items += (GetConfig "Shared\JocysCom.VS.AiCompanion.Shared.csproj")
+	$items += (GetConfig "Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj")
 	$items += (GetConfig "Engine\JocysCom.VS.AiCompanion.Engine.csproj")
 	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
 	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")

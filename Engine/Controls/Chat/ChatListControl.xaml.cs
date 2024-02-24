@@ -1,4 +1,5 @@
-﻿using JocysCom.VS.AiCompanion.Engine;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Controls;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -8,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace JocysCom.ClassLibrary.Controls.Chat
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
 	/// <summary>
 	/// Interaction logic for DataListControl.xaml
@@ -197,7 +198,7 @@ namespace JocysCom.ClassLibrary.Controls.Chat
 			{
 				data = Helper.FindResource<byte[]>(name, GetType().Assembly);
 			}
-			contents = contents.Replace("ChatListControl/" + name, Files.Mime.GetResourceDataUri(name, data));
+			contents = contents.Replace("ChatListControl/" + name, ClassLibrary.Files.Mime.GetResourceDataUri(name, data));
 		}
 
 		private void WebBrowser_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)

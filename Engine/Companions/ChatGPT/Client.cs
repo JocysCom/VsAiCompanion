@@ -2,7 +2,7 @@
 using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
-using JocysCom.ClassLibrary.Controls.Chat;
+using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Concurrent;

@@ -136,6 +136,10 @@
       <Project>{6D58A35D-FA37-4761-AE81-F1DD89829E1E}</Project>
       <Name>JocysCom.VS.AiCompanion.Plugins.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Shared\JocysCom.VS.AiCompanion.Shared.csproj">
+      <Project>{01818d93-e2a8-46af-a035-507d203ad47b}</Project>
+      <Name>JocysCom.VS.AiCompanion.Shared</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

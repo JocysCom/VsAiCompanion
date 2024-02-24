@@ -1,4 +1,4 @@
-﻿namespace JocysCom.ClassLibrary.Controls.Chat
+﻿namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
 	public enum MessageType
 	{
