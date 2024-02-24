@@ -15,7 +15,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>Soulution document.</returns>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		DocItem GetSolution(bool includeContents);
 
 		/// <summary>
@@ -24,7 +24,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <param name="fullName">If specified, then only the specified project document will be retrieved.</param>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>Project documents.</returns>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetSolutionProjects(string fullName, bool includeContents);
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>A collection of all Documents within the solution.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetAllSolutionDocuments(bool includeContents);
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>A collection of Documents from the same project as the active Document.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetDocumentsOfProjectOfCurrentDocument(bool includeContents);
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>A collection of Documents from the project of the selected Document.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetDocumentsOfProjectOfSelectedDocument(bool includeContents);
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>A collection of Documents selected in the Solution Explorer.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetDocumentsSelectedInExplorer(bool includeContents);
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>A collection of open Documents.</returns>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetOpenDocuments(bool includeContents);
 
 		// Methods for getting or setting a single Document
@@ -74,7 +74,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>The active Document.</returns>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		DocItem GetCurrentDocument(bool includeContents);
 
 		/// <summary>
@@ -116,13 +116,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="contents">The Document to be made active.</param>
 		/// <returns>True if the operation was successful.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Medium)]
 		bool SetCurrentDocumentContents(string contents);
 
 		/// <summary>
 		/// Retrieves the text currently selected within the active Document.
 		/// </summary>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		DocItem GetSelection();
 
 		/// <summary>
@@ -166,7 +166,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="includeDocItems">Includes the Document associated with the Exception.</param>
 		/// <param name="includeDocItemsContents">Includes Document file contents.</param>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		ExceptionInfo GetCurrentException(bool includeDocItems, bool includeDocItemsContents);
 
 		// Methods for formatting code
@@ -185,12 +185,27 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		[RiskLevel(RiskLevel.Low)]
 		bool EditFormatSelection();
 
-
 		/// <summary>
 		/// Get information about current Visual Studio environment.
 		/// </summary>
 		[RiskLevel(RiskLevel.Low)]
 		Dictionary<string, JsonElement> GetEnvironmentContext();
+
+		/// <summary>
+		/// Triggers a build for the specified project within the solution.
+		/// </summary>
+		/// <param name="fullName">The full name of the project to build.</param>
+		/// <returns>A string indicating the build result.</returns>
+		[RiskLevel(RiskLevel.High)]
+		string BuildSolutionProject(string fullName);
+
+		/// <summary>
+		/// Retrieves the content of a specified output window pane in Visual Studio.
+		/// </summary>
+		/// <param name="type">The type of the output pane (e.g., "Build" or "Debug").</param>
+		/// <returns>The content of the specified output window pane.</returns>
+		[RiskLevel(RiskLevel.High)]
+		string GetOutputContent(string type);
 
 	}
 }

@@ -33,7 +33,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="url">URL which points to the resource.</param>
 		/// <returns>The output of the request.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		public static async Task<string> GetWebPageContents(string url)
 		{
 			using (var client = new HttpClient())

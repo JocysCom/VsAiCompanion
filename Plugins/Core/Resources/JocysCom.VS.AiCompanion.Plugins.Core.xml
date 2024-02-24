@@ -136,22 +136,22 @@
             <summary>Risk level</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Unknown">
-            <summary>Unknown</summary>
+            <summary>Unknown.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.None">
-            <summary>None</summary>
+            <summary>None.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Low">
-            <summary>Low</summary>
+            <summary>Low. AI can read data.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Medium">
-            <summary>Medium</summary>
+            <summary>Medium. AI can read and write or set data.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.High">
-            <summary>High</summary>
+            <summary>High. AI can read, write and run scripts.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Critical">
-            <summary>Critical</summary>
+            <summary>Critical.</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute">
             <summary>
@@ -354,6 +354,12 @@
             <inheritdoc />
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.BuildSolutionProject(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent(System.String)">
             <inheritdoc />
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType">
@@ -743,6 +749,20 @@
             <summary>
             Get information about current Visual Studio environment.
             </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.BuildSolutionProject(System.String)">
+            <summary>
+            Triggers a build for the specified project within the solution.
+            </summary>
+            <param name="fullName">The full name of the project to build.</param>
+            <returns>A string indicating the build result.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetOutputContent(System.String)">
+            <summary>
+            Retrieves the content of a specified output window pane in Visual Studio.
+            </summary>
+            <param name="type">The type of the output pane (e.g., "Build" or "Debug").</param>
+            <returns>The content of the specified output window pane.</returns>
         </member>
     </members>
 </doc>

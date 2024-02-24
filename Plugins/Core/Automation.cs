@@ -1,4 +1,6 @@
-﻿namespace JocysCom.VS.AiCompanion.Plugins.Core
+﻿using System;
+
+namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 
 	/// <summary>
@@ -10,12 +12,12 @@
 		/// Retrieve current menu options or choices.
 		/// </summary>
 		/// <param name="menuContext">The context of the menu to retrieve options from.</param>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		public static string[] GetCurrentMenuOptions(string menuContext)
 		{
 			// Implementation would depend on how the UI framework presents menus.
 			// For example, it might query a menu component for its items.
-			return new string[0]; // Changed from throw to return default value.
+			return Array.Empty<string>(); // Changed from throw to return default value.
 		}
 
 		/// <summary>
@@ -23,7 +25,7 @@
 		/// </summary>
 		/// <param name="menuContext">The context of the menu to check for selection.</param>
 		/// <returns>The currently selected menu option.</returns>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		public static string GetCurrentMenuSelection(string menuContext)
 		{
 			// This method would typically return the identifier or name of the selected option.

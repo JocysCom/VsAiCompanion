@@ -48,6 +48,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\SolutionHelper.cs" />
+    <Compile Include="Common\SolutionHelper.Output.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="MainWindowCommand.cs" />
     <Compile Include="JocysCom.VS.AiCompanionPackage.cs" />

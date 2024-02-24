@@ -339,7 +339,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			if (solution == null)
 				return items;
 			// Add the solution file itself
-			items.AddRange(GetSolution(includeContent));
+			var solutionDocItem = GetSolution(includeContent);
+			items.Add(solutionDocItem);
 			// Get all projects (including solution folders)
 			var projects = GetAllProjects();
 			// Add all files in each project or solution folder
@@ -933,6 +934,49 @@ namespace JocysCom.VS.AiCompanion.Extension
 				stackTrace.AppendLine("   at " + functionName);
 			}
 			return stackTrace.ToString();
+		}
+
+		#endregion
+
+		#region Build Actions
+
+		/// <inheritdoc />
+		public string BuildSolutionProject(string fullName)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			DTE2 dte = GetCurrentService();
+			if (dte == null)
+				return "Unable to retrieve the DTE service.";
+			if (dte.Solution == null || dte.Solution.IsOpen == false)
+				return "No solution is currently open.";
+			// Find the project by its full name
+			Project projectToBuild = null;
+			foreach (Project project in dte.Solution.Projects)
+			{
+				if (project.FullName == fullName)
+				{
+					projectToBuild = project;
+					break;
+				}
+			}
+
+			if (projectToBuild == null)
+				return $"Project with the name {fullName} could not be found.";
+			var solutionBuild = dte.Solution.SolutionBuild as SolutionBuild2;
+			if (solutionBuild == null)
+				return "Unable to access the solution build.";
+			try
+			{
+				// Build the specified project
+				solutionBuild.BuildProject(solutionBuild.ActiveConfiguration.Name, projectToBuild.UniqueName, true);
+				if (solutionBuild.LastBuildInfo == 0) // LastBuildInfo == 0 indicates a successful build
+					return $"{projectToBuild.Name} build succeeded.";
+				return $"{projectToBuild.Name} build failed.";
+			}
+			catch (Exception ex)
+			{
+				return $"Failed to build {projectToBuild.Name}: {ex.Message}";
+			}
 		}
 
 		#endregion

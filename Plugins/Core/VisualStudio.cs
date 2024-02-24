@@ -111,5 +111,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public Dictionary<string, JsonElement> GetEnvironmentContext()
 			=> Current.GetEnvironmentContext();
 
+		/// <inheritdoc />
+		public string BuildSolutionProject(string fileName)
+			=> Current.BuildSolutionProject(fileName);
+
+		/// <inheritdoc />
+		public string GetOutputContent(string type)
+			=> Current.GetOutputContent(type);
+
 	}
 }

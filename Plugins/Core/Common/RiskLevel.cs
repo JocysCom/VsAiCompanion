@@ -4,17 +4,17 @@
 	/// <summary>Risk level</summary>
 	public enum RiskLevel : int
 	{
-		/// <summary>Unknown</summary>
+		/// <summary>Unknown.</summary>
 		Unknown,
-		/// <summary>None</summary>
+		/// <summary>None.</summary>
 		None,
-		/// <summary>Low</summary>
+		/// <summary>Low. AI can read data.</summary>
 		Low,
-		/// <summary>Medium</summary>
+		/// <summary>Medium. AI can read and write or set data.</summary>
 		Medium,
-		/// <summary>High</summary>
+		/// <summary>High. AI can read, write and run scripts.</summary>
 		High,
-		/// <summary>Critical</summary>
+		/// <summary>Critical.</summary>
 		Critical,
 	}
 }
