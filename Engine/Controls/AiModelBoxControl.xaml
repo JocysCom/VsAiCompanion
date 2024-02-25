@@ -23,12 +23,12 @@
 			VerticalAlignment="Center"
 			Content="{x:Static locales:Resources.Service}" />
 		<ComboBox
-			Name="AiCompanionComboBox"
+			Name="AiServicesComboBox"
 			x:FieldModifier="public"
 			DisplayMemberPath="Name"
 			SelectedValue="{Binding AiServiceId}"
 			SelectedValuePath="Id"
-			SelectionChanged="AiCompanionComboBox_SelectionChanged" />
+			SelectionChanged="AiServicesComboBox_SelectionChanged" />
 		<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Model}" />
 		<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
 		<Button

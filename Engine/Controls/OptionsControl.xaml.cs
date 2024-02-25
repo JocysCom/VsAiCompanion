@@ -54,7 +54,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 			if (result != MessageBoxResult.Yes)
 				return;
-			Global.ResetAppSettings();
+			SettingsSourceManager.ResetAppSettings();
 		}
 
 		private void ResetTemplatesButton_Click(object sender, RoutedEventArgs e)
@@ -64,7 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 			if (result != MessageBoxResult.Yes)
 				return;
-			Global.ResetTemplates();
+			SettingsSourceManager.ResetTemplates(null);
 		}
 
 		private void ResetPromptingButton_Click(object sender, RoutedEventArgs e)
@@ -86,6 +86,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.Resources.Enable_spell_check_for_the_chat_textbox);
 		}
 
+		private void ApplySettingsButton_Click(object sender, RoutedEventArgs e)
+		{
+			var text = $"Do you want to reset settings? Please note that this will reset all services, models, templates and tasks!";
+			var caption = $"{Global.Info.Product} - Reset Settings";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+			if (result != MessageBoxResult.Yes)
+				return;
+			SettingsSourceManager.ResetSettings();
+		}
+
+		System.Windows.Forms.OpenFileDialog _OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+
+		private void BrowseSettingsButton_Click(object sender, RoutedEventArgs e)
+		{
+			var dialog = _OpenFileDialog;
+			dialog.SupportMultiDottedExtensions = true;
+			DialogHelper.AddFilter(dialog, ".zip");
+			DialogHelper.AddFilter(dialog);
+			dialog.FilterIndex = 1;
+			dialog.RestoreDirectory = true;
+			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(".zip");
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			Global.AppSettings.ConfigurationUrl = dialog.FileNames[0];
+		}
 	}
 
 }

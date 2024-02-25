@@ -107,4 +107,6 @@ JSON Lines example:&#xD;
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
   <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
 </TemplateItem>

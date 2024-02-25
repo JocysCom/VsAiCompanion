@@ -64,4 +64,6 @@ Important:  Always wrap `fully corrected text` in the Markdown code block like t
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
 </TemplateItem>

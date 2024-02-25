@@ -49,4 +49,6 @@ Text to translate:</TextInstructions>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
 </TemplateItem>

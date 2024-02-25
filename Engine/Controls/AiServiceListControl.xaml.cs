@@ -23,7 +23,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//CurrentItems = new SortableBindingList<AiService>();
 			CurrentItems = Global.AppSettings.AiServices;
 			MainDataGrid.ItemsSource = CurrentItems;
+			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated;
 			UpdateButtons();
+		}
+
+		private void Global_OnAiServicesUpdated(object sender, EventArgs e)
+		{
+			CurrentItems = Global.AppSettings.AiServices;
+			MainDataGrid.ItemsSource = CurrentItems;
 		}
 
 		private void Tasks_ListChanged(object sender, ListChangedEventArgs e)

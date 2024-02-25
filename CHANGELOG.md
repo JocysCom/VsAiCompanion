@@ -1,6 +1,7 @@
-2024-02-25 v1.5.7
+2024-02-25 v1.5.12
 
 - Fix: The app is overwriting newer settings.
+- New: Customizable setting options for enterprises.
 
 2024-02-25 v1.5.6
 

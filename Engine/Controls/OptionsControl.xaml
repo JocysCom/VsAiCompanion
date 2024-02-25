@@ -82,7 +82,7 @@
 					Name="UseMacrosCheckBox"
 					Margin="-4"
 					Content="Enterprise Options"
-					IsChecked="{Binding IsEnterprise}" />
+					IsChecked="{Binding IsEnterprise, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			</GroupBox.Header>
 			<Grid>
 				<Grid.RowDefinitions>
@@ -99,12 +99,24 @@
 					Grid.Column="1"
 					SpellCheck.IsEnabled="True"
 					Text="{Binding ConfigurationUrl, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				<Button Name="ApplySettingsButton" Grid.Column="2">
-					<StackPanel Focusable="False">
-						<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-						<Label Content="Apply" />
-					</StackPanel>
-				</Button>
+				<StackPanel Grid.Column="2" Orientation="Horizontal">
+					<Button Name="BrowseSettingsButton" Click="BrowseSettingsButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_magnifying_glass}" Focusable="False" />
+							<Label Content="Browse..." />
+						</StackPanel>
+					</Button>
+					<Button Name="ApplySettingsButton" MinWidth="75" Click="ApplySettingsButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+							<Label Content="Apply" />
+						</StackPanel>
+					</Button>
+
+
+				</StackPanel>
+
+
 
 			</Grid>
 		</GroupBox>

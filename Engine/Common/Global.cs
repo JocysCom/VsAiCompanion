@@ -54,8 +54,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		public const string TasksName = nameof(Tasks);
+
 		public static SettingsData<TemplateItem> Tasks =
-			new SettingsData<TemplateItem>($"{nameof(Tasks)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			new SettingsData<TemplateItem>($"{TasksName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
 				UseSeparateFiles = true,
 			};
@@ -189,6 +191,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler OnSourceDataFilesUpdated;
 		public static event EventHandler OnTuningDataFilesUpdated;
 		public static event EventHandler OnTasksUpdated;
+		public static event EventHandler OnTemplatesUpdated;
+		public static event EventHandler OnAiServicesUpdated;
+		public static event EventHandler OnAiModelsUpdated;
 
 		public static void RaiseOnSaveSettings()
 			=> OnSaveSettings?.Invoke(null, EventArgs.Empty);
@@ -207,6 +212,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void RaiseOnTasksUpdated()
 			=> OnTasksUpdated?.Invoke(null, EventArgs.Empty);
+		public static void RaiseOnTemplatesUpdated()
+			=> OnTemplatesUpdated?.Invoke(null, EventArgs.Empty);
+
+		public static void RaiseOnAiServicesUpdated()
+			=> OnAiServicesUpdated?.Invoke(null, EventArgs.Empty);
+		public static void RaiseOnAiModelsUpdated()
+			=> OnAiModelsUpdated?.Invoke(null, EventArgs.Empty);
 
 		#endregion
 
@@ -220,14 +232,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			FineTunings.Save();
 			Assistants.Save();
 		}
-
-		/// <summary>
-		/// Subscribed by controls that need to refresh when the source data is updated.
-		/// </summary>
-		public static event EventHandler AiModelsUpdated;
-
-		public static void TriggerAiModelsUpdated()
-			=> AiModelsUpdated?.Invoke(null, EventArgs.Empty);
 
 		/// <summary>
 		/// Subscribed by controls that need to refresh when the source data is updated.
@@ -279,7 +283,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (AppData.Version < 2)
 			{
 				AppData.Version = 2;
-				ResetTemplates();
+				SettingsSourceManager.ResetTemplates(null);
 			}
 		}
 
@@ -315,35 +319,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Find data as embedded resource with the same file name and load.
 				data.ResetToDefault();
 			}
-		}
-
-		public static void ResetTemplates()
-		{
-			var defaultItems = SettingsSourceManager.GetDefaultTemplates();
-			if (defaultItems.Count == 0)
-				return;
-			var items = Templates.Items.ToArray();
-			foreach (var item in items)
-			{
-				var error = Templates.DeleteItem(item);
-				if (!string.IsNullOrEmpty(error))
-					ShowError(error);
-			}
-			Templates.PreventWriteToNewerFiles = false;
-			foreach (var item in defaultItems)
-			{
-				Templates.Items.Add(item);
-			}
-			// Templates.Load();
-			Templates.Save();
-			Templates.PreventWriteToNewerFiles = true;
-		}
-
-		public static void ResetAppSettings()
-		{
-			// Reset all app settings except list of services and list of models.
-			var exclude = new string[] { nameof(AppSettings.AiServices), nameof(AppSettings.AiModels) };
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(AppSettings, false, exclude);
 		}
 
 		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)
@@ -401,7 +376,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var data = (SettingsData<TemplateItem>)sender;
 			if (e.Items.Count == 0)
 			{
-				var items = SettingsSourceManager.GetDefaultTemplates();
+				var items = SettingsSourceManager.GetDefaultTemplates(null);
 				foreach (var item in items)
 					e.Items.Add(item);
 				if (items.Count > 0)

@@ -42,4 +42,6 @@ Write-Host "Number of words in the file: $wordCount"&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
 </TemplateItem>

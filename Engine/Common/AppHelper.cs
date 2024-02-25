@@ -361,7 +361,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Global.AppSettings.AiModels.Add(aiModel);
 				}
 				// This will inform all forms that models changed.
-				Global.TriggerAiModelsUpdated();
+				Global.RaiseOnAiModelsUpdated();
 			}
 		}
 
@@ -417,7 +417,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
 				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
-			item.AiModel = defaultAiService.DefaultAiModel;
+			item.AiModel = defaultAiService?.DefaultAiModel;
 			return item;
 		}
 

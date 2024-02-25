@@ -82,4 +82,6 @@ Expected answer is this:&#xD;
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
   <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
 </TemplateItem>

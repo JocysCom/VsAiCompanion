@@ -17,7 +17,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			Global.AiModelsUpdated += Global_AiModelsUpdated;
+			Global.OnAiModelsUpdated += Global_AiModelsUpdated;
 		}
 
 

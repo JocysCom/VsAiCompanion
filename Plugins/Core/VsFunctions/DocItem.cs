@@ -206,8 +206,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		public long LoadData(byte[] data)
 		{
-			var bytes = File.ReadAllBytes(FullName);
-			ContentData = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
+			ContentData = Convert.ToBase64String(data, Base64FormattingOptions.InsertLineBreaks);
 			ContentHint = "Base64EncodedBinary"; // Explicitly states the encoding method for binary data
 			return data.Length;
 		}

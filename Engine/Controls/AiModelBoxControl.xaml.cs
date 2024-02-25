@@ -17,8 +17,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AiCompanionComboBox.ItemsSource = Global.AppSettings.AiServices;
-			Global.AiModelsUpdated += Global_AiModelsUpdated;
+			AiServicesComboBox.ItemsSource = Global.AppSettings.AiServices;
+			Global.OnAiModelsUpdated += Global_OnAiModelsUpdated;
+			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated; ;
+		}
+
+		private void Global_OnAiServicesUpdated(object sender, EventArgs e)
+		{
+			AiServicesComboBox.ItemsSource = Global.AppSettings.AiServices;
 		}
 
 		public IAiServiceModel _item;
@@ -27,22 +33,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (item == null)
 			{
-				AiCompanionComboBox.SelectionChanged -= AiCompanionComboBox_SelectionChanged;
+				AiServicesComboBox.SelectionChanged -= AiServicesComboBox_SelectionChanged;
 			}
 			_item = item;
 			DataContext = item;
 			if (item != null)
 			{
-				AiCompanionComboBox.SelectionChanged += AiCompanionComboBox_SelectionChanged;
+				AiServicesComboBox.SelectionChanged += AiServicesComboBox_SelectionChanged;
 				var aiServiceId = _item.AiServiceId;
 				if (aiServiceId == Guid.Empty)
 					aiServiceId = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)?.Id ??
 						Global.AppSettings.AiServices.FirstOrDefault()?.Id ?? Guid.Empty;
-				AiCompanionComboBox.SelectedValue = aiServiceId;
+				AiServicesComboBox.SelectedValue = aiServiceId;
 			}
 		}
 
-		public void AiCompanionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		public void AiServicesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (_item == null)
 				return;
@@ -58,7 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public BindingList<string> AiModels { get; set; } = new BindingList<string>();
 
-		private void Global_AiModelsUpdated(object sender, EventArgs e)
+		private void Global_OnAiModelsUpdated(object sender, EventArgs e)
 		{
 			if (_item == null)
 				return;
