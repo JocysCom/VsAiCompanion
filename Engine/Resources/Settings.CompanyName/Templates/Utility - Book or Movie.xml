@@ -1,0 +1,32 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACm1TXW+bMBR976/wvFfwJx9xFFqpJGkmpVulpUx7mihhgJoBAgZpfv2uHZJGSyVk&#xD;
+OMfH595jm9nd/s8O9WnTFlUZYE4YRmmZVNuizAL8vFnaE3x3ezP7NP8Wbn4+LVDbZ+jp+X79JUTY&#xD;
+pvSHDCmdb+boe/SAOOGULr5ihPOuq6eUDsNABkmqJqMPTVznRdJSEFIthEUUzDgn226LoYR2vmiE&#xD;
+Y1RsA7yO39LmFwDos2yDD5wFY0w7jZLpfleUrx8JuVKKmlmQBpjVe4zexvdQbLs8wMLRIE+LLO9O&#xD;
+qC/S4b7SCxBDwoFHb1H8skvtlzh5zZrqbwmNlumALhTQy7St4yQNcN2kbdr0KYREaJaZWEVSlQYD&#xD;
+U8ddjoB75IpMLCFXDhGJzYjnWcyyOREWANcZP2GIBAhg6ig5T52mc+4SLxnXa9JIRkUPRbxQcEsI&#xD;
+4niWYGaU1lj7gNHvYrcL8GdXepMJw/SqSd/ifOVHUIZFnB8MIVd+rwxx4eAsQ7aYXDsoopRjguqi&#xD;
+l40ec34Y878tsExQWxLGfb4+O74XF5IvBVzmCs6g6PQxw426asWz3JUTyVxE7gGAv3J6AcDXAFIe&#xD;
+kQ4JEJRHaKRcnaA6PApmydwWBksD/RMEK4Ccn7A204R7JsBOE+pMqPcUYThnc3Xse0Yz+Ev0Tb+9&#xD;
++QeiVhxTtwMAAA==</IconData>
+  <Name>Utility - Book or Movie</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Can you suggest some books/movies? This is what I like:</TextInstructions>
+  <Text>[insert genre here]</Text>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

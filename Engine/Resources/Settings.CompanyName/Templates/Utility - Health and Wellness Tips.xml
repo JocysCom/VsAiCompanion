@@ -1,0 +1,34 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACm1U227TQBB971csKyGB5HgvzmWdJq1Ut1RIBirRguAtxG6y1LUj203K33NmbEMq&#xD;
+tUons7MzZ86eGWVx/vxYiH1eN74ql9KEWoq8XFeZLzdLeXf7YeSkaNpVma2KqsyXsqzk+dnJ4s3l&#xD;
+l+T2x82VaPYbcXN3kX5MhBwp9T1KlLq8vRRfv10LExqlrj5LIbdtu5srdTgcwkMUVvVGXder3dav&#xD;
+G4VERYkoUgAzJszaTKIFIR981m5BS+u3Umxzv9m2w2nv88NF9byUWmhhx/jI43cYKfCyslm+0ttq&#xD;
+ralXnzJ/Lnz58FqiieNY8S2nzpvdag0NdnXe5PU+H+px8Pcv6jkSrqtHRer9KVB074tiVD8V+Tzf&#xD;
+52WVZafrwu9eRpq2rh7yERrmvytfzuvqqfwXffRtXhceX3N7CoEE/hYb4bOl9Ouq7CMc3a3arUD8&#xD;
+Uxy4NA5sEgcmnEUTEYdGT+CPHVwbR3BhkxgBuLhDGHmBEUYHJjXwEjMJ7ZRDk3Bi+zT4Mz3ry3Fw&#xD;
+cQ9rpn0rODaFcam1gUusZRQn4ADFMQp8QnGMggOhOEKxEb4JBU6cwBgdTqIZHU0UjqcRexO+YXoE&#xD;
+xRyI44DbkSRg4s0k6YpfM4UHm1gd6ik4T5l5b4m3tQlbRu9fyEjD27sm9Higd+3pitBtBA82hYqW&#xD;
+5CVNEWSd+9RO/x6km0sHHw9NycH0QIeZQl6aEijyK4kInNRAIEOqkficAvl47O7ni+Wb15tf76yx&#xD;
+wcwFsXl/KtVrG4PyFBwT2gcaAA+qGy2PqR85TalfBR4U1gNME4zJON4VUGaTwkACtqK/JiUo2FXi&#xD;
+5I50cce6uCNdOIN0IQf8usnhBEnIDCoxG6jEDLuhM+dhHZh1vygsJQ+YtgmmWy443b4N4vJCcx2v&#xD;
+Z4fXrS33YZ4IU2+WP4nCOBrDp3Hg/7VRUC6IaP1/Fgu1wS8f/TadnfwFmPWJOpsFAAA=</IconData>
+  <Name>Utility - Health and Wellness Tips</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>What are some exercises for?:</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

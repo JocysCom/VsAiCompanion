@@ -1,0 +1,39 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAM1W3Y6bOBS+71NY7k0rgfEv2KMwFztadXuxW2mrPgAxJqElOAJmkvTp1zYkG6aZ&#xD;
+ziKtVhsp4fyf830GTlb90wY8ma6vbZtDggh8A9znuGvaPofbYdjfJcnhcEAHhmy3SSjGOHE5V2F3&#xD;
+x6Zuv90KJkqpJHghONTlsM2hIBSCrak322FSnmpz+MUec4gBBs7iv/A+lF8N9dCYe7v+avTQg1rb&#xD;
+dpWMttFfml7P3KDq7A4MWwM+Ou3X4950tWm1QdqZP8QPtmlcrMOKwIPdnzo/B1ifwMc/Hj79+Rl8&#xD;
+2K1/A+88grrVtut92nu0SkKfc8uqH8WgdkVZF80HfzHtALTDQShDTEnBIdCnHEqMUqkyBkGXQ6pS&#xD;
+JBVXKQTVPLSahW6mgl/aenDn8Nib7vO+0OZT+6U3ENRlDrVtbBcT+PcwYaB+sHtgq6o3jmAMgdfj&#xD;
+EJvDt5VQVK5h8tMcxKSk/FmmqYQW5OeZ5FlOURFNZjmrZM7XlcfdJaboLkQeiaunKMKZ8OycnMqx&#xD;
+g3OkThACKZFib3cqUxxxJsQC1ugy1qoS81ewO9Yw8cf6LFNjvJA1jSVzSGeszcn5B6xRLNORNSop&#xD;
+EiNvjKUXj1cJR0tIYwtJ+++h4xEyydIJcMaRFKkY8YpUIvf2wksw80WYs6wsaLoMs1AFI+W/h5mo&#xD;
+DGUZmTCzlCBO+ALE4n+PmEo53dp8eiFQKZB0P+dz5ijjdMkxp4tA/wjgddBsnZaEvQ7a75rzgllt&#xD;
+QFU3TQ5b27pxvRx3j43JoXkyrS1L36Oz38w5YtTiadWSi8E30sU+h+vHYZhZv9rarf1dPZjuYg9a&#xD;
+U7uLq4Ev5rLot0XXFW5PzWxXLFW2HeKq2NXN6TK0Nx2mfX9l6uvvl7EHcxziotVbz9QZycnj3NXH&#xD;
+eN2Ytox3tjR3oLXdrmiuDmu1L4YtcOf4u3uvRYzqDCMRYUCojESGRBDcV+PIe0Dsjd4A4rMnnlKC&#xD;
+IfgncUwLbhDSvAWcXd/H+8f35wxOB/XYNe/eTov5/eywL3MyQSO3ybTMxkEzHsWM+kmFK+weV9HE&#xD;
+QaSSjZITdEzSiCoQRvUxIdoL12OIG2PQF8agVERhNTTKD0JD10hhHafKQ5UjDZkbzguEeaNQ1+2y&#xD;
+G+3YC+1w5B7WhnAHNuXh6i44cm8t13fU4sl7bmGb08a2XN3owpd0merPy7q/Mj+WFS9xJWUoHM/m&#xD;
+vjmuuHUrpJe6q2Rz/2bl/z/f/wXeDncHeQsAAA==</IconData>
+  <Name>Code - Add types</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Add types to this code. Code:</TextInstructions>
+  <AttachContext>Selection</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

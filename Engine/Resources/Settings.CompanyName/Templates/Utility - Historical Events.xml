@@ -1,0 +1,42 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACuVW2W7bRhR9z1dMCRSIAXo4+yJbCRA6CQoobYA6LZo3VaIlNjIpUIxl9+tz7pBy&#xD;
+JMRo+tKneuO5M3c9c4by5cv72w27q7pd3TbTTHKRsapZtMu6WU2zD9dvzkPGdv28Wc43bVNNs6bN&#xD;
+Xr54dvnD1S/l9R/vX7Pd3Yq9//Bq9lPJsvOi+F2XRXF1fcV+/e0tk1wWxeufM5at+347KYr9fs/3&#xD;
+mrfdqnjbzbfrerEr4FiQI4IKJJOSL/tlhhKUeV8v+zXaEuLHjK2rerXuD9ZdXe1ftffTTDDBlMFP&#xD;
+djyHzBgma3bTJ2orIQTVGl0m95u6+fSUo4wxFmk3uU522/kCHGy7ald1d9UhHkZ9cxKfVviivS2I&#xD;
+vYcNgm7qzea8+7ypJtVd1bTL5cViU29PV3Z9136qzlGw+qutm0nXfm4eV2/rvuo2NR4TdQGCGL4u&#xD;
+V6xeTrN60TbjSlqtNki9q9gC9EjFjc3Y4iFBoI4WBdcEaVFwc9LkpFv9+VwGm0uLX6XOLlLrLWav&#xD;
++4eJ4MpeZMVRtRXru3mzu2m722l2O++7+v654NFZK30u8A1VGS8dnlJFLfNzlJRaKnl21HRKtZ33&#xD;
+a4aB3qWuc8e1tOWALY/GMWCpyHDGM2jFH4wShj7aOfjLIckMALFaq3JAKZoCpD7kkboc09NaKjo4&#xD;
+HiCiZ0eNffyWtqBzKQx8w9kpR8Xqu4S5oLwyRM6IBPdGGOu+Auwp8AYkLQ9a/F8JfJzSchFiLiOP&#xD;
+SpaeC29zJXkUjkXu0adKfVipgaiylQaoBHvaD7sB2kxBwUWmBCxUjzxIUyoNESO75d4HNlqRK6kO&#xD;
+jpZL78qUw+cakyMhpcYQPMaxthmMkjpS4wa1GhAhgmaYIRLtwsmZATFSeDzBm1AlPW1kKC0wArdA&#xD;
+HgMDzRRXShEqQblIiKW/SK+G8JlCuz6qkp4h4B3JpQkgGEBF9CVmGMdATQLdaYtZBYiz5G39iLyB&#xD;
+k80DV55mICQN9gyASEijt4RnmD0PM8cDkjsavQzcKJISxmX0ppExN1yFpAkr7WCU0oDixx3EY0Zw&#xD;
+GyWdj7GULGhZ0jmLgFraYlbcCkEdc+2+WhAXzTtahjuJukMY8joVDxnxkBZKGIrBxUfDxj4Q7iLi&#xD;
+Rr0kq6RCRPiwBzocrgGIMoa5pDVkBKmlxcQQO05YBEYNJAVpzG+4RheaWx9LYIcmNMcVw9iOrgyc&#xD;
+gNMJEYYPaeewjPfmI0YfCeOEwb5PSYOEEBTdMzKgVy5DyuQgV2SKCXtSS8rkaVlESJU0RS4irQej&#xD;
+4WPIgBadgeSMTnwp59jxhfv4bz420udb0zZ/V117eqOPX1X/9Q2NkCSpcFCDVwFaCw7ygqAdMNQy&#xD;
+w5FF7ejNpFEf8lDAJlocr/EgPN1yGBAfHW+E3hGoEhvW4LQCySqC44gzivQSQFlhTjj73kvqCU61&#xD;
+zXH2+tvPYfkPDKf35SX9k/Pi2RfFODbo5AkAAA==</IconData>
+  <Name>Utility - Historical Events</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Can you tell me about?:</TextInstructions>
+  <Text>[insert historical event or figure]</Text>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

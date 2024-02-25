@@ -1,0 +1,43 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACtVWbW/bNhD+3l/BCRjQADLF4zuduAWqvmCAtxVYumH95tmKrdWRDNmNk3+/h7Rc&#xD;
+2InTZe2nxbHFOx7vnnulLl7eXi/ZTdWt67YZZcRFxqpm2s7qZj7KPly+HfiMrTeTZjZZtk01ypo2&#xD;
+e/ni2cUPr38tL/98/4atb+bs/YdX459Klg2K4g9VFsXry9fst9/fMeJUFG9+yVi22GxWw6LYbrd8&#xD;
+q3jbzYt33WS1qKfrAoJFFMShAsqI+Gwzy2Aiat7Ws80CsIT4MWOLqp4vNnvqpq62r9rbUSaYYFLj&#xD;
+Pzv0gzIGz5r16IRtKYSItnqR4e2ybj6dEqQQQpF2k+hwvZpMEYNVV62r7qbanwdRXx2dTxw+ba+L&#xD;
+GL27JQ5d1cvloPu8rIbVTdW0s9n5dFmvjjnrTdd+qgYwWE0nq2HXfm6OmH+3dXPMva43Vbes8RgS&#xD;
+N+eIG8PfxZzVs1FWT9um5yTuarJZMPB/djwIn5PlNPbcupCT4UrZEnwHvubkJHPcOJ2T5F6EPUFc&#xD;
+GSp3hOPCKwaWUDpX3EoQUCPkjiih3nm13/GcrM01F5pR4EoT1s7KsRSccAQbwpeQMtrlkmsNMctV&#xD;
+UDlx7SwDJkF6R5SBS0f9huFauhx2JfVrElxYVfYEdJFjUOVMdMzo6Mve+49H2Rl287+eK4AUuTZn&#xD;
+5ylhLTJeb+6GUed5VpwOJtkUNEM0jgEyOZxSUpeCe+8j4QKxnkCWjGG9mORCxjMBoQFhlSqBV6lc&#xD;
+Kk4M3+D2S2t1LzIOsARnYnhliYiF5It3cMwFGXOpSbNDWCf8jJE1sKrs2SN+eS4JCgx3JmK0MgGQ&#xD;
+4fvwBlRACr72kqH4YlKBXll2aO8E4Jg/BfVSnD0lETH9qBHLpfGlRfYQGAhog1rwCrpQBYpiyAg7&#xD;
+iKLXCaj+3sBaWI3uOvWghNwjwKPRGBgJg8ygmLHCk0SZajY4Yv1uQCPgNzYKuJGWai8SV6LE7+78&#xD;
+XiSd+JhsOC7L2B1yt46RQEwhZndLgUD5HMHCOO3l0P1RAR5ljJiLzekZqlj2cmkZ7abnTlkvmWz0&#xD;
+dk8EijQOxFowj5Zg7KMQ4ghxcoyxgVTBVxVKbGhhAWGPwAOMexyMPQJTYioIYXqeiLIYED6gBD0q&#xD;
+GHkWzo8dijNVqtJp5ESo0OXRvWhiWH9aNjAslWKx1UWcUzIA5oFbpwIjoEsg2w9Kfc423aRZX7Xd&#xD;
+9Si7nmy6+vY55QIfygeoS2G0qgaovgGyhwDJQGcHF8C/68AwdkL5fPDg3HFiAhoC4UBS4sSGq/LY&#xD;
+jQbvCv0VtXMJY7X/nu2vrnS3D2l1e+RjslPMnwBaxMvKO9VjRxol1JtcfB16j9hjAOlxvFZicdAX&#xD;
+R5AU882+4I76ZncG9/yRGDrO2/+rO/uSolSIChXFFaavOelNtcSr0LpiU7zOoTeDCRmb3qW1IuDv&#xD;
+wMe1orACFz4pLO+3jTRoRtQuvsdt899Bow280gg+kqKEC+E07GndTZc9asU9uR1qTBWHl9EuvoYa&#xD;
+Su/P9xr8MORfRfqFSIuL+NL64tk/Wc5GkLQLAAA=</IconData>
+  <Name>Code - Find a bug</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Find a bug or issue in this code.</TextInstructions>
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

@@ -1,0 +1,35 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1VbW/TMBD+vl9hLCGB1Dp+ie04W5m0bExIASYxQPCttFlrSJMqydrCr+dxaPem&#xD;
+aiDxhQ+0Vc93uTv7ee58OTreLEqyKprW19WICsYpKapJPfXVbETfX74cJpS03biajsu6Kka0qunx&#xD;
+i4OjJ6dvs8tPF2ekXc3IxfuT/FVG6DCKPqosik4vT8m7D+dEMBFFZ28oofOuW6ZRtF6v2VqxuplF&#xD;
+5814OfeTNoJjFBwRFCGZEGzaTSm2CJnXftrNcSzOn1IyL/xs3u20lS/WJ/VmRDnhRMb40bs4BCVA&#xD;
+VrWjPXtLznnYa+uSbkpffdvnKJxzUf+0d03b5XgCDpZN0RbNqtjFQ/FX9+J7C5vUiyiw971E0JUv&#xD;
+y2FzXRZpsSqqejo9nJR+ed/Sdk39rRhiw+Jr7au0qa+rG+vCd0VTeohUHoIggs/RjPjpiPpJXW0t&#xD;
+vXU57uYE9tfCDnQu9EDkMZMDkSmm44EgaiCwgJBM5vgXLMkgJIsN6V2kIiFAqlw4lkBmkuNhsEux&#xD;
+dQwLBOaQNg8bfb6HNW1mX55JxRGD1Cp5fnjLQFVXP4qmPqTRnUPPSNeMq/aqbhYjuhh3jd8840xL&#xD;
+6QCAh+9O0czERieQ0gqpn9+B/gC+Y7EwA8OEUrlj1gC8ZjbRoCNJQAtnjpssZkaLoBgrA27jbhWu&#xD;
+zNYtl0gA5iQTNskk0/06FpLs1tahDX85KcalxZZKIZdjhqvMMW3xBHwqQxxzWu8U5BdJsvXLcQNi&#xD;
+g+MkCAa5yG0HCZM6zqDYsOZSkF9ry4xyZOtkWcx1jkJJ4Owxh6pxJUBU4hwJ+WN3q9xQs6dwoU3C&#xD;
+kbT+bd2i2V8VEeBDFf8X8d8p4s39eXDFmUFra7SlzC3TDuMgdLvLbOj8oDihCNoTMDAo0L9/NEDu&#xD;
+H3xYY8b67nsK0OZ3p7696GHE9U2VZBAmpMdNBwGWCINJZrcY4LeHKGH5AJcabLnHmLph6c7YxXum&#xD;
+H/bpgzm8z1c+5nsU3kgvDn4CPm3w6JEHAAA=</IconData>
+  <Name>Utility - Fact Checking</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Is it true that?:</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

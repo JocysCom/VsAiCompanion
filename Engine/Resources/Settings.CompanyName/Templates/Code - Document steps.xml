@@ -1,0 +1,46 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1XWW/bRhB+z6/YsijgABS5N3dlOwHCpEEBtgkQu0X7UqgSLbORSYGkr3/fb5ak&#xD;
+bbW2mx4JArSSoJ3ZnWu/mb0Onl+dbdhF2XZVUx9GIuERK+tls6rq9WF0fPT1zEWs6xf1arFp6vIw&#xD;
+qpvo+bMnB1+8fJMf/fj2Fesu1uzt8Yvim5xFszT9QeVp+vLoJXv3/WsmEpGmr76LWHTa99t5ml5e&#xD;
+XiaXKmnadfq6XWxPq2WXQjAlQSilMCZEsupXEVyQ5ctq1Z8iLM6/ithpWa1P+4m7qMrLF83VYcQZ&#xD;
+Z1LjF92dh4gYZlZ3h/f4lpxz8jWKzK82Vf3+PkHhvU/DaBCdd9vFEhhs27Ir24ty0gdTnezoh55k&#xD;
+2ZylhN71Bkon1WYza8835by8KOtmtdpfbqrtbk/Xt837cgaH5XKxnbfNeb3T+WtT1bu9Z1VftpsK&#xD;
+zVwkZh+4MXwO1qxaHUZni6oee8bevl3U3UnTntFg31ZXeyLm+IpYJN6bWDy9Ix90tov+lMHWt8LF&#xD;
+UubCJcZIUEz4WMKlGalc+IRz2MkSpSwLnI51Yq0ZGBgfZEzMk0yh1yUepHaCyExIMNKr4EJqMIIH&#xD;
+IZnFM05EUM2FTpxR1GUSYQQR0MwF2QyCsDgpk73JKvUEd0xMAVBEU4hD4ETQXGhqkrqDFs1TjtZA&#xD;
+ZzzLgxfQzpMQuQYkhEs+REUAUaCBIOR+2imEebv+ZU8qHksFk8o93Y/SO4lK13+SNZ5YZTl0h+Rl&#xD;
+BL2D+0fSZxPtY0CbT5TEogEtlIuBicG0dOwKm0hnY4dpOOTZAWQzyg6UyYc2yywbZDwbdHwxGvH5&#xD;
+aNazyRdJ30RwDxROxQKaQgKJsFAarLSqv54jU/8ONOZ/aAZovJ6gsVjyFtC4fwaNGavG/I2qMVPV&#xD;
+mM8TGvHYhvhfwWY6Ing8e2wV6SREnAG0IjBC7YZV4wIxnlshxIxELHZRhDgeZ+G8n4vt1ccJUVGA&#xD;
+4lMGNpsiw4n2WaB341EOZ77PA5Ep3KA4HWdgcEaCxjEHms5OMKjKcBbSgLQ2FkSE8x6jgRv/igyx&#xD;
+S1XgqKcLhRy0dQaKVEKfDNeGG44ksNxiHPF0dQicjw3OZaiMUe5W+J1i5nZ3ssPNZ3mO65mM7l3o&#xD;
+XAtrbRbycssR5HQDwOfhLFGQlheZovxMhPOJKWjVmqHNsCALr2OrC8gP/xD+3Ro9bzd7X/5c4FK3&#xD;
+aMXjx//NhMRfm5Ad2keKDncu5XSh7U1jaTKZxbSUQiZzp2MlPXOUVUWJG0kRBgcSIDAXVARn2LYU&#xD;
+dzm2H8Utc8g9CMOyjJo80wMnaBRq1oPwOcJUQjLUlcKOZwIheaHJOc+pEZpp2iZhG+PaBRKOc4O7&#xD;
+WSy9Z4aGJa5jlnxKL3Mbeig9cBhIhzgGIncu8MiN9FBggg+GsJuj7hXHRZJDc4xzpCm4fKKxF3OE&#xD;
+j7qGRoDHhlHErkgbUSs1WB7B9C5WGm6Yp7pRmiw7ODOqyKj+lM2KkJOpdfqRqpEPVM0tsSpPujsC&#xD;
+9IJYtHh4raqy7kNZTQWIl4zASypi10NzJfGGAicDtx5Vjuuqx4PqHK+bd/QSelMfd+Xt8NEfalPr&#xD;
+RCDlWiWYdzwb27EXS8VScR50fbNlzclJV/bB3Thh6p4tm03Thv1OYTfKkDStab/D0LQHCKCwa0M8&#xD;
+ZEPSSsRWpMV9NtJdgD4IOfmRkLMZdj1tYmvpZYSHzURMA1gUqN9PDB/uExZ+Nf9g+A7SoQgP6L39&#xD;
+7MlvFfon+m8QAAA=</IconData>
+  <Name>Code - Document steps</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Document the steps of this code.</TextInstructions>
+  <AttachContext>Selection</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

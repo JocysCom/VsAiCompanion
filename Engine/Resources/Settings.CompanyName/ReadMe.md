@@ -1,0 +1,1 @@
+The folder contains customized settings and serves as a demo.

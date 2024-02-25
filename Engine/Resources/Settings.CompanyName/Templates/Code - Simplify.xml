@@ -1,0 +1,35 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACn1U226jMBB971dY7ksrYbAJhFJBHrZadfuwrbRVP4CAE7w1dmScQPr1O3bIpdvV&#xD;
+RrKZOTNz5sKQot+t0Y6bXmhVYhYyfIXgN3ZS9SVurd3cR9EwDOEwC7VZRzGlNIKYC7f7UQr1/i9n&#xD;
+lud55K0YDaKxbYlTFmPUcrFu7aTsBB++6bHEFFEEiDt44ekLK6zki8oYPaCOmzVHotaqiA74wafh&#xD;
+ff3FBa2M7pBtOXoC7fu44UZwVfOwBviRPGgpeW2h5xA96M3euHrQco+enh9efr2ix275A924ToSq&#xD;
+teld2G1YRD7XMe2qP4hehSZ5ZR5N1UAei0YG/WC0h0c+x2iMS5zkd2EyZwCCEs9YmCdJitF6CnlT&#xD;
+wsLEtz03r5uq5i/qrecYiabEtZbaEDYN5ZSyt3qD9GrVc+uTOZ143xJfszjnnOPofzHsrxjKs2yZ&#xD;
+XMYU0ee+pt6jc/PFGq2ElFC4kTfXU6W32IPEbCUvMd9xpZvGJTP6HQClFT9qZNoLdgJcxrralHi5&#xD;
+tfYT+lsL2NFOWG5OuNekgAdw0BPcVH0LO1HtS/wJuxjXSitLVlUn5P5YkoeGaTkvoF58nMq2fLSk&#xD;
+UnXrRnbsZO/67MRIlpKrhnS64fdIadNV8uKtFZvKtghe6M+E0oAliWQsDuBIchRoQO6ohBPQmqQ0&#xD;
+TAOKSHYXxFmYIsJoCkiahGlNZnMQZxlYZyC4C+w+wsmSzJOAOrp5Ip1YT2TARTzZgYt4MgZXQNyN&#xD;
+4hzsOUrmAUmYy8MysMSOHVYWvGJIebY6qgOWTmTHKr3ytYwsgyIYSwJXPzoXXHsmIAIeT3PuVbpp&#xD;
+fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
+  <Name>Code - Simplify</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Simplify, refactor, and enhance the performance of the given code while preserving all essential comments.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

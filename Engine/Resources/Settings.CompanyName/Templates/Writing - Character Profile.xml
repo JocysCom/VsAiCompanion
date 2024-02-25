@@ -1,0 +1,67 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACsVW244aRxB991dMJq9DT98vq8VWuKwTidiWsk6UpwjDBEbGgAAvu/76nKoZYDYh&#xD;
+kaM8RLZ2TvfUnK7LqWpuXz1+WmUP1W5fb9b9XAmZZ9V6tpnX60U/f39/14v5q5cvbr8ZvR3e//pu&#xD;
+nO0fFtm794PJD8Ms75XlL2ZYlqP7UfbTz68zJVRZjt/kWb48HLY3ZXk8HsXRiM1uUb7eTbfLerYv&#xD;
+YViSIT4qQaaUmB/mOY4g5o4jKs/qeT+fTJ+q3W9YwM/1vn+FWUspiak1uXlc1euP1wxVSqnktzDt&#xD;
+53L7mGdP7fNYzw/Lfq4tLZZVvVgeTquHujoONvRBJjNt8Z9SNP2wqnofprOPi93m8xqOrqtj1rGA&#xD;
+Lzf77XRW9fPtrtpXu4cKQWbZ7YLD+jSt17w+79SzzWkHe9vpYZlh90cpgrGFFTK5iRTGaYeFcQYL&#xD;
+mWwwWMFgIgsnNP5qKeL5lVZCh9NXWHiiIDrgpCZ4W2g9UVpo3wLLdi4SDooJsG+EhKUUyRC22JfC&#xD;
+J8IR9lJY2FuRAmHQOhF8oZKIljAogTVjZQoVW/OYChX4KGBNWAbGhfIC8REEDciAnZCWsIQ3ThjQ&#xD;
+WGEZB9AbjsYjWMIO+16A3QiNT4PwMEcIfqIiA2xGThfeJdUmkOxOqQUGVZNzUMXCcq7sly959nu9&#xD;
+WvXzb8d+nMbjvPxrwSDoCF/BhNCQ89T66uAYHPEiELZIOeHEGH7DYzIJiSHOVaLBEX5roRxjfcoW&#xD;
+gvX/NUUO9kaY1AlLG3WnMQI2UG59oObAyVejpJIWEJpJUBVWMmGlrAJzFBInChXCBIIIscDh8Api&#xD;
+ipAOXPaEkXnSmGEMGaHm6bxvQHqy18SZRLDnA5JwqXs2FImVdNF1YxkNrHXmqvMBRGCWEZ8H8hCe&#xD;
+aOQncrlwrOlG0eEcDkdylP6G88KTiB/6QQcgA+Ax4HFd/q+TUoeH+ok0GZV6ntUL/1f5SdJA3b2w&#xD;
+lvSmWIZeT5JIHtpAM6gJ5G+hMdSim8+7u9FoIP8NJ/54RRj5dJAt8om263J650chXuMMwjQ+xET+&#xD;
+4FPUy7BrOAoNEYENSR5qoX1Lw4UmGHCQcEELDxhJ5RAXsSRkjTB3/qVaFzU8i3Y4dleln2ieckch&#xD;
+aRqyRNKkJUyNaYWifeM4mRgskGfkXoyAIXFfogOQb5qMwJh6qCGbe9Wpc1dGXcf8YGCvyrobIHCT&#xD;
+M8xpYDpW0/yO6GduewQehaERg4kegb3h6YhREiEstqFAFHkPSB4bNBoNfQy2rjIvuXyuFhf8yc3b&#xD;
+cvHsstvgol9Nn67cdxoTiW4oO8O9hckl0doe90kPS2pzjykN7KOd4SHhKB7KBnpIhEx2uK1o5Xhl&#xD;
+UyJLHWCiMFj4g4A+xIpk3kP8GCc9SCqQoUGumJINHZqLNh1v2tAcbtNMEtA0WoUiTtyalMxmAUpv&#xD;
+yAS70Ap9EvgIZ0CAovjYrpogAsIkgJw2QCPUf3yF3uTktGS4m6M5LRpiSYMG93PjEgYEXbgtZu9A&#xD;
+RVNUJ06uhHjP4VKcTZhESVZJw2OQIGH4hYH2ohhVKk5ZkwaOcm/SwgPbphhUBVBJqqfkS8LwxaGb&#xD;
+85AWeusb/H1T/VZFvd3nFX4+VQ/VejOfn5VlBzGNhtcaAF9bxNRoB8og7TjInSpFZzqqOh6WnVFc&#xD;
+Zlw3bXqpzAiSXOaFN/+zcFqh4yS+HLm8uBFb4SC4078Vai0pd4j+0oFmHOx342d3uf1TP/Ljln48&#xD;
+v3zxB8zJT80KDAAA</IconData>
+  <Name>Writing - Character Profile</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>You will be provided with the profile of the main character and a new fictional story. Your tasks are to:&#xD;
+&#xD;
+a) Translate the story into English if the story is in another language.&#xD;
+b) Analyze the story. Identify the main character from the profile.&#xD;
+c) Add new information about the main character to the profile.&#xD;
+d) Do not respond with the translation of the story. Respond with only the updated profile in the following format:&#xD;
+&#xD;
+```text&#xD;
+MAIN CHARACTER PROFILE&#xD;
+----------------------&#xD;
+...updated profile here...&#xD;
+```&#xD;
+&#xD;
+Physical and psychological information is of the utmost importance, as the character's appearance, actions, and motivations will be derived from it. If space allows, keep the important life-changing events that impacted the main character.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Text>```text&#xD;
+MAIN CHARACTER PROFILE&#xD;
+----------------------&#xD;
+Name: [paste name here]&#xD;
+```&#xD;
+&#xD;
+[paste story here]</Text>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

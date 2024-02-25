@@ -1,0 +1,31 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACs1TYW+bMBD93l/hWZrUSoB9EEYgoZWatNWkdKu0dNM+MnDAK7GRcSH797WtREqm&#xD;
+qvu0aRjE83Hv7r0D5le7bYsGpnouRY4hoBgxUcqKizrHj+tbf4pRrwtRFa0ULMdC4qvLs/m75efF&#xD;
++vvDDeqHGj08Xq8+LhD2CfkWLQhZrpfoy9c7BAEQcvMJI9xo3WWEjOMYjFEgVU3uVNE1vOyJSSQ2&#xD;
+0ZCIKQYQVLrCpoWtPPJKN0YWpe8xahivG33YDZyN13KXY4ooCifmxMc+ACPjTPT5K71DSqnttU/J&#xD;
+di0XT68lQpqmxD11qVnfFaWZQadYz9TADnyz4ZsTvosEpdwSO71frSFteNv66rllGRuYkFU1K1ve&#xD;
+nUZ6reQT801DVhZdpuSzOAn+lFycRrdcM9Vyc8sgiGdmbsgc8xrxKsfbgot9ZB/VqhD9RqqtfagV&#xD;
+352DR80Cs2gAkyi+OCI4UlfoBpli9+CFdBV5kKxiixKLUovAsJMVRA7HDicOpxaHlncyhUyYL2lv&#xD;
+IFP1j/MQpt6Uekl8cbDl3nsWdrsZJkcGSP0HN6FzE3o+2CsKJm/YmQSxl1qpACu3gehtmYlN+eAZ&#xD;
+tb/phL+qM7Iq4V+q8w/yTL3/YIoOzO0Pe3n2AhZhFW6wBAAA</IconData>
+  <Name>Code - Check Spelling</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Please check the spelling and grammar of comments in the code. Reply with corrected data.</TextInstructions>
+  <AttachContext>Selection</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

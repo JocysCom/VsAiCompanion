@@ -1,0 +1,38 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1WbWvbSBD+3l+xJyi0sF7trl5XiRuI0paC71po2nL3zbUVey+yJCTVdv99n1lJ&#xD;
+IYYQjoM7Co1trGdG8/LM7K5G5xfHXcn2RdvZupp7SkiPFdWqXttqM/c+Xb+ZpR7r+mW1XpZ1Vcy9&#xD;
+qvYuXj07/+3qfX7954fXrNtv2IdPl4t3OfNmvv8lyH3/6vqKffz8limhfP/1Hx7ztn3fZL5/OBzE&#xD;
+IRB1u/Hftstma1edD0OfDOHkI5hSYt2vPaSgyAe77regJeVzj20Lu9n2k7S3xeGyPs49ySTTIX7e&#xD;
+/TqUx1BZ1c0fyK2llJRrNMmOpa1uHzJUxhjf3XWmWdcsV+hB0xZd0e6LyR+CvTnxdxqxqnc+de97&#xD;
+CacbW5az9ltZZMW+qOr1+mxV2uZU0/VtfVvMkLBYLZusrb9VJ8q/a1udane2L9rS4pIpEZ2hbwyf&#xD;
+8w2z67m3W9pq1Izavl1W3U3d7uhm39rjC8UlvoorYUzE1ct79s6nWfZbhli/q5RrnatURJEGYspw&#xD;
+jZTRiHJlhJSIk4ggiJmTQh6KOI4GAcEHm4hLkQTQpsIAhqkimCgNQZvApdAhBCWdkU74TBJwrrkK&#xD;
+RRoFpIqEihQBeOaKYjpDRJycKd4UlTQuHVMTAWI0URyIE6BaqDRNaudFdeoxGnAik9xlAU4NGVFq&#xD;
+tIT6kg+sqEFE1AHq3F8nGyFrN19f6EByHSBkkL488/x7C+Vv/umqcf3IisUiNBzdzCekcU6AdRxz&#xD;
+tCHCkvN0AQzSCVqeoqXRaDagKB+uSRKzwcawmJvF4GvyMZhhUwYyvMv7QM1pwBX2hdIo2Z2IGkfK&#xD;
+9t8zLMm/7kH01AOePvWAq8ceX7/GYZB89thpCFEACCdo1cIJKjilVWHIj7PFUUzIJMaTDhTHkeNm&#xD;
+cqaa439DMSCC6v8kNpuYYUV/iu41U0Y9zGWTO5AEeMuRNHIgYI4BYxQB03yDgLns5hXdoI2oCLiZ&#xD;
+jLtOGv8WCbjrYIFxTENfD95hAkQuTqfdaL+TyMIYxEzdeHeS4RFmJ1xGlqc7/N5mlvFdsa7Qc3r5&#xD;
+evXsB5ofPS18CgAA</IconData>
+  <Name>Code - Document</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>
+  <AttachContext>Selection</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMacros>true</UseMacros>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

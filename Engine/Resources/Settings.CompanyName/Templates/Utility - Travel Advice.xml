@@ -1,0 +1,34 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACsVU227TQBB971csKyGBtNmrvbZzaaW6pUJyoRItiL6FeJuYunZku0ng65ldO+BQ&#xD;
+q6JPRIo9Mzsz58wZa6cnu4ccbUxVZ2Uxw4JyjEyxKNOsWM7wzfW7UYhR3cyLdJ6XhZnhosQnx0fT&#xD;
+V2cf4+uvV+eo3izR1c1p8j5GeMTYFxUzdnZ9hj59vkCCCsbOP2CEV02zHjO23W7pVtGyWrKLar5e&#xD;
+ZYuaQSKziVDEoJkQNG1SDBC28zZLmxXQ4vw1RiuTLVfN3ttkZnta7maYI458Ie0f9ycRGMFsRT0b&#xD;
+QJecc4vWpYx3eVbcDyWKKIqYO3Wp43o9X4AK68rUptqYfT042d1BvYvQRfnArH4/cii6y/J8VD3m&#xD;
+Zmw2pijTdLLIs/VhpG6q8t6MANB8L7NiXJWPxe/oQ9aYKs/gNZYTkAjBb7ps385ez5sVSmf4khPh&#xD;
+eYnQnPpEe4nyJREyTEAiogPqJV7IifS1C3hCuwSwbQXxvDDhzlOSKMkT1+z2YIxxtfz2Rvg+kVwR&#xD;
+2MfbyZ/hirL4aapygtkQMxFoh/yEm1Laob2IWtdtiJz0iAgCovXLue2p/A39DJoAGbQgWvw7GiAQ&#xD;
+HqtAUe4TDg8E4xJP7a1IgxVbC7pTATFBQXEhIyoggysagOcp0MJWExlE1PMTqTSV7iCWMoTIvkJa&#xD;
+RVwna7XdrdUiSq1p1PFwzG4vlYhsSHnwjGUIbVsbST+kIdGSqs7smjnbooWoTRd+QCXq+jgnVj7w&#xD;
+3h+EcN+0/MK907bqHAfRVrTIfUoDa5ACamBH/L9voSNqPQmeE3Tgswkj4sNW5Av49pdyIE1fsgEt&#xD;
+O5X78vf30l/YwSKfLLjde+9zeGYp2xVcWc/MNmVwfU3tTXx89AtMyWkEiwYAAA==</IconData>
+  <Name>Utility - Travel Advice</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>What are some must-visit places in?:</TextInstructions>
+  <Text>[insert location here]</Text>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

@@ -1,0 +1,33 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACm1TbW/aMBD+3l/heV+D32M7iLQSAbpJdKs0yrRPUxqyJCpLUGAJ7a/fOQRKaSXL&#xD;
+5/M9d89zZ3l0s/+7Rk1ab4uqDDEnDKO0TKpVUWYhfljMBhbfXF+NPk2+R4tf91O0bTJ0/zCef40Q&#xD;
+HlD6U0aUThYT9GN5izjhlE6/YYTz3W4zpLRtW9JKUtUZva3jTV4kWwpA6oCQRKEY52S1W2GgcJXP&#xD;
+hHCMilWI5/FzWv8GB3SW2/CDyoIx5ir1kOF+XZRPHwF5EAS0iwI0xGyzx+i5t22x2uUhFso5eVpk&#xD;
++e7oNUXajiuXgBgSCpYbUfy4TgePcfKU1dW/EoSWaYvOEKBluN3ESRriTZ1u07pJoUmERlnXVpFU&#xD;
+ZefDzSbe5Qju7jgjvmHGE8QqI+acKOkHHrdgAxUxYgzXHg8AJIXHiW8D6QkO8IBJBacvAsZmZMKJ&#xD;
+5Ip7DCJccusNoJLQFlKUNr43EMTXTM+5JD7zbU8XcWetQxkBt/AwQhhzct9oe8HoT7Feh/jzbBZN&#xD;
+fR/Ty16EIFoxfVTfkx3zkwEj0jUHFrqRzgZCametL4yT3MGdL4NgKXgeuN4iqKusgaZhSSKZsqeJ&#xD;
+XFCeadTjsZLvNULHgFZE50DXaRICpgZWuc1Nrj+qpSEq6UIOcgodw7nL79MP94DoAY0mNuLSESl4&#xD;
+NhgA7EDqjgf6lzsXNkQ3nY4jzYWEA9F7pW/UNIcCrzKPKnuR3SsDP0yto3TnA/fruHyprWWHcY1o&#xD;
+Bl/Tfa/rq/+LB+rBLAQAAA==</IconData>
+  <Name>Code - Fix Selected Issue</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>How to fix this issue reported by Visual Studio? Please reply with the fixed code.</TextInstructions>
+  <AttachContext>Error ErrorDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

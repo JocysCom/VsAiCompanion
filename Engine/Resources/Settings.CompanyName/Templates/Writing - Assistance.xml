@@ -1,0 +1,43 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACsVW227bRhB9z1dsCRRIAGq4s7NX2UqA0ElQQG0D1GnRvqkWLbORRYNSbOfve5aW&#xD;
+GCtwA/ShqCyYe5a7czlnZqDTV/fXa3Xb9Nu228wKJl2oZnPRLdvNalZ8OH87iYXa7hab5WLdbZpZ&#xD;
+semKVy+fnX539nN9/vv7N2p7u1LvP7ye/1CrYlJVv0ldVWfnZ+qXX98pJq6qNz8Vqrja7W6mVXV3&#xD;
+d0d3Ql2/qt71i5ur9mJb4WCVD+JSBWPMtNwtC7jIlu/a5e4KYWn9faGumnZ1tTug27a5e93dzwqt&#xD;
+tDIW3+JxHlwoZLbZzp7wbbTW2df+yPR+3W4+PnWQU0rV8HY4Ot3eLC7AwU3fbJv+tjncB2gvj+4P&#xD;
+O3TRXVeZvc9rXLps1+tJ/2ndTJvbZtMtlycX6/bmeGe767uPzQQOm7+6djPtu0+bcfe63TX9usVj&#xD;
+ak5AkMLndKV2/WKzvez661lxvdj17f1ziOi196XG32E9ASM+GSk1heCjSS/2Fv7RiiatWaIMd8bl&#xD;
+5GHtvNvv5hU7MlbyjgshaPPY9mD/ZrG7UstZ8aNxyZbMTvv6y1IZ5yJpHpF2xHI4ZrwlGwbkKCqD&#xD;
+fCjCJ4uxhNPa4G4E1pHJ1RySIefKJJrJKLZJKLkyJGtJUCXeE8OxT/m01GwSWTalj8FSFOUSRS2l&#xD;
+D7jNRkUL2rj0zgQysUY9EOtUOo+gnFfOJjKlsHfk7TGaWy+R4gHWx1DZFAEfWYJZ7GdPnqzUjgWu&#xD;
+cxyGxCkwIQg3h4lsBdeNIwSCNBwlU4tPlvSXNEWSIzuyIIy8fNiTZGtheEl7DkUZFAbJA+MuYxQI&#xD;
+xQPnUhsPllIa9Xkk3GH5x1GdT/vVn88NeDQ6lIb9i5OielRu1er/qD2WrDgoZk3G16ACN7m0PlBw&#xD;
+EZUSyLMvxRjSeZ4ItE4G4TOhpmoRtI5HoYFRCGaho/GplABmokKTUQLhgiJxSZPFm6jEpUCO89I6&#xD;
+MK9hPtY2wEWQw1UbHYpLRsPJojJ49Ou01SRxjMvpkBDIGDckQsWEQ1o2Ia+simNoCOtf1d0RnB+V&#xD;
+bH1czgZ+UHajpWP+nhA8wquYkpP793oHHRi1Mi6g9ddb2W1CohNEFw27bykNQhA4Ol/iHA+oKPOc&#xD;
+xf6Jdt6/xQDA9BhQAPmZ8zAgkRHgnmBSjIgD3qEtsxEmj3YbplVe1bjps+v9viWTld3fGdFgb48e&#xD;
+XCGYbGQfxeP4nyCaDVg2KEWJ/w3TSBXDZYIIPSbKN4jGxJmjAxMPnFlGWwHlSYNMcsoY2TlYzDKT&#xD;
+MnKCd3lEpUwVWqVkDOSAnKFKwMkIBkJGGE4lSp4lDBqht4C8cJbFgzig3D1AbOweZZE0Ws9k8cb/&#xD;
+87yL1uM5PEf4yEFm87CF8ZawGMOLGYiDkC4nAOACnCANh+rGUISoALCG0NBAmYFjhSYdfiS0u89T&#xD;
+Tfy0OMPiNP8Aefnsb/dK4KaACQAA</IconData>
+  <Name>Writing - Assistance</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Can you help me write an introduction for an essay about?:</TextInstructions>
+  <Text> [insert topic here]</Text>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

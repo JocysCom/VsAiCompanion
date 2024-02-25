@@ -1,0 +1,48 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAL1Y227bRhB9z1csmJcE4FJ7I7kMJD80KNI+tAEa5ANkaiWxoUiBoi05X9+Z2aUs&#xD;
+yYodukUNSMsdzu3MnN0RPN3dr9i963ZV28wimcjoDYO/w6ZudrNo3ffbD5PJfr9P9jppu9VECSEm&#xD;
+YHOi9uFQV823a8qyKIoJvY3Yvlr061mUShWxtatW6z5s7iu3/6U9zCLBBAMJfqIbcj/tq752N+v5&#xD;
+5vauW7mOVWXbTCde6jUWbldeKLBl125Yv3bsd9j9eti6rnJN6ZISxJ/4x7auXdkD3oR9bLcPHebC&#xD;
+bh/Y739+/PzXF/Zpc/sbe4coqqZsux2avU+mE4o0BF3u/CNtAaCbd5+6+QLi9OwgZ5EGYA9hPahZ&#xD;
+ZKxIoHIapLjLTVJordOIrYLV16bqoeB3O9d92c5L97n5unMRqxazqGzrtuMyeoxIUXd9u2Xtcrlz&#xD;
+UEkRMdxz0p1Fb5fKLrSJJs/ZyAubUqWlUKc208k5tOcxy8xjlsUA2lgErTxoEv80XDUKrpVmKd3z&#xD;
+cEUirVXmwrIo06V6oVAiMblIi0tLkVqlxpU4y42QxetLbESglTW+xNrqpChyOfBKwq4YUWY9jlXL&#xD;
+slDZOMhgI0X2eshwbqwQgVoqDbhNAVeVTtPMA9cqT7LUjjlPZhTy3CyMSschTxfz+TkpRzY7D5eI&#xD;
+zLPQba0TujUQs9LFyGanoyC7Mi3MC2fqErKTxhn9MmS8TYcrdLpiy6quZ1HTNpAuPvPurnaDYNd3&#xD;
+7beLHQ/TRB4FGKWcb2fR7V3fn0n/biuYbJuqd91RTru6ggV8iKN4Md+t5103f5hFZ7KTEi3bpufL&#xD;
++aaqH44Zo2gfRtqJaFd9P6bdu0PP5025xjINSB4Q5KY68NvaNQu+aRfuA2vabjOvTzo13c77NYMm&#xD;
+/mHyGKhQyzwWtYiVMjVXJhYlN0kaC8ZtrJMUFwuv06wUccHAJGMyg+/awCLKAjThgef0DWIRc9JF&#xD;
+L4yDh5hbdMKtd48KGAvDlpYiSdDJQBtXCWZoLYVAewmsRKkqcAd24bnkNmSJMlX41b8SsWXgLkZX&#xD;
+6BPX74G4d929M1FgyF1Xv3sbxuH7M6q4e9e0i8UZ8x7rliEqZaEsmEKJdWBaxUpCPFiNhRRURuln&#xD;
+sIMqoLDmvmKc9FHGyYKeyIYrqG2KeE2OriQ9WrLgChRJoI5PgxHCzHDLvKvQmhfyykJep6XRV0qj&#xD;
+RpQGmwDBIY4k7kiskDIMO68MANGhadhHajA+wRvAAT3MkUGUHXxKjtzCTU7fxC2tRvtGwpHZkwg1&#xD;
+FuCU7zwQntuBwIG/RF9fVa/szwYcDVA8Et36w0JUFE/TPy20ulJoPaLQqZDEQVNKCQEIOxADaa91&#xD;
+CTClZEQvYD/1OYe06CgpgaeH+AMqOubEQUP74Q3SM6YSwplKUqigqOHcxRYV0AuRSMGFQNCxEXQm&#xD;
+qSXYAly5xlcx6pODwQm3r04Aa0wp+ARk4QNTnPME5H8VHisIHo7oKQAFDwsqYEYp7axPETKwQ7I/&#xD;
+yMnDoWwgNYYfcs59f2gFoyFPWv9tdsWLuWGYkN1jbjxovTo9Yl4gHjqBE6HS2BOT5yWdShmaAHdg&#xD;
+RuzRtSoCXYm4GVO+dOyYJr2A+YGLZkdYQxVkLBlVoA71oQ3TmBQLyZVQKaYCMBZweLwD3OND/diy&#xD;
+AvOhuCGj/zMfOWTzbC6ht9Ba7aWFt7H+QFwPTibahxnOxBBoOEZDO346pC+DDwohlQ/GzPiQjwy4&#xD;
+HtDfB6cXrbxy0Zr3l78Lv7uu/cFEsxaYa4epMwwdP3PCyDlOnNNh5idNGGXhV1LOhjk2yiFOMPvU&#xD;
+a03Ta5hH3A+kx9F18dsr/Ph48tsuDDA/v3B8+el1nvFpRcWViqbPjq7pZHXzZor/5rn5B/OcWYIg&#xD;
+EgAA</IconData>
+  <Name>Utiltiy - Cooking Ideas</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Can you suggest a recipe for?</TextInstructions>
+  <Text>[insert dietary restriction or ingredient here]</Text>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

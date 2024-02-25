@@ -1,0 +1,36 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAK2UWU/bQBDH3/spttvX9XrvAyUg4nBUghYJaNWnKjhubOE6UZwmwKfvrI9AUtT2&#xD;
+AcvSeHbn+M3faw+OHn6WaJ0t62JeDTGnDKOsSufTopoN8e3NaeTw0eG7wfvx5+Tm29UJqtczdHU7&#xD;
+uviYIBzF8VeZxPH4Zoyuv5whTnkcn3zCCOer1eIgjjebDd1IOl/O4rPlZJEXaR1DYBwCISmGYpzT&#xD;
+6WqKoUWo/AKEY1RMh/hi8pgtv4MDnFU9fKWyYIyFSl3IwUNZVPevBXLvfdzsQugQs8UDRo+d3RTT&#xD;
+VT7EQgUnz4pZvuq9dZFtRvOQgBgSCu4g0eSuzKK7SXo/W85/VQBaZRv0IgJYDurFJM2GeLHM6my5&#xD;
+zmBIhAazZqwinVeNDyuLySpHsHYpOJVGGmLOBVs7KsFJBCNcU8c0J9xRx60i3MIdIoPNI0eV42Uk&#xD;
+KZPOE06tMzplVEgtCaNcQiajmmkFRoALxnphOi931GrJSw1VpCSSCiE4pHPnfUjnzoJR0nASMcqE&#xD;
+Mi9coZy+EFCPeUO4zxk1WkEyZAIIjKJClA0z9S5YeFhHntpESGKoDctCUNFMTrYaPGH0oyjLIf5w&#xD;
+fDwSozGO9+VqRTBEnoumeMLbYpJwmKN55EQ1W2tolzLSkHU7DUeP1XotfwnI2ntJBPUQ2qQJIUMm&#xD;
+TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD;
+I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
+4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
++vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
+  <Name>AI - Chat (GPT-4)</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TemplateName>AI - Chat</TemplateName>
+  <ShowInstructions>false</ShowInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

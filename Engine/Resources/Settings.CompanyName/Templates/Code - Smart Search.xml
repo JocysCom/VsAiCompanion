@@ -1,0 +1,41 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACq1VTY/bRgy951eo6nU0Gs73LNYJuvJuEGDbBsimRU+FI6u2ENU2bMfe5Nf3UZKT&#xD;
+NbLwIShgmMMZDvn4SI6uXz3+22WHZrtr16tJTlLlWbOq1/N2tZjk7x/uipi/evni+qfp79XDX29v&#xD;
+s91hkb19f3P/psryoiz/NFVZTh+m2bs/XmckqSxvf8uzfLnfb67K8ng8yqOR6+2ifL2dbZZtvSth&#xD;
+WLIhLpVwRiTn+3mOEOz5CRDKs3Y+ye9nn5vt31CAc7WbPONZK6XY02hy9di1q4/PGVJKqexPYTrJ&#xD;
+1eYxzz6P8tjO98tJri0ry6ZdLPcn7dA2x5s1X8hUpi1+TNHsQ9cUH2b1x8V2/WkFoKvmmD2xAJar&#xD;
+3WZWN5N8s212zfbQIMksu170abX1etXr2Knbbd01WY0QhJs1MBHKsJ3kMc/+abuu2H7q4Kc5NKv1&#xD;
+fD7sTfKf7/xduLvJy9HNZrZfZnD9a5BJRS3IS+qUDEFFUUB6a2uWipwowK83g1QOUkunvf+mG5mi&#xD;
+NbUShZXaRyOMtF5pUQQZdHRiFKNak7RRBaGEltEbLKSlQMJKZRIJODVJMxavEAPSwTdiOefgErLH&#xD;
+YoANkRiLIdh5qWKIJ70GkmC1R5AiSheDBqZorf+qDqJyElZBkGYMwksTrBNkpbMxiifcfLlIrrY6&#xD;
+6mmerVHDds9tIpV/jmvywffuiagrnIxkRP/PZFsPJKM4qSS1URZpkPQpcIk8UYQVi/r8zsn2pPEF&#xD;
+oTr4dyQ4mKMKaSc1pBQ9ZxgS2CPQQNaIc4CXc3bTVN1W3ycZpSYUAi6DI92hMC6ZBGodqgv8xmoH&#xD;
+jCx+AH+SysK5RwsBdwQN8M3ZGJfEeejL8O1NTNNn4J9TcM/9gV5FBO2Yb29VAsIYgwFCkMY4AxpN&#xD;
+S51IQxjtbUcyKqRZDPJ/ZN1Mg/nlvNPC90kwLB6BFFQ/AomHSyfLq7Qb11hCSTy0o16kdxSHS5hD&#xD;
++PjSewpS1zzjwaNwPMUYQyO1Nn5U2AAHo0l/1E+7FqfjHS/Gg3G/0qi3oP5SH6S/zMH60JCXmYi3&#xD;
+yaZnCqjRWyl6RPOBXIcS6BC5TJjzWOHUKseTrmElegwR+fs0rEkhkxHTkOQA+JQNP0QpWX69+AlK&#xD;
+qX+iIgEyOpQUJ64laYpjZLjkyB6dqy3jQKJ4C/Elc8qBZ3QvNlP9tVjnBak094dDUwmtpVIYDIdO&#xD;
+Q/ed53mZK+/8NMSBq+tyge8nfwNfvvgP59JpdtEHAAA=</IconData>
+  <Name>Code - Smart Search</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Analyse supplied data and find code which feature describe below. Please respond with the full file path, line number and relevant code lines. Use markdown format for the code.&#xD;
+&#xD;
+Code feature to find:</TextInstructions>
+  <Text>Multiplication</Text>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

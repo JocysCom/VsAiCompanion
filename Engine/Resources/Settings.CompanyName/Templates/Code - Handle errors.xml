@@ -1,0 +1,47 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACrVV224bNxB9z1ewCxSIAYrL4Z2ylQBZp0EBpw1Qp0XzpkpraRt5V1htLKdf30Ou&#xD;
+5EugAn1oZcHkkDNnztyoi9f3txt2V/e7pmtnBQlZsLpddMumXc2Kj9c/TELBdsO8Xc43XVvPirYr&#xD;
+Xr96cfHd5c/V9e8f3rLd3Yp9+Pjm6seKFZOy/E1XZXl5fcl++fUdI0Fl+fanghXrYdhOy3K/34u9&#xD;
+Fl2/Kt/18+26WexKKJZJEUYlwIjEclgWcJGQ981yWIOWlN8XbF03q/VwlO6aev+mu58VkkmmDL7F&#xD;
+0zioYIis3c1O+FZSyuTroDK93zTt51OKFGMs821Wne628wVysO3rXd3f1Ud7CM3NM/t8IhbdbZmy&#xD;
+93UDo5tms5n0Xzb1tL6r2265PF9smu3zk93Qd5/rCRzWf3ZNO+27L+3D6W0z1P2mwTJV50gQw+di&#xD;
+xYZ+3u5uuv52VtzOh765fylFlDEqw2X6OwoTZZzQZPnERWG9obMDxj/iUAYgrjyJEBz3Tlgr9VO7&#xD;
+bLto+sWmZgvUglTBFl/HtU+VEjE+y8C0X/3xUmnPg+Wo49l5UT5hUa7+I0rb+bBmy1nxnqLwnrgR&#xD;
+SsUqCdYlgQxLgkk3KHIWVLqhYK/yfz4eVfk+C4ZYtsyCdUlQ442nKgirQMsI6TQjK4yPD9JI4aA4&#xD;
+HvJRhR2kbH1UzLifTmSNIneBB312/thLbdf+Vffd/55GJRwnI9wV5tPkXYUdhbxlhPCMMOqwUdDi&#xD;
+TpgqLxTYqJr0YAyMhAYAJYJKp/qglVZzhSVhVOOaQLPe6OjI49P7dO0TIazZV14TzKh+VD5SfiA8&#xD;
+0j3wyraJbsKqxjWkOLJqZg7bMFKmcOA8kj2ojjy+Kdh+jWn9t3V63JweZymJpELnjgP9KIpofQxj&#xD;
+4Fa7ZxP9UDvnKAj0VVDpLQhVMBjLEHkwWkjPMIUmIrioEbNCu6oI2aI3vDCBKrKk0R54P1LPOhh4&#xD;
+rZEbaRF7DCS5xgOD2YrRca0sXmIgYgs7KEQVuE6DROBquNEJIXjnuTVGYksAcxiCihAKukOlAnlv&#xD;
+0ezKAgGjhlOyQLDWO27Jw7FRqJWNJvElJaGgTBU9KBJaSmslyLMgNUyls8yGqLiVwVQGliJ6blIW&#xD;
+vEX4uZ46Mh9TN7hYTYyMQoNsdB4qhCl1QiLfEy1JqKiYUgbA1lbaGeQW2dDKCx2Y8QGz7DD6ATnV&#xD;
+zCLhwmiuQkCy8UwYMLQpI06jJvCupIUEh4BFKCmdVnn0mUcVNNfGWeGgqFK5AIwyC7BGjuGIKycl&#xD;
+8CvgeACiaFoL/BiGEFL14Nej1oY5VEpI8FBYra+QChhLR3jWmCX4kHhZpBJRK/ZNw5x6igzex5Q3&#xD;
+so8veO7ii/S7+urF3xnwu3dXCAAA</IconData>
+  <Name>Code - Handle errors</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>We have a piece of PowerShell code. The code does not currently handle any exceptions or errors. We want to improve this code to handle potential errors without using try-catch blocks if possible, and provide user-friendly error messages Reply with fully modified code.  Use instant return if possible. Here's the original code:</TextInstructions>
+  <Text>```PowerShell&#xD;
+$file = 'C:\path\to\your\file.txt'&#xD;
+$content = Get-Content $file&#xD;
+$words = $content -split '\s+'&#xD;
+$wordCount = $words.Count&#xD;
+Write-Host "Number of words in the file: $wordCount"&#xD;
+```</Text>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

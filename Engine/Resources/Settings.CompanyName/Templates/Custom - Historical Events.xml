@@ -1,0 +1,38 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1XYYvbOBD93l+hMxS64MiSLNlSdtNCvb1y4GsLt21pv6WJN9HVsYPtJtt/f0+y&#xD;
+EzZHdpctC6V0kyCP5DdPM2+UcXL24mpVkk3RtLauJgGnLCBFNavntlpMgvcXf450QNpuWs2nZV0V&#xD;
+k6CqgxfPn5z9cf42u/j07hVpNwvy7v3L/K+MBKMo+hhnUXR+cU7++fCacMqj6NWbgATLrluPo2i7&#xD;
+3dJtTOtmEb1upuulnbURgJEDwikCGed03s0DbOGYt3beLREWY08DsizsYtntZhtbbF/WV5OAEUaE&#xD;
+xCe4ngcPCDKr2smRvQVjzO01QMZXpa2+HgNyY0zk73rouF1PZ9Bg3RRt0WyKnT8m9vLA36/QWb2K&#xD;
+nHrfSzhd2rIcNd/KYlxsiqqez09npV0frrRdU38tRtiw+Le21bipv1X71ZXtiqa0uIzFKQQieJ0t&#xD;
+iJ1PgtXUVsPKsNo106q9rJuVu9k19uoZDxnePOTUGBXyk2t477OedksCrr+5CZOcx5QxFbJchCzj&#xD;
+VEodMgIKZ+HKMx5KmiTK2SmNY2cItyo4FW6ZcrhjogRsYWJnpyx1XNrZ2jhQGgMkiMCQKcoV/IGX&#xD;
+VEvjLUBFxrWj7Ofg23trR7jn1W5xt6PZx+GsDCOilAahIzk/fD4ozLhZfHkmJMMmIuSanZwG0TU9&#xD;
+o8W1yV4owbyUaY69udYQBGOeUkQR59z4myLOAFMSccZkcBCCKgS5nzmEr4n2Ie5o98ZhqKMah9B2&#xD;
+38eMsuQwzFvLflvJBXMllyg3BpW5oVdP+jIqr6n0ZVS92tKVUfV1kL6MkBVD7qiOaMtT5KdQBsFv&#xD;
+0/ZYBowmmithhkQSKpRnuuUEJxAyxFnJdpZAg4DNEx7iDCAHlYQ6B1UsQ42Tp0GvCfIcsL2lsv6a&#xD;
+pgnpMYb0PiYfSEw20Bqy28uh9xEckwKHljMEkp6c/q+g6cNIIx+luUma9FGaG79Q7FEbaKMYk0oN&#xD;
+2sQ0lehcI/ED0jAp+mYjDffNRhrcRUsxaJ13NRuHcc3G+fhm40h8s3G0P6nZCJG63wFeGTwgpNbJ&#xD;
+D7RhpIlniu4fKJAIT8zEQJEMIK3uUKbHGNL7QJmeBMr0tA+ijHkQZe7fhX8XZe7fhH8XZfj9e/Av&#xD;
+K403ztz/sOdP/gPhB1zrhw4AAA==</IconData>
+  <Name>Custom - Historical Events</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Please provide a list of significant historical events that occurred on {Date.Now:MMMM dd} across all years in the past, detailing the year and a brief description of each event.</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMacros>true</UseMacros>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

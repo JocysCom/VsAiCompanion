@@ -1,0 +1,44 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACs1WbXOiSBD+vr+CY+uqsrUKM7xr4m4hotGo+BKM5ssWwjhgEBBQ1F9/A8ZdE5Pb&#xD;
+urqqu+AL3WP39NPdTw/efN+tfGqL4sQLgxoNGUBTKLBDxwtwjTbvm2WFppLUChzLDwNUo4OQ/v7t&#xD;
+080fDUO7nw10KtliamDWu22Nosss+8BrLNu4b1DjSYuCDGRZvU9TtJumUZVlsyxjMp4JY8y2Yity&#xD;
+PTthiSGbGxInlmwGIeOkDk1C5DtnnpO6BBYAf9KUizzspidt66GsHu5qNKAAxQnkTZ/nAWmKZBYk&#xD;
+tTdicwCAPNazSXXne8HTW4awUqmwxa+FaTWJLJvUIIpRguItOvkTxVu88C9WGDtcsXn19j5xWni+&#xD;
+X443PqqiLQpCx7m2fS96uZKkcfiEyiQgsq2oGoeb4MXiMvSCl6srL0Wx75FbFTLiNakbRa4bTKWx&#xD;
+FSSLMF7V6JWVxt7uCjBAkBRZLIH8daZ8efZ615MDjChxXOF4kkk0gYNyieMYCAThfI9iH9uLbR9R&#xD;
+NmkQ5BheFmnK3hMZHuU4b+NRPKtPNcbzK6VSghJf4ipfrmn2DBmLfwOTkFeuyHIB8ySXBZ6RoSCV&#xD;
+yjlQWOEvgZIuDKzUpTynRv/INfjK5HU+nCwzoiwcE+LEZyXPqHKUz1AfkZ9ivFrHVEGBiPxSozex&#xD;
+f/X5GP81xvczrjAyCVgqg/x90gTACIpIKni8v7VbseMmQVRB7qobI8Lfzz/aKwsjjtCa5EVTeXb0&#xD;
+aQQ5EO1+jWChvUrzokmXXfttCzlCD3KVymSAJVHmURmKucJxkBML5aeFwigKlJWjhcTwFUHJlUsm&#xD;
+5uWlSG97kLCW64qMWBJIoYSXzAvI6fY8VAULCVdILKXEK19Os1ZUIh+zaPcPmXkCXQzQT7ks8oX4&#xD;
+t7PDM8+TQ6h1JNnlxJxj/ffABI6RJEkuyUJx/2DoIJRzoQR5nrBC+WDoiCSIufjBcJVPZeNA3t2P&#xD;
+1lQytpUCnlIU73+t3n/2rLs4cWRyhB8/F0cOEN47c34JDlokZwZefpYfH2qnY/39o/zFc8CxUqta&#xD;
+uLNRgK/nVoIkoeRN6sYoA3ctHKrk6o9NVzcxkerDXDc1dUZuWt8bgX6+oE3r7Ydpj0iyTr6Mndqa&#xD;
+3GXCPPfo6L4+nAyFpcWPswep0VP3qvDIqo10ijBcPLWm8wXgW1baM4x1ezo0cQz022TfjIyZFnWa&#xD;
+7YEe7DJ/MjVnxkLtZINRuz9U7z3T8rRbR3XwcF5/2BAITbGJOTW11ZkV3j41u8PhHHc2iqxoy3Wy&#xD;
+FUxnvkVSa91d9rrNRJ0DPbXxgz5YR9q2pznp9GvrMOpumigZN24ttYvD3WG1SFpbdwSBZq0FrbvQ&#xD;
+DvXu/d3o62ijHdZJct/rrOGqk01adbAfo05fdGNcP7idgzduuzxb51fqYI0iw4jc9ib6urSGxn6a&#xD;
+3vaEcGKG6TLMOiLwHx7HC9boV9Z7bq7cjiYNF8vrcdTRcRhtBhN/Oe1MpCX7KBqmYY+mG9VfS2oz&#xD;
+MuPZKLOz7bBpzWJnna0acNQQ7uSlYrJJg8fmcqnP4kfeMBoDLVKUg+y1PCwtUNHCemdkinr81MEY&#xD;
+12ontt2wR2Ld5P+Yv336C+j+p+oxDAAA</IconData>
+  <Name>Code - Make easier to debug</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Make this code easier to debug</TextInstructions>
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

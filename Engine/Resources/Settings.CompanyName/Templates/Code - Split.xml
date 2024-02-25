@@ -1,0 +1,38 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAM1W227bOBB971cQ7EsLiBJJ3QMrDxsssn3YLbBFP0CmKJtbWjQkObb79TtDyV4n&#xD;
+SLJ10YcYsKk55FzOmRHhxfCwIg+6H4zrKipCQd8R+Bw2thsquh7H7U0U7ff7cB+Hrl9FknMegc/F&#xD;
+sZuDNd235w6Lsiwjv0vJ3jTjuqKpkJSstVmtx9l4MHr/mztUlBNOAMEvvfXhF6MZrb7dGq30QIxy&#xD;
+3SKaoGm70YO63CVt7zZkXGvyCazfD1vdG90pHSqA79mds1arEZiG5M5tjz1WQZZH8umvu89/fyH3&#xD;
+m+Uf5APWbzrl+gHdPoaLyKc5ZWyH6dGbQE3X/X1fN5BnJAcBLCg5whIDs4OsqJRJCJIlAmA0c4lm&#xD;
+TMlqdvramRGU3g26/7Ktlf7cfR00JaapqHLW9UzQ/xL6pMPotsS17aBHnw5t5s9W9H2il1krafSq&#xD;
+T5jkRRL/hKd44iPrUip96bOIHmvyulgieyJXIvMwkUU6qxWXIYwQmj8sl7xKrrZteMKvI922SvDk&#xD;
+F5AWeTax9u8BEk6KNMwzfg3f+Cq+Ranl//HlYVzwuHzimedNLbPrlEpVXYgfGA98xU7v1WJFWmNt&#xD;
+RTvXAVF8Zv3O6orqB925psEcvfumTycmi833izgDmEjV24oud+P4CP3HGbjrNmbU/Rn3ljWwQAx+&#xD;
+hpt6WNd9Xx8r+gi70Ld13cjaemPs8Vw0Qvv5kruABvP9XPaoDyOrO7VGpU5MjshzYw5saXXXsI1r&#xD;
+9A3pXL+p7UWbF9t6XBOYgD/hdgliqXggpCQ8yOMwhUXywrK8DNOAK5bhQpjgsBbEmyJWcDBI4XAG&#xD;
+nvhTYowcACYS2IolYbHE0AxRDACm35uefFKWEwmbTMQ+EoMoScCwAoCmVPBwKsUiXHq/kuTwnBGB&#xD;
+Ttn3eZx3/YOWdO7+rrcf3s8X4MdHE3QmnyRFAO9SmEJkTGEZyuHzoImJMqy3CDx7oBZ7RLEUKXpE&#xD;
+Bhn8lkH2OlEvjVcGADLjOZxG6oHETYyRBgkgHvaZsJQMTthTYWhAPCwLasei4CSWlPrQaEPsDKOx&#xD;
+TM0VQTpfz9SQl/qU+y5jOUz6fR+CgZl45n4Xc13KLZ6RW74gd5wVyDXh9tzPt0Dn3Pw3OfBvbRBn&#xD;
+kSaNvESsIHPdinm5USWG5OS0lC/mfaGhOcGWBV4k5qVmSYAigUZTNy5HkD8zgvF5BBfR6vbdAv9w&#xD;
+3v4LRnUlTaoKAAA=</IconData>
+  <Name>Code - Split</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Break this code into smaller chunks</TextInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

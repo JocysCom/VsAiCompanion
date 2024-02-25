@@ -1,0 +1,44 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACqVW224bRwx9z1dsty8tsJqdGc6FY1gJEMkOCiRtgDot+lQo640kRJYESbGcfH0P&#xD;
+ubKdWx+KGgYWnCU55CHPWZ0/u7tZVbf9br/crMe1M7au+nW3uV6u5+P6zdXliOtnT5+c/zD9bXL1&#xD;
+1+uLan87r16/ef7yl0lVj9r2T5q07fRqWv3+x4vKGde2F7/WVb04HLZnbXs8Hs2RzGY3b1/sZtvF&#xD;
+stu3cGzFEUEtkjlnrg/XNa6QzJ8V4upqeT2uX84+9ru/YaDO9X78nczeWiuZTi5nd6vl+v33HF0p&#xD;
+pdW3cB3XdntXVx9Pz+Py+rAY1z6IseiX88Xh3rpd9sfnGwmobOUD/gWi2dtVP3o7697Pd5sPaxS6&#xD;
+7o/VZx6o5Wy/nXX9uN7u+n2/u+3RZFWdz7WtZbdZq42T7eywqHD2ygVDzqXGexM5h27kDTuKjTPF&#xD;
+x2bkIo7JNaNokvewvSnNKBnuvEn6AqhlbshwyKEZkaFkqUFUpiRRmVPeIypbzk0y1kfkdsZHmxo2&#xD;
+Nkc3cclk/DXeGucjNXJnjNx4Z5DEN1+V+Kmu3i1Xq3H94+Xl5CLGuv2mp2JCzrgnGR9K6awJLqA4&#xD;
+azi7LE+iqKUHF1GlNSXjPtjMJXawcw5o00oXaNob4iDNm4hAfVp5DwgocgcEQtJslFClYeKkQRnF&#xD;
+B8BjcSeZhBrgC3wQCgRShG/ggsRkHJcEzImB5SiYwlnroFB4qEOCUFdIQ73FaT3eJ/SFOBe8+Icg&#xD;
+fWh/Uf14COegZSfpAll8zjJoG3GpRAkYhKaQDDlDhFfAiDALjDtEOCOIfMHblARJcDaRTD2mgsxI&#xD;
+JUER8yNSZxmjccUjsUdzScuwTkErLJuFqhI5cU5RmpbiiyITvIAuQ3FDuBua94VY/J2c45FY0xD7&#xD;
+BDN4iZZs6AKTtp5XWNoABAJu5jxYZbDKBEviSkJL2L7o0XjBwNAbbIDMzVdL9OmVYyRNGV1SHApJ&#xD;
+gGooPJDimrHUOg2ZOCrzCedgEkXfPbpp2KOXRg1O90HdyekU8+CjIae8Q8QEpPElJ1SVItCWqgm7&#xD;
+AeIVhvlFzY/MuZhGwPTAnF3fHUSewE+KSRVKiJ4pP6iUA8NzpkehwnglxX3GyWRqp6WuDrvZev9u&#xD;
+s7sZ1zezw2559xNm4QJXssQlV7rMeJ5OHcqPHCsohXUQkp+/ZTNkwCUMgmUR6D8ziLCncmkI+sTu&#xD;
+6BBKdLrHDhzVXKwE8vAThBOpV0wKOFvrNMhmAR6LKCPC/uqIZH0xMPZZ3gF3WCCPsIVzScrLYZrg&#xD;
+G0YOJ5JLcpSJw0leEds8gfJBPFxTQFGUDZ0UwRNBBHORHW6NAxvBkQh5FT0SKhF0FLeKHLFSF85C&#xD;
+Tio2dUCmoHVoacYqZTAVqo1D2RbGspSAQDBBdMyHoH1yxAoB2pSUgCHBl/BBEPkIJkKM0T7mpRhZ&#xD;
+h1aV3ComFoiL6UUY8IwrMbCh6pJhpWxVjAuIvhIXO4iwtQFpQTZ9ixEouviCKmlILolu0EMORRn1&#xD;
+77I+yN//kPUJuANVxRRREwuXCoaDvNCJgJF9uZaP1PLkLj1+0WzwIV4e5FuPnxW61OftHD855GfD&#xD;
+0yf/AL2C70gECQAA</IconData>
+  <Name>Code - Cleanup</Name>
+  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TextInstructions>Cleanup this code.</TextInstructions>
+  <AttachContext>Selection</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>
