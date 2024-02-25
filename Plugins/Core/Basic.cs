@@ -1,5 +1,4 @@
 ﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
-using JocysCom.VS.AiCompanion.Shared;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
@@ -11,8 +10,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// <summary>
 	/// Helps AI to auto-continue on the task.
 	/// </summary>
-	public class Basic
+	public class Basic : IDiffHelper
 	{
+
+		DiffHelper diffHelper = new DiffHelper();
 
 		/// <summary>
 		/// Use when you can't provide an answer in one response and need to split the answer.
@@ -144,34 +145,29 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return true;
 		}
 
-		/// <summary>
-		/// Compares two files and returns a textual representation of the changes.
-		/// </summary>
-		/// <param name="originalFilePath">The path to the original file.</param>
-		/// <param name="modifiedFilePath">The path to the modified file.</param>
-		/// <returns>A string detailing the changes made from the original file to the modified file.</returns>
+		/// <inheritdoc/>
 		[RiskLevel(RiskLevel.Medium)]
-		public static string CompareFilesAndReturnChanges(string originalFilePath, string modifiedFilePath)
-			=> DiffHelper.CompareFilesAndReturnChanges(originalFilePath, modifiedFilePath);
+		public string CompareFilesAndReturnChanges(string originalFileFullName, string modifiedFileFullName)
+			=> diffHelper.CompareFilesAndReturnChanges(originalFileFullName, modifiedFileFullName);
 
-		/// <summary>
-		/// Updates content of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
-		/// This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
-		/// especially useful when bandwidth or storage is limited.
-		/// </summary>
-		/// <example>
-		/// 'changes' value Example:
-		/// @@ -14,12 +14,9 @@
-		///  rld 
-		/// -1%0ARemove
-		/// +2%0AAdd
-		/// </example>
-		/// <param name="filePath">The path to the file that needs to be updated.</param>
-		/// <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
-		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		/// <inheritdoc/>
+		[RiskLevel(RiskLevel.Low)]
+		public string CompareContentsAndReturnChanges(string originalText, string modifiedText)
+			=> diffHelper.CompareContentsAndReturnChanges(originalText, modifiedText);
+
+		/// <inheritdoc/>
 		[RiskLevel(RiskLevel.High)]
-		public static string ApplyFileChanges(string filePath, string changes)
-			=> DiffHelper.PatchFile(filePath, changes);
+		public string ApplyFileChanges(string fullFileName, string unifiedDiff)
+			=> diffHelper.ApplyFileChanges(fullFileName, unifiedDiff);
+
+
+		/// <inheritdoc/>
+		[RiskLevel(RiskLevel.High)]
+		public string ApplyContentsChanges(string contents, string unifiedDiff)
+			=> diffHelper.ApplyContentsChanges(contents, unifiedDiff);
+
+
+
 
 		#endregion
 

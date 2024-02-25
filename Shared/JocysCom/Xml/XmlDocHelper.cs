@@ -91,6 +91,13 @@ namespace JocysCom.ClassLibrary.Xml
 			return RxMultiSpace.Replace(s, " ").Trim();
 		}
 
+		public static string TrimSpaces(string s)
+		{
+			if (string.IsNullOrEmpty(s))
+				return s;
+			return s.Trim(' ', '\r', '\n', '\t', '\u00A0');
+		}
+
 		public static string ConvertXmlNodesToText(params XmlNode[] nodes)
 		{
 			if (nodes == null)

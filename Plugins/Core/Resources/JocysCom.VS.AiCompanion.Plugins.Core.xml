@@ -95,29 +95,94 @@
             <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges(System.String,System.String)">
-            <summary>
-            Compares two files and returns a textual representation of the changes.
-            </summary>
-            <param name="originalFilePath">The path to the original file.</param>
-            <param name="modifiedFilePath">The path to the modified file.</param>
-            <returns>A string detailing the changes made from the original file to the modified file.</returns>
+            <inheritdoc/>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareContentsAndReturnChanges(System.String,System.String)">
+            <inheritdoc/>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ApplyFileChanges(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ApplyContentsChanges(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.DiffHelper">
             <summary>
-            Updates content of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
+            Diff helper.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.DiffHelper.ApplyContentsChanges(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.DiffHelper.ApplyFileChanges(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.DiffHelper.CompareFilesAndReturnChanges(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.DiffHelper.CompareContentsAndReturnChanges(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.IDiffHelper">
+            <summary>
+            Diff helper.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.IDiffHelper.CompareFilesAndReturnChanges(System.String,System.String)">
+            <summary>
+            Compares two files and returns a textual representation of the changes by using
+            Eugene W.Myers AnO(ND) Difference Algorithm implemented by Google's The Diff Match and Patch library.
             This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
             especially useful when bandwidth or storage is limited.
             </summary>
-            <example>
-            'changes' value Example:
-            @@ -14,12 +14,9 @@
-             rld 
-            -1%0ARemove
-            +2%0AAdd
-            </example>
-            <param name="filePath">The path to the file that needs to be updated.</param>
-            <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
+            <param name="originalFileFullName">The path to the original file.</param>
+            <param name="modifiedFileFullName">The path to the modified file.</param>
+            <returns>Unified diff string detailing the changes made from the original file to the modified file.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.IDiffHelper.CompareContentsAndReturnChanges(System.String,System.String)">
+            <summary>
+            Compares two contents and returns a textual representation of the changes by using
+            Eugene W.Myers AnO(ND) Difference Algorithm implemented by Google's The Diff Match and Patch library.
+            This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
+            especially useful when bandwidth or storage is limited.
+            </summary>
+            <param name="originalText">Original content.</param>
+            <param name="modifiedText">Modified content.</param>
+            <returns>Unified diff string detailing the changes made from the original content to the modified content.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.IDiffHelper.ApplyFileChanges(System.String,System.String)">
+            <summary>
+            Updates the content of the file by applying a series of changes. 
+            These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
+            This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
+            The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
+            </summary>
+            <param name="fileFullName">The path to the file that needs to be updated.</param>
+            <param name="unifiedDiff">Unified diff string representing the changes to apply,
+            adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by Google's The Diff Match and Patch library.</param>
             <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+            <example>
+            @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
+            -Text to be removed
+            +Text to be added
+            </example>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.IDiffHelper.ApplyContentsChanges(System.String,System.String)">
+            <summary>
+            Updates the content of the file by applying a series of changes. 
+            These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
+            This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
+            The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
+            </summary>
+            <param name="contents">The contents that needs to be updated.</param>
+            <param name="unifiedDiff">Unified diff string representing the changes to apply,
+            adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
+            <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+            <example>
+            @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
+            -Text to be removed
+            +Text to be added
+            </example>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo">
             <summary>
@@ -644,7 +709,7 @@
             <summary>
             Retrieves projects of the solution.
             </summary>
-            <param name="fileName">If specified, then only the specified project document will be retrieved.</param>
+            <param name="fileFullName">If specified, then only the specified project document will be retrieved.</param>
             <param name="includeContents">`true` to include contents, `false` to get information only.</param>
             <returns>Project documents.</returns>
         </member>
@@ -694,14 +759,14 @@
             <summary>
             Open document and make it current active document in the editor.
             </summary>
-            <param name="fileName">Full path to the document.</param>
+            <param name="fileFullName">Full path to the document.</param>
             <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.CloseDocument(System.String,System.Boolean)">
             <summary>
             Close document in the editor.
             </summary>
-            <param name="fileName">Full path to the document.</param>
+            <param name="fileFullName">Full path to the document.</param>
             <param name="save">`true` to save document before closing.</param>
             <returns>True if the operation was successful.</returns>
         </member>
@@ -709,31 +774,31 @@
             <summary>
             Undo changes of open document in the editor.
             </summary>
-            <param name="fileName">Full path to the document.</param>
+            <param name="fileFullName">Full path to the document.</param>
             <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SaveDocument(System.String,System.String)">
             <summary>
             Save open document in the editor.
             </summary>
-            <param name="fileName">Full path to the document.</param>
-            <param name="newFileName">Full path to the new copy of the document.</param>
+            <param name="fileFullName">Full path to the document.</param>
+            <param name="newFileFullName">Full path to the new copy of the document.</param>
             <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.ApplyCurrentDocumentContentsChanges(System.String)">
             <summary>
-            Updates content of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
-            This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
-            especially useful when bandwidth or storage is limited.
+            Updates the content of the current document by applying a series of changes. 
+            These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
+            This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
+            The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
             </summary>
-            <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
+            <param name="unifiedDiff">Unified diff string representing the changes to apply,
+            adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
             <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
             <example>
-            'changes' value Example:
-            @@ -14,12 +14,9 @@
-             rld 
-            -1%0ARemove
-            +2%0AAdd
+            @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
+            -Text to be removed
+            +Text to be added
             </example>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.SetCurrentDocumentContents(System.String)">
@@ -757,18 +822,17 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.ApplySelectionChanges(System.String)">
             <summary>
-            Updates selection of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
-            This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
-            especially useful when bandwidth or storage is limited.
+            Updates the selection of the current open document by applying a series of changes. 
+            These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
+            This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
+            The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
             </summary>
-            <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
-            <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+            <param name="unifiedDiff">Unified diff string representing the changes to apply,
+            adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
             <example>
-            'changes' value Example:
-            @@ -14,12 +14,9 @@
-             rld 
-            -1%0ARemove
-            +2%0AAdd
+            @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
+            -Text to be removed
+            +Text to be added
             </example>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
@@ -777,7 +841,7 @@
             </summary>
             <param name="errorLevel">The error level to filter by. If null, all error levels are considered.</param>
             <param name="project">The specific project to filter errors by. If null, errors from all projects are considered.</param>
-            <param name="fileName">The specific file name to filter errors by. If null, errors from all files are considered.</param>
+            <param name="fileFullName">The specific file name to filter errors by. If null, errors from all files are considered.</param>
             <param name="includeDocItem">If true, includes the document item associated with each error.</param>
             <param name="includeDocItemContents">If true, additionally loads the contents of the document item associated with each error. This parameter is effective only if <paramref name="includeDocItem"/> is also true.</param>
             <returns>A list of <see cref="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorItem"/> objects representing the filtered errors.</returns>
@@ -817,7 +881,7 @@
             <summary>
             Triggers a build for the specified project within the solution.
             </summary>
-            <param name="fileName">The full name of the project to build.</param>
+            <param name="fileFullName">The full name of the project to build.</param>
             <returns>A string indicating the build result.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetOutputContent(System.String)">

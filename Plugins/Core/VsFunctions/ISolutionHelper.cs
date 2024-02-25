@@ -21,11 +21,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves projects of the solution.
 		/// </summary>
-		/// <param name="fileName">If specified, then only the specified project document will be retrieved.</param>
+		/// <param name="fileFullName">If specified, then only the specified project document will be retrieved.</param>
 		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
 		/// <returns>Project documents.</returns>
 		[RiskLevel(RiskLevel.Low)]
-		IList<DocItem> GetSolutionProjects(string fileName, bool includeContents);
+		IList<DocItem> GetSolutionProjects(string fileFullName, bool includeContents);
 
 		/// <summary>
 		/// Retrieves all Documents throughout the entire solution.
@@ -80,53 +80,53 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Open document and make it current active document in the editor.
 		/// </summary>
-		/// <param name="fileName">Full path to the document.</param>
+		/// <param name="fileFullName">Full path to the document.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Low)]
-		bool OpenDocument(string fileName);
+		bool OpenDocument(string fileFullName);
 
 		/// <summary>
 		/// Close document in the editor.
 		/// </summary>
-		/// <param name="fileName">Full path to the document.</param>
+		/// <param name="fileFullName">Full path to the document.</param>
 		/// <param name="save">`true` to save document before closing.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		bool CloseDocument(string fileName, bool save);
+		bool CloseDocument(string fileFullName, bool save);
 
 		/// <summary>
 		/// Undo changes of open document in the editor.
 		/// </summary>
-		/// <param name="fileName">Full path to the document.</param>
+		/// <param name="fileFullName">Full path to the document.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		bool UndoDocument(string fileName);
+		bool UndoDocument(string fileFullName);
 
 		/// <summary>
 		/// Save open document in the editor.
 		/// </summary>
-		/// <param name="fileName">Full path to the document.</param>
-		/// <param name="newFileName">Full path to the new copy of the document.</param>
+		/// <param name="fileFullName">Full path to the document.</param>
+		/// <param name="newFileFullName">Full path to the new copy of the document.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		bool SaveDocument(string fileName, string newFileName);
+		bool SaveDocument(string fileFullName, string newFileFullName);
 
 		/// <summary>
-		/// Updates content of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
-		/// This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
-		/// especially useful when bandwidth or storage is limited.
+		/// Updates the content of the current document by applying a series of changes. 
+		/// These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
+		/// This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
+		/// The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
 		/// </summary>
-		/// <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
+		/// <param name="unifiedDiff">Unified diff string representing the changes to apply,
+		/// adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
 		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
 		/// <example>
-		/// 'changes' value Example:
-		/// @@ -14,12 +14,9 @@
-		///  rld 
-		/// -1%0ARemove
-		/// +2%0AAdd
+		/// @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
+		/// -Text to be removed
+		/// +Text to be added
 		/// </example>
 		[RiskLevel(RiskLevel.Medium)]
-		string ApplyCurrentDocumentContentsChanges(string changes);
+		string ApplyCurrentDocumentContentsChanges(string unifiedDiff);
 
 		/// <summary>
 		/// Sets the content of the currently open and active Document in the editor.
@@ -151,21 +151,20 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		bool SetSelection(string contents);
 
 		/// <summary>
-		/// Updates selection of the current document by applying a series of changes in the unified diff format as recognized by the diff-match-patch library. 
-		/// This format is focused on efficient text manipulation, supporting insertions, deletions, and modifications,
-		/// especially useful when bandwidth or storage is limited.
+		/// Updates the selection of the current open document by applying a series of changes. 
+		/// These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
+		/// This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
+		/// The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
 		/// </summary>
-		/// <param name="changes">The string representation of the changes to apply, adhering to the diff format specified above.</param>
-		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		/// <param name="unifiedDiff">Unified diff string representing the changes to apply,
+		/// adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
 		/// <example>
-		/// 'changes' value Example:
-		/// @@ -14,12 +14,9 @@
-		///  rld 
-		/// -1%0ARemove
-		/// +2%0AAdd
+		/// @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
+		/// -Text to be removed
+		/// +Text to be added
 		/// </example>
 		[RiskLevel(RiskLevel.Medium)]
-		string ApplySelectionChanges(string changes);
+		string ApplySelectionChanges(string unifiedDiff);
 
 		// Methods for getting errors
 
@@ -174,7 +173,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		/// <param name="errorLevel">The error level to filter by. If null, all error levels are considered.</param>
 		/// <param name="project">The specific project to filter errors by. If null, errors from all projects are considered.</param>
-		/// <param name="fileName">The specific file name to filter errors by. If null, errors from all files are considered.</param>
+		/// <param name="fileFullName">The specific file name to filter errors by. If null, errors from all files are considered.</param>
 		/// <param name="includeDocItem">If true, includes the document item associated with each error.</param>
 		/// <param name="includeDocItemContents">If true, additionally loads the contents of the document item associated with each error. This parameter is effective only if <paramref name="includeDocItem"/> is also true.</param>
 		/// <returns>A list of <see cref="ErrorItem"/> objects representing the filtered errors.</returns>
@@ -182,7 +181,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		IList<ErrorItem> GetErrors(
 			ErrorLevel? errorLevel = null,
 			string project = null,
-			string fileName = null,
+			string fileFullName = null,
 			bool includeDocItem = false,
 			bool includeDocItemContents = false
 		);
@@ -228,10 +227,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Triggers a build for the specified project within the solution.
 		/// </summary>
-		/// <param name="fileName">The full name of the project to build.</param>
+		/// <param name="fileFullName">The full name of the project to build.</param>
 		/// <returns>A string indicating the build result.</returns>
 		[RiskLevel(RiskLevel.High)]
-		string BuildSolutionProject(string fileName);
+		string BuildSolutionProject(string fileFullName);
 
 		/// <summary>
 		/// Retrieves the content of a specified output window pane in Visual Studio.

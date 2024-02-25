@@ -850,11 +850,11 @@
 			<div class="chat-message color-{Type}">
 				<div class="chat-message-head">
 					<span class="chat-date">{Date}</span>
+					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Remove')">Remove</button>
 					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Use')">Use</button>
 					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Edit')">Edit</button>
-					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Remove')">Remove</button>
 					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')">Copy</button>
-					<button class="chat-button regenerate-{Type} item-{Automated}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;">Regenerate</button>
+					<button class="chat-button item-{Automated} regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;">Regenerate</button>
 					{Buttons}
 				</div>
 				<div class="chat-message-body {BodyHide}">{Body}</div>

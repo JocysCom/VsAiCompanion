@@ -19,8 +19,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.GetSolution(includeContents);
 
 		/// <inheritdoc />
-		public IList<DocItem> GetSolutionProjects(string fileName, bool includeContents)
-			=> Current.GetSolutionProjects(fileName, includeContents);
+		public IList<DocItem> GetSolutionProjects(string fileFullName, bool includeContents)
+			=> Current.GetSolutionProjects(fileFullName, includeContents);
 
 		/// <inheritdoc />
 		public bool EditFormatDocument()
@@ -35,20 +35,20 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.GetCurrentDocument(includeContents);
 
 		/// <inheritdoc />
-		public bool OpenDocument(string fileName)
-			=> Current.OpenDocument(fileName);
+		public bool OpenDocument(string fileFullName)
+			=> Current.OpenDocument(fileFullName);
 
 		/// <inheritdoc />
-		public bool SaveDocument(string fileName, string newFileName)
-			=> Current.SaveDocument(fileName, newFileName);
+		public bool SaveDocument(string fileFullName, string newFileName)
+			=> Current.SaveDocument(fileFullName, newFileName);
 
 		/// <inheritdoc />
-		public bool CloseDocument(string fileName, bool save)
-			=> Current.CloseDocument(fileName, save);
+		public bool CloseDocument(string fileFullName, bool save)
+			=> Current.CloseDocument(fileFullName, save);
 
 		/// <inheritdoc />
-		public bool UndoDocument(string fileName)
-			=> Current.UndoDocument(fileName);
+		public bool UndoDocument(string fileFullName)
+			=> Current.UndoDocument(fileFullName);
 
 		/// <inheritdoc />
 		public IList<DocItem> GetAllSolutionDocuments(bool includeContents)
@@ -78,13 +78,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public IList<ErrorItem> GetErrors(
 			ErrorLevel? errorLevel = null,
 			string project = null,
-			string fileName = null,
+			string fileFullName = null,
 			bool includeDocItem = false,
 			bool includeDocItemContents = false)
 			=> Current.GetErrors(
 				errorLevel,
 				project,
-				fileName,
+				fileFullName,
 				includeDocItem,
 				includeDocItemContents
 			);
@@ -103,8 +103,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.SetCurrentDocumentContents(contents);
 
 		/// <inheritdoc />
-		public string ApplyCurrentDocumentContentsChanges(string changes)
-			=> Current.ApplyCurrentDocumentContentsChanges(changes);
+		public string ApplyCurrentDocumentContentsChanges(string unifiedDiff)
+			=> Current.ApplyCurrentDocumentContentsChanges(unifiedDiff);
 
 		/// <inheritdoc />
 		public bool SetSelection(string contents)
@@ -112,16 +112,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 
 		/// <inheritdoc />
-		public string ApplySelectionChanges(string changes)
-			=> Current.ApplySelectionChanges(changes);
+		public string ApplySelectionChanges(string unifiedDiff)
+			=> Current.ApplySelectionChanges(unifiedDiff);
 
 		/// <inheritdoc />
 		public Dictionary<string, JsonElement> GetEnvironmentContext()
 			=> Current.GetEnvironmentContext();
 
 		/// <inheritdoc />
-		public string BuildSolutionProject(string fileName)
-			=> Current.BuildSolutionProject(fileName);
+		public string BuildSolutionProject(string fileFullName)
+			=> Current.BuildSolutionProject(fileFullName);
 
 		/// <inheritdoc />
 		public string GetOutputContent(string type)

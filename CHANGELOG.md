@@ -1,4 +1,4 @@
-2024-02-24 v1.5.6
+2024-02-25 v1.5.6
 
 - New: Added new Basic and Visual Studio functions.
 - New: Added option for maximum risk level.

@@ -48,14 +48,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Id = (ClassFullName + "." + mi.Name).Trim('.');
 			var summary = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetSummaryText(mi));
 			var returns = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetReturnText(mi));
-			var example = XmlDocHelper.GetExampleText(mi);
+			var example = JocysCom.ClassLibrary.Text.Helper.RemoveIdent(
+				XmlDocHelper.TrimSpaces(XmlDocHelper.GetExampleText(mi)));
 			var lines = new List<string>();
 			if (!string.IsNullOrEmpty(summary))
 				lines.Add(summary);
 			if (!string.IsNullOrEmpty(returns))
 				lines.Add("Returns: " + returns);
 			if (!string.IsNullOrEmpty(example))
-				lines.Add(example);
+				lines.Add("Example:\r\n" + example);
 			Description = string.Join(Environment.NewLine, lines);
 			Mi = mi;
 			if (Params == null)

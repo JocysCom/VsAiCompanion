@@ -1,8 +1,8 @@
 ﻿using EnvDTE;
 using EnvDTE80;
 using JocysCom.VS.AiCompanion.Engine;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
-using JocysCom.VS.AiCompanion.Shared;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -18,6 +18,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 {
 	public partial class SolutionHelper : ISolutionHelper
 	{
+
+		DiffHelper diffHelper = new DiffHelper();
 
 		/// <summary>
 		/// Switch to Visual Studio Thread.
@@ -260,7 +262,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public IList<DocItem> GetSolutionProjects(string fullName, bool includeContents)
+		public IList<DocItem> GetSolutionProjects(string fileFullName, bool includeContents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var items = new List<DocItem>();
@@ -269,7 +271,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				return items;
 			foreach (Project project in GetAllProjects())
 			{
-				if (!string.IsNullOrWhiteSpace(fullName) && !project.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+				if (!string.IsNullOrWhiteSpace(fileFullName) && !project.FullName.Equals(fileFullName, StringComparison.OrdinalIgnoreCase))
 					continue;
 				var docItem = Convert(project, includeContents);
 				items.Add(docItem);
@@ -494,9 +496,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool OpenDocument(string fileName)
+		public bool OpenDocument(string fileFullName)
 		{
-			return _DocumentAction(fileName, (doc) =>
+			return _DocumentAction(fileFullName, (doc) =>
 			{
 				ThreadHelper.ThrowIfNotOnUIThread();
 				doc.Activate();
@@ -505,9 +507,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool CloseDocument(string fileName, bool save)
+		public bool CloseDocument(string fileFullName, bool save)
 		{
-			return _DocumentAction(fileName, (doc) =>
+			return _DocumentAction(fileFullName, (doc) =>
 			{
 				ThreadHelper.ThrowIfNotOnUIThread();
 				var param = save
@@ -519,9 +521,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool UndoDocument(string fileName)
+		public bool UndoDocument(string fileFullName)
 		{
-			return _DocumentAction(fileName, (doc) =>
+			return _DocumentAction(fileFullName, (doc) =>
 			{
 				ThreadHelper.ThrowIfNotOnUIThread();
 				doc.Undo();
@@ -530,21 +532,21 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public bool SaveDocument(string fileName, string newFileName)
+		public bool SaveDocument(string fileFullName, string newFileFullName)
 		{
-			return _DocumentAction(fileName, (doc) =>
+			return _DocumentAction(fileFullName, (doc) =>
 			{
 				ThreadHelper.ThrowIfNotOnUIThread();
 				vsSaveStatus status;
-				if (string.IsNullOrEmpty(newFileName))
+				if (string.IsNullOrEmpty(newFileFullName))
 					status = doc.Save();
 				else
-					status = doc.Save(newFileName);
+					status = doc.Save(newFileFullName);
 				return status == vsSaveStatus.vsSaveSucceeded;
 			});
 		}
 
-		private bool _DocumentAction(string fullName, Func<Document, bool> action)
+		private bool _DocumentAction(string fileFullName, Func<Document, bool> action)
 		{
 			// Switch to the main thread as required by most DTE operations.
 			ThreadHelper.ThrowIfNotOnUIThread();
@@ -554,7 +556,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				var dte = GetCurrentService();
 				// Iterate through the open documents to find a match.
 				foreach (Document doc in dte.Documents)
-					if (doc.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+					if (doc.FullName.Equals(fileFullName, StringComparison.OrdinalIgnoreCase))
 						return action.Invoke(doc);
 			}
 			catch (Exception ex)
@@ -568,15 +570,15 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public string ApplyCurrentDocumentContentsChanges(string changes)
+		public string ApplyCurrentDocumentContentsChanges(string unifiedDiff)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			try
 			{
 				var docItem = GetCurrentDocument(true);
 				var contents = docItem.ContentData;
-				contents = DiffHelper.PatchContents(contents, changes);
-				return SetSelection(contents) ? "OK" : "Failed";
+				contents = diffHelper.ApplyContentsChanges(contents, unifiedDiff);
+				return SetCurrentDocumentContents(contents) ? "OK" : "Failed";
 			}
 			catch (Exception ex)
 			{
@@ -604,7 +606,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			var td = GetTextDocument();
 			if (td == null)
 				return items;
-			var docItem = Convert(td, true);
+			var docItem = Convert(td, includeContent);
 			docItem.ContextType = ContextType.CurrentDocument | ContextType.OpenDocuments;
 			items.Add(docItem);
 			return items;
@@ -641,14 +643,14 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public string ApplySelectionChanges(string changes)
+		public string ApplySelectionChanges(string unifiedDiff)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			try
 			{
 				var docItem = GetSelection();
 				var contents = docItem.ContentData;
-				contents = DiffHelper.PatchContents(contents, changes);
+				contents = diffHelper.ApplyContentsChanges(contents, unifiedDiff);
 				return SetSelection(contents) ? "OK" : "Failed";
 			}
 			catch (Exception ex)
@@ -663,7 +665,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		public IList<Plugins.Core.VsFunctions.ErrorItem> GetErrors(
 			ErrorLevel? errorLevel = null,
 			string project = null,
-			string fileName = null,
+			string fileFullName = null,
 			bool includeDocItem = false,
 			bool includeDocItemContents = false
 		)
@@ -683,7 +685,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 					continue;
 				if (!string.IsNullOrEmpty(project) && errorItem.Project != project)
 					continue;
-				if (!string.IsNullOrEmpty(fileName) && errorItem.FileName != fileName)
+				if (!string.IsNullOrEmpty(fileFullName) && errorItem.FileName != fileFullName)
 					continue;
 				var ei = new Plugins.Core.VsFunctions.ErrorItem
 				{
@@ -978,7 +980,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		#region Build Actions
 
 		/// <inheritdoc />
-		public string BuildSolutionProject(string fullName)
+		public string BuildSolutionProject(string fileFullName)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			DTE2 dte = GetCurrentService();
@@ -990,7 +992,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Project projectToBuild = null;
 			foreach (Project project in dte.Solution.Projects)
 			{
-				if (project.FullName == fullName)
+				if (project.FullName == fileFullName)
 				{
 					projectToBuild = project;
 					break;
@@ -998,7 +1000,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			}
 
 			if (projectToBuild == null)
-				return $"Project with the name {fullName} could not be found.";
+				return $"Project with the name {fileFullName} could not be found.";
 			var solutionBuild = dte.Solution.SolutionBuild as SolutionBuild2;
 			if (solutionBuild == null)
 				return "Unable to access the solution build.";
@@ -1050,12 +1052,12 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return docItem;
 		}
 
-		private static DocItem Convert(ProjectItem o, string fullName, bool includeContents)
+		private static DocItem Convert(ProjectItem o, string fileFullName, bool includeContents)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			var docItem = new DocItem
 			{
-				FullName = fullName,
+				FullName = fileFullName,
 				Name = o.Name,
 				Kind = o.Kind,
 				Language = o.ContainingProject.CodeModel.Language,
