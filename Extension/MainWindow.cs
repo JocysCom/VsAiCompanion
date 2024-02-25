@@ -54,9 +54,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.IsVsExtesion = true;
 			;
 			var vsContext = Global._SolutionHelper.GetEnvironmentContext();
-			if (vsContext.ContainsKey("Visual Studio Version"))
+			if (vsContext.ContainsKey("DTE Version"))
 			{
-				var versionString = vsContext["Visual Studio Version"].Deserialize<string>();
+				var versionString = vsContext["DTE Version"].Deserialize<string>();
 				Version version;
 				if (Version.TryParse(versionString, out version))
 				{
