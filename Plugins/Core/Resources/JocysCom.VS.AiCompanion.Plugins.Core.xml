@@ -472,7 +472,7 @@
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.Selection">
             <summary>Selection.</summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.CurrentDocument">
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.ActiveDocument">
             <summary>Current active open document.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType.OpenDocuments">

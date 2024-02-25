@@ -478,7 +478,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				items.Add(docItem);
 			}
 			var activeDocs = _GetCurrentDocuments(false);
-			AddContextType(activeDocs, items, ContextType.CurrentDocument);
+			AddContextType(activeDocs, items, ContextType.ActiveDocument);
 			if (includeContent)
 				LoadData(items);
 			return items;
@@ -607,7 +607,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			if (td == null)
 				return items;
 			var docItem = Convert(td, includeContent);
-			docItem.ContextType = ContextType.CurrentDocument | ContextType.OpenDocuments;
+			docItem.ContextType = ContextType.ActiveDocument | ContextType.OpenDocuments;
 			items.Add(docItem);
 			return items;
 		}

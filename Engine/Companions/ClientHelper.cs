@@ -171,10 +171,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						}
 					}
 					// If active open document in Visual Studio.
-					if (at.HasFlag(ContextType.CurrentDocument))
+					if (at.HasFlag(ContextType.ActiveDocument))
 					{
 						var ad = Global._SolutionHelper.GetCurrentDocument(true);
-						var adAttachment = new MessageAttachments(ContextType.CurrentDocument, ad.Language, ad.ContentData);
+						var adAttachment = new MessageAttachments(ContextType.ActiveDocument, ad.Language, ad.ContentData);
 						m.Attachments.Add(adAttachment);
 					}
 					if (at.HasFlag(ContextType.OpenDocuments))
@@ -529,7 +529,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (item.AutoFormatCode)
 					Global._SolutionHelper.EditFormatSelection();
 			}
-			else if (item.AttachContext == ContextType.CurrentDocument && Global.IsVsExtesion)
+			else if (item.AttachContext == ContextType.ActiveDocument && Global.IsVsExtesion)
 			{
 				var vsData = AppHelper.GetMacroValues();
 				var code = AppHelper.GetCodeFromReply(data);

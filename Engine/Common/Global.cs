@@ -392,7 +392,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var asm = typeof(Global).Assembly;
 				var keys = asm.GetManifestResourceNames()
-					.Where(x => x.Contains("Resources.Templates"))
+					.Where(x => x.Contains("Resources.Settings.Templates"))
 					.ToList();
 				foreach (var key in keys)
 				{

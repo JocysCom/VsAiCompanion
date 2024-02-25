@@ -21,7 +21,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		Selection = 2,
 		/// <summary>Current active open document.</summary>
 		[Description("Current Document"), JsonPropertyOrder(3)]
-		CurrentDocument = 4,
+		ActiveDocument = 4,
 		/// <summary>Open documents.</summary>
 		[Description("Open Documents"), JsonPropertyOrder(4)]
 		OpenDocuments = 8192,
