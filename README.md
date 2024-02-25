@@ -79,7 +79,7 @@ Various Templates:
 
 Template: Code - Document
 
-<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png" width="600" height="600">
+<img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png" width="600" height="338">
 
 Template: Custom - Historical Events
 
@@ -91,7 +91,7 @@ Template: Translate - English to Klingon:
 
 Fine-Tuning: Create Custom Model
 
-<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_FineTuning.png"  width="600" height="416">
+<img alt="Translate" src="Documents/Images/JocysComVsAiCompanion_FineTuning.png"  width="600" height="600">
 
 Fine-Tuning: Create Assistant (Virtual Employee)
 
@@ -99,7 +99,7 @@ Fine-Tuning: Create Assistant (Virtual Employee)
 
 Plugins: Allow AI to run applications and scripts on your machine.
 
-<img alt="Plugins" src="Documents/Images/JocysComVsAiCompanion_Plugins.png"  width="600" height="546">
+<img alt="Plugins" src="Documents/Images/JocysComVsAiCompanion_Plugins.png"  width="600" height="600">
 
 Plugins: Ask AI about solution, changed files or the code.
 
