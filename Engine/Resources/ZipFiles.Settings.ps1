@@ -5,4 +5,5 @@ param (
 )
 
 ..\..\Resources\ZipFiles.ps1 "$($PSScriptRoot)\Settings" "$($PSScriptRoot)\Settings.zip" -LogPrefix $LogPrefix
+..\..\Resources\ZipFiles.ps1 "$($PSScriptRoot)\Settings.CompanyName" "$($PSScriptRoot)\Settings.CompanyName.zip" -LogPrefix $LogPrefix
 

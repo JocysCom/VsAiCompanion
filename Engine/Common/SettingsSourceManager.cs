@@ -1,5 +1,9 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.Plugins.Core;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -9,28 +13,67 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static List<TemplateItem> GetDefaultTemplates()
 		{
+			List<TemplateItem> items = null;
+			try
+			{
+				items = _GetDefaultTemplates();
+			}
+			catch (Exception ex)
+			{
+				Global.ShowError("GetDefaultTemplates() errro: " + ex.Message);
+			}
+			return items ?? new List<TemplateItem>();
+		}
+
+		public static List<TemplateItem> _GetDefaultTemplates()
+		{
+			ZipStorer zip = null;
 			if (Global.AppSettings.IsEnterprise)
 			{
-				return GetTempaltesFromEmbeddedResources();
+				var path = Global.AppSettings.ConfigurationUrl;
+				var isUrl = Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile;
+				zip = isUrl
+					? GetZipFromUrl(path)
+					: ZipStorer.Open(path, FileAccess.Read);
 			}
 			else
 			{
-				return GetTempaltesFromEmbeddedResourceZip();
-				//return GetTempaltesFromEmbeddedResources();
+				zip = AppHelper.GetZip("Resources.Settings.zip", typeof(Global).Assembly);
+			}
+			if (zip == null)
+				return null;
+			var items = GetTemplatesFromZip(zip);
+			zip.Close();
+			return items;
+		}
+
+		public static ZipStorer GetZipFromUrl(string url)
+		{
+			var docItem = Helper.RunSynchronously(async () => await Basic.DownloadContents(url));
+			if (!string.IsNullOrEmpty(docItem.Error))
+			{
+				Global.ShowError($"{nameof(GetZipFromUrl)} error: {docItem.Error}");
+				return null;
+			}
+			var zipBytes = docItem.GetDataBinary();
+			var ms = new MemoryStream(zipBytes);
+			try
+			{
+				// Open an existing zip file for reading.
+				var zip = ZipStorer.Open(ms, FileAccess.Read);
+				return zip;
+			}
+			catch (Exception ex)
+			{
+				Global.ShowError($"{nameof(GetZipFromUrl)} error: {ex.Message}");
+				return null;
 			}
 		}
 
-		public static List<TemplateItem> GetTempaltesFromEmbeddedResourceZip()
+		private static List<TemplateItem> GetTemplatesFromZip(ZipStorer zip)
 		{
 			var data = Global.Templates;
 			var list = new List<TemplateItem>();
-			var asm = typeof(Global).Assembly;
-			var zip = AppHelper.GetZip("Resources.Settings.zip", asm);
-			if (zip == null)
-			{
-				Global.ShowError("Resource 'Resources.Settings.zip' not found!");
-				return list;
-			}
 			var entries = zip.ReadCentralDir()
 				.Where(x => x.FilenameInZip.StartsWith(Global.TemplatesName))
 				.ToArray();
@@ -40,8 +83,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var item = data.DeserializeItem(bytes, false);
 				list.Add(item);
 			}
-			zip.Close();
 			return list;
+		}
+
+		public static List<TemplateItem> GetTempaltesFromEmbeddedResourceZip()
+		{
+			var asm = typeof(Global).Assembly;
+			var zip = AppHelper.GetZip("Resources.Settings.zip", asm);
+			if (zip == null)
+			{
+				Global.ShowError("Resource 'Resources.Settings.zip' not found!");
+				return new List<TemplateItem>();
+			}
+			var items = GetTemplatesFromZip(zip);
+			zip.Close();
+			return items;
 		}
 
 		public static List<TemplateItem> GetTempaltesFromEmbeddedResources()

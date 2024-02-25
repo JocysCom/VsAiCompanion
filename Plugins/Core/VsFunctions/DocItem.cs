@@ -204,6 +204,25 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Load content into `Data` property.
 		/// </summary>
+		public long LoadData(byte[] data)
+		{
+			var bytes = File.ReadAllBytes(FullName);
+			ContentData = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
+			ContentHint = "Base64EncodedBinary"; // Explicitly states the encoding method for binary data
+			return data.Length;
+		}
+
+		/// <summary>
+		/// Get content data as orignal binary data.
+		/// </summary>
+		public byte[] GetDataBinary()
+		{
+			return Convert.FromBase64String(ContentData);
+		}
+
+		/// <summary>
+		/// Load content into `Data` property.
+		/// </summary>
 		/// <param name="maxSize">Maximum bytes to load.</param>
 		public long LoadData(long maxSize = long.MaxValue)
 		{
@@ -232,8 +251,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 				else
 				{
 					var bytes = File.ReadAllBytes(FullName);
-					ContentData = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
-					ContentHint = "Base64EncodedBinary"; // Explicitly states the encoding method for binary data
+					LoadData(bytes);
 					return fi.Length;
 				}
 			}

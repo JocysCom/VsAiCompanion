@@ -60,6 +60,14 @@
             <returns>The output of the request.</returns>
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContents(System.String)">
+            <summary>
+            Download and return the content of a given URL.
+            </summary>
+            <param name="url">URL from which the content will be downloaded. The URL can have different schemes like 'https://', 'file://', etc., that are capable of fetching files or data across various protocols.</param>
+            <returns>The output of the request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess(System.String,System.String,System.String)">
             <summary>
             Execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
@@ -612,6 +620,16 @@
             Convert to flat string representation.
             </summary>
             <param name="items">Item to convert.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LoadData(System.Byte[])">
+            <summary>
+            Load content into `Data` property.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.GetDataBinary">
+            <summary>
+            Get content data as orignal binary data.
+            </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LoadData(System.Int64)">
             <summary>

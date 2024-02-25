@@ -38,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsEnterprise { get => _IsEnterprise; set => SetProperty(ref _IsEnterprise, value); }
 		private bool _IsEnterprise;
 
-		[DefaultValue("http://azuredevops.companyname.com/Projects/_git/Configurations/Settings/AiCompanion.zip")]
+		[DefaultValue("https://github.com/JocysCom/VsAiCompanion/raw/main/Engine/Resources/Settings.zip")]
 		public string ConfigurationUrl { get => _ConfigurationUrl; set => SetProperty(ref _ConfigurationUrl, value); }
 		private string _ConfigurationUrl;
 
