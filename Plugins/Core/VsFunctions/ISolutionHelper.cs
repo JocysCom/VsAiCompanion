@@ -221,7 +221,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Get information about current Visual Studio environment.
 		/// </summary>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.High)]
 		Dictionary<string, JsonElement> GetEnvironmentContext();
 
 		/// <summary>
