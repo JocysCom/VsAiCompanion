@@ -46,8 +46,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static SettingsData<PromptItem> PromptItems =
 			new SettingsData<PromptItem>($"{nameof(PromptItems)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
+		public const string TemplatesName = nameof(Templates);
+
 		public static SettingsData<TemplateItem> Templates =
-			new SettingsData<TemplateItem>($"{nameof(Templates)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			new SettingsData<TemplateItem>($"{TemplatesName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
 			{
 				UseSeparateFiles = true,
 			};
@@ -317,6 +319,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void ResetTemplates()
 		{
+			var defaultItems = SettingsSourceManager.GetDefaultTemplates();
+			if (defaultItems.Count == 0)
+				return;
 			var items = Templates.Items.ToArray();
 			foreach (var item in items)
 			{
@@ -324,8 +329,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!string.IsNullOrEmpty(error))
 					ShowError(error);
 			}
-			Templates.Load();
+			Templates.PreventWriteToNewerFiles = false;
+			foreach (var item in defaultItems)
+			{
+				Templates.Items.Add(item);
+			}
+			// Templates.Load();
 			Templates.Save();
+			Templates.PreventWriteToNewerFiles = true;
 		}
 
 		public static void ResetAppSettings()
@@ -390,17 +401,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var data = (SettingsData<TemplateItem>)sender;
 			if (e.Items.Count == 0)
 			{
-				var asm = typeof(Global).Assembly;
-				var keys = asm.GetManifestResourceNames()
-					.Where(x => x.Contains("Resources.Settings.Templates"))
-					.ToList();
-				foreach (var key in keys)
-				{
-					var bytes = Helper.GetResource<byte[]>(key, asm);
-					var item = data.DeserializeItem(bytes, false);
+				var items = SettingsSourceManager.GetDefaultTemplates();
+				foreach (var item in items)
 					e.Items.Add(item);
-				}
-				data.IsSavePending = true;
+				if (items.Count > 0)
+					data.IsSavePending = true;
 				return;
 			}
 			// Check reserved templates used for some automation.

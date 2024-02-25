@@ -208,11 +208,16 @@ namespace JocysCom.ClassLibrary.Configuration
 						var fileFullName = Path.Combine(di.FullName, fileName);
 						if (compress)
 							bytes = SettingsHelper.Compress(bytes);
-						if (SettingsHelper.WriteIfDifferent(fileFullName, bytes))
-						{
-							fi.Refresh();
-							fileItem.WriteTime = new FileInfo(fileFullName).LastWriteTime;
-						}
+						var fiItem = new FileInfo(fileFullName);
+						if (!AllowWriteFile(fiItem))
+							continue;
+						if (!SettingsHelper.WriteIfDifferent(fileFullName, bytes))
+							continue;
+						fi.Refresh();
+						fileItem.WriteTime = new FileInfo(fileFullName).LastWriteTime;
+						// Update last write time.
+						fiItem.Refresh();
+						SetLastWriteTime(fiItem);
 					}
 				}
 				else
@@ -222,7 +227,15 @@ namespace JocysCom.ClassLibrary.Configuration
 					var bytes = Serialize(this);
 					if (compress)
 						bytes = SettingsHelper.Compress(bytes);
-					SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
+					if (AllowWriteFile(fi))
+					{
+						if (SettingsHelper.WriteIfDifferent(fi.FullName, bytes))
+						{
+							// Update last write time.
+							fi.Refresh();
+							SetLastWriteTime(fi);
+						}
+					}
 				}
 			}
 			IsSavePending = false;
@@ -272,6 +285,52 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public event EventHandler<SettingsDataEventArgs> OnValidateData;
 
+		#region Last Write Time
+
+		[XmlIgnore]
+		public bool PreventWriteToNewerFiles { get; set; } = true;
+
+		[XmlIgnore, NonSerialized]
+		private Dictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
+
+		/// <summary>
+		/// Record the LastWriteTime when loading for later comparison when saving.
+		/// </summary>
+		private void SetLastWriteTime(FileInfo fi)
+		{
+			// If file was deleted or don't exists.
+			if (!fi.Exists)
+				return;
+			if (LastWriteTimes.ContainsKey(fi.FullName))
+				LastWriteTimes[fi.FullName] = fi.LastWriteTime;
+			else
+				LastWriteTimes.Add(fi.FullName, fi.LastWriteTime);
+		}
+
+		private bool IsNewerOnDisk(FileInfo fi)
+		{
+			fi.Refresh();
+			// If file was deleted or don't exists.
+			if (!fi.Exists)
+				return false;
+			if (!LastWriteTimes.ContainsKey(fi.FullName))
+				return false;
+			return fi.Exists && fi.LastWriteTime > LastWriteTimes[fi.FullName];
+		}
+
+		private bool AllowWriteFile(FileInfo fi)
+		{
+			fi.Refresh();
+			// If file was deleted or don't exists.
+			if (!fi.Exists)
+				return true;
+			if (!PreventWriteToNewerFiles)
+				return true;
+			return !IsNewerOnDisk(fi);
+		}
+
+		#endregion
+
 		public void Load()
 		{
 			LoadFrom(_XmlFile.FullName);
@@ -315,6 +374,8 @@ namespace JocysCom.ClassLibrary.Configuration
 								for (int i = 0; i < files.Length; i++)
 								{
 									var file = files[i];
+									// Record the LastWriteTime for later comparison.
+									SetLastWriteTime(file);
 									var bytes = System.IO.File.ReadAllBytes(file.FullName);
 									try
 									{
@@ -333,6 +394,8 @@ namespace JocysCom.ClassLibrary.Configuration
 							}
 							else
 							{
+								// Record the LastWriteTime for later comparison.
+								SetLastWriteTime(fi);
 								var bytes = System.IO.File.ReadAllBytes(fi.FullName);
 								data = DeserializeData(bytes, compress);
 							}

@@ -1,3 +1,7 @@
+2024-02-25 v1.5.7
+
+- Fix: The app is overwriting newer settings.
+
 2024-02-25 v1.5.6
 
 - New: Added new Basic and Visual Studio functions.

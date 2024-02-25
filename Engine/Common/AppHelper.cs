@@ -681,7 +681,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			zip.Close();
 		}
 
-		public static byte[] ExtractFile(string source, string filenameInZip, Assembly assembly = null)
+		public static ZipStorer GetZip(string source, Assembly assembly = null)
 		{
 			// Get list of resources to extract.
 			assembly = assembly ?? Assembly.GetExecutingAssembly();
@@ -693,6 +693,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			sr.Read(bytes, 0, bytes.Length);
 			// Open an existing zip file for reading.
 			var zip = ZipStorer.Open(sr, FileAccess.Read);
+			return zip;
+		}
+
+		public static byte[] ExtractFile(string source, string filenameInZip, Assembly assembly = null)
+		{
+			var zip = GetZip(source, assembly);
+			var bytes = ExtractFile(zip, filenameInZip);
+			zip.Close();
+			return bytes;
+		}
+
+		public static byte[] ExtractFile(ZipStorer zip, string filenameInZip)
+		{
 			// Read the central directory collection
 			var dir = zip.ReadCentralDir();
 			// Look for the desired file.
@@ -704,7 +717,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (zip.ExtractFile(entry, out file))
 					return file;
 			}
-			zip.Close();
 			return null;
 		}
 
