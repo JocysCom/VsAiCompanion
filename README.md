@@ -1,7 +1,7 @@
 # Jocys.com VS AI Companion
-This is a free and open-source project for people who have an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci...) subscription, also run Open AI on their local machine ([GPT4All](https://gpt4all.io/)), as well as those who run AI on-premises or on Azure Cloud.
+This is a free, open-source project for people who have an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci...) subscription or/and run Open AI on their local machine ([GPT4All](https://gpt4all.io/)), on-premises, or on Azure Cloud.
 
-The AI Companion is a tool that analyzes your project files and works alongside you to streamline development and boost productivity. It can be installed as a Visual Studio extension or run as a standalone application. It's like a Swiss Army Knife of AI for developers. Application allows you to easily create custom, fine-tuned AI models for company chatbots or virtual employees.
+The AI Companion is a tool that answers questions, analyzes project files, and works alongside, streamlining development and boosting productivity. Application allows easy creation of custom, fine-tuned AI models as chatbots or virtual employees. subscription. It's like a Swiss Army Knife of AI for developers. AI Companion can run as a standalone portable application or as a Visual Studio extension. Extension version can also be installed via Visual Studio Extension Manager.
 
 ### Why Use Tools Utilizing API Instead of Web Chat GPT?
 
@@ -9,12 +9,14 @@ The AI Companion is a tool that analyzes your project files and works alongside 
 - Web Chat is limited to 4K tokens, while AI models on API can process data 4-8 times larger.
 - API provides access to more recent and smarter AI models.
 
-### Download
-Digitally Signed Standalone/Portable Application v1.5.6 (2024-02-25)
+### DOWNLOAD  v1.5.6 (2024-02-25)
+Digitally Signed Standalone/Portable Application
 
 [Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.5.6/JocysCom.VS.AiCompanion.App.zip)
 
-Install Visual Studio Extension from <a href="https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion">VS AI Companion - Visual Studio Marketplace</a> or install by using Visual Studio Extension Manager.
+Visual Studio Extension
+
+<a href="https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion">Download - VS AI Companion from Visual Studio Marketplace</a> or install via Visual Studio Extension Manager.
 
 ### How can I access GPT-4?
 https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
