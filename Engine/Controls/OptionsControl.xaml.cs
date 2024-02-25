@@ -64,7 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
 			if (result != MessageBoxResult.Yes)
 				return;
-			SettingsSourceManager.ResetTemplates(null);
+			SettingsSourceManager.ResetTemplates();
 		}
 
 		private void ResetPromptingButton_Click(object sender, RoutedEventArgs e)

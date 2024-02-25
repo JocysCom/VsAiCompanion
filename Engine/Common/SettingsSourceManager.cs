@@ -48,25 +48,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static List<TemplateItem> GetDefaultTemplates(ZipStorer zip)
-		{
-			List<TemplateItem> items = null;
-			try
-			{
-				var closeZip = zip == null;
-				zip = zip ?? GetSettingsZip();
-				items = GetItemsFromZip(zip, Global.Templates.XmlFile.Name, Global.Templates);
-				if (closeZip)
-					zip.Close();
-				return items;
-			}
-			catch (Exception ex)
-			{
-				Global.ShowError("GetDefaultTemplates() error: " + ex.Message);
-			}
-			return items ?? new List<TemplateItem>();
-		}
-
 		#region Reset App Settings
 
 		/// <summary>
@@ -84,10 +65,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Reset Templates
 
+		public static void ResetTemplates()
+		{
+			var zip = GetSettingsZip();
+			ResetTemplates(zip);
+			zip.Close();
+		}
+
 		public static void ResetTemplates(ZipStorer zip)
 		{
 			var templates = Global.Templates;
-			var defaultItems = GetDefaultTemplates(zip);
+			var defaultItems = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
 			if (defaultItems.Count == 0)
 				return;
 			var items = templates.Items.ToArray();
@@ -107,7 +95,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			templates.PreventWriteToNewerFiles = true;
 		}
 
-		private static List<T> GetItemsFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)
+		public static List<T> GetItemsFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)
 		{
 			var list = new List<T>();
 			var entries = zip.ReadCentralDir()
@@ -143,7 +131,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.ShowError("Resource 'Resources.Settings.zip' not found!");
 				return new List<TemplateItem>();
 			}
-			var items = GetItemsFromZip(zip, Global.Templates.XmlFile.Name, Global.Templates);
+			var items = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
 			zip.Close();
 			return items;
 		}

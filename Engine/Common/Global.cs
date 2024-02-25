@@ -283,7 +283,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (AppData.Version < 2)
 			{
 				AppData.Version = 2;
-				SettingsSourceManager.ResetTemplates(null);
+				SettingsSourceManager.ResetTemplates();
 			}
 		}
 
@@ -376,12 +376,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var data = (SettingsData<TemplateItem>)sender;
 			if (e.Items.Count == 0)
 			{
-				var items = SettingsSourceManager.GetDefaultTemplates(null);
+				var zip = SettingsSourceManager.GetSettingsZip();
+				var items = SettingsSourceManager.GetItemsFromZip(zip, TemplatesName, Templates);
 				foreach (var item in items)
 					e.Items.Add(item);
 				if (items.Count > 0)
-					data.IsSavePending = true;
-				return;
+					Templates.IsSavePending = true;
+
 			}
 			// Check reserved templates used for some automation.
 			MakeSureTempalteExists(data, e.Items,
@@ -419,29 +420,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var sd = (SettingsData<TemplateItem>)sender;
 			if (e.Items.Count == 0)
 			{
-				var asm = typeof(Global).Assembly;
-				var keys = asm.GetManifestResourceNames()
-					.Where(x => x.Contains("Resources.Templates"))
-					.OrderBy(x => x)
-					.ToList();
-				foreach (var key in keys)
-				{
-					// Add chat and grammar templates.
-					if (key.IndexOf("Chat", StringComparison.OrdinalIgnoreCase) > -1 ||
-						key.IndexOf("Grammar", StringComparison.OrdinalIgnoreCase) > -1)
-					{
-						var bytes = Helper.GetResource<byte[]>(key, asm);
-						var item = sd.DeserializeItem(bytes, false);
-						var task = item.Copy(true);
-						task.ShowInstructions = false;
-						e.Items.Add(task);
-					}
-				}
-				sd.IsSavePending = true;
+				var zip = SettingsSourceManager.GetSettingsZip();
+				var items = SettingsSourceManager.GetItemsFromZip(zip, TasksName, Tasks);
+				foreach (var item in items)
+					e.Items.Add(item);
+				if (items.Count > 0)
+					Tasks.IsSavePending = true;
 			}
 			sd.IsSavePending |= FixTempalteItems(e.Items);
 		}
-
 		public static void ClearItems()
 		{
 			Templates.Items.Clear();

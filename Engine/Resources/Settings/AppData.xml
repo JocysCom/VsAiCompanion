@@ -18,20 +18,21 @@
       </AiServiceData>
       <TaskData>
         <GridSplitterPosition>0.2998859749144812</GridSplitterPosition>
+        <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
-          <string>AI - Chat (GPT-3.5)</string>
+          <string>Grammar - Detail</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>6</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.2998859749144812</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>Code - Find a bug</string>
         </ListSelection>
         <ListSelectedIndex>9</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
-        <GridSplitterPosition>0.2970353477765108</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>Doughnut Dynamics</string>
         </ListSelection>
@@ -87,10 +88,15 @@
       </AiServices>
       <Plugins>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContents</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContents</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess</Id>
@@ -108,6 +114,7 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareContentsAndReturnChanges</Id>
         </PluginItem>
         <PluginItem>
@@ -117,21 +124,27 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ApplyContentsChanges</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolutionProjects</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument</Id>
         </PluginItem>
         <PluginItem>
@@ -144,30 +157,39 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfCurrentDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetErrors</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrors</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection</Id>
         </PluginItem>
         <PluginItem>

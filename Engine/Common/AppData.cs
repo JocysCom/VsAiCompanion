@@ -38,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsEnterprise { get => _IsEnterprise; set => SetProperty(ref _IsEnterprise, value); }
 		private bool _IsEnterprise;
 
-		[DefaultValue("https://github.com/JocysCom/VsAiCompanion/raw/main/Engine/Resources/Settings.zip")]
+		[DefaultValue("https://github.com/JocysCom/VsAiCompanion/raw/main/Engine/Resources/Settings.CompanyName.zip")]
 		public string ConfigurationUrl { get => _ConfigurationUrl; set => SetProperty(ref _ConfigurationUrl, value); }
 		private string _ConfigurationUrl;
 

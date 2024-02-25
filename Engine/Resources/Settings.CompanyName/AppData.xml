@@ -1,12 +1,11 @@
 ﻿<Data Version="2">
   <Items>
     <AppData>
-      <ConfigurationUrl>https://github.com/JocysCom/VsAiCompanion/raw/main/Engine/Resources/Settings.CompanyName.zip</ConfigurationUrl>
       <StartPosition>
-        <Left>200</Left>
-        <Top>76</Top>
+        <Left>195</Left>
+        <Top>45</Top>
         <Width>494</Width>
-        <Height>361.5</Height>
+        <Height>400.5</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -33,7 +32,7 @@
         <ListSelectedIndex>23</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
-        <GridSplitterPosition>0.2970353477765108</GridSplitterPosition>
+        <GridSplitterPosition>0.29689119170984457</GridSplitterPosition>
         <ListSelection>
           <string>CyberNet Solutions</string>
         </ListSelection>
