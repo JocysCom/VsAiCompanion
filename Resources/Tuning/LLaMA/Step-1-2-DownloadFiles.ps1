@@ -1,21 +1,21 @@
 # Purpose: This script downloads necessary files and tools required for fine-tuning of AI model.
 using namespace System.IO
 
-<# Download Sources
-Python:
+<#
+Python: Programming language resources
     *.python.org
     *.pythonhosted.org
-NVIDIA:
+NVIDIA: Graphics technology company
     *.nvidia.com
-PyPI:
+PyPI: Python package index
     *.pypi.org
-Yodiw:
+Yodiw: Software engineering blog
     *.yodiw.com
-PyTorch:
+PyTorch: Open source machine learning library
     *.pytorch.org
-Hugging Face:
+Hugging Face: AI community and model hub
     *.huggingface.co
-Amazon S3:
+Amazon S3: Cloud storage service
     s3.amazonaws.com
 #>
 
@@ -284,5 +284,3 @@ while ($true) {
 	& $menuitems[$option]
 }
 return
-
-
