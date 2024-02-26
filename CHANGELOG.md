@@ -1,4 +1,4 @@
-2024-02-26 v1.5.15
+2024-02-26 v1.5.16
 
 - Fix: Update to address the issue of "Method not found: ...Generic.IAsyncEnumerable."
 - Fix: Enable chat history when enabling Plugins.
