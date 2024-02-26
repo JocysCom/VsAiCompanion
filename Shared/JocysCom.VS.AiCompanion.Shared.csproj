@@ -16,15 +16,14 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.5.12</AssemblyVersion>
-		<FileVersion>1.5.12</FileVersion>
+		<AssemblyVersion>1.5.16</AssemblyVersion>
+		<FileVersion>1.5.16</FileVersion>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
-		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="8.0.2" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
 	</ItemGroup>
 
@@ -37,15 +36,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="JocysCom\MakeLinks.ps1.cs" />
+		<Compile Remove="JocysCom\MakeLinks.ps1.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="JocysCom\MakeLinks.ps1.cs" />
+		<None Include="JocysCom\MakeLinks.ps1.cs" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
+		<Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
 	</Target>
 
 </Project>

@@ -268,7 +268,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				AppHelper.UpdateModelCodes(_item.AiService, AiModelBoxPanel.AiModels, _item?.AiModel);
 				IconPanel.BindData(_item);
 				PromptsPanel.BindData(_item);
-				OnPropertyChanged(nameof(SendChatHistory));
 				ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
 				ChatPanel.IsBusy = _item.IsBusy;
 				ChatPanel.UpdateButtons();
@@ -469,23 +468,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
 			});
-		}
-
-		public bool SendChatHistory
-		{
-			get
-			{
-				return _item?.AttachContext.HasFlag(ContextType.ChatHistory) ?? false;
-			}
-			set
-			{
-				var item = _item;
-				if (item == null)
-					return;
-				item.AttachContext = item.AttachContext.HasFlag(ContextType.ChatHistory)
-					? item.AttachContext & ~ContextType.ChatHistory
-					: item.AttachContext |= ContextType.ChatHistory;
-			}
 		}
 
 		private TextBox LastFocusedForCodeTextBox;

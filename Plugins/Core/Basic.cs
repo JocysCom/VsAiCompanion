@@ -10,10 +10,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// <summary>
 	/// Helps AI to auto-continue on the task.
 	/// </summary>
-	public class Basic : IDiffHelper
+	public class Basic : IDiffHelper, IFileHelper
 	{
-
-		DiffHelper diffHelper = new DiffHelper();
 
 		/// <summary>
 		/// Use when you can't provide an answer in one response and need to split the answer.
@@ -169,29 +167,43 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return true;
 		}
 
+		#endregion
+
+		#region IDiffHelper
+
+		DiffHelper diffHelper = new DiffHelper();
+
 		/// <inheritdoc/>
-		[RiskLevel(RiskLevel.Medium)]
 		public string CompareFilesAndReturnChanges(string originalFileFullName, string modifiedFileFullName)
 			=> diffHelper.CompareFilesAndReturnChanges(originalFileFullName, modifiedFileFullName);
 
 		/// <inheritdoc/>
-		[RiskLevel(RiskLevel.Low)]
 		public string CompareContentsAndReturnChanges(string originalText, string modifiedText)
 			=> diffHelper.CompareContentsAndReturnChanges(originalText, modifiedText);
 
 		/// <inheritdoc/>
-		[RiskLevel(RiskLevel.High)]
 		public string ApplyFileChanges(string fullFileName, string unifiedDiff)
 			=> diffHelper.ApplyFileChanges(fullFileName, unifiedDiff);
 
 
 		/// <inheritdoc/>
-		[RiskLevel(RiskLevel.High)]
 		public string ApplyContentsChanges(string contents, string unifiedDiff)
 			=> diffHelper.ApplyContentsChanges(contents, unifiedDiff);
 
 
+		#endregion
 
+		#region IFileHelper
+
+		FileHelper fileHelper = new FileHelper();
+
+		/// <inheritdoc/>
+		public bool WriteTextFile(string path, string contents, long line, long column, string mode)
+			=> fileHelper.WriteTextFile(path, contents, line, column, mode);
+
+		/// <inheritdoc/>
+		public string ReadTextFile(string path, long line, long column, long length)
+			=> fileHelper.ReadTextFile(path, line, column, length);
 
 		#endregion
 

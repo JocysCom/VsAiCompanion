@@ -165,11 +165,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (string.IsNullOrEmpty(item.Name))
 				itemsRequired.Add("Service Name");
 			// If OpenAI service then check for API Key and Organization ID.
-			if ((item.BaseUrl ?? "").Contains(".openai.com"))
+			var baseUrl = item.BaseUrl ?? "";
+			var isMicrosoft = baseUrl.Contains(".microsoft.com");
+			var isOpenAi = baseUrl.Contains(".openai.com");
+			if (isMicrosoft || isOpenAi)
 			{
 				if (string.IsNullOrEmpty(item.ApiSecretKey))
 					itemsRequired.Add("API Key");
-				if (string.IsNullOrEmpty(item.ApiOrganizationId))
+				if (isOpenAi && string.IsNullOrEmpty(item.ApiOrganizationId))
 					itemsRequired.Add("API Organization ID");
 			}
 			if (redirectToSettings && itemsRequired.Count > 0)

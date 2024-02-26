@@ -14,6 +14,7 @@
 		/// <param name="originalFileFullName">The path to the original file.</param>
 		/// <param name="modifiedFileFullName">The path to the modified file.</param>
 		/// <returns>Unified diff string detailing the changes made from the original file to the modified file.</returns>
+		[RiskLevel(RiskLevel.Medium)]
 		string CompareFilesAndReturnChanges(string originalFileFullName, string modifiedFileFullName);
 
 		/// <summary>
@@ -25,6 +26,7 @@
 		/// <param name="originalText">Original content.</param>
 		/// <param name="modifiedText">Modified content.</param>
 		/// <returns>Unified diff string detailing the changes made from the original content to the modified content.</returns>
+		[RiskLevel(RiskLevel.Low)]
 		string CompareContentsAndReturnChanges(string originalText, string modifiedText);
 
 		/// <summary>
@@ -42,6 +44,7 @@
 		/// -Text to be removed
 		/// +Text to be added
 		/// </example>
+		[RiskLevel(RiskLevel.High)]
 		string ApplyFileChanges(string fileFullName, string unifiedDiff);
 
 		/// <summary>
@@ -59,6 +62,7 @@
 		/// -Text to be removed
 		/// +Text to be added
 		/// </example>
+		[RiskLevel(RiskLevel.High)]
 		string ApplyContentsChanges(string contents, string unifiedDiff);
 
 	}

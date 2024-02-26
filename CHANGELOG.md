@@ -1,3 +1,10 @@
+2024-02-26 v1.5.15
+
+- Fix: Update to address the issue of "Method not found: ...Generic.IAsyncEnumerable."
+- Fix: Enable chat history when enabling Plugins.
+- Fix: Redirect to options when API key is missing for Microsoft API.
+- New: Added `ReadTextFile` and `WriteTextFile` functions.
+
 2024-02-25 v1.5.12
 
 - Fix: The app is overwriting newer settings.

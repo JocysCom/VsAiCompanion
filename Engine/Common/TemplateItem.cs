@@ -137,7 +137,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#region Plugins
 
 		[DefaultValue(false)]
-		public bool PluginsEnabled { get => _PluginsEnabled; set => SetProperty(ref _PluginsEnabled, value); }
+		public bool PluginsEnabled
+		{
+			get => _PluginsEnabled;
+			set
+			{
+				SetProperty(ref _PluginsEnabled, value);
+				// Plugins require chat history.
+				if (value && !SendChatHistory)
+					SendChatHistory = true;
+			}
+		}
 		bool _PluginsEnabled;
 
 		[DefaultValue(RiskLevel.Low)]
@@ -153,6 +163,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _PluginApprovalTemplate;
 
 		#endregion
+
+		[XmlIgnore]
+		public bool SendChatHistory
+		{
+			get => AttachContext.HasFlag(ContextType.ChatHistory);
+			set
+			{
+				AttachContext = value
+					? AttachContext |= ContextType.ChatHistory
+					: AttachContext &= ~ContextType.ChatHistory;
+				SetProperty(ref _SendChatHistory, value);
+			}
+		}
+		bool _SendChatHistory;
+
 
 		[XmlIgnore]
 		public object Tag;
