@@ -1,6 +1,24 @@
 # Purpose: This script downloads necessary files and tools required for fine-tuning of AI model.
 using namespace System.IO
 
+<# Download Sources
+Python:
+    *.python.org
+    *.pythonhosted.org
+NVIDIA:
+    *.nvidia.com
+PyPI:
+    *.pypi.org
+Yodiw:
+    *.yodiw.com
+PyTorch:
+    *.pytorch.org
+Hugging Face:
+    *.huggingface.co
+Amazon S3:
+    s3.amazonaws.com
+#>
+
 # ----------------------------------------------------------------------------
 [string]$current = $MyInvocation.MyCommand.Path
 # Get calling command path.
@@ -23,11 +41,12 @@ Set-Location $scriptPath
 $ca_path = "./Data/trusted_root_certificates.pem"
 # Check if file does not exist or its content is effectively empty (ignoring whitespace)
 if (-not (Test-Path $ca_path) -or [String]::IsNullOrWhiteSpace((Get-Content $ca_path -Raw))) {
-	$env:REQUESTS_CA_BUNDLE=$null
-    $env:PIP_CERT=$null
-} else {
-	$env:REQUESTS_CA_BUNDLE=$ca_path
-    $env:PIP_CERT=$ca_path
+	$env:REQUESTS_CA_BUNDLE = $null
+	$env:PIP_CERT = $null
+}
+else {
+	$env:REQUESTS_CA_BUNDLE = $ca_path
+	$env:PIP_CERT = $ca_path
 	Write-Host "Use $ca_path"
 }
 # ----------------------------------------------------------------------------
@@ -44,14 +63,14 @@ function DownloadFile1 {
 }
 # Fast downloads (Progress bar in PowerShell).
 function DownloadFile {
-    param($sourcePath, $targetPath)
-    Start-BitsTransfer -Source $sourcePath -Destination $targetPath
+	param($sourcePath, $targetPath)
+	Start-BitsTransfer -Source $sourcePath -Destination $targetPath
 }
 # Fast downloads (No Progress bar in PowerShell).
 function DownloadFile2 {
-    param($sourcePath, $targetPath)
-    $webClient = New-Object System.Net.WebClient
-    $webClient.DownloadFile($sourcePath, $targetPath)
+	param($sourcePath, $targetPath)
+	$webClient = New-Object System.Net.WebClient
+	$webClient.DownloadFile($sourcePath, $targetPath)
 }
 # ----------------------------------------------------------------------------
 # Show menu
@@ -82,19 +101,6 @@ function ShowOptionsMenu {
 	return $dic[$m.ToUpper()]
 }
 # ----------------------------------------------------------------------------
-# Download and install Python
-# ----------------------------------------------------------------------------
-# Download Python: https://www.python.org/downloads/
-$pythonLink = "https://www.python.org/ftp/python/3.11.6/python-3.11.6-amd64.exe"
-$pythonFile = ".\Data\Downloads\python-3.11.6-amd64.exe"
-function DownloadPython {
-	DownloadFile $pythonLink $pythonFile
-}
-function InstallPython {
-	# Insatalls to C:\Program Files\Python311
-	Start-Process -FilePath $pythonFile -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait
-}
-# ----------------------------------------------------------------------------
 # Install Git
 # ----------------------------------------------------------------------------
 $gitLink = "https://github.com/git-for-windows/git/releases/download/v2.38.0.windows.1/Git-2.38.0-64-bit.exe"
@@ -120,6 +126,18 @@ function InstallGitLfs {
 	Start-Process -FilePath $gitLfsFile -ArgumentList "/VERYSILENT" -Wait
 }
 # ----------------------------------------------------------------------------
+# Install Tortoise Git (UI for GIT)
+# ----------------------------------------------------------------------------
+# https://tortoisegit.org/
+$tortoiseGitLink = "https://download.tortoisegit.org/tgit/2.15.0.0/TortoiseGit-2.15.0.0-64bit.msi"
+$tortosieGitFile = ".\Data\Downloads\TortoiseGit-2.15.0.0-64bit.msi"
+function DownloadTortosieGit {
+	DownloadFile $tortoiseGitLink $tortosieGitFile
+}
+function InstallTortoiseGit {
+	Start-Process -FilePath $tortosieGitFile -Wait # -ArgumentList "/quiet"
+}
+# ----------------------------------------------------------------------------
 # Install CUDA (optional)
 # ----------------------------------------------------------------------------
 # https://developer.nvidia.com/cuda-downloads
@@ -130,6 +148,19 @@ function DownloadCuda {
 }
 function InstallCuda {
 	Start-Process -FilePath $cudaFile -ArgumentList "/s" -Wait
+}
+# ----------------------------------------------------------------------------
+# Download and install Python
+# ----------------------------------------------------------------------------
+# Download Python: https://www.python.org/downloads/
+$pythonLink = "https://www.python.org/ftp/python/3.11.8/python-3.11.8-amd64.exe"
+$pythonFile = ".\Data\Downloads\python-3.11.8-amd64.exe"
+function DownloadPython {
+	DownloadFile $pythonLink $pythonFile
+}
+function InstallPython {
+	# Insatalls to C:\Program Files\Python311
+	Start-Process -FilePath $pythonFile -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait
 }
 # ----------------------------------------------------------------------------
 # Install Python Libraries
@@ -202,8 +233,8 @@ function CloneModelRepository {
 # Download and Install: LM Studio
 # ----------------------------------------------------------------------------
 # https://lmstudio.ai/
-$lmStudioLink = "https://s3.amazonaws.com/releases.lmstudio.ai/0.2.8/LM+Studio-0.2.8+Setup.exe"
-$lmStudioFile = ".\Data\Downloads\LM+Studio-0.2.8+Setup.exe"
+$lmStudioLink = "https://releases.lmstudio.ai/windows/0.2.16/latest/LM-Studio-0.2.16-Setup.exe"
+$lmStudioFile = ".\Data\Downloads\LM-Studio-0.2.16-Setup.exe"
 function DownloadLmStudio {
 	DownloadFile $lmStudioLink $lmStudioFile
 }
@@ -212,51 +243,46 @@ function InstallLmStudio {
 }
 # ----------------------------------------------------------------------------
 
-# Show menus.
-$mdp = "Download Python"
-$mip = "Install  Python"
-$mdg = "Download Git"
-$mig = "Install  Git"
-$mdgl = "Download Git LFS"
-$migl = "Install  Git LFS"
-$mdc = "Download CUDA"
-$mic = "Install  CUDA"
-$mipc = "Install Python Certificates"
-$mip1 = "Install Python Torch"
-$mip1c = "Install Python Torch (CUDA)"
-$mip2 = "Install Python Transformers"
-$mids = "Install Python Datasets"
-$miaa = "Install Python Accelerate"
-$mifl = "Install Python Flask"
-$mipsp = "Install Python Sentencepiece"
-$mcr = "Clone Model Repository"
-$mdlms = "Download LM Studio"
-$milms = "Install  LM Studio"
-$menuItems = @( $mdp, $mip, $mdg, $mig, $mdgl, $migl, $mdc, $mic, $mipc, $mip1, $mip1c, $mip2, $mids, $miaa, $mifl, $mipsp, $mcr, $mdlms, $milms )
-$option = ShowOptionsMenu $menuItems  "Select Option:"
-if ("$option" -eq "") {
-	return
+# Download
+$menuItems = [ordered]@{
+	"Download Python"        = { DownloadPython }
+	"Download Git"           = { DownloadGit }
+	"Download Git LFS"       = { DownloadGitLfs }
+	"Download TortoiseGit"   = { DownloadTortoiseGit }
+	"Download CUDA"          = { DownloadCuda }
+	"Download LM Studio"     = { DownloadLmStudio }
+	"Clone Model Repository" = { CloneModelRepository }
 }
-Write-Host "Selected: $option"
+while ($true) {
+	$option = ShowOptionsMenu $menuItems.Keys  "Select Option:"
+	if ($option -eq $null) { break }
+	Write-Host "Selected: $option"
+	& $menuitems[$option]
+}
 
-switch ($option) {
-	$mdp { DownloadPython }
-	$mip { InstallPython }
-	$mdg { DownloadGit }
-	$mig { InstallGit }
-	$mdgl { DownloadGitLfs }
-	$migl { InstallGitLfs }
-	$mdc { DownloadCuda }
-	$mic { InstallCuda }
-	$mipc { InstallPythonCertificates }
-	$mip1 { InstallPythonTorch }
-	$mip1c { InstallPythonTorchCuda }
-	$mip2 { InstallPythonTransformers }
-	$mids { InstallPythonDatasets }
-	$miaa { InstallPythonAccelerate }
-	$mifl { InstallPythonFlask }
-	$mipsp  { InstallPythonSentencepiece }
-	$mcr { CloneModelRepository }
-	$mdlms { DownloadLmStudio }
-	$milms { InstallLmStudio }
+# Install
+$menuItems = [ordered]@{
+	"Install Python" = { InstallPython }
+	"Install Git" = { InstallGit }
+	"Install Git LFS" = { InstallGitLfs }
+	"Install TortoiseGit" = { InstallTortoiseGit }
+	"Install CUDA" = { InstallCuda }
+	"Install LM Studio" = { InstallLmStudio }
+	"Install Python Certificates" = { InstallPythonCertificates }
+	"Install Python Torch" = { InstallPythonTorch }
+	"Install Python Torch (CUDA)" = { InstallPythonTorchCuda }
+	"Install Python Transformers" = { InstallPythonTransformers }
+	"Install Python Datasets" = { InstallPythonDatasets }
+	"Install Python Accelerate" = { InstallPythonAccelerate }
+	"Install Python Flask" = { InstallPythonFlask }
+	"Install Python Sentencepiece" = { InstallPythonSentencepiece }
 }
+while ($true) {
+	$option = ShowOptionsMenu $menuItems.Keys  "Select Option:"
+	if ($option -eq $null) { break }
+	Write-Host "Selected: $option"
+	& $menuitems[$option]
+}
+return
+
+
