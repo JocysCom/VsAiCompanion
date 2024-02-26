@@ -159,14 +159,14 @@
   <data name="Is_Default_AI_Service" xml:space="preserve">
     <value>Is Default AI Service</value>
   </data>
-  <data name="OpenAI_API_Key" xml:space="preserve">
-    <value>OpenAI API Key</value>
+  <data name="API_Key" xml:space="preserve">
+    <value>API Key</value>
   </data>
-  <data name="OpenAI_API_Organization_ID" xml:space="preserve">
-    <value>OpenAI API Organization ID</value>
+  <data name="API_Organization_ID" xml:space="preserve">
+    <value>API Organization ID</value>
   </data>
-  <data name="Open_AI_Base_URL" xml:space="preserve">
-    <value>Open AI Base URL</value>
+  <data name="API_Base_URL" xml:space="preserve">
+    <value>API Base URL</value>
   </data>
   <data name="Model_Filter" xml:space="preserve">
     <value>Model Filter</value>

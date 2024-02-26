@@ -151,6 +151,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to API Base URL.
+        /// </summary>
+        public static string API_Base_URL {
+            get {
+                return ResourceManager.GetString("API_Base_URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to API Key.
+        /// </summary>
+        public static string API_Key {
+            get {
+                return ResourceManager.GetString("API_Key", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to API Organization ID.
+        /// </summary>
+        public static string API_Organization_ID {
+            get {
+                return ResourceManager.GetString("API_Organization_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to App Always on Top.
         /// </summary>
         public static string App_Always_on_Top {
@@ -691,38 +718,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open AI Base URL.
-        /// </summary>
-        public static string Open_AI_Base_URL {
-            get {
-                return ResourceManager.GetString("Open_AI_Base_URL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open File.
         /// </summary>
         public static string Open_File {
             get {
                 return ResourceManager.GetString("Open_File", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OpenAI API Key.
-        /// </summary>
-        public static string OpenAI_API_Key {
-            get {
-                return ResourceManager.GetString("OpenAI_API_Key", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OpenAI API Organization ID.
-        /// </summary>
-        public static string OpenAI_API_Organization_ID {
-            get {
-                return ResourceManager.GetString("OpenAI_API_Organization_ID", resourceCulture);
             }
         }
         

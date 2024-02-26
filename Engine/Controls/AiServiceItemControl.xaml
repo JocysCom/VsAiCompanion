@@ -48,21 +48,21 @@
 			</Button>
 			<CheckBox Checked="CheckBox_Checked" Content="{x:Static locales:Resources.Is_Default_AI_Service}" IsChecked="{Binding IsDefault}" />
 		</StackPanel>
-		<Label Grid.Row="1" Content="{x:Static locales:Resources.OpenAI_API_Key}" />
+		<Label Grid.Row="1" Content="{x:Static locales:Resources.API_Key}" />
 		<PasswordBox
 			Name="SecretKeyPasswordBox"
 			Grid.Row="1"
 			Grid.Column="1"
 			Grid.ColumnSpan="2" />
 
-		<Label Grid.Row="2" Content="{x:Static locales:Resources.OpenAI_API_Organization_ID}" />
+		<Label Grid.Row="2" Content="{x:Static locales:Resources.API_Organization_ID}" />
 		<PasswordBox
 			Name="OrganizationPasswordBox"
 			Grid.Row="2"
 			Grid.Column="1"
 			Grid.ColumnSpan="2" />
 
-		<Label Grid.Row="3" Content="{x:Static locales:Resources.Open_AI_Base_URL}" />
+		<Label Grid.Row="3" Content="{x:Static locales:Resources.API_Base_URL}" />
 		<TextBox
 			Name="OpenAiBaseUrlTextBox"
 			Grid.Row="3"
