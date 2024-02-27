@@ -20,39 +20,37 @@
         <GridSplitterPosition>0.27253886010362693</GridSplitterPosition>
         <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
-          <string>Grammar - Detail</string>
+          <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
-        <ListSelectedIndex>6</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
         <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
         <ListSelection>
-          <string>Grammar - Check Spelling</string>
+          <string>AI - Chat</string>
         </ListSelection>
-        <ListSelectedIndex>23</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
-        <GridSplitterPosition>0.29689119170984457</GridSplitterPosition>
+        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
         <ListSelection>
           <string>CyberNet Solutions</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </FineTuningData>
       <AssistantData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
         <ListSelection />
         <ListSelectedIndex>0</ListSelectedIndex>
       </AssistantData>
       <AiServices>
         <AiService>
-          <Id>1ba94e57-3827-3636-5ba1-227d5e4c56ea</Id>
+          <Id>d5e071e1-d99d-45ff-890a-82823b75e1ec</Id>
           <Name>Company Name AI</Name>
           <IsDefault>true</IsDefault>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <DefaultAiModel>gpt-4</DefaultAiModel>
-          <AiModels />
           <BaseUrl>https://companyname.api.cognitive.microsoft.com/v1/</BaseUrl>
-          <ModelFilter />
         </AiService>
       </AiServices>
       <Plugins>
@@ -91,6 +89,12 @@
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ApplyContentsChanges</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteTextFile</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFile</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -188,73 +192,70 @@
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTable</Id>
         </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetLists</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.CreateList</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.SetListItem</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItem</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteListItem</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchIndex</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuOptions</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuSelection</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.SelectMenuOption</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.NavigateToElement</Id>
+        </PluginItem>
       </Plugins>
       <AiModels>
-        <AiModel>
-          <Id>c16ad0f6-b6a1-00a1-5d27-e9acb47d54e1</Id>
-          <Name>text-davinci-003</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-        </AiModel>
-        <AiModel>
-          <Id>151904a3-f4e6-2491-7f55-83c09c8081ce</Id>
-          <Name>text-davinci-002</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-        </AiModel>
-        <AiModel>
-          <Id>44706ff9-a31b-a603-be5f-41425024eb85</Id>
-          <Name>text-davinci-001</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-        </AiModel>
-        <AiModel>
-          <Id>9a24cc72-9295-5613-cd99-710da3444340</Id>
-          <Name>gpt-3.5-turbo-16k-0613</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-        </AiModel>
-        <AiModel>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
-          <Name>gpt-3.5-turbo-16k</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-        </AiModel>
-        <AiModel>
-          <Id>0e7bceb5-2637-5805-9c13-a7e06ed7104f</Id>
-          <Name>gpt-3.5-turbo-0613</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-        </AiModel>
-        <AiModel>
-          <Id>c890f3bd-89a7-961a-17b1-eeff0a4b3563</Id>
-          <Name>gpt-3.5-turbo-0301</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-        </AiModel>
-        <AiModel>
-          <Id>99d65d61-0850-2a8b-716d-794cacd0adc5</Id>
-          <Name>gpt-3.5-turbo</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-        </AiModel>
-        <AiModel>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
-          <Name>gpt-3.5-turbo-16k</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
-        </AiModel>
         <AiModel>
           <Id>4f00f393-889d-f80c-7432-9e44718d2b71</Id>
           <Name>gpt-4</Name>
           <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
         </AiModel>
         <AiModel>
           <Id>984a6b6b-ab7a-8e4e-845f-8515e901fed0</Id>
           <Name>gpt-4-preview</Name>
           <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+        </AiModel>
+        <AiModel>
+          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
+          <Name>gpt-3.5-turbo-16k</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
         </AiModel>
       </AiModels>
       <Enabled>false</Enabled>

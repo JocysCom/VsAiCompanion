@@ -144,6 +144,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				foreach (var item in items)
 					CurrentItems.Remove(item);
+				Global.AppSettings.CleanupAiModels();
 			});
 		}
 

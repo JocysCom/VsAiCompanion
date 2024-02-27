@@ -595,7 +595,12 @@
 		}
 
 		function Copy() {
-			document.execCommand("Copy", false, null);
+			if (isElementFocused())
+				document.execCommand("Copy", false, null);
+		}
+
+		function isElementFocused() {
+			return document.activeElement && document.activeElement !== document.body;
 		}
 
 		function MessageAction(button, messageId, action) {

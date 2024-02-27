@@ -27,7 +27,7 @@ Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD
 5xAGeS1FuBYZlx1TNeFhXDURePaiGhIYvQsFe1RQw3BdAoMY2rpaMAhtJBiAAseB4jsJk//j/ZyE&#xD;
 4Xh8vNHccPPv3Xc2vYPaDP+g//APE7kSZtsXAAA=</IconData>
   <Name>® AI Tuning - Step 1 - Convert to Messages</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>Convert the supplied text to JSONL (JSON Lines) format, which is used for fine-tuning AI models. Please adhere to the following specification for the reply:&#xD;

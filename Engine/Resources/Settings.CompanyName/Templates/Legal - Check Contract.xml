@@ -41,7 +41,7 @@ P3DhSwV+bKPdo6HJTMxiFi1SiBmnrp9CWaCLKGbOiHCPKsPmYtml5jsVjFjHYz3nTS6+Xcz8zD+z&#xD
 LPha4dN4JgQErvnzEQ7mY2ygIC6FGrUN3sXTKUcu1ipGTGWM1TadJC/9u/rlR34xgOvVzfsf1vQf&#xD;
 O+//D5vhz0ASGgAA</IconData>
   <Name>Legal - Check Contract</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>Analyze the contract or terms and conditions provided. Identify any deceptive language, loopholes, or missing parts that can unfairly benefit one party. For example, try to identify "golden handcuffs," which are financial incentives given to employees to prevent them from leaving a company because the employee would have to pay them back. Reply with this format identifying as possible disadvantageous practices as possible.&#xD;
@@ -60,6 +60,7 @@ Explanation:&#xD;
 &lt;explanation&gt;&#xD;
 ```</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>

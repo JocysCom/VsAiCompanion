@@ -10,13 +10,8 @@
 	d:DesignWidth="480"
 	Background="White"
 	Loaded="UserControl_Loaded"
+	PreviewKeyDown="UserControl_PreviewKeyDown"
 	mc:Ignorable="d">
-	<UserControl.InputBindings>
-		<KeyBinding Key="C" Command="ApplicationCommands.Copy" Modifiers="Control" />
-	</UserControl.InputBindings>
-	<UserControl.CommandBindings>
-		<CommandBinding CanExecute="CopyCommand_CanExecute" Command="ApplicationCommands.Copy" Executed="CopyCommand_Executed" />
-	</UserControl.CommandBindings>
 	<Grid>
 		<Label
 			x:Name="LoadingLabel"

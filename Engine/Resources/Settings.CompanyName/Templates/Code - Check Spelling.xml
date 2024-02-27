@@ -12,7 +12,7 @@ nUZ6reQT801DVhZdpuSzOAn+lFycRrdcM9Vyc8sgiGdmbsgc8xrxKsfbgot9ZB/VqhD9RqqtfagV&#xD
 IFP1j/MQpt6Uekl8cbDl3nsWdrsZJkcGSP0HN6FzE3o+2CsKJm/YmQSxl1qpACu3gehtmYlN+eAZ&#xD;
 tb/phL+qM7Iq4V+q8w/yTL3/YIoOzO0Pe3n2AhZhFW6wBAAA</IconData>
   <Name>Code - Check Spelling</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>Please check the spelling and grammar of comments in the code. Reply with corrected data.</TextInstructions>

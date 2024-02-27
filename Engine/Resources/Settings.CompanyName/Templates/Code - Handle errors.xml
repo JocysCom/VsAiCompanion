@@ -22,7 +22,7 @@ zCLhwmiuQkCy8UwYMLQpI06jJvCupIUEh4BFKCmdVnn0mUcVNNfGWeGgqFK5AIwyC7BGjuGIKycl&#xD
 8CvgeACiaFoL/BiGEFL14Nej1oY5VEpI8FBYra+QChhLR3jWmCX4kHhZpBJRK/ZNw5x6igzex5Q3&#xD;
 so8veO7ii/S7+urF3xnwu3dXCAAA</IconData>
   <Name>Code - Handle errors</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>We have a piece of PowerShell code. The code does not currently handle any exceptions or errors. We want to improve this code to handle potential errors without using try-catch blocks if possible, and provide user-friendly error messages Reply with fully modified code.  Use instant return if possible. Here's the original code:</TextInstructions>

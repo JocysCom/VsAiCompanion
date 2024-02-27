@@ -36,7 +36,7 @@ YUVrGRYukdPQ/ONeav7RgOYf1VMUY0+0GE5VhEI7SarKeNiFqtricUCM/lik5w+SMT8d0NkrPq8f&#xD
 PNqEC4NtHiDpi2HD1XsVV504jvV48VpvbTh9exjy8qMEL0mixx3tPv3Cg+cPascsbf2/uaQzoEnt&#xD;
 J5f+5MGBCtxyvk3xT2Jij2P9HP76q/8CkSKQB9wPAAA=</IconData>
   <Name>Custom - Social Meeting Topics</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>Suggest five topics for a weekly team-building social meeting. The aim is to bond, have fun, and expand knowledge. Try to be creative and consider topics that are about some of the most fascinating and bizarre events that happened in the past week. Provide one sentence about the event, a link to news about it, and a question to discuss.</TextInstructions>
