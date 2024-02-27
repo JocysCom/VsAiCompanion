@@ -11,6 +11,12 @@
 	Background="White"
 	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
+	<UserControl.InputBindings>
+		<KeyBinding Key="C" Command="ApplicationCommands.Copy" Modifiers="Control" />
+	</UserControl.InputBindings>
+	<UserControl.CommandBindings>
+		<CommandBinding CanExecute="CopyCommand_CanExecute" Command="ApplicationCommands.Copy" Executed="CopyCommand_Executed" />
+	</UserControl.CommandBindings>
 	<Grid>
 		<Label
 			x:Name="LoadingLabel"
@@ -20,5 +26,6 @@
 			Content="Loading. Please wait..."
 			Foreground="DarkGray" />
 		<WebBrowser x:Name="WebBrowser" Visibility="Hidden" />
+
 	</Grid>
 </UserControl>

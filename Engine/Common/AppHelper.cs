@@ -38,9 +38,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static MacroValues GetMacroValues()
 		{
 			var mv = new MacroValues();
-			if (Global.IsVsExtesion)
+			if (Global.IsVsExtension)
 				mv.Selection = Global._SolutionHelper.GetSelection();
-			if (Global.IsVsExtesion)
+			if (Global.IsVsExtension)
 				mv.Document = Global._SolutionHelper.GetCurrentDocument(true) ?? new DocItem();
 			return mv;
 		}

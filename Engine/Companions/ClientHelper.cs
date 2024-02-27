@@ -148,7 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					};
 					m.Attachments.Add(clipAttachment);
 				}
-				if (Global.IsVsExtesion)
+				if (Global.IsVsExtension)
 				{
 					// If text selection in Visual Studio.
 					if (at.HasFlag(ContextType.Selection))
@@ -516,7 +516,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		/// <param name="data"></param>
 		public static void SetData(TemplateItem item, string data)
 		{
-			if (item.AttachContext == ContextType.Selection && Global.IsVsExtesion)
+			if (item.AttachContext == ContextType.Selection && Global.IsVsExtension)
 			{
 				var vsData = AppHelper.GetMacroValues();
 				var code = AppHelper.GetCodeFromReply(data);
@@ -529,7 +529,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (item.AutoFormatCode)
 					Global._SolutionHelper.EditFormatSelection();
 			}
-			else if (item.AttachContext == ContextType.ActiveDocument && Global.IsVsExtesion)
+			else if (item.AttachContext == ContextType.ActiveDocument && Global.IsVsExtension)
 			{
 				var vsData = AppHelper.GetMacroValues();
 				var code = AppHelper.GetCodeFromReply(data);

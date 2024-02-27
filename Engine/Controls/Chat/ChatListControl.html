@@ -594,6 +594,10 @@
 			}, 0);
 		}
 
+		function Copy() {
+			document.execCommand("Copy", false, null);
+		}
+
 		function MessageAction(button, messageId, action) {
 			button.classList.add('clicked');
 			setTimeout(function () {

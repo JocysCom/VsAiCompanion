@@ -440,7 +440,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static MainControl MainControl;
 
-		public static bool IsVsExtesion { get; set; }
+		public static bool IsVsExtension { get; set; }
 		public static Version VsVersion { get; set; }
 		public static string VsExtensionFeatureMessage = "This feature is only available when the application is run as an extension in Visual Studio.";
 		public static string VsExtensionVersionMessage = "This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.";

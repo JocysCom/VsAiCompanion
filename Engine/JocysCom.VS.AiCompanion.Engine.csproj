@@ -20,15 +20,20 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.5.16</AssemblyVersion>
-		<FileVersion>1.5.16</FileVersion>
+		<AssemblyVersion>1.5.17</AssemblyVersion>
+		<FileVersion>1.5.17</FileVersion>
+		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+		<!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+		<!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 

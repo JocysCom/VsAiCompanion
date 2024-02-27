@@ -51,7 +51,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.SwitchToVisualStudioThreadAsync = solutionHelper.SwitchToMainThreadAsync;
 
 			VisualStudio.Current = Global._SolutionHelper;
-			Global.IsVsExtesion = true;
+			Global.IsVsExtension = true;
 			;
 			var vsContext = Global._SolutionHelper.GetEnvironmentContext();
 			if (vsContext.ContainsKey("DTE Version"))

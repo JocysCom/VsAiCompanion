@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
@@ -253,6 +254,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				default:
 					break;
 			}
+		}
+
+		private void CopyCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			// Only needed for visual studio extension.
+			if (Global.IsVsExtension)
+				InvokeScript("Copy();");
+		}
+
+		private void CopyCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = Global.IsVsExtension;
 		}
 
 		#region Script Handler
