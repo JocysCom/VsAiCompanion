@@ -898,7 +898,7 @@ namespace OpenAI
                     }
                     finally
                     {
-                        if (disposeResponse_)""
+                        if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
@@ -6096,7 +6096,7 @@ namespace OpenAI
         public double? Presence_penalty { get; set; } = 0D;
 
         /// <summary>
-        /// An object specifying the format that the model must output. Compatible with [GPT-4 Turbo](/docs/models/gpt-4-and-gpt-4-turbo) and `gpt-3.5-turbo-1106`.
+        /// An object specifying the format that the model must output. Compatible with [GPT-4 Turbo](/docs/models/gpt-4-and-gpt-4-turbo) and all GPT-3.5 Turbo models newer than `gpt-3.5-turbo-1106`.
         /// <br/>
         /// <br/>Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the message the model generates is valid JSON.
         /// <br/>
@@ -7378,6 +7378,18 @@ namespace OpenAI
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public double Temperature { get; set; } = 0D;
 
+        /// <summary>
+        /// The timestamp granularities to populate for this transcription. Any of these options: `word`, or `segment`. Note: There is no additional latency for segment timestamps, but generating word timestamps incurs additional latency.
+        /// <br/>
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("timestamp_granularities[]")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+
+        // TODO(system.text.json): Add string enum item converter
+        public System.Collections.Generic.ICollection<Timestamp_granularitiesOf> Timestamp_granularities { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -7514,7 +7526,10 @@ namespace OpenAI
         public CreateSpeechRequestVoice Voice { get; set; }
 
         /// <summary>
-        /// The format to audio in. Supported formats are `mp3`, `opus`, `aac`, and `flac`.
+        /// The format to return audio in. 
+        /// <br/>Supported formats are `mp3`, `opus`, `aac`, `flac`, `pcm`, and `wav`. 
+        /// <br/>
+        /// <br/>The `pcm` audio format, similar to `wav` but without a header, utilizes a 24kHz sample rate, mono channel, and 16-bit depth in signed little-endian format.
         /// </summary>
 
         [System.Text.Json.Serialization.JsonPropertyName("response_format")]
@@ -11523,6 +11538,18 @@ namespace OpenAI
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum Timestamp_granularitiesOf
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"word")]
+        word = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"segment")]
+        segment = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Model11
     {
 
@@ -11591,6 +11618,12 @@ namespace OpenAI
 
         [System.Runtime.Serialization.EnumMember(Value = @"flac")]
         flac = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"pcm")]
+        pcm = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"wav")]
+        wav = 5,
 
     }
 

@@ -1,3 +1,8 @@
+2024-02-27 v1.6.6
+
+
+- Update: Changed to the less restrictive "Mozilla Public License v2.0".
+
 2024-02-26 v1.5.16
 
 - Fix: Update to address the issue of "Method not found: ...Generic.IAsyncEnumerable."
