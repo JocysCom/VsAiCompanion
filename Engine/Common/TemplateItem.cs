@@ -1,6 +1,7 @@
 ﻿using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -161,6 +162,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(Companions.ClientHelper.PluginApprovalTaskName)]
 		public string PluginApprovalTemplate { get => _PluginApprovalTemplate; set => SetProperty(ref _PluginApprovalTemplate, value); }
 		string _PluginApprovalTemplate;
+
+
+		[XmlIgnore]
+		public BindingList<PluginApprovalItem> PluginFunctionCalls { get; set; } = new BindingList<PluginApprovalItem>();
+
+		[XmlIgnore]
+		public SemaphoreSlim PluginApprovalSemaphore { get; set; }
+		public event EventHandler ApprovalPending;
+		public void RaiseApprovalPending()
+		{
+			if (ApprovalPending == null)
+			{
+				IsPluginApproved = false;
+				return;
+			}
+			ApprovalPending?.Invoke(null, EventArgs.Empty);
+		}
+
+		[XmlIgnore]
+		public bool IsPluginApproved { get; set; }
+
 
 		#endregion
 

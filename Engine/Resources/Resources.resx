@@ -462,4 +462,7 @@
   <data name="Maximum_Risk_Level" xml:space="preserve">
     <value>Max Risk Level</value>
   </data>
+  <data name="Call_function_request_denied" xml:space="preserve">
+    <value>The request to call the function was denied!</value>
+  </data>
 </root>

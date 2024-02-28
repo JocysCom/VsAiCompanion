@@ -253,6 +253,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					_item.PropertyChanged -= _item_PropertyChanged;
 					_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
+					_item.PluginFunctionCalls.ListChanged -= PluginFunctionCalls_ListChanged;
 				}
 				// Make sure that custom AiModel old and new item is available to select.
 				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
@@ -262,8 +263,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				AiModelBoxPanel.BindData(null);
 				DataContext = _item;
 				_item.PropertyChanged += _item_PropertyChanged;
+				_item.PluginFunctionCalls.ListChanged += PluginFunctionCalls_ListChanged;
 				AiModelBoxPanel.BindData(_item);
 				OnPropertyChanged(nameof(CreativityName));
+				OnPropertyChanged(nameof(SowApprovalPanel));
+				OnPropertyChanged(nameof(ApprovalItem));
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 				AppHelper.UpdateModelCodes(_item.AiService, AiModelBoxPanel.AiModels, _item?.AiModel);
 				IconPanel.BindData(_item);
@@ -284,6 +288,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 			}
 		}
+
+		#region Plugin Approvals
+
+		private void PluginFunctionCalls_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			OnPropertyChanged(nameof(SowApprovalPanel));
+			OnPropertyChanged(nameof(ApprovalItem));
+		}
+
+		public PluginApprovalItem ApprovalItem => Item?.PluginFunctionCalls.FirstOrDefault();
+
+		public bool SowApprovalPanel => Item?.PluginFunctionCalls.Count > 0;
+
+		#endregion
 
 		// Move to settings later.
 		public const string TextToProcess = "Text to process:";

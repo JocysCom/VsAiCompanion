@@ -268,6 +268,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The request to call the function was denied!.
+        /// </summary>
+        public static string Call_function_request_denied {
+            get {
+                return ResourceManager.GetString("Call_function_request_denied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {

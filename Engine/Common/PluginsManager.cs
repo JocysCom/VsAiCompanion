@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -135,8 +136,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 					text += assistantEvaluation;
 				text += "\r\n\r\n" + Client.Serialize(function);
 				var caption = $"{Global.Info.Product} - Plugin Function Approval";
-				var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-				return result == MessageBoxResult.Yes;
+
+				item.PluginApprovalSemaphore = new SemaphoreSlim(0);
+				item.RaiseApprovalPending();
+				// Wait until user approves.
+				item.PluginApprovalSemaphore.Wait();
+				return item.IsPluginApproved;
+				//var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+				//return result == MessageBoxResult.Yes;
 			}
 			return false;
 		}
@@ -159,84 +166,92 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (!AllowPlugin(function.name, item.MaxRiskLevel))
 				return null;
 			System.Reflection.MethodInfo methodInfo;
-			if (PluginFunctions.TryGetValue(function.name, out methodInfo))
+			if (!PluginFunctions.TryGetValue(function.name, out methodInfo))
 			{
-				if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
-					return "The request to call the function was denied!";
-				if (!await ApproveExecution(item, function))
-					return null;
-				object classInstance = null;
-				// If the method is not static, create an instance of the class.
-				if (!methodInfo.IsStatic)
-					classInstance = Activator.CreateInstance(methodInfo.DeclaringType);
-
-				// Prepare an array of parameters for the method invocation.
-				var methodParams = methodInfo.GetParameters();
-				object[] invokeParams = new object[methodParams.Length];
-				for (int i = 0; i < methodParams.Length; i++)
+				// Handle the case where the methodInfo is not found for the given functionName
+				MessageBox.Show($"The function '{function.name}' was not found.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return null;
+			}
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
+				return Resources.Resources.Call_function_request_denied;
+			object classInstance = null;
+			// If the method is not static, create an instance of the class.
+			if (!methodInfo.IsStatic)
+				classInstance = Activator.CreateInstance(methodInfo.DeclaringType);
+			// Prepare an array of parameters for the method invocation.
+			var methodParams = methodInfo.GetParameters();
+			object[] invokeParams = new object[methodParams.Length];
+			for (int i = 0; i < methodParams.Length; i++)
+			{
+				var param = methodParams[i];
+				JsonElement jsonElement;
+				// Extract parameters as a dictionary.
+				var parameters = function.parameters.additional_properties;
+				if (parameters == null)
+					parameters = new Dictionary<string, JsonElement>();
+				if (parameters.TryGetValue(param.Name, out jsonElement))
 				{
-					var param = methodParams[i];
-					JsonElement jsonElement;
-					// Extract parameters as a dictionary.
-					var parameters = function.parameters.additional_properties;
-					if (parameters == null)
-						parameters = new Dictionary<string, JsonElement>();
-					if (parameters.TryGetValue(param.Name, out jsonElement))
-					{
-						invokeParams[i] = jsonElement.Deserialize(param.ParameterType);
-					}
-					else if (param.HasDefaultValue)
-					{
-						invokeParams[i] = param.DefaultValue;
-					}
-					else
-					{
-						// Handle missing required parameter.
-						MessageBox.Show($"The required parameter '{param.Name}' is missing for the function '{function.name}'.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
-						return null;
-					}
+					invokeParams[i] = jsonElement.Deserialize(param.ParameterType);
 				}
-				// Check if the method is asynchronous (returns a Task or Task<string>)
-				if (typeof(Task).IsAssignableFrom(methodInfo.ReturnType))
+				else if (param.HasDefaultValue)
 				{
-					// It's an async method. Await the task.
-					var task = (Task)methodInfo.Invoke(classInstance, invokeParams);
-					await task.ConfigureAwait(false); // Ensure you await the task
-
-					// If the method returns a Task<string>, get the result.
-					if (task is Task<string> stringTask)
-					{
-						var result = await stringTask;
-						return result;
-					}
+					invokeParams[i] = param.DefaultValue;
 				}
 				else
 				{
-					object methodResult = null;
-					if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
-					{
-						await Global.MainControl.Dispatcher.InvokeAsync(async () =>
-						{
-							await Global.SwitchToVisualStudioThreadAsync();
-							methodResult = methodInfo.Invoke(classInstance, invokeParams);
+					// Handle missing required parameter.
+					MessageBox.Show($"The required parameter '{param.Name}' is missing for the function '{function.name}'.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					return null;
+				}
+			}
 
-						});
-					}
-					else
-					{
-						// It's a synchronous method.
-						methodResult = methodInfo.Invoke(classInstance, invokeParams);
-					}
-					var result = (methodResult is string s)
-						? s
-						: Client.Serialize(methodResult);
+			//var pfci = new PluginFunctionCallInfo();
+			//pfci.Plugin = new PluginItem(methodInfo);
+			//pfci.Args = invokeParams;
+			//item.PluginFunctionCalls.Add(pfci);
+			// Wait for approval.
+			//item.PluginApprovalSemaphore.Wait();
+			//if (!pfci.IsApproved != true)
+			//	return Resources.Resources.Call_function_request_denied;
+
+			if (!await ApproveExecution(item, function))
+				return Resources.Resources.Call_function_request_denied;
+
+			// Check if the method is asynchronous (returns a Task or Task<string>)
+			if (typeof(Task).IsAssignableFrom(methodInfo.ReturnType))
+			{
+				// It's an async method. Await the task.
+				var task = (Task)methodInfo.Invoke(classInstance, invokeParams);
+				await task.ConfigureAwait(false); // Ensure you await the task
+
+				// If the method returns a Task<string>, get the result.
+				if (task is Task<string> stringTask)
+				{
+					var result = await stringTask;
 					return result;
 				}
 			}
 			else
 			{
-				// Handle the case where the methodInfo is not found for the given functionName
-				MessageBox.Show($"The function '{function.name}' was not found.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				object methodResult = null;
+				if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
+				{
+					await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+					{
+						await Global.SwitchToVisualStudioThreadAsync();
+						methodResult = methodInfo.Invoke(classInstance, invokeParams);
+
+					});
+				}
+				else
+				{
+					// It's a synchronous method.
+					methodResult = methodInfo.Invoke(classInstance, invokeParams);
+				}
+				var result = (methodResult is string s)
+					? s
+					: Client.Serialize(methodResult);
+				return result;
 			}
 			return null;
 		}
