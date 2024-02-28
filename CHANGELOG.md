@@ -1,5 +1,6 @@
 2024-02-28 v1.6.11
 
+- Fix: Extension license file.
 - Update: The function approval process has been updated.
 - Update: Approval control is now within the app instead of in a popup message box.
 
