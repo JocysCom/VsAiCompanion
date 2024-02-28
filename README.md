@@ -41,6 +41,10 @@ This application (or extension) allows you to create advanced prompt templates a
 ### Data Safety Concerns
 OpenAI will not use the data submitted by customers via the OpenAI API to train or improve its models, unless customers explicitly decide to share their data for this purpose. Customers have the option to opt-in to share data. Please note that this data policy does not apply to OpenAI's Non-API consumer services like ChatGPT or DALL·E. More information can be found at: https://openai.com/policies/api-data-usage-policies."
 
+### Licensing
+
+The source code is licensed under MPL-2.0 (Mozilla Public License 2.0), permitting corporations to integrate and enhance this application with proprietary code, without the requirement to disclose their modifications. Specifically, this license facilitates the use of the application for purposes such as enabling AI to access corporate resources or to automate task creation for AI, while still keeping any proprietary additions private.
+
 ### How-To Examples
 How-To examples can be found here: [HOWTO.md](HOWTO.md)
 
