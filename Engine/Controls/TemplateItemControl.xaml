@@ -31,6 +31,7 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -386,25 +387,19 @@
 				</WrapPanel>
 			</Grid>
 			<!--  Row 3  -->
+			<Controls:PluginApprovalControl x:Name="PluginApprovalPanel" Grid.Row="3" Grid.ColumnSpan="4" />
+			<!--  Row 4  -->
 			<Border
-				Grid.Row="3"
+				Grid.Row="4"
 				Grid.ColumnSpan="4"
 				BorderBrush="{StaticResource BorderDark}"
 				BorderThickness="0,1,0,1">
 				<!--  Hide in order to preved UI freeze whe WebBrowser is loading. It will be made visible in MainContro.xaml.cs.  -->
-				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" Visibility="Collapsed" />
+				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" />
 			</Border>
+			<!--  Row 5  -->
 			<Border
-				Grid.Row="3"
-				Grid.ColumnSpan="4"
-				BorderBrush="{StaticResource BorderDark}"
-				BorderThickness="0,1,0,1">
-				<Controls:PluginApprovalControl x:Name="PluginApprovalControl" Visibility="Collapsed" />
-			</Border>
-
-			<!--  Row 4  -->
-			<Border
-				Grid.Row="4"
+				Grid.Row="5"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
 				BorderBrush="{StaticResource BorderDark}"
@@ -510,9 +505,9 @@
 					</StackPanel>
 				</StackPanel>
 			</Border>
-			<!--  Row 5  -->
+			<!--  Row 6  -->
 			<StackPanel
-				Grid.Row="5"
+				Grid.Row="6"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
 				Margin="5,3,0,3"
@@ -528,7 +523,7 @@
 					Unchecked="IsSpellCheckEnabledCheckBox_Unchecked" />
 			</StackPanel>
 			<StackPanel
-				Grid.Row="5"
+				Grid.Row="6"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
 				HorizontalAlignment="Right"

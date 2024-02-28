@@ -88,7 +88,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
 
-
 		[XmlIgnore]
 		public Viewbox Icon { get => _Icon; set => SetProperty(ref _Icon, value); }
 		Viewbox _Icon;

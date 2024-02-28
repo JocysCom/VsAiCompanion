@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -100,54 +99,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-
-		public static async Task<bool> ApproveExecution(TemplateItem item, chat_completion_function function)
-		{
-			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
-				return false;
-			if (item.PluginApprovalProcess == ToolCallApprovalProcess.AllowAll)
-				return true;
-			var assistantApproved = false;
-			string assistantEvaluation = null;
-			if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies || item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
-			{
-				assistantEvaluation = await ClientHelper.EvaluateToolExecutionSafety(item) ?? "";
-				Global.MainControl.Dispatcher.Invoke(() =>
-				{
-					var lastMessage = item.Messages.Last();
-					var attachment = new Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
-					attachment.Title = "Approval by Secondary AI";
-					attachment.IsAlwaysIncluded = true;
-					lastMessage.Attachments.Add(attachment);
-				});
-				assistantApproved = assistantEvaluation.ToLower().Contains("function call approved");
-				// If approval relies on AI assistan only then return result.
-				if (item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
-					return assistantApproved;
-			}
-			if (item.PluginApprovalProcess == ToolCallApprovalProcess.User || item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies)
-			{
-				// If assitant approved then return true.
-				if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies && assistantApproved)
-					return true;
-				// It is up to user now to approve.
-				var text = "Do you want to execute function submitted by AI?";
-				if (!string.IsNullOrEmpty(assistantEvaluation))
-					text += assistantEvaluation;
-				text += "\r\n\r\n" + Client.Serialize(function);
-				var caption = $"{Global.Info.Product} - Plugin Function Approval";
-
-				item.PluginApprovalSemaphore = new SemaphoreSlim(0);
-				item.RaiseApprovalPending();
-				// Wait until user approves.
-				item.PluginApprovalSemaphore.Wait();
-				return item.IsPluginApproved;
-				//var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-				//return result == MessageBoxResult.Yes;
-			}
-			return false;
-		}
-
 		public static bool AllowPlugin(string functionName, RiskLevel maxRiskLevel)
 		{
 			var currentPlugin = Global.AppSettings.Plugins.FirstOrDefault(x => x.Name == functionName);
@@ -205,16 +156,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			}
 
-			//var pfci = new PluginFunctionCallInfo();
-			//pfci.Plugin = new PluginItem(methodInfo);
-			//pfci.Args = invokeParams;
-			//item.PluginFunctionCalls.Add(pfci);
-			// Wait for approval.
-			//item.PluginApprovalSemaphore.Wait();
-			//if (!pfci.IsApproved != true)
-			//	return Resources.Resources.Call_function_request_denied;
+			var pfci = new PluginApprovalItem();
+			Global.MainControl.Dispatcher.Invoke(() =>
+			{
+				pfci.Plugin = new PluginItem(methodInfo);
+			});
+			pfci.function = function;
+			pfci.Args = invokeParams;
 
-			if (!await ApproveExecution(item, function))
+			var approved = await ApproveExecution(item, pfci);
+
+
+			if (!approved)
 				return Resources.Resources.Call_function_request_denied;
 
 			// Check if the method is asynchronous (returns a Task or Task<string>)
@@ -254,6 +207,54 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return result;
 			}
 			return null;
+		}
+
+		public static async Task<bool> ApproveExecution(TemplateItem item, PluginApprovalItem pfci)
+		{
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
+				return false;
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.AllowAll)
+				return true;
+			var assistantApproved = false;
+			string assistantEvaluation = null;
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies || item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
+			{
+				assistantEvaluation = await ClientHelper.EvaluateToolExecutionSafety(item) ?? "";
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					var lastMessage = item.Messages.Last();
+					var attachment = new Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
+					attachment.Title = "Approval by Secondary AI";
+					attachment.IsAlwaysIncluded = true;
+					lastMessage.Attachments.Add(attachment);
+				});
+				assistantApproved = assistantEvaluation.ToLower().Contains("function call approved");
+				// If approval relies on AI assistan only then return result.
+				if (item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
+					return assistantApproved;
+				pfci.SecondaryAiEvaluation = JocysCom.ClassLibrary.Text.Helper.CropLines(assistantEvaluation ?? "", 32);
+			}
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.User || item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies)
+			{
+				// If assitant approved then return true.
+				if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies && assistantApproved)
+					return true;
+
+				// This will make approval form on template panel visible.
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					item.PluginFunctionCalls.Add(pfci);
+				});
+				// Wait for approval (semaphore release)
+				pfci.Semaphore.Wait();
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					item.PluginFunctionCalls.Remove(pfci);
+				});
+				if (pfci.IsApproved != null)
+					return pfci.IsApproved.Value;
+			}
+			return false;
 		}
 
 		#endregion
