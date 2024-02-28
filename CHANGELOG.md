@@ -2,7 +2,7 @@
 
 - Update: The function approval process has been updated.
 - Update: Approval control is now within the app instead of in a popup message box.
--
+
 2024-02-27 v1.6.6
 
 - Fix: 3rd attempt to fix the "Method not found: ...Generic.IAsyncEnumerable" issue.
