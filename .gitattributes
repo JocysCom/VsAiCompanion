@@ -1,5 +1,7 @@
 * -text
 # Exclude files from language stats
-Engine/Resources/Documents/* linguist-vendored
 Resources/**/* linguist-vendored
+Engine/Resources/Documents/* linguist-vendored
 Engine/Controls/Chat/ChatListControl/prism.*
+Engine/Controls/Chat/ChatListControl/core.*
+Engine/Controls/Chat/ChatListControl/marked.*
