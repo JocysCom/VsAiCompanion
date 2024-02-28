@@ -20,13 +20,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
 				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
 				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
+				var zipServices = zipAppData.Items[0].AiServices;
+				var zipModels = zipAppData.Items[0].AiModels;
 				Global.Templates.PreventWriteToNewerFiles = false;
 				Global.Tasks.PreventWriteToNewerFiles = false;
 				Global.AppData.PreventWriteToNewerFiles = false;
-				Global.Tasks.Remove(Global.Tasks.Items.ToArray());
-				Global.Templates.Remove(Global.Templates.Items.ToArray());
-				Global.AppSettings.AiModels.Clear();
-				Global.AppSettings.AiServices.Clear();
+				// Remove tasks which will be replaced.
+				var zipTaskNames = zipTasks.Select(t => t.Name.ToLower()).ToList();
+				var tasksToRemove = Global.Tasks.Items.Where(x => zipTaskNames.Contains(x.Name.ToLower())).ToArray();
+				Global.Tasks.Remove(tasksToRemove);
+				// Remove templates which will be replaced.
+				var zipTemplateNames = zipTemplates.Select(t => t.Name.ToLower()).ToList();
+				var templatesToRemove = Global.Templates.Items.Where(x => zipTemplateNames.Contains(x.Name.ToLower())).ToArray();
+				Global.Templates.Remove(templatesToRemove);
+				// Remove AiServices.
+				var zipServiceNames = zipServices.Select(t => t.Name.ToLower()).ToList();
+				var servicesToRemove = Global.AppSettings.AiServices.Where(x => zipServiceNames.Contains(x.Name.ToLower())).ToArray();
+				foreach (var service in servicesToRemove)
+				{
+					var modelsToRemove = Global.AppSettings.AiModels.Where(x => x.AiServiceId == service.Id).ToArray();
+					foreach (var model in modelsToRemove)
+						Global.AppSettings.AiModels.Remove(model);
+					Global.AppSettings.AiServices.Remove(service);
+				}
+				// Add user settings.
 				foreach (var item in zipAppData.Items[0].AiServices)
 					Global.AppSettings.AiServices.Add(item);
 				foreach (var item in zipAppData.Items[0].AiModels)

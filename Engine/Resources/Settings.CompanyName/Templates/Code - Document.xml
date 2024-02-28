@@ -18,7 +18,7 @@ cqaa439DMSCC6v8kNpuYYUV/iu41U0Y9zGWTO5AEeMuRNHIgYI4BYxQB03yDgLns5hXdoI2oCLiZ&#xD
 jLtOGv8WCbjrYIFxTENfD95hAkQuTqfdaL+TyMIYxEzdeHeS4RFmJ1xGlqc7/N5mlvFdsa7Qc3r5&#xD;
 evXsB5ofPS18CgAA</IconData>
   <Name>Code - Document</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>

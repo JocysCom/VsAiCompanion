@@ -67,7 +67,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var value = pi.GetValue(currentItem);
 			foreach (var item in items)
 				pi.SetValue(item, value);
-			ListPanel.SelectByName(currentItem.Name);
 		}
 
 		#region ■ Properties

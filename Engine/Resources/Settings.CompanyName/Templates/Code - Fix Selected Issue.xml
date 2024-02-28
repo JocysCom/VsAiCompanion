@@ -14,7 +14,7 @@ XFCeadTjsZLvNULHgFZE50DXaRICpgZWuc1Nrj+qpSEq6UIOcgodw7nL79MP94DoAY0mNuLSESl4&#xD
 NhgA7EDqjgf6lzsXNkQ3nY4jzYWEA9F7pW/UNIcCrzKPKnuR3SsDP0yto3TnA/fruHyprWWHcY1o&#xD;
 Bl/Tfa/rq/+LB+rBLAQAAA==</IconData>
   <Name>Code - Fix Selected Issue</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>How to fix this issue reported by Visual Studio? Please reply with the fixed code.</TextInstructions>

@@ -146,6 +146,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		/// <summary>
+		/// Remove models without services.
+		/// </summary>
+		public void CleanupAiModels()
+		{
+			var serviceIds = AiServices.Select(x => x.Id).ToArray();
+			var modelsToRemove = AiModels.Where(x => !serviceIds.Contains(x.AiServiceId)).ToArray();
+			foreach (var model in modelsToRemove)
+				AiModels.Remove(model);
+		}
+
 		public SortableBindingList<AiService> AiServices
 		{
 			get

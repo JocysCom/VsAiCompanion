@@ -20,16 +20,16 @@
         <GridSplitterPosition>0.2998859749144812</GridSplitterPosition>
         <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
-          <string>Grammar - Detail</string>
+          <string>AI - Chat (GPT-4)</string>
         </ListSelection>
-        <ListSelectedIndex>6</ListSelectedIndex>
+        <ListSelectedIndex>1</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.2970353477765108</GridSplitterPosition>
         <ListSelection>
-          <string>Code - Find a bug</string>
+          <string>AI - Chat</string>
         </ListSelection>
-        <ListSelectedIndex>9</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
         <GridSplitterPosition>NaN</GridSplitterPosition>
@@ -122,6 +122,12 @@
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ApplyContentsChanges</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteTextFile</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFile</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -218,6 +224,51 @@
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTable</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetLists</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.CreateList</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.SetListItem</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItem</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteListItem</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchIndex</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuOptions</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuSelection</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.SelectMenuOption</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.NavigateToElement</Id>
         </PluginItem>
       </Plugins>
       <AiModels>

@@ -56,7 +56,7 @@ ZGpJ0fMrGiK8/OJkYOKD0lSsWASaiwtHXSG5bls3YR4JO+pAIcrKZptn9oKgYiGcVKeBE2N0QzzK&#xD
 otrxOuDTk6y/FsArgDLOvvnT2/99BbC8R8ALB5DBO308v9Lw1xDL2wh/YaH3F8/vJs4+fzehcdwM&#xD;
 u7YGb3+yxf9/U4GcfZPwUusW72IOj/a6B+iX1a93V3jtZK+OvvziPzT3qFsIGwAA</IconData>
   <Name>Utility - Language Learning</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>

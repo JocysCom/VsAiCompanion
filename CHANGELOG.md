@@ -1,6 +1,14 @@
+2024-02-27 v1.6.6
+
+- Fix: 3rd attempt to fix the "Method not found: ...Generic.IAsyncEnumerable" issue.
+- Fix: Settings.CompanyName.zip example file.
+- Fix: Auto clean up AI models without services on service delete.
+- Update: Don't deselect the list when making mass changes to properties.
+- Update: Changed to the less restrictive "Mozilla Public License v2.0".
+
 2024-02-26 v1.5.16
 
-- Fix: Update to address the issue of "Method not found: ...Generic.IAsyncEnumerable."
+- Fix: Update to address the issue of "Method not found: ...Generic.IAsyncEnumerable"
 - Fix: Enable chat history when enabling Plugins.
 - Fix: Redirect to options when API key is missing for Microsoft API.
 - New: Added `ReadTextFile` and `WriteTextFile` functions.

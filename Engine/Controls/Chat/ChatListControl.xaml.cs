@@ -256,18 +256,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
-		private void CopyCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			// Only needed for visual studio extension.
-			if (Global.IsVsExtension)
-				InvokeScript("Copy();");
-		}
-
-		private void CopyCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = Global.IsVsExtension;
-		}
-
 		#region Script Handler
 
 		bool ScriptHandlerInitialized;
@@ -321,5 +309,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#endregion
 
+		private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			//if (WebBrowser.IsFocused)
+			//{
+			var isCtrlDown = Keyboard.Modifiers == ModifierKeys.Control;
+			if (isCtrlDown && e.Key == Key.C)
+			{
+				bool isFocused = (bool)WebBrowser.InvokeScript("isElementFocused");
+				if (isFocused)
+				{
+					InvokeScript("Copy();");
+					e.Handled = true;
+				}
+			}
+			//}
+
+		}
 	}
 }

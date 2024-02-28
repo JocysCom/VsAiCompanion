@@ -13,7 +13,7 @@ FwwS77y+nmZbL6X0vQ9mEyRwuCRB6oKCnU0Ih1n30n5A6riUTwGRekhZyil1TKe2fiof94ExEboZ&#xD
 CVfcs0JSOKAZwhdE7XKUf72z6RkJusHHUeYfC6PQ/07fuenGBm82jy4nk6tJHw5rkLTrUfvtuK6H&#xD;
 ZzyuBU3g/tg7cHnxF+sWVibRAwAA</IconData>
   <Name>Code - Fix Debug Exception</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>How to fix this exception thrown during debug session in Visual Studio? Please reply with the fixed code.</TextInstructions>

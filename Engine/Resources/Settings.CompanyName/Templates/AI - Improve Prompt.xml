@@ -20,7 +20,7 @@ MtkcFloQwpoCBoHQplRA2GxOEjqo0pQ+BnlfGM3Qa+eSPViWR3qXRtERi1DpxWfui1hRy5TS6tve&#xD
 A4dL2l/YZnoe5MKNeeEsT6AI8TzZB7m9/PRYatrmn7Jrz7P8z03vfDfkYd9/a4nm69r2Abnyb/sX&#xD;
 z/4FWrZIn9sMAAA=</IconData>
   <Name>AI - Improve Prompt</Name>
-  <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsEnabled>false</IsEnabled>
   <TextInstructions>Please analyze the following AI prompt text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised AI prompt text.&#xD;
