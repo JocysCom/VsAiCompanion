@@ -1,3 +1,4 @@
 * -text
+# Exclude files from language stats
 Engine/Resources/Documents/* linguist-vendored
 Resources/* linguist-vendored
