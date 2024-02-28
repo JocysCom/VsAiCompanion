@@ -1,4 +1,4 @@
-2024-02-28 v1.6.10
+2024-02-28 v1.6.11
 
 - Update: The function approval process has been updated.
 - Update: Approval control is now within the app instead of in a popup message box.
