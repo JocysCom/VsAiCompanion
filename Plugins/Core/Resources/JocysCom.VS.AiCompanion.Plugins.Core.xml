@@ -235,6 +235,71 @@
             <param name="length">Read amount.</param>
             <returns>True if the operation was successful.</returns>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo">
+            <summary>
+            Represents the metadata of a file indexed by the Windows Search.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.ItemName">
+            <summary>
+            Gets or sets the name of the item, typically the file name including the extension.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.ItemPathDisplay">
+            <summary>
+            Gets or sets the full path of the item, suitable for display to the user.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.ItemTypeText">
+            <summary>
+            Gets or sets a text description of the item type (e.g., "JPEG image").
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.DateModified">
+            <summary>
+            Gets or sets the date the item was last modified.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.FileExtension">
+            <summary>
+            Gets or sets the file extension of the item.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Size">
+            <summary>
+            Gets or sets the size of the item, in bytes.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Author">
+            <summary>
+            Gets or sets the author of the document. Applicable to documents that store this metadata.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Title">
+            <summary>
+            Gets or sets the title of the document.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Keywords">
+            <summary>
+            Gets or sets the keywords associated with the file. This can be a collection of keywords.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Comment">
+            <summary>
+            Gets or sets any comment associated with the file.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.DateCreated">
+            <summary>
+            Gets or sets the date the item was created.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.DateAccessed">
+            <summary>
+            Gets or sets the date the item was last accessed.
+            </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo">
             <summary>
             List Info.
@@ -423,6 +488,32 @@
             </summary>
             <param name="indexName">Index name.</param>
             <param name="searchString">Search string.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex(System.String,System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.Nullable{System.Int64},System.Nullable{System.Int64},System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Searches the Windows Index for files matching the specified criteria. This method allows for extensive search capabilities, including text content, file metadata, and more.
+            </summary>
+            <param name="contents">Contents of the file. Uses CONTAINS in the query for partial matching.</param>
+            <param name="itemName">The name of the item, typically the file name including the extension. Uses CONTAINS in the query for partial matching.</param>
+            <param name="itemPath">The full path of the item, suitable for display to the user. Uses CONTAINS in the query for partial matching.</param>
+            <param name="itemTypeText">A text description of the item type, e.g., "JPEG image". Uses CONTAINS in the query for partial matching.</param>
+            <param name="dateModifiedStart">The start date for when the item was last modified.</param>
+            <param name="dateModifiedEnd">The end date for when the item was last modified.</param>
+            <param name="fileExtension">The file extension of the item. Uses CONTAINS in the query for partial matching.</param>
+            <param name="sizeMin">The minimum size of the item, in bytes.</param>
+            <param name="sizeMax">The maximum size of the item, in bytes.</param>
+            <param name="author">The author of the document. Applicable to documents that store this metadata. Uses CONTAINS in the query for partial matching.</param>
+            <param name="title">The title of the document. Uses CONTAINS in the query for partial matching.</param>
+            <param name="comment">Any comment associated with the file. Uses CONTAINS in the query for partial matching.</param>
+            <param name="dateCreatedStart">The start date for when the item was created.</param>
+            <param name="dateCreatedEnd">The end date for when the item was created.</param>
+            <param name="dateAccessedStart">The start date for when the item was last accessed.</param>
+            <param name="dateAccessedEnd">The end date for when the item was last accessed.</param>
+            <returns>A list of <see cref="T:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo"/> objects that match the specified search criteria.</returns>
+            <remarks>
+            This method leverages the Windows Search Index, offering a powerful search functionality across various file properties.
+            For properties like dates and size, where partial matching isn't applicable, the method uses SQL expressions to define ranges.
+            </remarks>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
             <summary>
