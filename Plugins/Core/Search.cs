@@ -14,10 +14,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	public partial class Search
 	{
 
+
+
 		/// <summary>
 		/// Database path. Set by external program.
 		/// </summary>
 		public static string _databasePath;
+
+#if DEBUG
 
 		//public static Dictionary<string, string> GetIndexList() => new Dictionary<string, string>();
 
@@ -88,6 +92,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 		}
 
+#endif
+
 		/// <summary>
 		/// Searches the Windows Index for files matching the specified criteria. This method allows for extensive search capabilities, including text content, file metadata, and more.
 		/// </summary>
@@ -95,8 +101,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="itemName">The name of the item, typically the file name including the extension. Uses CONTAINS in the query for partial matching.</param>
 		/// <param name="itemPath">The full path of the item, suitable for display to the user. Uses CONTAINS in the query for partial matching.</param>
 		/// <param name="itemTypeText">A text description of the item type, e.g., "JPEG image". Uses CONTAINS in the query for partial matching.</param>
-		/// <param name="dateModifiedStart">The start date for when the item was last modified.</param>
-		/// <param name="dateModifiedEnd">The end date for when the item was last modified.</param>
 		/// <param name="fileExtension">The file extension of the item. Uses CONTAINS in the query for partial matching.</param>
 		/// <param name="sizeMin">The minimum size of the item, in bytes.</param>
 		/// <param name="sizeMax">The maximum size of the item, in bytes.</param>
@@ -105,6 +109,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="comment">Any comment associated with the file. Uses CONTAINS in the query for partial matching.</param>
 		/// <param name="dateCreatedStart">The start date for when the item was created.</param>
 		/// <param name="dateCreatedEnd">The end date for when the item was created.</param>
+		/// <param name="dateModifiedStart">The start date for when the item was last modified.</param>
+		/// <param name="dateModifiedEnd">The end date for when the item was last modified.</param>
 		/// <param name="dateAccessedStart">The start date for when the item was last accessed.</param>
 		/// <param name="dateAccessedEnd">The end date for when the item was last accessed.</param>
 		/// <returns>A list of <see cref="IndexedFileInfo"/> objects that match the specified search criteria.</returns>
@@ -113,16 +119,17 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// For properties like dates and size, where partial matching isn't applicable, the method uses SQL expressions to define ranges.
 		/// </remarks>
 		// <param name="keywords">The keywords associated with the file. This can be a collection of keywords. Each keyword uses CONTAINS in the query for partial matching.</param>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Low)]
 		public static List<IndexedFileInfo> SearchWindowsIndex(
 			string contents = null,
 			string itemName = null, string itemPath = null, string itemTypeText = null,
-			DateTime? dateModifiedStart = null, DateTime? dateModifiedEnd = null,
 			string fileExtension = null, long? sizeMin = null, long? sizeMax = null,
-			string author = null, string title = null,
-			//string[] keywords = null,
-			string comment = null, DateTime? dateCreatedStart = null, DateTime? dateCreatedEnd = null,
-			DateTime? dateAccessedStart = null, DateTime? dateAccessedEnd = null)
+			string author = null, string title = null, string comment = null,
+			DateTime? dateCreatedStart = null, DateTime? dateCreatedEnd = null,
+			DateTime? dateModifiedStart = null, DateTime? dateModifiedEnd = null,
+			DateTime? dateAccessedStart = null, DateTime? dateAccessedEnd = null
+		//string[] keywords = null,
+		)
 		{
 			var whereClauses = new List<string>();
 			var parameters = new List<OleDbParameter>();
@@ -130,7 +137,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			if (!string.IsNullOrEmpty(contents))
 			{
 				whereClauses.Add("CONTAINS(System.Search.Contents, @Contents)");
-				parameters.Add(new OleDbParameter("@Content", $"\"*{contents}*\""));
+				parameters.Add(new OleDbParameter("@Contents", $"\"*{contents}*\""));
 			}
 
 			if (!string.IsNullOrEmpty(itemName))
@@ -163,14 +170,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				parameters.Add(new OleDbParameter("@Title", $"\"*{title}*\""));
 			}
 
-			//foreach (var keyword in keywords)
-			//{
-			//	if (!string.IsNullOrEmpty(keyword))
-			//	{
-			//		whereClauses.Add("CONTAINS(System.Search.Keywords, @Keyword)");
-			//		parameters.Add(new OleDbParameter("@Keyword", $"\"*{keyword}*\""));
-			//	}
-			//}
+			/*
+			foreach (var keyword in keywords)
+			{
+				if (!string.IsNullOrEmpty(keyword))
+				{
+					whereClauses.Add("CONTAINS(System.Search.Keywords, @Keyword)");
+					parameters.Add(new OleDbParameter("@Keyword", $"\"*{keyword}*\""));
+				}
+			}
+			*/
 
 			if (!string.IsNullOrEmpty(comment))
 			{

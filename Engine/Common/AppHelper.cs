@@ -752,6 +752,58 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Helper
+
+		/// <summary>Built-in types</summary>
+		public static readonly Dictionary<Type, string> TypeAliases = new Dictionary<Type, string>
+		{
+			{ typeof(bool), "bool" },
+			{ typeof(byte), "byte" },
+			{ typeof(char), "char" },
+			{ typeof(decimal), "decimal" },
+			{ typeof(double), "double" },
+			{ typeof(float), "float" },
+			{ typeof(int), "int" },
+			{ typeof(long), "long" },
+			{ typeof(object), "object" },
+			{ typeof(sbyte), "sbyte" },
+			{ typeof(short), "short" },
+			{ typeof(string), "string" },
+			{ typeof(uint), "uint" },
+			{ typeof(ulong), "ulong" },
+			{ typeof(ushort), "ushort" },
+			{ typeof(void), "void" }
+		};
+
+		public static string GetBuiltInTypeNameOrAlias(Type type)
+		{
+			if (type is null)
+				throw new ArgumentNullException(nameof(type));
+			var elementType = type.IsArray
+				? type.GetElementType()
+				: type;
+			// Lookup alias for type
+			string alias;
+			if (TypeAliases.TryGetValue(elementType, out alias))
+				return alias + (type.IsArray ? "[]" : "");
+			// Note: All Nullable<T> are value types.
+			if (type.IsValueType)
+			{
+				var underType = Nullable.GetUnderlyingType(type);
+				if (underType != null)
+					return GetBuiltInTypeNameOrAlias(underType) + "?";
+			}
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+			{
+				var itemType = type.GetGenericArguments()[0];
+				return string.Format("List<{0}>", GetBuiltInTypeNameOrAlias(itemType));
+			}
+			// Default to CLR type name
+			return type.Name;
+		}
+
+		#endregion
+
 	}
 
 }

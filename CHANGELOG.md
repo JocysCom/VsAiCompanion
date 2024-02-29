@@ -1,3 +1,8 @@
+2024-02-29 v1.6.13
+
+- Fix: Issue with inability to cancel message requests.
+- New: Plugin for searching Windows Index.
+
 2024-02-28 v1.6.11
 
 - Fix: Extension license file.

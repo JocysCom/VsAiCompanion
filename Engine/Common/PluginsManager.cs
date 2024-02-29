@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -39,15 +40,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 						AddMethods(typeof(Basic));
 						AddMethods(typeof(VisualStudio));
 						AddMethods(typeof(Database));
-#if DEBUG
-						AddMethods(typeof(Lists));
-
 						Search._databasePath = Global.PluginsSearchPath;
 						AddMethods(typeof(Search));
-
+#if DEBUG
+						AddMethods(typeof(Lists));
 						AddMethods(typeof(Automation));
 #endif
-
 					}
 					return _PluginFunctions;
 				}
@@ -110,7 +108,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		/// <param name="item">User settings.</param>
 		/// <param name="json">function as JSON</param>
-		public static async Task<string> ProcessPlugins(TemplateItem item, chat_completion_function function)
+		public static async Task<string> ProcessPlugins(TemplateItem item, chat_completion_function function, CancellationTokenSource cancellationTokenSource)
 		{
 			if (!item.PluginsEnabled)
 				return null;
@@ -164,7 +162,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			pfci.function = function;
 			pfci.Args = invokeParams;
 
-			var approved = await ApproveExecution(item, pfci);
+			var approved = await ApproveExecution(item, pfci, cancellationTokenSource);
 
 
 			if (!approved)
@@ -209,7 +207,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return null;
 		}
 
-		public static async Task<bool> ApproveExecution(TemplateItem item, PluginApprovalItem pfci)
+		public static async Task<bool> ApproveExecution(TemplateItem item, PluginApprovalItem pfci, CancellationTokenSource cancellationTokenSource)
 		{
 			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
 				return false;
@@ -219,7 +217,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			string assistantEvaluation = null;
 			if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies || item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
 			{
-				assistantEvaluation = await ClientHelper.EvaluateToolExecutionSafety(item) ?? "";
+				assistantEvaluation = await ClientHelper.EvaluateToolExecutionSafety(item, cancellationTokenSource) ?? "";
 				Global.MainControl.Dispatcher.Invoke(() =>
 				{
 					var lastMessage = item.Messages.Last();
@@ -246,7 +244,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 					item.PluginFunctionCalls.Add(pfci);
 				});
 				// Wait for approval (semaphore release)
-				pfci.Semaphore.Wait();
+				try
+				{
+					pfci.Semaphore.Wait(cancellationTokenSource.Token);
+				}
+				catch (Exception)
+				{
+				}
 				Global.MainControl.Dispatcher.Invoke(() =>
 				{
 					item.PluginFunctionCalls.Remove(pfci);
@@ -286,11 +290,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
 					if (!pi.IsOptional)
 						requiredParams.Add(pi.Name);
-					parametersObject.Add(pi.Name, new
+					var underlyingType = Nullable.GetUnderlyingType(pi.ParameterType) ?? pi.ParameterType;
+					var typeInfo = GetJsonType(pi.ParameterType);
+					if (underlyingType.IsArray)
 					{
-						type = GetJsonType(pi.ParameterType),
-						description = paramText
-					});
+						var elementType = underlyingType.GetElementType();
+						parametersObject.Add(pi.Name, new
+						{
+							type = "array",
+							items = new { type = GetJsonType(elementType) },
+							description = paramText
+						});
+					}
+					else
+					{
+						parametersObject.Add(pi.Name, new
+						{
+							type = typeInfo,
+							description = paramText
+						});
+					}
 				}
 				// Serialize the parameters object to a JSON string then create a BinaryData instance.
 				var serializedParameters = JsonSerializer.Serialize(new
@@ -316,26 +335,42 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static string GetJsonType(Type type)
+		public static object GetJsonType(Type type)
 		{
-			// Nullable types should be treated based on their underlying type.
+			// Determine the underlying non-nullable type of the parameter
 			var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
-			if (underlyingType == typeof(string))
+
+			// Enum handling: Return a JSON structure describing the enum, including possible values
+			if (underlyingType.IsEnum)
+			{
+				//var enumNames = Enum.GetNames(underlyingType);
+				//return new
+				//{
+				//	type = "string",
+				//	@enum = enumNames
+				//};
 				return "string";
-			else if (underlyingType == typeof(int) || underlyingType == typeof(long) || underlyingType == typeof(short) || underlyingType == typeof(byte))
-				return "integer";
-			else if (underlyingType == typeof(bool))
-				return "boolean";
-			else if (underlyingType == typeof(double) || underlyingType == typeof(float) || underlyingType == typeof(decimal))
-				return "number";
-			else if (underlyingType.IsArray || (typeof(System.Collections.IEnumerable).IsAssignableFrom(underlyingType) && underlyingType != typeof(string)))
-				return "array";
-			else if (underlyingType == typeof(object))
-				return "object";
-			else if (underlyingType.IsClass)
-				return "object";
-			else
-				return "object";
+			}
+			// Simple types: Return the JSON type name as a string
+			switch (Type.GetTypeCode(underlyingType))
+			{
+				case TypeCode.Boolean: return "boolean";
+				case TypeCode.Byte:
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.Int64:
+				case TypeCode.SByte:
+				case TypeCode.UInt16:
+				case TypeCode.UInt32:
+				case TypeCode.UInt64: return "integer";
+				case TypeCode.Decimal:
+				case TypeCode.Double:
+				case TypeCode.Single: return "number";
+				case TypeCode.String: return "string";
+				default:
+					// For all other types, including complex objects and types not explicitly handled above
+					return "object";
+			}
 		}
 
 		#endregion

@@ -69,7 +69,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				pp.Name = pi.Name;
 				pp.IsOptional = pi.IsOptional;
 				pp.Description = paramText;
-				pp.Type = PluginsManager.GetJsonType(pi.ParameterType);
+				pp.Type = AppHelper.GetBuiltInTypeNameOrAlias(pi.ParameterType);
 				pp.Index = index++;
 				Params.Add(pp);
 			}

@@ -338,7 +338,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								//var iae = (IAsyncEnumerable<Completions>)streamingChatCompletions;
 								var iae = streamingChatCompletions.AsAsyncEnumerable();
 								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
-								while (await choicesEnumerator.MoveNextAsync())
+								while (await choicesEnumerator.MoveNextAsync(cancellationTokenSource.Token))
 								{
 									var completions = choicesEnumerator.Current;
 									foreach (var choice in completions.Choices)
@@ -414,7 +414,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								//var iae = (IAsyncEnumerable<StreamingChatCompletionsUpdate>)streamingChatCompletions;
 								var iae = streamingChatCompletions.AsAsyncEnumerable();
 								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
-								while (await choicesEnumerator.MoveNextAsync())
+								while (await choicesEnumerator.MoveNextAsync(cancellationTokenSource.Token))
 								{
 									var choice = choicesEnumerator.Current;
 									answer += choice.ContentUpdate;
@@ -455,7 +455,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									{
 										foreach (var function in functions)
 										{
-											var functionResultContent = await PluginsManager.ProcessPlugins(item, function);
+											var functionResultContent = await PluginsManager.ProcessPlugins(item, function, cancellationTokenSource);
 											var fnAttachment = new MessageAttachments(ContextType.None, "text", functionResultContent);
 											fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
 											fnAttachment.IsAlwaysIncluded = true;
@@ -538,7 +538,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			assistantMessageItem.Body = answer;
 			if (!messageItems.Contains(assistantMessageItem))
 				messageItems.Add(assistantMessageItem);
-			if (functionResults.Count > 0)
+			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Count > 0)
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
 				userAutoReplyMessageItem.Attachments.AddRange(functionResults);
