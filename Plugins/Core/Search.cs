@@ -135,31 +135,31 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 			if (!string.IsNullOrEmpty(itemName))
 			{
-				whereClauses.Add("CONTAINS(System.Search.ItemName, @ItemName)");
-				parameters.Add(new OleDbParameter("@ItemName", $"\"*{itemName}*\""));
+				whereClauses.Add("CONTAINS(System.ItemNameDisplay, @ItemNameDisplay)");
+				parameters.Add(new OleDbParameter("@ItemNameDisplay", $"\"*{itemName}*\""));
 			}
 
 			if (!string.IsNullOrEmpty(itemPath))
 			{
-				whereClauses.Add("CONTAINS(System.Search.ItemPath, @ItemPath)");
-				parameters.Add(new OleDbParameter("@ItemPath", $"\"*{itemPath}*\""));
+				whereClauses.Add("CONTAINS(System.ItemPathDisplay, @ItemPathDisplay)");
+				parameters.Add(new OleDbParameter("@ItemPathDisplay", $"\"*{itemPath}*\""));
 			}
 
 			if (!string.IsNullOrEmpty(itemTypeText))
 			{
-				whereClauses.Add("CONTAINS(System.Search.ItemTypeText, @ItemTypeText)");
+				whereClauses.Add("CONTAINS(System.ItemTypeText, @ItemTypeText)");
 				parameters.Add(new OleDbParameter("@ItemTypeText", $"\"*{itemTypeText}*\""));
 			}
 
 			if (!string.IsNullOrEmpty(fileExtension))
 			{
-				whereClauses.Add("CONTAINS(System.Search.FileExtension, @FileExtension)");
+				whereClauses.Add("CONTAINS(System.FileExtension, @FileExtension)");
 				parameters.Add(new OleDbParameter("@FileExtension", $"\"*{fileExtension}*\""));
 			}
 
 			if (!string.IsNullOrEmpty(title))
 			{
-				whereClauses.Add("CONTAINS(System.Search.Title, @Title)");
+				whereClauses.Add("CONTAINS(System.Title, @Title)");
 				parameters.Add(new OleDbParameter("@Title", $"\"*{title}*\""));
 			}
 
@@ -174,7 +174,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 			if (!string.IsNullOrEmpty(comment))
 			{
-				whereClauses.Add("CONTAINS(System.Search.Comment, @Comment)");
+				whereClauses.Add("CONTAINS(System.Comment, @Comment)");
 				parameters.Add(new OleDbParameter("@Comment", $"\"*{comment}*\""));
 			}
 
@@ -234,11 +234,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 
 			var query = $@"
-            SELECT System.ItemName, System.ItemPathDisplay, System.ItemTypeText, System.DateModified, 
-                System.FileExtension, System.Size, System.Author, System.Title, System.DateCreated, 
-                System.DateAccessed
+            SELECT TOP 100
+				System.ItemNameDisplay, System.ItemPathDisplay,
+				System.FileExtension, System.ItemTypeText,
+				System.Size, System.Author, System.Title,
+				System.DateCreated, System.DateModified, System.DateAccessed
             FROM SystemIndex 
             WHERE {string.Join(" AND ", whereClauses)}";
+
 
 			var results = ExecuteQuery(query, parameters);
 			return results;
@@ -251,12 +254,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 			using (var connection = new OleDbConnection(connectionString))
 			{
-				var command = new OleDbCommand(query, connection);
-
-				foreach (var parameter in parameters)
-				{
-					command.Parameters.Add(parameter);
-				}
+				var queryString = GetSqlCommand(query, parameters);
+				var command = new OleDbCommand(queryString, connection);
+				//foreach (var parameter in parameters)
+				//{
+				//	command.Parameters.Add(parameter);
+				//}
 
 				try
 				{
@@ -265,11 +268,24 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 					while (reader.Read())
 					{
-						var fileInfo = new IndexedFileInfo
-						{
-							// Populate the object fields as before.
-						};
-						results.Add(fileInfo);
+						var fi = new IndexedFileInfo();
+						fi.ItemName = reader["System.ItemNameDisplay"] as string;
+						fi.ItemPathDisplay = reader["System.ItemPathDisplay"] as string;
+						fi.ItemTypeText = reader["System.ItemTypeText"] as string;
+						fi.FileExtension = reader["System.FileExtension"] as string;
+						var size = reader.IsDBNull(reader.GetOrdinal("System.Size"))
+							? null
+							: reader["System.Size"].ToString();
+						decimal decimalSize;
+						fi.Size = !decimal.TryParse(size, out decimalSize)
+							? 0
+							: (long)decimalSize;
+						fi.Author = reader["System.Author"] as string;
+						fi.Title = reader["System.Title"] as string;
+						fi.DateCreated = reader["System.DateCreated"] as DateTime?;
+						fi.DateModified = reader["System.DateModified"] as DateTime?;
+						fi.DateAccessed = reader["System.DateAccessed"] as DateTime?;
+						results.Add(fi);
 					}
 					reader.Close();
 				}
@@ -280,6 +296,31 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 
 			return results;
+		}
+
+		private static string GetSqlCommand(string query, List<OleDbParameter> parameters)
+		{
+			foreach (OleDbParameter parameter in parameters)
+			{
+				string parameterName = parameter.ParameterName;
+				string parameterValue = parameter.Value.ToString();
+				// If the parameter.Value is a string, you should escape any single quotes and wrap it in single quotes
+				if (parameter.Value is string)
+				{
+					parameterValue = parameterValue.Replace("'", "''"); // Sanitize single quotes
+					parameterValue = $"'{parameterValue}'"; // Wrap in single quotes for SQL string
+				}
+				// For datetime parameters, ensure to format the date correctly for SQL.
+				else if (parameter.Value is DateTime)
+				{
+					parameterValue = ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss");
+					parameterValue = $"'{parameterValue}'";
+				}
+				// Add other types and their formatting as needed (e.g., decimals might need formatting)
+				// Replace the parameter in the query
+				query = query.Replace(parameter.ParameterName, parameterValue);
+			}
+			return query;
 		}
 
 	}
