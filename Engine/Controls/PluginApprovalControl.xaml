@@ -5,8 +5,8 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="450"
-	d:DesignWidth="800"
+	x:Name="This"
+	Visibility="{Binding SowApprovalPanel, ElementName=This}"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -17,7 +17,42 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
-		<local:PluginItemControl x:Name="PluginItemControl" />
-	</Grid>
+	<Border BorderBrush="{StaticResource BorderDark}" BorderThickness="0,1,0,0">
+		<StackPanel Orientation="Vertical">
+			<StackPanel Background="{StaticResource BackgroundDark}" Orientation="Horizontal">
+				<Label Content="Do you want to execute function submitted by AI?" FontWeight="Bold" />
+				<Label Content="{Binding FunctionId, ElementName=This}" FontWeight="Bold" />
+			</StackPanel>
+			<local:PluginItemControl x:Name="PluginItemPanel" DataContext="{Binding ApprovalItem.Plugin, ElementName=This}" />
+			<Border
+				x:Name="SeparatorBorder"
+				Margin="4,0,4,0"
+				x:FieldModifier="public"
+				BorderBrush="{StaticResource BackgroundDark}"
+				BorderThickness="0,0,0,1"
+				Visibility="{Binding ShowSecondaryAiEvaluation, ElementName=This}">
+				<TextBlock
+					Margin="0,0,0,4"
+					Padding="0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Top"
+					Text="{Binding ApprovalItem.SecondaryAiEvaluation, ElementName=This}"
+					TextWrapping="Wrap" />
+			</Border>
+			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+				<Button Name="ApproveButton" MinWidth="75" Click="ApproveButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+						<Label Content="Approve" />
+					</StackPanel>
+				</Button>
+				<Button Name="DenyButton" MinWidth="75" Click="DenyButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+						<Label Content="Deny" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</StackPanel>
+	</Border>
 </UserControl>

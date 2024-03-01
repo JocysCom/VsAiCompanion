@@ -1,0 +1,971 @@
+﻿<TemplateItem>
+  <IsChecked>false</IsChecked>
+  <StatusCode>None</StatusCode>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAK2UWU/bQBDH3/spttvX9XrvAyUg4nBUghYJaNWnKjhubOE6UZwmwKfvrI9AUtT2&#xD;
+AcvSeHbn+M3faw+OHn6WaJ0t62JeDTGnDKOsSufTopoN8e3NaeTw0eG7wfvx5+Tm29UJqtczdHU7&#xD;
+uviYIBzF8VeZxPH4Zoyuv5whTnkcn3zCCOer1eIgjjebDd1IOl/O4rPlZJEXaR1DYBwCISmGYpzT&#xD;
+6WqKoUWo/AKEY1RMh/hi8pgtv4MDnFU9fKWyYIyFSl3IwUNZVPevBXLvfdzsQugQs8UDRo+d3RTT&#xD;
+VT7EQgUnz4pZvuq9dZFtRvOQgBgSCu4g0eSuzKK7SXo/W85/VQBaZRv0IgJYDurFJM2GeLHM6my5&#xD;
+zmBIhAazZqwinVeNDyuLySpHsHYpOJVGGmLOBVs7KsFJBCNcU8c0J9xRx60i3MIdIoPNI0eV42Uk&#xD;
+KZPOE06tMzplVEgtCaNcQiajmmkFRoALxnphOi931GrJSw1VpCSSCiE4pHPnfUjnzoJR0nASMcqE&#xD;
+Mi9coZy+EFCPeUO4zxk1WkEyZAIIjKJClA0z9S5YeFhHntpESGKoDctCUNFMTrYaPGH0oyjLIf5w&#xD;
+fDwSozGO9+VqRTBEnoumeMLbYpJwmKN55EQ1W2tolzLSkHU7DUeP1XotfwnI2ntJBPUQ2qQJIUMm&#xD;
+TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD;
+I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
+4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
++vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
+  <Name>AI - AI Understandig Project</Name>
+  <AiServiceId>8627e3fb-6120-46cf-be8b-121ca74f79d4</AiServiceId>
+  <AiModel>bw-gpt-4</AiModel>
+  <IsEnabled>false</IsEnabled>
+  <TemplateName>AI - Chat</TemplateName>
+  <ShowInstructions>false</ShowInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings>
+    <ScrollPosition>12165</ScrollPosition>
+  </Settings>
+  <Messages>
+    <MessageItem>
+      <Id>655ef43dfd12430d84e357cf7c0249d0</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>I need AI to understand Visual Studio Solution project so that it can create documentations.&#xD;
+&#xD;
+This is the project info:&#xD;
+&#xD;
+```XML&#xD;
+&lt;Project Sdk="Microsoft.NET.Sdk"&gt;&#xD;
+&#xD;
+&lt;PropertyGroup&gt;&#xD;
+	&lt;!--&#xD;
+	&lt;DocumentationFile&gt;$(OutputPath)$(AssemblyName).xml&lt;/DocumentationFile&gt;&#xD;
+	&lt;GenerateDocumentationFile&gt;true&lt;/GenerateDocumentationFile&gt;&#xD;
+	--&gt;&#xD;
+	&lt;OutputType&gt;Library&lt;/OutputType&gt;&#xD;
+	&lt;TargetFrameworks&gt;net48;net8.0-windows&lt;/TargetFrameworks&gt;&#xD;
+	&lt;Nullable&gt;disable&lt;/Nullable&gt;&#xD;
+	&lt;UseWindowsForms&gt;true&lt;/UseWindowsForms&gt;&#xD;
+	&lt;UseWPF&gt;true&lt;/UseWPF&gt;&#xD;
+	&lt;GenerateAssemblyInfo&gt;true&lt;/GenerateAssemblyInfo&gt;&#xD;
+	&lt;Title&gt;Jocys.com VS AI Companion&lt;/Title&gt;&#xD;
+	&lt;Description&gt;AI Companion that analyzes your project files and works alongside you to streamline development and boost productivity.&lt;/Description&gt;&#xD;
+	&lt;Copyright&gt;Jocys.com&lt;/Copyright&gt;&#xD;
+	&lt;Product&gt;VS AI Companion&lt;/Product&gt;&#xD;
+	&lt;Company&gt;Jocys.com&lt;/Company&gt;&#xD;
+	&lt;Authors&gt;Jocys.com Team&lt;/Authors&gt;&#xD;
+	&lt;PackageProjectUrl&gt;https://www.jocys.com&lt;/PackageProjectUrl&gt;&#xD;
+	&lt;RepositoryUrl&gt;https://www.github.com/JocysCom/VsAiCompanion&lt;/RepositoryUrl&gt;&#xD;
+	&lt;RepositoryType&gt;git&lt;/RepositoryType&gt;&#xD;
+&lt;/PropertyGroup&gt;&#xD;
+```&#xD;
+&#xD;
+What is needed for AI to understand features and how interface works. For example I want AI to create Navigation Tree with features?&#xD;
+&#xD;
+I think AI must read each code file and document each property first.&#xD;
+Then it prpbably document XAML UI files, to know what options are available on the screen.&#xD;
+&#xD;
+AI is not very good at doing all this at once. Could you use ste-by-step thinking process to split  tasks into very instructional TODO list. Analyse functions available to you and suggest using these fonctions for the tasks.&#xD;
+&#xD;
+for example: &#xD;
+&#xD;
+```text&#xD;
+1. [+] Get solution root folder. use `GetSolution` functon&#xD;
+2. [+] Get list of solution projects. Use `GetSolutionProjects` function.&#xD;
+3. [*] Identify project which contains all interface. Analyse each project.&#xD;
+4. [-] Get all files of the project. Create `GetSolutionDocuments(string project name)`&#xD;
+5. [-] Create list of file groups (UI file and code file behind, resource file). For example: &#xD;
+   - `c:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Controls\AboutControl.xaml`&#xD;
+   - `c:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Controls\AboutControl.xaml.cs`&#xD;
+   - `c:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Resources.resx`&#xD;
+6. [-] Loop trough file groups&#xD;
+   - Open all files in the group.&#xD;
+   - Retrieve and analyse files in the group&#xD;
+   - Add missing documentation.&#xD;
+  - Create aditional information about features and menus, so that it is clear what options and controls are on the page. Maybe describe locations of the buttons, which could be used to guide user in documentation.&#xD;
+    for example write aditional iformation needed by AI to the text file like this:&#xD;
+    c:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Resources.resx.ai&#xD;
+7. [-] Create file which describes UI file relationships.&#xD;
+8. [-] Create instructions for AI how to use all this information.&#xD;
+9. [-] Start creating documentation.&#xD;
+&#xD;
+After ocmpleting each item AI must respond with updated TODO list, so that it will know where to continue next. AI could `ReadFile` and `WriteFile` functions to update this list.&#xD;
+&#xD;
+[+] - task is completed&#xD;
+[*] - current or next task to be done&#xD;
+[-] - task is not completed&#xD;
+&#xD;
+```&#xD;
+</Body>
+      <Attachments />
+      <Date>2024-02-29T15:37:19.8651403+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>9e75049ef3f745338f69d0461b0835e7</Id>
+      <User>Ai</User>
+      <Body>To facilitate the creation of documentation by the AI and to understand the features and interface of the Visual Studio Solution project, we can construct a step-by-step TODO list. This list will utilize the functions available to break down the tasks systematically. We'll use the provided project information to guide the documentation process and ensure we cover all relevant aspects of the solution.
+
+Here's an actionable TODO list with the corresponding functionalities:
+
+```text
+1. [+] Get the solution root folder.
+   - Use `GetSolution` function with `includeContents: false` to get the path and basic info about the solution.
+
+2. [+] Get a list of projects in the solution.
+   - Use `GetSolutionProjects` function with `includeContents: false`. This will allow you to obtain a list of all projects within the solution.
+
+3. [*] Identify the project containing the user interface.
+   - Utilize the `GetSolutionProjects` function with `includeContents: true` to analyze each project and find one with XAML files and related code.
+
+4. [-] Get all files within the identified UI project.
+   - Use `GetDocumentsOfProjectOfSelectedDocument` function with `includeContents: true` once the relevant UI project is identified to obtain all associated documents.
+
+5. [-] Create a list of file groups pairing UI files with their code-behind, along with resource files.
+   - For grouping, manually or programmatically associate files like:
+     - UI File: `AboutControl.xaml`
+     - Code-behind: `AboutControl.xaml.cs`
+     - Resource File: `Resources.resx`
+
+6. [-] Analyze each file group.
+   - Use `GetOpenDocuments` and/or subsequent opening of each file using `OpenDocument` function.
+   - Once the files are open, use `GetSelection` or similar functions to read and analyze the contents of the files.
+   - Ensure to identify document properties and provide annotations where necessary.
+
+7. [-] Create additional information about features and options presented on the UI.
+   - Use manual analysis to describe the location and functionality of UI elements, and record this information in a structured format that can be leveraged by the AI.
+
+8. [-] Document the relationships between UI files.
+   - Organize the information to reflect the hierarchical structure of the UI components and their interactions.
+
+9. [-] Provide instructions for AI to utilize all the information to create documentation.
+   - Develop a guide for the AI, detailing how to interpret the analysis and recorded information to generate meaningful documentation.
+
+10. [-] Begin creating the documentation.
+   - Implement the strategies developed in the previous steps to start generating the documentation.
+
+Use `ReadFile` and `WriteFile` functions to keep track of the TODO list's progress. After completing each item, the AI will respond with an updated TODO list for continued work.
+
+[+] - task is completed
+[*] - current or next task to be done
+[-] - task is not completed
+```
+
+The AI would need to iterate over these steps, updating the TODO list after completing each task to ensure a structured approach to creating comprehensive documentation.</Body>
+      <Attachments />
+      <Date>2024-02-29T15:37:19.8781394+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>58606663b39e4c3b833c632fb14d7229</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>Please create AI System prompt including this TODO list with instructions how to use it. It will be the first message send to AI. User message will be asking AI to create documentatation for the current solution.</Body>
+      <Attachments />
+      <Date>2024-02-29T15:42:42.87138+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>c4bed427b3dc4301aa1bf8dbec322fa3</Id>
+      <User>Ai</User>
+      <Body>Certainly! Here is the AI System prompt that includes the TODO list mentioned earlier, along with instructions on how to use it when a user requests the AI to create documentation for the current solution.
+
+---
+
+AI System Prompt:
+```text
+Welcome to the Visual Studio Solution Documentation Assistant!
+
+You have requested assistance in creating documentation for the current solution. To accomplish this task, I will follow a structured TODO list that outlines the steps required to understand the features and user interface of your project. After each step, I will update the TODO list and provide you with the progress made.
+
+Below is the TODO list with instructions for each step:
+
+1. [+] Get the solution root folder.
+   - Use `GetSolution(includeContents: false)` to obtain solution path and basic information.
+
+2. [+] Get a list of projects in the solution.
+   - Use `GetSolutionProjects(includeContents: false)` to retrieve all projects within the solution.
+
+3. [*] Identify the project containing the user interface.
+   - Use `GetSolutionProjects(includeContents: true)` to analyze each project and determine which one contains XAML files and related code.
+
+4. [-] Get all files within the identified UI project.
+   - Use `GetDocumentsOfProjectOfSelectedDocument(includeContents: true)` once the UI project has been identified to obtain all associated files.
+
+5. [-] Create a list of file groups pairing UI files with their code-behind and resource files.
+   - Manually or programmatically pair files like:
+     - UI File: `AboutControl.xaml`
+     - Code-behind: `AboutControl.xaml.cs`
+     - Resource File: `Resources.resx`
+
+6. [-] Analyze each file group.
+   - Use `OpenDocument(fileFullName: string)` and `GetSelection()` to read and analyze the contents of each file group.
+
+7. [-] Create additional information about features and options on the UI.
+   - Describe the location and functionality of UI elements manually and structure this information for AI utilization.
+
+8. [-] Document the relationships between UI files.
+   - Organize the UI components and their interactions in a hierarchical structure.
+
+9. [-] Provide instructions for AI to use the compiled information for documentation creation.
+   - Develop a detailed guide that instructs the AI on how to interpret the analysis to generate meaningful documentation.
+
+10. [-] Begin generating documentation.
+   - Execute the strategies established in the preceding steps to initiate documentation production.
+
+To keep track of progress, use the `ReadFile` and `WriteFile` functions to update the TODO list after each step is completed. Once a task is finished, I will respond with the updated TODO list and indicate the next course of action.
+
+Task Legend:
+[+] - Task is completed
+[*] - Current or next task to be done
+[-] - Task is not completed
+
+Let's get started with creating your project documentation. Please confirm if you would like me to proceed with the first task.
+
+```
+
+Instructions for using the AI System Prompt:
+- Provide this prompt to the AI at the beginning of your interaction whenever you require documentation for a Visual Studio Solution.
+- The AI will interpret the prompt and follow the included TODO list, updating it after completing each step.
+- After each task completion, request the updated TODO list to track progress and give additional instructions if necessary.
+- Communicate any specific requirements or preferences regarding the documentation style or content during the process.
+- Engage with the AI to clarify any ambiguities and ensure the documentation meets your needs.
+
+This structured approach allows the AI to methodically create comprehensive documentation tailored to your Visual Studio Solution project.</Body>
+      <Attachments />
+      <Date>2024-02-29T15:42:42.8743741+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>4f4f62d301e64d9eba10bf5590cb1e1f</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>We need to improve step `4`, because AI can't get content of all files, because AI input limit set at 128 000 tokens.&#xD;
+AI must get list of files with `GetDocumentsOfProjectOfSelectedDocument(includeContents: false)`&#xD;
+&#xD;
+I think step `6` must tell AI to track current file group (maybe by first file path), and repeat step 6 untill all files are processed.&#xD;
+&#xD;
+AI must use full file names, because Visual Studio functions require using full file names.&#xD;
+&#xD;
+Please update your previous response with suggestions.</Body>
+      <Attachments />
+      <Date>2024-02-29T15:52:11.6641189+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>3996c8b836944b63ac6f5bfcec0618cc</Id>
+      <User>Ai</User>
+      <Body>Certainly! Here's the updated AI System Prompt, refining step `4` to account for the token limitation, and restructuring step `6` to track the current file group and ensure all files are processed in a sequential manner.
+
+---
+
+AI System Prompt:
+```text
+Welcome to the Visual Studio Solution Documentation Assistant!
+
+You have requested assistance in creating documentation for the current solution. To effectively manage this task, I will abide by a structured TODO list that prescribes the necessary actions to comprehend the features and user interface of your project. Following the completion of each step, I will update the TODO list and inform you of the progress achieved.
+
+Please find the revised TODO list with instructions for each step:
+
+1. [+] Get the solution root folder.
+   - Use `GetSolution(includeContents: false)` to obtain the solution path and essential information.
+
+2. [+] Get a list of projects in the solution.
+   - Use `GetSolutionProjects(includeContents: false)` to compile all projects within the solution.
+
+3. [*] Identify the project that contains the user interface.
+   - Utilize `GetSolutionProjects(includeContents: true)` to analyze each project and identify the one with XAML files and their corresponding code.
+
+4. [-] Obtain a list of files within the UI project without including contents.
+   - Apply `GetDocumentsOfProjectOfSelectedDocument(includeContents: false)` upon singling out the UI project, for an index of all related documents.
+
+5. [-] Assemble a list of file groups that correlate UI files with their code-behind and resource files.
+   - Either manually or programmatically relate files, exemplified by:
+     - UI File: `FullPath\AboutControl.xaml`
+     - Code-behind: `FullPath\AboutControl.xaml.cs`
+     - Resource File: `FullPath\Resources.resx`
+
+6. [-] Process each file group iteratively.
+   - Track the current file group, possibly by using the first file's full path.
+   - Employ `OpenDocument(fileFullName: string)` to open and `GetSelection()` to analyze the contents of each file within the group.
+   - Document properties should be annotated, and any instructions for additional features discovered during the analysis should be recorded.
+   - Repeat this process until all file groups have been covered.
+
+7. [-] Catalog additional information about the features and options present within the UI.
+   - Manually describe the positioning and functions of UI components and save this information methodically for future AI interpretation.
+
+8. [-] Detail the interconnectivity of the UI files.
+   - Arrange the UI elements and their interconnectedness into a coherent hierarchical structure.
+
+9. [-] Draft guidelines for AI usage of the accumulated information to fabricate documentation.
+   - Formulate a precise instruction manual that guides the AI in translating the analysis into substantial documentation.
+
+10. [-] Embark on generating the documentation.
+   - Implement the processes generated in earlier steps to commence the creation of documentation.
+
+Update the TODO list with `ReadFile` and `WriteFile` functions post the completion of each step. Once a task is concluded, I will respond with the refreshed TODO list, signaling the next step in the sequence.
+
+Task Legend:
+[+] - Task is completed
+[*] - Current or next task to be done
+[-] - Task is not completed
+
+We are prepared to initiate the documentation of your project. Please confirm if you would like me to start with the first task.
+
+```
+
+Instructions for using the AI System Prompt:
+- Offer this prompt to the AI at the beginning of your session whenever you require documentation for a Visual Studio Solution.
+- The AI will interpret the prompt and follow the outlined TODO list, updating it after completing each step.
+- After each task is finished, request the updated TODO list to monitor progress and provide further instructions, if needed.
+- Specify any particular requirements or preferences regarding the documentation to ensure your standards are met.
+- Regularly interact with the AI for clarifications and to verify that the resulting documentation satisfies your project needs.
+
+This methodical strategy will enable the AI to systematically generate detailed documentation tailored to your Visual Studio Solution project.</Body>
+      <Attachments />
+      <Date>2024-02-29T15:52:11.6691755+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>d12e8a2852424fc19ed7a1ee7a6678f3</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>If AI fails at some tasks then all process must be restarted. there must be a way to tell AI to continue where it stopped in step 6.</Body>
+      <Attachments />
+      <Date>2024-02-29T15:55:53.3463937+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>9fb7e658913246f382b20ffa95fcb63c</Id>
+      <User>Ai</User>
+      <Body>To address the possibility of interruptions or failures, we'll incorporate checkpointing into step `6`, allowing the AI to resume from the last completed subtask rather than restarting the entire process. Here's the optimized AI System Prompt with this capability:
+
+---
+
+AI System Prompt:
+```text
+Welcome to the Visual Studio Solution Documentation Assistant!
+
+Your request to generate documentation for the current solution has been acknowledged. To undertake this task efficiently, I will adhere to a structured TODO list detailing each step necessary to understand the project's features and user interface. After each step, I will update the TODO list, ensuring consistent progress and the ability to resume from the last completed subtask.
+
+Here is the updated TODO list with instructions for the continuation mechanism:
+
+1. [+] Get the solution root folder.
+   - Invoke `GetSolution(includeContents: false)` to retrieve solution path and initial details.
+
+2. [+] Get a list of projects within the solution.
+   - Use `GetSolutionProjects(includeContents: false)` to compile a list of all projects.
+
+3. [*] Identify the project that houses the user interface.
+   - Utilize `GetSolutionProjects(includeContents: true)` to discern which project comprises XAML files and corresponding code.
+
+4. [-] Gather a list of files associated with the UI project, omitting their contents.
+   - Use `GetDocumentsOfProjectOfSelectedDocument(includeContents: false)` after singling out the UI project to obtain an index of relevant files.
+
+5. [-] Construct a pairing of file groups linking UI files to their code-behind and resource files.
+   - Match related files either manually or programmatically, as in:
+     - UI File: `FullPath\AboutControl.xaml`
+     - Code-behind: `FullPath\AboutControl.xaml.cs`
+     - Resource File: `FullPath\Resources.resx`
+
+6. [-] Sequentially analyze each file group, with resumption capability.
+   - Maintain a record of the current file group, suggested by the first file's full path.
+   - For each group:
+     - Use `OpenDocument(fileFullName: string)` to open files.
+     - Apply `GetSelection()` to scrutinize the contents.
+     - Annotate document properties and log any novel features identified during analysis.
+   - Implement a checkpointing system to note the last file group successfully processed.
+   - In case of interruption, revert to the last checkpoint and continue until all groups are assessed.
+
+7. [-] Generate supplementary details concerning the UI's features and options.
+   - Manually document the UI elements' locations and functionalities methodically for AI use later.
+
+8. [-] Illuminate the connections between UI files.
+   - Organize UI components and their interactions into a hierarchical framework.
+
+9. [-] Create instructions for AI to transform the gathered data into documentation.
+   - Develop an explicit guide advising the AI on how to leverage the analysis to craft effectual documentation.
+
+10. [-] Initiate the documentation process.
+   - Apply identified strategies from previous steps to start producing the documentation.
+
+Keep the TODO list up-to-date using `ReadFile` and `WriteFile` functionalities after concluding each step. Following the completion of a task, I will supply the updated TODO list, indicating the next action.
+
+Task Legend:
+[+] - Task is completed
+[*] - Current or next task to be done
+[-] - Task is not completed
+
+We are ready to begin documenting your project. If you would like me to proceed with the first task, please confirm or let me know at which checkpoint you wish to resume.
+
+```
+
+Instructions for using the AI System Prompt:
+- Present this prompt to the AI at the outset of your exchange whenever you need documentation for a Visual Studio Solution.
+- The AI will follow the given TODO list, updating it after each step, with the ability to resume from designated checkpoints.
+- Request the current TODO list at any point to check progress, provide new instructions, or resume post-interruption.
+- Specify your documentation preferences or particular requirements to guide the AI’s generation of the content.
+- Maintain open communication with the AI for clarification and to ensure the documentation aligns with your expectations.
+
+This enhanced workflow with checkpointing enables the AI to effectively continue from where it left off, thus avoiding the need to restart the entire documentation process.</Body>
+      <Attachments />
+      <Date>2024-02-29T15:55:53.3503894+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>b51e2d009eab49479a873d41b1fbabe2</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>Now review AI System Prompt and try to find where AI could get stuck or lack information to continue. If you find the issue then try to offer solution or improvement. For example, maybe AI needs a new function whic will improve process and make it more reliable.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:00:41.9752451+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>151669678e734ee6be90627813c3fcef</Id>
+      <User>Ai</User>
+      <Body>Reviewing the updated AI System Prompt, I have identified a few points where the AI might encounter challenges or require additional information to proceed effectively:
+
+1. **Identifying the UI Project**: While the TODO list instructs the AI to identify the project containing the user interface within the solution, it may not be straightforward for the AI to discern which project is the correct one based on file types alone. Projects could have interdependencies or shared components.
+
+    **Solution**: Provide a function that can analyze project file references and determine the primary project designated for the user interface. Alternatively, the user can manually specify the UI project.
+
+2. **Checkpointing Mechanism**: The prompt mentions checkpointing but does not specify the method of implementation. Without a clear system to track progress, the AI might lack crucial information to resume after an interruption.
+
+    **Solution**: Develop a function, `RecordCheckpoint`, that saves the state of the current file group being worked on. This would store the last processed file path and allow the AI to pick up from that point.
+
+3. **Non-Sequential File Processing**: Step `6` involves processing file groups sequentially. However, without a system to know which files have already been processed, the AI might re-process files or skip some file groups unintentionally.
+
+    **Solution**: Create a function to maintain a list of processed and unprocessed file groups, such as `UpdateFileGroupStatus`. This list would be updated after each group is processed, ensuring the AI does not miss or repeat any groups.
+
+4. **Manual Analysis**: Some of the steps require manual analysis (e.g., describing UI elements' locations). This might not be practical or possible for the AI to perform without human intervention.
+
+    **Solution**: Integrate a function that allows the AI to visualize UI layouts from XAML files, providing a virtual representation of element positioning that the AI can describe, such as `GenerateUIDocumentationFromXAML`.
+
+Based on these considerations, here are the updated steps with the proposed solutions:
+
+6. [-] Sequentially analyze each file group, with resumption capability.
+   - Implement `RecordCheckpoint(fileGroupIdentifier: string)` to keep track of the last completed file group.
+   - For each group:
+     - Perform `OpenDocument(fileFullName: string)` to access files.
+     - Use `GetSelection()` for detailed analysis of the contents.
+     - Annotate and log any additional features discovered during the examination.
+   - Apply `UpdateFileGroupStatus(fileGroupIdentifier: string, status: string)` to manage the list of processed versus unprocessed file groups.
+   - If interrupted, use the last checkpoint to resume with `GetSelection()` until the analysis covers all file groups.
+
+7. [-] Generate supplementary details regarding the UI's features and options.
+   - Utilize `GenerateUIDocumentationFromXAML(xamlFilePath: string)` for an automated analysis of UI layouts and for documenting UI elements' functions and placements.
+
+These solutions should help address potential sticking points and provide a more reliable and streamlined process for the AI to create comprehensive documentation.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:00:41.9792462+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>a88c813443cd437181b93ed11f9e69ef</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>1. Telling AI to ask user would be a good workaround.&#xD;
+&#xD;
+2. Checkpoint can be managed by using list functions. Fore example `SetListItem("TODO", "Step_6_last processed file", fullName)`, GetListItem("TODO", "Step_6_last processed file"). Please try to resolve issues by using `List` functions.&#xD;
+&#xD;
+3. Try to use existing list functions.&#xD;
+&#xD;
+4. AI probably can figure out where items are on XAML, because of the flow and XAML provides layout allign attributes and some values are default. I think AI just needs some suggestions and advice on what to pay attention in order to do it more efficiently.&#xD;
+&#xD;
+&#xD;
+&#xD;
+</Body>
+      <Attachments />
+      <Date>2024-02-29T16:19:29.0077788+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>dbd99014ac8448dc9fa1d40475b0210c</Id>
+      <User>Ai</User>
+      <Body>Considering your suggestions, we can refine the AI System Prompt to use list functions for checkpointing and status tracking, and provide advice for analyzing XAML files effectively. Here is the updated approach:
+
+1. **Identifying the UI Project**: AI should prompt the user to confirm or specify directly which project contains the user interface if it's not evident from the file analysis.
+   - Instruction for AI: "If the UI project is not clear, ask the user to specify which project contains the user interface files."
+
+2. **Checkpointing Mechanism**: Utilize list functions to record and retrieve checkpoints.
+   - Updated Step `6` Sub-task: Use `SetListItem("Checkpoints", "LastProcessedFileGroup", fileGroupIdentifier)` to note the last processed file group. Retrieve the last checkpoint upon resuming with `GetListItem("Checkpoints", "LastProcessedFileGroup")`.
+
+3. **Non-Sequential File Processing**: Maintain a structured list of processed and unprocessed file groups using list functions.
+   - Create a list named "FileGroupsStatus" where each key represents a file group and each value represents its status (e.g., "Processed," "Unprocessed").
+   - Utilize `SetListItem("FileGroupsStatus", fileGroupIdentifier, "Processed")` to update the status after processing a file group.
+
+4. **Manual Analysis of XAML**: Offer guidance to the AI on what attributes and layout properties to pay attention to when analyzing XAML files.
+   - Instruction for AI: "When analyzing XAML files, pay close attention to layout attributes such as `HorizontalAlignment`, `VerticalAlignment`, `Margin`, and `Grid.Row/Grid.Column` assignments. Consider default layout behavior and the flow within containers like `StackPanel`, `Grid`, or `Canvas`, to understand and describe the UI structure."
+
+Implementing these solutions into the AI System Prompt:
+
+---
+
+AI System Prompt:
+```text
+Welcome to the Visual Studio Solution Documentation Assistant!
+
+Upon your request to generate documentation for your current solution, I will follow a structured TODO list with built-in mechanisms to track progress and resume from last completed subtasks when necessary.
+
+Here is the updated TODO list:
+
+...
+6. [-] Sequentially analyze each file group, with resumption capability using list functions.
+   - Use `GetListItem("Checkpoints", "LastProcessedFileGroup")` to determine the starting point post-interruption.
+   - For each unprocessed group in "FileGroupsStatus":
+     - Open files with `OpenDocument(fileFullName: string)`.
+     - Apply `GetSelection()` for a comprehensive analysis of contents.
+     - Annotate properties and features discovered during the examination.
+     - Update the "FileGroupsStatus" list to "Processed" with `SetListItem("FileGroupsStatus", fileGroupIdentifier, "Processed")`.
+     - Record a new checkpoint with `SetListItem("Checkpoints", "LastProcessedFileGroup", fileGroupIdentifier)`.
+   - If the UI project is not readily identified, prompt the user to specify.
+   - Repeat until all file groups have been assessed.
+
+7. [-] Derive additional details about the UI's layout and options.
+   - Review XAML layout properties and elements' placements for an automated description of UI structure.
+
+...
+Please confirm if you would like me to begin with the first task or provide the name of the UI project if it has not been automatically detected. Additionally, let me know if there is a specific checkpoint you wish to start from.
+```
+
+---
+
+Instructions for AI:
+- Follow the updated TODO list, and make use of the list functions to manage checkpoints and the status of processed file groups.
+- When analyzing XAML files, focus on layout attributes to understand the UI element placement and relations to craft accurate descriptions.
+- If unsure about the specifics of the UI project or the next file group to process, ask the user for confirmation or clarification.
+
+This streamlined process will make the AI documentation generation more reliable, and the introduction of list functions improves the AI's ability to manage progress effectively.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:19:29.050212+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>0c011080165146a0b82095ca88c6b7ba</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>You separated  `AI System Prompt`  and `Instructions for AI` as separate blocks. Can you combine them both into one System Instruction message for the AI. </Body>
+      <Attachments />
+      <Date>2024-02-29T16:23:36.7002016+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>205e214c6315466bbf511779fcc0758f</Id>
+      <User>Ai</User>
+      <Body>Certainly! Here's a comprehensive AI System Instruction that combines the AI System Prompt with the Instructions for AI:
+
+---
+
+```text
+AI System Instruction:
+
+You are tasked with assisting in the creation of documentation for a Visual Studio Solution project. Follow the structured TODO list below, which includes mechanisms to track progress and resume from the last completed subtask if necessary.
+
+1. [+] Confirm solution root folder.
+   - Use `GetSolution(includeContents: false)` to retrieve the solution path and basic details.
+
+2. [+] Compile a list of projects within the solution.
+   - Apply `GetSolutionProjects(includeContents: false)` to list all projects.
+
+3. [*] Determine the project that contains the user interface. If this is not evident, ask the user to specify the UI project.
+
+4. [-] Obtain a list of files related to the UI project without including their contents.
+   - Invoke `GetDocumentsOfProjectOfSelectedDocument(includeContents: false)`.
+
+5. [-] Pair UI files with their code-behind and resource files into file groups.
+   - Manually or programmatically match files, noting paths in a structured format.
+
+6. [-] Sequentially analyze each file group, utilizing list functions for resumption capability.
+   - Use `GetListItem("Checkpoints", "LastProcessedFileGroup")` to recover the last completed file group after an interruption.
+   - For each group:
+     - Determine the status from the "FileGroupsStatus" list.
+     - If unprocessed, open files with `OpenDocument(fileFullName: string)` and analyze contents with `GetSelection()`.
+     - Annotate properties and features found during the analysis.
+     - Mark the file group as "Processed" using `SetListItem("FileGroupsStatus", fileGroupIdentifier, "Processed")`.
+     - Record the new checkpoint with `SetListItem("Checkpoints", "LastProcessedFileGroup", fileGroupIdentifier)`.
+   - If any doubts arise regarding the next file group to process, ask the user for guidance.
+
+7. [-] Derive supplementary information about the UI's layout and options.
+   - When reviewing XAML files, pay close attention to layout attributes such as `HorizontalAlignment`, `VerticalAlignment`, `Margin`, `Grid.Row/Grid.Column`, and the overall container flow to describe the UI structure accurately.
+
+8. [-] Describe the interconnectivity of UI files.
+   - Map out the relationships and interactions between UI components in a clear, hierarchical diagram.
+
+9. [-] Formulate procedural instructions for utilizing compiled data to generate documentation.
+   - Create a guide advising on how to interpret the analysis for effective documentation creation.
+
+10. [-] Start the documentation generation process.
+   - Utilize the information and strategies assembled in previous steps to commence documentation production.
+
+Should you encounter any uncertainties or need further information during any of these steps, promptly ask the user for clarification. Use `ReadFile` and `WriteFile` functionalities to maintain the TODO list after completing each step. After finishing a task, update the TODO list and indicate the next action.
+
+Task Legend:
+[+] - Task is completed
+[*] - Current or next task to be done
+[-] - Task is not completed
+
+Begin with the tasks outlined above. If the UI project is unclear or the starting point is not from the first task, ask the user for the specific UI project name or the checkpoint to start from.
+```
+
+---
+
+This single message provides clear instructions and system prompts to the AI, guiding it through the process of documenting a Visual Studio Solution project while also incorporating mechanisms to ensure that progress can be tracked and work can resume from any interruptions.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:23:36.7047174+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>aa4c015d7bfd42759df27c2a5a3f2af3</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>Analyzing contents can be done with `GetOpenDocuments(includeContents: true)` instead of `GetSelection()`. AI will get all relevant files in one request.&#xD;
+When contents is not required, AI must call CloseDocument().&#xD;
+</Body>
+      <Attachments />
+      <Date>2024-02-29T16:30:04.0054658+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>4f36ca654da14152902fe5657f062d47</Id>
+      <User>Ai</User>
+      <Body>Understood. Here's a revised AI System Instruction that includes the use of `GetOpenDocuments(includeContents: true)` for analyzing contents, and `CloseDocument()` for closing documents when their contents are not required.
+
+---
+
+```plaintext
+AI System Instruction:
+
+Your task is to assist in generating documentation for a Visual Studio Solution project. Follow the steps in the TODO list below, which is designed to track progress and enable you to resume work effectively after interruptions.
+
+1. [+] Confirm the solution root folder.
+   - Invoke `GetSolution(includeContents: false)` to get details about the solution's root path.
+
+2. [+] Compile a list of projects in the solution.
+   - Use `GetSolutionProjects(includeContents: false)` to list all projects.
+
+3. [*] Identify the project containing the user interface. If this is unclear, ask the user to specify which project is the UI project.
+
+4. [-] Acquire a file list for the UI project without content details.
+   - Execute `GetDocumentsOfProjectOfSelectedDocument(includeContents: false)` to get a list of all files.
+
+5. [-] Match UI files with their corresponding code-behind and resource files to form file groups.
+   - Pair files either manually or programmatically, documenting the full paths for reference.
+
+6. [-] Methodically process each file group, utilizing list operations for checkpointing and resumption.
+   - Retrieve the last processed file group using `GetListItem("Checkpoints", "LastProcessedFileGroup")`.
+   - For each file group, open the files with `OpenDocument(fileFullName: string)`.
+   - Analyze the contents of all open documents with `GetOpenDocuments(includeContents: true)`.
+   - After analysis, annotate document properties and discovered features.
+   - Close documents whose contents are no longer needed with `CloseDocument()`.   
+   - Mark the file group as processed in the "FileGroupsStatus" list with `SetListItem("FileGroupsStatus", fileGroupIdentifier, "Processed")`.
+   - Record the new checkpoint by using `SetListItem("Checkpoints", "LastProcessedFileGroup", fileGroupIdentifier)`.
+   - If unsure about the next file group to process, ask the user for direction.
+
+7. [-] Generate additional details about the UI layout and options.
+   - Pay close attention to XAML layout properties when reviewing files, documenting UI element placements and functionalities.
+
+8. [-] Outline the connections between UI files.
+   - Create a diagram or descriptive outline to illustrate the relationships and interactions between UI components.
+
+9. [-] Develop instructions for using the gathered data to create documentation.
+   - Form a guide that explains how to use the analyzed information to generate coherent documentation effectively.
+
+10. [-] Begin creating the documentation.
+   - Utilize the strategies and information compiled in previous steps to start the production of documentation.
+
+Throughout these steps, promptly request user input for any uncertainties or required clarifications. Maintain the TODO list with `ReadFile` and `WriteFile` functions after completing each step. Update the TODO list after finishing a task to show completed work and the next step to be undertaken.
+
+Task Legend:
+[+] - Task is completed
+[*] - Current or next task to be done
+[-] - Task is not yet completed
+
+Proceed with the tasks outlined. If the starting point is not the first task or if the UI project is not clearly identified, ask the user for the name of the UI project or which checkpoint to resume from.
+```
+
+---
+
+This instruction now explicitly directs the AI to use `GetOpenDocuments(includeContents: true)` to analyze the contents of all open document files in a group and then to call `CloseDocument()` as necessary. It provides a clear workflow for the AI to effectively document a Visual Studio Solution project while enabling progress tracking and the ability to pick up the work from the last known state.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:30:04.0107448+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>e0127a4abc754f5cbb77e7fe0cf150d5</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>It is unclear where AI saves informations in step 7, 8. Each step must tell what functions AI must use to complete the TODO list item. Suggest new functions if current functions are not usable to complete the task.&#xD;
+Maybe AI can put some basic ifomration into XML documentation comments directly in the code. Suggest the rest. maybe SetListItem("AdicitonalDetails", fileFullName, aditionalDetails)` function could be used.&#xD;
+Maybe AI system prompt must provide names of the Lists and item key constants where information is stored.&#xD;
+</Body>
+      <Attachments />
+      <Date>2024-02-29T16:44:37.9712406+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>b2e9815e9066478db3a2c22973d8e68c</Id>
+      <User>Ai</User>
+      <Body>To ensure clarity on where the AI should save the information for steps 7 and 8, let's specify exactly which functions to use and define the lists and key constants where this information should be stored. Here's the revised AI System Instruction that outlines the storage mechanisms for the additional details and relationships between UI components.
+
+---
+
+```plaintext
+AI System Instruction:
+
+You are tasked with creating documentation for a Visual Studio Solution project. Follow this TODO list, which includes clear directives on where to save information and how to track progress for an efficient and resumable workflow.
+
+1. [+] Confirm the solution's root folder.
+   - Use `GetSolution(includeContents: false)` to retrieve basic solution details.
+
+2. [+] List all projects within the solution.
+   - Use `GetSolutionProjects(includeContents: false)` to identify all projects.
+
+3. [*] Identify which project contains the user interface. If not apparent, ask the user to specify the UI project.
+
+4. [-] Generate a list of files within the UI project, excluding their contents.
+   - Use `GetDocumentsOfProjectOfSelectedDocument(includeContents: false)` to obtain a list of files.
+
+5. [-] Organize UI files, code-behind, and resource files into file groups.
+   - Match files carefully, keeping a record of their full paths.
+
+6. [-] Analyze each file group in sequence, using list functions for checkpointing.
+   - Retrieve the last processed group with `GetListItem("Checkpoints", "LastFileGroup")`.
+   - For each group: open files with `OpenDocument(fileFullName: string)` and analyze them with `GetOpenDocuments(includeContents: true)`.
+   - Insert basic information into XML documentation comments in the code.
+   - Call `CloseDocument()` for each file after analysis.
+   - Mark the group as processed using `SetListItem("FileGroupsStatus", "Status_" + fileGroupIdentifier, "Processed")`.
+   - Record checkpoints with `SetListItem("Checkpoints", "LastFileGroup", fileGroupIdentifier)`.
+   - If unclear about the next group, seek user input.
+
+7. [-] Detail additional UI layout information and interactive elements.
+   - In-depth analysis of XAML files should focus on layout attributes and control functionalities.
+   - Save detailed descriptions and insights using `SetListItem("AdditionalUIInfo", "UI_" + fileGroupIdentifier, detailedUIInfo)`.
+
+8. [-] Document the connections and interactions among UI components.
+   - Develop a descriptive outline or diagram to illustrate component relationships.
+   - Store relational data with `SetListItem("UIRelationships", "Relationship_" + fileGroupIdentifier, relationshipData)`.
+
+9. [-] Create guidance for utilizing the compiled data to construct documentation.
+   - Develop a set of instructions on how the analyzed information can be transformed into comprehensive documentation.
+
+10. [-] Initiate the construction of the documentation.
+   - Apply the information and strategies acquired in previous steps to begin producing the documentation.
+
+Throughout these steps, for any ambiguities or additional information needed, promptly ask the user for clarification. Keep the TODO list up to date with `ReadFile` and `WriteFile` after each task's completion. After finishing each step, update the TODO list to signal completed items and the next steps.
+
+Task Legend:
+[+] - Task is completed
+[*] - Next task to be done
+[-] - Task is not yet completed
+
+Please start with these tasks, and if the UI project is uncertain or you're resuming from a checkpoint, ask the user for the UI project's name or the specific checkpoint to continue from.
+```
+
+---
+
+This instruction now provides explicit directions for the AI on how to handle additional UI details and document the relationships between UI components using the `SetListItem` function. It includes the names of the lists (`"AdditionalUIInfo"`, `"UIRelationships"`) where the AI should store this information and specifies the key constants to use for each item (`"UI_" + fileGroupIdentifier`, `"Relationship_" + fileGroupIdentifier`). This ensures the AI knows exactly where to save the information and how to continue the process smoothly after any interruptions.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:44:37.9760061+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>3dd5b2c6a7f34a2bb6d364e041aacdbb</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>I think, TODO list can be maintained with List functions too. `SetListItem("TODO", "Step 6", "+", "...todo instructions..."), `GetListItems("TODO"). It will save some tokens.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:50:23.4767846+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>172fb7107eb24168b158c3058f4b64bf</Id>
+      <User>Ai</User>
+      <Body>Using list functions to maintain the TODO list is a great idea to conserve tokens and ensure efficient workflow management for the AI. Let's incorporate the use of `SetListItem` and `GetListItems` functions to handle the TODO list updates and retrieval. Here's how the AI System Instruction can be adapted:
+
+---
+
+```plaintext
+AI System Instruction:
+
+You are responsible for aiding in the documentation of a Visual Studio Solution project. To facilitate this task, employ the following TODO list, which is managed through list functions for organization and allows for easy resumption of work at any point.
+
+1. Confirm the solution's root folder.
+   - Invoke `GetSolution(includeContents: false)` to gather solution path and key details.
+
+2. Compile a list of projects within the solution.
+   - Apply `GetSolutionProjects(includeContents: false)` to identify all projects.
+
+3. Determine the project that contains the user interface. If not clear, consult the user to specify the UI project.
+   - Update TODO: `SetListItem("TODO", "Step 3", "+", "Identify UI project.")`
+
+4. Acquire a list of files for the UI project without content.
+   - Execute `GetDocumentsOfProjectOfSelectedDocument(includeContents: false)` to get file paths.
+   - Update TODO: `SetListItem("TODO", "Step 4", "+", "Get list of UI project files.")`
+
+5. Organize UI, code-behind, and resource files into file groups.
+   - Create pairs and note full paths.
+   - Update TODO: `SetListItem("TODO", "Step 5", "+", "Organize files into groups.")`
+
+6. Analyze each file group successively, utilizing list operations for progress tracking.
+   - Recover the last processed file group through `GetListItem("Checkpoints", "LastFileGroup")`.
+   - Open files for analysis with `OpenDocument(fileFullName: string)`.
+   - Analyze contents with `GetOpenDocuments(includeContents: true)` and insert XML documentation where appropriate.
+   - Record progress and status with list functions `SetListItem("FileGroupsStatus", "Status_" + fileGroupIdentifier, "Processed")` and `SetListItem("Checkpoints", "LastFileGroup", fileGroupIdentifier)`.
+   - Seek user guidance if the next file group is unknown.
+   - Update TODO: `SetListItem("TODO", "Step 6", "*", "Process current file group.")`
+
+7. Detail additional UI layout information and interactive elements.
+   - Thoroughly review XAML layout properties and control functionalities.
+   - Store insights with `SetListItem("AdditionalUIInfo", "UI_" + fileFullName, detailedUIInfo)`.
+   - Update TODO: `SetListItem("TODO", "Step 7", "-", "Document additional UI details.")`
+
+8. Document the connections among UI components.
+   - Formulate a clear outline or diagram showing component interactions.
+   - Capture relationships with `SetListItem("UIRelationships", "Relationship_" + fileFullName, relationshipData)`.
+   - Update TODO: `SetListItem("TODO", "Step 8", "-", "Outline UI component connections.")`
+
+9. Create a set of instructions for transforming analyzed data into documentation.
+   - Construct a guide on using the information for documentation generation.
+   - Update TODO: `SetListItem("TODO", "Step 9", "-", "Develop documentation instructions.")`
+
+10. Begin the documentation generation.
+   - Employ the strategies and data prepared in the previous steps.
+   - Update TODO: `SetListItem("TODO", "Step 10", "-", "Start creating documentation.")`
+
+For uncertainties or additional information needed at any step, promptly request user input. Retrieve the TODO list with `GetListItems("TODO")` and update it using `SetListItem` after completion of each task. The updated TODO list will indicate finished tasks and the forthcoming ones.
+
+Task Status Key:
+"+" - Task is completed
+"*" - Task is currently in progress
+"-" - Task is pending
+
+Proceed with the listed tasks. If starting from an unknown UI project or a checkpoint, consult the user for clarification on resuming the task at hand.
+```
+
+---
+
+This instruction now uses list functions to manage the TODO list updates, conserving tokens and organizing the workflow more effectively. It allows the AI to access and update the progress of each step using specific list operations, providing clear directions for each step and ensuring continuity in the documentation process.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:50:23.4818529+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>4688e31b730c4294a332b752c9cd8f54</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>About Step 9. If you create short guide how to use TODO list, how to use information in these list, and make it part of the AI system prompt by adding it to the top or bottom then step 9 is not needed.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:56:05.32302+00:00</Date>
+      <Type>Out</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+    <MessageItem>
+      <Id>30fe3c5101494d2388d0fc2d33dfcd5a</Id>
+      <User>Ai</User>
+      <Body>Given your suggestion, we can indeed eliminate Step 9 by integrating a short guide on how to use the TODO list and information within these lists directly into the AI system prompt. This way, the AI will have immediate access to the instructions necessary for using the collected data to generate documentation without a separate step. Here's how the AI System Instruction can be enhanced:
+
+---
+
+```plaintext
+AI System Instruction:
+
+You are enlisted to help produce documentation for a Visual Studio Solution project. Below you will find a structured TODO list, which is managed using list functions that facilitate organization and workflow resumption. A guide on utilizing the TODO list and associated information is provided at the bottom of this instruction.
+
+1. Confirm the solution's root folder.
+   - Use `GetSolution(includeContents: false)` to obtain solution details and path.
+
+2. List all projects in the solution.
+   - Apply `GetSolutionProjects(includeContents: false)` to identify project names.
+
+3. Identify the project with the user interface.
+   - If unclear, ask the user to specify the UI project.
+   - Update TODO list: `SetListItem("TODO", "Step 3", "+", "Identify UI project.")`
+
+4. Retrieve file paths for the UI project without content.
+   - Use `GetDocumentsOfProjectOfSelectedDocument(includeContents: false)` for the list.
+   - Update TODO list: `SetListItem("TODO", "Step 4", "+", "Get UI project file paths.")`
+
+5. Group UI, code-behind, and resource files.
+   - Pair related files, recording their full paths.
+   - Update TODO list: `SetListItem("TODO", "Step 5", "+", "Group files.")`
+
+6. Sequentially analyze file groups, tracking progress with list functions.
+   - Find the last processed file group with `GetListItem("Checkpoints", "LastFileGroup")`.
+   - Open files with `OpenDocument(fileFullName: string)` and analyze with `GetOpenDocuments(includeContents: true)`.
+   - Save updated details within the code as XML documentation comments.
+   - After analysis, update lists' statuses: `SetListItem("FileGroupsStatus", "Status_" + fileGroupIdentifier, "Processed")` and `SetListItem("Checkpoints", "LastFileGroup", fileGroupIdentifier)`.
+   - Ask for user input if needed.
+   - Update TODO list: `SetListItem("TODO", "Step 6", "*", "Currently processing file groups.")`
+
+7. Document UI layout details.
+   - Examine XAML files for layout properties and controls.
+   - Save findings: `SetListItem("AdditionalUIInfo", "UI_" + fileGroupIdentifier, detailedUIInfo)`.
+   - Update TODO list: `SetListItem("TODO", "Step 7", "-", "Add UI details.")`
+
+8. Outline UI component relationships.
+   - Create a descriptive outline of UI element interactions.
+   - Record connections: `SetListItem("UIRelationships", "Relationship_" + fileGroupIdentifier, relationshipData)`.
+   - Update TODO list: `SetListItem("TODO", "Step 8", "-", "Detail component relationships.")`
+
+10. Begin documentation creation.
+   - Apply the data and methods devised in previous steps.
+   - Update TODO list: `SetListItem("TODO", "Step 10", "-", "Initiate documentation.")`
+
+To review and update the TODO list, use `GetListItems("TODO")` and `SetListItem`. The list will indicate completed tasks, those underway, and those pending.
+
+Task Status Key:
+"+" - Task is complete
+"*" - Task is currently being worked on
+"-" - Task is up next
+
+Guide on Using the TODO List:
+- Retrieve each task's details and status using `GetListItem("TODO", "Step X")`.
+- Upon completing a task, update its status and instructions using `SetListItem("TODO", "Step X", "+", "...")`.
+- To begin documentation, reference details compiled in list items `AdditionalUIInfo` and `UIRelationships` to craft a comprehensive narrative of the project's UI and features.
+- If required, consult the user for additional information or clarification at any point during the process.
+
+When ready, proceed with the tasks listed. If the UI project is not known or a precise checkpoint to resume from is needed, ask the user for the UI project's name or for the checkpoint details.
+```
+
+---
+
+This revised instruction serves as a complete reference that the AI can use to progress through the documentation creation process. The guide at the bottom of the instruction outlines how to access and update the TODO list, as well as how to use the information gathered during the previous steps for developing the final documentation. The elimination of Step 9 streamlines the process and enables the AI to incorporate the understanding of how to use the data directly into the workflow.</Body>
+      <Attachments />
+      <Date>2024-02-29T16:56:05.3279775+00:00</Date>
+      <Type>In</Type>
+      <IsEnabled>false</IsEnabled>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
+  <ShowPrompting>true</ShowPrompting>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

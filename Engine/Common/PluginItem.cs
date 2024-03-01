@@ -32,6 +32,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var iconName = Resources.Icons.Icons_Default.Icon_piece_grey;
 			switch (RiskLevel)
 			{
+				case RiskLevel.None:
 				case RiskLevel.Low:
 					iconName = Resources.Icons.Icons_Default.Icon_piece_green;
 					break;
@@ -39,6 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					iconName = Resources.Icons.Icons_Default.Icon_piece_yellow;
 					break;
 				case RiskLevel.High:
+				case RiskLevel.Critical:
 					iconName = Resources.Icons.Icons_Default.Icon_piece_red;
 					break;
 				default:
@@ -69,7 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				pp.Name = pi.Name;
 				pp.IsOptional = pi.IsOptional;
 				pp.Description = paramText;
-				pp.Type = PluginsManager.GetJsonType(pi.ParameterType);
+				pp.Type = AppHelper.GetBuiltInTypeNameOrAlias(pi.ParameterType);
 				pp.Index = index++;
 				Params.Add(pp);
 			}
@@ -87,7 +89,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue("")]
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
-
 
 		[XmlIgnore]
 		public Viewbox Icon { get => _Icon; set => SetProperty(ref _Icon, value); }

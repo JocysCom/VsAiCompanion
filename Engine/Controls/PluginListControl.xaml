@@ -86,6 +86,7 @@
 		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 			<ItemsControl
 				x:Name="MainItemsControl"
+				Margin="0,0,0,-1"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
 				HorizontalContentAlignment="Stretch"

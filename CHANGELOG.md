@@ -1,3 +1,18 @@
+2024-02-29 v1.6.14
+
+- New: TTS support. Can be used with Jocys.com TTS Monitor. Ask to create a very short funny dialog involving the dragon and voice it.
+
+2024-02-29 v1.6.13
+
+- Fix: Issue with inability to cancel message requests.
+- New: Plugin for searching Windows Index.
+
+2024-02-28 v1.6.11
+
+- Fix: Extension license file.
+- Update: The function approval process has been updated.
+- Update: Approval control is now within the app instead of in a popup message box.
+
 2024-02-27 v1.6.6
 
 - Fix: 3rd attempt to fix the "Method not found: ...Generic.IAsyncEnumerable" issue.

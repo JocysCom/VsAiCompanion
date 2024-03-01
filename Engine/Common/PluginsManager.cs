@@ -40,15 +40,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 						AddMethods(typeof(Basic));
 						AddMethods(typeof(VisualStudio));
 						AddMethods(typeof(Database));
-#if DEBUG
-						AddMethods(typeof(Lists));
-
 						Search._databasePath = Global.PluginsSearchPath;
 						AddMethods(typeof(Search));
+						AddMethods(typeof(TTS));
 
+#if DEBUG
+						AddMethods(typeof(Lists));
 						AddMethods(typeof(Automation));
 #endif
-
 					}
 					return _PluginFunctions;
 				}
@@ -100,54 +99,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-
-		public static async Task<bool> ApproveExecution(TemplateItem item, chat_completion_function function)
-		{
-			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
-				return false;
-			if (item.PluginApprovalProcess == ToolCallApprovalProcess.AllowAll)
-				return true;
-			var assistantApproved = false;
-			string assistantEvaluation = null;
-			if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies || item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
-			{
-				assistantEvaluation = await ClientHelper.EvaluateToolExecutionSafety(item) ?? "";
-				Global.MainControl.Dispatcher.Invoke(() =>
-				{
-					var lastMessage = item.Messages.Last();
-					var attachment = new Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
-					attachment.Title = "Approval by Secondary AI";
-					attachment.IsAlwaysIncluded = true;
-					lastMessage.Attachments.Add(attachment);
-				});
-				assistantApproved = assistantEvaluation.ToLower().Contains("function call approved");
-				// If approval relies on AI assistan only then return result.
-				if (item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
-					return assistantApproved;
-			}
-			if (item.PluginApprovalProcess == ToolCallApprovalProcess.User || item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies)
-			{
-				// If assitant approved then return true.
-				if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies && assistantApproved)
-					return true;
-				// It is up to user now to approve.
-				var text = "Do you want to execute function submitted by AI?";
-				if (!string.IsNullOrEmpty(assistantEvaluation))
-					text += assistantEvaluation;
-				text += "\r\n\r\n" + Client.Serialize(function);
-				var caption = $"{Global.Info.Product} - Plugin Function Approval";
-
-				item.PluginApprovalSemaphore = new SemaphoreSlim(0);
-				item.RaiseApprovalPending();
-				// Wait until user approves.
-				item.PluginApprovalSemaphore.Wait();
-				return item.IsPluginApproved;
-				//var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-				//return result == MessageBoxResult.Yes;
-			}
-			return false;
-		}
-
 		public static bool AllowPlugin(string functionName, RiskLevel maxRiskLevel)
 		{
 			var currentPlugin = Global.AppSettings.Plugins.FirstOrDefault(x => x.Name == functionName);
@@ -159,7 +110,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		/// <param name="item">User settings.</param>
 		/// <param name="json">function as JSON</param>
-		public static async Task<string> ProcessPlugins(TemplateItem item, chat_completion_function function)
+		public static async Task<string> ProcessPlugins(TemplateItem item, chat_completion_function function, CancellationTokenSource cancellationTokenSource)
 		{
 			if (!item.PluginsEnabled)
 				return null;
@@ -205,17 +156,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			}
 
-			//var pfci = new PluginFunctionCallInfo();
-			//pfci.Plugin = new PluginItem(methodInfo);
-			//pfci.Args = invokeParams;
-			//item.PluginFunctionCalls.Add(pfci);
-			// Wait for approval.
-			//item.PluginApprovalSemaphore.Wait();
-			//if (!pfci.IsApproved != true)
-			//	return Resources.Resources.Call_function_request_denied;
+			var pfci = new PluginApprovalItem();
+			PluginItem plugin = null;
+			Global.MainControl.Dispatcher.Invoke(() =>
+			{
+				plugin = new PluginItem(methodInfo);
+			});
 
-			if (!await ApproveExecution(item, function))
-				return Resources.Resources.Call_function_request_denied;
+			if (plugin.RiskLevel != RiskLevel.None)
+			{
+				pfci.Plugin = plugin;
+				pfci.function = function;
+				pfci.Args = invokeParams;
+				var approved = await ApproveExecution(item, pfci, cancellationTokenSource);
+				if (!approved)
+					return Resources.Resources.Call_function_request_denied;
+			}
 
 			// Check if the method is asynchronous (returns a Task or Task<string>)
 			if (typeof(Task).IsAssignableFrom(methodInfo.ReturnType))
@@ -256,6 +212,60 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return null;
 		}
 
+		public static async Task<bool> ApproveExecution(TemplateItem item, PluginApprovalItem pfci, CancellationTokenSource cancellationTokenSource)
+		{
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
+				return false;
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.AllowAll)
+				return true;
+			var assistantApproved = false;
+			string assistantEvaluation = null;
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies || item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
+			{
+				assistantEvaluation = await ClientHelper.EvaluateToolExecutionSafety(item, cancellationTokenSource) ?? "";
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					var lastMessage = item.Messages.Last();
+					var attachment = new Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
+					attachment.Title = "Approval by Secondary AI";
+					attachment.IsAlwaysIncluded = true;
+					lastMessage.Attachments.Add(attachment);
+				});
+				assistantApproved = assistantEvaluation.ToLower().Contains("function call approved");
+				// If approval relies on AI assistan only then return result.
+				if (item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
+					return assistantApproved;
+				pfci.SecondaryAiEvaluation = JocysCom.ClassLibrary.Text.Helper.CropLines(assistantEvaluation ?? "", 32);
+			}
+			if (item.PluginApprovalProcess == ToolCallApprovalProcess.User || item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies)
+			{
+				// If assitant approved then return true.
+				if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies && assistantApproved)
+					return true;
+
+				// This will make approval form on template panel visible.
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					item.PluginFunctionCalls.Add(pfci);
+				});
+				// Wait for approval (semaphore release)
+				try
+				{
+					pfci.Semaphore.Wait(cancellationTokenSource.Token);
+				}
+				catch (Exception)
+				{
+				}
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					item.PluginFunctionCalls.Remove(pfci);
+				});
+				if (pfci.IsApproved != null)
+					return pfci.IsApproved.Value;
+			}
+			return false;
+		}
+
 		#endregion
 
 		#region Microsoft's Reinvention of the Wheel
@@ -285,11 +295,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
 					if (!pi.IsOptional)
 						requiredParams.Add(pi.Name);
-					parametersObject.Add(pi.Name, new
+					var underlyingType = Nullable.GetUnderlyingType(pi.ParameterType) ?? pi.ParameterType;
+					var typeInfo = GetJsonType(pi.ParameterType);
+					if (underlyingType.IsArray)
 					{
-						type = GetJsonType(pi.ParameterType),
-						description = paramText
-					});
+						var elementType = underlyingType.GetElementType();
+						parametersObject.Add(pi.Name, new
+						{
+							type = "array",
+							items = new { type = GetJsonType(elementType) },
+							description = paramText
+						});
+					}
+					else
+					{
+						parametersObject.Add(pi.Name, new
+						{
+							type = typeInfo,
+							description = paramText
+						});
+					}
 				}
 				// Serialize the parameters object to a JSON string then create a BinaryData instance.
 				var serializedParameters = JsonSerializer.Serialize(new
@@ -315,26 +340,42 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static string GetJsonType(Type type)
+		public static object GetJsonType(Type type)
 		{
-			// Nullable types should be treated based on their underlying type.
+			// Determine the underlying non-nullable type of the parameter
 			var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
-			if (underlyingType == typeof(string))
+
+			// Enum handling: Return a JSON structure describing the enum, including possible values
+			if (underlyingType.IsEnum)
+			{
+				//var enumNames = Enum.GetNames(underlyingType);
+				//return new
+				//{
+				//	type = "string",
+				//	@enum = enumNames
+				//};
 				return "string";
-			else if (underlyingType == typeof(int) || underlyingType == typeof(long) || underlyingType == typeof(short) || underlyingType == typeof(byte))
-				return "integer";
-			else if (underlyingType == typeof(bool))
-				return "boolean";
-			else if (underlyingType == typeof(double) || underlyingType == typeof(float) || underlyingType == typeof(decimal))
-				return "number";
-			else if (underlyingType.IsArray || (typeof(System.Collections.IEnumerable).IsAssignableFrom(underlyingType) && underlyingType != typeof(string)))
-				return "array";
-			else if (underlyingType == typeof(object))
-				return "object";
-			else if (underlyingType.IsClass)
-				return "object";
-			else
-				return "object";
+			}
+			// Simple types: Return the JSON type name as a string
+			switch (Type.GetTypeCode(underlyingType))
+			{
+				case TypeCode.Boolean: return "boolean";
+				case TypeCode.Byte:
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.Int64:
+				case TypeCode.SByte:
+				case TypeCode.UInt16:
+				case TypeCode.UInt32:
+				case TypeCode.UInt64: return "integer";
+				case TypeCode.Decimal:
+				case TypeCode.Double:
+				case TypeCode.Single: return "number";
+				case TypeCode.String: return "string";
+				default:
+					// For all other types, including complex objects and types not explicitly handled above
+					return "object";
+			}
 		}
 
 		#endregion

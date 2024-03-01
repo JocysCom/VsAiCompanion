@@ -235,6 +235,71 @@
             <param name="length">Read amount.</param>
             <returns>True if the operation was successful.</returns>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo">
+            <summary>
+            Represents the metadata of a file indexed by the Windows Search.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.ItemName">
+            <summary>
+            Gets or sets the name of the item, typically the file name including the extension.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.ItemPathDisplay">
+            <summary>
+            Gets or sets the full path of the item, suitable for display to the user.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.ItemTypeText">
+            <summary>
+            Gets or sets a text description of the item type (e.g., "JPEG image").
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.DateModified">
+            <summary>
+            Gets or sets the date the item was last modified.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.FileExtension">
+            <summary>
+            Gets or sets the file extension of the item.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Size">
+            <summary>
+            Gets or sets the size of the item, in bytes.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Author">
+            <summary>
+            Gets or sets the author of the document. Applicable to documents that store this metadata.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Title">
+            <summary>
+            Gets or sets the title of the document.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Keywords">
+            <summary>
+            Gets or sets the keywords associated with the file. This can be a collection of keywords.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.Comment">
+            <summary>
+            Gets or sets any comment associated with the file.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.DateCreated">
+            <summary>
+            Gets or sets the date the item was created.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo.DateAccessed">
+            <summary>
+            Gets or sets the date the item was last accessed.
+            </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo">
             <summary>
             List Info.
@@ -424,90 +489,99 @@
             <param name="indexName">Index name.</param>
             <param name="searchString">Search string.</param>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex(System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Int64},System.Nullable{System.Int64},System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
             <summary>
-            Use to get selection or document content from Visual Studio.
+            Searches the Windows Index for files matching the specified criteria. This method allows for extensive search capabilities, including text content, file metadata, and more.
+            </summary>
+            <param name="contents">Contents of the file. Uses CONTAINS in the query for partial matching.</param>
+            <param name="itemName">The name of the item, typically the file name including the extension. Uses CONTAINS in the query for partial matching.</param>
+            <param name="itemPath">The full path of the item, suitable for display to the user. Uses CONTAINS in the query for partial matching.</param>
+            <param name="itemTypeText">A text description of the item type, e.g., "JPEG image". Uses CONTAINS in the query for partial matching.</param>
+            <param name="fileExtension">The file extension of the item. Uses CONTAINS in the query for partial matching.</param>
+            <param name="sizeMin">The minimum size of the item, in bytes.</param>
+            <param name="sizeMax">The maximum size of the item, in bytes.</param>
+            <param name="author">The author of the document. Applicable to documents that store this metadata. Uses CONTAINS in the query for partial matching.</param>
+            <param name="title">The title of the document. Uses CONTAINS in the query for partial matching.</param>
+            <param name="comment">Any comment associated with the file. Uses CONTAINS in the query for partial matching.</param>
+            <param name="dateCreatedStart">The start date for when the item was created.</param>
+            <param name="dateCreatedEnd">The end date for when the item was created.</param>
+            <param name="dateModifiedStart">The start date for when the item was last modified.</param>
+            <param name="dateModifiedEnd">The end date for when the item was last modified.</param>
+            <param name="dateAccessedStart">The start date for when the item was last accessed.</param>
+            <param name="dateAccessedEnd">The end date for when the item was last accessed.</param>
+            <returns>A list of <see cref="T:JocysCom.VS.AiCompanion.Plugins.Core.IndexedFileInfo"/> objects that match the specified search criteria.</returns>
+            <remarks>
+            This method leverages the Windows Search Index, offering a powerful search functionality across various file properties.
+            For properties like dates and size, where partial matching isn't applicable, the method uses SQL expressions to define ranges.
+            </remarks>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TTS">
+            <summary>
+            Used with Jocys.com TTS Monitor.
             </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.Current">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText(System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
-            Current Visual Solution helper.
+            Start playing text. This could be used for speaking with the user or narrating books or stories.
+            </summary>
+            <param name="name">Character name.</param>
+            <param name="text">Text to play.</param>
+            <param name="gender">Character gender: 'Male', 'Female', 'Neutral'. Default: 'Male'.</param>
+            <param name="language">Language Culture. Use Language[-Location] format. For example: 'en-GB'. Default is set by the user.</param>
+            <param name="effect">Sound effects:
+            'Default', 'Beast', 'Demon', 'Dragonkin', 'Elemental',
+            'Giant', 'Humanoid', 'Mechanical', 'Undead'. Default is 'Default' for humans.
+            </param>
+            <param name="group">Message chat group: 'Quest'. Default: 'Quest'.</param>
+            <param name="pitch">Voice pitch: Range from -10 to 10. Default is set by the user.</param>
+            <param name="rate">Voice rate or speed: Range from -10 to 10.  Default is set by the user.</param>
+            <param name="volume">Voice volume. Range from 0 to 100.  Default is set by the user.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.StopText">
+            <summary>
+            Stop text-to-speech playback.
+            </summary>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message">
+            <summary>TTS Message</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.name">
+            <summary>Character name.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.language">
+            <summary>
+            Culture. Can be sent in 2 formats:
+            	LCID HEX value: '419' = 0x0419 = ru-RU = Russian - Russia // Regex: ^[0-9a-fA-F]{1,4}$
+            	Language[-Location] value: 'en-GB' = English - Great Britain
+            var ci = new System.Globalization.CultureInfo("en-GB", false);
+            var ci = new System.Globalization.CultureInfo(0x040A, false);
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution(System.Boolean)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.command">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolutionProjects(System.String,System.Boolean)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.pitch">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.rate">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.gender">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument(System.Boolean)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.effect">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument(System.String)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.group">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument(System.String,System.String)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.volume">
+            <summary>Voice volume. Range from 0 to 100. Default: 100.</summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument(System.String,System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException(System.Boolean,System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfCurrentDocument(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrors(System.Boolean,System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplyCurrentDocumentContentsChanges(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplySelectionChanges(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.BuildSolutionProject(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent(System.String)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.part">
+            <summary>Text to play.</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType">
             <summary>
@@ -951,6 +1025,91 @@
             </summary>
             <param name="type">The type of the output pane (e.g., "Build" or "Debug").</param>
             <returns>The content of the specified output window pane.</returns>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
+            <summary>
+            Use to get selection or document content from Visual Studio.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.Current">
+            <summary>
+            Current Visual Solution helper.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolutionProjects(System.String,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument(System.String,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException(System.Boolean,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfCurrentDocument(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrors(System.Boolean,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplyCurrentDocumentContentsChanges(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplySelectionChanges(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.BuildSolutionProject(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent(System.String)">
+            <inheritdoc />
         </member>
     </members>
 </doc>

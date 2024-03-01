@@ -107,7 +107,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var methods = GetAllMetods();
 			foreach (var method in methods)
-				if (method.RiskLevel == RiskLevel.Low)
+				if (method.RiskLevel == RiskLevel.None || method.RiskLevel == RiskLevel.Low)
 					method.IsEnabled = true;
 		}
 

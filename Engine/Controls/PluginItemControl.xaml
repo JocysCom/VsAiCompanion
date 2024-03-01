@@ -19,128 +19,140 @@
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Border
-		Grid.Row="0"
-		Padding="4"
-		BorderBrush="{StaticResource BorderDark}"
-		BorderThickness="0,0,0,1">
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="auto" />
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="auto" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-			<ContentControl
-				Name="RightIcon"
-				Width="32"
-				Height="32"
-				Margin="4,4,8,4"
-				Padding="0"
-				VerticalAlignment="Top"
-				Content="{Binding Icon}" />
-			<StackPanel Grid.Column="1" HorizontalAlignment="Stretch" Orientation="Vertical">
-				<StackPanel Margin="0,4,4,4">
-					<CheckBox Name="MethodCheckBox" Margin="-4" IsChecked="{Binding IsEnabled}">
-						<CheckBox.Content>
-							<StackPanel>
-								<StackPanel Margin="0" Visibility="Collapsed">
-									<Label
-										Name="NamespaceLabel"
-										Margin="0"
-										Padding="0"
-										Content="{Binding Namespace}"
-										FontWeight="Bold"
-										Foreground="#000000" />
-									<Label
-										Name="NamesapceDotLabel"
-										Margin="0"
-										Padding="0"
-										Content="."
-										FontWeight="Bold"
-										Foreground="#808080" />
-									<Label
-										Name="ClassLabel"
-										Margin="0"
-										Padding="0"
-										Content="{Binding Class}"
-										FontWeight="Bold"
-										Foreground="#2B91AF" />
-									<Label
-										Name="ClassDotLabel"
-										Margin="0"
-										Padding="0"
-										Content="."
-										FontWeight="Bold"
-										Foreground="#808080" />
-								</StackPanel>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<ContentControl
+			Name="RightIcon"
+			Grid.Row="0"
+			Width="32"
+			Height="32"
+			Margin="8,8,8,4"
+			Padding="0"
+			VerticalAlignment="Top"
+			Content="{Binding Icon}" />
+		<StackPanel
+			Grid.Row="0"
+			Grid.Column="1"
+			Margin="0,4,0,4"
+			HorizontalAlignment="Stretch"
+			Orientation="Vertical">
+			<StackPanel Margin="0,4,4,4">
+				<CheckBox
+					Name="MethodCheckBox"
+					Margin="-4"
+					x:FieldModifier="public"
+					IsChecked="{Binding IsEnabled}">
+					<CheckBox.Content>
+						<StackPanel>
+							<StackPanel Margin="0" Visibility="Collapsed">
 								<Label
-									Name="NameLabel"
+									Name="NamespaceLabel"
 									Margin="0"
 									Padding="0"
-									Content="{Binding Name}"
+									Content="{Binding Namespace}"
 									FontWeight="Bold"
-									Foreground="#74531F" />
-							</StackPanel>
-						</CheckBox.Content>
-					</CheckBox>
-				</StackPanel>
-				<TextBlock
-					Name="MethodDescriptionLabel"
-					Margin="0,0,4,4"
-					Text="{Binding Description}"
-					TextWrapping="Wrap" />
-				<ItemsControl
-					x:Name="ParamsDataGrid"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-					ClipToBounds="True"
-					ItemsSource="{Binding Params}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Grid.Row="{Binding Index}" Orientation="Horizontal">
+									Foreground="#000000" />
 								<Label
-									Grid.Row="{Binding Index}"
-									Grid.Column="0"
-									Margin="24,0,0,0"
+									Name="NamesapceDotLabel"
+									Margin="0"
 									Padding="0"
-									Content="{Binding Type}"
+									Content="."
+									FontWeight="Bold"
+									Foreground="#808080" />
+								<Label
+									Name="ClassLabel"
+									Margin="0"
+									Padding="0"
+									Content="{Binding Class}"
 									FontWeight="Bold"
 									Foreground="#2B91AF" />
 								<Label
-									Grid.Row="{Binding Index}"
-									Grid.Column="1"
-									Margin="4,0,0,0"
+									Name="ClassDotLabel"
+									Margin="0"
 									Padding="0"
-									Content="{Binding Name}"
-									FontWeight="Bold" />
-								<Label
-									Grid.Row="{Binding Index}"
-									Grid.Column="2"
-									Margin="4,0,0,0"
-									Padding="0"
-									Content="(optional)"
+									Content="."
 									FontWeight="Bold"
-									Foreground="#808080"
-									Visibility="{Binding IsOptional, Converter={StaticResource _BoolToVisibilityConverter}}" />
-								<TextBlock
-									x:Name="ParameterDescription"
-									Grid.Row="{Binding Index}"
-									Grid.Column="3"
-									Margin="4,0,0,0"
-									Padding="0"
-									HorizontalAlignment="Stretch"
-									VerticalAlignment="Top"
-									Text="{Binding Description}"
-									TextWrapping="Wrap" />
+									Foreground="#808080" />
 							</StackPanel>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-
+							<Label
+								Name="NameLabel"
+								Margin="0"
+								Padding="0"
+								Content="{Binding Name}"
+								FontWeight="Bold"
+								Foreground="#74531F" />
+						</StackPanel>
+					</CheckBox.Content>
+				</CheckBox>
 			</StackPanel>
-		</Grid>
-	</Border>
+			<TextBlock
+				Name="MethodDescriptionLabel"
+				Margin="0,0,4,4"
+				Text="{Binding Description}"
+				TextWrapping="Wrap" />
+			<ItemsControl
+				x:Name="ParamsDataGrid"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+				ClipToBounds="True"
+				ItemsSource="{Binding Params}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Grid.Row="{Binding Index}" Orientation="Horizontal">
+							<Label
+								Grid.Row="{Binding Index}"
+								Grid.Column="0"
+								Margin="24,0,0,0"
+								Padding="0"
+								Content="{Binding Type}"
+								FontWeight="Bold"
+								Foreground="#2B91AF" />
+							<Label
+								Grid.Row="{Binding Index}"
+								Grid.Column="1"
+								Margin="4,0,0,0"
+								Padding="0"
+								Content="{Binding Name}"
+								FontWeight="Bold" />
+							<Label
+								Grid.Row="{Binding Index}"
+								Grid.Column="2"
+								Margin="4,0,0,0"
+								Padding="0"
+								Content="(optional)"
+								FontWeight="Bold"
+								Foreground="#808080"
+								Visibility="{Binding IsOptional, Converter={StaticResource _BoolToVisibilityConverter}}" />
+							<TextBlock
+								x:Name="ParameterDescription"
+								Grid.Row="{Binding Index}"
+								Grid.Column="3"
+								Margin="4,0,0,0"
+								Padding="0"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Top"
+								Text="{Binding Description}"
+								TextWrapping="Wrap" />
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</StackPanel>
+		<Border
+			x:Name="SeparatorBorder"
+			Grid.Row="1"
+			Grid.ColumnSpan="2"
+			Margin="4,0,4,0"
+			x:FieldModifier="public"
+			BorderBrush="{StaticResource BackgroundDark}"
+			BorderThickness="0,0,0,1" />
+	</Grid>
 </UserControl>

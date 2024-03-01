@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -454,7 +455,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 		}
 
-		public async static Task<string> EvaluateToolExecutionSafety(TemplateItem item)
+		public async static Task<string> EvaluateToolExecutionSafety(TemplateItem item, CancellationTokenSource cancellationToken)
 		{
 			/// Try to get reserved template to generate title.
 			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == item.PluginApprovalTemplate);

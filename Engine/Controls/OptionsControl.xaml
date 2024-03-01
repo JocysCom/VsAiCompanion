@@ -112,12 +112,7 @@
 							<Label Content="Apply" />
 						</StackPanel>
 					</Button>
-
-
 				</StackPanel>
-
-
-
 			</Grid>
 		</GroupBox>
 		<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="{x:Static locales:Resources.Title_for_Attached_Context}">
