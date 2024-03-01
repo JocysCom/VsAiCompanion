@@ -22,6 +22,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				iconName = Resources.Icons.Icons_Default.Icon_magnifying_glass;
 			if (Name.ToLower().Contains(nameof(Automation).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_elements_tree;
+			if (Name.ToLower().Contains(nameof(TTS).ToLower()))
+				iconName = Resources.Icons.Icons_Default.Icon_chat;
 			Icon = Engine.Resources.Icons.Icons_Default.Current[iconName];
 		}
 

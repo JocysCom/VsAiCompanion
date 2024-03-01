@@ -515,90 +515,73 @@
             For properties like dates and size, where partial matching isn't applicable, the method uses SQL expressions to define ranges.
             </remarks>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TTS">
             <summary>
-            Use to get selection or document content from Visual Studio.
+            Used with Jocys.com TTS Monitor.
             </summary>
         </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.Current">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText(System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
-            Current Visual Solution helper.
+            Start playing text. This could be used for speaking with the user or narrating books or stories.
+            </summary>
+            <param name="name">Character name.</param>
+            <param name="text">Text to play.</param>
+            <param name="gender">Character gender: 'Male', 'Female', 'Neutral'. Default: 'Male'.</param>
+            <param name="language">Language Culture. Use Language[-Location] format. For example: 'en-GB'. Default is set by the user.</param>
+            <param name="effect">Sound effects:
+            'Default', 'Beast', 'Demon', 'Dragonkin', 'Elemental',
+            'Giant', 'Humanoid', 'Mechanical', 'Undead'. Default is 'Default' for humans.
+            </param>
+            <param name="group">Message chat group: 'Quest'. Default: 'Quest'.</param>
+            <param name="pitch">Voice pitch: Range from -10 to 10. Default is set by the user.</param>
+            <param name="rate">Voice rate or speed: Range from -10 to 10.  Default is set by the user.</param>
+            <param name="volume">Voice volume. Range from 0 to 100.  Default is set by the user.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.StopText">
+            <summary>
+            Stop text-to-speech playback.
+            </summary>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message">
+            <summary>TTS Message</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.name">
+            <summary>Character name.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.language">
+            <summary>
+            Culture. Can be sent in 2 formats:
+            	LCID HEX value: '419' = 0x0419 = ru-RU = Russian - Russia // Regex: ^[0-9a-fA-F]{1,4}$
+            	Language[-Location] value: 'en-GB' = English - Great Britain
+            var ci = new System.Globalization.CultureInfo("en-GB", false);
+            var ci = new System.Globalization.CultureInfo(0x040A, false);
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution(System.Boolean)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.command">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolutionProjects(System.String,System.Boolean)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.pitch">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.rate">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.gender">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument(System.Boolean)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.effect">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument(System.String)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.group">
+            <summary></summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument(System.String,System.String)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.volume">
+            <summary>Voice volume. Range from 0 to 100. Default: 100.</summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument(System.String,System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException(System.Boolean,System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfCurrentDocument(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments(System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrors(System.Boolean,System.Boolean)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplyCurrentDocumentContentsChanges(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplySelectionChanges(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.BuildSolutionProject(System.String)">
-            <inheritdoc />
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent(System.String)">
-            <inheritdoc />
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message.part">
+            <summary>Text to play.</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ContextType">
             <summary>
@@ -1042,6 +1025,91 @@
             </summary>
             <param name="type">The type of the output pane (e.g., "Build" or "Debug").</param>
             <returns>The content of the specified output window pane.</returns>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
+            <summary>
+            Use to get selection or document content from Visual Studio.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.Current">
+            <summary>
+            Current Visual Solution helper.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolutionProjects(System.String,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument(System.String,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException(System.Boolean,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfCurrentDocument(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetErrors(System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ErrorLevel},System.String,System.String,System.Boolean,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrors(System.Boolean,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplyCurrentDocumentContentsChanges(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplySelectionChanges(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.BuildSolutionProject(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent(System.String)">
+            <inheritdoc />
         </member>
     </members>
 </doc>

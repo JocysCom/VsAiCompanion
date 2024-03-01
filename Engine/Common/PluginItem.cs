@@ -32,6 +32,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var iconName = Resources.Icons.Icons_Default.Icon_piece_grey;
 			switch (RiskLevel)
 			{
+				case RiskLevel.None:
 				case RiskLevel.Low:
 					iconName = Resources.Icons.Icons_Default.Icon_piece_green;
 					break;
@@ -39,6 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					iconName = Resources.Icons.Icons_Default.Icon_piece_yellow;
 					break;
 				case RiskLevel.High:
+				case RiskLevel.Critical:
 					iconName = Resources.Icons.Icons_Default.Icon_piece_red;
 					break;
 				default:

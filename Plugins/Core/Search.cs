@@ -13,9 +13,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public partial class Search
 	{
-
-
-
 		/// <summary>
 		/// Database path. Set by external program.
 		/// </summary>

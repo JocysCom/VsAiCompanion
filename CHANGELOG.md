@@ -1,3 +1,7 @@
+2024-02-29 v1.6.14
+
+- New: TTS support. Can be used with Jocys.com TTS Monitor. Ask to create a very short funny dialog involving the dragon and voice it.
+
 2024-02-29 v1.6.13
 
 - Fix: Issue with inability to cancel message requests.

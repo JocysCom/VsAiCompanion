@@ -42,6 +42,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 						AddMethods(typeof(Database));
 						Search._databasePath = Global.PluginsSearchPath;
 						AddMethods(typeof(Search));
+						AddMethods(typeof(TTS));
+
 #if DEBUG
 						AddMethods(typeof(Lists));
 						AddMethods(typeof(Automation));
@@ -155,18 +157,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 
 			var pfci = new PluginApprovalItem();
+			PluginItem plugin = null;
 			Global.MainControl.Dispatcher.Invoke(() =>
 			{
-				pfci.Plugin = new PluginItem(methodInfo);
+				plugin = new PluginItem(methodInfo);
 			});
-			pfci.function = function;
-			pfci.Args = invokeParams;
 
-			var approved = await ApproveExecution(item, pfci, cancellationTokenSource);
-
-
-			if (!approved)
-				return Resources.Resources.Call_function_request_denied;
+			if (plugin.RiskLevel != RiskLevel.None)
+			{
+				pfci.Plugin = plugin;
+				pfci.function = function;
+				pfci.Args = invokeParams;
+				var approved = await ApproveExecution(item, pfci, cancellationTokenSource);
+				if (!approved)
+					return Resources.Resources.Call_function_request_denied;
+			}
 
 			// Check if the method is asynchronous (returns a Task or Task<string>)
 			if (typeof(Task).IsAssignableFrom(methodInfo.ReturnType))
