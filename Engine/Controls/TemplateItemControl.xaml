@@ -86,7 +86,8 @@
 						ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
 						SelectedValue="{Binding MaxRiskLevel}"
 						SelectedValuePath="Key" />
-					<Label VerticalAlignment="Center" Content="Risk Plugins:" />
+					<Label VerticalAlignment="Center" Content="Risk Plugins" />
+					<Label Padding="0" Content="·" />
 					<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Approval_Type}" />
 					<ComboBox
 						Name="PluginApprovalProcessComboBox"
@@ -143,7 +144,7 @@
 						<StackPanel Orientation="Vertical">
 							<Slider
 								Name="CreativitySlider"
-								Width="150"
+								Width="145"
 								IsSnapToTickEnabled="True"
 								Maximum="2"
 								Minimum="0"
@@ -185,29 +186,32 @@
 						Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<StackPanel VerticalAlignment="Top">
 							<CheckBox Name="AutoSendCheckBox" Content="Send on Create" IsChecked="{Binding AutoSend}" />
-							<CheckBox Name="AutoFormatMessageCheckBox" IsChecked="{Binding AutoFormatMessage}">
+							<CheckBox Name="AutoGenerateTitleCheckBox" Content="Generate Title" IsChecked="{Binding AutoGenerateTitle}" />
+							<CheckBox Name="AutoFormatMessageCheckBox" Margin="0" IsChecked="{Binding AutoFormatMessage}">
 								<TextBlock VerticalAlignment="Center">
 									<Run Text="Auto" />
 									<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
 								</TextBlock>
 							</CheckBox>
-							<CheckBox Name="AutoRemoveCheckBox" Content="Remove on Complete" IsChecked="{Binding AutoRemove}" />
 						</StackPanel>
 						<StackPanel>
 							<CheckBox
-								Name="AutoGenerateTitleCheckBox"
-								Margin="3,0,3,3"
-								Content="Generate Title"
-								IsChecked="{Binding AutoGenerateTitle}" />
+								Name="AutoRemoveCheckBox"
+								Margin="0,0,0,3"
+								VerticalAlignment="Bottom"
+								Content="Remove on Complete"
+								IsChecked="{Binding AutoRemove}" />
 							<ComboBox
 								Name="MessageBoxOperationComboBox"
-								Margin="6,0,3,0"
+								Width="138"
+								Margin="3,0,0,0"
 								VerticalAlignment="Top"
 								DisplayMemberPath="Value"
 								ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
 								SelectedValue="{Binding MessageBoxOperation}"
 								SelectedValuePath="Key" />
 						</StackPanel>
+
 					</StackPanel>
 				</GroupBox>
 				<GroupBox
@@ -234,7 +238,11 @@
 						Orientation="Horizontal"
 						Visibility="{Binding BarPanelVisibility, ElementName=This}">
 						<StackPanel VerticalAlignment="Top">
-							<CheckBox Name="IsSystemInstructionsCheckBox" Content="Send as System Messages" IsChecked="{Binding IsSystemInstructions}" />
+							<CheckBox
+								Name="IsSystemInstructionsCheckBox"
+								Margin="0"
+								Content="Send as System Messages"
+								IsChecked="{Binding IsSystemInstructions}" />
 							<CheckBox Name="UseMaximumContextCheckBox" Content="Use Maximum Context" IsChecked="{Binding UseMaximumContext}" />
 						</StackPanel>
 					</StackPanel>

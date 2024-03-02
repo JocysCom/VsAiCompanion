@@ -242,14 +242,22 @@
 			</GroupBox>
 			<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Sending_Message}">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-					<CheckBox Name="ShowDocumentsAttachedWarningCheckBox" Content="{x:Static locales:Resources.Show_Documents_Attached_Warning}" IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox
+						Name="ShowDocumentsAttachedWarningCheckBox"
+						Margin="0"
+						Content="{x:Static locales:Resources.Show_Documents_Attached_Warning}"
+						IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="{x:Static locales:Resources.Show_Sensitive_Data_Warning}" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Name="UseEnterToSendMessageCheckBox" Content="{x:Static locales:Resources.Use_Enter_to_send_the_message}" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
 			<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Other}">
 				<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-					<CheckBox Name="IsSpellCheckEnabledCheckBox" Content="{x:Static locales:Resources.Spell_Check}" IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<CheckBox
+						Name="IsSpellCheckEnabledCheckBox"
+						Margin="0"
+						Content="{x:Static locales:Resources.Spell_Check}"
+						IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</WrapPanel>
 			</GroupBox>
 		</WrapPanel>
