@@ -43,10 +43,6 @@
 	  <ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="TtsMonitor\" />
-	</ItemGroup>
-
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 	  <Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
 	</Target>

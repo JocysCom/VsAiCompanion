@@ -130,32 +130,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (!methodInfo.IsStatic)
 				classInstance = Activator.CreateInstance(methodInfo.DeclaringType);
 			// Prepare an array of parameters for the method invocation.
-			var methodParams = methodInfo.GetParameters();
-			object[] invokeParams = new object[methodParams.Length];
-			for (int i = 0; i < methodParams.Length; i++)
-			{
-				var param = methodParams[i];
-				JsonElement jsonElement;
-				// Extract parameters as a dictionary.
-				var parameters = function.parameters.additional_properties;
-				if (parameters == null)
-					parameters = new Dictionary<string, JsonElement>();
-				if (parameters.TryGetValue(param.Name, out jsonElement))
-				{
-					invokeParams[i] = jsonElement.Deserialize(param.ParameterType);
-				}
-				else if (param.HasDefaultValue)
-				{
-					invokeParams[i] = param.DefaultValue;
-				}
-				else
-				{
-					// Handle missing required parameter.
-					MessageBox.Show($"The required parameter '{param.Name}' is missing for the function '{function.name}'.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
-					return null;
-				}
-			}
-
+			var invokeParams = ConvertFromToolItem(methodInfo, function);
 			var pfci = new PluginApprovalItem();
 			PluginItem plugin = null;
 			Global.MainControl.Dispatcher.Invoke(() =>
@@ -284,46 +259,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				if (!AllowPlugin(kv.Key, item.MaxRiskLevel))
 					continue;
-				var requiredParams = new List<string>();
 				// Get Method Info
 				var mi = kv.Value;
-				var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
-				var miParams = mi.GetParameters();
-				var parametersObject = new Dictionary<string, object>();
-				foreach (var pi in miParams)
-				{
-					var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
-					if (!pi.IsOptional)
-						requiredParams.Add(pi.Name);
-					var underlyingType = Nullable.GetUnderlyingType(pi.ParameterType) ?? pi.ParameterType;
-					var typeInfo = GetJsonType(pi.ParameterType);
-					if (underlyingType.IsArray)
-					{
-						var elementType = underlyingType.GetElementType();
-						parametersObject.Add(pi.Name, new
-						{
-							type = "array",
-							items = new { type = GetJsonType(elementType) },
-							description = paramText
-						});
-					}
-					else
-					{
-						parametersObject.Add(pi.Name, new
-						{
-							type = typeInfo,
-							description = paramText
-						});
-					}
-				}
 				// Serialize the parameters object to a JSON string then create a BinaryData instance.
-				var serializedParameters = JsonSerializer.Serialize(new
-				{
-					type = "object",
-					properties = parametersObject,
-					required = requiredParams.ToArray(),
-				});
+				var functionParameters = ConvertToToolItem(null, mi);
+				var serializedParameters = Client.Serialize(functionParameters);
 				var binaryParamaters = BinaryData.FromString(serializedParameters);
+				var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
 				// Create and add function definition.
 				var function = new FunctionDefinition();
 				function.Name = mi.Name;
@@ -340,42 +282,175 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static object GetJsonType(Type type)
-		{
-			// Determine the underlying non-nullable type of the parameter
-			var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+		#endregion
 
-			// Enum handling: Return a JSON structure describing the enum, including possible values
+		#region Function Converter
+
+		public static tool_item ConvertToToolItem(
+			Type type,
+			System.Reflection.MethodInfo mi = null, ParameterInfo miPi = null
+		)
+		{
+			var o = new tool_item();
+			string oDescription;
+			Type oType;
+			// Method
+			if (mi != null && miPi == null)
+			{
+				var args = mi.GetParameters();
+				o.type = GetJsonMainType(mi);
+				o.required = args.Where(x => !x.IsOptional).Select(x => x.Name).ToArray();
+				var oProperties = new Dictionary<string, tool_item>();
+				foreach (var arg in args)
+				{
+					var item = ConvertToToolItem(arg.ParameterType);
+					item.description = XmlDocHelper.GetParamText(mi, arg).Trim(new char[] { '\r', '\n', ' ' });
+					oProperties.Add(arg.Name, item);
+				}
+				o.properties = oProperties;
+				return o;
+			}
+			// Method parameter
+			else if (mi != null && miPi != null)
+			{
+				oType = miPi.ParameterType;
+				oDescription = XmlDocHelper.GetParamText(mi, miPi).Trim(new char[] { '\r', '\n', ' ' });
+			}
+			// Property type.
+			else
+			{
+				oType = type;
+				oDescription = XmlDocHelper.GetSummary(type).Trim(new char[] { '\r', '\n', ' ' });
+			}
+			var underlyingType = Nullable.GetUnderlyingType(oType) ?? oType;
+			o.type = GetJsonMainType(oType);
+			o.description = oDescription;
+			if (o.type == "object")
+			{
+				var properties = oType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+				var oProperties = new Dictionary<string, tool_item>();
+				foreach (var property in properties)
+				{
+					var item = ConvertToToolItem(property.PropertyType);
+					oProperties.Add(property.Name, item);
+				}
+				o.properties = oProperties;
+			}
+			if (underlyingType.IsArray)
+			{
+				var elementType = underlyingType.GetElementType();
+				o.items = ConvertToToolItem(type: elementType);
+				return o;
+			}
 			if (underlyingType.IsEnum)
 			{
-				//var enumNames = Enum.GetNames(underlyingType);
-				//return new
-				//{
-				//	type = "string",
-				//	@enum = enumNames
-				//};
-				return "string";
+				o.@enum = Enum.GetNames(underlyingType);
+				return o;
 			}
-			// Simple types: Return the JSON type name as a string
-			switch (Type.GetTypeCode(underlyingType))
+			return o;
+		}
+
+		public static string GetJsonMainType(object o)
+		{
+			if (o is Type type)
 			{
-				case TypeCode.Boolean: return "boolean";
-				case TypeCode.Byte:
-				case TypeCode.Int16:
-				case TypeCode.Int32:
-				case TypeCode.Int64:
-				case TypeCode.SByte:
-				case TypeCode.UInt16:
-				case TypeCode.UInt32:
-				case TypeCode.UInt64: return "integer";
-				case TypeCode.Decimal:
-				case TypeCode.Double:
-				case TypeCode.Single: return "number";
-				case TypeCode.String: return "string";
-				default:
-					// For all other types, including complex objects and types not explicitly handled above
-					return "object";
+				var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+				if (underlyingType.IsArray)
+					return "array";
+				if (underlyingType.IsEnum)
+					return "string";
+				switch (Type.GetTypeCode(underlyingType))
+				{
+					case TypeCode.Boolean: return "boolean";
+					case TypeCode.Byte:
+					case TypeCode.Int16:
+					case TypeCode.Int32:
+					case TypeCode.Int64:
+					case TypeCode.SByte:
+					case TypeCode.UInt16:
+					case TypeCode.UInt32:
+					case TypeCode.UInt64: return "integer";
+					case TypeCode.Decimal:
+					case TypeCode.Double:
+					case TypeCode.Single: return "number";
+					case TypeCode.String: return "string";
+				}
 			}
+			return "object";
+		}
+
+		/// <summary>
+		/// Convert incommming JSON function parameter to object array to pass into C# function.
+		/// </summary>
+		/// <param name="methodInfo">C# Method info.</param>
+		/// <param name="function">Incomming parameters.</param>
+		/// <returns>C# function arguments.</returns>
+		public static object[] ConvertFromToolItem(System.Reflection.MethodInfo methodInfo, chat_completion_function function)
+		{
+			var methodParams = methodInfo.GetParameters();
+			var invokeParams = new object[methodParams.Length];
+			for (int i = 0; i < methodParams.Length; i++)
+			{
+				var param = methodParams[i];
+				var type = param.ParameterType;
+				var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+				JsonElement jsonElement;
+				// Extract parameters as a dictionary.
+				var parameters = function.parameters.additional_properties;
+				if (parameters == null)
+					parameters = new Dictionary<string, JsonElement>();
+				if (parameters.TryGetValue(param.Name, out jsonElement))
+				{
+
+					if (underlyingType.IsEnum)
+					{
+						// Assuming the JSON element is a string that matches the enum name.
+						var enumValueStr = jsonElement.GetString();
+						var enumValue = Enum.Parse(underlyingType, enumValueStr);
+						invokeParams[i] = enumValue;
+					}
+					else if (underlyingType.IsArray)
+					{
+						var elementType = underlyingType.GetElementType();
+						if (jsonElement.ValueKind == JsonValueKind.Array)
+						{
+							var elements = new List<object>();
+							foreach (var arrayItem in jsonElement.EnumerateArray())
+							{
+								// Deserialize each element to the specified element type.
+								var element = arrayItem.Deserialize(elementType);
+								elements.Add(element);
+							}
+							// Create an array of the appropriate type and assign the elements.
+							var array = Array.CreateInstance(elementType, elements.Count);
+							for (var j = 0; j < elements.Count; j++)
+								array.SetValue(elements[j], j);
+							invokeParams[i] = array;
+						}
+						else
+						{
+							// Handle error: expected JSON array for parameter type.
+							MessageBox.Show($"Expected a JSON array for parameter '{param.Name}' but got a different type.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
+							return null;
+						}
+					}
+					else
+					{
+						invokeParams[i] = jsonElement.Deserialize(param.ParameterType);
+					}
+				}
+				else if (param.HasDefaultValue)
+				{
+					invokeParams[i] = param.DefaultValue;
+				}
+				else
+				{
+					// Handle missing required parameter.
+					MessageBox.Show($"The required parameter '{param.Name}' is missing for the function '{function.name}'.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					return invokeParams;
+				}
+			}
+			return invokeParams;
 		}
 
 		#endregion
@@ -402,14 +477,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var props = new Dictionary<string, object>();
 				foreach (var pi in mi.GetParameters())
 				{
-					var paramText = XmlDocHelper.GetParamText(mi, pi).Trim(new char[] { '\r', '\n', ' ' });
 					if (!pi.IsOptional)
 						requiredParams.Add(pi.Name);
-					props[pi.Name] = new
-					{
-						type = GetJsonType(pi.ParameterType),
-						description = paramText
-					};
+					props[pi.Name] = ConvertToToolItem(null, mi, pi);
 				}
 				var function = new chat_completion_function()
 				{

@@ -1,3 +1,7 @@
+2024-03-02 v1.6.15
+
+- Fix: AI Functions with enums failing.
+
 2024-02-29 v1.6.14
 
 - New: TTS support. Can be used with Jocys.com TTS Monitor. Ask to create a very short funny dialog involving the dragon and voice it.

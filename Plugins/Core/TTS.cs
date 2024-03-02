@@ -1,4 +1,5 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+﻿using JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Net;
 using System.Net.Sockets;
 
@@ -30,7 +31,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public bool PlayText(
 		string name,
 		string text = null,
-		string gender = null,
+		VoiceGender? gender = null,
 		string language = null,
 		string effect = null,
 		string group = null,
@@ -43,14 +44,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			var message = new message();
 			message.command = "save";
 			message.name = name;
-			message.gender = gender;
+			message.gender = gender?.ToString();
 			message.language = language;
 			message.effect = effect;
 			message.group = group;
-			message.rate = rate.ToString();
-			message.pitch = pitch.ToString();
-			message.volume = volume.ToString();
+			message.rate = rate?.ToString();
+			message.pitch = pitch?.ToString();
+			message.volume = volume?.ToString();
 			SendMessage(message);
+
 			message.command = "play";
 			//message.effect = null;
 			message.part = text;

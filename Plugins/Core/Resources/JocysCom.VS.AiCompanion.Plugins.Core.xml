@@ -520,7 +520,7 @@
             Used with Jocys.com TTS Monitor.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText(System.String,System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText(System.String,System.String,System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender},System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Start playing text. This could be used for speaking with the user or narrating books or stories.
             </summary>
@@ -543,6 +543,20 @@
             Stop text-to-speech playback.
             </summary>
             <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender">
+            <summary>
+            Voice gender.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender.Neutral">
+            <summary>Neutral</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender.Female">
+            <summary>Female</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender.Male">
+            <summary>Male</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.message">
             <summary>TTS Message</summary>
