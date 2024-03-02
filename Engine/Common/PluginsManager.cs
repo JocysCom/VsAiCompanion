@@ -1,4 +1,5 @@
 ﻿using Azure.AI.OpenAI;
+using DocumentFormat.OpenXml;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
@@ -142,7 +143,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				pfci.Plugin = plugin;
 				pfci.function = function;
-				pfci.Args = invokeParams;
+				// Select values submitted for param.
+				var parameters = function.parameters.additional_properties;
+				for (int p = 0; p < plugin.Params.Count; p++)
+				{
+					var param = plugin.Params[p];
+					param.ParamValuePreview = JocysCom.ClassLibrary.Text.Helper.CropLines(invokeParams[p]?.ToString() ?? "");
+					// Hide non supplied optional parameters.
+					if (parameters == null)
+						parameters = new Dictionary<string, JsonElement>();
+					if (param.IsOptional && !parameters.Keys.Contains(param.Name))
+						param.ParamVisibility = Visibility.Collapsed;
+				}
 				var approved = await ApproveExecution(item, pfci, cancellationTokenSource);
 				if (!approved)
 					return Resources.Resources.Call_function_request_denied;
@@ -325,16 +337,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var underlyingType = Nullable.GetUnderlyingType(oType) ?? oType;
 			o.type = GetJsonMainType(oType);
 			o.description = oDescription;
-			if (o.type == "object")
+			if (underlyingType == typeof(DateTime))
 			{
-				var properties = oType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-				var oProperties = new Dictionary<string, tool_item>();
-				foreach (var property in properties)
-				{
-					var item = ConvertToToolItem(property.PropertyType);
-					oProperties.Add(property.Name, item);
-				}
-				o.properties = oProperties;
+				o.format = "date-time";
+				return o;
 			}
 			if (underlyingType.IsArray)
 			{
@@ -346,6 +352,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				o.@enum = Enum.GetNames(underlyingType);
 				return o;
+			}
+			if (o.type == "object")
+			{
+				var properties = oType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+				var oProperties = new Dictionary<string, tool_item>();
+				foreach (var property in properties)
+				{
+					var item = ConvertToToolItem(property.PropertyType);
+					oProperties.Add(property.Name, item);
+				}
+				o.properties = oProperties;
 			}
 			return o;
 		}
@@ -401,12 +418,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 					parameters = new Dictionary<string, JsonElement>();
 				if (parameters.TryGetValue(param.Name, out jsonElement))
 				{
-
+					if (underlyingType == typeof(DateTime))
+					{
+						var stringValue = jsonElement.GetString();
+						var dateValue = DateTime.Parse(stringValue);
+						invokeParams[i] = dateValue;
+					}
 					if (underlyingType.IsEnum)
 					{
 						// Assuming the JSON element is a string that matches the enum name.
-						var enumValueStr = jsonElement.GetString();
-						var enumValue = Enum.Parse(underlyingType, enumValueStr);
+						var stringValue = jsonElement.GetString();
+						var enumValue = Enum.Parse(underlyingType, stringValue);
 						invokeParams[i] = enumValue;
 					}
 					else if (underlyingType.IsArray)

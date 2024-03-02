@@ -1,6 +1,7 @@
-2024-03-02 v1.6.15
+2024-03-02 v1.6.16
 
 - Fix: AI Functions with enums failing.
+- Update: The function approval form will now display only the supplied parameters.
 
 2024-02-29 v1.6.14
 

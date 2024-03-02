@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	public class tool_item
+	public class tool_item : base_item
 	{
 		[Default(null)]
 		public string name { get; set; }
@@ -19,6 +19,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public Dictionary<string, tool_item> properties { get; set; }
 		public tool_item parameters { get; set; }
 		public string[] required { get; set; }
+
+		// Used by dateTime type.
+		public string format;
 
 	}
 }

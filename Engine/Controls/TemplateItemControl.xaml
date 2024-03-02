@@ -395,7 +395,11 @@
 				</WrapPanel>
 			</Grid>
 			<!--  Row 3  -->
-			<Controls:PluginApprovalControl x:Name="PluginApprovalPanel" Grid.Row="3" Grid.ColumnSpan="4" />
+			<Controls:PluginApprovalControl
+				x:Name="PluginApprovalPanel"
+				Grid.Row="3"
+				Grid.ColumnSpan="4"
+				VerticalAlignment="Bottom" />
 			<!--  Row 4  -->
 			<Border
 				Grid.Row="4"

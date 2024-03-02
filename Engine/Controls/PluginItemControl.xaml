@@ -106,7 +106,7 @@
 				ItemsSource="{Binding Params}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<StackPanel Grid.Row="{Binding Index}" Orientation="Horizontal">
+						<StackPanel Grid.Row="{Binding Index}" Orientation="Horizontal" Visibility="{Binding ParamVisibility}">
 							<Label
 								Grid.Row="{Binding Index}"
 								Grid.Column="0"
@@ -121,7 +121,8 @@
 								Margin="4,0,0,0"
 								Padding="0"
 								Content="{Binding Name}"
-								FontWeight="Bold" />
+								FontWeight="Bold"
+								ToolTip="{Binding ParamValuePreview}" />
 							<Label
 								Grid.Row="{Binding Index}"
 								Grid.Column="2"

@@ -16,5 +16,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			}
 		}
+
 	}
 }

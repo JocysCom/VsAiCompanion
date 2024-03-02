@@ -39,10 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_item = value ?? emptyData;
 				DataContext = _item;
 				_item.ListChanged += _item_ListChanged;
-				OnPropertyChanged(nameof(SowApprovalPanel));
-				OnPropertyChanged(nameof(ApprovalItem));
-				OnPropertyChanged(nameof(ShowSecondaryAiEvaluation));
-				OnPropertyChanged(nameof(FunctionId));
+				UpdatePluginItemControl();
 			}
 		}
 
@@ -50,6 +47,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _item_ListChanged(object sender, ListChangedEventArgs e)
 		{
+			UpdatePluginItemControl();
+		}
+
+		void UpdatePluginItemControl()
+		{
+			//PluginItemPanel.Args = ApprovalItem?.Args;
 			OnPropertyChanged(nameof(SowApprovalPanel));
 			OnPropertyChanged(nameof(ApprovalItem));
 			OnPropertyChanged(nameof(ShowSecondaryAiEvaluation));
