@@ -43,6 +43,8 @@
 		/// @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
 		/// -Text to be removed
 		/// +Text to be added
+		///
+		/// * numbers are 1-based, not 0-based.
 		/// </example>
 		[RiskLevel(RiskLevel.High)]
 		string ApplyFileChanges(string fileFullName, string unifiedDiff);
@@ -61,6 +63,8 @@
 		/// @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
 		/// -Text to be removed
 		/// +Text to be added
+		///
+		/// * numbers are 1-based, not 0-based.
 		/// </example>
 		[RiskLevel(RiskLevel.High)]
 		string ApplyContentsChanges(string contents, string unifiedDiff);
