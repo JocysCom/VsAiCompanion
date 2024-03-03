@@ -65,7 +65,7 @@ Code - Smart Search: The AI can help you find the specific location of code feat
 
 Select Errors or Warnings reported by Visual Studio and ask AI to fix it:
 
-<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Task_Fix_SelectedIssue.png" width="600" height="473">
+<img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Task_Fix_SelectedIssue.png" width="600" height="338">
 
 Ask AI to fix the exception by either copying and pasting the exception info as a message or clicking the [Send] button when Visual Studio throws it during debugging:
 
