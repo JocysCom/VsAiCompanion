@@ -48,10 +48,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			Icon = Resources.Icons.Icons_Default.Current[iconName] as Viewbox;
 			Id = (ClassFullName + "." + mi.Name).Trim('.');
-			var summary = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetSummaryText(mi));
-			var returns = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetReturnText(mi));
-			var example = JocysCom.ClassLibrary.Text.Helper.RemoveIdent(
-				XmlDocHelper.TrimSpaces(XmlDocHelper.GetExampleText(mi)));
+			var summary = XmlDocHelper.GetSummaryText(mi, FormatText.ReduceAndTrimSpaces);
+			var returns = XmlDocHelper.GetReturnText(mi, FormatText.ReduceAndTrimSpaces);
+			var example = XmlDocHelper.GetExampleText(mi, FormatText.RemoveIdentAndTrimSpaces);
 			var lines = new List<string>();
 			if (!string.IsNullOrEmpty(summary))
 				lines.Add(summary);
@@ -66,7 +65,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var index = 0;
 			foreach (var pi in mi.GetParameters())
 			{
-				var paramText = XmlDocHelper.RemoveSpaces(XmlDocHelper.GetParamText(mi, pi));
+				var paramText = XmlDocHelper.GetParamText(mi, pi, FormatText.ReduceAndTrimSpaces);
 				var pp = new PluginParam();
 				pp.Name = pi.Name;
 				pp.IsOptional = pi.IsOptional;

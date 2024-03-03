@@ -8,7 +8,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 
 	/// <summary>
-	/// Helps AI to auto-continue on the task.
+	/// Basic functions that allow AI to create, modify files, or retrieve web content or files from the web.
 	/// </summary>
 	public class Basic : IDiffHelper, IFileHelper
 	{

@@ -1,9 +1,11 @@
-2024-03-02 v1.6.17
+2024-03-02 v1.6.19
 
 - Fix: AI Functions with enums failing.
 - Update: The function approval form will now display only the supplied parameters.
 - Update: Text file read and modify functions improved to be more understandable for AI.
-
+- Update: Updated some tooltips to improve clarity.
+- New: Added function category descriptions.
+ 
 2024-02-29 v1.6.14
 
 - New: TTS support. Can be used with Jocys.com TTS Monitor. Ask to create a very short funny dialog involving the dragon and voice it.

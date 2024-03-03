@@ -18,77 +18,114 @@ namespace JocysCom.ClassLibrary.Xml
 
 		#region Methods
 
-		public static string GetSummaryText(MemberInfo mi)
+		public static string GetSummaryText(MemberInfo mi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
 			// Get <summary> of the property first.
-			var text = member?.summary ?? "";
+			var s = member?.summary ?? "";
 			// If not set then...
-			if (!string.IsNullOrEmpty(text))
-				return text;
+			if (!string.IsNullOrEmpty(s))
+				return GetFormattedText(s, format);
 			if (mi.MemberType == MemberTypes.Property)
 			{
 				//	Get class  summary.
 				var pi = mi as PropertyInfo;
-				text = GetSummary(pi.PropertyType);
+				s = GetSummary(pi.PropertyType);
 			}
-			return text;
+			s = GetFormattedText(s, format);
+			return s;
 		}
 
-		public static string GetExampleText(MemberInfo mi)
+		public static string GetExampleText(MemberInfo mi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
-			var text = member?.example ?? "";
+			var s = member?.example ?? "";
 			// If not set then...
-			if (!string.IsNullOrEmpty(text))
-				return text;
+			if (!string.IsNullOrEmpty(s))
+				return GetFormattedText(s, format);
 			if (mi.MemberType == MemberTypes.Property)
 			{
 				//	Get class  summary.
 				var pi = mi as PropertyInfo;
-				text = GetSummary(pi.PropertyType);
+				s = GetSummary(pi.PropertyType);
 			}
-			return text;
+			s = GetFormattedText(s, format);
+			return s;
 		}
 
 
-		public static string GetParamText(MethodInfo mi, ParameterInfo pi)
+		public static string GetParamText(MethodInfo mi, ParameterInfo pi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
-			var text = member?.param.Where(x => x.name == pi.Name).Select(x => x.value).FirstOrDefault() ?? "";
-			if (!string.IsNullOrEmpty(text))
-				return text;
+			var s = member?.param.Where(x => x.name == pi.Name).Select(x => x.value).FirstOrDefault() ?? "";
+			if (!string.IsNullOrEmpty(s))
+				return GetFormattedText(s, format);
 			// Get return class summary.
-			text = GetSummary(pi.ParameterType);
-			return text;
+			s = GetSummary(pi.ParameterType);
+			s = GetFormattedText(s, format);
+			return s;
 		}
 
-		public static string GetReturnText(MethodInfo mi)
+		public static string GetReturnText(MethodInfo mi, FormatText format = FormatText.None)
 		{
 			var member = GetMemberDoc(mi);
-			var text = member?.returns.Select(x => x.value).FirstOrDefault() ?? "";
-			if (!string.IsNullOrEmpty(text))
-				return text;
+			var s = member?.returns.Select(x => x.value).FirstOrDefault() ?? "";
+			if (!string.IsNullOrEmpty(s))
+				return GetFormattedText(s, format);
 			// Get return class summary.
-			text = GetSummary(mi.ReturnType);
-			return text;
+			s = GetSummary(mi.ReturnType);
+			s = GetFormattedText(s, format);
+			return s;
 		}
 
-		public static string GetSummary(Type type)
+		public static string GetSummary(Type type, FormatText format = FormatText.None)
 		{
 			var ti = type.GetTypeInfo();
 			var typeMember = GetMemberDoc(ti);
-			var summary = typeMember?.summary ?? "";
-			return summary;
+			var s = typeMember?.summary ?? "";
+			s = GetFormattedText(s, format);
+			return s;
+		}
+
+		public static string GetFormattedText(string s, FormatText format)
+		{
+			if (format.HasFlag(FormatText.RemoveIdent))
+				s = RemoveIdent(s);
+			if (format.HasFlag(FormatText.ReduceSpaces))
+				s = ReduceSpaces(s);
+			if (format.HasFlag(FormatText.TrimSpaces))
+				s = TrimSpaces(s);
+			return s;
 		}
 
 		public static readonly Regex RxMultiSpace = new Regex("[ \r\n\t\u00A0]+", RegexOptions.Compiled);
 
-		public static string RemoveSpaces(string s)
+		public static string RemoveIdent(string s)
+		{
+			s = s.Trim('\n', '\r', ' ', '\t').Replace("\r\n", "\n");
+			var lines = s.Split('\n');
+			var checkLines = lines
+				// Ignore first trimmed line.
+				.Where((x, i) => i > 0 && !string.IsNullOrWhiteSpace(x)).ToArray();
+			if (checkLines.Length == 0)
+				return s;
+			var minIndent = checkLines.Min(x => x.Length - x.TrimStart(' ', '\t').Length);
+			for (var i = 0; i < lines.Length; i++)
+			{
+				if (lines[i].Length > minIndent)
+					// Don't trim first line.
+					lines[i] = lines[i].Substring(i == 0 ? 0 : minIndent);
+				else if (string.IsNullOrWhiteSpace(lines[i]))
+					lines[i] = "";
+			}
+			return string.Join(Environment.NewLine, lines);
+		}
+
+		public static string ReduceSpaces(string s)
 		{
 			if (string.IsNullOrEmpty(s))
 				return s;
-			return RxMultiSpace.Replace(s, " ").Trim();
+			return TrimSpaces(RxMultiSpace.Replace(s, " "));
 		}
 
 		public static string TrimSpaces(string s)
@@ -333,6 +370,17 @@ namespace JocysCom.ClassLibrary.Xml
 	}
 
 	#region Helper Classes
+
+	[Flags]
+	public enum FormatText
+	{
+		None = 0,
+		RemoveIdent = 1,
+		ReduceSpaces = 2,
+		TrimSpaces = 4,
+		RemoveIdentAndTrimSpaces = RemoveIdent | TrimSpaces,
+		ReduceAndTrimSpaces = ReduceSpaces | TrimSpaces,
+	}
 
 	public class XmlDocName
 	{

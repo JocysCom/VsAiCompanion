@@ -9,7 +9,8 @@ using System.Linq;
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 	/// <summary>
-	/// Index and search.
+	/// Functions that enable AI to perform indexed searches.
+	/// Use "Windows Search Settings" to add more folders to your search.
 	/// </summary>
 	public partial class Search
 	{

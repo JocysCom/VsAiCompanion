@@ -6,6 +6,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
 	d:DesignHeight="250"
 	d:DesignWidth="400"
 	mc:Ignorable="d">
@@ -20,6 +21,7 @@
 	</UserControl.Resources>
 	<Grid VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
@@ -83,7 +85,18 @@
 
 			</StackPanel>
 		</Border>
-		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+		<Border
+			Grid.Row="1"
+			Background="{StaticResource BackgroundDark}"
+			BorderBrush="{StaticResource BorderDark}"
+			BorderThickness="0,0,0,1">
+			<TextBlock
+				Name="ClassDescriptionLabel"
+				Margin="4"
+				Text="{Binding ClassDescription, ElementName=This}"
+				TextWrapping="Wrap" />
+		</Border>
+		<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
 			<ItemsControl
 				x:Name="MainItemsControl"
 				Margin="0,0,0,-1"

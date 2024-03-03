@@ -277,7 +277,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var functionParameters = ConvertToToolItem(null, mi);
 				var serializedParameters = Client.Serialize(functionParameters);
 				var binaryParamaters = BinaryData.FromString(serializedParameters);
-				var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
+				var summaryText = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
 				// Create and add function definition.
 				var function = new FunctionDefinition();
 				function.Name = mi.Name;
@@ -316,7 +316,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				foreach (var arg in args)
 				{
 					var item = ConvertToToolItem(arg.ParameterType);
-					item.description = XmlDocHelper.GetParamText(mi, arg).Trim(new char[] { '\r', '\n', ' ' });
+					item.description = XmlDocHelper.GetParamText(mi, arg, FormatText.RemoveIdentAndTrimSpaces);
 					oProperties.Add(arg.Name, item);
 				}
 				o.properties = oProperties;
@@ -326,13 +326,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			else if (mi != null && miPi != null)
 			{
 				oType = miPi.ParameterType;
-				oDescription = XmlDocHelper.GetParamText(mi, miPi).Trim(new char[] { '\r', '\n', ' ' });
+				oDescription = XmlDocHelper.GetParamText(mi, miPi, FormatText.RemoveIdentAndTrimSpaces);
 			}
 			// Property type.
 			else
 			{
 				oType = type;
-				oDescription = XmlDocHelper.GetSummary(type).Trim(new char[] { '\r', '\n', ' ' });
+				oDescription = XmlDocHelper.GetSummary(type, FormatText.RemoveIdentAndTrimSpaces);
 			}
 			var underlyingType = Nullable.GetUnderlyingType(oType) ?? oType;
 			o.type = GetJsonMainType(oType);
@@ -494,7 +494,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!AllowPlugin(kv.Key, item.MaxRiskLevel))
 					continue;
 				var mi = kv.Value;
-				var summaryText = XmlDocHelper.GetSummaryText(mi).Trim(new char[] { '\r', '\n', ' ' });
+				var summaryText = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
 				var requiredParams = new List<string>();
 				var props = new Dictionary<string, object>();
 				foreach (var pi in mi.GetParameters())

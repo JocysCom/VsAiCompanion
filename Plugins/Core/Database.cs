@@ -7,7 +7,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 
 	/// <summary>
-	/// Execute queries or stored procedures on database.
+	/// Allows AI to execute queries or stored procedures on a database.
+	/// For example, it can retrieve a database schema and construct complex results.
+	/// Use database permissions to restrict AI's access.
 	/// </summary>
 	public partial class Database
 	{

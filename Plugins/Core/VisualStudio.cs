@@ -5,7 +5,9 @@ using System.Text.Json;
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 	/// <summary>
-	/// Use to get selection or document content from Visual Studio.
+	/// Allows AI to work with Visual Studio.
+	/// For example, it can retrieve the content of a selected text, the current document,
+	/// or all open documents in Visual Studio when you request it.
 	/// </summary>
 	public partial class VisualStudio : ISolutionHelper
 	{

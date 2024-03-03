@@ -6,7 +6,9 @@ using System.Net.Sockets;
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 	/// <summary>
-	/// Used with Jocys.com TTS Monitor.
+	/// TTS functions allow AI to speak, voice, and narrate stories and dialogues.
+	/// They are used with Jocys.com TTS Monitor portable application from jocys.com/TTS by enabling "Options > Monitor: Server.".
+	/// Works well in combination with Windows Voice Typing.
 	/// </summary>
 	public class TTS
 	{

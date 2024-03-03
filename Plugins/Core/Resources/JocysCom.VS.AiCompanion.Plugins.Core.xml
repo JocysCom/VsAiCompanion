@@ -39,7 +39,7 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Basic">
             <summary>
-            Helps AI to auto-continue on the task.
+            Basic functions that allow AI to create, modify files, or retrieve web content or files from the web.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue(System.String)">
@@ -434,7 +434,9 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Database">
             <summary>
-            Execute queries or stored procedures on database.
+            Allows AI to execute queries or stored procedures on a database.
+            For example, it can retrieve a database schema and construct complex results.
+            Use database permissions to restrict AI's access.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQuery(System.String,System.String,System.String)">
@@ -463,7 +465,8 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Lists">
             <summary>
-            Manages various lists.
+            Allows AI to manage various lists, such as task lists, to-do lists, task progress, and completion lists.
+            It can also be used to store environment variables or settings.
             </summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Lists.AllLists">
@@ -524,7 +527,8 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">
             <summary>
-            Index and search.
+            Functions that enable AI to perform indexed searches.
+            Use "Windows Search Settings" to add more folders to your search.
             </summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Search._databasePath">
@@ -574,7 +578,9 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TTS">
             <summary>
-            Used with Jocys.com TTS Monitor.
+            TTS functions allow AI to speak, voice, and narrate stories and dialogues.
+            They are used with Jocys.com TTS Monitor portable application from jocys.com/TTS by enabling "Options > Monitor: Server.".
+            Works well in combination with Windows Voice Typing.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText(System.String,System.String,System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender},System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
@@ -1099,7 +1105,9 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
             <summary>
-            Use to get selection or document content from Visual Studio.
+            Allows AI to work with Visual Studio.
+            For example, it can retrieve the content of a selected text, the current document,
+            or all open documents in Visual Studio when you request it.
             </summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.Current">

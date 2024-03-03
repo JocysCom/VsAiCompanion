@@ -1,10 +1,12 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,7 +15,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for PluginListControl.xaml
 	/// </summary>
-	public partial class PluginListControl : UserControl
+	public partial class PluginListControl : UserControl, INotifyPropertyChanged
 	{
 		public PluginListControl()
 		{
@@ -43,8 +45,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void UpdateOnListChanged()
 		{
 			var methods = GetAllMetods();
+			var first = methods.FirstOrDefault();
+			if (first != null)
+			{
+				var summary = XmlDocHelper.GetSummaryText(first.Mi.DeclaringType, FormatText.ReduceAndTrimSpaces);
+				ClassDescription = summary;
+				OnPropertyChanged(nameof(ClassDescription));
+			}
 			ClassLibrary.Collections.CollectionsHelper.Synchronize(methods, CurrentItems, new PluginItemComparer());
 		}
+
+		public string ClassDescription { get; set; }
 
 		class PluginItemComparer : IEqualityComparer<PluginItem>
 		{
@@ -118,5 +129,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (method.RiskLevel == RiskLevel.Medium)
 					method.IsEnabled = true;
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 }
