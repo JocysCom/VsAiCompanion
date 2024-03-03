@@ -106,8 +106,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> Current.SetCurrentDocumentContents(contents);
 
 		/// <inheritdoc />
-		public string ApplyCurrentDocumentContentsChanges(string unifiedDiff)
-			=> Current.ApplyCurrentDocumentContentsChanges(unifiedDiff);
+		public string ModifyCurrentDocument(long startLine, long deleteLines, string insertContents = null)
+			=> Current.ModifyCurrentDocument(startLine, deleteLines, insertContents);
 
 		/// <inheritdoc />
 		public bool SetSelection(string contents)
@@ -115,8 +115,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 
 		/// <inheritdoc />
-		public string ApplySelectionChanges(string unifiedDiff)
-			=> Current.ApplySelectionChanges(unifiedDiff);
+		public string ModifySelection(long startLine, long deleteLines, string insertContents = null)
+			=> Current.ModifySelection(startLine, deleteLines, insertContents);
 
 		/// <inheritdoc />
 		public Dictionary<string, JsonElement> GetEnvironmentContext()

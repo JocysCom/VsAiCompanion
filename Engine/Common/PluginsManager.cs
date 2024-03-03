@@ -277,11 +277,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var functionParameters = ConvertToToolItem(null, mi);
 				var serializedParameters = Client.Serialize(functionParameters);
 				var binaryParamaters = BinaryData.FromString(serializedParameters);
-				var summaryText = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
+				var summary = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
+				var returns = XmlDocHelper.GetReturnText(mi, FormatText.RemoveIdentAndTrimSpaces);
+				//var example = XmlDocHelper.GetExampleText(mi, FormatText.RemoveIdentAndTrimSpaces);
+				var lines = new List<string>();
+				if (!string.IsNullOrEmpty(summary))
+					lines.Add(summary);
+				if (!string.IsNullOrEmpty(returns))
+					lines.Add("Returns:\r\n" + returns);
+				//if (!string.IsNullOrEmpty(example))
+				//	lines.Add("Example:\r\n" + example);
 				// Create and add function definition.
 				var function = new FunctionDefinition();
 				function.Name = mi.Name;
-				function.Description = summaryText;
+				function.Description = string.Join("\r\n\r\n", lines);
 				function.Parameters = binaryParamaters;
 				var tool = new ChatCompletionsFunctionToolDefinition(function);
 				ToolDefinitions.Add(tool);

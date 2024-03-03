@@ -118,7 +118,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var methods = GetAllMetods();
 			foreach (var method in methods)
-				if (method.RiskLevel == RiskLevel.None || method.RiskLevel == RiskLevel.Low)
+				if (method.RiskLevel >= RiskLevel.None && method.RiskLevel <= RiskLevel.Low)
 					method.IsEnabled = true;
 		}
 
@@ -126,7 +126,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var methods = GetAllMetods();
 			foreach (var method in methods)
-				if (method.RiskLevel == RiskLevel.Medium)
+				if (method.RiskLevel >= RiskLevel.None && method.RiskLevel <= RiskLevel.Medium)
 					method.IsEnabled = true;
 		}
 

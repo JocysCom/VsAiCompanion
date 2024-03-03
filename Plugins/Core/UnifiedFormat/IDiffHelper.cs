@@ -1,4 +1,4 @@
-﻿namespace JocysCom.VS.AiCompanion.Plugins.Core
+﻿namespace JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat
 {
 	/// <summary>
 	/// Diff helper.
@@ -40,11 +40,19 @@
 		/// adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by Google's The Diff Match and Patch library.</param>
 		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
 		/// <example>
-		/// @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
-		/// -Text to be removed
-		/// +Text to be added
-		///
-		/// * numbers are 1-based, not 0-based.
+		/// The GNU Unified Diff Format example:
+		/// 
+		/// @@ -OriginalStart,OriginalLength +TargetStart,TargetLength @@
+		/// -TextToDelete
+		/// +TextToInsert
+		/// 
+		/// Placeholders:
+		/// - OriginalStart is the 1-based starting line number of the original text segment.
+		/// - OriginalLength is the number of lines in the original text segment affected by the patch.
+		/// - TargetStart is the 1-based starting line number in the transformed (target) text where changes begin.
+		/// - TargetLength is the number of lines in the transformed text resulting from the patch.
+		/// - TextToDelete is the original text to be removed.
+		/// - TextToInsert is the new text to be added.
 		/// </example>
 		[RiskLevel(RiskLevel.High)]
 		string ModifyFile(string fileFullName, string unifiedDiff);
@@ -60,14 +68,54 @@
 		/// adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
 		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
 		/// <example>
-		/// @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
-		/// -Text to be removed
-		/// +Text to be added
-		///
-		/// * numbers are 1-based, not 0-based.
+		/// The GNU Unified Diff Format example:
+		/// 
+		/// @@ -OriginalStart,OriginalLength +TargetStart,TargetLength @@
+		/// -TextToDelete
+		/// +TextToInsert
+		/// 
+		/// Placeholders:
+		/// - OriginalStart is the 1-based starting line number of the original text segment.
+		/// - OriginalLength is the number of lines in the original text segment affected by the patch.
+		/// - TargetStart is the 1-based starting line number in the transformed (target) text where changes begin.
+		/// - TargetLength is the number of lines in the transformed text resulting from the patch.
+		/// - TextToDelete is the original text to be removed.
+		/// - TextToInsert is the new text to be added.
 		/// </example>
 		[RiskLevel(RiskLevel.High)]
 		string ModifyContents(string contents, string unifiedDiff);
+
+		/*
+
+		/// <summary>
+		/// Updates the content of the text by applying a series of changes. 
+		/// These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
+		/// This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
+		/// The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
+		/// </summary>
+		/// <param name="contents">The text contents that needs to be updated.</param>
+		/// <param name="textPatches">Unified diff string representing the changes to apply,
+		/// adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
+		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		/// <example>
+		/// The GNU Unified Diff Format example:
+		/// 
+		/// @@ -OriginalStart,OriginalLength +TargetStart,TargetLength @@
+		/// -TextToDelete
+		/// +TextToInsert
+		/// 
+		/// Placeholders:
+		/// - OriginalStart is the 1-based starting line number of the original text segment.
+		/// - OriginalLength is the number of lines in the original text segment affected by the patch.
+		/// - TargetStart is the 1-based starting line number in the transformed (target) text where changes begin.
+		/// - TargetLength is the number of lines in the transformed text resulting from the patch.
+		/// - TextToDelete is the original text to be removed.
+		/// - TextToInsert is the new text to be added.
+		/// </example>
+		[RiskLevel(RiskLevel.Low)]
+		string PatchText(string contents, TextPatch[] textPatches);
+
+		*/
 
 	}
 }

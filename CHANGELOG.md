@@ -1,9 +1,10 @@
-2024-03-02 v1.6.19
+2024-03-02 v1.6.20
 
 - Fix: AI Functions with enums failing.
 - Update: The function approval form will now display only the supplied parameters.
 - Update: Text file read and modify functions improved to be more understandable for AI.
 - Update: Updated some tooltips to improve clarity.
+- New: Web content and download functions with default credentials.
 - New: Added function category descriptions.
  
 2024-02-29 v1.6.14

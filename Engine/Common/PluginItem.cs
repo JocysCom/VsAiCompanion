@@ -56,8 +56,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				lines.Add(summary);
 			if (!string.IsNullOrEmpty(returns))
 				lines.Add("Returns: " + returns);
-			if (!string.IsNullOrEmpty(example))
-				lines.Add("Example:\r\n" + example);
+			//if (!string.IsNullOrEmpty(example))
+			//	lines.Add("Example:\r\n" + example);
 			Description = string.Join(Environment.NewLine, lines);
 			Mi = mi;
 			if (Params == null)

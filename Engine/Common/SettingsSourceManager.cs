@@ -196,7 +196,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static ZipStorer GetZipFromUrl(string url)
 		{
-			var docItem = Helper.RunSynchronously(async () => await Basic.DownloadContents(url));
+			var docItem = Helper.RunSynchronously(async () => await Basic.DownloadContentAuthenticated(url));
 			if (!string.IsNullOrEmpty(docItem.Error))
 			{
 				Global.ShowError($"{nameof(GetZipFromUrl)} error: {docItem.Error}");

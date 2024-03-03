@@ -29,17 +29,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				var allLines = File.ReadAllText(path, detectedEncoding)
 					   .Split(newLines, StringSplitOptions.None)
 					   .ToList();
-				if (deleteLines > 0)
-				{
-					long actualDeleteLines = Math.Min(deleteLines, allLines.Count - startLine + 1);
-					allLines.RemoveRange((int)startLine - 1, (int)actualDeleteLines);
-				}
-				if (insertContents != null)
-				{
-					// Adjust for insert after deletion operations
-					int adjustedStartLine = deleteLines > 0 ? (int)startLine - 1 : (int)startLine;
-					allLines.InsertRange(adjustedStartLine, insertContents.Split(newLines, StringSplitOptions.None));
-				}
+				_ModifyContents(allLines, startLine, deleteLines, insertContents);
 				// Write modified lines back to the file with the detected newline type.
 				File.WriteAllText(path, string.Join(detectedNewlineType, allLines), detectedEncoding);
 				return "OK";
@@ -113,53 +103,132 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 		}
 
+		#region Helper Functions
+
+		/// <summary>
+		/// Modifies text content by supporting line deletion, insertion, or updating through a combination of both.
+		/// </summary>
+		/// <param name="text">The text to operate on.</param>
+		/// <param name="startLine">
+		/// The 1-based line number indicating where the operation begins.
+		/// For insertion, this is the line where the new content will be added before.
+		/// </param>
+		/// <param name="deleteLines">
+		/// The number of lines to delete starting from the line number specified by "startLine"
+		/// Set to 0 for insertion operations where existing lines are not to be removed.
+		/// To delete all lines from the start line, use the maximum value of the integer type.
+		/// </param>
+		/// <param name="insertContents">
+		/// The content to insert. For deletion operations, this should be set to null.
+		/// For update operations, this contains the new content replacing the deleted lines.
+		/// </param>
+		/// <returns>Modified text.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="startLine"/> is less than 1 or <paramref name="deleteLines"/> is negative.</exception>
+		/// <example>
+		/// Deleting lines:
+		/// { text: "...text to modify...", startLine: 3, deleteLines: 2 }
+		/// 
+		/// Inserting lines:
+		/// { text: "...text to modify...", startLine: 4, deleteLines: 0, insertContents: "new content\r\nto insert from line 4" }
+		///
+		/// Updating lines:
+		/// { text: "...text to modify...", startLine: 4, deleteLines: 3, insertContents: "New content replacing lines 4-6" }
+		/// </example>
+		public string ModifyText(string text, long startLine, long deleteLines, string insertContents = null)
+		{
+			if (string.IsNullOrEmpty(text))
+				return text;
+			var newLines = new[] { "\r\n", "\n", "\r" };
+			string detectedNewlineType;
+			using (var reader = new StringReader(text))
+				_DetectNewLineType(reader, out detectedNewlineType);
+			var allLines = text
+				   .Split(newLines, StringSplitOptions.None)
+				   .ToList();
+			_ModifyContents(allLines, startLine, deleteLines, insertContents);
+			var result = string.Join(detectedNewlineType, allLines);
+			return result;
+		}
+
+		private void _ModifyContents(List<string> contents, long startLine, long deleteLines, string insertContents = null)
+		{
+			var newLines = new[] { "\r\n", "\n", "\r" };
+			if (deleteLines > 0)
+			{
+				long actualDeleteLines = Math.Min(deleteLines, contents.Count - startLine + 1);
+				contents.RemoveRange((int)startLine - 1, (int)actualDeleteLines);
+			}
+			if (insertContents != null)
+			{
+				// Always adjust to insert before the specified line
+				int adjustedStartLine = (int)startLine - 1;
+				var linesToInsert = insertContents.Split(newLines, StringSplitOptions.None);
+				if (deleteLines == 0)
+				{
+					// Prepend insertContents to the specified line when not deleting
+					contents[adjustedStartLine] = string.Join("", linesToInsert) + contents[adjustedStartLine];
+				}
+				else
+				{
+					// Insert after deletion or when adding new lines
+					contents.InsertRange(adjustedStartLine, linesToInsert);
+				}
+			}
+		}
+
+
+		private void _DetectNewLineType(TextReader reader, out string newlineType)
+		{
+			newlineType = Environment.NewLine;
+			char[] buffer = new char[1];
+			char currentChar;
+			char? lastChar = null;
+			while (reader.Read(buffer, 0, 1) > 0)
+			{
+				currentChar = buffer[0];
+				if (lastChar == '\r')
+				{
+					if (currentChar == '\n')
+					{
+						// Windows (CRLF)
+						newlineType = "\r\n";
+						return;
+					}
+					// Older Macs (CR)
+					newlineType = "\r";
+					break;
+				}
+				else if (currentChar == '\n')
+				{
+					// Unix/Linux (LF)
+					newlineType = "\n";
+					return;
+				}
+				lastChar = currentChar;
+			}
+			// Handling the case where the file ends with \r as the very last character.
+			if (lastChar == '\r')
+			{
+				// Older Macs (CR)
+				newlineType = "\r";
+			}
+		}
+
 
 		/// <summary>
 		/// Detect file encoding and new line type.
 		/// </summary>
 		private void DetectFileProperties(string path, out Encoding encoding, out string newlineType)
 		{
-			// Fallback to default encoding.
 			encoding = Encoding.Default;
-			// Default to Environment NewLine.
-			newlineType = Environment.NewLine;
 			using (var reader = new StreamReader(path, detectEncodingFromByteOrderMarks: true))
 			{
 				encoding = reader.CurrentEncoding;
-				char[] buffer = new char[1];
-				char currentChar;
-				char? lastChar = null;
-				while (reader.Read(buffer, 0, 1) > 0)
-				{
-					currentChar = buffer[0];
-					if (lastChar == '\r')
-					{
-						if (currentChar == '\n')
-						{
-							// Windows (CRLF)
-							newlineType = "\r\n";
-							return;
-						}
-						// Older Macs (CR)
-						newlineType = "\r";
-						break;
-					}
-					else if (currentChar == '\n')
-					{
-						// Unix/Linux (LF)
-						newlineType = "\n";
-						return;
-					}
-					lastChar = currentChar;
-				}
-				// Handling the case where the file ends with \r as the very last character.
-				if (lastChar == '\r')
-				{
-					// Older Macs (CR)
-					newlineType = "\r";
-				}
+				_DetectNewLineType(reader, out newlineType);
 			}
 		}
+
+		#endregion
 
 	}
 }

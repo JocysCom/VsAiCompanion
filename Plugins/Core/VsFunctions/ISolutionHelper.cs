@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
@@ -112,21 +113,35 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		bool SaveDocument(string fileFullName, string newFileFullName);
 
 		/// <summary>
-		/// Updates the content of the current document by applying a series of changes. 
-		/// These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
-		/// This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
-		/// The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
+		/// Modifies text content of the currently open and active Document in the editor. Supports line deletion, insertion, or updating through a combination of both.
 		/// </summary>
-		/// <param name="unifiedDiff">Unified diff string representing the changes to apply,
-		/// adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
-		/// <returns>'OK' if the operation was successful; otherwise, an error message.</returns>
+		/// <param name="startLine">
+		/// The 1-based line number indicating where the operation begins.
+		/// For insertion, this is the line where the new content will be added before.
+		/// </param>
+		/// <param name="deleteLines">
+		/// The number of lines to delete starting from the line number specified by "startLine"
+		/// Set to 0 for insertion operations where existing lines are not to be removed.
+		/// To delete all lines from the start line, use the maximum value of the integer type.
+		/// </param>
+		/// <param name="insertContents">
+		/// The content to insert. For deletion operations, this should be set to null.
+		/// For update operations, this contains the new content replacing the deleted lines.
+		/// </param>
+		/// <returns>A string indicating the outcome of the operation. Returns "OK" if successful.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="startLine"/> is less than 1 or <paramref name="deleteLines"/> is negative.</exception>
 		/// <example>
-		/// @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
-		/// -Text to be removed
-		/// +Text to be added
+		/// Deleting lines:
+		/// { startLine: 3, deleteLines: 2 }
+		/// 
+		/// Inserting lines:
+		/// { startLine: 4, deleteLines: 0, insertContents: "new content\r\nto insert from line 4" }
+		///
+		/// Updating lines:
+		/// { startLine: 4, deleteLines: 3, insertContents: "New content replacing lines 4-6" }
 		/// </example>
 		[RiskLevel(RiskLevel.Medium)]
-		string ApplyCurrentDocumentContentsChanges(string unifiedDiff);
+		string ModifyCurrentDocument(long startLine, long deleteLines, string insertContents = null);
 
 		/// <summary>
 		/// Sets the content of the currently open and active Document in the editor.
@@ -150,21 +165,37 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		[RiskLevel(RiskLevel.Medium)]
 		bool SetSelection(string contents);
 
+
 		/// <summary>
-		/// Updates the selection of the current open document by applying a series of changes. 
-		/// These changes must be represented using the unified diff format, which is focused on efficient text manipulation.
-		/// This format supports insertions, deletions, and modifications, particularly useful when bandwidth or storage is limited.
-		/// The unified diff format is derived from the Myers Diff Algorithm, as implemented by Google's Diff Match and Patch library.
+		/// Modifies text content of the current selection. Supports line deletion, insertion, or updating through a combination of both.
 		/// </summary>
-		/// <param name="unifiedDiff">Unified diff string representing the changes to apply,
-		/// adhering to the Eugene W.Myers AnO(ND) Difference Algorithm implemented by The Diff Match and Patch library.</param>
+		/// <param name="startLine">
+		/// The 1-based line number indicating where the operation begins.
+		/// For insertion, this is the line where the new content will be added before.
+		/// </param>
+		/// <param name="deleteLines">
+		/// The number of lines to delete starting from the line number specified by "startLine"
+		/// Set to 0 for insertion operations where existing lines are not to be removed.
+		/// To delete all lines from the start line, use the maximum value of the integer type.
+		/// </param>
+		/// <param name="insertContents">
+		/// The content to insert. For deletion operations, this should be set to null.
+		/// For update operations, this contains the new content replacing the deleted lines.
+		/// </param>
+		/// <returns>A string indicating the outcome of the operation. Returns "OK" if successful.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="startLine"/> is less than 1 or <paramref name="deleteLines"/> is negative.</exception>
 		/// <example>
-		/// @@ -lineNumberOriginal,numberOfLinesOriginal +lineNumberNew,numberOfLinesNew @@
-		/// -Text to be removed
-		/// +Text to be added
+		/// Deleting lines:
+		/// { startLine: 3, deleteLines: 2 }
+		/// 
+		/// Inserting lines:
+		/// { startLine: 4, deleteLines: 0, insertContents: "new content\r\nto insert from line 4" }
+		///
+		/// Updating lines:
+		/// { startLine: 4, deleteLines: 3, insertContents: "New content replacing lines 4-6" }
 		/// </example>
 		[RiskLevel(RiskLevel.Medium)]
-		string ApplySelectionChanges(string unifiedDiff);
+		string ModifySelection(long startLine, long deleteLines, string insertContents = null);
 
 		// Methods for getting errors
 

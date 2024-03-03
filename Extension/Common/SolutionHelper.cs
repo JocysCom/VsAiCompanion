@@ -19,7 +19,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 	public partial class SolutionHelper : ISolutionHelper
 	{
 
-		DiffHelper diffHelper = new DiffHelper();
+		FileHelper fileHelper = new FileHelper();
 
 		/// <summary>
 		/// Switch to Visual Studio Thread.
@@ -570,14 +570,14 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public string ApplyCurrentDocumentContentsChanges(string unifiedDiff)
+		public string ModifyCurrentDocument(long startLine, long deleteLines, string insertContents = null)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			try
 			{
 				var docItem = GetCurrentDocument(true);
 				var contents = docItem.ContentData;
-				contents = diffHelper.ModifyContents(contents, unifiedDiff);
+				contents = fileHelper.ModifyText(contents, startLine, deleteLines, insertContents);
 				return SetCurrentDocumentContents(contents) ? "OK" : "Failed";
 			}
 			catch (Exception ex)
@@ -643,14 +643,14 @@ namespace JocysCom.VS.AiCompanion.Extension
 		}
 
 		/// <inheritdoc />
-		public string ApplySelectionChanges(string unifiedDiff)
+		public string ModifySelection(long startLine, long deleteLines, string insertContents = null)
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();
 			try
 			{
 				var docItem = GetSelection();
 				var contents = docItem.ContentData;
-				contents = diffHelper.ModifyContents(contents, unifiedDiff);
+				contents = fileHelper.ModifyText(contents, startLine, deleteLines, insertContents);
 				return SetSelection(contents) ? "OK" : "Failed";
 			}
 			catch (Exception ex)

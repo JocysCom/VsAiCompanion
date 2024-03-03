@@ -7,6 +7,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public interface IFileHelper
 	{
+
 		/// <summary>
 		/// Modifies text content within a file by supporting line deletion, insertion, or updating through a combination of both.
 		/// </summary>
