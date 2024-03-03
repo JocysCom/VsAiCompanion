@@ -241,9 +241,13 @@
 							<CheckBox
 								Name="IsSystemInstructionsCheckBox"
 								Margin="0"
-								Content="Send as System Messages"
+								Content="Use System Messages"
 								IsChecked="{Binding IsSystemInstructions}" />
-							<CheckBox Name="UseMaximumContextCheckBox" Content="Use Maximum Context" IsChecked="{Binding UseMaximumContext}" />
+							<CheckBox
+								Name="UseMaximumContextCheckBox"
+								Margin="0"
+								Content="Use Maximum Context"
+								IsChecked="{Binding UseMaximumContext}" />
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>
