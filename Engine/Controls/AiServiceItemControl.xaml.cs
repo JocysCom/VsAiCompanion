@@ -86,6 +86,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		private string previousText = "";
+
 		private void OpenAiBaseUrlTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			Uri result;
@@ -98,6 +100,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Global.MainControl.InfoPanel.Reset();
 				else
 					Global.SetWithTimeout(MessageBoxImage.Error, $"OpenAI's base URL for '{_Item?.Name}' is not local and does not use HTTPS!");
+				// Check if the current text contains "microsoft.com" or "azure.com"
+				// and ensure these were not present in the previous text
+				var currentText = OpenAiBaseUrlTextBox.Text;
+				bool containsMicrosoft = currentText.Contains("microsoft.com") && !previousText.Contains("microsoft.com");
+				bool containsAzure = currentText.Contains("azure.com") && !previousText.Contains("azure.com");
+				// Enable IsAzureOpenAI
+				if (containsMicrosoft || containsAzure)
+					Item.IsAzureOpenAI = true;
+				previousText = currentText;
 			}
 
 		}
