@@ -577,7 +577,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 				var docItem = GetCurrentDocument(true);
 				var contents = docItem.ContentData;
-				contents = diffHelper.ApplyContentsChanges(contents, unifiedDiff);
+				contents = diffHelper.ModifyContents(contents, unifiedDiff);
 				return SetCurrentDocumentContents(contents) ? "OK" : "Failed";
 			}
 			catch (Exception ex)
@@ -650,7 +650,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 				var docItem = GetSelection();
 				var contents = docItem.ContentData;
-				contents = diffHelper.ApplyContentsChanges(contents, unifiedDiff);
+				contents = diffHelper.ModifyContents(contents, unifiedDiff);
 				return SetSelection(contents) ? "OK" : "Failed";
 			}
 			catch (Exception ex)

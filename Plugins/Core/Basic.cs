@@ -182,13 +182,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			=> diffHelper.CompareContentsAndReturnChanges(originalText, modifiedText);
 
 		/// <inheritdoc/>
-		public string ApplyFileChanges(string fullFileName, string unifiedDiff)
-			=> diffHelper.ApplyFileChanges(fullFileName, unifiedDiff);
+		public string ModifyFile(string fullFileName, string unifiedDiff)
+			=> diffHelper.ModifyFile(fullFileName, unifiedDiff);
 
 
 		/// <inheritdoc/>
-		public string ApplyContentsChanges(string contents, string unifiedDiff)
-			=> diffHelper.ApplyContentsChanges(contents, unifiedDiff);
+		public string ModifyContents(string contents, string unifiedDiff)
+			=> diffHelper.ModifyContents(contents, unifiedDiff);
 
 
 		#endregion
@@ -198,12 +198,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		FileHelper fileHelper = new FileHelper();
 
 		/// <inheritdoc/>
-		public bool WriteTextFile(string path, string contents, long line, long column, string mode)
-			=> fileHelper.WriteTextFile(path, contents, line, column, mode);
+		public string ModifyTextFile(string path, long startLine, long deleteLines, string insertContents = null)
+			=> fileHelper.ModifyTextFile(path, startLine, deleteLines, insertContents);
 
 		/// <inheritdoc/>
-		public string ReadTextFile(string path, long line, long column, long length)
-			=> fileHelper.ReadTextFile(path, line, column, length);
+		public string ReadTextFile(string path, long offset = 0, long length = long.MaxValue)
+			=> fileHelper.ReadTextFile(path, offset, length);
+
+		/// <inheritdoc/>
+		public string ReadTextFileLines(string path, long line = 1, long count = long.MaxValue)
+			=> fileHelper.ReadTextFileLines(path, line, count);
 
 		#endregion
 

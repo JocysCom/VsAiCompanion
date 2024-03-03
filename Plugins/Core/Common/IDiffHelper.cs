@@ -47,7 +47,7 @@
 		/// * numbers are 1-based, not 0-based.
 		/// </example>
 		[RiskLevel(RiskLevel.High)]
-		string ApplyFileChanges(string fileFullName, string unifiedDiff);
+		string ModifyFile(string fileFullName, string unifiedDiff);
 
 		/// <summary>
 		/// Updates the content of the file by applying a series of changes. 
@@ -67,7 +67,7 @@
 		/// * numbers are 1-based, not 0-based.
 		/// </example>
 		[RiskLevel(RiskLevel.High)]
-		string ApplyContentsChanges(string contents, string unifiedDiff);
+		string ModifyContents(string contents, string unifiedDiff);
 
 	}
 }

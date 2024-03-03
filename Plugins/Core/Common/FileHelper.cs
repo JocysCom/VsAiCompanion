@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -10,71 +11,154 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public class FileHelper : IFileHelper
 	{
+
 		/// <inheritdoc/>
-		public bool WriteTextFile(string path, string contents, long line, long column, string mode)
+		public string ModifyTextFile(string path, long startLine, long deleteLines, string insertContents = null)
 		{
-			if (line < 1 || column < 1) throw new ArgumentOutOfRangeException("Line and column must be greater than 0.");
-			if (mode != "insert" && mode != "overwrite")
-				throw new ArgumentException("Mode must be either 'insert' or 'overwrite'.");
-			// Read all lines of the file if it exists, otherwise, initialize an empty list.
-			var allLines = File.Exists(path) ? File.ReadAllLines(path).ToList() : new List<string>();
-			// Ensure the list has enough lines to start writing at the specified line.
-			while (allLines.Count < line)
-				allLines.Add("");  // Add empty lines as needed.
-								   // Handling the specified column, ensuring the target line is long enough.
-			string targetLine = allLines[(int)line - 1];
-			while (targetLine.Length < column - 1)
-				targetLine += " ";  // Add spaces as needed to reach the target column.
-			if (mode == "overwrite")
+			if (startLine < 1)
+				throw new ArgumentOutOfRangeException(nameof(startLine), $"Argument '{nameof(startLine)}' must be greater than 0.");
+			if (deleteLines < 0)
+				throw new ArgumentOutOfRangeException(nameof(deleteLines), $"Argument '{nameof(deleteLines)}' must be non-negative.");
+
+			Encoding detectedEncoding;
+			string detectedNewlineType;
+			var newLines = new[] { "\r\n", "\n", "\r" };
+			DetectFileProperties(path, out detectedEncoding, out detectedNewlineType);
+			try
 			{
-				// In case of overwrite, replace the content starting from the column.
-				// If the contents to overwrite are longer than the original line part, it will extend the line.
-				string beforeColumn = targetLine.Substring(0, (int)column - 1);
-				string afterColumn = targetLine.Length > column + contents.Length - 1
-					? targetLine.Substring((int)(column + contents.Length - 1))
-					: "";
-				allLines[(int)line - 1] = beforeColumn + contents + afterColumn;
+				var allLines = File.ReadAllText(path, detectedEncoding)
+					   .Split(newLines, StringSplitOptions.None)
+					   .ToList();
+				if (deleteLines > 0)
+				{
+					long actualDeleteLines = Math.Min(deleteLines, allLines.Count - startLine + 1);
+					allLines.RemoveRange((int)startLine - 1, (int)actualDeleteLines);
+				}
+				if (insertContents != null)
+				{
+					// Adjust for insert after deletion operations
+					int adjustedStartLine = deleteLines > 0 ? (int)startLine - 1 : (int)startLine;
+					allLines.InsertRange(adjustedStartLine, insertContents.Split(newLines, StringSplitOptions.None));
+				}
+				// Write modified lines back to the file with the detected newline type.
+				File.WriteAllText(path, string.Join(detectedNewlineType, allLines), detectedEncoding);
+				return "OK";
 			}
-			else if (mode == "insert")
+			catch (Exception ex)
 			{
-				// In case of insert, insert the contents at the specified column, pushing existing content to the right.
-				string beforeColumn = targetLine.Substring(0, (int)column - 1);
-				string afterColumn = targetLine.Substring((int)column - 1);
-				allLines[(int)line - 1] = beforeColumn + contents + afterColumn;
+				return ex.Message;
 			}
-			// Write the modified lines back to the file.
-			File.WriteAllLines(path, allLines);
-			return true;
 		}
 
 		/// <inheritdoc/>
-		public string ReadTextFile(string path, long line, long column, long length)
+		public string ReadTextFile(string path, long offset = 0, long length = long.MaxValue)
 		{
-			if (line < 1 || column < 1)
-				throw new ArgumentOutOfRangeException("Line and column must be greater than 0.");
-			if (length < 0)
-				throw new ArgumentOutOfRangeException("Length must be non-negative.");
-			string result = null;
-			using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-			using (var reader = new StreamReader(fileStream))
+			try
 			{
-				// Skip lines until the target line is reached.
-				for (long currentLine = 1; currentLine < line; currentLine++)
-					if (reader.ReadLine() == null)
-						throw new ArgumentOutOfRangeException("Line exceeds the file's total lines.");
-				// Read target line
-				var lineContent = reader.ReadLine();
-				if (lineContent == null)
-					throw new ArgumentOutOfRangeException("Line exceeds the file's total lines.");
-				// Check if the column exceeds the line's length.
-				if (column > lineContent.Length)
-					throw new ArgumentOutOfRangeException("Column exceeds the line's length.");
-				// Calculate the actual length to read, considering the column position and requested length.
-				long actualLength = Math.Min(length, lineContent.Length - column + 1);
-				// Extract the specified substring from the line.
-				result = lineContent.Substring((int)column - 1, (int)actualLength);
+				string result = null;
+				using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (var reader = new StreamReader(fileStream, detectEncodingFromByteOrderMarks: true))
+				{
+					// Check if the desired offset is beyond the length of the file.
+					if (offset >= fileStream.Length)
+						return null;
+					reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+					var buffer = new char[length];
+					var readLength = reader.ReadBlock(buffer, 0, (int)Math.Min(length, fileStream.Length - offset));
+					// If no characters were read, return null to indicate that the operation was not successful.
+					if (readLength == 0)
+						return null;
+					result = new string(buffer, 0, readLength);
+				}
+				return result;
 			}
-			return result;
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		/// <inheritdoc/>
+		public string ReadTextFileLines(string path, long line = 1, long count = long.MaxValue)
+		{
+			try
+			{
+				if (line < 1)
+					throw new ArgumentOutOfRangeException(nameof(line), $"Argument '{nameof(line)}' must be greater than 0.");
+				if (count < 1)
+					throw new ArgumentOutOfRangeException(nameof(count), $"Argument '{nameof(count)}' must be non-negative.");
+
+				Encoding detectedEncoding;
+				string detectedNewlineType;
+				DetectFileProperties(path, out detectedEncoding, out detectedNewlineType);
+				var lines = new List<string>();
+				using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (var reader = new StreamReader(fileStream, detectEncodingFromByteOrderMarks: true))
+				{
+					// Skip lines until the target line is reached.
+					for (long currentLine = 1; currentLine < line; currentLine++)
+						if (reader.ReadLine() == null)
+							throw new ArgumentOutOfRangeException("Line exceeds the file's total lines.");
+					string value;
+					// Read until the end or requested line count.
+					while ((value = reader.ReadLine()) != null && count-- > 0)
+						lines.Add(value);
+				}
+				var result = string.Join(detectedNewlineType, lines);
+				return result;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+
+		/// <summary>
+		/// Detect file encoding and new line type.
+		/// </summary>
+		private void DetectFileProperties(string path, out Encoding encoding, out string newlineType)
+		{
+			// Fallback to default encoding.
+			encoding = Encoding.Default;
+			// Default to Environment NewLine.
+			newlineType = Environment.NewLine;
+			using (var reader = new StreamReader(path, detectEncodingFromByteOrderMarks: true))
+			{
+				encoding = reader.CurrentEncoding;
+				char[] buffer = new char[1];
+				char currentChar;
+				char? lastChar = null;
+				while (reader.Read(buffer, 0, 1) > 0)
+				{
+					currentChar = buffer[0];
+					if (lastChar == '\r')
+					{
+						if (currentChar == '\n')
+						{
+							// Windows (CRLF)
+							newlineType = "\r\n";
+							return;
+						}
+						// Older Macs (CR)
+						newlineType = "\r";
+						break;
+					}
+					else if (currentChar == '\n')
+					{
+						// Unix/Linux (LF)
+						newlineType = "\n";
+						return;
+					}
+					lastChar = currentChar;
+				}
+				// Handling the case where the file ends with \r as the very last character.
+				if (lastChar == '\r')
+				{
+					// Older Macs (CR)
+					newlineType = "\r";
+				}
+			}
 		}
 
 	}
