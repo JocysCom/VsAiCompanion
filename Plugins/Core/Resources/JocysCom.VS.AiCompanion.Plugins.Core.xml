@@ -385,9 +385,7 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Database">
             <summary>
-            Allows AI to execute queries or stored procedures on a database.
-            For example, it can retrieve a database schema and construct complex results.
-            Use database permissions to restrict AI's access.
+            Allows AI to execute queries or stored procedures on a database. For example, it can retrieve a database schema and construct complex results. Use database permissions to restrict AI's access.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQuery(System.String,System.String,System.String)">
@@ -416,8 +414,7 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Lists">
             <summary>
-            Allows AI to manage various lists, such as task lists, to-do lists, task progress, and completion lists.
-            It can also be used to store environment variables or settings.
+            Allows AI to manage various lists, such as task lists, to-do lists, task progress, and completion lists. It can also be used to store environment variables or settings.
             </summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Lists.AllLists">
@@ -478,8 +475,7 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">
             <summary>
-            Functions that enable AI to perform indexed searches.
-            Use "Windows Search Settings" to add more folders to your search.
+            Functions that enable AI to perform indexed searches. Use "Windows Search Settings" to add more folders to your search.
             </summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Search._databasePath">
@@ -529,10 +525,10 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TTS">
             <summary>
-            TTS functions allow AI to speak, voice, and narrate stories and dialogues. They are used with Jocys.com TTS Monitor portable application from Jocys.com/TTS. Works well in combination with Windows Voice Typing. Enable text-to-speech:
-            AI Companion: Enable all TTS plugins in this tab. Add message instruction for AI like "Answer with text-to-speech voice." 
-            TTS Monitor: Open[Options] tab > open[Monitor: Server] tab > check "Enable" checkbox. 
-            TTS Monitor: Open[Options] tab > open[Monitor: Display] tab > uncheck "Enable" checkbox.
+            TTS functions, in combination with Jocys.com TTS Monitor app (Jocys.com/TTS), allow AI to speak and narrate stories or dialogues using text-to-speech voices. Works well with Windows Voice Typing. Enable text-to-speech:
+            AI Companion > Enable all TTS plugins in this tab. Add message instruction for AI like "Answer with text-to-speech voice." 
+            TTS Monitor > [Options] tab > [Monitor: Server] tab > check "Enable" checkbox. 
+            TTS Monitor > [Options] tab > [Monitor: Display] tab > uncheck "Enable" checkbox.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText(System.String,System.String,System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender},System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
@@ -1288,10 +1284,7 @@
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio">
             <summary>
-            Allows AI to work with Visual Studio.
-            For example, it can retrieve the content of a selected text, the current document,
-            or all open documents in Visual Studio when you request it.
-            Functions are only used when the application runs as an extension inside Visual Studio.
+            Allows AI to work with Visual Studio. For example, it can retrieve the content of a selected text, the current document, or all open documents in Visual Studio when you request it. Functions are only used when the application runs as an extension inside Visual Studio.
             </summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.Current">

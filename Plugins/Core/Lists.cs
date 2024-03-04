@@ -4,8 +4,7 @@ using System.Linq;
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 	/// <summary>
-	/// Allows AI to manage various lists, such as task lists, to-do lists, task progress, and completion lists.
-	/// It can also be used to store environment variables or settings.
+	/// Allows AI to manage various lists, such as task lists, to-do lists, task progress, and completion lists. It can also be used to store environment variables or settings.
 	/// </summary>
 	public partial class Lists
 	{
