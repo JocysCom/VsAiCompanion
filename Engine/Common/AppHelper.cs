@@ -471,6 +471,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, head, body);
 		}
 
+		public static void AddHelp(Slider control, string help)
+		{
+			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Tag as string, help);
+		}
+
 		public static void AddHelp(ContentControl control, string help)
 		{
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);

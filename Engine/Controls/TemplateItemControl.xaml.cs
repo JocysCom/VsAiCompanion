@@ -404,6 +404,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
 			}
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.Resources.Enable_spell_check_for_the_chat_textbox);
+			AppHelper.AddHelp(CreativitySlider, "WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.");
 			AppHelper.AddHelp(ShowInstructionsCheckBox, "Show instructions that will be included at the start of every message.");
 			AppHelper.AddHelp(AutoSendCheckBox, "Automatically send Task for processing to AI when Task is created from the Template.");
 			AppHelper.AddHelp(IsPreviewCheckBox, ClientHelper.PreviewModeMessage);

@@ -143,6 +143,7 @@
 						</GroupBox.Header>
 						<StackPanel Orientation="Vertical">
 							<Slider
+								Tag="Creativity"
 								Name="CreativitySlider"
 								Width="145"
 								IsSnapToTickEnabled="True"
