@@ -79,6 +79,7 @@ Application Options:
 <img alt="Options" src="Documents/Images/JocysComVsAiCompanion_Options.png" width="600" height="600">
 
 Task and template settings are saved in separate files for easy exchange and sharing:
+```C:\Users\<UserName>\AppData\Roaming\Jocys.com\VS AI Companion\```
 
 <img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_SettingFiles.png"  width="600" height="168">
 
