@@ -95,6 +95,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_piece_blue = nameof(Icon_piece_blue);
 		public const string Icon_piece_green = nameof(Icon_piece_green);
 		public const string Icon_piece_grey = nameof(Icon_piece_grey);
+		public const string Icon_piece_orange = nameof(Icon_piece_orange);
 		public const string Icon_piece_red = nameof(Icon_piece_red);
 		public const string Icon_piece_yellow = nameof(Icon_piece_yellow);
 		public const string Icon_radar = nameof(Icon_radar);

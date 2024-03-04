@@ -45,10 +45,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void UpdateOnListChanged()
 		{
 			var methods = GetAllMetods();
+			methods = methods
+				.OrderBy(x => x.RiskLevel)
+				.ThenBy(x => x.Name)
+				.ToArray();
 			var first = methods.FirstOrDefault();
 			if (first != null)
 			{
-				var summary = XmlDocHelper.GetSummaryText(first.Mi.DeclaringType, FormatText.ReduceAndTrimSpaces);
+				var summary = XmlDocHelper.GetSummaryText(first.Mi.DeclaringType, FormatText.RemoveIdentAndTrimSpaces);
 				ClassDescription = summary;
 				OnPropertyChanged(nameof(ClassDescription));
 			}
@@ -109,9 +113,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var methods = GetAllMetods();
 			foreach (var method in methods)
-				method.IsEnabled =
-					method.RiskLevel == RiskLevel.None ||
-					method.RiskLevel == RiskLevel.Low;
+				method.IsEnabled = method.RiskLevel >= RiskLevel.None && method.RiskLevel <= RiskLevel.Low;
 		}
 
 		private void EnableLowRiskButton_Click(object sender, RoutedEventArgs e)

@@ -20,6 +20,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Topmost = Global.AppSettings.AppAlwaysOnTop;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			InitializeComponent();
+			//MainPanel.InfoPanel.BodyMaxLength = int.MaxValue;
 			Global.MainControl = MainPanel;
 			var ai = new AssemblyInfo(typeof(MainControl).Assembly);
 			Title = ai.GetTitle(true, false, true, false, false);

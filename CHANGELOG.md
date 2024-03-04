@@ -1,4 +1,9 @@
-2024-03-02 v1.6.20
+2024-03-04 v1.6.25
+
+- Fix: Enable medium-risk level plugins by default. Low-risk level is selected for tasks by default.
+- Fix: Not all settings would load properly for the first start.
+
+- 2024-03-02 v1.6.20
 
 - Fix: AI Functions with enums failing.
 - Update: The function approval form will now display only the supplied parameters.
@@ -6,11 +11,8 @@
 - Update: Updated some tooltips to improve clarity.
 - New: Web content and download functions with default credentials.
 - New: Added function category descriptions.
- 
-2024-02-29 v1.6.14
-
 - New: TTS support. Can be used with Jocys.com TTS Monitor. Ask to create a very short funny dialog involving the dragon and voice it.
-
+ 
 2024-02-29 v1.6.13
 
 - Fix: Issue with inability to cancel message requests.

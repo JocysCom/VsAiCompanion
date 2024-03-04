@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 			try
 			{
 				var zip = GetSettingsZip();
+				// Load data from a single XML file.
 				var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
+				var zipPromptItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems);
+				// Load data from multiple XML files.
 				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
 				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
 				var zipServices = zipAppData.Items[0].AiServices;
 				var zipModels = zipAppData.Items[0].AiModels;
+				var zipAppSettings = zipAppData.Items[0];
 				Global.Templates.PreventWriteToNewerFiles = false;
 				Global.Tasks.PreventWriteToNewerFiles = false;
 				Global.AppData.PreventWriteToNewerFiles = false;
+				// Update Prompts.
+				var zipPromptNames = zipPromptItems.Items.Select(t => t.Name.ToLower()).ToList();
+				var promptsToRemove = Global.PromptItems.Items.Where(x => zipPromptNames.Contains(x.Name.ToLower())).ToArray();
+				Global.PromptItems.Remove(promptsToRemove);
+				Global.PromptItems.Add(zipPromptItems.Items.ToArray());
 				// Remove tasks which will be replaced.
 				var zipTaskNames = zipTasks.Select(t => t.Name.ToLower()).ToList();
 				var tasksToRemove = Global.Tasks.Items.Where(x => zipTaskNames.Contains(x.Name.ToLower())).ToArray();
@@ -50,6 +60,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Global.AppSettings.AiModels.Add(item);
 				Global.Templates.Add(zipTemplates.ToArray());
 				Global.Tasks.Add(zipTasks.ToArray());
+				// Copy other settings.
+				RuntimeHelper.CopyProperties(zipAppSettings, Global.AppSettings, true);
+				RuntimeHelper.CopyProperties(zipAppSettings.TaskData, Global.AppSettings.TaskData, true);
+				RuntimeHelper.CopyProperties(zipAppSettings.TemplateData, Global.AppSettings.TemplateData, true);
+				RuntimeHelper.CopyProperties(zipAppSettings.FineTuningData, Global.AppSettings.FineTuningData, true);
+				RuntimeHelper.CopyProperties(zipAppSettings.AiServiceData, Global.AppSettings.AiServiceData, true);
+				// Save settings.
 				Global.SaveSettings();
 				Global.Templates.PreventWriteToNewerFiles = true;
 				Global.Tasks.PreventWriteToNewerFiles = true;
@@ -64,6 +81,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.ShowError("ResetSettings() error: " + ex.Message);
 			}
 		}
+
+		public static Guid OpenAiServiceId
+			=> AppHelper.GetGuid(nameof(AiService), OpenAiName);
+		// Must be string constant or OpenAiServiceId property will get empty string.
+
+		public const string OpenAiName = "Open AI";
 
 		#region Reset App Settings
 

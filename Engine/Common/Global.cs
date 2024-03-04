@@ -43,8 +43,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static SettingsData<AppData> AppData =
 			new SettingsData<AppData>(null, true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
+		public const string PromptItemsName = nameof(PromptItems);
+
 		public static SettingsData<PromptItem> PromptItems =
-			new SettingsData<PromptItem>($"{nameof(PromptItems)}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
+			new SettingsData<PromptItem>($"{PromptItemsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
 		public const string TemplatesName = nameof(Templates);
 
@@ -243,13 +245,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void TriggerPromptingUpdated()
 			=> PromptingUpdated?.Invoke(null, EventArgs.Empty);
 
+		public static bool ResetSettings = false;
+
 		public static void LoadSettings()
 		{
+			ResetSettings = false;
 			// Load app data.
 			AppData.OnValidateData += AppData_OnValidateData;
 			AppData.Load();
 			if (AppData.IsSavePending)
+			{
 				AppData.Save();
+			}
+			if (ResetSettings)
+				SettingsSourceManager.ResetSettings();
+			// Always refresh plugins.
+			var newPluginsList = Engine.AppData.RefreshPlugins(AppSettings.Plugins);
+			ClassLibrary.Collections.CollectionsHelper.Synchronize(newPluginsList, AppSettings.Plugins);
 			// Load Prompt items.
 			PromptItems.OnValidateData += PromptItems_OnValidateData;
 			PromptItems.Load();
@@ -268,22 +280,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Load fine tune settings.
 			FineTunings.OnValidateData += FineTunings_OnValidateData;
 			FineTunings.Load();
-			FineTunings.Load();
 			if (FineTunings.IsLoadPending)
 				FineTunings.Load();
 			// Load Assistant settings.
 			Assistants.OnValidateData += Assistants_OnValidateData;
 			Assistants.Load();
-			Assistants.Load();
 			if (Assistants.IsLoadPending)
 				Assistants.Load();
-
-
 			// Enable template and task folder monitoring.
 			Templates.SetFileMonitoring(true);
 			Tasks.SetFileMonitoring(true);
 			// If old settings version then reset templates.
-			if (AppData.Version < 2)
+			if (AppData.Version < 2 && !ResetSettings)
 			{
 				AppData.Version = 2;
 				SettingsSourceManager.ResetTemplates();
@@ -327,41 +335,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)
 		{
 			var data = sender as ISettingsData;
+			// If no setting found then...
 			if (e.Items.Count == 0)
 			{
 				e.Items.Add(new AppData());
 				data.IsSavePending = true;
+				ResetSettings = true;
 			}
-			var appSettings = e.Items.FirstOrDefault();
-			// Always refresh plugins.
-			var newPluginsList = Engine.AppData.RefreshPlugins(appSettings.Plugins);
-			ClassLibrary.Collections.CollectionsHelper.Synchronize(newPluginsList, appSettings.Plugins);
-			// Check app services.
-			if (appSettings.AiServices == null || appSettings.AiServices.Count == 0)
-			{
-				appSettings.AiServices = Engine.AppData.GetDefaultAiServices();
-				data.IsSavePending = true;
-			}
-			if (appSettings.AiModels == null || appSettings.AiModels.Count == 0)
-			{
-				appSettings.AiModels = Engine.AppData.GetDefaultOpenAiModels();
-				data.IsSavePending = true;
-			}
-			if (appSettings.AiServiceData == null)
-			{
-				var d = new AiServiceSettings();
-				d.ListSelection = new List<string> { Engine.AppData.OpenAiName };
-				appSettings.AiServiceData = d;
-			}
-			// Fix OpenAI Id
-			var openAiService = appSettings.AiServices.FirstOrDefault(x => x.Name == Engine.AppData.OpenAiName);
-			if (openAiService != null)
-				openAiService.Id = Engine.AppData.OpenAiServiceId;
-			// Fix models.
-			var emptyServiceGuid = AppHelper.GetGuid(nameof(AiService), "");
-			var models = appSettings.AiModels.Where(x => x.AiServiceId == emptyServiceGuid).ToArray();
-			foreach (var model in models)
-				model.AiServiceId = Engine.AppData.OpenAiServiceId;
 		}
 
 		private static bool FixTempalteItems(IList<TemplateItem> items)
@@ -370,7 +350,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var emptyServiceGuid = AppHelper.GetGuid(nameof(AiService), "");
 			var tasks = items.Where(x => x.AiServiceId == emptyServiceGuid).ToArray();
 			foreach (var task in tasks)
-				task.AiServiceId = Engine.AppData.OpenAiServiceId;
+				task.AiServiceId = SettingsSourceManager.OpenAiServiceId;
 			return tasks.Count() > 0;
 		}
 

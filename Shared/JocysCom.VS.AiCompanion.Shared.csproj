@@ -16,8 +16,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.6.20</AssemblyVersion>
-		<FileVersion>1.6.20</FileVersion>
+		<AssemblyVersion>1.6.25</AssemblyVersion>
+		<FileVersion>1.6.25</FileVersion>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+		<PackageReference Include="System.Text.Json" Version="8.0.2" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

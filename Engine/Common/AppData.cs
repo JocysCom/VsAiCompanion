@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -269,111 +270,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var item = new PluginItem(plugin.Value);
 				var oldItem = old?.FirstOrDefault(x => x.Id == item.Id);
 				// Only the enable property can be modified by the user at the moment.
-				if (oldItem != null)
-					item.IsEnabled = oldItem.IsEnabled;
-				list.Add(item);
-			}
-			return list;
-		}
-
-		public static Guid OpenAiServiceId
-			=> AppHelper.GetGuid(nameof(AiService), OpenAiName);
-		// Must be string constant or OpenAiServiceId property will get empty string.
-		public const string OpenAiName = "Open AI";
-
-		public static SortableBindingList<AiService> GetDefaultAiServices()
-		{
-			var openAiServiceId = OpenAiServiceId;
-			var list = new SortableBindingList<AiService>
-			{
-				// Add open AI Model
-				new AiService()
+				if (oldItem == null)
 				{
-					Id = openAiServiceId,
-					Name = OpenAiName,
-					DefaultAiModel = "gpt-3.5-turbo-16k",
-					IsDefault = true,
-					BaseUrl = "https://api.openai.com/v1/",
-					ModelFilter = "gpt|text-davinci-[0-9+]",
-				},
-				// Add GPT4All Service
-				new AiService()
-				{
-					Id = AppHelper.GetGuid(nameof(AiService), "GPT4All (Local Machine)"),
-					Name = "GPT4All (Local Machine)",
-					AiModels = new string[0],
-					DefaultAiModel = "GPT4All Falcon",
-					BaseUrl = "http://localhost:4891/v1/",
-					ModelFilter = "",
-				},
-				// Add GPT4All Service
-				new AiService()
-				{
-					Id = AppHelper.GetGuid(nameof(AiService), "LM Studio (Local Machine)"),
-					Name = "LM Studio (Local Machine)",
-					AiModels = new string[0],
-					DefaultAiModel = "Mistral",
-					BaseUrl = "http://localhost:1234/v1/",
-					ModelFilter = "",
-				},
-				//// Add LocalGPT Service. Currently incompatible with OpenAI API.
-				//new AiService()
-				//{
-				//	Id = AppHelper.GetGuid(nameof(AiService), "LocalGPT (Local Machine)"),
-				//	Name = "LocalGPT (Local Machine)",
-				//	AiModels = new string[0],
-				//	DefaultAiModel = "llama-2-7b-chat.ggmlv3.q4_0.bin",
-				//	BaseUrl = "https://localhost:5110/v1/",
-				//	ModelFilter = "",
-				//},
-				// Add Open AI (on-premises)
-				new AiService()
-				{
-					Id = AppHelper.GetGuid(nameof(AiService), "Open AI (On-Premises)"),
-					Name = "Open AI (On-Premises)",
-					AiModels = new string[0],
-					DefaultAiModel = "gpt-3.5-turbo-16k",
-					BaseUrl = "https://ai.company.local/v1/",
-					ModelFilter = "",
-				},
-				// Add Azure Open AI
-				new AiService()
-				{
-					Id = AppHelper.GetGuid(nameof(AiService), "Azure Open AI"),
-					Name = "Azure Open AI",
-					AiModels = new string[0],
-					DefaultAiModel = "gpt-3.5-turbo-16k",
-					BaseUrl = "https://api.cognitive.microsoft.com/v1/",
-					ModelFilter = "",
-					IsAzureOpenAI = true,
+					// Enable up to medium-risk level plugins by default.
+					// The default plugin risk level on the task is low.
+					item.IsEnabled = item.RiskLevel >= RiskLevel.None && item.RiskLevel <= RiskLevel.Medium;
 				}
-			};
-
-			return list;
-		}
-
-		public static SortableBindingList<AiModel> GetDefaultOpenAiModels()
-		{
-			var openAiServiceId = OpenAiServiceId;
-			var list = new SortableBindingList<AiModel>();
-			var names = new string[] {
-				"text-davinci-003",
-				"text-davinci-002",
-				"text-davinci-001",
-				"gpt-3.5-turbo-16k-0613",
-				"gpt-3.5-turbo-16k",
-				"gpt-3.5-turbo-0613",
-				"gpt-3.5-turbo-0301",
-				"gpt-3.5-turbo"
-			};
-			foreach (var name in names)
-			{
-				var item = new AiModel()
+				else
 				{
-					Id = AppHelper.GetGuid(nameof(AiModel), name),
-					Name = name,
-					AiServiceId = openAiServiceId,
-				};
+					item.IsEnabled = oldItem.IsEnabled;
+				}
 				list.Add(item);
 			}
 			return list;

@@ -2,22 +2,15 @@
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Net;
 using System.Net.Sockets;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Windows.Documents;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 	/// <summary>
-	/// TTS functions allow AI to speak, voice, and narrate stories and dialogues. They are used with Jocys.com TTS Monitor portable application from Jocys.com/TTS. Works well in combination with Windows Voice Typing. 
-	///
-	/// Enable text-to-speech in AI Companion: 
-	/// Enable all TTS plugins in this tab. Add message instruction for AI like "Answer with text-to-speech voice." 
-	///
-	/// Enable text-to-speech for AI Companion in TTS Monitor: 
-	/// Open[Options] tab > open[Monitor: Server] tab > check "Enable" checkbox. 
-	/// Open[Options] tab > open[Monitor: Display] tab > uncheck "Enable" checkbox.
+	/// TTS functions allow AI to speak, voice, and narrate stories and dialogues. They are used with Jocys.com TTS Monitor portable application from Jocys.com/TTS. Works well in combination with Windows Voice Typing. Enable text-to-speech:
+	/// AI Companion: Enable all TTS plugins in this tab. Add message instruction for AI like "Answer with text-to-speech voice." 
+	/// TTS Monitor: Open[Options] tab > open[Monitor: Server] tab > check "Enable" checkbox. 
+	/// TTS Monitor: Open[Options] tab > open[Monitor: Display] tab > uncheck "Enable" checkbox.
 	/// </summary>
-
 	public class TTS
 	{
 
