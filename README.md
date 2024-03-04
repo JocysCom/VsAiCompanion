@@ -35,6 +35,9 @@ Existing tools like GitHub CoPilot have limitations when it comes to interacting
 ### Limitations
 You can ask questions about an entire solution or project using the "Code - Smart Search" template. However, the size of the solution or project is limited by the maximum amount of tokens the AI can process. People who have access to the GPT-4 API can upload projects or solutions for AI analysis, up to sizes of 96KB (about 3 bytes per token). These limitations could potentially be removed if AI is hosted on-premises.
 
+### Rate Limits
+Rate limits are restrictions that OpenAI API imposes on the number of times a user or client can access its services within a specified period of time: https://platform.openai.com/docs/guides/rate-limits/usage-tiers
+
 ### How it works
 This application (or extension) allows you to create advanced prompt templates and include data from various sources such as the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, Exception with relevant code files, or Chat History. You can execute this template with just one button press, and the data will be sent to your preferred AI model for results at https://api.openai.com.
 
