@@ -1,3 +1,7 @@
+2024-03-05 v1.6.26
+
+- Fix: The standalone app lists Visual Studio functions that are not available for AI.
+
 2024-03-04 v1.6.25
 
 - Fix: Enable medium-risk level plugins by default. Low-risk level is selected for tasks by default.

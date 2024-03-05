@@ -95,15 +95,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 				foreach (var type in controllerTypes)
 				{
-					AddMethods(type); // Reuse your existing method to add methods of the type
+					AddMethods(type);
 				}
 			}
 		}
 
-		public static bool AllowPlugin(string functionName, RiskLevel maxRiskLevel)
+		public static bool AllowPluginFunction(string functionName, RiskLevel maxRiskLevel)
 		{
 			var currentPlugin = Global.AppSettings.Plugins.FirstOrDefault(x => x.Name == functionName);
-			return currentPlugin?.IsEnabled == true && currentPlugin.RiskLevel <= maxRiskLevel;
+			// Deny disabled plugins.
+			if (currentPlugin?.IsEnabled != true)
+				return false;
+			// Deny if risk unknown.
+			if (currentPlugin.RiskLevel < RiskLevel.None)
+				return false;
+			// Deny if risk is higher than selected by the task.	
+			if (currentPlugin.RiskLevel > maxRiskLevel)
+				return false;
+			// Deny if this is not a Visual Studio extension but a plugin for Visual Studio.
+			if (!Global.IsVsExtension && currentPlugin.Mi.DeclaringType.Name == nameof(VisualStudio))
+				return false;
+			return true;
 		}
 
 		/// <summary>
@@ -115,7 +127,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (!item.PluginsEnabled)
 				return null;
-			if (!AllowPlugin(function.name, item.MaxRiskLevel))
+			if (!AllowPluginFunction(function.name, item.MaxRiskLevel))
 				return null;
 			System.Reflection.MethodInfo methodInfo;
 			if (!PluginFunctions.TryGetValue(function.name, out methodInfo))
@@ -269,10 +281,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var ToolDefinitions = new List<ChatCompletionsFunctionToolDefinition>();
 			foreach (var kv in PluginFunctions)
 			{
-				if (!AllowPlugin(kv.Key, item.MaxRiskLevel))
+				if (!AllowPluginFunction(kv.Key, item.MaxRiskLevel))
 					continue;
 				// Get Method Info
 				var mi = kv.Value;
+				// If this is not a Visual Studio extension but a plugin for Visual Studio, then skip.
+				if (!Global.IsVsExtension && mi.DeclaringType.Name == nameof(VisualStudio))
+					continue;
 				// Serialize the parameters object to a JSON string then create a BinaryData instance.
 				var functionParameters = ConvertToToolItem(null, mi);
 				var serializedParameters = Client.Serialize(functionParameters);
@@ -500,7 +515,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var CompletionTools = new List<chat_completion_tool>();
 			foreach (var kv in PluginFunctions)
 			{
-				if (!AllowPlugin(kv.Key, item.MaxRiskLevel))
+				if (!AllowPluginFunction(kv.Key, item.MaxRiskLevel))
 					continue;
 				var mi = kv.Value;
 				var summaryText = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
