@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static SettingsData<PromptItem> PromptItems =
 			new SettingsData<PromptItem>($"{PromptItemsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
+
+
+		public const string ListsName = nameof(Lists);
+
+		public static SettingsData<ListInfo> Lists =
+			new SettingsData<ListInfo>($"{ListsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			{
+				UseSeparateFiles = true,
+			};
 
 		public const string TemplatesName = nameof(Templates);
 
@@ -232,6 +242,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			RaiseOnSaveSettings();
 			AppData.Save();
 			PromptItems.Save();
+			Lists.Save();
 			Templates.Save();
 			Tasks.Save();
 			FineTunings.Save();
@@ -267,6 +278,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			PromptItems.Load();
 			if (PromptItems.IsSavePending)
 				PromptItems.Save();
+			// Load Lists.
+			Lists.OnValidateData += Lists_OnValidateData;
+			Lists.Load();
+			if (Lists.IsSavePending)
+				Lists.Save();
+			// Bind list to plugins.
+			Plugins.Core.Lists.AllLists = Lists.Items;
 			// Load templates.
 			Templates.OnValidateData += Templates_OnValidateData;
 			Templates.Load();
@@ -324,12 +342,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private static void PromptItems_OnValidateData(object sender, SettingsData<PromptItem>.SettingsDataEventArgs e)
 		{
-			var data = (SettingsData<PromptItem>)sender;
 			if (e.Items.Count == 0)
-			{
-				// Find data as embedded resource with the same file name and load.
-				data.ResetToDefault();
-			}
+				SettingsSourceManager.ResetPrompts();
+		}
+
+		private static void Lists_OnValidateData(object sender, SettingsData<ListInfo>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+				SettingsSourceManager.ResetLists();
 		}
 
 		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)

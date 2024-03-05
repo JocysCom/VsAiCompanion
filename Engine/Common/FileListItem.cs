@@ -1,15 +1,15 @@
-﻿using System.Windows.Media;
-using System.Xml.Serialization;
+﻿using JocysCom.ClassLibrary.Configuration;
 using System;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using JocysCom.ClassLibrary.Configuration;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class FileListItem: IFileListItem, INotifyPropertyChanged, IAiServiceModel, ICancellationTokens, ISettingsItem
+	public class FileListItem : IFileListItem, INotifyPropertyChanged, IAiServiceModel, ICancellationTokens, ISettingsItem
 	{
 		#region ■ IFileListItem
 

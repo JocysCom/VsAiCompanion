@@ -20,7 +20,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var zip = GetSettingsZip();
 				// Load data from a single XML file.
 				var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
-				var zipPromptItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems);
 				// Load data from multiple XML files.
 				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
 				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
@@ -30,11 +29,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.Templates.PreventWriteToNewerFiles = false;
 				Global.Tasks.PreventWriteToNewerFiles = false;
 				Global.AppData.PreventWriteToNewerFiles = false;
-				// Update Prompts.
-				var zipPromptNames = zipPromptItems.Items.Select(t => t.Name.ToLower()).ToList();
-				var promptsToRemove = Global.PromptItems.Items.Where(x => zipPromptNames.Contains(x.Name.ToLower())).ToArray();
-				Global.PromptItems.Remove(promptsToRemove);
-				Global.PromptItems.Add(zipPromptItems.Items.ToArray());
+
+
 				// Remove tasks which will be replaced.
 				var zipTaskNames = zipTasks.Select(t => t.Name.ToLower()).ToList();
 				var tasksToRemove = Global.Tasks.Items.Where(x => zipTaskNames.Contains(x.Name.ToLower())).ToArray();
@@ -101,19 +97,52 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(settings, false, exclude);
 		}
 
+
+		/// <summary>Reset Prompts</summary>
+		public static void ResetPrompts(ZipStorer zip = null)
+		{
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			// Update Prompts.
+			var zipPromptItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems);
+			var zipPromptNames = zipPromptItems.Items.Select(t => t.Name.ToLower()).ToList();
+			var promptsToRemove = Global.PromptItems.Items.Where(x => zipPromptNames.Contains(x.Name.ToLower())).ToArray();
+			Global.PromptItems.Remove(promptsToRemove);
+			Global.PromptItems.Add(zipPromptItems.Items.ToArray());
+			// Close zip.
+			if (closeZip)
+				zip.Close();
+		}
+
+		/// <summary>Reset Prompts</summary>
+		public static void ResetLists(ZipStorer zip = null)
+		{
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			// Update Lists
+			var zipLists = GetItemsFromZip(zip, Global.ListsName, Global.Lists);
+			// Remove lists which will be replaced.
+			var zipListsNames = zipLists.Select(t => t.Name.ToLower()).ToList();
+			var listsToRemove = Global.Lists.Items.Where(x => zipListsNames.Contains(x.Name.ToLower())).ToArray();
+			Global.Lists.Remove(listsToRemove);
+			Global.Lists.Add(zipLists.ToArray());
+			// Close zip.
+			if (closeZip)
+				zip.Close();
+		}
+
 		#endregion
 
 		#region Reset Templates
 
-		public static void ResetTemplates()
+		public static void ResetTemplates(ZipStorer zip = null)
 		{
-			var zip = GetSettingsZip();
-			ResetTemplates(zip);
-			zip.Close();
-		}
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
 
-		public static void ResetTemplates(ZipStorer zip)
-		{
 			var templates = Global.Templates;
 			var defaultItems = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
 			if (defaultItems.Count == 0)
@@ -133,6 +162,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Templates.Load();
 			templates.Save();
 			templates.PreventWriteToNewerFiles = true;
+
+			if (closeZip)
+				zip.Close();
 		}
 
 		public static List<T> GetItemsFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)

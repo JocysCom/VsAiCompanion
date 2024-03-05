@@ -1,6 +1,7 @@
-2024-03-05 v1.6.26
+2024-03-05 v1.6.27
 
 - Fix: The standalone app lists Visual Studio functions that are not available for AI.
+- New: Functions that enable AI to manage different types of lists, such as task, to-do, progress, or environment properties.
 
 2024-03-04 v1.6.25
 

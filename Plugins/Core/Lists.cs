@@ -11,7 +11,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Property set from the external class.
 		/// </summary>
-		private static IList<ListInfo> AllLists { get; set; }
+		public static IList<ListInfo> AllLists
+		{
+			get => _AllLists;
+			set => _AllLists = value;
+		}
+		static IList<ListInfo> _AllLists = new List<ListInfo>();
 
 		#region List Manipulation
 
@@ -21,7 +26,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static IList<ListInfo> GetLists()
 		{
-			return AllLists;
+			return _AllLists;
 		}
 
 		/// <summary>
@@ -31,9 +36,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static bool CreateList(string listName, string description)
 		{
-			if (AllLists == null) AllLists = new List<ListInfo>();
-			if (AllLists.Any(l => l.Name == listName)) return false; // List already exists
-			AllLists.Add(new ListInfo { Name = listName, Description = description, Items = new List<ListItem>() });
+			if (_AllLists == null) _AllLists = new List<ListInfo>();
+			if (_AllLists.Any(l => l.Name == listName)) return false; // List already exists
+			_AllLists.Add(new ListInfo { Name = listName, Description = description, Items = new List<ListItem>() });
 			return true;
 		}
 
@@ -44,7 +49,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static bool UpdateList(string listName, string description)
 		{
-			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
 			if (list != null)
 			{
 				list.Description = description;
@@ -60,10 +65,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static bool DeleteList(string listName)
 		{
-			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
 			if (list != null)
 			{
-				AllLists.Remove(list);
+				_AllLists.Remove(list);
 				return true;
 			}
 			return false;
@@ -76,7 +81,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static bool ClearList(string listName)
 		{
-			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
 			if (list != null)
 			{
 				list.Items.Clear();
@@ -96,11 +101,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static bool SetListItem(string listName, string key, string value, string comment = "")
 		{
-			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
 			if (list == null)
 			{
 				CreateList(listName, ""); // Create list if not exists
-				list = AllLists.First(l => l.Name == listName);
+				list = _AllLists.First(l => l.Name == listName);
 			}
 			var item = list.Items.FirstOrDefault(i => i.Key == key);
 			if (item != null)
@@ -118,7 +123,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static ListItem GetListItem(string listName, string key)
 		{
-			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
 			return list?.Items.FirstOrDefault(i => i.Key == key);
 		}
 
@@ -129,7 +134,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static bool DeleteListItem(string listName, string key)
 		{
-			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
 			var item = list?.Items.FirstOrDefault(i => i.Key == key);
 			if (item != null)
 			{
@@ -145,7 +150,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.Low)]
 		public static IList<ListItem> GetListItems(string listName)
 		{
-			var list = AllLists.FirstOrDefault(l => l.Name == listName);
+			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
 			return list?.Items ?? new List<ListItem>();
 		}
 
