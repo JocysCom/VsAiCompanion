@@ -33,7 +33,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <returns>The output of the started process.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		/// <remarks>Be cautious with executing process requesys received via API due to security risks.</remarks>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public static string StartProcess(string fileName, string arguments, string workingDirectory)
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo
@@ -63,7 +63,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <returns>The output of the executed PowerShell script.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		/// <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public static string RunPowerShellScript(string script)
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo

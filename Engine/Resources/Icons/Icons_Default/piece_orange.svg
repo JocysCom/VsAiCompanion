@@ -5,8 +5,8 @@
     <desc>piece2 icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
     <defs>
         <linearGradient x1="0" y1="32" x2="318.916" y2="480.00085" gradientUnits="userSpaceOnUse" id="color-1">
-			<stop offset="0" stop-color="#ff9c85"/>
-			<stop offset="1" stop-color="#ff6347"/>
+			<stop offset="0" stop-color="#ff9448"/>
+			<stop offset="1" stop-color="#d75f00"/>
         </linearGradient>
     </defs>
     <g fill="url(#color-1)" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
