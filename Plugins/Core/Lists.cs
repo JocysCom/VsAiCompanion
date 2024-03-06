@@ -23,7 +23,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Retrieves all lists.
 		/// </summary>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static IList<ListInfo> GetLists()
 		{
 			return _AllLists;
@@ -33,7 +33,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Creates a new list.
 		/// </summary>
 		/// <returns>True if the list is created successfully.</returns>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static bool CreateList(string listName, string description)
 		{
 			if (_AllLists == null) _AllLists = new List<ListInfo>();
@@ -46,7 +46,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Updates an existing list.
 		/// </summary>
 		/// <returns>True if the list is updated successfully.</returns>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static bool UpdateList(string listName, string description)
 		{
 			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
@@ -62,7 +62,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Deletes an existing list.
 		/// </summary>
 		/// <returns>True if the list is deleted successfully.</returns>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static bool DeleteList(string listName)
 		{
 			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
@@ -78,7 +78,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Clears all items from a list.
 		/// </summary>
 		/// <returns>True if the list items are cleared successfully.</returns>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static bool ClearList(string listName)
 		{
 			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
@@ -98,7 +98,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Sets or adds an item to a list.
 		/// </summary>
 		/// <returns>True if the item is set or added successfully.</returns>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static bool SetListItem(string listName, string key, string value, string comment = "")
 		{
 			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
@@ -120,7 +120,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Retrieves an item from a list.
 		/// </summary>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static ListItem GetListItem(string listName, string key)
 		{
 			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
@@ -131,7 +131,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Deletes an item from a list.
 		/// </summary>
 		/// <returns>True if the item is deleted successfully.</returns>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static bool DeleteListItem(string listName, string key)
 		{
 			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
@@ -147,7 +147,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Retrieves all items from a list.
 		/// </summary>
-		[RiskLevel(RiskLevel.Low)]
+		[RiskLevel(RiskLevel.None)]
 		public static IList<ListItem> GetListItems(string listName)
 		{
 			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
