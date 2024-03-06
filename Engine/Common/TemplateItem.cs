@@ -131,6 +131,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseMaximumContext { get => _UseMaximumContext; set => SetProperty(ref _UseMaximumContext, value); }
 		bool _UseMaximumContext;
 
+		/// <summary>
+		/// Can be used used for categorized search.
+		/// </summary>
+		[DefaultValue("")]
+		public string Tags { get => _Tags; set => SetProperty(ref _Tags, value); }
+		string _Tags;
+
 		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
 		ItemType _ItemType;
 
