@@ -41,6 +41,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 		#region ■ ISettingsItemFile
+
+		public string Path { get => _Path; set => SetProperty(ref _Path, value); }
+		string _Path;
+
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 

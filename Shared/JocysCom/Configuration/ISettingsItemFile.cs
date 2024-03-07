@@ -2,21 +2,31 @@
 
 namespace JocysCom.ClassLibrary.Configuration
 {
+	/// <summary>
+	/// Defines an interface for a settings item that represents or interacts with a file. Includes properties for managing file names and tracking write timestamps.
+	/// </summary>
 	public interface ISettingsItemFile
 	{
 		/// <summary>
-		/// File name.
+		/// Parent Directory of the file associated with this settings item.
+		/// This represents the actual relative directory path of the file on the file system.
+		/// </summary>
+		string Path { get; set; }
+
+		/// <summary>
+		/// File name associated with this settings item.
+		/// This represents the actual name of the file on the file system without extension.
 		/// </summary>
 		string Name { get; set; }
 
 		/// <summary>
-		/// Map to property which contains base file name.
+		/// Base name of the file without extension, used for internal identification of the file within the settings management context.
 		/// </summary>
 		string BaseName { get; set; }
 
 		/// <summary>
-		/// Map to property which contains last time item was modified.
-		/// Update on INotifyPropertyChanged.
+		/// Timestamp indicating the last time the file was written to.
+		/// This is used for tracking changes to the file over time.
 		/// </summary>
 		DateTime WriteTime { get; set; }
 

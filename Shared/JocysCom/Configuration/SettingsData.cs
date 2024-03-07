@@ -21,29 +21,36 @@ using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
+	/// <summary>
+	/// Represents a container for managing settings data T.
+	/// Enables saving and loading of settings either as a single or multiple XML files.
+	/// </summary>
+	/// <typeparam name="T">The type of settings data this container will manage.</typeparam>
 	[Serializable, XmlRoot("Data"), DataContract]
 	public class SettingsData<T> : ISettingsData
 	{
 		/// <summary>
-		/// Initialize class. Use 'Environment.SpecialFolder.CommonApplicationData' folder, same for all users, to store settings.
+		/// Initializes a new instance of the SettingsData class with default settings.
 		/// </summary>
 		public SettingsData()
 		{
 			Initialize(null, false, null, null);
 		}
 
+
 		/// <summary>
-		/// Initialize class
+		/// Initializes a new instance of the SettingsData class with specific settings.
 		/// </summary>
-		/// <param name="overrideFileName"></param>
-		/// <param name="userLevel">
-		/// Defines where to store XML settings file:
+		/// <param name="overrideFileName">Specifies a custom file name for the settings file. If null, a default name based on the type T is used.</param>
+		/// <param name="userLevel">Determines the storage location of the XML settings file. True to use user-specific storage, False for common storage, Null for executable directory.</param>
+		/// <param name="comment">A comment to include within the XML settings file.</param>
+		/// <param name="assembly">The assembly to use for retrieving default company and product name for folder path generation.</param>
+		/// <remarks>
+		/// userLevel param defines where to store XML settings file:
 		///   True  - Environment.SpecialFolder.ApplicationData
 		///   False - Environment.SpecialFolder.CommonApplicationData
 		///   Null  - Use ./{ExecutableBaseName}.xml settings file
-		/// </param>
-		/// <param name="comment"></param>
-		/// <param name="assembly">Used to get company and product name.</param>
+		/// </remarks>
 		public SettingsData(string overrideFileName = null, bool? userLevel = false, string comment = null, Assembly assembly = null)
 		{
 			Initialize(overrideFileName, userLevel, comment, assembly);
@@ -103,6 +110,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			_XmlFile = new FileInfo(path);
 		}
 
+		/// <summary>
+		/// Retrieves the directory path used for storing local settings, typically named after the executable.
+		/// </summary>
+		/// <returns>The directory path or null if the directory does not exist.</returns>
 		public string GetLocalSettingsDirectory()
 		{
 			var moduleFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
@@ -115,15 +126,27 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 
+		/// <summary>
+		/// Indicates whether saving the settings is pending. This can be used to optimize write operations by delaying them until necessary.
+		/// </summary>
 		[XmlIgnore]
 		public bool IsSavePending { get; set; }
 
+		/// <summary>
+		/// Indicates whether loading the settings is pending. Useful for deferring the loading operation until it's required.
+		/// </summary>
 		[XmlIgnore]
 		public bool IsLoadPending { get; set; }
 
+		/// <summary>
+		/// Determines whether settings are stored in separate files.
+		/// </summary>
 		[XmlIgnore]
 		public bool UseSeparateFiles { get; set; }
 
+		/// <summary>
+		/// Gets or sets the FileInfo object for the XML file that stores the settings data.
+		/// </summary>
 		[XmlIgnore]
 		public FileInfo XmlFile { get { return _XmlFile; } set { _XmlFile = value; } }
 
@@ -133,13 +156,18 @@ namespace JocysCom.ClassLibrary.Configuration
 		[NonSerialized]
 		protected string _Comment;
 
+		/// <summary>
+		/// A list of settings items managed by this instance.
+		/// </summary>
 		[DataMember]
 		public SortableBindingList<T> Items { get; set; }
 
 		[NonSerialized]
 		private object _SyncRoot;
 
-		// Synchronization root for this object.
+		/// <summary>
+		/// Synchronization root object for thread-safe operations.
+		/// </summary>
 		public virtual object SyncRoot
 		{
 			get
@@ -150,6 +178,11 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Converts the items in the collection to an array and returns it.
+		/// This operation is synchronized to prevent data inconsistency during the conversion.
+		/// </summary>
+		/// <returns>An array of items.</returns>
 		public T[] ItemsToArraySynchronized()
 		{
 			lock (SyncRoot)
@@ -173,8 +206,15 @@ namespace JocysCom.ClassLibrary.Configuration
 		[XmlIgnore, NonSerialized]
 		object saveReadFileLock = new object();
 
+		/// <summary>
+		/// Occurs when the settings data is about to be saved to the XML file, allowing for pre-save operations or validation.
+		/// </summary>
 		public event EventHandler Saving;
 
+		/// <summary>
+		/// Saves the current settings into an XML file at the specified path. Compresses the file if the file extension is .gz.
+		/// </summary>
+		/// <param name="path">The file path where the settings will be saved.</param>
 		public void SaveAs(string path)
 		{
 			SetFileMonitoring(false);
@@ -205,7 +245,17 @@ namespace JocysCom.ClassLibrary.Configuration
 						var fileItem = (ISettingsItemFile)items[i];
 						var bytes = Serialize(fileItem);
 						var fileName = RemoveInvalidFileNameChars(fileItem.BaseName) + fi.Extension;
-						var fileFullName = Path.Combine(di.FullName, fileName);
+						var itemPath = fileItem.Path;
+						if (!string.IsNullOrEmpty(itemPath))
+						{
+							itemPath = RemoveInvalidPathChars(itemPath);
+							var directoryPath = Path.Combine(di.FullName, itemPath);
+							if (!Directory.Exists(directoryPath))
+								Directory.CreateDirectory(directoryPath);
+						}
+						var fileFullName = string.IsNullOrEmpty(itemPath)
+							? Path.Combine(di.FullName, fileName)
+							: Path.Combine(di.FullName, itemPath, fileName);
 						if (compress)
 							bytes = SettingsHelper.Compress(bytes);
 						var fiItem = new FileInfo(fileFullName);
@@ -242,6 +292,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			SetFileMonitoring(true);
 		}
 
+		public static string RemoveInvalidPathChars(string name)
+		{
+			var invalidChars = Path.GetInvalidPathChars();
+			return new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
+		}
+
 		public static string RemoveInvalidFileNameChars(string name)
 		{
 			var invalidChars = Path.GetInvalidFileNameChars();
@@ -253,20 +309,26 @@ namespace JocysCom.ClassLibrary.Configuration
 			SaveAs(_XmlFile.FullName);
 		}
 
-		/// <summary>Remove with SyncRoot lock.</summary>
-		public void Remove(params T[] items)
-		{
-			lock (SyncRoot)
-				foreach (var item in items)
-					Items.Remove(item);
-		}
-
-		/// <summary>Add with SyncRoot lock.</summary>
+		/// <summary>
+		/// Adds an array of items to the current collection of settings data.
+		/// </summary>
+		/// <param name="items">The array of items to add.</param>
 		public void Add(params T[] items)
 		{
 			lock (SyncRoot)
 				foreach (var item in items)
 					Items.Add(item);
+		}
+
+		/// <summary>
+		/// Removes an array of items from the current collection of settings data.
+		/// </summary>
+		/// <param name="items">The array of items to remove.</param>
+		public void Remove(params T[] items)
+		{
+			lock (SyncRoot)
+				foreach (var item in items)
+					Items.Remove(item);
 		}
 
 		public class SettingsDataEventArgs : EventArgs
@@ -283,6 +345,9 @@ namespace JocysCom.ClassLibrary.Configuration
 		[XmlIgnore, NonSerialized]
 		public ValidateDataDelegate ValidateData;
 
+		/// <summary>
+		/// Occurs when data validation is required, providing an opportunity to perform custom validation logic on settings data.
+		/// </summary>
 		public event EventHandler<SettingsDataEventArgs> OnValidateData;
 
 		#region Last Write Time
@@ -347,6 +412,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			return di;
 		}
 
+		/// <summary>
+		/// Loads settings data from an XML file specified by the fileName.
+		/// </summary>
+		/// <param name="fileName">The file name/path from which to load settings data.</param>
 		public void LoadFrom(string fileName)
 		{
 			var settingsLoaded = false;
@@ -370,7 +439,7 @@ namespace JocysCom.ClassLibrary.Configuration
 							if (UseSeparateFiles)
 							{
 								data = new SettingsData<T>();
-								var files = di.GetFiles("*" + fi.Extension);
+								var files = di.GetFiles("*" + fi.Extension, SearchOption.AllDirectories);
 								for (int i = 0; i < files.Length; i++)
 								{
 									var file = files[i];
@@ -385,6 +454,7 @@ namespace JocysCom.ClassLibrary.Configuration
 										// Set Name property value to the same as the file.
 										var name = RemoveInvalidFileNameChars(file.Name);
 										var fileBaseName = Path.GetFileNameWithoutExtension(file.Name);
+										itemFile.Path = IO.PathHelper.GetRelativePath(di.FullName, file.Directory.FullName + "\\");
 										if (itemFile.BaseName != fileBaseName)
 											itemFile.BaseName = fileBaseName;
 										data.Add(item);
@@ -472,6 +542,11 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#region Use Separate Files
 
+		/// <summary>
+		/// Generates the full path for a file based on a filename without an extension.
+		/// </summary>
+		/// <param name="fileNameWithoutExtension">The name of the file without the extension.</param>
+		/// <returns>The full path of the file with its extension.</returns>
 		public string GetItemFileFullName(string fileNameWithoutExtension)
 		{
 			var fi = new FileInfo(_XmlFile.FullName);
@@ -480,6 +555,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			return path;
 		}
 
+		/// <summary>
+		/// Renames the specified folder to a new name, managing potential case-sensitivity issues on certain file systems by temporarily renaming to a GUID-based name.
+		/// </summary>
+		/// <param name="currentPath">The current path of the folder to be renamed.</param>
+		/// <param name="newFolderName">The new name for the folder.</param>
+		/// <returns>A message indicating success, error, or null if the operation is successful.</returns>
 		public string RenameFolder(string currentPath, string newFolderName)
 		{
 			try
@@ -511,8 +592,11 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Returns error.
+		/// Renames a settings item file to a new name, ensuring file system consistency and updating internal metadata accordingly.
 		/// </summary>
+		/// <param name="itemFile">The settings item file object to be renamed.</param>
+		/// <param name="newName">The new name for the settings item file.</param>
+		/// <returns>A message indicating the outcome of the operation or null if the operation is successful.</returns>
 		public string RenameItem(ISettingsItemFile itemFile, string newName)
 		{
 			lock (saveReadFileLock)
@@ -571,8 +655,10 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Returns new name.
+		/// Deletes the file associated with a settings item and removes the item from the internal collection, ensuring data integrity and freeing up resources.
 		/// </summary>
+		/// <param name="itemFile">The settings item file object to be deleted.</param>
+		/// <returns>A message indicating the result of the delete operation, or null if successful.</returns>
 		public string DeleteItem(ISettingsItemFile itemFile)
 		{
 			lock (saveReadFileLock)
@@ -608,6 +694,9 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#endregion
 
+		/// <summary>
+		/// Indicates whether the items collection should be cleared when loading new data.
+		/// </summary>
 		[XmlIgnore]
 		public bool ClearWhenLoading = false;
 
@@ -659,8 +748,10 @@ namespace JocysCom.ClassLibrary.Configuration
 		#region Synchronize
 
 		/// <summary>
-		/// Synchronize source collection to destination.
+		/// Synchronizes the content of the source collection with the target collection.
 		/// </summary>
+		/// <param name="source">The source collection to sync from.</param>
+		/// <param name="target">The target collection to sync to.</param>
 		/// <remarks>
 		/// Same Code:
 		/// JocysCom\Controls\SearchHelper.cs
@@ -711,6 +802,10 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#endregion
 
+		/// <summary>
+		/// Resets settings to default values defined within the resource files of the specified assemblies.
+		/// </summary>
+		/// <returns>True if default settings were successfully loaded; otherwise, False.</returns>
 		public bool ResetToDefault()
 		{
 			// Clear original data.
@@ -754,6 +849,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			return Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
 		}
 
+		/// <summary>
+		/// Deserializes settings data from a byte array, potentially decompressing it first if indicated.
+		/// </summary>
+		/// <param name="bytes">The byte array containing serialized settings data.</param>
+		/// <param name="compressed">Indicates whether the byte array is compressed and requires decompression.</param>
+		/// <returns>A <see cref="SettingsData{T}"/> instance deserialized from the byte array.</returns>
 		public SettingsData<T> DeserializeData(byte[] bytes, bool compressed)
 		{
 			if (compressed)
@@ -762,6 +863,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			return data;
 		}
 
+		/// <summary>
+		/// Deserializes a single settings item from a byte array, optionally decompressing it. This method facilitates the reconstruction of individual settings from file storage.
+		/// </summary>
+		/// <param name="bytes">The byte array containing the serialized settings item.</param>
+		/// <param name="compressed">Indicates whether the byte array is compressed.</param>
+		/// <returns>The deserialized settings item.</returns>
 		public T DeserializeItem(byte[] bytes, bool compressed)
 		{
 			if (compressed)
@@ -772,6 +879,12 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#region Folder Monitoring
 
+		/// <summary>
+		/// Enables or disables monitoring on the settings file directory. When enabled, changes to the files are detected, allowing for the application to respond accordingly.
+		/// </summary>
+		/// <param name="enabled">true to enable monitoring; false to disable it.</param>
+		/// <param name="folderPath">The path to the folder to monitor.</param>
+		/// <param name="filePattern">The pattern of the file names to monitor within the folder.</param>
 		public void SetFileMonitoring(bool enabled)
 		{
 			// Allow to monitor if items are in separate files.
@@ -784,11 +897,23 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		private FileSystemWatcher _folderWatcher;
 		private System.Timers.Timer _debounceTimer;
+
+		/// <summary>
+		/// Raises an event when files in the monitored settings directory change, ensuring settings are reloaded or updated accordingly.
+		/// </summary>
 		public event EventHandler FilesChanged;
 
 		[DefaultValue(false)]
 		public bool IsFolderMonitored { get; set; }
 
+
+		/// <summary>
+		/// Enables or disables file monitoring for changes to settings files. When enabled, changes to the settings file on disk will trigger a reload of settings to reflect the new state.
+		/// </summary>
+		/// <param name="enabled">Indicates whether file monitoring should be enabled (true) or disabled (false).</param>
+		/// <remarks>
+		/// Monitoring settings files is crucial in scenarios where settings might be changed externally or by different instances, ensuring the application operates with the most up-to-date configuration.
+		/// </remarks>
 		public void SetFileMonitoring(bool enabled, string folderPath, string filePattern)
 		{
 			IsFolderMonitored = enabled;
@@ -803,7 +928,8 @@ namespace JocysCom.ClassLibrary.Configuration
 
 				_folderWatcher = new FileSystemWatcher(folderPath, filePattern)
 				{
-					NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName
+					NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+					IncludeSubdirectories = true,
 				};
 
 				_folderWatcher.Changed += OnChanged;

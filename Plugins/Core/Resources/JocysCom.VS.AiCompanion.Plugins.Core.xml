@@ -313,6 +313,9 @@
             List Info.
             </summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Path">
+            <summary>List path.</summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Name">
             <summary>List name.</summary>
         </member>

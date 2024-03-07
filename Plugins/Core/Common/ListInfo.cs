@@ -11,10 +11,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public class ListInfo : ISettingsItemFile
 	{
+		/// <summary>List path.</summary>
+		public string Path { get; set; }
+
 		/// <summary>List name.</summary>
 		public string Name { get; set; }
+
 		/// <summary>List description.</summary>
 		public string Description { get; set; }
+
 		/// <summary>Dictionary items</summary>
 		public List<ListItem> Items { get; set; }
 
