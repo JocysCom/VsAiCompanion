@@ -47,7 +47,7 @@
 				Padding="0"
 				Content="{StaticResource Icon_Information}"
 				Focusable="False" />
-			<TextBlock
+			<TextBox
 				Name="BodyLabel"
 				Grid.Row="1"
 				Grid.Column="1"
@@ -55,6 +55,10 @@
 				Padding="0"
 				VerticalAlignment="Center"
 				x:FieldModifier="public"
+				Background="Transparent"
+				Focusable="False"
+				IsReadOnly="True"
+				MaxLines="2"
 				Text="[BodyLabel]"
 				TextWrapping="Wrap" />
 			<ContentControl
