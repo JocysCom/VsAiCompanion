@@ -45,9 +45,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 						Search._databasePath = Global.PluginsSearchPath;
 						AddMethods(typeof(Search));
 						AddMethods(typeof(TTS));
-
-#if DEBUG
 						AddMethods(typeof(Lists));
+#if DEBUG
 						AddMethods(typeof(Automation));
 #endif
 					}
