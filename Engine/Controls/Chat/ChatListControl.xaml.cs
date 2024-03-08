@@ -155,7 +155,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 						LoadResource(ref contents, "IconError.svg");
 						LoadResource(ref contents, "IconIn.svg");
 						LoadResource(ref contents, "IconOut.svg");
-						LoadResource(ref contents, "core.min.js");
+						LoadResource(ref contents, "core-js.min.js");
 						LoadResource(ref contents, "marked.min.js");
 						LoadResource(ref contents, "prism.css");
 						LoadResource(ref contents, "prism.js");
