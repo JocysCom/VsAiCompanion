@@ -425,9 +425,20 @@
             Property set from the external class.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetLists">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetFilteredListInfos">
             <summary>
             Retrieves all lists.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetFilteredListInfo(System.String)">
+            <summary>
+            Get list by name.
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Lists.FilterPath">
+            <summary>
+            Filter list by parent, to make sure that only Global and child lists are selected.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.CreateList(System.String,System.String)">

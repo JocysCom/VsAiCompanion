@@ -194,6 +194,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			else
 			{
+				// It's a synchronous method.
 				object methodResult = null;
 				if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
 				{
@@ -201,12 +202,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 					{
 						await Global.SwitchToVisualStudioThreadAsync();
 						methodResult = methodInfo.Invoke(classInstance, invokeParams);
-
 					});
+				}
+				else if (classInstance is Lists lists)
+				{
+					// Make sure that the list have the name of the task.
+					// If task is renamed then relevant lists must be renamed too.
+					lists.FilterPath = item.Name;
+					methodResult = methodInfo.Invoke(lists, invokeParams);
 				}
 				else
 				{
-					// It's a synchronous method.
+
 					methodResult = methodInfo.Invoke(classInstance, invokeParams);
 				}
 				var result = (methodResult is string s)

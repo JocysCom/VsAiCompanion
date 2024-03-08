@@ -2,6 +2,7 @@
 
 - Fix: The standalone app lists Visual Studio functions that are not available for AI.
 - Fix: Tooltip text cropping issue in InfoPanel.
+- Fix: A confirmation dialog pops up to save settings when multiple list items are selected.
 - New: Functions that enable AI to manage different types of lists, such as task, to-do, progress, or environment properties.
 
 2024-03-04 v1.6.25

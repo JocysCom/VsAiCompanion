@@ -13,10 +13,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		public static IList<ListInfo> AllLists
 		{
-			get => _AllLists;
+			get
+			{
+				lock (AllListsLock)
+					return _AllLists = _AllLists ?? new List<ListInfo>();
+			}
 			set => _AllLists = value;
 		}
-		static IList<ListInfo> _AllLists = new List<ListInfo>();
+		static IList<ListInfo> _AllLists;
+		static object AllListsLock = new object();
 
 		#region List Manipulation
 
@@ -24,10 +29,29 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Retrieves all lists.
 		/// </summary>
 		[RiskLevel(RiskLevel.None)]
-		public IList<ListInfo> GetLists()
+		public IList<ListInfo> GetFilteredListInfos()
 		{
-			return _AllLists;
+			return AllLists
+				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
+				.ToList();
 		}
+
+		/// <summary>
+		/// Get list by name.
+		/// </summary>
+		/// <param name="name"></param>
+		public ListInfo GetFilteredListInfo(string name)
+		{
+			return AllLists
+				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
+				.Where(x => x.Name == name)
+				.FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Filter list by parent, to make sure that only Global and child lists are selected.
+		/// </summary>
+		public string FilterPath;
 
 		/// <summary>
 		/// Creates a new list.
@@ -36,9 +60,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public bool CreateList(string listName, string description)
 		{
-			if (_AllLists == null) _AllLists = new List<ListInfo>();
-			if (_AllLists.Any(l => l.Name == listName)) return false; // List already exists
-			_AllLists.Add(new ListInfo { Name = listName, Description = description, Items = new List<ListItem>() });
+			var li = GetFilteredListInfo(listName);
+			// List already exists.
+			if (li != null)
+				return false;
+			li = new ListInfo();
+			li.Path = FilterPath;
+			li.Name = listName;
+			li.Description = description;
+			li.Items = new List<ListItem>();
+			_AllLists.Add(li);
 			return true;
 		}
 
@@ -49,13 +80,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public bool UpdateList(string listName, string description)
 		{
-			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
-			if (list != null)
+			var li = GetFilteredListInfo(listName);
+			if (li != null)
 			{
-				list.Description = description;
+				li.Description = description;
 				return true;
 			}
-			return CreateList(listName, description); // Create if not exists and return result
+			// Create if not exists and return result
+			return CreateList(listName, description);
 		}
 
 		/// <summary>
@@ -65,13 +97,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public bool DeleteList(string listName)
 		{
-			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
-			if (list != null)
-			{
-				_AllLists.Remove(list);
-				return true;
-			}
-			return false;
+			var li = GetFilteredListInfo(listName);
+			return _AllLists?.Remove(li) == true;
 		}
 
 		/// <summary>
@@ -81,13 +108,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public bool ClearList(string listName)
 		{
-			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
-			if (list != null)
-			{
-				list.Items.Clear();
-				return true;
-			}
-			return false;
+			var li = GetFilteredListInfo(listName);
+			li?.Items.Clear();
+			return true;
 		}
 
 		#endregion
@@ -101,19 +124,20 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public bool SetListItem(string listName, string key, string value, string comment = "")
 		{
-			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
-			if (list == null)
+			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
+			if (li == null)
 			{
-				CreateList(listName, ""); // Create list if not exists
-				list = _AllLists.First(l => l.Name == listName);
+				// Create list if not exists.
+				CreateList(listName, "");
+				li = GetFilteredListInfos().First(l => l.Name == listName);
 			}
-			var item = list.Items.FirstOrDefault(i => i.Key == key);
+			var item = li.Items.FirstOrDefault(i => i.Key == key);
 			if (item != null)
 			{
 				item.Value = value;
 				item.Comment = comment;
 			}
-			else list.Items.Add(new ListItem { Key = key, Value = value, Comment = comment });
+			else li.Items.Add(new ListItem { Key = key, Value = value, Comment = comment });
 			return true;
 		}
 
@@ -123,8 +147,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public ListItem GetListItem(string listName, string key)
 		{
-			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
-			return list?.Items.FirstOrDefault(i => i.Key == key);
+			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
+			return li?.Items.FirstOrDefault(i => i.Key == key);
 		}
 
 		/// <summary>
@@ -134,14 +158,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public bool DeleteListItem(string listName, string key)
 		{
-			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
-			var item = list?.Items.FirstOrDefault(i => i.Key == key);
-			if (item != null)
-			{
-				list.Items.Remove(item);
-				return true;
-			}
-			return false;
+			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
+			var item = li?.Items.FirstOrDefault(i => i.Key == key);
+			if (item == null)
+				return false;
+			li.Items.Remove(item);
+			return true;
 		}
 
 		/// <summary>
@@ -150,8 +172,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public IList<ListItem> GetListItems(string listName)
 		{
-			var list = _AllLists.FirstOrDefault(l => l.Name == listName);
-			return list?.Items ?? new List<ListItem>();
+			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
+			return li?.Items ?? new List<ListItem>();
 		}
 
 		#endregion
