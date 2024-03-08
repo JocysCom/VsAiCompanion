@@ -28,8 +28,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Retrieves all lists.
 		/// </summary>
-		[RiskLevel(RiskLevel.None)]
-		public IList<ListInfo> GetFilteredListInfos()
+		private IList<ListInfo> GetFilteredListInfos()
 		{
 			return AllLists
 				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
@@ -37,14 +36,26 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Get list by name.
+		/// Get List names.
 		/// </summary>
-		/// <param name="name"></param>
-		public ListInfo GetFilteredListInfo(string name)
+		[RiskLevel(RiskLevel.None)]
+		public List<string> GetListNames()
 		{
 			return AllLists
 				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
-				.Where(x => x.Name == name)
+				.Select(x => x.Name)
+				.ToList();
+		}
+
+		/// <summary>
+		/// Get list by name.
+		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		public ListInfo GetFilteredListInfo(string listName)
+		{
+			return AllLists
+				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
+				.Where(x => x.Name == listName)
 				.FirstOrDefault();
 		}
 
@@ -98,7 +109,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public bool DeleteList(string listName)
 		{
 			var li = GetFilteredListInfo(listName);
-			return _AllLists?.Remove(li) == true;
+			if (li == null)
+				return true;
+			return _AllLists.Remove(li);
 		}
 
 		/// <summary>
@@ -109,7 +122,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public bool ClearList(string listName)
 		{
 			var li = GetFilteredListInfo(listName);
-			li?.Items.Clear();
+			if (li == null)
+				return false;
+			li.Items.Clear();
 			return true;
 		}
 
@@ -124,20 +139,25 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public bool SetListItem(string listName, string key, string value, string comment = "")
 		{
-			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
+			var li = GetFilteredListInfo(listName);
 			if (li == null)
-			{
-				// Create list if not exists.
-				CreateList(listName, "");
-				li = GetFilteredListInfos().First(l => l.Name == listName);
-			}
+				return false;
 			var item = li.Items.FirstOrDefault(i => i.Key == key);
-			if (item != null)
+			if (item == null)
+			{
+				item = new ListItem
+				{
+					Key = key,
+					Value = value,
+					Comment = comment,
+				};
+				li.Items.Add(item);
+			}
+			else
 			{
 				item.Value = value;
 				item.Comment = comment;
 			}
-			else li.Items.Add(new ListItem { Key = key, Value = value, Comment = comment });
 			return true;
 		}
 

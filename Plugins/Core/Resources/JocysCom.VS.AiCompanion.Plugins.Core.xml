@@ -430,11 +430,16 @@
             Retrieves all lists.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListNames">
+            <summary>
+            Get List names.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetFilteredListInfo(System.String)">
             <summary>
             Get list by name.
             </summary>
-            <param name="name"></param>
+            <param name="listName">Name of the list</param>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Lists.FilterPath">
             <summary>
