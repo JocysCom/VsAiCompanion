@@ -1,5 +1,6 @@
 ﻿using Azure.AI.OpenAI;
 using DocumentFormat.OpenXml;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
@@ -64,8 +65,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 			var methods = type.GetMethods(bindingFlags);
-			foreach (var method in methods)
-				_PluginFunctions.Add(method.Name, method);
+			foreach (var mi in methods)
+			{
+				var rla = Attributes.FindCustomAttribute<RiskLevelAttribute>(mi);
+				if (rla == null || rla.Level <= RiskLevel.Unknown)
+					continue;
+				_PluginFunctions.Add(mi.Name, mi);
+			}
 		}
 
 		/// <summary>
