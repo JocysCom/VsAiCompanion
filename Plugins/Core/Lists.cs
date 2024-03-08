@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
@@ -45,6 +46,41 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
 				.Select(x => x.Name)
 				.ToList();
+		}
+
+
+		/// <summary>
+		/// Load items into existing list from the CSV file.
+		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		/// <param name="path">Path to the CSV file</param>
+		/// <param name="keyColumn">Use csv column for the Key property.</param>
+		/// <param name="valueColumn">Use csv column for the Value property.</param>
+		/// <param name="commentColumn">Use csv column for the Comment property.</param>
+		/// <returns></returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public int LoadListFromCsv(
+			string listName,
+			string path,
+			string keyColumn = null, string valueColumn = null, string commentColumn = null)
+		{
+			var li = GetFilteredListInfo(listName);
+			// List don't exists
+			if (li == null)
+				return -1;
+			var table = JocysCom.ClassLibrary.Files.CsvHelper.Read(path, true, true);
+			foreach (DataRow row in table.Rows)
+			{
+				var item = new ListItem();
+				if (string.IsNullOrWhiteSpace(keyColumn))
+					item.Key = (string)row[keyColumn];
+				if (string.IsNullOrWhiteSpace(valueColumn))
+					item.Value = (string)row[valueColumn];
+				if (string.IsNullOrWhiteSpace(commentColumn))
+					item.Comment = (string)row[commentColumn];
+				li.Items.Add(item);
+			}
+			return table.Rows.Count;
 		}
 
 		/// <summary>
