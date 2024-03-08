@@ -454,7 +454,9 @@ namespace JocysCom.ClassLibrary.Configuration
 										// Set Name property value to the same as the file.
 										var name = RemoveInvalidFileNameChars(file.Name);
 										var fileBaseName = Path.GetFileNameWithoutExtension(file.Name);
-										itemFile.Path = IO.PathHelper.GetRelativePath(di.FullName, file.Directory.FullName + "\\");
+										var path = IO.PathHelper.GetRelativePath(di.FullName + "\\", file.Directory.FullName + "\\");
+										path = path.TrimStart('.', '\\', '/');
+										itemFile.Path = string.IsNullOrWhiteSpace(path) ? null : path;
 										if (itemFile.BaseName != fileBaseName)
 											itemFile.BaseName = fileBaseName;
 										data.Add(item);

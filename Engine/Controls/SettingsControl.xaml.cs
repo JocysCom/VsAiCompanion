@@ -59,7 +59,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (items.Count < 2)
 				return;
 			var text = $"Do you want to apply the same change to all {items.Count} selected items?";
-			var caption = $"{Global.Info.Product} - Apply Value";
+			var caption = $"{Global.Info.Product} - Apply Value - {e.PropertyName}";
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 			if (result != MessageBoxResult.Yes)
 				return;
