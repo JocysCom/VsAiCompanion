@@ -78,6 +78,16 @@
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="AssistantsPanel" x:FieldModifier="public" DataType="Assistant" />
 			</TabItem>
+
+			<TabItem x:Name="ListsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_todo_list}" />
+						<Label Content="Lists" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:SettingsControl x:Name="ListsPanel" />
+			</TabItem>
 			<TabItem x:Name="PluginsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -87,7 +97,6 @@
 				</TabItem.Header>
 				<controls:PluginsControl x:Name="PluginsPanel" />
 			</TabItem>
-
 			<TabItem x:Name="OptionsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

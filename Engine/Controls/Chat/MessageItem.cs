@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
-	public class MessageItem : ISettingsItem, INotifyPropertyChanged
+	public class MessageItem : SettingsItem
 	{
 		public MessageItem()
 		{
@@ -55,9 +54,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public MessageType Type { get => _Type; set => SetProperty(ref _Type, value); }
 		MessageType _Type;
 
-		public bool IsEnabled { get => _IsEnabled; set => SetProperty(ref _IsEnabled, value); }
-		bool _IsEnabled;
-
 		[XmlIgnore, JsonIgnore]
 		public object Tag;
 
@@ -78,28 +74,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		}
 
 		#region ■ ISettingsItem
-		bool ISettingsItem.Enabled { get => IsEnabled; set => IsEnabled = value; }
 
-		public bool IsEmpty =>
+		public override bool IsEmpty =>
 			string.IsNullOrEmpty(User) &&
 			string.IsNullOrEmpty(Body);
-
-		#endregion
-
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
-		{
-			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
 
 		#endregion
 

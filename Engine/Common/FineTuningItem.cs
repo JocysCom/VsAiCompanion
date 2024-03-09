@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class FineTuningItem : FileListItem
+	public class FineTuningItem : AiFileListItem
 	{
 		public FineTuningItem()
 		{

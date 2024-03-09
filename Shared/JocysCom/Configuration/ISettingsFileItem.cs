@@ -5,7 +5,7 @@ namespace JocysCom.ClassLibrary.Configuration
 	/// <summary>
 	/// Defines an interface for a settings item that represents or interacts with a file. Includes properties for managing file names and tracking write timestamps.
 	/// </summary>
-	public interface ISettingsItemFile
+	public interface ISettingsFileItem : ISettingsItem
 	{
 		/// <summary>
 		/// Parent Directory of the file associated with this settings item.

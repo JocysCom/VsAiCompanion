@@ -96,6 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Template: return Templates;
 				case ItemType.FineTuning: return FineTunings;
 				case ItemType.Assistant: return Assistants;
+				case ItemType.Lists: return Lists;
 				default: return new SettingsData<TemplateItem>();
 			}
 		}
@@ -107,7 +108,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			form.ShowDialog(message);
 		}
 
-		public static void InsertItem(IFileListItem item, ItemType type)
+		public static void InsertItem(ISettingsListFileItem item, ItemType type)
 		{
 			if (type != ItemType.Task && type != ItemType.Template)
 				return;
@@ -260,6 +261,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void LoadSettings()
 		{
+			// Set a converter to convert SVG to images for the user interface.
+			SettingsListFileItem.ConvertToImage = Converters.SvgHelper.LoadSvgFromString;
 			ResetSettings = false;
 			// Load app data.
 			AppData.OnValidateData += AppData_OnValidateData;

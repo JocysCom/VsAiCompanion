@@ -62,7 +62,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// </summary>
 		/// <param name="itemFile">The settings item file to delete.</param>
 		/// <returns>A message indicating the result of the delete operation.</returns>
-		string DeleteItem(ISettingsItemFile itemFile);
+		string DeleteItem(ISettingsFileItem itemFile);
 
 		/// <summary>
 		/// Renames a specified settings item file and updates the settings data and file system.
@@ -70,6 +70,6 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <param name="itemFile">The settings item file to rename.</param>
 		/// <param name="newName">The new name for the settings item file.</param>
 		/// <returns>A message indicating the outcome of the rename operation.</returns>
-		string RenameItem(ISettingsItemFile itemFile, string newName);
+		string RenameItem(ISettingsFileItem itemFile, string newName);
 	}
 }

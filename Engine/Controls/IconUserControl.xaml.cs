@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,9 +19,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateButtons();
 		}
 
-		IFileListItem _item;
+		ISettingsListFileItem _item;
 
-		public void BindData(IFileListItem item = null)
+		public void BindData(ISettingsListFileItem item = null)
 		{
 			_item = item;
 			DataContext = item;
@@ -33,18 +34,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			IconEditButton.Visibility = _item?.Icon == null
 				? Visibility.Visible
 				: Visibility.Hidden;
-		}
-
-		private void LoadSvgFromFile(string filePath)
-		{
-			string svgContent = System.IO.File.ReadAllText(filePath);
-			LoadSvgFromString(svgContent);
-		}
-
-		private void LoadSvgFromString(string svgContent)
-		{
-			string html = $"<html><body style='margin:0;padding:0;'>{svgContent}</body></html>";
-
 		}
 
 		System.Windows.Forms.OpenFileDialog _OpenFileDialog = new System.Windows.Forms.OpenFileDialog();

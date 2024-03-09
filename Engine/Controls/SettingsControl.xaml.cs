@@ -1,5 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -29,11 +31,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
 		}
 
-		IFileListItem currentItem;
+		ISettingsListFileItem currentItem;
 
 		void UpdateOnSelectionChanged()
 		{
-			var item = ListPanel.MainDataGrid.SelectedItems.Cast<IFileListItem>().FirstOrDefault();
+			var item = ListPanel.MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().FirstOrDefault();
 			if (currentItem != null)
 				currentItem.PropertyChanged -= CurrentItem_PropertyChanged;
 			currentItem = item;
@@ -49,13 +51,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AssistantItemPanel.Item = (AssistantItem)item;
 			}
+			else if (DataType == ItemType.Lists)
+			{
+				ListsItemPanel.Item = (ListInfo)item;
+			}
 			if (currentItem != null)
 				currentItem.PropertyChanged += CurrentItem_PropertyChanged;
 		}
 
 		private void CurrentItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			var items = ListPanel.MainDataGrid.SelectedItems.Cast<IFileListItem>().ToList();
+			var items = ListPanel.MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().ToList();
 			if (items.Count < 2)
 				return;
 			var text = $"Do you want to apply the same change to all {items.Count} selected items?";
@@ -74,6 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public TemplateItemControl TemplateItemPanel;
 		FineTuningItemControl FineTuningItemPanel;
 		AssistantItemControl AssistantItemPanel;
+		ListsItemControl ListsItemPanel;
 
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
@@ -118,6 +125,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						control.DataType = value;
 						control.Visibility = Visibility.Visible;
 						AssistantItemPanel = control;
+					}
+				}
+				else if (value == ItemType.Lists)
+				{
+					if (ListsItemPanel == null)
+					{
+						var control = new ListsItemControl();
+						Grid.SetColumn(control, 2);
+						MainGrid.Children.Add(control);
+						//control.DataType = value;
+						control.Visibility = Visibility.Visible;
+						ListsItemPanel = control;
 					}
 				}
 				else

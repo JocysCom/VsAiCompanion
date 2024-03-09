@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class TemplateItem : FileListItem
+	public class TemplateItem : AiFileListItem
 	{
 		public TemplateItem()
 		{

@@ -242,7 +242,7 @@ namespace JocysCom.ClassLibrary.Configuration
 						di.Create();
 					for (int i = 0; i < items.Length; i++)
 					{
-						var fileItem = (ISettingsItemFile)items[i];
+						var fileItem = (ISettingsFileItem)items[i];
 						var bytes = Serialize(fileItem);
 						var fileName = RemoveInvalidFileNameChars(fileItem.BaseName) + fi.Extension;
 						var itemPath = fileItem.Path;
@@ -308,6 +308,14 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			SaveAs(_XmlFile.FullName);
 		}
+
+		/// <summary>
+		/// Settings root directory.
+		/// </summary>
+		public DirectoryInfo RootDirectory =>
+			UseSeparateFiles
+				? GetCreateDirectory(_XmlFile)
+				: _XmlFile.Directory;
 
 		/// <summary>
 		/// Adds an array of items to the current collection of settings data.
@@ -449,7 +457,7 @@ namespace JocysCom.ClassLibrary.Configuration
 									try
 									{
 										var item = DeserializeItem(bytes, compress);
-										var itemFile = (ISettingsItemFile)item;
+										var itemFile = (ISettingsFileItem)item;
 										itemFile.WriteTime = file.LastWriteTime;
 										// Set Name property value to the same as the file.
 										var name = RemoveInvalidFileNameChars(file.Name);
@@ -599,7 +607,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <param name="itemFile">The settings item file object to be renamed.</param>
 		/// <param name="newName">The new name for the settings item file.</param>
 		/// <returns>A message indicating the outcome of the operation or null if the operation is successful.</returns>
-		public string RenameItem(ISettingsItemFile itemFile, string newName)
+		public string RenameItem(ISettingsFileItem itemFile, string newName)
 		{
 			lock (saveReadFileLock)
 			{
@@ -661,7 +669,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// </summary>
 		/// <param name="itemFile">The settings item file object to be deleted.</param>
 		/// <returns>A message indicating the result of the delete operation, or null if successful.</returns>
-		public string DeleteItem(ISettingsItemFile itemFile)
+		public string DeleteItem(ISettingsFileItem itemFile)
 		{
 			lock (saveReadFileLock)
 			{
@@ -846,6 +854,8 @@ namespace JocysCom.ClassLibrary.Configuration
 			return success;
 		}
 
+		#region Serialization
+
 		byte[] Serialize(object fileItem)
 		{
 			return Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
@@ -878,6 +888,8 @@ namespace JocysCom.ClassLibrary.Configuration
 			var item = Serializer.DeserializeFromXmlBytes<T>(bytes);
 			return item;
 		}
+
+		#endregion
 
 		#region Folder Monitoring
 

@@ -1,7 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
-using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -9,28 +7,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// <summary>
 	/// List Info.
 	/// </summary>
-	public class ListInfo : ISettingsItemFile
+	public class ListInfo : SettingsListFileItem
 	{
-		/// <summary>List path.</summary>
-		public string Path { get; set; }
-
-		/// <summary>List name.</summary>
-		public string Name { get; set; }
-
 		/// <summary>List description.</summary>
-		public string Description { get; set; }
+		public string Description { get => _Description; set => SetProperty(ref _Description, value); }
+		string _Description;
 
 		/// <summary>Dictionary items</summary>
-		public List<ListItem> Items { get; set; }
+		public List<ListItem> Items { get => _Items; set => SetProperty(ref _Items, value); }
+		List<ListItem> _Items;
 
-		#region ■ ISettingsItemFile
-
-		[XmlIgnore]
-		string ISettingsItemFile.BaseName { get => Name; set => Name = value; }
-
-		[XmlIgnore]
-		DateTime ISettingsItemFile.WriteTime { get; set; }
-
-		#endregion
 	}
 }

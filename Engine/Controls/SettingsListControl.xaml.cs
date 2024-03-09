@@ -46,12 +46,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				if (e.ListChangedType == ListChangedType.ItemChanged)
 				{
-					if (!selectionsUpdating && e.PropertyDescriptor?.Name == nameof(IFileListItem.IsChecked))
+					if (!selectionsUpdating && e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.IsChecked))
 					{
 						selectionsUpdating = true;
-						var selectedItems = MainDataGrid.SelectedItems.Cast<IFileListItem>().ToList();
+						var selectedItems = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().ToList();
 						// Get updated item.
-						var item = (IFileListItem)MainDataGrid.Items[e.NewIndex];
+						var item = (ISettingsListFileItem)MainDataGrid.Items[e.NewIndex];
 						if (selectedItems.Contains(item))
 						{
 							// Update other items to same value.
@@ -72,7 +72,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var template = (FrameworkElement)values[1];
 			var cell = (DataGridCell)(template ?? sender).Parent;
 			var value = values[2];
-			var item = (IFileListItem)cell.DataContext;
+			var item = (ISettingsListFileItem)cell.DataContext;
 			// Format ConnectionClassColumn value.
 			// Format StatusCodeColumn value.
 			if (cell.Column == StatusCodeColumn)
@@ -96,7 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public IBindingList SourceItems { get; set; }
 
-		public SortableBindingList<IFileListItem> CurrentItems { get; set; } = new SortableBindingList<IFileListItem>();
+		public SortableBindingList<ISettingsListFileItem> CurrentItems { get; set; } = new SortableBindingList<ISettingsListFileItem>();
 
 		#region ■ Properties
 
@@ -150,7 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.SetSelection(MainDataGrid, nameof(IFileListItem.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(ISettingsListFileItem.Name), list, 0);
 		}
 
 		TaskSettings PanelSettings { get; set; } = new TaskSettings();
@@ -180,14 +180,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (MainDataGrid.SelectedIndex >= 0)
 			{
 				// Remember selection.
-				PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(IFileListItem.Name));
+				PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(ISettingsListFileItem.Name));
 				PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
 			}
 			else
 			{
 				// Try to restore selection.
 				ControlsHelper.SetSelection(
-					MainDataGrid, nameof(IFileListItem.Name),
+					MainDataGrid, nameof(ISettingsListFileItem.Name),
 					PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
 				);
 			}
@@ -198,7 +198,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		void UpdateButtons()
 		{
 			var allowEnable = true;
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<IFileListItem>();
+			var selecetedItems = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>();
 			var isSelected = selecetedItems.Count() > 0;
 			if (DataType == ItemType.Template)
 			{
@@ -222,7 +222,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
-			IFileListItem item = null;
+			ISettingsListFileItem item = null;
 			if (DataType == ItemType.Template || DataType == ItemType.Task)
 			{
 				var ti = AppHelper.GetNewTemplateItem();
@@ -253,15 +253,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ti.SetIcon(contents);
 				item = ti;
 			}
-
-
+			if (DataType == ItemType.Lists)
+			{
+				var ti = AppHelper.GetNewListsItem();
+				ti.Name = $"List {DateTime.Now:yyyyMMdd_HHmmss}";
+				// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
+				var contents = Helper.FindResource<string>(ClientHelper.DefaultListsIconEmbeddedResource, GetType().Assembly);
+				ti.SetIcon(contents);
+				item = ti;
+			}
 			if (item != null)
 				InsertItem(item);
 		}
 
-		public void InsertItem(IFileListItem item)
+		public void InsertItem(ISettingsListFileItem item)
 		{
-			var position = FindInsertPosition(SourceItems.Cast<IFileListItem>().ToList(), item);
+			var position = FindInsertPosition(SourceItems.Cast<ISettingsListFileItem>().ToList(), item);
 			// Make sure new item will be selected and focused.
 			PanelSettings.ListSelection = new List<string>() { item.Name };
 			PanelSettings.ListSelectedIndex = position;
@@ -270,7 +277,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				SettingsData.Save();
 		}
 
-		private int FindInsertPosition(IList<IFileListItem> list, IFileListItem item)
+		private int FindInsertPosition(IList<ISettingsListFileItem> list, ISettingsListFileItem item)
 		{
 			for (int i = 0; i < list.Count; i++)
 				if (string.Compare(list[i].Name, item.Name, StringComparison.Ordinal) > 0)
@@ -286,7 +293,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Delete()
 		{
-			var items = MainDataGrid.SelectedItems.Cast<IFileListItem>().ToList();
+			var items = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().ToList();
 			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.Name).ToArray()))
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
@@ -334,7 +341,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				var textBox = e.EditingElement as TextBox;
 				var newName = textBox.Text.Trim();
-				var item = (IFileListItem)e.Row.Item;
+				var item = (ISettingsListFileItem)e.Row.Item;
 				var settingsData = Global.GetSettings(DataType);
 				var error = settingsData.RenameItem(item, newName);
 				if (!string.IsNullOrEmpty(error))
@@ -350,7 +357,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CopyButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = MainDataGrid.SelectedItems.Cast<IFileListItem>().FirstOrDefault();
+			var item = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().FirstOrDefault();
 			if (item == null)
 				return;
 			var text = Serializer.SerializeToXmlString(item, null, true);
@@ -386,7 +393,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				var list = PanelSettings.ListSelection;
 				if (list?.Count > 0)
-					ControlsHelper.SetSelection(MainDataGrid, nameof(IFileListItem.Name), list, 0);
+					ControlsHelper.SetSelection(MainDataGrid, nameof(ISettingsListFileItem.Name), list, 0);
 				SearchTextBox.Text = PanelSettings.SearchText;
 			}
 		}
@@ -405,7 +412,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void InitSearch()
 		{
-			_SearchHelper = new SearchHelper<IFileListItem>((x) =>
+			_SearchHelper = new SearchHelper<ISettingsListFileItem>((x) =>
 			{
 				var s = SearchTextBox.Text;
 				// Item type specific code.
@@ -420,7 +427,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					return string.IsNullOrEmpty(s) ||
 						(x.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
 				}
-			}, null, new SortableBindingList<IFileListItem>());
+			}, null, new SortableBindingList<ISettingsListFileItem>());
 			_SearchHelper.SetSource(SourceItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
 			MainDataGrid.ItemsSource = _SearchHelper.FilteredList;
@@ -430,12 +437,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			// Try to restore selection.
 			ControlsHelper.SetSelection(
-				MainDataGrid, nameof(IFileListItem.Name),
+				MainDataGrid, nameof(ISettingsListFileItem.Name),
 				PanelSettings.ListSelection, 0
 			);
 		}
 
-		private SearchHelper<IFileListItem> _SearchHelper;
+		private SearchHelper<ISettingsListFileItem> _SearchHelper;
 
 		private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
@@ -457,7 +464,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = MainDataGrid.SelectedItems.Cast<IFileListItem>().FirstOrDefault();
+			var item = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().FirstOrDefault();
 			if (item == null)
 				return;
 			// Item type specific code.
@@ -490,7 +497,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CreateNewTaskButton_Click(object sender, RoutedEventArgs e)
 		{
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<IFileListItem>();
+			var selecetedItems = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>();
 			var selection = new List<string>();
 			if (DataType == ItemType.Template)
 			{
@@ -512,7 +519,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Global_OnTasksUpdated(object sender, EventArgs e)
 		{
-			if (DataType !=  ItemType.Task)
+			if (DataType != ItemType.Task)
 				return;
 			ControlsHelper.EnsureTabItemSelected(this);
 		}

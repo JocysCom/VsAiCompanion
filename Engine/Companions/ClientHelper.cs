@@ -24,9 +24,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string GenerateTitleTaskName = "® System - Generate Title";
 		public const string FormatMessageTaskName = "® System - Format Message";
 		public const string PluginApprovalTaskName = "® System - Plugin Approval";
-		public const string DefaultTaskItemIconEmbeddedResource = "document_gear.svg";
-		public const string DefaultFineTuningIconEmbeddedResource = "control_panel.svg";
-		public const string DefaultAssistantIconEmbeddedResource = "user_comment.svg";
+		public const string DefaultTaskItemIconEmbeddedResource = Resources.Icons.Icons_Default.Icon_document_gear + ".svg";
+		public const string DefaultFineTuningIconEmbeddedResource = Resources.Icons.Icons_Default.Icon_control_panel + ".svg";
+		public const string DefaultAssistantIconEmbeddedResource = Resources.Icons.Icons_Default.Icon_user_comment + ".svg";
+		public const string DefaultListsIconEmbeddedResource = Resources.Icons.Icons_Default.Icon_todo_list + ".svg";
 
 		public static string JoinMessageParts(params string[] args)
 		{

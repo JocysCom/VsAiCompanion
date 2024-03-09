@@ -1,7 +1,9 @@
 ﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections;
@@ -235,12 +237,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Fix name to make sure that it is not same as existing names.
 		/// </summary>
-		public static void FixName(IFileListItem copy, IBindingList items)
+		public static void FixName(ISettingsListFileItem copy, IBindingList items)
 		{
 			var newName = copy.Name;
 			for (int i = 1; i < int.MaxValue; i++)
 			{
-				var sameFound = items.Cast<IFileListItem>().Any(x => string.Equals(x.Name, newName, StringComparison.OrdinalIgnoreCase));
+				var sameFound = items.Cast<ISettingsListFileItem>().Any(x => string.Equals(x.Name, newName, StringComparison.OrdinalIgnoreCase));
 				// If item with the same name not found then...
 				if (!sameFound)
 					break;
@@ -438,6 +440,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
+			return item;
+		}
+
+		public static ListInfo GetNewListsItem()
+		{
+			var item = new ListInfo();
 			return item;
 		}
 

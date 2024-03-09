@@ -313,12 +313,6 @@
             List Info.
             </summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Path">
-            <summary>List path.</summary>
-        </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Name">
-            <summary>List name.</summary>
-        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Description">
             <summary>List description.</summary>
         </member>
@@ -434,6 +428,17 @@
             <summary>
             Get List names.
             </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.LoadListFromCsv(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Load items into existing list from the CSV file.
+            </summary>
+            <param name="listName">Name of the list</param>
+            <param name="path">Path to the CSV file</param>
+            <param name="keyColumn">Use csv column for the Key property.</param>
+            <param name="valueColumn">Use csv column for the Value property.</param>
+            <param name="commentColumn">Use csv column for the Comment property.</param>
+            <returns></returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetFilteredListInfo(System.String)">
             <summary>
