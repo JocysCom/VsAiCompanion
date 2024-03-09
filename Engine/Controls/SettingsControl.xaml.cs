@@ -134,7 +134,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						var control = new ListsItemControl();
 						Grid.SetColumn(control, 2);
 						MainGrid.Children.Add(control);
-						//control.DataType = value;
+						control.DataType = value;
 						control.Visibility = Visibility.Visible;
 						ListsItemPanel = control;
 					}

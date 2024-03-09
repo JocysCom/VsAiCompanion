@@ -24,10 +24,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string GenerateTitleTaskName = "® System - Generate Title";
 		public const string FormatMessageTaskName = "® System - Format Message";
 		public const string PluginApprovalTaskName = "® System - Plugin Approval";
-		public const string DefaultTaskItemIconEmbeddedResource = Resources.Icons.Icons_Default.Icon_document_gear + ".svg";
-		public const string DefaultFineTuningIconEmbeddedResource = Resources.Icons.Icons_Default.Icon_control_panel + ".svg";
-		public const string DefaultAssistantIconEmbeddedResource = Resources.Icons.Icons_Default.Icon_user_comment + ".svg";
-		public const string DefaultListsIconEmbeddedResource = Resources.Icons.Icons_Default.Icon_todo_list + ".svg";
 
 		public static string JoinMessageParts(params string[] args)
 		{
@@ -502,7 +498,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var message = ex.Message;
 			// Workaround: Provide a hint until Microsoft's OpenAI packages are no longer in beta.
 			if (message.Contains("Method not found") && message.Contains("System.Collections.Generic.IAsyncEnumerable"))
-				message += " " + Global.VsExtensionVersionMessage;
+				message += " " + Engine.Resources.Resources.VsExtensionVersionMessage;
 			var msgItem = new MessageItem(SystemName, message, MessageType.Error);
 			msgItem.Attachments.Add(new MessageAttachments(ContextType.Error, "log", ex.ToString()));
 			Global.MainControl.Dispatcher.Invoke(() =>

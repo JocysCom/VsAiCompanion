@@ -201,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var item = MainDataGrid.SelectedItems.Cast<model>().FirstOrDefault();
 			if (item == null)
 				return;
-			var task = AppHelper.GetNewTemplateItem();
+			var task = AppHelper.GetNewTemplateItem(false);
 			// Treat the new task as a chat; therefore, clear the input box after sending.
 			task.MessageBoxOperation = MessageBoxOperation.ClearMessage;
 			task.AttachContext = ContextType.ChatHistory;

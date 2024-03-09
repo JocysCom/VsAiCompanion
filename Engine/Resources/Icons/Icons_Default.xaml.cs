@@ -80,6 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_graduate = nameof(Icon_graduate);
 		public const string Icon_hamburger = nameof(Icon_hamburger);
 		public const string Icon_Information_Grey = nameof(Icon_Information_Grey);
+		public const string Icon_list = nameof(Icon_list);
 		public const string Icon_list_style_numbered = nameof(Icon_list_style_numbered);
 		public const string Icon_magnifying_glass = nameof(Icon_magnifying_glass);
 		public const string Icon_map_location2 = nameof(Icon_map_location2);
@@ -100,6 +101,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_piece_yellow = nameof(Icon_piece_yellow);
 		public const string Icon_radar = nameof(Icon_radar);
 		public const string Icon_reticle = nameof(Icon_reticle);
+		public const string Icon_screen = nameof(Icon_screen);
 		public const string Icon_settings = nameof(Icon_settings);
 		public const string Icon_shield = nameof(Icon_shield);
 		public const string Icon_spellcheck = nameof(Icon_spellcheck);

@@ -1103,5 +1103,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
                 return ResourceManager.GetString("Visual_Studio_Extension_Options", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This feature is only available when the application is run as an extension in Visual Studio..
+        /// </summary>
+        public static string VsExtensionFeatureMessage {
+            get {
+                return ResourceManager.GetString("VsExtensionFeatureMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update..
+        /// </summary>
+        public static string VsExtensionVersionMessage {
+            get {
+                return ResourceManager.GetString("VsExtensionVersionMessage", resourceCulture);
+            }
+        }
     }
 }

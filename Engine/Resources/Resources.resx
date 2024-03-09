@@ -465,4 +465,10 @@
   <data name="Call_function_request_denied" xml:space="preserve">
     <value>The request to call the function was denied!</value>
   </data>
+  <data name="VsExtensionFeatureMessage" xml:space="preserve">
+    <value>This feature is only available when the application is run as an extension in Visual Studio.</value>
+  </data>
+  <data name="VsExtensionVersionMessage" xml:space="preserve">
+    <value>This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.</value>
+  </data>
 </root>

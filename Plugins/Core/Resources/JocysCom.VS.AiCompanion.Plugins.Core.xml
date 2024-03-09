@@ -313,6 +313,11 @@
             List Info.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.#ctor">
+            <summary>
+            List Info
+            </summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Description">
             <summary>List description.</summary>
         </member>

@@ -208,7 +208,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 					// Make sure that the list have the name of the task.
 					// If task is renamed then relevant lists must be renamed too.
 					lists.FilterPath = item.Name;
-					methodResult = methodInfo.Invoke(lists, invokeParams);
+					await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+					{
+						methodResult = methodInfo.Invoke(lists, invokeParams);
+						// Fix lists with no icons.
+						var noIconLists = Global.Lists.Items.Where(x => x.IconData == null).ToList();
+						foreach (var noIconList in noIconLists)
+							AppHelper.SetListIconToDefault(noIconList);
+						await Task.Delay(0);
+					});
 				}
 				else
 				{

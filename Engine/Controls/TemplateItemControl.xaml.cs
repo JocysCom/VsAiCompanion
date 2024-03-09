@@ -50,18 +50,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Global_PromptingUpdated(object sender, EventArgs e)
 		{
-			PromptsPanel.BindData(_item);
+			PromptsPanel.BindData(_Item);
 		}
 
 		private void PromptsPanel_AddPromptButton_Click(object sender, RoutedEventArgs e)
 		{
-			var promptItem = Global.PromptItems.Items.FirstOrDefault(x => x.Name == _item?.PromptName);
+			var promptItem = Global.PromptItems.Items.FirstOrDefault(x => x.Name == _Item?.PromptName);
 			if (promptItem == null)
 				return;
-			var box = _item.ShowInstructions
+			var box = _Item.ShowInstructions
 				? LastFocusedForCodeTextBox ?? ChatPanel.DataInstructionsTextBox
 				: ChatPanel.DataTextBox;
-			var promptString = string.Format(promptItem.Pattern, _item?.PromptOption);
+			var promptString = string.Format(promptItem.Pattern, _Item?.PromptOption);
 			AppHelper.InsertText(box, promptString, false, true);
 		}
 
@@ -92,7 +92,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				ChatPanel.EditMessageId = id;
 				ChatPanel.FocusDataTextBox();
-				await ClientHelper.Send(_item, ChatPanel.ApplyMessageEdit, message.Body);
+				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, message.Body);
 			}
 			else if (action == MessageAction.Edit)
 			{
@@ -155,25 +155,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void Global_OnSaveSettings(object sender, EventArgs e)
 		{
 			// Update from previous settings.
-			if (_item != null)
-				_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
+			if (_Item != null)
+				_Item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
 		}
 
 		private async void ChatPanel_OnSend(object sender, EventArgs e)
 		{
-			await ClientHelper.Send(_item, ChatPanel.ApplyMessageEdit);
+			await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit);
 		}
 
 		private void ChatPanel_OnStop(object sender, EventArgs e)
 		{
-			_item?.StopClients();
+			_Item?.StopClients();
 		}
 
 		public string CreativityName
 		{
 			get
 			{
-				var v = _item?.Creativity;
+				var v = _Item?.Creativity;
 				if (v is null)
 					return "";
 				if (v >= 2 - 0.25)
@@ -239,48 +239,48 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 		Dictionary<MessageBoxOperation, string> _MessageBoxOperations;
 
-		TemplateItem _item;
+		TemplateItem _Item;
 		public TemplateItem Item
 		{
-			get => _item;
+			get => _Item;
 			set
 			{
-				if (Equals(value, _item))
+				if (Equals(value, _Item))
 					return;
-				var oldItem = _item;
+				var oldItem = _Item;
 				// Update from previous settings.
-				if (_item != null)
+				if (_Item != null)
 				{
-					_item.PropertyChanged -= _item_PropertyChanged;
-					_item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
+					_Item.PropertyChanged -= _item_PropertyChanged;
+					_Item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
 				}
 				// Make sure that custom AiModel old and new item is available to select.
 				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
 				// Set new item.
-				_item = value ?? AppHelper.GetNewTemplateItem();
+				_Item = value ?? AppHelper.GetNewTemplateItem(true);
 				// This will trigger AiCompanionComboBox_SelectionChanged event.
 				AiModelBoxPanel.BindData(null);
-				DataContext = _item;
-				_item.PropertyChanged += _item_PropertyChanged;
-				AiModelBoxPanel.BindData(_item);
+				DataContext = _Item;
+				_Item.PropertyChanged += _item_PropertyChanged;
+				AiModelBoxPanel.BindData(_Item);
 				OnPropertyChanged(nameof(CreativityName));
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
-				AppHelper.UpdateModelCodes(_item.AiService, AiModelBoxPanel.AiModels, _item?.AiModel);
-				PluginApprovalPanel.Item = _item.PluginFunctionCalls;
-				IconPanel.BindData(_item);
-				PromptsPanel.BindData(_item);
-				ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
-				ChatPanel.IsBusy = _item.IsBusy;
+				AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
+				PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
+				IconPanel.BindData(_Item);
+				PromptsPanel.BindData(_Item);
+				ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
+				ChatPanel.IsBusy = _Item.IsBusy;
 				ChatPanel.UpdateButtons();
-				System.Diagnostics.Debug.WriteLine($"Bound Item: {_item.Name}");
+				System.Diagnostics.Debug.WriteLine($"Bound Item: {_Item.Name}");
 				// AutoSend once enabled then...
-				if (DataType == ItemType.Task && _item.AutoSend)
+				if (DataType == ItemType.Task && _Item.AutoSend)
 				{
 					// Disable auto-send so that it won't trigger every time item is bound.
-					_item.AutoSend = false;
+					_Item.AutoSend = false;
 					_ = Dispatcher.BeginInvoke(new Action(() =>
 					{
-						_ = ClientHelper.Send(_item, ChatPanel.ApplyMessageEdit);
+						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit);
 					}));
 				}
 			}
@@ -294,21 +294,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			switch (e.PropertyName)
 			{
 				case nameof(TemplateItem.IsBusy):
-					ChatPanel.IsBusy = _item.IsBusy;
+					ChatPanel.IsBusy = _Item.IsBusy;
 					ChatPanel.UpdateButtons();
 					break;
 				case nameof(TemplateItem.Creativity):
 					OnPropertyChanged(nameof(CreativityName));
 					break;
 				case nameof(TemplateItem.IsSystemInstructions):
-					var text = _item.TextInstructions.Trim();
+					var text = _Item.TextInstructions.Trim();
 					var containsDataHeader = text.Contains(TextToProcess) || text.EndsWith(":");
-					if (_item.IsSystemInstructions && text.Contains(TextToProcess))
+					if (_Item.IsSystemInstructions && text.Contains(TextToProcess))
 					{
 						var s = text.Replace(TextToProcess, "").TrimEnd();
 						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
 					}
-					else if (!_item.IsSystemInstructions && !containsDataHeader && !string.IsNullOrEmpty(text))
+					else if (!_Item.IsSystemInstructions && !containsDataHeader && !string.IsNullOrEmpty(text))
 					{
 						var s = ClientHelper.JoinMessageParts(text, TextToProcess);
 						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
@@ -380,8 +380,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			cb.SelectedIndex = alwaysSelectedIndex;
 			AppHelper.InsertText(ChatPanel.DataTextBox, "{" + item.Key + "}");
 			// Enable use of macros.
-			if (!_item.UseMacros)
-				_item.UseMacros = true;
+			if (!_Item.UseMacros)
+				_Item.UseMacros = true;
 		}
 
 		#endregion
@@ -397,11 +397,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeLabel, head, body, MessageBoxImage.Warning);
 			if (!Global.IsVsExtension)
 			{
-				Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Global.VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(SelectionComboBox, UseMacrosCheckBox.Content as string, Global.VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(AutomationVsLabel, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Global.VsExtensionFeatureMessage);
+				Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Engine.Resources.Resources.VsExtensionFeatureMessage);
+				Global.MainControl.InfoPanel.HelpProvider.Add(SelectionComboBox, UseMacrosCheckBox.Content as string, Engine.Resources.Resources.VsExtensionFeatureMessage);
+				Global.MainControl.InfoPanel.HelpProvider.Add(AutomationVsLabel, AutomationVsLabel.Content as string, Engine.Resources.Resources.VsExtensionFeatureMessage);
+				Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Engine.Resources.Resources.VsExtensionFeatureMessage);
+				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Engine.Resources.Resources.VsExtensionFeatureMessage);
 			}
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.Resources.Enable_spell_check_for_the_chat_textbox);
 			AppHelper.AddHelp(CreativitySlider, "WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.");
@@ -433,8 +433,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 			if (result != MessageBoxResult.Yes)
 				return;
-			_item.Messages.Clear();
-			ChatPanel.MessagesPanel.SetDataItems(_item.Messages, _item.Settings);
+			_Item.Messages.Clear();
+			ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
 			ChatPanel.UpdateButtons();
 		}
 
@@ -445,10 +445,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
 		{
-			var firstMessage = _item.Messages.FirstOrDefault();
+			var firstMessage = _Item.Messages.FirstOrDefault();
 			if (firstMessage == null)
 				return;
-			_ = ClientHelper.GenerateTitle(_item);
+			_ = ClientHelper.GenerateTitle(_Item);
 		}
 
 		private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
@@ -486,7 +486,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				language = MarkdownLanguageNameComboBox.SelectedItem as string ?? "";
 			if (string.IsNullOrEmpty(language))
 				return;
-			var box = _item.ShowInstructions
+			var box = _Item.ShowInstructions
 				? LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox
 				: ChatPanel.DataTextBox;
 			var caretIndex = box.CaretIndex;

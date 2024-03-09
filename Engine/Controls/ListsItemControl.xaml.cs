@@ -51,6 +51,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					//	Directory.CreateDirectory(path);
 					_Item.PropertyChanged += _Item_PropertyChanged;
 				}
+				IconPanel.BindData(_Item);
 				DataContext = value;
 				//AiModelBoxPanel.BindData(value);
 				//IconPanel.BindData(value);

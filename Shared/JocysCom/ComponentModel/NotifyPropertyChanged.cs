@@ -13,12 +13,13 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected virtual void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
+		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
 		{
 			if (Equals(property, value))
 				return;
 			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			// Invoke overridden OnPropertyChanged method in the most derived class of the object.
+			OnPropertyChanged(propertyName);
 		}
 
 		/// <summary>

@@ -225,43 +225,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ISettingsListFileItem item = null;
 			if (DataType == ItemType.Template || DataType == ItemType.Task)
 			{
-				var ti = AppHelper.GetNewTemplateItem();
+				var ti = AppHelper.GetNewTemplateItem(true);
 				// Treat the new task as a chat; therefore, clear the input box after sending.
 				if (DataType == ItemType.Task)
 					ti.MessageBoxOperation = MessageBoxOperation.ClearMessage;
-				ti.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
-				// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
-				var contents = Helper.FindResource<string>(ClientHelper.DefaultTaskItemIconEmbeddedResource, GetType().Assembly);
-				ti.SetIcon(contents);
 				item = ti;
 			}
 			if (DataType == ItemType.FineTuning)
-			{
-				var ti = AppHelper.GetNewFineTuningItem();
-				ti.Name = $"Name {DateTime.Now:yyyyMMdd_HHmmss}";
-				// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
-				var contents = Helper.FindResource<string>(ClientHelper.DefaultFineTuningIconEmbeddedResource, GetType().Assembly);
-				ti.SetIcon(contents);
-				item = ti;
-			}
+				item = AppHelper.GetNewFineTuningItem();
 			if (DataType == ItemType.Assistant)
-			{
-				var ti = AppHelper.GetNewAssistantItem();
-				ti.Name = $"Assistant {DateTime.Now:yyyyMMdd_HHmmss}";
-				// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
-				var contents = Helper.FindResource<string>(ClientHelper.DefaultAssistantIconEmbeddedResource, GetType().Assembly);
-				ti.SetIcon(contents);
-				item = ti;
-			}
+				item = AppHelper.GetNewAssistantItem();
 			if (DataType == ItemType.Lists)
-			{
-				var ti = AppHelper.GetNewListsItem();
-				ti.Name = $"List {DateTime.Now:yyyyMMdd_HHmmss}";
-				// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
-				var contents = Helper.FindResource<string>(ClientHelper.DefaultListsIconEmbeddedResource, GetType().Assembly);
-				ti.SetIcon(contents);
-				item = ti;
-			}
+				item = AppHelper.GetNewListsItem();
 			if (item != null)
 				InsertItem(item);
 		}
@@ -280,7 +255,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private int FindInsertPosition(IList<ISettingsListFileItem> list, ISettingsListFileItem item)
 		{
 			for (int i = 0; i < list.Count; i++)
-				if (string.Compare(list[i].Name, item.Name, StringComparison.Ordinal) > 0)
+				if (string.Compare(
+						list[i].Path + "/" + list[i].Name,
+						item.Path + "/" + item.Name,
+						StringComparison.Ordinal
+					) > 0)
 					return i;
 			// If not found, insert at the end
 			return list.Count;

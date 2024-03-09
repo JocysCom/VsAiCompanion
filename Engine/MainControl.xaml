@@ -86,7 +86,7 @@
 						<Label Content="Lists" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:SettingsControl x:Name="ListsPanel" />
+				<controls:SettingsControl x:Name="ListsPanel" DataType="Lists" />
 			</TabItem>
 			<TabItem x:Name="PluginsTabItem" x:FieldModifier="public">
 				<TabItem.Header>

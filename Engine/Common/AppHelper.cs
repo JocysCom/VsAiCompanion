@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Collections;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
@@ -413,13 +414,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 			CollectionsHelper.Synchronize(serviceModels, target);
 		}
 
-		public static TemplateItem GetNewTemplateItem()
+		public static TemplateItem GetNewTemplateItem(bool setNameAndIcon = false)
 		{
 			var item = new TemplateItem();
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
 				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService?.DefaultAiModel;
+			if (setNameAndIcon)
+			{
+				item.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
+				// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
+				var contents = Helper.FindResource<string>(
+					Resources.Icons.Icons_Default.Icon_document_gear.Replace("Icon_", "") + ".svg",
+					typeof(AppHelper).Assembly);
+				item.SetIcon(contents);
+			}
 			return item;
 		}
 
@@ -430,6 +440,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
+			item.Name = $"FineTuning {DateTime.Now:yyyyMMdd_HHmmss}";
+			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
+			var contents = Helper.FindResource<string>(
+				Resources.Icons.Icons_Default.Icon_control_panel.Replace("Icon_", "") + ".svg",
+				typeof(AppHelper).Assembly);
+			item.SetIcon(contents);
 			return item;
 		}
 
@@ -440,13 +456,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService.DefaultAiModel ?? "gpt-3.5-turbo";
+			item.Name = $"Assistant {DateTime.Now:yyyyMMdd_HHmmss}";
+			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
+			var contents = Helper.FindResource<string>(
+				Resources.Icons.Icons_Default.Icon_user_comment.Replace("Icon_", "") + ".svg",
+				typeof(AppHelper).Assembly);
+			item.SetIcon(contents);
 			return item;
 		}
 
 		public static ListInfo GetNewListsItem()
 		{
 			var item = new ListInfo();
+			item.Name = $"List {DateTime.Now:yyyyMMdd_HHmmss}";
+			SetListIconToDefault(item);
 			return item;
+		}
+
+		public static void SetListIconToDefault(ListInfo item)
+		{
+			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
+			var contents = Helper.FindResource<string>(
+				Resources.Icons.Icons_Default.Icon_list.Replace("Icon_", "") + ".svg",
+				typeof(AppHelper).Assembly);
+			item.SetIcon(contents);
 		}
 
 		public static FineTuningItem GetNewFineTuning()
