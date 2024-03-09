@@ -471,4 +471,7 @@
   <data name="VsExtensionVersionMessage" xml:space="preserve">
     <value>This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.</value>
   </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
 </root>

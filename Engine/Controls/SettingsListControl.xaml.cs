@@ -126,12 +126,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Re-attach events.
 				MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
 				SourceItems.ListChanged += SourceItems_ListChanged;
-				ShowColumns(IconColumn, NameColumn);
+				var columns = new List<DataGridColumn> { IconColumn, NameColumn };
 				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid);
 				if (DataType != ItemType.Task)
 					buttons = buttons.Except(new Button[] { GenerateTitleButton }).ToArray();
 				if (DataType != ItemType.Template)
 					buttons = buttons.Except(new Button[] { CreateNewTaskButton }).ToArray();
+				if (DataType == ItemType.Lists)
+				{
+					columns.Add(PathColumn);
+				}
+				ShowColumns(columns.ToArray());
 				AppHelper.ShowButtons(TemplateListGrid, buttons);
 			}
 		}
