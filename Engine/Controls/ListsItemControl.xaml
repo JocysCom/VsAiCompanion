@@ -5,16 +5,121 @@
 	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
 	<Grid>
-		<Controls:IconUserControl
-			x:Name="IconPanel"
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<StackPanel Orientation="Horizontal">
+			<Controls:IconUserControl
+				x:Name="IconPanel"
+				Width="64"
+				Height="64"
+				VerticalAlignment="Top" />
+		</StackPanel>
+		<Border
 			Grid.Row="1"
-			Width="64"
-			Height="64"
-			VerticalAlignment="Top" />
+			Margin="0,0,0,0"
+			BorderBrush="{StaticResource BorderDark}"
+			BorderThickness="0,1,0,1">
+			<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
+				<Button
+					Name="AddButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="AddButton_Click"
+					ToolTip="{x:Static locales:Resources.Add_New}">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+						<Label x:Name="AddButtonLabel" Content="{x:Static locales:Resources.Add_New}" Visibility="Collapsed" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="EditButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="EditButton_Click"
+					ToolTip="{x:Static locales:Resources.Edit}">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						<Label x:Name="EditButtonLabel" Content="{x:Static locales:Resources.Edit}" Visibility="Collapsed" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="DeleteButton"
+					Margin="0,0,3,3"
+					x:FieldModifier="public"
+					Background="Transparent"
+					Click="DeleteButton_Click"
+					ToolTip="{x:Static locales:Resources.Delete}">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
+						<Label x:Name="DeleteButtonLabel" Content="{x:Static locales:Resources.Delete}" Visibility="Collapsed" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</Border>
+		<DataGrid
+			x:Name="MainDataGrid"
+			Grid.Row="2"
+			Height="Auto"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			x:FieldModifier="public"
+			AutoGenerateColumns="False"
+			CanUserAddRows="True"
+			ClipToBounds="True"
+			ItemsSource="{Binding Items}"
+			Loaded="MainDataGrid_Loaded"
+			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
+			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
+			ScrollViewer.CanContentScroll="True"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			SelectionChanged="MainDataGrid_SelectionChanged"
+			SelectionMode="Extended">
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					x:Name="KeyColumn"
+					Binding="{Binding Key}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{x:Static locales:Resources.Key}" />
+				<DataGridTextColumn
+					x:Name="ValueColumn"
+					Width="Auto"
+					Binding="{Binding Value}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{x:Static locales:Resources.Value}" />
+				<DataGridTextColumn
+					x:Name="CommentColumn"
+					Width="Auto"
+					Binding="{Binding Comment}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{x:Static locales:Resources.Comment}" />
+			</DataGrid.Columns>
+			<DataGrid.CellStyle>
+				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
+			</DataGrid.CellStyle>
+		</DataGrid>
 	</Grid>
 </UserControl>

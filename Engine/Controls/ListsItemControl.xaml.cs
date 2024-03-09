@@ -1,6 +1,10 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -12,6 +16,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public ListsItemControl()
 		{
 			InitializeComponent();
+			UpdateButtons();
 		}
 
 		[Category("Main"), DefaultValue(ItemType.None)]
@@ -78,5 +83,100 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void MainDataGrid_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
+
+		private void MainDataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			var isEditMode = AppHelper.IsGridInEditMode((DataGrid)sender);
+			var grid = (DataGrid)sender;
+			if (e.Key == Key.Enter)
+			{
+				// Commit manually and supress selection of next row.
+				if (isEditMode)
+				{
+					e.Handled = true;
+					grid.CommitEdit(DataGridEditingUnit.Cell, true);
+					grid.CommitEdit(DataGridEditingUnit.Row, true);
+				}
+			}
+			if (!isEditMode && e.Key == Key.Delete)
+				Delete();
+		}
+
+		private void MainDataGrid_PreviewMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+
+		}
+
+		private void AddButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
+
+		private void DeleteButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			Delete();
+		}
+
+		private void Delete()
+		{
+			var items = MainDataGrid.SelectedItems.Cast<ListItem>().ToList();
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.Key).ToArray()))
+				return;
+			// Use begin invoke or grid update will deadlock on same thread.
+			ControlsHelper.BeginInvoke(() =>
+			{
+				foreach (var item in items)
+					Item.Items.Remove(item);
+			});
+		}
+
+		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (MainDataGrid.SelectedItem != null)
+			{
+				MainDataGrid.CurrentCell = new DataGridCellInfo(MainDataGrid.SelectedItem, KeyColumn);
+				MainDataGrid.Focus();
+				MainDataGrid.BeginEdit();
+			}
+		}
+
+
+		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
+		}
+
+		private void UpdateOnSelectionChanged()
+		{
+			//// If item selected then...
+			//if (MainDataGrid.SelectedIndex >= 0)
+			//{
+			//	// Remember selection.
+			//	PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(ISettingsListFileItem.Name));
+			//	PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
+			//}
+			//else
+			//{
+			//	// Try to restore selection.
+			//	ControlsHelper.SetSelection(
+			//		MainDataGrid, nameof(ISettingsListFileItem.Name),
+			//		PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
+			//	);
+			//}
+			UpdateButtons();
+		}
+
+
+		void UpdateButtons()
+		{
+			//var selecetedItems = MainDataGrid.SelectedItems.AsQueryable();
+			var isSelected = MainDataGrid.SelectedItems.Count > 0;
+			EditButton.IsEnabled = isSelected;
+			DeleteButton.IsEnabled = isSelected;
+		}
 	}
 }
