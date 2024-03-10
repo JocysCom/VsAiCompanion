@@ -1,5 +1,4 @@
 ﻿<TemplateItem>
-  
   <Name>Grammar - Detail</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACqVZXW/bOBZ9n19BeF6mgCjzQ6KoIunDFovuPMwMsIP5AbYsJd5R7MB2m6S/fs+5&#xD;
@@ -60,7 +59,6 @@ Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
 &#xD;
 Text to process:&#xD;
 </TextInstructions>
-  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>

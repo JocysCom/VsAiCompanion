@@ -25,7 +25,7 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>Lists - Update User Profile</string>
         </ListSelection>
@@ -44,7 +44,7 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AssistantData>
       <ListsData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
         <ListSelection>
           <string>Context - Operating System</string>
         </ListSelection>
@@ -235,15 +235,19 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.LoadListFromCsv</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.CreateList</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList</Id>
         </PluginItem>
         <PluginItem>
@@ -251,12 +255,15 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItem</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteListItem</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems</Id>
         </PluginItem>
       </Plugins>
