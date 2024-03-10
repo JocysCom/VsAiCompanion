@@ -200,25 +200,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> PluginApprovalTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
-		private IEnumerable<string> ListNames =>
-			Global.Lists.Items
+		private Dictionary<string, string> GetListNames(string prefix)
+		{
+			var items = Global.Lists.Items
 				.Where(x => string.IsNullOrWhiteSpace(x.Path))
 				.OrderBy(x => $"{x.Path}/{x.Name}")
-				.Select(x => x.Name);
+				.Select(x => x.Name)
+				.Where(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+				.ToList();
+			items.Insert(0, "");
+			var dic = items.ToDictionary(x => x, x => x);
+			return dic;
+		}
 
 		public Dictionary<string, string> ContextListNames
-			=> ListNames
-				.Where(x => x.StartsWith("Context", StringComparison.OrdinalIgnoreCase))
-				.ToDictionary(x => x, x => x);
-
+			=> GetListNames("Context");
 		public Dictionary<string, string> ProfileListNames
-			=> ListNames
-				.Where(x => x.StartsWith("Profile", StringComparison.OrdinalIgnoreCase))
-				.ToDictionary(x => x, x => x);
+			=> GetListNames("Profile");
 		public Dictionary<string, string> RoleListNames
-			=> ListNames
-				.Where(x => x.StartsWith("Role", StringComparison.OrdinalIgnoreCase))
-				.ToDictionary(x => x, x => x);
+			=> GetListNames("Role");
 
 		public Dictionary<ContextType, string> DataTypes
 		{
