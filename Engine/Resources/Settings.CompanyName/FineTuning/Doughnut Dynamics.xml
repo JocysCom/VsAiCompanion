@@ -1,6 +1,6 @@
 ﻿<FineTuningItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <IsEnabled>false</IsEnabled>
+  <Name>Doughnut Dynamics</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAN1aW2/bRhZ+768YMC8tQMpzIzkMrDxssMj2oVtgi/4Ah6JsNbRkSEps59fvuc1w&#xD;
 aMtJ3eqpASKSczlz5ju3bya5PHy5Vl+G/WGz2y4LszDFDwr+PNyO28OyuDke795eXNzf3y/u3WK3&#xD;
@@ -55,10 +55,8 @@ SdW8m8qGUdJ3MwbgX+gVQOqsB5LJVB9ZAt3LGdIbeyGER9o5KJr6RhuJPnkWrNEAv7E2ViG+r0E4&#xD
 GjyN4KAOFqobGMSlhYTgv8qNTvOZisdABMUxePcyMiEi5E1X2plpzQko6peOXpA9ukZwaHHxDAm2&#xD;
 p2sgQhyqT16AfNfWZCRNtA6HUJEyDTfPIbOSQwG07wDmPB4AAFaX7jYYLxoIiJFDgCTvv4kXmIb2&#xD;
 ZPn4FkYkWwwVOtEcLH0CrCaBdXlx/e6HS/zfde/+D3+md8aXJwAA</IconData>
-  <Name>Doughnut Dynamics</Name>
   <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <SystemMessage>You are a helpful, respectful and honest assistant of Doughnut Dynamics.</SystemMessage>
   <FineTuningSourceDataSelection>
     <string>demo-data-Doughnut-Dynamics.csv</string>

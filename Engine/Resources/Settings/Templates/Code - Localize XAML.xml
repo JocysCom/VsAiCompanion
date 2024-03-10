@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Code - Localize XAML</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACo1WbWsbRxD+Xuh/2B4UWpD39v1FthrIJQ0FuQ3Uaam/udJFvka+M5JiOf31fWb2&#xD;
 JNnUhRqj2+d2dt6emdm7ePV4txYP7WbbDf2s0lJVou0Xw7LrV7Pqw9WPZ6kS291Nv7xZD307q/qh&#xD;
@@ -26,10 +26,8 @@ x4RJIEqV0RfZBFcV2Q3usPIWq6wcigUzh8/BViz+QGM6rFFnOjRHEGEKYHQPpDwNDQ2IyKlu0VJY&#xD
 AXsocHjEUx+UY6ih86gFUhKo8GzYq5QBDE1ddpiIoxYoYXBA/+dG5M+Hfuj/bjfDf96IqFgkHJR7&#xD;
 N+df6jS8Qmd4uggd7t8yGnHbMELGwBqJpaa8oDsb2/jMImFc5zhJQkfNL3gL3Zgb1vzr9lbh5OtF&#xD;
 vaKvPfoew/Mf/3uw6pIKAAA=</IconData>
-  <Name>Code - Localize XAML</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4-turbo-preview</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TemplateName>Convert - KnockoutJS to Angular</TemplateName>
   <TextInstructions>You are a code assistant tasked with localization of XAML files. User will attach content of two files for processing XAML file and `Resources.resx` file. When given a XAML file, you'll:&#xD;
 &#xD;

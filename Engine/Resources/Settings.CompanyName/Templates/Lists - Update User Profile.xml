@@ -1,5 +1,5 @@
 ﻿<TemplateItem>
-  <IsEnabled>false</IsEnabled>
+  
   <Name>Lists - Update User Profile</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAH1T226bQBB9z1dsN6+wN+6WSSTbJK6UtpHquOpTRWALKxNAQMHp13cWX3CbqBIs&#xD;
@@ -12,8 +12,8 @@ u+ce8UHsQKZZjiT6zblD3OSoM4qfEVpra58VIjcKouitAg+Ib/DctIjnWX5h2sSxPM8QYq13/kMN&#xD
 LVhCL7gOCkZs1wBnJJvKEha/EzCsFfRYdfoaCXPf5uASx4ARc3LORzuYTG8y+aV9AYEWTLY12qcE&#xD;
 yqqUGLVdU+3giq8dy/V9dgqYx3Hi5wBMnUziOsTjtJzDL6qTTaHgA+C/q/EOxcxpBv+Gnu+bqz+y&#xD;
 7EqprQMAAA==</IconData>
-  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4-0125-preview</AiModel>
+  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Processing Instructions:
 
 1. Find all lists starting with "Profile".
@@ -64,6 +64,7 @@ To improve our interaction, I want to understand you better. You can choose to n
 </TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Text>I would like assistance with updating one of the profiles.</Text>
+  <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -74,6 +75,7 @@ To improve our interaction, I want to understand you better. You can choose to n
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
   <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

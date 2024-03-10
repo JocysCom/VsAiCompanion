@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Utiltiy - Cooking Ideas</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAL1Y227bRhB9z1csmJcE4FJ7I7kMJD80KNI+tAEa5ANkaiWxoUiBoi05X9+Z2aUs&#xD;
 yYodukUNSMsdzu3MnN0RPN3dr9i963ZV28wimcjoDYO/w6ZudrNo3ffbD5PJfr9P9jppu9VECSEm&#xD;
@@ -28,10 +28,8 @@ AvOhuCGj/zMfOWTzbC6ht9Ba7aWFt7H+QFwPTibahxnOxBBoOEZDO346pC+DDwohlQ/GzPiQjwy4&#xD
 HtDfB6cXrbxy0Zr3l78Lv7uu/cFEsxaYa4epMwwdP3PCyDlOnNNh5idNGGXhV1LOhjk2yiFOMPvU&#xD;
 a03Ta5hH3A+kx9F18dsr/Ph48tsuDDA/v3B8+el1nvFpRcWViqbPjq7pZHXzZor/5rn5B/OcWYIg&#xD;
 EgAA</IconData>
-  <Name>Utiltiy - Cooking Ideas</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you suggest a recipe for?</TextInstructions>
   <Text>[insert dietary restriction or ingredient here]</Text>
   <Settings />

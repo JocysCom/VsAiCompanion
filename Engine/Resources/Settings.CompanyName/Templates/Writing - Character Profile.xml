@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Writing - Character Profile</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACsVW244aRxB991dMJq9DT98vq8VWuKwTidiWsk6UpwjDBEbGgAAvu/76nKoZYDYh&#xD;
 kaM8RLZ2TvfUnK7LqWpuXz1+WmUP1W5fb9b9XAmZZ9V6tpnX60U/f39/14v5q5cvbr8ZvR3e//pu&#xD;
@@ -26,10 +26,8 @@ RVNUJ06uhHjP4VKcTZhESVZJw2OQIGH4hYH2ohhVKk5ZkwaOcm/SwgPbphhUBVBJqqfkS8LwxaGb&#xD
 85AWeusb/H1T/VZFvd3nFX4+VQ/VejOfn5VlBzGNhtcaAF9bxNRoB8og7TjInSpFZzqqOh6WnVFc&#xD;
 Zlw3bXqpzAiSXOaFN/+zcFqh4yS+HLm8uBFb4SC4078Vai0pd4j+0oFmHOx342d3uf1TP/Ljln48&#xD;
 v3zxB8zJT80KDAAA</IconData>
-  <Name>Writing - Character Profile</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>You will be provided with the profile of the main character and a new fictional story. Your tasks are to:&#xD;
 &#xD;
 a) Translate the story into English if the story is in another language.&#xD;

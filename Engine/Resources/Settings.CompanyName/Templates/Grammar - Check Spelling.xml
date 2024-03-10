@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Grammar - Check Spelling</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACsVX227bRhB9z1ewBAokgETu7IVLylYCxE6DAmoboE6L5k2VaImNTAqUYjn9+s5l&#xD;
 eRFqN0iBorYhzdmdnZ05cyF9+erhbhfdl+2haup5DImKo7JeNeuq3szj9zffTfM4OhyX9Xq5a+py&#xD;
@@ -24,10 +24,8 @@ xPMZ54oRAJoEAVif8VMvPKlGQNjoQBhKdmBD2840968dTSV57slYogkpgOLMYbSTZcMZcNlgDUIK&#xD
 ozxJQFFCtDwLAHieSZwg89TJTDIyk0Ktilp48xhNTaRoyA7wgyz0+FjGh8x/NrgeX9z8w4sgfj/5&#xD;
 7tdPLphotTAT8AtHkicJR6BaABrwCzAsO5Y9y/gi4xeazp3FSlGV4a141m5+f64hn+Rq4t2L7l2Z&#xD;
 /5mY6f3Do5H/LcCzhR6wcEn/Pbx89hf9kj3BPQ0AAA==</IconData>
-  <Name>Grammar - Check Spelling</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Please proofread the following text, focusing only on correcting spelling and grammar errors. Maintain the original sentence structure and meaning as much as possible, making only minimal changes necessary for correctness.&#xD;
 &#xD;
 After making the corrections, always provide answer in two parts:&#xD;

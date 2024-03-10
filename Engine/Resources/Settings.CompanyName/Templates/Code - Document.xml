@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Code - Document</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACu1WbWvbSBD+3l+xJyi0sF7trl5XiRuI0paC71po2nL3zbUVey+yJCTVdv99n1lJ&#xD;
 IYYQjoM7Co1trGdG8/LM7K5G5xfHXcn2RdvZupp7SkiPFdWqXttqM/c+Xb+ZpR7r+mW1XpZ1Vcy9&#xD;
@@ -17,10 +17,8 @@ tCHCkvN0AQzSCVqeoqXRaDagKB+uSRKzwcawmJvF4GvyMZhhUwYyvMv7QM1pwBX2hdIo2Z2IGkfK&#xD
 cqaa439DMSCC6v8kNpuYYUV/iu41U0Y9zGWTO5AEeMuRNHIgYI4BYxQB03yDgLns5hXdoI2oCLiZ&#xD;
 jLtOGv8WCbjrYIFxTENfD95hAkQuTqfdaL+TyMIYxEzdeHeS4RFmJ1xGlqc7/N5mlvFdsa7Qc3r5&#xD;
 evXsB5ofPS18CgAA</IconData>
-  <Name>Code - Document</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>
   <AttachContext>Selection</AttachContext>
   <Settings />

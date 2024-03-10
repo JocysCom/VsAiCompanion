@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Code - Split</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAM1W227bOBB971cQ7EsLiBJJ3QMrDxsssn3YLbBFP0CmKJtbWjQkObb79TtDyV4n&#xD;
 SLJ10YcYsKk55FzOmRHhxfCwIg+6H4zrKipCQd8R+Bw2thsquh7H7U0U7ff7cB+Hrl9FknMegc/F&#xD;
@@ -19,10 +19,8 @@ Bhn8lkH2OlEvjVcGADLjOZxG6oHETYyRBgkgHvaZsJQMTthTYWhAPCwLasei4CSWlPrQaEPsDKOx&#xD
 TM0VQTpfz9SQl/qU+y5jOUz6fR+CgZl45n4Xc13KLZ6RW74gd5wVyDXh9tzPt0Dn3Pw3OfBvbRBn&#xD;
 kSaNvESsIHPdinm5USWG5OS0lC/mfaGhOcGWBV4k5qVmSYAigUZTNy5HkD8zgvF5BBfR6vbdAv9w&#xD;
 3v4LRnUlTaoKAAA=</IconData>
-  <Name>Code - Split</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Break this code into smaller chunks</TextInstructions>
   <Settings />
   <Messages />

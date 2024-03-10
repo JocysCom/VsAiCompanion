@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>® System - Generate Title</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACpVW247aSBB9z1e0nJdEcoO7fY9gHjZaZfOwibRRPoBpGvDG2Mh4Bma+fs+pNojJ&#xD;
 RpEGCdxdXbdzqqrx4vi4VY9+ODZ9t4zMzERvFD7nfdsdl9FuHA8f5vPT6TQ7pbN+2M5tkiRz2Nyo&#xD;
@@ -27,21 +27,19 @@ wTYUTJm6zAlqFS5GZjv1cmhl6yY3ct/LzYvMq2eF/wlcrTV6MCUfYLxADLm2sCgKFIoHSm7QolBB&#xD
 OOliIxWRheiKFxRDwkCdTvB9nl4uHoZHj7/h8C/+MLTv3k4vWO9fvAnc/Ilh4AtXhUk3RRKXLBQX&#xD;
 +CIeT9D78q9QcEanEz2ZiEDOp2Uwk2MlZpSIQy4ufOS8rMA4LqkqzjBFeNRo9DjPVIaLvlJBIDpY&#xD;
 4nKRh+jAEoOFloAaDfG9xc/3gp/x2yv+xXx792bBV/67/wCrBrfPLAwAAA==</IconData>
-  <Name>® System - Generate Title</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Analyze conversation and create a chat title consisting of 2-5 words. Emphasize user requests in the title. Do not mention the chat itself by using words like "chat," "chat log," or "conversation." Please do not include prefixes such as "Title:." Avoid using dots, commas, or any other special characters. Only provide the generated title in your response.</TextInstructions>
   <Settings />
   <Messages>
     <MessageItem>
+      <IsEnabled>false</IsEnabled>
       <Id>ab880acfad604a25860525836f3ee6ae</Id>
       <User>System</User>
       <Body>This reserved task use AI to automatically generate chat title.</Body>
       <Attachments />
       <Date>2023-07-16T08:55:56.1042695+01:00</Date>
       <Type>Information</Type>
-      <IsEnabled>false</IsEnabled>
     </MessageItem>
   </Messages>
   <AutoSend>false</AutoSend>

@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Code - Cleanup</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACqVW224bRwx9z1dsty8tsJqdGc6FY1gJEMkOCiRtgDot+lQo640kRJYESbGcfH0P&#xD;
 ubKdWx+KGgYWnCU55CHPWZ0/u7tZVbf9br/crMe1M7au+nW3uV6u5+P6zdXliOtnT5+c/zD9bXL1&#xD;
@@ -24,10 +24,8 @@ Tio2dUCmoHVoacYqZTAVqo1D2RbGspSAQDBBdMyHoH1yxAoB2pSUgCHBl/BBEPkIJkKM0T7mpRhZ&#xD
 h1aV3ComFoiL6UUY8IwrMbCh6pJhpWxVjAuIvhIXO4iwtQFpQTZ9ixEouviCKmlILolu0EMORRn1&#xD;
 77I+yN//kPUJuANVxRRREwuXCoaDvNCJgJF9uZaP1PLkLj1+0WzwIV4e5FuPnxW61OftHD855GfD&#xD;
 0yf/AL2C70gECQAA</IconData>
-  <Name>Code - Cleanup</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Cleanup this code.</TextInstructions>
   <AttachContext>Selection</AttachContext>
   <Settings />

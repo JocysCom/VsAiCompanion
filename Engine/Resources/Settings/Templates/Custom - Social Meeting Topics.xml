@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Custom - Social Meeting Topics</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACr2XXU8jRxqF7/Mrer23pt31XTWCRBmYiSJ5diPNZKNcrYjxghUCyBCY4dfvc95u&#xD;
 2yRCyl6thOhT1W9XvV/nVPn4m8+/XXeP6+395vbmZOb6Ydatb1a3F5uby5PZj5/eH9XZN19/dfy3&#xD;
@@ -35,21 +35,19 @@ LTWWqeWGkYtWO5+RnIEs6x7MJGcPIicZ0oAy0Jx8xbA5Dh024SbBkYbQWjS8juYfSmD+wTsW1wmv&#xD
 YUVrGRYukdPQ/ONeav7RgOYf1VMUY0+0GE5VhEI7SarKeNiFqtricUCM/lik5w+SMT8d0NkrPq8f&#xD;
 PNqEC4NtHiDpi2HD1XsVV504jvV48VpvbTh9exjy8qMEL0mixx3tPv3Cg+cPascsbf2/uaQzoEnt&#xD;
 J5f+5MGBCtxyvk3xT2Jij2P9HP76q/8CkSKQB9wPAAA=</IconData>
-  <Name>Custom - Social Meeting Topics</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Suggest five topics for a weekly team-building social meeting. The aim is to bond, have fun, and expand knowledge. Try to be creative and consider topics that are about some of the most fascinating and bizarre events that happened in the past week. Provide one sentence about the event, a link to news about it, and a question to discuss.</TextInstructions>
   <Settings />
   <Messages>
     <MessageItem>
+      <IsEnabled>false</IsEnabled>
       <Id>b207351d53c347b494df4a6cd9ed1922</Id>
       <User>System</User>
       <Body>It is best to send these instructions to an AI that has access to the internet news.</Body>
       <Attachments />
       <Date>2023-08-09T09:57:17.5137619+01:00</Date>
       <Type>Information</Type>
-      <IsEnabled>false</IsEnabled>
     </MessageItem>
   </Messages>
   <AutoSend>false</AutoSend>

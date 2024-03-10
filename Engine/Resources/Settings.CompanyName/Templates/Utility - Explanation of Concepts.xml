@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Utility - Explanation of Concepts</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACq1UW0/bMBh951d4liaBlDq242toQSIwNKnbkAabtresDW1GmlRJaLt/v5NQUMtl&#xD;
 T2vT1P58vnO+i+3h6WZRkFVWN3lVjqhgnJKsnFTTvJyN6M31h4GjpGnTcpoWVZmNaFnR05OD4bvz&#xD;
@@ -16,10 +16,8 @@ nsDBOgGzdI6gUIZFXCU4P5IbCEouIKK8BpnH2EDDs0jLJGJdkxyzMkJ62khwWGWJgZRFKUDMnQKf&#xD
 c6ZPwOjAMs6hYqCt94te4lrY7saXDdju0v4Yx2K5edGRYTjb2aB7k6c+CTQJNfYIBAMi0SYkjROP&#xD;
 gU26d7dEHgBSEuAl8B2mnz4Benz37t0fACDs+f9HUk/x75w/3EP9ZRA/O5CvYbsg3sQOuxvr5OAv&#xD;
 ac+lCrEFAAA=</IconData>
-  <Name>Utility - Explanation of Concepts</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Can you explain in simple terms this complex topic:</TextInstructions>
   <Settings />
   <Messages />

@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Code - Simplify</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACn1U226jMBB971dY7ksrYbAJhFJBHrZadfuwrbRVP4CAE7w1dmScQPr1O3bIpdvV&#xD;
 RrKZOTNz5sKQot+t0Y6bXmhVYhYyfIXgN3ZS9SVurd3cR9EwDOEwC7VZRzGlNIKYC7f7UQr1/i9n&#xD;
@@ -14,10 +14,8 @@ UnXrRnbsZO/67MRIlpKrhnS64fdIadNV8uKtFZvKtghe6M+E0oAliWQsDuBIchRoQO6ohBPQmqQ0&#xD
 TAOKSHYXxFmYIsJoCkiahGlNZnMQZxlYZyC4C+w+wsmSzJOAOrp5Ip1YT2TARTzZgYt4MgZXQNyN&#xD;
 4hzsOUrmAUmYy8MysMSOHVYWvGJIebY6qgOWTmTHKr3ytYwsgyIYSwJXPzoXXHsmIAIeT3PuVbpp&#xD;
 fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
-  <Name>Code - Simplify</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Simplify, refactor, and enhance the performance of the given code while preserving all essential comments.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <AttachContext>ActiveDocument</AttachContext>

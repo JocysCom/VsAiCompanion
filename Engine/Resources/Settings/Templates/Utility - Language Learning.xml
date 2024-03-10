@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Utility - Language Learning</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACn1Z225jxxF891cwzCtFzv2yWNmItWsjwDox4HWCPAWyxEiEGUmQ5NXaX5/qqj6K&#xD;
 dmMEEEQMOWemL9VVPXNef/Xx38fVh/39w+H25nQdt2G92t9c3F4ebq5O1z++/+ZkrL/68ovXf3jz&#xD;
@@ -55,10 +55,8 @@ LI5NXl8cZolbBD2wzhY6F3vaJPpDumRpcalmWK/V5Rq31bwJVsVVXSvgNlK3q/BegV9uxdn/UGWo&#xD
 ZGpJ0fMrGiK8/OJkYOKD0lSsWASaiwtHXSG5bls3YR4JO+pAIcrKZptn9oKgYiGcVKeBE2N0QzzK&#xD;
 otrxOuDTk6y/FsArgDLOvvnT2/99BbC8R8ALB5DBO308v9Lw1xDL2wh/YaH3F8/vJs4+fzehcdwM&#xD;
 u7YGb3+yxf9/U4GcfZPwUusW72IOj/a6B+iX1a93V3jtZK+OvvziPzT3qFsIGwAA</IconData>
-  <Name>Utility - Language Learning</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>
   <Settings />
   <Messages />

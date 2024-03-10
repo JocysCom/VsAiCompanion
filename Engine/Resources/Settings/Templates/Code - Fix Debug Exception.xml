@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Code - Fix Debug Exception</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACm1TXW+bMBR976/wvFfwF4bgKLRSPlpNardKTTvtaaKOB6gMEDBI+ut3DSRNtyLE&#xD;
 8fU9955zjby42v/OUWfqJiuLCHPCMDKFLndZkUT4cXvthvjq8mLxaf1ttf1xv0FNl6D7x+XtlxXC&#xD;
@@ -12,10 +12,8 @@ CjWi9IMRpcxd7hNfcmcEbYukcoZabkEo6UwtxooB/ECDmuKhFbUAP1L4zDuFtpuABg9CEhYI5YTE&#xD
 FwwS77y+nmZbL6X0vQ9mEyRwuCRB6oKCnU0Ih1n30n5A6riUTwGRekhZyil1TKe2fiof94ExEboZ&#xD;
 CVfcs0JSOKAZwhdE7XKUf72z6RkJusHHUeYfC6PQ/07fuenGBm82jy4nk6tJHw5rkLTrUfvtuK6H&#xD;
 ZzyuBU3g/tg7cHnxF+sWVibRAwAA</IconData>
-  <Name>Code - Fix Debug Exception</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>How to fix this exception thrown during debug session in Visual Studio? Please reply with the fixed code.</TextInstructions>
   <AttachContext>Exception ExceptionDocuments</AttachContext>
   <Settings />

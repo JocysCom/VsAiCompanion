@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Code - Handle errors</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACrVV224bNxB9z1ewCxSIAYrL4Z2ylQBZp0EBpw1Qp0XzpkpraRt5V1htLKdf30Ou&#xD;
 5EugAn1oZcHkkDNnztyoi9f3txt2V/e7pmtnBQlZsLpddMumXc2Kj9c/TELBdsO8Xc43XVvPirYr&#xD;
@@ -21,10 +21,8 @@ vEX4uZ46Mh9TN7hYTYyMQoNsdB4qhCl1QiLfEy1JqKiYUgbA1lbaGeQW2dDKCx2Y8QGz7DD6ATnV&#xD
 zCLhwmiuQkCy8UwYMLQpI06jJvCupIUEh4BFKCmdVnn0mUcVNNfGWeGgqFK5AIwyC7BGjuGIKycl&#xD;
 8CvgeACiaFoL/BiGEFL14Nej1oY5VEpI8FBYra+QChhLR3jWmCX4kHhZpBJRK/ZNw5x6igzex5Q3&#xD;
 so8veO7ii/S7+urF3xnwu3dXCAAA</IconData>
-  <Name>Code - Handle errors</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>We have a piece of PowerShell code. The code does not currently handle any exceptions or errors. We want to improve this code to handle potential errors without using try-catch blocks if possible, and provide user-friendly error messages Reply with fully modified code.  Use instant return if possible. Here's the original code:</TextInstructions>
   <Text>```PowerShell&#xD;
 $file = 'C:\path\to\your\file.txt'&#xD;

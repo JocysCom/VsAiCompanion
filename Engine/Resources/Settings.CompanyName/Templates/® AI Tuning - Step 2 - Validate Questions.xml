@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>® AI Tuning - Step 2 - Validate Questions</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACtVY247bNhB9L9B/IJSXBDBl3kkFdh4aFGkf2gAN8gGyRK/VyJIha9fefH1nKNm1&#xD;
 F7KxqpsF1oBNzpDDOWc4vHm2fbgjD77ZFnU1j3jMo59/IvDZr8tqO49Wbbt5P53udrt4J+O6uZsK&#xD;
@@ -26,22 +26,20 @@ wSL0AUtIO4lSMITvKRg1tPuyi3mm1A9FM3gWXDwMJPzPpCcc3uC6pAIGFbK04EOBOmMYf/ghuMQY&#xD
 Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD;
 5xAGeS1FuBYZlx1TNeFhXDURePaiGhIYvQsFe1RQw3BdAoMY2rpaMAhtJBiAAseB4jsJk//j/ZyE&#xD;
 4Xh8vNHccPPv3Xc2vYPaDP+g//APE7kSZtsXAAA=</IconData>
-  <Name>® AI Tuning - Step 2 - Validate Questions</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Data will be supplied in a JSONL (JSON Lines) format. Check if the question matches the answer. Update the question to match the answer.</TextInstructions>
   <Text>This reserved task using AI to process messages for fine-tuning an AI model.</Text>
   <Settings />
   <Messages>
     <MessageItem>
+      <IsEnabled>false</IsEnabled>
       <Id>621cb809662e4c17920e29bdbb72756e</Id>
       <User>System</User>
       <Body>This reserved task using AI to process messages for fine-tuning an AI model.</Body>
       <Attachments />
       <Date>2023-09-28T15:02:12.5356797+01:00</Date>
       <Type>Information</Type>
-      <IsEnabled>false</IsEnabled>
     </MessageItem>
   </Messages>
   <AutoSend>false</AutoSend>

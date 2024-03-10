@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Code - Check Spelling</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACs1TYW+bMBD93l/hWZrUSoB9EEYgoZWatNWkdKu0dNM+MnDAK7GRcSH797WtREqm&#xD;
 qvu0aRjE83Hv7r0D5le7bYsGpnouRY4hoBgxUcqKizrHj+tbf4pRrwtRFa0ULMdC4qvLs/m75efF&#xD;
@@ -11,10 +11,8 @@ nUZ6reQT801DVhZdpuSzOAn+lFycRrdcM9Vyc8sgiGdmbsgc8xrxKsfbgot9ZB/VqhD9RqqtfagV&#xD
 352DR80Cs2gAkyi+OCI4UlfoBpli9+CFdBV5kKxiixKLUovAsJMVRA7HDicOpxaHlncyhUyYL2lv&#xD;
 IFP1j/MQpt6Uekl8cbDl3nsWdrsZJkcGSP0HN6FzE3o+2CsKJm/YmQSxl1qpACu3gehtmYlN+eAZ&#xD;
 tb/phL+qM7Iq4V+q8w/yTL3/YIoOzO0Pe3n2AhZhFW6wBAAA</IconData>
-  <Name>Code - Check Spelling</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Please check the spelling and grammar of comments in the code. Reply with corrected data.</TextInstructions>
   <AttachContext>Selection</AttachContext>
   <Settings />

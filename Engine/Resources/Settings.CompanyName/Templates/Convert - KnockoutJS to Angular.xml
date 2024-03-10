@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Convert - KnockoutJS to Angular</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACm1U227bRhB9z1dsCRRIAFrcmb2ObCVA1k5QQGkDxGnRvqkWLbGhSYFiLOfve5a2&#xD;
 AymIJEBnD+e+Z3jx5uGuVff1sG/6blHQTBeq7m76ddNtFsXn63dnsVD7cdWtV23f1Yui64s3r19c&#xD;
@@ -19,10 +19,8 @@ LS+DDVkojmIKHNCZ4LZUIAcDAfsMY+AUyGsIw4lT0AWXjEBo3dEEg0uSxwSIdBJ1yIJyqAedoB+J&#xD
 YlAxEuYkWWhQLLrPSwMsiJIFhUs1Al/ksrhrG3NRcRKdiwxhUh4ceQN5QYQ6izFgoGx81BCvydXg&#xD;
 6njJCAaBZ4zlCexL9ggBG8o4r0sWHpZmwilv1BOdubxuGTxu1/PGTUbfHU385+R9Nh82/77Mq2FR&#xD;
 EL06L6ofXgYn75vnwwQu8gv49Yv/ATV8wv6ABgAA</IconData>
-  <Name>Convert - KnockoutJS to Angular</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Convert KnockoutJS HTML to Angular in this Microsoft Razor page template. Reply with fully converted code. Code:</TextInstructions>
   <Settings />
   <Messages />

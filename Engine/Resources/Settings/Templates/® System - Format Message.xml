@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>® System - Format Message</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACpVW247aSBB9z1e0nJdEcoO7fY9gHjZaZfOwibRRPoBpGvDG2Mh4Bma+fs+pNojJ&#xD;
 RpEGCdxdXbdzqqrx4vi4VY9+ODZ9t4zMzERvFD7nfdsdl9FuHA8f5vPT6TQ7pbN+2M5tkiRz2Nyo&#xD;
@@ -27,21 +27,19 @@ wTYUTJm6zAlqFS5GZjv1cmhl6yY3ct/LzYvMq2eF/wlcrTV6MCUfYLxADLm2sCgKFIoHSm7QolBB&#xD
 OOliIxWRheiKFxRDwkCdTvB9nl4uHoZHj7/h8C/+MLTv3k4vWO9fvAnc/Ilh4AtXhUk3RRKXLBQX&#xD;
 +CIeT9D78q9QcEanEz2ZiEDOp2Uwk2MlZpSIQy4ufOS8rMA4LqkqzjBFeNRo9DjPVIaLvlJBIDpY&#xD;
 4nKRh+jAEoOFloAaDfG9xc/3gp/x2yv+xXx792bBV/67/wCrBrfPLAwAAA==</IconData>
-  <Name>® System - Format Message</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Analyze the orignal user text. Once you detect any segment of programing code, please encapsulate it within single or triple markdown quotes in order to create a code block. If you notice the absence of the programming language specification for the code block, please deduce the language and indicate it in the markdown. Be careful to not envelop standard, non-code text in such markdowns. The original user text is not to be edited or removed, only supplement it by adding markdowns where necessary. Refrain from inserting your own annotations or comments.</TextInstructions>
   <Settings />
   <Messages>
     <MessageItem>
+      <IsEnabled>false</IsEnabled>
       <Id>b9eedde09e924045a8add4660fff9426</Id>
       <User>System</User>
       <Body>This reserved task use AI to automatically format your message using markdown.</Body>
       <Attachments />
       <Date>2023-07-16T08:56:44.733945+01:00</Date>
       <Type>Information</Type>
-      <IsEnabled>false</IsEnabled>
     </MessageItem>
   </Messages>
   <AutoSend>false</AutoSend>

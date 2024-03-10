@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Writing - Add Character</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACrVW227bRhB9z1ew7Ku03PvFsBJUFwcB2DZAnBZ9KhSalYgokiCpkp2v75kRJdGp&#xD;
 gqQPNWzu2d3h2ZnZM0Pfvnr8tMj29WbbrJaDXAmZZ/WyWj00y9kgf39/14/5q5cvbn8Y/zq6/+Pt&#xD;
@@ -23,10 +23,8 @@ hc8rlXeeVU8ntBnklL2Uztw2ju5+uloxGgEHy+3UaKeqPvUFaLA7KjSu49jOo29HvejjPYtkHYeq&#xD
 fYsHTYNqn44H3Pfx/Qo93FEJHAcLuXlzmjFX6Ml3mj4Pkb+WMuDQL5y95M744SgNn3XhcDVaVAc+&#xD;
 w/M+xj09KkmRKIWOQBHFxKO+POZ4+Opkw9Ycw9kSf3sQMeW37IhKUlNmm+Nmu0d/c/Lq6NTXbZjj&#xD;
 dErr5dmITuK4iOpbZmAaaRQgPkW0wV8S6uCJIKWpq036+UKbPNzSP5AvX/wDiDdICQ4LAAA=</IconData>
-  <Name>Writing - Add Character</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>I need to write a book and need a intelligent [villain/hero/support] character who have an idea backed by a logical motive. Please create new idea for a such character, which would be unique.</TextInstructions>
   <AttachContext>ChatHistory</AttachContext>
   <Settings />

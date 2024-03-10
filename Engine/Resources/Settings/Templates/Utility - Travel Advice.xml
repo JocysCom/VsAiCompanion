@@ -1,6 +1,6 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  
+  <Name>Utility - Travel Advice</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACsVU227TQBB971csKyGBtNmrvbZzaaW6pUJyoRItiL6FeJuYunZku0ng65ldO+BQ&#xD;
 q6JPRIo9Mzsz58wZa6cnu4ccbUxVZ2Uxw4JyjEyxKNOsWM7wzfW7UYhR3cyLdJ6XhZnhosQnx0fT&#xD;
@@ -14,10 +14,8 @@ HqtAUe4TDg8E4xJP7a1IgxVbC7pTATFBQXEhIyoggysagOcp0MJWExlE1PMTqTSV7iCWMoTIvkJa&#xD
 RVwna7XdrdUiSq1p1PFwzG4vlYhsSHnwjGUIbVsbST+kIdGSqs7smjnbooWoTRd+QCXq+jgnVj7w&#xD;
 3h+EcN+0/MK907bqHAfRVrTIfUoDa5ACamBH/L9voSNqPQmeE3Tgswkj4sNW5Av49pdyIE1fsgEt&#xD;
 O5X78vf30l/YwSKfLLjde+9zeGYp2xVcWc/MNmVwfU3tTXx89AtMyWkEiwYAAA==</IconData>
-  <Name>Utility - Travel Advice</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>What are some must-visit places in?:</TextInstructions>
   <Text>[insert location here]</Text>
   <Settings />
