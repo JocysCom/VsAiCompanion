@@ -31,6 +31,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			return AllLists
 				.Where(x => x.IsEnabled)
+				.OrderBy(x => $"{x.Path}/{x.Name}")
 				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath);
 		}
 

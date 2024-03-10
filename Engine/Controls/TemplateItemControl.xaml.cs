@@ -200,6 +200,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> PluginApprovalTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
+		private IEnumerable<string> ListNames =>
+			Global.Lists.Items
+				.Where(x => string.IsNullOrWhiteSpace(x.Path))
+				.OrderBy(x => $"{x.Path}/{x.Name}")
+				.Select(x => x.Name);
+
+		public Dictionary<string, string> ContextListNames
+			=> ListNames
+				.Where(x => x.StartsWith("Context", StringComparison.OrdinalIgnoreCase))
+				.ToDictionary(x => x, x => x);
+
+		public Dictionary<string, string> ProfileListNames
+			=> ListNames
+				.Where(x => x.StartsWith("Profile", StringComparison.OrdinalIgnoreCase))
+				.ToDictionary(x => x, x => x);
+		public Dictionary<string, string> RoleListNames
+			=> ListNames
+				.Where(x => x.StartsWith("Role", StringComparison.OrdinalIgnoreCase))
+				.ToDictionary(x => x, x => x);
+
 		public Dictionary<ContextType, string> DataTypes
 		{
 			get

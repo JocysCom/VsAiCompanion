@@ -71,6 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.RaiseOnAiModelsUpdated();
 				Global.RaiseOnTasksUpdated();
 				Global.RaiseOnTemplatesUpdated();
+				Global.RaiseOnListsUpdated();
 			}
 			catch (Exception ex)
 			{

@@ -210,6 +210,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler OnTemplatesUpdated;
 		public static event EventHandler OnAiServicesUpdated;
 		public static event EventHandler OnAiModelsUpdated;
+		public static event EventHandler OnListsUpdated;
 
 		public static void RaiseOnSaveSettings()
 			=> OnSaveSettings?.Invoke(null, EventArgs.Empty);
@@ -235,6 +236,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			=> OnAiServicesUpdated?.Invoke(null, EventArgs.Empty);
 		public static void RaiseOnAiModelsUpdated()
 			=> OnAiModelsUpdated?.Invoke(null, EventArgs.Empty);
+
+		public static void RaiseOnListsUpdated()
+			=> OnListsUpdated?.Invoke(null, EventArgs.Empty);
 
 		#endregion
 

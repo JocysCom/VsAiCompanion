@@ -261,8 +261,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			for (int i = 0; i < list.Count; i++)
 				if (string.Compare(
-						list[i].Path + "/" + list[i].Name,
-						item.Path + "/" + item.Name,
+						$"{list[i].Path}/{list[i].Name}",
+						$"{item.Path}/{item.Name}",
 						StringComparison.Ordinal
 					) > 0)
 					return i;

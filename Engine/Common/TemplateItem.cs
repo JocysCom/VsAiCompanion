@@ -169,6 +169,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string PluginApprovalTemplate { get => _PluginApprovalTemplate; set => SetProperty(ref _PluginApprovalTemplate, value); }
 		string _PluginApprovalTemplate;
 
+		[DefaultValue(null)]
+		public string Context0ListName { get => _Context0ListName; set => SetProperty(ref _Context0ListName, value); }
+		string _Context0ListName;
+
+		[DefaultValue(null)]
+		public string Context1ListName { get => _Context1ListName; set => SetProperty(ref _Context1ListName, value); }
+		string _Context1ListName;
+
+		[DefaultValue(null)]
+		public string Context2ListName { get => _Context2ListName; set => SetProperty(ref _Context2ListName, value); }
+		string _Context2ListName;
+
+		[DefaultValue(null)]
+		public string Context3ListName { get => _Context3ListName; set => SetProperty(ref _Context3ListName, value); }
+		string _Context3ListName;
+
+		[DefaultValue(null)]
+		public string Context4ListName { get => _Context4ListName; set => SetProperty(ref _Context4ListName, value); }
+		string _Context4ListName;
+
+		[DefaultValue(null)]
+		public string Context5ListName { get => _Context5ListName; set => SetProperty(ref _Context5ListName, value); }
+		string _Context5ListName;
 
 		[XmlIgnore]
 		public BindingList<PluginApprovalItem> PluginFunctionCalls { get; set; } = new BindingList<PluginApprovalItem>();

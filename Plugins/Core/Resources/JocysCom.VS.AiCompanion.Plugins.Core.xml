@@ -435,6 +435,12 @@
             Retrieves all lists.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetFilteredListInfo(System.String)">
+            <summary>
+            Get list by name.
+            </summary>
+            <param name="listName">Name of the list</param>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListNames">
             <summary>
             Get List names.
@@ -449,13 +455,7 @@
             <param name="keyColumn">Use csv column for the Key property.</param>
             <param name="valueColumn">Use csv column for the Value property.</param>
             <param name="commentColumn">Use csv column for the Comment property.</param>
-            <returns></returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetFilteredListInfo(System.String)">
-            <summary>
-            Get list by name.
-            </summary>
-            <param name="listName">Name of the list</param>
+            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Lists.FilterPath">
             <summary>
@@ -466,31 +466,32 @@
             <summary>
             Creates a new list.
             </summary>
-            <returns>True if the list is created successfully.</returns>
+            <returns>0 operation successfull, -2 list is readonly, -3 list already exists.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList(System.String,System.String)">
             <summary>
             Updates an existing list.
             </summary>
-            <returns>True if the list is updated successfully.</returns>
+            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList(System.String)">
             <summary>
             Deletes an existing list.
             </summary>
-            <returns>True if the list is deleted successfully.</returns>
+            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList(System.String)">
             <summary>
             Clears all items from a list.
             </summary>
-            <returns>True if the list items are cleared successfully.</returns>
+            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.SetListItem(System.String,System.String,System.String,System.String)">
             <summary>
             Sets or adds an item to a list.
             </summary>
             <returns>True if the item is set or added successfully.</returns>
+            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItem(System.String,System.String)">
             <summary>
@@ -501,7 +502,7 @@
             <summary>
             Deletes an item from a list.
             </summary>
-            <returns>True if the item is deleted successfully.</returns>
+            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems(System.String)">
             <summary>
