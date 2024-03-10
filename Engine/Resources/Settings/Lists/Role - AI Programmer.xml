@@ -1,0 +1,79 @@
+﻿<ListInfo>
+  <Name>Role - AI Programmer</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1WTW/bRhC951ewzJVc7s5+cNewEsCykhZI2wB1XPRUKBIrEVYoQVIkO7++b5YU&#xD;
+bTFueityKCRhOcPZ+XjzdrSXr+8/rZJDtd3V62aUKiHTpGpm63ndLEbph5s3uU9fv3px+cP1r+Ob&#xD;
+P95Pkt1hkbz/cPXup3GS5kXxux4XxfXNdfLb7dtECVUUk1/SJF3u95uLojgej+KoxXq7KN5up5tl&#xD;
+PdsVMCzYEJsKOFNKzPfzFCHY85NEVJrU81H6bvpQbf+EgDyb3egZzySlZE+dycX9qm7unjNUIYQi&#xD;
+voXpKJWb+zR56NZjPd8vRykZFpZVvVjuT9Khro5Xa96QyIQMvgzR9OOqyj9OZ3eL7fpzg0Sb6pg8&#xD;
+sUAuF7vNdFaN0s222lXbQ4Uik+RyEcuqZ+smytBspvtlAt3PpITPzI8kaJZL4Vwms1wJyqSwpn3C&#xD;
+76CMcDOZtQb8pnvBv6UR/oC9VpcWNngiy3uxylLxahzZ4brEKrHhZC6fGjy38YBk5FmEgd3Av26t&#xD;
+T957o7jnbMvh5HiQ+SDxf8v72XRuSS3d/+h8Ax2wZ9YRjwmV9/Ri8t1aQWPSmWElETZlWCNlv6TJ&#xD;
+X/VqNUpfTtwkTCZpMaS2shk9xoE7a225gn/LiShhjC8RWqKdnJ7xgRclmVn8LiapVCctY9/HOAll&#xD;
+oADPWes/lvUY6gufqBIhcKhUEMHTKrdCe9RkliSCDt8HKU1M8gnyxuhoFpD6ScREhBFOHo5/1wYP&#xD;
+PTdCcYVZX+tjN0irN4SJvsYgqvc864R0zzSHsdAABYmrss08doW68lxAW1j2GqsWSqM/OQllKJpr&#xD;
+66Kd0jqiY2JXoacWLaPRSGZTCIbL9GgoRE9Qoy6pXesNUU5iHBmaJwzIoZ1v8QATSWjjYnQb0Wxl&#xD;
+zkJKr2MjpSQQhj8zvJbKYoSyoXFxZAYlVS9223lboNJzV1AF1GQBMmdDGeeCQuGYHDORyliNLE20&#xD;
+d2XbLa14VDtwmMMao5i83rZJe8/JYZGhRTBwEGW0iamjczzMZefZs+OSEBugKlCcsafIVvSEo2go&#xD;
+tTCEhU8RKsLhJaJOimcJZIjskzK4Dg8ldEBkCWungTPH0nGvDbEn1gQ/VqiYpGdGlAHniWUZj42w&#xD;
+UGTnhOn4lm8/r/BvVx2qZj2f9xw0Vz5cj78mHVwyi06kO+fcgHIDxg0IN+DbgG75gG98kGSwPeF6&#xD;
+uWXc2IJmgN8Jr/DWZVYE7orvHg6YI8HhDxojjNEFjlSWJxwheqtDDyRwMmDfCUeITj/CeA7Bt2G0&#xD;
+12E8GZ8dZd+DijtNldwrXJssrjRYS4GHe8IVBjenB+oUratm3VRpsttv13eI89LicHl5UuTdRUj1&#xD;
+CvY9m25Gabzn9OpP9b7armosMD4fMeU/56XkMLFW8x1kpr/KLGr+28wuiwVuwnybffXibyZGtrib&#xD;
+CwAA</IconData>
+  <Description>This specifies the AI's role and the kinds of tasks it is expected to assist with, focusing on programming, software development, and related technical advice within your business area.</Description>
+  <Instructions>Invoking the specifics of the user's focus on AI Programming, this list aids in customizing talks around AI development topics, tools, and techniques. Aim to support and inspire their projects and learning pursuits in the AI realm.</Instructions>
+  <IsReadOnly>true</IsReadOnly>
+  <Items>
+    <ListItem>
+      <Key>Programming Languages</Key>
+      <Value>Python, Java, C++, R</Value>
+      <Comment>Languages commonly used in AI development.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>ML Libraries</Key>
+      <Value>TensorFlow, PyTorch, scikit-learn, Keras</Value>
+      <Comment>Popular libraries for developing machine learning models.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Development Tools</Key>
+      <Value>Jupyter Notebook, Colab, Visual Studio Code</Value>
+      <Comment>Tools that facilitate coding and model development.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Ethics and Safety</Key>
+      <Value>Responsible AI, Ethical AI Guidelines, Safety Considerations</Value>
+      <Comment>Important principles to follow when developing AI applications.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Deployment Platforms</Key>
+      <Value>Google Cloud AI, AWS SageMaker, Azure Machine Learning</Value>
+      <Comment>Platforms that support the deployment of AI models.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Research Conferences</Key>
+      <Value>NeurIPS, ICML, ICLR, CVPR</Value>
+      <Comment>Key conferences for staying updated on AI research breakthroughs.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Datasets and Repositories</Key>
+      <Value>Kaggle, UCI Machine Learning Repository, ImageNet</Value>
+      <Comment>Sources for datasets to train and test AI models.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Deep Learning Concepts</Key>
+      <Value>Neural Networks, Convolutional Neural Networks, Recurrent Neural Networks</Value>
+      <Comment>Core concepts in deep learning.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Project Management</Key>
+      <Value>Agile for AI, SCRUM, Kanban</Value>
+      <Comment>Project management methodologies suited for AI development projects.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Ethics Boards and Regulations</Key>
+      <Value>GDPR for AI, AI Ethics Committees</Value>
+      <Comment>Understanding the regulatory landscape for AI applications.</Comment>
+    </ListItem>
+  </Items>
+</ListInfo>

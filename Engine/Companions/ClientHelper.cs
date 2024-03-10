@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
@@ -134,6 +135,43 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					m.Body = AppHelper.ReplaceMacros(m.Body, vsData);
 				var fileItems = new List<DocItem>();
 				var at = item.AttachContext;
+				// If data from context lists.
+				var listNames = new List<string> {
+					item.Context0ListName,
+					item.Context1ListName,
+					item.Context2ListName,
+					item.Context3ListName,
+					item.Context4ListName,
+					item.Context5ListName,
+				};
+				// Get all enabled non-empty lists.
+				var listInfos = Global.Lists.Items
+					.Where(x => x.IsEnabled && x.Items?.Count > 0)
+					.Where(x => listNames.Contains(x.Name))
+					.ToList();
+				for (int i = 0; i < listInfos.Count; i++)
+				{
+					var li = listInfos[i];
+					var liForJson = new ListInfo()
+					{
+						Path = li.Path,
+						Name = li.Name,
+						Instructions = li.Instructions,
+						IsReadOnly = li.IsReadOnly,
+						Items = new BindingList<ListItem>(li.Items.ToList()),
+					};
+					var data = Client.Serialize(liForJson);
+					liForJson.Items.Clear();
+					var listAttachment = new MessageAttachments()
+					{
+
+						Title = li.Name,
+						Instructions = li.Instructions,
+						Type = ContextType.None,
+						Data = data,
+					};
+					m.Attachments.Add(listAttachment);
+				}
 				// If data from clipboard.
 				if (at.HasFlag(ContextType.Clipboard))
 				{

@@ -23,14 +23,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Load data from multiple XML files.
 				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
 				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
+				var zipLists = GetItemsFromZip(zip, Global.ListsName, Global.Lists);
 				var zipServices = zipAppData.Items[0].AiServices;
 				var zipModels = zipAppData.Items[0].AiModels;
 				var zipAppSettings = zipAppData.Items[0];
 				Global.Templates.PreventWriteToNewerFiles = false;
 				Global.Tasks.PreventWriteToNewerFiles = false;
+				Global.Lists.PreventWriteToNewerFiles = false;
 				Global.AppData.PreventWriteToNewerFiles = false;
-
-
 				// Remove tasks which will be replaced.
 				var zipTaskNames = zipTasks.Select(t => t.Name.ToLower()).ToList();
 				var tasksToRemove = Global.Tasks.Items.Where(x => zipTaskNames.Contains(x.Name.ToLower())).ToArray();
@@ -39,6 +39,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var zipTemplateNames = zipTemplates.Select(t => t.Name.ToLower()).ToList();
 				var templatesToRemove = Global.Templates.Items.Where(x => zipTemplateNames.Contains(x.Name.ToLower())).ToArray();
 				Global.Templates.Remove(templatesToRemove);
+				// Remove Lists which will be replaced.
+				var zipListsNames = zipLists.Select(t => t.Name.ToLower()).ToList();
+				var listsToRemove = Global.Lists.Items.Where(x => zipListsNames.Contains(x.Name.ToLower())).ToArray();
+				Global.Lists.Remove(listsToRemove);
 				// Remove AiServices.
 				var zipServiceNames = zipServices.Select(t => t.Name.ToLower()).ToList();
 				var servicesToRemove = Global.AppSettings.AiServices.Where(x => zipServiceNames.Contains(x.Name.ToLower())).ToArray();
@@ -54,6 +58,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Global.AppSettings.AiServices.Add(item);
 				foreach (var item in zipAppData.Items[0].AiModels)
 					Global.AppSettings.AiModels.Add(item);
+				Global.Lists.Add(zipLists.ToArray());
 				Global.Templates.Add(zipTemplates.ToArray());
 				Global.Tasks.Add(zipTasks.ToArray());
 				// Copy other settings.
@@ -64,6 +69,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				RuntimeHelper.CopyProperties(zipAppSettings.AiServiceData, Global.AppSettings.AiServiceData, true);
 				// Save settings.
 				Global.SaveSettings();
+				Global.Lists.PreventWriteToNewerFiles = true;
 				Global.Templates.PreventWriteToNewerFiles = true;
 				Global.Tasks.PreventWriteToNewerFiles = true;
 				Global.AppData.PreventWriteToNewerFiles = true;

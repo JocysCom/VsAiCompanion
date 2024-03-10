@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
@@ -24,20 +23,26 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public string Description { get => _Description; set => SetProperty(ref _Description, value); }
 		string _Description;
 
-		/// <summary>List description sent to AI.</summary>
+		/// <summary>List Instructions for AI.</summary>
 		[DefaultValue("")]
 		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, value); }
 		string _Instructions;
 
-		/// <summary>List description sent to AI.</summary>
+		/// <summary>If 'true' then AI can't modify the list.</summary>
 		[DefaultValue(false)]
 		public bool IsReadOnly { get => _IsReadOnly; set => SetProperty(ref _IsReadOnly, value); }
 		bool _IsReadOnly;
 
-		/// <summary>Dictionary items</summary>
+		/// <summary>List items: Key, Value, Comment.</summary>
 		[DefaultValue(null)]
-		public List<ListItem> Items { get => _Items; set => SetProperty(ref _Items, value); }
-		List<ListItem> _Items;
+		public BindingList<ListItem> Items { get => _Items; set => SetProperty(ref _Items, value); }
+		BindingList<ListItem> _Items;
+
+		/// <inheritdoc/>
+		public override bool IsEmpty
+		{
+			get { return (_Items?.Count ?? 0) == 0; }
+		}
 
 	}
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Serialization;
@@ -23,7 +24,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		public System.Windows.MessageBoxImage StatusCode { get => _StatusCode; set => SetProperty(ref _StatusCode, value); }
 		System.Windows.MessageBoxImage _StatusCode;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public DrawingImage Icon
 		{
 			get

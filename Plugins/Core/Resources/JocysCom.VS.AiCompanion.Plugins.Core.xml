@@ -322,13 +322,16 @@
             <summary>List description used for the user.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Instructions">
-            <summary>List description sent to AI.</summary>
+            <summary>List Instructions for AI.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.IsReadOnly">
-            <summary>List description sent to AI.</summary>
+            <summary>If 'true' then AI can't modify the list.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Items">
-            <summary>Dictionary items</summary>
+            <summary>List items: Key, Value, Comment.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.IsEmpty">
+            <inheritdoc/>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ListItem">
             <summary>
@@ -441,6 +444,13 @@
             </summary>
             <param name="listName">Name of the list</param>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetList(System.String,System.Boolean)">
+            <summary>
+            Get list information
+            </summary>
+            <param name="listName">Name of the list</param>
+            <param name="includeItems">`true` to include items, `false` to get information only.</param>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListNames">
             <summary>
             Get List names.
@@ -486,7 +496,7 @@
             </summary>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.SetListItem(System.String,System.String,System.String,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem(System.String,System.String,System.String,System.String)">
             <summary>
             Sets or adds an item to a list.
             </summary>

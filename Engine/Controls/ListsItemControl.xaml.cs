@@ -55,9 +55,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					//if (!Directory.Exists(path))
 					//	Directory.CreateDirectory(path);
 					_Item.PropertyChanged += _Item_PropertyChanged;
+					ControlsHelper.SetItemsSource(MainDataGrid, null);
 				}
 				IconPanel.BindData(_Item);
 				DataContext = value;
+				ControlsHelper.SetItemsSource(MainDataGrid, _Item.Items);
 				//AiModelBoxPanel.BindData(value);
 				//IconPanel.BindData(value);
 				// SourceFilesPanel.Data = value;
@@ -180,6 +182,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			// Fast workaround
+			//MainDataGrid.ItemsSource = _Item?.Items;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			AppHelper.AddHelp(IsEnabledCheckBox, IsEnabledCheckBox.Content as string, Engine.Resources.Resources.List_IsEnabled);
@@ -188,6 +192,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(InstructionsTextBox, Engine.Resources.Resources.Instructions, Engine.Resources.Resources.List_Instructions);
 			AppHelper.AddHelp(DescriptionLabel, Engine.Resources.Resources.Description, Engine.Resources.Resources.List_Description);
 			AppHelper.AddHelp(DescriptionTextBox, Engine.Resources.Resources.Description, Engine.Resources.Resources.List_Description);
+		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			// Fast workaround
+			//MainDataGrid.ItemsSource = null;
+
 		}
 	}
 

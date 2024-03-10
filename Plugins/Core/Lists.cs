@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using JocysCom.ClassLibrary.Runtime;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 
@@ -53,6 +55,27 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return GetEnabledLists()
 				.Where(x => x.Name == listName)
 				.FirstOrDefault();
+		}
+
+
+		/// <summary>
+		/// Get list information
+		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		/// <param name="includeItems">`true` to include items, `false` to get information only.</param>
+		[RiskLevel(RiskLevel.None)]
+		public ListInfo GetList(string listName, bool includeItems = false)
+		{
+			var li = GetFilteredListInfo(listName);
+			if (li == null)
+				return null;
+			if (includeItems)
+				return li;
+			var newLi = new ListInfo();
+			RuntimeHelper.CopyProperties(li, newLi, true);
+			newLi.IconData = null;
+			newLi.IconType = null;
+			return newLi;
 		}
 
 		/// <summary>
@@ -124,7 +147,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			li.Path = FilterPath;
 			li.Name = listName;
 			li.Description = description;
-			li.Items = new List<ListItem>();
+			li.Items = new BindingList<ListItem>();
 			_AllLists.Add(li);
 			return 0;
 		}
@@ -186,7 +209,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <returns>True if the item is set or added successfully.</returns>
 		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int SetListItem(string listName, string key, string value, string comment = "")
+		public int UpdateListItem(string listName, string key, string value, string comment = "")
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
@@ -246,7 +269,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public IList<ListItem> GetListItems(string listName)
 		{
 			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
-			return li?.Items ?? new List<ListItem>();
+			return li?.Items.ToList() ?? new List<ListItem>();
 		}
 
 		#endregion

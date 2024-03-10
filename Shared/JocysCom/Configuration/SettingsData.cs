@@ -440,6 +440,7 @@ namespace JocysCom.ClassLibrary.Configuration
 							{
 								data = new SettingsData<T>();
 								var files = di.GetFiles("*" + fi.Extension, SearchOption.AllDirectories);
+								var fileItems = new List<ISettingsFileItem>();
 								for (int i = 0; i < files.Length; i++)
 								{
 									var file = files[i];
@@ -459,10 +460,19 @@ namespace JocysCom.ClassLibrary.Configuration
 										fileItem.Path = string.IsNullOrWhiteSpace(path) ? null : path;
 										if (fileItem.BaseName != fileBaseName)
 											fileItem.BaseName = fileBaseName;
-										data.Add(item);
+										fileItems.Add(fileItem);
 									}
 									catch { }
 								}
+								// Reorder.
+								fileItems = fileItems
+									// Move works with special characters to the end.
+									.OrderBy(x => x.Name.StartsWith("®"))
+									.ThenBy(x => x.Path)
+									.ThenBy(x => x.Name)
+									.ToList();
+								foreach (var fileItem1 in fileItems)
+									data.Add((T)fileItem1);
 							}
 							else
 							{

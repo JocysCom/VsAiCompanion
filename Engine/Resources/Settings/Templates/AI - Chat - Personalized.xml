@@ -1,0 +1,91 @@
+﻿<TemplateItem>
+  <IsEnabled>false</IsEnabled>
+  <Name>AI - Chat - Personalized</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1a205sxxF991dMJq9z2X3vtg62DhdbkXBiKbajPEUYJkCMAQEGn/P1WWtVNzMQ&#xD;
+fCK/RrEtpnvv6u66rqrq7Xdf/vrz1exxc3d/eXO9N3eraT7bXJ/enF1en+/Nv//uq2Wdf/nFZ+/+&#xD;
+cPiXg+/+/u3R7P7xfPbt9/vHfzqYzZfr9d/CwXp9+N3h7K8/fD1zK7deH/15PptfPDzcfr5ePz09&#xD;
+rZ7C6ubufP313cntxeXp/RqEaxJi0RqbObc6ezib4wjuvMOIm88uz/bmxycfNnf/wAR8Xt/vvbGz&#xD;
+n6aJO3WSz3+9urz+6S1C11pb6y1I9+bT7a/z2Yf++3R59nCxN/eRk4vN5fnFw5g9Xm6e9m+4YDbN&#xD;
+fMR/VNHJj1eb5Y8npz+d3938cg1GrzdPsx0K8PL5/e3J6WZvfnu3ud/cPW4g5Gz27lxi/Xxyea35&#xD;
+85PL05vxBM9uTx4uZnj6jWsL51fFHbu2muJ2XCrHNRz7aRXxPKymfOxhP8dxdBzHzHEtr8fVL1zE&#xD;
+qmOvQcVCv8irHLRDKxiHqYqS42nSbsUvEv7gRLdKHMeq575i7EmOX+cbOcoN4ymIu5AXCRwv0sdv&#xD;
+cBZ5LavSjrEGKzBuEWOcvXD1GNyEpkFe+bKAnBAWHGBYVxnbpFXle2zKccl9g+3Yc5wDx0H0CYoq&#xD;
+Kxc0hrxZCgQNDoecftDk47KqFQvzx4/z2T8vr6725n98/37f7x/O12/YhSpaeAkJrUPtXsJPVBHG&#xD;
+UAgMU8G5l6ImPJkSJtTgRFK3CFLtxD0iJtT5hF/aYaK1QhwvMcllLMOk1bEhNObzOAqT5DoLGFNQ&#xD;
+sUYjl2NjGePGsTSejsEpFApNwWZmDr4sARtUHIdxDVhUV2CbviHt40RKK6t4D8Vlh7VSd4aKbRB1&#xD;
+lHRNZwVrHMK7MKQ58sqZT+I5nU8Sw/IFR8mfQQN2gvz82Mnf4TcYmIrEa1cbxnBV0yfdy3dFYwyb&#xD;
+mwW4cTXLuNKtxYPbsCK8IS98V43f8YJ02A6ODt7yAsRk+x+SPKxSeiF53K/t8GA+uwGSXT4QLBGF&#xD;
+bykigoG4oADpOCAWPcbBOYxDchgn+B+YLKRp8F6Pv20B7wEIQZiAYSLM9Mclu04ODUMdtk0DrsW+&#xD;
+faO/HtuxQMOcMfZZY2AAVO63z0sunR4ABYvYPgCwNPYnNIxzMU658zOe+0Fu3Ns2JpVtb9LasaYF&#xD;
+YwfjqX38BjuP53UV26CvqwnG4z6V6OP69jBjSHYqhohZY2Y8JpOiJu+xb2Iy2eYmq840FbSulgae&#xD;
+xiNsGTplg7OGvoMDyLS+M8aIcTuQ49YZGc/9IDe2bRuTxrY3KXWqCd+GQpijan+IsR+09Hjf98AY&#xD;
+7mh7YxzHkRjGwUl/LA5F3jnXNl0ibW+S2rGmAYxNQcwZQ1OE0ziII5x9bIKADmPzYQQENYTsnHSD&#xD;
+GWFnWht0YbRxF3L4grFgKtkG3Vf6Z0TZu/X5izrhBjXS1cmHN0oF5u4FEm6afD5dwjAL/Jl8bPx1&#xD;
+FcdzHpvnr6/I+ZwXX0gcJ3gx5y3ptxQjwyLUYgFyksiXRGLQ2uaMSm7u+u/UdIiL8BX+Gh8eOZ17&#xD;
+5WhHJthPR8B1yCE3xyFQ4ymmjGhSOeQaTmFgHYVo4lMgmO0hTpwLDo9dNKqgNSEjoXPWcCAfGhsO&#xD;
+bkiBgYvkhlzhaTJ5Q0Sa41MXSOyhN751U5bgUyKxD0Frc6wiLkY8ZUhAVlsyLQRjFUl0u9XkfNdd&#xD;
+5lqIKR5d8FoEFNK0AamXW2of9XgKcGfyEZE5pFhbnU2TgxFn+s2IA0mIWknW0JoQXX/cuXamiMlN&#xD;
+3SP0N9gmoUGx0miWUWBwkoKNbgSZRD8OdVy3CNULS3CZKGEXvqs1dUsjWZqh5ZoAUS40HU+IPy4Z&#xD;
+DhsDNzIXCgmVGZ0YVR49J1eShgAHoucUIPOOdyL2dFro8iJF0/FxGrfqU/j9I2PFxasAlmAU1EfN&#xD;
+uyuJaRzBRlddQduZ2Sdkj4mDmswdW7vQCsCCxSErr/hDD8dtcB/mffc+vJVCuSIg6piZq2smCcQ2&#xD;
+TZnZKbB0PLxAKorB9Blhb/osQEdTQB0N2s3c5HehOFOSQzlhi4x6wIGFl4dG5crZtg7ALIVw37tH&#xD;
+ZQoW2lPU49KauVY0G/pmgeiyOVP2SfJAeXpfS/Dmt0YGoNTrCR4ly4FlnuIRUAqOKG+AuyuSQ5Ma&#xD;
+UkEdLK2IqhJ8hEXGekbMkmMkTLkVkjvFh2NqS/PrLiZTvMSTMhxw2abGXrU1g9qzzJZyujKyediU&#xD;
+DQdqd47BCQLPdBxM13htYpiSkpdUQ0h0qzJfBKSR2CkCU0HCMA0utvqbogDI586+gWKCq3dHoH6e&#xD;
+jdPhiXFg0GJSTIbhu/N7/g69AR+lExRo8oTJdvNms4khqV9TiivwTfNR89XupEBUYaU5xJSgCm3a&#xD;
+owq+SsQMgpIs4PQZJY2MQfWkCAyhLcAWFDDVSkogADc1SviFwFqQATDgK0Ah6RI8RlEqf+kSMYkp&#xD;
+hxl651RICtjWU+hbGMWdYUFDLD4LYEzQ2HOBUo8z9hJcmQ+bfK8g5xqlohcH6gdVr/QnD/RwXpoK&#xD;
+BmUgIEk/+ypwTWmsdTNygsqTKoLLCBehQBKG4UF8CBCR+hywRBEtyU2AbPoCMu3OYKGp454xY9kc&#xD;
+i8Rp6blIdHDMbjPTfWQyN/DV2eZE/XDkbsN0JhW87Y6J5NBMIjlDl0m5xvKTxSaUIEcz41JRyx1N&#xD;
+mSMhM0vYakAEbsLQ/3LHAJaRHV2dfoIMw7XM22bV5dassec485WkBIYYLMNVtp5CpzLsJ6Ulag9R&#xD;
+h/cpt2pPKlqxg4KdCjX9piAQAiJJofTpAyaDirVIBpXZFnMXecXB6wto71Wy2OaXo3ywv//Vm/kF&#xD;
+svFGBeaMgiOdaYkFhiALgWJSXwEJhojklYbgZVYMDbMpSuVmBHULMFp6+cLPLJ2U4Wi70xeeZhDl&#xD;
+n13NILTPDTVeOBtZyKgVureRhR1vkwmNChFmHKJ8M8A1PC99TsWjBgA80+/MBipbohMsoYXhwxLk&#xD;
+ebnk+EbI+RcRV3474p4VsTP7z4hLLyMufiLiakd7RVzpGh8R94xmPCiNDGUlcOnTnCf/Q/eIrQfV&#xD;
+o+LT0Yue37/pT7iGYrHocbGAIJXiHZMFrgdDV7RwHXUVCrbFEn0YUtJiiQsIEJ7yeUM9gGpJlaln&#xD;
+bYI7EuzK1IHWiC3KdIoXtUmJLdLjeF9gSFhYjGBXoA1vNXoVVKq006z4pXGlHsGs4BxXlkjgSjNU&#xD;
+ekIawLUjawymF/y8mN1T02h3BTKqUNH89FI5qzaOBPLxL/dVqyLcB4Oay0Lb2T3ugVCFmzFxdcYD&#xD;
+rQ3AieHA41rDITChWXgsbhN5zQEfxLwgLS9eab6bbnn3yxVumzePm+ubs7MdQDhqR0e7Bry5+nB+&#xD;
+cz27vbm8fsCNOnChsp/zKh3zDHd6lW0PIaa0OiPkwNOeX/NmCjCBwyMqm11y1GszuBManDJeP7Ph&#xD;
+IzrOw/ns/uHu5qfNErfwm3+BAdyEXz5s7l54m0v/hVsHrxrs4BcVCYp39uzJv+AeFQDZ9bQ5Xsca&#xD;
+d4QBxFQJg4tgMDuhatxdDEBMEoa1Kd/XVl536L8lzG8U98QWXBmgh1SBB0uaGyUrG32CiQW+ViMX&#xD;
+y4o1JdV4AUEgD1GtzXQALyN5RsWBea1WLKNAJHlRigKOqENKTEsqpbQWshBfOimgTPDue1mKDoG+&#xD;
+jyizqWgHG8jO1nrhqYBbcYXK13pApEJ+gxBeIYUyalUx7tSoVoKprEKxJKS0th3ga9lVbWFkgNAZ&#xD;
+4OichSBKq12tIRMc0JIKyykCmFWwJpURHu2PVQbWDVrngo0EvalKuoyiXTkcpbgyhPXqPaWjdbMy&#xD;
+wpJ6Zc0rSOndmHAYLbv1RtVEskbewxzCmNEwWbrAzYgVMdKa1ZhgnOpySWUeugv1af22AjUG1/WK&#xD;
+AZ29tMB3Nu9pEnhLxnoDMqHasdyjHZNa8q409Aw20ZFwfi1XgQks6jbVmey5l8+HsvxWfrcEaaUT&#xD;
+EtaQQ7OOq/3mRiLjktqa1Pasnq12gvXxVixHFR0xazV0LrfrKkfCEHYqIcMLzEN0AExJMwxLmpRu&#xD;
+lNpdZgUDqgbNuhKtqbQFuEeytoattbxOmty63bissebFvMXqclwo2eUYnFl1W4Nu+NHK8eMP5omf&#xD;
+l/BZICMOXuHAzk17iO9T/ATw6bMLr+wBYrhyTMwDyJXogzhHfw4Yw4cb6J7zUklKGAvAxGbgovcE&#xD;
+QaR8CNbXc8qMy6+WLz94/B5820lJcHLBiu7k+H1QzgEt6C4xkjMmcVzA8Rf5WtS5A0q2KA4AGlO5&#xD;
+3TzEMu6noqX53kvjHkdkvJlS8FsIuNaXo9SzmxRDS9+rfBitdTQdNyyKcF/NiQwdOtghGZfR+Ct6&#xD;
+rbaiDv/fr+z04KZYw9fSb4RRSz539sve2svMhs66UVRLpmZ13LvYbSOyil0ID5AzGOstAyofm/bu&#xD;
+y7vfE6lEv37ZFawfRz2gjFCERrh8wKk9l30yW5sg23SN9vFT6brwvnk3XaOJNOlwrLkwW8ft6FGf&#xD;
+Xlo+xYdJE7ihYKz9Ppz6xWcIlP92WvAHjMWC01k+olZ6WT5Cilex+pGdIej0/RyJ0LgRWgMxzdHJ&#xD;
+G4HNpna/ghudXsdYk61bJ81xN6VV1otjr+ePBQc4qvAajZ/kI7obHk3Tc44STPMtK5+ubJH+i3/Z&#xD;
+qLhXX030847/d8gXn/0b7zGB4esiAAA=</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <AutoGenerateTitle>true</AutoGenerateTitle>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
+  <Context0ListName>Context - Operating System</Context0ListName>
+  <Context1ListName>Context - Visual Studio</Context1ListName>
+  <Context2ListName>Profile - Assistant</Context2ListName>
+  <Context3ListName>Role - AI Programmer</Context3ListName>
+  <Context4ListName>Profile - User</Context4ListName>
+  <Context5ListName>Role - .NET Developer</Context5ListName>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>
