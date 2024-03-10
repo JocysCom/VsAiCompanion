@@ -53,6 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 						Global.AppSettings.AiModels.Remove(model);
 					Global.AppSettings.AiServices.Remove(service);
 				}
+				ResetPrompts(zip);
 				// Add user settings.
 				foreach (var item in zipAppData.Items[0].AiServices)
 					Global.AppSettings.AiServices.Add(item);
