@@ -286,7 +286,7 @@
 					Header="{x:Static locales:Resources.Status}" />
 				<DataGridTextColumn
 					x:Name="NameColumn"
-					Width="auto"
+					Width="*"
 					Binding="{Binding Name}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCellMarginRight3}"

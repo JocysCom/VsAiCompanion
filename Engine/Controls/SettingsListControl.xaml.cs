@@ -134,6 +134,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					buttons = buttons.Except(new Button[] { CreateNewTaskButton }).ToArray();
 				if (DataType == ItemType.Lists)
 				{
+					NameColumn.Width = DataGridLength.Auto;
 					columns.Add(PathColumn);
 				}
 				ShowColumns(columns.ToArray());

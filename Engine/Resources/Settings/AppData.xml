@@ -1,12 +1,11 @@
 ﻿<Data Version="2">
   <Items>
     <AppData>
-      <AllowOnlyOneCopy>false</AllowOnlyOneCopy>
       <StartPosition>
-        <Left>219.25</Left>
-        <Top>71.25</Top>
-        <Width>450</Width>
-        <Height>400</Height>
+        <Left>195</Left>
+        <Top>45</Top>
+        <Width>494</Width>
+        <Height>400.5</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -18,16 +17,16 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.233751425313569</GridSplitterPosition>
+        <GridSplitterPosition>0.23367875647668393</GridSplitterPosition>
         <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
-          <string>Grammar - Detail - Casual</string>
+          <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
-        <ListSelectedIndex>5</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
         <ChatPanelZoom>50</ChatPanelZoom>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.2970353477765108</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
@@ -61,9 +60,6 @@
         <ListSelectedIndex>0</ListSelectedIndex>
         <ChatPanelZoom>0</ChatPanelZoom>
       </ListsData>
-      <ShowDocumentsAttachedWarning>false</ShowDocumentsAttachedWarning>
-      <ShowSensitiveDataWarning>false</ShowSensitiveDataWarning>
-      <UseEnterToSendMessage>false</UseEnterToSendMessage>
       <AiServices>
         <AiService>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
@@ -71,7 +67,7 @@
           <IsDefault>true</IsDefault>
           <ResponseStreaming>false</ResponseStreaming>
           <ResponseTimeout>0</ResponseTimeout>
-          <DefaultAiModel>ft:gpt-3.5-turbo-0613:personal::8HIyJN5j</DefaultAiModel>
+          <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
           <ModelFilter>gpt|text-davinci-[0-9+]</ModelFilter>
         </AiService>
@@ -129,12 +125,14 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.RunPowerShellScript</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFile</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges</Id>
         </PluginItem>
         <PluginItem>
@@ -194,12 +192,15 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument</Id>
         </PluginItem>
         <PluginItem>
@@ -239,6 +240,7 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents</Id>
         </PluginItem>
         <PluginItem>
@@ -246,6 +248,7 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ModifyCurrentDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection</Id>
         </PluginItem>
         <PluginItem>
@@ -417,8 +420,6 @@
         </AiModel>
       </AiModels>
       <MarkdownLanguageNames>ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex,AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL,BBCode,BBJ,BNF,BQN,BSL,Bash,Basic,Batch,Bicep,Birb,Bison,Brainfuck,BrightScript,Bro,C,CFScript,CIL,CMake,COBOL,CSHTML,CSP,CSS,CSS-Extras,CSV,Chaiscript,CilkC,CilkCpp,Clike,Clojure,CoffeeScript,Concurnas,Cooklang,Coq,Cpp,Crystal,Csharp,Cue,Cypher,D,DAX,DNS-Zone-File,Dart,DataWeave,Dhall,Diff,Django,Docker,Dot,EBNF,EJS,ERB,EditorConfig,Eiffel,Elixir,Elm,Erlang,Excel-Formula,FORTRAN,FTL,Factor,False,Firestore-Security-Rules,Flow,Fsharp,GAP,GCode,GEDCOM,GLSL,GML,GN,GdScript,Gettext,Gherkin,Git,Go,Go-Module,Gradle,Graphql,Groovy,HCL,HLSL,HPKP,HSTS,HTTP,Haml,Handlebars,Haskell,Haxe,Hoon,ICU-Message-Format,IECSt,INI,IchigoJam,Icon,Idris,Ignore,Inform7,Io,J,JEXL,JQ,JS-Extras,JS-Templates,JSDoc,JSON,JSON5,JSONP,JSStackTrace,JSX,Java,JavaDoc,JavaDocLike,JavaScript,JavaStackTrace,Jolie,Julia,KeepALIVED,Keyman,Kotlin,Kumir,Kusto,LLVM,LOLCode,Latex,Latte,Less,LilyPond,Linker-Script,Liquid,Lisp,LiveScript,Log,Lua,MAXScript,MEL,Magma,Makefile,Markdown,Markup,Markup-Templating,Mata,Matlab,Mermaid,MetaFont,Mizar,MongoDB,Monkey,MoonScript,N1QL,N4JS,NASM,NSIS,Nand2Tetris-HDL,Naniscript,Neon,Nevod,Nginx,Nim,Nix,OCaml,ObjectiveC,Odin,OpenCL,OpenQASM,Oz,PCAxis,PHP,PHP-Extras,PHPDoc,PLSQL,PSL,PariGP,Parser,Pascal,PascalIGO,PeopleCode,Perl,Plant-UML,PowerQuery,PowerShell,Processing,Prolog,PromQL,Properties,Protobuf,Pug,Puppet,Pure,PureBasic,PureScript,Python,Q,QML,QSharp,Qore,R,REST,RIP,Racket,Reason,Regex,Rego,RenPY,Rescript,Roboconf,RobotFramework,Ruby,Rust,SAS,SCSS,SML,SPARQL,SQF,SQL,Sass,Scala,Scheme,Shell-Session,Smali,SmallTalk,Smarty,Solidity,Solution-File,Soy,Splunk-SPL,Squirrel,Stan,Stata,Stylus,SuperCollider,Swift,Systemd,T4-CS,T4-Templating,T4-VB,TAP,TOML,TSX,TT2,Tcl,Textile,Tremor,Turtle,Twig,TypeScript,TypoScript,UORazor,URI,UnrealScript,V,VBNet,VHDL,Vala,Velocity,Verilog,Vim,Visual-Basic,WASM,WGSL,WarpScript,Web-IDL,Wiki,Wolfram,Wren,XML,XQuery,Xeora,Xojo,YAML,Yang,ZigetLua</MarkdownLanguageNames>
-      <MinimizeToTray>false</MinimizeToTray>
-      <MinimizeOnClose>false</MinimizeOnClose>
     </AppData>
   </Items>
 </Data>
