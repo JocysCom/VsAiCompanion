@@ -59,6 +59,7 @@ Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
 &#xD;
 Text to process:&#xD;
 </TextInstructions>
+  <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>
@@ -67,6 +68,8 @@ Text to process:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <ItemType>None</ItemType>
+  <PromptName>Audience</PromptName>
+  <PromptOption>artists</PromptOption>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

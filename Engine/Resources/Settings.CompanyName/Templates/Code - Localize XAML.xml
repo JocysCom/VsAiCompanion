@@ -61,7 +61,6 @@ Localized XAML:&#xD;
 &lt;/data&gt;&#xD;
 ```&#xD;
 </TextInstructions>
-  <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <AttachContext>OpenDocuments</AttachContext>
   <Settings />

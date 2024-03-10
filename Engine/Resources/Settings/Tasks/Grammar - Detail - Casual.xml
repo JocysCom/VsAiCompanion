@@ -58,6 +58,7 @@ Text to process:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <IsFavorite>false</IsFavorite>
   <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />

@@ -134,7 +134,9 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
 4. John cooked an egg.&#xD;
 5. John ate the apple.</Text>
   <AttachContext>ChatHistory</AttachContext>
-  <Settings />
+  <Settings>
+    <ScrollPosition>1403</ScrollPosition>
+  </Settings>
   <Messages>
     <MessageItem>
       <IsEnabled>false</IsEnabled>

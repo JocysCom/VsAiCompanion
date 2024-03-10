@@ -1,6 +1,7 @@
 ﻿<Data Version="2">
   <Items>
     <AppData>
+      <AllowOnlyOneCopy>false</AllowOnlyOneCopy>
       <StartPosition>
         <Left>219.25</Left>
         <Top>71.25</Top>
@@ -17,43 +18,59 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.2998859749144812</GridSplitterPosition>
+        <GridSplitterPosition>0.233751425313569</GridSplitterPosition>
+        <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
-          <string>AI - Chat (GPT-3.5)</string>
+          <string>Grammar - Detail - Casual</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>5</ListSelectedIndex>
+        <ChatPanelZoom>50</ChatPanelZoom>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.2970353477765108</GridSplitterPosition>
         <ListSelection>
-          <string>Grammar - Detail</string>
+          <string>AI - Chat</string>
         </ListSelection>
-        <ListSelectedIndex>25</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
         <GridSplitterPosition>NaN</GridSplitterPosition>
+        <IsListPanelVisible>false</IsListPanelVisible>
+        <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
           <string>Doughnut Dynamics</string>
         </ListSelection>
         <ListSelectedIndex>1</ListSelectedIndex>
+        <ChatPanelZoom>0</ChatPanelZoom>
       </FineTuningData>
       <AssistantData>
         <GridSplitterPosition>NaN</GridSplitterPosition>
+        <IsListPanelVisible>false</IsListPanelVisible>
+        <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection />
         <ListSelectedIndex>0</ListSelectedIndex>
+        <ChatPanelZoom>0</ChatPanelZoom>
       </AssistantData>
       <ListsData>
         <GridSplitterPosition>NaN</GridSplitterPosition>
+        <IsListPanelVisible>false</IsListPanelVisible>
+        <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
           <string>Context - Operating System</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
+        <ChatPanelZoom>0</ChatPanelZoom>
       </ListsData>
+      <ShowDocumentsAttachedWarning>false</ShowDocumentsAttachedWarning>
+      <ShowSensitiveDataWarning>false</ShowSensitiveDataWarning>
+      <UseEnterToSendMessage>false</UseEnterToSendMessage>
       <AiServices>
         <AiService>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
           <Name>Open AI</Name>
           <IsDefault>true</IsDefault>
+          <ResponseStreaming>false</ResponseStreaming>
+          <ResponseTimeout>0</ResponseTimeout>
           <DefaultAiModel>ft:gpt-3.5-turbo-0613:personal::8HIyJN5j</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
           <ModelFilter>gpt|text-davinci-[0-9+]</ModelFilter>
@@ -61,6 +78,8 @@
         <AiService>
           <Id>831ee2de-6274-0abb-35af-1e0251a3666e</Id>
           <Name>GPT4All (Local Machine)</Name>
+          <ResponseStreaming>false</ResponseStreaming>
+          <ResponseTimeout>0</ResponseTimeout>
           <DefaultAiModel>GPT4All Falcon</DefaultAiModel>
           <AiModels />
           <BaseUrl>http://localhost:4891/v1/</BaseUrl>
@@ -69,6 +88,8 @@
         <AiService>
           <Id>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</Id>
           <Name>LM Studio (Local Machine)</Name>
+          <ResponseStreaming>false</ResponseStreaming>
+          <ResponseTimeout>0</ResponseTimeout>
           <DefaultAiModel>Mistral</DefaultAiModel>
           <AiModels />
           <BaseUrl>http://localhost:1234/v1/</BaseUrl>
@@ -77,6 +98,8 @@
         <AiService>
           <Id>7638dcd2-f637-12a5-89e2-c4834bfa367c</Id>
           <Name>Open AI (On-Premises)</Name>
+          <ResponseStreaming>false</ResponseStreaming>
+          <ResponseTimeout>0</ResponseTimeout>
           <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
           <AiModels />
           <BaseUrl>https://ai.company.local/v1/</BaseUrl>
@@ -85,6 +108,8 @@
         <AiService>
           <Id>1ba94e57-3827-3636-5ba1-227d5e4c56ea</Id>
           <Name>Azure Open AI</Name>
+          <ResponseStreaming>false</ResponseStreaming>
+          <ResponseTimeout>0</ResponseTimeout>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
           <AiModels />
@@ -392,6 +417,8 @@
         </AiModel>
       </AiModels>
       <MarkdownLanguageNames>ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex,AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL,BBCode,BBJ,BNF,BQN,BSL,Bash,Basic,Batch,Bicep,Birb,Bison,Brainfuck,BrightScript,Bro,C,CFScript,CIL,CMake,COBOL,CSHTML,CSP,CSS,CSS-Extras,CSV,Chaiscript,CilkC,CilkCpp,Clike,Clojure,CoffeeScript,Concurnas,Cooklang,Coq,Cpp,Crystal,Csharp,Cue,Cypher,D,DAX,DNS-Zone-File,Dart,DataWeave,Dhall,Diff,Django,Docker,Dot,EBNF,EJS,ERB,EditorConfig,Eiffel,Elixir,Elm,Erlang,Excel-Formula,FORTRAN,FTL,Factor,False,Firestore-Security-Rules,Flow,Fsharp,GAP,GCode,GEDCOM,GLSL,GML,GN,GdScript,Gettext,Gherkin,Git,Go,Go-Module,Gradle,Graphql,Groovy,HCL,HLSL,HPKP,HSTS,HTTP,Haml,Handlebars,Haskell,Haxe,Hoon,ICU-Message-Format,IECSt,INI,IchigoJam,Icon,Idris,Ignore,Inform7,Io,J,JEXL,JQ,JS-Extras,JS-Templates,JSDoc,JSON,JSON5,JSONP,JSStackTrace,JSX,Java,JavaDoc,JavaDocLike,JavaScript,JavaStackTrace,Jolie,Julia,KeepALIVED,Keyman,Kotlin,Kumir,Kusto,LLVM,LOLCode,Latex,Latte,Less,LilyPond,Linker-Script,Liquid,Lisp,LiveScript,Log,Lua,MAXScript,MEL,Magma,Makefile,Markdown,Markup,Markup-Templating,Mata,Matlab,Mermaid,MetaFont,Mizar,MongoDB,Monkey,MoonScript,N1QL,N4JS,NASM,NSIS,Nand2Tetris-HDL,Naniscript,Neon,Nevod,Nginx,Nim,Nix,OCaml,ObjectiveC,Odin,OpenCL,OpenQASM,Oz,PCAxis,PHP,PHP-Extras,PHPDoc,PLSQL,PSL,PariGP,Parser,Pascal,PascalIGO,PeopleCode,Perl,Plant-UML,PowerQuery,PowerShell,Processing,Prolog,PromQL,Properties,Protobuf,Pug,Puppet,Pure,PureBasic,PureScript,Python,Q,QML,QSharp,Qore,R,REST,RIP,Racket,Reason,Regex,Rego,RenPY,Rescript,Roboconf,RobotFramework,Ruby,Rust,SAS,SCSS,SML,SPARQL,SQF,SQL,Sass,Scala,Scheme,Shell-Session,Smali,SmallTalk,Smarty,Solidity,Solution-File,Soy,Splunk-SPL,Squirrel,Stan,Stata,Stylus,SuperCollider,Swift,Systemd,T4-CS,T4-Templating,T4-VB,TAP,TOML,TSX,TT2,Tcl,Textile,Tremor,Turtle,Twig,TypeScript,TypoScript,UORazor,URI,UnrealScript,V,VBNet,VHDL,Vala,Velocity,Verilog,Vim,Visual-Basic,WASM,WGSL,WarpScript,Web-IDL,Wiki,Wolfram,Wren,XML,XQuery,Xeora,Xojo,YAML,Yang,ZigetLua</MarkdownLanguageNames>
+      <MinimizeToTray>false</MinimizeToTray>
+      <MinimizeOnClose>false</MinimizeOnClose>
     </AppData>
   </Items>
 </Data>

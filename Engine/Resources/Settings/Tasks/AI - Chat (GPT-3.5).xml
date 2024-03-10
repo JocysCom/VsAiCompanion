@@ -28,7 +28,10 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <IsFavorite>false</IsFavorite>
   <ItemType>None</ItemType>
+  <PromptName>Audience</PromptName>
+  <PromptOption>artists</PromptOption>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

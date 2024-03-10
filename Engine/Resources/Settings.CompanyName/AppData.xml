@@ -25,11 +25,11 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.26735751295336785</GridSplitterPosition>
         <ListSelection>
-          <string>Lists - Update User Profile</string>
+          <string>AI - Chat</string>
         </ListSelection>
-        <ListSelectedIndex>29</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
         <GridSplitterPosition>NaN</GridSplitterPosition>
@@ -44,7 +44,7 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AssistantData>
       <ListsData>
-        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>Context - Operating System</string>
         </ListSelection>
