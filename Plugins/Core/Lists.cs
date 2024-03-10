@@ -26,14 +26,32 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		#region List Manipulation
 
+
+		private IEnumerable<ListInfo> GetEnabledLists()
+		{
+			return AllLists
+				.Where(x => x.IsEnabled)
+				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath);
+		}
+
 		/// <summary>
 		/// Retrieves all lists.
 		/// </summary>
 		private IList<ListInfo> GetFilteredListInfos()
 		{
-			return AllLists
-				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
+			return GetEnabledLists()
 				.ToList();
+		}
+
+		/// <summary>
+		/// Get list by name.
+		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		public ListInfo GetFilteredListInfo(string listName)
+		{
+			return GetEnabledLists()
+				.Where(x => x.Name == listName)
+				.FirstOrDefault();
 		}
 
 		/// <summary>
@@ -42,12 +60,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public List<string> GetListNames()
 		{
-			return AllLists
-				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
+			return GetEnabledLists()
 				.Select(x => x.Name)
 				.ToList();
 		}
-
 
 		/// <summary>
 		/// Load items into existing list from the CSV file.
@@ -57,7 +73,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="keyColumn">Use csv column for the Key property.</param>
 		/// <param name="valueColumn">Use csv column for the Value property.</param>
 		/// <param name="commentColumn">Use csv column for the Comment property.</param>
-		/// <returns></returns>
+		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.Medium)]
 		public int LoadListFromCsv(
 			string listName,
@@ -68,6 +84,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			// List don't exists
 			if (li == null)
 				return -1;
+			if (li.IsReadOnly)
+				return -2;
 			var table = JocysCom.ClassLibrary.Files.CsvHelper.Read(path, true, true);
 			foreach (DataRow row in table.Rows)
 			{
@@ -80,19 +98,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					item.Comment = (string)row[commentColumn];
 				li.Items.Add(item);
 			}
-			return table.Rows.Count;
-		}
-
-		/// <summary>
-		/// Get list by name.
-		/// </summary>
-		/// <param name="listName">Name of the list</param>
-		public ListInfo GetFilteredListInfo(string listName)
-		{
-			return AllLists
-				.Where(x => string.IsNullOrEmpty(x.Path) || x.Path == FilterPath)
-				.Where(x => x.Name == listName)
-				.FirstOrDefault();
+			return 0;
 		}
 
 		/// <summary>
@@ -103,36 +109,37 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Creates a new list.
 		/// </summary>
-		/// <returns>True if the list is created successfully.</returns>
+		/// <returns>0 operation successfull, -2 list is readonly, -3 list already exists.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public bool CreateList(string listName, string description)
+		public int CreateList(string listName, string description)
 		{
 			var li = GetFilteredListInfo(listName);
 			// List already exists.
 			if (li != null)
-				return false;
+				return -3;
+			if (li.IsReadOnly)
+				return -2;
 			li = new ListInfo();
 			li.Path = FilterPath;
 			li.Name = listName;
 			li.Description = description;
 			li.Items = new List<ListItem>();
 			_AllLists.Add(li);
-			return true;
+			return 0;
 		}
 
 		/// <summary>
 		/// Updates an existing list.
 		/// </summary>
-		/// <returns>True if the list is updated successfully.</returns>
+		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public bool UpdateList(string listName, string description)
+		public int UpdateList(string listName, string description)
 		{
 			var li = GetFilteredListInfo(listName);
-			if (li != null)
-			{
-				li.Description = description;
-				return true;
-			}
+			if (li == null)
+				return -1;
+			if (li.IsReadOnly)
+				return -2;
 			// Create if not exists and return result
 			return CreateList(listName, description);
 		}
@@ -140,28 +147,32 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Deletes an existing list.
 		/// </summary>
-		/// <returns>True if the list is deleted successfully.</returns>
+		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public bool DeleteList(string listName)
+		public int DeleteList(string listName)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return true;
-			return _AllLists.Remove(li);
+				return -1;
+			if (li.IsReadOnly)
+				return -2;
+			return _AllLists.Remove(li) ? 0 : -1;
 		}
 
 		/// <summary>
 		/// Clears all items from a list.
 		/// </summary>
-		/// <returns>True if the list items are cleared successfully.</returns>
+		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public bool ClearList(string listName)
+		public int ClearList(string listName)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return false;
+				return -1;
+			if (li.IsReadOnly)
+				return -2;
 			li.Items.Clear();
-			return true;
+			return 0;
 		}
 
 		#endregion
@@ -172,12 +183,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Sets or adds an item to a list.
 		/// </summary>
 		/// <returns>True if the item is set or added successfully.</returns>
+		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public bool SetListItem(string listName, string key, string value, string comment = "")
+		public int SetListItem(string listName, string key, string value, string comment = "")
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
-				return false;
+				return -1;
+			if (li.IsReadOnly)
+				return -2;
 			var item = li.Items.FirstOrDefault(i => i.Key == key);
 			if (item == null)
 			{
@@ -194,7 +208,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				item.Value = value;
 				item.Comment = comment;
 			}
-			return true;
+			return 0;
 		}
 
 		/// <summary>
@@ -210,16 +224,18 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Deletes an item from a list.
 		/// </summary>
-		/// <returns>True if the item is deleted successfully.</returns>
+		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public bool DeleteListItem(string listName, string key)
+		public int DeleteListItem(string listName, string key)
 		{
 			var li = GetFilteredListInfos().FirstOrDefault(l => l.Name == listName);
 			var item = li?.Items.FirstOrDefault(i => i.Key == key);
 			if (item == null)
-				return false;
+				return -1;
+			if (li.IsReadOnly)
+				return -2;
 			li.Items.Remove(item);
-			return true;
+			return 0;
 		}
 
 		/// <summary>
