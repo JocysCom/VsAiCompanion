@@ -655,6 +655,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description of the list for user information purposes only.
+        /// </summary>
+        public static string List_Description {
+            get {
+                return ResourceManager.GetString("List_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AI instructions that will be sent with this list..
+        /// </summary>
+        public static string List_Instructions {
+            get {
+                return ResourceManager.GetString("List_Instructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow to send this list to AI..
+        /// </summary>
+        public static string List_IsEnabled {
+            get {
+                return ResourceManager.GetString("List_IsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prevent AI from modifying this list..
+        /// </summary>
+        public static string List_IsReadOnly {
+            get {
+                return ResourceManager.GetString("List_IsReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists..
+        /// </summary>
+        public static string Lists_Feature_Description {
+            get {
+                return ResourceManager.GetString("Lists_Feature_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Market Place.
         /// </summary>
         public static string Market_Place {

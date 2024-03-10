@@ -9,6 +9,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
+	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -20,20 +21,91 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel Orientation="Horizontal">
+		<Border
+			Grid.Row="0"
+			Grid.ColumnSpan="2"
+			Background="{StaticResource BackgroundDark}"
+			BorderBrush="{StaticResource BorderDark}"
+			BorderThickness="0,0,0,1">
+			<TextBlock
+				Name="FeatureDescriptionLabel"
+				Margin="4"
+				Text="{x:Static locales:Resources.Lists_Feature_Description}"
+				TextWrapping="Wrap" />
+		</Border>
+		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
 			<Controls:IconUserControl
 				x:Name="IconPanel"
 				Width="64"
 				Height="64"
 				VerticalAlignment="Top" />
+
+		</StackPanel>
+		<StackPanel Grid.Row="1" Grid.Column="1">
+			<StackPanel Orientation="Horizontal">
+				<CheckBox
+					Name="IsEnabledCheckBox"
+					HorizontalAlignment="Center"
+					Content="Is Enabled"
+					IsChecked="{Binding IsEnabled}" />
+				<CheckBox
+					Name="IsReadOnlyCheckBox"
+					HorizontalAlignment="Center"
+					Content="Is Read-Only"
+					IsChecked="{Binding IsReadOnly}" />
+			</StackPanel>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Label x:Name="DescriptionLabel" Grid.Row="0" Content="{x:Static locales:Resources.Description}" />
+				<TextBox
+					Name="DescriptionTextBox"
+					Grid.Row="0"
+					Grid.Column="1"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					TextWrapping="Wrap" />
+				<Label x:Name="InstructionsLabel" Grid.Row="1" Content="{x:Static locales:Resources.Instructions}" />
+				<TextBox
+					Name="InstructionsTextBox"
+					Grid.Row="1"
+					Grid.Column="1"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text="{Binding Instructions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					TextWrapping="Wrap" />
+			</Grid>
 		</StackPanel>
 		<Border
-			Grid.Row="1"
+			Grid.Row="2"
+			Grid.ColumnSpan="2"
 			Margin="0,0,0,0"
 			BorderBrush="{StaticResource BorderDark}"
 			BorderThickness="0,1,0,1">
@@ -78,7 +150,8 @@
 		</Border>
 		<DataGrid
 			x:Name="MainDataGrid"
-			Grid.Row="2"
+			Grid.Row="3"
+			Grid.ColumnSpan="2"
 			Height="Auto"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"

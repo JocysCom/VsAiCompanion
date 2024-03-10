@@ -319,7 +319,13 @@
             </summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Description">
-            <summary>List description.</summary>
+            <summary>List description used for the user.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Instructions">
+            <summary>List description sent to AI.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.IsReadOnly">
+            <summary>List description sent to AI.</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListInfo.Items">
             <summary>Dictionary items</summary>

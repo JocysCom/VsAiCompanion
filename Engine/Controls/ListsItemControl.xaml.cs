@@ -85,7 +85,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MainDataGrid_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-
 		}
 
 		private void MainDataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -178,5 +177,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			EditButton.IsEnabled = isSelected;
 			DeleteButton.IsEnabled = isSelected;
 		}
+
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			AppHelper.AddHelp(IsEnabledCheckBox, IsEnabledCheckBox.Content as string, Engine.Resources.Resources.List_IsEnabled);
+			AppHelper.AddHelp(IsReadOnlyCheckBox, IsReadOnlyCheckBox.Content as string, Engine.Resources.Resources.List_IsReadOnly);
+			AppHelper.AddHelp(InstructionsLabel, Engine.Resources.Resources.Instructions, Engine.Resources.Resources.List_Instructions);
+			AppHelper.AddHelp(InstructionsTextBox, Engine.Resources.Resources.Instructions, Engine.Resources.Resources.List_Instructions);
+			AppHelper.AddHelp(DescriptionLabel, Engine.Resources.Resources.Description, Engine.Resources.Resources.List_Description);
+			AppHelper.AddHelp(DescriptionTextBox, Engine.Resources.Resources.Description, Engine.Resources.Resources.List_Description);
+		}
 	}
+
 }

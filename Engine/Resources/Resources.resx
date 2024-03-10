@@ -483,4 +483,19 @@
   <data name="Value" xml:space="preserve">
     <value>Value</value>
   </data>
+  <data name="List_Description" xml:space="preserve">
+    <value>Description of the list for user information purposes only</value>
+  </data>
+  <data name="List_Instructions" xml:space="preserve">
+    <value>AI instructions that will be sent with this list.</value>
+  </data>
+  <data name="List_IsEnabled" xml:space="preserve">
+    <value>Allow to send this list to AI.</value>
+  </data>
+  <data name="List_IsReadOnly" xml:space="preserve">
+    <value>Prevent AI from modifying this list.</value>
+  </data>
+  <data name="Lists_Feature_Description" xml:space="preserve">
+    <value>Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists.</value>
+  </data>
 </root>

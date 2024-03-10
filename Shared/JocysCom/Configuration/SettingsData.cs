@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using JocysCom.ClassLibrary.Collections;
 using System.ComponentModel;
+
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -243,22 +244,13 @@ namespace JocysCom.ClassLibrary.Configuration
 					for (int i = 0; i < items.Length; i++)
 					{
 						var fileItem = (ISettingsFileItem)items[i];
+						var fileFullName = GetFileItemFullName(path, fileItem);
+						var fiItem = new FileInfo(fileFullName);
+						if (!fiItem.Directory.Exists)
+							fiItem.Directory.Create();
 						var bytes = Serialize(fileItem);
-						var fileName = RemoveInvalidFileNameChars(fileItem.BaseName) + fi.Extension;
-						var itemPath = fileItem.Path;
-						if (!string.IsNullOrEmpty(itemPath))
-						{
-							itemPath = RemoveInvalidPathChars(itemPath);
-							var directoryPath = Path.Combine(di.FullName, itemPath);
-							if (!Directory.Exists(directoryPath))
-								Directory.CreateDirectory(directoryPath);
-						}
-						var fileFullName = string.IsNullOrEmpty(itemPath)
-							? Path.Combine(di.FullName, fileName)
-							: Path.Combine(di.FullName, itemPath, fileName);
 						if (compress)
 							bytes = SettingsHelper.Compress(bytes);
-						var fiItem = new FileInfo(fileFullName);
 						if (!AllowWriteFile(fiItem))
 							continue;
 						if (!SettingsHelper.WriteIfDifferent(fileFullName, bytes))
@@ -457,16 +449,16 @@ namespace JocysCom.ClassLibrary.Configuration
 									try
 									{
 										var item = DeserializeItem(bytes, compress);
-										var itemFile = (ISettingsFileItem)item;
-										itemFile.WriteTime = file.LastWriteTime;
+										var fileItem = (ISettingsFileItem)item;
+										fileItem.WriteTime = file.LastWriteTime;
 										// Set Name property value to the same as the file.
 										var name = RemoveInvalidFileNameChars(file.Name);
 										var fileBaseName = Path.GetFileNameWithoutExtension(file.Name);
 										var path = IO.PathHelper.GetRelativePath(di.FullName + "\\", file.Directory.FullName + "\\");
 										path = path.TrimEnd('.', '\\', '/');
-										itemFile.Path = string.IsNullOrWhiteSpace(path) ? null : path;
-										if (itemFile.BaseName != fileBaseName)
-											itemFile.BaseName = fileBaseName;
+										fileItem.Path = string.IsNullOrWhiteSpace(path) ? null : path;
+										if (fileItem.BaseName != fileBaseName)
+											fileItem.BaseName = fileBaseName;
 										data.Add(item);
 									}
 									catch { }
@@ -555,15 +547,33 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Generates the full path for a file based on a filename without an extension.
 		/// </summary>
-		/// <param name="fileNameWithoutExtension">The name of the file without the extension.</param>
 		/// <returns>The full path of the file with its extension.</returns>
-		public string GetItemFileFullName(string fileNameWithoutExtension)
+		public string GetFileItemFullName(ISettingsFileItem fileItem, string overrideBaseName = null)
 		{
-			var fi = new FileInfo(_XmlFile.FullName);
-			var di = GetCreateDirectory(fi);
-			var path = Path.Combine(di.FullName, fileNameWithoutExtension + ".xml");
-			return path;
+			var fileFullName = GetFileItemFullName(_XmlFile.FullName, fileItem, overrideBaseName);
+			var fiItem = new FileInfo(fileFullName);
+			if (!fiItem.Directory.Exists)
+				fiItem.Directory.Create();
+			return fileFullName;
 		}
+
+		/// <summary>
+		/// Get item path when using separte files.
+		/// </summary>
+		public static string GetFileItemFullName(string rootPath, ISettingsFileItem fileItem, string overrideBaseName = null)
+		{
+			var fi = new FileInfo(rootPath);
+			var di = GetCreateDirectory(fi);
+			var fileName = RemoveInvalidFileNameChars(overrideBaseName ?? fileItem.BaseName) + fi.Extension;
+			var itemPath = fileItem.Path;
+			if (!string.IsNullOrEmpty(itemPath))
+				itemPath = RemoveInvalidPathChars(itemPath);
+			var fileFullName = string.IsNullOrEmpty(itemPath)
+				? Path.Combine(di.FullName, fileName)
+				: Path.Combine(di.FullName, itemPath, fileName);
+			return fileFullName;
+		}
+
 
 		/// <summary>
 		/// Renames the specified folder to a new name, managing potential case-sensitivity issues on certain file systems by temporarily renaming to a GUID-based name.
@@ -604,14 +614,14 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Renames a settings item file to a new name, ensuring file system consistency and updating internal metadata accordingly.
 		/// </summary>
-		/// <param name="itemFile">The settings item file object to be renamed.</param>
+		/// <param name="fileItem">The settings item file object to be renamed.</param>
 		/// <param name="newName">The new name for the settings item file.</param>
 		/// <returns>A message indicating the outcome of the operation or null if the operation is successful.</returns>
-		public string RenameItem(ISettingsFileItem itemFile, string newName)
+		public string RenameItem(ISettingsFileItem fileItem, string newName)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
+				var oldName = RemoveInvalidFileNameChars(fileItem.BaseName);
 				// Case sensitive comparison.
 				if (string.Equals(oldName, newName, StringComparison.Ordinal))
 					return null;
@@ -621,9 +631,9 @@ namespace JocysCom.ClassLibrary.Configuration
 				var invalidChars = newName.Intersect(Path.GetInvalidFileNameChars());
 				if (invalidChars.Any())
 					return $"File name cannot contain invalid characters: {string.Join("", invalidChars)}";
-				var oldPath = GetItemFileFullName(oldName);
+				var oldPath = GetFileItemFullName(fileItem, oldName);
 				var file = new FileInfo(oldPath);
-				var newPath = GetItemFileFullName(newName);
+				var newPath = GetFileItemFullName(fileItem, newName);
 				// Disable monitoring in order not to trigger reloading.
 				SetFileMonitoring(false);
 				try
@@ -648,8 +658,8 @@ namespace JocysCom.ClassLibrary.Configuration
 					if (file.Exists)
 					{
 						file.MoveTo(newPath);
-						itemFile.BaseName = newName;
-						itemFile.WriteTime = file.LastWriteTime;
+						fileItem.BaseName = newName;
+						fileItem.WriteTime = file.LastWriteTime;
 					}
 				}
 				catch (Exception)
@@ -667,14 +677,14 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Deletes the file associated with a settings item and removes the item from the internal collection, ensuring data integrity and freeing up resources.
 		/// </summary>
-		/// <param name="itemFile">The settings item file object to be deleted.</param>
+		/// <param name="fileItem">The settings item file object to be deleted.</param>
 		/// <returns>A message indicating the result of the delete operation, or null if successful.</returns>
-		public string DeleteItem(ISettingsFileItem itemFile)
+		public string DeleteItem(ISettingsFileItem fileItem)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
-				var oldPath = GetItemFileFullName(oldName);
+				var oldName = RemoveInvalidFileNameChars(fileItem.BaseName);
+				var oldPath = GetFileItemFullName(fileItem, oldName);
 				var fi = new FileInfo(oldPath);
 				// Rename folder if folder with the same name exists.
 				var folderPath = Path.Combine(fi.Directory.FullName, oldName);
@@ -697,7 +707,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				{
 					return ex.Message;
 				}
-				Items.Remove((T)itemFile);
+				Items.Remove((T)fileItem);
 				return null;
 			}
 		}
