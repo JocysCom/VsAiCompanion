@@ -18,15 +18,13 @@
       </AiServiceData>
       <TaskData>
         <GridSplitterPosition>0.23367875647668393</GridSplitterPosition>
-        <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
           <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
-        <ChatPanelZoom>50</ChatPanelZoom>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
@@ -66,7 +64,6 @@
           <Name>Open AI</Name>
           <IsDefault>true</IsDefault>
           <ResponseStreaming>false</ResponseStreaming>
-          <ResponseTimeout>0</ResponseTimeout>
           <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
           <ModelFilter>gpt|text-davinci-[0-9+]</ModelFilter>
@@ -75,7 +72,6 @@
           <Id>831ee2de-6274-0abb-35af-1e0251a3666e</Id>
           <Name>GPT4All (Local Machine)</Name>
           <ResponseStreaming>false</ResponseStreaming>
-          <ResponseTimeout>0</ResponseTimeout>
           <DefaultAiModel>GPT4All Falcon</DefaultAiModel>
           <AiModels />
           <BaseUrl>http://localhost:4891/v1/</BaseUrl>
@@ -85,7 +81,6 @@
           <Id>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</Id>
           <Name>LM Studio (Local Machine)</Name>
           <ResponseStreaming>false</ResponseStreaming>
-          <ResponseTimeout>0</ResponseTimeout>
           <DefaultAiModel>Mistral</DefaultAiModel>
           <AiModels />
           <BaseUrl>http://localhost:1234/v1/</BaseUrl>
@@ -95,7 +90,6 @@
           <Id>7638dcd2-f637-12a5-89e2-c4834bfa367c</Id>
           <Name>Open AI (On-Premises)</Name>
           <ResponseStreaming>false</ResponseStreaming>
-          <ResponseTimeout>0</ResponseTimeout>
           <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
           <AiModels />
           <BaseUrl>https://ai.company.local/v1/</BaseUrl>
@@ -105,7 +99,6 @@
           <Id>1ba94e57-3827-3636-5ba1-227d5e4c56ea</Id>
           <Name>Azure Open AI</Name>
           <ResponseStreaming>false</ResponseStreaming>
-          <ResponseTimeout>0</ResponseTimeout>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
           <AiModels />
