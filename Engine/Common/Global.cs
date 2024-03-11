@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary;
-using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -413,8 +412,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (itemsAdded > 0)
 				{
 					// Reorder and save.
-					var newOrder = e.Items.OrderBy(x => x.Name).ToArray();
-					CollectionsHelper.Synchronize(newOrder, e.Items);
+					SettingsData<TemplateItem>.SortList(e.Items);
 					Templates.IsSavePending = true;
 				}
 			}

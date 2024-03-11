@@ -844,6 +844,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Personalize the chat by providing personalized context. You can create and edit context lists on the [Lists] tab..
+        /// </summary>
+        public static string Personalize_the_chat {
+            get {
+                return ResourceManager.GetString("Personalize_the_chat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preview.
         /// </summary>
         public static string Preview {

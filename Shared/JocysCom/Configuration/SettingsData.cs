@@ -13,6 +13,8 @@ using System.Xml.Serialization;
 using JocysCom.ClassLibrary.Collections;
 using System.ComponentModel;
 
+
+
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -465,13 +467,7 @@ namespace JocysCom.ClassLibrary.Configuration
 									}
 									catch { }
 								}
-								// Reorder.
-								fileItems = fileItems
-									// Move works with special characters to the end.
-									.OrderBy(x => x.Name.StartsWith("®"))
-									.ThenBy(x => x.Path)
-									.ThenBy(x => x.Name)
-									.ToList();
+								SortList(fileItems);
 								foreach (var fileItem1 in fileItems)
 									data.Add((T)fileItem1);
 							}
@@ -551,6 +547,17 @@ namespace JocysCom.ClassLibrary.Configuration
 				ResetToDefault();
 				Save();
 			}
+		}
+
+		public static void SortList<T1>(IList<T1> items) where T1 : ISettingsFileItem
+		{
+			// Move works with special characters to the end.
+			var newItems = items
+				.OrderBy(x => x.Name.StartsWith("®"))
+				.ThenBy(x => x.Path)
+				.ThenBy(x => x.Name)
+				.ToList();
+			CollectionsHelper.Synchronize(newItems, items);
 		}
 
 		#region Use Separate Files

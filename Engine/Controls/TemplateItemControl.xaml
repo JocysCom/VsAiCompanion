@@ -279,18 +279,20 @@
 						</StackPanel>
 					</TabItem.Header>
 					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="194*" />
+							<ColumnDefinition Width="251*" />
+						</Grid.ColumnDefinitions>
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
-						<Border Background="{StaticResource BackgroundDark}" BorderThickness="0" />
-						<Label
-							Padding="0,2,0,3"
-							HorizontalAlignment="Center"
-							Content="Visual Studio Extension Options"
-							Opacity="0.3" />
-						<WrapPanel Grid.Row="1" Orientation="Horizontal">
+						<WrapPanel
+							Grid.Row="1"
+							Grid.ColumnSpan="2"
+							Margin="0,0,0,66"
+							Orientation="Horizontal">
 							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
 								<GroupBox.Header>
 									<StackPanel Orientation="Horizontal">
@@ -427,69 +429,82 @@
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
 							<ContentControl Content="{StaticResource Icon_list}" />
-							<Label Content="Personalized Context" />
+							<Label x:Name="PersonalizedContextLabel" Content="Personalized Context" />
 						</StackPanel>
 					</TabItem.Header>
-					<WrapPanel Orientation="Horizontal">
-						<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
-							<GroupBox.Header>
-								<Label x:Name="ContextSystemLabel" Padding="0" Content="System and Application" />
-							</GroupBox.Header>
-							<StackPanel Orientation="Vertical">
-								<ComboBox
-									Name="Context0TemplateComboBox"
-									DisplayMemberPath="Value"
-									ItemsSource="{Binding ContextListNames, ElementName=This}"
-									SelectedValue="{Binding Context0ListName}"
-									SelectedValuePath="Key" />
-								<ComboBox
-									Name="Context1TemplateComboBox"
-									DisplayMemberPath="Value"
-									ItemsSource="{Binding ContextListNames, ElementName=This}"
-									SelectedValue="{Binding Context1ListName}"
-									SelectedValuePath="Key" />
-							</StackPanel>
-						</GroupBox>
+					<StackPanel>
+						<Border Background="{StaticResource BackgroundDark}" BorderBrush="{StaticResource BorderDark}"
+								BorderThickness="0,0,0,1">
+							<TextBlock
+								Name="FeatureDescriptionLabel"
+								Margin="4"
+								Text="{x:Static locales:Resources.Personalize_the_chat}"
+								TextWrapping="Wrap" />
+						</Border>
 
-						<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
-							<GroupBox.Header>
-								<Label x:Name="ContextAssistantLabel" Padding="0" Content="Assistant - Profile and Role" />
-							</GroupBox.Header>
-							<StackPanel Orientation="Vertical">
-								<ComboBox
-									Name="Context2TemplateComboBox"
-									DisplayMemberPath="Value"
-									ItemsSource="{Binding ProfileListNames, ElementName=This}"
-									SelectedValue="{Binding Context2ListName}"
-									SelectedValuePath="Key" />
-								<ComboBox
-									Name="Context3TemplateComboBox"
-									DisplayMemberPath="Value"
-									ItemsSource="{Binding RoleListNames, ElementName=This}"
-									SelectedValue="{Binding Context3ListName}"
-									SelectedValuePath="Key" />
-							</StackPanel>
-						</GroupBox>
-						<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
-							<GroupBox.Header>
-								<Label x:Name="ContextUserLabel" Padding="0" Content="User - Profile and Role" />
-							</GroupBox.Header>
-							<StackPanel Orientation="Vertical">
-								<ComboBox
-									Name="Context4TemplateComboBox"
-									DisplayMemberPath="Value"
-									ItemsSource="{Binding ProfileListNames, ElementName=This}"
-									SelectedValue="{Binding Context4ListName}"
-									SelectedValuePath="Key" />
-								<ComboBox
-									Name="Context5TemplateComboBox"
-									DisplayMemberPath="Value"
-									ItemsSource="{Binding RoleListNames, ElementName=This}"
-									SelectedValue="{Binding Context5ListName}"
-									SelectedValuePath="Key" />
-							</StackPanel>
-						</GroupBox>
-					</WrapPanel>
+						<WrapPanel Orientation="Horizontal">
+
+							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+								<GroupBox.Header>
+									<Label x:Name="ContextSystemLabel" Padding="0" Content="System and Application" />
+								</GroupBox.Header>
+								<StackPanel Orientation="Vertical">
+									<ComboBox
+										Name="Context0TemplateComboBox"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding ContextListNames, ElementName=This}"
+										SelectedValue="{Binding Context0ListName}"
+										SelectedValuePath="Key" />
+									<ComboBox
+										Name="Context1TemplateComboBox"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding ContextListNames, ElementName=This}"
+										SelectedValue="{Binding Context1ListName}"
+										SelectedValuePath="Key" />
+								</StackPanel>
+							</GroupBox>
+
+							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+								<GroupBox.Header>
+									<Label x:Name="ContextAssistantLabel" Padding="0" Content="Assistant - Profile and Role" />
+								</GroupBox.Header>
+								<StackPanel Orientation="Vertical">
+									<ComboBox
+										Name="Context2TemplateComboBox"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding ProfileListNames, ElementName=This}"
+										SelectedValue="{Binding Context2ListName}"
+										SelectedValuePath="Key" />
+									<ComboBox
+										Name="Context3TemplateComboBox"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding RoleListNames, ElementName=This}"
+										SelectedValue="{Binding Context3ListName}"
+										SelectedValuePath="Key" />
+								</StackPanel>
+							</GroupBox>
+							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+								<GroupBox.Header>
+									<Label x:Name="ContextUserLabel" Padding="0" Content="User - Profile and Role" />
+								</GroupBox.Header>
+								<StackPanel Orientation="Vertical">
+									<ComboBox
+										Name="Context4TemplateComboBox"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding ProfileListNames, ElementName=This}"
+										SelectedValue="{Binding Context4ListName}"
+										SelectedValuePath="Key" />
+									<ComboBox
+										Name="Context5TemplateComboBox"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding RoleListNames, ElementName=This}"
+										SelectedValue="{Binding Context5ListName}"
+										SelectedValuePath="Key" />
+								</StackPanel>
+							</GroupBox>
+						</WrapPanel>
+					</StackPanel>
+
 				</TabItem>
 			</TabControl>
 			<!--  Row 2  -->

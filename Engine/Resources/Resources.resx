@@ -507,4 +507,7 @@
   <data name="Preview_Mode_Message" xml:space="preserve">
     <value>Preview Mode - Sending messages to AI is suppressed.</value>
   </data>
+  <data name="Personalize_the_chat" xml:space="preserve">
+    <value>Personalize the chat by providing personalized context. You can create and edit context lists on the [Lists] tab.</value>
+  </data>
 </root>
