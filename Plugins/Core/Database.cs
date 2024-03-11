@@ -50,5 +50,38 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return CsvHelper.Write(table);
 		}
 
+		/// <summary>
+		/// Get description text of database schema, table or column.
+		/// Specify only the levels relevant to the target object for which the description is being set.
+		/// When specifying a column, for instance, both the table and schema to which it belongs must also be indicated.
+		/// </summary>
+		/// <param name="connectionString">Databse connection string.</param>
+		/// <param name="schema">Schema name.</param>
+		/// <param name="table">Table name.</param>
+		/// <param name="column">Column name.</param>
+		/// <returns>Item description.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public static string GetDescription(string connectionString, string schema = null, string table = null, string column = null)
+		{
+			return SqlHelper.GetProperty(connectionString, "MS_Description", schema, table, column);
+		}
+
+		/// <summary>
+		/// Set description of database schema, table or column.
+		/// Specify only the levels relevant to the target object for which the description is being set.
+		/// When specifying a column, for instance, both the table and schema to which it belongs must also be indicated.
+		/// </summary>
+		/// <param name="connectionString">Database connection string.</param>
+		/// <param name="schema">Schema name.</param>
+		/// <param name="table">Table name.</param>
+		/// <param name="column">Column name.</param>
+		/// <param name="description">Description text.</param>
+		/// <returns>Number of items affected.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public static int SetDescription(string connectionString, string description, string schema = null, string table = null, string column = null)
+		{
+			return SqlHelper.SetProperty(connectionString, "MS_Description", description, schema, table, column);
+		}
+
 	}
 }

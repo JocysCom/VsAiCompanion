@@ -1,7 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
@@ -15,7 +15,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public static class Global
 	{
-
 		public static ISolutionHelper _SolutionHelper;
 		public static Func<Task> SwitchToVisualStudioThreadAsync = () => { return null; };
 
@@ -407,12 +406,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Templates.IsSavePending = true;
 
 			}
-			// Check reserved templates used for some automation.
-			MakeSureTempalteExists(data, e.Items,
-				ClientHelper.GenerateTitleTaskName,
-				ClientHelper.FormatMessageTaskName,
-				ClientHelper.PluginApprovalTaskName
-			);
+			else
+			{
+				// Check for missing templates only.
+				var itemsAdded = SettingsSourceManager.CheckRequiredTemplates(e.Items);
+				if (itemsAdded > 0)
+				{
+					// Reorder and save.
+					var newOrder = e.Items.OrderBy(x => x.Name).ToArray();
+					CollectionsHelper.Synchronize(newOrder, e.Items);
+					Templates.IsSavePending = true;
+				}
+			}
 			data.IsSavePending |= FixTempalteItems(e.Items);
 		}
 

@@ -22,9 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public const string UserName = "User";
 		public const string SystemName = "System";
 		public const string AiName = "Ai";
-		public const string GenerateTitleTaskName = "® System - Generate Title";
-		public const string FormatMessageTaskName = "® System - Format Message";
-		public const string PluginApprovalTaskName = "® System - Plugin Approval";
+
 
 		public static string JoinMessageParts(params string[] args)
 		{
@@ -330,7 +328,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var msgTokens = CountTokens(chatLogMessages, ChatLogOptions);
 			if (item.IsPreview)
 			{
-				var message = new MessageItem(SystemName, PreviewModeMessage);
+				var message = new MessageItem(SystemName, Resources.Resources.Preview_Mode_Message);
 				item.Messages.Add(message);
 			}
 			else if (maxTokens < msgTokens)
@@ -413,7 +411,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			if (string.IsNullOrEmpty((text ?? "").Trim()))
 				return text;
 			/// Try to get reserved template to generate title.
-			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == FormatMessageTaskName);
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == SettingsSourceManager.TemplateFormatMessageTaskName);
 			if (rItem == null)
 				return text;
 			var messages = new List<chat_completion_message>();
@@ -446,7 +444,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public async static Task GenerateTitle(TemplateItem item)
 		{
 			/// Try to get reserved template to generate title.
-			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == GenerateTitleTaskName);
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == SettingsSourceManager.TemplateGenerateTitleTaskName);
 			if (rItem == null)
 				return;
 			if (item.Messages.Count == 0)

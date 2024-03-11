@@ -165,7 +165,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public ToolCallApprovalProcess PluginApprovalProcess { get => _PluginApprovalProcess; set => SetProperty(ref _PluginApprovalProcess, value); }
 		ToolCallApprovalProcess _PluginApprovalProcess;
 
-		[DefaultValue(Companions.ClientHelper.PluginApprovalTaskName)]
+		[DefaultValue(SettingsSourceManager.TemplatePluginApprovalTaskName)]
 		public string PluginApprovalTemplate { get => _PluginApprovalTemplate; set => SetProperty(ref _PluginApprovalTemplate, value); }
 		string _PluginApprovalTemplate;
 

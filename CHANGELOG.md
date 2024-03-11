@@ -1,6 +1,7 @@
-2024-03-10 v1.7.7
+2024-03-11 v1.7.8
 
 - Fix: Default lists are not loaded if settings already exist.
+- Fix: Automatically add missing templates on load.
 
 2024-03-10 v1.7.6
 

@@ -145,37 +145,76 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Reset Templates
 
+
+		public const string TemplateGenerateTitleTaskName = "® System - Generate Title";
+		public const string TemplateFormatMessageTaskName = "® System - Format Message";
+		public const string TemplatePluginApprovalTaskName = "® System - Plugin Approval";
+		public const string TempalteListsUpdateUserProfile = "Lists - Update User Profile";
+		public const string TemplateAIChatPersonalized = "AI - Chat - Personalized";
+
+		public static string[] GetRequiredTemplates()
+		{
+			return new string[] {
+				TemplateGenerateTitleTaskName,
+				TemplateFormatMessageTaskName,
+				TemplatePluginApprovalTaskName,
+				TempalteListsUpdateUserProfile,
+				TemplateAIChatPersonalized,
+			};
+		}
+
+		public static int CheckRequiredTemplates(IList<TemplateItem> items, ZipStorer zip = null)
+		{
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			// ---
+			var required = GetRequiredTemplates();
+			var current = items.Select(x => x.Name).ToArray();
+			var missing = required.Except(current).ToArray();
+			// If all templates exist then return.
+			if (missing.Length == 0)
+				return 0;
+			var zipItems = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates, missing);
+			foreach (var zipItem in zipItems)
+				items.Add(zipItem);
+			// ---
+			if (closeZip)
+				zip.Close();
+			return missing.Length;
+		}
+
 		public static void ResetTemplates(ZipStorer zip = null)
 		{
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
-
-			var templates = Global.Templates;
-			var defaultItems = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
-			if (defaultItems.Count == 0)
+			// ---
+			var data = Global.Templates;
+			var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
+			if (zipTemplates.Count == 0)
 				return;
-			var items = templates.Items.ToArray();
+			var items = data.Items.ToArray();
 			foreach (var item in items)
 			{
-				var error = templates.DeleteItem(item);
+				var error = data.DeleteItem(item);
 				if (!string.IsNullOrEmpty(error))
 					Global.ShowError(error);
 			}
-			templates.PreventWriteToNewerFiles = false;
-			foreach (var item in defaultItems)
+			data.PreventWriteToNewerFiles = false;
+			foreach (var item in zipTemplates)
 			{
-				templates.Items.Add(item);
+				data.Items.Add(item);
 			}
 			// Templates.Load();
-			templates.Save();
-			templates.PreventWriteToNewerFiles = true;
-
+			data.Save();
+			data.PreventWriteToNewerFiles = true;
+			// ---
 			if (closeZip)
 				zip.Close();
 		}
 
-		public static List<T> GetItemsFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)
+		public static List<T> GetItemsFromZip<T>(ZipStorer zip, string name, SettingsData<T> data, params string[] names)
 		{
 			var list = new List<T>();
 			var entries = zip.ReadCentralDir()
@@ -183,6 +222,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				.ToArray();
 			foreach (var entry in entries)
 			{
+				// If names supplied then get only named templates.
+				if (names?.Length > 0)
+				{
+					var nameInZip = Path.GetFileNameWithoutExtension(entry.FilenameInZip);
+					if (!names.Contains(nameInZip))
+						continue;
+				}
 				var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
 				var item = data.DeserializeItem(bytes, false);
 				list.Add(item);

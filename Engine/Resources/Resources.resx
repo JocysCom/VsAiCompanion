@@ -504,4 +504,7 @@
   <data name="ReadOnly" xml:space="preserve">
     <value>Read-Only</value>
   </data>
+  <data name="Preview_Mode_Message" xml:space="preserve">
+    <value>Preview Mode - Sending messages to AI is suppressed.</value>
+  </data>
 </root>

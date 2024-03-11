@@ -853,6 +853,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preview Mode - Sending messages to AI is suppressed..
+        /// </summary>
+        public static string Preview_Mode_Message {
+            get {
+                return ResourceManager.GetString("Preview_Mode_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prompting.
         /// </summary>
         public static string Prompting {

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
-	internal class SqlHelper
+	internal partial class SqlHelper
 	{
 
 		#region Execute Methods
