@@ -143,7 +143,7 @@ namespace JocysCom.ClassLibrary.Controls
 			else if (args.Length > 0)
 				content = string.Format(content, args);
 			BodyLabel.Text = content;
-			// Update body colors.
+			// Set body color and icon.
 			switch (image)
 			{
 				case MessageBoxImage.Error:
