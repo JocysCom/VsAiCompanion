@@ -173,6 +173,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)
 		{
 			var itemsRequired = new List<string>();
+			if (item == null)
+			{
+				SetWithTimeout(MessageBoxImage.Warning, "Please choose a valid AI Service from the dropdown menu.");
+				return false;
+			}
 			if (string.IsNullOrEmpty(item.BaseUrl))
 				itemsRequired.Add("Base URL");
 			if (string.IsNullOrEmpty(item.Name))

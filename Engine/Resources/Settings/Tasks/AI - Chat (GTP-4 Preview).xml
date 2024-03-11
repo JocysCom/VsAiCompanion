@@ -15,7 +15,7 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
 4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
 +vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4-preview</AiModel>
+  <AiModel>gpt-4-turbo-preview</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>

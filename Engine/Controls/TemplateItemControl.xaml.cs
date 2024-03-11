@@ -161,7 +161,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ChatPanel_OnSend(object sender, EventArgs e)
 		{
-			await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit);
+			if (_Item != null)
+				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit);
 		}
 
 		private void ChatPanel_OnStop(object sender, EventArgs e)
