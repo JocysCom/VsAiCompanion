@@ -57,12 +57,12 @@
 				<CheckBox
 					Name="IsEnabledCheckBox"
 					HorizontalAlignment="Center"
-					Content="Is Enabled"
+					Content="{x:Static locales:Resources.Enabled}"
 					IsChecked="{Binding IsEnabled}" />
 				<CheckBox
 					Name="IsReadOnlyCheckBox"
 					HorizontalAlignment="Center"
-					Content="Is Read-Only"
+					Content="{x:Static locales:Resources.ReadOnly}"
 					IsChecked="{Binding IsReadOnly}" />
 			</StackPanel>
 			<Grid>
