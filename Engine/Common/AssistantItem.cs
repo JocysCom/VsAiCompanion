@@ -2,7 +2,7 @@
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class AssistantItem : FileListItem
+	public class AssistantItem : AiFileListItem
 	{
 		public AssistantItem()
 		{

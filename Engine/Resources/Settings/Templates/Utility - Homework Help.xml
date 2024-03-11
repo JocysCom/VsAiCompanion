@@ -1,6 +1,5 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <Name>Utility - Homework Help</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACt1VUW+bMBB+76/wLE1qJbCxwUBoaKXSrpqUbZXWbtreGLjEK4HI0CT99zsbUqVd&#xD;
 VqkP28MIse/Od9/5O5/M9HSzqNFK6k61TYoZ8TCSTdGWqqlSfHP9zo0x6vq8KfO6bWSKmxafnhxM&#xD;
@@ -15,10 +14,8 @@ n4+CASUCBTYThwZnnMRh6IRGiJxwFhBzVgFhfgDGYPQys8jMGEVgtasRzL4TzWxglI1AcCz+6Dak&#xD
 2ls/2O3wf6l++wkH5tkSZpAoiqBTXkc4EAPhUAQD5SAcSAvxEmlYtaTB29I24QNxAPzbxLeUA6iA&#xD;
 F0+ky2AXr6INWxtoC0taWMqw9gJls2ooi4GwGOgaoH9EN4SOhmazbNl/wXb5eCnCRTcDWmIGN8lk&#xD;
 BuowPsN2W/g8qP4h8QgXj7gWc2o+NycHvwDi1U0tbgcAAA==</IconData>
-  <Name>Utility - Homework Help</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you help me solve this math problem:</TextInstructions>
   <Text>[insert math problem here]</Text>
   <Settings />

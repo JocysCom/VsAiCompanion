@@ -1,0 +1,128 @@
+﻿<ListInfo>
+  <Name>Profile - User</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAJ1W247bNhB9z1cQzEsCkBJvoqSFvQ9dFGke2gAN8gEyTdlqZMmQtGs7X98ZSpbt&#xD;
+drGNa2At8nBmeM4ZUt5F/7IhL77rq7ZZUhlJ+o7A57irm35Jt8Owf4jjw+EQHXTUdptYCSFiyLkK&#xD;
+ezjWVfP9tWCZ53kcVik5VOthu6SJVJRsfbXZDtPkpfKHX9rjkgoiCCD4Rx9D+cVQDbV/fO59RyrX&#xD;
+Not4BMbFte/dZY2UXbsjw9aTzzD79bj3XeUb5yMH8Cf+1Na1dwOojMhTuz91yICsTuTzH09f/vxK&#xD;
+Pu1Wv5EPyL1qXNv1mPYxWsRhk/N+ZT8OwxRk+aL71BVr2GcgR7mkNqfkBM9EpJQcFfhpbZSnaQKw&#xD;
+QthGUsBkMyV9a6oBXEYNX/eF81+ab72npFovqWvrtuOSXjYMm/ZDuydtWfYe7BOU4JyH2CV9XyZF&#xD;
+kqQ0fitH/iPHu1zp4jpnEd8q+w/JZpSshYmSUbSRMsrEpNlkIrI2u0Ozukuz8Stbqvs0S5V77/+/&#xD;
+ZmnTUbTKxVm0gk5rM4nWRkWJuke0vq/R4XNno8tSlfYnRSNS1LNoB7dTiTTSWqEqd4LyCk62lYmm&#xD;
+BKorA92HD5z/8ja2vI39aUPMnSd/ZVN9nyH/vi2L+Fb3dO/jy8VfbEhZ1fWSNm0DdHHMu+faL6l/&#xD;
+8U27XuMeXfvdnyPGGZ9efnIG0HlX7Jd09TwMN+hfbQUv4l01+G7Gw6yu4AE1xAyvi35bdF0BFt9g&#xD;
+Vy6VbTPwsthV9WkmjdBhegNfQX31Y6Y9+OPAi8Zt0amzkhPq3FVHvqp9s+a7du0fSNN2u6K+atZi&#xD;
+XwxbAn38XWaGqTyNkprDNWE8SZzJmSC5hS9pEibGBcClYDlREibSRgnRmintVIZzyCcJnC6m4U4R&#xD;
+m8PIGocPBVUAY3jZxpFNnGCKhKqGcMmgmOMpxiYQw5OMaazHMwVZjmuDEYSHqjkkCMNyhGEqCE8F&#xD;
+41g74BwWFDwMAilG8MAVa3EsFjSO4VMUPJEAVkFcAzwR5cBUwkODZGIw3p7FcVAnZRgApCBJGjSE&#xD;
+K/1juiDP3YvXdDqJz1394f30a/Hx5jTPjVCJZfCj6ngmUJbMgbEMhoShVSPJPCcWqEhpiRRh38RZ&#xD;
+JoO7OVOSIFumUBJ2hWVEhw6hhiSdRk5iiw2U02eYj3jQjbtiL0ZVQWYoaBQclbCtGXfHzQUzKXCU&#xD;
+ill1Zoujax/UKz6oN3wIr2bHA0t+psmvePILUT4z5VdU7djdsUcZjlKMAbbj2YU9FEkVfDuNJz09&#xD;
+u40DALEmprN8zIVUPtnMR5/5xWg+Oc0vVvPZ62sf5Cs+6Dd8EC6X4ZRLFW6OmQZSZaAkA3PseB3x&#xD;
+wIwrVgBRyWaAZ5chLgo8u9BUmKmMnBdUdk1TvELTzDQX8ebx3QL/vXz8G7E+TQKYCgAA</IconData>
+  <Description>This is all about you - your preferences, psychological traits, and any personal information you're willing to share. It's used to personalize the AI's responses and tailor its interaction style to suit you better.</Description>
+  <Instructions>This list captures key information about the user, including preferences and interests. Apply this knowledge to personalize interactions, ensuring a more engaging and relevant experience.</Instructions>
+  <IsReadOnly>true</IsReadOnly>
+  <Items>
+    <ListItem>
+      <Key>First Name</Key>
+      <Value>John</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Last Name</Key>
+      <Value>Smith</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Favorite Genres</Key>
+      <Value>Sci-Fi</Value>
+      <Comment>Especially enjoys Sci-Fi movies and books.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Hobby Interests</Key>
+      <Value>programming and gaming</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Gender Identity</Key>
+      <Value>Male</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Date of Birth</Key>
+      <Value>August 10, 1985</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Music</Key>
+      <Value>Epic Movie music without vocals</Value>
+      <Comment>Finds instrumental scores from movies inspiring.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Hobbies</Key>
+      <Value>Programming, gaming</Value>
+      <Comment>Enjoys coding and playing video games in free time.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Learning Style</Key>
+      <Value>Hands-on and visual learning</Value>
+      <Comment>Prefers practical exercises and visual aids.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Communication</Key>
+      <Value>Prefers concise and clear information</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Introvert/Extrovert</Key>
+      <Value>Introvert</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Decision Style</Key>
+      <Value>Logic-based decision making</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Stress Management</Key>
+      <Value>Engages in hobbies and listens to music</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Optimist/Pessimist</Key>
+      <Value>Optimist</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Languages</Key>
+      <Value>English (native)</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Profession</Key>
+      <Value>.NET Software Developer</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Education</Key>
+      <Value>Bachelor's Degree in Computer Science</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Goals</Key>
+      <Value>To become a senior software developer and contribute to significant projects</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Important Events</Key>
+      <Value>Developer conference in December</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Favorite Season/Holiday</Key>
+      <Value>Fall / Halloween</Value>
+      <Comment />
+    </ListItem>
+  </Items>
+</ListInfo>

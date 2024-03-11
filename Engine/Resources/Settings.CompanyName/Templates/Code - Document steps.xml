@@ -1,6 +1,5 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <Name>Code - Document steps</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACu1XWW/bRhB+z6/YsijgABS5N3dlOwHCpEEBtgkQu0X7UqgSLbORSYGkr3/fb5ak&#xD;
 bbW2mx4JArSSoJ3ZnWu/mb0Onl+dbdhF2XZVUx9GIuERK+tls6rq9WF0fPT1zEWs6xf1arFp6vIw&#xD;
@@ -26,10 +25,8 @@ j7qGRoDHhlHErkgbUSs1WB7B9C5WGm6Yp7pRmiw7ODOqyKj+lM2KkJOpdfqRqpEPVM0tsSpPujsC&#xD
 RCDlWiWYdzwb27EXS8VScR50fbNlzclJV/bB3Thh6p4tm03Thv1OYTfKkDStab/D0LQHCKCwa0M8&#xD;
 ZEPSSsRWpMV9NtJdgD4IOfmRkLMZdj1tYmvpZYSHzURMA1gUqN9PDB/uExZ+Nf9g+A7SoQgP6L39&#xD;
 7MlvFfon+m8QAAA=</IconData>
-  <Name>Code - Document steps</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Document the steps of this code.</TextInstructions>
   <AttachContext>Selection</AttachContext>
   <Settings />

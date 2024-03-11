@@ -1,7 +1,14 @@
-2024-03-05 v1.6.27
+2024-03-10 v1.7.7
+
+- Fix: Default lists are not loaded if settings already exist.
+
+2024-03-10 v1.7.6
 
 - Fix: The standalone app lists Visual Studio functions that are not available for AI.
+- Fix: Tooltip text cropping issue in InfoPanel.
+- Fix: A confirmation dialog pops up to save settings when multiple list items are selected.
 - New: Functions that enable AI to manage different types of lists, such as task, to-do, progress, or environment properties.
+- New: Personalize the chat by supplying personalized context.
 
 2024-03-04 v1.6.25
 

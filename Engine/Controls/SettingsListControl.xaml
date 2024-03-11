@@ -291,6 +291,16 @@
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
 					Header="{x:Static locales:Resources.Name}" />
+				<DataGridTextColumn
+					x:Name="PathColumn"
+					Width="*"
+					Binding="{Binding Path}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
+					Foreground="{StaticResource BorderDark}"
+					Header="{x:Static locales:Resources.Path}"
+					IsReadOnly="True" />
+
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>

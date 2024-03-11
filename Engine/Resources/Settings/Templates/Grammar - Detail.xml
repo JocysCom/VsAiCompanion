@@ -1,6 +1,5 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <Name>Grammar - Detail</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACqVZXW/bOBZ9n19BeF6mgCjzQ6KoIunDFovuPMwMsIP5AbYsJd5R7MB2m6S/fs+5&#xD;
 lFy746RV06IRRYmX55z7wav0av/pRn1qd/v1dnM9s7md/aTw5/Gu3+yvZ7eHw/3b+fzh4SF/8Pl2&#xD;
@@ -43,10 +42,8 @@ SYP9ApnIE0boMOQ7WM8ARA9IxzC1YJlXyOxQF7B7j/YEOSE20tGKZGaDJtEr7WZKb3lP0tuIsAKH&#xD
 8UmQfFtkj+rrkL3YDD/XDUtxwlGaEkWj1aHqkitubL2ROt4pL9uFQuEXbzLAijC0R5K9lmuk9iQn&#xD;
 UgefXqhEJykqXMM+lIKh2yikTpw3fZfwP9sRs2UU/BIXIDDiP8JH8BO/PhLQFWaAH0cLsI3Yv4au&#xD;
 2bTi3cHJMDOix9EI6BeQX+pW7Zd29Wp+8+6nK/6n6Lv/A31xhvJOHQAA</IconData>
-  <Name>Grammar - Detail</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. The text may consist of complete sentences, phrases, or standalone titles. Additionally, rewrite any sentences that could be clearer by using more common words to enhance understanding. Make sure the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
 &#xD;
 After making the corrections, always provide answer in two parts:&#xD;
@@ -71,6 +68,8 @@ Text to process:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <ItemType>None</ItemType>
+  <PromptName>Audience</PromptName>
+  <PromptOption>artists</PromptOption>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

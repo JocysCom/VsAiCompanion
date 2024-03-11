@@ -335,10 +335,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							var response = await client.GetCompletionsStreamingAsync(completionsOptions, cancellationTokenSource.Token);
 							using (var streamingChatCompletions = response)
 							{
-								//var iae = (IAsyncEnumerable<Completions>)streamingChatCompletions;
-								var iae = streamingChatCompletions.AsAsyncEnumerable();
+								var iae = streamingChatCompletions.EnumerateValues();
 								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
-								while (await choicesEnumerator.MoveNextAsync(cancellationTokenSource.Token))
+								while (await choicesEnumerator.MoveNextAsync())
 								{
 									var completions = choicesEnumerator.Current;
 									foreach (var choice in completions.Choices)
@@ -409,12 +408,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						{
 							var client = GetAiClient();
 							var response = await client.GetChatCompletionsStreamingAsync(chatCompletionsOptions, cancellationTokenSource.Token);
-							using (StreamingResponse<StreamingChatCompletionsUpdate> streamingChatCompletions = response)
+							using (var streamingChatCompletions = response)
 							{
-								//var iae = (IAsyncEnumerable<StreamingChatCompletionsUpdate>)streamingChatCompletions;
-								var iae = streamingChatCompletions.AsAsyncEnumerable();
+								var iae = streamingChatCompletions.EnumerateValues();
 								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
-								while (await choicesEnumerator.MoveNextAsync(cancellationTokenSource.Token))
+								while (await choicesEnumerator.MoveNextAsync())
 								{
 									var choice = choicesEnumerator.Current;
 									answer += choice.ContentUpdate;

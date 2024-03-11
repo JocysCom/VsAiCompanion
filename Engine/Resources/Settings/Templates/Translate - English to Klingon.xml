@@ -1,6 +1,5 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <Name>Translate - English to Klingon</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACrVYa08bRxT93l+x3apSItmz834ATqSQNKpk2khNWpUvFbU3sI2x0doB0l/fc+/s&#xD;
 Yi+YtKoSQN45O3fmPs+dMUfPby8XxXXdrpvVclIqIcuiXs5W82Z5Pinfvf1hHMtivTlbzs8Wq2U9&#xD;
@@ -33,10 +32,8 @@ UM6BoYozkuBkQj5VhsGDQcmAoY5x1CA0cO43wBH5T+hLOheA1hkbnKmEg8X2xHBqPwZ1gRSiLeLg&#xD
 tl7i64NFG3MyFhYnO8LIKVVGFxZfLyS3Lypjf0wYpyFjDW9x/KO7E0YpJMMYeQBGtw+B5RNuItQO&#xD;
 IyqWMMo8t8cIfUiR4wolOchLXIs8kQ33jVRYCbPxbdpS5XEwB7n63xU2vEkc0b8onn3zD2AdpIai&#xD;
 EQAA</IconData>
-  <Name>Translate - English to Klingon</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Translate English to Klingon and Klingon to English.&#xD;
 &#xD;
 Text to translate:</TextInstructions>

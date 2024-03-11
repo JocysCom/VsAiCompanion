@@ -1,5 +1,6 @@
 ﻿using Azure.AI.OpenAI;
 using DocumentFormat.OpenXml;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
@@ -44,9 +45,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 						Search._databasePath = Global.PluginsSearchPath;
 						AddMethods(typeof(Search));
 						AddMethods(typeof(TTS));
-
-#if DEBUG
 						AddMethods(typeof(Lists));
+#if DEBUG
 						AddMethods(typeof(Automation));
 #endif
 					}
@@ -64,8 +64,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 			var methods = type.GetMethods(bindingFlags);
-			foreach (var method in methods)
-				_PluginFunctions.Add(method.Name, method);
+			foreach (var mi in methods)
+			{
+				var rla = Attributes.FindCustomAttribute<RiskLevelAttribute>(mi);
+				if (rla == null || rla.Level <= RiskLevel.Unknown)
+					continue;
+				_PluginFunctions.Add(mi.Name, mi);
+			}
 		}
 
 		/// <summary>
@@ -188,6 +193,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			else
 			{
+				// It's a synchronous method.
 				object methodResult = null;
 				if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
 				{
@@ -195,12 +201,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 					{
 						await Global.SwitchToVisualStudioThreadAsync();
 						methodResult = methodInfo.Invoke(classInstance, invokeParams);
-
+					});
+				}
+				else if (classInstance is Lists lists)
+				{
+					// Make sure that the list have the name of the task.
+					// If task is renamed then relevant lists must be renamed too.
+					lists.FilterPath = item.Name;
+					await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+					{
+						methodResult = methodInfo.Invoke(lists, invokeParams);
+						// Fix lists with no icons.
+						var noIconLists = Global.Lists.Items.Where(x => x.IconData == null).ToList();
+						foreach (var noIconList in noIconLists)
+							AppHelper.SetListIconToDefault(noIconList);
+						await Task.Delay(0).ConfigureAwait(true);
 					});
 				}
 				else
 				{
-					// It's a synchronous method.
+
 					methodResult = methodInfo.Invoke(classInstance, invokeParams);
 				}
 				var result = (methodResult is string s)

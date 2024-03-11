@@ -1,7 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Xml.Serialization;
+using System.ComponentModel;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -9,23 +7,42 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// <summary>
 	/// List Info.
 	/// </summary>
-	public class ListInfo : ISettingsItemFile
+	public class ListInfo : SettingsListFileItem
 	{
-		/// <summary>List name.</summary>
-		public string Name { get; set; }
-		/// <summary>List description.</summary>
-		public string Description { get; set; }
-		/// <summary>Dictionary items</summary>
-		public List<ListItem> Items { get; set; }
 
-		#region ■ ISettingsItemFile
+		/// <summary>
+		/// List Info
+		/// </summary>
+		public ListInfo()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
 
-		[XmlIgnore]
-		string ISettingsItemFile.BaseName { get => Name; set => Name = value; }
+		/// <summary>List description used for the user.</summary>
+		[DefaultValue("")]
+		public string Description { get => _Description; set => SetProperty(ref _Description, value); }
+		string _Description;
 
-		[XmlIgnore]
-		DateTime ISettingsItemFile.WriteTime { get; set; }
+		/// <summary>List Instructions for AI.</summary>
+		[DefaultValue("")]
+		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, value); }
+		string _Instructions;
 
-		#endregion
+		/// <summary>If 'true' then AI can't modify the list.</summary>
+		[DefaultValue(false)]
+		public bool IsReadOnly { get => _IsReadOnly; set => SetProperty(ref _IsReadOnly, value); }
+		bool _IsReadOnly;
+
+		/// <summary>List items: Key, Value, Comment.</summary>
+		[DefaultValue(null)]
+		public BindingList<ListItem> Items { get => _Items; set => SetProperty(ref _Items, value); }
+		BindingList<ListItem> _Items;
+
+		/// <inheritdoc/>
+		public override bool IsEmpty
+		{
+			get { return (_Items?.Count ?? 0) == 0; }
+		}
+
 	}
 }

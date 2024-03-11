@@ -1,6 +1,5 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <Name>Writing - Add Emotions</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACr1W32/bRgx+71+haa/26X7fsYhbLLZTFFC3Am037GlwFc8R6tqB7cVN/vp9pOxY&#xD;
 aT2ge9gAwyLvKN5H8iNPFy+/fF4Wd/PNtl2vRqVRuizmq2Z93a4Wo/LD+6thLl++eHbxw+SX8fvf&#xD;
@@ -27,10 +26,8 @@ kfFSOxtx6WL+hW46Yxgg/MwXMSsog87wraGSwQDBIS46vl48uM7BZe0FHy4swWfk4tKuq0/G8IKa&#xD
 cPUeVMEXsCrXD/G2dqgeR9FxgrwbcxES6MRfRwnnsp65tkDsUqefivTwhr+oLHdZVilajs8icXKI&#xD;
 RyMJ7iyJPaoEqFsuLjOx0/nR2+ZdUQ/vnlRsvsOJIRgQoTtRvul6CB7eMB1jRlb/N0j8VUL8CXiA&#xD;
 9BWCUyt4538K/qthIo8L/uJ/8exvTl7RnL8MAAA=</IconData>
-  <Name>Writing - Add Emotions</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TextInstructions>Please rewrite this text to make the scene more emotional. Add relevant punctuation marks. Add indicators of emotions in square brackets.</TextInstructions>
   <Text> [insert dialog here]</Text>
   <AttachContext>ChatHistory</AttachContext>

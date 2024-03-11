@@ -1,6 +1,6 @@
 ﻿<FineTuningItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <IsEnabled>false</IsEnabled>
+  <Name>CyberNet Solutions</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAKWXX2/bOAzA3/cpBO9lAyJbf225SPpwxaG3h7sBN+wDOLKc+ObYge026T79kbKT&#xD;
 Jm3cNViBxBRJifzRlJTOu8cVeXRtVzb1IuAhDz4Q+NtvqrpbBOu+395E0W63C3cybNpVJBhjEcw5&#xD;
@@ -22,10 +22,8 @@ VVkKjSowFCQk+BjHh6EcczKggnLPMLUxTRRPKyAuVEC9VQFhU4yC9UbUWI0CFwZADNQlRjuPcdcM&#xD
 lhgaMOazo4KaZxGNUEdYRnIYCUMOBmFO8+QX8tQTeSrYjSIRlTKwcZjfyyj+JN4Ct+GEBT5TllhN&#xD;
 rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD;
 9sMc/1+6/R8zShDpaQ0AAA==</IconData>
-  <Name>CyberNet Solutions</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <SystemMessage>You are a helpful, respectful and honest assistant of CyberNet Solutions.</SystemMessage>
   <FineTuningSourceDataSelection>
     <string>demo-data-CyberNet-Solutions.csv</string>

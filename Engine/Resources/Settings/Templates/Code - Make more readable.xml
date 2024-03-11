@@ -1,6 +1,5 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <Name>Code - Make more readable</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACtWXb2/bNhDG3/dTcBoGtIBskTxSEt24Bap2xQBtLdBkw/Zm8GzF0epIhqz8+/Z7&#xD;
 7iS7TZcO6ZABXVP4KJI63v2eIyUdPb8+36jLqtvVbTOPzFRHqmqW7apu1vPo5Pj7SR6pXb9oVotN&#xD;
@@ -28,10 +27,8 @@ d8Q/NFbV6e6jCfxuv+jw9bOqq6YXSfaHFj4nDD5nInUzmGuLDxlcWblaj7ecNHWPr5oLfGK848+R&#xD
 N83JrvowfPw3XcM0C5l11cTgDS6FrgA02TduD7IwUPlo17db1Z6e7qpe1h55cPdk2W7aTqhY3heW&#xD;
 34mww2Vsj8WAyW0n5nNOpMxZMhvucpLc5nUvkPY/AjlhZFogCsB43yGF+78gd5QM5XjEn7/PHv0F&#xD;
 Ghj6cv4PAAA=</IconData>
-  <Name>Code - Make more readable</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>Make this code more readable</TextInstructions>
   <AttachContext>ActiveDocument</AttachContext>
   <Settings />

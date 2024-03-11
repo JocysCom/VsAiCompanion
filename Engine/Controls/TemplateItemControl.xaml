@@ -116,289 +116,383 @@
 				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 			</Button>
 			<!--  Row 1  -->
-			<Controls:IconUserControl
-				x:Name="IconPanel"
+			<TabControl
+				x:Name="MainTabControl"
 				Grid.Row="1"
-				Width="64"
-				Height="64"
-				VerticalAlignment="Top"
-				Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-			<WrapPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-				<StackPanel Orientation="Vertical">
-					<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
-						<GroupBox.Header>
-							<StackPanel Orientation="Horizontal">
-								<Label
-									x:Name="CreativityLabel"
-									Margin="0"
-									Padding="0"
-									Content="Creativity - "
-									Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-								<Label
-									Margin="0"
-									Padding="0"
-									VerticalAlignment="Center"
-									Content="{Binding CreativityName, ElementName=This}" />
-							</StackPanel>
-						</GroupBox.Header>
+				Grid.ColumnSpan="4"
+				Margin="4"
+				HorizontalAlignment="Stretch"
+				HorizontalContentAlignment="Stretch"
+				x:FieldModifier="public"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}">
+				<TabItem x:Name="MainTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_gearwheel}" />
+							<Label Content="Main" />
+						</StackPanel>
+					</TabItem.Header>
+					<WrapPanel>
+						<Controls:IconUserControl
+							x:Name="IconPanel"
+							Grid.Row="1"
+							Width="64"
+							Height="64"
+							VerticalAlignment="Top"
+							Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 						<StackPanel Orientation="Vertical">
-							<Slider
-								Name="CreativitySlider"
-								Width="145"
-								IsSnapToTickEnabled="True"
-								Maximum="2"
-								Minimum="0"
-								Tag="Creativity"
-								TickFrequency="0.5"
-								TickPlacement="BottomRight"
-								Value="{Binding Creativity}" />
-						</StackPanel>
-					</GroupBox>
-					<CheckBox
-						Name="IsFavoriteCheckBox"
-						Margin="-8,0,0,0"
-						HorizontalAlignment="Center"
-						Content="Show Icon in Toolbar"
-						IsChecked="{Binding IsFavorite}"
-						Visibility="{Binding TemplateItemVisibility, ElementName=This}" />
-				</StackPanel>
-				<GroupBox
-					Grid.Row="1"
-					Grid.Column="1"
-					Margin="0,0,3,3"
-					VerticalAlignment="Stretch"
-					Visibility="{Binding BarPanelVisibility, ElementName=This}">
-					<GroupBox.Header>
-						<StackPanel Orientation="Horizontal">
-							<Label
-								Grid.Row="2"
-								Grid.Column="1"
-								Padding="0"
-								VerticalAlignment="Center"
-								Content="Automation"
-								Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-						</StackPanel>
-					</GroupBox.Header>
-					<StackPanel
-						Grid.Row="2"
-						Grid.Column="2"
-						Grid.ColumnSpan="2"
-						Orientation="Horizontal"
-						Visibility="{Binding BarPanelVisibility, ElementName=This}">
-						<StackPanel VerticalAlignment="Top">
-							<CheckBox Name="AutoSendCheckBox" Content="Send on Create" IsChecked="{Binding AutoSend}" />
-							<CheckBox Name="AutoGenerateTitleCheckBox" Content="Generate Title" IsChecked="{Binding AutoGenerateTitle}" />
-							<CheckBox Name="AutoFormatMessageCheckBox" Margin="0" IsChecked="{Binding AutoFormatMessage}">
-								<TextBlock VerticalAlignment="Center">
-									<Run Text="Auto" />
-									<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
-								</TextBlock>
-							</CheckBox>
-						</StackPanel>
-						<StackPanel>
-							<CheckBox
-								Name="AutoRemoveCheckBox"
-								Margin="0,0,0,3"
-								VerticalAlignment="Bottom"
-								Content="Remove on Complete"
-								IsChecked="{Binding AutoRemove}" />
-							<ComboBox
-								Name="MessageBoxOperationComboBox"
-								Width="138"
-								Margin="3,0,0,0"
-								VerticalAlignment="Top"
-								DisplayMemberPath="Value"
-								ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
-								SelectedValue="{Binding MessageBoxOperation}"
-								SelectedValuePath="Key" />
-						</StackPanel>
-
-					</StackPanel>
-				</GroupBox>
-				<GroupBox
-					Grid.Row="1"
-					Grid.Column="1"
-					Margin="0,0,3,3"
-					VerticalAlignment="Stretch"
-					Visibility="{Binding BarPanelVisibility, ElementName=This}">
-					<GroupBox.Header>
-						<StackPanel Orientation="Horizontal">
-							<Label
-								Grid.Row="2"
-								Grid.Column="1"
-								Padding="0"
-								VerticalAlignment="Center"
-								Content="Instructions"
-								Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-						</StackPanel>
-					</GroupBox.Header>
-					<StackPanel
-						Grid.Row="2"
-						Grid.Column="2"
-						Grid.ColumnSpan="2"
-						Orientation="Horizontal"
-						Visibility="{Binding BarPanelVisibility, ElementName=This}">
-						<StackPanel VerticalAlignment="Top">
-							<CheckBox
-								Name="IsSystemInstructionsCheckBox"
-								Margin="0"
-								Content="Use System Messages"
-								IsChecked="{Binding IsSystemInstructions}" />
-							<CheckBox
-								Name="UseMaximumContextCheckBox"
-								Margin="0"
-								Content="Use Maximum Context"
-								IsChecked="{Binding UseMaximumContext}" />
-						</StackPanel>
-					</StackPanel>
-				</GroupBox>
-			</WrapPanel>
-			<!--  Row 2  -->
-			<Grid Grid.Row="2" Grid.ColumnSpan="4">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				<Border Background="{StaticResource BackgroundDark}" />
-				<Label
-					Padding="0,2,0,3"
-					HorizontalAlignment="Center"
-					Content="Visual Studio Extension Options"
-					Opacity="0.3"
-					Visibility="{Binding BarPanelVisibility, ElementName=This}" />
-				<WrapPanel Grid.Row="1" Orientation="Horizontal">
-					<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
-						<GroupBox.Header>
-							<StackPanel Orientation="Horizontal">
-								<Label
-									x:Name="AttachmentIcon"
-									Margin="-2"
-									Padding="0"
-									VerticalAlignment="Center"
-									Content="&#xE16C;"
-									FontFamily="Segoe MDL2 Assets" />
-								<Label
-									x:Name="ContextTypeLabel"
-									Padding="4,0,0,0"
-									VerticalAlignment="Center"
-									Content="Attachments" />
-							</StackPanel>
-						</GroupBox.Header>
-						<Controls:EnumComboBox
-							x:Name="AttachmentEnumComboBox"
-							Width="170"
-							VerticalAlignment="Center"
-							SelectedValue="{Binding AttachContext}"
-							Style="{StaticResource ComboBox_Dynamic}"
-							Text="None" />
-					</GroupBox>
-					<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
-						<GroupBox.Header>
-							<CheckBox
-								Name="UseMacrosCheckBox"
-								Margin="-4"
-								Content="Use Macros"
-								IsChecked="{Binding UseMacros}" />
-						</GroupBox.Header>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="Auto" />
-							</Grid.ColumnDefinitions>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto" />
-								<RowDefinition Height="Auto" />
-							</Grid.RowDefinitions>
-							<local:PropertyComboBox
-								x:Name="VsMacrosComboBox"
-								Grid.Row="0"
-								Grid.Column="1"
-								Width="100"
-								Style="{StaticResource ComboBox_Static}"
-								Text="Environment" />
-							<Label
-								Grid.Row="0"
-								Grid.Column="0"
-								VerticalAlignment="Center"
-								Content="Environment"
-								Visibility="Collapsed" />
-							<Label
-								Grid.Row="0"
-								Grid.Column="2"
-								VerticalAlignment="Center"
-								Content="Selection"
-								Visibility="Collapsed" />
-							<ComboBox
-								Name="SelectionComboBox"
-								Grid.Row="0"
-								Grid.Column="3"
-								Width="90"
-								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBox_Static}"
-								Text="Selection" />
-							<ComboBox
-								Name="DateComboBox"
-								Grid.Row="1"
-								Grid.Column="1"
-								Width="100"
-								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBox_Static}"
-								Text="Date" />
-							<Label
-								Grid.Row="1"
-								Grid.Column="0"
-								VerticalAlignment="Center"
-								Content="Date"
-								Visibility="Collapsed" />
-							<Label
-								Grid.Row="1"
-								Grid.Column="2"
-								Content="Document"
-								Visibility="Collapsed" />
-							<ComboBox
-								Name="FileComboBox"
-								Grid.Row="1"
-								Grid.Column="3"
-								Width="90"
-								DisplayMemberPath="Key"
-								Style="{StaticResource ComboBox_Static}"
-								Text="Document" />
-							<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
-								<Button
-									Name="PropertiesRefreshButton"
-									Grid.Row="1"
-									Grid.Column="3"
-									Margin="0,0,3,0"
-									VerticalAlignment="Center"
-									Click="PropertiesRefreshButton_Click"
-									Visibility="Collapsed">
-									<StackPanel>
-										<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
-										<Label Content="Refresh" />
+							<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+								<GroupBox.Header>
+									<StackPanel Orientation="Horizontal">
+										<Label
+											x:Name="CreativityLabel"
+											Margin="0"
+											Padding="0"
+											Content="Creativity - "
+											Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+										<Label
+											Margin="0"
+											Padding="0"
+											VerticalAlignment="Center"
+											Content="{Binding CreativityName, ElementName=This}" />
 									</StackPanel>
-								</Button>
-							</StackPanel>
-						</Grid>
-					</GroupBox>
-					<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch" Visibility="{Binding BarPanelVisibility, ElementName=This}">
-						<GroupBox.Header>
-							<Label x:Name="AutomationVsLabel" Padding="0" Content="Automation" />
-						</GroupBox.Header>
-						<StackPanel Orientation="Vertical">
-							<ComboBox
-								Name="AutoOperationComboBox"
-								Width="100"
-								Margin="3,3,3,8"
-								ItemsSource="{Binding AutoOperations, ElementName=This}"
-								SelectedValue="{Binding AutoOperation}" />
-							<CheckBox x:Name="AutoFormatCodeCheckBox" Content="Format Code" IsChecked="{Binding AutoFormatCode}" />
+								</GroupBox.Header>
+								<StackPanel Orientation="Vertical">
+									<Slider
+										Name="CreativitySlider"
+										Width="145"
+										IsSnapToTickEnabled="True"
+										Maximum="2"
+										Minimum="0"
+										Tag="Creativity"
+										TickFrequency="0.5"
+										TickPlacement="BottomRight"
+										Value="{Binding Creativity}" />
+								</StackPanel>
+							</GroupBox>
+							<CheckBox
+								Name="IsFavoriteCheckBox"
+								Margin="-8,0,0,0"
+								HorizontalAlignment="Center"
+								Content="Show Icon in Toolbar"
+								IsChecked="{Binding IsFavorite}"
+								Visibility="{Binding TemplateItemVisibility, ElementName=This}" />
 						</StackPanel>
-					</GroupBox>
-				</WrapPanel>
-			</Grid>
+						<GroupBox
+							Grid.Row="1"
+							Grid.Column="1"
+							Margin="0,0,3,3"
+							VerticalAlignment="Stretch"
+							Visibility="{Binding BarPanelVisibility, ElementName=This}">
+							<GroupBox.Header>
+								<StackPanel Orientation="Horizontal">
+									<Label
+										Grid.Row="2"
+										Grid.Column="1"
+										Padding="0"
+										VerticalAlignment="Center"
+										Content="Automation"
+										Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+								</StackPanel>
+							</GroupBox.Header>
+							<StackPanel
+								Grid.Row="2"
+								Grid.Column="2"
+								Grid.ColumnSpan="2"
+								Orientation="Horizontal"
+								Visibility="{Binding BarPanelVisibility, ElementName=This}">
+								<StackPanel VerticalAlignment="Top">
+									<CheckBox Name="AutoSendCheckBox" Content="Send on Create" IsChecked="{Binding AutoSend}" />
+									<CheckBox Name="AutoGenerateTitleCheckBox" Content="Generate Title" IsChecked="{Binding AutoGenerateTitle}" />
+									<CheckBox Name="AutoFormatMessageCheckBox" Margin="0" IsChecked="{Binding AutoFormatMessage}">
+										<TextBlock VerticalAlignment="Center">
+											<Run Text="Auto" />
+											<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
+										</TextBlock>
+									</CheckBox>
+								</StackPanel>
+								<StackPanel>
+									<CheckBox
+										Name="AutoRemoveCheckBox"
+										Margin="0,0,0,3"
+										VerticalAlignment="Bottom"
+										Content="Remove on Complete"
+										IsChecked="{Binding AutoRemove}" />
+									<ComboBox
+										Name="MessageBoxOperationComboBox"
+										Width="138"
+										Margin="3,0,0,0"
+										VerticalAlignment="Top"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
+										SelectedValue="{Binding MessageBoxOperation}"
+										SelectedValuePath="Key" />
+								</StackPanel>
+
+							</StackPanel>
+						</GroupBox>
+						<GroupBox
+							Grid.Row="1"
+							Grid.Column="1"
+							Margin="0,0,3,3"
+							VerticalAlignment="Stretch"
+							Visibility="{Binding BarPanelVisibility, ElementName=This}">
+							<GroupBox.Header>
+								<StackPanel Orientation="Horizontal">
+									<Label
+										Grid.Row="2"
+										Grid.Column="1"
+										Padding="0"
+										VerticalAlignment="Center"
+										Content="Instructions"
+										Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+								</StackPanel>
+							</GroupBox.Header>
+							<StackPanel
+								Grid.Row="2"
+								Grid.Column="2"
+								Grid.ColumnSpan="2"
+								Orientation="Horizontal"
+								Visibility="{Binding BarPanelVisibility, ElementName=This}">
+								<StackPanel VerticalAlignment="Top">
+									<CheckBox
+										Name="IsSystemInstructionsCheckBox"
+										Margin="0"
+										Content="Use System Messages"
+										IsChecked="{Binding IsSystemInstructions}" />
+									<CheckBox
+										Name="UseMaximumContextCheckBox"
+										Margin="0"
+										Content="Use Maximum Context"
+										IsChecked="{Binding UseMaximumContext}" />
+								</StackPanel>
+							</StackPanel>
+						</GroupBox>
+					</WrapPanel>
+				</TabItem>
+
+				<TabItem x:Name="VisualStudioTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_Visual_Studio}" />
+							<Label Content="Visual Studio" />
+						</StackPanel>
+					</TabItem.Header>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<Border Background="{StaticResource BackgroundDark}" BorderThickness="0" />
+						<Label
+							Padding="0,2,0,3"
+							HorizontalAlignment="Center"
+							Content="Visual Studio Extension Options"
+							Opacity="0.3" />
+						<WrapPanel Grid.Row="1" Orientation="Horizontal">
+							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
+								<GroupBox.Header>
+									<StackPanel Orientation="Horizontal">
+										<Label
+											x:Name="AttachmentIcon"
+											Margin="-2"
+											Padding="0"
+											VerticalAlignment="Center"
+											Content="&#xE16C;"
+											FontFamily="Segoe MDL2 Assets" />
+										<Label
+											x:Name="ContextTypeLabel"
+											Padding="4,0,0,0"
+											VerticalAlignment="Center"
+											Content="Attachments" />
+									</StackPanel>
+								</GroupBox.Header>
+								<Controls:EnumComboBox
+									x:Name="AttachmentEnumComboBox"
+									Width="170"
+									VerticalAlignment="Center"
+									SelectedValue="{Binding AttachContext}"
+									Style="{StaticResource ComboBox_Dynamic}"
+									Text="None" />
+							</GroupBox>
+							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
+								<GroupBox.Header>
+									<CheckBox
+										Name="UseMacrosCheckBox"
+										Margin="-4"
+										Content="Use Macros"
+										IsChecked="{Binding UseMacros}" />
+								</GroupBox.Header>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
+									<local:PropertyComboBox
+										x:Name="VsMacrosComboBox"
+										Grid.Row="0"
+										Grid.Column="1"
+										Width="100"
+										Style="{StaticResource ComboBox_Static}"
+										Text="Environment" />
+									<Label
+										Grid.Row="0"
+										Grid.Column="0"
+										VerticalAlignment="Center"
+										Content="Environment"
+										Visibility="Collapsed" />
+									<Label
+										Grid.Row="0"
+										Grid.Column="2"
+										VerticalAlignment="Center"
+										Content="Selection"
+										Visibility="Collapsed" />
+									<ComboBox
+										Name="SelectionComboBox"
+										Grid.Row="0"
+										Grid.Column="3"
+										Width="90"
+										DisplayMemberPath="Key"
+										Style="{StaticResource ComboBox_Static}"
+										Text="Selection" />
+									<ComboBox
+										Name="DateComboBox"
+										Grid.Row="1"
+										Grid.Column="1"
+										Width="100"
+										DisplayMemberPath="Key"
+										Style="{StaticResource ComboBox_Static}"
+										Text="Date" />
+									<Label
+										Grid.Row="1"
+										Grid.Column="0"
+										VerticalAlignment="Center"
+										Content="Date"
+										Visibility="Collapsed" />
+									<Label
+										Grid.Row="1"
+										Grid.Column="2"
+										Content="Document"
+										Visibility="Collapsed" />
+									<ComboBox
+										Name="FileComboBox"
+										Grid.Row="1"
+										Grid.Column="3"
+										Width="90"
+										DisplayMemberPath="Key"
+										Style="{StaticResource ComboBox_Static}"
+										Text="Document" />
+									<StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+										<Button
+											Name="PropertiesRefreshButton"
+											Grid.Row="1"
+											Grid.Column="3"
+											Margin="0,0,3,0"
+											VerticalAlignment="Center"
+											Click="PropertiesRefreshButton_Click"
+											Visibility="Collapsed">
+											<StackPanel>
+												<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+												<Label Content="Refresh" />
+											</StackPanel>
+										</Button>
+									</StackPanel>
+								</Grid>
+							</GroupBox>
+							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+								<GroupBox.Header>
+									<Label x:Name="AutomationVsLabel" Padding="0" Content="Automation" />
+								</GroupBox.Header>
+								<StackPanel Orientation="Vertical">
+									<ComboBox
+										Name="AutoOperationComboBox"
+										Width="100"
+										Margin="3,3,3,8"
+										ItemsSource="{Binding AutoOperations, ElementName=This}"
+										SelectedValue="{Binding AutoOperation}" />
+									<CheckBox x:Name="AutoFormatCodeCheckBox" Content="Format Code" IsChecked="{Binding AutoFormatCode}" />
+								</StackPanel>
+							</GroupBox>
+						</WrapPanel>
+					</Grid>
+				</TabItem>
+				<TabItem x:Name="ListsTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_list}" />
+							<Label Content="Personalized Context" />
+						</StackPanel>
+					</TabItem.Header>
+					<WrapPanel Orientation="Horizontal">
+						<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+							<GroupBox.Header>
+								<Label x:Name="ContextSystemLabel" Padding="0" Content="System and Application" />
+							</GroupBox.Header>
+							<StackPanel Orientation="Vertical">
+								<ComboBox
+									Name="Context0TemplateComboBox"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding ContextListNames, ElementName=This}"
+									SelectedValue="{Binding Context0ListName}"
+									SelectedValuePath="Key" />
+								<ComboBox
+									Name="Context1TemplateComboBox"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding ContextListNames, ElementName=This}"
+									SelectedValue="{Binding Context1ListName}"
+									SelectedValuePath="Key" />
+							</StackPanel>
+						</GroupBox>
+
+						<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+							<GroupBox.Header>
+								<Label x:Name="ContextAssistantLabel" Padding="0" Content="Assistant - Profile and Role" />
+							</GroupBox.Header>
+							<StackPanel Orientation="Vertical">
+								<ComboBox
+									Name="Context2TemplateComboBox"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding ProfileListNames, ElementName=This}"
+									SelectedValue="{Binding Context2ListName}"
+									SelectedValuePath="Key" />
+								<ComboBox
+									Name="Context3TemplateComboBox"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding RoleListNames, ElementName=This}"
+									SelectedValue="{Binding Context3ListName}"
+									SelectedValuePath="Key" />
+							</StackPanel>
+						</GroupBox>
+						<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+							<GroupBox.Header>
+								<Label x:Name="ContextUserLabel" Padding="0" Content="User - Profile and Role" />
+							</GroupBox.Header>
+							<StackPanel Orientation="Vertical">
+								<ComboBox
+									Name="Context4TemplateComboBox"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding ProfileListNames, ElementName=This}"
+									SelectedValue="{Binding Context4ListName}"
+									SelectedValuePath="Key" />
+								<ComboBox
+									Name="Context5TemplateComboBox"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding RoleListNames, ElementName=This}"
+									SelectedValue="{Binding Context5ListName}"
+									SelectedValuePath="Key" />
+							</StackPanel>
+						</GroupBox>
+					</WrapPanel>
+				</TabItem>
+			</TabControl>
+			<!--  Row 2  -->
 			<!--  Row 3  -->
 			<Controls:PluginApprovalControl
 				x:Name="PluginApprovalPanel"

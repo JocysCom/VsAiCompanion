@@ -41,7 +41,7 @@ namespace JocysCom.ClassLibrary.Controls
 			SetHead(head);
 			SetBody(image, body);
 		}
-		public int BodyMaxLength { get; set; } = 128;
+		public int BodyMaxLength { get; set; } = int.MaxValue;
 
 		private void HelpProvider_OnMouseLeave(object sender, EventArgs e)
 		{

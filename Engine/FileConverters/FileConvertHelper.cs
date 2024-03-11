@@ -96,30 +96,35 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				}
 
 				var sourceExt = Path.GetExtension(sourcePath).ToLower();
-				// Read from file.
-				switch (sourceExt)
+				if (!targetTypeToExtension.ContainsValue(sourceExt))
 				{
-					case ".jsonl":
+					error = $"The extension {sourceExt} is unknown.";
+					return false;
+				}
+				var key = targetTypeToExtension.FirstOrDefault(x => x.Value == sourceExt).Key;
+				// Read from file.
+				switch (key)
+				{
+					case ConvertTargetType.JSONL:
 						result = ReadFromJsonl<T>(sourcePath);
 						break;
-					case ".json":
+					case ConvertTargetType.JSON:
 						result = ReadFromJson<T>(sourcePath);
 						break;
-					case ".xlsx":
+					case ConvertTargetType.XLSX:
 						result = ReadFromXlsx<T>(sourcePath);
 						break;
-					case ".docx":
+					case ConvertTargetType.DOCX:
 						result = ReadFromDocx<T>(sourcePath);
 						break;
-					case ".rtf":
+					case ConvertTargetType.RTF:
 						result = ReadFromRtf<T>(sourcePath);
 						break;
-					case ".csv":
+					case ConvertTargetType.CSV:
 						result = ReadFromCsv<T>(sourcePath);
 						break;
 					default:
-						error = $"The extension {sourceExt} is unknown.";
-						return false;
+						break;
 				}
 			}
 			catch (Exception ex)
@@ -144,27 +149,33 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			if (process != null)
 				foreach (var item in items)
 					process(item);
+			if (!targetTypeToExtension.ContainsValue(targetExt))
+			{
+				Global.ShowError($"The extension {targetExt} is not supported for writing.");
+				return false;
+			}
+			var key = targetTypeToExtension.FirstOrDefault(x => x.Value == targetExt).Key;
 			// Write to file.
 			try
 			{
-				switch (targetExt)
+				switch (key)
 				{
-					case ".jsonl":
+					case ConvertTargetType.JSONL:
 						WriteToJsonl(targetPath, items);
 						break;
-					case ".json":
+					case ConvertTargetType.JSON:
 						WriteToJson(targetPath, items);
 						break;
-					case ".xlsx":
+					case ConvertTargetType.XLSX:
 						WriteToXlsx(targetPath, items);
 						break;
-					case ".docx":
+					case ConvertTargetType.DOCX:
 						WriteToDocx(targetPath, items);
 						break;
-					case ".rtf":
+					case ConvertTargetType.RTF:
 						WriteToRtf(targetPath, items);
 						break;
-					case ".csv":
+					case ConvertTargetType.CSV:
 						WriteToCsv(targetPath, items);
 						break;
 					default:
@@ -686,28 +697,35 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{
 					csv.WriteField(message_role.user);
 					csv.WriteField(message_role.assistant);
+					csv.WriteField("text");
 					csv.NextRecord();
 				}
 				else
 				{
 					csv.WriteField(nameof(text_completion_item.prompt));
 					csv.WriteField(nameof(text_completion_item.completion));
+					csv.WriteField("text");
 					csv.NextRecord();
 				}
 				foreach (var request in o)
 				{
+					var prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request.";
 					if (request is chat_completion_request cr)
 					{
 						var userContet = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
 						var assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
 						csv.WriteField(userContet);
 						csv.WriteField(assistantContent);
+						// Text for LLaMA training
+						csv.WriteField($"{prefix}\r\n\r\n### Instruction:\r\n{userContet}\r\n\r\n### Response:\r\n{assistantContent}");
 						csv.NextRecord();
 					}
 					else if (request is text_completion_item tr)
 					{
 						csv.WriteField(tr.prompt);
 						csv.WriteField(tr.completion);
+						// Text for LLaMA training
+						csv.WriteField($"{prefix}\r\n\r\n###\r\nInstruction:\r\n{tr.prompt}\r\n\r\n### Response:\r\n{tr.completion}");
 						csv.NextRecord();
 					}
 				}

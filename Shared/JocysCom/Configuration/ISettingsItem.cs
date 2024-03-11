@@ -1,10 +1,21 @@
-﻿namespace JocysCom.ClassLibrary.Configuration
+﻿using System.ComponentModel;
+
+namespace JocysCom.ClassLibrary.Configuration
 {
-	public interface ISettingsItem
+
+	/// <summary>
+	/// Defines an interface for a settings item, including properties for enabled state and emptiness check.
+	/// </summary>
+	public interface ISettingsItem : INotifyPropertyChanged
 	{
-		bool Enabled { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether this settings item is enabled.
+		/// </summary>
+		bool IsEnabled { get; set; }
 
+		/// <summary>
+		/// Gets a value indicating whether this settings item is empty or uninitialized.
+		/// </summary>
 		bool IsEmpty { get; }
-
 	}
 }

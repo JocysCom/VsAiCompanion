@@ -1,5 +1,8 @@
 # Purpose: Check software and tool version compatibility with Orca-2 model requirements.
 
+# Activate "tuning" Python environment.
+tuning\Scripts\activate
+
 # Verify CUDA version compatibility with PyTorch and Orca-2 model requirements.
 $requiredCudaVersion = "11.1"
 $cudaVersion = (nvidia-smi | Select-String -Pattern "CUDA Version: \d+\.\d+").Matches.Value.Split(":")[1].Trim()

@@ -1,6 +1,5 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <Name>Code - Fix Selected Issue</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACm1TbW/aMBD+3l/heV+D32M7iLQSAbpJdKs0yrRPUxqyJCpLUGAJ7a/fOQRKaSXL&#xD;
 5/M9d89zZ3l0s/+7Rk1ab4uqDDEnDKO0TKpVUWYhfljMBhbfXF+NPk2+R4tf91O0bTJ0/zCef40Q&#xD;
@@ -13,10 +12,8 @@ fR/Ty16EIFoxfVTfkx3zkwEj0jUHFrqRzgZCametL4yT3MGdL4NgKXgeuN4iqKusgaZhSSKZsqeJ&#xD
 XFCeadTjsZLvNULHgFZE50DXaRICpgZWuc1Nrj+qpSEq6UIOcgodw7nL79MP94DoAY0mNuLSESl4&#xD;
 NhgA7EDqjgf6lzsXNkQ3nY4jzYWEA9F7pW/UNIcCrzKPKnuR3SsDP0yto3TnA/fruHyprWWHcY1o&#xD;
 Bl/Tfa/rq/+LB+rBLAQAAA==</IconData>
-  <Name>Code - Fix Selected Issue</Name>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
-  <IsEnabled>false</IsEnabled>
+  <AiModel>gpt-4</AiModel>
   <TextInstructions>How to fix this issue reported by Visual Studio? Please reply with the fixed code.</TextInstructions>
   <AttachContext>Error ErrorDocument</AttachContext>
   <Settings />

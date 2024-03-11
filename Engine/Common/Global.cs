@@ -96,6 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Template: return Templates;
 				case ItemType.FineTuning: return FineTunings;
 				case ItemType.Assistant: return Assistants;
+				case ItemType.Lists: return Lists;
 				default: return new SettingsData<TemplateItem>();
 			}
 		}
@@ -107,7 +108,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			form.ShowDialog(message);
 		}
 
-		public static void InsertItem(IFileListItem item, ItemType type)
+		public static void InsertItem(ISettingsListFileItem item, ItemType type)
 		{
 			if (type != ItemType.Task && type != ItemType.Template)
 				return;
@@ -172,6 +173,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)
 		{
 			var itemsRequired = new List<string>();
+			if (item == null)
+			{
+				SetWithTimeout(MessageBoxImage.Warning, "Please choose a valid AI Service from the dropdown menu.");
+				return false;
+			}
 			if (string.IsNullOrEmpty(item.BaseUrl))
 				itemsRequired.Add("Base URL");
 			if (string.IsNullOrEmpty(item.Name))
@@ -209,6 +215,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler OnTemplatesUpdated;
 		public static event EventHandler OnAiServicesUpdated;
 		public static event EventHandler OnAiModelsUpdated;
+		public static event EventHandler OnListsUpdated;
 
 		public static void RaiseOnSaveSettings()
 			=> OnSaveSettings?.Invoke(null, EventArgs.Empty);
@@ -235,6 +242,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void RaiseOnAiModelsUpdated()
 			=> OnAiModelsUpdated?.Invoke(null, EventArgs.Empty);
 
+		public static void RaiseOnListsUpdated()
+			=> OnListsUpdated?.Invoke(null, EventArgs.Empty);
+
 		#endregion
 
 		public static void SaveSettings()
@@ -260,6 +270,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void LoadSettings()
 		{
+			// Set a converter to convert SVG to images for the user interface.
+			SettingsListFileItem.ConvertToImage = Converters.SvgHelper.LoadSvgFromString;
 			ResetSettings = false;
 			// Load app data.
 			AppData.OnValidateData += AppData_OnValidateData;
@@ -343,13 +355,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private static void PromptItems_OnValidateData(object sender, SettingsData<PromptItem>.SettingsDataEventArgs e)
 		{
 			if (e.Items.Count == 0)
+			{
 				SettingsSourceManager.ResetPrompts();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
 		}
 
 		private static void Lists_OnValidateData(object sender, SettingsData<ListInfo>.SettingsDataEventArgs e)
 		{
 			if (e.Items.Count == 0)
+			{
 				SettingsSourceManager.ResetLists();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
 		}
 
 		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)
@@ -442,8 +462,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static bool IsVsExtension { get; set; }
 		public static Version VsVersion { get; set; }
-		public static string VsExtensionFeatureMessage = "This feature is only available when the application is run as an extension in Visual Studio.";
-		public static string VsExtensionVersionMessage = "This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.";
 		public static bool ShowExtensionVersionMessageOnError;
 
 

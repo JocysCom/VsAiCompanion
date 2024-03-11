@@ -251,7 +251,8 @@ $menuItems = [ordered]@{
 	"Download TortoiseGit"   = { DownloadTortoiseGit }
 	"Download CUDA"          = { DownloadCuda }
 	"Download LM Studio"     = { DownloadLmStudio }
-	"Clone Model Repository" = { CloneModelRepository }
+	"Clone Model Repository (Mistral)" = { CloneModelRepository }
+	"Clone Model Repository with Python (Orca-2)" = { python "Step-2-1-DownloadModel.py" }
 }
 while ($true) {
 	$option = ShowOptionsMenu $menuItems.Keys  "Select Option:"
@@ -262,20 +263,21 @@ while ($true) {
 
 # Install
 $menuItems = [ordered]@{
-	"Install Python" = { InstallPython }
 	"Install Git" = { InstallGit }
 	"Install Git LFS" = { InstallGitLfs }
 	"Install TortoiseGit" = { InstallTortoiseGit }
 	"Install CUDA" = { InstallCuda }
 	"Install LM Studio" = { InstallLmStudio }
+	"Install Python" = { InstallPython }
 	"Install Python Certificates" = { InstallPythonCertificates }
-	"Install Python Torch" = { InstallPythonTorch }
 	"Install Python Torch (CUDA)" = { InstallPythonTorchCuda }
 	"Install Python Transformers" = { InstallPythonTransformers }
 	"Install Python Datasets" = { InstallPythonDatasets }
 	"Install Python Accelerate" = { InstallPythonAccelerate }
 	"Install Python Flask" = { InstallPythonFlask }
 	"Install Python Sentencepiece" = { InstallPythonSentencepiece }
+	"Install Python Autotrain Advanced" = { pip install autotrain-advanced }
+	"Install Python HuggingFace Hub" = { pip install hugginface_hub }
 }
 while ($true) {
 	$option = ShowOptionsMenu $menuItems.Keys  "Select Option:"
@@ -284,3 +286,5 @@ while ($true) {
 	& $menuitems[$option]
 }
 return
+
+

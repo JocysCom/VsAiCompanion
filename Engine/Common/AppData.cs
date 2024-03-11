@@ -1,11 +1,11 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -14,7 +14,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 	/// Application settings.
 	/// </summary>
 	/// <remarks>Advice: Organize all settings as flat data tables instead of using a tree structure to improve compatibility and ease conversion.</remarks>
-	public class AppData : JocysCom.ClassLibrary.Configuration.ISettingsItem, INotifyPropertyChanged, ITrayManagerSettings
+	public class AppData : SettingsItem, INotifyPropertyChanged, ITrayManagerSettings
 	{
 
 		public AppData()
@@ -87,6 +87,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private TaskSettings _AssistantData;
 
+		public TaskSettings ListsData
+		{
+			get => _ListsData = _ListsData ?? new TaskSettings();
+			set => SetProperty(ref _ListsData, value);
+		}
+		private TaskSettings _ListsData;
 
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
@@ -96,6 +102,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Template: return TemplateData;
 				case ItemType.FineTuning: return FineTuningData;
 				case ItemType.Assistant: return AssistantData;
+				case ItemType.Lists: return ListsData;
 				default: return new TaskSettings();
 			}
 		}
@@ -203,11 +210,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private SortableBindingList<AiModel> _AiModels;
 
-		public bool Enabled { get; set; }
-
-		public bool IsEmpty =>
-			false;
-
 		public string MarkdownLanguageNames { get; set; } =
 			"ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex," +
 			"AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL," +
@@ -283,23 +285,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				list.Add(item);
 			}
 			return list;
-		}
-
-		#endregion
-
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
-		{
-			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion

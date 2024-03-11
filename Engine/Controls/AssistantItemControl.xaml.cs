@@ -1,13 +1,10 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.IO;
-using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using static System.Environment;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {

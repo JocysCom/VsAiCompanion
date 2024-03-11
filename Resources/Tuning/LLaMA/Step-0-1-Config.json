@@ -1,7 +1,9 @@
 {
+	"PROJECT_NAME": "custom-model",
 	"MODEL_NAME": "microsoft/Orca-2-7b",
 	"CERT_FILE_PATH": "./Data/trusted_root_certificates.pem",
 	"CACHE_DIR": "./Data/model_cache",
+	"TRAINING_DATA_PATH": "./Data/training_data",
 	"DATA_PATH": "./Data/data.jsonl",
 	"DATA_TRAIN_PATH": "./Data/data.train.jsonl",
 	"DATA_VALIDATION_PATH": "./Data/data.validation.jsonl",

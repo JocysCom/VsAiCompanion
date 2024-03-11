@@ -1,0 +1,78 @@
+﻿<TemplateItem>
+  <Name>Lists - Update User Profile</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAH1T226bQBB9z1dsN6+wN+6WSSTbJK6UtpHquOpTRWALKxNAQMHp13cWX3CbqBIs&#xD;
+M7Nnz5mZHea3+5cC9bJpVVWGmBOGkSyTKlVlFuKnzZ3p49ubq/mH1Zfl5vtjhNo+Q49Pi4ePS4RN&#xD;
+Sr9ZS0pXmxX6ur1HnHBKo88Y4bzr6hmlwzCQwSJVk9H7Jq5zlbQUgFQD4RAFMs5J2qUYJDTzRSIc&#xD;
+I5WG+CF+lc0PcCDPsg3fYRaMMc10hMz2hSp37wF5EAR03AVoiFm9x+j1+B1U2uUhFrZ2cqmyvDt5&#xD;
+vZLDotIHEEPChke3KH4upPkcJ7usqX6VkGgpB3SBgFxmbR0nMsR1I1vZ9BKKRGiejWWppCpHHyJ1&#xD;
+3OUIYp8EN+ytICJhhsmI6+rVsQ2TEzEtaxsAh212iE4geHtO/LXgvzH6qYoixNeB6y1WS0z/FbMM&#xD;
+u+ce8UHsQKZZjiT6zblD3OSoM4qfEVpra58VIjcKouitAg+Ib/DctIjnWX5h2sSxPM8QYq13/kMN&#xD;
+LVhCL7gOCkZs1wBnJJvKEha/EzCsFfRYdfoaCXPf5uASx4ARc3LORzuYTG8y+aV9AYEWTLY12qcE&#xD;
+yqqUGLVdU+3giq8dy/V9dgqYx3Hi5wBMnUziOsTjtJzDL6qTTaHgA+C/q/EOxcxpBv+Gnu+bqz+y&#xD;
+7EqprQMAAA==</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <TextInstructions>Processing Instructions:
+
+1. Find all lists starting with "Profile".
+2. Ask the user to choose a list for updating.
+3. Open this chosen list.
+4. Check for missing data like first name, last name, or gender.
+5. With one question at a time, guide the user to complete the missing details. Let the user know they can use "skip" to bypass any question. Update the chosen list from step 2 based on their responses.
+
+To enhance the "Profile - User" list and enable custom AI responses, consider asking the following. The goal is to respectfully gather the user's preferences, traits, and personal information.
+
+---
+
+### About You
+
+To improve our interaction, I want to understand you better. You can choose to not answer any uncomfortable questions.
+
+**Basic Personal Data**
+
+1. **First Name**: What's your first name?
+2. **Last Name**: What's your last name, if you wish to share? (optional)
+3. **Gender Identity**: How do you identify your gender? (optional)
+4. **Date of Birth**: When's your birthday, if you wish to share? (optional)
+
+**Preferences**
+
+5. **Genre**: Which genres of books, movies, or games do you enjoy?
+6. **Music**: What music, artists, or bands do you like?
+7. **Hobbies**: What are your interests or hobbies?
+8. **Learning Style**: How do you prefer learning new things?
+9. **Communication**: Do you prefer concise or detailed information?
+
+**Traits**
+
+10. **Introvert/Extrovert**: Do you identify more as an introvert, extrovert, or in-between?
+11. **Decision Style**: Do you lean more towards intuition or logic when making decisions?
+12. **Stress Management**: How do you manage stress?
+13. **Optimist/Pessimist**: Are you more of an optimist or pessimist?
+
+**Personal Details**
+
+14. **Cultural Background**: Could you share your cultural or ethnic background, if you're comfortable doing so? (optional)
+15. **Languages**: Which languages can you speak?
+16. **Profession**: What's your professional field?
+17. **Education**: What's your highest level of education, and in what field?
+18. **Goals**: What are some of your life goals?
+19. **Important Events**: Any important upcoming events?
+20. **Favorite Season/Holiday**: Do you have a preferred season or holiday?
+</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Text>I would like assistance with updating one of the profiles.</Text>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

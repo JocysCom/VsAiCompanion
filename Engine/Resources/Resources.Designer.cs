@@ -322,6 +322,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comment.
+        /// </summary>
+        public static string Comment {
+            get {
+                return ResourceManager.GetString("Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Company Product.
         /// </summary>
         public static string Company_Product {
@@ -628,11 +637,65 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Key.
+        /// </summary>
+        public static string Key {
+            get {
+                return ResourceManager.GetString("Key", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License.
         /// </summary>
         public static string License {
             get {
                 return ResourceManager.GetString("License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description of the list for user information purposes only.
+        /// </summary>
+        public static string List_Description {
+            get {
+                return ResourceManager.GetString("List_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AI instructions that will be sent with this list..
+        /// </summary>
+        public static string List_Instructions {
+            get {
+                return ResourceManager.GetString("List_Instructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow to send this list to AI..
+        /// </summary>
+        public static string List_IsEnabled {
+            get {
+                return ResourceManager.GetString("List_IsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prevent AI from modifying this list..
+        /// </summary>
+        public static string List_IsReadOnly {
+            get {
+                return ResourceManager.GetString("List_IsReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists..
+        /// </summary>
+        public static string Lists_Feature_Description {
+            get {
+                return ResourceManager.GetString("Lists_Feature_Description", resourceCulture);
             }
         }
         
@@ -759,6 +822,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Paste {
             get {
                 return ResourceManager.GetString("Paste", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Path.
+        /// </summary>
+        public static string Path {
+            get {
+                return ResourceManager.GetString("Path", resourceCulture);
             }
         }
         
@@ -1096,11 +1168,38 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Value.
+        /// </summary>
+        public static string Value {
+            get {
+                return ResourceManager.GetString("Value", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Visual Studio Extension Options.
         /// </summary>
         public static string Visual_Studio_Extension_Options {
             get {
                 return ResourceManager.GetString("Visual_Studio_Extension_Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This feature is only available when the application is run as an extension in Visual Studio..
+        /// </summary>
+        public static string VsExtensionFeatureMessage {
+            get {
+                return ResourceManager.GetString("VsExtensionFeatureMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update..
+        /// </summary>
+        public static string VsExtensionVersionMessage {
+            get {
+                return ResourceManager.GetString("VsExtensionVersionMessage", resourceCulture);
             }
         }
     }

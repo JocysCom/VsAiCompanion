@@ -1,0 +1,78 @@
+﻿<ListInfo>
+  <Name>Role - .NET Developer</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAO1WUW/bNhB+76/QtFeJIo+kRAZxC8RxuwLdVmBphj0NrqxZQlzZsF076a/fd5Ss&#xD;
+xGrWvQ19GJCAOvJ4/O6772hevrr/tIoO1XbXrNtJrISMo6ot14umXU7iDzevUxe/evni8ofrX6c3&#xD;
+f7yfRbvDMnr/4erd22kUp1n2u55m2fXNdfTb7ZtICZVls1/iKK73+81Flh2PR3HUYr1dZm+2803d&#xD;
+lLsMjhk7YlOGYEqJxX4R4wiO/ASIiqNmMYnfzR+q7Z8wgLPdTZ6JTFJKjtS7XNyvmvbuOUflvc/C&#xD;
+Klwnsdzcx9FDPx6bxb6exGTYqKtmWe9P1qGpjldr3hDJiAz+mKL5x1WVfpyXd8vt+nMLoG11jJ54&#xD;
+AMvFbjMvq0m82Va7anuokGQUXS5DWk25boONmc18X0eY+5mUcIn5iQSVqRR5nsgkVYISKazpvvB/&#xD;
+UEbkpUw6B17pF/i/NsIdsNfqwsIHX2R5L0ZZKB5NTnY81hglNpzc5VOH5zYeAEaenTDyG8XXnfcp&#xD;
++uAU9pxtOZwCj5CPgP8b7mfh3JKq8//Z+QY7UE/ZC48FlQ7yYvHdWkFT0onhSSJsSjAGyX6Jo7+a&#xD;
+1WoS/zjLZ342i7OxtJVN6PEchLPWFivEtwxECWNcgaMlADM84zwPSjJ3vBZAKtVbdchsik4oPHlE&#xD;
+Trr4Ia3Ho75wRxU4Ak2lvPCOVqkV2iEnU5Pw2n8vtDPIJ8wbo4ObB/STiRsRTtAW2r8vg8M8F0Jx&#xD;
+hsmQ62M1SKvXhBt9jYuo2fNdJ2T+THGYCw1SAFwVHfJQFerTyz3KwrbTGLVQGvVJSShDwV3bPPgp&#xD;
+rQM7xnZ5aurYMlqG0XpvOE2HgsJ0JFleSuq8i4ZTTmZoCl2GG9Do3HV8EPtpk4fTbWCzsxmFlE6H&#xD;
+QkpJBX8kssSyVJa4CqzYcGV6JdVg9tt5m6fCcVWQBabJgmRGQwljoSBPylmJVIRsZGGCf1501dKK&#xD;
+r+ocGuZjjVEsXmc70M4xOAzSdwx6PkQZbcpOMCwIZNRFdhy4IMkBlYLEmXsKakVN+BSNSS0METeK&#xD;
+tcgIzUtEvRV6yRad+qT0ec+HEtp7Zgkq0prZAGlhr/VF1/DeTRUyJumS0GDoJ7ZlaBthMZGcC6bX&#xD;
+W7r9vMKvXXWo2vViMWjQXDl/Pf1adAjJKjqJ7lxzI8mNFDcS3EhvI7mlI71xI0lvB8ENdqe4qYXM&#xD;
+QH8unMJqnljhuSqu/zjgHvE5fqBxhTG74JGK4sRjykRqPxAJngzUd+IRZq4faTyn4Ns02ms/nU3P&#xD;
+WtkNpOJNU0X3Cs8miycNxkLg457whMHL6YH6iS5Uu26rONrtt+u7igOjuZw8TaT9Q0gNExy7nG8m&#xD;
+cXjnDNOfmn21XTUY4Hx+xRT/jEvJMbBu5jtApr9Cpv97ZJfZEi9hfs2+fPE3Jka2uJsLAAA=</IconData>
+  <Description>Your current role and area of expertise are detailed here, letting the AI understand the context of your questions and the nature of the assistance you're seeking, especially in .NET development.</Description>
+  <Instructions>Here, the user's role and expertise are detailed. Factor in this context when providing development advice, resources, or when discussing technologies to match the user's skill level and interests.</Instructions>
+  <IsReadOnly>true</IsReadOnly>
+  <Items>
+    <ListItem>
+      <Key>ASP.NET MVC Development</Key>
+      <Value>Specialization in building web applications using the ASP.NET MVC framework.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Entity Framework Core</Key>
+      <Value>Expertise in using Entity Framework Core for data access in .NET applications.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Blazor Development</Key>
+      <Value>Proficiency in developing interactive web UIs using Blazor, a feature of ASP.NET.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Microservices Architecture</Key>
+      <Value>Experience in designing and implementing microservices architectures using .NET Core.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Azure Cloud Services</Key>
+      <Value>Knowledge in deploying and managing .NET applications on Azure Cloud Services.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>C# Language Features</Key>
+      <Value>Deep understanding of the latest C# language features and best practices.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Performance Optimization</Key>
+      <Value>Skills in optimizing the performance of .NET applications through profiling and tuning.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Secure Coding Practices</Key>
+      <Value>Awareness of secure coding practices specific to .NET development.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Unit Testing in .NET</Key>
+      <Value>Experience in writing and maintaining unit tests in .NET environments using frameworks like NUnit or xUnit.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>DevOps for .NET</Key>
+      <Value>Familiarity with DevOps practices, including CI/CD pipelines, specifically for .NET applications.</Value>
+      <Comment />
+    </ListItem>
+  </Items>
+</ListInfo>

@@ -32,17 +32,24 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
-        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>CyberNet Solutions</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </FineTuningData>
       <AssistantData>
-        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection />
         <ListSelectedIndex>0</ListSelectedIndex>
       </AssistantData>
+      <ListsData>
+        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
+        <ListSelection>
+          <string>Context - Operating System</string>
+        </ListSelection>
+        <ListSelectedIndex>0</ListSelectedIndex>
+      </ListsData>
       <AiServices>
         <AiService>
           <Id>d5e071e1-d99d-45ff-890a-82823b75e1ec</Id>
@@ -59,25 +66,20 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue</Id>
         </PluginItem>
         <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContents</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContents</Id>
-        </PluginItem>
-        <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.RunPowerShellScript</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFile</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges</Id>
         </PluginItem>
         <PluginItem>
@@ -85,16 +87,32 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareContentsAndReturnChanges</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ApplyFileChanges</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyFile</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ApplyContentsChanges</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyContents</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteTextFile</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyTextFile</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFile</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFileLines</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContents</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContentsAuthenticated</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContent</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContentAuthenticated</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -121,12 +139,15 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument</Id>
         </PluginItem>
         <PluginItem>
@@ -166,16 +187,20 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplyCurrentDocumentContentsChanges</Id>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ModifyCurrentDocument</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ApplySelectionChanges</Id>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ModifySelection</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext</Id>
@@ -193,49 +218,60 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTable</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetLists</Id>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.TTS.StopText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetList</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListNames</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.LoadListFromCsv</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.CreateList</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.SetListItem</Id>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItem</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteListItem</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchIndex</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuOptions</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuSelection</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.SelectMenuOption</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.NavigateToElement</Id>
         </PluginItem>
       </Plugins>
       <AiModels>
@@ -258,7 +294,6 @@
           <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
         </AiModel>
       </AiModels>
-      <Enabled>false</Enabled>
       <MarkdownLanguageNames>ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex,AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL,BBCode,BBJ,BNF,BQN,BSL,Bash,Basic,Batch,Bicep,Birb,Bison,Brainfuck,BrightScript,Bro,C,CFScript,CIL,CMake,COBOL,CSHTML,CSP,CSS,CSS-Extras,CSV,Chaiscript,CilkC,CilkCpp,Clike,Clojure,CoffeeScript,Concurnas,Cooklang,Coq,Cpp,Crystal,Csharp,Cue,Cypher,D,DAX,DNS-Zone-File,Dart,DataWeave,Dhall,Diff,Django,Docker,Dot,EBNF,EJS,ERB,EditorConfig,Eiffel,Elixir,Elm,Erlang,Excel-Formula,FORTRAN,FTL,Factor,False,Firestore-Security-Rules,Flow,Fsharp,GAP,GCode,GEDCOM,GLSL,GML,GN,GdScript,Gettext,Gherkin,Git,Go,Go-Module,Gradle,Graphql,Groovy,HCL,HLSL,HPKP,HSTS,HTTP,Haml,Handlebars,Haskell,Haxe,Hoon,ICU-Message-Format,IECSt,INI,IchigoJam,Icon,Idris,Ignore,Inform7,Io,J,JEXL,JQ,JS-Extras,JS-Templates,JSDoc,JSON,JSON5,JSONP,JSStackTrace,JSX,Java,JavaDoc,JavaDocLike,JavaScript,JavaStackTrace,Jolie,Julia,KeepALIVED,Keyman,Kotlin,Kumir,Kusto,LLVM,LOLCode,Latex,Latte,Less,LilyPond,Linker-Script,Liquid,Lisp,LiveScript,Log,Lua,MAXScript,MEL,Magma,Makefile,Markdown,Markup,Markup-Templating,Mata,Matlab,Mermaid,MetaFont,Mizar,MongoDB,Monkey,MoonScript,N1QL,N4JS,NASM,NSIS,Nand2Tetris-HDL,Naniscript,Neon,Nevod,Nginx,Nim,Nix,OCaml,ObjectiveC,Odin,OpenCL,OpenQASM,Oz,PCAxis,PHP,PHP-Extras,PHPDoc,PLSQL,PSL,PariGP,Parser,Pascal,PascalIGO,PeopleCode,Perl,Plant-UML,PowerQuery,PowerShell,Processing,Prolog,PromQL,Properties,Protobuf,Pug,Puppet,Pure,PureBasic,PureScript,Python,Q,QML,QSharp,Qore,R,REST,RIP,Racket,Reason,Regex,Rego,RenPY,Rescript,Roboconf,RobotFramework,Ruby,Rust,SAS,SCSS,SML,SPARQL,SQF,SQL,Sass,Scala,Scheme,Shell-Session,Smali,SmallTalk,Smarty,Solidity,Solution-File,Soy,Splunk-SPL,Squirrel,Stan,Stata,Stylus,SuperCollider,Swift,Systemd,T4-CS,T4-Templating,T4-VB,TAP,TOML,TSX,TT2,Tcl,Textile,Tremor,Turtle,Twig,TypeScript,TypoScript,UORazor,URI,UnrealScript,V,VBNet,VHDL,Vala,Velocity,Verilog,Vim,Visual-Basic,WASM,WGSL,WarpScript,Web-IDL,Wiki,Wolfram,Wren,XML,XQuery,Xeora,Xojo,YAML,Yang,ZigetLua</MarkdownLanguageNames>
     </AppData>
   </Items>

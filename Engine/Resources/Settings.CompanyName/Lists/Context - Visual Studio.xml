@@ -1,0 +1,100 @@
+﻿<ListInfo>
+  <Name>Context - Visual Studio</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAMVXbW/cRBD+jsR/WIyQWslZ7/vLJaFS3VIhubRSWxD9gkLOSUwvduS7Jim/nmfW&#xD;
+68tdGwRFCJIoO7Ozszv7PDNj++jR7eWKXbfjuhv640JyUbC2Px2WXX9+XLx5/d1BKNh6c9IvT1ZD&#xD;
+3x4X/VA8+vbLL46+evKifv3zy6dsfX3OXr553Hxfs+Kgqn7SdVU9ef2EvfrxGZNcVtXTHwpWXGw2&#xD;
+V4uqurm54TeaD+N59Ww8ubroTtcVFla0EE4VNpOSLzfLgs6grW+65eYCgQnxTcEu2u78YjNr1117&#xD;
+83i4PS4EEyw6/BW7N5EFw9369fE9hyshBB2WlyxuV13/7r6FMsZYJWtaulhfnZwChauxXbfjdTv7&#xD;
+Q+nO9vzTDD8dLivC78MKTmfdanUwvl+1i/a67Yfl8vB01V3tz6w34/CuPcCB7W9D1y/G4X2/nb3s&#xD;
+Nu246jAs1CEhxPBzdJ6FSWGb8aRfnw3j5XFxebIZu9sHshT4pf8Hgiv7sNhxSE5XJ5sLtjwunkvN&#xD;
+gy+95aaWintlS++49pGBFKlIcVqyyL0mWdhGceNKr2vBYyi94jpoJrgQsfSY0lBKF7nWjSgVnH09&#xD;
+GZXlwnmWvJTmTnqWdlK6SZsrUU8nysiNxPFTMNCcl2yKUgnubCMtt6VSNUapTKkk3Jk0WKdJscGQ&#xD;
+pmRW6FqRDs0mBV9IKkma+0grJslt50KWQkMYKK7qPIrklySzlVyyasRNfuk0b6C5HMik1DnG2TSF&#xD;
+D015lu7kTXPHxtu9HFqM578+CKrUupQ6PDy8y6t+6H9vx+GwqHZzovoXM+QzCHeR2JaaLMoCDCQM&#xD;
+kJFcBQu6tcxyDZDsrDDNrdOkCPBuyNfaxiE1aufBhS2xmTSM5rWbwlUMgQAPwYNpouKulIJrV0eC&#xD;
+GIrkGsdHJKyQQAw38NBKwOx9QwKW2kQUjFEpBkcVoIFOqVmkISt1xGbabk2CG1AEzYLEEHlIBwjf&#xD;
+fMrh51XUPYxLEUrgJL39HyhXmfJcrftlPNU21bjPlMPijcqUK8O9zJRPcqY8GybKocQgQTl8TaIc&#xD;
+xZg5Bz0+uJl0MHlHOkzSTawHy52ZWQ8YEEFmPYAhJCfIDritbpIwsw6j8GFmPaDkg8+sT8rM+mya&#xD;
+WIdm0EMm1rFH1HM3au46VGJdTq1Lh8S6lKmtCcdyr2sywvdxrikvsD7+t5zvYFvvo77PSGYJ9NtY&#xD;
+EvLW0AoLcrFCoJZcAEpZoa2MmDWGIo8gIgJHQONxHrqybCAYjPU0AqYsqEkwMZAJhCL1aEPgidQE&#xD;
+gdNRSa5zENkwxQcSTQr5s3uJ3e0lZq+X2G0vcU1OL+TgXdYZzXYyEvtvU9U2Oyjfx72nzkJVIj+f&#xD;
+/AHvKd3mA96NcKlPeP4nybGfIMA6RAo95YeS6RpRJFJtTBR74+6vUVt/hMg+WhnEZoa1/gjtfSa2&#xD;
+FDV3xNUIwihiXyJHHBWogSKcphzRJFtLOWBsSA52ShGfUkSlFGm0oQatPVfuT+o6pMrk3lJZW5UU&#xD;
+gxcBRD8ZfA1ZEI0UAso9Jsnnhg852rn4a/RKb6m/Wq/QX6VKLRFnTP1V+/RIRRepJ6OnB4hhkxvu&#xD;
+blRg+eHR5OdJTSfSY4WeN1Mk0OQcIsmhzrFDsZLlW0FRbPvo0nb7OJtAsQHkNtvaT/0ArTzqqTs4&#xD;
+IpzIuUuSt8+pZD13oTGeGqsJVOfEhmpm09vnBDi9AjWKXotoEWYcvdM1s+mjQnk/rh58/UuD1+WT&#xD;
+8a/L5J5S2Wo70rI9W++uWaXt8cGy7Np+wzoUwHwkPgAkiqxgH6bhVuHTA5pK2nl2edN3G3yHvMdH&#xD;
+wSv6gHjRv1m3d+bXnxSjRVJ6F9sDmVqtLQ/S/93p1OpSnR6tN8MVG87O1u0mHZsBoumD02E1jIub&#xD;
+C3w6HKaJ3BkWEsjse8q/6SnIs9oHZQtixu6Ivq4w/gGI4FWSYA4AAA==</IconData>
+  <Description>Contains details about your current AI tool environment, specifically within Visual Studio. It lets the AI adapt its assistance to the application's capabilities, shortcuts, and specific functionalities you're using.</Description>
+  <Instructions>This list provides insights into the user's application setup. Use this information to offer more precise suggestions related to development workflows, project management, and customization.</Instructions>
+  <IsReadOnly>true</IsReadOnly>
+  <Items>
+    <ListItem>
+      <Key>VisualStudioVersion</Key>
+      <Value>2022</Value>
+      <Comment>The version of Visual Studio currently being used.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Edition</Key>
+      <Value>Community</Value>
+      <Comment>The edition of Visual Studio.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>InstalledWorkloads</Key>
+      <Value>.NET desktop development, ASP.NET and web development</Value>
+      <Comment>A list of installed workloads.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>DefaultLanguage</Key>
+      <Value>C#</Value>
+      <Comment>The default programming language used in the IDE.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Theme</Key>
+      <Value>Dark</Value>
+      <Comment>Visual Studio theme preference.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>AutoSaveEnabled</Key>
+      <Value>True</Value>
+      <Comment>Whether auto-save feature is enabled.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>SourceControlProvider</Key>
+      <Value>Git</Value>
+      <Comment>The source control system in use.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>NuGetPackageSources</Key>
+      <Value>nuget.org</Value>
+      <Comment>Preferred sources for NuGet packages.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>CodeAnalysisTool</Key>
+      <Value>Roslyn</Value>
+      <Comment>The code analysis tool or linter in use.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>LiveUnitTestingEnabled</Key>
+      <Value>False</Value>
+      <Comment>Whether Live Unit Testing is enabled.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>CodeLensEnabled</Key>
+      <Value>True</Value>
+      <Comment>Indicates if CodeLens feature is enabled.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>KeymapScheme</Key>
+      <Value>Visual Studio</Value>
+      <Comment>The keyboard shortcuts scheme.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>StartupProject</Key>
+      <Value>MyWebApp</Value>
+      <Comment>The project set to run at startup in a solution.</Comment>
+    </ListItem>
+  </Items>
+</ListInfo>

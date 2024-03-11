@@ -20,8 +20,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.6.25</AssemblyVersion>
-		<FileVersion>1.6.25</FileVersion>
+		<AssemblyVersion>1.7.7</AssemblyVersion>
+		<FileVersion>1.7.7</FileVersion>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 	</PropertyGroup>
 
@@ -46,9 +46,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.13" />
+		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.14" />
 		<PackageReference Include="Azure.Identity" Version="1.10.4" />
-		<PackageReference Include="CsvHelper" Version="31.0.0" />
+		<PackageReference Include="CsvHelper" Version="31.0.2" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
@@ -133,6 +133,7 @@
 		<None Remove="Resources\IconExperience.License.txt" />
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
+		<None Remove="Resources\Icons\Icons_Default\list.svg" />
 		<None Remove="Resources\Icons\Icons_Default\user_comment.svg" />
 		<None Remove="Resources\Icons\Templates\control_panel.svg" />
 		<None Remove="Resources\MainWindowCommand.png" />
@@ -171,6 +172,7 @@
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
+		<EmbeddedResource Include="Resources\Icons\Icons_Default\list.svg" />
 		<EmbeddedResource Include="Resources\Settings.zip" />
 		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />

@@ -1,6 +1,5 @@
 ﻿<TemplateItem>
-  <IsChecked>false</IsChecked>
-  <StatusCode>None</StatusCode>
+  <Name>AI - Evaluate Morality</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAJVV3Y7TPBC95ylG5gakOLGdn21XyV6w+rQfF4AE4gFS12kNaVw57rbdp2fs/LRF&#xD;
 CLSRXM+cmcmZ43HUsn/ewLOyvTZdRXjMyRvA57Rru74iW+f290lyPB7jYxobu0kEYyzBmqu0+1Or&#xD;
@@ -16,10 +15,8 @@ Whb5xfySlKcC0zFNZCzCXCwebfyRHvIJEAIBgyn4Ml65g31WnIyzPdj23dvxo3t/cz+upC2jbFlI&#xD
 WoSmsUGRRjQXo8FFoC28ljz1pIgAriHk8Wj0ffgSmYropYrOwUmmb56zRdgHgRjxZ1Tg0SyC9vTO&#xD;
 R14gzGCxkGJgzBaR4JiAe7bAOhG4PIQ+0AGmY7J3Q2ywQkGIQShAAAZ8pEmxxevaufRCNTEN4KUp&#xD;
 OnV1zUJnmpH/eljsD8MS87DKZPPwpvT/Tw+/AHxzW0rZBgAA</IconData>
-  <Name>AI - Evaluate Morality</Name>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
-  <IsEnabled>false</IsEnabled>
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity. Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. Values that are non-applicable can usually be set to 0. Output your thinking process. Always include `MVS` calculations as shown in the example.&#xD;
 &#xD;
@@ -137,9 +134,12 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
 4. John cooked an egg.&#xD;
 5. John ate the apple.</Text>
   <AttachContext>ChatHistory</AttachContext>
-  <Settings />
+  <Settings>
+    <ScrollPosition>3712</ScrollPosition>
+  </Settings>
   <Messages>
     <MessageItem>
+      <IsEnabled>false</IsEnabled>
       <Id>68af625b6f0743ed8170cc2723dc14a5</Id>
       <User>User</User>
       <BodyInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity. Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. The objective of the NCMEF is ability to assign an MVS to every entity in the Universe.&#xD;
@@ -255,9 +255,9 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
       <Attachments />
       <Date>2023-11-13T23:29:56.8325559+00:00</Date>
       <Type>Out</Type>
-      <IsEnabled>false</IsEnabled>
     </MessageItem>
     <MessageItem>
+      <IsEnabled>false</IsEnabled>
       <Id>feb5e82969014ab291ca67d099b671e7</Id>
       <User>Ai</User>
       <Body>To analyze the moral implications of each provided situation, we will apply the Numerically Comprehensive Moral Evaluation Formula (NCMEF) individually to each action and affected entity. We will estimate the values of variables from the given information, and please note that the estimations are speculative, as they depend on various factors not provided in these brief scenarios.
@@ -347,7 +347,6 @@ In conclusion, based on the scenarios provided and the estimates made for the NC
       <Attachments />
       <Date>2023-11-13T23:30:34.6482925+00:00</Date>
       <Type>In</Type>
-      <IsEnabled>false</IsEnabled>
     </MessageItem>
   </Messages>
   <AutoSend>false</AutoSend>
