@@ -50,22 +50,8 @@
 				Width="64"
 				Height="64"
 				VerticalAlignment="Top" />
-
 		</StackPanel>
-		<StackPanel Grid.Row="1" Grid.Column="1">
-			<StackPanel Orientation="Horizontal">
-				<CheckBox
-					Name="IsEnabledCheckBox"
-					HorizontalAlignment="Center"
-					Content="Is Enabled"
-					IsChecked="{Binding IsEnabled}" />
-				<CheckBox
-					Name="IsReadOnlyCheckBox"
-					HorizontalAlignment="Center"
-					Content="Is Read-Only"
-					IsChecked="{Binding IsReadOnly}" />
-			</StackPanel>
-			<Grid>
+			<Grid Grid.Row="1" Grid.Column="1">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
@@ -73,12 +59,24 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<Label x:Name="DescriptionLabel" Grid.Row="0" Content="{x:Static locales:Resources.Description}" />
+				<CheckBox
+					Margin="3,3,0,0"
+					Name="IsEnabledCheckBox"
+					HorizontalAlignment="Center"
+					Content="Enabled"
+					IsChecked="{Binding IsEnabled}" />
+				<CheckBox Grid.Column="1"
+					Margin="0,3,0,0"
+					Name="IsReadOnlyCheckBox"
+					Content="Read-Only"
+					IsChecked="{Binding IsReadOnly}" />
+				<Label x:Name="DescriptionLabel" Grid.Row="1" Content="{x:Static locales:Resources.Description}" />
 				<TextBox
 					Name="DescriptionTextBox"
-					Grid.Row="0"
 					Grid.Column="1"
+					 Grid.Row="1"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
@@ -88,10 +86,10 @@
 					SpellCheck.IsEnabled="True"
 					Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					TextWrapping="Wrap" />
-				<Label x:Name="InstructionsLabel" Grid.Row="1" Content="{x:Static locales:Resources.Instructions}" />
+				<Label x:Name="InstructionsLabel" Grid.Row="2" Content="{x:Static locales:Resources.Instructions}" />
 				<TextBox
 					Name="InstructionsTextBox"
-					Grid.Row="1"
+					Grid.Row="2"
 					Grid.Column="1"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
@@ -103,7 +101,6 @@
 					Text="{Binding Instructions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					TextWrapping="Wrap" />
 			</Grid>
-		</StackPanel>
 		<Border
 			Grid.Row="2"
 			Grid.ColumnSpan="2"
