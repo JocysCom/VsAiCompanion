@@ -60,6 +60,7 @@ Conclusion: Function call approved.&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>true</IsPreview>
+  <IsFavorite>false</IsFavorite>
   <UseMaximumContext>true</UseMaximumContext>
   <ItemType>None</ItemType>
   <Attachments />

@@ -4,8 +4,8 @@
       <StartPosition>
         <Left>195</Left>
         <Top>45</Top>
-        <Width>494</Width>
-        <Height>400.5</Height>
+        <Width>455.5</Width>
+        <Height>352.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -17,15 +17,14 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.27253886010362693</GridSplitterPosition>
-        <IsBarPanelVisible>false</IsBarPanelVisible>
+        <GridSplitterPosition>0.22747747747747749</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
+        <GridSplitterPosition>0.23085585585585586</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
@@ -44,7 +43,7 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AssistantData>
       <ListsData>
-        <GridSplitterPosition>0.29740932642487045</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>Context - Operating System</string>
         </ListSelection>
@@ -216,6 +215,12 @@
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTable</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.GetDescription</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.SetDescription</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
