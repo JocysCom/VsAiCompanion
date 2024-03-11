@@ -338,6 +338,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				Items = items;
 			}
 			public IList<T> Items { get; }
+			public bool Handled { get; set; }
 		}
 
 		public delegate IList<T> ValidateDataDelegate(IList<T> items);
@@ -749,7 +750,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				for (int i = 0; i < items.Count; i++)
 					Items.Add(items[i]);
 			}
-			else
+			else if (!(e?.Handled == true))
 			{
 				var oldList = GetHashValues(Items);
 				var newList = GetHashValues(data).ToArray();

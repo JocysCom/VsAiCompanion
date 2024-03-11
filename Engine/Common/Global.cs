@@ -355,13 +355,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private static void PromptItems_OnValidateData(object sender, SettingsData<PromptItem>.SettingsDataEventArgs e)
 		{
 			if (e.Items.Count == 0)
+			{
 				SettingsSourceManager.ResetPrompts();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
 		}
 
 		private static void Lists_OnValidateData(object sender, SettingsData<ListInfo>.SettingsDataEventArgs e)
 		{
 			if (e.Items.Count == 0)
+			{
 				SettingsSourceManager.ResetLists();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
 		}
 
 		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)

@@ -1,3 +1,7 @@
+2024-03-10 v1.7.7
+
+- Fix: Default lists are not loaded if settings already exist.
+
 2024-03-10 v1.7.6
 
 - Fix: The standalone app lists Visual Studio functions that are not available for AI.
