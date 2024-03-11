@@ -498,4 +498,10 @@
   <data name="Lists_Feature_Description" xml:space="preserve">
     <value>Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists.</value>
   </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="ReadOnly" xml:space="preserve">
+    <value>Read-Only</value>
+  </data>
 </root>
