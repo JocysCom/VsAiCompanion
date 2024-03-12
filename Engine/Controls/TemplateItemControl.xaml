@@ -433,8 +433,7 @@
 						</StackPanel>
 					</TabItem.Header>
 					<StackPanel>
-						<Border Background="{StaticResource BackgroundDark}" BorderBrush="{StaticResource BorderDark}"
-								BorderThickness="0,0,0,1">
+						<Border Background="{StaticResource BackgroundDark}" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,0,1">
 							<TextBlock
 								Name="FeatureDescriptionLabel"
 								Margin="4"
@@ -451,12 +450,14 @@
 								<StackPanel Orientation="Vertical">
 									<ComboBox
 										Name="Context0TemplateComboBox"
+										HorizontalAlignment="Stretch"
 										DisplayMemberPath="Value"
 										ItemsSource="{Binding ContextListNames, ElementName=This}"
 										SelectedValue="{Binding Context0ListName}"
 										SelectedValuePath="Key" />
 									<ComboBox
 										Name="Context1TemplateComboBox"
+										HorizontalAlignment="Stretch"
 										DisplayMemberPath="Value"
 										ItemsSource="{Binding ContextListNames, ElementName=This}"
 										SelectedValue="{Binding Context1ListName}"
@@ -471,12 +472,14 @@
 								<StackPanel Orientation="Vertical">
 									<ComboBox
 										Name="Context2TemplateComboBox"
+										HorizontalAlignment="Stretch"
 										DisplayMemberPath="Value"
 										ItemsSource="{Binding ProfileListNames, ElementName=This}"
 										SelectedValue="{Binding Context2ListName}"
 										SelectedValuePath="Key" />
 									<ComboBox
 										Name="Context3TemplateComboBox"
+										HorizontalAlignment="Stretch"
 										DisplayMemberPath="Value"
 										ItemsSource="{Binding RoleListNames, ElementName=This}"
 										SelectedValue="{Binding Context3ListName}"
@@ -490,12 +493,14 @@
 								<StackPanel Orientation="Vertical">
 									<ComboBox
 										Name="Context4TemplateComboBox"
+										HorizontalAlignment="Stretch"
 										DisplayMemberPath="Value"
 										ItemsSource="{Binding ProfileListNames, ElementName=This}"
 										SelectedValue="{Binding Context4ListName}"
 										SelectedValuePath="Key" />
 									<ComboBox
 										Name="Context5TemplateComboBox"
+										HorizontalAlignment="Stretch"
 										DisplayMemberPath="Value"
 										ItemsSource="{Binding RoleListNames, ElementName=This}"
 										SelectedValue="{Binding Context5ListName}"
