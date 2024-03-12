@@ -141,7 +141,7 @@
 							VerticalAlignment="Top"
 							Visibility="{Binding BarPanelVisibility, ElementName=This}" />
 						<StackPanel Orientation="Vertical">
-							<GroupBox Margin="0,0,3,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+							<GroupBox Margin="0,0,0,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
 								<GroupBox.Header>
 									<StackPanel Orientation="Horizontal">
 										<Label
@@ -181,7 +181,7 @@
 						<GroupBox
 							Grid.Row="1"
 							Grid.Column="1"
-							Margin="0,0,3,3"
+							Margin="3,0,0,3"
 							VerticalAlignment="Stretch"
 							Visibility="{Binding BarPanelVisibility, ElementName=This}">
 							<GroupBox.Header>
@@ -234,7 +234,7 @@
 						<GroupBox
 							Grid.Row="1"
 							Grid.Column="1"
-							Margin="0,0,3,3"
+							Margin="3,0,3,3"
 							VerticalAlignment="Stretch"
 							Visibility="{Binding BarPanelVisibility, ElementName=This}">
 							<GroupBox.Header>
@@ -440,10 +440,8 @@
 								Text="{x:Static locales:Resources.Personalize_the_chat}"
 								TextWrapping="Wrap" />
 						</Border>
-
 						<WrapPanel Orientation="Horizontal">
-
-							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
 								<GroupBox.Header>
 									<Label x:Name="ContextSystemLabel" Padding="0" Content="System and Application" />
 								</GroupBox.Header>
@@ -464,8 +462,7 @@
 										SelectedValuePath="Key" />
 								</StackPanel>
 							</GroupBox>
-
-							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
 								<GroupBox.Header>
 									<Label x:Name="ContextAssistantLabel" Padding="0" Content="Assistant - Profile and Role" />
 								</GroupBox.Header>
@@ -509,7 +506,6 @@
 							</GroupBox>
 						</WrapPanel>
 					</StackPanel>
-
 				</TabItem>
 			</TabControl>
 			<!--  Row 2  -->
