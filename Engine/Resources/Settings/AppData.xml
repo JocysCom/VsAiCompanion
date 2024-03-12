@@ -2,9 +2,9 @@
   <Items>
     <AppData>
       <StartPosition>
-        <Left>211</Left>
+        <Left>259.5</Left>
         <Top>74.5</Top>
-        <Width>455.5</Width>
+        <Width>407</Width>
         <Height>352.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
@@ -17,14 +17,14 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.22916666666666666</GridSplitterPosition>
+        <GridSplitterPosition>0.22945638432364096</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.29646017699115046</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
@@ -55,7 +55,7 @@
         <ListSelection>
           <string>Context - Operating System</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>1</ListSelectedIndex>
         <ChatPanelZoom>0</ChatPanelZoom>
       </ListsData>
       <AiServices>
@@ -149,16 +149,23 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContents</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContents</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContentsAuthenticated</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContentsAuthenticated</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContent</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.DownloadContent</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContentAuthenticated</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.DownloadContentAuthenticated</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.CallApi</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.CallApiAuthenticated</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

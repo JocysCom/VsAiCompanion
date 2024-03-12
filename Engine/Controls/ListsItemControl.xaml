@@ -32,9 +32,19 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
+		<Button
+			Name="ListToggleButton"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Panel.ZIndex="10"
+			Click="ListToggleButton_Click"
+			Focusable="False">
+			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+		</Button>
 		<Border
 			Grid.Row="0"
 			Grid.ColumnSpan="2"
+			Padding="32,0,0,0"
 			Background="{StaticResource BackgroundDark}"
 			BorderBrush="{StaticResource BorderDark}"
 			BorderThickness="0,0,0,1">
@@ -44,7 +54,7 @@
 				Text="{x:Static locales:Resources.Lists_Feature_Description}"
 				TextWrapping="Wrap" />
 		</Border>
-		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
 			<Controls:IconUserControl
 				x:Name="IconPanel"
 				Width="64"

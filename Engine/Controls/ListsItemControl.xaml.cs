@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -27,12 +28,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				_DataType = value;
 				// Update panel settings.
-				//PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
-				//PanelSettings = Global.AppSettings.GetTaskSettings(value);
-				//PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
+				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
+				PanelSettings = Global.AppSettings.GetTaskSettings(value);
+				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
 				// Update the rest.
 				//PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
-				//PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
+				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
 				//OnPropertyChanged(nameof(BarPanelVisibility));
 			}
 		}
@@ -199,6 +200,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Fast workaround
 			//MainDataGrid.ItemsSource = null;
 
+		}
+
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
+
+		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			await Task.Delay(0);
+		}
+
+		private void ListToggleButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			PanelSettings.UpdateListToggleButtonIcon(ListToggleButton, true);
 		}
 	}
 
