@@ -5,7 +5,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
 
 	/// <summary>
-	/// Basic functions that allow AI to create, modify files, or retrieve web content or files from the web.
+	/// Basic functions that allow AI to create and modify files.
 	/// </summary>
 	public partial class Basic : IFileHelper, IDiffHelper
 	{

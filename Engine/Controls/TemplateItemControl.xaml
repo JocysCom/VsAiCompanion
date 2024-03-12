@@ -288,11 +288,7 @@
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
-						<WrapPanel
-							Grid.Row="1"
-							Grid.ColumnSpan="2"
-							Margin="0,0,0,66"
-							Orientation="Horizontal">
+						<WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
 							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
 								<GroupBox.Header>
 									<StackPanel Orientation="Horizontal">
