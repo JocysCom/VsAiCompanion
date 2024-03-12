@@ -76,7 +76,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="table">Table name.</param>
 		/// <param name="column">Column name.</param>
 		/// <param name="description">Description text.</param>
-		/// <returns>Number of items affected.</returns>
+		/// <returns>0 (success) or 1 (failure).</returns>
 		[RiskLevel(RiskLevel.High)]
 		public static int SetDescription(string connectionString, string description, string schema = null, string table = null, string column = null)
 		{

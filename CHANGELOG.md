@@ -1,3 +1,7 @@
+2024-03-12 v1.7.10
+
+- Fix: Database function `SetDescription`.
+
 2024-03-11 v1.7.9
 
 - Fix: Default lists are not loaded if settings already exist.

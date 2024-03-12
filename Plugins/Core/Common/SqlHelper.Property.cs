@@ -25,6 +25,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return value;
 		}
 
+		/// <returns>0 (success) or 1 (failure).</returns>
 		public static int SetProperty(string connectionString, string name, string value, string schema = null, string table = null, string column = null)
 		{
 			var level0 = string.IsNullOrEmpty(schema) ? null : "SCHEMA";
@@ -117,10 +118,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			p.Add("@level1name", SqlDbType.VarChar, 128).Value = level1name ?? (object)DBNull.Value;
 			p.Add("@level2type", SqlDbType.VarChar, 128).Value = level2type ?? (object)DBNull.Value;
 			p.Add("@level2name", SqlDbType.VarChar, 128).Value = level2name ?? (object)DBNull.Value;
+			var rv = new SqlParameter("@returnValue", SqlDbType.Int);
+			rv.Direction = ParameterDirection.ReturnValue;
+			p.Add(rv);
 			var helper = new SqlHelper();
 			var data = helper.ExecuteNonQuery(connectionString, cmd);
 			cmd.Dispose();
-			return data;
+			var returnValue = (int)rv.Value;
+			return returnValue;
 		}
 
 	}

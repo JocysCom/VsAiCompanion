@@ -358,25 +358,28 @@
             </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel">
-            <summary>Risk level</summary>
+            <summary>
+            Defines the access and execution levels for AI within applications,
+            ranging from no permissions to full user-equivalent permissions.
+            </summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Unknown">
             <summary>Unknown.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.None">
-            <summary>None.</summary>
+            <summary>None: Read Internal. AI can only read data within the application.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Low">
-            <summary>Low. AI can read data.</summary>
+            <summary>Low: Write Internal. AI can write or modify data within the application.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Medium">
-            <summary>Medium. AI can read and write or set data.</summary>
+            <summary>Medium: Read External. AI can read external data sources outside the application.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.High">
-            <summary>High. AI can read, write and run scripts.</summary>
+            <summary>High: Write External. AI can modify external data sources outside the application.</summary>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Critical">
-            <summary>Critical.</summary>
+            <summary>Critical: Full Access. AI has full access, equivalent to a user, including running applications and scripts.</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute">
             <summary>
@@ -398,6 +401,9 @@
             <summary>
             SQL Data Helper.
             </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.SqlHelper.SetProperty(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <returns>0 (success) or 1 (failure).</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Database">
             <summary>
@@ -451,7 +457,7 @@
             <param name="table">Table name.</param>
             <param name="column">Column name.</param>
             <param name="description">Description text.</param>
-            <returns>Number of items affected.</returns>
+            <returns>0 (success) or 1 (failure).</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Lists">
             <summary>
