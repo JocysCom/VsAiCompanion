@@ -40,6 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					if (_PluginFunctions.Count == 0)
 					{
 						AddMethods(typeof(Basic));
+						AddMethods(typeof(Web));
 						AddMethods(typeof(VisualStudio));
 						AddMethods(typeof(Database));
 						Search._databasePath = Global.PluginsSearchPath;

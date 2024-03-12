@@ -64,17 +64,18 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="listName">Name of the list</param>
 		/// <param name="includeItems">`true` to include items, `false` to get information only.</param>
 		[RiskLevel(RiskLevel.None)]
-		public ListInfo GetList(string listName, bool includeItems = false)
+		public ListInfo GetList(string listName, bool includeItems)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
 				return null;
-			if (includeItems)
-				return li;
 			var newLi = new ListInfo();
 			RuntimeHelper.CopyProperties(li, newLi, true);
+			// Remove unecessary data.
 			newLi.IconData = null;
 			newLi.IconType = null;
+			if (includeItems)
+				newLi.Items = li.Items;
 			return newLi;
 		}
 
@@ -141,8 +142,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			// List already exists.
 			if (li != null)
 				return -3;
-			if (li.IsReadOnly)
-				return -2;
 			li = new ListInfo();
 			li.Path = FilterPath;
 			li.Name = listName;
@@ -155,22 +154,29 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Updates an existing list.
 		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		/// <param name="description">Optional. List description.</param>
+		/// <param name="instructions">Optional. Assistant Instrutions.</param>
 		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int UpdateList(string listName, string description)
+		public int UpdateList(string listName, string description = null, string instructions = null)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
 				return -1;
 			if (li.IsReadOnly)
 				return -2;
-			// Create if not exists and return result
-			return CreateList(listName, description);
+			if (description != null)
+				li.Description = description;
+			if (instructions != null)
+				li.Instructions = instructions;
+			return 0;
 		}
 
 		/// <summary>
 		/// Deletes an existing list.
 		/// </summary>
+		/// <param name="listName">Name of the list</param>
 		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
 		public int DeleteList(string listName)
@@ -186,6 +192,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Clears all items from a list.
 		/// </summary>
+		/// <param name="listName">Name of the list</param>
 		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
 		public int ClearList(string listName)

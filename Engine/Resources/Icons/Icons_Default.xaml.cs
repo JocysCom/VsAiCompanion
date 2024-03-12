@@ -24,6 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_button_error = nameof(Icon_button_error);
 		public const string Icon_button_trend_up = nameof(Icon_button_trend_up);
 		public const string Icon_chat = nameof(Icon_chat);
+		public const string Icon_chat_personalized = nameof(Icon_chat_personalized);
 		public const string Icon_checkbox_checked = nameof(Icon_checkbox_checked);
 		public const string Icon_checkbox_checked_all = nameof(Icon_checkbox_checked_all);
 		public const string Icon_checkbox_null = nameof(Icon_checkbox_null);
@@ -80,6 +81,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_graduate = nameof(Icon_graduate);
 		public const string Icon_hamburger = nameof(Icon_hamburger);
 		public const string Icon_Information_Grey = nameof(Icon_Information_Grey);
+		public const string Icon_internet = nameof(Icon_internet);
 		public const string Icon_list = nameof(Icon_list);
 		public const string Icon_list_style_numbered = nameof(Icon_list_style_numbered);
 		public const string Icon_magnifying_glass = nameof(Icon_magnifying_glass);
@@ -118,6 +120,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_user_comment = nameof(Icon_user_comment);
 		public const string Icon_user_group = nameof(Icon_user_group);
 		public const string Icon_user_group_emoticon = nameof(Icon_user_group_emoticon);
+		public const string Icon_user_id = nameof(Icon_user_id);
 		public const string Icon_Visual_Studio = nameof(Icon_Visual_Studio);
 		public const string Icon_warning = nameof(Icon_warning);
 		public const string Icon_window = nameof(Icon_window);

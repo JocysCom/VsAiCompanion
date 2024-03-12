@@ -1,6 +1,9 @@
-2024-03-12 v1.7.10
+2024-03-12 v1.7.18
 
-- Fix: Database function `SetDescription`.
+- Fix: Database function "SetDescription."
+- Fix: AI was unable to create or update lists.
+- New: Now AI can request API specifications and call web services.
+- New: "API - Demo" list with API web service example.
 
 2024-03-11 v1.7.9
 

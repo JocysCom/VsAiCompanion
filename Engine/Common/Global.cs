@@ -368,6 +368,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Data is reset, no need to handle it.
 				e.Handled = true;
 			}
+			else
+			{
+				// Check for missing templates only.
+				var itemsAdded = SettingsSourceManager.CheckRequiredLists(e.Items);
+				if (itemsAdded > 0)
+				{
+					// Reorder and save.
+					SettingsData<ListInfo>.SortList(e.Items);
+					Lists.IsSavePending = true;
+				}
+			}
 		}
 
 		private static void AppData_OnValidateData(object sender, SettingsData<AppData>.SettingsDataEventArgs e)

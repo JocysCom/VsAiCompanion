@@ -223,7 +223,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return sb.ToString();
 		}
 
-		public static void CopyProperties(object source, object target, bool valueTypeOnly = false)
+		public static void CopyProperties(object source, object target, bool onlyNonByRef = false)
 		{
 			if (source is null)
 				throw new ArgumentNullException(nameof(source));
@@ -240,7 +240,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					continue;
 				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
 					continue;
-				if (valueTypeOnly && !sp.PropertyType.IsValueType)
+				if (onlyNonByRef && sp.PropertyType.IsByRef)
 					continue;
 				var useJson = sp.PropertyType.IsSerializable && !sp.PropertyType.IsValueType;
 				// Get source value.

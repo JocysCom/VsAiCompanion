@@ -12,6 +12,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Id = methodInfoDeclaringType.FullName;
 			Name = methodInfoDeclaringType.Name;
 			var iconName = Resources.Icons.Icons_Default.Icon_radar;
+			if (Name.ToLower().Contains(nameof(Web).ToLower()))
+				iconName = Resources.Icons.Icons_Default.Icon_internet;
 			if (Name.ToLower().Contains(nameof(VisualStudio).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_Visual_Studio;
 			if (Name.ToLower().Contains(nameof(Database).ToLower()))

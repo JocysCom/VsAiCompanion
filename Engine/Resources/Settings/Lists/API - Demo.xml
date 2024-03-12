@@ -1,0 +1,32 @@
+﻿<ListInfo>
+  <Name>API - Demo</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAH1T226bQBB9z1dsN6+wN+6WSSTbJK6UtpHquOpTRWALKxNAQMHp13cWX3CbqBIs&#xD;
+M7Nnz5mZHea3+5cC9bJpVVWGmBOGkSyTKlVlFuKnzZ3p49ubq/mH1Zfl5vtjhNo+Q49Pi4ePS4RN&#xD;
+Sr9ZS0pXmxX6ur1HnHBKo88Y4bzr6hmlwzCQwSJVk9H7Jq5zlbQUgFQD4RAFMs5J2qUYJDTzRSIc&#xD;
+I5WG+CF+lc0PcCDPsg3fYRaMMc10hMz2hSp37wF5EAR03AVoiFm9x+j1+B1U2uUhFrZ2cqmyvDt5&#xD;
+vZLDotIHEEPChke3KH4upPkcJ7usqX6VkGgpB3SBgFxmbR0nMsR1I1vZ9BKKRGiejWWppCpHHyJ1&#xD;
+3OUIYp8EN+ytICJhhsmI6+rVsQ2TEzEtaxsAh212iE4geHtO/LXgvzH6qYoixNeB6y1WS0z/FbMM&#xD;
+u+ce8UHsQKZZjiT6zblD3OSoM4qfEVpra58VIjcKouitAg+Ib/DctIjnWX5h2sSxPM8QYq13/kMN&#xD;
+LVhCL7gOCkZs1wBnJJvKEha/EzCsFfRYdfoaCXPf5uASx4ARc3LORzuYTG8y+aV9AYEWTLY12qcE&#xD;
+yqqUGLVdU+3giq8dy/V9dgqYx3Hi5wBMnUziOsTjtJzDL6qTTaHgA+C/q/EOxcxpBv+Gnu+bqz+y&#xD;
+7EqprQMAAA==</IconData>
+  <Description>A list of APIs with their URLs, specifications, and short descriptions for demo and testing purposes.</Description>
+  <Instructions>A list of APIs with their URLs, specifications, and short descriptions for demo and testing purposes. List Structure:&#xD;
+Key - API Base URL 
+Value - URL to API Specification (JSON or YAML) 
+Comment - Short description of API service.&#xD;
+&#xD;
+Special instructions for processing: 
+1. Retrieve the API from the list. 
+2. Use the specification URL to fetch and parse the API specification. 
+3. Based on the specification, call the appropriate endpoint in the API to get the output.  </Instructions>
+  <IsReadOnly>true</IsReadOnly>
+  <Items>
+    <ListItem>
+      <Key>https://icanhazdadjoke.com/search</Key>
+      <Value>https://app.swaggerhub.com/apiproxy/schema/file/apis/CothamTechnologies/dadjokesdemo/1.0?format=json</Value>
+      <Comment>Dad jokes</Comment>
+    </ListItem>
+  </Items>
+</ListInfo>

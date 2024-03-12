@@ -107,38 +107,6 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFileLines(System.String,System.Int64,System.Int64)">
             <inheritdoc/>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContents(System.String)">
-            <summary>
-            Retrieve content of websites by URL.
-            </summary>
-            <param name="url">URL which points to the resource.</param>
-            <returns>The output of the request.</returns>
-            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContentsAuthenticated(System.String)">
-            <summary>
-            Retrieve content of websites by URL. Use default credentials of the user.
-            </summary>
-            <param name="url">URL which points to the resource.</param>
-            <returns>The output of the request.</returns>
-            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContent(System.String)">
-            <summary>
-            Download and return the content of a given URL.
-            </summary>
-            <param name="url">URL from which the content will be downloaded. The URL can have different schemes like 'https://', 'file://', etc., that are capable of fetching files or data across various protocols.</param>
-            <returns>The output of the request.</returns>
-            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContentAuthenticated(System.String)">
-            <summary>
-            Download and return the content of a given URL. Use default credentials of the user.
-            </summary>
-            <param name="url">URL from which the content will be downloaded. The URL can have different schemes like 'https://', 'file://', etc., that are capable of fetching files or data across various protocols.</param>
-            <returns>The output of the request.</returns>
-            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
-        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper">
             <summary>
             File Helper
@@ -514,22 +482,27 @@
             </summary>
             <returns>0 operation successfull, -2 list is readonly, -3 list already exists.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList(System.String,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList(System.String,System.String,System.String)">
             <summary>
             Updates an existing list.
             </summary>
+            <param name="listName">Name of the list</param>
+            <param name="description">Optional. List description.</param>
+            <param name="instructions">Optional. Assistant Instrutions.</param>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList(System.String)">
             <summary>
             Deletes an existing list.
             </summary>
+            <param name="listName">Name of the list</param>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList(System.String)">
             <summary>
             Clears all items from a list.
             </summary>
+            <param name="listName">Name of the list</param>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem(System.String,System.String,System.String,System.String)">
@@ -1448,6 +1421,71 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent(System.String)">
             <inheritdoc />
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Web">
+            <summary>
+            Web functions that allow AI to retrieve web content or files from the web or call APIs.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContents(System.String)">
+            <summary>
+            Retrieve content of websites by URL.
+            </summary>
+            <param name="url">URL which points to the resource.</param>
+            <returns>The output of the request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContentsAuthenticated(System.String)">
+            <summary>
+            Retrieve content of websites by URL. Use default credentials of the user.
+            </summary>
+            <param name="url">URL which points to the resource.</param>
+            <returns>The output of the request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.DownloadContent(System.String)">
+            <summary>
+            Download and return the content of a given URL.
+            </summary>
+            <param name="url">URL from which the content will be downloaded. The URL can have different schemes like 'https://', 'file://', etc., that are capable of fetching files or data across various protocols.</param>
+            <returns>The output of the request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.DownloadContentAuthenticated(System.String)">
+            <summary>
+            Download and return the content of a given URL. Use default credentials of the user.
+            </summary>
+            <param name="url">URL from which the content will be downloaded. The URL can have different schemes like 'https://', 'file://', etc., that are capable of fetching files or data across various protocols.</param>
+            <returns>The output of the request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.CallApi(System.String,System.String,System.String)">
+            <summary>
+            Performs an HTTP request to the specified API and returns its JSON response.
+            </summary>
+            <param name="httpCallType">The type of HTTP call (e.g., GET, POST)</param>
+            <param name="apiBaseUrl">The base URL of the API.</param>
+            <param name="jsonString">The JSON string to send as the payload, if applicable.</param>
+            <returns>The JSON response from the API.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.CallApiAuthenticated(System.String,System.String,System.String)">
+            <summary>
+            Performs an HTTP request to the specified API and returns its JSON response.
+            </summary>
+            <param name="httpCallType">The type of HTTP call (e.g., GET, POST)</param>
+            <param name="apiBaseUrl">The base URL of the API.</param>
+            <param name="jsonString">The JSON string to send as the payload, if applicable.</param>
+            <returns>The JSON response from the API.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web._CallApiAsync(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Performs an HTTP request to the specified API and returns its JSON response.
+            </summary>
+            <param name="httpCallType">The type of HTTP call (e.g., GET, POST)</param>
+            <param name="apiBaseUrl">The base URL of the API.</param>
+            <param name="jsonString">The JSON string to send as the payload, if applicable.</param>
+            <param name="useDefaultCredentials">Use default credentials.</param>
+            <returns>The JSON response from the API.</returns>
         </member>
     </members>
 </doc>

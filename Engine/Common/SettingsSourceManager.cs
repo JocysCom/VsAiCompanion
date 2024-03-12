@@ -123,6 +123,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 				zip.Close();
 		}
 
+		#endregion
+
+		#region Lists
+
+		public static string[] GetRequiredLists()
+		{
+			return new string[] {
+				"API - Demo",
+			};
+		}
+
+
 		/// <summary>Reset Prompts</summary>
 		public static void ResetLists(ZipStorer zip = null)
 		{
@@ -139,6 +151,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Close zip.
 			if (closeZip)
 				zip.Close();
+		}
+
+		public static int CheckRequiredLists(IList<ListInfo> items, ZipStorer zip = null)
+		{
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			// ---
+			var required = GetRequiredLists();
+			var current = items.Select(x => x.Name).ToArray();
+			var missing = required.Except(current).ToArray();
+			// If all templates exist then return.
+			if (missing.Length == 0)
+				return 0;
+			var zipItems = GetItemsFromZip(zip, Global.ListsName, Global.Lists, missing);
+			foreach (var zipItem in zipItems)
+				items.Add(zipItem);
+			// ---
+			if (closeZip)
+				zip.Close();
+			return missing.Length;
 		}
 
 		#endregion
@@ -305,7 +338,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static ZipStorer GetZipFromUrl(string url)
 		{
-			var docItem = Helper.RunSynchronously(async () => await Basic.DownloadContentAuthenticated(url));
+			var docItem = Helper.RunSynchronously(async () => await Web.DownloadContentAuthenticated(url));
 			if (!string.IsNullOrEmpty(docItem.Error))
 			{
 				Global.ShowError($"{nameof(GetZipFromUrl)} error: {docItem.Error}");
