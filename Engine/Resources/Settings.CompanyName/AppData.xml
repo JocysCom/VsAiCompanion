@@ -24,7 +24,7 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.23085585585585586</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
@@ -43,11 +43,11 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AssistantData>
       <ListsData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.25731981981981983</GridSplitterPosition>
         <ListSelection>
           <string>Context - Operating System</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>1</ListSelectedIndex>
       </ListsData>
       <AiServices>
         <AiService>
@@ -102,16 +102,23 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContents</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContents</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetWebPageContentsAuthenticated</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContentsAuthenticated</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContent</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.DownloadContent</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.DownloadContentAuthenticated</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.DownloadContentAuthenticated</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.CallApi</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.CallApiAuthenticated</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

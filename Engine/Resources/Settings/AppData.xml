@@ -24,7 +24,7 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.29646017699115046</GridSplitterPosition>
+        <GridSplitterPosition>NaN</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
@@ -49,8 +49,7 @@
         <ChatPanelZoom>0</ChatPanelZoom>
       </AssistantData>
       <ListsData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
-        <IsListPanelVisible>false</IsListPanelVisible>
+        <GridSplitterPosition>0.28192161820480405</GridSplitterPosition>
         <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection>
           <string>Context - Operating System</string>
