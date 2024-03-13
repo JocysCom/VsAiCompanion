@@ -20,8 +20,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.7.18</AssemblyVersion>
-		<FileVersion>1.7.18</FileVersion>
+		<AssemblyVersion>1.7.19</AssemblyVersion>
+		<FileVersion>1.7.19</FileVersion>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 	</PropertyGroup>
 
