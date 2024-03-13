@@ -53,7 +53,7 @@ This tool acts as an intermediary, facilitating data exchange between the user a
 ### Wiki
 - [Home - Rethinking AI Integration](https://github.com/JocysCom/VsAiCompanion/wiki)
 - [AI mastering tips](https://github.com/JocysCom/VsAiCompanion/wiki/Tips)
-- [How-To examples](HOWTO.md)
+- [How-To examples](https://github.com/JocysCom/VsAiCompanion/blob/main/HOWTO.md)
 
 ## Screenshots
 Visual Studio Extension: Open the extension in Visual Studio:
