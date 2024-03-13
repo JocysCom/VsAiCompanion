@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using JocysCom.ClassLibrary.Collections;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -45,7 +45,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				{
 					var release = releases[i];
 					var name = i == 0 ? $"Latest Version {release.name}" : release.name;
-					ReleaseList.Add(release.id, name);
+					ReleaseList.Add(new KeyValue<long, string>(release.id, name));
 				}
 				if (releases.Count > 0)
 					ReleaseComboBox.SelectedIndex = 0;
@@ -58,7 +58,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			}
 		}
 
-		public Dictionary<long, string> ReleaseList = new Dictionary<long, string>();
+		public BindingList<KeyValue<long, string>> ReleaseList = new BindingList<KeyValue<long, string>>();
 		public long? ReleaseId = null;
 
 		/*
