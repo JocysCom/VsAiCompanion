@@ -35,7 +35,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		/// <summary>List items: Key, Value, Comment.</summary>
 		[DefaultValue(null)]
-		public BindingList<ListItem> Items { get => _Items; set => SetProperty(ref _Items, value); }
+		public BindingList<ListItem> Items
+		{
+			get => _Items = _Items ?? new BindingList<ListItem>();
+			set => SetProperty(ref _Items, value);
+		}
 		BindingList<ListItem> _Items;
 
 		/// <inheritdoc/>
