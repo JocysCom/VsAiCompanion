@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.Controls.UpdateControl.GitHub;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
@@ -17,17 +18,17 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			// Set the base URL for API requests.
 			_httpClient.BaseAddress = new Uri("https://api.github.com/");
 			// GitHub API requires a user-agent header.
-			_httpClient.DefaultRequestHeaders.Add("User-Agent", "Your-App-Name");
+			_httpClient.DefaultRequestHeaders.Add("User-Agent", "JocysCom GitHub API Client");
 		}
 
-		public async Task<List<ReleaseInfo>> GetGitHubReleasesAsync(string company, string product)
+		public async Task<List<release>> GetGitHubReleasesAsync(string company, string product)
 		{
 			var url = $"repos/{company}/{product}/releases";
 			var response = await _httpClient.GetAsync(url);
 			if (response.IsSuccessStatusCode)
 			{
 				var content = await response.Content.ReadAsStringAsync();
-				var releases = JsonSerializer.Deserialize<List<ReleaseInfo>>(content);
+				var releases = JsonSerializer.Deserialize<List<release>>(content);
 				return releases;
 			}
 			else

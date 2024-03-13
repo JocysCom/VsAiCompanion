@@ -19,8 +19,8 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -44,8 +44,26 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-
-		<TextBox x:Name="LogPanel" Grid.Row="2" Grid.ColumnSpan="2" />
+		<StackPanel Grid.Row="2" Orientation="Horizontal">
+			<ComboBox
+				Name="ReleaseComboBox"
+				MinWidth="75"
+				DisplayMemberPath="Value"
+				SelectedValuePath="Key"
+				SelectionChanged="ReleaseComboBox_SelectionChanged" />
+			<Button Name="InstallButton" MinWidth="75" Click="InstallButton_Click">
+				<StackPanel Focusable="False">
+					<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
+					<Label Content="Install" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+		<TextBox
+			x:Name="LogPanel"
+			Grid.Row="3"
+			Grid.ColumnSpan="2"
+			VerticalAlignment="Stretch"
+			Background="{StaticResource BackgroundDark}" />
 
 	</Grid>
 </UserControl>

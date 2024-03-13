@@ -567,15 +567,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-		#endregion
-
 		private void IsSpellCheckEnabledCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
 			Global.AppSettings.IsSpellCheckEnabled = true;
@@ -585,5 +576,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			Global.AppSettings.IsSpellCheckEnabled = false;
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
 	}
 }

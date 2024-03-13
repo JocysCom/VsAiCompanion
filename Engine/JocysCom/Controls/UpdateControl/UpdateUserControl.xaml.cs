@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
@@ -7,31 +10,56 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 	/// Interaction logic for UpdateWindow.xaml
 	/// </summary>
 	/// <remarks>Make sure to set the Owner property to be disposed properly after closing.</remarks>
-	public partial class UpdateUserControl : UserControl
+	public partial class UpdateUserControl : UserControl, INotifyPropertyChanged
 	{
 		public UpdateUserControl()
 		{
-			//InitializeComponent();
+			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			//LogPanel.LogGridScrollUp = false;
 			//var process = System.Diagnostics.Process.GetCurrentProcess();
 			//processFileName = process.MainModule.FileName;
+			ReleaseComboBox.ItemsSource = ReleaseList;
 		}
+
+		public string GitHubCompany { get; set; }
+		public string GitHubProduct { get; set; }
+
+		public string AssetName { get; set; }
+
 
 		private async void CheckButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			try
 			{
 				var client = new GitHubApiClient();
-				var releases = await client.GetGitHubReleasesAsync("JocysCom", "VsAiCompanion");
-				LogPanel.Text = JsonSerializer.Serialize(releases);
+				var releases = await client.GetGitHubReleasesAsync(GitHubCompany, GitHubProduct);
+				releases = releases
+					.Where(x => !string.IsNullOrWhiteSpace(x.name))
+					.Where(x => x.assets.Any(y => AssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
+					.OrderByDescending(x => x.published_at)
+					.ToList();
+				ReleaseList.Clear();
+				for (int i = 0; i < releases.Count; i++)
+				{
+					var release = releases[i];
+					var name = i == 0 ? $"Latest Version {release.name}" : release.name;
+					ReleaseList.Add(release.id, name);
+				}
+				if (releases.Count > 0)
+					ReleaseComboBox.SelectedIndex = 0;
+				OnPropertyChanged(nameof(ReleaseList));
+				//LogPanel.Text = JsonSerializer.Serialize(releases);
 			}
 			catch (System.Exception ex)
 			{
 				LogPanel.Text = ex.ToString();
 			}
 		}
+
+		public Dictionary<long, string> ReleaseList = new Dictionary<long, string>();
+		public long? ReleaseId = null;
 
 		/*
 
@@ -246,5 +274,24 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		}
 
 		*/
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
+		private void ReleaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
+		}
+
+		private void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
 	}
 }
