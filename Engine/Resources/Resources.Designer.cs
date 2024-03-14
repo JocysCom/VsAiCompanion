@@ -961,6 +961,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset UI Settings.
+        /// </summary>
+        public static string Reset_UI_Settings {
+            get {
+                return ResourceManager.GetString("Reset_UI_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Response Streaming.
         /// </summary>
         public static string Response_Streaming {

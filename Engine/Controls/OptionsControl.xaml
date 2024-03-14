@@ -237,7 +237,16 @@
 							<Label Content="{x:Static locales:Resources.Reset_Prompting_Settings}" />
 						</StackPanel>
 					</Button>
-
+					<Button
+						Name="ResetUIButton"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Left"
+						Click="ResetUIButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="{x:Static locales:Resources.Reset_UI_Settings}" />
+						</StackPanel>
+					</Button>
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Sending_Message}">

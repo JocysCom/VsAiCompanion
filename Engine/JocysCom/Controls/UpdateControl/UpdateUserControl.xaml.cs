@@ -38,7 +38,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				releases = releases
 					.Where(x => !string.IsNullOrWhiteSpace(x.name))
 					.Where(x => x.assets.Any(y => AssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
-					.OrderByDescending(x => x.published_at)
+					.Where(x => System.Version.TryParse(x.name, out _))
+					.OrderByDescending(x => System.Version.Parse(x.name))
 					.ToList();
 				ReleaseList.Clear();
 				for (int i = 0; i < releases.Count; i++)
