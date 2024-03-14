@@ -112,6 +112,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			Global.AppSettings.ConfigurationUrl = dialog.FileNames[0];
 		}
+
+		/// <summary>
+		/// Use to make screenshots.
+		/// </summary>
+		private void ResetUIButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!Global.IsVsExtension)
+			{
+				//Global.MainControl.ActualWidth = 900
+			}
+			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.TaskData);
+			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.TemplateData);
+			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.FineTuningData);
+			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.AssistantData);
+			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.ListsData);
+		}
 	}
 
 }

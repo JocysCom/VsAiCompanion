@@ -110,14 +110,12 @@
 			<TabItem x:Name="UpdatesTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_user_group}" />
+						<ContentControl Content="{StaticResource Icon_Refresh}" />
 						<Label Content="Updates" />
 					</StackPanel>
 				</TabItem.Header>
 				<JcControlsUc:UpdateUserControl x:Name="UpdatesPanel" x:FieldModifier="public" />
 			</TabItem>
-
-
 			<TabItem>
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

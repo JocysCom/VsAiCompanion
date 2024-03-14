@@ -1,3 +1,7 @@
+2024-03-13 v1.7.19
+
+- Fix: Unable create the first item on the list manually.
+
 2024-03-12 v1.7.18
 
 - Fix: Database function "SetDescription."

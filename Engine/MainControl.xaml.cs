@@ -29,9 +29,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			AssistantsTabItem.Visibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			UpdatesTabItem.Visibility = InitHelper.IsDebug
+			UpdatesTabItem.Visibility = InitHelper.IsDebug && !Global.IsVsExtension
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			UpdatesPanel.GitHubCompany = "JocysCom";
+			UpdatesPanel.GitHubProduct = "VsAiCompanion";
+			UpdatesPanel.AssetName = "JocysCom.VS.AiCompanion.App.zip";
 		}
 
 		private void MainWindowPanel_Unloaded(object sender, RoutedEventArgs e)

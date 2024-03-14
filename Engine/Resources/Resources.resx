@@ -510,4 +510,7 @@
   <data name="Personalize_the_chat" xml:space="preserve">
     <value>Personalize the chat by providing personalized context. You can create and edit context lists on the [Lists] tab.</value>
   </data>
+  <data name="Reset_UI_Settings" xml:space="preserve">
+    <value>Reset UI Settings</value>
+  </data>
 </root>
