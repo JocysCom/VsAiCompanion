@@ -9,10 +9,10 @@ The AI Companion is a tool that answers questions, analyzes project files, and w
 - Web Chat is limited to 4K tokens, while AI models on API can process data 4-8 times larger.
 - API provides access to more recent and smarter AI models.
 
-### DOWNLOAD  v1.7.18 (2024-03-12)
+### DOWNLOAD  v1.7.19 (2024-03-13)
 Digitally Signed Standalone/Portable Application
 
-[Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.7.18/JocysCom.VS.AiCompanion.App.zip)
+[Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.7.19/JocysCom.VS.AiCompanion.App.zip)
 
 Visual Studio Extension
 
@@ -53,7 +53,7 @@ This tool acts as an intermediary, facilitating data exchange between the user a
 ### Wiki
 - [Home - Rethinking AI Integration](https://github.com/JocysCom/VsAiCompanion/wiki)
 - [AI mastering tips](https://github.com/JocysCom/VsAiCompanion/wiki/Tips)
-- [How-To examples](HOWTO.md)
+- [How-To examples](https://github.com/JocysCom/VsAiCompanion/blob/main/HOWTO.md)
 
 ## Screenshots
 Visual Studio Extension: Open the extension in Visual Studio:
