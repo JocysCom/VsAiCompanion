@@ -20,6 +20,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
@@ -28,12 +29,6 @@
 		</Grid.ColumnDefinitions>
 		<StackPanel Grid.Row="0" />
 		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-			<Button Name="CheckButton" Click="CheckButton_Click">
-				<StackPanel>
-
-					<Label Content="Check..." />
-				</StackPanel>
-			</Button>
 			<CheckBox x:Name="CheckDigitalSignatureCheckBox" Margin="8,0,0,0" Content="Check Digital Signature" />
 			<CheckBox x:Name="CheckVersionCheckBox" Margin="8,0,0,0" Content="Check Version" />
 		</StackPanel>
@@ -51,6 +46,12 @@
 				DisplayMemberPath="Value"
 				SelectedValuePath="Key"
 				SelectionChanged="ReleaseComboBox_SelectionChanged" />
+			<Button Name="CheckButton" Click="CheckButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+				</StackPanel>
+			</Button>
+
 			<Button Name="InstallButton" MinWidth="75" Click="InstallButton_Click">
 				<StackPanel Focusable="False">
 					<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
@@ -59,8 +60,14 @@
 			</Button>
 		</StackPanel>
 		<TextBox
-			x:Name="LogPanel"
+			x:Name="StatusPanel"
 			Grid.Row="3"
+			Grid.ColumnSpan="2"
+			VerticalAlignment="Stretch"
+			Background="{StaticResource BackgroundDark}" />
+		<TextBox
+			x:Name="LogPanel"
+			Grid.Row="4"
 			Grid.ColumnSpan="2"
 			VerticalAlignment="Stretch"
 			Background="{StaticResource BackgroundDark}" />

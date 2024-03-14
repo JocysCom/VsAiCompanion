@@ -35,6 +35,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			UpdatesPanel.GitHubCompany = "JocysCom";
 			UpdatesPanel.GitHubProduct = "VsAiCompanion";
 			UpdatesPanel.AssetName = "JocysCom.VS.AiCompanion.App.zip";
+			UpdatesPanel.AddTask += UpdatesPanel_AddTask;
+			UpdatesPanel.RemoveTask += UpdatesPanel_RemoveTask;
+		}
+
+		private void UpdatesPanel_AddTask(object sender, System.EventArgs e)
+		{
+			Global.MainControl.InfoPanel.AddTask(e);
+		}
+
+		private void UpdatesPanel_RemoveTask(object sender, System.EventArgs e)
+		{
+			Global.MainControl.InfoPanel.RemoveTask(e);
 		}
 
 		private void MainWindowPanel_Unloaded(object sender, RoutedEventArgs e)

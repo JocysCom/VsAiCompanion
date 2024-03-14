@@ -1,7 +1,13 @@
 ﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Network;
+using JocysCom.Controls.UpdateControl.GitHub;
+using JocysCom.VS.AiCompanion.Engine;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
@@ -25,17 +31,31 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		public string GitHubCompany { get; set; }
 		public string GitHubProduct { get; set; }
-
 		public string AssetName { get; set; }
+
+		public event EventHandler AddTask;
+		public event EventHandler RemoveTask;
 
 
 		private async void CheckButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			await Step1ChekOnline();
+		}
+
+		public BindingList<KeyValue<long, string>> ReleaseList = new BindingList<KeyValue<long, string>>();
+		public long? ReleaseId = null;
+
+		List<release> Releases;
+
+		public async Task Step1ChekOnline()
+		{
+			var e = new EventArgs();
+			AddTask?.Invoke(this, e);
 			try
 			{
 				var client = new GitHubApiClient();
 				var releases = await client.GetGitHubReleasesAsync(GitHubCompany, GitHubProduct);
-				releases = releases
+				Releases = releases
 					.Where(x => !string.IsNullOrWhiteSpace(x.name))
 					.Where(x => x.assets.Any(y => AssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
 					.Where(x => System.Version.TryParse(x.name, out _))
@@ -57,10 +77,66 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			{
 				LogPanel.Text = ex.ToString();
 			}
+			RemoveTask?.Invoke(this, e);
 		}
 
-		public BindingList<KeyValue<long, string>> ReleaseList = new BindingList<KeyValue<long, string>>();
-		public long? ReleaseId = null;
+
+		Downloader _downloader;
+
+		public async Task Step2DownloadAndExtract()
+		{
+			var item = ReleaseComboBox.SelectedItem as KeyValue<long, string>;
+			var releaseId = item?.Key;
+			if (releaseId == null)
+				return;
+			var selectedRelease = Releases
+				.Where(x => x.id == releaseId)
+				.FirstOrDefault();
+			if (selectedRelease == null)
+				return;
+			var asset = selectedRelease.assets
+				.First(x => AssetName.Equals(x.name, System.StringComparison.OrdinalIgnoreCase));
+			oldProgress = 0;
+			_downloader = new Downloader();
+			_downloader.Params.Url = asset.browser_download_url;
+			_downloader.Params.TargetFile = AssetName;
+			_downloader.Progress += _downloader_Progress;
+			await _downloader.LoadAsync();
+		}
+
+		decimal oldProgress;
+		object progressLock = new object();
+
+		private void _downloader_Progress(object sender, DownloaderEventArgs e)
+		{
+			lock (progressLock)
+			{
+				var dl = (Downloader)sender;
+				var progress = Math.Round(100m * e.BytesReceived / e.TotalBytesToReceive, 1);
+				if (oldProgress != progress || dl.Params.ResponseData != null)
+				{
+					oldProgress = progress;
+					Global.MainControl.Dispatcher.Invoke(() =>
+					{
+						var mb = Math.Round(e.BytesReceived / 1024m / 1024m, 1);
+						StatusPanel.Text = string.Format("Download... {0}% - {1} MB", progress, mb);
+						var isDone = e.BytesReceived == e.TotalBytesToReceive;
+						if (isDone && _downloader.Params.ResponseData != null)
+						{
+							AddLog($"Saving File {dl.Params.TargetFile}... \r\n");
+							System.IO.File.WriteAllBytes(dl.Params.TargetFile, dl.Params.ResponseData);
+							AddLog(" Done");
+							//Step3AExtractFiles(zipFileName);
+						}
+					});
+				}
+			}
+		}
+
+		public void AddLog(string s)
+		{
+			LogPanel.AppendText(s);
+		}
 
 		/*
 
@@ -91,22 +167,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		CloudItem CheckUpateItem;
 
-		void Step1ChekOnline()
-		{
-			CurrentLogItem = LogPanel.Add("Check Online...");
-			var message = new CloudMessage(Engine.CloudAction.CheckUpdates);
-			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
-			message.Values.Add(CloudKey.ClientVersion, ai.Version);
-			var item = new CloudItem()
-			{
-				Date = DateTime.Now,
-				Message = message,
-				State = CloudState.None,
-				Retries = 4,
-			};
-			CheckUpateItem = item;
-			Global.CloudClient.TasksTimer.DoActionNow(item);
-		}
+	
 
 		private void TasksTimer_BeforeRemove(object sender, QueueTimerEventArgs e)
 		{
@@ -120,55 +181,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			}
 		}
 
-		Downloader _downloader;
-		string processFileName;
 
-		public void Step2ProcessUpdateResults(CloudMessage results)
-		{
-			if (CancelUpdate)
-				return;
-			var url = results.Values.GetValue<string>(CloudKey.UpdateUrl);
-			if (string.IsNullOrEmpty(url))
-			{
-				CurrentLogItem.Message += " No new updates.";
-				return;
-			}
-			CurrentLogItem.Message += " Update URL retrieved.";
-			LogPanel.Add("{0}", url);
-			CurrentLogItem = LogPanel.Add("Download...");
-			_downloader = new Downloader();
-			_downloader.Progress += _downloader_Progress;
-			_downloader.LoadAsync(url);
-		}
-
-		LogItem CurrentLogItem;
-		decimal oldProgress;
-		object progressLock = new object();
-
-		private void _downloader_Progress(object sender, DownloaderEventArgs e)
-		{
-			lock (progressLock)
-			{
-				var progress = Math.Round(100m * e.BytesReceived / e.TotalBytesToReceive, 1);
-				if (oldProgress != progress || _downloader.Params.ResponseData != null)
-				{
-					oldProgress = progress;
-					ControlsHelper.Invoke(() =>
-					{
-						var mb = Math.Round(e.BytesReceived / 1024m / 1024m, 1);
-						CurrentLogItem.Message = string.Format("Download... {0}% - {1} MB", progress, mb);
-						if (_downloader.Params.ResponseData != null)
-						{
-							CurrentLogItem.Message = "Saving File...";
-							var zipFileName = processFileName + ".zip";
-							System.IO.File.WriteAllBytes(zipFileName, _downloader.Params.ResponseData);
-							CurrentLogItem.Message += " Done";
-							Step3AExtractFiles(zipFileName);
-						}
-					});
-				}
-			}
-		}
+		
 
 		void Step3AExtractFiles(string zipFileName)
 		{
@@ -290,9 +304,9 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		}
 
-		private void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		private async void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			await Step2DownloadAndExtract();
 		}
 	}
 }
