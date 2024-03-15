@@ -1,3 +1,10 @@
+2024-03-15 v1.8.6
+
+- Fix: The AI was unable to update the List instructions.
+- New: Role and Profile templates.
+- New: List sort and Insert List item methods.
+- New: Option to convert the fine-tuning files to and from Markdown format.
+
 2024-03-13 v1.7.19
 
 - Fix: Unable create the first item on the list manually.
