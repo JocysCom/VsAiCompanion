@@ -1,0 +1,53 @@
+﻿<ListInfo>
+  <Name>Role - Business Analyst</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1WTW/bRhC951ewzJVc7s5+cNewEsCykhZI2wB1XPRUKBIrEVYoQVIkO7++b5YU&#xD;
+bTFueityKCRhOcPZ+XjzdrSXr+8/rZJDtd3V62aUKiHTpGpm63ndLEbph5s3uU9fv3px+cP1r+Ob&#xD;
+P95Pkt1hkbz/cPXup3GS5kXxux4XxfXNdfLb7dtECVUUk1/SJF3u95uLojgej+KoxXq7KN5up5tl&#xD;
+PdsVMCzYEJsKOFNKzPfzFCHY85NEVJrU81H6bvpQbf+EgDyb3egZzySlZE+dycX9qm7unjNUIYQi&#xD;
+voXpKJWb+zR56NZjPd8vRykZFpZVvVjuT9Khro5Xa96QyIQMvgzR9OOqyj9OZ3eL7fpzg0Sb6pg8&#xD;
+sUAuF7vNdFaN0s222lXbQ4Uik+RyEcuqZ+smytBspvtlAt3PpITPzI8kaJZL4Vwms1wJyqSwpn3C&#xD;
+76CMcDOZtQb8pnvBv6UR/oC9VpcWNngiy3uxylLxahzZ4brEKrHhZC6fGjy38YBk5FmEgd3Av26t&#xD;
+T957o7jnbMvh5HiQ+SDxf8v72XRuSS3d/+h8Ax2wZ9YRjwmV9/Ri8t1aQWPSmWElETZlWCNlv6TJ&#xD;
+X/VqNUpfTtwkTCZpMaS2shk9xoE7a225gn/LiShhjC8RWqKdnJ7xgRclmVn8LiapVCctY9/HOAll&#xD;
+oADPWes/lvUY6gufqBIhcKhUEMHTKrdCe9RkliSCDt8HKU1M8gnyxuhoFpD6ScREhBFOHo5/1wYP&#xD;
+PTdCcYVZX+tjN0irN4SJvsYgqvc864R0zzSHsdAABYmrss08doW68lxAW1j2GqsWSqM/OQllKJpr&#xD;
+66Kd0jqiY2JXoacWLaPRSGZTCIbL9GgoRE9Qoy6pXesNUU5iHBmaJwzIoZ1v8QATSWjjYnQb0Wxl&#xD;
+zkJKr2MjpSQQhj8zvJbKYoSyoXFxZAYlVS9223lboNJzV1AF1GQBMmdDGeeCQuGYHDORyliNLE20&#xD;
+d2XbLa14VDtwmMMao5i83rZJe8/JYZGhRTBwEGW0iamjczzMZefZs+OSEBugKlCcsafIVvSEo2go&#xD;
+tTCEhU8RKsLhJaJOimcJZIjskzK4Dg8ldEBkCWungTPH0nGvDbEn1gQ/VqiYpGdGlAHniWUZj42w&#xD;
+UGTnhOn4lm8/r/BvVx2qZj2f9xw0Vz5cj78mHVwyi06kO+fcgHIDxg0IN+DbgG75gG98kGSwPeF6&#xD;
+uWXc2IJmgN8Jr/DWZVYE7orvHg6YI8HhDxojjNEFjlSWJxwheqtDDyRwMmDfCUeITj/CeA7Bt2G0&#xD;
+12E8GZ8dZd+DijtNldwrXJssrjRYS4GHe8IVBjenB+oUratm3VRpsttv13eI89LicHl5UuTdRUj1&#xD;
+CvY9m25Gabzn9OpP9b7armosMD4fMeU/56XkMLFW8x1kpr/KLGr+28wuiwVuwnybffXibyZGtrib&#xD;
+CwAA</IconData>
+  <Description>This list outlines the key responsibilities and duties of a Business Analyst within the organization.</Description>
+  <Instructions>Use this list to inform project teams and HR during the recruitment or evaluation of Business Analyst candidates. It guides on the scope of work and areas of accountability for Business Analyst roles.</Instructions>
+  <Items>
+    <ListItem>
+      <Key>Gather Requirements</Key>
+      <Value>Elicit, analyze, and document business, functional, and system requirements.</Value>
+      <Comment>Core activity for understanding project objectives and user needs.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Stakeholder Engagement</Key>
+      <Value>Facilitate meetings and communicate regularly with stakeholders to ensure project alignment.</Value>
+      <Comment>Ensures open communication and requirements alignment.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Requirements Management</Key>
+      <Value>Manage and prioritize requirements through the project lifecycle.</Value>
+      <Comment>Critical for adapting to changes and keeping project on target.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Process Improvement</Key>
+      <Value>Identify and recommend improvements to existing business processes.</Value>
+      <Comment>Aims at enhancing efficiency and effectiveness.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Solution Validation</Key>
+      <Value>Validate the functionality and performance of solutions against requirements.</Value>
+      <Comment>Ensures the solution meets business needs and works as expected.</Comment>
+    </ListItem>
+  </Items>
+</ListInfo>

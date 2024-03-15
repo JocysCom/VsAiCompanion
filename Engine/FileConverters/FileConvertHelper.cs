@@ -39,6 +39,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{ ConvertTargetType.RTF, ".rtf" },
 				{ ConvertTargetType.DOCX, ".docx" },
 				{ ConvertTargetType.CSV, ".csv" },
+				{ ConvertTargetType.MD, ".md" },
 			};
 
 
@@ -123,6 +124,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					case ConvertTargetType.CSV:
 						result = ReadFromCsv<T>(sourcePath);
 						break;
+					case ConvertTargetType.MD:
+						result = ReadFromMD<T>(sourcePath);
+						break;
 					default:
 						break;
 				}
@@ -177,6 +181,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 						break;
 					case ConvertTargetType.CSV:
 						WriteToCsv(targetPath, items);
+						break;
+					case ConvertTargetType.MD:
+						WriteToMD(targetPath, items);
 						break;
 					default:
 						Global.ShowError($"The extension {targetExt} is not supported for writing.");
@@ -765,6 +772,166 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			}
 			return list;
 
+		}
+
+		#endregion
+
+		#region Markdown (*.md)
+
+		public static void WriteToMD<T>(string path, List<T> o)
+		{
+			var isChat = typeof(T) == typeof(chat_completion_request);
+			using (var writer = new StreamWriter(path))
+			{
+				for (int i = 0; i < o.Count; i++)
+				{
+					var request = o[i];
+					string systemContent = null;
+					string userContent = null;
+					string assistantContent = null;
+					if (request is chat_completion_request cr)
+					{
+						systemContent = cr.messages.FirstOrDefault(x => x.role == message_role.system)?.content ?? "";
+						userContent = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
+						assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
+					}
+					else if (request is text_completion_item tr)
+					{
+						var prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request.";
+						systemContent = prefix;
+						userContent = tr.completion;
+						assistantContent = tr.completion;
+					}
+					if (i > 0)
+					{
+						writer.WriteLine();
+						writer.WriteLine();
+					}
+					if (systemContent != null)
+					{
+						writer.WriteLine(prefixSystem);
+						writer.WriteLine();
+						writer.WriteLine(systemContent);
+						writer.WriteLine();
+					}
+					if (userContent != null)
+					{
+						writer.WriteLine(prefixUser);
+						writer.WriteLine();
+						writer.WriteLine(userContent);
+						writer.WriteLine();
+					}
+					if (assistantContent != null)
+					{
+						writer.WriteLine(prefixAssistant);
+						writer.WriteLine();
+						writer.WriteLine(assistantContent);
+						writer.WriteLine();
+					}
+
+				}
+			}
+		}
+
+		public const string prefixSystem = "### System:";
+		public const string prefixUser = "### User:";
+		public const string prefixAssistant = "### Assistant:";
+
+		public static List<T> ReadFromMD<T>(string path)
+		{
+			var list = new List<T>();
+			//var isChat = typeof(T) == typeof(chat_completion_message);
+			using (var reader = new StreamReader(path))
+			{
+				string systemContent = null;
+				string userContent = null;
+				string assistantContent = null;
+				message_role? currentRole = null;
+				message_role? previousRole = null;
+				var assistantContentCompete = false;
+				string line;
+				do
+				{
+					line = reader.ReadLine();
+					if (line == prefixSystem)
+					{
+						previousRole = currentRole;
+						currentRole = message_role.system;
+						continue;
+					}
+					else if (line == prefixUser)
+					{
+						previousRole = currentRole;
+						currentRole = message_role.user;
+						continue;
+					}
+					else if (line == prefixAssistant)
+					{
+						previousRole = currentRole;
+						currentRole = message_role.assistant;
+						continue;
+					}
+					if (
+						// Finished reading last content of assistant or...
+						(previousRole == message_role.assistant && line == null) ||
+						// Previous content was assistant and current content is not then...
+						(previousRole == message_role.assistant && currentRole != message_role.assistant)
+					)
+					{
+						assistantContentCompete = true;
+					}
+					// Add content to appropriate item.
+					switch (currentRole)
+					{
+						case message_role.system:
+							systemContent = line;
+							break;
+						case message_role.user:
+							userContent = line;
+							break;
+						case message_role.assistant:
+							assistantContent = line;
+							break;
+						default:
+							break;
+					}
+					if (assistantContentCompete)
+					{
+
+						var item = (T)Activator.CreateInstance(typeof(T));
+						if (item is chat_completion_request cr)
+						{
+							cr.messages = new List<chat_completion_message>();
+							if (systemContent != null)
+								cr.messages.Add(new chat_completion_message(message_role.system, TrimSpaces(systemContent)));
+							if (userContent != null)
+								cr.messages.Add(new chat_completion_message(message_role.user, TrimSpaces(userContent)));
+							if (assistantContent != null)
+								cr.messages.Add(new chat_completion_message(message_role.assistant, TrimSpaces(assistantContent)));
+						}
+						else if (item is text_completion_item tr)
+						{
+							tr.prompt = userContent;
+							tr.completion = assistantContent;
+						}
+						list.Add(item);
+						// Reset content.
+						systemContent = null;
+						userContent = null;
+						assistantContent = null;
+						assistantContentCompete = false;
+						currentRole = null;
+					}
+				} while (line != null);
+			}
+			return list;
+		}
+
+		private static string TrimSpaces(string s)
+		{
+			if (string.IsNullOrEmpty(s))
+				return s;
+			return s.Trim(' ', '\r', '\n', '\t', '\u00A0');
 		}
 
 		#endregion

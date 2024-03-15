@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Runtime;
+﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Runtime;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -134,9 +135,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Creates a new list.
 		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		/// <param name="description">Description provides user-facing details of the list.</param>
+		/// <param name="instructions"> Instructions, outline how AI should operate based on the list's content.</param>
 		/// <returns>0 operation successfull, -2 list is readonly, -3 list already exists.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int CreateList(string listName, string description)
+		public int CreateList(string listName, string description, string instructions)
 		{
 			var li = GetFilteredListInfo(listName);
 			// List already exists.
@@ -146,6 +150,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			li.Path = FilterPath;
 			li.Name = listName;
 			li.Description = description;
+			li.Instructions = instructions;
 			li.Items = new BindingList<ListItem>();
 			_AllLists.Add(li);
 			return 0;
@@ -155,8 +160,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Updates an existing list.
 		/// </summary>
 		/// <param name="listName">Name of the list</param>
-		/// <param name="description">Optional. List description.</param>
-		/// <param name="instructions">Optional. Assistant Instrutions.</param>
+		/// <param name="description">Optional. Description provides user-facing details of the list.</param>
+		/// <param name="instructions">Optional. Instructions, outline how AI should operate based on the list's content.</param>
 		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
 		public int UpdateList(string listName, string description = null, string instructions = null)
@@ -206,6 +211,33 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return 0;
 		}
 
+		/// <summary>
+		/// Sort items by key.
+		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+		[RiskLevel(RiskLevel.None)]
+		public int SortList(string listName)
+		{
+			var li = GetFilteredListInfo(listName);
+			if (li == null)
+				return -1;
+			if (li.IsReadOnly)
+				return -2;
+			var allVersion = li.Items.All(x => System.Version.TryParse(x.Key, out _));
+			List<ListItem> sortedList;
+			if (allVersion)
+			{
+				sortedList = li.Items.OrderBy(x => System.Version.Parse(x.Key)).ToList();
+			}
+			else
+			{
+				sortedList = li.Items.OrderBy(x => x.Key).ToList();
+			}
+			CollectionsHelper.Synchronize(sortedList, li.Items);
+			return 0;
+		}
+
 		#endregion
 
 		#region Item Manipulation
@@ -213,10 +245,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Sets or adds an item to a list.
 		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		/// <param name="key">Item key.</param>
+		/// <param name="value">Item value.</param>
+		/// <param name="comment">Item comment.</param>
+		/// <param name="index">Optional. The zero-based index at which item should be inserted.</param>
 		/// <returns>True if the item is set or added successfully.</returns>
 		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int UpdateListItem(string listName, string key, string value, string comment = "")
+		public int UpdateListItem(string listName, string key, string value, string comment = "", int? index = null)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
@@ -232,7 +269,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					Value = value,
 					Comment = comment,
 				};
-				li.Items.Add(item);
+				if (index.HasValue)
+					li.Items.Insert(index.Value, item);
+				else
+					li.Items.Add(item);
 			}
 			else
 			{

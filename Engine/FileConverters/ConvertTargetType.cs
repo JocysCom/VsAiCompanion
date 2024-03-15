@@ -15,6 +15,8 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 		RTF,
 		[Description("Comma Separated Values (*.csv)")]
 		CSV,
+		[Description("Markdown (*.md)")]
+		MD,
 		[Description("Microsoft Excel Worksheet (*xlsx)")]
 		XLSX,
 		[Description("Microsoft Word Document (*.docx)")]

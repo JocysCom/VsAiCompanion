@@ -1,0 +1,231 @@
+﻿<TemplateItem>
+  <Name>Demo - Lists - Project TODO</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAK2UWU/bQBDH3/spttvX9XrvAyUg4nBUghYJaNWnKjhubOE6UZwmwKfvrI9AUtT2&#xD;
+AcvSeHbn+M3faw+OHn6WaJ0t62JeDTGnDKOsSufTopoN8e3NaeTw0eG7wfvx5+Tm29UJqtczdHU7&#xD;
+uviYIBzF8VeZxPH4Zoyuv5whTnkcn3zCCOer1eIgjjebDd1IOl/O4rPlZJEXaR1DYBwCISmGYpzT&#xD;
+6WqKoUWo/AKEY1RMh/hi8pgtv4MDnFU9fKWyYIyFSl3IwUNZVPevBXLvfdzsQugQs8UDRo+d3RTT&#xD;
+VT7EQgUnz4pZvuq9dZFtRvOQgBgSCu4g0eSuzKK7SXo/W85/VQBaZRv0IgJYDurFJM2GeLHM6my5&#xD;
+zmBIhAazZqwinVeNDyuLySpHsHYpOJVGGmLOBVs7KsFJBCNcU8c0J9xRx60i3MIdIoPNI0eV42Uk&#xD;
+KZPOE06tMzplVEgtCaNcQiajmmkFRoALxnphOi931GrJSw1VpCSSCiE4pHPnfUjnzoJR0nASMcqE&#xD;
+Mi9coZy+EFCPeUO4zxk1WkEyZAIIjKJClA0z9S5YeFhHntpESGKoDctCUNFMTrYaPGH0oyjLIf5w&#xD;
+fDwSozGO9+VqRTBEnoumeMLbYpJwmKN55EQ1W2tolzLSkHU7DUeP1XotfwnI2ntJBPUQ2qQJIUMm&#xD;
+TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD;
+I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
+4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
++vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <TemplateName>AI - Chat</TemplateName>
+  <ShowInstructions>false</ShowInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages>
+    <MessageItem>
+      <Id>ac412dcc7d1a4c13a4444ecfeffbfa15</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>Structure a comprehensive task list for a website project. 
+
+1. Number the primary tasks sequentially.
+2. Add subtasks under each primary task, labeled in a decimal format (e.g., 2.3 for the third subtask of task 2).
+3. Begin with "Hiring employees" and conclude with "Delivering the website."
+
+Provide the list under the heading `TODO - Website Project`.</Body>
+      <Attachments>
+        <MessageAttachments>
+          <IsMarkdown>false</IsMarkdown>
+          <Type>None</Type>
+          <Title>Profile - Project Manager</Title>
+          <Instructions>Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.</Instructions>
+          <Data>{"Description":"","Instructions":"Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.","Items":[{"Key":"Leadership skills","Value":"Ability to lead, motivate, and manage project teams.","Comment":""},{"Key":"Excellent communication","Value":"Strong verbal and written communication skills.","Comment":""},{"Key":"Problem-solving","Value":"Strong analytical and problem-solving abilities.","Comment":""},{"Key":"Organizational skills","Value":"High level of organizational and multitasking abilities.","Comment":""},{"Key":"Technical expertise","Value":"Understanding of software development processes and methodologies.","Comment":""},{"Key":"Budget management","Value":"Experience in budget planning and financial management.","Comment":""},{"Key":"Risk management","Value":"Ability to identify and mitigate project risks.","Comment":""},{"Key":"Decision-making","Value":"Capability to make informed decisions quickly and effectively.","Comment":""},{"Key":"Adaptability","Value":"Flexibility to adapt to new challenges and changes within projects.","Comment":""}],"Name":"Profile - Project Manager","IsEnabled":true}</Data>
+        </MessageAttachments>
+        <MessageAttachments>
+          <IsMarkdown>false</IsMarkdown>
+          <Type>None</Type>
+          <Title>Role - Project Manager</Title>
+          <Instructions>Use this list to understand and communicate the key responsibilities and duties of a Project Manager within a programming company.</Instructions>
+          <Data>{"Description":"","Instructions":"Use this list to understand and communicate the key responsibilities and duties of a Project Manager within a programming company.","Items":[{"Key":"Define project scope","Value":"Ensure a clear understanding of project objectives, deliverables, and requirements.","Comment":""},{"Key":"Plan and schedule","Value":"Develop project plans, timelines, and milestones.","Comment":""},{"Key":"Budget management","Value":"Prepare and manage project budgets, ensuring cost-effectiveness.","Comment":""},{"Key":"Resource allocation","Value":"Allocate and manage resources efficiently to meet project goals.","Comment":""},{"Key":"Risk management","Value":"Identify potential project risks and develop mitigation strategies.","Comment":""},{"Key":"Stakeholder communication","Value":"Maintain regular communication with project stakeholders and team members.","Comment":""},{"Key":"Quality assurance","Value":"Ensure the project meets all quality standards and objectives.","Comment":""},{"Key":"Documentation","Value":"Maintain comprehensive project documentation for all project phases.","Comment":""}],"Name":"Role - Project Manager","IsEnabled":true}</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-15T14:11:51.8970099+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>cefef8dae3854c2e9090c4398f0470de</Id>
+      <User>Ai</User>
+      <Body>TODO - Website Project
+
+1. Hiring Employees
+   1.1. Define the roles and responsibilities for project team members.
+   1.2. Create job descriptions based on the project's needs.
+   1.3. Advertise job openings on relevant platforms.
+   1.4. Review applications and shortlist candidates.
+   1.5. Conduct interviews to assess candidates' skills and fit.
+   1.6. Hire qualified candidates and complete the onboarding process.
+   1.7. Organize training sessions for new hires if necessary.
+
+2. Planning Phase
+   2.1. Appoint a Project Manager to oversee the project.
+   2.2. Conduct a kick-off meeting to discuss project objectives and expectations.
+   2.3. Define the project scope and create a project charter.
+   2.4. Set up a project timeline with milestones and deliverables.
+   2.5. Develop a budget plan and allocate resources accordingly.
+   2.6. Establish communication protocols for team collaboration and stakeholder updates.
+   2.7. Identify potential risks and prepare risk mitigation strategies.
+   2.8. Define quality assurance protocols to ensure deliverables meet standards.
+
+3. Design Phase
+   3.1. Gather requirements through client consultation and market research.
+   3.2. Create wireframes and propose design mockups for client approval.
+   3.3. Develop a user experience (UX) strategy focusing on interface usability.
+   3.4. Finalize the website’s design theme and visual elements.
+   3.5. Receive and incorporate feedback from the client on the design.
+
+4. Development Phase
+   4.1. Set up the development environment and define the tech stack.
+   4.2. Define the website’s architecture and database schema.
+   4.3. Develop the front-end interface based on approved designs.
+   4.4. Implement back-end server-side logic and database integration.
+   4.5. Ensure responsive design for mobile compatibility.
+   4.6. Perform code reviews and refactor for optimization.
+   4.7. Integrate necessary APIs and third-party services.
+
+5. Testing Phase
+   5.1. Create test cases that cover all functionalities.
+   5.2. Conduct thorough testing, including unit, integration, and system testing.
+   5.3. Perform user acceptance testing (UAT) with client involvement.
+   5.4. Fix any issues or bugs identified during testing.
+   5.5. Optimize performance and conduct load testing.
+   5.6. Ensure security compliance and perform vulnerability assessments.
+
+6. Launch Preparation
+   6.1. Prepare launch plan and checklist.
+   6.2. Set up the production environment and configure servers.
+   6.3. Migrate data and perform pre-launch testing.
+   6.4. Plan for downtime or maintenance windows if necessary.
+   6.5. Finalize and document deployment procedures.
+   
+7. Deployment and Launch
+   7.1. Deploy the website to the production server.
+   7.2. Monitor systems for any immediate issues during the launch.
+   7.3. Implement SEO best practices and submit the site to search engines.
+   7.4. Set up analytics and tracking tools for performance monitoring.
+
+8. Post-Launch Activities
+   8.1. Provide training and support documentation to the client.
+   8.2. Establish a maintenance and update schedule.
+   8.3. Offer technical support and troubleshooting for a defined period.
+   8.4. Collect user feedback and monitor website performance.
+
+9. Project Review and Closure
+   9.1. Conduct a project post-mortem to discuss successes and areas for improvement.
+   9.2. Collect and archive all project documentation.
+   9.3. Release project resources and formally close out the project.
+   9.4. Deliver the final project report to stakeholders.
+   9.5. Celebrate the project completion with the team.
+
+The "Profile - Project Manager" and "Role - Project Manager" lists can be used to assist in performing tasks 1 and 2.1, where qualities and responsibilities of the Project Manager are crucial for the success of the project.</Body>
+      <Attachments />
+      <Date>2024-03-15T14:11:51.9034525+00:00</Date>
+      <Type>In</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>1187a4681282443c845374e3069d00ab</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>1. Sort existing `TODO - Website Project` list.&#xD;
+2. Get `TODO - Website Project` list.&#xD;
+3.  Insert missing subtasks.</Body>
+      <Attachments>
+        <MessageAttachments>
+          <IsMarkdown>false</IsMarkdown>
+          <Type>None</Type>
+          <Title>Profile - Project Manager</Title>
+          <Instructions>Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.</Instructions>
+          <Data>{"Description":"","Instructions":"Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.","Items":[{"Key":"Leadership skills","Value":"Ability to lead, motivate, and manage project teams.","Comment":""},{"Key":"Excellent communication","Value":"Strong verbal and written communication skills.","Comment":""},{"Key":"Problem-solving","Value":"Strong analytical and problem-solving abilities.","Comment":""},{"Key":"Organizational skills","Value":"High level of organizational and multitasking abilities.","Comment":""},{"Key":"Technical expertise","Value":"Understanding of software development processes and methodologies.","Comment":""},{"Key":"Budget management","Value":"Experience in budget planning and financial management.","Comment":""},{"Key":"Risk management","Value":"Ability to identify and mitigate project risks.","Comment":""},{"Key":"Decision-making","Value":"Capability to make informed decisions quickly and effectively.","Comment":""},{"Key":"Adaptability","Value":"Flexibility to adapt to new challenges and changes within projects.","Comment":""}],"Name":"Profile - Project Manager","IsEnabled":true}</Data>
+        </MessageAttachments>
+        <MessageAttachments>
+          <IsMarkdown>false</IsMarkdown>
+          <Type>None</Type>
+          <Title>Role - Project Manager</Title>
+          <Instructions>Use this list to understand and communicate the key responsibilities and duties of a Project Manager within a programming company.</Instructions>
+          <Data>{"Description":"","Instructions":"Use this list to understand and communicate the key responsibilities and duties of a Project Manager within a programming company.","Items":[{"Key":"Define project scope","Value":"Ensure a clear understanding of project objectives, deliverables, and requirements.","Comment":""},{"Key":"Plan and schedule","Value":"Develop project plans, timelines, and milestones.","Comment":""},{"Key":"Budget management","Value":"Prepare and manage project budgets, ensuring cost-effectiveness.","Comment":""},{"Key":"Resource allocation","Value":"Allocate and manage resources efficiently to meet project goals.","Comment":""},{"Key":"Risk management","Value":"Identify potential project risks and develop mitigation strategies.","Comment":""},{"Key":"Stakeholder communication","Value":"Maintain regular communication with project stakeholders and team members.","Comment":""},{"Key":"Quality assurance","Value":"Ensure the project meets all quality standards and objectives.","Comment":""},{"Key":"Documentation","Value":"Maintain comprehensive project documentation for all project phases.","Comment":""}],"Name":"Role - Project Manager","IsEnabled":true}</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-15T14:50:11.3411849+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>1e8c034de79448d28e8e710e116843ad</Id>
+      <User>Ai</User>
+      <Body />
+      <IsAutomated>true</IsAutomated>
+      <Attachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Call</Title>
+          <Data>```JSON&#xD;
+[&#xD;
+{&#xD;
+	"id": "call_WvpekNEbxQ4ljPSvvQwPYvnK",&#xD;
+	"name": "SortList",&#xD;
+	"parameters": {"listName": "TODO - Website Project"}&#xD;
+},&#xD;
+{&#xD;
+	"id": "call_NVt6Qm6h9anLfTPG8NRubqBw",&#xD;
+	"name": "GetList",&#xD;
+	"parameters": {"listName": "TODO - Website Project", "includeItems": true}&#xD;
+}&#xD;
+]&#xD;
+```</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-15T14:50:11.3485036+00:00</Date>
+      <Type>In</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>1b669f0ee77049b79c6408ad808eb39e</Id>
+      <User>User</User>
+      <Body />
+      <IsAutomated>true</IsAutomated>
+      <Attachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Results (Id:call_WvpekNEbxQ4ljPSvvQwPYvnK)</Title>
+          <Data>```text&#xD;
+0&#xD;
+```</Data>
+        </MessageAttachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Results (Id:call_NVt6Qm6h9anLfTPG8NRubqBw)</Title>
+          <Data>```text&#xD;
+{"Description":"This list outlines the comprehensive tasks required to complete a website project from start to finish.","Instructions":"Follow this task list sequentially to ensure the website project is completed efficiently and effectively.","Items":[{"Key":"1","Value":"Hiring Employees","Comment":"Begin by assembling a qualified project team."},{"Key":"1.1","Value":"Define the roles and responsibilities for project team members.","Comment":""},{"Key":"1.2","Value":"Create job descriptions based on the project's needs.","Comment":""},{"Key":"1.3","Value":"Advertise job openings on relevant platforms.","Comment":""},{"Key":"1.4","Value":"Review applications and shortlist candidates.","Comment":""},{"Key":"1.5","Value":"Conduct interviews to assess candidates' skills and fit.","Comment":""},{"Key":"1.6","Value":"Hire qualified candidates and complete the onboarding process.","Comment":""},{"Key":"1.7","Value":"Organize training sessions for new hires if necessary.","Comment":""},{"Key":"2","Value":"Planning Phase","Comment":"Laying the groundwork for the project's strategy, scope, and guidelines."},{"Key":"2.1","Value":"Appoint a Project Manager to oversee the project.","Comment":""},{"Key":"2.2","Value":"Conduct a kick-off meeting to discuss project objectives and expectations.","Comment":""},{"Key":"2.3","Value":"Define the project scope and create a project charter.","Comment":""},{"Key":"2.4","Value":"Set up a project timeline with milestones and deliverables.","Comment":""},{"Key":"2.5","Value":"Develop a budget plan and allocate resources accordingly.","Comment":""},{"Key":"2.6","Value":"Establish communication protocols for team collaboration and stakeholder updates.","Comment":""},{"Key":"2.7","Value":"Identify potential risks and prepare risk mitigation strategies.","Comment":""},{"Key":"2.8","Value":"Define quality assurance protocols to ensure deliverables meet standards.","Comment":""},{"Key":"3","Value":"Design Phase","Comment":"Crafting the visual components and user experience of the website."},{"Key":"3.1","Value":"Gather requirements through client consultation and market research.","Comment":"Define the essential requirements for the website to ensure it meets client and user needs."},{"Key":"3.2","Value":"Create wireframes and propose design mockups for client approval.","Comment":"Develop the blueprint and visual design that will guide the website's layout and aesthetics."},{"Key":"3.3","Value":"Develop a user experience (UX) strategy focusing on interface usability.","Comment":"Ensure the website is intuitive and user-friendly to encourage positive engagement."},{"Key":"3.4","Value":"Finalize the website’s design theme and visual elements.","Comment":"Lock in the visual aspects of the website to maintain a consistent brand image."},{"Key":"3.5","Value":"Receive and incorporate feedback from the client on the design.","Comment":"Refine the design based on client preferences and requirements."},{"Key":"4","Value":"Development Phase","Comment":"Turning the design into a functional website through coding."},{"Key":"4.1","Value":"Set up the development environment and define the tech stack.","Comment":"Prepare the necessary tools and frameworks for the development process."},{"Key":"4.2","Value":"Define the website’s architecture and database schema.","Comment":"Structure the website's backend to ensure scalability and efficiency."},{"Key":"4.3","Value":"Develop the front-end interface based on approved designs.","Comment":"Translate design mockups into a usable and interactive front-end interface."},{"Key":"5","Value":"Testing Phase","Comment":"Rigorous testing to ensure reliability, functionality, and performance."},{"Key":"6","Value":"Launch Preparation","Comment":"Setting up for a smooth transition to a live environment."},{"Key":"7","Value":"Deployment and Launch","Comment":"Taking the website live and monitoring for any immediate issues."},{"Key":"8","Value":"Post-Launch Activities","Comment":"Support, feedback implementation, and performance monitoring post-launch."},{"Key":"9","Value":"Project Review and Closure","Comment":"Reviewing the project outcomes and officially closing the project."}],"Path":"Demo - Lists - Project TODO","Name":"TODO - Website Project","IsEnabled":true}&#xD;
+```</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-15T14:50:16.7330394+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
+  <Context2ListName>Profile - Project Manager</Context2ListName>
+  <Context3ListName>Role - Project Manager</Context3ListName>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

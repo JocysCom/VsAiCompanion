@@ -1,5 +1,5 @@
 ﻿<ListInfo>
-  <Name>Role - .NET Developer</Name>
+  <Name>Role - Software Developer</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACu1WTW/bRhC951ewzJVc7s5+cNewEsCykhZI2wB1XPRUKBIrEVYoQVIkO7++b5YU&#xD;
 bTFueityKCRhOcPZ+XjzdrSXr+8/rZJDtd3V62aUKiHTpGpm63ndLEbph5s3uU9fv3px+cP1r+Ob&#xD;
@@ -21,58 +21,52 @@ uWXc2IJmgN8Jr/DWZVYE7orvHg6YI8HhDxojjNEFjlSWJxwheqtDDyRwMmDfCUeITj/CeA7Bt2G0&#xD
 12E8GZ8dZd+DijtNldwrXJssrjRYS4GHe8IVBjenB+oUratm3VRpsttv13eI89LicHl5UuTdRUj1&#xD;
 CvY9m25Gabzn9OpP9b7armosMD4fMeU/56XkMLFW8x1kpr/KLGr+28wuiwVuwnybffXibyZGtrib&#xD;
 CwAA</IconData>
-  <Description>Your current role and area of expertise are detailed here, letting the AI understand the context of your questions and the nature of the assistance you're seeking, especially in .NET development.</Description>
-  <Instructions>Here, the user's role and expertise are detailed. Factor in this context when providing development advice, resources, or when discussing technologies to match the user's skill level and interests.</Instructions>
-  <IsReadOnly>true</IsReadOnly>
+  <Description>This list outlines the key responsibilities and duties that a Software Developer is expected to fulfill. It serves as a guideline for task allocation and role expectations.</Description>
+  <Instructions>Utilize this list to guide the creation of job descriptions, assess candidate fit during hiring, and allocate tasks to team members efficiently according to the responsibilities outlined.</Instructions>
   <Items>
     <ListItem>
-      <Key>ASP.NET MVC Development</Key>
-      <Value>Specialization in building web applications using the ASP.NET MVC framework.</Value>
+      <Key>Develop and maintain software</Key>
+      <Value>Develop and maintain software applications based on requirements documentation and specifications.</Value>
       <Comment />
     </ListItem>
     <ListItem>
-      <Key>Entity Framework Core</Key>
-      <Value>Expertise in using Entity Framework Core for data access in .NET applications.</Value>
+      <Key>Collaborate with product team</Key>
+      <Value>Collaborate with the product team to define software requirements and system architecture.</Value>
       <Comment />
     </ListItem>
     <ListItem>
-      <Key>Blazor Development</Key>
-      <Value>Proficiency in developing interactive web UIs using Blazor, a feature of ASP.NET.</Value>
+      <Key>Write clean, scalable code</Key>
+      <Value>Write clean, scalable, and well-documented code using best coding practices.</Value>
       <Comment />
     </ListItem>
     <ListItem>
-      <Key>Microservices Architecture</Key>
-      <Value>Experience in designing and implementing microservices architectures using .NET Core.</Value>
+      <Key>Engage in code reviews</Key>
+      <Value>Engage in code reviews to maintain code quality and share knowledge with team members.</Value>
       <Comment />
     </ListItem>
     <ListItem>
-      <Key>Azure Cloud Services</Key>
-      <Value>Knowledge in deploying and managing .NET applications on Azure Cloud Services.</Value>
+      <Key>Troubleshoot, debug, and upgrade</Key>
+      <Value>Troubleshoot, debug, and upgrade existing software to ensure it's functional and secure.</Value>
       <Comment />
     </ListItem>
     <ListItem>
-      <Key>C# Language Features</Key>
-      <Value>Deep understanding of the latest C# language features and best practices.</Value>
+      <Key>Test software</Key>
+      <Value>Test software to ensure responsiveness and efficiency.</Value>
       <Comment />
     </ListItem>
     <ListItem>
-      <Key>Performance Optimization</Key>
-      <Value>Skills in optimizing the performance of .NET applications through profiling and tuning.</Value>
+      <Key>Integrate software components</Key>
+      <Value>Integrate software components and third-party programs to meet specifications.</Value>
       <Comment />
     </ListItem>
     <ListItem>
-      <Key>Secure Coding Practices</Key>
-      <Value>Awareness of secure coding practices specific to .NET development.</Value>
+      <Key>Document development phases</Key>
+      <Value>Document development phases and monitor systems.</Value>
       <Comment />
     </ListItem>
     <ListItem>
-      <Key>Unit Testing in .NET</Key>
-      <Value>Experience in writing and maintaining unit tests in .NET environments using frameworks like NUnit or xUnit.</Value>
-      <Comment />
-    </ListItem>
-    <ListItem>
-      <Key>DevOps for .NET</Key>
-      <Value>Familiarity with DevOps practices, including CI/CD pipelines, specifically for .NET applications.</Value>
+      <Key>Stay up-to-date</Key>
+      <Value>Stay up-to-date with new technology trends, programming techniques, and best practices.</Value>
       <Comment />
     </ListItem>
   </Items>

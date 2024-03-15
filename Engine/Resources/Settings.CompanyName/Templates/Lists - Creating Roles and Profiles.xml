@@ -1,0 +1,50 @@
+﻿<TemplateItem>
+  <Name>Lists - Creating Roles and Profiles</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACn1T226bQBB9z1dsN6+wN+6WSSTbJK6UJpHquOpTRfAWViaAgILTr+8sJsZtokqw&#xD;
+zMyePWdmdphfH15y1Mm6UWURYk4YRrJIyp0q0hA/bW5MH19fXcw/rR6Wm++PEWq6FD0+Le4+LxE2&#xD;
+Kf1mLSldbVbo6/YWccIpje4xwlnbVjNK+74nvUXKOqW3dVxlKmkoAKkGwiEKZJyTXbvDIKGZzxLh&#xD;
+GKldiO/iV1n/AAfyLJrwA2bBGNNMI2R2yFWx/wjIgyCgwy5AQ8yqA0av47dXuzYLsbC1k0mVZu2b&#xD;
+1ynZL0p9ADEkbHh0i+LnXJrPcbJP6/JXAYkWskdnCMhl1lRxIkNc1bKRdSehSITm6VCWSspi8CFS&#xD;
+xW2GIPZFcMPeCiISZpiMuK5eHdswORHTsrYBcNxmx+gEgrfjxF8L/hujnyrPQ3wZuN5itcT0XzHL&#xD;
+sDvuER/EjmSaZSTRb8Yd4iajziB+QmitrX1SiNwoiKL3CjwgvsEz0yKeZ/m5aRPH8jxDiLXe+Q81&#xD;
+tGAJveA6KBixXQOcgWwqS1j8RsCwltBj1eprJMx9n4NLHANGzMk4H+xgMr3JhD5M9hkEWjDZ1mC/&#xD;
+JVCUhcSoaetyD1d86Viu70M6x4A5jhOgxwBMnUziKsTDtJzCL6qVda7gA+C/q/GOxcxpCv+Gnu+r&#xD;
+iz+y7EqprQMAAA==</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4-0125-preview</AiModel>
+  <TemplateName>AI - Chat</TemplateName>
+  <ShowInstructions>false</ShowInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Messages>
+    <MessageItem>
+      <Id>a711fea913c148bc984b66da3ffddce3</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>Tasks&#xD;
+
+1. Retrieve current lists.
+2. If absent, create these lists:
+    - List titled 'Role - Project Manager': Specify its Description and Instructions.
+    - List titled 'Profile - Project Manager': Specify its Description and Instructions.
+3. Populate the 'Role - Project Manager' list with typical Project Manager responsibilities and duties.
+4. Populate the 'Profile - Project Manager' list with typical Project Manager traits and qualifications.
+
+Note: In the Description, provide user-facing details of the list. In the Instructions, outline how AI should operate based on the list's content.</Body>
+      <Attachments />
+      <Date>2024-03-15T12:00:11.7946157+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

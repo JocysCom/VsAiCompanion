@@ -1,0 +1,40 @@
+﻿<ListInfo>
+  <Name>Profile - Technical Support</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACq1Ua2/TMBT9vl9hLCGBlMa+tvNsu0nLHkIaMIkNBN9K47VmWVIlWTv+Pdd2Wlap&#xD;
+7AurVOX4+j7OOXYyOXl6qMhat51p6imFkFOi63lTmnoxpbc3F6OUkq6f1eWsamo9pXVDT46PJm/O&#xD;
+Phc336/PSbdekOvb06sPBaEjxr7JgrGzmzPy5eslgRAYO/9ECV32/SpnbLPZhBsZNu2CXbaz1dLM&#xD;
+O4aJzCZiEcNmAGHZlxRH2M4bU/ZLpMX5W0qW2iyW/Xa1Nnpz2jxNKSecRCDsnz5XApSgtrqbHpgu&#xD;
+OOd22pCSP1Wmvj+UCFmWMbfrUvNuNZujC6tWd7pd6209LszdXr2LhPPmgVn/fldYdGeqatQ+VjrX&#xD;
+a103ZTmeV2a1H+n6trnXIxyofzWmztvmsd5FH0yv28rgIxdjtIjgb7LwT4dXs35JTDml80ckpyhB&#xD;
++BFSFUghwugKUhlGgUgUYinS59hnFDJGFCMiSlmUuqdKAfccyrADxjjWRtxhkVgM4ipVHhQJ7HZj&#xD;
+NZRY4LogsG1BqWHQjt6PPaPydvHzHUASQASB4PL9mLJ/KpVe6f8yKBySGRGCBzLCbkREsUeFyMQQ&#xD;
+c3Zh1uvadkB+AoFzII1eVC+8ekfVnmchZOIREWBjQCCzpy1jiRKtIBxOIJGBVBmBGLNlbOXbiBS4&#xD;
+k6Gw5HWskXLohXHXXapomOciyECKLScJ9oZaniLzzEWCa69lq++AU4JngWWGyl+0Cr8JO6tEIZU9&#xD;
+BEspsfZk8QAg5oVHQnHkhP4I7ucLXkBmazgB6d4mzPDIVnmEjSC2x4qtfdWhu4330B4G0v5LecLw&#xD;
+dZ7YL9Px0R9IyHj2mwUAAA==</IconData>
+  <Description>This list highlights the key skills, traits, and qualifications essential for Technical Support personnel. It is designed to aid in the recruitment process, allowing for the identification of suitable candidates, and supports the ongoing development of support staff.</Description>
+  <Instructions>Reference this list during hiring processes to assess candidates' fit for Technical Support roles and for developing existing staff's capabilities in these areas.</Instructions>
+  <Items>
+    <ListItem>
+      <Key>Problem-solving skills</Key>
+      <Value>Strong analytical and problem-solving skills to diagnose and address technical issues efficiently.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Customer service orientation</Key>
+      <Value>A customer-oriented approach, with excellent communication skills to interact positively with users and provide effective solutions.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Technical knowledge</Key>
+      <Value>Robust technical knowledge in the relevant domain, including understanding of software applications, networking principles, and hardware troubleshooting.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Continuous learning</Key>
+      <Value>Willingness and ability to continuously learn and adapt to new technologies and software updates to provide up-to-date support.</Value>
+      <Comment />
+    </ListItem>
+  </Items>
+</ListInfo>

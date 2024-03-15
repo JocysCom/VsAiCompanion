@@ -73,7 +73,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_user_group}" />
-						<Label Content="Assistants" />
+						<Label Content="Teams" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="AssistantsPanel" x:FieldModifier="public" DataType="Assistant" />

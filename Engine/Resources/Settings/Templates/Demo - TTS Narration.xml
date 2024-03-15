@@ -1,0 +1,145 @@
+﻿<TemplateItem>
+  <IsEnabled>false</IsEnabled>
+  <Name>Demo - TTS Narration</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAK2UWU/bQBDH3/spttvX9XrvAyUg4nBUghYJaNWnKjhubOE6UZwmwKfvrI9AUtT2&#xD;
+AcvSeHbn+M3faw+OHn6WaJ0t62JeDTGnDKOsSufTopoN8e3NaeTw0eG7wfvx5+Tm29UJqtczdHU7&#xD;
+uviYIBzF8VeZxPH4Zoyuv5whTnkcn3zCCOer1eIgjjebDd1IOl/O4rPlZJEXaR1DYBwCISmGYpzT&#xD;
+6WqKoUWo/AKEY1RMh/hi8pgtv4MDnFU9fKWyYIyFSl3IwUNZVPevBXLvfdzsQugQs8UDRo+d3RTT&#xD;
+VT7EQgUnz4pZvuq9dZFtRvOQgBgSCu4g0eSuzKK7SXo/W85/VQBaZRv0IgJYDurFJM2GeLHM6my5&#xD;
+zmBIhAazZqwinVeNDyuLySpHsHYpOJVGGmLOBVs7KsFJBCNcU8c0J9xRx60i3MIdIoPNI0eV42Uk&#xD;
+KZPOE06tMzplVEgtCaNcQiajmmkFRoALxnphOi931GrJSw1VpCSSCiE4pHPnfUjnzoJR0nASMcqE&#xD;
+Mi9coZy+EFCPeUO4zxk1WkEyZAIIjKJClA0z9S5YeFhHntpESGKoDctCUNFMTrYaPGH0oyjLIf5w&#xD;
+fDwSozGO9+VqRTBEnoumeMLbYpJwmKN55EQ1W2tolzLSkHU7DUeP1XotfwnI2ntJBPUQ2qQJIUMm&#xD;
+TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD;
+I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
+4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
++vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <TemplateName>AI - Chat</TemplateName>
+  <ShowInstructions>false</ShowInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages>
+    <MessageItem>
+      <IsEnabled>false</IsEnabled>
+      <Id>d9bd0c18015048f3a8df6b061d7f9402</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>create a very short funny dialog involwing two dragons and voice it</Body>
+      <Attachments />
+      <Date>2024-03-01T12:06:07.5580347+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+    <MessageItem>
+      <IsEnabled>false</IsEnabled>
+      <Id>a36083f99b184cf1a8be4d3caefb0b80</Id>
+      <User>Ai</User>
+      <Body />
+      <IsAutomated>true</IsAutomated>
+      <Attachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Call</Title>
+          <Data>```JSON&#xD;
+[&#xD;
+{&#xD;
+	"id": "call_dtEEQHMRMBuZ7aonCjcWi9gN",&#xD;
+	"name": "PlayText",&#xD;
+	"parameters": {"name": "Draco", "text": "Why did the dragon refuse to eat the comedian?", "gender": "Male", "language": "en-US", "rate": 0, "effect": "Dragonkin"}&#xD;
+},&#xD;
+{&#xD;
+	"id": "call_2CDbH8X0MfEa0sfJtk6DTMt9",&#xD;
+	"name": "PlayText",&#xD;
+	"parameters": {"name": "Ember", "text": "I'm not sure, why?", "gender": "Female", "language": "en-US", "rate": 0, "effect": "Dragonkin"}&#xD;
+},&#xD;
+{&#xD;
+	"id": "call_wyKFkoyJYe23VBCnRcieidtK",&#xD;
+	"name": "PlayText",&#xD;
+	"parameters": {"name": "Draco", "text": "Because he always tasted funny!", "gender": "Male", "language": "en-US", "rate": 0, "effect": "Dragonkin"}&#xD;
+},&#xD;
+{&#xD;
+	"id": "call_v6NkVKYaJ03bBwvcy6RR9Ftp",&#xD;
+	"name": "PlayText",&#xD;
+	"parameters": {"name": "Ember", "text": "That joke almost slayed me!", "gender": "Female", "language": "en-US", "rate": 0, "effect": "Dragonkin"}&#xD;
+}&#xD;
+]&#xD;
+```</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-01T12:06:07.561795+00:00</Date>
+      <Type>In</Type>
+    </MessageItem>
+    <MessageItem>
+      <IsEnabled>false</IsEnabled>
+      <Id>e161893eaa5c4c69b9408ff5e196bbd1</Id>
+      <User>User</User>
+      <Body />
+      <IsAutomated>true</IsAutomated>
+      <Attachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Results (Id:call_dtEEQHMRMBuZ7aonCjcWi9gN)</Title>
+          <Data>```text&#xD;
+true&#xD;
+```</Data>
+        </MessageAttachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Results (Id:call_2CDbH8X0MfEa0sfJtk6DTMt9)</Title>
+          <Data>```text&#xD;
+true&#xD;
+```</Data>
+        </MessageAttachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Results (Id:call_wyKFkoyJYe23VBCnRcieidtK)</Title>
+          <Data>```text&#xD;
+true&#xD;
+```</Data>
+        </MessageAttachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Results (Id:call_v6NkVKYaJ03bBwvcy6RR9Ftp)</Title>
+          <Data>```text&#xD;
+true&#xD;
+```</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-01T12:06:56.4012077+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+    <MessageItem>
+      <IsEnabled>false</IsEnabled>
+      <Id>829c20f9c651456180cd841cae3d3edf</Id>
+      <User>Ai</User>
+      <Body>The voicing for the dragon dialogue has been initiated. You should now hear the short funny dialogue between Draco and Ember.</Body>
+      <Attachments />
+      <Date>2024-03-01T12:06:56.4176513+00:00</Date>
+      <Type>In</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

@@ -1,0 +1,50 @@
+﻿<ListInfo>
+  <Name>Profile - Quality Assurance (QA)</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACq1Ua2/TMBT9vl9hLCGBlMa+tvNsu0nLHkIaMIkNBN9K47VmWVIlWTv+Pdd2Wlap&#xD;
+7AurVOX4+j7OOXYyOXl6qMhat51p6imFkFOi63lTmnoxpbc3F6OUkq6f1eWsamo9pXVDT46PJm/O&#xD;
+Phc336/PSbdekOvb06sPBaEjxr7JgrGzmzPy5eslgRAYO/9ECV32/SpnbLPZhBsZNu2CXbaz1dLM&#xD;
+O4aJzCZiEcNmAGHZlxRH2M4bU/ZLpMX5W0qW2iyW/Xa1Nnpz2jxNKSecRCDsnz5XApSgtrqbHpgu&#xD;
+OOd22pCSP1Wmvj+UCFmWMbfrUvNuNZujC6tWd7pd6209LszdXr2LhPPmgVn/fldYdGeqatQ+VjrX&#xD;
+a103ZTmeV2a1H+n6trnXIxyofzWmztvmsd5FH0yv28rgIxdjtIjgb7LwT4dXs35JTDml80ckpyhB&#xD;
++BFSFUghwugKUhlGgUgUYinS59hnFDJGFCMiSlmUuqdKAfccyrADxjjWRtxhkVgM4ipVHhQJ7HZj&#xD;
+NZRY4LogsG1BqWHQjt6PPaPydvHzHUASQASB4PL9mLJ/KpVe6f8yKBySGRGCBzLCbkREsUeFyMQQ&#xD;
+c3Zh1uvadkB+AoFzII1eVC+8ekfVnmchZOIREWBjQCCzpy1jiRKtIBxOIJGBVBmBGLNlbOXbiBS4&#xD;
+k6Gw5HWskXLohXHXXapomOciyECKLScJ9oZaniLzzEWCa69lq++AU4JngWWGyl+0Cr8JO6tEIZU9&#xD;
+BEspsfZk8QAg5oVHQnHkhP4I7ucLXkBmazgB6d4mzPDIVnmEjSC2x4qtfdWhu4330B4G0v5LecLw&#xD;
+dZ7YL9Px0R9IyHj2mwUAAA==</IconData>
+  <Description>This list encaptures the essential traits, skills, and qualifications necessary for a Quality Assurance (QA) professional. It serves as a guideline for recruiters and hiring managers to identify the ideal candidate for QA roles.</Description>
+  <Instructions>Use the content of this list to filter and identify candidates who best fit the quality assurance role within a software development context. Aim to match these attributes with candidate profiles during the hiring process.</Instructions>
+  <Items>
+    <ListItem>
+      <Key>Attention to detail</Key>
+      <Value>Key trait for identifying and addressing potential issues before they escalate.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Analytical skills</Key>
+      <Value>Ability to critically evaluate information from multiple sources and make coherent decisions aimed at improving product quality.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Technical proficiency</Key>
+      <Value>Understanding of software development processes, programming languages, and testing tools.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Communication skills</Key>
+      <Value>Effective verbal and written communication skills are critical for documenting test cases, defects, and for collaborating with other team members.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Problem-solving skills</Key>
+      <Value>Ability to quickly identify problems and implement efficient solutions.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Adaptability</Key>
+      <Value>The tech industry is constantly evolving; adaptability is key to embracing new testing tools and methodologies.</Value>
+      <Comment />
+    </ListItem>
+  </Items>
+</ListInfo>

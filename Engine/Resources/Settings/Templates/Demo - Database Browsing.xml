@@ -1,0 +1,47 @@
+﻿<TemplateItem>
+  <Name>Demo - Database Browsing</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAK2UWU/bQBDH3/spttvX9XrvAyUg4nBUghYJaNWnKjhubOE6UZwmwKfvrI9AUtT2&#xD;
+AcvSeHbn+M3faw+OHn6WaJ0t62JeDTGnDKOsSufTopoN8e3NaeTw0eG7wfvx5+Tm29UJqtczdHU7&#xD;
+uviYIBzF8VeZxPH4Zoyuv5whTnkcn3zCCOer1eIgjjebDd1IOl/O4rPlZJEXaR1DYBwCISmGYpzT&#xD;
+6WqKoUWo/AKEY1RMh/hi8pgtv4MDnFU9fKWyYIyFSl3IwUNZVPevBXLvfdzsQugQs8UDRo+d3RTT&#xD;
+VT7EQgUnz4pZvuq9dZFtRvOQgBgSCu4g0eSuzKK7SXo/W85/VQBaZRv0IgJYDurFJM2GeLHM6my5&#xD;
+zmBIhAazZqwinVeNDyuLySpHsHYpOJVGGmLOBVs7KsFJBCNcU8c0J9xRx60i3MIdIoPNI0eV42Uk&#xD;
+KZPOE06tMzplVEgtCaNcQiajmmkFRoALxnphOi931GrJSw1VpCSSCiE4pHPnfUjnzoJR0nASMcqE&#xD;
+Mi9coZy+EFCPeUO4zxk1WkEyZAIIjKJClA0z9S5YeFhHntpESGKoDctCUNFMTrYaPGH0oyjLIf5w&#xD;
+fDwSozGO9+VqRTBEnoumeMLbYpJwmKN55EQ1W2tolzLSkHU7DUeP1XotfwnI2ntJBPUQ2qQJIUMm&#xD;
+TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD;
+I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
+4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
++vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <TemplateName>AI - Chat</TemplateName>
+  <TextInstructions>Select table names to understand the database structure. Then obtain the column names for these tables to construct a valid SQL command as requested. Ensure you use the correct SQL connection string.</TextInstructions>
+  <ShowInstructions>false</ShowInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages>
+    <MessageItem>
+      <Id>829f16b50e7c49ee9e65483e5bef0903</Id>
+      <User>User</User>
+      <BodyInstructions>Select table names to understand the database structure. Then obtain the column names for these tables to construct a valid SQL command as requested. Ensure you use the correct SQL connection string.</BodyInstructions>
+      <Body>Please find the work address of John Smith from the local `DataModelDemo database.</Body>
+      <Attachments />
+      <Date>2024-03-11T12:15:17.3466205+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
+  <MaxRiskLevel>High</MaxRiskLevel>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

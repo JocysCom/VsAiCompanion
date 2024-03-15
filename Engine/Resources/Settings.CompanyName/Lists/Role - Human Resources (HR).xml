@@ -1,0 +1,68 @@
+﻿<ListInfo>
+  <Name>Role - Human Resources (HR)</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1WTW/bRhC951ewzJVc7s5+cNewEsCykhZI2wB1XPRUKBIrEVYoQVIkO7++b5YU&#xD;
+bTFueityKCRhOcPZ+XjzdrSXr+8/rZJDtd3V62aUKiHTpGpm63ndLEbph5s3uU9fv3px+cP1r+Ob&#xD;
+P95Pkt1hkbz/cPXup3GS5kXxux4XxfXNdfLb7dtECVUUk1/SJF3u95uLojgej+KoxXq7KN5up5tl&#xD;
+PdsVMCzYEJsKOFNKzPfzFCHY85NEVJrU81H6bvpQbf+EgDyb3egZzySlZE+dycX9qm7unjNUIYQi&#xD;
+voXpKJWb+zR56NZjPd8vRykZFpZVvVjuT9Khro5Xa96QyIQMvgzR9OOqyj9OZ3eL7fpzg0Sb6pg8&#xD;
+sUAuF7vNdFaN0s222lXbQ4Uik+RyEcuqZ+smytBspvtlAt3PpITPzI8kaJZL4Vwms1wJyqSwpn3C&#xD;
+76CMcDOZtQb8pnvBv6UR/oC9VpcWNngiy3uxylLxahzZ4brEKrHhZC6fGjy38YBk5FmEgd3Av26t&#xD;
+T957o7jnbMvh5HiQ+SDxf8v72XRuSS3d/+h8Ax2wZ9YRjwmV9/Ri8t1aQWPSmWElETZlWCNlv6TJ&#xD;
+X/VqNUpfTtwkTCZpMaS2shk9xoE7a225gn/LiShhjC8RWqKdnJ7xgRclmVn8LiapVCctY9/HOAll&#xD;
+oADPWes/lvUY6gufqBIhcKhUEMHTKrdCe9RkliSCDt8HKU1M8gnyxuhoFpD6ScREhBFOHo5/1wYP&#xD;
+PTdCcYVZX+tjN0irN4SJvsYgqvc864R0zzSHsdAABYmrss08doW68lxAW1j2GqsWSqM/OQllKJpr&#xD;
+66Kd0jqiY2JXoacWLaPRSGZTCIbL9GgoRE9Qoy6pXesNUU5iHBmaJwzIoZ1v8QATSWjjYnQb0Wxl&#xD;
+zkJKr2MjpSQQhj8zvJbKYoSyoXFxZAYlVS9223lboNJzV1AF1GQBMmdDGeeCQuGYHDORyliNLE20&#xD;
+d2XbLa14VDtwmMMao5i83rZJe8/JYZGhRTBwEGW0iamjczzMZefZs+OSEBugKlCcsafIVvSEo2go&#xD;
+tTCEhU8RKsLhJaJOimcJZIjskzK4Dg8ldEBkCWungTPH0nGvDbEn1gQ/VqiYpGdGlAHniWUZj42w&#xD;
+UGTnhOn4lm8/r/BvVx2qZj2f9xw0Vz5cj78mHVwyi06kO+fcgHIDxg0IN+DbgG75gG98kGSwPeF6&#xD;
+uWXc2IJmgN8Jr/DWZVYE7orvHg6YI8HhDxojjNEFjlSWJxwheqtDDyRwMmDfCUeITj/CeA7Bt2G0&#xD;
+12E8GZ8dZd+DijtNldwrXJssrjRYS4GHe8IVBjenB+oUratm3VRpsttv13eI89LicHl5UuTdRUj1&#xD;
+CvY9m25Gabzn9OpP9b7armosMD4fMeU/56XkMLFW8x1kpr/KLGr+28wuiwVuwnybffXibyZGtrib&#xD;
+CwAA</IconData>
+  <Description>This list details the essential responsibilities and duties associated with the Human Resources (HR) role within an organization. It aids leaders and managers in understanding the scope of HR work for effective team management and HR strategy implementation.</Description>
+  <Instructions>Extract and apply the HR responsibilities and duties from this list for creating job descriptions, HR planning, and task delegation within the HR department.</Instructions>
+  <Items>
+    <ListItem>
+      <Key>Recruitment and Selection</Key>
+      <Value>Manage the end-to-end recruitment process, from job posting to interviewing and hiring.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Employee Relations</Key>
+      <Value>Serve as the first point of contact for employee issues and conflicts, promoting a healthy workplace environment.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Training and Development</Key>
+      <Value>Identify training needs and organize development programs to enhance employees' skills and career growth.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Compensation and Benefits</Key>
+      <Value>Design and oversee compensation structures and benefits programs to ensure fairness and competitiveness.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>HR Policies and Compliance</Key>
+      <Value>Develop and implement HR policies, ensuring compliance with labor laws and regulations.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Performance Management</Key>
+      <Value>Coordinate the performance review process, including setting objectives, feedback sessions, and performance improvement plans.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Strategic HR Planning</Key>
+      <Value>Collaborate with management to align HR strategies with business goals.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Workplace Safety</Key>
+      <Value>Ensure a safe working environment, conducting safety training and managing workers' compensation claims.</Value>
+      <Comment />
+    </ListItem>
+  </Items>
+</ListInfo>

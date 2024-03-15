@@ -1,0 +1,276 @@
+﻿<TemplateItem>
+  <Name>Demo - API Calls</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAK2UWU/bQBDH3/spttvX9XrvAyUg4nBUghYJaNWnKjhubOE6UZwmwKfvrI9AUtT2&#xD;
+AcvSeHbn+M3faw+OHn6WaJ0t62JeDTGnDKOsSufTopoN8e3NaeTw0eG7wfvx5+Tm29UJqtczdHU7&#xD;
+uviYIBzF8VeZxPH4Zoyuv5whTnkcn3zCCOer1eIgjjebDd1IOl/O4rPlZJEXaR1DYBwCISmGYpzT&#xD;
+6WqKoUWo/AKEY1RMh/hi8pgtv4MDnFU9fKWyYIyFSl3IwUNZVPevBXLvfdzsQugQs8UDRo+d3RTT&#xD;
+VT7EQgUnz4pZvuq9dZFtRvOQgBgSCu4g0eSuzKK7SXo/W85/VQBaZRv0IgJYDurFJM2GeLHM6my5&#xD;
+zmBIhAazZqwinVeNDyuLySpHsHYpOJVGGmLOBVs7KsFJBCNcU8c0J9xRx60i3MIdIoPNI0eV42Uk&#xD;
+KZPOE06tMzplVEgtCaNcQiajmmkFRoALxnphOi931GrJSw1VpCSSCiE4pHPnfUjnzoJR0nASMcqE&#xD;
+Mi9coZy+EFCPeUO4zxk1WkEyZAIIjKJClA0z9S5YeFhHntpESGKoDctCUNFMTrYaPGH0oyjLIf5w&#xD;
+fDwSozGO9+VqRTBEnoumeMLbYpJwmKN55EQ1W2tolzLSkHU7DUeP1XotfwnI2ntJBPUQ2qQJIUMm&#xD;
+TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD;
+I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
+4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
++vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <TemplateName>AI - Chat</TemplateName>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages>
+    <MessageItem>
+      <Id>513cd71e077c411ebf625dbcb4d0d503</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>Extract details from the provided API specification to perform a "get a dad joke" operation.
+
+API specification URL (JSON format): https://app.swaggerhub.com/apiproxy/schema/file/apis/CothamTechnologies/dadjokesdemo/1.0?format=json
+
+Perform an API call to the base URL: https://icanhazdadjoke.com/search
+
+Return a dad joke.</Body>
+      <Attachments />
+      <Date>2024-03-13T10:10:38.4719949+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>298710162b494ee6964d02d1e3890139</Id>
+      <User>Ai</User>
+      <Body />
+      <IsAutomated>true</IsAutomated>
+      <Attachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Call</Title>
+          <Data>```JSON&#xD;
+[&#xD;
+{&#xD;
+	"id": "call_J2YR5nrgDRBWdYgtt4izoJDD",&#xD;
+	"name": "GetWebPageContents",&#xD;
+	"parameters": {"url":"https://app.swaggerhub.com/apiproxy/schema/file/apis/CothamTechnologies/dadjokesdemo/1.0?format=json"}&#xD;
+}&#xD;
+]&#xD;
+```</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-13T10:10:38.4760701+00:00</Date>
+      <Type>In</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>252ee56edf9c4ef28ca8b60e89279137</Id>
+      <User>User</User>
+      <Body />
+      <IsAutomated>true</IsAutomated>
+      <Attachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Results (Id:call_J2YR5nrgDRBWdYgtt4izoJDD)</Title>
+          <Data>```text&#xD;
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "1.0",
+    "title" : "Dad Jokes demo",
+    "description" : "Dad Jokes demo"
+  },
+  "host" : "icanhazdadjoke.com",
+  "paths" : {
+    "/search" : {
+      "get" : {
+        "summary" : "Search for dad jokes",
+        "description" : "Search for dad jokes",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "User-Agent",
+          "type" : "string",
+          "description" : "user agent"
+        }, {
+          "in" : "query",
+          "name" : "page",
+          "type" : "string",
+          "description" : "which page of results to fetch default 1"
+        }, {
+          "in" : "query",
+          "name" : "limit",
+          "type" : "string",
+          "description" : "number of results to return per page default:20 max:30"
+        }, {
+          "in" : "query",
+          "name" : "term",
+          "type" : "string",
+          "description" : "search term to use default:list all jokes"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "current_page" : {
+                  "type" : "number"
+                },
+                "limit" : {
+                  "type" : "number"
+                },
+                "next_page" : {
+                  "type" : "number"
+                },
+                "previous_page" : {
+                  "type" : "number"
+                },
+                "results" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "id" : {
+                        "type" : "string"
+                      },
+                      "joke" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
+                },
+                "search_term" : {
+                  "type" : "string"
+                },
+                "status" : {
+                  "type" : "number"
+                },
+                "total_jokes" : {
+                  "type" : "number"
+                },
+                "total_pages" : {
+                  "type" : "number"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Error"
+          }
+        }
+      }
+    },
+    "/" : {
+      "get" : {
+        "summary" : "Get Random Joke",
+        "description" : "Get Random Joke",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "User-Agent",
+          "type" : "string",
+          "description" : "user agent"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "id" : {
+                  "type" : "string"
+                },
+                "joke" : {
+                  "type" : "string"
+                },
+                "status" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Error"
+          }
+        }
+      }
+    }
+  }
+}&#xD;
+```</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-13T10:10:45.2166977+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>8a90564fe198423a83d5d581a55d5fab</Id>
+      <User>Ai</User>
+      <Body />
+      <IsAutomated>true</IsAutomated>
+      <Attachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Call</Title>
+          <Data>```JSON&#xD;
+[&#xD;
+{&#xD;
+	"id": "call_okqaZN4rQSajc2qb5nU8qtwF",&#xD;
+	"name": "CallApi",&#xD;
+	"parameters": {"apiBaseUrl":"https://icanhazdadjoke.com/search","httpCallType":"GET","jsonString":"{\"limit\":\"1\"}"}&#xD;
+}&#xD;
+]&#xD;
+```</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-13T10:10:45.2278725+00:00</Date>
+      <Type>In</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>7cbadefdb5504bdcbfd9c765783bbd33</Id>
+      <User>User</User>
+      <Body />
+      <IsAutomated>true</IsAutomated>
+      <Attachments>
+        <MessageAttachments>
+          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <IsMarkdown>true</IsMarkdown>
+          <Type>None</Type>
+          <Title>AI Function Results (Id:call_okqaZN4rQSajc2qb5nU8qtwF)</Title>
+          <Data>```text&#xD;
+{"current_page":1,"limit":20,"next_page":2,"previous_page":1,"results":[{"id":"0189hNRf2g","joke":"I'm tired of following my dreams. I'm just going to ask them where they are going and meet up with them later."},{"id":"08EQZ8EQukb","joke":"Did you hear about the guy whose whole left side was cut off? He's all right now."},{"id":"08xHQCdx5Ed","joke":"Why didn\u2019t the skeleton cross the road? Because he had no guts."},{"id":"0DQKB51oGlb","joke":"What did one nut say as he chased another nut?  I'm a cashew!"},{"id":"0DdFQZgyXnb","joke":"Where do fish keep their money? In the riverbank"},{"id":"0DdaxAX0orc","joke":"I accidentally took my cats meds last night. Don\u2019t ask meow."},{"id":"0DtrrOZDlyd","joke":"Chances are if you' ve seen one shopping center, you've seen a mall."},{"id":"0L6MexPukjb","joke":"Dermatologists are always in a hurry. They spend all day making rash decisions. "},{"id":"0LuXvkq4Muc","joke":"I knew I shouldn't steal a mixer from work, but it was a whisk I was willing to take."},{"id":"0gFdFBsWDd","joke":"I won an argument with a weather forecaster once. His logic was cloudy..."},{"id":"0ga2EdN7prc","joke":"How come the stadium got hot after the game? Because all of the fans left."},{"id":"0ga2wsPZgib","joke":"\"Why do seagulls fly over the ocean?\" \"Because if they flew over the bay, we'd call them bagels.\""},{"id":"0oO71TSv4Ed","joke":"Why was it called the dark ages? Because of all the knights. "},{"id":"0oz51ozk3ob","joke":"A steak pun is a rare medium well done."},{"id":"0ozAXv4Mmjb","joke":"Why did the tomato blush? Because it saw the salad dressing."},{"id":"0wcFBQfiGBd","joke":"Did you hear the joke about the wandering nun? She was a roman catholic."},{"id":"189xHQ7pOuc","joke":"What creature is smarter than a talking parrot? A spelling bee."},{"id":"18Elj3EIYvc","joke":"I'll tell you what often gets over looked... garden fences."},{"id":"18h3wcU8xAd","joke":"Why did the kid cross the playground? To get to the other slide."},{"id":"1DIRSfx51Dd","joke":"Why do birds fly south for the winter? Because it's too far to walk."}],"search_term":"","status":200,"total_jokes":744,"total_pages":38}
+&#xD;
+```</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-03-13T10:10:49.8310078+00:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>aa435dc049ae47419fa28ec390ca229e</Id>
+      <User>Ai</User>
+      <Body>Here's a dad joke for you:
+
+"I'm tired of following my dreams. I'm just going to ask them where they are going and meet up with them later."
+
+Enjoy the humor! If you want more jokes, just let me know.</Body>
+      <Attachments />
+      <Date>2024-03-13T10:10:49.8400564+00:00</Date>
+      <Type>In</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
+  <MaxRiskLevel>Medium</MaxRiskLevel>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

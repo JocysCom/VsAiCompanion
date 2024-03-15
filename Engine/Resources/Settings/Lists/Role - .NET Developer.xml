@@ -1,25 +1,26 @@
 ﻿<ListInfo>
   <Name>Role - .NET Developer</Name>
   <IconType>.svg</IconType>
-  <IconData>H4sIAAAAAAAEAO1WUW/bNhB+76/QtFeJIo+kRAZxC8RxuwLdVmBphj0NrqxZQlzZsF076a/fd5Ss&#xD;
-xGrWvQ19GJCAOvJ4/O6772hevrr/tIoO1XbXrNtJrISMo6ot14umXU7iDzevUxe/evni8ofrX6c3&#xD;
-f7yfRbvDMnr/4erd22kUp1n2u55m2fXNdfTb7ZtICZVls1/iKK73+81Flh2PR3HUYr1dZm+2803d&#xD;
-lLsMjhk7YlOGYEqJxX4R4wiO/ASIiqNmMYnfzR+q7Z8wgLPdTZ6JTFJKjtS7XNyvmvbuOUflvc/C&#xD;
-Klwnsdzcx9FDPx6bxb6exGTYqKtmWe9P1qGpjldr3hDJiAz+mKL5x1WVfpyXd8vt+nMLoG11jJ54&#xD;
-AMvFbjMvq0m82Va7anuokGQUXS5DWk25boONmc18X0eY+5mUcIn5iQSVqRR5nsgkVYISKazpvvB/&#xD;
-UEbkpUw6B17pF/i/NsIdsNfqwsIHX2R5L0ZZKB5NTnY81hglNpzc5VOH5zYeAEaenTDyG8XXnfcp&#xD;
-+uAU9pxtOZwCj5CPgP8b7mfh3JKq8//Z+QY7UE/ZC48FlQ7yYvHdWkFT0onhSSJsSjAGyX6Jo7+a&#xD;
-1WoS/zjLZ342i7OxtJVN6PEchLPWFivEtwxECWNcgaMlADM84zwPSjJ3vBZAKtVbdchsik4oPHlE&#xD;
-Trr4Ia3Ho75wRxU4Ak2lvPCOVqkV2iEnU5Pw2n8vtDPIJ8wbo4ObB/STiRsRTtAW2r8vg8M8F0Jx&#xD;
-hsmQ62M1SKvXhBt9jYuo2fNdJ2T+THGYCw1SAFwVHfJQFerTyz3KwrbTGLVQGvVJSShDwV3bPPgp&#xD;
-rQM7xnZ5aurYMlqG0XpvOE2HgsJ0JFleSuq8i4ZTTmZoCl2GG9Do3HV8EPtpk4fTbWCzsxmFlE6H&#xD;
-QkpJBX8kssSyVJa4CqzYcGV6JdVg9tt5m6fCcVWQBabJgmRGQwljoSBPylmJVIRsZGGCf1501dKK&#xD;
-r+ocGuZjjVEsXmc70M4xOAzSdwx6PkQZbcpOMCwIZNRFdhy4IMkBlYLEmXsKakVN+BSNSS0METeK&#xD;
-tcgIzUtEvRV6yRad+qT0ec+HEtp7Zgkq0prZAGlhr/VF1/DeTRUyJumS0GDoJ7ZlaBthMZGcC6bX&#xD;
-W7r9vMKvXXWo2vViMWjQXDl/Pf1adAjJKjqJ7lxzI8mNFDcS3EhvI7mlI71xI0lvB8ENdqe4qYXM&#xD;
-QH8unMJqnljhuSqu/zjgHvE5fqBxhTG74JGK4sRjykRqPxAJngzUd+IRZq4faTyn4Ns02ms/nU3P&#xD;
-WtkNpOJNU0X3Cs8miycNxkLg457whMHL6YH6iS5Uu26rONrtt+u7igOjuZw8TaT9Q0gNExy7nG8m&#xD;
-cXjnDNOfmn21XTUY4Hx+xRT/jEvJMbBu5jtApr9Cpv97ZJfZEi9hfs2+fPE3Jka2uJsLAAA=</IconData>
+  <IconData>H4sIAAAAAAAACu1WTW/bRhC951ewzJVc7s5+cNewEsCykhZI2wB1XPRUKBIrEVYoQVIkO7++b5YU&#xD;
+bTFueityKCRhOcPZ+XjzdrSXr+8/rZJDtd3V62aUKiHTpGpm63ndLEbph5s3uU9fv3px+cP1r+Ob&#xD;
+P95Pkt1hkbz/cPXup3GS5kXxux4XxfXNdfLb7dtECVUUk1/SJF3u95uLojgej+KoxXq7KN5up5tl&#xD;
+PdsVMCzYEJsKOFNKzPfzFCHY85NEVJrU81H6bvpQbf+EgDyb3egZzySlZE+dycX9qm7unjNUIYQi&#xD;
+voXpKJWb+zR56NZjPd8vRykZFpZVvVjuT9Khro5Xa96QyIQMvgzR9OOqyj9OZ3eL7fpzg0Sb6pg8&#xD;
+sUAuF7vNdFaN0s222lXbQ4Uik+RyEcuqZ+smytBspvtlAt3PpITPzI8kaJZL4Vwms1wJyqSwpn3C&#xD;
+76CMcDOZtQb8pnvBv6UR/oC9VpcWNngiy3uxylLxahzZ4brEKrHhZC6fGjy38YBk5FmEgd3Av26t&#xD;
+T957o7jnbMvh5HiQ+SDxf8v72XRuSS3d/+h8Ax2wZ9YRjwmV9/Ri8t1aQWPSmWElETZlWCNlv6TJ&#xD;
+X/VqNUpfTtwkTCZpMaS2shk9xoE7a225gn/LiShhjC8RWqKdnJ7xgRclmVn8LiapVCctY9/HOAll&#xD;
+oADPWes/lvUY6gufqBIhcKhUEMHTKrdCe9RkliSCDt8HKU1M8gnyxuhoFpD6ScREhBFOHo5/1wYP&#xD;
+PTdCcYVZX+tjN0irN4SJvsYgqvc864R0zzSHsdAABYmrss08doW68lxAW1j2GqsWSqM/OQllKJpr&#xD;
+66Kd0jqiY2JXoacWLaPRSGZTCIbL9GgoRE9Qoy6pXesNUU5iHBmaJwzIoZ1v8QATSWjjYnQb0Wxl&#xD;
+zkJKr2MjpSQQhj8zvJbKYoSyoXFxZAYlVS9223lboNJzV1AF1GQBMmdDGeeCQuGYHDORyliNLE20&#xD;
+d2XbLa14VDtwmMMao5i83rZJe8/JYZGhRTBwEGW0iamjczzMZefZs+OSEBugKlCcsafIVvSEo2go&#xD;
+tTCEhU8RKsLhJaJOimcJZIjskzK4Dg8ldEBkCWungTPH0nGvDbEn1gQ/VqiYpGdGlAHniWUZj42w&#xD;
+UGTnhOn4lm8/r/BvVx2qZj2f9xw0Vz5cj78mHVwyi06kO+fcgHIDxg0IN+DbgG75gG98kGSwPeF6&#xD;
+uWXc2IJmgN8Jr/DWZVYE7orvHg6YI8HhDxojjNEFjlSWJxwheqtDDyRwMmDfCUeITj/CeA7Bt2G0&#xD;
+12E8GZ8dZd+DijtNldwrXJssrjRYS4GHe8IVBjenB+oUratm3VRpsttv13eI89LicHl5UuTdRUj1&#xD;
+CvY9m25Gabzn9OpP9b7armosMD4fMeU/56XkMLFW8x1kpr/KLGr+28wuiwVuwnybffXibyZGtrib&#xD;
+CwAA</IconData>
   <Description>Your current role and area of expertise are detailed here, letting the AI understand the context of your questions and the nature of the assistance you're seeking, especially in .NET development.</Description>
   <Instructions>Here, the user's role and expertise are detailed. Factor in this context when providing development advice, resources, or when discussing technologies to match the user's skill level and interests.</Instructions>
   <IsReadOnly>true</IsReadOnly>

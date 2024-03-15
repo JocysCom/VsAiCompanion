@@ -1,0 +1,45 @@
+﻿<ListInfo>
+  <Name>Profile - Business Analyst</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACq1Ua2/TMBT9vl9hLCGBlMa+tvNsu0nLHkIaMIkNBN9K47VmWVIlWTv+Pdd2Wlap&#xD;
+7AurVOX4+j7OOXYyOXl6qMhat51p6imFkFOi63lTmnoxpbc3F6OUkq6f1eWsamo9pXVDT46PJm/O&#xD;
+Phc336/PSbdekOvb06sPBaEjxr7JgrGzmzPy5eslgRAYO/9ECV32/SpnbLPZhBsZNu2CXbaz1dLM&#xD;
+O4aJzCZiEcNmAGHZlxRH2M4bU/ZLpMX5W0qW2iyW/Xa1Nnpz2jxNKSecRCDsnz5XApSgtrqbHpgu&#xD;
+OOd22pCSP1Wmvj+UCFmWMbfrUvNuNZujC6tWd7pd6209LszdXr2LhPPmgVn/fldYdGeqatQ+VjrX&#xD;
+a103ZTmeV2a1H+n6trnXIxyofzWmztvmsd5FH0yv28rgIxdjtIjgb7LwT4dXs35JTDml80ckpyhB&#xD;
++BFSFUghwugKUhlGgUgUYinS59hnFDJGFCMiSlmUuqdKAfccyrADxjjWRtxhkVgM4ipVHhQJ7HZj&#xD;
+NZRY4LogsG1BqWHQjt6PPaPydvHzHUASQASB4PL9mLJ/KpVe6f8yKBySGRGCBzLCbkREsUeFyMQQ&#xD;
+c3Zh1uvadkB+AoFzII1eVC+8ekfVnmchZOIREWBjQCCzpy1jiRKtIBxOIJGBVBmBGLNlbOXbiBS4&#xD;
+k6Gw5HWskXLohXHXXapomOciyECKLScJ9oZaniLzzEWCa69lq++AU4JngWWGyl+0Cr8JO6tEIZU9&#xD;
+BEspsfZk8QAg5oVHQnHkhP4I7ucLXkBmazgB6d4mzPDIVnmEjSC2x4qtfdWhu4330B4G0v5LecLw&#xD;
+dZ7YL9Px0R9IyHj2mwUAAA==</IconData>
+  <Description>This list details the typical traits, skills, and qualifications that are expected of a Business Analyst.</Description>
+  <Instructions>Use this list for drafting job descriptions, preparing interview questions, and evaluating candidates for the Business Analyst position. It serves as a guideline for the desired attributes in potential hires.</Instructions>
+  <Items>
+    <ListItem>
+      <Key>Analytical Skills</Key>
+      <Value>Strong capability in analyzing data, understanding business processes, and solving complex problems.</Value>
+      <Comment>Foundation of business analysis work.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Communication Skills</Key>
+      <Value>Excellent verbal and written communication skills, with the ability to convey complex ideas effectively.</Value>
+      <Comment>Essential for stakeholder engagement and documentation.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Technical Proficiency</Key>
+      <Value>Understanding of relevant IT systems, software, and technology.</Value>
+      <Comment>Necessary for working closely with IT teams and understanding solutions.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Problem-Solving Skills</Key>
+      <Value>Ability to identify and define problems, analyze data, and propose viable solutions.</Value>
+      <Comment>Crucial for overcoming project challenges and improving processes.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Educational background</Key>
+      <Value>Preferably a degree in Business, Economics, IT, or related fields.</Value>
+      <Comment>Provides foundational knowledge and relevant skills for the role.</Comment>
+    </ListItem>
+  </Items>
+</ListInfo>

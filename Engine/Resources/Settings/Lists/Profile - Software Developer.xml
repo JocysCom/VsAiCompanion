@@ -1,0 +1,30 @@
+﻿<ListInfo>
+  <Name>Profile - Software Developer</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACq1Ua2/TMBT9vl9hLCGBlMa+tvNsu0nLHkIaMIkNBN9K47VmWVIlWTv+Pdd2Wlap&#xD;
+7AurVOX4+j7OOXYyOXl6qMhat51p6imFkFOi63lTmnoxpbc3F6OUkq6f1eWsamo9pXVDT46PJm/O&#xD;
+Phc336/PSbdekOvb06sPBaEjxr7JgrGzmzPy5eslgRAYO/9ECV32/SpnbLPZhBsZNu2CXbaz1dLM&#xD;
+O4aJzCZiEcNmAGHZlxRH2M4bU/ZLpMX5W0qW2iyW/Xa1Nnpz2jxNKSecRCDsnz5XApSgtrqbHpgu&#xD;
+OOd22pCSP1Wmvj+UCFmWMbfrUvNuNZujC6tWd7pd6209LszdXr2LhPPmgVn/fldYdGeqatQ+VjrX&#xD;
+a103ZTmeV2a1H+n6trnXIxyofzWmztvmsd5FH0yv28rgIxdjtIjgb7LwT4dXs35JTDml80ckpyhB&#xD;
++BFSFUghwugKUhlGgUgUYinS59hnFDJGFCMiSlmUuqdKAfccyrADxjjWRtxhkVgM4ipVHhQJ7HZj&#xD;
+NZRY4LogsG1BqWHQjt6PPaPydvHzHUASQASB4PL9mLJ/KpVe6f8yKBySGRGCBzLCbkREsUeFyMQQ&#xD;
+c3Zh1uvadkB+AoFzII1eVC+8ekfVnmchZOIREWBjQCCzpy1jiRKtIBxOIJGBVBmBGLNlbOXbiBS4&#xD;
+k6Gw5HWskXLohXHXXapomOciyECKLScJ9oZaniLzzEWCa69lq++AU4JngWWGyl+0Cr8JO6tEIZU9&#xD;
+BEspsfZk8QAg5oVHQnHkhP4I7ucLXkBmazgB6d4mzPDIVnmEjSC2x4qtfdWhu4330B4G0v5LecLw&#xD;
+dZ7YL9Px0R9IyHj2mwUAAA==</IconData>
+  <Description>This list details the essential traits and qualifications that are typically required or desirable for a Software Developer role. It acts as a foundational guide for candidate evaluation during the hiring process.</Description>
+  <Instructions>Reference this list when posting job ads, conducting interviews, and evaluating candidates to ensure a comprehensive understanding of the qualifications needed for a software developer.</Instructions>
+  <Items>
+    <ListItem>
+      <Key>Proficiency in programming languages</Key>
+      <Value>Proficiency in at least one programming language such as Java, C++, Python, or JavaScript.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Understanding of SDLC</Key>
+      <Value>Strong understanding of the software development lifecycle and methodologies (Agile, Scrum, Kanban).</Value>
+      <Comment />
+    </ListItem>
+  </Items>
+</ListInfo>

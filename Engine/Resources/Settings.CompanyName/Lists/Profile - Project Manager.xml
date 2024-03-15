@@ -1,0 +1,65 @@
+﻿<ListInfo>
+  <Name>Profile - Project Manager</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACq1Ua2/TMBT9vl9hLCGBlMa+tvNsu0nLHkIaMIkNBN9K47VmWVIlWTv+Pdd2Wlap&#xD;
+7AurVOX4+j7OOXYyOXl6qMhat51p6imFkFOi63lTmnoxpbc3F6OUkq6f1eWsamo9pXVDT46PJm/O&#xD;
+Phc336/PSbdekOvb06sPBaEjxr7JgrGzmzPy5eslgRAYO/9ECV32/SpnbLPZhBsZNu2CXbaz1dLM&#xD;
+O4aJzCZiEcNmAGHZlxRH2M4bU/ZLpMX5W0qW2iyW/Xa1Nnpz2jxNKSecRCDsnz5XApSgtrqbHpgu&#xD;
+OOd22pCSP1Wmvj+UCFmWMbfrUvNuNZujC6tWd7pd6209LszdXr2LhPPmgVn/fldYdGeqatQ+VjrX&#xD;
+a103ZTmeV2a1H+n6trnXIxyofzWmztvmsd5FH0yv28rgIxdjtIjgb7LwT4dXs35JTDml80ckpyhB&#xD;
++BFSFUghwugKUhlGgUgUYinS59hnFDJGFCMiSlmUuqdKAfccyrADxjjWRtxhkVgM4ipVHhQJ7HZj&#xD;
+NZRY4LogsG1BqWHQjt6PPaPydvHzHUASQASB4PL9mLJ/KpVe6f8yKBySGRGCBzLCbkREsUeFyMQQ&#xD;
+c3Zh1uvadkB+AoFzII1eVC+8ekfVnmchZOIREWBjQCCzpy1jiRKtIBxOIJGBVBmBGLNlbOXbiBS4&#xD;
+k6Gw5HWskXLohXHXXapomOciyECKLScJ9oZaniLzzEWCa69lq++AU4JngWWGyl+0Cr8JO6tEIZU9&#xD;
+BEspsfZk8QAg5oVHQnHkhP4I7ucLXkBmazgB6d4mzPDIVnmEjSC2x4qtfdWhu4330B4G0v5LecLw&#xD;
+dZ7YL9Px0R9IyHj2mwUAAA==</IconData>
+  <Description>This list compiles the key traits and qualifications necessary for the Project Manager role, covering both soft skills and technical competencies required to successfully manage projects.</Description>
+  <Instructions>Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.</Instructions>
+  <Items>
+    <ListItem>
+      <Key>Leadership skills</Key>
+      <Value>Ability to lead, motivate, and manage project teams.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Excellent communication</Key>
+      <Value>Strong verbal and written communication skills.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Problem-solving</Key>
+      <Value>Strong analytical and problem-solving abilities.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Organizational skills</Key>
+      <Value>High level of organizational and multitasking abilities.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Technical expertise</Key>
+      <Value>Understanding of software development processes and methodologies.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Budget management</Key>
+      <Value>Experience in budget planning and financial management.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Risk management</Key>
+      <Value>Ability to identify and mitigate project risks.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Decision-making</Key>
+      <Value>Capability to make informed decisions quickly and effectively.</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Adaptability</Key>
+      <Value>Flexibility to adapt to new challenges and changes within projects.</Value>
+      <Comment />
+    </ListItem>
+  </Items>
+</ListInfo>
