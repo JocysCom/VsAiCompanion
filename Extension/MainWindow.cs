@@ -80,7 +80,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		private void Control_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			Global.SaveSettings();
+			//Global.SaveSettings();
 		}
 
 		/// <summary>

@@ -6,14 +6,15 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Json;
 using System.Text;
-using System.Text.Json;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
 	public static partial class RuntimeHelper
 	{
 
+		/*
 		public static bool IsKnownType(Type type)
 		{
 			if (type is null)
@@ -24,6 +25,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				|| type.IsValueType
 				|| type.IsSerializable;
 		}
+		*/
 
 		private static readonly HashSet<Type> numericTypes = new HashSet<Type>
 		{
@@ -143,7 +145,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return items;
 		}
 
-		public static void CopyFields(object source, object target)
+		public static void CopyFields(object source, object target, bool onlyNonByRef = false)
 		{
 			if (source is null)
 				throw new ArgumentNullException(nameof(source));
@@ -152,24 +154,79 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Get Field Info.
 			var sourceFields = GetFields(source.GetType());
 			var targetFields = GetFields(target.GetType());
-			foreach (var sf in sourceFields)
+			foreach (var sm in sourceFields)
 			{
-				var tf = targetFields.FirstOrDefault(x => x.Name == sf.Name);
-				if (tf == null || !IsKnownType(sf.FieldType) || sf.FieldType != tf.FieldType)
+				var tm = targetFields.FirstOrDefault(x => x.Name == sm.Name);
+				bool useJson;
+				if (!CanCopy(sm.FieldType, tm.FieldType, onlyNonByRef, out useJson))
 					continue;
-				var useJson = sf.FieldType.IsSerializable && !sf.FieldType.IsValueType;
-				var value = sf.GetValue(source);
+				// Get source value.
+				var sValue = sm.GetValue(source);
 				if (useJson)
+					sValue = Serialize(sValue);
+				var update = true;
+				// Get target value.
+				var dValue = tm.GetValue(target);
+				if (useJson)
+					dValue = Serialize(dValue);
+				// Update only if values are different.
+				update = !Equals(sValue, dValue);
+				if (update)
 				{
-					var json = JsonSerializer.Serialize(value);
-					value = JsonSerializer.Deserialize(json, tf.FieldType);
-					tf.SetValue(target, value);
-				}
-				else
-				{
-					tf.SetValue(target, sf.GetValue(source));
+					if (useJson)
+						sValue = Deserialize(sValue as string, tm.FieldType);
+					tm.SetValue(target, sValue);
 				}
 			}
+		}
+
+		#endregion
+
+		#region Serializer
+
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<Type, DataContractJsonSerializer> JsonSerializers = new ConcurrentDictionary<Type, DataContractJsonSerializer>();
+
+		static DataContractJsonSerializer GetJsonSerializer(Type type, DataContractJsonSerializerSettings settings = null)
+		{
+			if (type == null)
+				return null;
+			return JsonSerializers.GetOrAdd(type, x => new DataContractJsonSerializer(type, settings));
+		}
+
+		// DataContractJsonSerializerSettings requires .NET 4.5
+		static DataContractJsonSerializerSettings settings = new DataContractJsonSerializerSettings()
+		{
+			IgnoreExtensionDataObject = true,
+			// Simple dictionary format looks like this: { "Key1": "Value1", "Key2": "Value2" }
+			UseSimpleDictionaryFormat = true,
+		};
+
+
+		private static string Serialize(object o)
+		{
+			if (o is null)
+				return null;
+			var serializer = GetJsonSerializer(o.GetType());
+			var ms = new MemoryStream();
+			lock (serializer) { serializer.WriteObject(ms, o); }
+			var json = Encoding.UTF8.GetString(ms.ToArray());
+			ms.Close();
+			return json;
+		}
+
+		private static object Deserialize(string json, Type type)
+		{
+			if (json is null)
+				return null;
+			var serializer = GetJsonSerializer(type);
+			var bytes = Encoding.UTF8.GetBytes(json);
+			var ms = new MemoryStream(bytes);
+			object o;
+			lock (serializer) { o = serializer.ReadObject(ms); }
+			ms.Close();
+			return o;
 		}
 
 		#endregion
@@ -223,6 +280,26 @@ namespace JocysCom.ClassLibrary.Runtime
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Retur true if can copy.
+		/// </summary>
+		public static bool CanCopy(Type source, Type target, bool onlyNonByRef, out bool useJson)
+		{
+			useJson = false;
+			// If target property don't exists.
+			if (target == null)
+				return false;
+			// If target property can't be assigned.
+			if (!source.IsAssignableFrom(source))
+				return false;
+			// If only non reference properties can be compied.
+			if (onlyNonByRef && source.IsByRef)
+				return false;
+			// Use JSON to clone referenced values.
+			useJson = source.IsByRef;
+			return true;
+		}
+
 		public static void CopyProperties(object source, object target, bool onlyNonByRef = false)
 		{
 			if (source is null)
@@ -232,37 +309,35 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Get type of the destination object.
 			var sourceProperties = GetProperties(source.GetType());
 			var targetProperties = GetProperties(target.GetType());
-			foreach (var sp in sourceProperties)
+			foreach (var sm in sourceProperties)
 			{
 				// Get destination property and skip if not found.
-				var tp = targetProperties.FirstOrDefault(x => Equals(x.Name, sp.Name));
-				if (!sp.CanRead || !tp.CanWrite)
+				var tm = targetProperties.FirstOrDefault(x => Equals(x.Name, sm.Name));
+				if (!sm.CanRead || !tm.CanWrite)
 					continue;
-				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
+				bool useJson;
+				if (!CanCopy(sm.PropertyType, tm.PropertyType, onlyNonByRef, out useJson))
 					continue;
-				if (onlyNonByRef && sp.PropertyType.IsByRef)
-					continue;
-				var useJson = sp.PropertyType.IsSerializable && !sp.PropertyType.IsValueType;
 				// Get source value.
-				var sValue = sp.GetValue(source, null);
+				var sValue = sm.GetValue(source, null);
 				if (useJson)
-					sValue = JsonSerializer.Serialize(sValue);
+					sValue = Serialize(sValue);
 				var update = true;
 				// If can read target value.
-				if (tp.CanRead)
+				if (tm.CanRead)
 				{
 					// Get target value.
-					var dValue = tp.GetValue(target, null);
+					var dValue = tm.GetValue(target, null);
 					if (useJson)
-						dValue = JsonSerializer.Serialize(dValue);
+						dValue = Serialize(dValue);
 					// Update only if values are different.
 					update = !Equals(sValue, dValue);
 				}
 				if (update)
 				{
 					if (useJson)
-						sValue = JsonSerializer.Deserialize(sValue as string, tp.PropertyType);
-					tp.SetValue(target, sValue, null);
+						sValue = Deserialize(sValue as string, tm.PropertyType);
+					tm.SetValue(target, sValue, null);
 				}
 			}
 		}

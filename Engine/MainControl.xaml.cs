@@ -37,6 +37,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			UpdatesPanel.AssetName = "JocysCom.VS.AiCompanion.App.zip";
 			UpdatesPanel.AddTask += UpdatesPanel_AddTask;
 			UpdatesPanel.RemoveTask += UpdatesPanel_RemoveTask;
+			// Subscribe to the application-wide Activated and Deactivated events
+			Application.Current.Deactivated += Current_Deactivated;
+		}
+
+		private void Current_Deactivated(object sender, System.EventArgs e)
+		{
+			Global.SaveSettings();
 		}
 
 		private void UpdatesPanel_AddTask(object sender, System.EventArgs e)
