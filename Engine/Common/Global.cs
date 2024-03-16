@@ -247,6 +247,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void SaveSettings()
 		{
+			// Don't save if not loaded first.
+			if (!IsSettignsLoaded)
+				return;
 			RaiseOnSaveSettings();
 			AppData.Save();
 			PromptItems.Save();
@@ -265,6 +268,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			=> PromptingUpdated?.Invoke(null, EventArgs.Empty);
 
 		public static bool ResetSettings = false;
+
+		public static bool IsSettignsLoaded;
 
 		public static void LoadSettings()
 		{
@@ -324,6 +329,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AppData.Version = 2;
 				SettingsSourceManager.ResetTemplates();
 			}
+			IsSettignsLoaded = true;
 		}
 
 		private static void Assistants_OnValidateData(object sender, SettingsData<AssistantItem>.SettingsDataEventArgs e)

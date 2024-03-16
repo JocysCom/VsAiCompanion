@@ -58,9 +58,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var position = PositionSettings.GetGridSplitterPosition(MainGrid);
-			if (position == 0.0)
+			if (position == null || position == 0.0)
 				return;
-			Global.AppSettings.AiServiceData.GridSplitterPosition = position;
+			Global.AppSettings.AiServiceData.GridSplitterPosition = position.Value;
 		}
 
 		#endregion

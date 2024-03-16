@@ -628,13 +628,21 @@
 			if (!settings)
 				return;
 			var position = settings.ScrollPosition;
-			// Check if position is a valid number and larger than 0
-			if (!isNaN(position) && position > 0)
+			// Check if position is a valid number
+			if (isNaN(position))
+				return;
+			// By default, "null" indicates that the scroll is at the bottom.
+			if (position == null)
+				ScrollToBottom();
+			if (position >= 0)
 				SetScrollPosition(position);
 		}
 
 		function GetSettings() {
 			var position = GetScrollPosition();
+			// Always return null if position is on the bottom.
+			if (IsScrollOnTheBottom())
+				position = null;
 			var settings = {
 				"ScrollPosition": position,
 			};

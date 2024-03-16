@@ -5,8 +5,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
 	public class ChatSettings
 	{
-		[DefaultValue(0)]
-		public int ScrollPosition { get; set; }
+		/// <summary>
+		/// By default, "null" indicates that the scroll is at the bottom.
+		/// </summary>
+		[DefaultValue(null)]
+		public int? ScrollPosition { get; set; }
 
 		// Override the Equals method.
 		public override bool Equals(object o)

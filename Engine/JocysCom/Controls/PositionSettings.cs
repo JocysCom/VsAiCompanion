@@ -269,7 +269,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Get Grid Splitter positon as percentage from 0 to 1.
 		/// </summary>
-		public static double GetGridSplitterPosition(Grid grid, GridSplitter splitter = null)
+		public static double? GetGridSplitterPosition(Grid grid, GridSplitter splitter = null)
 		{
 			splitter = splitter ?? grid.Children.OfType<GridSplitter>().First();
 			var isVertical = splitter.ResizeDirection == GridResizeDirection.Rows;
@@ -279,6 +279,10 @@ namespace JocysCom.ClassLibrary.Controls
 			var total = isVertical
 				? grid.ActualHeight
 				: grid.ActualWidth;
+			if (double.IsNaN(size0) && double.IsInfinity(size0))
+				return null;
+			if (double.IsNaN(total) && double.IsInfinity(total) || total == 0)
+				return null;
 			var position = size0 / total;
 			return position;
 		}

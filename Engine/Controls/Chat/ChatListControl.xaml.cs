@@ -77,7 +77,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return null;
 			try
 			{
-				return (ChatSettings)JsonSerializer.Deserialize(json, typeof(ChatSettings));
+				var settings = (ChatSettings)JsonSerializer.Deserialize(json, typeof(ChatSettings));
+				return settings;
 			}
 			catch (Exception ex)
 			{

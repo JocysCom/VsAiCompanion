@@ -156,7 +156,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			// Update from previous settings.
 			if (_Item != null)
-				_Item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
+			{
+				var settings = ChatPanel.MessagesPanel.GetWebSettings();
+				if (settings != null)
+					_Item.Settings = settings;
+			}
+
 		}
 
 		private async void ChatPanel_OnSend(object sender, EventArgs e)

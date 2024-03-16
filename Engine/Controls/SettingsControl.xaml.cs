@@ -225,9 +225,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (DataType == ItemType.None)
 				return;
 			var position = PositionSettings.GetGridSplitterPosition(MainGrid);
-			if (position == 0.0)
+			if (position == null || position == 0.0)
 				return;
-			PanelSettings.GridSplitterPosition = position;
+			PanelSettings.GridSplitterPosition = position.Value;
 		}
 
 		#endregion
