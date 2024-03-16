@@ -104,7 +104,9 @@
 						<Label Content="Options" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:OptionsControl x:Name="OptionsPanel" />
+				<ScrollViewer>
+					<controls:OptionsControl x:Name="OptionsPanel" />
+				</ScrollViewer>
 			</TabItem>
 
 			<TabItem x:Name="UpdatesTabItem" x:FieldModifier="public">

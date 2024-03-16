@@ -2,6 +2,7 @@
 
 - Fix: The AI was unable to update the List instructions.
 - Fix: Saving scroll position.
+- Fix: The Options window is now scrollable.
 - New: Role and Profile templates.
 - New: List sort and Insert List item methods.
 - New: Option to convert the fine-tuning files to and from Markdown format.
