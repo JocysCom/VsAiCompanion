@@ -4,8 +4,6 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	Width="480"
-	Height="240"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -29,7 +27,11 @@
 		</Grid.ColumnDefinitions>
 		<StackPanel Grid.Row="0" />
 		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-			<CheckBox x:Name="CheckDigitalSignatureCheckBox" Margin="8,0,0,0" Content="Check Digital Signature" />
+			<CheckBox
+				x:Name="CheckDigitalSignatureCheckBox"
+				Margin="8,0,0,0"
+				Content="Check Digital Signature"
+				IsChecked="True" />
 			<CheckBox x:Name="CheckVersionCheckBox" Margin="8,0,0,0" Content="Check Version" />
 		</StackPanel>
 		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
@@ -58,6 +60,23 @@
 					<Label Content="Install" />
 				</StackPanel>
 			</Button>
+			<Button Name="DownloadButton" MinWidth="75" Click="DownloadButton_Click">
+				<StackPanel Focusable="False">
+					<Label Content="Download" />
+				</StackPanel>
+			</Button>
+			<Button Name="ExtractButton" MinWidth="75" Click="ExtractButton_Click">
+				<StackPanel Focusable="False">
+					<Label Content="Extract" />
+				</StackPanel>
+			</Button>
+
+			<Button Name="CheckSignatureButton" MinWidth="75" Click="CheckSignatureButton_Click">
+				<StackPanel Focusable="False">
+					<Label Content="Check Signature" />
+				</StackPanel>
+			</Button>
+
 		</StackPanel>
 		<TextBox
 			x:Name="StatusPanel"
@@ -65,12 +84,19 @@
 			Grid.ColumnSpan="2"
 			VerticalAlignment="Stretch"
 			Background="{StaticResource BackgroundDark}" />
+
+
 		<TextBox
-			x:Name="LogPanel"
+			Name="LogTextBox"
 			Grid.Row="4"
 			Grid.ColumnSpan="2"
+			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
-			Background="{StaticResource BackgroundDark}" />
-
+			VerticalContentAlignment="Top"
+			Background="{StaticResource BackgroundDark}"
+			IsReadOnly="True"
+			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			TextWrapping="Wrap" />
 	</Grid>
 </UserControl>

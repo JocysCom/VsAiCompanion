@@ -11,7 +11,7 @@ namespace JocysCom.ClassLibrary.Network
 			Headers = new Dictionary<string, IEnumerable<string>>();
 		}
 
-		public string Url { get; set; }
+		public string SourceUrl { get; set; }
 		public string TargetFile { get; set; }
 
 		public Dictionary<string, IEnumerable<string>> Headers { get; set; }

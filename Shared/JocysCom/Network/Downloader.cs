@@ -51,7 +51,7 @@ namespace JocysCom.ClassLibrary.Network
 				}
 				// Set timeout as needed.
 				client.Timeout = TimeSpan.FromSeconds(Params.Timeout);
-				var response = await client.GetAsync(Params.Url);
+				var response = await client.GetAsync(Params.SourceUrl);
 				if (response.IsSuccessStatusCode)
 				{
 					var contentType = response.Content.Headers.ContentType;

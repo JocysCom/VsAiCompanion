@@ -34,7 +34,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				: Visibility.Collapsed;
 			UpdatesPanel.GitHubCompany = "JocysCom";
 			UpdatesPanel.GitHubProduct = "VsAiCompanion";
-			UpdatesPanel.AssetName = "JocysCom.VS.AiCompanion.App.zip";
+			UpdatesPanel.GitHubAssetName = "JocysCom.VS.AiCompanion.App.zip";
+			UpdatesPanel.FileNameInsideZip = "JocysCom.VS.AiCompanion.App.exe";
+			UpdatesPanel.UpdateFileFullName = new AssemblyInfo().AssemblyPath;
 			UpdatesPanel.AddTask += UpdatesPanel_AddTask;
 			UpdatesPanel.RemoveTask += UpdatesPanel_RemoveTask;
 			// Subscribe to the application-wide Activated and Deactivated events

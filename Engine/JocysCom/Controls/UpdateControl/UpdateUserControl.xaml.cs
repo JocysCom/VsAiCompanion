@@ -1,11 +1,17 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Network;
 using JocysCom.Controls.UpdateControl.GitHub;
+using JocysCom.WebSites.Engine.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.AccessControl;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -22,19 +28,46 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			cancellationTokenSource = new CancellationTokenSource();
 			//LogPanel.LogGridScrollUp = false;
 			//var process = System.Diagnostics.Process.GetCurrentProcess();
 			//processFileName = process.MainModule.FileName;
 			ReleaseComboBox.ItemsSource = ReleaseList;
 		}
 
+
+		CancellationTokenSource cancellationTokenSource;
+
 		public string GitHubCompany { get; set; }
 		public string GitHubProduct { get; set; }
-		public string AssetName { get; set; }
+
+		/// <summary>
+		/// GitHub executing asset name + ".zip".
+		/// </summary>
+		public string GitHubAssetName { get; set; }
+
+		/// <summary>
+		/// Executable inside the zip
+		/// </summary>
+		public string FileNameInsideZip { get; set; }
+
+		/// <summary>
+		/// Executable file name to update.
+		/// </summary>
+		public string UpdateFileFullName { get; set; }
+
 
 		public event EventHandler AddTask;
 		public event EventHandler RemoveTask;
 
+		/// <summary>
+		/// Path to GitHub file on the local disk.
+		/// </summary>
+		public string DownloadTargetFile
+			=> Path.GetTempPath() + GitHubAssetName;
+
+		public string UpdateFileTempFullName
+			=> UpdateFileFullName + ".tmp";
 
 		private async void CheckButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
@@ -56,7 +89,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				var releases = await client.GetGitHubReleasesAsync(GitHubCompany, GitHubProduct);
 				Releases = releases
 					.Where(x => !string.IsNullOrWhiteSpace(x.name))
-					.Where(x => x.assets.Any(y => AssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
+					.Where(x => x.assets.Any(y => GitHubAssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
 					.Where(x => System.Version.TryParse(x.name, out _))
 					.OrderByDescending(x => System.Version.Parse(x.name))
 					.ToList();
@@ -74,7 +107,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			}
 			catch (System.Exception ex)
 			{
-				LogPanel.Text = ex.ToString();
+				cancellationTokenSource.Cancel();
+				AddLog(ex.ToString());
 			}
 			RemoveTask?.Invoke(this, e);
 		}
@@ -94,11 +128,13 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			if (selectedRelease == null)
 				return;
 			var asset = selectedRelease.assets
-				.First(x => AssetName.Equals(x.name, System.StringComparison.OrdinalIgnoreCase));
+				.First(x => GitHubAssetName.Equals(x.name, System.StringComparison.OrdinalIgnoreCase));
 			oldProgress = 0;
+
+
 			_downloader = new Downloader();
-			_downloader.Params.Url = asset.browser_download_url;
-			_downloader.Params.TargetFile = AssetName;
+			_downloader.Params.SourceUrl = asset.browser_download_url;
+			_downloader.Params.TargetFile = DownloadTargetFile;
 			_downloader.Progress += _downloader_Progress;
 			await _downloader.LoadAsync();
 		}
@@ -122,10 +158,10 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 						var isDone = e.BytesReceived == e.TotalBytesToReceive;
 						if (isDone && _downloader.Params.ResponseData != null)
 						{
-							AddLog($"Saving File {dl.Params.TargetFile}... \r\n");
-							System.IO.File.WriteAllBytes(dl.Params.TargetFile, dl.Params.ResponseData);
-							AddLog(" Done");
-							//Step3AExtractFiles(zipFileName);
+							AddLog($"Saving File {DownloadTargetFile}... \r\n");
+							System.IO.File.WriteAllBytes(DownloadTargetFile, dl.Params.ResponseData);
+							AddLog(" Done\r\n");
+							Step3AExtractFiles(DownloadTargetFile);
 						}
 					});
 				}
@@ -134,7 +170,62 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		public void AddLog(string s)
 		{
-			LogPanel.AppendText(s);
+			LogTextBox.AppendText(s);
+		}
+
+		private void DownloadButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
+
+		private void ExtractButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			Step3AExtractFiles(DownloadTargetFile);
+		}
+
+		void Step3AExtractFiles(string zipFileName)
+		{
+			if (cancellationTokenSource.Token.IsCancellationRequested)
+				return;
+			var tmpName = UpdateFileFullName + ".tmp";
+			AddLog("Extracting...\r\n");
+			AddLog($"\tFile: {FileNameInsideZip}\r\n");
+			AddLog($"\tFrom: {zipFileName}\r\n");
+			AddLog($"\tTo: {tmpName}\r\n");
+			JocysCom.ClassLibrary.Files.Zip.UnZipFile(zipFileName, FileNameInsideZip, tmpName);
+			AddLog("...Done\r\n");
+		}
+
+		private void CheckSignatureButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			Step3CheckSignature(UpdateFileTempFullName);
+		}
+
+		void Step3CheckSignature(string updateFileName)
+		{
+			if (cancellationTokenSource.Token.IsCancellationRequested)
+				return;
+			if (CheckDigitalSignatureCheckBox.IsChecked == true)
+			{
+				AddLog("Check Digital Signature...\r\n");
+				X509Certificate2 certificate;
+				Exception error;
+				if (CertificateHelper.IsSignedAndTrusted(updateFileName, out certificate, out error))
+				{
+					AddLog($"\tSubject:    {certificate.Subject}\r\n");
+					AddLog($"\tIssuer:     {certificate.Issuer}\r\n");
+					AddLog($"\tExpires:    {certificate.NotAfter}\r\n");
+					AddLog($"\tThumbprint: {certificate.Thumbprint}\r\n");
+				}
+				else
+				{
+					var errMessage = error == null
+						? "\tFailed" : string.Format(" Failed: {0}", error.Message);
+					AddLog(errMessage + "\r\n");
+					cancellationTokenSource.Cancel();
+				}
+				AddLog("...Done.\r\n");
+			}
 		}
 
 		/*
@@ -183,35 +274,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		
 
-		void Step3AExtractFiles(string zipFileName)
-		{
-			if (CancelUpdate)
-				return;
-			var name = System.IO.Path.GetFileName(processFileName);
-			string updateFileName = processFileName + ".tmp";
-			JocysCom.ClassLibrary.Files.Zip.UnZipFile(zipFileName, "x360ce.exe", updateFileName);
-			Step3CheckSignature(updateFileName);
-		}
-
-		void Step3CheckSignature(string updateFileName)
-		{
-			if (CancelUpdate)
-				return;
-			if (CheckDigitalSignatureCheckBox.IsChecked == true)
-			{
-				CurrentLogItem = LogPanel.Add("Check Digital Signature...");
-				X509Certificate2 certificate;
-				Exception error;
-				if (!CertificateHelper.IsSignedAndTrusted(updateFileName, out certificate, out error))
-				{
-					var errMessage = error == null
-						? " Failed" : string.Format(" Failed: {0}", error.Message);
-					CurrentLogItem.Message += errMessage;
-					return;
-				}
-			}
-			Step4CheckVersion(updateFileName);
-		}
+		
+		
 
 		void Step4CheckVersion(string updatedFileName)
 		{
@@ -289,15 +353,6 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		*/
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-		#endregion
-
 		private void ReleaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 
@@ -307,5 +362,30 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		{
 			await Step2DownloadAndExtract();
 		}
+
+
+		#region Permission Helper
+
+		public bool HasRightsToModify(string fileFullName)
+		{
+			var rights = FileSystemRights.Modify;
+			var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+			// Check if users in non elevated mode have rights to modify the file.
+			var hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(fileFullName, rights, users, false);
+			return hasRights;
+			//if (!hasRights && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
+		}
+
+		#endregion
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
@@ -28,10 +28,16 @@
 		<PackageReference Include="System.Text.Json" Version="8.0.2" />
 	</ItemGroup>
 
+	<ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.1" />
+	</ItemGroup>
+
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.Net.Http" />
 		<Reference Include="System.Security" />
 		<Reference Include="System.Data.Entity" />
+		<Reference Include="System.DirectoryServices" />
+		<Reference Include="System.DirectoryServices.AccountManagement" />
 		<Reference Include="System.configuration" />
 		<Reference Include="System.Web" />
 	</ItemGroup>
