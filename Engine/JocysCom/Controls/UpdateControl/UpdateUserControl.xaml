@@ -41,7 +41,7 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-		<StackPanel Grid.Row="2" Orientation="Horizontal">
+		<StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal">
 			<ComboBox
 				Name="ReleaseComboBox"
 				MinWidth="75"
@@ -74,6 +74,24 @@
 			<Button Name="CheckSignatureButton" MinWidth="75" Click="CheckSignatureButton_Click">
 				<StackPanel Focusable="False">
 					<Label Content="Check Signature" />
+				</StackPanel>
+			</Button>
+
+			<Button Name="CheckVersionButton" MinWidth="75" Click="CheckVersionButton_Click">
+				<StackPanel Focusable="False">
+					<Label Content="Check Version" />
+				</StackPanel>
+			</Button>
+
+			<Button Name="ReplaceFileButton" MinWidth="75" Click="ReplaceFileButton_Click">
+				<StackPanel Focusable="False">
+					<Label Content="Replace File" />
+				</StackPanel>
+			</Button>
+
+			<Button Name="RestartButton" MinWidth="75" Click="RestartButton_Click">
+				<StackPanel Focusable="False">
+					<Label Content="Restart" />
 				</StackPanel>
 			</Button>
 

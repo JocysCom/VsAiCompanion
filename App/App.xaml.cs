@@ -25,6 +25,15 @@ namespace JocysCom.VS.AiCompanion
 		{
 			try
 			{
+				// ------------------------------------------------
+				// Administrator commands.
+				// ------------------------------------------------
+				var args = Environment.GetCommandLineArgs();
+				var executed = AdminCommands.ProcessAdminCommands(args);
+				// If valid command was executed then...
+				if (executed)
+					return;
+				// ------------------------------------------------
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;

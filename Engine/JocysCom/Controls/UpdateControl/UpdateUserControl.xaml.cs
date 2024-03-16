@@ -1,16 +1,19 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Network;
 using JocysCom.Controls.UpdateControl.GitHub;
+using JocysCom.VS.AiCompanion.Engine;
 using JocysCom.WebSites.Engine.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -29,12 +32,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			cancellationTokenSource = new CancellationTokenSource();
-			//LogPanel.LogGridScrollUp = false;
-			//var process = System.Diagnostics.Process.GetCurrentProcess();
-			//processFileName = process.MainModule.FileName;
 			ReleaseComboBox.ItemsSource = ReleaseList;
 		}
-
 
 		CancellationTokenSource cancellationTokenSource;
 
@@ -66,12 +65,30 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		public string DownloadTargetFile
 			=> Path.GetTempPath() + GitHubAssetName;
 
+		/// <summary>New application file.</summary>
 		public string UpdateFileTempFullName
 			=> UpdateFileFullName + ".tmp";
 
+		/// <summary>Current application backup file.</summary>
+		public string UpdateFileBackFullName
+			=> UpdateFileFullName + ".bak";
+
+
+		bool InstallMode;
+
+		private async void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			InstallMode = true;
+			cancellationTokenSource = new CancellationTokenSource();
+			await Step2Download();
+		}
+
+
+
 		private async void CheckButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			await Step1ChekOnline();
+			InstallMode = false;
+			await Step1CheckOnline();
 		}
 
 		public BindingList<KeyValue<long, string>> ReleaseList = new BindingList<KeyValue<long, string>>();
@@ -79,7 +96,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		List<release> Releases;
 
-		public async Task Step1ChekOnline()
+		public async Task Step1CheckOnline()
 		{
 			var e = new EventArgs();
 			AddTask?.Invoke(this, e);
@@ -113,10 +130,15 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			RemoveTask?.Invoke(this, e);
 		}
 
+		private async void DownloadButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			InstallMode = false;
+			await Step2Download();
+		}
 
 		Downloader _downloader;
 
-		public async Task Step2DownloadAndExtract()
+		public async Task Step2Download()
 		{
 			var item = ReleaseComboBox.SelectedItem as KeyValue<long, string>;
 			var releaseId = item?.Key;
@@ -130,8 +152,6 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			var asset = selectedRelease.assets
 				.First(x => GitHubAssetName.Equals(x.name, System.StringComparison.OrdinalIgnoreCase));
 			oldProgress = 0;
-
-
 			_downloader = new Downloader();
 			_downloader.Params.SourceUrl = asset.browser_download_url;
 			_downloader.Params.TargetFile = DownloadTargetFile;
@@ -161,7 +181,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 							AddLog($"Saving File {DownloadTargetFile}... \r\n");
 							System.IO.File.WriteAllBytes(DownloadTargetFile, dl.Params.ResponseData);
 							AddLog(" Done\r\n");
-							Step3AExtractFiles(DownloadTargetFile);
+							if (InstallMode)
+								Step3ExtractFile();
 						}
 					});
 				}
@@ -173,196 +194,178 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			LogTextBox.AppendText(s);
 		}
 
-		private void DownloadButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-
-		}
-
 		private void ExtractButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			Step3AExtractFiles(DownloadTargetFile);
+			InstallMode = false;
+			Step3ExtractFile();
 		}
 
-		void Step3AExtractFiles(string zipFileName)
+		bool Step3ExtractFile()
 		{
-			if (cancellationTokenSource.Token.IsCancellationRequested)
-				return;
+			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
+				return false;
 			var tmpName = UpdateFileFullName + ".tmp";
 			AddLog("Extracting...\r\n");
 			AddLog($"\tFile: {FileNameInsideZip}\r\n");
-			AddLog($"\tFrom: {zipFileName}\r\n");
+			AddLog($"\tFrom: {DownloadTargetFile}\r\n");
 			AddLog($"\tTo: {tmpName}\r\n");
-			JocysCom.ClassLibrary.Files.Zip.UnZipFile(zipFileName, FileNameInsideZip, tmpName);
+			try
+			{
+				JocysCom.ClassLibrary.Files.Zip.UnZipFile(DownloadTargetFile, FileNameInsideZip, tmpName);
+			}
+			catch (Exception ex)
+			{
+				AddLog($"\tException: {ex.Message}\r\n");
+				cancellationTokenSource.Cancel();
+				return false;
+			}
 			AddLog("...Done\r\n");
+			return true;
 		}
 
 		private void CheckSignatureButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			InstallMode = false;
 			Step3CheckSignature(UpdateFileTempFullName);
 		}
 
-		void Step3CheckSignature(string updateFileName)
+		bool Step3CheckSignature(string updateFileName)
 		{
-			if (cancellationTokenSource.Token.IsCancellationRequested)
-				return;
-			if (CheckDigitalSignatureCheckBox.IsChecked == true)
+			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
+				return false;
+			AddLog("Check Digital Signature...\r\n");
+			X509Certificate2 certificate;
+			Exception error;
+			if (CertificateHelper.IsSignedAndTrusted(updateFileName, out certificate, out error))
 			{
-				AddLog("Check Digital Signature...\r\n");
-				X509Certificate2 certificate;
-				Exception error;
-				if (CertificateHelper.IsSignedAndTrusted(updateFileName, out certificate, out error))
-				{
-					AddLog($"\tSubject:    {certificate.Subject}\r\n");
-					AddLog($"\tIssuer:     {certificate.Issuer}\r\n");
-					AddLog($"\tExpires:    {certificate.NotAfter}\r\n");
-					AddLog($"\tThumbprint: {certificate.Thumbprint}\r\n");
-				}
-				else
-				{
-					var errMessage = error == null
-						? "\tFailed" : string.Format(" Failed: {0}", error.Message);
-					AddLog(errMessage + "\r\n");
+				AddLog($"\tSubject:    {certificate.Subject}\r\n");
+				AddLog($"\tIssuer:     {certificate.Issuer}\r\n");
+				AddLog($"\tExpires:    {certificate.NotAfter}\r\n");
+				AddLog($"\tThumbprint: {certificate.Thumbprint}\r\n");
+			}
+			else
+			{
+				var errMessage = error == null
+					? "\tFailed" : string.Format(" Failed: {0}", error.Message);
+				AddLog(errMessage + "\r\n");
+				return false;
+			}
+			AddLog("...Done.\r\n");
+			return true;
+		}
+
+		private void CheckVersionButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			InstallMode = false;
+			Step4CheckVersion();
+		}
+
+		bool Step4CheckVersion()
+		{
+			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
+				return false;
+			var processFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UpdateFileFullName);
+			var updatedFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UpdateFileTempFullName);
+			var processVersion = new Version(processFi.FileVersion);
+			var updatedVersion = new Version(updatedFi.FileVersion);
+			AddLog($"Current version: {processVersion}\r\n");
+			AddLog($"Updated version: {updatedVersion}\r\n");
+			if (processVersion == updatedVersion)
+			{
+				AddLog("Versions are the same. Skip Update\r\n");
+				cancellationTokenSource.Cancel();
+				return false;
+			}
+			if (processVersion > updatedVersion)
+			{
+				AddLog("Remote version is older. Skip Update.\r\n");
+				if (CheckVersionCheckBox.IsChecked == true)
 					cancellationTokenSource.Cancel();
-				}
-				AddLog("...Done.\r\n");
+				return false;
 			}
+			return true;
 		}
 
-		/*
-
-		public void OpenDialog()
+		private void ReplaceFileButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			Global.CloudClient.TasksTimer.BeforeRemove += TasksTimer_BeforeRemove;
+			InstallMode = false;
+			Step5ReplaceFiles();
 		}
 
-
-		public void CloseDialog()
+		bool Step5ReplaceFiles()
 		{
-			Global.CloudClient.TasksTimer.BeforeRemove -= TasksTimer_BeforeRemove;
-		}
-
-		bool CancelUpdate;
-
-		private void CloseButton_Click(object sender, EventArgs e)
-		{
-			CancelUpdate = true;
-			var item = CheckUpateItem;
-			item.Retries = 0;
-		}
-
-		private void CheckButton_Click(object sender, EventArgs e)
-		{
-			Step1ChekOnline();
-		}
-
-		CloudItem CheckUpateItem;
-
-	
-
-		private void TasksTimer_BeforeRemove(object sender, QueueTimerEventArgs e)
-		{
-			var item = e.Item as CloudItem;
-			// If check online task failed then...
-			if (Equals(CheckUpateItem, item) && !e.Keep)
+			if (!HasRightsToModify(UpdateFileFullName))
 			{
-				CurrentLogItem.Message += " Failed";
-				if (item.Error != null)
-					CurrentLogItem.Message += ": " + item.Error.Message;
+				// Continue update as elevated process.
+				AdminCommands.RunElevated(AdminCommand.UpdaterRenameFiles, UpdateFileFullName);
+				return true;
 			}
-		}
-
-
-		
-
-		
-		
-
-		void Step4CheckVersion(string updatedFileName)
-		{
-			if (CancelUpdate)
-				return;
-			if (CheckVersionCheckBox.IsChecked == true)
-			{
-				var processFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(processFileName);
-				var updatedFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(updatedFileName);
-				var processVersion = new Version(processFi.FileVersion);
-				var updatedVersion = new Version(updatedFi.FileVersion);
-				LogPanel.Add("Current version: {0}", processVersion);
-				LogPanel.Add("Updated version: {0}", updatedVersion);
-				if (processVersion == updatedVersion)
-				{
-					LogPanel.Add("Versions are the same. Skip Update");
-					return;
-				}
-				if (processVersion > updatedVersion)
-				{
-					LogPanel.Add("Remote version is older. Skip Update.");
-					return;
-				}
-			}
-			Step5ReplaceFiles(updatedFileName);
-		}
-
-		void Step5ReplaceFiles(string updateFileName)
-		{
-			if (CancelUpdate)
-				return;
-			// Change the currently running executable so it can be overwritten.
-			string bak = processFileName + ".bak";
-			CurrentLogItem = LogPanel.Add("Renaming running process...");
+			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
+				return false;
+			AddLog($"Removing UpdateFileBackFullName...\r\n");
 			try
 			{
-				if (System.IO.File.Exists(bak))
-					System.IO.File.Delete(bak);
+				// Delete current application backup.
+				if (File.Exists(UpdateFileBackFullName))
+					File.Delete(UpdateFileBackFullName);
 			}
 			catch (Exception ex)
 			{
-				CurrentLogItem.Message += " Failed: " + ex.Message;
-				return;
+				AddLog($"\tException: {ex.Message}\r\n");
+				cancellationTokenSource.Cancel();
+				return false;
 			}
-			System.IO.File.Move(processFileName, bak);
-			System.IO.File.Copy(updateFileName, processFileName);
-			CurrentLogItem.Message += " Done";
+			AddLog("...Done.\r\n");
+			// Change the currently running executable so it can be overwritten.
+			AddLog($"Replacing with new file...\r\n");
+			try
+			{
+				File.Move(UpdateFileFullName, UpdateFileBackFullName);
+				File.Copy(UpdateFileTempFullName, UpdateFileFullName);
+			}
+			catch (Exception ex)
+			{
+				AddLog($"\tException: {ex.Message}\r\n");
+				cancellationTokenSource.Cancel();
+				return false;
+			}
+			AddLog("...Done.\r\n");
+			return true;
+		}
+
+		private void RestartButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			InstallMode = false;
 			Step6Restart();
 		}
 
-		void Step6Restart()
+		bool Step6Restart()
 		{
-			if (CancelUpdate)
-				return;
-			var process = System.Diagnostics.Process.GetCurrentProcess();
-			CurrentLogItem = LogPanel.Add("Restarting...");
-			System.Windows.Forms.Application.Restart();
+			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
+				return false;
+			var batchCommands = new StringBuilder();
+			var tempBatchFile = Path.GetTempFileName() + ".bat";
+			var tempVbsFile = Path.GetTempFileName() + ".vbs";
+			// Prepare the batch script
+			batchCommands.AppendLine("@echo off");
+			batchCommands.AppendLine("timeout /t 5 /nobreak > NUL");
+			batchCommands.AppendLine($"start \"\" \"{UpdateFileFullName}\"");
+			batchCommands.AppendLine($"del \"{tempBatchFile}\"");
+			File.WriteAllText(tempBatchFile, batchCommands.ToString());
+			// Prepare the VBScript
+			var vbsCommands = $"CreateObject(\"Wscript.Shell\").Run \"\"\"{tempBatchFile}\"\"\", 0, False";
+			File.WriteAllText(tempVbsFile, vbsCommands);
+			// Execute the VBScript, which runs the batch file invisibly
+			Process.Start("wscript.exe", $"\"{tempVbsFile}\"");
+			// Shutdown the current application instance
+			System.Windows.Application.Current.Shutdown();
+			return true;
 		}
-
-		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-
-		}
-
-		private void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
-			CancelUpdate = false;
-			LogPanel.Items.Clear();
-			// Center message box window in application.
-			if (Owner == null)
-				ControlsHelper.CenterWindowOnApplication(this);
-		}
-
-		*/
 
 		private void ReleaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 
 		}
-
-		private async void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			await Step2DownloadAndExtract();
-		}
-
 
 		#region Permission Helper
 
