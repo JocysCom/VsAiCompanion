@@ -29,16 +29,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			AssistantsTabItem.Visibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			UpdatesTabItem.Visibility = InitHelper.IsDebug && !Global.IsVsExtension
+			UpdatesTabItem.Visibility = !Global.IsVsExtension
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			var appExeAssembly = System.Reflection.Assembly.GetEntryAssembly();
-			var us = Global.AppSettings.UpdateSettings;
-			us.UpdateMissingDefaults(appExeAssembly);
-			UpdatesPanel.UpdateExeFileFullName = appExeAssembly.Location;
-			UpdatesPanel.Settings = us;
-			UpdatesPanel.AddTask += UpdatesPanel_AddTask;
-			UpdatesPanel.RemoveTask += UpdatesPanel_RemoveTask;
+			if (!Global.IsVsExtension)
+			{
+				var us = Global.AppSettings.UpdateSettings;
+				us.UpdateMissingDefaults(appExeAssembly);
+				UpdatesPanel.UpdateExeFileFullName = appExeAssembly.Location.Replace(".dll", ".exe");
+				UpdatesPanel.Settings = us;
+				UpdatesPanel.AddTask += UpdatesPanel_AddTask;
+				UpdatesPanel.RemoveTask += UpdatesPanel_RemoveTask;
+			}
 			// Subscribe to the application-wide Activated and Deactivated events
 			Application.Current.Deactivated += Current_Deactivated;
 		}

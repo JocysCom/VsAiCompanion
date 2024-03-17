@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
 {
@@ -29,13 +30,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				return ex.Message;
 			}
 		}
-		public static string RestartApp()
+		public static string RestartApp(string exeFile)
 		{
 			try
 			{
+				Task.Delay(1000).Wait();
 				var currentProcess = Process.GetCurrentProcess();
-				var assembly = System.Reflection.Assembly.GetEntryAssembly();
-				var location = assembly.Location;
 				// 1. Close all other instances of the current app that have a different process ID (PID).
 				var allProcesses = Process.GetProcessesByName(currentProcess.ProcessName);
 				foreach (var process in allProcesses.Where(p => p.Id != currentProcess.Id))
@@ -51,13 +51,14 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 					Thread.Sleep(1000); // Wait a bit before checking again
 				}
 				// 3. Start the app at the specified location.
-				Process.Start(location);
+				Process.Start(exeFile);
 				// 4. Shutdown the current app.
 				Environment.Exit(0);
 				return "OK";
 			}
 			catch (Exception ex)
 			{
+				System.Windows.MessageBox.Show(ex.ToString());
 				return ex.Message;
 			}
 		}
@@ -79,7 +80,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			{
 				// Run copy of app as Administrator.
 				JocysCom.ClassLibrary.Win32.UacHelper.RunProcess(
-					System.Reflection.Assembly.GetEntryAssembly().Location,
+					System.Reflection.Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe"),
 					string.Join(" ", args), isElevated: true);
 				return false;
 			}
@@ -88,7 +89,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		{
 			// Don't wait for process to finish.
 			JocysCom.ClassLibrary.Win32.UacHelper.RunProcessAsync(
-				System.Reflection.Assembly.GetEntryAssembly().Location,
+				System.Reflection.Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe"),
 				string.Join(" ", args));
 			return true;
 
@@ -110,7 +111,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			// ------------------------------------------------
 			if (ic.ContainsKey(nameof(RestartApp)))
 			{
-				RestartApp();
+				var exeFile = ic["exeFile"];
+				RestartApp(exeFile);
 				return true;
 			}
 			return false;

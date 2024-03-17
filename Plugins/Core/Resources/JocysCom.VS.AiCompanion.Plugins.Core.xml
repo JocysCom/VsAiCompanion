@@ -476,10 +476,13 @@
             Filter list by parent, to make sure that only Global and child lists are selected.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.CreateList(System.String,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.CreateList(System.String,System.String,System.String)">
             <summary>
             Creates a new list.
             </summary>
+            <param name="listName">Name of the list</param>
+            <param name="description">Description provides user-facing details of the list.</param>
+            <param name="instructions"> Instructions, outline how AI should operate based on the list's content.</param>
             <returns>0 operation successfull, -2 list is readonly, -3 list already exists.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateList(System.String,System.String,System.String)">
@@ -487,8 +490,8 @@
             Updates an existing list.
             </summary>
             <param name="listName">Name of the list</param>
-            <param name="description">Optional. List description.</param>
-            <param name="instructions">Optional. Assistant Instrutions.</param>
+            <param name="description">Optional. Description provides user-facing details of the list.</param>
+            <param name="instructions">Optional. Instructions, outline how AI should operate based on the list's content.</param>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.DeleteList(System.String)">
@@ -505,10 +508,22 @@
             <param name="listName">Name of the list</param>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem(System.String,System.String,System.String,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.SortList(System.String)">
+            <summary>
+            Sort items by key.
+            </summary>
+            <param name="listName">Name of the list</param>
+            <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem(System.String,System.String,System.String,System.String,System.Nullable{System.Int32})">
             <summary>
             Sets or adds an item to a list.
             </summary>
+            <param name="listName">Name of the list</param>
+            <param name="key">Item key.</param>
+            <param name="value">Item value.</param>
+            <param name="comment">Item comment.</param>
+            <param name="index">Optional. The zero-based index at which item should be inserted.</param>
             <returns>True if the item is set or added successfully.</returns>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>

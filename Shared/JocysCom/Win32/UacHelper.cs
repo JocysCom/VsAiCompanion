@@ -90,7 +90,7 @@ namespace JocysCom.ClassLibrary.Win32
 		{
 			//if (IsElevated)
 			//	throw new ApplicationException("Elevated already");
-			var location = Assembly.GetEntryAssembly().Location;
+			var location = Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe");
 			RunProcessAsync(location, null, false, true);
 			//Close this instance because we have an elevated instance
 			System.Windows.Application.Current.Shutdown();

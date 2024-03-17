@@ -38,7 +38,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		CancellationTokenSource cancellationTokenSource;
 
-		public UpdateSettings Settings { get; set; } = new UpdateSettings();
+		public UpdateSettings Settings
+		{
+			get { return _Settings; }
+			set { _Settings = value; OnPropertyChanged(nameof(Settings)); }
+		}
+		UpdateSettings _Settings = new UpdateSettings();
 
 		public event EventHandler AddTask;
 		public event EventHandler RemoveTask;
@@ -99,7 +104,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				var changes = Releases.Where(x => currentVersion < Version.Parse(x.name)).ToList();
 				changesText = string.Join(Environment.NewLine, changes.Select(x => x.body));
 			}
-			LogTextBox.Text = changesText;
+			LogTextBox.Text = changesText + "\r\n\r\n";
 		}
 		public async Task Step1CheckOnline()
 		{
@@ -130,7 +135,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 					ReleaseComboBox.SelectedIndex = 0;
 				else
 				{
-					AddLog("No updates found!");
+					AddLog("No updates found!\r\n");
 				}
 				OnPropertyChanged(nameof(ReleaseList));
 				//LogPanel.Text = JsonSerializer.Serialize(releases);
@@ -153,6 +158,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		public async Task Step2Download()
 		{
+			AddLog($"Downloading File...\r\n");
 			var item = ReleaseComboBox.SelectedItem as KeyValue<long, string>;
 			var releaseId = item?.Key;
 			if (releaseId == null)
@@ -311,11 +317,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		bool Step5ReplaceFiles()
 		{
+			AddLog("Replacing Files...\r\n");
 			var args = new string[] {
 				$"/{nameof(UpdateProcessHelper.ReplaceFiles)}",
 				$"/bakFile=\"{UpdateBakFileFullName}\"",
 				$"/newFile=\"{UpdateNewFileFullName}\"",
-				$"/exeFile=\"{UpdateExeFileFullName}\""
+				$"/exeFile=\"{UpdateExeFileFullName}\"",
 			};
 			if (PermissionHelper.CanRenameFile(UpdateExeFileFullName))
 				UpdateProcessHelper.ProcessAdminCommands(args);
@@ -330,8 +337,11 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		}
 		void Step6RestartApp()
 		{
+			AddLog("Restarting...\r\n");
+			Task.Delay(1000).Wait();
 			var args = new string[] {
 				$"/{nameof(UpdateProcessHelper.RestartApp)}",
+				$"/exeFile=\"{UpdateExeFileFullName}\"",
 			};
 			UpdateProcessHelper.RunProcessAsync(args);
 			System.Windows.Application.Current.Shutdown();
