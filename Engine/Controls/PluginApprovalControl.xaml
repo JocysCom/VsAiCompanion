@@ -22,6 +22,7 @@
 			<Grid>
 				<Grid.ColumnDefinitions />
 				<StackPanel
+					x:Name="TitleBackStackPanel"
 					HorizontalAlignment="Stretch"
 					Background="{StaticResource BackgroundDark}"
 					Opacity="0.5"

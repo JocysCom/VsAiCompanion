@@ -1,9 +1,12 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Plugins.Core;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -43,6 +46,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		Dictionary<RiskLevel, Brush> RiskToBrush = new Dictionary<RiskLevel, Brush>()
+		{
+			{ RiskLevel.Unknown, (Brush)brushConverter.ConvertFromString("#90dedede") },
+			{ RiskLevel.None, (Brush)brushConverter.ConvertFromString("#90278fcb") },
+			{ RiskLevel.Low, (Brush)brushConverter.ConvertFromString("#9057a01c") },
+			{ RiskLevel.Medium, (Brush)brushConverter.ConvertFromString("#90ffcc00") },
+			{ RiskLevel.High, (Brush)brushConverter.ConvertFromString("#90d75f00") },
+			{ RiskLevel.Critical, (Brush)brushConverter.ConvertFromString("#90c70000") },
+		};
+
+		public static BrushConverter brushConverter = new BrushConverter();
+
+
 		#region Plugin Approvals
 
 		private void _item_ListChanged(object sender, ListChangedEventArgs e)
@@ -60,7 +76,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		public PluginApprovalItem ApprovalItem
-			=> Item.FirstOrDefault();
+		{
+			get
+			{
+				var item = Item.FirstOrDefault();
+				var rl = item?.Plugin.RiskLevel;
+				var brush = RiskToBrush[RiskLevel.Unknown];
+				if (rl != null && RiskToBrush.ContainsKey(rl.Value))
+					brush = RiskToBrush[rl.Value];
+				TitleBackStackPanel.Background = brush;
+				return item;
+			}
+		}
 
 		public Visibility SowApprovalPanel => Item.Count > 0
 			? Visibility.Visible : Visibility.Collapsed;
