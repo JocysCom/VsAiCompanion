@@ -2,19 +2,20 @@
   <IsEnabled>false</IsEnabled>
   <Name>Demo - TTS Chat</Name>
   <IconType>.svg</IconType>
-  <IconData>H4sIAAAAAAAEAK2UWU/bQBDH3/spttvX9XrvAyUg4nBUghYJaNWnKjhubOE6UZwmwKfvrI9AUtT2&#xD;
-AcvSeHbn+M3faw+OHn6WaJ0t62JeDTGnDKOsSufTopoN8e3NaeTw0eG7wfvx5+Tm29UJqtczdHU7&#xD;
-uviYIBzF8VeZxPH4Zoyuv5whTnkcn3zCCOer1eIgjjebDd1IOl/O4rPlZJEXaR1DYBwCISmGYpzT&#xD;
-6WqKoUWo/AKEY1RMh/hi8pgtv4MDnFU9fKWyYIyFSl3IwUNZVPevBXLvfdzsQugQs8UDRo+d3RTT&#xD;
-VT7EQgUnz4pZvuq9dZFtRvOQgBgSCu4g0eSuzKK7SXo/W85/VQBaZRv0IgJYDurFJM2GeLHM6my5&#xD;
-zmBIhAazZqwinVeNDyuLySpHsHYpOJVGGmLOBVs7KsFJBCNcU8c0J9xRx60i3MIdIoPNI0eV42Uk&#xD;
-KZPOE06tMzplVEgtCaNcQiajmmkFRoALxnphOi931GrJSw1VpCSSCiE4pHPnfUjnzoJR0nASMcqE&#xD;
-Mi9coZy+EFCPeUO4zxk1WkEyZAIIjKJClA0z9S5YeFhHntpESGKoDctCUNFMTrYaPGH0oyjLIf5w&#xD;
-fDwSozGO9+VqRTBEnoumeMLbYpJwmKN55EQ1W2tolzLSkHU7DUeP1XotfwnI2ntJBPUQ2qQJIUMm&#xD;
-TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD;
-I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
-4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
-+vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
+  <IconData>H4sIAAAAAAAACq2VXU+cQBSG7/0V0/EWBuaLAbNoKq5uE21Nqja9alaWLkSEDUtZ9df3DAwL1q2t&#xD;
+iclmPl/Oed5h5zA5erjPUZNU66wsQkyJi1FSxOUiK5Yhvr46tX18dLg3+XDyJbr6fjlF62aJLq+P&#xD;
+zz9FCNuO841HjnNydYK+3pwhSqjjTD9jhNO6Xh04zmazIRtOymrpnFXzVZrFaweEjhbCQw4Eo5Qs&#xD;
+6gWGFDryCIRilC1CfD5/TKofMAHOYh3uiMxc19WRjOTgIc+Ku11CGgSB0+6CNMTu6gGjR9NvskWd&#xD;
+hpgJPUmTbJnW/azJks1xqR9ALmICfvqI5rd5Yt/O47tlVf4qALRINmikAJaD9WoeJyFeVck6qZoE&#xD;
+TCI0Wba2srgs2jmsrOZ1imDtglKLernNLe+CMhg28oJyvQQrGP3M8hzSlEWC0bquyjsIvS+55/tu&#xD;
+v2AbG3S7AG6TeL4KcUu5Xb7P6qTKM+hA7GLnTxLmEt+i/owTFtsu8TzLtWxKmAUTKcwQmhtO/Bi2&#xD;
+Osl2q99OqSJebJ7Xi63EKBrKIwYjRYRnMapb6lsm81Pvd3/qTYPp9CUi9YkrLSpTSKQ0JA0415gu&#xD;
+4VK3VHpqmHHZ2IrwDraTjhWDLNXhttHMZqvcChsIFEF+sCKIL0AIE9b2QGS4Bgfi2A9OopcO4Gze&#xD;
+aIC/ZkA85xc9/wi/o4cokb9FV8aBtAzPv8HhztI3ksv3OnoIFEF+ORw9Jbw/esP1Hw4EkW90IN7L&#xD;
+AQSKIH8wOBBE9Q4M118dVElc6+LF2tIFb3IoXe5QuIBiG4Bxeqr3SihGWa3rHZTW3ReeEZXCf0xS&#xD;
+38/1G/Pg3lLoZ3p3fI27KjAqAoG+yVAshLnIEKm7yTB4eg3FVTtYGBFMWmIGr1nJCDJIJSzIBxmU&#xD;
+YF47AEUDGL7sXgqnShegVqnplD5s3XaTVMOA1OjMntGP5I2WRYz3mQCl7cGXgRrcfOS+p3YcJdBB&#xD;
+GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
@@ -226,6 +227,7 @@ true&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <IsFavorite>false</IsFavorite>
   <UseMaximumContext>true</UseMaximumContext>
   <ItemType>None</ItemType>
   <PluginsEnabled>true</PluginsEnabled>

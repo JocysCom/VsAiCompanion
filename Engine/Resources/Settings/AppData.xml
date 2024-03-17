@@ -1,12 +1,21 @@
 ﻿<Data Version="2">
   <Items>
     <AppData>
+      <UpdateSettings>
+        <GitHubCompany>JocysCom</GitHubCompany>
+        <GitHubProduct>VsAiCompanion</GitHubProduct>
+        <CheckVersion>false</CheckVersion>
+        <IncludePrerelease>false</IncludePrerelease>
+        <MinVersion>1.7.20.0</MinVersion>
+        <GitHubAssetName>JocysCom.VS.AiCompanion.App.zip</GitHubAssetName>
+        <FileNameInsideZip>JocysCom.VS.AiCompanion.App.exe</FileNameInsideZip>
+      </UpdateSettings>
       <StartPosition>
         <Left>259.5</Left>
         <Top>74.5</Top>
-        <Width>407</Width>
+        <Width>455.5</Width>
         <Height>352.75</Height>
-        <ScreenName>\\.\DISPLAY2</ScreenName>
+        <ScreenName>\\.\DISPLAY7</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
@@ -17,45 +26,36 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.22945638432364096</GridSplitterPosition>
+        <GridSplitterPosition>0.22409909909909909</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
+        <GridSplitterPosition>0.22747747747747749</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
-        <IsListPanelVisible>false</IsListPanelVisible>
-        <IsBarPanelVisible>false</IsBarPanelVisible>
+        <GridSplitterPosition>0.23817567567567569</GridSplitterPosition>
         <ListSelection>
           <string>Doughnut Dynamics</string>
         </ListSelection>
         <ListSelectedIndex>1</ListSelectedIndex>
-        <ChatPanelZoom>0</ChatPanelZoom>
       </FineTuningData>
       <AssistantData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
-        <IsListPanelVisible>false</IsListPanelVisible>
-        <IsBarPanelVisible>false</IsBarPanelVisible>
         <ListSelection />
         <ListSelectedIndex>0</ListSelectedIndex>
-        <ChatPanelZoom>0</ChatPanelZoom>
       </AssistantData>
       <ListsData>
-        <GridSplitterPosition>0.28192161820480405</GridSplitterPosition>
-        <IsBarPanelVisible>false</IsBarPanelVisible>
+        <GridSplitterPosition>0.30011261261261263</GridSplitterPosition>
         <ListSelection>
           <string>Context - Operating System</string>
         </ListSelection>
         <ListSelectedIndex>1</ListSelectedIndex>
-        <ChatPanelZoom>0</ChatPanelZoom>
       </ListsData>
       <AiServices>
         <AiService>
@@ -314,6 +314,10 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.ClearList</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.SortList</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
