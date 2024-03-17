@@ -30,6 +30,25 @@ namespace JocysCom.ClassLibrary.Security
 			}
 		}
 
+		/// <summary>
+		/// Returns true if current user can rename the file.
+		/// </summary>
+		/// <param name="fileFullName">Path to the file.</param>
+		/// <param name="user">Optional. Default current windows user.</param>
+		/// <returns>true if current user can rename the file. false if elevated permissions required.</returns>
+		public static bool CanRenameFile(string fileFullName, SecurityIdentifier user = null)
+		{
+			user = user ?? WindowsIdentity.GetCurrent().User;
+			var fileDirectory = new FileInfo(fileFullName).Directory.FullName;
+			// Check for Write permissions on the directory.
+			var hasDirectoryWriteRights = HasRights(fileDirectory, FileSystemRights.Write, user);
+			// Check for Delete permissions on the file itself.
+			var hasFileDeleteRights = HasRights(fileFullName, FileSystemRights.Delete, user);
+			// Alternative: Check for Modify permissions on the file itself.
+			var hasFileModifyRights = HasRights(fileFullName, FileSystemRights.Modify, user);
+			return (hasDirectoryWriteRights && hasFileDeleteRights) || hasFileModifyRights;
+		}
+
 		#region Users and Groups
 
 		/// <summary>

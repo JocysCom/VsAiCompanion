@@ -1,7 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Network;
+using JocysCom.ClassLibrary.Security;
 using JocysCom.Controls.UpdateControl.GitHub;
-using JocysCom.VS.AiCompanion.Engine;
 using JocysCom.WebSites.Engine.Security;
 using System;
 using System.Collections.Generic;
@@ -10,9 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,54 +35,37 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		CancellationTokenSource cancellationTokenSource;
 
-		public string GitHubCompany { get; set; }
-		public string GitHubProduct { get; set; }
+		public UpdateSettings Settings { get; set; } = new UpdateSettings();
 
-		/// <summary>
-		/// GitHub executing asset name + ".zip".
-		/// </summary>
-		public string GitHubAssetName { get; set; }
+		public event EventHandler AddTask;
+		public event EventHandler RemoveTask;
 
-		/// <summary>
-		/// Executable inside the zip
-		/// </summary>
-		public string FileNameInsideZip { get; set; }
+		bool InstallMode;
 
 		/// <summary>
 		/// Executable file name to update.
 		/// </summary>
-		public string UpdateFileFullName { get; set; }
-
-
-		public event EventHandler AddTask;
-		public event EventHandler RemoveTask;
+		public string UpdateExeFileFullName { get; set; }
 
 		/// <summary>
 		/// Path to GitHub file on the local disk.
 		/// </summary>
 		public string DownloadTargetFile
-			=> Path.GetTempPath() + GitHubAssetName;
+			=> Path.GetTempPath() + Settings.GitHubAssetName;
 
 		/// <summary>New application file.</summary>
-		public string UpdateFileTempFullName
-			=> UpdateFileFullName + ".tmp";
+		public string UpdateNewFileFullName
+			=> UpdateExeFileFullName + ".tmp";
 
 		/// <summary>Current application backup file.</summary>
-		public string UpdateFileBackFullName
-			=> UpdateFileFullName + ".bak";
-
-
-		bool InstallMode;
-
+		public string UpdateBakFileFullName
+			=> UpdateExeFileFullName + ".bak";
 		private async void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = true;
 			cancellationTokenSource = new CancellationTokenSource();
 			await Step2Download();
 		}
-
-
-
 		private async void CheckButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
@@ -103,21 +84,24 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			try
 			{
 				var client = new GitHubApiClient();
-				var releases = await client.GetGitHubReleasesAsync(GitHubCompany, GitHubProduct);
-				Releases = releases
+				var gitReleases = await client.GetGitHubReleasesAsync(Settings.GitHubCompany, Settings.GitHubProduct);
+				Version minVersion;
+				Version.TryParse(Settings.MinVersion, out minVersion);
+				Releases = gitReleases
 					.Where(x => !string.IsNullOrWhiteSpace(x.name))
-					.Where(x => x.assets.Any(y => GitHubAssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
-					.Where(x => System.Version.TryParse(x.name, out _))
-					.OrderByDescending(x => System.Version.Parse(x.name))
+					.Where(x => x.assets.Any(y => Settings.GitHubAssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
+					.Where(x => Version.TryParse(x.name, out _))
+					.Where(x => minVersion <= Version.Parse(x.name))
+					.OrderByDescending(x => Version.Parse(x.name))
 					.ToList();
 				ReleaseList.Clear();
-				for (int i = 0; i < releases.Count; i++)
+				for (int i = 0; i < Releases.Count; i++)
 				{
-					var release = releases[i];
+					var release = Releases[i];
 					var name = i == 0 ? $"Latest Version {release.name}" : release.name;
 					ReleaseList.Add(new KeyValue<long, string>(release.id, name));
 				}
-				if (releases.Count > 0)
+				if (Releases.Count > 0)
 					ReleaseComboBox.SelectedIndex = 0;
 				OnPropertyChanged(nameof(ReleaseList));
 				//LogPanel.Text = JsonSerializer.Serialize(releases);
@@ -150,7 +134,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			if (selectedRelease == null)
 				return;
 			var asset = selectedRelease.assets
-				.First(x => GitHubAssetName.Equals(x.name, System.StringComparison.OrdinalIgnoreCase));
+				.First(x => Settings.GitHubAssetName.Equals(x.name, System.StringComparison.OrdinalIgnoreCase));
 			oldProgress = 0;
 			_downloader = new Downloader();
 			_downloader.Params.SourceUrl = asset.browser_download_url;
@@ -204,14 +188,14 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		{
 			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
 				return false;
-			var tmpName = UpdateFileFullName + ".tmp";
+			var tmpName = UpdateExeFileFullName + ".tmp";
 			AddLog("Extracting...\r\n");
-			AddLog($"\tFile: {FileNameInsideZip}\r\n");
+			AddLog($"\tFile: {Settings.FileNameInsideZip}\r\n");
 			AddLog($"\tFrom: {DownloadTargetFile}\r\n");
 			AddLog($"\tTo: {tmpName}\r\n");
 			try
 			{
-				JocysCom.ClassLibrary.Files.Zip.UnZipFile(DownloadTargetFile, FileNameInsideZip, tmpName);
+				JocysCom.ClassLibrary.Files.Zip.UnZipFile(DownloadTargetFile, Settings.FileNameInsideZip, tmpName);
 			}
 			catch (Exception ex)
 			{
@@ -226,7 +210,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		private void CheckSignatureButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
-			Step3CheckSignature(UpdateFileTempFullName);
+			Step3CheckSignature(UpdateNewFileFullName);
 		}
 
 		bool Step3CheckSignature(string updateFileName)
@@ -264,8 +248,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		{
 			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
 				return false;
-			var processFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UpdateFileFullName);
-			var updatedFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UpdateFileTempFullName);
+			var processFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UpdateExeFileFullName);
+			var updatedFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UpdateNewFileFullName);
 			var processVersion = new Version(processFi.FileVersion);
 			var updatedVersion = new Version(updatedFi.FileVersion);
 			AddLog($"Current version: {processVersion}\r\n");
@@ -294,49 +278,26 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		bool Step5ReplaceFiles()
 		{
-			if (!HasRightsToModify(UpdateFileFullName))
-			{
-				// Continue update as elevated process.
-				AdminCommands.RunElevated(AdminCommand.UpdaterRenameFiles, UpdateFileFullName);
-				return true;
-			}
-			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
-				return false;
-			AddLog($"Removing UpdateFileBackFullName...\r\n");
-			try
-			{
-				// Delete current application backup.
-				if (File.Exists(UpdateFileBackFullName))
-					File.Delete(UpdateFileBackFullName);
-			}
-			catch (Exception ex)
-			{
-				AddLog($"\tException: {ex.Message}\r\n");
-				cancellationTokenSource.Cancel();
-				return false;
-			}
-			AddLog("...Done.\r\n");
-			// Change the currently running executable so it can be overwritten.
-			AddLog($"Replacing with new file...\r\n");
-			try
-			{
-				File.Move(UpdateFileFullName, UpdateFileBackFullName);
-				File.Copy(UpdateFileTempFullName, UpdateFileFullName);
-			}
-			catch (Exception ex)
-			{
-				AddLog($"\tException: {ex.Message}\r\n");
-				cancellationTokenSource.Cancel();
-				return false;
-			}
-			AddLog("...Done.\r\n");
+			var args = new string[] {
+				$"/{nameof(UpdateProcessHelper.ReplaceFiles)}",
+				$"/bakFile=\"{UpdateBakFileFullName}\"",
+				$"/newFile=\"{UpdateNewFileFullName}\"",
+				$"/exeFile=\"{UpdateExeFileFullName}\""
+			};
+			if (PermissionHelper.CanRenameFile(UpdateExeFileFullName))
+				UpdateProcessHelper.ProcessAdminCommands(args);
+			else
+				UpdateProcessHelper.RunElevated(args);
 			return true;
 		}
-
 		private void RestartButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
-			Step6Restart();
+			var args = new string[] {
+				$"/{nameof(UpdateProcessHelper.RestartApp)}",
+			};
+			UpdateProcessHelper.RunProcessAsync(args);
+			System.Windows.Application.Current.Shutdown();
 		}
 
 		bool Step6Restart()
@@ -349,7 +310,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			// Prepare the batch script
 			batchCommands.AppendLine("@echo off");
 			batchCommands.AppendLine("timeout /t 5 /nobreak > NUL");
-			batchCommands.AppendLine($"start \"\" \"{UpdateFileFullName}\"");
+			batchCommands.AppendLine($"start \"\" \"{UpdateExeFileFullName}\"");
 			batchCommands.AppendLine($"del \"{tempBatchFile}\"");
 			File.WriteAllText(tempBatchFile, batchCommands.ToString());
 			// Prepare the VBScript
@@ -364,22 +325,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		private void ReleaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
 		}
-
-		#region Permission Helper
-
-		public bool HasRightsToModify(string fileFullName)
-		{
-			var rights = FileSystemRights.Modify;
-			var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-			// Check if users in non elevated mode have rights to modify the file.
-			var hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(fileFullName, rights, users, false);
-			return hasRights;
-			//if (!hasRights && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
-		}
-
-		#endregion
 
 		#region ■ INotifyPropertyChanged
 

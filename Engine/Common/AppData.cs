@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UpdateControl;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue("https://github.com/JocysCom/VsAiCompanion/raw/main/Engine/Resources/Settings.CompanyName.zip")]
 		public string ConfigurationUrl { get => _ConfigurationUrl; set => SetProperty(ref _ConfigurationUrl, value); }
 		private string _ConfigurationUrl;
+		public UpdateSettings UpdateSettings
+		{
+			get => _UpdateSettings = _UpdateSettings ?? new UpdateSettings();
+			set => _UpdateSettings = value;
+		}
+		private UpdateSettings _UpdateSettings;
 
 		#region Positions and Locations
 

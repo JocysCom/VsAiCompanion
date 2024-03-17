@@ -29,7 +29,7 @@ namespace JocysCom.VS.AiCompanion
 				// Administrator commands.
 				// ------------------------------------------------
 				var args = Environment.GetCommandLineArgs();
-				var executed = AdminCommands.ProcessAdminCommands(args);
+				var executed = JocysCom.ClassLibrary.Controls.UpdateControl.UpdateProcessHelper.ProcessAdminCommands(args);
 				// If valid command was executed then...
 				if (executed)
 					return;

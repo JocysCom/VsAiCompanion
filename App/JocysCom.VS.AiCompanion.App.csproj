@@ -8,9 +8,9 @@
 		<UseWPF>true</UseWPF>
 		<PackageIcon>App.ico</PackageIcon>
 		<ApplicationIcon>App.ico</ApplicationIcon>
-		<AssemblyVersion>1.7.19</AssemblyVersion>
+		<AssemblyVersion>1.7.20</AssemblyVersion>
 		<DebugType>embedded</DebugType>
-		<FileVersion>1.7.19</FileVersion>
+		<FileVersion>1.7.20</FileVersion>
 		<!-- Include all necessary native libraries (such as sni.dll for SQL Network Interface)
 			 inside the main output file (.dll or .exe). These libraries are then extracted to a
 			 temporary directory and loaded from there when the application starts, making
@@ -19,6 +19,10 @@
 		 -->
 		<IncludeNativeLibrariesForSelfExtract>True</IncludeNativeLibrariesForSelfExtract>
 		<SignAssembly>False</SignAssembly>
+		<Company>Jocys.com</Company>
+		<Authors>Jocys.com Team</Authors>
+		<PackageId>VS AI Companion</PackageId>
+		<Product>VS AI Companion</Product>
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
