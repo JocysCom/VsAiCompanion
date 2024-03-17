@@ -35,14 +35,16 @@
 				Margin="8,0,0,0"
 				Content="Verify Digital Signature"
 				IsChecked="{Binding Settings.VerifySignature, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-			<CheckBox x:Name="CheckVersionCheckBox" Margin="8,0,0,0" Content="Check Version" />
-		</StackPanel>
-		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-			<Button Name="CloseButton" Margin="8,0,0,0">
-				<StackPanel>
-					<Label Content="Close" />
-				</StackPanel>
-			</Button>
+			<CheckBox
+				x:Name="IncludePrereleaseCheckBox"
+				Margin="8,0,0,0"
+				Content="Include Prerelease"
+				IsChecked="{Binding Settings.IncludePrerelease, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<CheckBox
+				x:Name="CheckVersionCheckBox"
+				Margin="8,0,0,0"
+				Content="Check Version"
+				Visibility="Collapsed" />
 		</StackPanel>
 		<StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal">
 			<ComboBox
@@ -54,50 +56,51 @@
 			<Button Name="CheckButton" Click="CheckButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
+					<Label Content="Check" />
 				</StackPanel>
 			</Button>
-
 			<Button Name="InstallButton" MinWidth="75" Click="InstallButton_Click">
 				<StackPanel Focusable="False">
 					<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
 					<Label Content="Install" />
 				</StackPanel>
 			</Button>
-			<Button Name="DownloadButton" MinWidth="75" Click="DownloadButton_Click">
-				<StackPanel Focusable="False">
-					<Label Content="Download" />
-				</StackPanel>
-			</Button>
-			<Button Name="ExtractButton" MinWidth="75" Click="ExtractButton_Click">
-				<StackPanel Focusable="False">
-					<Label Content="Extract" />
-				</StackPanel>
-			</Button>
+			<StackPanel x:Name="ExtraButtonsPanel" Orientation="Horizontal">
+				<Button Name="DownloadButton" MinWidth="75" Click="DownloadButton_Click">
+					<StackPanel Focusable="False">
+						<Label Content="Download" />
+					</StackPanel>
+				</Button>
+				<Button Name="ExtractButton" MinWidth="75" Click="ExtractButton_Click">
+					<StackPanel Focusable="False">
+						<Label Content="Extract" />
+					</StackPanel>
+				</Button>
 
-			<Button Name="CheckSignatureButton" MinWidth="75" Click="CheckSignatureButton_Click">
-				<StackPanel Focusable="False">
-					<Label Content="Check Signature" />
-				</StackPanel>
-			</Button>
+				<Button Name="CheckSignatureButton" MinWidth="75" Click="CheckSignatureButton_Click">
+					<StackPanel Focusable="False">
+						<Label Content="Check Signature" />
+					</StackPanel>
+				</Button>
 
-			<Button Name="CheckVersionButton" MinWidth="75" Click="CheckVersionButton_Click">
-				<StackPanel Focusable="False">
-					<Label Content="Check Version" />
-				</StackPanel>
-			</Button>
+				<Button Name="CheckVersionButton" MinWidth="75" Click="CheckVersionButton_Click">
+					<StackPanel Focusable="False">
+						<Label Content="Check Version" />
+					</StackPanel>
+				</Button>
 
-			<Button Name="ReplaceFileButton" MinWidth="75" Click="ReplaceFileButton_Click">
-				<StackPanel Focusable="False">
-					<Label Content="Replace File" />
-				</StackPanel>
-			</Button>
+				<Button Name="ReplaceFileButton" MinWidth="75" Click="ReplaceFileButton_Click">
+					<StackPanel Focusable="False">
+						<Label Content="Replace File" />
+					</StackPanel>
+				</Button>
 
-			<Button Name="RestartButton" MinWidth="75" Click="RestartButton_Click">
-				<StackPanel Focusable="False">
-					<Label Content="Restart" />
-				</StackPanel>
-			</Button>
-
+				<Button Name="RestartButton" MinWidth="75" Click="RestartButton_Click">
+					<StackPanel Focusable="False">
+						<Label Content="Restart" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
 		</StackPanel>
 		<TextBox
 			x:Name="StatusPanel"

@@ -73,6 +73,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		bool _CheckVersion;
 
 		/// <summary>
+		/// Include prerelease.
+		/// </summary>
+		public bool IncludePrerelease { get => _IncludePrerelease; set => SetProperty(ref _IncludePrerelease, value); }
+		bool _IncludePrerelease;
+
+		/// <summary>
 		/// Filter by minimum version.
 		/// </summary>
 		public string MinVersion { get => _MinVersion; set => SetProperty(ref _MinVersion, value); }

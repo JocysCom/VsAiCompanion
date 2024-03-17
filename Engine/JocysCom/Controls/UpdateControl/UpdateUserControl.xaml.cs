@@ -6,14 +6,13 @@ using JocysCom.WebSites.Engine.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
@@ -29,8 +28,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			ExtraButtonsPanel.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			cancellationTokenSource = new CancellationTokenSource();
 			ReleaseComboBox.ItemsSource = ReleaseList;
+			UpdateButtons();
 		}
 
 		CancellationTokenSource cancellationTokenSource;
@@ -69,6 +72,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		private async void CheckButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
+			LogTextBox.Clear();
 			await Step1CheckOnline();
 		}
 
@@ -77,6 +81,26 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		List<release> Releases;
 
+		void UpdateButtons()
+		{
+			var selected = ReleaseComboBox.SelectedIndex == 0;
+			InstallButton.IsEnabled = selected;
+			DownloadButton.IsEnabled = selected;
+			ExtractButton.IsEnabled = selected;
+			CheckSignatureButton.IsEnabled = selected;
+			CheckVersionButton.IsEnabled = selected;
+			ReplaceFileButton.IsEnabled = selected;
+			RestartButton.IsEnabled = selected;
+			var currentVersion = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+			var changesText = "";
+			if (Releases?.Count > 0)
+			{
+				// Get description of versions that are higher than the current version.
+				var changes = Releases.Where(x => currentVersion < Version.Parse(x.name)).ToList();
+				changesText = string.Join(Environment.NewLine, changes.Select(x => x.body));
+			}
+			LogTextBox.Text = changesText;
+		}
 		public async Task Step1CheckOnline()
 		{
 			var e = new EventArgs();
@@ -91,6 +115,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 					.Where(x => !string.IsNullOrWhiteSpace(x.name))
 					.Where(x => x.assets.Any(y => Settings.GitHubAssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
 					.Where(x => Version.TryParse(x.name, out _))
+					.Where(x => Settings.IncludePrerelease || x.prerelease == false)
 					.Where(x => minVersion <= Version.Parse(x.name))
 					.OrderByDescending(x => Version.Parse(x.name))
 					.ToList();
@@ -103,6 +128,10 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				}
 				if (Releases.Count > 0)
 					ReleaseComboBox.SelectedIndex = 0;
+				else
+				{
+					AddLog("No updates found!");
+				}
 				OnPropertyChanged(nameof(ReleaseList));
 				//LogPanel.Text = JsonSerializer.Serialize(releases);
 			}
@@ -166,7 +195,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 							System.IO.File.WriteAllBytes(DownloadTargetFile, dl.Params.ResponseData);
 							AddLog(" Done\r\n");
 							if (InstallMode)
+							{
 								Step3ExtractFile();
+								//Step4CheckVersion();
+								Step5ReplaceFiles();
+								Step6RestartApp();
+							}
 						}
 					});
 				}
@@ -183,7 +217,6 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			InstallMode = false;
 			Step3ExtractFile();
 		}
-
 		bool Step3ExtractFile()
 		{
 			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
@@ -293,38 +326,19 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		private void RestartButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
+			Step6RestartApp();
+		}
+		void Step6RestartApp()
+		{
 			var args = new string[] {
 				$"/{nameof(UpdateProcessHelper.RestartApp)}",
 			};
 			UpdateProcessHelper.RunProcessAsync(args);
 			System.Windows.Application.Current.Shutdown();
 		}
-
-		bool Step6Restart()
-		{
-			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
-				return false;
-			var batchCommands = new StringBuilder();
-			var tempBatchFile = Path.GetTempFileName() + ".bat";
-			var tempVbsFile = Path.GetTempFileName() + ".vbs";
-			// Prepare the batch script
-			batchCommands.AppendLine("@echo off");
-			batchCommands.AppendLine("timeout /t 5 /nobreak > NUL");
-			batchCommands.AppendLine($"start \"\" \"{UpdateExeFileFullName}\"");
-			batchCommands.AppendLine($"del \"{tempBatchFile}\"");
-			File.WriteAllText(tempBatchFile, batchCommands.ToString());
-			// Prepare the VBScript
-			var vbsCommands = $"CreateObject(\"Wscript.Shell\").Run \"\"\"{tempBatchFile}\"\"\", 0, False";
-			File.WriteAllText(tempVbsFile, vbsCommands);
-			// Execute the VBScript, which runs the batch file invisibly
-			Process.Start("wscript.exe", $"\"{tempVbsFile}\"");
-			// Shutdown the current application instance
-			System.Windows.Application.Current.Shutdown();
-			return true;
-		}
-
 		private void ReleaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			UpdateButtons();
 		}
 
 		#region ■ INotifyPropertyChanged
