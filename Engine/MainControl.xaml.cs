@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Controls.UpdateControl;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,12 +36,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var appExeAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			if (!Global.IsVsExtension)
 			{
+				var control = new UpdateUserControl();
 				var us = Global.AppSettings.UpdateSettings;
 				us.UpdateMissingDefaults(appExeAssembly);
-				UpdatesPanel.UpdateExeFileFullName = appExeAssembly.Location.Replace(".dll", ".exe");
-				UpdatesPanel.Settings = us;
-				UpdatesPanel.AddTask += UpdatesPanel_AddTask;
-				UpdatesPanel.RemoveTask += UpdatesPanel_RemoveTask;
+				control.Settings = us;
+				control.AddTask += UpdatesPanel_AddTask;
+				control.RemoveTask += UpdatesPanel_RemoveTask;
+				UpdatesTabItem.Content = control;
 			}
 			// Subscribe to the application-wide Activated and Deactivated events
 			Application.Current.Deactivated += Current_Deactivated;

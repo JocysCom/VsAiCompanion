@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Network;
 using JocysCom.ClassLibrary.Security;
+using JocysCom.ClassLibrary.Win32;
 using JocysCom.Controls.UpdateControl.GitHub;
 using JocysCom.WebSites.Engine.Security;
 using System;
@@ -50,10 +51,6 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		bool InstallMode;
 
-		/// <summary>
-		/// Executable file name to update.
-		/// </summary>
-		public string UpdateExeFileFullName { get; set; }
 
 		/// <summary>
 		/// Path to GitHub file on the local disk.
@@ -63,11 +60,11 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		/// <summary>New application file.</summary>
 		public string UpdateNewFileFullName
-			=> UpdateExeFileFullName + ".tmp";
+			=> UacHelper.CurrentProcessFileName + ".tmp";
 
 		/// <summary>Current application backup file.</summary>
 		public string UpdateBakFileFullName
-			=> UpdateExeFileFullName + ".bak";
+			=> UacHelper.CurrentProcessFileName + ".bak";
 		private async void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = true;
@@ -96,7 +93,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			CheckVersionButton.IsEnabled = selected;
 			ReplaceFileButton.IsEnabled = selected;
 			RestartButton.IsEnabled = selected;
-			var currentVersion = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+			var currentVersion = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
 			var changesText = "";
 			if (Releases?.Count > 0)
 			{
@@ -204,6 +201,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 							{
 								Step3ExtractFile();
 								//Step4CheckVersion();
+								Step3CheckSignature();
 								Step5ReplaceFiles();
 								Step6RestartApp();
 							}
@@ -227,7 +225,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		{
 			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
 				return false;
-			var tmpName = UpdateExeFileFullName + ".tmp";
+			var tmpName = UpdateNewFileFullName;
 			AddLog("Extracting...\r\n");
 			AddLog($"\tFile: {Settings.FileNameInsideZip}\r\n");
 			AddLog($"\tFrom: {DownloadTargetFile}\r\n");
@@ -249,17 +247,17 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		private void CheckSignatureButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
-			Step3CheckSignature(UpdateNewFileFullName);
+			Step3CheckSignature();
 		}
 
-		bool Step3CheckSignature(string updateFileName)
+		bool Step3CheckSignature()
 		{
 			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
 				return false;
 			AddLog("Check Digital Signature...\r\n");
 			X509Certificate2 certificate;
 			Exception error;
-			if (CertificateHelper.IsSignedAndTrusted(updateFileName, out certificate, out error))
+			if (CertificateHelper.IsSignedAndTrusted(UpdateNewFileFullName, out certificate, out error))
 			{
 				AddLog($"\tSubject:    {certificate.Subject}\r\n");
 				AddLog($"\tIssuer:     {certificate.Issuer}\r\n");
@@ -287,7 +285,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		{
 			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
 				return false;
-			var processFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UpdateExeFileFullName);
+			var processFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UacHelper.CurrentProcessFileName);
 			var updatedFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(UpdateNewFileFullName);
 			var processVersion = new Version(processFi.FileVersion);
 			var updatedVersion = new Version(updatedFi.FileVersion);
@@ -322,9 +320,9 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				$"/{nameof(UpdateProcessHelper.ReplaceFiles)}",
 				$"/bakFile=\"{UpdateBakFileFullName}\"",
 				$"/newFile=\"{UpdateNewFileFullName}\"",
-				$"/exeFile=\"{UpdateExeFileFullName}\"",
+				$"/exeFile=\"{UacHelper.CurrentProcessFileName}\"",
 			};
-			if (PermissionHelper.CanRenameFile(UpdateExeFileFullName))
+			if (PermissionHelper.CanRenameFile(UacHelper.CurrentProcessFileName))
 				UpdateProcessHelper.ProcessAdminCommands(args);
 			else
 				UpdateProcessHelper.RunElevated(args);
@@ -341,7 +339,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			Task.Delay(1000).Wait();
 			var args = new string[] {
 				$"/{nameof(UpdateProcessHelper.RestartApp)}",
-				$"/exeFile=\"{UpdateExeFileFullName}\"",
+				$"/exeFile=\"{UacHelper.CurrentProcessFileName}\"",
 			};
 			UpdateProcessHelper.RunProcessAsync(args);
 			System.Windows.Application.Current.Shutdown();

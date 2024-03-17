@@ -33,11 +33,21 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<JcControls:InfoControl x:Name="InfoPanel" Grid.Row="0" RightIconContent="{StaticResource Icon_AiCompanion}" />
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<JcControls:InfoControl x:Name="InfoPanel" RightIconContent="{StaticResource Icon_AiCompanion}" />
+		<Controls:AvatarControl
+			x:Name="AvatarPanel"
+			Grid.RowSpan="2"
+			Grid.Column="1"
+			Width="64" />
 		<Controls:QuickActionControl x:Name="QuickActionPanel" Grid.Row="1" />
 		<TabControl
 			x:Name="MainTabControl"
 			Grid.Row="2"
+			Grid.ColumnSpan="2"
 			Margin="4"
 			x:FieldModifier="public"
 			SelectionChanged="MainTabControl_SelectionChanged">
@@ -116,7 +126,6 @@
 						<Label Content="Updates" />
 					</StackPanel>
 				</TabItem.Header>
-				<JcControlsUc:UpdateUserControl x:Name="UpdatesPanel" x:FieldModifier="public" />
 			</TabItem>
 			<TabItem>
 				<TabItem.Header>

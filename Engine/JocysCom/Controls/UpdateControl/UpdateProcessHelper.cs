@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -80,7 +81,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			{
 				// Run copy of app as Administrator.
 				JocysCom.ClassLibrary.Win32.UacHelper.RunProcess(
-					System.Reflection.Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe"),
+					UacHelper.CurrentProcessFileName,
 					string.Join(" ", args), isElevated: true);
 				return false;
 			}
@@ -89,7 +90,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		{
 			// Don't wait for process to finish.
 			JocysCom.ClassLibrary.Win32.UacHelper.RunProcessAsync(
-				System.Reflection.Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe"),
+				UacHelper.CurrentProcessFileName,
 				string.Join(" ", args));
 			return true;
 
