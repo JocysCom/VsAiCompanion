@@ -36,6 +36,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Plu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Shared", "Shared\JocysCom.VS.AiCompanion.Shared.csproj", "{01818D93-E2A8-46AF-A035-507D203AD47B}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "JocysCom.VS.AiCompanion.DataFunctions", "Data\DataFunctions\JocysCom.VS.AiCompanion.DataFunctions.sqlproj", "{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{843D4334-2E79-470C-A481-E02CF34E242E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -192,6 +196,30 @@ Global
 		{01818D93-E2A8-46AF-A035-507D203AD47B}.Release|x64.Build.0 = Release|Any CPU
 		{01818D93-E2A8-46AF-A035-507D203AD47B}.Release|x86.ActiveCfg = Release|Any CPU
 		{01818D93-E2A8-46AF-A035-507D203AD47B}.Release|x86.Build.0 = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|arm64.Build.0 = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|arm64.Deploy.0 = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|x64.Build.0 = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|x86.Build.0 = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|arm64.ActiveCfg = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|arm64.Build.0 = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|arm64.Deploy.0 = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|x64.ActiveCfg = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|x64.Build.0 = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|x64.Deploy.0 = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|x86.ActiveCfg = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|x86.Build.0 = Release|Any CPU
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,6 +227,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
 		{6D58A35D-FA37-4761-AE81-F1DD89829E1E} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
+		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99} = {843D4334-2E79-470C-A481-E02CF34E242E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBFF2296-DB1F-4D4F-B14D-BE266743B9AE}
