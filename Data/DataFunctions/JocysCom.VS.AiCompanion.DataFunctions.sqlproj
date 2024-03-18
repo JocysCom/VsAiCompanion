@@ -58,6 +58,12 @@
     <Folder Include="Properties" />
     <Folder Include="Deployment" />
     <Folder Include="Common" />
+    <Folder Include="Embedding\" />
+    <Folder Include="Embedding\Tables\" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="Security\" />
+    <Folder Include="Compare" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Deployment\Add_Assembly_to_Trusted_List.sql" />
@@ -65,14 +71,23 @@
     <Build Include="Deployment\DataFunctions_UnInstall.sql" />
     <Build Include="Deployment\Test_RegexBase.sql" />
     <Build Include="Deployment\Test_StringBase.sql" />
+    <Build Include="Embedding\Tables\FileEmbedding.sql" />
+    <Build Include="Embedding\Tables\File.sql" />
+    <Build Include="dbo\Stored Procedures\sp_getMostSimilarFiles.sql" />
+    <Build Include="dbo\Stored Procedures\sp_getMostSimilar.sql" />
+    <Build Include="Security\Embedding.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\RegexBase.cs" />
     <Compile Include="Common\StringBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common\EmbeddingBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data" />
     <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Compare\DatabaseToProject.scmp" />
   </ItemGroup>
 </Project>
