@@ -11,8 +11,8 @@
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>JocysCom.VS.AiCompanion.DataFunctions</RootNamespace>
-    <AssemblyName>JocysCom.VS.AiCompanion.DataFunctions</AssemblyName>
+    <RootNamespace>DataFunctions</RootNamespace>
+    <AssemblyName>DataFunctions</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
@@ -22,6 +22,10 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultSchema>Embedding</DefaultSchema>
+    <DelaySign>False</DelaySign>
+    <SignAssembly>False</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\..\..\..\_Backup\Configuration\SSL\Code Sign - Evaldas Jocys\RSA-4096 - Expires 2026-07-26\Evaldas_Jocys.PublicKey.cer</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -60,22 +64,22 @@
     <Folder Include="Common" />
     <Folder Include="Embedding\" />
     <Folder Include="Embedding\Tables\" />
-    <Folder Include="dbo\" />
-    <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="Security\" />
     <Folder Include="Compare" />
+    <Folder Include="Embedding\Stored Procedures" />
+    <Folder Include="Assemblies\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Deployment\Add_Assembly_to_Trusted_List.sql" />
-    <Build Include="Deployment\DataFunctions_Install.sql" />
-    <Build Include="Deployment\DataFunctions_UnInstall.sql" />
-    <Build Include="Deployment\Test_RegexBase.sql" />
-    <Build Include="Deployment\Test_StringBase.sql" />
+    <None Include="Deployment\Add_Assembly_to_Trusted_List.sql" />
+    <None Include="Deployment\DataFunctions_Install.sql" />
+    <None Include="Deployment\DataFunctions_UnInstall.sql" />
+    <None Include="Deployment\Test_RegexBase.sql" />
+    <None Include="Deployment\Test_StringBase.sql" />
     <Build Include="Embedding\Tables\FileEmbedding.sql" />
     <Build Include="Embedding\Tables\File.sql" />
-    <Build Include="dbo\Stored Procedures\sp_getMostSimilarFiles.sql" />
-    <Build Include="dbo\Stored Procedures\sp_getMostSimilar.sql" />
     <Build Include="Security\Embedding.sql" />
+    <None Include="Compare\ProjectToDatabase.scmp" />
+    <None Include="Assemblies\DataFunctions.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\RegexBase.cs" />
@@ -86,8 +90,24 @@
   <ItemGroup>
     <Reference Include="System.Data" />
     <Reference Include="System" />
+    <Reference Include="DataFunctions">
+      <HintPath>Assemblies\DataFunctions.dll</HintPath>
+      <SqlAssemblyName>DataFunctions</SqlAssemblyName>
+      <IsModelAware>True</IsModelAware>
+      <GenerateSqlClrDdl>False</GenerateSqlClrDdl>
+      <SqlOwnerName>dbo</SqlOwnerName>
+      <SqlPermissionSet>SAFE</SqlPermissionSet>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\DatabaseToProject.scmp" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="Embedding\Stored Procedures\sp_getMostSimilar.sql" />
+    <Build Include="Embedding\Stored Procedures\sp_getMostSimilarFiles.sql" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Sign.ps1" "$(TargetPath)"
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

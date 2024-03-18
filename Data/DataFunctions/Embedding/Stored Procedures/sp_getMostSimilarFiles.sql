@@ -1,5 +1,5 @@
 ﻿
-CREATE PROCEDURE sp_getMostSimilarFiles
+CREATE PROCEDURE [Embedding].[sp_getMostSimilarFiles]
     @promptEmbedding varbinary(max)
 AS
 BEGIN

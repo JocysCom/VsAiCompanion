@@ -26,6 +26,7 @@ GO
 ---------------------------------------------------------------
 -- ALLOW UNSAFE CODE
 ---------------------------------------------------------------
+/*
 EXEC('
 USE [master];
 
@@ -38,18 +39,39 @@ CREATE LOGIN DataFunctionsKeyLogin FROM ASYMMETRIC KEY DataFunctionsKey
 -- Step 3: Grant UNSAFE assembly permission to the login created.
 GRANT UNSAFE ASSEMBLY TO DataFunctionsKeyLogin;
 ')
+*/
+
+---------------------------------------------------------------
+-- ALLOW UNSAFE CODE WITH CERTIFICTAE
+---------------------------------------------------------------
+
+USE [master]
+CREATE CERTIFICATE [DataFunctionsCertificate]
+FROM FILE = 'd:\Projects\Jocys.com GitHub\VsAiCompanion\Data\DataFunctions\Deployment\Evaldas_Jocys.cer';
+GO
+
+USE [master]
+CREATE LOGIN [DataFunctionsLogin] FROM CERTIFICATE [DataFunctionsCertificate]
+GO
+
+USE [master]
+GRANT UNSAFE ASSEMBLY TO [DataFunctionsLogin];
+GO
+
 ---------------------------------------------------------------
 -- CREATE Assembly
 ---------------------------------------------------------------
 
 -- Important Note: Makse to to select target database first.
+USE [Embeddings]
 CREATE ASSEMBLY [DataFunctions]
-FROM 'd:\Projects\Jocys.com GitHub\VsAiCompanion\Data\DataFunctions\JocysCom.VS.AiCompanion.DataFunctions.dll'
+FROM 'd:\Projects\Jocys.com GitHub\VsAiCompanion\Data\DataFunctions\bin\Release\DataFunctions.dll'
 GO
 
 -- Important Note: Makse to to select target database first.
+USE [Embeddings]
 ALTER ASSEMBLY [DataFunctions] ADD FILE
-FROM 'd:\Projects\Jocys.com GitHub\VsAiCompanion\Data\DataFunctions\JocysCom.VS.AiCompanion.DataFunctions.dll'
+FROM 'd:\Projects\Jocys.com GitHub\VsAiCompanion\Data\DataFunctions\bin\Release\DataFunctions.dll'
 GO
 
 -- Set assembly permissions to allow network access.

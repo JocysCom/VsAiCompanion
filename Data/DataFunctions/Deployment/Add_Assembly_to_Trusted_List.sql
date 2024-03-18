@@ -13,6 +13,7 @@ WHERE a.is_user_defined = 1 AND a.[name] = @clr_name
 
 SELECT @clr_full_name [name], @clr_hash as [hash]
 
+GO
 ---------------------------------------------------------------
 -- SQL 2017
 ---------------------------------------------------------------
