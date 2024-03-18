@@ -83,12 +83,12 @@ GO
 -- CREATE DataFunctions.RegexBase Functions
 ---------------------------------------------------------------
 
-CREATE FUNCTION dbo.RegexReplace(@input nvarchar(max), @pattern nvarchar(max), @replacement nvarchar(max))
+CREATE FUNCTION [Embedding].RegexReplace(@input nvarchar(max), @pattern nvarchar(max), @replacement nvarchar(max))
 RETURNS nvarchar(max) WITH EXECUTE AS CALLER
 AS EXTERNAL NAME DataFunctions.RegexBase.RegexReplace
 GO
 
-CREATE FUNCTION dbo.RegexIsMatch(@input nvarchar(max), @pattern nvarchar(max))
+CREATE FUNCTION [Embedding].RegexIsMatch(@input nvarchar(max), @pattern nvarchar(max))
 RETURNS bit WITH EXECUTE AS CALLER
 AS EXTERNAL NAME DataFunctions.RegexBase.RegexIsMatch
 GO
@@ -97,27 +97,27 @@ GO
 -- CREATE DataFunctions.StringBase Functions
 ---------------------------------------------------------------
 
-CREATE FUNCTION dbo.HtmlDecode(@value nvarchar(max))
+CREATE FUNCTION [Embedding].HtmlDecode(@value nvarchar(max))
 RETURNS nvarchar(max) WITH EXECUTE AS CALLER
 AS EXTERNAL NAME DataFunctions.StringBase.HtmlDecode
 GO
 
-CREATE FUNCTION dbo.HtmlEncode(@value nvarchar(max))
+CREATE FUNCTION [Embedding].HtmlEncode(@value nvarchar(max))
 RETURNS nvarchar(max) WITH EXECUTE AS CALLER
 AS EXTERNAL NAME DataFunctions.StringBase.HtmlEncode
 GO
 
-CREATE FUNCTION dbo.UrlDecode(@value nvarchar(max))
+CREATE FUNCTION [Embedding].UrlDecode(@value nvarchar(max))
 RETURNS nvarchar(max) WITH EXECUTE AS CALLER
 AS EXTERNAL NAME DataFunctions.StringBase.UrlDecode
 GO
 
-CREATE FUNCTION dbo.UrlEncode(@value nvarchar(max))
+CREATE FUNCTION [Embedding].UrlEncode(@value nvarchar(max))
 RETURNS nvarchar(max) WITH EXECUTE AS CALLER
 AS EXTERNAL NAME DataFunctions.StringBase.UrlEncode
 GO
 
-CREATE FUNCTION dbo.UrlEncodeKeyValue(@key nvarchar(max), @value nvarchar(max))
+CREATE FUNCTION [Embedding].UrlEncodeKeyValue(@key nvarchar(max), @value nvarchar(max))
 RETURNS nvarchar(max) WITH EXECUTE AS CALLER
 AS EXTERNAL NAME DataFunctions.StringBase.UrlEncodeKeyValue
 GO
