@@ -121,13 +121,3 @@ CREATE FUNCTION dbo.UrlEncodeKeyValue(@key nvarchar(max), @value nvarchar(max))
 RETURNS nvarchar(max) WITH EXECUTE AS CALLER
 AS EXTERNAL NAME DataFunctions.StringBase.UrlEncodeKeyValue
 GO
-
-CREATE FUNCTION dbo.GetTitleKey(@input nvarchar(max), @capitalize bit)
-RETURNS nvarchar(max) WITH EXECUTE AS CALLER
-AS EXTERNAL NAME DataFunctions.StringBase.GetTitleKey
-GO
-
-CREATE FUNCTION dbo.ConvertToASCII(@input nvarchar(max))
-RETURNS nvarchar(max) WITH EXECUTE AS CALLER
-AS EXTERNAL NAME DataFunctions.StringBase.ConvertToASCII
-GO
