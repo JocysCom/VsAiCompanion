@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Embeddings.DataAccess;
 using HtmlAgilityPack;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using RtfPipe;
@@ -11,6 +12,9 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
@@ -40,6 +44,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{ ConvertTargetType.DOCX, ".docx" },
 				{ ConvertTargetType.CSV, ".csv" },
 				{ ConvertTargetType.MD, ".md" },
+				{ ConvertTargetType.TXTS, ".txt" },
 			};
 
 
@@ -184,6 +189,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 						break;
 					case ConvertTargetType.MD:
 						WriteToMD(targetPath, items);
+						break;
+					case ConvertTargetType.TXTS:
+						WriteToTXTS(targetPath, items);
 						break;
 					default:
 						Global.ShowError($"The extension {targetExt} is not supported for writing.");
@@ -572,7 +580,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				stylesheet.TableStyles = new TableStyles();
 			// Create a new cell style and add it to the stylesheet
 			var format = new CellFormat();
-			format.Alignment = new Alignment();
+			format.Alignment = new DocumentFormat.OpenXml.Spreadsheet.Alignment();
 			format.Alignment.WrapText = wrapText;
 			stylesheet.CellFormats.Append(format);
 			uint formatId = (uint)stylesheet.CellFormats.Count() - 1;
@@ -811,21 +819,21 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					{
 						writer.WriteLine(prefixSystem);
 						writer.WriteLine();
-						writer.WriteLine(systemContent);
+						writer.WriteLine(TrimSpaces(systemContent));
 						writer.WriteLine();
 					}
 					if (userContent != null)
 					{
 						writer.WriteLine(prefixUser);
 						writer.WriteLine();
-						writer.WriteLine(userContent);
+						writer.WriteLine(TrimSpaces(userContent));
 						writer.WriteLine();
 					}
 					if (assistantContent != null)
 					{
 						writer.WriteLine(prefixAssistant);
 						writer.WriteLine();
-						writer.WriteLine(assistantContent);
+						writer.WriteLine(TrimSpaces(assistantContent));
 						writer.WriteLine();
 					}
 
@@ -933,6 +941,175 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				return s;
 			return s.Trim(' ', '\r', '\n', '\t', '\u00A0');
 		}
+
+		#endregion
+
+		#region Markdown (*.txt)
+
+		public static void WriteToTXTS<T>(string path, List<T> o)
+		{
+			var sha256 = SHA256.Create();
+			// path will be the folder.
+			var diFullname = path + ".data";
+			var di = new DirectoryInfo(diFullname);
+			if (!di.Exists)
+				di.Create();
+			var isChat = typeof(T) == typeof(chat_completion_request);
+			var sb = new StringBuilder();
+			var pattern = new string('0', o.Count.ToString().Length);
+			for (int i = 0; i < o.Count; i++)
+			{
+				var request = o[i];
+				string systemContent = null;
+				string userContent = null;
+				string assistantContent = null;
+				if (request is chat_completion_request cr)
+				{
+					systemContent = cr.messages.FirstOrDefault(x => x.role == message_role.system)?.content ?? "";
+					userContent = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
+					assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
+				}
+				else if (request is text_completion_item tr)
+				{
+					var prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request.";
+					systemContent = prefix;
+					userContent = tr.completion;
+					assistantContent = tr.completion;
+				}
+				if (systemContent != null)
+				{
+					sb.AppendLine(prefixSystem);
+					sb.AppendLine();
+					sb.AppendLine(TrimSpaces(systemContent));
+					sb.AppendLine();
+				}
+				if (userContent != null)
+				{
+					sb.AppendLine(prefixUser);
+					sb.AppendLine();
+					sb.AppendLine(TrimSpaces(userContent));
+					sb.AppendLine();
+				}
+				if (assistantContent != null)
+				{
+					sb.AppendLine(prefixAssistant);
+					sb.AppendLine();
+					sb.AppendLine(TrimSpaces(assistantContent));
+					sb.AppendLine();
+					var hash = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(sb.ToString()));
+					var hashString = string.Join("", hash.Select(x => x.ToString("X2")));
+					var file_path = string.Format("{0}\\{1:" + pattern + "}_{2}.txt", diFullname, i, hashString);
+					File.WriteAllText(file_path, sb.ToString());
+					sb.Clear();
+				}
+			}
+			ConvertToEmbeddingsCSV(diFullname);
+		}
+
+		public static void ConvertToEmbeddingsCSV(string path)
+		{
+			var service = Global.AppSettings.AiServices.FirstOrDefault(x => x.BaseUrl.Contains("azure"));
+			var url = service.BaseUrl + "openai/deployments/text-embedding-ada-002/embeddings?api-version=2023-05-15";
+			var files = Directory.GetFiles(path, "*.txt");
+			var connectionString = "Data Source=localhost;Initial Catalog=Embeddings;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;";
+#if NETFRAMEWORK
+			var db = new Embeddings.DataAccess.EmbeddingsContext();
+			db.Database.Connection.ConnectionString = connectionString;
+#else
+			var db = EmbeddingsContext.Create(connectionString);
+#endif
+
+			for (int i = 0; i < files.Count(); i++)
+			{
+				var fi = new FileInfo(files[i]);
+				var file = db.Files.FirstOrDefault(x => x.Url == fi.FullName);
+				if (file == null)
+				{
+					file = new Embeddings.Model.File();
+					file.Created = fi.CreationTime;
+					file.Modified = fi.LastWriteTime;
+					file.Name = fi.Name;
+					file.Url = fi.FullName;
+					file.TextSize = file.Size;
+					db.Files.Add(file);
+					db.SaveChanges();
+				}
+				var text = File.ReadAllText(fi.FullName);
+				var embeddings = GetEmbeddings(url, service.ApiSecretKey, text, service);
+				var embedding = new Embeddings.Model.FileEmbedding();
+				embedding.Embedding = VectorToBinary(embeddings);
+				embedding.FileId = file.Id;
+				embedding.EmbeddingModel = "ada-002";
+				embedding.EmbeddingSize = 256;
+				embedding.PartIndex = i;
+				embedding.PartCount = files.Count();
+				db.FileEmbeddings.Add(embedding);
+				db.SaveChanges();
+
+			}
+			//await ec.GetEmbeddingsAsync(url, service.ApiSecretKey);
+		}
+
+		#region Client
+
+		// Synchronous method to get embeddings
+		public static float[] GetEmbeddings(string url, string apiKey, string text, AiService service)
+		{
+
+
+			if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(text))
+				throw new ArgumentException("URL, API key, and text cannot be null or empty.");
+			using (var _httpClient = new HttpClient())
+			{
+				// Add the necessary headers to the request
+				_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+				// Create the JSON body
+				var payload = new payload { text = text };
+				var json = Client.Serialize(payload);
+				var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+				// Make the POST request
+				var response = _httpClient.PostAsync(url, httpContent).Result;
+				response.EnsureSuccessStatusCode();
+				// Read the response as a string
+				string responseString = response.Content.ReadAsStringAsync().Result;
+				// Deserialize the response into a list of embeddings
+				var result = Client.Deserialize<embedding_response>(responseString);
+				var embeddings = result.embeddings[0].embedding;
+				return embeddings;
+			}
+		}
+
+		/// <summary>
+		/// Convert embedding vectors to byte array.
+		/// </summary>
+		/// <param name="vectors">Embedding vectors.</param>
+		/// <returns>Byte array.</returns>
+		private static byte[] VectorToBinary(float[] vectors)
+		{
+			byte[] bytes = new byte[vectors.Length * sizeof(float)];
+			Buffer.BlockCopy(vectors, 0, bytes, 0, bytes.Length);
+			return bytes;
+		}
+
+		private class payload
+		{
+			public string text { get; set; }
+		}
+
+		// Helper class to deserialize the JSON response
+		private class embedding_response
+		{
+			public Embedding[] embeddings { get; set; }
+		}
+
+		private class Embedding
+		{
+			public float[] embedding { get; set; }
+		}
+
+
+		#endregion
+
 
 		#endregion
 

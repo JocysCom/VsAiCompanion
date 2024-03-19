@@ -22,7 +22,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// "TableDirect" - The name of a table.
 		/// </param>
 		[RiskLevel(RiskLevel.High)]
-		public int ExecuteNonQuery(string connectionString, string cmdText, string cmdType)
+		public static int ExecuteNonQuery(string connectionString, string cmdText, string cmdType)
 		{
 			var cmd = new SqlCommand(cmdText);
 			cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
@@ -41,7 +41,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// "TableDirect" - The name of a table.
 		/// </param>
 		[RiskLevel(RiskLevel.High)]
-		public string ExecuteDataTable(string connectionString, string cmdText, string cmdType)
+		public static string ExecuteDataTable(string connectionString, string cmdText, string cmdType)
 		{
 			var cmd = new SqlCommand(cmdText);
 			cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);

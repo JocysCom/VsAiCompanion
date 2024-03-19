@@ -293,6 +293,48 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		}
 
 		/// <summary>
+		/// Get embedding vectors.
+		/// </summary>
+		/// <param name="modelName"></param>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public async Task<Dictionary<int, float[]>> GetEmbedding(
+			string modelName,
+			IEnumerable<string> input)
+		{
+			var client = GetAiClient();
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
+			var id = Guid.NewGuid();
+			Global.MainControl.Dispatcher.Invoke(() =>
+			{
+				//item.CancellationTokenSources.Add(cancellationTokenSource);
+				Global.MainControl.InfoPanel.AddTask(id);
+			});
+			Dictionary<int, float[]> results = null;
+			try
+			{
+				var options = new EmbeddingsOptions(modelName, input);
+				var response = await client.GetEmbeddingsAsync(options, cancellationTokenSource.Token);
+				if (response != null)
+				{
+					var promptTokens = response.Value.Usage.PromptTokens;
+					var totalTokens = response.Value.Usage.TotalTokens;
+					results = response.Value.Data.
+						ToDictionary(x => x.Index, x => x.Embedding.ToArray()));
+				}
+			}
+			catch (Exception)
+			{
+			}
+			finally
+			{
+				Global.MainControl.InfoPanel.RemoveTask(id);
+			}
+			return results;
+		}
+
+		/// <summary>
 		/// Query AI
 		/// </summary>
 		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>

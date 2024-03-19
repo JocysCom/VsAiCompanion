@@ -1,0 +1,58 @@
+﻿<#@ template language="C#" hostspecific="true" debug="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Configuration" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Security.Cryptography" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Xml.Serialization" #>
+<#@ include file="MainModel.tt.cs"#>
+<#@ output extension=".cs" #>
+<#
+//-------------------------------------------------------------
+
+// Executing template from command line:
+// "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\TextTransform.exe" "MainModel.tt"
+
+// Alternative C# files creation with Roslyn.
+// https://carlos.mendible.com/2017/03/02/create-a-class-with-net-core-and-roslyn/
+
+// Colorizing T4 (*.tt) files:
+// T4 Language https://github.com/bricelam/T4Language
+
+// To generate *.cs files on "Save" in Visual Studio set
+// *.tt "Custom Tool" property to: TextTemplatingFileGenerator
+
+// Debugging  T4 (*.tt) files:
+//     Set a breakpoint in the *.tt file;
+//     Right-click the *.tt file in the Visual Studio solution explorer;
+//     Select "Debug T4 Template";
+
+//-------------------------------------------------------------
+
+try
+{
+	MainModel.InitTemplates(Host.TemplateFile);
+}
+catch (Exception ex)
+{
+	MainModel.Log(ex.ToString());
+	if (ex.InnerException != null)
+	{	MainModel.Log("---------------------");
+		MainModel.Log(ex.InnerException.ToString());
+	}
+	throw;
+}
+
+// Template here:
+#>
+<#+
+#>
