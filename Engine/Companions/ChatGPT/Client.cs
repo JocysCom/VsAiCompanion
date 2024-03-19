@@ -320,8 +320,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				{
 					var promptTokens = response.Value.Usage.PromptTokens;
 					var totalTokens = response.Value.Usage.TotalTokens;
-					results = response.Value.Data.
-						ToDictionary(x => x.Index, x => x.Embedding.ToArray()));
+					results = response.Value.Data
+						.ToDictionary(x => x.Index, x => x.Embedding.ToArray());
 				}
 			}
 			catch (Exception)
