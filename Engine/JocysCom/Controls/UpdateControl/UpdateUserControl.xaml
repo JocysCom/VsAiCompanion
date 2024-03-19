@@ -57,7 +57,7 @@
 				DisplayMemberPath="Value"
 				SelectedValuePath="Key"
 				SelectionChanged="ReleaseComboBox_SelectionChanged" />
-			<Button Name="CheckButton" Click="CheckButton_Click">
+			<Button Name="CheckButton" MinWidth="75" Click="CheckButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
 					<Label Content="Check" />
