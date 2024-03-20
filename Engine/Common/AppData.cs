@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -119,7 +118,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Embedding Settings
 
-		[XmlIgnore]
 		public EmbeddingSettings Embedding
 		{
 			get => _EmbeddingSettings = _EmbeddingSettings ?? new EmbeddingSettings();

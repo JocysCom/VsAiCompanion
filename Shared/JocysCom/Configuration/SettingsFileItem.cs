@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace JocysCom.ClassLibrary.Configuration
@@ -15,10 +16,10 @@ namespace JocysCom.ClassLibrary.Configuration
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		string ISettingsFileItem.BaseName { get => Name; set => Name = value; }
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		DateTime ISettingsFileItem.WriteTime { get; set; }
 
 		#region ■ INotifyPropertyChanged

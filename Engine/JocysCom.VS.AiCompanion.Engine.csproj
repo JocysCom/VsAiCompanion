@@ -52,7 +52,6 @@
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Data.ConnectionUI" Version="17.5.33428.366" />
 		<PackageReference Include="RtfPipe" Version="2.0.7677.4303" />
 		<PackageReference Include="SharpVectors" Version="1.8.4" />
 	</ItemGroup>
@@ -216,6 +215,15 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Microsoft.Data.ConnectionUI">
+	    <HintPath>..\Resources\Microsoft.Data.Connection\Microsoft.Data.ConnectionUI.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Microsoft.Data.ConnectionUI.Dialog">
+	    <HintPath>..\Resources\Microsoft.Data.Connection\Microsoft.Data.ConnectionUI.Dialog.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>

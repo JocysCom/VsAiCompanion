@@ -1,4 +1,5 @@
-﻿using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Threading;
 
 namespace JocysCom.VS.AiCompanion.Engine

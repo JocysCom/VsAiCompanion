@@ -19,7 +19,8 @@ using System.Xml.Serialization;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class MainModel {
+public class MainModel
+{
 
 	/// <summary>
 	/// Path to log file.
@@ -46,7 +47,8 @@ public class MainModel {
 	private static long oldFilesSize;
 	private static long newFilesSize;
 
-	public static void InitTemplates(string hostTemplateFile) {
+	public static void InitTemplates(string hostTemplateFile)
+	{
 		var scriptStopwatch = System.Diagnostics.Stopwatch.StartNew();
 		var file = new FileInfo(hostTemplateFile);
 		TemplateFile = file;
@@ -58,7 +60,8 @@ public class MainModel {
 		var title = $"{ConvertNameToString(nameof(MainModel))} Code Generator";
 		SetTitle(title);
 		var configs = file.Directory.GetFiles($"{file.Name}*.config");
-		foreach (var config in configs) {
+		foreach (var config in configs)
+		{
 			Log(new string('-', 64));
 			Log($"CONFIG: {config.Name}");
 			Log(new string('-', 64));
@@ -66,7 +69,8 @@ public class MainModel {
 			MainModel.config = new Config();
 			MainModel.config.LoadConfig(config);
 			Log($"CONFIG Loaded");
-			if (!MainModel.config.Enabled) {
+			if (!MainModel.config.Enabled)
+			{
 				Log($"Generator is disabled in {config.Name}");
 				continue;
 			}
@@ -115,23 +119,27 @@ public class MainModel {
 		Log("");
 	}
 
-	public static void SetTitle(string s) {
+	public static void SetTitle(string s)
+	{
 		// Return if console is not available.
 		if (Console.LargestWindowWidth == 0)
 			return;
 		Console.Title = s;
 	}
 
-	public static decimal GetPriceOfCoding(long bytes) {
+	public static decimal GetPriceOfCoding(long bytes)
+	{
 		// £20 multiplied by cost to the company (2x).
 		return GetHoursOfCoding(bytes) * 20m * 2m;
 	}
 
-	public static decimal GetHoursOfCoding(long bytes) {
+	public static decimal GetHoursOfCoding(long bytes)
+	{
 		return GetYearsOfCoding(bytes) * 365.25m * 8;
 	}
 
-	public static decimal GetYearsOfCoding(long bytes) {
+	public static decimal GetYearsOfCoding(long bytes)
+	{
 		// Speed of avergae developers.
 		var linesPerYear = 25000;
 		var bytesPerLine = 43;
@@ -139,14 +147,16 @@ public class MainModel {
 		return (decimal)bytes / bytesPerYear;
 	}
 
-	public static string GetPath(string name) {
+	public static string GetPath(string name)
+	{
 		var combined = System.IO.Path.Combine(config.OutputPath, name);
 		// Fix dot notations.
 		combined = Path.GetFullPath(combined);
 		return combined;
 	}
 
-	public static string ConvertNameToString(string s) {
+	public static string ConvertNameToString(string s)
+	{
 		// Add space before uppercase.
 		var ucRx = new Regex("([A-Z][^A-Z])", RegexOptions.Multiline);
 		s = ucRx.Replace(s, " $1").Trim();
@@ -159,7 +169,8 @@ public class MainModel {
 	/// <summary>
 	/// Log to file and write error to console.
 	/// </summary>
-	public static void Log(string format, params object[] args) {
+	public static void Log(string format, params object[] args)
+	{
 		var content = args.Length == 0 ? format : string.Format(format, args);
 		var isError = content.TrimStart().StartsWith(Error, StringComparison.OrdinalIgnoreCase);
 		var isWarning = content.TrimStart().StartsWith(Warning, StringComparison.OrdinalIgnoreCase);
@@ -176,12 +187,14 @@ public class MainModel {
 	/// <summary>
 	/// Generate C# enum objects from database tables.
 	/// </summary>
-	public static void GenerateEnums(string schemaName = "Types") {
+	public static void GenerateEnums(string schemaName = "Types")
+	{
 		Log("GenerateEnums: START");
 		UpdateEnvironmnet();
 		UpdateDataFromDatabase();
 		// ----------------------------------------------------------------------------
-		if (!_SchemaNames.Contains(schemaName)) {
+		if (!_SchemaNames.Contains(schemaName))
+		{
 			Log(Warning + ": Schema {0} not found!", schemaName);
 			return;
 		}
@@ -190,7 +203,8 @@ public class MainModel {
 		var newFiles = new List<string>();
 		var tableNames = GetTableNames(schemaName);
 		// For each table...
-		for (var t = 0; t < tableNames.Count; t++) {
+		for (var t = 0; t < tableNames.Count; t++)
+		{
 			var tableName = tableNames[t];
 			// Select data.
 			bool isFlags;
@@ -232,9 +246,11 @@ public class MainModel {
 	/// <summary>
 	/// Get information about columns. Use data by executing SQL script from *.sql file or from [Security].[ColumnInfo] table.
 	/// </summary>
-	public static DataTable GetColumnInfo(bool useColumnInfoTable = false) {
+	public static DataTable GetColumnInfo(bool useColumnInfoTable = false)
+	{
 		var sql = "SELECT * FROM [Security].[ColumnInfo]";
-		if (!useColumnInfoTable) {
+		if (!useColumnInfoTable)
+		{
 			sql = File.ReadAllText(TemplateFile.FullName + ".sql");
 			// Remove CREATE PROCEDURE block.
 			sql = sql.Substring(sql.IndexOf("AS") + 2);
@@ -252,7 +268,8 @@ public class MainModel {
 	/// <summary>
 	/// Check if specific object exists in database.
 	/// </summary>
-	public static bool DbContains(string name, string type = null) {
+	public static bool DbContains(string name, string type = null)
+	{
 		var sql = "SELECT * FROM sys.objects WHERE name = @name AND (@type IS NULL OR [type] = @type)";
 		var cmd = new SqlCommand(sql);
 		cmd.Parameters.AddWithValue("@name", name);
@@ -262,7 +279,8 @@ public class MainModel {
 		return table.Rows.Count > 0;
 	}
 
-	private static DataTable GetEnumData(string schemaName, string tableName, out bool isFlags) {
+	private static DataTable GetEnumData(string schemaName, string tableName, out bool isFlags)
+	{
 		var cmd = new SqlCommand("SELECT * FROM [" + schemaName + "].[" + tableName + "]");
 		cmd.CommandType = CommandType.Text;
 		var table = ExecuteDataTable(cmd);
@@ -279,21 +297,25 @@ public class MainModel {
 		return table;
 	}
 
-	private static string GetEnumConent(DataTable table, bool isFlags) {
+	private static string GetEnumConent(DataTable table, bool isFlags)
+	{
 		// Add enumeration properties.
 		var content = "";
-		for (var r = 0; r < table.Rows.Count; r++) {
+		for (var r = 0; r < table.Rows.Count; r++)
+		{
 			var id = "";
 			var value = "";
 			var description = "";
 			var summary = "";
 			var row = table.Rows[r];
 			int? iId;
-			if (table.Columns.Contains("id")) {
+			if (table.Columns.Contains("id"))
+			{
 				iId = (int)row["id"];
 				id = iId.Value.ToString();
 				var iStart = isFlags ? 0 : 8;
-				for (int i = iStart; i < 32; i++) {
+				for (int i = iStart; i < 32; i++)
+				{
 					int pow;
 					var upow = (uint)Math.Pow(2, i);
 					pow = unchecked((int)upow);
@@ -328,12 +350,14 @@ public class MainModel {
 		List<DataRow> columnRows,
 		List<ClassDiagramClassProperty> showAsAssociation,
 		out string contents
-	) {
+	)
+	{
 		contents = "";
 		// Foreign Primary Key Items/Lists.
 		var fkItems = "";
 		var fkLists = "";
-		for (var c = 0; c < columnRows.Count; c++) {
+		for (var c = 0; c < columnRows.Count; c++)
+		{
 			var row = columnRows[c];
 			var name = (string)row["Name"];
 			if (config.GenerateOneToManyItems)
@@ -354,12 +378,14 @@ public class MainModel {
 			List<DataRow> columnRows,
 			List<string> requiredNamespaces,
 			out string contents
-			) {
+			)
+	{
 		contents = "";
 		var containsExternal = columnRows.Any(x => useExternalCustomOption(x));
 		var requiredNsEntityFrameworkCore = false;
 		var requiredNsDataAnnotationsSchema = false;
-		for (var c = 0; c < columnRows.Count; c++) {
+		for (var c = 0; c < columnRows.Count; c++)
+		{
 			var row = columnRows[c];
 			// If no records are marked as external then everything is external.
 			var isExternal = useExternalCustomOption(row) || !containsExternal;
@@ -396,7 +422,8 @@ public class MainModel {
 			propSummary = GetSummary(propSummary);
 			var csProp = "\r\n";
 			csProp += propSummary + "\r\n";
-			if (genItemType == GenItemType.InternalClass || genItemType == GenItemType.ExternalClass) {
+			if (genItemType == GenItemType.InternalClass || genItemType == GenItemType.ExternalClass)
+			{
 				// Add primary key attribute.
 				if (IsPrimaryKey)
 					csProp += "[Key]\r\n";
@@ -408,7 +435,8 @@ public class MainModel {
 				if (type.Contains("decimal") && IsCustomPrecision)
 					//csProp += $"[Column(TypeName = \"decimal({Precision}, {Scale})\")]\r\n";
 					csProp += $"[Precision({Precision}, {Scale})]\r\n";
-				if ((type.Contains("char") || type.Contains("text")) && !type.StartsWith("n") && config.EnableEntityFrameworkCore && !config.EnableEntityFramework6) {
+				if ((type.Contains("char") || type.Contains("text")) && !type.StartsWith("n") && config.EnableEntityFrameworkCore && !config.EnableEntityFramework6)
+				{
 					requiredNsEntityFrameworkCore = true;
 					csProp += $"[Unicode(false)]\r\n";
 				}
@@ -434,7 +462,8 @@ public class MainModel {
 				$"{schemaName}.{tableName}.{name}".Equals((string)x["Id"], StringComparison.Ordinal)
 			);
 
-			if (config.UseDateTimeKindUtcProperty && isClassDateTime) {
+			if (config.UseDateTimeKindUtcProperty && isClassDateTime)
+			{
 				csProp += "" + csPublic + columnPropertyType + " " + columnPropertyName + " {\r\n";
 				// Solution 1 - Set all to UTC.
 				//csProp += "\tget => DateTime.SpecifyKind(_" + name + ", DateTimeKind.Utc);\r\n";
@@ -453,7 +482,8 @@ public class MainModel {
 				csProp += "}\r\n";
 				csProp += "private " + columnPropertyType + " _" + name + ";\r\n";
 			}
-			else if (config.StoreEnumDataAsStrings && oRow != null && (string)oRow["IsEnum"] == "1") {
+			else if (config.StoreEnumDataAsStrings && oRow != null && (string)oRow["IsEnum"] == "1")
+			{
 				var enumType = oRow["CustomType"];
 				csProp += "" + csPublic + columnPropertyType + " " + columnPropertyName + " { get; set; }\r\n";
 				csProp += "\r\n";
@@ -465,7 +495,8 @@ public class MainModel {
 				csProp += "}\r\n";
 				requiredNsDataAnnotationsSchema = true;
 			}
-			else {
+			else
+			{
 				csProp += "" + csPublic + columnPropertyType + " " + columnPropertyName + " { get; set; }\r\n";
 			}
 			contents += csProp;
@@ -487,7 +518,8 @@ public class MainModel {
 
 	private static List<string> _SchemaNames;
 
-	private static void UpdateEnvironmnet() {
+	private static void UpdateEnvironmnet()
+	{
 		var scriptPath = TemplateFile.Directory.FullName;
 		_ModelClassName = string.IsNullOrEmpty(config.ModelClassName)
 				? System.IO.Path.GetFileNameWithoutExtension(TemplateFile.FullName)
@@ -497,11 +529,13 @@ public class MainModel {
 		Environment.CurrentDirectory = scriptPath;
 	}
 
-	private static void UpdateDataFromDatabase() {
+	private static void UpdateDataFromDatabase()
+	{
 		_useColumnInfoTable = DbContains("Tools_GetColumnInfo") && DbContains("Tools_UpdateColumnInfo");
 		Log("UseColumnInfoTable = {0}", _useColumnInfoTable);
 		// If stored procedure, which updates column info was found then...
-		if (_useColumnInfoTable) {
+		if (_useColumnInfoTable)
+		{
 			// Update [Security].[ColumnInfo] table and apply changes.
 			var updateSql = "EXEC [Security].[Tools_UpdateColumnInfo] 1, 1, 1, 1, 1";
 			var updateCmd = new SqlCommand(updateSql);
@@ -532,11 +566,13 @@ public class MainModel {
 			GenType genType,
 			bool inclusive = true,
 			params string[] schemaFilter
-		) {
+		)
+	{
 		Log("GenerateClasses: START");
 		UpdateEnvironmnet();
 		UpdateDataFromDatabase();
-		var classDiagram = new ClassDiagram() {
+		var classDiagram = new ClassDiagram()
+		{
 			MajorVersion = 1,
 			MinorVersion = 1,
 			Class = new List<ClassDiagramClass>(),
@@ -577,7 +613,8 @@ public class MainModel {
 		var tmp = "";
 		var contextE = "";
 		var contextI = "";
-		if (generateClasses) {
+		if (generateClasses)
+		{
 			var nsOpenContext = usingDA + usingEF + "\r\n" + "namespace " + config.ContextNamespace + "\r\n{\r\n";
 			var classSummary = GetSummary(ConvertNameToString(_ModelClassName));
 			var initializeSummary = GetSummary("Initialize model");
@@ -643,7 +680,8 @@ public class MainModel {
 
 		//------------------------------------------------------
 		// For each Schema...
-		for (var s = 0; s < schemaNames.Count; s++) {
+		for (var s = 0; s < schemaNames.Count; s++)
+		{
 			var schemaName = schemaNames[s];
 			// Get old files.
 			var schemaDir = new DirectoryInfo(GetPath(schemaName));
@@ -659,7 +697,8 @@ public class MainModel {
 				tableNames.Count == 1 ? "" : "s");
 
 			// For each Table...
-			for (var t = 0; t < tableNames.Count; t++) {
+			for (var t = 0; t < tableNames.Count; t++)
+			{
 				var tableName = tableNames[t];
 				var tableItemType = GetTableItemType(schemaName, tableName);
 				var tablePropertyName = GetTablePropertyName(tableItemType);
@@ -670,17 +709,21 @@ public class MainModel {
 				//------------------------------------------------------
 				// Check primary keys.
 				var pkeys = 0;
-				for (var c = 0; c < columnRows.Count; c++) {
+				for (var c = 0; c < columnRows.Count; c++)
+				{
 					var row = columnRows[c];
-					if ((bool)row["IsPrimaryKey"]) {
+					if ((bool)row["IsPrimaryKey"])
+					{
 						pkeys += 1;
 					}
 				}
-				if (genType == GenType.Class && pkeys == 0) {
+				if (genType == GenType.Class && pkeys == 0)
+				{
 					Log("      " + Warning + ": No Primary keys: {0}.{1}", schemaName, tableName);
 					//continue;
 				}
-				if (pkeys > 1) {
+				if (pkeys > 1)
+				{
 					Log("      " + Warning + ": Multiple Primary keys: {0}.{1}", schemaName, tableName);
 					//continue;
 				}
@@ -689,7 +732,8 @@ public class MainModel {
 				var nsSchemaClose = "";
 				var nsClassPrefix = "";
 				var nsNamePrefix = "";
-				if (schemaName != config.ContextDefaultSchema || schemaName != "") {
+				if (schemaName != config.ContextDefaultSchema || schemaName != "")
+				{
 					//nsSchemaOpen += "\tnamespace schemaName\r\n";
 					//nsSchemaOpen += "\t{\r\n";
 					//nsSchemaOpen += "\r\n";
@@ -709,7 +753,8 @@ public class MainModel {
 				if (genType == GenType.Class && (schemaName != config.ContextDefaultSchema || tableName != tableItemType))
 					attE += "\t[Table(\"" + tableName + "\", Schema = \"" + schemaName + "\")]\r\n";
 				tmp = "\tpublic partial " + csObjectType + " " + tableItemType;
-				if (!string.IsNullOrEmpty(inheritancePV)) {
+				if (!string.IsNullOrEmpty(inheritancePV))
+				{
 					tmp += ": " + inheritancePV;
 				}
 				tmp += "\r\n";
@@ -718,7 +763,8 @@ public class MainModel {
 				var internalText = usingDA;
 				var externalText = usingDA;
 				var transferText = usingDA;
-				if (columnRows.Any(x => (bool)x["IsCustomPrecision"])) {
+				if (columnRows.Any(x => (bool)x["IsCustomPrecision"]))
+				{
 					internalText += usingEF;
 					externalText += usingEF;
 				}
@@ -728,11 +774,13 @@ public class MainModel {
 				//------------------------------------------------------
 				// 3.5 = 350px 
 				var width = 0.5m + Math.Ceiling(tableItemType.Length * 0.075m / 0.25m) * 0.25m;
-				var classDiagramClass = new ClassDiagramClass() {
+				var classDiagramClass = new ClassDiagramClass()
+				{
 					Name = config.Namespace + "." + tableItemType,
 					Collapsed = true,
 					Position = new ClassDiagramClassPosition() { X = 0.5m, Y = 0.5m, Width = width },
-					TypeIdentifier = new ClassDiagramClassTypeIdentifier() {
+					TypeIdentifier = new ClassDiagramClassTypeIdentifier()
+					{
 						//HashCode =
 						FileName = schemaName + "\\" + tableItemType + ".cs",
 					},
@@ -755,12 +803,14 @@ public class MainModel {
 				tmp = "\r\n";
 				tmp += IdentText(GetSummary(ConvertNameToString(tableItemType)), 2) + "\r\n";
 				tmp += "\t\tpublic virtual DbSet<" + nsClassPrefix + tableItemType + "> " + nsNamePrefix + tablePropertyName + " { get; set; }\r\n";
-				if (externalWrite) {
+				if (externalWrite)
+				{
 					if (!schemaDir.Exists)
 						schemaDir.Create();
 					externalText += IdentText(externalProperties, 2);
 					externalText += foreignKeyContent;
-					if (config.GenerateCloneAndCopyMethods && genType == GenType.Class) {
+					if (config.GenerateCloneAndCopyMethods && genType == GenType.Class)
+					{
 						externalText += "\r\n";
 						externalText += IdentText(GenerateCloneAndCopyMethods(nsClassPrefix + tableItemType, columnRows, ""), 2);
 						externalText += "\r\n";
@@ -772,11 +822,13 @@ public class MainModel {
 					if (generateClasses)
 						contextE += tmp;
 				}
-				else if (internalWrite) {
+				else if (internalWrite)
+				{
 					if (generateClasses)
 						contextI += tmp;
 				}
-				if (internalWrite) {
+				if (internalWrite)
+				{
 					if (!schemaDir.Exists)
 						schemaDir.Create();
 					internalText += IdentText(internalProperties, 2);
@@ -791,7 +843,8 @@ public class MainModel {
 			for (int i = 0; i < filesToDelete.Count; i++)
 				File.Delete(filesToDelete[i]);
 		}
-		if (generateClasses) {
+		if (generateClasses)
+		{
 			if (config.GenerateControllers)
 				GenerateControllers(schemaNames);
 			//------------------------------------------------------
@@ -799,7 +852,8 @@ public class MainModel {
 			contextE += aClose;
 			contextI += aClose;
 			//------------------------------------------------------
-			if (config.GenerateContext) {
+			if (config.GenerateContext)
+			{
 				// Write external context.
 				var contextPathE = GetPath($"{config.ModelClassName}.cs");
 				Log("  {0}", contextPathE);
@@ -825,22 +879,26 @@ public class MainModel {
 			remaining = remaining.Except(noAssocItems).ToArray();
 			// Slit into linked levels.
 			var children = new ClassDiagramClass[0];
-			while (true) {
+			while (true)
+			{
 				GetChildren(children, remaining, out children, out remaining);
 				if (children.Length == 0)
 					break;
 				levels.Add(children);
 				Log($"\tClass Diagram Level {levels.Count}: {levels[levels.Count - 1].Length} item(s)");
 			}
-			if (remaining.Length > 0) {
+			if (remaining.Length > 0)
+			{
 				levels.Add(remaining);
 				Log($"\tClass Diagram Level {levels.Count}: {levels[levels.Count - 1].Length} item(s)");
 			}
 			// Reorder class diagram.
-			for (int l = 0; l < levels.Count; l++) {
+			for (int l = 0; l < levels.Count; l++)
+			{
 				var level = levels[l];
 				var x = 0.5m;
-				for (int c = 0; c < level.Length; c++) {
+				for (int c = 0; c < level.Length; c++)
+				{
 					var classItem = level[c];
 					classItem.Position.Y = l + 0.5m;
 					classItem.Position.X = x;
@@ -857,10 +915,12 @@ public class MainModel {
 	}
 
 	/// <summary>Cleanup files.</summary>
-	private static void Cleanup(List<string> oldFiles, List<string> newFiles) {
+	private static void Cleanup(List<string> oldFiles, List<string> newFiles)
+	{
 		// Get old file paths which do not exist in the new list.
 		var filesToDelete = oldFiles.Where(x => !newFiles.Any(y => x.Equals(y, StringComparison.OrdinalIgnoreCase))).ToList();
-		for (int i = 0; i < filesToDelete.Count; i++) {
+		for (int i = 0; i < filesToDelete.Count; i++)
+		{
 			Log("Warning: Delete File " + filesToDelete[i]);
 			File.Delete(filesToDelete[i]);
 		}
@@ -869,21 +929,25 @@ public class MainModel {
 	#region Generate: Controllers
 
 
-	public static void GenerateControllers(List<string> schemaNames) {
+	public static void GenerateControllers(List<string> schemaNames)
+	{
 		Log("  Controllers:");
 		var di = new DirectoryInfo(GetPath("Controllers"));
 		var oldFiles = di.Exists ? di.GetFiles("*.cs").Select(x => x.FullName).ToList() : new List<string>();
 		var newFiles = new List<string>();
-		for (var s = 0; s < schemaNames.Count; s++) {
+		for (var s = 0; s < schemaNames.Count; s++)
+		{
 			var schemaName = schemaNames[s];
 			var tableNames = GetTableNames(schemaName);
 			// For each Table...
-			for (var t = 0; t < tableNames.Count; t++) {
+			for (var t = 0; t < tableNames.Count; t++)
+			{
 				var tableName = tableNames[t];
 				var tableItemType = GetTableItemType(schemaName, tableName);
 				var columnRows = FilterRows(schemaName, tableName);
 				string content;
-				if (GetControllerFileContent(schemaName, tableName, config.ModelClassName, tableItemType, columnRows, out content)) {
+				if (GetControllerFileContent(schemaName, tableName, config.ModelClassName, tableItemType, columnRows, out content))
+				{
 					if (!di.Exists)
 						di.Create();
 					var fi = new FileInfo(di.FullName + "\\" + tableItemType + "Controller.cs");
@@ -903,10 +967,12 @@ public class MainModel {
 		string tableModelName,
 		List<DataRow> columnRows,
 		out string contents
-	) {
+	)
+	{
 		contents = "";
 		var primaryKeyRow = columnRows.FirstOrDefault(x => (bool)x["IsPrimaryKey"]);
-		if (primaryKeyRow == null) {
+		if (primaryKeyRow == null)
+		{
 			Log($"      Error: No primary keys!");
 			return false;
 		}
@@ -921,7 +987,8 @@ public class MainModel {
 		// Generate Data Transfer Object (DTO).
 		string transferClass = "";
 		var requiredNamespaces = new List<string>();
-		if (config.GenerateDTO) {
+		if (config.GenerateDTO)
+		{
 			transferClass += "public partial class " + tableModelName + "Dto {\r\n";
 			string tansferProperties = "";
 			GenerateClassProperties(GenType.Class, GenItemType.TransferClass, schemaName, tableName, columnRows, requiredNamespaces, out tansferProperties);
@@ -941,7 +1008,8 @@ public class MainModel {
 		contents += "using System.Collections.Generic;\r\n";
 		if (config.GenerateDTO && columnRows.Any(x => useStringLengthAttribute(x)))
 			contents += "using System.ComponentModel.DataAnnotations;\r\n";
-		if (config.GenerateDTO) {
+		if (config.GenerateDTO)
+		{
 			contents += "using System.Linq;\r\n"; ;
 			contents += GetEntityUsings();
 		}
@@ -956,11 +1024,13 @@ public class MainModel {
 		copyProperties += "\r\n";
 		copyProperties += "#region Copy Properties\r\n";
 		copyProperties += "\r\n";
-		if (config.GenerateDTO) {
+		if (config.GenerateDTO)
+		{
 			// ----- Create Convert functions.
 			// -- From DTO...
 			copyProperties += $"private {tableModelName} CopyProperties({tableModelName}{dtoSuffix} source, {tableModelName} target, bool copyKey = false) {{\r\n";
-			foreach (var row in columnRows) {
+			foreach (var row in columnRows)
+			{
 				var columnPropertyName = GetColumnPropertyName(row);
 				if ((bool)row["IsPrimaryKey"])
 					copyProperties += $"\tif (copyKey)\r\n\t";
@@ -972,7 +1042,8 @@ public class MainModel {
 			copyProperties += "\r\n";
 			copyProperties += "\r\n";
 			copyProperties += $"private {tableModelName}{dtoSuffix} CopyProperties({tableModelName} source, {tableModelName}{dtoSuffix} target, bool copyKey = false) {{\r\n";
-			foreach (var row in columnRows) {
+			foreach (var row in columnRows)
+			{
 				var columnPropertyName = GetColumnPropertyName(row);
 				if ((bool)row["IsPrimaryKey"])
 					copyProperties += $"\tif (copyKey)\r\n\t";
@@ -1033,10 +1104,12 @@ public class MainModel {
 		s += $"\t\t{tableModelName}{dtoSuffix} {paramName},\r\n";
 		s += $"\t\tCancellationToken cancellationToken = default\r\n";
 		s += $"\t) {{\r\n";
-		if (config.GenerateDataAccessClasses) {
+		if (config.GenerateDataAccessClasses)
+		{
 			s += $"\t\tvar db{prefixedParamName} = await {dataAccessPropertyName}.Insert({paramName}, cancellationToken);\r\n";
 		}
-		else {
+		else
+		{
 			s += $"\t\tvar db{prefixedParamName} = new {tableModelName}();\r\n";
 			s += $"\t\tCopyProperties({paramName}, db{prefixedParamName});\r\n";
 			s += $"\t\t{modelPropertyName}.{tablePropertyName}.Add(db{prefixedParamName}); \r\n";
@@ -1101,7 +1174,8 @@ public class MainModel {
 		contents += IdentText(s) + "\r\n";
 
 		var fkMethods = "";
-		foreach (var row in columnRows) {
+		foreach (var row in columnRows)
+		{
 			var tableItemType = GetTableItemType(schemaName, tableName);
 			var columnKeyType = GetColumnPropertyType(row);
 			var columnKeyName = GetColumnPropertyName(row);
@@ -1135,7 +1209,8 @@ public class MainModel {
 			f += "}\r\n";
 			fkMethods += "\r\n" + f;
 		}
-		if (!string.IsNullOrEmpty(fkMethods)) {
+		if (!string.IsNullOrEmpty(fkMethods))
+		{
 			contents += "\r\n";
 			fkMethods = "#region Select by Foreign Key\r\n" + fkMethods + "\r\n#endregion";
 			contents += IdentText(fkMethods, 2);
@@ -1161,17 +1236,22 @@ public class MainModel {
 	public static void GetChildren(
 		ClassDiagramClass[] parent, ClassDiagramClass[] all,
 		out ClassDiagramClass[] children, out ClassDiagramClass[] remaining
-	) {
+	)
+	{
 		parent = parent ?? Array.Empty<ClassDiagramClass>();
-		if (parent.Length == 0) {
+		if (parent.Length == 0)
+		{
 			// Return all root nodes.
 			children = all.Where(x => x.ShowAsAssociation?.Any() != true).ToArray();
 		}
-		else {
+		else
+		{
 			var parentTypes = parent.Select(x => x.Name.Split('.').Last()).ToArray();
 			var c = new List<ClassDiagramClass>();
-			foreach (var a in all) {
-				if (a.ShowAsAssociation?.Any() == true) {
+			foreach (var a in all)
+			{
+				if (a.ShowAsAssociation?.Any() == true)
+				{
 					if (a.ShowAsAssociation.Any(x => parentTypes.Contains(x.Type)))
 						c.Add(a);
 				}
@@ -1181,7 +1261,8 @@ public class MainModel {
 		remaining = all.Except(children).ToArray();
 	}
 
-	private static List<string> GetTableNames(string schemaName) {
+	private static List<string> GetTableNames(string schemaName)
+	{
 		return FilterRows(schemaName)
 			.Select(x => (string)x["TableName"])
 			.Distinct()
@@ -1189,7 +1270,8 @@ public class MainModel {
 			.ToList();
 	}
 
-	private static List<DataRow> FilterRows(string schemaName = null, string tableName = null, string columnName = null) {
+	private static List<DataRow> FilterRows(string schemaName = null, string tableName = null, string columnName = null)
+	{
 		var items = _columnInfoRows
 			.Where(x => schemaName == null || (string)x["SchemaName"] == schemaName)
 			.Where(x => tableName == null || (string)x["TableName"] == tableName)
@@ -1199,14 +1281,17 @@ public class MainModel {
 			.ThenBy(x => (int)x["Index"])
 			.ToList();
 		var filtered = new List<DataRow>();
-		foreach (var item in items) {
+		foreach (var item in items)
+		{
 			var stcName = $"{item["SchemaName"]}.{item["TableName"]}.{item["Name"]}";
 			// Filter table name.
-			if (config.ExcludeFilter?.IsMatch(stcName) == true) {
+			if (config.ExcludeFilter?.IsMatch(stcName) == true)
+			{
 				//Log("    Skip (Exclude Filter): {0}", stcName);
 				continue;
 			}
-			if (config.IncludeFilter?.IsMatch(stcName) == false) {
+			if (config.IncludeFilter?.IsMatch(stcName) == false)
+			{
 				//Log("    Skip (Include Filter): {0}", stcName);
 				continue;
 			}
@@ -1217,7 +1302,8 @@ public class MainModel {
 	}
 
 	/// <summary>Generate Clone and Copy Methods</summary>
-	private static string GenerateCloneAndCopyMethods(string tableModelName, List<DataRow> columnRows, string dtoSuffix) {
+	private static string GenerateCloneAndCopyMethods(string tableModelName, List<DataRow> columnRows, string dtoSuffix)
+	{
 		var s = "";
 		s += "#region Clone and Copy Methods\r\n";
 		s += "\r\n";
@@ -1231,7 +1317,8 @@ public class MainModel {
 		s += "\r\n";
 		s += "/// <summary>Copy to existing object.</summary>\r\n";
 		s += $"public static {tableModelName} Copy({tableModelName}{dtoSuffix} source, {tableModelName} target, bool copyKey = false) {{\r\n";
-		foreach (var row in columnRows) {
+		foreach (var row in columnRows)
+		{
 			var columnPropertyName = GetColumnPropertyName(row);
 			if ((bool)row["IsPrimaryKey"])
 				s += $"\tif (copyKey)\r\n\t";
@@ -1252,14 +1339,16 @@ public class MainModel {
 			string foreignTableName,
 			string foreignColumnName,
 			List<ClassDiagramClassProperty> showAsAssociation
-		) {
+		)
+	{
 		var rows = FilterRows(foreignSchemaName, foreignTableName, foreignColumnName)
 			.Where(x => (string)x["PrimaryKeySchema"] != "")
 			.Where(x => (string)x["PrimaryKeyTable"] != "")
 			.Where(x => (string)x["PrimaryKeyColumn"] != "")
 			.ToList();
 		var s = "";
-		for (int r = 0; r < rows.Count; r++) {
+		for (int r = 0; r < rows.Count; r++)
+		{
 			var row = rows[r];
 			var primaryIsNullable = (bool)row["IsNullable"];
 			var primarySchemaName = (string)row["PrimaryKeySchema"];
@@ -1278,7 +1367,8 @@ public class MainModel {
 				s += " = null!;";
 			s += "\r\n";
 			// Add item for class diagram.
-			showAsAssociation.Add(new ClassDiagramClassProperty() {
+			showAsAssociation.Add(new ClassDiagramClassProperty()
+			{
 				// Primary type.
 				Type = $"{primaryTableItemType}",
 				Name = TrimIdAndSingularize(foreignColumnName, foreignTableItemType),
@@ -1294,7 +1384,8 @@ public class MainModel {
 			string primarySchemaName,
 			string primaryTableName,
 			string primaryColumnName
-		) {
+		)
+	{
 		// Get all foreign columns which points to this primary column.
 		var rows = FilterRows()
 			.Where(x => primarySchemaName == null || (string)x["PrimaryKeySchema"] == primarySchemaName)
@@ -1302,7 +1393,8 @@ public class MainModel {
 			.Where(x => primaryColumnName == null || (string)x["PrimaryKeyColumn"] == primaryColumnName)
 			.ToList();
 		var s = "";
-		for (int r = 0; r < rows.Count; r++) {
+		for (int r = 0; r < rows.Count; r++)
+		{
 			var row = rows[r];
 			// Get foreign and primary column information.
 			var foreignColumnName = (string)row["Name"];
@@ -1333,30 +1425,35 @@ public class MainModel {
 		return s;
 	}
 
-	private static bool useStringLengthAttribute(DataRow row) {
+	private static bool useStringLengthAttribute(DataRow row)
+	{
 		var type = (string)row["Type"];
 		var length = (int)row["Length"];
 		return type.Contains("char") && length != -1;
 	}
 
-	private static bool useExternalCustomOption(DataRow row) {
+	private static bool useExternalCustomOption(DataRow row)
+	{
 		var customOptions = (int)row["CustomOptions"];
 		var isExternal = (customOptions & 4) == 4;
 		return isExternal;
 	}
 
-	private static string GetEntityUsings() {
+	private static string GetEntityUsings()
+	{
 		var s = "";
 		if (config.EnableEntityFramework6 && config.EnableEntityFrameworkCore)
 			s += "#if NETFRAMEWORK\r\n";
-		if (config.EnableEntityFramework6) {
+		if (config.EnableEntityFramework6)
+		{
 			// Support for Entity Framework 6 attributes (old).
 			s += "using System.Data.Entity;\r\n";
 			s += "using System.Data.Entity.Infrastructure;\r\n";
 		}
 		if (config.EnableEntityFramework6 && config.EnableEntityFrameworkCore)
 			s += "#else\r\n";
-		if (config.EnableEntityFrameworkCore) {
+		if (config.EnableEntityFrameworkCore)
+		{
 			// Support for Entity Framework Core attributes (new).
 			s += "using Microsoft.EntityFrameworkCore;\r\n";
 		}
@@ -1365,9 +1462,11 @@ public class MainModel {
 		return s;
 	}
 
-	private static string TrimIdAndSingularize(string foreignColumnName, string foreignTableItemType) {
+	private static string TrimIdAndSingularize(string foreignColumnName, string foreignTableItemType)
+	{
 		var newName = foreignColumnName;
-		if (config.SingularizeForeignKeyItems) {
+		if (config.SingularizeForeignKeyItems)
+		{
 			if (newName.EndsWith("Id"))
 				newName = newName.Substring(0, newName.Length - 2);
 			if (pluralizer.IsPlural(newName))
@@ -1379,7 +1478,8 @@ public class MainModel {
 		return newName + "_Item";
 	}
 
-	private static string TrimIdAndPluralize(string foreignColumnName, string foreignTableItemType, string primaryTableItemType) {
+	private static string TrimIdAndPluralize(string foreignColumnName, string foreignTableItemType, string primaryTableItemType)
+	{
 		if (!config.PluralizeForeignKeyLists)
 			return $"{foreignTableItemType}_{foreignColumnName}_List";
 		if (foreignColumnName.EndsWith("Id"))
@@ -1401,7 +1501,8 @@ public class MainModel {
 
 	#region ■ Text Helper
 
-	public static string GetSummary(string s) {
+	public static string GetSummary(string s)
+	{
 		s = s.Trim('\r', '\n');
 		// If cotnains line breaks then...
 		s = s.Contains("\r") || s.Contains("\r")
@@ -1417,7 +1518,8 @@ public class MainModel {
 	/// <param name="s">String to ident.</param>
 	/// <param name="tabs">Positive - add ident, negative - remove ident.</param>
 	/// <param name="ident">Ident character</param>
-	public static string IdentText(string s, int tabs = 1, string ident = "\t") {
+	public static string IdentText(string s, int tabs = 1, string ident = "\t")
+	{
 		if (tabs == 0)
 			return s;
 		if (string.IsNullOrEmpty(s))
@@ -1427,14 +1529,17 @@ public class MainModel {
 		var prefix = string.Concat(Enumerable.Repeat(ident, tabs));
 		string line;
 		var lines = s.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-		for (int i = 0; i < lines.Length; i++) {
+		for (int i = 0; i < lines.Length; i++)
+		{
 			line = lines[i];
-			if (line != "") {
+			if (line != "")
+			{
 				// If add idents then...
 				if (tabs > 0)
 					sb.Append(prefix);
 				// If remove idents then...
-				else if (tabs < 0) {
+				else if (tabs < 0)
+				{
 					var count = 0;
 					// Count how much idents could be removed
 					while (line.Substring(count * ident.Length, ident.Length) == ident && count < tabs)
@@ -1451,7 +1556,8 @@ public class MainModel {
 		return sb.ToString();
 	}
 
-	public static string ToCamelCase(string s) {
+	public static string ToCamelCase(string s)
+	{
 		var words = s.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
 		var leadWord = Regex.Replace(words[0], @"([A-Z])([A-Z]+|[a-z0-9]+)($|[A-Z]\w*)",
 			x => x.Groups[1].Value.ToLower() + x.Groups[2].Value.ToLower() + x.Groups[3].Value);
@@ -1466,7 +1572,8 @@ public class MainModel {
 
 	#region ■ Convert C# Types 
 
-	private static bool IsTypeAlias(string name) {
+	private static bool IsTypeAlias(string name)
+	{
 		return _typeAlias.ContainsValue(name);
 	}
 
@@ -1494,7 +1601,8 @@ public class MainModel {
 	/// <summary>
 	/// Convert C# Type to string or alias. 
 	/// </summary>
-	public static string GetBuiltInTypeNameOrAlias(Type type) {
+	public static string GetBuiltInTypeNameOrAlias(Type type)
+	{
 		if (type == null)
 			throw new ArgumentNullException("type");
 		var elementType = type.IsArray
@@ -1505,12 +1613,14 @@ public class MainModel {
 		if (_typeAlias.TryGetValue(elementType, out aliasName))
 			return aliasName + (type.IsArray ? "[]" : "");
 		// Note: All Nullable<T> are value types.
-		if (type.IsValueType) {
+		if (type.IsValueType)
+		{
 			var underType = Nullable.GetUnderlyingType(type);
 			if (underType != null)
 				return GetBuiltInTypeNameOrAlias(underType) + "?";
 		}
-		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)) {
+		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+		{
 			var itemType = type.GetGenericArguments()[0];
 			return string.Format("List<{0}>", GetBuiltInTypeNameOrAlias(itemType));
 		}
@@ -1521,7 +1631,8 @@ public class MainModel {
 	/// <summary>
 	/// Get C# class name.
 	/// </summary>
-	public static string GetTableItemType(string schemaName, string tableName) {
+	public static string GetTableItemType(string schemaName, string tableName)
+	{
 		var name = tableName;
 		// Check if table name override was found.
 		var tableModelPV = GetEntityModelName(schemaName, tableName);
@@ -1535,7 +1646,8 @@ public class MainModel {
 	/// <summary>
 	/// Get C# table (DbSet) property name.
 	/// </summary>
-	public static string GetTablePropertyName(string name) {
+	public static string GetTablePropertyName(string name)
+	{
 		if (config.PluralizeTableName && pluralizer.IsSingular(name))
 			name = pluralizer.Pluralize(name);
 		return name;
@@ -1545,7 +1657,8 @@ public class MainModel {
 	/// Get C# type from column row.
 	/// </summary>
 	/// <param name="row">Column row</param>
-	private static string GetColumnPropertyType(DataRow row) {
+	private static string GetColumnPropertyType(DataRow row)
+	{
 		var type = (string)row["Type"];
 		var CustomType = (string)row["CustomType"];
 		var IsNullable = (bool)row["IsNullable"];
@@ -1564,7 +1677,8 @@ public class MainModel {
 	/// Get C# type from column row.
 	/// </summary>
 	/// <param name="row">Column row</param>
-	private static string GetColumnPropertyName(DataRow row) {
+	private static string GetColumnPropertyName(DataRow row)
+	{
 		var name = (string)row["Name"];
 		var isTypeAlias = IsTypeAlias(name);
 		var namePrefix = isTypeAlias ? "@" : "";
@@ -1579,7 +1693,8 @@ public class MainModel {
 	/// <summary>
 	/// Convert SQL Data Type to C# type string.
 	/// </summary>
-	public static string ToSystemTypeCS(SqlDataType sqlType) {
+	public static string ToSystemTypeCS(SqlDataType sqlType)
+	{
 		var t = ToSystemType(sqlType);
 		var name = GetBuiltInTypeNameOrAlias(t);
 		return name;
@@ -1588,9 +1703,11 @@ public class MainModel {
 	/// <summary>
 	/// Convert SQL Data Type to C# type.
 	/// </summary>
-	public static Type ToSystemType(SqlDataType sqlType) {
+	public static Type ToSystemType(SqlDataType sqlType)
+	{
 		Type t = typeof(String);
-		switch (sqlType) {
+		switch (sqlType)
+		{
 			case SqlDataType.BigInt:
 				t = typeof(Int64);
 				break;
@@ -1664,23 +1781,28 @@ public class MainModel {
 
 	#region ■ SQL Helper
 
-	public static string GetEntityModelName(string schema = null, string table = null, string column = null) {
+	public static string GetEntityModelName(string schema = null, string table = null, string column = null)
+	{
 		return GetProperty("EntityModelName", schema, table, column);
 	}
 
-	public static string GetEntityInheritance(string schema = null, string table = null, string column = null) {
+	public static string GetEntityInheritance(string schema = null, string table = null, string column = null)
+	{
 		return GetProperty("EntityInheritance", schema, table, column);
 	}
 
-	public static string GetDescription(string schema = null, string table = null, string column = null) {
+	public static string GetDescription(string schema = null, string table = null, string column = null)
+	{
 		return GetProperty("MS_Description", schema, table, column);
 	}
 
-	public static int SetDescription(string value, string schema = null, string table = null, string column = null) {
+	public static int SetDescription(string value, string schema = null, string table = null, string column = null)
+	{
 		return SetProperty("MS_Description", value, schema, table, column);
 	}
 
-	public static string GetProperty(string name, string schema = null, string table = null, string column = null) {
+	public static string GetProperty(string name, string schema = null, string table = null, string column = null)
+	{
 		var level0 = string.IsNullOrEmpty(schema) ? null : "SCHEMA";
 		var level1 = string.IsNullOrEmpty(table) ? null : "TABLE";
 		var level2 = string.IsNullOrEmpty(column) ? null : "COLUMN";
@@ -1693,7 +1815,8 @@ public class MainModel {
 		return value;
 	}
 
-	public static int SetProperty(string name, string value, string schema = null, string table = null, string column = null) {
+	public static int SetProperty(string name, string value, string schema = null, string table = null, string column = null)
+	{
 		var level0 = string.IsNullOrEmpty(schema) ? null : "SCHEMA";
 		var level1 = string.IsNullOrEmpty(table) ? null : "TABLE";
 		var level2 = string.IsNullOrEmpty(column) ? null : "COLUMN";
@@ -1702,7 +1825,8 @@ public class MainModel {
 			level0, schema,
 			level1, table,
 			level2, column);
-		if (value == null) {
+		if (value == null)
+		{
 			if (row == null)
 				return 0;
 			return sp_extendedproperty(
@@ -1730,7 +1854,8 @@ public class MainModel {
 			string level1name = null,
 			string level2type = null,
 			string level2name = null
-	) {
+	)
+	{
 		var cmd = new SqlCommand("SELECT * FROM sys.fn_listextendedproperty(@property_name, @level0_object_type, @level0_object_name, @level1_object_type, @level1_object_name, @level2_object_type, @level2_object_name)");
 		cmd.CommandType = CommandType.Text;
 		var p = cmd.Parameters;
@@ -1756,7 +1881,8 @@ public class MainModel {
 	string level1name = null,
 	string level2type = null,
 	string level2name = null
-) {
+)
+	{
 		// -1 - Delete, 0 - Update, 1 - Add.
 		var sp = "sys.sp_updateextendedproperty";
 		if (action == -1)
@@ -1780,10 +1906,12 @@ public class MainModel {
 		return data;
 	}
 
-	public static int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null, int? timeout = null) {
+	public static int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null, int? timeout = null)
+	{
 		//var sql = ToSqlCommandString(cmd);
 		var cb = new SqlConnectionStringBuilder(connectionString);
-		if (timeout.HasValue) {
+		if (timeout.HasValue)
+		{
 			cmd.CommandTimeout = timeout.Value;
 			cb.ConnectTimeout = timeout.Value;
 		}
@@ -1797,7 +1925,8 @@ public class MainModel {
 		return rv;
 	}
 
-	public static T ExecuteDataSet<T>(string connectionString, SqlCommand cmd, string comment = null) where T : DataSet {
+	public static T ExecuteDataSet<T>(string connectionString, SqlCommand cmd, string comment = null) where T : DataSet
+	{
 		var conn = new SqlConnection(connectionString);
 		cmd.Connection = conn;
 		conn.Open();
@@ -1813,25 +1942,29 @@ public class MainModel {
 		return ds;
 	}
 
-	public static DataSet ExecuteDataSet(string connectionString, SqlCommand cmd, string comment = null) {
+	public static DataSet ExecuteDataSet(string connectionString, SqlCommand cmd, string comment = null)
+	{
 		return ExecuteDataSet<DataSet>(connectionString, cmd, comment);
 	}
 
-	public static DataTable ExecuteDataTable(SqlCommand cmd, string comment = null) {
+	public static DataTable ExecuteDataTable(SqlCommand cmd, string comment = null)
+	{
 		var ds = ExecuteDataSet(config.ModelConnection, cmd, comment);
 		if (ds != null && ds.Tables.Count > 0)
 			return ds.Tables[0];
 		return null;
 	}
 
-	public static DataTable ExecuteDataTable(string connectionString, SqlCommand cmd, string comment = null) {
+	public static DataTable ExecuteDataTable(string connectionString, SqlCommand cmd, string comment = null)
+	{
 		var ds = ExecuteDataSet(connectionString, cmd, comment);
 		if (ds != null && ds.Tables.Count > 0)
 			return ds.Tables[0];
 		return null;
 	}
 
-	public static DataRow ExecuteDataRow(string connectionString, SqlCommand cmd, string comment = null) {
+	public static DataRow ExecuteDataRow(string connectionString, SqlCommand cmd, string comment = null)
+	{
 		var table = ExecuteDataTable(connectionString, cmd, comment);
 		if (table != null && table.Rows.Count > 0)
 			return table.Rows[0];
@@ -1842,7 +1975,8 @@ public class MainModel {
 
 	#region ■ File Writing
 
-	public static bool IsDifferent(string name, byte[] bytes) {
+	public static bool IsDifferent(string name, byte[] bytes)
+	{
 		if (bytes == null)
 			throw new ArgumentNullException(nameof(bytes));
 		var fi = new FileInfo(name);
@@ -1853,7 +1987,8 @@ public class MainModel {
 		var byteHash = algorithm.ComputeHash(bytes);
 		var fileBytes = File.ReadAllBytes(fi.FullName);
 		var fileHash = algorithm.ComputeHash(fileBytes);
-		for (int i = 0; i < byteHash.Length; i++) {
+		for (int i = 0; i < byteHash.Length; i++)
+		{
 			if (byteHash[i] != fileHash[i])
 				return true;
 		}
@@ -1861,7 +1996,8 @@ public class MainModel {
 		return false;
 	}
 
-	public static bool WriteIfDifferent(string name, string contents) {
+	public static bool WriteIfDifferent(string name, string contents)
+	{
 		var bytes = System.Text.Encoding.UTF8.GetBytes(contents);
 		var isDifferent = IsDifferent(name, bytes);
 		if (isDifferent)
@@ -1869,7 +2005,8 @@ public class MainModel {
 		return isDifferent;
 	}
 
-	public static bool WriteIfDifferent(string name, byte[] bytes) {
+	public static bool WriteIfDifferent(string name, byte[] bytes)
+	{
 		var isDifferent = IsDifferent(name, bytes);
 		if (isDifferent)
 			File.WriteAllBytes(name, bytes);
@@ -1879,7 +2016,8 @@ public class MainModel {
 	/// <summary>
 	/// Save file content if different.
 	/// </summary>
-	private void SaveFile(string path, string contents) {
+	private void SaveFile(string path, string contents)
+	{
 		var fullPath = Path.Combine(TemplateFile.Directory.FullName, path);
 		// var getContents = GenerationEnvironment.ToString()
 		WriteIfDifferent(fullPath, contents);
@@ -1890,7 +2028,8 @@ public class MainModel {
 	/// Remove all *.cs files.
 	/// </summary>
 	/// <param name="name"></param>
-	private void CleanupFolder(string name) {
+	private void CleanupFolder(string name)
+	{
 		var dir = new DirectoryInfo(GetPath(name));
 		if (!dir.Exists)
 			dir.Create();
@@ -1900,7 +2039,8 @@ public class MainModel {
 			files[f].Delete();
 	}
 
-	private static string SeriallizeToXmlString(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, bool indent = true) {
+	private static string SeriallizeToXmlString(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, bool indent = true)
+	{
 		if (o == null)
 			return null;
 		// Create serialization settings.
@@ -1915,33 +2055,41 @@ public class MainModel {
 		// Serialize in memory first, so file will be locked for shorter times.
 		var ms = new MemoryStream();
 		var xw = XmlWriter.Create(ms, settings);
-		try {
-			lock (serializer) {
-				if (!string.IsNullOrEmpty(comment)) {
+		try
+		{
+			lock (serializer)
+			{
+				if (!string.IsNullOrEmpty(comment))
+				{
 					xw.WriteStartDocument();
 					xw.WriteComment(comment);
 				}
-				if (omitXmlDeclaration) {
+				if (omitXmlDeclaration)
+				{
 					//Create our own namespaces for the output
 					var ns = new XmlSerializerNamespaces();
 					//Add an empty namespace and empty value
 					ns.Add("", "");
 					serializer.Serialize(xw, o, ns);
 				}
-				else {
+				else
+				{
 					serializer.Serialize(xw, o);
 				}
-				if (!string.IsNullOrEmpty(comment)) {
+				if (!string.IsNullOrEmpty(comment))
+				{
 					xw.WriteEndDocument();
 				}
 				// Make sure that all data flushed into memory stream.
 				xw.Flush();
 			}
 		}
-		catch (Exception) {
+		catch (Exception)
+		{
 			throw;
 		}
-		finally {
+		finally
+		{
 			// This will close underlying MemoryStream too.
 			xw.Close();
 		}
@@ -1966,7 +2114,8 @@ public class MainModel {
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class RequiredAttribute : Attribute { }
 
-public class Config {
+public class Config
+{
 
 	public bool Enabled = true;
 	// Move required to top to read it first.
@@ -2013,18 +2162,21 @@ public class Config {
 
 	private ConfigFile _Config;
 
-	public void LoadConfig(FileInfo configFile) {
+	public void LoadConfig(FileInfo configFile)
+	{
 		//Log(new string('-', 64));
 		//Log($"CONFIG: {configFile.Name}");
 		//Log(new string('-', 64));
 		// Load configuration.
 		_Config = new ConfigFile(configFile.FullName);
 		var props = GetType().GetFields();
-		foreach (var prop in props) {
+		foreach (var prop in props)
+		{
 			var value =
 				_Config.AppSettings[prop.Name]?.Value ??
 				_Config.ConnectionStrings[prop.Name]?.ConnectionString;
-			if (value == null) {
+			if (value == null)
+			{
 				// If attribute is not required then continue...
 				if (!Attribute.IsDefined(prop, typeof(RequiredAttribute)))
 					continue;
@@ -2034,7 +2186,8 @@ public class Config {
 				throw new Exception(errorMessage);
 			}
 			object result;
-			switch (prop.Name) {
+			switch (prop.Name)
+			{
 				case nameof(ExcludeFilter):
 				case nameof(IncludeFilter):
 					result = GetRegex(value);
@@ -2048,19 +2201,23 @@ public class Config {
 					break;
 			}
 			prop.SetValue(this, result);
-			if (prop.Name == nameof(Namespace)) {
+			if (prop.Name == nameof(Namespace))
+			{
 				ControllerNamespace = Namespace;
 				ContextNamespace = Namespace;
 			}
 		}
 	}
 
-	private bool TryParse(string value, Type t, out object result) {
-		if (t == typeof(string)) {
+	private bool TryParse(string value, Type t, out object result)
+	{
+		if (t == typeof(string))
+		{
 			result = value;
 			return true;
 		}
-		if (t.IsEnum) {
+		if (t.IsEnum)
+		{
 			var retValue = value == null ? false : Enum.IsDefined(t, value);
 			result = retValue ? Enum.Parse(t, value) : default;
 			return retValue;
@@ -2074,7 +2231,8 @@ public class Config {
 		return retVal;
 	}
 
-	private Regex GetRegex(string value) {
+	private Regex GetRegex(string value)
+	{
 		if (string.IsNullOrEmpty(value))
 			return null;
 		value = string.Join("|", value
@@ -2085,7 +2243,8 @@ public class Config {
 		return new Regex(value, RegexOptions.IgnoreCase);
 	}
 
-	private DataTable GetTable(string csvValue) {
+	private DataTable GetTable(string csvValue)
+	{
 		var table = new DataTable();
 		if (string.IsNullOrEmpty(csvValue))
 			return table;
@@ -2105,7 +2264,8 @@ public class Config {
 /// <summary>
 /// Parse *.config XML file.
 /// </summary>
-public class ConfigFile {
+public class ConfigFile
+{
 	/// <summary>
 	/// Configuration file.
 	/// </summary>
@@ -2122,7 +2282,8 @@ public class ConfigFile {
 	/// Load *.config XML file.
 	/// </summary>
 	/// <param name="configFileName">Path to *.config XML file.</param>
-	public ConfigFile(string configFileName) {
+	public ConfigFile(string configFileName)
+	{
 		var fileMap = new System.Configuration.ExeConfigurationFileMap();
 		fileMap.ExeConfigFilename = configFileName;
 		Configuration = System.Configuration.ConfigurationManager
@@ -2141,20 +2302,23 @@ public class ConfigFile {
 #region ■ SQL Types
 
 [Flags]
-public enum GenType {
+public enum GenType
+{
 	Enum = 1,
 	Class = 2,
 	Interface = 3,
 }
 
-public enum GenItemType {
+public enum GenItemType
+{
 	InternalClass = 1,
 	ExternalClass = 2,
 	TransferClass = 3,
 }
 
 
-public enum SqlDataType {
+public enum SqlDataType
+{
 	BigInt = 1,
 	Binary = 2,
 	Bit = 3,
@@ -2205,7 +2369,8 @@ public enum SqlDataType {
 [Serializable]
 [XmlType(AnonymousType = true)]
 [XmlRoot(Namespace = "", IsNullable = false)]
-public partial class ClassDiagram {
+public partial class ClassDiagram
+{
 	[XmlElement("Class")]
 	public List<ClassDiagramClass> Class { get; set; }
 	[XmlAttribute] public byte MajorVersion { get; set; }
@@ -2214,7 +2379,8 @@ public partial class ClassDiagram {
 
 [Serializable]
 [XmlType(AnonymousType = true)]
-public partial class ClassDiagramClass {
+public partial class ClassDiagramClass
+{
 	public ClassDiagramClassPosition Position { get; set; }
 	public ClassDiagramClassTypeIdentifier TypeIdentifier { get; set; }
 	[XmlArrayItem("Property", IsNullable = false)] public List<ClassDiagramClassProperty> ShowAsAssociation { get; set; }
@@ -2224,7 +2390,8 @@ public partial class ClassDiagramClass {
 
 [Serializable]
 [XmlType(AnonymousType = true)]
-public partial class ClassDiagramClassPosition {
+public partial class ClassDiagramClassPosition
+{
 	[XmlAttribute] public decimal X { get; set; }
 	[XmlAttribute] public decimal Y { get; set; }
 	[XmlAttribute] public decimal Width { get; set; }
@@ -2232,14 +2399,16 @@ public partial class ClassDiagramClassPosition {
 
 [Serializable]
 [XmlType(AnonymousType = true)]
-public partial class ClassDiagramClassTypeIdentifier {
+public partial class ClassDiagramClassTypeIdentifier
+{
 	public string HashCode { get; set; }
 	public string FileName { get; set; }
 }
 
 [Serializable]
 [XmlType(AnonymousType = true)]
-public partial class ClassDiagramClassProperty {
+public partial class ClassDiagramClassProperty
+{
 	/// <summary>Used for MainModel script only.</summary>
 	[XmlIgnore] public string Type { get; set; }
 	[XmlAttribute] public string Name { get; set; }
@@ -2257,12 +2426,14 @@ public partial class ClassDiagramClassProperty {
 <PackageProjectUrl>https://github.com/sarathkcm/Pluralize.NET</PackageProjectUrl>
 */
 
-public class PluralizerRule {
+public class PluralizerRule
+{
 	public Regex Condition { get; set; }
 	public string ReplaceWith { get; set; }
 }
 
-public class Pluralizer {
+public class Pluralizer
+{
 
 	protected readonly IList<PluralizerRule> _pluralRules = GetPluralRules();
 	protected readonly IList<PluralizerRule> _singularRules = GetSingularRules();
@@ -2272,83 +2443,103 @@ public class Pluralizer {
 
 	private static readonly Regex _replacementRegex = new Regex("\\$(\\d{1,2})");
 
-	public string Pluralize(string word) {
+	public string Pluralize(string word)
+	{
 		return Transform(word, _irregularSingles, _irregularPlurals, _pluralRules);
 	}
 
-	public string Singularize(string word) {
+	public string Singularize(string word)
+	{
 		return Transform(word, _irregularPlurals, _irregularSingles, _singularRules);
 	}
 
-	public bool IsSingular(string word) {
+	public bool IsSingular(string word)
+	{
 		return Singularize(word) == word;
 	}
 
-	public bool IsPlural(string word) {
+	public bool IsPlural(string word)
+	{
 		return Pluralize(word) == word;
 	}
 
-	public string Format(string word, int count, bool inclusive = false) {
+	public string Format(string word, int count, bool inclusive = false)
+	{
 		var pluralized = count == 1 ?
 			Singularize(word) : Pluralize(word);
 		return (inclusive ? count + " " : "") + pluralized;
 	}
 
-	public void AddPluralRule(Regex rule, string replacement) {
-		_pluralRules.Add(new PluralizerRule {
+	public void AddPluralRule(Regex rule, string replacement)
+	{
+		_pluralRules.Add(new PluralizerRule
+		{
 			Condition = rule,
 			ReplaceWith = replacement
 		});
 	}
 
-	public void AddPluralRule(string rule, string replacement) {
+	public void AddPluralRule(string rule, string replacement)
+	{
 		var regexRule = SanitizeRule(rule);
-		_pluralRules.Add(new PluralizerRule {
+		_pluralRules.Add(new PluralizerRule
+		{
 			Condition = regexRule,
 			ReplaceWith = replacement
 		});
 	}
 
-	public void AddSingularRule(Regex rule, string replacement) {
-		_singularRules.Add(new PluralizerRule {
+	public void AddSingularRule(Regex rule, string replacement)
+	{
+		_singularRules.Add(new PluralizerRule
+		{
 			Condition = rule,
 			ReplaceWith = replacement
 		});
 	}
 
-	public void AddSingularRule(string rule, string replacement) {
+	public void AddSingularRule(string rule, string replacement)
+	{
 		var regexRule = SanitizeRule(rule);
-		_singularRules.Add(new PluralizerRule {
+		_singularRules.Add(new PluralizerRule
+		{
 			Condition = regexRule,
 			ReplaceWith = replacement
 		});
 	}
 
-	public void AddUncountableRule(string word) {
+	public void AddUncountableRule(string word)
+	{
 		_uncountables.Add(word);
 	}
 
-	public void AddUncountableRule(Regex rule) {
-		_pluralRules.Add(new PluralizerRule {
+	public void AddUncountableRule(Regex rule)
+	{
+		_pluralRules.Add(new PluralizerRule
+		{
 			Condition = rule,
 			ReplaceWith = "$0"
 		});
-		_singularRules.Add(new PluralizerRule {
+		_singularRules.Add(new PluralizerRule
+		{
 			Condition = rule,
 			ReplaceWith = "$0"
 		});
 	}
 
-	public void AddIrregularRule(string single, string plural) {
+	public void AddIrregularRule(string single, string plural)
+	{
 		_irregularSingles.Add(single, plural);
 		_irregularPlurals.Add(plural, single);
 	}
 
-	private Regex SanitizeRule(string rule) {
+	private Regex SanitizeRule(string rule)
+	{
 		return new Regex($"^{rule}$", RegexOptions.IgnoreCase);
 	}
 
-	private string RestoreCase(string originalWord, string newWord) {
+	private string RestoreCase(string originalWord, string newWord)
+	{
 		// Tokens are an exact match.
 		if (originalWord == newWord)
 			return newWord;
@@ -2365,16 +2556,19 @@ public class Pluralizer {
 		return newWord.ToLower();
 	}
 
-	private string ApplyRules(string token, string originalWord, IList<PluralizerRule> rules) {
+	private string ApplyRules(string token, string originalWord, IList<PluralizerRule> rules)
+	{
 		// Empty string or doesn't need fixing.
 		if (string.IsNullOrEmpty(token) || _uncountables.Contains(GetLastCapitalizedWord(token)))
 			return originalWord;
 		// Iterate over the sanitization rules and use the first one to match.
 		// Iterate backwards since specific/custom rules can be appended
-		for (var i = rules.Count - 1; i >= 0; i--) {
+		for (var i = rules.Count - 1; i >= 0; i--)
+		{
 			var rule = rules[i];
 			// If the rule passes, return the replacement.
-			if (rule.Condition.IsMatch(originalWord)) {
+			if (rule.Condition.IsMatch(originalWord))
+			{
 				var match = rule.Condition.Match(originalWord);
 				var matchString = match.Groups[0].Value;
 				if (string.IsNullOrWhiteSpace(matchString))
@@ -2385,14 +2579,17 @@ public class Pluralizer {
 		return originalWord;
 	}
 
-	private MatchEvaluator GetReplaceMethod(string originalWord, string replacement) {
-		return match => {
+	private MatchEvaluator GetReplaceMethod(string originalWord, string replacement)
+	{
+		return match =>
+		{
 			return RestoreCase(originalWord, _replacementRegex.Replace(replacement, m => match.Groups[int.Parse(m.Groups[1].Value)].Value));
 		};
 	}
 
 	private string Transform(string word, IDictionary<string, string> replacables,
-		IDictionary<string, string> keepables, IList<PluralizerRule> rules) {
+		IDictionary<string, string> keepables, IList<PluralizerRule> rules)
+	{
 		if (keepables.ContainsKey(word))
 			return word;
 		if (replacables.TryGetValue(word, out string token))
@@ -2400,7 +2597,8 @@ public class Pluralizer {
 		return ApplyRules(word, word, rules);
 	}
 
-	public static IList<PluralizerRule> GetSingularRules() {
+	public static IList<PluralizerRule> GetSingularRules()
+	{
 		return new List<PluralizerRule> {
 			// rules are ordered more generic first
 			new PluralizerRule { Condition = new Regex("s$", RegexOptions.IgnoreCase), ReplaceWith = ""},
@@ -2436,7 +2634,8 @@ public class Pluralizer {
 		};
 	}
 
-	public static IList<PluralizerRule> GetPluralRules() {
+	public static IList<PluralizerRule> GetPluralRules()
+	{
 		return new List<PluralizerRule> {
             // rules are ordered more generic first
             new PluralizerRule { Condition = new Regex("s?$",RegexOptions.IgnoreCase), ReplaceWith = "s" },
@@ -2474,7 +2673,8 @@ public class Pluralizer {
 		};
 	}
 
-	public static ICollection<string> GetUncountables() {
+	public static ICollection<string> GetUncountables()
+	{
 		return new HashSet<string>(StringComparer.OrdinalIgnoreCase) { 
 			// Singular words with no plurals.
 			"adulthood",
@@ -2628,7 +2828,8 @@ public class Pluralizer {
 		{"cookie","cookies" }
 	};
 
-	public static string GetLastCapitalizedWord(string s) {
+	public static string GetLastCapitalizedWord(string s)
+	{
 		if (string.IsNullOrEmpty(s))
 			return s;
 		// Add space before uppercase.
@@ -2640,14 +2841,16 @@ public class Pluralizer {
 		return s;
 	}
 
-	public static IDictionary<string, string> GetIrregularPlurals() {
+	public static IDictionary<string, string> GetIrregularPlurals()
+	{
 		var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		foreach (KeyValuePair<string, string> item in IrregularWords.Reverse())
 			if (!result.ContainsKey(item.Value)) result.Add(item.Value, item.Key);
 		return result;
 	}
 
-	public static IDictionary<string, string> GetIrregularSingulars() {
+	public static IDictionary<string, string> GetIrregularSingulars()
+	{
 		return IrregularWords;
 	}
 

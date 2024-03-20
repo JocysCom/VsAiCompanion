@@ -12,6 +12,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using JocysCom.ClassLibrary.Collections;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
+
 
 
 
@@ -132,25 +134,25 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Indicates whether saving the settings is pending. This can be used to optimize write operations by delaying them until necessary.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool IsSavePending { get; set; }
 
 		/// <summary>
 		/// Indicates whether loading the settings is pending. Useful for deferring the loading operation until it's required.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool IsLoadPending { get; set; }
 
 		/// <summary>
 		/// Determines whether settings are stored in separate files.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool UseSeparateFiles { get; set; }
 
 		/// <summary>
 		/// Gets or sets the FileInfo object for the XML file that stores the settings data.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public FileInfo XmlFile { get { return _XmlFile; } set { _XmlFile = value; } }
 
 		[NonSerialized]
@@ -192,12 +194,12 @@ namespace JocysCom.ClassLibrary.Configuration
 				return Items.ToArray();
 		}
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		IBindingList ISettingsData.Items { get { return Items; } }
 
 		public delegate void ApplyOrderDelegate(SettingsData<T> source);
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		public ApplyOrderDelegate ApplyOrder;
 
 		/// <summary>
@@ -206,7 +208,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		[XmlAttribute]
 		public int Version { get; set; }
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		object saveReadFileLock = new object();
 
 		/// <summary>
@@ -345,7 +347,7 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public delegate IList<T> ValidateDataDelegate(IList<T> items);
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		public ValidateDataDelegate ValidateData;
 
 		/// <summary>
@@ -355,10 +357,10 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#region Last Write Time
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool PreventWriteToNewerFiles { get; set; } = true;
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		private Dictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
 
 		/// <summary>
@@ -735,7 +737,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Indicates whether the items collection should be cleared when loading new data.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool ClearWhenLoading = false;
 
 		void LoadAndValidateData(IList<T> data)

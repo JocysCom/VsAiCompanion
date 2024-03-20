@@ -195,7 +195,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
-				return; 
+				return;
 			ValueChanged = null;
 			if (_NumericUpDownStyleConverter != null)
 			{

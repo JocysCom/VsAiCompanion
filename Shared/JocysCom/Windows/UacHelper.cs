@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace JocysCom.ClassLibrary.Win32
+namespace JocysCom.ClassLibrary.Windows
 {
 	public partial class UacHelper
 	{

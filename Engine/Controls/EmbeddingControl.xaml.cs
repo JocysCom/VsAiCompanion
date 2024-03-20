@@ -105,6 +105,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				Item.Target = dcd.ConnectionString;
 			}
+			OnPropertyChanged(nameof(FilteredConnectionString));
 			//#endif
 		}
 
@@ -117,7 +118,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			get
 			{
-				var value = Global.AppSettings.Embedding.Source;
+				var value = Global.AppSettings.Embedding.Target;
 				if (string.IsNullOrWhiteSpace(value))
 					return "";
 				var filtered = ClassLibrary.Data.SqlHelper.FilterConnectionString(value);
