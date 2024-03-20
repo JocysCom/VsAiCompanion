@@ -18,6 +18,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			//Global.AppSettings.Embedding.AiModel = "text-embedding-ada-002";
 			Item = Global.AppSettings.Embedding;
+#if NETFRAMEWORK
+#else
+			EditButton.Visibility = System.Windows.Visibility.Collapsed;
+#endif
 		}
 
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
