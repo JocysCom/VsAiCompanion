@@ -136,6 +136,7 @@
 		<None Remove="Resources\Icons\Icons_Default\list.svg" />
 		<None Remove="Resources\Icons\Icons_Default\user_comment.svg" />
 		<None Remove="Resources\Icons\Templates\control_panel.svg" />
+		<None Remove="Resources\Images\AvatarBackground.png" />
 		<None Remove="Resources\MainWindowCommand.png" />
 		<None Remove="Resources\PromptItems.xml" />
 	</ItemGroup>
@@ -173,6 +174,7 @@
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\list.svg" />
+		<Resource Include="Resources\Images\AvatarBackground.png" />
 		<EmbeddedResource Include="Resources\Settings.zip" />
 		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
