@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -113,6 +114,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 				default: return new TaskSettings();
 			}
 		}
+
+		#endregion
+
+		#region Embedding Settings
+
+		[XmlIgnore]
+		public EmbeddingSettings Embedding
+		{
+			get => _EmbeddingSettings = _EmbeddingSettings ?? new EmbeddingSettings();
+			set => SetProperty(ref _EmbeddingSettings, value);
+		}
+		private EmbeddingSettings _EmbeddingSettings;
 
 		#endregion
 

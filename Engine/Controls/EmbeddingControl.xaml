@@ -78,7 +78,8 @@
 				Name="TargetTextBox"
 				Grid.Row="1"
 				Grid.Column="2"
-				IsReadOnly="True" />
+				IsReadOnly="True"
+				Text="{Binding FilteredConnectionString, ElementName=This}" />
 			<Button
 				Name="EditButton"
 				Grid.Row="1"

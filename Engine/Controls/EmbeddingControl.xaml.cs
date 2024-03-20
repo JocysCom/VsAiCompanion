@@ -40,6 +40,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 		string _DataFolderPath;
 
+		public EmbeddingSettings Item
+		{
+			get => _Item;
+			set
+			{
+				if (_Item != null)
+				{
+					_Item.PropertyChanged -= _Item_PropertyChanged;
+				}
+				_Item = value;
+				if (value != null)
+				{
+					_Item.PropertyChanged += _Item_PropertyChanged;
+				}
+				DataContext = value;
+				AiModelBoxPanel.BindData(value);
+				OnPropertyChanged(nameof(FilteredConnectionString));
+			}
+		}
+		EmbeddingSettings _Item;
+
+		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(EmbeddingSettings.Source))
+			{
+				OnPropertyChanged(nameof(FilteredConnectionString));
+			}
+		}
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -61,7 +90,41 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			//Microsoft.Data.ConnectionUI.DataConnectionDialog dcd;
+			//dcd = new Microsoft.Data.ConnectionUI.DataConnectionDialog();
+			////Adds all the standard supported databases
+			////DataSource.AddStandardDataSources(dcd);
+			////allows you to add datasources, if you want to specify which will be supported 
+			//dcd.DataSources.Add(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource);
+			//dcd.SetSelectedDataProvider(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource, Microsoft.Data.ConnectionUI.DataProvider.SqlDataProvider);
+			//dcd.ConnectionString = this.dbaConnectionString;
+			//Microsoft.Data.ConnectionUI.DataConnectionDialog.Show(dcd);
+			//if (dcd.DialogResult == DialogResult.OK)
+			//{
+			//	this.dbaConnectionString = dcd.ConnectionString;
+			//}
 		}
+
+		#region Database Connection Strings
+
+		/// <summary>
+		/// Database Administrative Connection String.
+		/// </summary>
+		public string FilteredConnectionString
+		{
+			get
+			{
+				var value = Global.AppSettings.Embedding.Source;
+				if (string.IsNullOrWhiteSpace(value))
+					return "";
+				var filtered = ClassLibrary.Data.SqlHelper.FilterConnectionString(value);
+				return filtered;
+			}
+			set
+			{
+			}
+		}
+
+		#endregion
 	}
 }
