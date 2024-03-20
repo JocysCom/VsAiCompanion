@@ -54,7 +54,7 @@
 				Name="DataFolderTextBox"
 				Grid.Row="0"
 				Grid.Column="2"
-				IsReadOnly="True" />
+				Background="{StaticResource BackgroundDark}" />
 			<Button
 				Name="BrowseButton"
 				Grid.Row="0"
@@ -78,7 +78,7 @@
 				Name="TargetTextBox"
 				Grid.Row="1"
 				Grid.Column="2"
-				IsReadOnly="True"
+				Background="{StaticResource BackgroundDark}"
 				Text="{Binding FilteredConnectionString, ElementName=This}" />
 			<Button
 				Name="EditButton"
@@ -112,7 +112,7 @@
 				Click="ApplySettingsButton_Click">
 				<StackPanel Focusable="False">
 					<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
-					<Label Content="Start" />
+					<Label Content="Process" />
 				</StackPanel>
 			</Button>
 

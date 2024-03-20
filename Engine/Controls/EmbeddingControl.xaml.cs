@@ -16,7 +16,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-
+			//Global.AppSettings.Embedding.AiModel = "text-embedding-ada-002";
+			Item = Global.AppSettings.Embedding;
 		}
 
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -90,19 +91,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			//Microsoft.Data.ConnectionUI.DataConnectionDialog dcd;
-			//dcd = new Microsoft.Data.ConnectionUI.DataConnectionDialog();
-			////Adds all the standard supported databases
-			////DataSource.AddStandardDataSources(dcd);
-			////allows you to add datasources, if you want to specify which will be supported 
-			//dcd.DataSources.Add(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource);
-			//dcd.SetSelectedDataProvider(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource, Microsoft.Data.ConnectionUI.DataProvider.SqlDataProvider);
-			//dcd.ConnectionString = this.dbaConnectionString;
-			//Microsoft.Data.ConnectionUI.DataConnectionDialog.Show(dcd);
-			//if (dcd.DialogResult == DialogResult.OK)
-			//{
-			//	this.dbaConnectionString = dcd.ConnectionString;
-			//}
+			//#if NETFRAMEWORK
+			Microsoft.Data.ConnectionUI.DataConnectionDialog dcd;
+			dcd = new Microsoft.Data.ConnectionUI.DataConnectionDialog();
+			//Adds all the standard supported databases
+			//DataSource.AddStandardDataSources(dcd);
+			//allows you to add datasources, if you want to specify which will be supported 
+			dcd.DataSources.Add(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource);
+			dcd.SetSelectedDataProvider(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource, Microsoft.Data.ConnectionUI.DataProvider.SqlDataProvider);
+			dcd.ConnectionString = Item.Target ?? "";
+			Microsoft.Data.ConnectionUI.DataConnectionDialog.Show(dcd);
+			if (dcd.DialogResult == System.Windows.Forms.DialogResult.OK)
+			{
+				Item.Target = dcd.ConnectionString;
+			}
+			//#endif
 		}
 
 		#region Database Connection Strings
