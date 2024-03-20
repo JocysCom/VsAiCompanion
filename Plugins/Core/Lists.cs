@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -81,14 +82,36 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Get List names.
+		/// Get List names filtered by an optional regular expression pattern.
 		/// </summary>
+		/// <param name="pattern">The regex pattern to filter list names. If null, all names are returned.</param>
+		/// <returns>A List of filtered list names.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public List<string> GetListNames()
+		public List<string> GetListNames(string pattern = null)
 		{
-			return GetEnabledLists()
-				.Select(x => x.Name)
-				.ToList();
+			var enabledLists = GetEnabledLists()
+				.Select(x => x.Name);
+			if (pattern != null)
+			{
+				var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+				enabledLists = enabledLists.Where(x => regex.IsMatch(x));
+			}
+			return enabledLists.ToList();
+		}
+
+		/// <summary>
+		/// Get Lists filtered by regular expression pattern.
+		/// </summary>
+		/// <param name="pattern">The regex pattern to filter by list name. If null, all lists are returned.</param>
+		/// <returns>Filtered lists.</returns>
+		[RiskLevel(RiskLevel.None)]
+		public List<ListInfo> GetLists(string pattern)
+		{
+			var names = GetListNames(pattern)
+				.ToArray();
+			var enabledLists = GetEnabledLists()
+				.Where(x => names.Contains(x.Name));
+			return enabledLists.ToList();
 		}
 
 		/// <summary>

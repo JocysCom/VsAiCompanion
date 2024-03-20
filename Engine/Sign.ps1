@@ -8,7 +8,15 @@ param (
 
 $modulePath = "d:\_Backup\Configuration\SSL\Tools\app_signModule.ps1"
 if (!(Test-Path $modulePath)) {
-	return 0
+	return
+}
+
+# Get all Plug and Play devices that match the search criteria
+$tokenPresent = Get-PnpDevice | Where-Object {$_.FriendlyName -like "*SafeNet eToken*"} | Select-Object -First 1
+# Check if the USB token was found
+if (!($tokenPresent)) {
+    Write-Host "The SafeNet eToken is NOT detected."
+	return
 }
 
 function Main {

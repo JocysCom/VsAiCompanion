@@ -1,4 +1,9 @@
-﻿-- Declare properties.
+﻿/*
+Post-Deployment Script Template							
+--------------------------------------------------------------------------------------
+*/
+
+-- Declare properties.
 DECLARE
 	@clr_hash binary(64),
 	@clr_name nvarchar(4000) = 'DataFunctions',
@@ -13,9 +18,8 @@ WHERE a.is_user_defined = 1 AND a.[name] = @clr_name
 
 SELECT @clr_full_name [name], @clr_hash as [hash]
 
-GO
 ---------------------------------------------------------------
--- SQL 2017
+-- Requires SQL 2017+
 ---------------------------------------------------------------
 
 DECLARE @old_hash binary(64)
@@ -33,3 +37,20 @@ SELECT * FROM sys.trusted_assemblies
 EXEC sys.sp_add_trusted_assembly @hash = @clr_hash, @description = @clr_name
 
 SELECT * FROM sys.trusted_assemblies
+
+---------------------------------------------------------------
+GO
+---------------------------------------------------------------
+
+sp_configure 'show advanced options', 1
+RECONFIGURE;
+GO
+
+-- Disable strict security.	
+sp_configure 'clr strict security', 1;
+RECONFIGURE;
+GO
+
+sp_configure 'show advanced options', 0
+RECONFIGURE;
+GO

@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -28,11 +29,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region ■ ICancellationTokens
 
-		[XmlIgnore, DefaultValue(false)]
+		[XmlIgnore, JsonIgnore, DefaultValue(false)]
 		public bool IsBusy { get => _IsBusy; set => SetProperty(ref _IsBusy, value); }
 		bool _IsBusy;
 
-		[XmlIgnore, DefaultValue(null)]
+		[XmlIgnore, JsonIgnore, DefaultValue(null)]
 		public BindingList<CancellationTokenSource> CancellationTokenSources { get => _CancellationTokenSources; set => SetProperty(ref _CancellationTokenSources, value); }
 		BindingList<CancellationTokenSource> _CancellationTokenSources;
 

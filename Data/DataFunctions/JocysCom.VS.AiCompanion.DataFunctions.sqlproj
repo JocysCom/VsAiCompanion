@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{3c54106b-2d93-45bd-99ea-fac5b95d3c99}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql140DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -23,9 +23,7 @@
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
     <DefaultSchema>Embedding</DefaultSchema>
-    <DelaySign>False</DelaySign>
-    <SignAssembly>False</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\..\..\..\_Backup\Configuration\SSL\Code Sign - Evaldas Jocys\RSA-4096 - Expires 2026-07-26\Evaldas_Jocys.PublicKey.cer</AssemblyOriginatorKeyFile>
+    <PermissionSet>SAFE</PermissionSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -67,10 +65,8 @@
     <Folder Include="Security\" />
     <Folder Include="Compare" />
     <Folder Include="Embedding\Stored Procedures" />
-    <Folder Include="Assemblies\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Deployment\Add_Assembly_to_Trusted_List.sql" />
     <None Include="Deployment\DataFunctions_Install.sql" />
     <None Include="Deployment\DataFunctions_UnInstall.sql" />
     <None Include="Deployment\Test_RegexBase.sql" />
@@ -79,7 +75,6 @@
     <Build Include="Embedding\Tables\File.sql" />
     <Build Include="Security\Embedding.sql" />
     <None Include="Compare\ProjectToDatabase.scmp" />
-    <None Include="Assemblies\DataFunctions.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\RegexBase.cs" />
@@ -88,16 +83,8 @@
     <Compile Include="Common\EmbeddingBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Data" />
     <Reference Include="System" />
-    <Reference Include="DataFunctions">
-      <HintPath>Assemblies\DataFunctions.dll</HintPath>
-      <SqlAssemblyName>DataFunctions</SqlAssemblyName>
-      <IsModelAware>True</IsModelAware>
-      <GenerateSqlClrDdl>False</GenerateSqlClrDdl>
-      <SqlOwnerName>dbo</SqlOwnerName>
-      <SqlPermissionSet>SAFE</SqlPermissionSet>
-    </Reference>
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\DatabaseToProject.scmp" />
@@ -105,6 +92,12 @@
   <ItemGroup>
     <Build Include="Embedding\Stored Procedures\sp_getMostSimilar.sql" />
     <Build Include="Embedding\Stored Procedures\sp_getMostSimilarFiles.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Script.PreDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment.sql" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Sign.ps1" "$(TargetPath)"

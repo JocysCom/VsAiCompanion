@@ -2,7 +2,7 @@
 	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.FineTuningItemControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
@@ -37,7 +37,7 @@
 				Focusable="False">
 				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 			</Button>
-			<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
+			<controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
 		</StackPanel>
 		<Button
 			Name="BarToggleButton"
@@ -60,7 +60,7 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-			<Controls:IconUserControl
+			<controls:IconUserControl
 				x:Name="IconPanel"
 				Grid.Row="0"
 				Grid.RowSpan="3"
@@ -163,7 +163,7 @@
 						<Label Content="{x:Static locales:Resources._1_Source_Files}" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningLocalFilesControl x:Name="SourceFilesPanel" FolderType="SourceFiles" />
+				<controls:FineTuningLocalFilesControl x:Name="SourceFilesPanel" FolderType="SourceFiles" />
 			</TabItem>
 			<TabItem x:Name="TuningFilesTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -172,7 +172,7 @@
 						<Label Content="{x:Static locales:Resources._2_Tuning_Files}" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningLocalFilesControl x:Name="TuningFilesPanel" FolderType="TuningFiles" />
+				<controls:FineTuningLocalFilesControl x:Name="TuningFilesPanel" FolderType="TuningFiles" />
 			</TabItem>
 			<TabItem x:Name="FileListTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -181,7 +181,7 @@
 						<Label Content="{x:Static locales:Resources._3_Remote_Files}" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningRemoteFilesControl x:Name="RemoteFilesPanel" />
+				<controls:FineTuningRemoteFilesControl x:Name="RemoteFilesPanel" />
 			</TabItem>
 			<TabItem
 				x:Name="TuningJobsTabItem"
@@ -194,7 +194,7 @@
 						<Label Content="{x:Static locales:Resources._4_Tuning_Jobs}" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningJobListControl x:Name="TuningJobsListPanel" />
+				<controls:FineTuningJobListControl x:Name="TuningJobsListPanel" />
 			</TabItem>
 			<TabItem x:Name="ModelsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -203,7 +203,7 @@
 						<Label Content="{x:Static locales:Resources._5_Models}" />
 					</StackPanel>
 				</TabItem.Header>
-				<Controls:FineTuningModelListControl x:Name="ModelsPanel" />
+				<controls:FineTuningModelListControl x:Name="ModelsPanel" />
 			</TabItem>
 		</TabControl>
 	</Grid>

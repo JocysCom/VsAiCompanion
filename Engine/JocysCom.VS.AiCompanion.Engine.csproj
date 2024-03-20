@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!--
@@ -56,16 +56,22 @@
 		<PackageReference Include="SharpVectors" Version="1.8.4" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
 		<PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="8.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.2" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.2" />
 		<PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<PackageReference Include="EntityFramework" Version="6.4.4" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
@@ -194,23 +200,32 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="JocysCom\MakeLinks.ps1.cs" />
+		<Compile Remove="JocysCom\MakeLinks.ps1.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
-	  <EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
-	  <EmbeddedResource Include="Resources\Icons\Icons_Default\user_comment.svg" />
-	  <EmbeddedResource Include="Resources\Icons\Templates\control_panel.svg" />
-	  <EmbeddedResource Include="Resources\PromptItems.xml" />
+		<EmbeddedResource Include="..\CHANGELOG.md" Link="CHANGELOG.md" />
+		<EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
+		<EmbeddedResource Include="Resources\Icons\Icons_Default\user_comment.svg" />
+		<EmbeddedResource Include="Resources\Icons\Templates\control_panel.svg" />
+		<EmbeddedResource Include="Resources\PromptItems.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="JocysCom\MakeLinks.ps1.cs" />
+		<None Include="JocysCom\MakeLinks.ps1.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
+		<ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Microsoft.Data.ConnectionUI">
+	    <HintPath>..\Resources\Microsoft.Data.Connection\Microsoft.Data.ConnectionUI.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Microsoft.Data.ConnectionUI.Dialog">
+	    <HintPath>..\Resources\Microsoft.Data.Connection\Microsoft.Data.ConnectionUI.Dialog.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -218,21 +233,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Controls\EnumComboBox.xaml.cs">
-	    <SubType>Code</SubType>
-	  </Compile>
-	  <Compile Update="Resources\Resources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resources.resx</DependentUpon>
-	  </Compile>
+		<Compile Update="Controls\EnumComboBox.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Resources\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Resources\Resources.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="Resources\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
@@ -240,7 +255,7 @@
 	</Target>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
+		<Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
 	</Target>
 
 </Project>

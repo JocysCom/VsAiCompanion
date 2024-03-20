@@ -33,6 +33,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			UpdatesTabItem.Visibility = !Global.IsVsExtension
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			EmbeddingTabItem.Visibility = InitHelper.IsDebug
+						? Visibility.Visible
+						: Visibility.Collapsed;
 			var appExeAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			if (!Global.IsVsExtension)
 			{

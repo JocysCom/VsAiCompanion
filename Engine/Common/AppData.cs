@@ -116,6 +116,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Embedding Settings
+
+		public EmbeddingSettings Embedding
+		{
+			get => _EmbeddingSettings = _EmbeddingSettings ?? new EmbeddingSettings();
+			set => SetProperty(ref _EmbeddingSettings, value);
+		}
+		private EmbeddingSettings _EmbeddingSettings;
+
+		#endregion
+
 		#region  Spell Check
 
 		/// <summary>Allow only one standalone copy.</summary>

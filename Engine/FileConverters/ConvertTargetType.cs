@@ -21,5 +21,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 		XLSX,
 		[Description("Microsoft Word Document (*.docx)")]
 		DOCX,
+		[Description("Text Files (*.txt)")]
+		TXTS,
 	}
 }

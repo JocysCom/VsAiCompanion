@@ -11,6 +11,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
@@ -40,6 +41,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{ ConvertTargetType.DOCX, ".docx" },
 				{ ConvertTargetType.CSV, ".csv" },
 				{ ConvertTargetType.MD, ".md" },
+				{ ConvertTargetType.TXTS, ".txt" },
 			};
 
 
@@ -184,6 +186,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 						break;
 					case ConvertTargetType.MD:
 						WriteToMD(targetPath, items);
+						break;
+					case ConvertTargetType.TXTS:
+						WriteToTXTS(targetPath, items);
 						break;
 					default:
 						Global.ShowError($"The extension {targetExt} is not supported for writing.");
@@ -572,7 +577,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				stylesheet.TableStyles = new TableStyles();
 			// Create a new cell style and add it to the stylesheet
 			var format = new CellFormat();
-			format.Alignment = new Alignment();
+			format.Alignment = new DocumentFormat.OpenXml.Spreadsheet.Alignment();
 			format.Alignment.WrapText = wrapText;
 			stylesheet.CellFormats.Append(format);
 			uint formatId = (uint)stylesheet.CellFormats.Count() - 1;
@@ -811,21 +816,21 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					{
 						writer.WriteLine(prefixSystem);
 						writer.WriteLine();
-						writer.WriteLine(systemContent);
+						writer.WriteLine(TrimSpaces(systemContent));
 						writer.WriteLine();
 					}
 					if (userContent != null)
 					{
 						writer.WriteLine(prefixUser);
 						writer.WriteLine();
-						writer.WriteLine(userContent);
+						writer.WriteLine(TrimSpaces(userContent));
 						writer.WriteLine();
 					}
 					if (assistantContent != null)
 					{
 						writer.WriteLine(prefixAssistant);
 						writer.WriteLine();
-						writer.WriteLine(assistantContent);
+						writer.WriteLine(TrimSpaces(assistantContent));
 						writer.WriteLine();
 					}
 
@@ -932,6 +937,70 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			if (string.IsNullOrEmpty(s))
 				return s;
 			return s.Trim(' ', '\r', '\n', '\t', '\u00A0');
+		}
+
+		#endregion
+
+		#region Markdown (*.txt)
+
+		public static void WriteToTXTS<T>(string path, List<T> o)
+		{
+			var sha256 = SHA256.Create();
+			// path will be the folder.
+			var diFullname = path + ".data";
+			var di = new DirectoryInfo(diFullname);
+			if (!di.Exists)
+				di.Create();
+			var isChat = typeof(T) == typeof(chat_completion_request);
+			var sb = new StringBuilder();
+			var pattern = new string('0', o.Count.ToString().Length);
+			for (int i = 0; i < o.Count; i++)
+			{
+				var request = o[i];
+				string systemContent = null;
+				string userContent = null;
+				string assistantContent = null;
+				if (request is chat_completion_request cr)
+				{
+					systemContent = cr.messages.FirstOrDefault(x => x.role == message_role.system)?.content ?? "";
+					userContent = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
+					assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
+				}
+				else if (request is text_completion_item tr)
+				{
+					var prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request.";
+					systemContent = prefix;
+					userContent = tr.completion;
+					assistantContent = tr.completion;
+				}
+				if (systemContent != null)
+				{
+					sb.AppendLine(prefixSystem);
+					sb.AppendLine();
+					sb.AppendLine(TrimSpaces(systemContent));
+					sb.AppendLine();
+				}
+				if (userContent != null)
+				{
+					sb.AppendLine(prefixUser);
+					sb.AppendLine();
+					sb.AppendLine(TrimSpaces(userContent));
+					sb.AppendLine();
+				}
+				if (assistantContent != null)
+				{
+					sb.AppendLine(prefixAssistant);
+					sb.AppendLine();
+					sb.AppendLine(TrimSpaces(assistantContent));
+					sb.AppendLine();
+					var hash = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(sb.ToString()));
+					var hashString = string.Join("", hash.Select(x => x.ToString("X2")));
+					var file_path = string.Format("{0}\\{1:" + pattern + "}_{2}.txt", diFullname, i, hashString);
+					File.WriteAllText(file_path, sb.ToString());
+					sb.Clear();
+				}
+			}
+
 		}
 
 		#endregion

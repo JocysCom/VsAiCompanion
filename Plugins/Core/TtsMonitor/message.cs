@@ -1,4 +1,4 @@
-﻿using JocysCom.VS.AiCompanion.Shared;
+﻿using JocysCom.ClassLibrary.ComponentModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;

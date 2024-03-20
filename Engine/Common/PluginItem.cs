@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using System.Windows.Controls;
 using System.Xml.Serialization;
 
@@ -93,44 +94,44 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Id { get => _Id; set => SetProperty(ref _Id, value); }
 		string _Id;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public Viewbox Icon { get => _Icon; set => SetProperty(ref _Icon, value); }
 		Viewbox _Icon;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public System.Reflection.MethodInfo Mi { get => _Mi; set => SetProperty(ref _Mi, value); }
 		System.Reflection.MethodInfo _Mi;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public BindingList<PluginParam> Params { get => _Params; set => SetProperty(ref _Params, value); }
 		BindingList<PluginParam> _Params;
 
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string Namespace { get => _Namespace; set => SetProperty(ref _Namespace, value); }
 		string _Namespace;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public RiskLevel RiskLevel { get => _RiskLevel; set => SetProperty(ref _RiskLevel, value); }
 		RiskLevel _RiskLevel;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string ClassFullName { get => _ClassFullName; set => SetProperty(ref _ClassFullName, value); }
 		string _ClassFullName;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string Class { get => _Class; set => SetProperty(ref _Class, value); }
 		string _Class;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string Description { get => _Description; set => SetProperty(ref _Description, value); }
 		string _Description;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string AssemblyName { get; set; }
 
 		#region INotifyPropertyChanged

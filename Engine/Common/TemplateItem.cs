@@ -4,6 +4,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -105,7 +106,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool AutoFormatCode { get => _AutoFormatCode; set => SetProperty(ref _AutoFormatCode, value); }
 		bool _AutoFormatCode;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public Task GenerateTitleTask;
 
 		[DefaultValue(false)]
@@ -193,12 +194,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Context5ListName { get => _Context5ListName; set => SetProperty(ref _Context5ListName, value); }
 		string _Context5ListName;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public BindingList<PluginApprovalItem> PluginFunctionCalls { get; set; } = new BindingList<PluginApprovalItem>();
 
 		#endregion
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool SendChatHistory
 		{
 			get => AttachContext.HasFlag(ContextType.ChatHistory);
@@ -213,7 +214,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		bool _SendChatHistory;
 
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public object Tag;
 
 		public TemplateItem Copy(bool newId)

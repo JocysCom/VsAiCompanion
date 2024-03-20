@@ -259,6 +259,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Browse....
+        /// </summary>
+        public static string Browse {
+            get {
+                return ResourceManager.GetString("Browse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bytes.
         /// </summary>
         public static string Bytes {
@@ -417,6 +426,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Data_Folder {
             get {
                 return ResourceManager.GetString("Data_Folder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Database.
+        /// </summary>
+        public static string Database {
+            get {
+                return ResourceManager.GetString("Database", resourceCulture);
             }
         }
         
@@ -709,6 +727,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log.
+        /// </summary>
+        public static string Log {
+            get {
+                return ResourceManager.GetString("Log", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Market Place.
         /// </summary>
         public static string Market_Place {
@@ -723,6 +750,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Maximum_Risk_Level {
             get {
                 return ResourceManager.GetString("Maximum_Risk_Level", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message.
+        /// </summary>
+        public static string Message {
+            get {
+                return ResourceManager.GetString("Message", resourceCulture);
             }
         }
         
@@ -1105,6 +1141,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Source.
+        /// </summary>
+        public static string Source {
+            get {
+                return ResourceManager.GetString("Source", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Spell Check.
         /// </summary>
         public static string Spell_Check {
@@ -1146,6 +1191,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string System_Message {
             get {
                 return ResourceManager.GetString("System_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target.
+        /// </summary>
+        public static string Target {
+            get {
+                return ResourceManager.GetString("Target", resourceCulture);
             }
         }
         

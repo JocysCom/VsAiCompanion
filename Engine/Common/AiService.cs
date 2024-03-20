@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -48,7 +49,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#region API Keys
 
 		/// <summary>Organization key. Usage from these API requests will count against the specified organization's subscription quota.</summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string ApiOrganizationId
 		{
 			get => UserDecrypt(_ApiOrganizationIdEncrypted);
@@ -59,7 +60,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string _ApiOrganizationIdEncrypted { get; set; }
 
 		/// <summary>Access Key or Username</summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string ApiAccessKey
 		{
 			get => UserDecrypt(_ApiAccessKeyEncrypted);
@@ -71,7 +72,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 
 		/// <summary>Secret Key, API Key or Password.</summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public string ApiSecretKey
 		{
 			get => UserDecrypt(_ApiSecretKeyEncrypted);

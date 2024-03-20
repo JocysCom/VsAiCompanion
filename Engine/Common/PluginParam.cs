@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Text.Json.Serialization;
+using System.Windows;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -11,10 +12,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsOptional { get; set; }
 		public int Index { get; set; }
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public object ParamValuePreview { get; set; }
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public Visibility ParamVisibility { get; set; } = Visibility.Visible;
 
 	}

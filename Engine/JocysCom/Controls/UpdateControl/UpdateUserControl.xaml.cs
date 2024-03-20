@@ -1,7 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Network;
 using JocysCom.ClassLibrary.Security;
-using JocysCom.ClassLibrary.Win32;
+using JocysCom.ClassLibrary.Windows;
 using JocysCom.Controls.UpdateControl.GitHub;
 using JocysCom.WebSites.Engine.Security;
 using System;
@@ -339,7 +339,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			Task.Delay(1000).Wait();
 			var args = new string[] {
 				$"/{nameof(UpdateProcessHelper.RestartApp)}",
-				$"/exeFile=\"{UacHelper.CurrentProcessFileName}\"",
+				$"/exeFile=\"{ UacHelper.CurrentProcessFileName}\"",
 			};
 			UpdateProcessHelper.RunProcessAsync(args);
 			System.Windows.Application.Current.Shutdown();

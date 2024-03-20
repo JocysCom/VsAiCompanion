@@ -455,10 +455,19 @@
             <param name="listName">Name of the list</param>
             <param name="includeItems">`true` to include items, `false` to get information only.</param>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListNames">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListNames(System.String)">
             <summary>
-            Get List names.
+            Get List names filtered by an optional regular expression pattern.
             </summary>
+            <param name="pattern">The regex pattern to filter list names. If null, all names are returned.</param>
+            <returns>A List of filtered list names.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetLists(System.String)">
+            <summary>
+            Get Lists filtered by regular expression pattern.
+            </summary>
+            <param name="pattern">The regex pattern to filter by list name. If null, all lists are returned.</param>
+            <returns>Filtered lists.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.LoadListFromCsv(System.String,System.String,System.String,System.String,System.String)">
             <summary>
