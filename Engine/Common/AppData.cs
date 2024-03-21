@@ -116,6 +116,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Avatar
+
+		[DefaultValue(true)]
+		public bool ShowAvatar { get => _ShowAvatar; set => SetProperty(ref _ShowAvatar, value); }
+		private bool _ShowAvatar;
+
+		[DefaultValue(WindowState.Normal)]
+		public WindowState AvatarWindowsState { get => _AvatarWindowsState; set => SetProperty(ref _AvatarWindowsState, value); }
+		WindowState _AvatarWindowsState;
+
+		#endregion
+
 		#region Embedding Settings
 
 		public EmbeddingSettings Embedding

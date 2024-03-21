@@ -113,5 +113,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			}
 		}
+
+		private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			Global.AppSettings.ShowAvatar = !Global.AppSettings.ShowAvatar;
+		}
 	}
 }
