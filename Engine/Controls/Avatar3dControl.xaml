@@ -1,0 +1,105 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Avatar3dControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	Loaded="UserControl_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Viewbox>
+			<Canvas Width="321" Height="201">
+
+				<!--  The Viewport3D provides a rendering surface for 3-D visual content.  -->
+				<Viewport3D
+					Canvas.Left="0"
+					Canvas.Top="10"
+					Width="150"
+					Height="150"
+					ClipToBounds="True">
+
+					<!--  Defines the camera used to view the 3D object.  -->
+					<Viewport3D.Camera>
+						<PerspectiveCamera FieldOfView="60" LookDirection="0,0,-1" Position="0,0,2" />
+					</Viewport3D.Camera>
+
+					<!--  The ModelVisual3D children contain the 3D models  -->
+					<Viewport3D.Children>
+
+						<!--
+							This ModelVisual3D defines the light cast in the scene. Without light, the 3D
+							object cannot be seen. Also, the direction of the lights affect shadowing. If desired,
+							you can create multiple lights with different colors that shine from different directions.
+						-->
+						<ModelVisual3D>
+							<ModelVisual3D.Content>
+								<DirectionalLight Direction="-0.612372,-0.5,-0.612372" Color="#FFFFFF" />
+							</ModelVisual3D.Content>
+						</ModelVisual3D>
+						<ModelVisual3D>
+							<ModelVisual3D.Content>
+								<GeometryModel3D>
+
+									<!--  The geometry specifies the shape of the 3D plane. In this sample, a flat sheet is created.  -->
+									<GeometryModel3D.Geometry>
+										<MeshGeometry3D
+											Normals="0,0,1 0,0,1 0,0,1 0,0,1 0,0,1 0,0,1 "
+											Positions="-0.5,-0.5,0.5 0.5,-0.5,0.5 0.5,0.5,0.5 0.5,0.5,0.5 -0.5,0.5,0.5 -0.5,-0.5,0.5 "
+											TextureCoordinates="0,0 1,0 1,1 1,1 0,1 0,0 "
+											TriangleIndices="0,1,2 3,4,5 " />
+									</GeometryModel3D.Geometry>
+
+									<!--
+										The material specifies the material applied to the 3D object. In this sample a linear gradient
+										covers the surface of the 3D object.
+									-->
+									<GeometryModel3D.Material>
+										<MaterialGroup>
+											<DiffuseMaterial>
+												<DiffuseMaterial.Brush>
+													<LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+														<LinearGradientBrush.GradientStops>
+															<GradientStop Offset="0" Color="Yellow" />
+															<GradientStop Offset="0.25" Color="Red" />
+															<GradientStop Offset="0.75" Color="Blue" />
+															<GradientStop Offset="1" Color="LimeGreen" />
+														</LinearGradientBrush.GradientStops>
+													</LinearGradientBrush>
+												</DiffuseMaterial.Brush>
+											</DiffuseMaterial>
+										</MaterialGroup>
+									</GeometryModel3D.Material>
+
+									<!--
+										Apply a transform to the object. In this sample, a rotation transform is applied, rendering the
+										3D object rotated.
+									-->
+									<GeometryModel3D.Transform>
+										<RotateTransform3D>
+											<RotateTransform3D.Rotation>
+												<AxisAngleRotation3D x:Name="AxisAngleRotation" Angle="40" Axis="0,3,0" />
+											</RotateTransform3D.Rotation>
+										</RotateTransform3D>
+									</GeometryModel3D.Transform>
+								</GeometryModel3D>
+							</ModelVisual3D.Content>
+						</ModelVisual3D>
+					</Viewport3D.Children>
+
+				</Viewport3D>
+			</Canvas>
+		</Viewbox>
+	</Grid>
+</UserControl>
