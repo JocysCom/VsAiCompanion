@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,7 +11,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for AiModelBoxControl.xaml
 	/// </summary>
-	public partial class AiModelBoxControl : UserControl
+	public partial class AiModelBoxControl : UserControl, INotifyPropertyChanged
 	{
 		public AiModelBoxControl()
 		{
@@ -19,7 +20,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			AiServicesComboBox.ItemsSource = Global.AppSettings.AiServices;
 			Global.OnAiModelsUpdated += Global_OnAiModelsUpdated;
-			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated; ;
+			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated;
 		}
 
 		private void Global_OnAiServicesUpdated(object sender, EventArgs e)
@@ -27,26 +28,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AiServicesComboBox.ItemsSource = Global.AppSettings.AiServices;
 		}
 
-		public IAiServiceModel _item;
 
-		public void BindData(IAiServiceModel item)
+		public IAiServiceModel Item
 		{
-			if (item == null)
+			get
 			{
-				AiServicesComboBox.SelectionChanged -= AiServicesComboBox_SelectionChanged;
+				return _item;
 			}
-			_item = item;
-			DataContext = item;
-			if (item != null)
+			set
 			{
-				AiServicesComboBox.SelectionChanged += AiServicesComboBox_SelectionChanged;
-				var aiServiceId = _item.AiServiceId;
-				if (aiServiceId == Guid.Empty)
-					aiServiceId = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)?.Id ??
-						Global.AppSettings.AiServices.FirstOrDefault()?.Id ?? Guid.Empty;
-				AiServicesComboBox.SelectedValue = aiServiceId;
+				if (_item != null)
+				{
+					AiServicesComboBox.SelectionChanged -= AiServicesComboBox_SelectionChanged;
+				}
+				_item = value;
+				if (_item != null)
+				{
+					AiServicesComboBox.SelectionChanged += AiServicesComboBox_SelectionChanged;
+					var aiServiceId = _item.AiServiceId;
+					if (aiServiceId == Guid.Empty)
+						aiServiceId = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)?.Id ??
+							Global.AppSettings.AiServices.FirstOrDefault()?.Id ?? Guid.Empty;
+					AiServicesComboBox.SelectedValue = aiServiceId;
+				}
+				OnPropertyChanged(nameof(Item));
 			}
 		}
+		public IAiServiceModel _item;
 
 		public void AiServicesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -62,7 +70,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await AppHelper.UpdateModels(_item.AiService);
 		}
 
-		public BindingList<string> AiModels { get; set; } = new BindingList<string>();
+		public BindingList<string> AiModels { get; } = new BindingList<string>();
 
 		private void Global_OnAiModelsUpdated(object sender, EventArgs e)
 		{
@@ -71,6 +79,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 			AppHelper.UpdateModelCodes(_item.AiService, AiModels, _item?.AiModel);
 		}
+
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 
 	}
 }

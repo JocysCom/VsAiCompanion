@@ -1117,10 +1117,6 @@
       <Name>Created</Name>
       <Name>MS_Description</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=162.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Name>Embedding</Name>
-      <Name>FileEmbedding</Name>
-    </SelectedItem>
     <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlExtendedProperty, Microsoft.Data.Tools.Schema.Sql, Version=162.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>SqlColumn</Name>
       <Name>Embedding</Name>

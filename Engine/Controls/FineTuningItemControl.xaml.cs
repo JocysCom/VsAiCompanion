@@ -38,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_Item.PropertyChanged += _Item_PropertyChanged;
 				}
 				DataContext = value;
-				AiModelBoxPanel.BindData(value);
+				AiModelBoxPanel.Item = value;
 				IconPanel.BindData(value);
 				SourceFilesPanel.Data = value;
 				TuningFilesPanel.Data = value;

@@ -28,6 +28,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		string _Target;
 
+		/// <summary>
+		/// Test message
+		/// </summary>
+		public string Message { get => _Message; set => SetProperty(ref _Message, string.IsNullOrWhiteSpace(value) ? "" : value); }
+		string _Message;
+
 		#region ■ IAiServiceModel
 
 		[DefaultValue(null)]
@@ -42,7 +48,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public AiService AiService =>
 			Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
 
-		[XmlIgnore, JsonIgnore]
 		public string AiModel { get => _AiModel; set => SetProperty(ref _AiModel, value); }
 		string _AiModel;
 

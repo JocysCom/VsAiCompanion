@@ -16,7 +16,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<StackPanel Orientation="Horizontal">
+	<StackPanel DataContext="{Binding Item, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Orientation="Horizontal">
 		<Label
 			Grid.Row="0"
 			Grid.Column="1"
@@ -30,7 +30,7 @@
 			SelectedValuePath="Id"
 			SelectionChanged="AiServicesComboBox_SelectionChanged" />
 		<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Model}" />
-		<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel}" />
+		<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		<Button
 			Name="ModelRefreshButton"
 			Grid.Row="1"

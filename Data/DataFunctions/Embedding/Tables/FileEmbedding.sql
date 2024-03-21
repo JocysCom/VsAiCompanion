@@ -1,15 +1,17 @@
 ﻿CREATE TABLE [Embedding].[FileEmbedding] (
-    [Id]             BIGINT           IDENTITY (1, 1) NOT NULL,
-    [PartText]       NVARCHAR (MAX)   NOT NULL,
-    [PartIndex]      INT              NOT NULL,
-    [PartCount]      INT              NOT NULL,
-    [FileId]         BIGINT           NOT NULL,
-    [Embedding]      VARBINARY (8000) NOT NULL,
-    [EmbeddingSize]  INT              NOT NULL,
-    [EmbeddingModel] NVARCHAR (50)    NOT NULL,
+    [Id]             BIGINT          IDENTITY (1, 1) NOT NULL,
+    [PartText]       NVARCHAR (MAX)  CONSTRAINT [DF_FileEmbedding_PartText] DEFAULT ('') NOT NULL,
+    [PartIndex]      INT             CONSTRAINT [DF_FileEmbedding_PartIndex] DEFAULT ((0)) NOT NULL,
+    [PartCount]      INT             CONSTRAINT [DF_FileEmbedding_PartCount] DEFAULT ((1)) NOT NULL,
+    [FileId]         BIGINT          NOT NULL,
+    [Embedding]      VARBINARY (MAX) NOT NULL,
+    [EmbeddingSize]  INT             CONSTRAINT [DF_FileEmbedding_EmbeddingSize] DEFAULT ((0)) NOT NULL,
+    [EmbeddingModel] NVARCHAR (50)   CONSTRAINT [DF_FileEmbedding_EmbeddingModel] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FileEmbedding] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_FileEmbedding_File] FOREIGN KEY ([Id]) REFERENCES [Embedding].[File] ([Id])
 );
+
+
 
 
 GO

@@ -1,30 +1,27 @@
 ﻿using Embeddings.DataAccess;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class EmbeddingHelper
 	{
 
-		public static void ConvertToEmbeddingsCSV(string path, string model)
+		public static async Task ConvertToEmbeddingsCSV(string path, string connectionString, AiService service, string modelName)
 		{
-			var service = Global.AppSettings.AiServices.FirstOrDefault(x => x.BaseUrl.Contains("azure"));
-			var url = service.BaseUrl + $"openai/deployments/{model}/embeddings?api-version=2023-05-15";
+			//var service = Global.AppSettings.AiServices.FirstOrDefault(x => x.BaseUrl.Contains("azure"));
+			//var url = service.BaseUrl + $"openai/deployments/{model}/embeddings?api-version=2023-05-15";
 			var files = Directory.GetFiles(path, "*.txt");
-			var connectionString = "Data Source=localhost;Initial Catalog=Embeddings;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;";
 #if NETFRAMEWORK
 			var db = new Embeddings.DataAccess.EmbeddingsContext();
 			db.Database.Connection.ConnectionString = connectionString;
 #else
 			var db = EmbeddingsContext.Create(connectionString);
 #endif
-
 			for (int i = 0; i < files.Count(); i++)
 			{
 				var fi = new FileInfo(files[i]);
@@ -41,49 +38,52 @@ namespace JocysCom.VS.AiCompanion.Engine
 					db.SaveChanges();
 				}
 				var text = File.ReadAllText(fi.FullName);
-				var embeddings = GetEmbeddings(url, service.ApiSecretKey, text, service);
-				var embedding = new Embeddings.Model.FileEmbedding();
-				embedding.Embedding = VectorToBinary(embeddings);
-				embedding.FileId = file.Id;
-				embedding.EmbeddingModel = model;
-				embedding.EmbeddingSize = 256;
-				embedding.PartIndex = i;
-				embedding.PartCount = files.Count();
-				db.FileEmbeddings.Add(embedding);
-				db.SaveChanges();
-
+				var client = new Client(service);
+				// Don't split file
+				var input = new List<string> { text };
+				var results = await client.GetEmbedding(modelName, input);
+				foreach (var result in results)
+				{
+					var embedding = new Embeddings.Model.FileEmbedding();
+					embedding.Embedding = VectorToBinary(result.Value);
+					embedding.FileId = file.Id;
+					embedding.EmbeddingModel = modelName;
+					embedding.EmbeddingSize = result.Value.Length;
+					embedding.PartIndex = 0;
+					embedding.PartCount = 1;
+					embedding.PartText = input[0];
+					db.FileEmbeddings.Add(embedding);
+					db.SaveChanges();
+				}
 			}
-			//await ec.GetEmbeddingsAsync(url, service.ApiSecretKey);
 		}
 
 		#region Client
 
-		// Synchronous method to get embeddings
-		public static float[] GetEmbeddings(string url, string apiKey, string text, AiService service)
-		{
-
-
-			if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(text))
-				throw new ArgumentException("URL, API key, and text cannot be null or empty.");
-			using (var _httpClient = new HttpClient())
-			{
-				// Add the necessary headers to the request
-				_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-				// Create the JSON body
-				var payload = new payload { text = text };
-				var json = Client.Serialize(payload);
-				var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-				// Make the POST request
-				var response = _httpClient.PostAsync(url, httpContent).Result;
-				response.EnsureSuccessStatusCode();
-				// Read the response as a string
-				string responseString = response.Content.ReadAsStringAsync().Result;
-				// Deserialize the response into a list of embeddings
-				var result = Client.Deserialize<embedding_response>(responseString);
-				var embeddings = result.embeddings[0].embedding;
-				return embeddings;
-			}
-		}
+		//// Synchronous method to get embeddings
+		//public static float[] GetEmbeddings(string url, string apiKey, string text, AiService service)
+		//{
+		//	if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(text))
+		//		throw new ArgumentException("URL, API key, and text cannot be null or empty.");
+		//	using (var _httpClient = new HttpClient())
+		//	{
+		//		// Add the necessary headers to the request
+		//		_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+		//		// Create the JSON body
+		//		var payload = new payload { text = text };
+		//		var json = Client.Serialize(payload);
+		//		var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+		//		// Make the POST request
+		//		var response = _httpClient.PostAsync(url, httpContent).Result;
+		//		response.EnsureSuccessStatusCode();
+		//		// Read the response as a string
+		//		string responseString = response.Content.ReadAsStringAsync().Result;
+		//		// Deserialize the response into a list of embeddings
+		//		var result = Client.Deserialize<embedding_response>(responseString);
+		//		var embeddings = result.embeddings[0].embedding;
+		//		return embeddings;
+		//	}
+		//}
 
 		/// <summary>
 		/// Convert embedding vectors to byte array.

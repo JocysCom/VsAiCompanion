@@ -54,7 +54,8 @@
 				Name="DataFolderTextBox"
 				Grid.Row="0"
 				Grid.Column="2"
-				Background="{StaticResource BackgroundDark}" />
+				Background="{StaticResource BackgroundDark}"
+				Text="{Binding Item.Source, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			<Button
 				Name="BrowseButton"
 				Grid.Row="0"
@@ -79,7 +80,7 @@
 				Grid.Row="1"
 				Grid.Column="2"
 				Background="{StaticResource BackgroundDark}"
-				Text="{Binding FilteredConnectionString, ElementName=This}" />
+				Text="{Binding Item.Target, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			<Button
 				Name="EditButton"
 				Grid.Row="1"
@@ -103,13 +104,13 @@
 				Grid.Row="2"
 				Grid.Column="2"
 				Width="Auto"
-				Text="" />
+				Text="{Binding Item.Message, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			<Button
 				Name="ApplySettingsButton"
 				Grid.Row="2"
 				Grid.Column="3"
 				MinWidth="75"
-				Click="ApplySettingsButton_Click">
+				Click="ProcessSettingsButton_Click">
 				<StackPanel Focusable="False">
 					<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
 					<Label Content="Process" />

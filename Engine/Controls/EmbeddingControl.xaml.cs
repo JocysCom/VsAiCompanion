@@ -25,25 +25,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
-			=> ControlsHelper.OpenUrl(DataFolderPath);
+		{
+			var path = AssemblyInfo.ParameterizePath(Item.Source, true);
+			ControlsHelper.OpenUrl(path);
+		}
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 
 		}
-
-		public string DataFolderPathShow
-		{
-			get => AssemblyInfo.ParameterizePath(DataFolderPath, true);
-			set { }
-		}
-
-		public string DataFolderPath
-		{
-			get => _DataFolderPath;
-			set { _DataFolderPath = value; }
-		}
-		string _DataFolderPath;
 
 		public EmbeddingSettings Item
 		{
@@ -60,8 +50,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_Item.PropertyChanged += _Item_PropertyChanged;
 				}
 				DataContext = value;
-				AiModelBoxPanel.BindData(value);
-				OnPropertyChanged(nameof(FilteredConnectionString));
+				AiModelBoxPanel.Item = value;
+				OnPropertyChanged(nameof(Item));
+				//OnPropertyChanged(nameof(FilteredConnectionString));
 			}
 		}
 		EmbeddingSettings _Item;
@@ -70,22 +61,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (e.PropertyName == nameof(EmbeddingSettings.Source))
 			{
-				OnPropertyChanged(nameof(FilteredConnectionString));
+				//OnPropertyChanged(nameof(FilteredConnectionString));
 			}
 		}
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-		#endregion
-
-		private void ApplySettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		private async void ProcessSettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			EmbeddingHelper.ConvertToEmbeddingsCSV(DataFolderPath, AiModelBoxPanel._item?.AiModel);
+			try
+			{
+				var path = AssemblyInfo.ExpandPath(Item.Source);
+				await EmbeddingHelper.ConvertToEmbeddingsCSV(
+					path,
+					Item.Target,
+					Item.AiService, Item.AiModel);
+			}
+			catch (System.Exception ex)
+			{
+				HelpRichTextBox.AppendText(ex.ToString());
+			}
 		}
 
 		private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -109,30 +102,40 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				Item.Target = dcd.ConnectionString;
 			}
-			OnPropertyChanged(nameof(FilteredConnectionString));
+			//OnPropertyChanged(nameof(FilteredConnectionString));
 			//#endif
 		}
 
 		#region Database Connection Strings
 
-		/// <summary>
-		/// Database Administrative Connection String.
-		/// </summary>
-		public string FilteredConnectionString
-		{
-			get
-			{
-				var value = Global.AppSettings.Embedding.Target;
-				if (string.IsNullOrWhiteSpace(value))
-					return "";
-				var filtered = ClassLibrary.Data.SqlHelper.FilterConnectionString(value);
-				return filtered;
-			}
-			set
-			{
-			}
-		}
+		///// <summary>
+		///// Database Administrative Connection String.
+		///// </summary>
+		//public string FilteredConnectionString
+		//{
+		//	get
+		//	{
+		//		var value = Global.AppSettings.Embedding.Target;
+		//		if (string.IsNullOrWhiteSpace(value))
+		//			return "";
+		//		var filtered = ClassLibrary.Data.SqlHelper.FilterConnectionString(value);
+		//		return filtered;
+		//	}
+		//	set
+		//	{
+		//	}
+		//}
 
 		#endregion
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 }
