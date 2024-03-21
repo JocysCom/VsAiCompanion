@@ -90,8 +90,9 @@
     <None Include="Compare\DatabaseToProject.scmp" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Embedding\Stored Procedures\sp_getMostSimilar.sql" />
+    <Build Include="Embedding\Stored Procedures\sp_getSimilarFiles.sql" />
     <Build Include="Embedding\Stored Procedures\sp_getMostSimilarFiles.sql" />
+    <Build Include="Embedding\Stored Procedures\sp_getSimilarFileEmbeddings.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Script.PreDeployment.sql" />

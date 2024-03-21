@@ -1,8 +1,21 @@
-﻿using JocysCom.ClassLibrary.Configuration;
+﻿using Embeddings.DataAccess;
+using Embeddings.Model;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Linq;
+
+#if NETFRAMEWORK
+using System.Data.SqlClient;
+#else
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+#endif
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -77,7 +90,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			catch (System.Exception ex)
 			{
-				HelpRichTextBox.AppendText(ex.ToString());
+				LogTextBox.Text = ex.ToString();
 			}
 		}
 
@@ -137,5 +150,60 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private async void SearchButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			try
+			{
+				var input = new List<string> { Item.Message };
+				var client = new Client(Item.AiService);
+				var results = await client.GetEmbedding(Item.AiModel, input);
+#if NETFRAMEWORK
+				var db = new Embeddings.DataAccess.EmbeddingsContext();
+				db.Database.Connection.ConnectionString = Item.Target;
+#else
+				var db = EmbeddingsContext.Create(Item.Target);
+#endif
+
+
+				// Example values for skip and take
+				int skip = 0;
+				int take = 2;
+
+				var vectors = results[0];
+
+				// Convert your embedding to the format expected by SQL Server.
+				// This example assumes `results` is the embedding in a suitable binary format.
+				var embeddingParam = new SqlParameter("@promptEmbedding", SqlDbType.VarBinary)
+				{
+					Value = EmbeddingHelper.VectorToBinary(vectors)
+				};
+
+				var skipParam = new SqlParameter("@skip", SqlDbType.Int) { Value = skip };
+				var takeParam = new SqlParameter("@take", SqlDbType.Int) { Value = take };
+
+				// Assuming `FileSimilarity` is the result type.
+				var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
+#if NETFRAMEWORK
+				var similarFiles = db.Database.SqlQuery<FileEmbedding>(
+					sqlCommand, embeddingParam, skipParam, takeParam)
+					.ToList();
+#else
+				var similarFiles = db.FileEmbeddings.FromSqlRaw(
+					sqlCommand, embeddingParam, skipParam, takeParam)
+					.ToList();
+#endif
+				foreach (var item in similarFiles)
+				{
+					item.Embedding = null;
+				}
+
+				var json = Client.Serialize(similarFiles);
+				LogTextBox.Text = json;
+			}
+			catch (System.Exception ex)
+			{
+				LogTextBox.Text = ex.ToString();
+			}
+		}
 	}
 }

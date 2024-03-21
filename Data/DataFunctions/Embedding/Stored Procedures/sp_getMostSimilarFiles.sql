@@ -4,20 +4,16 @@ CREATE PROCEDURE [Embedding].[sp_getMostSimilarFiles]
 AS
 BEGIN
     SET NOCOUNT ON;
-/*
 	SELECT TOP 10
-		f1.[Name] AS File1,
-		f2.[Name] AS File2,
-		CLR_NAMESPACE.CosineSimilarity(
-			CLR_NAMESPACE.BinaryToVector(f1.[Embedding]),
-			CLR_NAMESPACE.BinaryToVector(f2.[Embedding])
-		) AS Similarity
+		f1.[Url] AS Url1, f2.[Url] AS Url2,
+		[Embedding].CosineSimilarity(fe1.[Embedding], fe2.[Embedding]) AS Similarity
 	FROM
-		FileEmbedding AS f1
+		FileEmbedding AS fe1
 	CROSS JOIN
-		FileEmbedding AS f2
+		FileEmbedding AS fe2
+	INNER JOIN [File] f1 ON f1.Id = fe1.FileId
+	INNER JOIN [File] f2 ON f2.Id = fe2.FileId
 	WHERE
-		f1.Id != f2.Id
+		fe1.Id != fe2.Id
 	ORDER BY Similarity DESC
-	*/
 END

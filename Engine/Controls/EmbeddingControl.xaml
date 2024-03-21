@@ -37,6 +37,7 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -92,19 +93,6 @@
 					<Label Content="{x:Static locales:Resources.Edit}" />
 				</StackPanel>
 			</Button>
-
-			<!--  System message content  -->
-			<Label
-				Grid.Row="2"
-				Grid.Column="1"
-				VerticalAlignment="Center"
-				Content="{x:Static locales:Resources.Message}" />
-			<TextBox
-				Name="MessageTextBox"
-				Grid.Row="2"
-				Grid.Column="2"
-				Width="Auto"
-				Text="{Binding Item.Message, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			<Button
 				Name="ApplySettingsButton"
 				Grid.Row="2"
@@ -117,29 +105,36 @@
 				</StackPanel>
 			</Button>
 
+			<!--  System message content  -->
+			<Label
+				Grid.Row="3"
+				Grid.Column="1"
+				VerticalAlignment="Center"
+				Content="{x:Static locales:Resources.Message}" />
+			<TextBox
+				Name="MessageTextBox"
+				Grid.Row="3"
+				Grid.Column="2"
+				Width="Auto"
+				Text="{Binding Item.Message, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<Button
+				Name="SendSettingsButton"
+				Grid.Row="3"
+				Grid.Column="3"
+				MinWidth="75"
+				Click="SearchButton_Click">
+				<StackPanel Focusable="False">
+					<ContentControl Content="{StaticResource Icon_find}" Focusable="False" />
+					<Label Content="Search" />
+				</StackPanel>
+			</Button>
+
 		</Grid>
 		<Border
 			Grid.Row="3"
 			Grid.Column="0"
 			VerticalAlignment="Stretch"
-			Background="{StaticResource BackgroundLight}">
-			<TextBox
-				Name="LogTextBox"
-				Margin="3"
-				Padding="6"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch"
-				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-				BorderThickness="1"
-				IsReadOnly="True"
-				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				ScrollViewer.VerticalScrollBarVisibility="Auto"
-				TextWrapping="Wrap">
-				<TextBox.Resources>
-					<Style TargetType="Border" />
-				</TextBox.Resources>
-			</TextBox>
-		</Border>
+			Background="{StaticResource BackgroundLight}" />
 		<TabControl
 			x:Name="MainTabControl"
 			Grid.Row="4"
@@ -152,20 +147,23 @@
 						<Label Content="{x:Static locales:Resources.Log}" />
 					</StackPanel>
 				</TabItem.Header>
-				<RichTextBox x:Name="HelpRichTextBox">
-					<RichTextBox.OpacityMask>
-						<VisualBrush>
-							<VisualBrush.Visual>
-								<Border
-									Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-									Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-									Background="White"
-									CornerRadius="0,5,5,5"
-									SnapsToDevicePixels="True" />
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</RichTextBox.OpacityMask>
-				</RichTextBox>
+				<TextBox
+					Name="LogTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
+
 			</TabItem>
 
 		</TabControl>

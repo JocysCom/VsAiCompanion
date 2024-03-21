@@ -90,7 +90,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		/// <param name="vectors">Embedding vectors.</param>
 		/// <returns>Byte array.</returns>
-		private static byte[] VectorToBinary(float[] vectors)
+		public static byte[] VectorToBinary(float[] vectors)
 		{
 			byte[] bytes = new byte[vectors.Length * sizeof(float)];
 			Buffer.BlockCopy(vectors, 0, bytes, 0, bytes.Length);
