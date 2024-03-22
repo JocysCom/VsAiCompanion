@@ -109,7 +109,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//allows you to add datasources, if you want to specify which will be supported 
 			dcd.DataSources.Add(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource);
 			dcd.SetSelectedDataProvider(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource, Microsoft.Data.ConnectionUI.DataProvider.SqlDataProvider);
-			dcd.ConnectionString = Item.Target ?? "";
+			try
+			{
+				dcd.ConnectionString = Item.Target ?? "";
+			}
+			catch (System.Exception)
+			{
+			}
 			Microsoft.Data.ConnectionUI.DataConnectionDialog.Show(dcd);
 			if (dcd.DialogResult == System.Windows.Forms.DialogResult.OK)
 			{
@@ -124,7 +130,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//allows you to add datasources, if you want to specify which will be supported 
 			dcd.DataSources.Add(Microsoft.SqlServer.Management.ConnectionUI.DataSource.SqlDataSource);
 			dcd.SetSelectedDataProvider(Microsoft.SqlServer.Management.ConnectionUI.DataSource.SqlDataSource, Microsoft.SqlServer.Management.ConnectionUI.DataProvider.SqlDataProvider);
-			dcd.ConnectionString = Item.Target ?? "";
+			try
+			{
+				dcd.ConnectionString = Item.Target ?? "";
+			}
+			catch (System.Exception)
+			{
+			}
 			Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog.Show(dcd);
 			if (dcd.DialogResult == System.Windows.Forms.DialogResult.OK)
 			{
