@@ -975,10 +975,10 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				}
 				if (systemContent != null)
 				{
-					sb.AppendLine(prefixSystem);
-					sb.AppendLine();
-					sb.AppendLine(TrimSpaces(systemContent));
-					sb.AppendLine();
+					//sb.AppendLine(prefixSystem);
+					//sb.AppendLine();
+					//sb.AppendLine(TrimSpaces(systemContent));
+					//sb.AppendLine();
 				}
 				if (userContent != null)
 				{

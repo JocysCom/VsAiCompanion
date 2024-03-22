@@ -33,7 +33,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Item = Global.AppSettings.Embedding;
 #if NETFRAMEWORK
 #else
-			EditButton.Visibility = System.Windows.Visibility.Collapsed;
+			//EditButton.Visibility = System.Windows.Visibility.Collapsed;
 #endif
 		}
 
@@ -101,7 +101,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			//#if NETFRAMEWORK
+#if NETFRAMEWORK
 			Microsoft.Data.ConnectionUI.DataConnectionDialog dcd;
 			dcd = new Microsoft.Data.ConnectionUI.DataConnectionDialog();
 			//Adds all the standard supported databases
@@ -116,7 +116,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Item.Target = dcd.ConnectionString;
 			}
 			//OnPropertyChanged(nameof(FilteredConnectionString));
-			//#endif
+#else
+			Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog dcd;
+			dcd = new Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog();
+			//Adds all the standard supported databases
+			//DataSource.AddStandardDataSources(dcd);
+			//allows you to add datasources, if you want to specify which will be supported 
+			dcd.DataSources.Add(Microsoft.SqlServer.Management.ConnectionUI.DataSource.SqlDataSource);
+			dcd.SetSelectedDataProvider(Microsoft.SqlServer.Management.ConnectionUI.DataSource.SqlDataSource, Microsoft.SqlServer.Management.ConnectionUI.DataProvider.SqlDataProvider);
+			dcd.ConnectionString = Item.Target ?? "";
+			Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog.Show(dcd);
+			if (dcd.DialogResult == System.Windows.Forms.DialogResult.OK)
+			{
+				Item.Target = dcd.ConnectionString;
+			}
+			//OnPropertyChanged(nameof(FilteredConnectionString));
+
+#endif
 		}
 
 		#region Database Connection Strings
