@@ -154,23 +154,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			try
 			{
+				LogTextBox.Text = "Converting message to embedding vectors...";
 				var input = new List<string> { Item.Message };
 				var client = new Client(Item.AiService);
 				var results = await client.GetEmbedding(Item.AiModel, input);
+				LogTextBox.Text = " Done.\r\n";
 #if NETFRAMEWORK
 				var db = new Embeddings.DataAccess.EmbeddingsContext();
 				db.Database.Connection.ConnectionString = Item.Target;
 #else
 				var db = EmbeddingsContext.Create(Item.Target);
 #endif
-
-
 				// Example values for skip and take
 				int skip = 0;
 				int take = 2;
 
 				var vectors = results[0];
-
+				LogTextBox.Text = "Searching on database...";
 				// Convert your embedding to the format expected by SQL Server.
 				// This example assumes `results` is the embedding in a suitable binary format.
 				var embeddingParam = new SqlParameter("@promptEmbedding", SqlDbType.VarBinary)
@@ -192,13 +192,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					sqlCommand, embeddingParam, skipParam, takeParam)
 					.ToList();
 #endif
+				LogTextBox.Text = " Done...";
 				foreach (var item in similarFiles)
 				{
-					item.Embedding = null;
+					var file = db.Files.Where(x => x.Id == item.Id).FirstOrDefault();
+					LogTextBox.Text += $"\r\n{file?.Url}";
+					var text = JocysCom.ClassLibrary.Text.Helper.IdentText(item.PartText);
+					LogTextBox.Text += "\r\n" + text + "\r\n\r\n";
 				}
-
-				var json = Client.Serialize(similarFiles);
-				LogTextBox.Text = json;
+				//var json = Client.Serialize(similarFiles);
+				//LogTextBox.Text = json;
 			}
 			catch (System.Exception ex)
 			{

@@ -29,6 +29,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _Target;
 
 		/// <summary>
+		/// Monitor source and auto-update target.
+		/// </summary>
+		public bool AutoUpdate { get => _AutoUpdate; set => SetProperty(ref _AutoUpdate, value); }
+		bool _AutoUpdate;
+
+		/// <summary>
 		/// Test message
 		/// </summary>
 		public string Message { get => _Message; set => SetProperty(ref _Message, string.IsNullOrWhiteSpace(value) ? "" : value); }
@@ -43,6 +49,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			set => SetProperty(ref _AiServiceId, value);
 		}
 		Guid _AiServiceId;
+
+
+		[DefaultValue(0)]
+		public int Skip { get => _Skip; set => SetProperty(ref _Skip, value); }
+		int _Skip;
+
+		[DefaultValue(4)]
+		public int Take { get => _Take; set => SetProperty(ref _Take, value); }
+		int _Take;
+
+		[DefaultValue(32768)]
+		public int MaxTokens { get => _MaxTokens; set => SetProperty(ref _MaxTokens, value); }
+		int _MaxTokens;
 
 		[XmlIgnore, JsonIgnore]
 		public AiService AiService =>
