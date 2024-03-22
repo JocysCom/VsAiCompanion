@@ -1,0 +1,31 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34714.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.SqlServer.Management.ConnectionUI", "ConnectionUI\Microsoft.SqlServer.Management.ConnectionUI.csproj", "{3362CBD0-3ACA-472C-8596-D36CF9BF0D5F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.SqlServer.Management.ConnectionUI.Dialog", "ConnectionUI.Dialog\Microsoft.SqlServer.Management.ConnectionUI.Dialog.csproj", "{FFA3F79A-43A0-4DCD-8928-3C5EBF32EACD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3362CBD0-3ACA-472C-8596-D36CF9BF0D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3362CBD0-3ACA-472C-8596-D36CF9BF0D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3362CBD0-3ACA-472C-8596-D36CF9BF0D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3362CBD0-3ACA-472C-8596-D36CF9BF0D5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFA3F79A-43A0-4DCD-8928-3C5EBF32EACD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFA3F79A-43A0-4DCD-8928-3C5EBF32EACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFA3F79A-43A0-4DCD-8928-3C5EBF32EACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFA3F79A-43A0-4DCD-8928-3C5EBF32EACD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CA7D088B-4A61-4EE4-967B-42A176D67146}
+	EndGlobalSection
+EndGlobal

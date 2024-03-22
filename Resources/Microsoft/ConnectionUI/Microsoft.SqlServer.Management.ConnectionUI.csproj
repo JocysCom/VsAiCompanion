@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <ApplicationVersion>20.200.0.0</ApplicationVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Company>Microsoft Corporation</Company>
+    <Copyright>© 2024 Microsoft Corporation. All rights reserved.</Copyright>
+    <FileVersion>20.0.70.0</FileVersion>
+    <InformationalVersion>20.0.70.0+b0f831c7165e004d740dbec914c2940a936de578</InformationalVersion>
+    <Product>Microsoft SQL Server</Product>
+    <AssemblyTitle>Microsoft.SqlServer.Management.ConnectionUI</AssemblyTitle>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <AssemblyVersion>20.200.0.0</AssemblyVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Configuration>Release</Configuration>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Configuration>Release</Configuration>
+  </PropertyGroup>
+</Project>
