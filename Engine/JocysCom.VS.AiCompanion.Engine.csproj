@@ -153,6 +153,7 @@
 		<None Remove="Resources\FineTuning.zip" />
 		<None Remove="Resources\FineTuningHelp.zip" />
 		<None Remove="Resources\IconExperience.License.txt" />
+		<None Remove="Resources\Icons\Icons_Default\chart_radar.svg" />
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<None Remove="Resources\Icons\Icons_Default\list.svg" />
@@ -195,6 +196,7 @@
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
+		<EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\list.svg" />
 		<Resource Include="Resources\Images\AvatarBackground.png" />
 		<EmbeddedResource Include="Resources\Settings.zip" />

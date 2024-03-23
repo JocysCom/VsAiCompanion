@@ -531,4 +531,7 @@
   <data name="Target" xml:space="preserve">
     <value>Target</value>
   </data>
+  <data name="Embeddings_Feature_Description" xml:space="preserve">
+    <value>Embeddings allow to search for content based on its meaning. AI can utilize embeddings to find relevant information and files.</value>
+  </data>
 </root>

@@ -2,9 +2,8 @@
 	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.ListsItemControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="450"
@@ -55,7 +54,7 @@
 				TextWrapping="Wrap" />
 		</Border>
 		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
-			<Controls:IconUserControl
+			<controls:IconUserControl
 				x:Name="IconPanel"
 				Width="64"
 				Height="64"

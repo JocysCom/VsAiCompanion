@@ -469,15 +469,36 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var item = new ListInfo();
 			item.Name = $"List {DateTime.Now:yyyyMMdd_HHmmss}";
-			SetListIconToDefault(item);
+			SetIconToDefault(item);
 			return item;
 		}
 
-		public static void SetListIconToDefault(ListInfo item)
+		public static void SetIconToDefault(ListInfo item)
 		{
 			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
 			var contents = Helper.FindResource<string>(
 				Resources.Icons.Icons_Default.Icon_list.Replace("Icon_", "") + ".svg",
+				typeof(AppHelper).Assembly);
+			item.SetIcon(contents);
+		}
+
+		public static EmbeddingsItem GetNewEmbeddingsItem()
+		{
+			var item = new EmbeddingsItem();
+			item.Name = $"Embedding {DateTime.Now:yyyyMMdd_HHmmss}";
+			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
+			Global.AppSettings.AiServices.FirstOrDefault();
+			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
+			item.AiModel = defaultAiService?.DefaultAiModel ?? "text-embedding-3-large";
+			SetIconToDefault(item);
+			return item;
+		}
+
+		public static void SetIconToDefault(EmbeddingsItem item)
+		{
+			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
+			var contents = Helper.FindResource<string>(
+				Resources.Icons.Icons_Default.Icon_chart_radar.Replace("Icon_", "") + ".svg",
 				typeof(AppHelper).Assembly);
 			item.SetIcon(contents);
 		}

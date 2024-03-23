@@ -1,6 +1,4 @@
-﻿using Embeddings.DataAccess;
-using Embeddings.Model;
-using JocysCom.ClassLibrary.Configuration;
+﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Collections.Generic;
@@ -9,10 +7,15 @@ using System.Data;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Linq;
+using System.Threading.Tasks;
+
+
 
 #if NETFRAMEWORK
 using System.Data.SqlClient;
+using Embeddings.Model;
 #else
+using Embeddings.DataAccess;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 #endif
@@ -22,20 +25,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for EmbeddingControl.xaml
 	/// </summary>
-	public partial class EmbeddingControl : UserControl, INotifyPropertyChanged
+	public partial class EmbeddingsItemControl : UserControl, INotifyPropertyChanged
 	{
-		public EmbeddingControl()
+		public EmbeddingsItemControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			//Global.AppSettings.Embedding.AiModel = "text-embedding-ada-002";
-			Item = Global.AppSettings.Embedding;
-#if NETFRAMEWORK
-#else
-			//EditButton.Visibility = System.Windows.Visibility.Collapsed;
-#endif
 		}
+
+		#region List Panel Item
+
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
+
+		[Category("Main"), DefaultValue(ItemType.None)]
+		public ItemType DataType
+		{
+			get => _DataType;
+			set
+			{
+				_DataType = value;
+				if (ControlsHelper.IsDesignMode(this))
+					return;
+				// Update panel settings.
+				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
+				PanelSettings = Global.AppSettings.GetTaskSettings(value);
+				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
+				// Update the rest.
+				//PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
+				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);
+				//OnPropertyChanged(nameof(BarPanelVisibility));
+			}
+		}
+		private ItemType _DataType;
+
+		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			await Task.Delay(0);
+		}
+
+		private void ListToggleButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			PanelSettings.UpdateListToggleButtonIcon(ListToggleButton, true);
+		}
+
+		#endregion
 
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
@@ -48,7 +82,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
-		public EmbeddingSettings Item
+		public EmbeddingsItem Item
 		{
 			get => _Item;
 			set
@@ -57,24 +91,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					_Item.PropertyChanged -= _Item_PropertyChanged;
 				}
+				AiModelBoxPanel.Item = null;
 				_Item = value;
+				AiModelBoxPanel.Item = value;
 				if (value != null)
 				{
-					_Item.PropertyChanged += _Item_PropertyChanged;
+					value.PropertyChanged += _Item_PropertyChanged;
 				}
-				DataContext = value;
-				AiModelBoxPanel.Item = value;
+				IconPanel.BindData(value);
 				OnPropertyChanged(nameof(Item));
-				//OnPropertyChanged(nameof(FilteredConnectionString));
 			}
 		}
-		EmbeddingSettings _Item;
+		EmbeddingsItem _Item;
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(EmbeddingSettings.Source))
+			if (e.PropertyName == nameof(EmbeddingsItem.Source))
 			{
-				//OnPropertyChanged(nameof(FilteredConnectionString));
 			}
 		}
 
@@ -94,9 +127,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		System.Windows.Forms.FolderBrowserDialog _FolderBrowser = new System.Windows.Forms.FolderBrowserDialog();
+
 		private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 
+			var dialog = _FolderBrowser;
+			dialog.SelectedPath = Item.Source;
+			DialogHelper.FixDialogFolder(dialog, Global.FineTuningPath);
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			Item.Source = dialog.SelectedPath;
 		}
 
 		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)

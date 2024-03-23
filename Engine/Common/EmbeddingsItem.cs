@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary.Configuration;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -7,8 +7,13 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class EmbeddingSettings : NotifyPropertyChanged, IAiServiceModel
+	public class EmbeddingsItem : SettingsListFileItem, IAiServiceModel
 	{
+
+		public EmbeddingsItem()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
 
 		/// <summary>Embedding data source.</summary>
 		[DefaultValue("")]

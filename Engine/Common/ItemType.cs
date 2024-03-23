@@ -8,5 +8,6 @@
 		FineTuning = 3,
 		Assistant = 4,
 		Lists = 5,
+		Embeddings = 6,
 	}
 }

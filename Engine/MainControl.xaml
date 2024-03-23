@@ -114,7 +114,7 @@
 						<Label Content="Embedding" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:EmbeddingControl x:Name="EmbeddingPanel" />
+				<controls:SettingsControl x:Name="EmbeddingPanel" DataType="Embeddings" />
 			</TabItem>
 
 			<TabItem x:Name="ListsTabItem" x:FieldModifier="public">
@@ -126,6 +126,7 @@
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="ListsPanel" DataType="Lists" />
 			</TabItem>
+
 			<TabItem x:Name="PluginsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

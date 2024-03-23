@@ -55,6 +55,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				ListsItemPanel.Item = (ListInfo)item;
 			}
+			else if (DataType == ItemType.Embeddings)
+			{
+				EmbeddingItemPanel.Item = (EmbeddingsItem)item;
+			}
 			if (currentItem != null)
 				currentItem.PropertyChanged += CurrentItem_PropertyChanged;
 		}
@@ -81,6 +85,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		FineTuningItemControl FineTuningItemPanel;
 		AssistantItemControl AssistantItemPanel;
 		ListsItemControl ListsItemPanel;
+		EmbeddingsItemControl EmbeddingItemPanel;
 
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
@@ -137,6 +142,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						control.DataType = value;
 						control.Visibility = Visibility.Visible;
 						ListsItemPanel = control;
+					}
+				}
+				else if (value == ItemType.Embeddings)
+				{
+					if (EmbeddingItemPanel == null)
+					{
+						var control = new EmbeddingsItemControl();
+						Grid.SetColumn(control, 2);
+						MainGrid.Children.Add(control);
+						control.DataType = value;
+						control.Visibility = Visibility.Visible;
+						EmbeddingItemPanel = control;
 					}
 				}
 				else

@@ -20,6 +20,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateButtons();
 		}
 
+		#region List Panel Item
+
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
+
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
 		{
@@ -38,6 +42,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 		private ItemType _DataType;
+
+		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			await Task.Delay(0);
+		}
+
+		private void ListToggleButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			PanelSettings.UpdateListToggleButtonIcon(ListToggleButton, true);
+		}
+
+		#endregion
 
 		#region Item
 		public ListInfo Item
@@ -58,9 +74,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_Item.PropertyChanged += _Item_PropertyChanged;
 					ControlsHelper.SetItemsSource(MainDataGrid, null);
 				}
-				IconPanel.BindData(_Item);
+				IconPanel.BindData(value);
 				DataContext = value;
-				ControlsHelper.SetItemsSource(MainDataGrid, _Item.Items);
+				ControlsHelper.SetItemsSource(MainDataGrid, value.Items);
 				//AiModelBoxPanel.BindData(value);
 				//IconPanel.BindData(value);
 				// SourceFilesPanel.Data = value;
@@ -202,17 +218,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
-		TaskSettings PanelSettings { get; set; } = new TaskSettings();
-
-		private async void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			await Task.Delay(0);
-		}
-
-		private void ListToggleButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			PanelSettings.UpdateListToggleButtonIcon(ListToggleButton, true);
-		}
 	}
 
 }

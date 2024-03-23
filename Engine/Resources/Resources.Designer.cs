@@ -511,6 +511,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Embeddings allow to search for content based on its meaning. AI can utilize embeddings to find relevant information and files..
+        /// </summary>
+        public static string Embeddings_Feature_Description {
+            get {
+                return ResourceManager.GetString("Embeddings_Feature_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable All.
         /// </summary>
         public static string Enable_All {

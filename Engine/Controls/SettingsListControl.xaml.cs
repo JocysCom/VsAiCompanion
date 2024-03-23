@@ -243,6 +243,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				item = AppHelper.GetNewAssistantItem();
 			if (DataType == ItemType.Lists)
 				item = AppHelper.GetNewListsItem();
+			if (DataType == ItemType.Embeddings)
+				item = AppHelper.GetNewEmbeddingsItem();
 			if (item != null)
 				InsertItem(item);
 		}

@@ -101,6 +101,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private TaskSettings _ListsData;
 
+		public TaskSettings EmbeddingsData
+		{
+			get => _EmbeddingsData = _EmbeddingsData ?? new TaskSettings();
+			set => SetProperty(ref _EmbeddingsData, value);
+		}
+		private TaskSettings _EmbeddingsData;
+
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
 			switch (type)
@@ -110,6 +117,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.FineTuning: return FineTuningData;
 				case ItemType.Assistant: return AssistantData;
 				case ItemType.Lists: return ListsData;
+				case ItemType.Embeddings: return EmbeddingsData;
 				default: return new TaskSettings();
 			}
 		}
@@ -125,17 +133,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(WindowState.Normal)]
 		public WindowState AvatarWindowsState { get => _AvatarWindowsState; set => SetProperty(ref _AvatarWindowsState, value); }
 		WindowState _AvatarWindowsState;
-
-		#endregion
-
-		#region Embedding Settings
-
-		public EmbeddingSettings Embedding
-		{
-			get => _EmbeddingSettings = _EmbeddingSettings ?? new EmbeddingSettings();
-			set => SetProperty(ref _EmbeddingSettings, value);
-		}
-		private EmbeddingSettings _EmbeddingSettings;
 
 		#endregion
 

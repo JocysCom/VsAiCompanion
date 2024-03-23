@@ -24,6 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
 				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
 				var zipLists = GetItemsFromZip(zip, Global.ListsName, Global.Lists);
+				var zipEmbeddings = GetItemsFromZip(zip, Global.EmbeddingsName, Global.Embeddings);
 				var zipServices = zipAppData.Items[0].AiServices;
 				var zipModels = zipAppData.Items[0].AiModels;
 				var zipAppSettings = zipAppData.Items[0];
@@ -31,18 +32,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.Tasks.PreventWriteToNewerFiles = false;
 				Global.Lists.PreventWriteToNewerFiles = false;
 				Global.AppData.PreventWriteToNewerFiles = false;
-				// Remove tasks which will be replaced.
-				var zipTaskNames = zipTasks.Select(t => t.Name.ToLower()).ToList();
-				var tasksToRemove = Global.Tasks.Items.Where(x => zipTaskNames.Contains(x.Name.ToLower())).ToArray();
-				Global.Tasks.Remove(tasksToRemove);
-				// Remove templates which will be replaced.
-				var zipTemplateNames = zipTemplates.Select(t => t.Name.ToLower()).ToList();
-				var templatesToRemove = Global.Templates.Items.Where(x => zipTemplateNames.Contains(x.Name.ToLower())).ToArray();
-				Global.Templates.Remove(templatesToRemove);
-				// Remove Lists which will be replaced.
-				var zipListsNames = zipLists.Select(t => t.Name.ToLower()).ToList();
-				var listsToRemove = Global.Lists.Items.Where(x => zipListsNames.Contains(x.Name.ToLower())).ToArray();
-				Global.Lists.Remove(listsToRemove);
+				RemoveToReplace(Global.Tasks, zipTasks);
+				RemoveToReplace(Global.Templates, zipTemplates);
+				RemoveToReplace(Global.Lists, zipLists);
+				RemoveToReplace(Global.Embeddings, zipEmbeddings);
 				// Remove AiServices.
 				var zipServiceNames = zipServices.Select(t => t.Name.ToLower()).ToList();
 				var servicesToRemove = Global.AppSettings.AiServices.Where(x => zipServiceNames.Contains(x.Name.ToLower())).ToArray();
@@ -59,6 +52,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Global.AppSettings.AiServices.Add(item);
 				foreach (var item in zipAppData.Items[0].AiModels)
 					Global.AppSettings.AiModels.Add(item);
+				Global.Embeddings.Add(zipEmbeddings.ToArray());
 				Global.Lists.Add(zipLists.ToArray());
 				Global.Templates.Add(zipTemplates.ToArray());
 				Global.Tasks.Add(zipTasks.ToArray());
@@ -71,6 +65,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Save settings.
 				Global.SaveSettings();
 				Global.Lists.PreventWriteToNewerFiles = true;
+				Global.Embeddings.PreventWriteToNewerFiles = true;
 				Global.Templates.PreventWriteToNewerFiles = true;
 				Global.Tasks.PreventWriteToNewerFiles = true;
 				Global.AppData.PreventWriteToNewerFiles = true;
@@ -135,25 +130,34 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-		/// <summary>Reset Prompts</summary>
+		/// <summary>Reset Lists</summary>
 		public static void ResetLists(ZipStorer zip = null)
+			=> ResetItems(zip, Global.Lists, Global.ListsName);
+
+		/// <summary>Reset Lists</summary>
+		public static void ResetEmbeddings(ZipStorer zip = null)
+			=> ResetItems(zip, Global.Embeddings, Global.EmbeddingsName);
+
+		private static void ResetItems<T>(ZipStorer zip, SettingsData<T> data, string name) where T : SettingsFileItem
 		{
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
 			// Update Lists
-			var zipLists = GetItemsFromZip(zip, Global.ListsName, Global.Lists);
-			// Remove lists which will be replaced.
-			var zipListsNames = zipLists.Select(t => t.Name.ToLower()).ToList();
-			var listsToRemove = Global.Lists.Items.Where(x => zipListsNames.Contains(x.Name.ToLower())).ToArray();
-			Global.Lists.Remove(listsToRemove);
-			Global.Lists.Add(zipLists.ToArray());
+			var zipItems = GetItemsFromZip(zip, name, data);
+			RemoveToReplace(data, zipItems);
+			data.Add(zipItems.ToArray());
 			// Close zip.
 			if (closeZip)
 				zip.Close();
 		}
 
-		public static int CheckRequiredLists(IList<ListInfo> items, ZipStorer zip = null)
+		public static int CheckRequiredItems(IList<EmbeddingsItem> items, ZipStorer zip = null)
+		{
+			return 0;
+		}
+
+		public static int CheckRequiredItems(IList<ListInfo> items, ZipStorer zip = null)
 		{
 			bool closeZip;
 			if (closeZip = zip == null)
@@ -315,6 +319,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 		#region General Methods
+
+		private static void RemoveToReplace<T>(SettingsData<T> data, IList<T> items) where T : SettingsFileItem
+		{
+			// Remove lists which will be replaced.
+			var names = items.Select(t => t.Name.ToLower()).ToList();
+			var itemsToRemove = data.Items.Where(x => names.Contains(x.Name.ToLower())).ToArray();
+			data.Remove(itemsToRemove);
+		}
 
 		public static ZipStorer GetSettingsZip()
 		{

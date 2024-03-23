@@ -56,6 +56,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		public const string EmbeddingsName = nameof(Embeddings);
+
+		public static SettingsData<EmbeddingsItem> Embeddings =
+			new SettingsData<EmbeddingsItem>($"{EmbeddingsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			{
+				UseSeparateFiles = true,
+			};
+
 		public const string TemplatesName = nameof(Templates);
 
 		public static SettingsData<TemplateItem> Templates =
@@ -95,6 +103,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.FineTuning: return FineTunings;
 				case ItemType.Assistant: return Assistants;
 				case ItemType.Lists: return Lists;
+				case ItemType.Embeddings: return Embeddings;
 				default: return new SettingsData<TemplateItem>();
 			}
 		}
@@ -214,6 +223,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler OnAiServicesUpdated;
 		public static event EventHandler OnAiModelsUpdated;
 		public static event EventHandler OnListsUpdated;
+		public static event EventHandler OnEmbeddingsUpdated;
 
 		public static void RaiseOnSaveSettings()
 			=> OnSaveSettings?.Invoke(null, EventArgs.Empty);
@@ -243,6 +253,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void RaiseOnListsUpdated()
 			=> OnListsUpdated?.Invoke(null, EventArgs.Empty);
 
+		public static void RaiseOnEmbeddingsUpdated()
+			=> OnEmbeddingsUpdated?.Invoke(null, EventArgs.Empty);
+
 		#endregion
 
 		public static void SaveSettings()
@@ -254,6 +267,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			AppData.Save();
 			PromptItems.Save();
 			Lists.Save();
+			Embeddings.Save();
 			Templates.Save();
 			Tasks.Save();
 			FineTunings.Save();
@@ -298,6 +312,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Lists.Load();
 			if (Lists.IsSavePending)
 				Lists.Save();
+			// Load Embeddings.
+			Embeddings.OnValidateData += Embeddings_OnValidateData;
+			Embeddings.Load();
+			if (Embeddings.IsSavePending)
+				Embeddings.Save();
 			// Bind list to plugins.
 			Plugins.Core.Lists.AllLists = Lists.Items;
 			// Load templates.
@@ -377,12 +396,33 @@ namespace JocysCom.VS.AiCompanion.Engine
 			else
 			{
 				// Check for missing templates only.
-				var itemsAdded = SettingsSourceManager.CheckRequiredLists(e.Items);
+				var itemsAdded = SettingsSourceManager.CheckRequiredItems(e.Items);
 				if (itemsAdded > 0)
 				{
 					// Reorder and save.
 					SettingsData<ListInfo>.SortList(e.Items);
 					Lists.IsSavePending = true;
+				}
+			}
+		}
+
+		private static void Embeddings_OnValidateData(object sender, SettingsData<EmbeddingsItem>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				SettingsSourceManager.ResetEmbeddings();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
+			else
+			{
+				// Check for missing templates only.
+				var itemsAdded = SettingsSourceManager.CheckRequiredItems(e.Items);
+				if (itemsAdded > 0)
+				{
+					// Reorder and save.
+					SettingsData<EmbeddingsItem>.SortList(e.Items);
+					Embeddings.IsSavePending = true;
 				}
 			}
 		}

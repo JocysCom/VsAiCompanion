@@ -215,7 +215,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 						// Fix lists with no icons.
 						var noIconLists = Global.Lists.Items.Where(x => x.IconData == null).ToList();
 						foreach (var noIconList in noIconLists)
-							AppHelper.SetListIconToDefault(noIconList);
+							AppHelper.SetIconToDefault(noIconList);
 						await Task.Delay(0).ConfigureAwait(true);
 					});
 				}
