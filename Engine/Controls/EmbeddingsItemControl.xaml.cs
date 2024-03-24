@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,7 +7,9 @@ using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Linq;
 using System.Threading.Tasks;
-using Embeddings;
+using JocysCom.VS.AiCompanion.DataClient;
+using System;
+
 #if NETFRAMEWORK
 using System.Data.SqlClient;
 #else
@@ -67,6 +68,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		public Dictionary<FilePartGroup, string> FilePartGroups
+		=> ClassLibrary.Runtime.Attributes.GetDictionary(
+			(FilePartGroup[])Enum.GetValues(typeof(FilePartGroup)));
+
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			var path = AssemblyInfo.ParameterizePath(Item.Source, true);
@@ -115,7 +120,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				await EmbeddingHelper.ConvertToEmbeddingsCSV(
 					path,
 					Item.Target,
-					Item.AiService, Item.AiModel);
+					Item.AiService, Item.AiModel,
+					Item.FilePartGroup
+					);
 			}
 			catch (System.Exception ex)
 			{
@@ -218,60 +225,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void SearchButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			try
+			LogTextBox.Text = "";
+			var eh = new EmbeddingHelper();
+			await eh.SearchEmbeddings(Item, Item.Message);
+			foreach (var filPart in eh?.FileParts)
 			{
-				LogTextBox.Text = "Converting message to embedding vectors...";
-				var input = new List<string> { Item.Message };
-				var client = new Client(Item.AiService);
-				var results = await client.GetEmbedding(Item.AiModel, input);
-				LogTextBox.Text = " Done.\r\n";
-#if NETFRAMEWORK
-				var db = new EmbeddingsContext();
-				db.Database.Connection.ConnectionString = Item.Target;
-#else
-				var db = EmbeddingsContext.Create(Item.Target);
-#endif
-				// Example values for skip and take
-				int skip = 0;
-				int take = 2;
-
-				var vectors = results[0];
-				LogTextBox.Text = "Searching on database...";
-				// Convert your embedding to the format expected by SQL Server.
-				// This example assumes `results` is the embedding in a suitable binary format.
-				var embeddingParam = new SqlParameter("@promptEmbedding", SqlDbType.VarBinary)
-				{
-					Value = EmbeddingHelper.VectorToBinary(vectors)
-				};
-
-				var skipParam = new SqlParameter("@skip", SqlDbType.Int) { Value = skip };
-				var takeParam = new SqlParameter("@take", SqlDbType.Int) { Value = take };
-
-				// Assuming `FileSimilarity` is the result type.
-				var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
-#if NETFRAMEWORK
-				var similarFiles = db.Database.SqlQuery<Embeddings.Embedding.FilePart>(
-					sqlCommand, embeddingParam, skipParam, takeParam)
-					.ToList();
-#else
-				var similarFiles = db.FileParts.FromSqlRaw(
-					sqlCommand, embeddingParam, skipParam, takeParam)
-					.ToList();
-#endif
-				LogTextBox.Text = " Done...";
-				foreach (var item in similarFiles)
-				{
-					var file = db.Files.Where(x => x.Id == item.Id).FirstOrDefault();
-					LogTextBox.Text += $"\r\n{file?.Url}";
-					var text = JocysCom.ClassLibrary.Text.Helper.IdentText(item.Text);
-					LogTextBox.Text += "\r\n" + text + "\r\n\r\n";
-				}
-				//var json = Client.Serialize(similarFiles);
-				//LogTextBox.Text = json;
-			}
-			catch (System.Exception ex)
-			{
-				LogTextBox.Text = ex.ToString();
+				LogTextBox.Text += eh.Log;
+				var file = eh.Files.Where(x => x.Id == filPart.Id).FirstOrDefault();
+				LogTextBox.Text += $"\r\n{file?.Url}";
+				var text = JocysCom.ClassLibrary.Text.Helper.IdentText(filPart.Text);
+				LogTextBox.Text += "\r\n" + text + "\r\n\r\n";
 			}
 		}
 	}

@@ -1,4 +1,5 @@
-﻿using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
+﻿using JocysCom.VS.AiCompanion.DataClient;
+using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Collections.Generic;
@@ -251,6 +252,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue("helpful assistant")]
 		public string PromptOption { get => _PromptOption; set => SetProperty(ref _PromptOption, value); }
 		string _PromptOption;
+
+		#endregion
+
+		#region Embeddings
+
+		[DefaultValue(false)]
+		public bool UseEmbeddings { get => _UseEmbeddings; set => SetProperty(ref _UseEmbeddings, value); }
+		bool _UseEmbeddings;
+
+		[DefaultValue(FilePartGroup.None)]
+		public FilePartGroup FilePartGroup { get => _FilePartGroup; set => SetProperty(ref _FilePartGroup, value); }
+		FilePartGroup _FilePartGroup;
 
 		#endregion
 

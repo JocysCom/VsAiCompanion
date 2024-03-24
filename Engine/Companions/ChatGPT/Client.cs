@@ -329,7 +329,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			finally
 			{
-				Global.MainControl.InfoPanel.RemoveTask(id);
+				Global.MainControl.Dispatcher.Invoke(() =>
+				{
+					Global.MainControl.InfoPanel.RemoveTask(id);
+				});
 			}
 			return results;
 		}
@@ -359,6 +362,38 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				item.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
 			});
+			if (item.UseEmbeddings)
+			{
+				// Experimental.
+				// AI must decide what to search for, not to use by the last user message.
+				var group = item.FilePartGroup;
+				var embeddingItem = Global.Embeddings.Items.FirstOrDefault(x => x.FilePartGroup == group);
+				if (embeddingItem != null)
+				{
+					var eh = new EmbeddingHelper();
+					var lastUserMessage = messagesToSend.Last(x => x.role == message_role.user);
+					var lastSystemMessage = messagesToSend.Last(x => x.role == message_role.system);
+					if (!string.IsNullOrWhiteSpace(lastUserMessage?.content))
+					{
+						await eh.SearchEmbeddings(embeddingItem, lastUserMessage?.content);
+						if (eh.FileParts != null && eh.FileParts.Count > 0)
+						{
+							var systemMessage = "\r\n\r\n";
+							systemMessage += embeddingItem.Instructions;
+							systemMessage += "\r\n\r\n";
+							foreach (var filPart in eh.FileParts)
+							{
+								var file = eh.Files.Where(x => x.Id == filPart.Id).FirstOrDefault();
+								systemMessage += $"\r\n{file?.Url}";
+								var text = JocysCom.ClassLibrary.Text.Helper.IdentText(filPart.Text);
+								systemMessage += "\r\n" + text + "\r\n\r\n";
+							}
+							lastSystemMessage.content += systemMessage;
+						}
+					}
+
+				}
+			}
 			var secure = new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttps;
 			try
 			{

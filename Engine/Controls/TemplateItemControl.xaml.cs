@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -225,6 +226,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> GetListNames("Profile");
 		public Dictionary<string, string> RoleListNames
 			=> GetListNames("Role");
+
+		public Dictionary<FilePartGroup, string> FilePartGroups
+			=> ClassLibrary.Runtime.Attributes.GetDictionary(
+				(FilePartGroup[])Enum.GetValues(typeof(FilePartGroup)));
 
 		public Dictionary<ContextType, string> DataTypes
 		{

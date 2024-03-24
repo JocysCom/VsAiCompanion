@@ -26,7 +26,6 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<!--  Row 0  -->
@@ -54,6 +53,7 @@
 		<!--  Row 1  -->
 		<Grid Grid.Row="1">
 			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -90,7 +90,7 @@
 				Grid.ColumnSpan="2"
 				Margin="3,0,3,0"
 				Background="{StaticResource BackgroundDark}"
-				Text="{Binding Item.Source, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}" />
 			<Button
 				Name="BrowseButton"
 				Grid.Row="1"
@@ -117,7 +117,7 @@
 				Grid.ColumnSpan="2"
 				Margin="3,0,3,0"
 				Background="{StaticResource BackgroundDark}"
-				Text="{Binding Item.Target, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" />
 			<Button
 				Name="EditButton"
 				Grid.Row="2"
@@ -150,6 +150,14 @@
 				Margin="0,0,0,0"
 				HorizontalAlignment="Right"
 				Orientation="Horizontal">
+				<Label x:Name="EmbeddingsLabel" Content="Group" />
+				<ComboBox
+					Name="FilePartGroupsComboBox"
+					HorizontalAlignment="Stretch"
+					DisplayMemberPath="Value"
+					ItemsSource="{Binding FilePartGroups, ElementName=This}"
+					SelectedValue="{Binding FilePartGroup}"
+					SelectedValuePath="Key" />
 				<Label x:Name="SkipLabel" Content="Skip" />
 				<JcControls:NumericUpDown x:Name="SkipUpdown" Value="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" />
 				<Label x:Name="TakeLabel" Content="Take" />
@@ -157,23 +165,42 @@
 				<Label x:Name="MaxTokensLabel" Content="Max Tokens" />
 				<JcControls:NumericUpDown x:Name="MaxTokensUpdown" Value="{Binding MaxTokens, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>
-			<!--  System message content  -->
+			<!--  System Instructions  -->
 			<Label
+				x:Name="InstructionsLabel"
 				Grid.Row="4"
+				Grid.Column="1"
+				Content="{x:Static locales:Resources.Instructions}" />
+			<TextBox
+				Name="InstructionsTextBox"
+				Grid.Row="4"
+				Grid.Column="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				VerticalContentAlignment="Top"
+				AcceptsReturn="True"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				SpellCheck.IsEnabled="True"
+				Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
+				TextWrapping="Wrap" />
+			<!--  Test message  -->
+			<Label
+				Grid.Row="5"
 				Grid.Column="1"
 				VerticalAlignment="Center"
 				Content="{x:Static locales:Resources.Message}" />
 			<TextBox
 				Name="MessageTextBox"
-				Grid.Row="4"
+				Grid.Row="5"
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
 				Width="Auto"
 				Margin="3,0,3,0"
-				Text="{Binding Item.Message, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" />
 			<Button
 				Name="SendSettingsButton"
-				Grid.Row="4"
+				Grid.Row="5"
 				Grid.Column="4"
 				MinWidth="75"
 				Margin="3,0,0,0"
@@ -183,7 +210,6 @@
 					<Label Content="Search" />
 				</StackPanel>
 			</Button>
-
 		</Grid>
 		<!--  Row 2  -->
 		<Border

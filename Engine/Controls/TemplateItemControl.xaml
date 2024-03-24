@@ -500,6 +500,29 @@
 										SelectedValuePath="Key" />
 								</StackPanel>
 							</GroupBox>
+
+
+							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
+								<GroupBox.Header>
+									<Label x:Name="EmbeddingsLabel" Padding="0" Content="Embedding Groups" />
+								</GroupBox.Header>
+								<StackPanel Orientation="Vertical">
+									<ComboBox
+										Name="FilePartGroupsComboBox"
+										HorizontalAlignment="Stretch"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding FilePartGroups, ElementName=This}"
+										SelectedValue="{Binding FilePartGroup}"
+										SelectedValuePath="Key" />
+									<CheckBox
+										Name="UseEmbeddingsCheckBox"
+										Margin="0"
+										Content="Use Embeddings"
+										IsChecked="{Binding UseEmbeddings}" />
+								</StackPanel>
+							</GroupBox>
+
+
 						</WrapPanel>
 					</StackPanel>
 				</TabItem>

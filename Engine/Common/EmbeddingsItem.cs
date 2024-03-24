@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.DataClient;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -36,14 +37,28 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Monitor source and auto-update target.
 		/// </summary>
+		[DefaultValue(false)]
 		public bool AutoUpdate { get => _AutoUpdate; set => SetProperty(ref _AutoUpdate, value); }
 		bool _AutoUpdate;
 
 		/// <summary>
 		/// Test message
 		/// </summary>
+		[DefaultValue("")]
 		public string Message { get => _Message; set => SetProperty(ref _Message, string.IsNullOrWhiteSpace(value) ? "" : value); }
 		string _Message;
+
+		/// <summary>
+		/// System instructions
+		/// </summary>
+		[DefaultValue("")]
+		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, string.IsNullOrWhiteSpace(value) ? "" : value); }
+		string _Instructions;
+
+
+		[DefaultValue(FilePartGroup.None)]
+		public FilePartGroup FilePartGroup { get => _FilePartGroup; set => SetProperty(ref _FilePartGroup, value); }
+		FilePartGroup _FilePartGroup;
 
 		#region ■ IAiServiceModel
 

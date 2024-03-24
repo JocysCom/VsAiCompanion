@@ -1,18 +1,30 @@
 ﻿using Embeddings;
 using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+#if NETFRAMEWORK
+using System.Data.SqlClient;
+#else
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+#endif
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class EmbeddingHelper
 	{
 
-		public static async Task ConvertToEmbeddingsCSV(string path, string connectionString, AiService service, string modelName)
+		public static async Task ConvertToEmbeddingsCSV(string path,
+			string connectionString, AiService service, string modelName,
+			FilePartGroup filePartGroup
+			)
 		{
 			//var service = Global.AppSettings.AiServices.FirstOrDefault(x => x.BaseUrl.Contains("azure"));
 			//var url = service.BaseUrl + $"openai/deployments/{model}/embeddings?api-version=2023-05-15";
@@ -48,7 +60,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				file.Modified = fi.LastWriteTime.ToUniversalTime();
 				file.TextSize = file.Size;
 				db.SaveChanges();
-				var text = File.ReadAllText(fi.FullName);
+				var text = System.IO.File.ReadAllText(fi.FullName);
 				var client = new Client(service);
 				// Don't split file
 				var input = new List<string> { text };
@@ -62,6 +74,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					part.FileId = file.Id;
 					part.EmbeddingModel = modelName;
 					part.EmbeddingSize = result.Value.Length;
+					part.GroupFlag = (int)filePartGroup;
 					part.Index = 0;
 					part.Count = 1;
 					part.HashType = "SHA_256";
@@ -75,6 +88,63 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			}
 		}
+
+		public string Log { get; set; } = "";
+		public List<Embeddings.Embedding.File> Files { get; set; }
+		public List<Embeddings.Embedding.FilePart> FileParts { get; set; }
+
+		public async Task SearchEmbeddings(EmbeddingsItem item, string message)
+		{
+			try
+			{
+				Log = "Converting message to embedding vectors...";
+				var input = new List<string> { item.Message };
+				var client = new Client(item.AiService);
+				var results = await client.GetEmbedding(item.AiModel, input);
+				Log += " Done.\r\n";
+#if NETFRAMEWORK
+				var db = new EmbeddingsContext();
+				db.Database.Connection.ConnectionString = item.Target;
+#else
+				var db = EmbeddingsContext.Create(item.Target);
+#endif
+				// Example values for skip and take
+				int skip = 0;
+				int take = 2;
+
+				var vectors = results[0];
+				Log += "Searching on database...";
+				// Convert your embedding to the format expected by SQL Server.
+				// This example assumes `results` is the embedding in a suitable binary format.
+				var embeddingParam = new SqlParameter("@promptEmbedding", SqlDbType.VarBinary)
+				{
+					Value = VectorToBinary(vectors)
+				};
+
+				var skipParam = new SqlParameter("@skip", SqlDbType.Int) { Value = skip };
+				var takeParam = new SqlParameter("@take", SqlDbType.Int) { Value = take };
+
+				// Assuming `FileSimilarity` is the result type.
+				var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
+#if NETFRAMEWORK
+				FileParts = db.Database.SqlQuery<Embeddings.Embedding.FilePart>(
+					sqlCommand, embeddingParam, skipParam, takeParam)
+					.ToList();
+#else
+				FileParts = db.FileParts.FromSqlRaw(
+					sqlCommand, embeddingParam, skipParam, takeParam)
+					.ToList();
+#endif
+				var fileIds = FileParts.Select(x => x.FileId).Distinct().ToArray();
+				Files = db.Files.Where(x => fileIds.Contains(x.Id)).ToList();
+				Log += " Done...";
+			}
+			catch (System.Exception ex)
+			{
+				Log = ex.ToString();
+			}
+		}
+
 
 		#region Client
 

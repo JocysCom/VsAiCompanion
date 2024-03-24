@@ -1,0 +1,37 @@
+﻿<EmbeddingsItem>
+  <UseApplicationDispatcher>false</UseApplicationDispatcher>
+  <Name>CyberNet Solutions</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACp1X246bSBB9z1e0yEsi0ZimoYHInoeNVtk8ZCNtlA/AGMZs2mABM/bM1++paiB2&#xD;
+drQbJ5IDXZdTVae6yp718HgvHqt+aLp246lAea8E/p0Pth023n4cj+9Wq9PpFJx00PX3qygMwxV8&#xD;
+LszenW3TfnvJWOV5vmKtJ07NbtxvvERFnthXzf1+nA6PTXX6rTtvvFCEAhL6eHcMvx6b0VZ35b7o&#xD;
+R9EXu6IXTdm165WTO5tdNZT/MhF13x3EuK/ER5x+Px+rvqnasgpKiD/I9521VTmi5kC8745PPeUj&#xD;
+tk/i45/vP//1RXw4bP8Qb6iSpi27fiC3t8F6xbHmsPXgXvmIIqui/4AMEGcUZ7XxNIp7mp7naOPF&#xD;
+WgWJSTNI6ZSFAbjUiSfuJ6+vbTOC9Ieh6r8ci7L63H4dKk80u41XdrbrpZp4WaIOY3cUXV0PFdgM&#xD;
+PUFnybYb77XZpdts663+y0f94JMkJk71pc96dV3ajTWbmKqMlppvqDa6qdpEGWXq26rVJlZx8evV&#xD;
+KpUHeRRmyhWdmCBUcbq0Ow8yk2lS4hgZFZictT/NgL6Jgboua13exgB8dFj9OgNZFqhUJakjQGkw&#xD;
+EKo8cwzoPApUlLOWGIjzQJuctD/NQHwTA7rehrW6jYEoLpKq/n8GaPjniV/fi7qxduO1XYt06V32&#xD;
+D7aaBcPYd99+OMlpAapFQFHK4rjxtg/jeCX9u2uwjA/NWPWLnE+2wQMY4SLeFQNWX188bbwr2QVF&#xD;
+ddeOsi4OjX1aMibRadrCF6KheV7SHqvzKIu23BNNcyVPVOShOcutrdqdPHS76p1ou/5Q2ItOrY/F&#xD;
+uBdo4icT+zqyOov9sFRpkPih0JGv4iChJ1ShD2UZ+qQUkhSQCumU0jnKyZOkbOLe2Fs6dzYR7A45&#xD;
+YePxPN2kh/6x0q5NuGu9ffN6Wqdvr3pXPVZtt9tdXYWlECBGcWZVSJnYJEVEnVpptI9PGVHcRBh6&#xD;
+5EJhz0OP/y30RluYQp1SugRglQEGauZ36KCagBIfUCL3geRgGEU6GESloFMO8DdWTgc56diwlJQP&#xD;
+WKJ8crB6BYQP3FzUKQc5JeSyk3O6LmwpUQxlJXP4cpeu6mO8hRCXz7P4FKH1Smdkk0MU5TZJmCVK&#xD;
+OqIX+MNOx9Q0lZJlhMJhbOnARblAEdulmmBMbOVslhifMO2VmSYzBkX+U+TQZ/jLsGimz5CTFUAR&#xD;
+jzJEgmQ42SlDd49ROTBbWzllyJFdYK6V78h3KyTImFMlkyH7Mq5dQoN7TpGpmZmJFHhxQKA3ohRC&#xD;
+Hz8b5vwVcQkVa/BMUoYnTJUrpEtUoI/Z3BM4MIOzgmCdU65QI5pMoimQnCPRDCPSkoNc3NgFg6oc&#xD;
+It+ZJRh8mA75XedyvJjK6IWpjG6YysiEVIeKqEkmLrFaBF8TXNPYj1FFaImoKCtRoKDUDO4vHkx2&#xD;
+Fvo52oMF40MmJGYcq8X5W5kblFbymbUUQ4Y8CLxmmCXc0hh0pKgzzXy8OwcJoGQaFz6r0NJS4nCU&#xD;
+hlRCubGiVcVAiIeYbpdot0u04FDTfUgpA+WuoorQIYPoOaFxt8k0y2xK80T3HyUroFPu2teW54yU&#xD;
+NkOiZG1TnkhCuGyKeqEp+pam4HcQXfDM5jFyN2U8E5eBX8wuMcFEKG4UFcBLnduzsJrhqpcsY86p&#xD;
+GO6cmi3QPbJA00iPeygkAhA13Cnu3dQwplLSNBJ39Duc9kXm4KlX/Iw5FbaJGULRjivZOhbwNq4d&#xD;
+xCEy4OXlSsXuyHLMI90kfE9RC+nraqqbtiIzrakurMVQW43Vi7nBL0gsKGoF4FNjY35cdoO+wH/s&#xD;
+RnzdDXw5P1d9N3djvbq/e7WmP9Lu/gHVOz5f3g0AAA==</IconData>
+  <Source>C:\Users\EJocys\AppData\Roaming\Jocys.com\VS AI Companion\FineTuning\CyberNet Solutions\SourceFiles\demo-data-CyberNet-Solutions.txt.data</Source>
+  <Target>Data Source=localhost;Initial Catalog=Embeddings;Integrated Security=True;Trust Server Certificate=True</Target>
+  <Message>What is the slogan of the company?</Message>
+  <Instructions>Analyze the information provided below and use it to enhance the relevance of responses to users.</Instructions>
+  <FilePartGroup>Group01</FilePartGroup>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>text-embedding-3-large</AiModel>
+</EmbeddingsItem>
