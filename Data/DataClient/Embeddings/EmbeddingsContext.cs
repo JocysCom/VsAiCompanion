@@ -1,11 +1,14 @@
-using Embeddings.Model;
+using System;
+using System.Collections.Generic;
+using System.CodeDom.Compiler;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 #if NETFRAMEWORK
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 #else
 using Microsoft.EntityFrameworkCore;
 #endif
-using System;
-using System.CodeDom.Compiler;
 
 namespace Embeddings
 {
@@ -43,15 +46,13 @@ namespace Embeddings
 		public EmbeddingsContext(DbContextOptions<EmbeddingsContext> options) : base(options) { }
 
 		/// <summary>Create context with connection string.</summary>
-		public static EmbeddingsContext Create(string connectionString)
-		{
+		public static EmbeddingsContext Create(string connectionString) {
 			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
 			optionsBuilder.UseSqlServer(connectionString);
 			return new EmbeddingsContext(optionsBuilder.Options);
 		}
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
+		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 			modelBuilder.Ignore<Type>();
 			modelBuilder.Ignore<System.Reflection.CustomAttributeData>();
 			base.OnModelCreating(modelBuilder);
@@ -61,10 +62,10 @@ namespace Embeddings
 
 
 		/// <summary>File</summary>
-		public virtual DbSet<File> Files { get; set; }
+		public virtual DbSet<Embedding.File> Files { get; set; }
 
-		/// <summary>File Embedding</summary>
-		public virtual DbSet<FilePart> FileEmbeddings { get; set; }
+		/// <summary>File Part</summary>
+		public virtual DbSet<Embedding.FilePart> FileParts { get; set; }
 
 	}
 }

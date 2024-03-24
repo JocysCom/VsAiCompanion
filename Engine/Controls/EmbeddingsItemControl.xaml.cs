@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Embeddings;
 #if NETFRAMEWORK
 using System.Data.SqlClient;
-using Embeddings.Model;
 #else
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -251,11 +250,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Assuming `FileSimilarity` is the result type.
 				var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
 #if NETFRAMEWORK
-				var similarFiles = db.Database.SqlQuery<FilePart>(
+				var similarFiles = db.Database.SqlQuery<Embeddings.Embedding.FilePart>(
 					sqlCommand, embeddingParam, skipParam, takeParam)
 					.ToList();
 #else
-				var similarFiles = db.FileEmbeddings.FromSqlRaw(
+				var similarFiles = db.FileParts.FromSqlRaw(
 					sqlCommand, embeddingParam, skipParam, takeParam)
 					.ToList();
 #endif
@@ -264,7 +263,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					var file = db.Files.Where(x => x.Id == item.Id).FirstOrDefault();
 					LogTextBox.Text += $"\r\n{file?.Url}";
-					var text = JocysCom.ClassLibrary.Text.Helper.IdentText(item.PartText);
+					var text = JocysCom.ClassLibrary.Text.Helper.IdentText(item.Text);
 					LogTextBox.Text += "\r\n" + text + "\r\n\r\n";
 				}
 				//var json = Client.Serialize(similarFiles);

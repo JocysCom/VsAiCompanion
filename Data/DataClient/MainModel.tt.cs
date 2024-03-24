@@ -2,18 +2,10 @@
 #if NET6_0_OR_GREATER
 #nullable disable
 #endif
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
+#if NETFRAMEWORK
 using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Serialization;
-
+#else
+#endif
 // */
 //----BEGIN T4 CODE-----
 
@@ -382,7 +374,6 @@ public class MainModel
 	{
 		contents = "";
 		var containsExternal = columnRows.Any(x => useExternalCustomOption(x));
-		var requiredNsEntityFrameworkCore = false;
 		var requiredNsDataAnnotationsSchema = false;
 		for (var c = 0; c < columnRows.Count; c++)
 		{
@@ -437,8 +428,10 @@ public class MainModel
 					csProp += $"[Precision({Precision}, {Scale})]\r\n";
 				if ((type.Contains("char") || type.Contains("text")) && !type.StartsWith("n") && config.EnableEntityFrameworkCore && !config.EnableEntityFramework6)
 				{
-					requiredNsEntityFrameworkCore = true;
-					csProp += $"[Unicode(false)]\r\n";
+					// Use fluent API instead.
+					//csProp += "#if NETCOREAPP\r\n";
+					//csProp += $"[Unicode(false)]\r\n";
+					//csProp += "#endif\r\n";
 				}
 				// If nullable reference types are not enabled then EF don't know if string is required.
 				if (!config.EnableNullableReferenceTypes && Type.GetTypeCode(sysType) == TypeCode.String && !IsNullable)
@@ -501,8 +494,6 @@ public class MainModel
 			}
 			contents += csProp;
 		}
-		if (requiredNsEntityFrameworkCore)
-			requiredNamespaces?.Add("Microsoft.EntityFrameworkCore");
 		if (requiredNsDataAnnotationsSchema)
 			requiredNamespaces?.Add("System.ComponentModel.DataAnnotations.Schema");
 	}
@@ -598,13 +589,9 @@ public class MainModel
 		usingDA += "using System.ComponentModel.DataAnnotations;\r\n";
 		usingDA += "using System.ComponentModel.DataAnnotations.Schema;\r\n";
 
-		if (config.ContextNamespace != config.Namespace)
-			usingDA += $"using {config.Namespace};\r\n";
-
 		// Using entity framework.
 		var usingEF = GetEntityUsings();
 
-		var nsOpen = "\r\nnamespace " + config.Namespace + "\r\n{\r\n\r\n";
 		var aClose = "";
 		aClose += "\r\n";
 		aClose += "\t}\r\n";
@@ -730,21 +717,9 @@ public class MainModel
 				//------------------------------------------------------
 				var nsSchemaOpen = "";
 				var nsSchemaClose = "";
-				var nsClassPrefix = "";
-				var nsNamePrefix = "";
-				if (schemaName != config.ContextDefaultSchema || schemaName != "")
-				{
-					//nsSchemaOpen += "\tnamespace schemaName\r\n";
-					//nsSchemaOpen += "\t{\r\n";
-					//nsSchemaOpen += "\r\n";
-					//nsSchemaClose += "\r\n";
-					//nsSchemaClose += "\t}\r\n";
-					//nsSchemaClose += "\r\n";
-					//nsClassPrefix = "schemaName.";
-					//nsNamePrefix = "schemaName";
-				}
-				var csObjectType = genType.ToString().ToLower();
+				var isDefaultSchema = schemaName == "" || schemaName == config.ContextDefaultSchema;
 
+				var csObjectType = genType.ToString().ToLower();
 				var tableSummary = GetSummary(string.Format(config.DefaultTableSummary, ConvertNameToString(tableName)));
 				// External attributes.
 				var attE = "";
@@ -768,6 +743,9 @@ public class MainModel
 					internalText += usingEF;
 					externalText += usingEF;
 				}
+
+				var nsOpen = "\r\nnamespace " + config.Namespace + (isDefaultSchema ? "" : "." + schemaName) + "\r\n{\r\n\r\n";
+
 				// Data Item class.
 				internalText += nsOpen + nsSchemaOpen + IdentText(tableSummary, 1) + "\r\n" + tmp;
 				externalText += nsOpen + nsSchemaOpen + IdentText(tableSummary, 1) + "\r\n" + attE + tmp;
@@ -776,7 +754,7 @@ public class MainModel
 				var width = 0.5m + Math.Ceiling(tableItemType.Length * 0.075m / 0.25m) * 0.25m;
 				var classDiagramClass = new ClassDiagramClass()
 				{
-					Name = config.Namespace + "." + tableItemType,
+					Name = config.Namespace + "." + (isDefaultSchema ? "" : schemaName + ".") + tableItemType,
 					Collapsed = true,
 					Position = new ClassDiagramClassPosition() { X = 0.5m, Y = 0.5m, Width = width },
 					TypeIdentifier = new ClassDiagramClassTypeIdentifier()
@@ -799,10 +777,11 @@ public class MainModel
 				var externalWrite = !string.IsNullOrEmpty(externalProperties);
 				if (classDiagramClass.ShowAsAssociation.Count == 0)
 					classDiagramClass.ShowAsAssociation = null;
+
 				// Create C# code for table inside context.
 				tmp = "\r\n";
 				tmp += IdentText(GetSummary(ConvertNameToString(tableItemType)), 2) + "\r\n";
-				tmp += "\t\tpublic virtual DbSet<" + nsClassPrefix + tableItemType + "> " + nsNamePrefix + tablePropertyName + " { get; set; }\r\n";
+				tmp += "\t\tpublic virtual DbSet<" + (isDefaultSchema ? "" : schemaName + ".") + tableItemType + "> " + tablePropertyName + " { get; set; }\r\n";
 				if (externalWrite)
 				{
 					if (!schemaDir.Exists)
@@ -812,7 +791,7 @@ public class MainModel
 					if (config.GenerateCloneAndCopyMethods && genType == GenType.Class)
 					{
 						externalText += "\r\n";
-						externalText += IdentText(GenerateCloneAndCopyMethods(nsClassPrefix + tableItemType, columnRows, ""), 2);
+						externalText += IdentText(GenerateCloneAndCopyMethods(tableItemType, columnRows, ""), 2);
 						externalText += "\r\n";
 					}
 					externalText += nsSchemaClose + aClose;
@@ -1753,6 +1732,8 @@ public class MainModel
 				break;
 			case SqlDataType.Timestamp:
 			case SqlDataType.Binary:
+			case SqlDataType.VarBinary:
+			case SqlDataType.VarBinaryMax:
 				t = typeof(Byte[]);
 				break;
 			case SqlDataType.TinyInt:

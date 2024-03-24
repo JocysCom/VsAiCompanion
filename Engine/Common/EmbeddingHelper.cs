@@ -1,4 +1,5 @@
 ﻿using Embeddings;
+using JocysCom.ClassLibrary;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
@@ -22,37 +23,54 @@ namespace JocysCom.VS.AiCompanion.Engine
 #else
 			var db = EmbeddingsContext.Create(connectionString);
 #endif
+			var algorithm = System.Security.Cryptography.SHA256.Create();
+
 			for (int i = 0; i < files.Count(); i++)
 			{
 				var fi = new FileInfo(files[i]);
 				var file = db.Files.FirstOrDefault(x => x.Url == fi.FullName);
+				var fileHash = JocysCom.ClassLibrary.Security.SHA256Helper.GetHashFromFile(fi.FullName);
 				if (file == null)
 				{
-					file = new Embeddings.Model.File();
-					file.Created = fi.CreationTime;
-					file.Modified = fi.LastWriteTime;
-					file.Name = fi.Name;
-					file.Url = fi.FullName;
-					file.TextSize = file.Size;
+					file = new Embeddings.Embedding.File();
 					db.Files.Add(file);
-					db.SaveChanges();
 				}
+				file.Name = fi.Name;
+				file.Url = fi.FullName;
+				file.GroupName = System.IO.Path.GetFileName(path);
+				file.HashType = "SHA_256";
+				file.Hash = fileHash;
+				file.Size = fi.Length;
+				file.State = (int)ProgressStatus.Completed;
+				file.TextSize = fi.Length;
+				file.IsEnabled = true;
+				file.Created = fi.CreationTime.ToUniversalTime();
+				file.Modified = fi.LastWriteTime.ToUniversalTime();
+				file.TextSize = file.Size;
+				db.SaveChanges();
 				var text = File.ReadAllText(fi.FullName);
 				var client = new Client(service);
 				// Don't split file
 				var input = new List<string> { text };
 				var results = await client.GetEmbedding(modelName, input);
+				var now = DateTime.Now;
+				var partHash = algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(text));
 				foreach (var result in results)
 				{
-					var embedding = new Embeddings.Model.FilePart();
-					embedding.Embedding = VectorToBinary(result.Value);
-					embedding.FileId = file.Id;
-					embedding.EmbeddingModel = modelName;
-					embedding.EmbeddingSize = result.Value.Length;
-					embedding.PartIndex = 0;
-					embedding.PartCount = 1;
-					embedding.PartText = input[0];
-					db.FileEmbeddings.Add(embedding);
+					var part = new Embeddings.Embedding.FilePart();
+					part.Embedding = VectorToBinary(result.Value);
+					part.FileId = file.Id;
+					part.EmbeddingModel = modelName;
+					part.EmbeddingSize = result.Value.Length;
+					part.Index = 0;
+					part.Count = 1;
+					part.HashType = "SHA_256";
+					part.Hash = partHash;
+					part.IsEnabled = true;
+					part.Created = now.ToUniversalTime();
+					part.Modified = now.ToUniversalTime();
+					part.Text = input[0];
+					db.FileParts.Add(part);
 					db.SaveChanges();
 				}
 			}

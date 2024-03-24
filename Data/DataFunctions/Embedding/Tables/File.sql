@@ -11,9 +11,10 @@
     [IsEnabled] BIT            CONSTRAINT [DF_File_IsEnabled] DEFAULT ((1)) NOT NULL,
     [Modified]  DATETIME       CONSTRAINT [DF_File_Modified] DEFAULT (getdate()) NOT NULL,
     [Created]   DATETIME       CONSTRAINT [DF_File_Created] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_File] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [CK_File_HashType] CHECK ([HashType]='SHA2_512' OR [HashType]='SHA2_256' OR [HashType]='SHA1' OR [HashType]='SHA' OR [HashType]='MD5' OR [HashType]='MD4' OR [HashType]='MD2' OR [HashType]='')
+    CONSTRAINT [PK_File] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
@@ -22,7 +23,7 @@ CREATE NONCLUSTERED INDEX [IX_File_HashType_Hash]
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ensures the hash algorithm specified in the HashType column is one of the recognized and supported types.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'File', @level2type = N'CONSTRAINT', @level2name = N'CK_File_HashType';
+
 
 
 GO

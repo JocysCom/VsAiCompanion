@@ -15,9 +15,10 @@
     [Created]        DATETIME        CONSTRAINT [DF_Part_Created] DEFAULT (getdate()) NOT NULL,
     [Modified]       DATETIME        CONSTRAINT [DF_Part_Modified] DEFAULT (getdate()) NOT NULL,
     CONSTRAINT [PK_FileEmbedding] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [CK_FilePart_HashType] CHECK ([HashType]='SHA2_512' OR [HashType]='SHA2_256' OR [HashType]='SHA1' OR [HashType]='SHA' OR [HashType]='MD5' OR [HashType]='MD4' OR [HashType]='MD2' OR [HashType]=''),
     CONSTRAINT [FK_FilePart_File] FOREIGN KEY ([FileId]) REFERENCES [Embedding].[File] ([Id])
 );
+
+
 
 
 GO
@@ -36,7 +37,7 @@ CREATE NONCLUSTERED INDEX [IX_FilePart_Filed_Index]
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ensures the hash algorithm specified in the HashType column is one of the recognized and supported types.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'FilePart', @level2type = N'CONSTRAINT', @level2name = N'CK_FilePart_HashType';
+
 
 
 GO

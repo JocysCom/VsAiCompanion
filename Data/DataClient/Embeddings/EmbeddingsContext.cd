@@ -1,17 +1,17 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Embeddings.Model.File" Collapsed="true">
+  <Class Name="Embeddings.Embedding.File" Collapsed="true">
     <Position X="0.5" Y="1.5" Width="1.00" />
     <TypeIdentifier>
       <FileName>Embedding\File.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Embeddings.Model.FileEmbedding" Collapsed="true">
-    <Position X="0.5" Y="2.5" Width="1.50" />
+  <Class Name="Embeddings.Embedding.FilePart" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.25" />
     <TypeIdentifier>
-      <FileName>Embedding\FileEmbedding.cs</FileName>
+      <FileName>Embedding\FilePart.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="" />
+      <Property Name="File" />
     </ShowAsAssociation>
   </Class>
 </ClassDiagram>

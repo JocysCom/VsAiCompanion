@@ -1,42 +1,77 @@
+using System;
+using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Embeddings.Model
+namespace Embeddings.Embedding
 {
 
-	/// <summary>File Embedding</summary>
+	/// <summary>File Part</summary>
 	[GeneratedCode("MainModel", "2023.1.19")]
-	[Table("FileEmbedding", Schema = "Embedding")]
+	[Table("FilePart", Schema = "Embedding")]
 	public partial class FilePart
 	{
 
-		/// <summary>Id (unique primary key).</summary>
+		/// <summary>Unique identifier of the file part.</summary>
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public long Id { get; set; }
 
-		/// <summary>File text part used for embedding</summary>
-		public string PartText { get; set; }
-
-		/// <summary>Part index</summary>
-		public int PartIndex { get; set; }
-
-		/// <summary>Number of parts</summary>
-		public int PartCount { get; set; }
-
-		/// <summary>Id to original file info</summary>
+		/// <summary>Unique identifier of the associated file.</summary>
 		public long FileId { get; set; }
 
-		/// <summary>Embedding vectors</summary>
-		public byte[] Embedding { get; set; }
+		/// <summary>File text part used for embedding</summary>
+		[Required]
+		public string Text { get; set; }
 
-		/// <summary>Number of vectors inside embedding: 256, 512, 1024, 2048...</summary>
-		public int EmbeddingSize { get; set; }
+		/// <summary>Index of this part relative to other parts of the same file.</summary>
+		public int Index { get; set; }
+
+		/// <summary>Total number of parts into which the file is divided.</summary>
+		public int Count { get; set; }
+
+		/// <summary>A bitwise operation will be used to include groups by their group flag.</summary>
+		public long GroupFlag { get; set; }
+
+		/// <summary>Specifies the hash algorithm used to generate the hash value: MD2, MD4, MD5, SHA, SHA1, SHA2_256, and SHA2_512.</summary>
+		[Required]
+		[StringLength(20)]
+		public string HashType { get; set; }
+
+		/// <summary>The SHA-256 hash of the 'PartText' bytes, represented as a string in UTF-16 encoding.</summary>
+		public byte[] Hash { get; set; }
+
+		/// <summary>Processing state of the record.</summary>
+		public int State { get; set; }
 
 		/// <summary>AI Model used for embedding.</summary>
+		[Required]
 		[StringLength(100)]
 		public string EmbeddingModel { get; set; }
+
+		/// <summary>The number of vectors contained within the embedding, e.g., 256, 512, 1024, 2048.</summary>
+		public int EmbeddingSize { get; set; }
+
+		/// <summary>Binary representation of embedding vectors generated for this file part.</summary>
+		public byte[] Embedding { get; set; }
+
+		/// <summary>Indicates if the record is active and considered in searches.</summary>
+		public bool IsEnabled { get; set; }
+
+		/// <summary>UTC date and time when the part was created.</summary>
+		public DateTime Created { get; set; }
+
+		/// <summary>UTC date and time when the part was last modified.</summary>
+		public DateTime Modified { get; set; }
+
+		#region Foreign Key Items
+
+		/// <summary>Foreign key item</summary>
+		[ForeignKey(nameof(FileId))]
+		public virtual File File { get; set; }
+
+		#endregion
 
 		#region Clone and Copy Methods
 
@@ -49,17 +84,23 @@ namespace Embeddings.Model
 			=> Copy(this, target, copyKey);
 
 		/// <summary>Copy to existing object.</summary>
-		public static FilePart Copy(FilePart source, FilePart target, bool copyKey = false)
-		{
+		public static FilePart Copy(FilePart source, FilePart target, bool copyKey = false) {
 			if (copyKey)
 				target.Id = source.Id;
-			target.PartText = source.PartText;
-			target.PartIndex = source.PartIndex;
-			target.PartCount = source.PartCount;
 			target.FileId = source.FileId;
-			target.Embedding = source.Embedding;
-			target.EmbeddingSize = source.EmbeddingSize;
+			target.Text = source.Text;
+			target.Index = source.Index;
+			target.Count = source.Count;
+			target.GroupFlag = source.GroupFlag;
+			target.HashType = source.HashType;
+			target.Hash = source.Hash;
+			target.State = source.State;
 			target.EmbeddingModel = source.EmbeddingModel;
+			target.EmbeddingSize = source.EmbeddingSize;
+			target.Embedding = source.Embedding;
+			target.IsEnabled = source.IsEnabled;
+			target.Created = source.Created;
+			target.Modified = source.Modified;
 			return target;
 		}
 
