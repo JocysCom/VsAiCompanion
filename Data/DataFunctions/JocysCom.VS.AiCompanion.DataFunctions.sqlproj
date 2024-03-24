@@ -71,8 +71,6 @@
     <None Include="Deployment\DataFunctions_UnInstall.sql" />
     <None Include="Deployment\Test_RegexBase.sql" />
     <None Include="Deployment\Test_StringBase.sql" />
-    <Build Include="Embedding\Tables\FileEmbedding.sql" />
-    <Build Include="Embedding\Tables\File.sql" />
     <Build Include="Security\Embedding.sql" />
     <None Include="Compare\ProjectToDatabase.scmp" />
   </ItemGroup>
@@ -93,6 +91,8 @@
     <Build Include="Embedding\Stored Procedures\sp_getSimilarFiles.sql" />
     <Build Include="Embedding\Stored Procedures\sp_getMostSimilarFiles.sql" />
     <Build Include="Embedding\Stored Procedures\sp_getSimilarFileEmbeddings.sql" />
+    <Build Include="Embedding\Tables\FilePart.sql" />
+    <Build Include="Embedding\Tables\File.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Script.PreDeployment.sql" />

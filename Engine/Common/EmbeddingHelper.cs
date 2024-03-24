@@ -1,4 +1,4 @@
-﻿using Embeddings.DataAccess;
+﻿using Embeddings;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			//var url = service.BaseUrl + $"openai/deployments/{model}/embeddings?api-version=2023-05-15";
 			var files = Directory.GetFiles(path, "*.txt");
 #if NETFRAMEWORK
-			var db = new Embeddings.DataAccess.EmbeddingsContext();
+			var db = new EmbeddingsContext();
 			db.Database.Connection.ConnectionString = connectionString;
 #else
 			var db = EmbeddingsContext.Create(connectionString);
@@ -44,7 +44,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var results = await client.GetEmbedding(modelName, input);
 				foreach (var result in results)
 				{
-					var embedding = new Embeddings.Model.FileEmbedding();
+					var embedding = new Embeddings.Model.FilePart();
 					embedding.Embedding = VectorToBinary(result.Value);
 					embedding.FileId = file.Id;
 					embedding.EmbeddingModel = modelName;

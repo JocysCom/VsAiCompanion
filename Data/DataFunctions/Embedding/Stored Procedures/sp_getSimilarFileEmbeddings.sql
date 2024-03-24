@@ -9,12 +9,12 @@ BEGIN
     ;WITH RankedFiles AS
     (
         SELECT
-            fe.*,
-            RowNum = ROW_NUMBER() OVER (ORDER BY [Embedding].CosineSimilarity(@promptEmbedding, fe.[Embedding]) DESC)
+            fp.*,
+            RowNum = ROW_NUMBER() OVER (ORDER BY [Embedding].CosineSimilarity(@promptEmbedding, fp.[Embedding]) DESC)
         FROM
-            FileEmbedding AS fe
+            [FilePart] AS fp
         INNER JOIN
-            [Embedding].[File] AS f ON f.Id = fe.FileId
+            [File] AS f ON f.Id = fp.FileId
     )
     SELECT
         *

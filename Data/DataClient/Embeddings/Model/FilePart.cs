@@ -8,7 +8,7 @@ namespace Embeddings.Model
 	/// <summary>File Embedding</summary>
 	[GeneratedCode("MainModel", "2023.1.19")]
 	[Table("FileEmbedding", Schema = "Embedding")]
-	public partial class FileEmbedding
+	public partial class FilePart
 	{
 
 		/// <summary>Id (unique primary key).</summary>
@@ -41,15 +41,15 @@ namespace Embeddings.Model
 		#region Clone and Copy Methods
 
 		/// <summary>Clone to new object.</summary>
-		public FileEmbedding Clone(bool copyKey = false)
-			=> Copy(this, new FileEmbedding(), copyKey);
+		public FilePart Clone(bool copyKey = false)
+			=> Copy(this, new FilePart(), copyKey);
 
 		/// <summary>Copy to existing object.</summary>
-		public FileEmbedding Copy(FileEmbedding target, bool copyKey = false)
+		public FilePart Copy(FilePart target, bool copyKey = false)
 			=> Copy(this, target, copyKey);
 
 		/// <summary>Copy to existing object.</summary>
-		public static FileEmbedding Copy(FileEmbedding source, FileEmbedding target, bool copyKey = false)
+		public static FilePart Copy(FilePart source, FilePart target, bool copyKey = false)
 		{
 			if (copyKey)
 				target.Id = source.Id;

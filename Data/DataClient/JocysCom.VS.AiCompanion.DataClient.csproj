@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net48;net8.0</TargetFrameworks>
+		<Nullable>disable</Nullable>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<Title>Jocys.com VS AI Companion Data Client</Title>
+		<Description>AI Companion data client for embeddings database.</Description>
+		<Copyright>Jocys.com</Copyright>
+		<Product>VS AI Companion Data Client</Product>
+		<Company>Jocys.com</Company>
+		<Authors>Jocys.com Team</Authors>
+		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
+		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<AssemblyVersion>1.8.6</AssemblyVersion>
+		<FileVersion>1.8.6</FileVersion>
+		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.17" />
+		<PackageReference Include="System.Data.OracleClient" Version="1.0.8" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+		<PackageReference Include="System.Data.Odbc" Version="8.0.0" />
+		<PackageReference Include="System.Data.OleDb" Version="8.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<PackageReference Include="EntityFramework" Version="6.4.4" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<Reference Include="System.Data.DataSetExtensions" />
+		<Reference Include="System.Data.Entity" />
+		<Reference Include="System.Data.Linq" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="MainModel.cs" />
+	  <Compile Remove="MainModel.tt.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="MainModel.cs" />
+	  <None Include="MainModel.tt.cs" />
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
+	</Target>
+
+</Project>

@@ -10,11 +10,11 @@ BEGIN
     (
         SELECT
             f.*,
-            RowNum = ROW_NUMBER() OVER (ORDER BY [Embedding].CosineSimilarity(@promptEmbedding, fe.[Embedding]) DESC)
+            RowNum = ROW_NUMBER() OVER (ORDER BY [Embedding].CosineSimilarity(@promptEmbedding, fp.[Embedding]) DESC)
         FROM
-            FileEmbedding AS fe
+            [FilePart] AS fp
         INNER JOIN
-            [Embedding].[File] AS f ON f.Id = fe.FileId
+            [Embedding].[File] AS f ON f.Id = fp.FileId
     )
     SELECT
         *

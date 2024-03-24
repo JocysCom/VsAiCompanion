@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.CodeDom.Compiler;
 
-namespace Embeddings.DataAccess
+namespace Embeddings
 {
 	/// <summary>Embeddings Context</summary>
 	[GeneratedCode("MainModel", "2023.1.19")]
@@ -64,7 +64,7 @@ namespace Embeddings.DataAccess
 		public virtual DbSet<File> Files { get; set; }
 
 		/// <summary>File Embedding</summary>
-		public virtual DbSet<FileEmbedding> FileEmbeddings { get; set; }
+		public virtual DbSet<FilePart> FileEmbeddings { get; set; }
 
 	}
 }

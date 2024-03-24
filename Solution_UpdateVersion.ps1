@@ -230,6 +230,8 @@ function GetConfigurationFiles
 	[Config[]]$items = @()
 	$items += (GetConfig "Shared\JocysCom.VS.AiCompanion.Shared.csproj")
 	$items += (GetConfig "Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj")
+	$items += (GetConfig "Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj")
+	$items += (GetConfig "Data\DataFunctions\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Engine\JocysCom.VS.AiCompanion.Engine.csproj")
 	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
 	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")

@@ -111,7 +111,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_chart_radar}" />
-						<Label Content="Embedding" />
+						<Label Content="Embeddings" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="EmbeddingPanel" DataType="Embeddings" />

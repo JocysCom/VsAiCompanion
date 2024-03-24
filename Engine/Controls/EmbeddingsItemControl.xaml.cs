@@ -8,14 +8,11 @@ using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Linq;
 using System.Threading.Tasks;
-
-
-
+using Embeddings;
 #if NETFRAMEWORK
 using System.Data.SqlClient;
 using Embeddings.Model;
 #else
-using Embeddings.DataAccess;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 #endif
@@ -230,7 +227,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var results = await client.GetEmbedding(Item.AiModel, input);
 				LogTextBox.Text = " Done.\r\n";
 #if NETFRAMEWORK
-				var db = new Embeddings.DataAccess.EmbeddingsContext();
+				var db = new EmbeddingsContext();
 				db.Database.Connection.ConnectionString = Item.Target;
 #else
 				var db = EmbeddingsContext.Create(Item.Target);
@@ -254,7 +251,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Assuming `FileSimilarity` is the result type.
 				var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
 #if NETFRAMEWORK
-				var similarFiles = db.Database.SqlQuery<FileEmbedding>(
+				var similarFiles = db.Database.SqlQuery<FilePart>(
 					sqlCommand, embeddingParam, skipParam, takeParam)
 					.ToList();
 #else

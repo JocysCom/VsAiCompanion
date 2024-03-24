@@ -6,14 +6,14 @@ BEGIN
     SET NOCOUNT ON;
 	SELECT TOP 10
 		f1.[Url] AS Url1, f2.[Url] AS Url2,
-		[Embedding].CosineSimilarity(fe1.[Embedding], fe2.[Embedding]) AS Similarity
+		[Embedding].CosineSimilarity(fp1.[Embedding], fp2.[Embedding]) AS Similarity
 	FROM
-		FileEmbedding AS fe1
+		FilePart AS fp1
 	CROSS JOIN
-		FileEmbedding AS fe2
-	INNER JOIN [File] f1 ON f1.Id = fe1.FileId
-	INNER JOIN [File] f2 ON f2.Id = fe2.FileId
+		FilePart AS fp2
+	INNER JOIN [File] f1 ON f1.Id = fp1.FileId
+	INNER JOIN [File] f2 ON f2.Id = fp2.FileId
 	WHERE
-		fe1.Id != fe2.Id
+		fp1.Id != fp2.Id
 	ORDER BY Similarity DESC
 END
