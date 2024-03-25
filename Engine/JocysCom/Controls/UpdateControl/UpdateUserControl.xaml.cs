@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -51,6 +52,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		bool InstallMode;
 
+		public bool EnableReplace { get; set; }
+		public bool EnableRestart { get; set; }
 
 		/// <summary>
 		/// Path to GitHub file on the local disk.
@@ -98,7 +101,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			if (Releases?.Count > 0)
 			{
 				// Get description of versions that are higher than the current version.
-				var changes = Releases.Where(x => currentVersion < Version.Parse(x.name)).ToList();
+				var changes = Releases.Where(x => currentVersion < Version.Parse(ExtractVersionFromName(x.tag_name))).ToList();
 				changesText = string.Join(Environment.NewLine, changes.Select(x => x.body));
 			}
 			LogTextBox.Text = changesText + "\r\n\r\n";
@@ -115,17 +118,17 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				Version.TryParse(Settings.MinVersion, out minVersion);
 				Releases = gitReleases
 					.Where(x => !string.IsNullOrWhiteSpace(x.name))
-					.Where(x => x.assets.Any(y => Settings.GitHubAssetName.Equals(y.name, System.StringComparison.OrdinalIgnoreCase)))
-					.Where(x => Version.TryParse(x.name, out _))
+					.Where(x => x.assets.Any(y => Settings.GitHubAssetName.EndsWith(y.name, System.StringComparison.OrdinalIgnoreCase)))
+					.Where(x => Version.TryParse(ExtractVersionFromName(x.tag_name), out _))
 					.Where(x => Settings.IncludePrerelease || x.prerelease == false)
-					.Where(x => minVersion <= Version.Parse(x.name))
-					.OrderByDescending(x => Version.Parse(x.name))
+					.Where(x => minVersion <= Version.Parse(ExtractVersionFromName(x.tag_name)))
+					.OrderByDescending(x => Version.Parse(ExtractVersionFromName(x.tag_name)))
 					.ToList();
 				ReleaseList.Clear();
 				for (int i = 0; i < Releases.Count; i++)
 				{
 					var release = Releases[i];
-					var name = i == 0 ? $"Latest Version {release.name}" : release.name;
+					var name = i == 0 ? $"Latest Version {ExtractVersionFromName(release.tag_name)}" : ExtractVersionFromName(release.tag_name);
 					ReleaseList.Add(new KeyValue<long, string>(release.id, name));
 				}
 				if (Releases.Count > 0)
@@ -143,6 +146,16 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				AddLog(ex.ToString());
 			}
 			RemoveTask?.Invoke(this, e);
+		}
+
+		static string ExtractVersionFromName(string name)
+		{
+			var pattern = @"v?\d+(\.\d+)*";
+			var regex = new Regex(pattern);
+			var match = regex.Match(name);
+			return match.Success
+				? match.Value
+				: "";
 		}
 
 		private async void DownloadButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -166,7 +179,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			if (selectedRelease == null)
 				return;
 			var asset = selectedRelease.assets
-				.First(x => Settings.GitHubAssetName.Equals(x.name, System.StringComparison.OrdinalIgnoreCase));
+				.First(x => Settings.GitHubAssetName.EndsWith(x.name, System.StringComparison.OrdinalIgnoreCase));
 			oldProgress = 0;
 			_downloader = new Downloader();
 			_downloader.Params.SourceUrl = asset.browser_download_url;
@@ -315,6 +328,11 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		bool Step5ReplaceFiles()
 		{
+			if (!EnableReplace)
+			{
+				AddLog("EnableReplace = False\r\n");
+				return false;
+			}
 			AddLog("Replacing Files...\r\n");
 			var args = new string[] {
 				$"/{nameof(UpdateProcessHelper.ReplaceFiles)}",
@@ -328,13 +346,20 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				UpdateProcessHelper.RunElevated(args);
 			return true;
 		}
+
 		private void RestartButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
 			Step6RestartApp();
 		}
-		void Step6RestartApp()
+
+		bool Step6RestartApp()
 		{
+			if (!EnableRestart)
+			{
+				AddLog("EnableRestart = False\r\n");
+				return false;
+			}
 			AddLog("Restarting...\r\n");
 			Task.Delay(1000).Wait();
 			var args = new string[] {
@@ -343,6 +368,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			};
 			UpdateProcessHelper.RunProcessAsync(args);
 			System.Windows.Application.Current.Shutdown();
+			return true;
 		}
 		private void ReleaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{

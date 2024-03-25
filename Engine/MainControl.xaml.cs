@@ -1,7 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
-using JocysCom.ClassLibrary.Controls.UpdateControl;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,17 +35,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			EmbeddingTabItem.Visibility = InitHelper.IsDebug
 						? Visibility.Visible
 						: Visibility.Collapsed;
-			var appExeAssembly = System.Reflection.Assembly.GetEntryAssembly();
-			if (!Global.IsVsExtension)
-			{
-				var control = new UpdateUserControl();
-				var us = Global.AppSettings.UpdateSettings;
-				us.UpdateMissingDefaults(appExeAssembly);
-				control.Settings = us;
-				control.AddTask += UpdatesPanel_AddTask;
-				control.RemoveTask += UpdatesPanel_RemoveTask;
-				UpdatesTabItem.Content = control;
-			}
 			// Subscribe to the application-wide Activated and Deactivated events
 			Application.Current.Deactivated += Current_Deactivated;
 		}
@@ -54,16 +42,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private void Current_Deactivated(object sender, System.EventArgs e)
 		{
 			Global.SaveSettings();
-		}
-
-		private void UpdatesPanel_AddTask(object sender, System.EventArgs e)
-		{
-			Global.MainControl.InfoPanel.AddTask(e);
-		}
-
-		private void UpdatesPanel_RemoveTask(object sender, System.EventArgs e)
-		{
-			Global.MainControl.InfoPanel.RemoveTask(e);
 		}
 
 		private void MainWindowPanel_Unloaded(object sender, RoutedEventArgs e)

@@ -73,7 +73,11 @@
 				Width="64"
 				Height="64"
 				VerticalAlignment="Top" />
-			<StackPanel Grid.Column="1" Grid.ColumnSpan="5" Orientation="Horizontal">
+			<StackPanel
+				Grid.Column="1"
+				Grid.ColumnSpan="5"
+				Margin="0,3,0,0"
+				Orientation="Horizontal">
 				<controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
 				<CheckBox x:Name="MonitorAndUpdateCheckbox" Content="Monitor and Auto Update" IsChecked="{Binding AutoUpdate, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>

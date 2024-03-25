@@ -155,6 +155,7 @@
 						<Label Content="Updates" />
 					</StackPanel>
 				</TabItem.Header>
+				<controls:UpdatesControl x:Name="UpdatesPanel" />
 			</TabItem>
 			<TabItem>
 				<TabItem.Header>

@@ -50,6 +50,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private UpdateSettings _UpdateSettings;
 
+		public UpdateSettings PandocUpdateSettings
+		{
+			get => _PandocUpdateSettings = _PandocUpdateSettings ?? new UpdateSettings();
+			set => _PandocUpdateSettings = value;
+		}
+		private UpdateSettings _PandocUpdateSettings;
+
 		#region Positions and Locations
 
 		public PositionSettings StartPosition
