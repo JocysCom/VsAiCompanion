@@ -116,14 +116,13 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				var gitReleases = await client.GetGitHubReleasesAsync(Settings.GitHubCompany, Settings.GitHubProduct);
 				Version minVersion;
 				Version.TryParse(Settings.MinVersion, out minVersion);
-				Releases = gitReleases
-					.Where(x => !string.IsNullOrWhiteSpace(x.name))
-					.Where(x => x.assets.Any(y => Settings.GitHubAssetName.EndsWith(y.name, System.StringComparison.OrdinalIgnoreCase)))
-					.Where(x => Version.TryParse(ExtractVersionFromName(x.tag_name), out _))
-					.Where(x => Settings.IncludePrerelease || x.prerelease == false)
-					.Where(x => minVersion <= Version.Parse(ExtractVersionFromName(x.tag_name)))
-					.OrderByDescending(x => Version.Parse(ExtractVersionFromName(x.tag_name)))
-					.ToList();
+				var filter = gitReleases.Where(x => !string.IsNullOrWhiteSpace(x.tag_name));
+				filter = filter.Where(x => x.assets.Any(y => y.name.EndsWith(Settings.GitHubAssetName, System.StringComparison.OrdinalIgnoreCase)));
+				filter = filter.Where(x => Version.TryParse(ExtractVersionFromName(x.tag_name), out _));
+				filter = filter.Where(x => Settings.IncludePrerelease || x.prerelease == false);
+				filter = filter.Where(x => minVersion <= Version.Parse(ExtractVersionFromName(x.tag_name)));
+				filter = filter.OrderByDescending(x => Version.Parse(ExtractVersionFromName(x.tag_name)));
+				Releases = gitReleases.ToList();
 				ReleaseList.Clear();
 				for (int i = 0; i < Releases.Count; i++)
 				{
@@ -179,7 +178,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			if (selectedRelease == null)
 				return;
 			var asset = selectedRelease.assets
-				.First(x => Settings.GitHubAssetName.EndsWith(x.name, System.StringComparison.OrdinalIgnoreCase));
+				.First(x => x.name.EndsWith(Settings.GitHubAssetName, System.StringComparison.OrdinalIgnoreCase));
 			oldProgress = 0;
 			_downloader = new Downloader();
 			_downloader.Params.SourceUrl = asset.browser_download_url;
