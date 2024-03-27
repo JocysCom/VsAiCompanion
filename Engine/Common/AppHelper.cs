@@ -486,10 +486,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var item = new EmbeddingsItem();
 			item.Name = $"Embedding {DateTime.Now:yyyyMMdd_HHmmss}";
-			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
-			Global.AppSettings.AiServices.FirstOrDefault();
+			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)
+				?? Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
 			item.AiModel = defaultAiService?.DefaultAiModel ?? "text-embedding-3-large";
+			item.Source = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item), true);
+			item.Target = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item) + ".db", true);
 			SetIconToDefault(item);
 			return item;
 		}

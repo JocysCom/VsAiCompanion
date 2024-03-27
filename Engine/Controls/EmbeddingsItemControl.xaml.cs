@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using JocysCom.VS.AiCompanion.DataClient;
 using System;
+using System.IO;
+
 
 #if NETFRAMEWORK
 using System.Data.SqlClient;
@@ -71,12 +73,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<FilePartGroup, string> FilePartGroups
 		=> ClassLibrary.Runtime.Attributes.GetDictionary(
 			(FilePartGroup[])Enum.GetValues(typeof(FilePartGroup)));
-
-		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			var path = AssemblyInfo.ParameterizePath(Item.Source, true);
-			ControlsHelper.OpenUrl(path);
-		}
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -141,7 +137,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = dialog.ShowDialog();
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
-			Item.Source = dialog.SelectedPath;
+			Item.Source = AssemblyInfo.ParameterizePath(dialog.SelectedPath, true);
+		}
+
+		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			var path = AssemblyInfo.ExpandPath(Item.Source);
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+			ControlsHelper.OpenUrl(path);
 		}
 
 		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -237,5 +241,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogTextBox.Text += "\r\n" + text + "\r\n\r\n";
 			}
 		}
+
+		private void CreateButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			var path = AssemblyInfo.ExpandPath(Item.Target);
+			switch (Path.GetExtension(path).ToLower())
+			{
+				case ".db":
+					InitLiteDB(path);
+					break;
+				default:
+					break;
+			}
+		}
+
+		void InitLiteDB(string path)
+		{
+
+		}
+
+
 	}
 }

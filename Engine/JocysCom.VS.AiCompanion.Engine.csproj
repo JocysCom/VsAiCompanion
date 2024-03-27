@@ -57,6 +57,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.17" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
@@ -81,6 +82,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
 		<PackageReference Include="EntityFramework" Version="6.4.4" />
 			<Reference Include="Microsoft.Data.ConnectionUI">
 				<HintPath>..\Resources\Microsoft.Data.Connection\net48\Microsoft.Data.ConnectionUI.dll</HintPath>

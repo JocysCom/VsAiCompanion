@@ -242,7 +242,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				// If each item will be saved to a separate file.
 				if (UseSeparateFiles)
 				{
-					var di = GetCreateDirectory(fi);
+					var di = GetRootDirectory(fi);
 					if (!di.Exists)
 						di.Create();
 					for (int i = 0; i < items.Length; i++)
@@ -310,7 +310,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// </summary>
 		public DirectoryInfo RootDirectory =>
 			UseSeparateFiles
-				? GetCreateDirectory(_XmlFile)
+				? GetRootDirectory(_XmlFile)
 				: _XmlFile.Directory;
 
 		/// <summary>
@@ -406,7 +406,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			LoadFrom(_XmlFile.FullName);
 		}
 
-		static DirectoryInfo GetCreateDirectory(FileInfo fi)
+		static DirectoryInfo GetRootDirectory(FileInfo fi)
 		{
 			var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
 			var dirName = Path.GetFileNameWithoutExtension(fi.FullName);
@@ -425,7 +425,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			var settingsLoaded = false;
 			var fi = new FileInfo(fileName);
-			var di = GetCreateDirectory(fi);
+			var di = GetRootDirectory(fi);
 			var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
 			// If configuration file exists then...
 			if (fi.Exists || di.Exists)
@@ -565,9 +565,8 @@ namespace JocysCom.ClassLibrary.Configuration
 		#region Use Separate Files
 
 		/// <summary>
-		/// Generates the full path for a file based on a filename without an extension.
+		/// Get the full path for a file based on a filename with extension.
 		/// </summary>
-		/// <returns>The full path of the file with its extension.</returns>
 		public string GetFileItemFullName(ISettingsFileItem fileItem, string overrideBaseName = null)
 		{
 			var fileFullName = GetFileItemFullName(_XmlFile.FullName, fileItem, overrideBaseName);
@@ -577,13 +576,27 @@ namespace JocysCom.ClassLibrary.Configuration
 			return fileFullName;
 		}
 
+		public string GetFileItemFullBaseName(ISettingsFileItem fileItem)
+		{
+			var fi = new FileInfo(_XmlFile.FullName);
+			var di = GetRootDirectory(fi);
+			var fileName = RemoveInvalidFileNameChars(fileItem.BaseName);
+			var itemPath = fileItem.Path;
+			if (!string.IsNullOrEmpty(itemPath))
+				itemPath = RemoveInvalidPathChars(itemPath);
+			var fileFullName = string.IsNullOrEmpty(itemPath)
+				? Path.Combine(di.FullName, fileName)
+				: Path.Combine(di.FullName, itemPath, fileName);
+			return fileFullName;
+		}
+
 		/// <summary>
 		/// Get item path when using separte files.
 		/// </summary>
 		public static string GetFileItemFullName(string rootPath, ISettingsFileItem fileItem, string overrideBaseName = null)
 		{
 			var fi = new FileInfo(rootPath);
-			var di = GetCreateDirectory(fi);
+			var di = GetRootDirectory(fi);
 			var fileName = RemoveInvalidFileNameChars(overrideBaseName ?? fileItem.BaseName) + fi.Extension;
 			var itemPath = fileItem.Path;
 			if (!string.IsNullOrEmpty(itemPath))
@@ -935,7 +948,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			if (!UseSeparateFiles)
 				return;
 			var fi = new FileInfo(XmlFile.FullName);
-			var di = GetCreateDirectory(fi);
+			var di = GetRootDirectory(fi);
 			SetFileMonitoring(enabled, di.FullName, "*.xml");
 		}
 

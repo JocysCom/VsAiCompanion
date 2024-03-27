@@ -95,18 +95,33 @@
 				Margin="3,0,3,0"
 				Background="{StaticResource BackgroundDark}"
 				Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}" />
-			<Button
-				Name="BrowseButton"
-				Grid.Row="1"
-				Grid.Column="4"
-				MinWidth="75"
-				HorizontalAlignment="Center"
-				Click="BrowseButton_Click">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
-					<Label Content="{x:Static locales:Resources.Browse}" />
-				</StackPanel>
-			</Button>
+			<StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
+
+				<Button
+					Name="BrowseButton"
+					MinWidth="75"
+					HorizontalAlignment="Center"
+					Click="BrowseButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Browse}" />
+					</StackPanel>
+				</Button>
+
+				<Button
+					Name="OpenButton"
+					MinWidth="75"
+					HorizontalAlignment="Center"
+					Click="OpenButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Open}" />
+					</StackPanel>
+				</Button>
+
+
+			</StackPanel>
+
 
 			<!--  Target: Connection String  -->
 			<Label
@@ -122,18 +137,32 @@
 				Margin="3,0,3,0"
 				Background="{StaticResource BackgroundDark}"
 				Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" />
-			<Button
-				Name="EditButton"
-				Grid.Row="2"
-				Grid.Column="4"
-				MinWidth="75"
-				Margin="3,0,0,0"
-				Click="EditButton_Click">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
-					<Label Content="{x:Static locales:Resources.Edit}" />
-				</StackPanel>
-			</Button>
+			<StackPanel Grid.Row="2" Grid.Column="4" Orientation="Horizontal">
+
+				<Button
+					Name="EditButton"
+					MinWidth="75"
+					Margin="3,0,0,0"
+					Click="EditButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Edit}" />
+					</StackPanel>
+				</Button>
+
+				<Button
+					Name="CreateButton"
+					MinWidth="75"
+					Margin="3,0,0,0"
+					Click="CreateButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_database}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Create}" />
+					</StackPanel>
+				</Button>
+
+			</StackPanel>
+
 			<Button
 				Name="ApplySettingsButton"
 				Grid.Row="3"
