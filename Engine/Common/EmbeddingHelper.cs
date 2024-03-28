@@ -8,9 +8,12 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LiteDB;
+using System.Data.Common;
 
 #if NETFRAMEWORK
 using System.Data.SqlClient;
+using System.Data.SQLite;
 #else
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +23,45 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class EmbeddingHelper
 	{
+		//public class MyDbConfiguration : DbConfiguration
+		//{
+		//	public MyDbConfiguration(string connectionString)
+		//	{
+		//		if (connectionString.Contains(".db"))
+		//		{
+		//			SetProviderFactory("System.Data.SQLite.EF6", SQLiteProviderFactory.Instance);
+		//			SetProviderServices("System.Data.SQLite.EF6", (DbProviderServices)SQLiteProviderFactory.Instance.GetService(typeof(DbProviderServices)));
+		//		}
+		//		else
+		//		{
+		//			SetProviderServices("System.Data.SqlClient", SqlProviderServices.inInstance);
+		//		}
+		//	}
+		//}
+
+		public static EmbeddingsContext NewEmbeddingsContext(string connectionString)
+		{
+#if NETFRAMEWORK
+			//var config = new MyDbConfiguration(connectionString);
+			//DbConfiguration.SetConfiguration(config);
+			DbConnection connection;
+			if (connectionString.Contains(".db"))
+				connection = new SQLiteConnection(connectionString);
+			else
+				connection = new SqlConnection(connectionString);
+			var db = new EmbeddingsContext();
+			db.Database.Connection.ConnectionString = connectionString;
+#else
+			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
+			if (connectionString.Contains(".db"))
+				optionsBuilder.UseSqlite(connectionString);
+			else
+				optionsBuilder.UseSqlServer(connectionString);
+			var db = new EmbeddingsContext(optionsBuilder.Options);
+#endif
+			return db;
+		}
+
 
 		public static async Task ConvertToEmbeddingsCSV(string path,
 			string connectionString, AiService service, string modelName,
@@ -29,12 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			//var service = Global.AppSettings.AiServices.FirstOrDefault(x => x.BaseUrl.Contains("azure"));
 			//var url = service.BaseUrl + $"openai/deployments/{model}/embeddings?api-version=2023-05-15";
 			var files = Directory.GetFiles(path, "*.txt");
-#if NETFRAMEWORK
-			var db = new EmbeddingsContext();
-			db.Database.Connection.ConnectionString = connectionString;
-#else
-			var db = EmbeddingsContext.Create(connectionString);
-#endif
+			var db = NewEmbeddingsContext(connectionString);
 			var algorithm = System.Security.Cryptography.SHA256.Create();
 
 			for (int i = 0; i < files.Count(); i++)
@@ -93,6 +130,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public List<Embeddings.Embedding.File> Files { get; set; }
 		public List<Embeddings.Embedding.FilePart> FileParts { get; set; }
 
+
+
 		public async Task SearchEmbeddings(EmbeddingsItem item, string message)
 		{
 			try
@@ -102,12 +141,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var client = new Client(item.AiService);
 				var results = await client.GetEmbedding(item.AiModel, input);
 				Log += " Done.\r\n";
-#if NETFRAMEWORK
-				var db = new EmbeddingsContext();
-				db.Database.Connection.ConnectionString = item.Target;
-#else
-				var db = EmbeddingsContext.Create(item.Target);
-#endif
+				var db = NewEmbeddingsContext(item.Target);
 				// Example values for skip and take
 				int skip = 0;
 				int take = 2;
