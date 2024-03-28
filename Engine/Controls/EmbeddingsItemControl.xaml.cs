@@ -231,7 +231,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			LogTextBox.Text = "";
 			var eh = new EmbeddingHelper();
-			await eh.SearchEmbeddings(Item, Item.Message);
+			await eh.SearchEmbeddings(Item, Item.Message, Item.Skip, Item.Take);
 			foreach (var filPart in eh?.FileParts)
 			{
 				LogTextBox.Text += eh.Log;

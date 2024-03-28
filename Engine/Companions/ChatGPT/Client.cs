@@ -372,10 +372,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				{
 					var eh = new EmbeddingHelper();
 					var lastUserMessage = messagesToSend.Last(x => x.role == message_role.user);
-					var lastSystemMessage = messagesToSend.Last(x => x.role == message_role.system);
 					if (!string.IsNullOrWhiteSpace(lastUserMessage?.content))
 					{
-						await eh.SearchEmbeddings(embeddingItem, lastUserMessage?.content);
+						// Try to get system message before user message.
+						var lastSystemMessage = messagesToSend.LastOrDefault(x => x.role == message_role.system);
+						var lastUserMessageIndex = messagesToSend.IndexOf(lastUserMessage);
+						// If no system message
+						var addNewSystemMessage = false;
+						if (lastSystemMessage == null)
+							addNewSystemMessage = true;
+						// system message is not before user message, add one.
+						else if ((messagesToSend.IndexOf(lastSystemMessage) - 1) != lastUserMessageIndex)
+							addNewSystemMessage = true;
+						if (addNewSystemMessage)
+						{
+							// Insert system message before user message.
+							lastSystemMessage = new chat_completion_message(message_role.system, "");
+							messagesToSend.Insert(lastUserMessageIndex, lastSystemMessage);
+						}
+						await eh.SearchEmbeddings(embeddingItem, lastUserMessage?.content, embeddingItem.Skip, embeddingItem.Take);
 						if (eh.FileParts != null && eh.FileParts.Count > 0)
 						{
 							var systemMessage = "\r\n\r\n";
@@ -391,7 +406,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							lastSystemMessage.content += systemMessage;
 						}
 					}
-
 				}
 			}
 			var secure = new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttps;

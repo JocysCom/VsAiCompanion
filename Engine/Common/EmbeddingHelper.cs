@@ -132,7 +132,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 
 
-		public async Task SearchEmbeddings(EmbeddingsItem item, string message)
+		public async Task SearchEmbeddings(EmbeddingsItem item, string message, int skip, int take)
 		{
 			try
 			{
@@ -142,10 +142,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var results = await client.GetEmbedding(item.AiModel, input);
 				Log += " Done.\r\n";
 				var db = NewEmbeddingsContext(item.Target);
-				// Example values for skip and take
-				int skip = 0;
-				int take = 2;
-
 				var vectors = results[0];
 				Log += "Searching on database...";
 				// Convert your embedding to the format expected by SQL Server.
