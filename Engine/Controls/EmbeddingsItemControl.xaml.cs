@@ -11,10 +11,11 @@ using JocysCom.VS.AiCompanion.DataClient;
 using System;
 using System.IO;
 
-
 #if NETFRAMEWORK
+using System.Data.SQLite;
 using System.Data.SqlClient;
 #else
+using Microsoft.Data.Sqlite;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 #endif
@@ -174,9 +175,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 #else
 			Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog dcd;
 			dcd = new Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog();
-			//Adds all the standard supported databases
-			//DataSource.AddStandardDataSources(dcd);
-			//allows you to add datasources, if you want to specify which will be supported 
+			// Add all the standard supported databases.
+			Microsoft.SqlServer.Management.ConnectionUI.DataSource.AddStandardDataSources(dcd);
+			//Add custom data sources.
 			dcd.DataSources.Add(Microsoft.SqlServer.Management.ConnectionUI.DataSource.SqlDataSource);
 			dcd.SetSelectedDataProvider(Microsoft.SqlServer.Management.ConnectionUI.DataSource.SqlDataSource, Microsoft.SqlServer.Management.ConnectionUI.DataProvider.SqlDataProvider);
 			try
@@ -191,8 +192,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				Item.Target = dcd.ConnectionString;
 			}
-			//OnPropertyChanged(nameof(FilteredConnectionString));
-
 #endif
 		}
 
@@ -248,18 +247,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			switch (Path.GetExtension(path).ToLower())
 			{
 				case ".db":
-					InitLiteDB(path);
+					SqliteHelper.InitSqlLiteDatabase(path);
+					var connectionString = SqliteHelper.NewConnection(path).ConnectionString.ToString();
+					var db = EmbeddingHelper.NewEmbeddingsContext(connectionString);
+					var item = db.Files.FirstOrDefault();
 					break;
 				default:
 					break;
 			}
 		}
-
-		void InitLiteDB(string path)
-		{
-
-		}
-
 
 	}
 }

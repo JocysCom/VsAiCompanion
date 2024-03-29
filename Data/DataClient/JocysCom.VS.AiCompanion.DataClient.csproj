@@ -63,6 +63,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Deployment\File.SQLite.sql" />
+	  <None Remove="Deployment\FilePart.SQLite.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\File.sql" />
+	  <EmbeddedResource Include="Deployment\File.Sqlite.sql" />
+	  <EmbeddedResource Include="Deployment\FilePart.Sqlite.sql" />
+	  <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\FilePart.sql" Link="Deployment\FilePart.sql" />
 	  <None Include="MainModel.cs" />
 	  <None Include="MainModel.tt.cs" />
 	</ItemGroup>
