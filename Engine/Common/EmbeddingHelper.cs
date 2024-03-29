@@ -39,24 +39,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 		//	}
 		//}
 
-		public static EmbeddingsContext NewEmbeddingsContext(string connectionString)
+		public static EmbeddingsContext NewEmbeddingsContext(string connectionStringOrFilPath)
 		{
 #if NETFRAMEWORK
 			//var config = new MyDbConfiguration(connectionString);
 			//DbConfiguration.SetConfiguration(config);
 			DbConnection connection;
-			if (connectionString.Contains(".db"))
-				connection = new SQLiteConnection(connectionString);
+			if (connectionStringOrFilPath.Contains(".db"))
+				connection = new SQLiteConnection(connectionStringOrFilPath);
 			else
-				connection = new SqlConnection(connectionString);
+				connection = new SqlConnection(connectionStringOrFilPath);
 			var db = new EmbeddingsContext();
-			db.Database.Connection.ConnectionString = connectionString;
+			db.Database.Connection.ConnectionString = connectionStringOrFilPath;
 #else
 			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
-			if (connectionString.Contains(".db"))
+			if (connectionStringOrFilPath.EndsWith(".db"))
+			{
+				var connectionString = SqliteHelper.NewConnection(connectionStringOrFilPath).ConnectionString.ToString();
 				optionsBuilder.UseSqlite(connectionString);
+			}
 			else
-				optionsBuilder.UseSqlServer(connectionString);
+				optionsBuilder.UseSqlServer(connectionStringOrFilPath);
 			var db = new EmbeddingsContext(optionsBuilder.Options);
 #endif
 			return db;

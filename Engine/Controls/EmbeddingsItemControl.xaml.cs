@@ -113,10 +113,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			try
 			{
-				var path = AssemblyInfo.ExpandPath(Item.Source);
+				var source = AssemblyInfo.ExpandPath(Item.Source);
+				var target = AssemblyInfo.ExpandPath(Item.Target);
 				await EmbeddingHelper.ConvertToEmbeddingsCSV(
-					path,
-					Item.Target,
+					source,
+					target,
 					Item.AiService, Item.AiModel,
 					Item.FilePartGroup
 					);
