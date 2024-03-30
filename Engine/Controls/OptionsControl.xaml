@@ -237,6 +237,22 @@
 							<Label Content="{x:Static locales:Resources.Reset_Prompting_Settings}" />
 						</StackPanel>
 					</Button>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="W" />
+						<Controls:NumericUpDown
+							x:Name="WindowWidthUpDown"
+							LargeChange="200"
+							Maximum="100000"
+							SmallChange="100"
+							Value="900" />
+						<Label Content="H" />
+						<Controls:NumericUpDown
+							x:Name="WindowHeightUpDown"
+							LargeChange="200"
+							Maximum="100000"
+							SmallChange="100"
+							Value="900" />
+					</StackPanel>
 					<Button
 						Name="ResetUIButton"
 						HorizontalAlignment="Stretch"

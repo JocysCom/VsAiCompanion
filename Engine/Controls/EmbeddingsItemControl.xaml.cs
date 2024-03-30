@@ -75,9 +75,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		=> ClassLibrary.Runtime.Attributes.GetDictionary(
 			(FilePartGroup[])Enum.GetValues(typeof(FilePartGroup)));
 
+		bool HelpInit;
+
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
+			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
+			{
+				HelpInit = true;
+				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature ‐ Embeddings.rtf");
+				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+			}
 		}
 
 		public EmbeddingsItem Item
@@ -258,5 +265,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		private void MainTabControl_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+		{
+
+		}
 	}
 }

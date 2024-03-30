@@ -1024,6 +1024,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use to capture screenshots of a similar size..
+        /// </summary>
+        public static string Reset_UI_Settings_ToolTip {
+            get {
+                return ResourceManager.GetString("Reset_UI_Settings_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Response Streaming.
         /// </summary>
         public static string Response_Streaming {

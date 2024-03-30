@@ -192,11 +192,16 @@
 					SelectedValue="{Binding FilePartGroup}"
 					SelectedValuePath="Key" />
 				<Label x:Name="SkipLabel" Content="Skip" />
-				<JcControls:NumericUpDown x:Name="SkipUpdown" Value="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" />
+				<JcControls:NumericUpDown x:Name="SkipUpdown" Maximum="9223372036854775807" Value="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" />
 				<Label x:Name="TakeLabel" Content="Take" />
-				<JcControls:NumericUpDown x:Name="TakeUpdown" Value="{Binding Take, UpdateSourceTrigger=PropertyChanged}" />
+				<JcControls:NumericUpDown x:Name="TakeUpdown" Maximum="9223372036854775807" Value="{Binding Take, UpdateSourceTrigger=PropertyChanged}" />
 				<Label x:Name="MaxTokensLabel" Content="Max Tokens" />
-				<JcControls:NumericUpDown x:Name="MaxTokensUpdown" Value="{Binding MaxTokens, UpdateSourceTrigger=PropertyChanged}" />
+				<JcControls:NumericUpDown
+					x:Name="MaxTokensUpdown"
+					LargeChange="1024"
+					Maximum="9223372036854775807"
+					SmallChange="128"
+					Value="{Binding MaxTokens, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>
 			<!--  System Instructions  -->
 			<Label
@@ -255,8 +260,31 @@
 			x:Name="MainTabControl"
 			Grid.Row="3"
 			Margin="4"
-			x:FieldModifier="public">
+			x:FieldModifier="public"
+			SelectionChanged="MainTabControl_SelectionChanged">
 			<TabItem Name="HelpTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Question}" />
+						<Label Content="{x:Static locales:Resources.Help}" />
+					</StackPanel>
+				</TabItem.Header>
+				<RichTextBox x:Name="HelpRichTextBox">
+					<RichTextBox.OpacityMask>
+						<VisualBrush>
+							<VisualBrush.Visual>
+								<Border
+									Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
+									Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
+									Background="White"
+									CornerRadius="0,5,5,5"
+									SnapsToDevicePixels="True" />
+							</VisualBrush.Visual>
+						</VisualBrush>
+					</RichTextBox.OpacityMask>
+				</RichTextBox>
+			</TabItem>
+			<TabItem Name="LogTabPage">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_list}" />

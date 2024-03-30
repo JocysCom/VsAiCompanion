@@ -86,7 +86,11 @@
 			Orientation="Horizontal">
 			<CheckBox Content="{x:Static locales:Resources.Is_Azure_OpenAI}" IsChecked="{Binding IsAzureOpenAI}" />
 			<CheckBox Content="{x:Static locales:Resources.Response_Streaming}" IsChecked="{Binding ResponseStreaming}" />
-			<JcControls:NumericUpDown Value="{Binding ResponseTimeout}" />
+			<JcControls:NumericUpDown
+				LargeChange="60"
+				Maximum="100000"
+				SmallChange="5"
+				Value="{Binding ResponseTimeout}" />
 			<Label Content="{x:Static locales:Resources.Response_Timeout}" />
 		</StackPanel>
 

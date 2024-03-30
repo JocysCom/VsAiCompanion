@@ -214,6 +214,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void StartPosition_PositionLoaded(object sender, System.EventArgs e)
 		{
 			LoadPositions();
+			// The size of the grid position could remain the same after resizing the parent window.
+			// Set _LoadGridPosition to true to ensure that the grid separator position will be loaded
+			// as soon as the grid size changes due to the top window size change.
+			_LoadGridPosition = true;
 		}
 
 		void LoadPositions()

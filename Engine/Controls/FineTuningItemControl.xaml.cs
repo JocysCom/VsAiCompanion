@@ -146,7 +146,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature ‐ Fine‐Tuning.rtf");
 				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
 			}
-
 		}
 
 		#region ■ INotifyPropertyChanged

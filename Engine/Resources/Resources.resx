@@ -537,4 +537,7 @@
   <data name="Create" xml:space="preserve">
     <value>Create</value>
   </data>
+  <data name="Reset_UI_Settings_ToolTip" xml:space="preserve">
+    <value>Use to capture screenshots of a similar size.</value>
+  </data>
 </root>

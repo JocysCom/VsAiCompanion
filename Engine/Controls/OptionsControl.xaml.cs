@@ -84,6 +84,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.Resources.Enable_spell_check_for_the_chat_textbox);
+			AppHelper.AddHelp(ResetUIButton, Engine.Resources.Resources.Reset_UI_Settings_ToolTip);
 		}
 
 		private void ApplySettingsButton_Click(object sender, RoutedEventArgs e)
@@ -118,15 +119,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// </summary>
 		private void ResetUIButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (!Global.IsVsExtension)
-			{
-				//Global.MainControl.ActualWidth = 900
-			}
 			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.TaskData);
 			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.TemplateData);
 			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.FineTuningData);
 			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.AssistantData);
 			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.ListsData);
+			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.EmbeddingsData);
+			var ps = Global.AppSettings.StartPosition;
+			if (!Global.IsVsExtension)
+			{
+				var window = ControlsHelper.GetParent<Window>(this);
+				var w = Math.Max((double)WindowWidthUpDown.Value, window.MinWidth);
+				var h = Math.Max((double)WindowHeightUpDown.Value, window.MinHeight);
+				var content = (FrameworkElement)window.Content;
+				// Get space taken by the window borders.
+				var wSpace = window.ActualWidth - content.ActualWidth;
+				var hSpace = window.ActualHeight - content.ActualHeight;
+				var size = new Size(w + wSpace, h + hSpace);
+				var newSize = PositionSettings.ConvertToDiu(size);
+				ps.Left = Math.Round(ps.Left);
+				ps.Top = Math.Round(ps.Top);
+				ps.Width = newSize.Width;
+				ps.Height = newSize.Height;
+				ps.LoadPosition(window);
+			}
 		}
 	}
 

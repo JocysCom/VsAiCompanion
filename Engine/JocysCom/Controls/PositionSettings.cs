@@ -45,6 +45,9 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public event EventHandler PositionLoaded;
 
+		public void RaisePositionLoaded()
+			=> PositionLoaded?.Invoke(this, EventArgs.Empty);
+
 		/// <summary>
 		/// Call on Window_SourceInitialized event.
 		/// </summary>
@@ -93,7 +96,7 @@ namespace JocysCom.ClassLibrary.Controls
 			w.Width = pixRectangle.Width;
 			w.Height = pixRectangle.Height;
 			w.WindowState = overrideState ?? WindowState;
-			PositionLoaded?.Invoke(this, EventArgs.Empty);
+			RaisePositionLoaded();
 		}
 
 		#region Helper Functions
