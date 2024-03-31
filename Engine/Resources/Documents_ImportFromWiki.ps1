@@ -30,7 +30,7 @@ function Convert-MarkdownToRtf {
 		$ResourcePath = $WikiFolderPath
 		Write-Host "Resources: $ResourcePath"
 		$FileBase = $File.BaseName -replace '[-]', ' '
-		$FileBase = $File.BaseName -replace '‐', '-'
+		$FileBase = $FileBase -replace '‐', '-'
 		
 		$InputFilePath = $File.FullName
         $OutputHtmlFileName =  $FileBase + ".html"

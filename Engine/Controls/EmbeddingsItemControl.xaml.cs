@@ -75,6 +75,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		=> ClassLibrary.Runtime.Attributes.GetDictionary(
 			(EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup)));
 
+
+		public Dictionary<EmbeddingGroup, string> EmbeddingGroupFlags
+		{
+			get
+			{
+				if (_EmbeddingGroupFlags == null)
+				{
+					var values = (EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup));
+					_EmbeddingGroupFlags = ClassLibrary.Runtime.Attributes.GetDictionary(values);
+				}
+				return _EmbeddingGroupFlags;
+			}
+			set => _EmbeddingGroupFlags = value;
+		}
+		Dictionary<EmbeddingGroup, string> _EmbeddingGroupFlags;
+
 		bool HelpInit;
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -266,9 +282,5 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private void MainTabControl_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-		{
-
-		}
 	}
 }

@@ -273,9 +273,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseEmbeddings { get => _UseEmbeddings; set => SetProperty(ref _UseEmbeddings, value); }
 		bool _UseEmbeddings;
 
+		[DefaultValue("")]
+		public string EmbeddingGroupName { get => _EmbeddingGroupName; set => SetProperty(ref _EmbeddingGroupName, value); }
+		string _EmbeddingGroupName;
+
 		[DefaultValue(EmbeddingGroup.None)]
-		public EmbeddingGroup FilePartGroup { get => _FilePartGroup; set => SetProperty(ref _FilePartGroup, value); }
-		EmbeddingGroup _FilePartGroup;
+		public EmbeddingGroup EmbeddingGroupFlag { get => _EmbeddingGroupFlag; set => SetProperty(ref _EmbeddingGroupFlag, value); }
+		EmbeddingGroup _EmbeddingGroupFlag;
 
 		#endregion
 

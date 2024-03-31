@@ -186,25 +186,19 @@
 				Grid.Column="2"
 				HorizontalAlignment="Left"
 				Orientation="Horizontal">
-				<TextBox
-					Name="EmbeddingGroupNameTextBox"
-					MinWidth="256"
-					Margin="0"
-					Padding="6"
-					BorderThickness="0"
-					Text="{Binding GroupName}" />
+				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="256" Text="{Binding GroupName}" />
 				<Label
 					x:Name="EmbeddingGroupFlagLabel"
 					Grid.Row="3"
 					Grid.Column="1"
 					Margin="3,0,0,0"
-					Content="Group Flags" />
+					Content="Group Flag" />
 				<ComboBox
 					Name="EmbeddingGroupComboBox"
 					HorizontalAlignment="Stretch"
 					DisplayMemberPath="Value"
-					ItemsSource="{Binding EmbeddingGroups, ElementName=This}"
-					SelectedValue="{Binding GroupFlag}"
+					ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
+					SelectedValue="{Binding EmbeddingGroupFlag}"
 					SelectedValuePath="Key" />
 			</StackPanel>
 

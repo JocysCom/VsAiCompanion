@@ -231,51 +231,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
 				(EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup)));
 
-		public Dictionary<ContextType, string> DataTypes
-		{
-			get
-			{
-				if (_DataTypes == null)
-				{
-					var values = new ContextType[] {
-						ContextType.Clipboard,
-						ContextType.Selection,
-						ContextType.ActiveDocument,
-						ContextType.OpenDocuments,
-						ContextType.SelectedDocuments,
-						ContextType.CurrentProject,
-						ContextType.SelectedProject,
-						ContextType.Solution,
-					};
-					_DataTypes = ClassLibrary.Runtime.Attributes.GetDictionary(values);
-				}
-				return _DataTypes;
-			}
-			set => _DataTypes = value;
-		}
-		Dictionary<ContextType, string> _DataTypes;
-
-
 		public BindingList<EnumComboBox.CheckBoxViewModel> AttachContexts
 		{
 			get
 			{
 				if (_AttachContexts == null)
-				{
 					_AttachContexts = EnumComboBox.GetItemSource<ContextType>();
-				}
 				return _AttachContexts;
 			}
 			set => _AttachContexts = value;
 		}
 		BindingList<EnumComboBox.CheckBoxViewModel> _AttachContexts;
 
+		public BindingList<EnumComboBox.CheckBoxViewModel> EmbeddingGroupFlags
+		{
+			get
+			{
+				if (_EmbeddingGroupFlags == null)
+					_EmbeddingGroupFlags = EnumComboBox.GetItemSource<EmbeddingGroup>();
+				return _EmbeddingGroupFlags;
+			}
+			set => _EmbeddingGroupFlags = value;
+		}
+		BindingList<EnumComboBox.CheckBoxViewModel> _EmbeddingGroupFlags;
 
 		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
 		{
 			get
 			{
-				if (_DataTypes == null)
+				if (_MessageBoxOperations == null)
 				{
 					var values = (MessageBoxOperation[])Enum.GetValues(typeof(MessageBoxOperation));
 					_MessageBoxOperations = ClassLibrary.Runtime.Attributes.GetDictionary(values);

@@ -422,7 +422,7 @@
 						</WrapPanel>
 					</Grid>
 				</TabItem>
-				<TabItem x:Name="ListsTabItem" x:FieldModifier="public">
+				<TabItem x:Name="PersonalizedTabItem" x:FieldModifier="public">
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
 							<ContentControl Content="{StaticResource Icon_list}" />
@@ -501,32 +501,43 @@
 										SelectedValuePath="Key" />
 								</StackPanel>
 							</GroupBox>
-
-
-							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
-								<GroupBox.Header>
-									<Label x:Name="EmbeddingsLabel" Padding="0" Content="Embedding Groups" />
-								</GroupBox.Header>
-								<StackPanel Orientation="Vertical">
-									<ComboBox
-										Name="FilePartGroupsComboBox"
-										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Value"
-										ItemsSource="{Binding FilePartGroups, ElementName=This}"
-										SelectedValue="{Binding FilePartGroup}"
-										SelectedValuePath="Key" />
-									<CheckBox
-										Name="UseEmbeddingsCheckBox"
-										Margin="0"
-										Content="Use Embeddings"
-										IsChecked="{Binding UseEmbeddings}" />
-								</StackPanel>
-							</GroupBox>
-
-
 						</WrapPanel>
 					</StackPanel>
 				</TabItem>
+
+				<TabItem x:Name="EmbeddingsTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_chart_radar}" />
+							<Label x:Name="EmbeddingsContextLabel" Content="Embeddings" />
+						</StackPanel>
+					</TabItem.Header>
+					<WrapPanel Orientation="Horizontal">
+						<CheckBox
+							Name="UseEmbeddingsCheckBox"
+							Margin="0"
+							Content="Use Embeddings"
+							IsChecked="{Binding UseEmbeddings}" />
+						<Label x:Name="EmbeddingsLabel" Margin="3" Content="Group Name" />
+
+						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="256" Text="{Binding EmbeddingGroupName}" />
+						<Label
+							x:Name="EmbeddingGroupFlagLabel"
+							Grid.Row="3"
+							Grid.Column="1"
+							Margin="3"
+							Content="Group Flags" />
+
+						<Controls:EnumComboBox
+							x:Name="EmbeddingGroupFlagComboBox"
+							VerticalAlignment="Center"
+							ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							SelectedValue="{Binding EmbeddingGroupFlag}"
+							Style="{StaticResource ComboBox_Dynamic}"
+							Text="None" />
+					</WrapPanel>
+				</TabItem>
+
 			</TabControl>
 			<!--  Row 2  -->
 			<!--  Row 3  -->
