@@ -18,21 +18,22 @@ namespace Embeddings.Embedding
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public long Id { get; set; }
 
+		/// <summary>Name of the group to which the file belongs.</summary>
+		[Required]
+		[StringLength(128)]
+		public string GroupName { get; set; }
+
+		/// <summary>A bitwise operation will be used to include groups by their group flag.</summary>
+		public long GroupFlag { get; set; }
+
 		/// <summary>Unique identifier of the associated file.</summary>
 		public long FileId { get; set; }
-
-		/// <summary>File text part used for embedding</summary>
-		[Required]
-		public string Text { get; set; }
 
 		/// <summary>Index of this part relative to other parts of the same file.</summary>
 		public int Index { get; set; }
 
 		/// <summary>Total number of parts into which the file is divided.</summary>
 		public int Count { get; set; }
-
-		/// <summary>A bitwise operation will be used to include groups by their group flag.</summary>
-		public long GroupFlag { get; set; }
 
 		/// <summary>Specifies the hash algorithm used to generate the hash value: MD2, MD4, MD5, SHA, SHA1, SHA2_256, and SHA2_512.</summary>
 		[Required]
@@ -44,6 +45,13 @@ namespace Embeddings.Embedding
 
 		/// <summary>Processing state of the record.</summary>
 		public int State { get; set; }
+
+		/// <summary>File text part used for embedding</summary>
+		[Required]
+		public string Text { get; set; }
+
+		/// <summary>File Part size in tokens.</summary>
+		public long TextTokens { get; set; }
 
 		/// <summary>AI Model used for embedding.</summary>
 		[Required]
@@ -87,14 +95,16 @@ namespace Embeddings.Embedding
 		public static FilePart Copy(FilePart source, FilePart target, bool copyKey = false) {
 			if (copyKey)
 				target.Id = source.Id;
+			target.GroupName = source.GroupName;
+			target.GroupFlag = source.GroupFlag;
 			target.FileId = source.FileId;
-			target.Text = source.Text;
 			target.Index = source.Index;
 			target.Count = source.Count;
-			target.GroupFlag = source.GroupFlag;
 			target.HashType = source.HashType;
 			target.Hash = source.Hash;
 			target.State = source.State;
+			target.Text = source.Text;
+			target.TextTokens = source.TextTokens;
 			target.EmbeddingModel = source.EmbeddingModel;
 			target.EmbeddingSize = source.EmbeddingSize;
 			target.Embedding = source.Embedding;

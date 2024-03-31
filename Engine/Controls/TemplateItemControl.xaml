@@ -310,6 +310,7 @@
 									x:Name="AttachmentEnumComboBox"
 									Width="170"
 									VerticalAlignment="Center"
+									ItemsSource="{Binding AttachContexts, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 									SelectedValue="{Binding AttachContext}"
 									Style="{StaticResource ComboBox_Dynamic}"
 									Text="None" />

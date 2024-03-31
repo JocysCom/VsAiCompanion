@@ -71,9 +71,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		public Dictionary<FilePartGroup, string> FilePartGroups
+		public Dictionary<EmbeddingGroup, string> EmbeddingGroups
 		=> ClassLibrary.Runtime.Attributes.GetDictionary(
-			(FilePartGroup[])Enum.GetValues(typeof(FilePartGroup)));
+			(EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup)));
 
 		bool HelpInit;
 
@@ -126,7 +126,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					source,
 					target,
 					Item.AiService, Item.AiModel,
-					Item.FilePartGroup
+					Item.EmbeddingGroupName,
+					Item.EmbeddingGroupFlag
 					);
 			}
 			catch (System.Exception ex)

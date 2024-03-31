@@ -18,6 +18,14 @@ namespace Embeddings.Embedding
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public long Id { get; set; }
 
+		/// <summary>Name of the group to which the file belongs.</summary>
+		[Required]
+		[StringLength(128)]
+		public string GroupName { get; set; }
+
+		/// <summary>A bitwise operation will be used to include groups by their group flag.</summary>
+		public long GroupFlag { get; set; }
+
 		/// <summary>File name.</summary>
 		[Required]
 		[StringLength(512)]
@@ -25,6 +33,7 @@ namespace Embeddings.Embedding
 
 		/// <summary>URL specifying the file's location.</summary>
 		[Required]
+		[StringLength(4096)]
 		public string Url { get; set; }
 
 		/// <summary>File size in bytes.</summary>
@@ -38,16 +47,8 @@ namespace Embeddings.Embedding
 		/// <summary>The SHA-256 hash of the file's bytes.</summary>
 		public byte[] Hash { get; set; }
 
-		/// <summary>Name of the group to which the file belongs.</summary>
-		[Required]
-		[StringLength(128)]
-		public string GroupName { get; set; }
-
 		/// <summary>Processing state of the record.</summary>
 		public int State { get; set; }
-
-		/// <summary>Size in bytes of the text extracted for embedding.</summary>
-		public long TextSize { get; set; }
 
 		/// <summary>Indicates if the record is active and included in searches.</summary>
 		public bool IsEnabled { get; set; }
@@ -80,14 +81,14 @@ namespace Embeddings.Embedding
 		public static File Copy(File source, File target, bool copyKey = false) {
 			if (copyKey)
 				target.Id = source.Id;
+			target.GroupName = source.GroupName;
+			target.GroupFlag = source.GroupFlag;
 			target.Name = source.Name;
 			target.Url = source.Url;
 			target.Size = source.Size;
 			target.HashType = source.HashType;
 			target.Hash = source.Hash;
-			target.GroupName = source.GroupName;
 			target.State = source.State;
-			target.TextSize = source.TextSize;
 			target.IsEnabled = source.IsEnabled;
 			target.Modified = source.Modified;
 			target.Created = source.Created;

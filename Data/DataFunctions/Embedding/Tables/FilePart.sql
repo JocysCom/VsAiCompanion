@@ -1,23 +1,24 @@
 ﻿CREATE TABLE [Embedding].[FilePart] (
     [Id]             BIGINT          IDENTITY (1, 1) NOT NULL,
-    [FileId]         BIGINT          NOT NULL,
-    [Text]           NVARCHAR (MAX)  CONSTRAINT [DF_FileEmbedding_PartText] DEFAULT ('') NOT NULL,
-    [Index]          INT             CONSTRAINT [DF_FileEmbedding_PartIndex] DEFAULT ((0)) NOT NULL,
-    [Count]          INT             CONSTRAINT [DF_FileEmbedding_PartCount] DEFAULT ((1)) NOT NULL,
+    [GroupName]      NVARCHAR (64)   CONSTRAINT [DF_FilePart_GroupName] DEFAULT ('') NOT NULL,
     [GroupFlag]      BIGINT          CONSTRAINT [DF_FilePart_GroupFlag] DEFAULT ((0)) NOT NULL,
+    [FileId]         BIGINT          NOT NULL,
+    [Index]          INT             CONSTRAINT [DF_FilePart_Index] DEFAULT ((0)) NOT NULL,
+    [Count]          INT             CONSTRAINT [DF_FilePart_Count] DEFAULT ((1)) NOT NULL,
     [HashType]       VARCHAR (20)    CONSTRAINT [DF_FilePart_HashType] DEFAULT ('') NOT NULL,
     [Hash]           BINARY (64)     NULL,
     [State]          INT             CONSTRAINT [DF_Part_State] DEFAULT ((0)) NOT NULL,
-    [EmbeddingModel] NVARCHAR (50)   CONSTRAINT [DF_FileEmbedding_EmbeddingModel] DEFAULT ('') NOT NULL,
-    [EmbeddingSize]  INT             CONSTRAINT [DF_FileEmbedding_EmbeddingSize] DEFAULT ((0)) NOT NULL,
+    [Text]           NVARCHAR (MAX)  CONSTRAINT [DF_FilePart_Text] DEFAULT ('') NOT NULL,
+    [TextTokens]     BIGINT          CONSTRAINT [DF_FilePart_Tokens] DEFAULT ((0)) NOT NULL,
+    [EmbeddingModel] NVARCHAR (50)   CONSTRAINT [DF_FilePart_EmbeddingModel] DEFAULT ('') NOT NULL,
+    [EmbeddingSize]  INT             CONSTRAINT [DF_FilePart_EmbeddingSize] DEFAULT ((0)) NOT NULL,
     [Embedding]      VARBINARY (MAX) NULL,
     [IsEnabled]      BIT             CONSTRAINT [DF_FilePart_IsEnabled] DEFAULT ((1)) NOT NULL,
-    [Created]        DATETIME        CONSTRAINT [DF_Part_Created] DEFAULT (getdate()) NOT NULL,
-    [Modified]       DATETIME        CONSTRAINT [DF_Part_Modified] DEFAULT (getdate()) NOT NULL,
-    CONSTRAINT [PK_FileEmbedding] PRIMARY KEY CLUSTERED ([Id] ASC),
+    [Created]        DATETIME        CONSTRAINT [DF_FilePart_Created] DEFAULT (getdate()) NOT NULL,
+    [Modified]       DATETIME        CONSTRAINT [DF_FilePart_Modified] DEFAULT (getdate()) NOT NULL,
+    CONSTRAINT [PK_FilePart] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_FilePart_File] FOREIGN KEY ([FileId]) REFERENCES [Embedding].[File] ([Id])
 );
-
 
 
 
@@ -98,4 +99,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique iden
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique identifier of the file part.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'FilePart', @level2type = N'COLUMN', @level2name = N'Id';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Name of the group to which the file belongs.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'FilePart', @level2type = N'COLUMN', @level2name = N'GroupName';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'File Part size in tokens.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'FilePart', @level2type = N'COLUMN', @level2name = N'TextTokens';
 

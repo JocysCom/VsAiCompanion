@@ -1,13 +1,13 @@
 ﻿CREATE TABLE [Embedding].[File] (
     [Id]        BIGINT         IDENTITY (1, 1) NOT NULL,
+    [GroupName] NVARCHAR (64)  CONSTRAINT [DF_File_GroupName] DEFAULT ('') NOT NULL,
+    [GroupFlag] BIGINT         CONSTRAINT [DF_File_GroupFlag] DEFAULT ('') NOT NULL,
     [Name]      NVARCHAR (256) CONSTRAINT [DF_File_Name] DEFAULT ('') NOT NULL,
-    [Url]       NVARCHAR (MAX) CONSTRAINT [DF_File_Url] DEFAULT ('') NOT NULL,
+    [Url]       NVARCHAR (2048) CONSTRAINT [DF_File_Url] DEFAULT ('') NOT NULL,
     [Size]      BIGINT         CONSTRAINT [DF_File_Size] DEFAULT ((0)) NOT NULL,
     [HashType]  VARCHAR (20)   CONSTRAINT [DF_File_HashType] DEFAULT ('') NOT NULL,
     [Hash]      BINARY (64)    NULL,
-    [GroupName] NVARCHAR (64)  CONSTRAINT [DF_File_GroupName] DEFAULT ('') NOT NULL,
     [State]     INT            CONSTRAINT [DF_File_State] DEFAULT ((0)) NOT NULL,
-    [TextSize]  BIGINT         CONSTRAINT [DF_File_TextSize] DEFAULT ((0)) NOT NULL,
     [IsEnabled] BIT            CONSTRAINT [DF_File_IsEnabled] DEFAULT ((1)) NOT NULL,
     [Modified]  DATETIME       CONSTRAINT [DF_File_Modified] DEFAULT (getdate()) NOT NULL,
     [Created]   DATETIME       CONSTRAINT [DF_File_Created] DEFAULT (getdate()) NOT NULL,
@@ -15,16 +15,13 @@
 );
 
 
-
-
 GO
 CREATE NONCLUSTERED INDEX [IX_File_HashType_Hash]
     ON [Embedding].[File]([HashType] ASC, [Hash] ASC);
 
-
 GO
-
-
+CREATE NONCLUSTERED INDEX [IX_File_GroupName_GroupFlag]
+    ON [Embedding].[File]([GroupName] ASC, [GroupFlag] ASC, [Url] ASC);
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UTC date and time when the file was created.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'File', @level2type = N'COLUMN', @level2name = N'Created';
@@ -36,10 +33,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UTC date an
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Indicates if the record is active and included in searches.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'File', @level2type = N'COLUMN', @level2name = N'IsEnabled';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Size in bytes of the text extracted for embedding.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'File', @level2type = N'COLUMN', @level2name = N'TextSize';
 
 
 GO
@@ -72,4 +65,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'File name.'
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique file id.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'File', @level2type = N'COLUMN', @level2name = N'Id';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'A bitwise operation will be used to include groups by their group flag.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'File', @level2type = N'COLUMN', @level2name = N'GroupFlag';
 

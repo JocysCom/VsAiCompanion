@@ -227,9 +227,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> RoleListNames
 			=> GetListNames("Role");
 
-		public Dictionary<FilePartGroup, string> FilePartGroups
+		public Dictionary<EmbeddingGroup, string> FilePartGroups
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
-				(FilePartGroup[])Enum.GetValues(typeof(FilePartGroup)));
+				(EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup)));
 
 		public Dictionary<ContextType, string> DataTypes
 		{
@@ -254,6 +254,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set => _DataTypes = value;
 		}
 		Dictionary<ContextType, string> _DataTypes;
+
+
+		public BindingList<EnumComboBox.CheckBoxViewModel> AttachContexts
+		{
+			get
+			{
+				if (_AttachContexts == null)
+				{
+					_AttachContexts = EnumComboBox.GetItemSource<ContextType>();
+				}
+				return _AttachContexts;
+			}
+			set => _AttachContexts = value;
+		}
+		BindingList<EnumComboBox.CheckBoxViewModel> _AttachContexts;
+
 
 		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
 		{

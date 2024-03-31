@@ -66,9 +66,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-		public static async Task ConvertToEmbeddingsCSV(string path,
-			string connectionString, AiService service, string modelName,
-			FilePartGroup filePartGroup
+		public static async Task ConvertToEmbeddingsCSV(
+			string path,
+			string connectionString,
+			AiService service, string modelName,
+			string embeddingGroupName,
+			EmbeddingGroup embeddingGroupFlag
 			)
 		{
 			//var service = Global.AppSettings.AiServices.FirstOrDefault(x => x.BaseUrl.Contains("azure"));
@@ -87,18 +90,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 					file = new Embeddings.Embedding.File();
 					db.Files.Add(file);
 				}
+				//file.GroupName = 
 				file.Name = fi.Name;
 				file.Url = fi.FullName;
-				file.GroupName = System.IO.Path.GetFileName(path);
+				file.GroupName = embeddingGroupName;
+				file.GroupFlag = (long)embeddingGroupFlag;
 				file.HashType = "SHA_256";
 				file.Hash = fileHash;
 				file.Size = fi.Length;
 				file.State = (int)ProgressStatus.Completed;
-				file.TextSize = fi.Length;
 				file.IsEnabled = true;
 				file.Created = fi.CreationTime.ToUniversalTime();
 				file.Modified = fi.LastWriteTime.ToUniversalTime();
-				file.TextSize = file.Size;
 				db.SaveChanges();
 				var text = System.IO.File.ReadAllText(fi.FullName);
 				var client = new Client(service);
@@ -111,10 +114,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					var part = new Embeddings.Embedding.FilePart();
 					part.Embedding = VectorToBinary(result.Value);
+					part.GroupName = embeddingGroupName;
+					part.GroupFlag = (long)embeddingGroupFlag;
 					part.FileId = file.Id;
 					part.EmbeddingModel = modelName;
 					part.EmbeddingSize = result.Value.Length;
-					part.GroupFlag = (int)filePartGroup;
+					part.GroupFlag = (int)embeddingGroupFlag;
 					part.Index = 0;
 					part.Count = 1;
 					part.HashType = "SHA_256";
@@ -123,6 +128,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					part.Created = now.ToUniversalTime();
 					part.Modified = now.ToUniversalTime();
 					part.Text = input[0];
+					part.TextTokens = Companions.ClientHelper.CountTokens(text);
 					db.FileParts.Add(part);
 					db.SaveChanges();
 				}

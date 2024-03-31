@@ -367,7 +367,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// Experimental.
 				// AI must decide what to search for, not to use by the last user message.
 				var group = item.FilePartGroup;
-				var embeddingItem = Global.Embeddings.Items.FirstOrDefault(x => x.FilePartGroup == group);
+				var embeddingItem = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupFlag == group);
 				if (embeddingItem != null)
 				{
 					var eh = new EmbeddingHelper();

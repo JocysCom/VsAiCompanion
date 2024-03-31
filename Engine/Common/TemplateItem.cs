@@ -62,7 +62,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Documents files, selction, clipboard.
 		/// </summary>
 		[DefaultValue(ContextType.None)]
-		public ContextType AttachContext { get => _AttachContext; set => SetProperty(ref _AttachContext, value); }
+		public ContextType AttachContext
+		{
+			get => _AttachContext;
+			set
+			{
+				var oldChatValue = _AttachContext.HasFlag(ContextType.ChatHistory);
+				var newChatValue = value.HasFlag(ContextType.ChatHistory);
+				SetProperty(ref _AttachContext, value);
+				if (oldChatValue != newChatValue)
+					OnPropertyChanged(nameof(SendChatHistory));
+			}
+
+		}
 		ContextType _AttachContext;
 
 		public ChatSettings Settings { get => _Settings; set => SetProperty(ref _Settings, value); }
@@ -261,9 +273,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseEmbeddings { get => _UseEmbeddings; set => SetProperty(ref _UseEmbeddings, value); }
 		bool _UseEmbeddings;
 
-		[DefaultValue(FilePartGroup.None)]
-		public FilePartGroup FilePartGroup { get => _FilePartGroup; set => SetProperty(ref _FilePartGroup, value); }
-		FilePartGroup _FilePartGroup;
+		[DefaultValue(EmbeddingGroup.None)]
+		public EmbeddingGroup FilePartGroup { get => _FilePartGroup; set => SetProperty(ref _FilePartGroup, value); }
+		EmbeddingGroup _FilePartGroup;
 
 		#endregion
 

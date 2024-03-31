@@ -9,6 +9,7 @@
 	IsReadOnly="True"
 	IsSynchronizedWithCurrentItem="True"
 	IsTextSearchEnabled="False"
+	Loaded="ComboBox_Loaded"
 	SelectionChanged="ComboBox_SelectionChanged"
 	StaysOpenOnEdit="True"
 	mc:Ignorable="d">
@@ -46,22 +47,4 @@
 			</Setter>
 		</Style>
 	</ComboBox.ItemContainerStyle>
-	<!--<ComboBox.ItemTemplate>
-		<DataTemplate>
-			-->
-	<!--<Label
-					Margin="3"
-					Padding="0"
-					Content="{Binding Description}"
-					Visibility="{Binding LabelVisibility}" />-->
-	<!--
-			<CheckBox
-				Margin="0"
-				Command="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=DataContext.CheckCommand}"
-				CommandParameter="{Binding}"
-				Content="{Binding Description}"
-				IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-				Visibility="{Binding CheckVisibility}" />
-		</DataTemplate>
-	</ComboBox.ItemTemplate>-->
 </ComboBox>

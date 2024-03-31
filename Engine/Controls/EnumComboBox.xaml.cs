@@ -1,6 +1,5 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+﻿using JocysCom.ClassLibrary.Controls;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -20,11 +19,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			public bool IsChecked { get => _IsChecked; set => SetProperty(ref _IsChecked, value); }
 			private bool _IsChecked;
 
+			public Enum Value { get; set; }
 
-			public ContextType Value { get; set; }
-
-			public Visibility LabelVisibility => Value == ContextType.None ? Visibility.Visible : Visibility.Collapsed;
-			public Visibility CheckVisibility => Value != ContextType.None ? Visibility.Visible : Visibility.Collapsed;
+			public Visibility CheckVisibility { get; set; }
 
 			#region ■ INotifyPropertyChanged
 
@@ -41,6 +38,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 			}
 
+			public override string ToString()
+			{
+				return Description;
+			}
+
 			#endregion
 
 		}
@@ -48,17 +50,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public EnumComboBox()
 		{
 			InitializeComponent();
-			SetItemSource<ContextType>();
-			Data.ListChanged += List_ListChanged;
 		}
 
 		private void List_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			if (e.PropertyDescriptor?.Name == nameof(CheckBoxViewModel.IsChecked))
 			{
-				var items = ItemsSource.Cast<CheckBoxViewModel>();
-				var top = items.First(x => x.Value == ContextType.None);
-				var choice = ItemsSource.Cast<CheckBoxViewModel>().Where(x => x.Value != ContextType.None).ToList();
+				var data = (BindingList<CheckBoxViewModel>)sender;
+				var top = data[0];
+				var choice = data.Skip(1);
 				var count = choice.Count(x => x.IsChecked);
 				var names = choice.Where(x => x.IsChecked).Select(x => x.Description).ToList();
 				if (count == 0)
@@ -67,31 +67,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					top.Description = This.Text = names.First();
 				else
 					top.Description = This.Text = $"{names.First()} + " + (count - 1).ToString();
-				var value = Data
+				var value = data
 					.Where(x => x.IsChecked)
-					.Aggregate(default(ContextType), (current, item) => current | item.Value);
-				if (!Equals(SelectedValue, value))
-					SelectedValue = value;
+					.Aggregate(0L, (current, item) => Convert.ToInt64(current) | Convert.ToInt64(item.Value));
+				var newValue = (Enum)Enum.ToObject(top.Value.GetType(), value);
+				if (!Equals(SelectedValue, newValue))
+					SelectedValue = newValue;
 			}
 		}
 
-		BindingList<CheckBoxViewModel> Data = new BindingList<CheckBoxViewModel>();
-
-		void SetItemSource<T>()
+		public static BindingList<CheckBoxViewModel> GetItemSource<T>() where T : Enum
 		{
 			var items = Enum.GetValues(typeof(T))
-				.Cast<ContextType>()
+				.Cast<T>()
 				.OrderBy(x => GetOrder(x))
-				.Select(e => new CheckBoxViewModel
+				.Select((e, i) => new CheckBoxViewModel
 				{
-					Description = GetDescription(e),
+					CheckVisibility = i == 0 ? Visibility.Collapsed : Visibility.Visible,
+					Description = i == 0 ? "None" : GetDescription(e),
 					Value = e
 				})
 				.ToList();
-			Data.Clear();
-			items.ForEach(e => Data.Add(e));
-			items[0].Description = "None";
-			ItemsSource = Data;
+			var list = new BindingList<CheckBoxViewModel>();
+			foreach (var item in items)
+				list.Add(item);
+			return list;
 		}
 
 		public static string GetDescription(Enum value)
@@ -118,28 +118,47 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#region Binding
 
 		private static readonly new DependencyProperty SelectedValueProperty =
-			DependencyProperty.Register("SelectedValue", typeof(ContextType), typeof(EnumComboBox),
-		new FrameworkPropertyMetadata(default(ContextType), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
+			DependencyProperty.Register("SelectedValue", typeof(Enum), typeof(EnumComboBox),
+		new FrameworkPropertyMetadata(default(Enum), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
 
-		public new ContextType SelectedValue
+		public new Enum SelectedValue
 		{
-			get => (ContextType)GetValue(SelectedValueProperty);
+			get => (Enum)GetValue(SelectedValueProperty);
 			set => SetValue(SelectedValueProperty, value);
 		}
 
 		private static void OnSelectedValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var box = (EnumComboBox)d;
-			var value = (ContextType)box.GetValue(SelectedValueProperty);
-			var items = (IEnumerable<CheckBoxViewModel>)box.ItemsSource;
+			var value = (Enum)box.GetValue(SelectedValueProperty);
+			var items = (BindingList<CheckBoxViewModel>)box.ItemsSource;
+
+
 			foreach (var item in items)
 			{
-				var isChecked = item.Value != ContextType.None && value.HasFlag(item.Value);
+				var isChecked = !IsDefault(item.Value) && value.HasFlag(item.Value);
 				if (item.IsChecked != isChecked)
 					item.IsChecked = isChecked;
 			}
 		}
 
+		static bool IsDefault(Enum value)
+			=> Convert.ToInt64(value) == 0L;
+
 		#endregion
+
+		void UpdateListMonitoring()
+		{
+			var data = (BindingList<CheckBoxViewModel>)ItemsSource;
+			data.ListChanged += List_ListChanged;
+			SelectedIndex = 0;
+		}
+
+		private void ComboBox_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+				UpdateListMonitoring();
+
+		}
 	}
 }

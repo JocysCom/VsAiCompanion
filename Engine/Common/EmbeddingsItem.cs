@@ -55,10 +55,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, string.IsNullOrWhiteSpace(value) ? "" : value); }
 		string _Instructions;
 
+		[DefaultValue("")]
+		public string EmbeddingGroupName { get => _EmbeddingGroupName; set => SetProperty(ref _EmbeddingGroupName, value); }
+		string _EmbeddingGroupName;
 
-		[DefaultValue(FilePartGroup.None)]
-		public FilePartGroup FilePartGroup { get => _FilePartGroup; set => SetProperty(ref _FilePartGroup, value); }
-		FilePartGroup _FilePartGroup;
+		[DefaultValue(EmbeddingGroup.None)]
+		public EmbeddingGroup EmbeddingGroupFlag { get => _EmbeddingGroupFlag; set => SetProperty(ref _EmbeddingGroupFlag, value); }
+		EmbeddingGroup _EmbeddingGroupFlag;
 
 		#region ■ IAiServiceModel
 
