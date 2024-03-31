@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -492,6 +493,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			item.AiModel = defaultAiService?.DefaultAiModel ?? "text-embedding-3-large";
 			item.Source = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item), true);
 			item.Target = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item) + ".db", true);
+			// Find free flag number.
+			var taken = Global.Embeddings.Items.Select(x => x.EmbeddingGroupFlag)
+				.Distinct();
+			var free = Enum.GetValues(typeof(EmbeddingGroup))
+				.Cast<EmbeddingGroup>().Except(taken).FirstOrDefault();
+			item.EmbeddingGroupFlag = free;
 			SetIconToDefault(item);
 			return item;
 		}

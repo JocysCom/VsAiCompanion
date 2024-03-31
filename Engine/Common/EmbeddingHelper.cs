@@ -10,6 +10,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using LiteDB;
 using System.Data.Common;
+using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.DataFunctions;
+using Embeddings.Embedding;
+
+
+
 
 #if NETFRAMEWORK
 using System.Data.SqlClient;
@@ -146,34 +152,51 @@ namespace JocysCom.VS.AiCompanion.Engine
 			try
 			{
 				Log = "Converting message to embedding vectors...";
+				if (string.IsNullOrWhiteSpace(item.Message))
+				{
+					Log += " Message is empty.\r\n";
+					return;
+				}
 				var input = new List<string> { item.Message };
 				var client = new Client(item.AiService);
 				var results = await client.GetEmbedding(item.AiModel, input);
 				Log += " Done.\r\n";
-				var db = NewEmbeddingsContext(item.Target);
+				var expandedTarget = AssemblyInfo.ExpandPath(item.Target);
+				var db = NewEmbeddingsContext(expandedTarget);
 				var vectors = results[0];
 				Log += "Searching on database...";
-				// Convert your embedding to the format expected by SQL Server.
-				// This example assumes `results` is the embedding in a suitable binary format.
-				var embeddingParam = new SqlParameter("@promptEmbedding", SqlDbType.VarBinary)
+				if (IsFilePath(item.Target))
 				{
-					Value = VectorToBinary(vectors)
-				};
-
-				var skipParam = new SqlParameter("@skip", SqlDbType.Int) { Value = skip };
-				var takeParam = new SqlParameter("@take", SqlDbType.Int) { Value = take };
-
-				// Assuming `FileSimilarity` is the result type.
-				var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
+					var ids = await GetSimilarFileEmbeddings(expandedTarget, item.EmbeddingGroupName, (long)item.EmbeddingGroupFlag, vectors, item.Take);
+					FileParts = db.FileParts
+						.Where(x => ids.Contains(x.Id))
+						.ToList()
+						.OrderBy(x => ids.IndexOf(x.Id))
+						.ToList();
+				}
+				else
+				{
+					// Convert your embedding to the format expected by SQL Server.
+					// This example assumes `results` is the embedding in a suitable binary format.
+					var embeddingParam = new SqlParameter("@promptEmbedding", SqlDbType.VarBinary)
+					{
+						Value = VectorToBinary(vectors)
+					};
+					var skipParam = new SqlParameter("@skip", SqlDbType.Int) { Value = skip };
+					var takeParam = new SqlParameter("@take", SqlDbType.Int) { Value = take };
+					// Assuming `FileSimilarity` is the result type.
+					var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
 #if NETFRAMEWORK
 				FileParts = db.Database.SqlQuery<Embeddings.Embedding.FilePart>(
 					sqlCommand, embeddingParam, skipParam, takeParam)
 					.ToList();
 #else
-				FileParts = db.FileParts.FromSqlRaw(
-					sqlCommand, embeddingParam, skipParam, takeParam)
-					.ToList();
+					FileParts = db.FileParts.FromSqlRaw(
+						sqlCommand, embeddingParam, skipParam, takeParam)
+						.ToList();
 #endif
+
+				}
 				var fileIds = FileParts.Select(x => x.FileId).Distinct().ToArray();
 				Files = db.Files.Where(x => fileIds.Contains(x.Id)).ToList();
 				Log += " Done...";
@@ -182,6 +205,93 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Log = ex.ToString();
 			}
+		}
+
+		public static bool IsFilePath(string stringOrPath)
+		{
+			var path = AssemblyInfo.ExpandPath(stringOrPath);
+			var ext = Path.GetExtension(path).ToLower();
+			return ext == ".db";
+		}
+
+		public static async Task<List<long>> GetSimilarFileEmbeddings(
+			string path,
+			string groupName,
+			long groupFlag,
+			float[] promptVectors, int take)
+		{
+			var commandText = $@"
+                SELECT
+					fp.Id,
+					fp.FileId,
+					fp.Embedding
+                FROM FilePart AS fp
+                JOIN File AS f ON f.Id = fp.FileId
+                WHERE f.GroupName = @GroupName
+                AND fp.GroupFlag & @GroupFlag > 0
+                AND fp.IsEnabled = 1
+                AND f.IsEnabled = 1";
+			var connection = SqliteHelper.NewConnection(path);
+			var command = SqliteHelper.NewCommand(commandText, connection);
+			var nameParam = command.CreateParameter();
+			nameParam.ParameterName = "@GroupName";
+			nameParam.Value = groupName;
+			command.Parameters.Add(nameParam);
+			var flagParam = command.CreateParameter();
+			flagParam.ParameterName = "@GroupFlag";
+			flagParam.Value = (int)groupFlag;
+			command.Parameters.Add(flagParam);
+			connection.Open();
+			var reader = await command.ExecuteReaderAsync();
+			var tempResult = new SortedList<float, FilePart>();
+			while (await reader.ReadAsync())
+			{
+				var filePart = ReadFilePartFromReader(reader);
+				var partVectors = EmbeddingBase.BinaryToVector(filePart.Embedding);
+				var similarity = EmbeddingBase._CosineSimilarity(promptVectors, partVectors);
+				// If take list is not filled yet then add and continue.
+				if (tempResult.Count < take)
+				{
+					tempResult.Add(similarity, filePart);
+					continue;
+				}
+				// If similarity less or same then skip and continue.
+				if (similarity <= tempResult.Keys[0])
+					continue;
+				// Replace least similar item with the more similar.
+				tempResult.RemoveAt(0);
+				tempResult.Add(similarity, filePart);
+			}
+			var ids = tempResult
+				.ToList()
+				.OrderByDescending(x => x.Key)
+				.Select(x => x.Value.Id)
+				.ToList();
+			return ids;
+		}
+
+		private static FilePart ReadFilePartFromReader(DbDataReader reader)
+		{
+			var filePart = new FilePart
+			{
+				Id = reader.GetInt64(reader.GetOrdinal("Id")),
+				//GroupName = reader.GetString(reader.GetOrdinal("GroupName")),
+				//GroupFlag = reader.GetInt64(reader.GetOrdinal("GroupFlag")),
+				FileId = reader.GetInt64(reader.GetOrdinal("FileId")),
+				//Index = reader.GetInt32(reader.GetOrdinal("Index")),
+				//Count = reader.GetInt32(reader.GetOrdinal("Count")),
+				//HashType = reader.GetString(reader.GetOrdinal("HashType")),
+				//Hash = (byte[])reader["Hash"],
+				//Text = reader.GetString(reader.GetOrdinal("Text")),
+				//TextTokens = reader.GetInt64(reader.GetOrdinal("TextTokens")),
+				//EmbeddingModel = reader.GetString(reader.GetOrdinal("EmbeddingModel")),
+				//EmbeddingSize = reader.GetInt32(reader.GetOrdinal("EmbeddingSize")),
+				Embedding = (byte[])reader["Embedding"],
+				//IsEnabled = reader.GetBoolean(reader.GetOrdinal("IsEnabled")),
+				//Created = reader.GetDateTime(reader.GetOrdinal("Created")),
+				//Modified = reader.GetDateTime(reader.GetOrdinal("Modified"))
+			};
+			return filePart;
 		}
 
 

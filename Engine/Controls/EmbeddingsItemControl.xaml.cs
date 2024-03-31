@@ -132,26 +132,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private async void ProcessSettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			try
-			{
-				var source = AssemblyInfo.ExpandPath(Item.Source);
-				var target = AssemblyInfo.ExpandPath(Item.Target);
-				await EmbeddingHelper.ConvertToEmbeddingsCSV(
-					source,
-					target,
-					Item.AiService, Item.AiModel,
-					Item.EmbeddingGroupName,
-					Item.EmbeddingGroupFlag
-					);
-			}
-			catch (System.Exception ex)
-			{
-				LogTextBox.Text = ex.ToString();
-			}
-		}
-
 		System.Windows.Forms.FolderBrowserDialog _FolderBrowser = new System.Windows.Forms.FolderBrowserDialog();
 
 		private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -253,9 +233,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void SearchButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			MainTabControl.SelectedItem = LogTabPage;
 			LogTextBox.Text = "";
 			var eh = new EmbeddingHelper();
 			await eh.SearchEmbeddings(Item, Item.Message, Item.Skip, Item.Take);
+			if (eh.FileParts == null)
+			{
+				LogTextBox.Text += "\r\nSearch returned no results.";
+				return;
+			}
 			foreach (var filPart in eh?.FileParts)
 			{
 				LogTextBox.Text += eh.Log;
@@ -268,19 +254,44 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CreateButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			MainTabControl.SelectedItem = LogTabPage;
 			var path = AssemblyInfo.ExpandPath(Item.Target);
-			switch (Path.GetExtension(path).ToLower())
+			InitSqlDatabase(path);
+		}
+
+		public void InitSqlDatabase(string stringOrPath)
+		{
+			if (EmbeddingHelper.IsFilePath(stringOrPath))
+				SqliteHelper.InitSqlLiteDatabase(stringOrPath);
+
+		}
+
+		private async void ProcessSettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			MainTabControl.SelectedItem = LogTabPage;
+			try
 			{
-				case ".db":
-					SqliteHelper.InitSqlLiteDatabase(path);
-					var connectionString = SqliteHelper.NewConnection(path).ConnectionString.ToString();
-					var db = EmbeddingHelper.NewEmbeddingsContext(connectionString);
-					var item = db.Files.FirstOrDefault();
-					break;
-				default:
-					break;
+				var source = AssemblyInfo.ExpandPath(Item.Source);
+				var target = AssemblyInfo.ExpandPath(Item.Target);
+
+				if (EmbeddingHelper.IsFilePath(target) && !File.Exists(target))
+					InitSqlDatabase(target);
+
+				await EmbeddingHelper.ConvertToEmbeddingsCSV(
+					source,
+					target,
+					Item.AiService, Item.AiModel,
+					Item.EmbeddingGroupName,
+					Item.EmbeddingGroupFlag
+					);
+			}
+			catch (System.Exception ex)
+			{
+				LogTextBox.Text = ex.ToString();
 			}
 		}
+
+
 
 	}
 }

@@ -13,6 +13,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 {
 	public class SqliteHelper
 	{
+
 		public static void InitSqlLiteDatabase(string path)
 		{
 #if NETFRAMEWORK
@@ -33,7 +34,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			var commandText = ResourceHelper.FindResource($"{name}.Sqlite.sql");
 			var command = NewCommand(commandText, connection);
 			command.ExecuteNonQuery();
-			connection.Close();
 			return true;
 		}
 

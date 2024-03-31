@@ -72,11 +72,11 @@
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
             <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFile(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles(System.String[])">
             <summary>
-            Read file information and contents.
+            Read information and contents of files.
             </summary>
-            <param name="path">The file to read from.</param>
+            <param name="paths">The list of files to read from.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile(System.String,System.String)">
             <summary>

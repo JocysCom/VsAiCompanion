@@ -79,6 +79,7 @@
     <Compile Include="Common\StringBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\EmbeddingBase.cs" />
+    <Compile Include="Common\EmbeddingsBase.Methods.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

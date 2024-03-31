@@ -68,6 +68,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Include="..\DataFunctions\Common\EmbeddingsBase.Methods.cs" Link="Common\EmbeddingsBase.Methods.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\File.sql" />
 	  <EmbeddedResource Include="Deployment\File.Sqlite.sql" />
 	  <EmbeddedResource Include="Deployment\FilePart.Sqlite.sql" />

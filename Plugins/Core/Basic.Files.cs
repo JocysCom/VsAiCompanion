@@ -1,5 +1,6 @@
 ﻿using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using System.Collections.Generic;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -8,15 +9,20 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		#region File Operations
 
 		/// <summary>
-		/// Read file information and contents.
+		/// Read information and contents of files.
 		/// </summary>
-		/// <param name="path">The file to read from.</param>
+		/// <param name="paths">The list of files to read from.</param>
 		[RiskLevel(RiskLevel.Medium)]
-		public static DocItem ReadFile(string path)
+		public static List<DocItem> ReadFiles(string[] paths)
 		{
-			var di = new DocItem(null, path);
-			di.LoadData();
-			return di;
+			var list = new List<DocItem>();
+			foreach (var path in paths)
+			{
+				var di = new DocItem(null, path);
+				di.LoadData();
+				list.Add(di);
+			}
+			return list;
 		}
 
 		/// <summary>
