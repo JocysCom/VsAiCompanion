@@ -27,6 +27,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<!--  Row 0  -->
 		<Button
@@ -163,19 +164,29 @@
 				</Button>
 
 			</StackPanel>
-
-			<Button
-				Name="ApplySettingsButton"
-				Grid.Row="3"
-				Grid.Column="4"
-				MinWidth="75"
-				Margin="3,0,0,0"
-				Click="ProcessSettingsButton_Click">
-				<StackPanel Focusable="False">
-					<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
-					<Label Content="Process" />
-				</StackPanel>
-			</Button>
+			<StackPanel Grid.Row="3" Grid.Column="4" Orientation="Horizontal">
+				<Button
+					Name="ScanStartButton"
+					MinWidth="75"
+					Margin="3,0,0,0"
+					Click="ScanStartButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
+						<Label Content="Process" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="ScanStopButton"
+					MinWidth="75"
+					Margin="3,0,0,0"
+					Click="ScanStopButton_Click"
+					IsEnabled="False">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Stop}" Focusable="False" />
+						<Label Content="Stop" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
 			<Label
 				x:Name="EmbeddingsLabel"
 				Grid.Row="3"
@@ -336,5 +347,7 @@
 				</TextBox>
 			</TabItem>
 		</TabControl>
+		<!--  Row 4  -->
+		<JcControls:ProgressBarControl x:Name="ScanProgressPanel" Grid.Row="4" />
 	</Grid>
 </UserControl>

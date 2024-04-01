@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 using JocysCom.VS.AiCompanion.DataClient;
 using System;
 using System.IO;
+using JocysCom.ClassLibrary.IO;
+using LiteDB;
+using System.Windows;
+
 
 
 #if NETFRAMEWORK
@@ -33,6 +37,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			ScanProgressPanel.UpdateProgress();
 		}
 
 		#region List Panel Item
@@ -279,32 +284,123 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
-		private async void ProcessSettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		FileProcessor fp;
+		Embeddings.EmbeddingsContext db;
+		System.Security.Cryptography.SHA256 algorithm = System.Security.Cryptography.SHA256.Create();
+
+		private void ScanStartButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			MainTabControl.SelectedItem = LogTabPage;
-			try
+			//var form = new MessageBoxWindow();
+			//var result = form.ShowDialog("Start Processing?", "Processing", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+			//if (result != MessageBoxResult.OK)
+			//	return;
+			ScanStartButton.IsEnabled = false;
+			ScanStopButton.IsEnabled = true;
+			Global.MainControl.InfoPanel.AddTask(TaskName.Scan);
+			ScanStarted = DateTime.Now;
+			var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanTask, Item);
+			if (!success)
 			{
-				var source = AssemblyInfo.ExpandPath(Item.Source);
-				var target = AssemblyInfo.ExpandPath(Item.Target);
-
-				if (EmbeddingHelper.IsFilePath(target) && !File.Exists(target))
-					InitSqlDatabase(target);
-
-				await EmbeddingHelper.ConvertToEmbeddingsCSV(
-					source,
-					target,
-					Item.AiService, Item.AiModel,
-					Item.EmbeddingGroupName,
-					Item.EmbeddingGroupFlag
-					);
-			}
-			catch (System.Exception ex)
-			{
-				LogTextBox.Text = ex.ToString();
+				ScanProgressPanel.UpdateProgress("Scan failed!", "", true);
+				ScanStartButton.IsEnabled = true;
+				ScanStopButton.IsEnabled = false;
+				Global.MainControl.InfoPanel.RemoveTask(TaskName.Scan);
 			}
 		}
 
 
+		#region Locations Scanner
 
+		DateTime ScanStarted;
+		//IScanner _Scanner;
+		object AddAndUpdateLock = new object();
+
+		void ScanTask(object state)
+		{
+
+			var item = (EmbeddingsItem)state;
+			var paths = Array.Empty<string>();
+			var source = AssemblyInfo.ExpandPath(item.Source);
+			var target = AssemblyInfo.ExpandPath(item.Target);
+			if (fp != null)
+			{
+				fp.IsStopping = true;
+				fp.Progress -= _Scanner_Progress;
+			}
+			if (db != null)
+			{
+				db.Dispose();
+			}
+			db = EmbeddingHelper.NewEmbeddingsContext(target);
+			fp = new FileProcessor();
+			fp.Progress += _Scanner_Progress;
+			Dispatcher.Invoke(new Action(() =>
+			{
+				MainTabControl.SelectedItem = LogTabPage;
+				try
+				{
+					paths = new[] { source };
+					if (EmbeddingHelper.IsFilePath(target) && !File.Exists(target))
+						InitSqlDatabase(target);
+				}
+				catch (System.Exception ex)
+				{
+					LogTextBox.Text = ex.ToString();
+				}
+			}));
+			Dispatcher.Invoke(new Action(() =>
+			{
+				ScanProgressPanel.UpdateProgress("...", "");
+				ScanStartButton.IsEnabled = false;
+				ScanStopButton.IsEnabled = true;
+			}));
+			fp.Scan(paths, "*.txt");
+		}
+
+		private async void _Scanner_Progress(object sender, ClassLibrary.ProgressEventArgs e)
+		{
+			Dispatcher.Invoke(new Action(() =>
+			{
+				ScanProgressPanel.UpdateProgress(e);
+				if (e.State == ClassLibrary.ProgressStatus.Completed)
+				{
+					Global.MainControl.InfoPanel.RemoveTask(TaskName.Scan);
+					ScanStartButton.IsEnabled = true;
+					ScanStopButton.IsEnabled = false;
+				}
+			}));
+			if (e.State == ClassLibrary.ProgressStatus.Processing)
+			{
+				try
+				{
+					var fi = (FileInfo)e.SubData;
+					await EmbeddingHelper.UpdateEmbedding(
+						db, fi.FullName, algorithm,
+						Item.AiService, Item.AiModel,
+						Item.EmbeddingGroupName, Item.EmbeddingGroupFlag
+						);
+					e.State = ClassLibrary.ProgressStatus.Updated;
+				}
+				catch (Exception ex)
+				{
+					e.Exception = ex;
+					e.State = ClassLibrary.ProgressStatus.Exception;
+					fp.IsStopping = true;
+				}
+				Dispatcher.Invoke(new Action(() =>
+				{
+					ScanProgressPanel.UpdateProgress(e);
+				}));
+			}
+		}
+
+		#endregion
+
+		private void ScanStopButton_Click(object sender, RoutedEventArgs e)
+		{
+			var p = fp;
+			if (p != null)
+				p.IsStopping = true;
+		}
 	}
 }

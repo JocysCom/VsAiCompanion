@@ -14,6 +14,9 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.DataFunctions;
 using Embeddings.Embedding;
 using Microsoft.ML;
+using JocysCom.ClassLibrary.Security;
+
+
 
 
 #if NETFRAMEWORK
@@ -70,75 +73,65 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return db;
 		}
 
-
-		public static async Task ConvertToEmbeddingsCSV(
-			string path,
-			string connectionString,
+		public static async Task UpdateEmbedding(
+			EmbeddingsContext db,
+			string fileName,
+			System.Security.Cryptography.SHA256 algorithm,
 			AiService service, string modelName,
-			string embeddingGroupName,
-			EmbeddingGroup embeddingGroupFlag
-			)
+			string embeddingGroupName, EmbeddingGroup embeddingGroupFlag
+		)
 		{
-			//var service = Global.AppSettings.AiServices.FirstOrDefault(x => x.BaseUrl.Contains("azure"));
-			//var url = service.BaseUrl + $"openai/deployments/{model}/embeddings?api-version=2023-05-15";
-			var files = Directory.GetFiles(path, "*.txt");
-			var db = NewEmbeddingsContext(connectionString);
-			var algorithm = System.Security.Cryptography.SHA256.Create();
-
-			for (int i = 0; i < files.Count(); i++)
+			var fi = new FileInfo(fileName);
+			var file = db.Files.FirstOrDefault(x => x.Url == fi.FullName);
+			var fileHash = HashHelper.GetHashFromFile(algorithm, fileName);
+			if (file == null)
 			{
-				var fi = new FileInfo(files[i]);
-				var file = db.Files.FirstOrDefault(x => x.Url == fi.FullName);
-				var fileHash = JocysCom.ClassLibrary.Security.SHA256Helper.GetHashFromFile(fi.FullName);
-				if (file == null)
-				{
-					file = new Embeddings.Embedding.File();
-					db.Files.Add(file);
-				}
-				//file.GroupName = 
-				file.Name = fi.Name;
-				file.Url = fi.FullName;
-				file.GroupName = embeddingGroupName;
-				file.GroupFlag = (long)embeddingGroupFlag;
-				file.HashType = "SHA_256";
-				file.Hash = fileHash;
-				file.Size = fi.Length;
-				file.State = (int)ProgressStatus.Completed;
-				file.IsEnabled = true;
-				file.Created = fi.CreationTime.ToUniversalTime();
-				file.Modified = fi.LastWriteTime.ToUniversalTime();
-				db.SaveChanges();
-				var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
-				var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens);
-				var input = parts.Select(x => x.Text);
-				var client = new Client(service);
-				var results = await client.GetEmbedding(modelName, input);
-				var now = DateTime.Now;
-				foreach (var key in results.Keys)
-				{
-					var ipart = parts[key];
-					var vectors = results[key];
-					var partHash = algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(ipart.Text));
-					var part = new Embeddings.Embedding.FilePart();
-					part.Embedding = VectorToBinary(vectors);
-					part.GroupName = embeddingGroupName;
-					part.GroupFlag = (long)embeddingGroupFlag;
-					part.FileId = file.Id;
-					part.EmbeddingModel = modelName;
-					part.EmbeddingSize = vectors.Length;
-					part.GroupFlag = (int)embeddingGroupFlag;
-					part.Index = 0;
-					part.Count = 1;
-					part.HashType = "SHA_256";
-					part.Hash = partHash;
-					part.IsEnabled = true;
-					part.Created = now.ToUniversalTime();
-					part.Modified = now.ToUniversalTime();
-					part.Text = ipart.Text;
-					part.TextTokens = ipart.TextTokens;
-					db.FileParts.Add(part);
-					db.SaveChanges();
-				}
+				file = new Embeddings.Embedding.File();
+				db.Files.Add(file);
+			}
+			//file.GroupName = 
+			file.Name = fi.Name;
+			file.Url = fi.FullName;
+			file.GroupName = embeddingGroupName;
+			file.GroupFlag = (long)embeddingGroupFlag;
+			file.HashType = "SHA_256";
+			file.Hash = fileHash;
+			file.Size = fi.Length;
+			file.State = (int)ProgressStatus.Completed;
+			file.IsEnabled = true;
+			file.Created = fi.CreationTime.ToUniversalTime();
+			file.Modified = fi.LastWriteTime.ToUniversalTime();
+			await db.SaveChangesAsync();
+			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
+			var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens);
+			var input = parts.Select(x => x.Text);
+			var client = new Client(service);
+			var results = await client.GetEmbedding(modelName, input);
+			var now = DateTime.Now;
+			foreach (var key in results.Keys)
+			{
+				var ipart = parts[key];
+				var vectors = results[key];
+				var partHash = algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(ipart.Text));
+				var part = new Embeddings.Embedding.FilePart();
+				part.Embedding = VectorToBinary(vectors);
+				part.GroupName = embeddingGroupName;
+				part.GroupFlag = (long)embeddingGroupFlag;
+				part.FileId = file.Id;
+				part.EmbeddingModel = modelName;
+				part.EmbeddingSize = vectors.Length;
+				part.GroupFlag = (int)embeddingGroupFlag;
+				part.Index = 0;
+				part.Count = 1;
+				part.HashType = "SHA_256";
+				part.Hash = partHash;
+				part.IsEnabled = true;
+				part.Created = now.ToUniversalTime();
+				part.Modified = now.ToUniversalTime();
+				part.Text = ipart.Text;
+				part.TextTokens = ipart.TextTokens;
+				db.FileParts.Add(part);
+				await db.SaveChangesAsync();
 			}
 		}
 
