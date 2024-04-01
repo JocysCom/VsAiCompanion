@@ -13,8 +13,7 @@ using System.Data.Common;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.DataFunctions;
 using Embeddings.Embedding;
-
-
+using Microsoft.ML;
 
 
 #if NETFRAMEWORK
@@ -109,22 +108,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 				file.Created = fi.CreationTime.ToUniversalTime();
 				file.Modified = fi.LastWriteTime.ToUniversalTime();
 				db.SaveChanges();
-				var text = System.IO.File.ReadAllText(fi.FullName);
+				var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
+				var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens);
+				var input = parts.Select(x => x.Text);
 				var client = new Client(service);
-				// Don't split file
-				var input = new List<string> { text };
 				var results = await client.GetEmbedding(modelName, input);
 				var now = DateTime.Now;
-				var partHash = algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(text));
-				foreach (var result in results)
+				foreach (var key in results.Keys)
 				{
+					var ipart = parts[key];
+					var vectors = results[key];
+					var partHash = algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(ipart.Text));
 					var part = new Embeddings.Embedding.FilePart();
-					part.Embedding = VectorToBinary(result.Value);
+					part.Embedding = VectorToBinary(vectors);
 					part.GroupName = embeddingGroupName;
 					part.GroupFlag = (long)embeddingGroupFlag;
 					part.FileId = file.Id;
 					part.EmbeddingModel = modelName;
-					part.EmbeddingSize = result.Value.Length;
+					part.EmbeddingSize = vectors.Length;
 					part.GroupFlag = (int)embeddingGroupFlag;
 					part.Index = 0;
 					part.Count = 1;
@@ -133,8 +134,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					part.IsEnabled = true;
 					part.Created = now.ToUniversalTime();
 					part.Modified = now.ToUniversalTime();
-					part.Text = input[0];
-					part.TextTokens = Companions.ClientHelper.CountTokens(text);
+					part.Text = ipart.Text;
+					part.TextTokens = ipart.TextTokens;
 					db.FileParts.Add(part);
 					db.SaveChanges();
 				}
@@ -144,6 +145,45 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Log { get; set; } = "";
 		public List<Embeddings.Embedding.File> Files { get; set; }
 		public List<Embeddings.Embedding.FilePart> FileParts { get; set; }
+
+		public static FilePart[] GetParts(string path, int maxTokensPerChunk)
+		{
+			var mlContext = new MLContext();
+			var content = System.IO.File.ReadAllText(path);
+			var data = new List<TextData> { new TextData { Text = content } };
+			var dataView = mlContext.Data.LoadFromEnumerable(data);
+			// Tokenize the text
+			var textPipeline = mlContext.Transforms.Text.TokenizeIntoWords("Tokens", nameof(TextData.Text));
+			var textTransformer = textPipeline.Fit(dataView);
+			var transformedData = textTransformer.Transform(dataView);
+			var tokens = mlContext.Data.CreateEnumerable<TokenizedTextData>(transformedData, reuseRowObject: false).First().Tokens;
+			// Chunk the tokens
+			var chunks = ChunkTokens(tokens, maxTokensPerChunk);
+			return chunks.Select(x => new FilePart()
+			{
+				Text = string.Join(" ", x),
+				TextTokens = x.Length
+
+			}).ToArray();
+		}
+
+		static IEnumerable<string[]> ChunkTokens(string[] tokens, int maxTokensPerChunk)
+		{
+			for (int i = 0; i < tokens.Length; i += maxTokensPerChunk)
+			{
+				yield return tokens.Skip(i).Take(maxTokensPerChunk).ToArray();
+			}
+		}
+
+		class TextData
+		{
+			public string Text { get; set; }
+		}
+
+		class TokenizedTextData
+		{
+			public string[] Tokens { get; set; }
+		}
 
 
 
@@ -187,9 +227,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 					// Assuming `FileSimilarity` is the result type.
 					var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
 #if NETFRAMEWORK
-				FileParts = db.Database.SqlQuery<Embeddings.Embedding.FilePart>(
-					sqlCommand, embeddingParam, skipParam, takeParam)
-					.ToList();
+					FileParts = db.Database.SqlQuery<Embeddings.Embedding.FilePart>(
+						sqlCommand, embeddingParam, skipParam, takeParam)
+						.ToList();
 #else
 					FileParts = db.FileParts.FromSqlRaw(
 						sqlCommand, embeddingParam, skipParam, takeParam)
