@@ -87,8 +87,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		int _MaxTokens;
 
 		[XmlIgnore, JsonIgnore]
-		public AiService AiService =>
-			Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
+		public AiService AiService
+			=> Global.AppSettings.AiServices.FirstOrDefault(x => x.Id == AiServiceId);
 
 		public string AiModel { get => _AiModel; set => SetProperty(ref _AiModel, value); }
 		string _AiModel;

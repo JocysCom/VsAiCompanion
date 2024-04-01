@@ -490,7 +490,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)
 				?? Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
-			item.AiModel = defaultAiService?.DefaultAiModel ?? "text-embedding-3-large";
+			var models = Global.AppSettings.AiModels.Where(x => x.AiServiceId == defaultAiService?.Id);
+			item.AiModel = models?.FirstOrDefault(x => x.Name.IndexOf("embedding", StringComparison.OrdinalIgnoreCase) >= 0)?.Name
+				?? defaultAiService?.DefaultAiModel
+				?? "text-embedding-3-large";
 			item.Source = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item), true);
 			item.Target = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item) + ".db", true);
 			// Find free flag number.

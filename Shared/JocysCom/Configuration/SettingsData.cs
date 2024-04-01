@@ -1,28 +1,19 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using JocysCom.ClassLibrary.Collections;
-using System.ComponentModel;
-using System.Text.Json.Serialization;
-
-
-
-
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-using System.Windows;
-#else // .NET Framework
-using System.Windows.Forms;
-#endif
 
 namespace JocysCom.ClassLibrary.Configuration
 {
@@ -345,6 +336,20 @@ namespace JocysCom.ClassLibrary.Configuration
 			public bool Handled { get; set; }
 		}
 
+		public class ItemPropertyChangedEventArgs : PropertyChangedEventArgs
+		{
+			/// <summary>The old value of the property.</summary>
+			public object OldValue { get; }
+			/// <summary>The new value of the property.</summary>
+			public object NewValue { get; }
+			public ItemPropertyChangedEventArgs(string propertyName, object oldValue, object newValue)
+				: base(propertyName)
+			{
+				OldValue = oldValue;
+				NewValue = newValue;
+			}
+		}
+
 		public delegate IList<T> ValidateDataDelegate(IList<T> items);
 
 		[XmlIgnore, JsonIgnore, NonSerialized]
@@ -501,14 +506,8 @@ namespace JocysCom.ClassLibrary.Configuration
 							//form.StartPosition = FormStartPosition.CenterParent;
 							var text = sb.ToString();
 							bool reset;
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
 							var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Error);
 							reset = result == MessageBoxResult.Yes;
-#else // .NET Framework
-							var result = MessageBox.Show(text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-							reset = result == DialogResult.Yes;
-#endif
 							if (reset)
 							{
 								if (System.IO.File.Exists(backupFile))
@@ -645,6 +644,11 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
+		/// Occurs when item was renamed.
+		/// </summary>
+		public event EventHandler<ItemPropertyChangedEventArgs> ItemRenamed;
+
+		/// <summary>
 		/// Renames a settings item file to a new name, ensuring file system consistency and updating internal metadata accordingly.
 		/// </summary>
 		/// <param name="fileItem">The settings item file object to be renamed.</param>
@@ -690,9 +694,12 @@ namespace JocysCom.ClassLibrary.Configuration
 					}
 					if (file.Exists)
 					{
+						var oldBaseName = fileItem.BaseName;
 						file.MoveTo(newPath);
 						fileItem.BaseName = newName;
 						fileItem.WriteTime = file.LastWriteTime;
+						var e = new ItemPropertyChangedEventArgs(nameof(fileItem.BaseName), oldBaseName, newName);
+						ItemRenamed(fileItem, e);
 					}
 				}
 				catch (Exception)

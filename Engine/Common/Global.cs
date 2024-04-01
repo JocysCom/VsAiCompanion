@@ -315,6 +315,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Load Embeddings.
 			Embeddings.OnValidateData += Embeddings_OnValidateData;
 			Embeddings.Load();
+			Embeddings.ItemRenamed += Embeddings_ItemRenamed;
 			if (Embeddings.IsSavePending)
 				Embeddings.Save();
 			// Bind list to plugins.
@@ -349,6 +350,34 @@ namespace JocysCom.VS.AiCompanion.Engine
 				SettingsSourceManager.ResetTemplates();
 			}
 			IsSettignsLoaded = true;
+		}
+
+		private static void Embeddings_ItemRenamed(object sender, SettingsData<EmbeddingsItem>.ItemPropertyChangedEventArgs e)
+		{
+			var item = (EmbeddingsItem)sender;
+			var oldFullName = AssemblyInfo.ExpandPath(item.Target);
+			// If not a file path then return (probably connection string)
+			if (!EmbeddingHelper.IsFilePath(oldFullName))
+				return;
+			var oldFileBaseName = Path.GetFileNameWithoutExtension(oldFullName);
+			// if old file name did not match new item name then return.
+			if (!oldFileBaseName.Equals((string)e.OldValue, StringComparison.OrdinalIgnoreCase))
+				return;
+			var ext = Path.GetExtension(oldFullName);
+			var fi = new FileInfo(oldFullName);
+			var newFullName = Path.Combine(fi.Directory.FullName, (string)e.NewValue + ext);
+			if (fi.Exists)
+			{
+				try
+				{
+					fi.MoveTo(newFullName);
+				}
+				catch
+				{
+					return;
+				}
+			}
+			item.Target = AssemblyInfo.ParameterizePath(newFullName, true);
 		}
 
 		private static void Assistants_OnValidateData(object sender, SettingsData<AssistantItem>.SettingsDataEventArgs e)

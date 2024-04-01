@@ -11,6 +11,7 @@ using JocysCom.VS.AiCompanion.DataClient;
 using System;
 using System.IO;
 
+
 #if NETFRAMEWORK
 using System.Data.SQLite;
 using System.Data.SqlClient;
@@ -136,7 +137,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
 			var dialog = _FolderBrowser;
 			dialog.SelectedPath = Item.Source;
 			DialogHelper.FixDialogFolder(dialog, Global.FineTuningPath);
@@ -144,6 +144,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
 			Item.Source = AssemblyInfo.ParameterizePath(dialog.SelectedPath, true);
+			UpdateFromFolder(dialog.SelectedPath);
+		}
+
+		private void UpdateFromFolder(string path)
+		{
+			// If name is default.
+			if (!Item.Name.StartsWith("Embedding 2"))
+				return;
+			var di = new DirectoryInfo(path);
+			var newName = di.Parent == null
+				? di.Name
+				: $"{di.Parent.Name} - {di.Name}";
+			Global.Embeddings.RenameItem(Item, newName);
 		}
 
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
