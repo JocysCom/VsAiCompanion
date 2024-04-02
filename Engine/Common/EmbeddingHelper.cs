@@ -15,9 +15,7 @@ using JocysCom.VS.AiCompanion.DataFunctions;
 using Embeddings.Embedding;
 using Microsoft.ML;
 using JocysCom.ClassLibrary.Security;
-
-
-
+using System.Threading;
 
 #if NETFRAMEWORK
 using System.Data.SqlClient;
@@ -73,46 +71,91 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return db;
 		}
 
-		public static async Task UpdateEmbedding(
+		public static async Task<ProgressStatus> UpdateEmbedding(
 			EmbeddingsContext db,
 			string fileName,
 			System.Security.Cryptography.SHA256 algorithm,
 			AiService service, string modelName,
-			string embeddingGroupName, EmbeddingGroup embeddingGroupFlag
+			string embeddingGroupName, EmbeddingGroup embeddingGroupFlag,
+			CancellationToken cancellationToken = default
 		)
 		{
 			var fi = new FileInfo(fileName);
-			var file = db.Files.FirstOrDefault(x => x.Url == fi.FullName);
+			var file = db.Files.FirstOrDefault(x =>
+				// Select item by index.
+				x.GroupName == embeddingGroupName &&
+				x.GroupFlag == (int)embeddingGroupFlag &&
+				x.Url == fi.FullName);
 			var fileHash = HashHelper.GetHashFromFile(algorithm, fileName);
+			var fileHashDb = EmbeddingBase.GetHashByName(file?.Hash, file?.HashType);
+			// If file found but different.
+			if (fileHashDb != null && !fileHashDb.SequenceEqual(fileHash))
+			{
+				// Remove parts and file.
+				var filePartsToDelete = db.FileParts.Where(x => x.FileId == file.Id).ToList();
+				foreach (var filePartToDelete in filePartsToDelete)
+					db.FileParts.Remove(filePartToDelete);
+				await db.SaveChangesAsync();
+				db.Files.Remove(file);
+				file = null;
+			}
+			// If there is no such file in database then...
 			if (file == null)
 			{
+				// Add new file.
 				file = new Embeddings.Embedding.File();
 				db.Files.Add(file);
+				file.Name = fi.Name;
+				file.Url = fi.FullName;
+				file.GroupName = embeddingGroupName;
+				file.GroupFlag = (long)embeddingGroupFlag;
+				file.HashType = EmbeddingBase.SHA2_256;
+				file.Hash = fileHash;
+				file.Size = fi.Length;
+				file.IsEnabled = true;
+				file.Created = fi.CreationTime.ToUniversalTime();
+				file.Modified = fi.LastWriteTime.ToUniversalTime();
 			}
-			//file.GroupName = 
-			file.Name = fi.Name;
-			file.Url = fi.FullName;
-			file.GroupName = embeddingGroupName;
-			file.GroupFlag = (long)embeddingGroupFlag;
-			file.HashType = "SHA_256";
-			file.Hash = fileHash;
-			file.Size = fi.Length;
 			file.State = (int)ProgressStatus.Completed;
-			file.IsEnabled = true;
-			file.Created = fi.CreationTime.ToUniversalTime();
-			file.Modified = fi.LastWriteTime.ToUniversalTime();
 			await db.SaveChangesAsync();
+			// Process parts.
 			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
 			var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens);
 			var input = parts.Select(x => x.Text);
+			// GetPart hashed from the database.
+			var targetFileParts = db.FileParts
+				.Where(x => x.FileId == file.Id)
+				.OrderBy(x => x.Index)
+				.ToList();
+			var targetFilePartHashes = targetFileParts
+				.Select(x => EmbeddingBase.GetHashByName(x.Hash, x.HashType))
+				.ToList();
+			var sourceFilePartHashes = input
+				.Select(x => algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(x)))
+				.ToList();
+			// If all hashes match then...
+			if (targetFilePartHashes.Count == sourceFilePartHashes.Count &&
+				!targetFilePartHashes.Where((x, i) => !x.SequenceEqual(sourceFilePartHashes[i])).Any())
+			{
+				foreach (var targetFilePart in targetFileParts)
+					targetFilePart.State = (int)ProgressStatus.Completed;
+				await db.SaveChangesAsync();
+				return ProgressStatus.Skipped;
+			}
+			// Remove parts.
+			foreach (var targetFilePart in targetFileParts)
+				db.FileParts.Remove(targetFilePart);
+			await db.SaveChangesAsync();
+			// Fill with updated records.
 			var client = new Client(service);
-			var results = await client.GetEmbedding(modelName, input);
+			var results = await client.GetEmbedding(modelName, input, cancellationToken);
+			if (cancellationToken.IsCancellationRequested)
+				return ProgressStatus.Canceled;
 			var now = DateTime.Now;
 			foreach (var key in results.Keys)
 			{
 				var ipart = parts[key];
 				var vectors = results[key];
-				var partHash = algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(ipart.Text));
 				var part = new Embeddings.Embedding.FilePart();
 				part.Embedding = VectorToBinary(vectors);
 				part.GroupName = embeddingGroupName;
@@ -123,16 +166,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 				part.GroupFlag = (int)embeddingGroupFlag;
 				part.Index = 0;
 				part.Count = 1;
-				part.HashType = "SHA_256";
-				part.Hash = partHash;
+				part.HashType = EmbeddingBase.SHA2_256;
+				part.Hash = sourceFilePartHashes[key];
 				part.IsEnabled = true;
+				file.State = (int)ProgressStatus.Completed;
 				part.Created = now.ToUniversalTime();
 				part.Modified = now.ToUniversalTime();
 				part.Text = ipart.Text;
 				part.TextTokens = ipart.TextTokens;
 				db.FileParts.Add(part);
-				await db.SaveChangesAsync();
 			}
+			await db.SaveChangesAsync();
+			return ProgressStatus.Updated;
 		}
 
 		public string Log { get; set; } = "";
@@ -178,8 +223,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			public string[] Tokens { get; set; }
 		}
 
-
-
 		public async Task SearchEmbeddings(EmbeddingsItem item, string message, int skip, int take)
 		{
 			try
@@ -200,7 +243,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Log += "Searching on database...";
 				if (IsFilePath(item.Target))
 				{
-					var ids = await GetSimilarFileEmbeddings(expandedTarget, item.EmbeddingGroupName, (long)item.EmbeddingGroupFlag, vectors, item.Take);
+					var ids = await GetSimilarFileEmbeddings(expandedTarget, item.EmbeddingGroupName, item.EmbeddingGroupFlag, vectors, item.Take);
 					FileParts = db.FileParts
 						.Where(x => ids.Contains(x.Id))
 						.ToList()
@@ -247,10 +290,76 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return ext == ".db";
 		}
 
+		public static async Task<int> SetFileState(
+			EmbeddingsContext db,
+			string groupName,
+			EmbeddingGroup groupFlag,
+			ProgressStatus state
+		)
+		{
+#if NETFRAMEWORK
+			var connection = db.Database.Connection;
+#else
+			var connection = db.Database.GetDbConnection();
+#endif
+			var command = connection.CreateCommand();
+			if (connection.State != ConnectionState.Open)
+				connection.Open();
+			AddParameters(command, groupName, groupFlag, state);
+			var isPortable = IsFilePath(connection.ConnectionString);
+			var schema = isPortable ? "" : "[Embedding].";
+			command.CommandText = $@"
+                UPDATE {schema}[FilePart]
+				SET [State] = @State
+                WHERE [GroupName] = @GroupName
+                AND [GroupFlag] = @GroupFlag";
+			var rowsAffected = await command.ExecuteNonQueryAsync();
+			command.CommandText = $@"
+                UPDATE {schema}[File]
+				SET [State] = @State
+                WHERE [GroupName] = @GroupName
+                AND [GroupFlag] = @GroupFlag";
+			rowsAffected += await command.ExecuteNonQueryAsync();
+			return rowsAffected;
+		}
+
+		public static async Task<int> DeleteByState(
+			EmbeddingsContext db,
+			string groupName,
+			EmbeddingGroup groupFlag,
+			ProgressStatus state
+		)
+		{
+#if NETFRAMEWORK
+			var connection = db.Database.Connection;
+#else
+			var connection = db.Database.GetDbConnection();
+#endif
+			var command = connection.CreateCommand();
+			if (connection.State != ConnectionState.Open)
+				connection.Open();
+			AddParameters(command, groupName, groupFlag, state);
+			var isPortable = IsFilePath(connection.ConnectionString);
+			var schema = isPortable ? "" : "[Embedding].";
+			command.CommandText = $@"
+                DELETE FROM {schema}[FilePart]
+                WHERE [GroupName] = @GroupName
+                AND [GroupFlag] = @GroupFlag
+				AND [State] = @State";
+			var rowsAffected = await command.ExecuteNonQueryAsync();
+			command.CommandText = $@"
+                DELETE FROM {schema}[File]
+                WHERE [GroupName] = @GroupName
+                AND [GroupFlag] = @GroupFlag
+				AND [State] = @State";
+			rowsAffected += await command.ExecuteNonQueryAsync();
+			return rowsAffected;
+		}
+
 		public static async Task<List<long>> GetSimilarFileEmbeddings(
 			string path,
 			string groupName,
-			long groupFlag,
+			EmbeddingGroup groupFlag,
 			float[] promptVectors, int take)
 		{
 			var commandText = $@"
@@ -266,14 +375,7 @@ namespace JocysCom.VS.AiCompanion.Engine
                 AND f.IsEnabled = 1";
 			var connection = SqliteHelper.NewConnection(path);
 			var command = SqliteHelper.NewCommand(commandText, connection);
-			var nameParam = command.CreateParameter();
-			nameParam.ParameterName = "@GroupName";
-			nameParam.Value = groupName;
-			command.Parameters.Add(nameParam);
-			var flagParam = command.CreateParameter();
-			flagParam.ParameterName = "@GroupFlag";
-			flagParam.Value = (int)groupFlag;
-			command.Parameters.Add(flagParam);
+			AddParameters(command, groupName, groupFlag);
 			connection.Open();
 			var reader = await command.ExecuteReaderAsync();
 			var tempResult = new SortedList<float, FilePart>();
@@ -301,6 +403,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 				.Select(x => x.Value.Id)
 				.ToList();
 			return ids;
+		}
+
+		private static void AddParameters(DbCommand command, string groupName, EmbeddingGroup groupFlag, ProgressStatus? state = null)
+		{
+			var nameParam = command.CreateParameter();
+			nameParam.ParameterName = "@GroupName";
+			nameParam.Value = groupName;
+			command.Parameters.Add(nameParam);
+			var flagParam = command.CreateParameter();
+			flagParam.ParameterName = "@GroupFlag";
+			flagParam.Value = (int)groupFlag;
+			command.Parameters.Add(flagParam);
+			if (state != null)
+			{
+				var stateParam = command.CreateParameter();
+				stateParam.ParameterName = "@State";
+				stateParam.Value = (int)state;
+				command.Parameters.Add(stateParam);
+			}
 		}
 
 		private static FilePart ReadFilePartFromReader(DbDataReader reader)

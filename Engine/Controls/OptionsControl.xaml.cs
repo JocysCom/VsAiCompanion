@@ -129,16 +129,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!Global.IsVsExtension)
 			{
 				var window = ControlsHelper.GetParent<Window>(this);
+				//var pixRect = PositionSettings.GetPixelsBoundaryRectangle(this);
+				//var pixRectWin = PositionSettings.GetPixelsBoundaryRectangle(window);
 				var w = Math.Max((double)WindowWidthUpDown.Value, window.MinWidth);
 				var h = Math.Max((double)WindowHeightUpDown.Value, window.MinHeight);
 				var content = (FrameworkElement)window.Content;
 				// Get space taken by the window borders.
 				var wSpace = window.ActualWidth - content.ActualWidth;
 				var hSpace = window.ActualHeight - content.ActualHeight;
+				//var tPad = pixRect.Top - pixRectWin.Top;
+				//var lPad = pixRect.Left - pixRectWin.Left;
+				//var padPoint = new Point(tPad, lPad);
 				var size = new Size(w + wSpace, h + hSpace);
+				var point = new Point(window.Left, window.Top);
 				var newSize = PositionSettings.ConvertToDiu(size);
-				ps.Left = Math.Round(ps.Left / 2 / 3 / 5) * 2 * 3 * 5;
-				ps.Top = Math.Round(ps.Top / 2 / 3 / 5) * 2 * 3 * 5;
+				var newPoint = PositionSettings.ConvertToDiu(point);
+				//var newPadPoint = PositionSettings.ConvertToDiu(padPoint);
+				ps.Left = (int)(newPoint.X / 2 / 3 / 5) * 2 * 3 * 5;
+				ps.Top = (int)(newPoint.Y / 2 / 3 / 5) * 2 * 3 * 5;
 				ps.Width = newSize.Width;
 				ps.Height = newSize.Height;
 				ps.LoadPosition(window);

@@ -197,7 +197,7 @@
 				Grid.Column="2"
 				HorizontalAlignment="Left"
 				Orientation="Horizontal">
-				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="256" Text="{Binding GroupName}" />
+				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="256" Text="{Binding EmbeddingGroupName}" />
 				<Label
 					x:Name="EmbeddingGroupFlagLabel"
 					Grid.Row="3"

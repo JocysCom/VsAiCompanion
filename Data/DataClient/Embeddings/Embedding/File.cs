@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -78,7 +78,8 @@ namespace Embeddings.Embedding
 			=> Copy(this, target, copyKey);
 
 		/// <summary>Copy to existing object.</summary>
-		public static File Copy(File source, File target, bool copyKey = false) {
+		public static File Copy(File source, File target, bool copyKey = false)
+		{
 			if (copyKey)
 				target.Id = source.Id;
 			target.GroupName = source.GroupName;

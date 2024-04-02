@@ -300,11 +300,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <returns></returns>
 		public async Task<Dictionary<int, float[]>> GetEmbedding(
 			string modelName,
-			IEnumerable<string> input)
+			IEnumerable<string> input,
+			CancellationToken cancellationToken = default
+			)
 		{
 			var client = GetAiClient();
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
+			var clientToken = new CancellationTokenSource();
+			clientToken.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
+			var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(clientToken.Token, cancellationToken);
 			var id = Guid.NewGuid();
 			Global.MainControl.Dispatcher.Invoke(() =>
 			{
@@ -315,7 +318,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			try
 			{
 				var options = new EmbeddingsOptions(modelName, input);
-				var response = await client.GetEmbeddingsAsync(options, cancellationTokenSource.Token);
+				var response = await client.GetEmbeddingsAsync(options, linkedTokenSource.Token);
 				if (response != null)
 				{
 					var promptTokens = response.Value.Usage.PromptTokens;

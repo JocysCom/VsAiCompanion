@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -110,10 +111,9 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Convert the screen rectangle to device-independent units rectangle.
 		/// </summary>
-		static Rect ConvertToDiu(Rect pixRectangle, Window w = null)
+		static Rect ConvertToDiu(Rect pixRectangle, Visual v = null)
 		{
-			var matrix = GetMatrix(w);
-
+			var matrix = GetMatrix(v);
 			var leftDiu = pixRectangle.Left / matrix.M11;
 			var topDiu = pixRectangle.Top / matrix.M22;
 			var widthDiu = pixRectangle.Width / matrix.M11;
@@ -121,24 +121,36 @@ namespace JocysCom.ClassLibrary.Controls
 			return new Rect(leftDiu, topDiu, widthDiu, heightDiu);
 		}
 
-		public static Size ConvertToPixels(Size size, Window w = null)
+		public static Size ConvertToPixels(Size size, Visual v = null)
 		{
-			var matrix = GetMatrix(w);
+			var matrix = GetMatrix(v);
 			return new Size(size.Width * matrix.M11, size.Height * matrix.M22);
 		}
 
-		public static Size ConvertToDiu(Size size, Window w = null)
+		public static Point ConvertToPixels(Point point, Visual v = null)
 		{
-			var matrix = GetMatrix(w);
+			var matrix = GetMatrix(v);
+			return new Point(point.X * matrix.M11, point.Y * matrix.M22);
+		}
+
+		public static Point ConvertToDiu(Point point, Visual v = null)
+		{
+			var matrix = GetMatrix(v);
+			return new Point(point.X / matrix.M11, point.Y / matrix.M22);
+		}
+
+		public static Size ConvertToDiu(Size size, Visual v = null)
+		{
+			var matrix = GetMatrix(v);
 			return new Size(size.Width / matrix.M11, size.Height / matrix.M22);
 		}
 
 		/// <summary>
 		/// Convert device-independent units rectangle to the screen rectangle.
 		/// </summary>
-		static Rect ConvertToPixels(Rect diuRectangle, Window w = null)
+		static Rect ConvertToPixels(Rect diuRectangle, Visual v = null)
 		{
-			var matrix = GetMatrix(w);
+			var matrix = GetMatrix(v);
 			var leftPixels = diuRectangle.Left * matrix.M11;
 			var topPixels = diuRectangle.Top * matrix.M22;
 			var widthPixels = diuRectangle.Width * matrix.M11;
@@ -146,9 +158,9 @@ namespace JocysCom.ClassLibrary.Controls
 			return new Rect(leftPixels, topPixels, widthPixels, heightPixels);
 		}
 
-		static System.Windows.Media.Matrix GetMatrix(Window w = null)
+		static System.Windows.Media.Matrix GetMatrix(Visual v = null)
 		{
-			var matrix = w is null ? null : PresentationSource.FromVisual(w)?.CompositionTarget?.TransformToDevice;
+			var matrix = v is null ? null : PresentationSource.FromVisual(v)?.CompositionTarget?.TransformToDevice;
 			if (matrix != null)
 				return matrix.Value;
 			// Create a temporary Visual object
@@ -161,6 +173,13 @@ namespace JocysCom.ClassLibrary.Controls
 			// Dispose the temporary PresentationSource or app won't close properly.
 			source.Dispose();
 			return matrix.Value;
+		}
+
+		public static Rect GetPixelsBoundaryRectangle(FrameworkElement element)
+		{
+			var point = element.PointToScreen(new Point(0, 0));
+			var rect = new Rect(point, new Size(element.ActualWidth, element.ActualHeight));
+			return rect;
 		}
 
 		static Rect UnionOfAllWorkingAreaBounds()

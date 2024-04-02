@@ -699,7 +699,7 @@ namespace JocysCom.ClassLibrary.Configuration
 						fileItem.BaseName = newName;
 						fileItem.WriteTime = file.LastWriteTime;
 						var e = new ItemPropertyChangedEventArgs(nameof(fileItem.BaseName), oldBaseName, newName);
-						ItemRenamed(fileItem, e);
+						ItemRenamed?.Invoke(fileItem, e);
 					}
 				}
 				catch (Exception)

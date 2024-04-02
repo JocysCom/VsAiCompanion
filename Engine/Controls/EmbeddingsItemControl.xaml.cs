@@ -13,6 +13,10 @@ using System.IO;
 using JocysCom.ClassLibrary.IO;
 using LiteDB;
 using System.Windows;
+using JocysCom.ClassLibrary;
+
+
+
 
 
 
@@ -251,6 +255,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void SearchButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
 			MainTabControl.SelectedItem = LogTabPage;
 			LogTextBox.Text = "";
 			var eh = new EmbeddingHelper();
@@ -290,6 +296,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ScanStartButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
 			//var form = new MessageBoxWindow();
 			//var result = form.ShowDialog("Start Processing?", "Processing", MessageBoxButton.OKCancel, MessageBoxImage.Question);
 			//if (result != MessageBoxResult.OK)
@@ -315,7 +323,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		//IScanner _Scanner;
 		object AddAndUpdateLock = new object();
 
-		void ScanTask(object state)
+		async void ScanTask(object state)
 		{
 
 			var item = (EmbeddingsItem)state;
@@ -332,7 +340,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				db.Dispose();
 			}
 			db = EmbeddingHelper.NewEmbeddingsContext(target);
+			// Mark all files as starting to process.
+			var tempState = ProgressStatus.Started;
+			await EmbeddingHelper.SetFileState(
+				db, Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, tempState);
 			fp = new FileProcessor();
+			fp.ProcessItem = _Scanner_ProcessItem;
 			fp.Progress += _Scanner_Progress;
 			Dispatcher.Invoke(new Action(() =>
 			{
@@ -340,8 +353,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				try
 				{
 					paths = new[] { source };
-					if (EmbeddingHelper.IsFilePath(target) && !File.Exists(target))
-						InitSqlDatabase(target);
+					if (EmbeddingHelper.IsFilePath(target))
+					{
+						var dbFi = new FileInfo(target);
+						// If database file don't exists or not initialized then...
+						if (!dbFi.Exists || dbFi.Length == 0)
+							InitSqlDatabase(target);
+					}
 				}
 				catch (System.Exception ex)
 				{
@@ -354,10 +372,47 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ScanStartButton.IsEnabled = false;
 				ScanStopButton.IsEnabled = true;
 			}));
-			fp.Scan(paths, "*.txt");
+			await fp.Scan(paths, "*.txt");
+			// Cleanup.
+			var noErrors =
+				fp.ProcessItemStates[ProgressStatus.Exception] == 0 &&
+				fp.ProcessItemStates[ProgressStatus.Failed] == 0 &&
+				fp.ProcessItemStates[ProgressStatus.Canceled] == 0;
+			// If cancellation was not requested and no errors then...
+			if (!fp.Cancellation.Token.IsCancellationRequested && noErrors)
+			{
+				// Delete unprocessed files.
+				await EmbeddingHelper.DeleteByState(
+					db,
+					Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, tempState);
+
+			}
 		}
 
-		private async void _Scanner_Progress(object sender, ClassLibrary.ProgressEventArgs e)
+		private async Task<ProgressStatus> _Scanner_ProcessItem(FileProcessor fp, ClassLibrary.ProgressEventArgs e)
+		{
+			try
+			{
+				var fi = (FileInfo)e.SubData;
+				var processingState = await EmbeddingHelper.UpdateEmbedding(
+					db, fi.FullName, algorithm,
+					Item.AiService, Item.AiModel,
+					Item.EmbeddingGroupName, Item.EmbeddingGroupFlag,
+					fp.Cancellation.Token
+					);
+				return processingState;
+			}
+			catch (Exception ex)
+			{
+				e.Exception = ex;
+				// Stop if too many exceptions.
+				if (fp.ProcessItemStates[ClassLibrary.ProgressStatus.Exception] > 5)
+					fp.IsStopping = true;
+				return ClassLibrary.ProgressStatus.Exception;
+			}
+		}
+
+		private void _Scanner_Progress(object sender, ClassLibrary.ProgressEventArgs e)
 		{
 			Dispatcher.Invoke(new Action(() =>
 			{
@@ -369,29 +424,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					ScanStopButton.IsEnabled = false;
 				}
 			}));
-			if (e.State == ClassLibrary.ProgressStatus.Processing)
-			{
-				try
-				{
-					var fi = (FileInfo)e.SubData;
-					await EmbeddingHelper.UpdateEmbedding(
-						db, fi.FullName, algorithm,
-						Item.AiService, Item.AiModel,
-						Item.EmbeddingGroupName, Item.EmbeddingGroupFlag
-						);
-					e.State = ClassLibrary.ProgressStatus.Updated;
-				}
-				catch (Exception ex)
-				{
-					e.Exception = ex;
-					e.State = ClassLibrary.ProgressStatus.Exception;
-					fp.IsStopping = true;
-				}
-				Dispatcher.Invoke(new Action(() =>
-				{
-					ScanProgressPanel.UpdateProgress(e);
-				}));
-			}
 		}
 
 		#endregion
@@ -400,7 +432,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var p = fp;
 			if (p != null)
+			{
+				fp.Cancellation.Cancel();
 				p.IsStopping = true;
+			}
 		}
+
 	}
 }
