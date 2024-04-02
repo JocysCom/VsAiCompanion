@@ -287,6 +287,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void LoadSettings()
 		{
+			// Make sure DbContext supports MS SQL Server
+			DataConnectionDialogHelper.AddDbProviderFactories();
 			// Set a converter to convert SVG to images for the user interface.
 			SettingsListFileItem.ConvertToImage = Converters.SvgHelper.LoadSvgFromString;
 			ResetSettings = false;

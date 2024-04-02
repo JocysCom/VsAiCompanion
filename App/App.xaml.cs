@@ -3,7 +3,6 @@ using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine;
 using System;
 using System.Configuration;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -243,16 +242,6 @@ namespace JocysCom.VS.AiCompanion
 
 		#endregion
 
-#if NETFRAMEWORK
-#else
-		public void AddFactory(DbProviderFactory instance)
-		{
-			var invariantName = instance.GetType().Namespace;
-			if (!DbProviderFactories.GetProviderInvariantNames().Contains(invariantName))
-				DbProviderFactories.RegisterFactory(invariantName, instance);
-		}
-#endif
-
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			if (!allowToRun)
@@ -260,13 +249,6 @@ namespace JocysCom.VS.AiCompanion
 				Shutdown();
 				return;
 			}
-#if NETFRAMEWORK
-#else
-			// Workaround fix for System.Runtime.ExceptionServices.FirstChanceException
-			// The specified invariant name 'System.Data.SqlClient' wasn't found in the list of registered .NET Data Providers.
-			//AddFactory(SqlClientFactory.Instance);
-			AddFactory(Microsoft.Data.SqlClient.SqlClientFactory.Instance);
-#endif
 			base.OnStartup(e);
 			try
 			{

@@ -1,33 +1,19 @@
-﻿using JocysCom.ClassLibrary.Configuration;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.IO;
+using JocysCom.VS.AiCompanion.DataClient;
+using LiteDB;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Runtime.CompilerServices;
-using System.Windows.Controls;
-using System.Linq;
-using System.Threading.Tasks;
-using JocysCom.VS.AiCompanion.DataClient;
-using System;
 using System.IO;
-using JocysCom.ClassLibrary.IO;
-using LiteDB;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
-using JocysCom.ClassLibrary;
-
-
-
-
-
-
-#if NETFRAMEWORK
-using System.Data.SQLite;
-using System.Data.SqlClient;
-#else
-using Microsoft.Data.Sqlite;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-#endif
+using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -178,48 +164,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-#if NETFRAMEWORK
-			Microsoft.Data.ConnectionUI.DataConnectionDialog dcd;
-			dcd = new Microsoft.Data.ConnectionUI.DataConnectionDialog();
-			//Adds all the standard supported databases
-			//DataSource.AddStandardDataSources(dcd);
-			//allows you to add datasources, if you want to specify which will be supported 
-			dcd.DataSources.Add(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource);
-			dcd.SetSelectedDataProvider(Microsoft.Data.ConnectionUI.DataSource.SqlDataSource, Microsoft.Data.ConnectionUI.DataProvider.SqlDataProvider);
-			try
-			{
-				dcd.ConnectionString = Item.Target ?? "";
-			}
-			catch (System.Exception)
-			{
-			}
-			Microsoft.Data.ConnectionUI.DataConnectionDialog.Show(dcd);
-			if (dcd.DialogResult == System.Windows.Forms.DialogResult.OK)
-			{
-				Item.Target = dcd.ConnectionString;
-			}
-			//OnPropertyChanged(nameof(FilteredConnectionString));
-#else
-			Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog dcd;
-			dcd = new Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog();
-			// Add all the standard supported databases.
-			Microsoft.SqlServer.Management.ConnectionUI.DataSource.AddStandardDataSources(dcd);
-			//Add custom data sources.
-			dcd.DataSources.Add(Microsoft.SqlServer.Management.ConnectionUI.DataSource.SqlDataSource);
-			dcd.SetSelectedDataProvider(Microsoft.SqlServer.Management.ConnectionUI.DataSource.SqlDataSource, Microsoft.SqlServer.Management.ConnectionUI.DataProvider.SqlDataProvider);
-			try
-			{
-				dcd.ConnectionString = Item.Target ?? "";
-			}
-			catch (System.Exception)
-			{
-			}
-			Microsoft.SqlServer.Management.ConnectionUI.DataConnectionDialog.Show(dcd);
-			if (dcd.DialogResult == System.Windows.Forms.DialogResult.OK)
-			{
-				Item.Target = dcd.ConnectionString;
-			}
-#endif
+			var connectionString = DataConnectionDialogHelper.ShowDialog(Item.Target);
+			if (connectionString != null)
+				Item.Target = connectionString;
 		}
 
 		#region Database Connection Strings
