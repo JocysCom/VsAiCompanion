@@ -241,28 +241,42 @@
 						<Label Content="W" />
 						<Controls:NumericUpDown
 							x:Name="WindowWidthUpDown"
-							LargeChange="200"
+							LargeChange="120"
 							Maximum="100000"
-							SmallChange="100"
+							SmallChange="60"
 							Value="900" />
 						<Label Content="H" />
 						<Controls:NumericUpDown
 							x:Name="WindowHeightUpDown"
-							LargeChange="200"
+							LargeChange="120"
 							Maximum="100000"
-							SmallChange="100"
+							SmallChange="60"
 							Value="900" />
 					</StackPanel>
-					<Button
-						Name="ResetUIButton"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Left"
-						Click="ResetUIButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="{x:Static locales:Resources.Reset_UI_Settings}" />
-						</StackPanel>
-					</Button>
+					<StackPanel Orientation="Horizontal">
+						<Button
+							Name="ResetUIButton"
+							HorizontalAlignment="Left"
+							HorizontalContentAlignment="Left"
+							Click="ResetUIButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{x:Static locales:Resources.Reset_UI_Settings}" />
+							</StackPanel>
+						</Button>
+						<Button
+							Name="AdjustUIButton"
+							HorizontalAlignment="Left"
+							HorizontalContentAlignment="Left"
+							Click="AdjustUIButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_screen}" Focusable="False" />
+								<Label Content="Adjust" />
+							</StackPanel>
+						</Button>
+
+					</StackPanel>
+
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Sending_Message}">

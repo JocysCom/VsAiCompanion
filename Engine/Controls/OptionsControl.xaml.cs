@@ -137,12 +137,39 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var hSpace = window.ActualHeight - content.ActualHeight;
 				var size = new Size(w + wSpace, h + hSpace);
 				var newSize = PositionSettings.ConvertToDiu(size);
-				ps.Left = Math.Round(ps.Left);
-				ps.Top = Math.Round(ps.Top);
+				ps.Left = Math.Round(ps.Left / 2 / 3 / 5) * 2 * 3 * 5;
+				ps.Top = Math.Round(ps.Top / 2 / 3 / 5) * 2 * 3 * 5;
 				ps.Width = newSize.Width;
 				ps.Height = newSize.Height;
 				ps.LoadPosition(window);
 			}
+		}
+
+		/// <summary>
+		/// Adjusts the provided dimension to the nearest perfect size for screenshots, 
+		/// meeting the criteria of divisibility by 2, 3, 4, and 10.
+		/// </summary>
+		/// <param name="value">The original size of the screenshot dimension 
+		/// (width or height) to be adjusted.</param>
+		/// <returns>The adjusted size, meeting the criteria of being a multiple of 2, 3, 4, and 10 
+		/// for optimal resizing quality.</returns>
+		public static int AdjustForScreenshot(int value)
+		{
+			// The LCM of 2, 3, 4, and 10 to ensure scaling and quality criteria
+			const int perfectDivisor = 60;
+			// If the value already meets the perfect criteria then return.
+			if (value % perfectDivisor == 0)
+				return value;
+			// Calculate the nearest higher multiple of 60
+			int adjustedValue = ((value / perfectDivisor) + 1) * perfectDivisor;
+			return adjustedValue;
+		}
+
+		private void AdjustUIButton_Click(object sender, RoutedEventArgs e)
+		{
+			WindowWidthUpDown.Value = AdjustForScreenshot((int)WindowWidthUpDown.Value);
+			WindowHeightUpDown.Value = AdjustForScreenshot((int)WindowHeightUpDown.Value);
+			ResetUIButton_Click(null, null);
 		}
 	}
 
