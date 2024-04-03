@@ -205,7 +205,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			MainTabControl.SelectedItem = LogTabPage;
 			LogTextBox.Text = "";
 			var eh = new EmbeddingHelper();
-			var systemMessage = await eh.SearchEmbeddingsToSystemMessage(Item, Item.Message, Item.Skip, Item.Take);
+			var systemMessage = await eh.SearchEmbeddingsToSystemMessage(Item, Item.EmbeddingGroupFlag, Item.Message, Item.Skip, Item.Take);
 			if (eh.FileParts == null)
 			{
 				LogTextBox.Text += "\r\nSearch returned no results.";
@@ -218,15 +218,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void CreateButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			MainTabControl.SelectedItem = LogTabPage;
-			var path = AssemblyInfo.ExpandPath(Item.Target);
-			InitSqlDatabase(path);
+			InitSqlDatabase(Item.Target);
 		}
 
-		public void InitSqlDatabase(string stringOrPath)
+		public void InitSqlDatabase(string target)
 		{
-			if (EmbeddingHelper.IsPortable(stringOrPath))
-				SqliteHelper.InitSqlLiteDatabase(stringOrPath);
-
+			target = AssemblyInfo.ExpandPath(target);
+			var connectionString = SqlInitHelper.IsPortable(target)
+				? SqlInitHelper.PathToConnectionString(target)
+				: target;
+			SqlInitHelper.InitSqlDatabase(connectionString);
 		}
 
 		FileProcessor _Scanner;
@@ -281,7 +282,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				db.Dispose();
 			}
-			db = EmbeddingHelper.NewEmbeddingsContext(target);
+			var connectionString = SqlInitHelper.IsPortable(target)
+				? SqlInitHelper.PathToConnectionString(target)
+				: target;
+			db = EmbeddingHelper.NewEmbeddingsContext(connectionString);
 			Ignores.Clear();
 			_Scanner = new FileProcessor();
 			_Scanner.ProcessItem = _Scanner_ProcessItem;
@@ -295,9 +299,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				try
 				{
 					paths = new[] { source };
-
-
-					if (EmbeddingHelper.IsPortable(target))
+					if (SqlInitHelper.IsPortable(target))
 					{
 						var dbFi = new FileInfo(target);
 						// If database file don't exists or not initialized then...
@@ -318,8 +320,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}));
 			// Mark all files as starting to process.
 			var tempState = ProgressStatus.Started;
-			await EmbeddingHelper.SetFileState(
-				db, Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, tempState);
+			await SqlInitHelper.SetFileState(
+				db, Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, (int)tempState);
 			await _Scanner.Scan(paths, Item.SourcePattern, allDirectories: true);
 			// Cleanup.
 			var noErrors =
@@ -330,9 +332,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!_Scanner.Cancellation.Token.IsCancellationRequested && noErrors)
 			{
 				// Delete unprocessed files.
-				await EmbeddingHelper.DeleteByState(
+				await SqlInitHelper.DeleteByState(
 					db,
-					Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, tempState);
+					Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, (int)tempState);
 
 			}
 		}
@@ -453,7 +455,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var path = AssemblyInfo.ExpandPath(Item.Target);
 			//if (EmbeddingHelper.IsFilePath(path))
 			//DialogHelper.FixDialogFile(dialog, _OpenFileDialog.FileName);
-			if (EmbeddingHelper.IsPortable(path))
+			if (SqlInitHelper.IsPortable(path))
 			{
 				dialog.FileName = Path.GetFileName(path);
 				dialog.InitialDirectory = Path.GetDirectoryName(path);

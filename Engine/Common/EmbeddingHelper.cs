@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using LiteDB;
-using System.Data.Common;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.DataFunctions;
 using Embeddings.Embedding;
@@ -50,27 +49,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		//	}
 		//}
 
-		public static EmbeddingsContext NewEmbeddingsContext(string connectionStringOrFilPath)
+		public static EmbeddingsContext NewEmbeddingsContext(string connectionString)
 		{
+			var isPortable = SqlInitHelper.IsPortable(connectionString);
 #if NETFRAMEWORK
-			//var config = new MyDbConfiguration(connectionString);
-			//DbConfiguration.SetConfiguration(config);
-			DbConnection connection;
-			if (connectionStringOrFilPath.Contains(".db"))
-				connection = new SQLiteConnection(connectionStringOrFilPath);
-			else
-				connection = new SqlConnection(connectionStringOrFilPath);
+			//DbConnection connection = isPortable
+			//	? (DbConnection)new SQLiteConnection(connectionString)
+			//	: new SqlConnection(connectionString);
 			var db = new EmbeddingsContext();
-			db.Database.Connection.ConnectionString = connectionStringOrFilPath;
+			db.Database.Connection.ConnectionString = connectionString;
 #else
 			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
-			if (connectionStringOrFilPath.EndsWith(".db"))
-			{
-				var connectionString = SqliteHelper.NewConnection(connectionStringOrFilPath).ConnectionString.ToString();
+			if (isPortable)
 				optionsBuilder.UseSqlite(connectionString);
-			}
 			else
-				optionsBuilder.UseSqlServer(connectionStringOrFilPath);
+				optionsBuilder.UseSqlServer(connectionString);
 			var db = new EmbeddingsContext(optionsBuilder.Options);
 #endif
 			return db;
@@ -232,9 +225,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			public string[] Tokens { get; set; }
 		}
 
-		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item, string message, int skip, int take)
+		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item, EmbeddingGroup groupFlag, string message, int skip, int take)
 		{
-			await SearchEmbeddings(item, message, item.Skip, item.Take);
+			await SearchEmbeddings(item, groupFlag, message, item.Skip, item.Take);
 			var systemMessage = "";
 			if (FileParts == null || FileParts.Count == 0)
 				return systemMessage;
@@ -266,27 +259,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-		public async Task SearchEmbeddings(EmbeddingsItem item, string message, int skip, int take)
+		public async Task SearchEmbeddings(EmbeddingsItem item, EmbeddingGroup groupFlag, string message, int skip, int take)
 		{
 			try
 			{
 				Log = "Converting message to embedding vectors...";
-				if (string.IsNullOrWhiteSpace(item.Message))
+				if (string.IsNullOrWhiteSpace(message))
 				{
 					Log += " Message is empty.\r\n";
 					return;
 				}
-				var input = new List<string> { item.Message };
+				var input = new List<string> { message };
 				var client = new Client(item.AiService);
 				var results = await client.GetEmbedding(item.AiModel, input);
 				Log += " Done.\r\n";
-				var expandedTarget = AssemblyInfo.ExpandPath(item.Target);
-				var db = NewEmbeddingsContext(expandedTarget);
+				var target = AssemblyInfo.ExpandPath(item.Target);
+				var connectionString = SqlInitHelper.IsPortable(target)
+					? SqlInitHelper.PathToConnectionString(target)
+					: target;
+				var db = NewEmbeddingsContext(connectionString);
 				var vectors = results[0];
 				Log += "Searching on database...";
-				if (IsPortable(item.Target))
+				if (SqlInitHelper.IsPortable(item.Target))
 				{
-					var ids = await GetSimilarFileEmbeddings(expandedTarget, item.EmbeddingGroupName, item.EmbeddingGroupFlag, vectors, item.Take);
+					var ids = await SqlInitHelper.GetSimilarFileEmbeddings(connectionString, item.EmbeddingGroupName, groupFlag, vectors, item.Take);
 					FileParts = db.FileParts
 						.Where(x => ids.Contains(x.Id))
 						.ToList()
@@ -324,169 +320,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Log = ex.ToString();
 			}
-		}
-
-		public static bool IsPortable(string stringOrPath)
-		{
-			return stringOrPath?.IndexOf(".db", StringComparison.OrdinalIgnoreCase) >= 0;
-		}
-
-		public static async Task<int> SetFileState(
-			EmbeddingsContext db,
-			string groupName,
-			EmbeddingGroup groupFlag,
-			ProgressStatus state
-		)
-		{
-#if NETFRAMEWORK
-			var connection = db.Database.Connection;
-#else
-			var connection = db.Database.GetDbConnection();
-#endif
-			var command = connection.CreateCommand();
-			if (connection.State != ConnectionState.Open)
-				connection.Open();
-			AddParameters(command, groupName, groupFlag, state);
-			var isPortable = IsPortable(connection.ConnectionString);
-			var schema = isPortable ? "" : "[Embedding].";
-			command.CommandText = $@"
-                UPDATE {schema}[FilePart]
-				SET [State] = @State
-                WHERE [GroupName] = @GroupName
-                AND [GroupFlag] = @GroupFlag";
-			var rowsAffected = await command.ExecuteNonQueryAsync();
-			command.CommandText = $@"
-                UPDATE {schema}[File]
-				SET [State] = @State
-                WHERE [GroupName] = @GroupName
-                AND [GroupFlag] = @GroupFlag";
-			rowsAffected += await command.ExecuteNonQueryAsync();
-			return rowsAffected;
-		}
-
-		public static async Task<int> DeleteByState(
-			EmbeddingsContext db,
-			string groupName,
-			EmbeddingGroup groupFlag,
-			ProgressStatus state
-		)
-		{
-#if NETFRAMEWORK
-			var connection = db.Database.Connection;
-#else
-			var connection = db.Database.GetDbConnection();
-#endif
-			var command = connection.CreateCommand();
-			if (connection.State != ConnectionState.Open)
-				connection.Open();
-			AddParameters(command, groupName, groupFlag, state);
-			var isPortable = IsPortable(connection.ConnectionString);
-			var schema = isPortable ? "" : "[Embedding].";
-			command.CommandText = $@"
-                DELETE FROM {schema}[FilePart]
-                WHERE [GroupName] = @GroupName
-                AND [GroupFlag] = @GroupFlag
-				AND [State] = @State";
-			var rowsAffected = await command.ExecuteNonQueryAsync();
-			command.CommandText = $@"
-                DELETE FROM {schema}[File]
-                WHERE [GroupName] = @GroupName
-                AND [GroupFlag] = @GroupFlag
-				AND [State] = @State";
-			rowsAffected += await command.ExecuteNonQueryAsync();
-			return rowsAffected;
-		}
-
-		public static async Task<List<long>> GetSimilarFileEmbeddings(
-			string path,
-			string groupName,
-			EmbeddingGroup groupFlag,
-			float[] promptVectors, int take)
-		{
-			var commandText = $@"
-                SELECT
-					fp.Id,
-					fp.FileId,
-					fp.Embedding
-                FROM FilePart AS fp
-                JOIN File AS f ON f.Id = fp.FileId
-                WHERE f.GroupName = @GroupName
-                AND fp.GroupFlag & @GroupFlag > 0
-                AND fp.IsEnabled = 1
-                AND f.IsEnabled = 1";
-			var connection = SqliteHelper.NewConnection(path);
-			var command = SqliteHelper.NewCommand(commandText, connection);
-			AddParameters(command, groupName, groupFlag);
-			connection.Open();
-			var reader = await command.ExecuteReaderAsync();
-			var tempResult = new SortedList<float, FilePart>();
-			while (await reader.ReadAsync())
-			{
-				var filePart = ReadFilePartFromReader(reader);
-				var partVectors = EmbeddingBase.BinaryToVector(filePart.Embedding);
-				var similarity = EmbeddingBase._CosineSimilarity(promptVectors, partVectors);
-				// If take list is not filled yet then add and continue.
-				if (tempResult.Count < take)
-				{
-					tempResult.Add(similarity, filePart);
-					continue;
-				}
-				// If similarity less or same then skip and continue.
-				if (similarity <= tempResult.Keys[0])
-					continue;
-				// Replace least similar item with the more similar.
-				tempResult.RemoveAt(0);
-				tempResult.Add(similarity, filePart);
-			}
-			var ids = tempResult
-				.ToList()
-				.OrderByDescending(x => x.Key)
-				.Select(x => x.Value.Id)
-				.ToList();
-			return ids;
-		}
-
-		private static void AddParameters(DbCommand command, string groupName, EmbeddingGroup groupFlag, ProgressStatus? state = null)
-		{
-			var nameParam = command.CreateParameter();
-			nameParam.ParameterName = "@GroupName";
-			nameParam.Value = groupName;
-			command.Parameters.Add(nameParam);
-			var flagParam = command.CreateParameter();
-			flagParam.ParameterName = "@GroupFlag";
-			flagParam.Value = (int)groupFlag;
-			command.Parameters.Add(flagParam);
-			if (state != null)
-			{
-				var stateParam = command.CreateParameter();
-				stateParam.ParameterName = "@State";
-				stateParam.Value = (int)state;
-				command.Parameters.Add(stateParam);
-			}
-		}
-
-		private static FilePart ReadFilePartFromReader(DbDataReader reader)
-		{
-			var filePart = new FilePart
-			{
-				Id = reader.GetInt64(reader.GetOrdinal("Id")),
-				//GroupName = reader.GetString(reader.GetOrdinal("GroupName")),
-				//GroupFlag = reader.GetInt64(reader.GetOrdinal("GroupFlag")),
-				FileId = reader.GetInt64(reader.GetOrdinal("FileId")),
-				//Index = reader.GetInt32(reader.GetOrdinal("Index")),
-				//Count = reader.GetInt32(reader.GetOrdinal("Count")),
-				//HashType = reader.GetString(reader.GetOrdinal("HashType")),
-				//Hash = (byte[])reader["Hash"],
-				//Text = reader.GetString(reader.GetOrdinal("Text")),
-				//TextTokens = reader.GetInt64(reader.GetOrdinal("TextTokens")),
-				//EmbeddingModel = reader.GetString(reader.GetOrdinal("EmbeddingModel")),
-				//EmbeddingSize = reader.GetInt32(reader.GetOrdinal("EmbeddingSize")),
-				Embedding = (byte[])reader["Embedding"],
-				//IsEnabled = reader.GetBoolean(reader.GetOrdinal("IsEnabled")),
-				//Created = reader.GetDateTime(reader.GetOrdinal("Created")),
-				//Modified = reader.GetDateTime(reader.GetOrdinal("Modified"))
-			};
-			return filePart;
 		}
 
 

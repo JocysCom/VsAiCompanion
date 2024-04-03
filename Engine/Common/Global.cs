@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
@@ -359,7 +360,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var item = (EmbeddingsItem)sender;
 			var oldFullName = AssemblyInfo.ExpandPath(item.Target);
 			// If not a file path then return (probably connection string)
-			if (!EmbeddingHelper.IsPortable(oldFullName))
+			if (!SqlInitHelper.IsPortable(oldFullName))
 				return;
 			var oldFileBaseName = Path.GetFileNameWithoutExtension(oldFullName);
 			// if old file name did not match new item name then return.

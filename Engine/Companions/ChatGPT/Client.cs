@@ -371,7 +371,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// AI must decide what to search for, not to use by the last user message.
 				var groupName = item.EmbeddingGroupName;
 				var groupFlag = item.EmbeddingGroupFlag;
-				var embeddingItem = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupFlag == groupFlag);
+				var embeddingItem = Global.Embeddings.Items
+					.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
 				if (embeddingItem != null)
 				{
 					var eh = new EmbeddingHelper();
@@ -394,7 +395,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							lastSystemMessage = new chat_completion_message(message_role.system, "");
 							messagesToSend.Insert(lastUserMessageIndex, lastSystemMessage);
 						}
-						var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem, lastUserMessage?.content, embeddingItem.Skip, embeddingItem.Take);
+						var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem, groupFlag, lastUserMessage?.content, embeddingItem.Skip, embeddingItem.Take);
 						if (!string.IsNullOrEmpty(systemMessage))
 							lastSystemMessage.content += "\r\n\r\n" + systemMessage;
 
