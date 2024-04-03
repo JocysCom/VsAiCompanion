@@ -583,6 +583,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exclude Patterns.
+        /// </summary>
+        public static string Exclude_Patterns {
+            get {
+                return ResourceManager.GetString("Exclude_Patterns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File Name.
         /// </summary>
         public static string File_Name {
@@ -642,6 +651,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Id {
             get {
                 return ResourceManager.GetString("Id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include Patterns.
+        /// </summary>
+        public static string Include_Patterns {
+            get {
+                return ResourceManager.GetString("Include_Patterns", resourceCulture);
             }
         }
         

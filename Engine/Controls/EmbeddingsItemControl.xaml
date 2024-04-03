@@ -191,7 +191,7 @@
 				Grid.Column="2"
 				HorizontalAlignment="Left"
 				Orientation="Horizontal">
-				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="256" Text="{Binding EmbeddingGroupName}" />
+				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName}" />
 				<Label
 					x:Name="EmbeddingGroupFlagLabel"
 					Grid.Row="3"
@@ -205,6 +205,14 @@
 					ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
 					SelectedValue="{Binding EmbeddingGroupFlag}"
 					SelectedValuePath="Key" />
+				<Label
+					x:Name="SourcePatternLabel"
+					Grid.Row="3"
+					Grid.Column="1"
+					Margin="3,0,0,0"
+					Content="Source Pattern" />
+				<TextBox Name="SourcePatternTextBox" MinWidth="64" Text="{Binding SourcePattern}" />
+				<CheckBox x:Name="UseGitIgnoreCheckbox" Content="Use .gitignore" IsChecked="{Binding UseGitIgnore, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>
 
 			<!--  Search options  -->
@@ -313,6 +321,54 @@
 						</VisualBrush>
 					</RichTextBox.OpacityMask>
 				</RichTextBox>
+			</TabItem>
+			<TabItem Name="IncludePatternsTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_list}" />
+						<Label Content="{x:Static locales:Resources.Include_Patterns}" />
+					</StackPanel>
+				</TabItem.Header>
+				<TextBox
+					Name="IncludePatternsTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					BorderThickness="0"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					Text="{Binding IncludePatterns}"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
+			</TabItem>
+			<TabItem Name="ExcludePatternsTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_list}" />
+						<Label Content="{x:Static locales:Resources.Exclude_Patterns}" />
+					</StackPanel>
+				</TabItem.Header>
+				<TextBox
+					Name="ExcludePatternsTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					BorderThickness="0"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					Text="{Binding ExcludePatterns}"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
 			</TabItem>
 			<TabItem Name="LogTabPage">
 				<TabItem.Header>

@@ -11,14 +11,13 @@ namespace JocysCom.ClassLibrary.IO
 
 		public FileProcessor()
 		{
-			ff = new FileFinder();
-			ff.FileFound += ff_FileFound;
+			FileFinder = new FileFinder();
+			FileFinder.FileFound += ff_FileFound;
 			Cancellation = new CancellationTokenSource();
 		}
 
 		private void ff_FileFound(object sender, ProgressEventArgs e)
 			=> Report(e);
-
 
 		#region ■ IProgress
 
@@ -43,13 +42,13 @@ namespace JocysCom.ClassLibrary.IO
 				.Cast<ProgressStatus>()
 				.ToDictionary(x => x, x => 0);
 
-		public bool IsStopping { get => ff.IsStopping; set => ff.IsStopping = value; }
+		public bool IsStopping { get => FileFinder.IsStopping; set => FileFinder.IsStopping = value; }
 
-		public bool IsPaused { get => ff.IsPaused; set => ff.IsPaused = value; }
+		public bool IsPaused { get => FileFinder.IsPaused; set => FileFinder.IsPaused = value; }
 
-		private readonly FileFinder ff;
+		public readonly FileFinder FileFinder;
 
-		public async Task Scan(string[] paths, string searchPattern = null)
+		public async Task Scan(string[] paths, string searchPattern = null, bool allDirectories = false)
 		{
 			_DateStarted = DateTime.Now;
 			IsStopping = false;
@@ -69,7 +68,7 @@ namespace JocysCom.ClassLibrary.IO
 				.Where(x => !x.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				.ToArray();
 			// Create list to store file to scan.
-			var files = ff.GetFiles(searchPattern, false, dirs);
+			var files = FileFinder.GetFiles(searchPattern, allDirectories, dirs);
 			// Step 2: Scan files.
 			var topMessage = "Process Files.";
 			var topMessageStates = "";

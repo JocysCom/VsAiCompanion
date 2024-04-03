@@ -41,7 +41,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private void Current_Deactivated(object sender, System.EventArgs e)
 		{
-			Global.SaveSettings();
+			if (!InitHelper.IsDebug)
+				Global.SaveSettings();
 		}
 
 		private void MainWindowPanel_Unloaded(object sender, RoutedEventArgs e)

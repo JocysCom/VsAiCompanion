@@ -63,6 +63,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public EmbeddingGroup EmbeddingGroupFlag { get => _EmbeddingGroupFlag; set => SetProperty(ref _EmbeddingGroupFlag, value); }
 		EmbeddingGroup _EmbeddingGroupFlag;
 
+		/// <summary>
+		/// Use .gitignore to filter files.
+		/// </summary>
+		[DefaultValue(true)]
+		public bool UseGitIgnore { get => _UseGitIgnore; set => SetProperty(ref _UseGitIgnore, value); }
+		bool _UseGitIgnore;
+
+		[DefaultValue("*.*")]
+		public string SourcePattern { get => _SourcePattern; set => SetProperty(ref _SourcePattern, string.IsNullOrWhiteSpace(value) ? "*.*" : value); }
+		string _SourcePattern;
+
+		[DefaultValue("")]
+		public string IncludePatterns { get => _IncludePatterns; set => SetProperty(ref _IncludePatterns, string.IsNullOrWhiteSpace(value) ? "" : value); }
+		string _IncludePatterns;
+
+		[DefaultValue("")]
+		public string ExcludePatterns { get => _ExcludePatterns; set => SetProperty(ref _ExcludePatterns, string.IsNullOrWhiteSpace(value) ? "" : value); }
+		string _ExcludePatterns;
+
 		#region ■ IAiServiceModel
 
 		[DefaultValue(null)]

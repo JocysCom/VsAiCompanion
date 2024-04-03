@@ -16,6 +16,11 @@ using Embeddings.Embedding;
 using Microsoft.ML;
 using JocysCom.ClassLibrary.Security;
 using System.Threading;
+using System.Text;
+
+
+
+
 
 #if NETFRAMEWORK
 using System.Data.SqlClient;
@@ -188,10 +193,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var mlContext = new MLContext();
 			var content = System.IO.File.ReadAllText(path);
+			if (string.IsNullOrEmpty(content))
+				return Array.Empty<FilePart>();
 			var data = new List<TextData> { new TextData { Text = content } };
 			var dataView = mlContext.Data.LoadFromEnumerable(data);
 			// Tokenize the text
-			var textPipeline = mlContext.Transforms.Text.TokenizeIntoWords("Tokens", nameof(TextData.Text));
+			// Define your custom list of separators
+			char[] separators = new char[] { ' ', ',', '.', ';', ':', '!', '?', '-', '(', ')', '[', ']', '{', '}', '\"', '\'', '\n', '\t' };
+			var textPipeline = mlContext.Transforms.Text.TokenizeIntoWords("Tokens", nameof(TextData.Text), separators);
 			var textTransformer = textPipeline.Fit(dataView);
 			var transformedData = textTransformer.Transform(dataView);
 			var tokens = mlContext.Data.CreateEnumerable<TokenizedTextData>(transformedData, reuseRowObject: false).First().Tokens;
@@ -223,6 +232,40 @@ namespace JocysCom.VS.AiCompanion.Engine
 			public string[] Tokens { get; set; }
 		}
 
+		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item, string message, int skip, int take)
+		{
+			await SearchEmbeddings(item, message, item.Skip, item.Take);
+			var systemMessage = "";
+			if (FileParts == null || FileParts.Count == 0)
+				return systemMessage;
+			systemMessage += item.Instructions;
+			systemMessage += "\r\n\r\n";
+			foreach (var filPart in FileParts)
+			{
+				var file = Files.Where(x => x.Id == filPart.FileId).FirstOrDefault();
+				systemMessage += "\r\n";
+				systemMessage += ConvertToChunkString(file?.Url, filPart.Text);
+				systemMessage += "\r\n\r\n";
+			}
+			return systemMessage;
+		}
+
+
+		/// <summary>
+		/// Convert to flat string representation.
+		/// </summary>
+		public static string ConvertToChunkString(string path, string content)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine($"=== BEGIN FILE CHUNK: {path} ===");
+			sb.Append(content);
+			if (!content.EndsWith(Environment.NewLine))
+				sb.AppendLine();
+			sb.AppendLine($"=== END FILE CHUNK: {path} ===");
+			return sb.ToString();
+		}
+
+
 		public async Task SearchEmbeddings(EmbeddingsItem item, string message, int skip, int take)
 		{
 			try
@@ -241,7 +284,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var db = NewEmbeddingsContext(expandedTarget);
 				var vectors = results[0];
 				Log += "Searching on database...";
-				if (IsFilePath(item.Target))
+				if (IsPortable(item.Target))
 				{
 					var ids = await GetSimilarFileEmbeddings(expandedTarget, item.EmbeddingGroupName, item.EmbeddingGroupFlag, vectors, item.Take);
 					FileParts = db.FileParts
@@ -283,11 +326,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static bool IsFilePath(string stringOrPath)
+		public static bool IsPortable(string stringOrPath)
 		{
-			var path = AssemblyInfo.ExpandPath(stringOrPath);
-			var ext = Path.GetExtension(path).ToLower();
-			return ext == ".db";
+			return stringOrPath?.IndexOf(".db", StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
 		public static async Task<int> SetFileState(
@@ -306,7 +347,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (connection.State != ConnectionState.Open)
 				connection.Open();
 			AddParameters(command, groupName, groupFlag, state);
-			var isPortable = IsFilePath(connection.ConnectionString);
+			var isPortable = IsPortable(connection.ConnectionString);
 			var schema = isPortable ? "" : "[Embedding].";
 			command.CommandText = $@"
                 UPDATE {schema}[FilePart]
@@ -339,7 +380,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (connection.State != ConnectionState.Open)
 				connection.Open();
 			AddParameters(command, groupName, groupFlag, state);
-			var isPortable = IsFilePath(connection.ConnectionString);
+			var isPortable = IsPortable(connection.ConnectionString);
 			var schema = isPortable ? "" : "[Embedding].";
 			command.CommandText = $@"
                 DELETE FROM {schema}[FilePart]

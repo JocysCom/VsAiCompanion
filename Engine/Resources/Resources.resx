@@ -540,4 +540,10 @@
   <data name="Reset_UI_Settings_ToolTip" xml:space="preserve">
     <value>Use to capture screenshots of a similar size.</value>
   </data>
+  <data name="Exclude_Patterns" xml:space="preserve">
+    <value>Exclude Patterns</value>
+  </data>
+  <data name="Include_Patterns" xml:space="preserve">
+    <value>Include Patterns</value>
+  </data>
 </root>

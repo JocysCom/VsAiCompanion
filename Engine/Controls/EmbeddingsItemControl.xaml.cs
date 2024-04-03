@@ -3,13 +3,12 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.IO;
 using JocysCom.VS.AiCompanion.DataClient;
-using LiteDB;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -70,7 +69,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<EmbeddingGroup, string> EmbeddingGroups
 		=> ClassLibrary.Runtime.Attributes.GetDictionary(
 			(EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup)));
-
 
 		public Dictionary<EmbeddingGroup, string> EmbeddingGroupFlags
 		{
@@ -207,20 +205,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			MainTabControl.SelectedItem = LogTabPage;
 			LogTextBox.Text = "";
 			var eh = new EmbeddingHelper();
-			await eh.SearchEmbeddings(Item, Item.Message, Item.Skip, Item.Take);
+			var systemMessage = await eh.SearchEmbeddingsToSystemMessage(Item, Item.Message, Item.Skip, Item.Take);
 			if (eh.FileParts == null)
 			{
 				LogTextBox.Text += "\r\nSearch returned no results.";
 				return;
 			}
-			foreach (var filPart in eh?.FileParts)
-			{
-				LogTextBox.Text += eh.Log;
-				var file = eh.Files.Where(x => x.Id == filPart.Id).FirstOrDefault();
-				LogTextBox.Text += $"\r\n{file?.Url}";
-				var text = JocysCom.ClassLibrary.Text.Helper.IdentText(filPart.Text);
-				LogTextBox.Text += "\r\n" + text + "\r\n\r\n";
-			}
+			LogTextBox.Text += eh.Log;
+			LogTextBox.Text += "\r\n\r\n" + systemMessage;
 		}
 
 		private void CreateButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -232,12 +224,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void InitSqlDatabase(string stringOrPath)
 		{
-			if (EmbeddingHelper.IsFilePath(stringOrPath))
+			if (EmbeddingHelper.IsPortable(stringOrPath))
 				SqliteHelper.InitSqlLiteDatabase(stringOrPath);
 
 		}
 
-		FileProcessor fp;
+		FileProcessor _Scanner;
 		Embeddings.EmbeddingsContext db;
 		System.Security.Cryptography.SHA256 algorithm = System.Security.Cryptography.SHA256.Create();
 
@@ -267,8 +259,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#region Locations Scanner
 
 		DateTime ScanStarted;
-		//IScanner _Scanner;
 		object AddAndUpdateLock = new object();
+		Ignore.Ignore ExcludePatterns;
+		Ignore.Ignore IncludePatterns;
 
 		async void ScanTask(object state)
 		{
@@ -277,30 +270,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var paths = Array.Empty<string>();
 			var source = AssemblyInfo.ExpandPath(item.Source);
 			var target = AssemblyInfo.ExpandPath(item.Target);
-			if (fp != null)
+			if (_Scanner != null)
 			{
-				fp.IsStopping = true;
-				fp.Progress -= _Scanner_Progress;
+				_Scanner.IsStopping = true;
+				_Scanner.Progress -= _Scanner_Progress;
+				_Scanner.ProcessItem = null;
+				_Scanner.FileFinder.IsIgnored = null;
 			}
 			if (db != null)
 			{
 				db.Dispose();
 			}
 			db = EmbeddingHelper.NewEmbeddingsContext(target);
-			// Mark all files as starting to process.
-			var tempState = ProgressStatus.Started;
-			await EmbeddingHelper.SetFileState(
-				db, Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, tempState);
-			fp = new FileProcessor();
-			fp.ProcessItem = _Scanner_ProcessItem;
-			fp.Progress += _Scanner_Progress;
+			Ignores.Clear();
+			_Scanner = new FileProcessor();
+			_Scanner.ProcessItem = _Scanner_ProcessItem;
+			_Scanner.FileFinder.IsIgnored = _Scanner_FileFinder_IsIgnored;
+			_Scanner.Progress += _Scanner_Progress;
+			ExcludePatterns = GetIgnoreFromText(item.ExcludePatterns);
+			IncludePatterns = GetIgnoreFromText(item.IncludePatterns);
 			Dispatcher.Invoke(new Action(() =>
 			{
 				MainTabControl.SelectedItem = LogTabPage;
 				try
 				{
 					paths = new[] { source };
-					if (EmbeddingHelper.IsFilePath(target))
+
+
+					if (EmbeddingHelper.IsPortable(target))
 					{
 						var dbFi = new FileInfo(target);
 						// If database file don't exists or not initialized then...
@@ -319,14 +316,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ScanStartButton.IsEnabled = false;
 				ScanStopButton.IsEnabled = true;
 			}));
-			await fp.Scan(paths, "*.txt");
+			// Mark all files as starting to process.
+			var tempState = ProgressStatus.Started;
+			await EmbeddingHelper.SetFileState(
+				db, Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, tempState);
+			await _Scanner.Scan(paths, Item.SourcePattern, allDirectories: true);
 			// Cleanup.
 			var noErrors =
-				fp.ProcessItemStates[ProgressStatus.Exception] == 0 &&
-				fp.ProcessItemStates[ProgressStatus.Failed] == 0 &&
-				fp.ProcessItemStates[ProgressStatus.Canceled] == 0;
+				_Scanner.ProcessItemStates[ProgressStatus.Exception] == 0 &&
+				_Scanner.ProcessItemStates[ProgressStatus.Failed] == 0 &&
+				_Scanner.ProcessItemStates[ProgressStatus.Canceled] == 0;
 			// If cancellation was not requested and no errors then...
-			if (!fp.Cancellation.Token.IsCancellationRequested && noErrors)
+			if (!_Scanner.Cancellation.Token.IsCancellationRequested && noErrors)
 			{
 				// Delete unprocessed files.
 				await EmbeddingHelper.DeleteByState(
@@ -336,8 +337,57 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		ConcurrentDictionary<string, Ignore.Ignore> Ignores = new ConcurrentDictionary<string, Ignore.Ignore>();
+
+		private bool _Scanner_FileFinder_IsIgnored(string parentPath, string filePath, long fileLength)
+		{
+			var relativePath = PathHelper.GetRelativePath(parentPath + "\\", filePath, false)
+				.Replace("\\", "/");
+			if (IncludePatterns?.IsIgnored(relativePath) == false)
+				return true;
+			if (ExcludePatterns?.IsIgnored(relativePath) == true)
+				return true;
+			var ignore = Ignores.GetOrAdd(parentPath, x => GetIgnoreFromFile(Path.Combine(parentPath, ".gitignore")));
+			if (ignore?.IsIgnored(relativePath) == true)
+				return true;
+			if (fileLength > 0)
+			{
+				var isBinary = DocItem.IsBinary(filePath, 1024);
+				if (isBinary)
+					return true;
+			}
+			return false;
+		}
+
+		private Ignore.Ignore GetIgnoreFromText(string text)
+		{
+			var ignore = new Ignore.Ignore();
+			var lines = text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
+			var containsRules = false;
+			foreach (var line in lines)
+			{
+				if (string.IsNullOrWhiteSpace(line))
+					continue;
+				if (line.TrimStart().StartsWith("#"))
+					continue;
+				ignore.Add(line);
+				containsRules = true;
+			}
+			return containsRules ? ignore : null;
+		}
+
+		private Ignore.Ignore GetIgnoreFromFile(string path)
+		{
+			var fi = new FileInfo(path);
+			if (!fi.Exists)
+				return null;
+			var text = File.ReadAllText(path);
+			return GetIgnoreFromText(text);
+		}
+
 		private async Task<ProgressStatus> _Scanner_ProcessItem(FileProcessor fp, ClassLibrary.ProgressEventArgs e)
 		{
+			await Task.Delay(50);
 			try
 			{
 				var fi = (FileInfo)e.SubData;
@@ -377,10 +427,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ScanStopButton_Click(object sender, RoutedEventArgs e)
 		{
-			var p = fp;
+			var p = _Scanner;
 			if (p != null)
 			{
-				fp.Cancellation.Cancel();
+				_Scanner.Cancellation.Cancel();
 				p.IsStopping = true;
 			}
 		}
@@ -403,7 +453,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var path = AssemblyInfo.ExpandPath(Item.Target);
 			//if (EmbeddingHelper.IsFilePath(path))
 			//DialogHelper.FixDialogFile(dialog, _OpenFileDialog.FileName);
-			if (EmbeddingHelper.IsFilePath(path))
+			if (EmbeddingHelper.IsPortable(path))
 			{
 				dialog.FileName = Path.GetFileName(path);
 				dialog.InitialDirectory = Path.GetDirectoryName(path);

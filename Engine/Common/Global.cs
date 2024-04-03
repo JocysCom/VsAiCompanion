@@ -359,7 +359,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var item = (EmbeddingsItem)sender;
 			var oldFullName = AssemblyInfo.ExpandPath(item.Target);
 			// If not a file path then return (probably connection string)
-			if (!EmbeddingHelper.IsFilePath(oldFullName))
+			if (!EmbeddingHelper.IsPortable(oldFullName))
 				return;
 			var oldFileBaseName = Path.GetFileNameWithoutExtension(oldFullName);
 			// if old file name did not match new item name then return.

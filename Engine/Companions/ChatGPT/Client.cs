@@ -327,7 +327,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						.ToDictionary(x => x.Index, x => x.Embedding.ToArray());
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 			}
 			finally
@@ -394,21 +394,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							lastSystemMessage = new chat_completion_message(message_role.system, "");
 							messagesToSend.Insert(lastUserMessageIndex, lastSystemMessage);
 						}
-						await eh.SearchEmbeddings(embeddingItem, lastUserMessage?.content, embeddingItem.Skip, embeddingItem.Take);
-						if (eh.FileParts != null && eh.FileParts.Count > 0)
-						{
-							var systemMessage = "\r\n\r\n";
-							systemMessage += embeddingItem.Instructions;
-							systemMessage += "\r\n\r\n";
-							foreach (var filPart in eh.FileParts)
-							{
-								var file = eh.Files.Where(x => x.Id == filPart.Id).FirstOrDefault();
-								systemMessage += $"\r\n{file?.Url}";
-								var text = JocysCom.ClassLibrary.Text.Helper.IdentText(filPart.Text);
-								systemMessage += "\r\n" + text + "\r\n\r\n";
-							}
-							lastSystemMessage.content += systemMessage;
-						}
+						var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem, lastUserMessage?.content, embeddingItem.Skip, embeddingItem.Take);
+						if (!string.IsNullOrEmpty(systemMessage))
+							lastSystemMessage.content += "\r\n\r\n" + systemMessage;
+
 					}
 				}
 			}
