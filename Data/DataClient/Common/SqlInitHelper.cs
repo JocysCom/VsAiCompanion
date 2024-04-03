@@ -7,6 +7,8 @@ using Embeddings.Embedding;
 using System.Collections.Generic;
 using JocysCom.VS.AiCompanion.DataFunctions;
 using System.Linq;
+using System.Text.RegularExpressions;
+
 
 #if NETFRAMEWORK
 using System.Data.SQLite;
@@ -29,13 +31,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		public static void InitSqlDatabase(string connectionString)
 		{
-			if (IsPortable(connectionString))
-				InitSqlLiteDatabase(connectionString);
-		}
-
-
-		public static void InitSqlLiteDatabase(string connectionString)
-		{
 #if NETFRAMEWORK
 			var isPortable = IsPortable(connectionString);
 			if (isPortable)
@@ -56,15 +51,29 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		{
 			if (TableExists(name, connection))
 				return false;
-			var commandText = ResourceHelper.FindResource($"{name}.Sqlite.sql");
-			var command = NewCommand(commandText, connection);
-			command.ExecuteNonQuery();
+			var isPortable = IsPortable(connection.DataSource);
+			var suffix = isPortable
+				? ".Sqlite"
+				: "";
+			var sqlScript = ResourceHelper.FindResource($"{name}{suffix}.sql");
+			string pattern = @"^\s*GO\s*$";
+			// Split the script using the Regex.Split function, considering the pattern.
+			string[] commandTexts = Regex.Split(sqlScript, pattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+			for (int i = 0; i < commandTexts.Length; i++)
+			{
+				var commandText = commandTexts[i];
+				var command = NewCommand(commandText, connection);
+				command.ExecuteNonQuery();
+			}
 			return true;
 		}
 
 		public static bool TableExists(string name, DbConnection connection)
 		{
-			string commandText = $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name;";
+			var isPortable = IsPortable(connection.DataSource);
+			var commandText = isPortable
+				? $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name;"
+				: $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'Embedding' AND TABLE_NAME = @name;";
 			var command = NewCommand(commandText, connection);
 			var nameParam = command.CreateParameter();
 			nameParam.ParameterName = "@name";
@@ -99,32 +108,38 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		public static DbConnection NewConnection(string connectionString)
 		{
+			var isPortable = IsPortable(connectionString);
+			if (!isPortable)
+				return new SqlConnection(connectionString);
 #if NETFRAMEWORK
-			var connection = new SQLiteConnection(connectionString);
+			return new SQLiteConnection(connectionString);
 #else
-			var connection = new SqliteConnection(connectionString);
+			return new SqliteConnection(connectionString);
 #endif
-			return connection;
 		}
 
 		public static DbConnectionStringBuilder NewConnectionStringBuilder(string connectionString)
 		{
+			var isPortable = IsPortable(connectionString);
+			if (!isPortable)
+				return new SqlConnectionStringBuilder(connectionString);
 #if NETFRAMEWORK
-			var builder = new SQLiteConnectionStringBuilder(connectionString);
+			return new SQLiteConnectionStringBuilder(connectionString);
 #else
-			var builder = new SqliteConnectionStringBuilder(connectionString);
+			return new SqliteConnectionStringBuilder(connectionString);
 #endif
-			return builder;
 		}
 
 		public static DbCommand NewCommand(string commandText = null, DbConnection connection = null)
 		{
+			var isPortable = IsPortable(connection.ConnectionString);
+			if (!isPortable)
+				return new SqlCommand(commandText, (SqlConnection)connection);
 #if NETFRAMEWORK
-			var command = new SQLiteCommand(commandText, (SQLiteConnection)connection);
+			return new SQLiteCommand(commandText, (SQLiteConnection)connection);
 #else
-			var command = new SqliteCommand(commandText, (SqliteConnection)connection);
+			return new SqliteCommand(commandText, (SqliteConnection)connection);
 #endif
-			return command;
 		}
 
 		#endregion
@@ -134,7 +149,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 	string groupName,
 	EmbeddingGroup groupFlag,
 	int state
-)
+	)
 		{
 #if NETFRAMEWORK
 			var connection = db.Database.Connection;

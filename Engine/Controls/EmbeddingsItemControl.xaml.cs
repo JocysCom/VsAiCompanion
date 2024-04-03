@@ -215,21 +215,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			LogTextBox.Text += "\r\n\r\n" + systemMessage;
 		}
 
-		private void CreateButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-			MainTabControl.SelectedItem = LogTabPage;
-			InitSqlDatabase(Item.Target);
-		}
-
-		public void InitSqlDatabase(string target)
-		{
-			target = AssemblyInfo.ExpandPath(target);
-			var connectionString = SqlInitHelper.IsPortable(target)
-				? SqlInitHelper.PathToConnectionString(target)
-				: target;
-			SqlInitHelper.InitSqlDatabase(connectionString);
-		}
-
 		FileProcessor _Scanner;
 		Embeddings.EmbeddingsContext db;
 		System.Security.Cryptography.SHA256 algorithm = System.Security.Cryptography.SHA256.Create();
@@ -285,7 +270,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var connectionString = SqlInitHelper.IsPortable(target)
 				? SqlInitHelper.PathToConnectionString(target)
 				: target;
-			db = EmbeddingHelper.NewEmbeddingsContext(connectionString);
 			Ignores.Clear();
 			_Scanner = new FileProcessor();
 			_Scanner.ProcessItem = _Scanner_ProcessItem;
@@ -299,13 +283,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				try
 				{
 					paths = new[] { source };
-					if (SqlInitHelper.IsPortable(target))
-					{
-						var dbFi = new FileInfo(target);
-						// If database file don't exists or not initialized then...
-						if (!dbFi.Exists || dbFi.Length == 0)
-							InitSqlDatabase(target);
-					}
+					SqlInitHelper.InitSqlDatabase(connectionString);
 				}
 				catch (System.Exception ex)
 				{
@@ -320,6 +298,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}));
 			// Mark all files as starting to process.
 			var tempState = ProgressStatus.Started;
+			db = EmbeddingHelper.NewEmbeddingsContext(connectionString);
 			await SqlInitHelper.SetFileState(
 				db, Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, (int)tempState);
 			await _Scanner.Scan(paths, Item.SourcePattern, allDirectories: true);
