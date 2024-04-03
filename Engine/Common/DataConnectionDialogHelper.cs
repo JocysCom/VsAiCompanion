@@ -2,7 +2,6 @@
 using System;
 using System.Data.Common;
 using System.Linq;
-using JocysCom.ClassLibrary.Configuration;
 
 
 #if NETFRAMEWORK
@@ -25,35 +24,34 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var dcd = new DataConnectionDialog();
 			//Adds all the standard supported databases
 			dcd.DataSources.Clear();
-			if ((connectionString ?? "").Contains(".db"))
-			{
-				connectionString = AssemblyInfo.ExpandPath(connectionString);
-				connectionString = JocysCom.VS.AiCompanion.DataClient.SqliteHelper.NewConnection(connectionString).ConnectionString;
-#if NETFRAMEWORK
-				var factory = SQLiteFactory.Instance;
-				var name = factory.GetType().Namespace;	
-				var sqliteDataSource = new DataSource(nameof(System.Data.SQLite), "System Data SQLite");
-#else
-				var factory = SqliteFactory.Instance;
-				var name = factory.GetType().Namespace;
-				var sqliteDataSource = new DataSource(nameof(Microsoft.Data.Sqlite), "Microsoft Data Sqlite");
-#endif
-				//DataSource.AddStandardDataSources(dcd);
-				var sqliteDataProvider = CreateSqliteDataProvider();
-				sqliteDataSource.Providers.Add(sqliteDataProvider);
-				dcd.DataSources.Add(sqliteDataSource);
-				dcd.SelectedDataProvider = sqliteDataProvider;
-				dcd.SelectedDataSource = sqliteDataSource;
-
-
-
-			}
-			else
-			{
-				dcd.DataSources.Add(DataSource.SqlDataSource);
-				dcd.SelectedDataProvider = DataProvider.SqlDataProvider;
-				dcd.SelectedDataSource = DataSource.SqlDataSource;
-			}
+			/*
+						if ((connectionString ?? "").Contains(".db"))
+						{
+							connectionString = AssemblyInfo.ExpandPath(connectionString);
+							connectionString = JocysCom.VS.AiCompanion.DataClient.SqliteHelper.NewConnection(connectionString).ConnectionString;
+			#if NETFRAMEWORK
+							var factory = SQLiteFactory.Instance;
+							var name = factory.GetType().Namespace;
+							var sqliteDataSource = new DataSource(nameof(System.Data.SQLite), "System Data SQLite");
+			#else
+							var factory = SqliteFactory.Instance;
+							var name = factory.GetType().Namespace;
+							var sqliteDataSource = new DataSource(nameof(Microsoft.Data.Sqlite), "Microsoft Data Sqlite");
+			#endif
+							//DataSource.AddStandardDataSources(dcd);
+							var sqliteDataProvider = CreateSqliteDataProvider();
+							sqliteDataSource.Providers.Add(sqliteDataProvider);
+							dcd.DataSources.Add(sqliteDataSource);
+							dcd.SelectedDataProvider = sqliteDataProvider;
+							dcd.SelectedDataSource = sqliteDataSource;
+						}
+						else
+						{
+			*/
+			dcd.DataSources.Add(DataSource.SqlDataSource);
+			dcd.SelectedDataProvider = DataProvider.SqlDataProvider;
+			dcd.SelectedDataSource = DataSource.SqlDataSource;
+			//			}
 			try
 			{
 				dcd.ConnectionString = connectionString ?? "";

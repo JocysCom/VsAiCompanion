@@ -97,16 +97,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SettingsSourceManager.ResetSettings();
 		}
 
-		System.Windows.Forms.OpenFileDialog _OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
 
 		private void BrowseSettingsButton_Click(object sender, RoutedEventArgs e)
 		{
+			if (_OpenFileDialog == null)
+			{
+				_OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+				_OpenFileDialog.SupportMultiDottedExtensions = true;
+				DialogHelper.AddFilter(_OpenFileDialog, ".zip");
+				DialogHelper.AddFilter(_OpenFileDialog);
+				_OpenFileDialog.FilterIndex = 1;
+				_OpenFileDialog.RestoreDirectory = true;
+			}
 			var dialog = _OpenFileDialog;
-			dialog.SupportMultiDottedExtensions = true;
-			DialogHelper.AddFilter(dialog, ".zip");
-			DialogHelper.AddFilter(dialog);
-			dialog.FilterIndex = 1;
-			dialog.RestoreDirectory = true;
 			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(".zip");
 			var result = dialog.ShowDialog();
 			if (result != System.Windows.Forms.DialogResult.OK)

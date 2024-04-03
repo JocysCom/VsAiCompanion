@@ -385,5 +385,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+
+		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
+
+		private void BrowseTargetButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (_OpenFileDialog == null)
+			{
+				_OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+				_OpenFileDialog.SupportMultiDottedExtensions = true;
+				DialogHelper.AddFilter(_OpenFileDialog, ".db");
+				DialogHelper.AddFilter(_OpenFileDialog);
+				_OpenFileDialog.FilterIndex = 1;
+				_OpenFileDialog.RestoreDirectory = true;
+			}
+			var dialog = _OpenFileDialog;
+			var path = AssemblyInfo.ExpandPath(Item.Target);
+			//if (EmbeddingHelper.IsFilePath(path))
+			//DialogHelper.FixDialogFile(dialog, _OpenFileDialog.FileName);
+			if (EmbeddingHelper.IsFilePath(path))
+			{
+				dialog.FileName = Path.GetFileName(path);
+				dialog.InitialDirectory = Path.GetDirectoryName(path);
+			}
+			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(".db");
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			Item.Target = AssemblyInfo.ParameterizePath(dialog.FileName, true);
+		}
+
 	}
 }

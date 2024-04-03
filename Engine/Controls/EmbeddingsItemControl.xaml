@@ -81,7 +81,11 @@
 				Margin="0,3,0,0"
 				Orientation="Horizontal">
 				<controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
-				<CheckBox x:Name="MonitorAndUpdateCheckbox" Content="Monitor and Auto Update" IsChecked="{Binding AutoUpdate, UpdateSourceTrigger=PropertyChanged}" />
+				<CheckBox
+					x:Name="MonitorAndUpdateCheckbox"
+					Content="Monitor and Auto Update"
+					IsChecked="{Binding AutoUpdate, UpdateSourceTrigger=PropertyChanged}"
+					Visibility="Collapsed" />
 			</StackPanel>
 			<!--  Source: Folder  -->
 			<Label
@@ -141,35 +145,26 @@
 				Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" />
 			<StackPanel Grid.Row="2" Grid.Column="4" Orientation="Horizontal">
 
-				<Button
-					Name="EditButton"
-					MinWidth="75"
-					Margin="3,0,0,0"
-					Click="EditButton_Click">
+				<Button Name="BrowseTargetButton" MinWidth="75" Click="BrowseTargetButton_Click">
 					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						<ContentControl Content="{StaticResource Icon_folder_open_doc}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Browse}" />
+					</StackPanel>
+				</Button>
+
+
+				<Button Name="EditButton" MinWidth="75" Click="EditButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_database}" Focusable="False" />
 						<Label Content="{x:Static locales:Resources.Edit}" />
 					</StackPanel>
 				</Button>
 
-				<Button
-					Name="CreateButton"
-					MinWidth="75"
-					Margin="3,0,0,0"
-					Click="CreateButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_database}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Create}" />
-					</StackPanel>
-				</Button>
+
 
 			</StackPanel>
 			<StackPanel Grid.Row="3" Grid.Column="4" Orientation="Horizontal">
-				<Button
-					Name="ScanStartButton"
-					MinWidth="75"
-					Margin="3,0,0,0"
-					Click="ScanStartButton_Click">
+				<Button Name="ScanStartButton" MinWidth="75" Click="ScanStartButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
 						<Label Content="Process" />
@@ -178,7 +173,6 @@
 				<Button
 					Name="ScanStopButton"
 					MinWidth="75"
-					Margin="3,0,0,0"
 					Click="ScanStopButton_Click"
 					IsEnabled="False">
 					<StackPanel Focusable="False">
@@ -278,7 +272,6 @@
 				Grid.Row="6"
 				Grid.Column="4"
 				MinWidth="75"
-				Margin="3,0,0,0"
 				Click="SearchButton_Click">
 				<StackPanel Focusable="False">
 					<ContentControl Content="{StaticResource Icon_find}" Focusable="False" />
