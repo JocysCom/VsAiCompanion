@@ -91,7 +91,7 @@
   <ItemGroup>
     <Build Include="Embedding\Stored Procedures\sp_getSimilarFiles.sql" />
     <Build Include="Embedding\Stored Procedures\sp_getMostSimilarFiles.sql" />
-    <Build Include="Embedding\Stored Procedures\sp_getSimilarFileEmbeddings.sql" />
+    <Build Include="Embedding\Stored Procedures\sp_getSimilarFileParts.sql" />
     <Build Include="Embedding\Tables\FilePart.sql" />
     <Build Include="Embedding\Tables\File.sql" />
   </ItemGroup>

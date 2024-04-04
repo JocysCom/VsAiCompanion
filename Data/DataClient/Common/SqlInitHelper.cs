@@ -302,7 +302,17 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return filePart;
 		}
 
-
+		/// <summary>
+		/// Convert embedding vectors to byte array.
+		/// </summary>
+		/// <param name="vectors">Embedding vectors.</param>
+		/// <returns>Byte array.</returns>
+		public static byte[] VectorToBinary(float[] vectors)
+		{
+			byte[] bytes = new byte[vectors.Length * sizeof(float)];
+			Buffer.BlockCopy(vectors, 0, bytes, 0, bytes.Length);
+			return bytes;
+		}
 
 	}
 }

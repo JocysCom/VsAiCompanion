@@ -155,7 +155,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var ipart = parts[key];
 				var vectors = results[key];
 				var part = new Embeddings.Embedding.FilePart();
-				part.Embedding = VectorToBinary(vectors);
+				part.Embedding = SqlInitHelper.VectorToBinary(vectors);
 				part.GroupName = embeddingGroupName;
 				part.GroupFlag = (long)embeddingGroupFlag;
 				part.FileId = file.Id;
@@ -295,7 +295,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					// This example assumes `results` is the embedding in a suitable binary format.
 					var embeddingParam = new SqlParameter("@promptEmbedding", SqlDbType.VarBinary)
 					{
-						Value = VectorToBinary(vectors)
+						Value = SqlInitHelper.VectorToBinary(vectors)
 					};
 					var skipParam = new SqlParameter("@skip", SqlDbType.Int) { Value = skip };
 					var takeParam = new SqlParameter("@take", SqlDbType.Int) { Value = take };
@@ -350,17 +350,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		//	}
 		//}
 
-		/// <summary>
-		/// Convert embedding vectors to byte array.
-		/// </summary>
-		/// <param name="vectors">Embedding vectors.</param>
-		/// <returns>Byte array.</returns>
-		public static byte[] VectorToBinary(float[] vectors)
-		{
-			byte[] bytes = new byte[vectors.Length * sizeof(float)];
-			Buffer.BlockCopy(vectors, 0, bytes, 0, bytes.Length);
-			return bytes;
-		}
+
 
 		private class @payload
 		{

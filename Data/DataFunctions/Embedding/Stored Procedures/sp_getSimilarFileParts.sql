@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [Embedding].[sp_getSimilarFileEmbeddings]
+﻿CREATE PROCEDURE [Embedding].[sp_getSimilarFileParts]
     @promptEmbedding varbinary(max),
     @skip int,
     @take int
