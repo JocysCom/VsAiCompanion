@@ -520,7 +520,7 @@
 							IsChecked="{Binding UseEmbeddings}" />
 						<Label x:Name="EmbeddingsLabel" Margin="3" Content="Group Name" />
 
-						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="256" Text="{Binding EmbeddingGroupName}" />
+						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName}" />
 						<Label
 							x:Name="EmbeddingGroupFlagLabel"
 							Grid.Row="3"
@@ -530,6 +530,7 @@
 
 						<Controls:EnumComboBox
 							x:Name="EmbeddingGroupFlagComboBox"
+							MinWidth="64"
 							VerticalAlignment="Center"
 							ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							SelectedValue="{Binding EmbeddingGroupFlag}"

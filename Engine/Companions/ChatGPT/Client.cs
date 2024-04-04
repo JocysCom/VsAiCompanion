@@ -349,7 +349,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			List<chat_completion_message> messagesToSend,
 			double creativity,
 			TemplateItem item,
-			int maxInputTokens
+			int maxInputTokens,
+			string embeddingText
 		)
 		{
 			var messageItems = new List<MessageItem>();
@@ -395,10 +396,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							lastSystemMessage = new chat_completion_message(message_role.system, "");
 							messagesToSend.Insert(lastUserMessageIndex, lastSystemMessage);
 						}
-						var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem, groupFlag, lastUserMessage?.content, embeddingItem.Skip, embeddingItem.Take);
-						if (!string.IsNullOrEmpty(systemMessage))
-							lastSystemMessage.content += "\r\n\r\n" + systemMessage;
-
+						if (!string.IsNullOrEmpty(embeddingText))
+						{
+							var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem, groupFlag, embeddingText, embeddingItem.Skip, embeddingItem.Take);
+							if (!string.IsNullOrEmpty(systemMessage))
+								lastSystemMessage.content += "\r\n\r\n" + systemMessage;
+						}
 					}
 				}
 			}

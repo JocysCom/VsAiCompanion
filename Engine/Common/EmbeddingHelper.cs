@@ -293,21 +293,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					// Convert your embedding to the format expected by SQL Server.
 					// This example assumes `results` is the embedding in a suitable binary format.
-					var embeddingParam = new SqlParameter("@promptEmbedding", SqlDbType.VarBinary)
+					var vectorsParam = new SqlParameter("@vectors", SqlDbType.VarBinary)
 					{
 						Value = SqlInitHelper.VectorToBinary(vectors)
 					};
+					var groupNameParam = new SqlParameter("@groupName", SqlDbType.NVarChar, 64) { Value = item.EmbeddingGroupName };
+					var groupFlagParam = new SqlParameter("@groupFlag", SqlDbType.BigInt) { Value = (long)groupFlag };
 					var skipParam = new SqlParameter("@skip", SqlDbType.Int) { Value = skip };
 					var takeParam = new SqlParameter("@take", SqlDbType.Int) { Value = take };
 					// Assuming `FileSimilarity` is the result type.
-					var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileEmbeddings] @promptEmbedding, @skip, @take";
+					var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileParts] @groupName, @groupFlag, @vectors, @skip, @take";
 #if NETFRAMEWORK
 					FileParts = db.Database.SqlQuery<Embeddings.Embedding.FilePart>(
-						sqlCommand, embeddingParam, skipParam, takeParam)
+						sqlCommand, groupNameParam, groupFlagParam, vectorsParam, skipParam, takeParam)
 						.ToList();
 #else
 					FileParts = db.FileParts.FromSqlRaw(
-						sqlCommand, embeddingParam, skipParam, takeParam)
+						sqlCommand, groupNameParam, groupFlagParam, vectorsParam, skipParam, takeParam)
 						.ToList();
 #endif
 

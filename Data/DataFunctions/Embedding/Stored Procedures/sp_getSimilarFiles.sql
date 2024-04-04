@@ -1,5 +1,7 @@
 ﻿CREATE PROCEDURE [Embedding].[sp_getSimilarFiles]
-    @promptEmbedding varbinary(max),
+    @groupName nvarchar(64),
+    @groupFlag bigint,
+    @vectors varbinary(max),
     @skip int,
     @take int
 AS
@@ -10,16 +12,17 @@ BEGIN
     (
         SELECT
             f.*,
-            RowNum = ROW_NUMBER() OVER (ORDER BY [Embedding].CosineSimilarity(@promptEmbedding, fp.[Embedding]) DESC)
+            RowNum = ROW_NUMBER() OVER (ORDER BY [Embedding].CosineSimilarity(@vectors, fp.[Embedding]) DESC)
         FROM
-            [FilePart] AS fp
+            [FilePart] AS fp WITH (NOLOCK)
         INNER JOIN
-            [Embedding].[File] AS f ON f.Id = fp.FileId
+            [Embedding].[File] AS f WITH (NOLOCK) ON f.Id = fp.FileId
+        WHERE
+            fp.GroupName = @groupName AND
+            (@groupFlag = 0 OR (fp.GroupFlag & @groupFlag) > 0)
     )
-    SELECT
-        *
-    FROM
-        RankedFiles
-    WHERE
-        RowNum > @skip AND RowNum <= @skip + @take
+    SELECT *
+    FROM RankedFiles
+    WHERE RowNum > @skip AND RowNum <= @skip + @take
+    ORDER BY RowNum
 END

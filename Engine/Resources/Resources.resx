@@ -546,4 +546,9 @@
   <data name="Include_Patterns" xml:space="preserve">
     <value>Include Patterns</value>
   </data>
+  <data name="Embedding_Default_Instructions" xml:space="preserve">
+    <value>Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile.
+
+Use only the contents from these documents to answer questions.</value>
+  </data>
 </root>

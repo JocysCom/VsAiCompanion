@@ -520,6 +520,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile.
+        ///
+        ///Use only the contents from these documents to answer questions..
+        /// </summary>
+        public static string Embedding_Default_Instructions {
+            get {
+                return ResourceManager.GetString("Embedding_Default_Instructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Embeddings allow to search for content based on its meaning. AI can utilize embeddings to find relevant information and files..
         /// </summary>
         public static string Embeddings_Feature_Description {

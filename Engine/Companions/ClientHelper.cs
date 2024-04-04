@@ -97,6 +97,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				return;
 			}
 			MessageItem m;
+			string embeddingText = null;
 			if (overrideMessage == null)
 			{
 				if (item.Messages == null)
@@ -122,6 +123,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 				if (item.AutoFormatMessage)
 					itemText = await FormatMessage(item, itemText);
+				embeddingText = itemText;
 				var vsData = AppHelper.GetMacroValues();
 				// Prepare instructions.
 				var instructions = item.TextInstructions;
@@ -353,7 +355,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						chatLogMessages,
 						item.Creativity,
 						item,
-						maxInputTokens
+						maxInputTokens,
+						embeddingText
 					)).ConfigureAwait(true);
 					// If assistant message was received.
 					var assistantMessage = messageItems.FirstOrDefault();
@@ -430,7 +433,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					messages,
 					rItem.Creativity,
 					item,
-					maxInputTokens
+					maxInputTokens,
+					null
 				)).ConfigureAwait(true);
 				return messageItem.FirstOrDefault()?.Body ?? text;
 			}
@@ -468,7 +472,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					messages,
 					rItem.Creativity,
 					item,
-					maxInputTokens
+					maxInputTokens,
+					null
 				)).ConfigureAwait(true);
 				var body = response.FirstOrDefault()?.Body;
 				if (!string.IsNullOrEmpty(body))
@@ -515,7 +520,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					messages,
 					rItem.Creativity,
 					item,
-					maxInputTokens
+					maxInputTokens,
+					null
 				)).ConfigureAwait(true);
 				var body = response.FirstOrDefault()?.Body;
 				return body;

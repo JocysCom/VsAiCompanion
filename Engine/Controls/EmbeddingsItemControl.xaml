@@ -200,6 +200,7 @@
 					Content="Group Flag" />
 				<ComboBox
 					Name="EmbeddingGroupComboBox"
+					MinWidth="64"
 					HorizontalAlignment="Stretch"
 					DisplayMemberPath="Value"
 					ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"

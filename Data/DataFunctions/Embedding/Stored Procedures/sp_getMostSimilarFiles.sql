@@ -1,6 +1,4 @@
-﻿
-CREATE PROCEDURE [Embedding].[sp_getMostSimilarFiles]
-    @promptEmbedding varbinary(max)
+﻿CREATE PROCEDURE [Embedding].[sp_getMostSimilarFiles]
 AS
 BEGIN
     SET NOCOUNT ON;

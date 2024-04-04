@@ -494,6 +494,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			item.AiModel = models?.FirstOrDefault(x => x.Name.IndexOf("embedding", StringComparison.OrdinalIgnoreCase) >= 0)?.Name
 				?? defaultAiService?.DefaultAiModel
 				?? "text-embedding-3-large";
+			item.Instructions = Resources.Resources.Embedding_Default_Instructions;
 			item.Source = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item), true);
 			item.Target = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item) + ".db", true);
 			// Find free flag number.

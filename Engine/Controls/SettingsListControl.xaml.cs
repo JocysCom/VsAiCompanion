@@ -228,6 +228,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
 			ISettingsListFileItem item = null;
 			if (DataType == ItemType.Template || DataType == ItemType.Task)
 			{
