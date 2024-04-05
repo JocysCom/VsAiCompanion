@@ -298,7 +298,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}));
 			// Mark all files as starting to process.
 			var tempState = ProgressStatus.Started;
-			db = EmbeddingHelper.NewEmbeddingsContext(connectionString);
+			db = SqlInitHelper.NewEmbeddingsContext(connectionString);
 			await SqlInitHelper.SetFileState(
 				db, Item.EmbeddingGroupName, Item.EmbeddingGroupFlag, (int)tempState);
 			await _Scanner.Scan(paths, Item.SourcePattern, allDirectories: true);

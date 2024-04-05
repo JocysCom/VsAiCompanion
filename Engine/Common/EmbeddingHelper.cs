@@ -17,10 +17,6 @@ using JocysCom.ClassLibrary.Security;
 using System.Threading;
 using System.Text;
 
-
-
-
-
 #if NETFRAMEWORK
 using System.Data.SqlClient;
 using System.Data.SQLite;
@@ -33,41 +29,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class EmbeddingHelper
 	{
-		//public class MyDbConfiguration : DbConfiguration
-		//{
-		//	public MyDbConfiguration(string connectionString)
-		//	{
-		//		if (connectionString.Contains(".db"))
-		//		{
-		//			SetProviderFactory("System.Data.SQLite.EF6", SQLiteProviderFactory.Instance);
-		//			SetProviderServices("System.Data.SQLite.EF6", (DbProviderServices)SQLiteProviderFactory.Instance.GetService(typeof(DbProviderServices)));
-		//		}
-		//		else
-		//		{
-		//			SetProviderServices("System.Data.SqlClient", SqlProviderServices.inInstance);
-		//		}
-		//	}
-		//}
-
-		public static EmbeddingsContext NewEmbeddingsContext(string connectionString)
-		{
-			var isPortable = SqlInitHelper.IsPortable(connectionString);
-#if NETFRAMEWORK
-			//DbConnection connection = isPortable
-			//	? (DbConnection)new SQLiteConnection(connectionString)
-			//	: new SqlConnection(connectionString);
-			var db = new EmbeddingsContext();
-			db.Database.Connection.ConnectionString = connectionString;
-#else
-			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
-			if (isPortable)
-				optionsBuilder.UseSqlite(connectionString);
-			else
-				optionsBuilder.UseSqlServer(connectionString);
-			var db = new EmbeddingsContext(optionsBuilder.Options);
-#endif
-			return db;
-		}
 
 		public static async Task<ProgressStatus> UpdateEmbedding(
 			EmbeddingsContext db,
@@ -259,7 +220,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-		public async Task SearchEmbeddings(EmbeddingsItem item, EmbeddingGroup groupFlag, string message, int skip, int take)
+		public async Task SearchEmbeddings(
+			EmbeddingsItem item, EmbeddingGroup groupFlag,
+			string message,
+			int skip, int take,
+			CancellationToken cancellationToken = default)
 		{
 			try
 			{
@@ -277,7 +242,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var connectionString = SqlInitHelper.IsPortable(target)
 					? SqlInitHelper.PathToConnectionString(target)
 					: target;
-				var db = NewEmbeddingsContext(connectionString);
+				var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
 				var vectors = results[0];
 				Log += "Searching on database...";
 				if (SqlInitHelper.IsPortable(item.Target))
@@ -291,28 +256,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				else
 				{
-					// Convert your embedding to the format expected by SQL Server.
-					// This example assumes `results` is the embedding in a suitable binary format.
-					var vectorsParam = new SqlParameter("@vectors", SqlDbType.VarBinary)
-					{
-						Value = SqlInitHelper.VectorToBinary(vectors)
-					};
-					var groupNameParam = new SqlParameter("@groupName", SqlDbType.NVarChar, 64) { Value = item.EmbeddingGroupName };
-					var groupFlagParam = new SqlParameter("@groupFlag", SqlDbType.BigInt) { Value = (long)groupFlag };
-					var skipParam = new SqlParameter("@skip", SqlDbType.Int) { Value = skip };
-					var takeParam = new SqlParameter("@take", SqlDbType.Int) { Value = take };
-					// Assuming `FileSimilarity` is the result type.
-					var sqlCommand = "EXEC [Embedding].[sp_getSimilarFileParts] @groupName, @groupFlag, @vectors, @skip, @take";
-#if NETFRAMEWORK
-					FileParts = db.Database.SqlQuery<Embeddings.Embedding.FilePart>(
-						sqlCommand, groupNameParam, groupFlagParam, vectorsParam, skipParam, takeParam)
-						.ToList();
-#else
-					FileParts = db.FileParts.FromSqlRaw(
-						sqlCommand, groupNameParam, groupFlagParam, vectorsParam, skipParam, takeParam)
-						.ToList();
-#endif
-
+					FileParts = await db.sp_getSimilarFileParts(
+						item.EmbeddingGroupName, (long)groupFlag,
+						vectors, skip, take, cancellationToken
+					);
 				}
 				var fileIds = FileParts.Select(x => x.FileId).Distinct().ToArray();
 				Files = db.Files.Where(x => fileIds.Contains(x.Id)).ToList();

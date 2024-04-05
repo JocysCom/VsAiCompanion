@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.CodeDom.Compiler;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Common;
+
 #if NETFRAMEWORK
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -19,9 +18,12 @@ namespace Embeddings
 
 
 		/// <summary>Initialize model</summary>
-		public EmbeddingsContext() : base() { }
+		public EmbeddingsContext()
+			: base() { }
 
 #if NETFRAMEWORK
+		public EmbeddingsContext(DbConnection existingConnection, bool contextOwnsConnection)
+			: base(existingConnection, contextOwnsConnection) { }
 #else
 		/*
 
@@ -46,20 +48,21 @@ namespace Embeddings
 		public EmbeddingsContext(DbContextOptions<EmbeddingsContext> options) : base(options) { }
 
 		/// <summary>Create context with connection string.</summary>
-		public static EmbeddingsContext Create(string connectionString) {
+		public static EmbeddingsContext Create(string connectionString)
+		{
 			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
 			optionsBuilder.UseSqlServer(connectionString);
 			return new EmbeddingsContext(optionsBuilder.Options);
 		}
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder) {
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
 			modelBuilder.Ignore<Type>();
 			modelBuilder.Ignore<System.Reflection.CustomAttributeData>();
 			base.OnModelCreating(modelBuilder);
 		}
 
 #endif
-
 
 		/// <summary>File</summary>
 		public virtual DbSet<Embedding.File> Files { get; set; }

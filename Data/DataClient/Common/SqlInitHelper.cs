@@ -8,10 +8,14 @@ using System.Collections.Generic;
 using JocysCom.VS.AiCompanion.DataFunctions;
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using System.Reflection;
 
 #if NETFRAMEWORK
+using System.Data.Entity.Infrastructure.DependencyResolution;
+using System.Data.Entity;
 using System.Data.SQLite;
+// using System.Data.SQLite.Linq;
+using System.Data.SQLite.EF6;
 using System.Data.SqlClient;
 #else
 using Microsoft.Data.SqlClient;
@@ -85,6 +89,31 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		}
 
 		#region Helper Methods
+
+		public static EmbeddingsContext NewEmbeddingsContext(string connectionString)
+		{
+			var isPortable = IsPortable(connectionString);
+#if NETFRAMEWORK
+			var connection = isPortable
+				? System.Data.SQLite.EF6.SQLiteProviderFactory.Instance.CreateConnection()
+				: new SqlConnection();
+			connection.ConnectionString = connectionString;
+			var db = new EmbeddingsContext(connection, true);
+			//var db = new EmbeddingsContext();
+
+
+			//Microsoft.Data.SqlClient.SqlClientFactory;
+			//db.Database.Connection.ConnectionString = connectionString;
+#else
+			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
+			if (isPortable)
+				optionsBuilder.UseSqlite(connectionString);
+			else
+				optionsBuilder.UseSqlServer(connectionString);
+			var db = new EmbeddingsContext(optionsBuilder.Options);
+#endif
+			return db;
+		}
 
 		public static string PathToConnectionString(string path)
 		{
@@ -313,6 +342,129 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			Buffer.BlockCopy(vectors, 0, bytes, 0, bytes.Length);
 			return bytes;
 		}
+
+
+		private static void AddFactory(DbProviderFactory instance)
+		{
+			var type = instance.GetType();
+			var invariantName = type.FullName;
+			var shortName = type.Namespace.Split('.').Last();
+#if NETFRAMEWORK
+			var table = DbProviderFactories.GetFactoryClasses();
+			var row = table.Rows.Cast<DataRow>()
+				.FirstOrDefault(x => (string)x["InvariantName"] == invariantName);
+			if (row == null)
+			{
+				// Columns
+				// [0] Name
+				// [1] Description
+				// [2] InvariantName
+				// [3] AssemblyQualifiedName
+				table.Rows.Add(
+				$"{shortName} Data Provider",
+				$".NET Framework Data Provider for {shortName}",
+				invariantName,
+				type.AssemblyQualifiedName
+		   );
+			}
+#else
+			if (!DbProviderFactories.GetProviderInvariantNames().Contains(invariantName))
+				DbProviderFactories.RegisterFactory(invariantName, instance);
+#endif
+		}
+
+		/// <summary>
+		/// Make DbContext support SQL Server and SQLite.
+		/// </summary>
+		public static void AddDbProviderFactories()
+		{
+#if NETFRAMEWORK
+			//AddFactory(Microsoft.Data.SqlClient.SqlClientFactory.Instance);
+			//RegisterSqlLiteFactory();
+			//RegisterSQLiteProviderServices();
+			//AddFactory(System.Data.SQLite.EF6.SQLiteProviderFactory.Instance);
+#else
+			// Workaround fix for System.Runtime.ExceptionServices.FirstChanceException
+			// The specified invariant name 'System.Data.SqlClient' wasn't found in the list of registered .NET Data Providers.
+			AddFactory(SqlClientFactory.Instance);
+			AddFactory(SqliteFactory.Instance);
+#endif
+		}
+
+#if NETFRAMEWORK
+		private static void RegisterSQLiteProviderServices()
+		{
+			// This method should contain the registration logic for SQLite,
+			// similar to what was in MyDbConfiguration but translated to a context-based initialization
+			var instance = SQLiteProviderFactory.Instance;
+			var service = (System.Data.Entity.Core.Common.DbProviderServices)instance.GetService(typeof(System.Data.Entity.Core.Common.DbProviderServices));
+			var instanceResolver = (IDbDependencyResolver)new SingletonDependencyResolver<DbProviderFactory>(instance, "System.Data.SQLite.EF6");
+			var serviceResolver = new SingletonDependencyResolver<System.Data.Entity.Core.Common.DbProviderServices>(service, "System.Data.SQLite.EF6");
+			DbConfiguration.Loaded += (_, a) =>
+			{
+				a.AddDependencyResolver(instanceResolver, true);
+				a.AddDependencyResolver(serviceResolver, true);
+			};
+		}
+
+		/*
+		 * 
+				<entityFramework>
+		  <providers>
+			<provider invariantName="System.Data.SqlClient" 
+			  type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer"/>
+			<provider invariantName="System.Data.SQLite.EF6" 
+			  type="System.Data.SQLite.EF6.SQLiteProviderServices, System.Data.SQLite.EF6"/>
+		  </providers>
+		</entityFramework>
+
+		<system.data>
+		  <DbProviderFactories>
+			<remove invariant="System.Data.SQLite.EF6" />
+			<add name="SQLite Data Provider"
+			   invariant="System.Data.SQLite.EF6"
+			   description=".NET Framework Data Provider for SQLite"
+			   type="System.Data.SQLite.SQLiteFactory, System.Data.SQLite" />
+		  </DbProviderFactories>
+		</system.data>
+
+		*/
+
+		public static void RegisterSqlLiteFactory()
+		{
+			var table = GetProviderTable();
+			// Ensure any existing registrations are removed to avoid duplicate rows
+			var row = table.Select("InvariantName='Microsoft.Data.SqlClient'").FirstOrDefault();
+			row?.Delete();
+
+			// Add the new DataRow with the Microsoft.Data.SqlClient.SqlClientFactory details
+			table.Rows.Add(
+				  "SQLite Data Provider",
+				  ".NET Framework Data Provider for SQLite",
+				  "System.Data.SQLite.EF6",
+				  "System.Data.SQLite.SQLiteFactory, System.Data.SQLite"
+			  );
+
+			//	// Add the new DataRow with the Microsoft.Data.SqlClient.SqlClientFactory details
+			//	table.Rows.Add(
+			//		"Microsoft Data Provider for SQL Server",
+			//		".NET Framework Data Provider for SQL Server",
+			//		"Microsoft.Data.SqlClient",
+			//		typeof(Microsoft.Data.SqlClient.SqlClientFactory).AssemblyQualifiedName
+			//	);
+			//}
+
+		}
+
+		private static DataTable GetProviderTable()
+		{
+			var factoryType = typeof(DbProviderFactories);
+			var method = factoryType.GetMethod("GetProviderTable", BindingFlags.Static | BindingFlags.NonPublic);
+			var table = (DataTable)method.Invoke(null, new object[] { });
+			return table;
+		}
+
+#endif
 
 	}
 }

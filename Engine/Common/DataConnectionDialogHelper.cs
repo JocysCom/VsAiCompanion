@@ -1,13 +1,21 @@
 ﻿using System.Collections.Generic;
 using System;
-using System.Data.Common;
-using System.Linq;
+
+
+
+
+
+
+
+
 
 
 #if NETFRAMEWORK
 using Microsoft.Data.ConnectionUI;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Data.SqlClient;
-using System.Data.SQLite;
+using System.Data.SQLite.EF6;
 #else
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
@@ -104,31 +112,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 			return sqliteDataProvider;
 		}
-
-		private static void AddFactory(DbProviderFactory instance)
-		{
-			var invariantName = instance.GetType().Namespace;
-#if NETFRAMEWORK
-
-#else
-			if (!DbProviderFactories.GetProviderInvariantNames().Contains(invariantName))
-				DbProviderFactories.RegisterFactory(invariantName, instance);
-#endif
-		}
-
-		public static void AddDbProviderFactories()
-		{
-#if NETFRAMEWORK
-			//AddFactory(SQLiteFactory.Instance);
-#else
-			// Workaround fix for System.Runtime.ExceptionServices.FirstChanceException
-			// The specified invariant name 'System.Data.SqlClient' wasn't found in the list of registered .NET Data Providers.
-			AddFactory(SqlClientFactory.Instance);
-			AddFactory(SqliteFactory.Instance);
-#endif
-		}
-
-
 
 	}
 }
