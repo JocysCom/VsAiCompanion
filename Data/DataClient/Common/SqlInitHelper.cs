@@ -23,6 +23,29 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 #endif
 
+/* Entity Frameworks and database clients.
+
+	1.Build-In Entity Framework 1.0 - 5.x for .NET Framework 4.8
+	    - `System.Data.Entity` namespace
+      Database Clients:
+        - `System.Data.SqlClinet` namespace
+	    - `System.Data.SQLite` package
+
+	2. Entity Framework 6.0 (EF6) package for .NET Framework 4.8
+	     - `EntityFramework` package
+       Database Clients:
+         - `System.Data.SqlClinet` namespace
+         - `System.Data.SQLite` package
+         - `System.Data.SQLite.EF6` package
+
+	3. Entity Framework Core 7.0+ (EF Core) package for .NET Core
+	     - `Microsoft.EntityFrameworkCore` package
+	  Data Clients:
+		  - `Microsoft.EntityFrameworkCore.Sqlite` package
+	      - `Microsoft.EntityFrameworkCore.SqlServer` package
+ 
+ */
+
 namespace JocysCom.VS.AiCompanion.DataClient
 {
 	public class SqlInitHelper
@@ -258,7 +281,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			}
 		}
 
-		public static async Task<List<long>> GetSimilarFileEmbeddings(
+		public static async Task<List<Guid>> GetSimilarFileEmbeddings(
 	string connectionString,
 	string groupName,
 	EmbeddingGroup groupFlag,
@@ -311,10 +334,10 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		{
 			var filePart = new FilePart
 			{
-				Id = reader.GetInt64(reader.GetOrdinal("Id")),
+				Id = reader.GetGuid(reader.GetOrdinal("Id")),
 				//GroupName = reader.GetString(reader.GetOrdinal("GroupName")),
 				//GroupFlag = reader.GetInt64(reader.GetOrdinal("GroupFlag")),
-				FileId = reader.GetInt64(reader.GetOrdinal("FileId")),
+				FileId = reader.GetGuid(reader.GetOrdinal("FileId")),
 				//Index = reader.GetInt32(reader.GetOrdinal("Index")),
 				//Count = reader.GetInt32(reader.GetOrdinal("Count")),
 				//HashType = reader.GetString(reader.GetOrdinal("HashType")),
@@ -338,7 +361,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		/// <returns>Byte array.</returns>
 		public static byte[] VectorToBinary(float[] vectors)
 		{
-			byte[] bytes = new byte[vectors.Length * sizeof(float)];
+			var bytes = new byte[vectors.Length * sizeof(float)];
 			Buffer.BlockCopy(vectors, 0, bytes, 0, bytes.Length);
 			return bytes;
 		}

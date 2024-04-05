@@ -1,19 +1,18 @@
 ﻿CREATE TABLE [Embedding].[File] (
-    [Id]        BIGINT         IDENTITY (1, 1) NOT NULL,
-    [GroupName] NVARCHAR (64)  CONSTRAINT [DF_File_GroupName] DEFAULT ('') NOT NULL,
-    [GroupFlag] BIGINT         CONSTRAINT [DF_File_GroupFlag] DEFAULT ('') NOT NULL,
-    [Name]      NVARCHAR (256) CONSTRAINT [DF_File_Name] DEFAULT ('') NOT NULL,
-    [Url]       NVARCHAR (2048) CONSTRAINT [DF_File_Url] DEFAULT ('') NOT NULL,
-    [Size]      BIGINT         CONSTRAINT [DF_File_Size] DEFAULT ((0)) NOT NULL,
-    [HashType]  VARCHAR (20)   CONSTRAINT [DF_File_HashType] DEFAULT ('') NOT NULL,
-    [Hash]      BINARY (64)    NULL,
-    [State]     INT            CONSTRAINT [DF_File_State] DEFAULT ((0)) NOT NULL,
-    [IsEnabled] BIT            CONSTRAINT [DF_File_IsEnabled] DEFAULT ((1)) NOT NULL,
-    [Modified]  DATETIME       CONSTRAINT [DF_File_Modified] DEFAULT (getdate()) NOT NULL,
-    [Created]   DATETIME       CONSTRAINT [DF_File_Created] DEFAULT (getdate()) NOT NULL,
+    [Id]        UNIQUEIDENTIFIER NOT NULL DEFAULT newid(),
+    [GroupName] NVARCHAR (64)    CONSTRAINT [DF_File_GroupName] DEFAULT ('') NOT NULL,
+    [GroupFlag] BIGINT           CONSTRAINT [DF_File_GroupFlag] DEFAULT ('') NOT NULL,
+    [Name]      NVARCHAR (256)   CONSTRAINT [DF_File_Name] DEFAULT ('') NOT NULL,
+    [Url]       NVARCHAR (2048)  CONSTRAINT [DF_File_Url] DEFAULT ('') NOT NULL,
+    [Size]      BIGINT           CONSTRAINT [DF_File_Size] DEFAULT ((0)) NOT NULL,
+    [HashType]  VARCHAR (20)     CONSTRAINT [DF_File_HashType] DEFAULT ('') NOT NULL,
+    [Hash]      BINARY (64)      NULL,
+    [State]     INT              CONSTRAINT [DF_File_State] DEFAULT ((0)) NOT NULL,
+    [IsEnabled] BIT              CONSTRAINT [DF_File_IsEnabled] DEFAULT ((1)) NOT NULL,
+    [Modified]  DATETIME         CONSTRAINT [DF_File_Modified] DEFAULT (getdate()) NOT NULL,
+    [Created]   DATETIME         CONSTRAINT [DF_File_Created] DEFAULT (getdate()) NOT NULL,
     CONSTRAINT [PK_File] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
-
 
 GO
 CREATE NONCLUSTERED INDEX [IX_File_HashType_Hash]

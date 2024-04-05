@@ -20,6 +20,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return;
 			UpdateControlButtons();
 			UpdateButtons();
+			AppControlsHelper.AllowDrop(DataTextBox, true);
+			AppControlsHelper.AllowDrop(DataInstructionsTextBox, true);
 		}
 
 		public void FocusDataTextBox()

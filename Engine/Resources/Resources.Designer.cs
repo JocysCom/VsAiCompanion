@@ -1269,6 +1269,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please analyze the text in the attached files:.
+        /// </summary>
+        public static string TextBox_Drop_Files_Instructions {
+            get {
+                return ResourceManager.GetString("TextBox_Drop_Files_Instructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Title for Attached Context.
         /// </summary>
         public static string Title_for_Attached_Context {

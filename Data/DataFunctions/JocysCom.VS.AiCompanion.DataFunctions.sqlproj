@@ -65,6 +65,7 @@
     <Folder Include="Security\" />
     <Folder Include="Compare" />
     <Folder Include="Embedding\Stored Procedures" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Deployment\DataFunctions_Install.sql" />
@@ -73,6 +74,8 @@
     <None Include="Deployment\Test_StringBase.sql" />
     <Build Include="Security\Embedding.sql" />
     <None Include="Compare\ProjectToDatabase.scmp" />
+    <None Include="Scripts\LongBinary_Fix.ps1" />
+    <None Include="Deployment\Script.Full.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\RegexBase.cs" />
@@ -96,10 +99,10 @@
     <Build Include="Embedding\Tables\File.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PreDeploy Include="Script.PreDeployment.sql" />
+    <PreDeploy Include="Deployment\Script.PreDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Script.PostDeployment.sql" />
+    <PostDeploy Include="Deployment\Script.PostDeployment.sql" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Sign.ps1" "$(TargetPath)"

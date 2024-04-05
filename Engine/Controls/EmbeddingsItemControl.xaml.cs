@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -362,7 +363,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var fi = new FileInfo(path);
 			if (!fi.Exists)
 				return null;
-			var text = File.ReadAllText(path);
+			var text = System.IO.File.ReadAllText(path);
 			return GetIgnoreFromText(text);
 		}
 
@@ -445,6 +446,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			Item.Target = AssemblyInfo.ParameterizePath(dialog.FileName, true);
 		}
+
+		#region Export/ Import
+
+		System.Windows.Forms.OpenFileDialog ImportOpenFileDialog { get; } = new System.Windows.Forms.OpenFileDialog();
+
+		private void ImportButton_Click(object sender, RoutedEventArgs e)
+		{
+		}
+
+		System.Windows.Forms.SaveFileDialog ExportSaveFileDialog { get; } = new System.Windows.Forms.SaveFileDialog();
+
+		private void ExportButton_Click(object sender, RoutedEventArgs e)
+		{
+			var target = Item.Target;
+			var connectionString = SqlInitHelper.IsPortable(target)
+				? SqlInitHelper.PathToConnectionString(target)
+				: target;
+			var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
+			var items = db.FileParts.Where(x =>
+				x.GroupName == Item.EmbeddingGroupName &&
+				x.GroupFlag == (long)Item.EmbeddingGroupFlag)
+				.ToList();
+			AppControlsHelper.Export(items);
+		}
+
+		#endregion
+
 
 	}
 }

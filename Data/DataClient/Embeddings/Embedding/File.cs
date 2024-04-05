@@ -16,7 +16,7 @@ namespace Embeddings.Embedding
 		/// <summary>Unique file id.</summary>
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public long Id { get; set; }
+		public Guid Id { get; set; }
 
 		/// <summary>Name of the group to which the file belongs.</summary>
 		[Required]

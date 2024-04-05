@@ -1,15 +1,5 @@
 ﻿using System.Collections.Generic;
 using System;
-
-
-
-
-
-
-
-
-
-
 #if NETFRAMEWORK
 using Microsoft.Data.ConnectionUI;
 using System.Data.Entity;

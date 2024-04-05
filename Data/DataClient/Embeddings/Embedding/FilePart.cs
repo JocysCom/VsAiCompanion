@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,7 +15,7 @@ namespace Embeddings.Embedding
 		/// <summary>Unique identifier of the file part.</summary>
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public long Id { get; set; }
+		public Guid Id { get; set; }
 
 		/// <summary>Name of the group to which the file belongs.</summary>
 		[Required]
@@ -27,7 +26,7 @@ namespace Embeddings.Embedding
 		public long GroupFlag { get; set; }
 
 		/// <summary>Unique identifier of the associated file.</summary>
-		public long FileId { get; set; }
+		public Guid FileId { get; set; }
 
 		/// <summary>Index of this part relative to other parts of the same file.</summary>
 		public int Index { get; set; }
@@ -92,7 +91,8 @@ namespace Embeddings.Embedding
 			=> Copy(this, target, copyKey);
 
 		/// <summary>Copy to existing object.</summary>
-		public static FilePart Copy(FilePart source, FilePart target, bool copyKey = false) {
+		public static FilePart Copy(FilePart source, FilePart target, bool copyKey = false)
+		{
 			if (copyKey)
 				target.Id = source.Id;
 			target.GroupName = source.GroupName;
