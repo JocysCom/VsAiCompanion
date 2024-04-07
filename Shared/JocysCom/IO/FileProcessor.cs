@@ -53,7 +53,8 @@ namespace JocysCom.ClassLibrary.IO
 			_DateStarted = DateTime.Now;
 			IsStopping = false;
 			IsPaused = false;
-			foreach (var key in ProcessItemStates.Keys)
+			var keys = ProcessItemStates.Keys.ToArray();
+			foreach (var key in keys)
 				ProcessItemStates[key] = 0;
 			// Step 1: Get list of files inside the folder.
 			var e = new ProgressEventArgs

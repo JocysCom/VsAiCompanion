@@ -118,12 +118,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#region Binding
 
 		private static readonly new DependencyProperty SelectedValueProperty =
-			DependencyProperty.Register("SelectedValue", typeof(Enum), typeof(EnumComboBox),
-		new FrameworkPropertyMetadata(default(Enum), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
+			DependencyProperty.Register("SelectedValue", typeof(object), typeof(EnumComboBox),
+		new FrameworkPropertyMetadata(default(object), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
 
-		public new Enum SelectedValue
+		public new object SelectedValue
 		{
-			get => (Enum)GetValue(SelectedValueProperty);
+			get => GetValue(SelectedValueProperty);
 			set => SetValue(SelectedValueProperty, value);
 		}
 

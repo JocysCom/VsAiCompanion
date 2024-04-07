@@ -23,7 +23,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			//Adds all the standard supported databases
 			dcd.DataSources.Clear();
 			/*
-						if ((connectionString ?? "").Contains(".db"))
+						if ((connectionString ?? "").Contains(SqlInitHelper.SqliteExt))
 						{
 							connectionString = AssemblyInfo.ExpandPath(connectionString);
 							connectionString = JocysCom.VS.AiCompanion.DataClient.SqliteHelper.NewConnection(connectionString).ConnectionString;

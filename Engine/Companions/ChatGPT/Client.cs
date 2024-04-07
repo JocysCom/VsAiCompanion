@@ -327,7 +327,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						.ToDictionary(x => x.Index, x => x.Embedding.ToArray());
 				}
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 			}
 			finally

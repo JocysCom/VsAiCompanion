@@ -29,8 +29,6 @@
 								Padding="5"
 								HorizontalAlignment="Stretch"
 								VerticalAlignment="Stretch"
-								Command="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=DataContext.CheckCommand}"
-								CommandParameter="{Binding}"
 								Content="{Binding Description}"
 								IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 								Visibility="{Binding CheckVisibility}" />

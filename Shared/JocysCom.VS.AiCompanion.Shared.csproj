@@ -24,7 +24,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
 		<PackageReference Include="System.Text.Json" Version="8.0.1" />
 	</ItemGroup>
 

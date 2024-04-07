@@ -18,10 +18,8 @@ using System.Threading;
 using System.Text;
 
 #if NETFRAMEWORK
-using System.Data.SqlClient;
 using System.Data.SQLite;
 #else
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 #endif
 
@@ -52,9 +50,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				// Remove parts and file.
 				var filePartsToDelete = db.FileParts.Where(x => x.FileId == file.Id).ToList();
-				foreach (var filePartToDelete in filePartsToDelete)
-					db.FileParts.Remove(filePartToDelete);
-				await db.SaveChangesAsync();
+				if (filePartsToDelete.Any())
+				{
+					foreach (var filePartToDelete in filePartsToDelete)
+						db.FileParts.Remove(filePartToDelete);
+					await db.SaveChangesAsync();
+				}
 				db.Files.Remove(file);
 				file = null;
 			}
@@ -123,8 +124,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				part.EmbeddingModel = modelName;
 				part.EmbeddingSize = vectors.Length;
 				part.GroupFlag = (int)embeddingGroupFlag;
-				part.Index = 0;
-				part.Count = 1;
+				part.Index = key;
+				part.Count = parts.Length;
 				part.HashType = EmbeddingBase.SHA2_256;
 				part.Hash = sourceFilePartHashes[key];
 				part.IsEnabled = true;

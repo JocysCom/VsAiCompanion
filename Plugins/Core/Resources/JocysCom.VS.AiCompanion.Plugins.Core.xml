@@ -577,6 +577,11 @@
             Database path. Set by external program.
             </summary>
         </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Search.LitedbExt">
+            <summary>
+            LiteDB file extension.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder(System.String,System.String)">
             <summary>
             Index a specific folder. Returns true if successful.

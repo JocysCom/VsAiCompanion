@@ -15,7 +15,7 @@ namespace Embeddings.Embedding
 		/// <summary>Unique identifier of the file part.</summary>
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public Guid Id { get; set; }
+		public long Id { get; set; }
 
 		/// <summary>Name of the group to which the file belongs.</summary>
 		[Required]
@@ -26,7 +26,7 @@ namespace Embeddings.Embedding
 		public long GroupFlag { get; set; }
 
 		/// <summary>Unique identifier of the associated file.</summary>
-		public Guid FileId { get; set; }
+		public long FileId { get; set; }
 
 		/// <summary>Index of this part relative to other parts of the same file.</summary>
 		public int Index { get; set; }
@@ -71,14 +71,6 @@ namespace Embeddings.Embedding
 
 		/// <summary>UTC date and time when the part was last modified.</summary>
 		public DateTime Modified { get; set; }
-
-		#region Foreign Key Items
-
-		/// <summary>Foreign key item</summary>
-		[ForeignKey(nameof(FileId))]
-		public virtual File File { get; set; }
-
-		#endregion
 
 		#region Clone and Copy Methods
 

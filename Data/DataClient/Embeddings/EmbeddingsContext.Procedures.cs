@@ -5,13 +5,12 @@ using Embeddings.Embedding;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 #if NETFRAMEWORK
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 #else
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 #endif
 
@@ -61,18 +60,6 @@ namespace Embeddings
 #else
 			return Database.GetDbConnection();
 #endif
-		}
-
-
-		private static DbParameter AddParameter(DbCommand command, string parameterName, object value)
-		{
-			if (value is null)
-				return null;
-			var parameter = command.CreateParameter();
-			parameter.ParameterName = parameterName;
-			parameter.Value = value;
-			command.Parameters.Add(parameter);
-			return parameter;
 		}
 
 

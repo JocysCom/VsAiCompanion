@@ -18,6 +18,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		public static string _databasePath;
 
+		/// <summary>
+		/// LiteDB file extension.
+		/// </summary>
+		public const string LitedbExt = ".litedb";
+
 #if DEBUG
 
 		//public static Dictionary<string, string> GetIndexList() => new Dictionary<string, string>();
@@ -34,7 +39,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			if (!di.Exists)
 				di.Create();
 
-			var connectionString = Path.Combine(_databasePath, indexName + ".db");
+			var connectionString = Path.Combine(_databasePath, indexName + LitedbExt);
 			using (var db = new LiteDatabase(connectionString))
 			{
 				var filesCollection = db.GetCollection<DocItem>(indexName);
@@ -72,7 +77,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			var di = new DirectoryInfo(_databasePath);
 			if (!di.Exists)
 				di.Create();
-			var connectionString = Path.Combine(_databasePath, indexName + ".db");
+			var connectionString = Path.Combine(_databasePath, indexName + LitedbExt);
 			using (var db = new LiteDatabase(connectionString))
 			{
 				var filesCollection = db.GetCollection<DocItem>(indexName);

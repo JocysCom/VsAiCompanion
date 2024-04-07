@@ -496,7 +496,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				?? "text-embedding-3-large";
 			item.Instructions = Resources.Resources.Embedding_Default_Instructions;
 			item.Source = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item), true);
-			item.Target = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item) + ".db", true);
+			item.Target = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item) + SqlInitHelper.SqliteExt, true);
 			// Find free flag number.
 			var taken = Global.Embeddings.Items.Select(x => x.EmbeddingGroupFlag)
 				.Distinct();

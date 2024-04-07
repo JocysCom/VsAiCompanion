@@ -1,6 +1,5 @@
 using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,7 +15,7 @@ namespace Embeddings.Embedding
 		/// <summary>Unique file id.</summary>
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public Guid Id { get; set; }
+		public long Id { get; set; }
 
 		/// <summary>Name of the group to which the file belongs.</summary>
 		[Required]
@@ -58,14 +57,6 @@ namespace Embeddings.Embedding
 
 		/// <summary>UTC date and time when the file was created.</summary>
 		public DateTime Created { get; set; }
-
-		#region Foreign Key Lists
-
-		/// <summary>Collection of File Parts. Foreign key relationship.</summary>
-		[InverseProperty(nameof(FilePart.File))]
-		public virtual ICollection<FilePart> FileParts { get; }
-
-		#endregion
 
 		#region Clone and Copy Methods
 

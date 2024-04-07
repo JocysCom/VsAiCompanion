@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [Embedding].[File] (
-    [Id]        UNIQUEIDENTIFIER NOT NULL DEFAULT newid(),
+    [Id]        BIGINT           IDENTITY (1, 1) NOT NULL,
     [GroupName] NVARCHAR (64)    CONSTRAINT [DF_File_GroupName] DEFAULT ('') NOT NULL,
     [GroupFlag] BIGINT           CONSTRAINT [DF_File_GroupFlag] DEFAULT ('') NOT NULL,
     [Name]      NVARCHAR (256)   CONSTRAINT [DF_File_Name] DEFAULT ('') NOT NULL,

@@ -19,11 +19,14 @@ namespace Embeddings
 
 		/// <summary>Initialize model</summary>
 		public EmbeddingsContext()
-			: base() { }
+			: base()
+		{
+		}
 
 #if NETFRAMEWORK
 		public EmbeddingsContext(DbConnection existingConnection, bool contextOwnsConnection)
 			: base(existingConnection, contextOwnsConnection) { }
+
 #else
 		/*
 

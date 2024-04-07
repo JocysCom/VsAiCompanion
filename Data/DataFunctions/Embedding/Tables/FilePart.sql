@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [Embedding].[FilePart] (
-    [Id]             UNIQUEIDENTIFIER NOT NULL DEFAULT newid(),
+    [Id]             BIGINT           IDENTITY (1, 1) NOT NULL,
     [GroupName]      NVARCHAR (64)    CONSTRAINT [DF_FilePart_GroupName] DEFAULT ('') NOT NULL,
     [GroupFlag]      BIGINT           CONSTRAINT [DF_FilePart_GroupFlag] DEFAULT ((0)) NOT NULL,
-    [FileId]         UNIQUEIDENTIFIER NOT NULL,
+    [FileId]         BIGINT           NOT NULL,
     [Index]          INT              CONSTRAINT [DF_FilePart_Index] DEFAULT ((0)) NOT NULL,
     [Count]          INT              CONSTRAINT [DF_FilePart_Count] DEFAULT ((1)) NOT NULL,
     [HashType]       VARCHAR (20)     CONSTRAINT [DF_FilePart_HashType] DEFAULT ('') NOT NULL,

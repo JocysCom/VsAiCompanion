@@ -27,6 +27,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			ImportButton.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			ExportButton.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			ScanProgressPanel.UpdateProgress();
 		}
 
@@ -422,17 +428,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void BrowseTargetButton_Click(object sender, RoutedEventArgs e)
 		{
+			var path = AssemblyInfo.ExpandPath(Item.Target);
 			if (_OpenFileDialog == null)
 			{
 				_OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 				_OpenFileDialog.SupportMultiDottedExtensions = true;
-				DialogHelper.AddFilter(_OpenFileDialog, ".db");
+				DialogHelper.AddFilter(_OpenFileDialog, SqlInitHelper.SqliteExt);
 				DialogHelper.AddFilter(_OpenFileDialog);
 				_OpenFileDialog.FilterIndex = 1;
 				_OpenFileDialog.RestoreDirectory = true;
 			}
 			var dialog = _OpenFileDialog;
-			var path = AssemblyInfo.ExpandPath(Item.Target);
 			//if (EmbeddingHelper.IsFilePath(path))
 			//DialogHelper.FixDialogFile(dialog, _OpenFileDialog.FileName);
 			if (SqlInitHelper.IsPortable(path))
@@ -440,7 +446,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				dialog.FileName = Path.GetFileName(path);
 				dialog.InitialDirectory = Path.GetDirectoryName(path);
 			}
-			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(".db");
+			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(SqlInitHelper.SqliteExt);
 			var result = dialog.ShowDialog();
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
@@ -459,7 +465,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ExportButton_Click(object sender, RoutedEventArgs e)
 		{
-			var target = Item.Target;
+			var target = AssemblyInfo.ExpandPath(Item.Target);
 			var connectionString = SqlInitHelper.IsPortable(target)
 				? SqlInitHelper.PathToConnectionString(target)
 				: target;
