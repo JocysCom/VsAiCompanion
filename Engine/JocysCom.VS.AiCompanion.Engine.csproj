@@ -77,16 +77,11 @@
 		<PackageReference Include="System.Data.Common" Version="4.3.0" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
-		<Reference Include="Microsoft.Data.ConnectionUI">
-			<HintPath>..\Resources\Microsoft.Data.Connection\Microsoft.Data.ConnectionUI.dll</HintPath>
-		</Reference>
-		<Reference Include="Microsoft.Data.ConnectionUI.Dialog">
-			<HintPath>..\Resources\Microsoft.Data.Connection\Microsoft.Data.ConnectionUI.Dialog.dll</HintPath>
-		</Reference>
+		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI.Dialog\Microsoft.SqlServer.Management.ConnectionUI.Dialog.csproj" />
+		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI\Microsoft.SqlServer.Management.ConnectionUI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

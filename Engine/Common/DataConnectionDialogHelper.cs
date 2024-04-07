@@ -1,6 +1,6 @@
 ﻿using System;
-using Microsoft.Data.ConnectionUI;
 #if NETFRAMEWORK
+using Microsoft.Data.ConnectionUI;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Data.SqlClient;
@@ -9,7 +9,7 @@ using System.Data.SQLite.EF6;
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-//using Microsoft.SqlServer.Management.ConnectionUI;
+using Microsoft.SqlServer.Management.ConnectionUI;
 #endif
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -20,11 +20,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var dcd = new DataConnectionDialog();
 			dcd.DataSources.Clear();
-			DataSource.AddStandardDataSources(dcd);
+#if NETFRAMEWORK
 			dcd.DataSources.Add(DataSource.SqlDataSource);
-			dcd.SelectedDataProvider = DataProvider.SqlDataProvider;
 			dcd.SelectedDataSource = DataSource.SqlDataSource;
-			//			}
+			dcd.SelectedDataProvider = DataProvider.SqlDataProvider;
+#else
+			//DataSource.AddStandardDataSources(dcd);
+			dcd.DataSources.Add(DataSource.SqlDataSource);
+			//var a0 = DataProvider.SqlDataProvider.CreateConnectionProperties(DataSource.SqlDataSource);
+			//var a1 = DataProvider.SqlDataProvider.CreateConnectionUIControl(DataSource.SqlDataSource);
+			DataSource.SqlDataSource.Providers.Add(DataProvider.SqlDataProvider);
+			dcd.SetSelectedDataProvider(DataSource.SqlDataSource, DataProvider.SqlDataProvider);
+#endif
+
 			try
 			{
 				dcd.ConnectionString = ReformatConnectionStringForSystemData(connectionString);
@@ -52,42 +60,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			str = str.Replace("Trust Server Certificate", "TrustServerCertificate");
 			return str;
 		}
-
-		/*
-		public void OpenDatabaseConnectionDialog()
-		{
-			string filePath = Path.GetTempFileName() + ".udl";
-			Process.Start(filePath);
-		}
-
-		public void MonitorFileChange()
-		{
-			string filePath = Path.GetTempFileName() + ".udl";
-			using (var watcher = new FileSystemWatcher(Path.GetDirectoryName(filePath), "*.udl"))
-			{
-				watcher.NotifyFilter = NotifyFilters.LastWrite;
-				watcher.Changed += (object sender, FileSystemEventArgs e) =>
-			{
-					if (e.FullPath == filePath)
-					{
-						string[] lines = File.ReadAllLines(filePath);
-						foreach (string line in lines)
-						{
-							if (line.StartsWith("Provider="))
-							{
-								string connectionString = line.Substring("Provider=".Length);
-								// use the connection string
-								Debug.WriteLine(connectionString);
-							}
-						}
-					}
-				};
-				watcher.EnableRaisingEvents = true;
-				OpenDatabaseConnectionDialog(filePath);
-				Console.ReadLine();
-			}
-		}
-		*/
 
 	}
 }
