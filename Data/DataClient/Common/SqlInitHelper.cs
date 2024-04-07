@@ -426,6 +426,15 @@ namespace JocysCom.VS.AiCompanion.DataClient
 #endif
 		}
 
+		private static void ClearDbProviderFactories()
+		{
+			// Cleanup old providers.
+			var table = GetDbProviderFactories();
+			var rows = table.Rows.Cast<DataRow>().ToList();
+			foreach (var row in rows)
+				row?.Delete();
+		}
+
 		/// <summary>
 		/// Make DbContext support SQL Server and SQLite.
 		/// </summary>
@@ -465,12 +474,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		private static void AddEntityFrameworkProviders()
 		{
-			// Cleanup old providers.
-			var table = GetDbProviderFactories();
-			var rows = table.Rows.Cast<DataRow>().ToList();
-			foreach (var row in rows)
-				row?.Delete();
-
 			System.Data.Entity.DbConfiguration.Loaded += (sender, args) =>
 			{
 				args.AddDependencyResolver(new SqlLiteEF6Resolver(), true);

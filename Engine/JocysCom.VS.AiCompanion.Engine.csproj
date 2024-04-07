@@ -59,6 +59,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
@@ -68,12 +69,11 @@
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.1" />
 		<PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-		<Reference Include="Microsoft.SqlServer.Management.ConnectionUI">
-			<HintPath>..\Resources\Microsoft.Data.Connection\net8.0\Microsoft.SqlServer.Management.ConnectionUI.dll</HintPath>
-		</Reference>
-		<Reference Include="Microsoft.SqlServer.Management.ConnectionUI.Dialog">
-			<HintPath>..\Resources\Microsoft.Data.Connection\net8.0\Microsoft.SqlServer.Management.ConnectionUI.Dialog.dll</HintPath>
-		</Reference>
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI.Dialog\Microsoft.SqlServer.Management.ConnectionUI.Dialog.csproj" />
+		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI\Microsoft.SqlServer.Management.ConnectionUI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
