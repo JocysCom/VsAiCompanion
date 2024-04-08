@@ -16,6 +16,9 @@ using Microsoft.ML;
 using JocysCom.ClassLibrary.Security;
 using System.Threading;
 using System.Text;
+using JocysCom.VS.AiCompanion.Plugins.Core;
+
+
 
 #if NETFRAMEWORK
 using System.Data.SQLite;
@@ -147,7 +150,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static FilePart[] GetParts(string path, int maxTokensPerChunk)
 		{
 			var mlContext = new MLContext();
-			var content = System.IO.File.ReadAllText(path);
+			var fh = new FileHelper();
+			var result = fh.ReadFileAsPlainText(path);
+			var content = result?.Result;
 			if (string.IsNullOrEmpty(content))
 				return Array.Empty<FilePart>();
 			var data = new List<TextData> { new TextData { Text = content } };
