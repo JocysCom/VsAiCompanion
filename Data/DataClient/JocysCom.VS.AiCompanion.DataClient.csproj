@@ -87,6 +87,7 @@
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\Setup\MSSQL\File.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\FilePart.sql" Link="Deployment\Setup\MSSQL\FilePart.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Deployment\CosineSimilarity.sql" Link="Deployment\Setup\MSSQL\CosineSimilarity.sql" />
 		<None Include="MainModel.cs" />
 		<None Include="MainModel.tt.cs" />
 	</ItemGroup>

@@ -74,6 +74,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			{
 				success &= CreateSchema("Embedding", connection);
 				success &= CreateAssembly("DataFunctions", connection);
+				success &= CreateFunction("CosineSimilarity", connection);
 			}
 			success &= CreateTable(nameof(File), connection);
 			success &= CreateTable(nameof(FilePart), connection);
@@ -91,15 +92,15 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		{
 			var isPortable = IsPortable(connection.ConnectionString);
 			var commandText = isPortable
-				? $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name;"
-				: $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'Embedding' AND TABLE_NAME = @name;";
+				? $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name"
+				: $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'Embedding' AND TABLE_NAME = @name";
 			var exist = Exist(commandText, name, connection);
 			return exist || RunScript(name, connection);
 		}
 
 		public static bool CreateProcedure(string name, DbConnection connection)
 		{
-			var commandText = $"SELECT [name] FROM sys.objects WHERE object_id = OBJECT_ID(N'[Embedding].' + QUOTENAME(@name)) AND type IN (N'P', N'PC');";
+			var commandText = $"SELECT [name] FROM sys.objects WHERE object_id = OBJECT_ID(N'[Embedding].' + QUOTENAME(@name)) AND [type] IN (N'P', N'PC')";
 			var exist = Exist(commandText, name, connection);
 			return exist || RunScript(name, connection);
 		}
@@ -107,6 +108,13 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static bool CreateSchema(string name, DbConnection connection)
 		{
 			var commandText = $"SELECT [name] FROM sys.schemas WHERE name = @name";
+			var exist = Exist(commandText, name, connection);
+			return exist || RunScript(name, connection);
+		}
+
+		public static bool CreateFunction(string name, DbConnection connection)
+		{
+			var commandText = $"SELECT [name] FROM sys.objects WHERE [object_id] = OBJECT_ID(N'[Embedding].' + QUOTENAME(@name)) AND [type] IN (N'FN', N'IF', N'TF', N'FS', N'FT')";
 			var exist = Exist(commandText, name, connection);
 			return exist || RunScript(name, connection);
 		}

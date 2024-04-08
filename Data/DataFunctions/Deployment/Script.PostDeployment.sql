@@ -14,7 +14,7 @@ SELECT
 	@clr_hash = HASHBYTES('SHA2_512', af.content)
 FROM sys.assemblies a
 JOIN sys.assembly_files af ON a.assembly_id = af.assembly_id
-WHERE a.is_user_defined = 1 AND a.[name] = @clr_name
+WHERE a.is_user_defined = 1 AND a.[name] = @clr_name AND af.[file_id] = 1
 
 SELECT @clr_full_name [name], @clr_hash as [hash]
 
