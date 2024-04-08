@@ -20,19 +20,19 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -60,42 +60,43 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="MainModel.cs" />
-	  <Compile Remove="MainModel.tt.cs" />
+		<Compile Remove="MainModel.cs" />
+		<Compile Remove="MainModel.tt.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Deployment\File.SQLite.sql" />
-	  <None Remove="Deployment\FilePart.SQLite.sql" />
+		<Compile Include="..\DataFunctions\Common\EmbeddingsBase.Methods.cs" Link="Common\EmbeddingsBase.Methods.cs" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<None Remove="Deployment\Setup\**\*.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Include="..\DataFunctions\Common\EmbeddingsBase.Methods.cs" Link="Common\EmbeddingsBase.Methods.cs" />
+		<EmbeddedResource Include="Deployment\Setup\**\*.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Deployment\Setup\*.sql" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\File.sql" />
-	  <EmbeddedResource Include="Deployment\File.Sqlite.sql" />
-	  <EmbeddedResource Include="Deployment\FilePart.Sqlite.sql" />
-	  <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\FilePart.sql" Link="Deployment\FilePart.sql" />
-	  <None Include="MainModel.cs" />
-	  <None Include="MainModel.tt.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Deployment\Setup\" />
+		<EmbeddedResource Include="..\DataFunctions\Deployment\DataFunctions.sql" Link="Deployment\Setup\MSSQL\DataFunctions.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Deployment\Script.PostDeployment.sql" Link="Deployment\Setup\MSSQL\Script.PostDeployment.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Deployment\Script.PreDeployment.sql" Link="Deployment\Setup\MSSQL\Script.PreDeployment.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getMostSimilarFiles.sql" Link="Deployment\Setup\MSSQL\sp_getMostSimilarFiles.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getSimilarFileParts.sql" Link="Deployment\Setup\MSSQL\sp_getSimilarFileParts.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getSimilarFiles.sql" Link="Deployment\Setup\MSSQL\sp_getSimilarFiles.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\Setup\MSSQL\File.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\FilePart.sql" Link="Deployment\Setup\MSSQL\FilePart.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
+		<None Include="MainModel.cs" />
+		<None Include="MainModel.tt.cs" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
+		<Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
 	</Target>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-	  <Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Deployment\CreateSetupFiles.ps1&quot;" />
+		<Exec Command="::PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Deployment\CreateSetupFiles.ps1&quot;" />
 	</Target>
 
 </Project>

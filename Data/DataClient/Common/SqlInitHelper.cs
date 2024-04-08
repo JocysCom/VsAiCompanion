@@ -55,10 +55,10 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static bool IsPortable(string connectionStringOrPath)
 			=> PortableExt.Any(x => connectionStringOrPath?.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0);
 
-		public static void InitSqlDatabase(string connectionString)
+		public static bool InitSqlDatabase(string connectionString)
 		{
-#if NETFRAMEWORK
 			var isPortable = IsPortable(connectionString);
+#if NETFRAMEWORK
 			if (isPortable)
 			{
 				var path = ConnectionStringToPath(connectionString);
@@ -69,43 +69,89 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			var connection = NewConnection(connectionString);
 			// Empty file will be created at this point if not exists.
 			connection.Open();
-			CreateTable(nameof(File), connection);
-			CreateTable(nameof(FilePart), connection);
+			var success = true;
+			if (!isPortable)
+			{
+				success &= CreateSchema("Embedding", connection);
+				success &= CreateAssembly("DataFunctions", connection);
+			}
+			success &= CreateTable(nameof(File), connection);
+			success &= CreateTable(nameof(FilePart), connection);
+			if (!isPortable)
+			{
+				success &= CreateProcedure("sp_getMostSimilarFiles", connection);
+				success &= CreateProcedure("sp_getSimilarFileParts", connection);
+				success &= CreateProcedure("sp_getSimilarFiles", connection);
+			}
 			connection.Close();
+			return success;
 		}
 
 		public static bool CreateTable(string name, DbConnection connection)
 		{
-			if (TableExists(name, connection))
-				return false;
 			var isPortable = IsPortable(connection.ConnectionString);
-			var suffix = isPortable
-				? ".Sqlite"
-				: "";
-			var sqlScript = ResourceHelper.FindResource($"{name}{suffix}.sql");
+			var commandText = isPortable
+				? $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name;"
+				: $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'Embedding' AND TABLE_NAME = @name;";
+			var exist = Exist(commandText, name, connection);
+			return exist || RunScript(name, connection);
+		}
+
+		public static bool CreateProcedure(string name, DbConnection connection)
+		{
+			var commandText = $"SELECT [name] FROM sys.objects WHERE object_id = OBJECT_ID(N'[Embedding].' + QUOTENAME(@name)) AND type IN (N'P', N'PC');";
+			var exist = Exist(commandText, name, connection);
+			return exist || RunScript(name, connection);
+		}
+
+		public static bool CreateSchema(string name, DbConnection connection)
+		{
+			var commandText = $"SELECT [name] FROM sys.schemas WHERE name = @name";
+			var exist = Exist(commandText, name, connection);
+			return exist || RunScript(name, connection);
+		}
+
+		public static bool CreateAssembly(string name, DbConnection connection)
+		{
+			var commandText = $"SELECT [name] FROM sys.assemblies WHERE name = @name";
+			var exist = Exist(commandText, name, connection);
+			if (exist)
+				return true;
+			var success = true;
+			success &= RunScript("Script.PreDeployment", connection);
+			success &= RunScript(name, connection);
+			success &= RunScript("Script.PostDeployment", connection);
+			return success;
+		}
+
+		public static bool Exist(string commandText, string name, DbConnection connection)
+		{
+			var command = NewCommand(commandText, connection);
+			AddParameter(command, "@name", name);
+			var result = command.ExecuteScalar();
+			var exists = result?.ToString() == name;
+			return exists;
+		}
+
+		public static bool RunScript(string name, DbConnection connection)
+		{
+			var isPortable = IsPortable(connection.ConnectionString);
+			var dbType = isPortable
+				? "SQLite"
+				: "MSSQL";
+			var sqlScript = ResourceHelper.FindResource($"Setup.{dbType}.{name}.sql").Trim();
 			string pattern = @"^\s*GO\s*$";
 			// Split the script using the Regex.Split function, considering the pattern.
 			string[] commandTexts = Regex.Split(sqlScript, pattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 			for (int i = 0; i < commandTexts.Length; i++)
 			{
 				var commandText = commandTexts[i];
+				if (string.IsNullOrWhiteSpace(commandText))
+					continue;
 				var command = NewCommand(commandText, connection);
 				command.ExecuteNonQuery();
 			}
 			return true;
-		}
-
-		public static bool TableExists(string name, DbConnection connection)
-		{
-			var isPortable = IsPortable(connection.ConnectionString);
-			var commandText = isPortable
-				? $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name;"
-				: $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'Embedding' AND TABLE_NAME = @name;";
-			var command = NewCommand(commandText, connection);
-			AddParameter(command, "@name", name);
-			var result = command.ExecuteScalar();
-			var exists = result?.ToString() == name;
-			return exists;
 		}
 
 		#region Helper Methods

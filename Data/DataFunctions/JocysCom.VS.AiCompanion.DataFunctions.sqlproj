@@ -76,6 +76,7 @@
     <None Include="Compare\ProjectToDatabase.scmp" />
     <None Include="Scripts\LongBinary_Fix.ps1" />
     <None Include="Deployment\Script.Full.sql" />
+    <None Include="Scripts\CreateAssemblyInstallScript.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\RegexBase.cs" />
@@ -97,6 +98,7 @@
     <Build Include="Embedding\Stored Procedures\sp_getSimilarFileParts.sql" />
     <Build Include="Embedding\Tables\FilePart.sql" />
     <Build Include="Embedding\Tables\File.sql" />
+    <None Include="Deployment\DataFunctions.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Deployment\Script.PreDeployment.sql" />
@@ -105,7 +107,11 @@
     <PostDeploy Include="Deployment\Script.PostDeployment.sql" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Sign.ps1" "$(TargetPath)"
+    <PostBuildEvent>:: Sign first
+PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Sign.ps1" "$(TargetPath)"
+:: Create assembly script
+PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Scripts\CreateAssemblyInstallScript.ps1" "$(TargetPath)"
+
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
