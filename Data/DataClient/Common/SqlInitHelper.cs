@@ -50,11 +50,10 @@ namespace JocysCom.VS.AiCompanion.DataClient
 	{
 
 		public const string SqliteExt = ".sqlite";
+		public static string[] PortableExt = new string[] { ".sqlite", ".sqlite3", ".db", ".db3", ".s3db", ".sl3" };
 
 		public static bool IsPortable(string connectionStringOrPath)
-		{
-			return connectionStringOrPath?.IndexOf(SqliteExt, StringComparison.OrdinalIgnoreCase) >= 0;
-		}
+			=> PortableExt.Any(x => connectionStringOrPath?.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0);
 
 		public static void InitSqlDatabase(string connectionString)
 		{
@@ -404,7 +403,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		/// Add Db Provider Factory.
 		/// </summary>
 		/// <param name="instance">Db Provider Factory instance.</param>
-		private static void AddDbProviderFactory(DbProviderFactory instance)
+		public static void AddDbProviderFactory(DbProviderFactory instance)
 		{
 			var type = instance.GetType();
 #if NETFRAMEWORK
@@ -420,7 +419,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			rowToAdd["AssemblyQualifiedName"] = type.AssemblyQualifiedName;
 			table.Rows.Add(rowToAdd);
 #else
-			var invariantName = type.FullName;
+			//var invariantName = type.FullName;
+			var invariantName = type.Namespace;
 			if (!DbProviderFactories.GetProviderInvariantNames().Contains(invariantName))
 				DbProviderFactories.RegisterFactory(invariantName, instance);
 #endif

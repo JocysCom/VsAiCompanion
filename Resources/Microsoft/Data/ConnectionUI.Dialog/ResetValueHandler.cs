@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+﻿namespace Microsoft.Data.ConnectionUI
 {
   internal delegate void ResetValueHandler(object component);
 }

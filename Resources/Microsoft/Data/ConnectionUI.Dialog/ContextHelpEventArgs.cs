@@ -1,19 +1,23 @@
 ﻿using System.Drawing;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
-  public class ContextHelpEventArgs : HelpEventArgs
-  {
-    private DataConnectionDialogContext _context;
+#if NETCOREAPP
+	[SupportedOSPlatform("windows")]
+#endif
 
-    public ContextHelpEventArgs(DataConnectionDialogContext context, Point mousePos)
-      : base(mousePos)
-    {
-      this._context = context;
-    }
+	public class ContextHelpEventArgs : HelpEventArgs
+	{
+		private DataConnectionDialogContext _context;
 
-    public DataConnectionDialogContext Context => this._context;
-  }
+		public ContextHelpEventArgs(DataConnectionDialogContext context, Point mousePos)
+		  : base(mousePos)
+		{
+			_context = context;
+		}
+
+		public DataConnectionDialogContext Context => _context;
+	}
 }

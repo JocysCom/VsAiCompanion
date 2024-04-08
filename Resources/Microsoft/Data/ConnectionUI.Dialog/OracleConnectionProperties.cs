@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+﻿namespace Microsoft.Data.ConnectionUI
 {
   public class OracleConnectionProperties : AdoDotNetConnectionProperties
   {
@@ -25,12 +24,12 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 
     protected override string ToTestString()
     {
-      bool flag = (bool) this.ConnectionStringBuilder["Pooling"];
-      int num = !this.ConnectionStringBuilder.ShouldSerialize("Pooling") ? 1 : 0;
+      bool flag1 = (bool) this.ConnectionStringBuilder["Pooling"];
+      bool flag2 = !this.ConnectionStringBuilder.ShouldSerialize("Pooling");
       this.ConnectionStringBuilder["Pooling"] = (object) false;
       string connectionString = this.ConnectionStringBuilder.ConnectionString;
-      this.ConnectionStringBuilder["Pooling"] = (object) flag;
-      if (num != 0)
+      this.ConnectionStringBuilder["Pooling"] = (object) flag1;
+      if (flag2)
         this.ConnectionStringBuilder.Remove("Pooling");
       return connectionString;
     }

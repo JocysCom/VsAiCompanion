@@ -32,6 +32,18 @@ namespace JocysCom.VS.AiCompanion.Shared.JocysCom
 		/// <summary>
 		/// Constructor for failure scenarios, setting errors and Internal Server Error status.
 		/// </summary>
+		/// <param name="error">Exception related to operation failure.</param>
+		public OperationResult(Exception error) : this()
+		{
+			StatusCode = 1;
+			StatusText = "Error";
+			Errors.Add(error);
+		}
+
+
+		/// <summary>
+		/// Constructor for failure scenarios, setting errors and Internal Server Error status.
+		/// </summary>
 		/// <param name="errors">Collection of exceptions related to operation failure.</param>
 		public OperationResult(IEnumerable<Exception> errors) : this()
 		{

@@ -1,18 +1,16 @@
-﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Data.Common;
+using System.Data.SqlClient;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
   public class SqlConnectionProperties : AdoDotNetConnectionProperties
   {
     private const int SqlError_CannotOpenDatabase = 4060;
 
     public SqlConnectionProperties()
-      : base("Microsoft.Data.SqlClient")
+      : base("System.Data.SqlClient")
     {
       this.LocalReset();
     }
@@ -27,24 +25,14 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
     {
       get
       {
-        if (!(this.ConnectionStringBuilder["Data Source"] is string) || (this.ConnectionStringBuilder["Data Source"] as string).Length == 0)
-          return false;
-        return new HashSet<string>((IEnumerable<string>) new string[6]
-        {
-          "ActiveDirectoryIntegrated",
-          "ActiveDirectoryInteractive",
-          "ActiveDirectoryDeviceCodeFlow",
-          "ActiveDirectoryManagedIdentity",
-          "ActiveDirectoryMSI",
-          "ActiveDirectoryDefault"
-        }, (IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase).Contains(this.ConnectionStringBuilder["Authentication"].ToString()) || (bool) this.ConnectionStringBuilder["Integrated Security"] || this.ConnectionStringBuilder["User ID"] is string && (this.ConnectionStringBuilder["User ID"] as string).Length != 0;
+        return this.ConnectionStringBuilder["Data Source"] is string && (this.ConnectionStringBuilder["Data Source"] as string).Length != 0 && ((bool) this.ConnectionStringBuilder["Integrated Security"] || this.ConnectionStringBuilder["User ID"] is string && (this.ConnectionStringBuilder["User ID"] as string).Length != 0);
       }
     }
 
     public override void Test()
     {
       if (!(this.ConnectionStringBuilder["Data Source"] is string str1) || str1.Length == 0)
-        throw new InvalidOperationException(SR.SqlConnectionProperties_MustSpecifyDataSource);
+        throw new InvalidOperationException(SR.GetString("SqlConnectionProperties_MustSpecifyDataSource"));
       string str2 = this.ConnectionStringBuilder["Initial Catalog"] as string;
       try
       {
@@ -53,7 +41,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
       catch (SqlException ex)
       {
         if (ex.Number == 4060 && str2 != null && str2.Length > 0)
-          throw new InvalidOperationException(SR.SqlConnectionProperties_CannotTestNonExistentDatabase);
+          throw new InvalidOperationException(SR.GetString("SqlConnectionProperties_CannotTestNonExistentDatabase"));
         throw;
       }
     }
@@ -65,20 +53,20 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 
     protected override string ToTestString()
     {
-      bool flag = (bool) this.ConnectionStringBuilder["Pooling"];
-      int num = !this.ConnectionStringBuilder.ShouldSerialize("Pooling") ? 1 : 0;
+      bool flag1 = (bool) this.ConnectionStringBuilder["Pooling"];
+      bool flag2 = !this.ConnectionStringBuilder.ShouldSerialize("Pooling");
       this.ConnectionStringBuilder["Pooling"] = (object) false;
       string connectionString = this.ConnectionStringBuilder.ConnectionString;
-      this.ConnectionStringBuilder["Pooling"] = (object) flag;
-      if (num != 0)
+      this.ConnectionStringBuilder["Pooling"] = (object) flag1;
+      if (flag2)
         this.ConnectionStringBuilder.Remove("Pooling");
       return connectionString;
     }
 
     protected override void Inspect(DbConnection connection)
     {
-      if (connection.ServerVersion.StartsWith("07", StringComparison.Ordinal))
-        throw new NotSupportedException(SR.SqlConnectionProperties_UnsupportedSqlVersion);
+      if (connection.ServerVersion.StartsWith("07", StringComparison.Ordinal) || connection.ServerVersion.StartsWith("08", StringComparison.Ordinal))
+        throw new NotSupportedException(SR.GetString("SqlConnectionProperties_UnsupportedSqlVersion"));
     }
 
     private void LocalReset() => this["Integrated Security"] = (object) true;

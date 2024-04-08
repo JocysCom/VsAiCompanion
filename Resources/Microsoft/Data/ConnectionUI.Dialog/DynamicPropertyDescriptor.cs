@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
   internal class DynamicPropertyDescriptor : PropertyDescriptor
   {
@@ -238,7 +237,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
     public void SetAttribute(Attribute value)
     {
       if (value == null)
-        throw new ArgumentNullException("attribute");
+        throw new ArgumentNullException(nameof (value));
       if (this._attributes == null)
         this._attributes = new List<Attribute>();
       this._attributes.Add(value);

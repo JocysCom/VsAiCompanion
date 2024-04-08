@@ -2,56 +2,61 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
-  internal sealed class UserPreferenceChangedHandler : IComponent, IDisposable
-  {
-    private Form _form;
 
-    public UserPreferenceChangedHandler(Form form)
-    {
-      SystemEvents.UserPreferenceChanged += new UserPreferenceChangedEventHandler(this.HandleUserPreferenceChanged);
-      this._form = form;
-    }
+#if NETCOREAPP
+	[SupportedOSPlatform("windows")]
+#endif
 
-    ~UserPreferenceChangedHandler() => this.Dispose(false);
+	internal sealed class UserPreferenceChangedHandler : IComponent, IDisposable
+	{
+		private Form _form;
 
-    public ISite Site
-    {
-      get => this._form.Site;
-      set
-      {
-      }
-    }
+		public UserPreferenceChangedHandler(Form form)
+		{
+			SystemEvents.UserPreferenceChanged += new UserPreferenceChangedEventHandler(HandleUserPreferenceChanged);
+			_form = form;
+		}
 
-    public event EventHandler Disposed;
+		~UserPreferenceChangedHandler() => Dispose(false);
 
-    public void Dispose()
-    {
-      this.Dispose(true);
-      GC.SuppressFinalize((object) this);
-    }
+		public ISite Site
+		{
+			get => _form.Site;
+			set
+			{
+			}
+		}
 
-    private void HandleUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-    {
-      IUIService service = this._form.Site != null ? this._form.Site.GetService(typeof (IUIService)) as IUIService : (IUIService) null;
-      if (service == null || !(service.Styles[(object) "DialogFont"] is Font style))
-        return;
-      this._form.Font = style;
-    }
+		public event EventHandler Disposed;
 
-    private void Dispose(bool disposing)
-    {
-      if (!disposing)
-        return;
-      SystemEvents.UserPreferenceChanged -= new UserPreferenceChangedEventHandler(this.HandleUserPreferenceChanged);
-      if (this.Disposed == null)
-        return;
-      this.Disposed((object) this, EventArgs.Empty);
-    }
-  }
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize((object)this);
+		}
+
+		private void HandleUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+		{
+			IUIService service = _form.Site != null ? _form.Site.GetService(typeof(IUIService)) as IUIService : (IUIService)null;
+			if (service == null || !(service.Styles[(object)"DialogFont"] is Font style))
+				return;
+			_form.Font = style;
+		}
+
+		private void Dispose(bool disposing)
+		{
+			if (!disposing)
+				return;
+			SystemEvents.UserPreferenceChanged -= new UserPreferenceChangedEventHandler(HandleUserPreferenceChanged);
+			if (Disposed == null)
+				return;
+			Disposed((object)this, EventArgs.Empty);
+		}
+	}
 }

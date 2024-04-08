@@ -34,6 +34,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			ScanProgressPanel.UpdateProgress();
+			Func<bool> action = () =>
+			{
+				SearchButton_Click(MessgaeTextBox, new RoutedEventArgs());
+				return true;
+			};
+			AppControlsHelper.UseEnterToSend(MessgaeTextBox, action);
 		}
 
 		#region List Panel Item

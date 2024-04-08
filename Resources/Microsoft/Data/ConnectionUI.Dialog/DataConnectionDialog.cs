@@ -4,17 +4,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
+
+#if NETCOREAPP
+	[SupportedOSPlatform("windows")]
+#endif
 	public class DataConnectionDialog : Form
 	{
-		private Size _initialContainerControlSize = Size.Empty;
+		private Size _initialContainerControlSize;
 		private bool _showingDialog;
 		private Label _headerLabel;
 		private bool _translateHelpButton = true;
@@ -52,7 +56,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof(DataConnectionSourceDialog));
 			_chooseDataSourceTitle = componentResourceManager.GetString("$this.Text");
 			_chooseDataSourceAcceptText = componentResourceManager.GetString("okButton.Text");
-			_changeDataSourceTitle = SR.DataConnectionDialog_ChangeDataSourceTitle;
+			_changeDataSourceTitle = SR.GetString("DataConnectionDialog_ChangeDataSourceTitle");
 			_dataSources = (ICollection<DataSource>)new DataConnectionDialog.DataSourceCollection(this);
 		}
 
@@ -66,14 +70,11 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			if (dialog == null)
 				throw new ArgumentNullException(nameof(dialog));
 			if (dialog.DataSources.Count == 0)
-				throw new InvalidOperationException(SR.DataConnectionDialog_NoDataSourcesAvailable);
+				throw new InvalidOperationException(SR.GetString("DataConnectionDialog_NoDataSourcesAvailable"));
 			foreach (DataSource dataSource in (IEnumerable<DataSource>)dialog.DataSources)
 			{
 				if (dataSource.Providers.Count == 0)
-				{
-					// ISSUE: reference to a compiler-generated method
-					throw new InvalidOperationException(SRHelper.DataConnectionDialog_NoDataProvidersForDataSource(dataSource.DisplayName.Replace("'", "''")));
-				}
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_NoDataProvidersForDataSource", (object)dataSource.DisplayName.Replace("'", "''")));
 			}
 			Application.ThreadException += new ThreadExceptionEventHandler(dialog.HandleDialogException);
 			dialog._showingDialog = true;
@@ -95,7 +96,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 						if (dialog.SelectedDataSource != null)
 						{
 							if (dialog.SelectedDataProvider != null)
-								goto label_26;
+								goto label_25;
 						}
 						return DialogResult.Cancel;
 					}
@@ -108,7 +109,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				}
 				else
 					dialog._saveSelection = false;
-				label_26:
+				label_25:
 				if (owner == null)
 					dialog.StartPosition = FormStartPosition.CenterScreen;
 				DialogResult dialogResult;
@@ -159,7 +160,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			set
 			{
 				if (_showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				if (_headerLabel == null)
 				{
 					switch (value)
@@ -236,7 +237,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			set
 			{
 				if (_showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				if (value == null)
 					value = string.Empty;
 				if (value == _chooseDataSourceTitle)
@@ -251,7 +252,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			set
 			{
 				if (_showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				if (value == null)
 					value = string.Empty;
 				if (value == _chooseDataSourceHeaderLabel)
@@ -266,7 +267,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			set
 			{
 				if (_showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				if (value == null)
 					value = string.Empty;
 				if (value == _chooseDataSourceAcceptText)
@@ -281,7 +282,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			set
 			{
 				if (_showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				if (value == null)
 					value = string.Empty;
 				if (value == _changeDataSourceTitle)
@@ -296,7 +297,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			set
 			{
 				if (_showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				if (value == null)
 					value = string.Empty;
 				if (value == _changeDataSourceHeaderLabel)
@@ -305,6 +306,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			}
 		}
 
+		[CLSCompliant(false)]
 		public ICollection<DataSource> DataSources => _dataSources;
 
 		public DataSource UnspecifiedDataSource => _unspecifiedDataSource;
@@ -332,7 +334,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				if (SelectedDataSource == value)
 					return;
 				if (_showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				SetSelectedDataSource(value, false);
 			}
 		}
@@ -345,7 +347,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				if (SelectedDataProvider == value)
 					return;
 				if (SelectedDataSource == null)
-					throw new InvalidOperationException(SR.DataConnectionDialog_NoDataSourceSelected);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_NoDataSourceSelected"));
 				SetSelectedDataProvider(SelectedDataSource, value);
 			}
 		}
@@ -374,7 +376,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			if (dataSource == null)
 				throw new ArgumentNullException(nameof(dataSource));
 			if (_showingDialog)
-				throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+				throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 			SetSelectedDataProvider(dataSource, dataProvider, false);
 		}
 
@@ -423,9 +425,9 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			set
 			{
 				if (_showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				if (SelectedDataProvider == null)
-					throw new InvalidOperationException(SR.DataConnectionDialog_NoDataProviderSelected);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_NoDataProviderSelected"));
 				if (ConnectionProperties == null)
 					return;
 				ConnectionProperties.Parse(value);
@@ -440,6 +442,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 
 		public event EventHandler VerifySettings;
 
+		[CLSCompliant(false)]
 		public event EventHandler<ContextHelpEventArgs> ContextHelpRequested;
 
 		public event ThreadExceptionEventHandler DialogException;
@@ -455,11 +458,15 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				if (!_connectionUIControlTable[SelectedDataSource].ContainsKey(SelectedDataProvider))
 				{
 					IDataConnectionUIControl connectionUiControl = (IDataConnectionUIControl)null;
-					UserControl userControl = (UserControl)null;
+					var userControl = (UserControl)null;
 					try
 					{
 						connectionUiControl = SelectedDataSource != UnspecifiedDataSource ? SelectedDataProvider.CreateConnectionUIControl(SelectedDataSource) : SelectedDataProvider.CreateConnectionUIControl();
-						userControl = connectionUiControl as UserControl;
+						if (!(connectionUiControl is UserControl))
+						{
+							if (connectionUiControl is IContainerControl containerControl)
+								userControl = containerControl.ActiveControl as UserControl;
+						}
 					}
 					catch
 					{
@@ -482,7 +489,9 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 					_connectionUIControlTable[SelectedDataSource][SelectedDataProvider] = connectionUiControl;
 					components.Add((IComponent)userControl);
 				}
-				return _connectionUIControlTable[SelectedDataSource][SelectedDataProvider] as UserControl;
+				if (!(_connectionUIControlTable[SelectedDataSource][SelectedDataProvider] is UserControl activeControl))
+					activeControl = (_connectionUIControlTable[SelectedDataSource][SelectedDataProvider] as IContainerControl).ActiveControl as UserControl;
+				return activeControl;
 			}
 		}
 
@@ -522,7 +531,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 		protected override void OnLoad(EventArgs e)
 		{
 			if (!_showingDialog)
-				throw new NotSupportedException(SR.DataConnectionDialog_ShowDialogNotSupported);
+				throw new NotSupportedException(SR.GetString("DataConnectionDialog_ShowDialogNotSupported"));
 			ConfigureDataSourceTextBox();
 			ConfigureChangeDataSourceButton();
 			ConfigureContainerControl();
@@ -552,8 +561,10 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			buttonsTableLayoutPanel.Anchor |= AnchorStyles.Top | AnchorStyles.Left;
 			buttonsTableLayoutPanel.Anchor &= ~(AnchorStyles.Bottom | AnchorStyles.Right);
 			Size size = Size - SizeFromClientSize(new Size(containerControl.Right + containerControl.Margin.Right + Padding.Right, buttonsTableLayoutPanel.Bottom + buttonsTableLayoutPanel.Margin.Bottom + Padding.Bottom));
-			MinimumSize = MinimumSize - size;
-			Size = Size - size;
+			DataConnectionDialog connectionDialog1 = this;
+			connectionDialog1.MinimumSize = connectionDialog1.MinimumSize - size;
+			DataConnectionDialog connectionDialog2 = this;
+			connectionDialog2.Size = connectionDialog2.Size - size;
 			buttonsTableLayoutPanel.Anchor |= AnchorStyles.Bottom | AnchorStyles.Right;
 			buttonsTableLayoutPanel.Anchor &= ~(AnchorStyles.Top | AnchorStyles.Left);
 			testConnectionButton.Anchor |= AnchorStyles.Bottom;
@@ -579,21 +590,21 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				ContextHelpRequested((object)this, e);
 			if (e.Handled)
 				return;
-			ShowError((string)null, SR.DataConnectionDialog_NoHelpAvailable);
+			ShowError((string)null, SR.GetString("DataConnectionDialog_NoHelpAvailable"));
 			e.Handled = true;
 		}
 
 		protected override void OnHelpRequested(HelpEventArgs hevent)
 		{
 			Control control = (Control)this;
-			while (control is ContainerControl containerControl && !(containerControl is IDataConnectionUIControl) && containerControl.ActiveControl != null)
+			while (control is ContainerControl containerControl && containerControl != ConnectionUIControl && containerControl.ActiveControl != null)
 				control = containerControl.ActiveControl;
 			DataConnectionDialogContext context = DataConnectionDialogContext.Main;
 			if (control == dataSourceTextBox)
 				context = DataConnectionDialogContext.MainDataSourceTextBox;
 			if (control == changeDataSourceButton)
 				context = DataConnectionDialogContext.MainChangeDataSourceButton;
-			if (control is IDataConnectionUIControl)
+			if (control == ConnectionUIControl)
 			{
 				context = DataConnectionDialogContext.MainConnectionUIControl;
 				if (ConnectionUIControl is SqlConnectionUIControl)
@@ -646,14 +657,16 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				catch (Exception ex)
 				{
 					if (!(ex is ExternalException externalException) || externalException.ErrorCode != -2147217842)
-						ShowError((string)null, ex.Message);
+						ShowError((string)null, ex);
 					e.Cancel = true;
 				}
 			}
 			base.OnFormClosing(e);
 		}
 
+#if NETFRAMEWORK
 		[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+#endif
 		protected override void WndProc(ref Message m)
 		{
 			if (_translateHelpButton && HelpUtils.IsContextHelpMessage(ref m))
@@ -682,13 +695,13 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				IEnumerator<DataSource> enumerator = _dataSources.GetEnumerator();
 				enumerator.MoveNext();
 				if (value != enumerator.Current)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotChangeSingleDataSource);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotChangeSingleDataSource"));
 			}
 			if (_selectedDataSource == value)
 				return;
 			if (value != null)
 			{
-				_selectedDataSource = _dataSources.Contains(value) ? value : throw new InvalidOperationException(SR.DataConnectionDialog_DataSourceNotFound);
+				_selectedDataSource = _dataSources.Contains(value) ? value : throw new InvalidOperationException(SR.GetString("DataConnectionDialog_DataSourceNotFound"));
 				switch (_selectedDataSource.Providers.Count)
 				{
 					case 0:
@@ -724,14 +737,14 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				IEnumerator<DataProvider> enumerator = dataSource.Providers.GetEnumerator();
 				enumerator.MoveNext();
 				if (value != enumerator.Current)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotChangeSingleDataProvider);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotChangeSingleDataProvider"));
 			}
 			if ((!_dataProviderSelections.ContainsKey(dataSource) || _dataProviderSelections[dataSource] == value) && (_dataProviderSelections.ContainsKey(dataSource) || value == null))
 				return;
 			if (value != null)
 			{
 				if (!dataSource.Providers.Contains(value))
-					throw new InvalidOperationException(SR.DataConnectionDialog_DataSourceNoAssociation);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_DataSourceNoAssociation"));
 				_dataProviderSelections[dataSource] = value;
 			}
 			else if (_dataProviderSelections.ContainsKey(dataSource))
@@ -759,10 +772,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 					if (SelectedDataProvider != null)
 					{
 						if (SelectedDataProvider.ShortDisplayName != null)
-						{
-							// ISSUE: reference to a compiler-generated method
-							dataSourceTextBox.Text = SRHelper.DataConnectionDialog_DataSourceWithShortProvider(dataSourceTextBox.Text, SelectedDataProvider.ShortDisplayName);
-						}
+							dataSourceTextBox.Text = SR.GetString("DataConnectionDialog_DataSourceWithShortProvider", (object)dataSourceTextBox.Text, (object)SelectedDataProvider.ShortDisplayName);
 						dataProviderToolTip.SetToolTip((Control)dataSourceTextBox, SelectedDataProvider.DisplayName);
 					}
 					else
@@ -774,6 +784,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				dataSourceTextBox.Text = (string)null;
 				dataProviderToolTip.SetToolTip((Control)dataSourceTextBox, (string)null);
 			}
+			dataSourceTextBox.Select(0, 0);
 		}
 
 		private void ConfigureChangeDataSourceButton()
@@ -794,125 +805,60 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			if (containerControl.Controls.Count == 0 && ConnectionUIControl != null || containerControl.Controls.Count > 0 && ConnectionUIControl != containerControl.Controls[0])
 			{
 				containerControl.Controls.Clear();
-				if (ConnectionUIControl != null)
+				if (ConnectionUIControl != null && ConnectionUIControl.PreferredSize.Width > 0 && ConnectionUIControl.PreferredSize.Height > 0)
 				{
-					Size size1 = ConnectionUIControl.PreferredSize;
-					if (size1.Width > 0)
+					containerControl.Controls.Add((Control)ConnectionUIControl);
+					MinimumSize = Size.Empty;
+					Size size1 = containerControl.Size;
+					containerControl.Size = _initialContainerControlSize;
+					Size preferredSize = ConnectionUIControl.PreferredSize;
+					containerControl.Size = size1;
+					int val2 = Math.Max(_initialContainerControlSize.Width - (Width - ClientSize.Width) - Padding.Left - containerControl.Margin.Left - containerControl.Margin.Right - Padding.Right, testConnectionButton.Width + testConnectionButton.Margin.Right + buttonsTableLayoutPanel.Margin.Left + buttonsTableLayoutPanel.Width + buttonsTableLayoutPanel.Margin.Right);
+					preferredSize.Width = Math.Max(preferredSize.Width, val2);
+					DataConnectionDialog connectionDialog = this;
+					connectionDialog.Size = connectionDialog.Size + (preferredSize - containerControl.Size);
+					if (containerControl.Bottom == advancedButton.Top)
 					{
-						size1 = ConnectionUIControl.PreferredSize;
-						if (size1.Height > 0)
-						{
-							containerControl.Controls.Add((Control)ConnectionUIControl);
-							MinimumSize = Size.Empty;
-							Size size2 = containerControl.Size;
-							containerControl.Size = _initialContainerControlSize;
-							Size preferredSize = ConnectionUIControl.PreferredSize;
-							containerControl.Size = size2;
-							int width1 = _initialContainerControlSize.Width;
-							int width2 = Width;
-							size1 = ClientSize;
-							int width3 = size1.Width;
-							int num1 = width2 - width3;
-							int num2 = width1 - num1 - Padding.Left - containerControl.Margin.Left;
-							Padding padding1 = containerControl.Margin;
-							int right1 = padding1.Right;
-							int num3 = num2 - right1;
-							padding1 = Padding;
-							int right2 = padding1.Right;
-							int val1 = num3 - right2;
-							int num4 = testConnectionButton.Width + testConnectionButton.Margin.Right;
-							Padding margin = buttonsTableLayoutPanel.Margin;
-							int left1 = margin.Left;
-							int num5 = num4 + left1 + buttonsTableLayoutPanel.Width;
-							margin = buttonsTableLayoutPanel.Margin;
-							int right3 = margin.Right;
-							int val2_1 = num5 + right3;
-							int val2_2 = Math.Max(val1, val2_1);
-							preferredSize.Width = Math.Max(preferredSize.Width, val2_2);
-							Size = Size + (preferredSize - containerControl.Size);
-							if (containerControl.Bottom == advancedButton.Top)
-							{
-								ContainerControl containerControl1 = containerControl;
-								margin = containerControl.Margin;
-								int left2 = margin.Left;
-								margin = dataSourceTableLayoutPanel.Margin;
-								int bottom1 = margin.Bottom;
-								margin = containerControl.Margin;
-								int right4 = margin.Right;
-								margin = advancedButton.Margin;
-								int top1 = margin.Top;
-								Padding padding2 = new Padding(left2, bottom1, right4, top1);
-								containerControl1.Margin = padding2;
-								int height1 = Height;
-								margin = containerControl.Margin;
-								int bottom2 = margin.Bottom;
-								margin = advancedButton.Margin;
-								int top2 = margin.Top;
-								int num6 = bottom2 + top2;
-								Height = height1 + num6;
-								ContainerControl containerControl2 = containerControl;
-								int height2 = containerControl2.Height;
-								margin = containerControl.Margin;
-								int bottom3 = margin.Bottom;
-								margin = advancedButton.Margin;
-								int top3 = margin.Top;
-								int num7 = bottom3 + top3;
-								containerControl2.Height = height2 - num7;
-							}
-							Size size3 = SystemInformation.PrimaryMonitorMaximizedWindowSize - SystemInformation.FrameBorderSize - SystemInformation.FrameBorderSize;
-							if (Width > size3.Width)
-							{
-								Width = size3.Width;
-								if (Height + SystemInformation.HorizontalScrollBarHeight <= size3.Height)
-									Height += SystemInformation.HorizontalScrollBarHeight;
-							}
-							if (Height > size3.Height)
-							{
-								if (Width + SystemInformation.VerticalScrollBarWidth <= size3.Width)
-									Width += SystemInformation.VerticalScrollBarWidth;
-								Height = size3.Height;
-							}
-							MinimumSize = Size;
-							advancedButton.Enabled = !(ConnectionUIControl is DataConnectionDialog.PropertyGridUIControl);
-							goto label_19;
-						}
+						containerControl.Margin = new Padding(containerControl.Margin.Left, dataSourceTableLayoutPanel.Margin.Bottom, containerControl.Margin.Right, advancedButton.Margin.Top);
+						Height += containerControl.Margin.Bottom + advancedButton.Margin.Top;
+						containerControl.Height -= containerControl.Margin.Bottom + advancedButton.Margin.Top;
 					}
+					Size size2 = SystemInformation.PrimaryMonitorMaximizedWindowSize - SystemInformation.FrameBorderSize - SystemInformation.FrameBorderSize;
+					if (Width > size2.Width)
+					{
+						Width = size2.Width;
+						if (Height + SystemInformation.HorizontalScrollBarHeight <= size2.Height)
+							Height += SystemInformation.HorizontalScrollBarHeight;
+					}
+					if (Height > size2.Height)
+					{
+						if (Width + SystemInformation.VerticalScrollBarWidth <= size2.Width)
+							Width += SystemInformation.VerticalScrollBarWidth;
+						Height = size2.Height;
+					}
+					MinimumSize = Size;
+					advancedButton.Enabled = !(ConnectionUIControl is DataConnectionDialog.PropertyGridUIControl);
 				}
-				MinimumSize = Size.Empty;
-				if (containerControl.Bottom != advancedButton.Top)
+				else
 				{
-					ContainerControl containerControl3 = containerControl;
-					int height3 = containerControl3.Height;
-					int bottom4 = containerControl.Margin.Bottom;
-					Padding margin = advancedButton.Margin;
-					int top4 = margin.Top;
-					int num8 = bottom4 + top4;
-					containerControl3.Height = height3 + num8;
-					int height4 = Height;
-					margin = containerControl.Margin;
-					int bottom5 = margin.Bottom;
-					margin = advancedButton.Margin;
-					int top5 = margin.Top;
-					int num9 = bottom5 + top5;
-					Height = height4 - num9;
-					ContainerControl containerControl4 = containerControl;
-					margin = containerControl.Margin;
-					int left = margin.Left;
-					margin = containerControl.Margin;
-					int right = margin.Right;
-					Padding padding = new Padding(left, 0, right, 0);
-					containerControl4.Margin = padding;
+					MinimumSize = Size.Empty;
+					if (containerControl.Bottom != advancedButton.Top)
+					{
+						containerControl.Height += containerControl.Margin.Bottom + advancedButton.Margin.Top;
+						Height -= containerControl.Margin.Bottom + advancedButton.Margin.Top;
+						containerControl.Margin = new Padding(containerControl.Margin.Left, 0, containerControl.Margin.Right, 0);
+					}
+					DataConnectionDialog connectionDialog = this;
+					connectionDialog.Size = connectionDialog.Size - (containerControl.Size - new Size(300, 0));
+					MinimumSize = Size;
+					advancedButton.Enabled = true;
 				}
-				Size = Size - (containerControl.Size - new Size(300, 0));
-				MinimumSize = Size;
-				advancedButton.Enabled = true;
 			}
-		label_19:
 			if (ConnectionUIControl == null)
 				return;
 			try
 			{
-				(ConnectionUIControl as IDataConnectionUIControl).LoadProperties();
+				_connectionUIControlTable[SelectedDataSource][SelectedDataProvider].LoadProperties();
 			}
 			catch
 			{
@@ -957,7 +903,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				return;
 			try
 			{
-				(ConnectionUIControl as IDataConnectionUIControl).LoadProperties();
+				_connectionUIControlTable[SelectedDataSource][SelectedDataProvider].LoadProperties();
 			}
 			catch
 			{
@@ -976,11 +922,11 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			catch (Exception ex)
 			{
 				Cursor.Current = current;
-				ShowError(SR.DataConnectionDialog_TestResults, ex);
+				ShowError(SR.GetString("DataConnectionDialog_TestResults"), ex);
 				return;
 			}
 			Cursor.Current = current;
-			ShowMessage(SR.DataConnectionDialog_TestResults, SR.DataConnectionDialog_TestConnectionSucceeded);
+			ShowMessage(SR.GetString("DataConnectionDialog_TestResults"), SR.GetString("DataConnectionDialog_TestConnectionSucceeded"));
 		}
 
 		private void ConfigureAcceptButton(object sender, EventArgs e)
@@ -1159,7 +1105,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 				if (item == null)
 					throw new ArgumentNullException(nameof(item));
 				if (_dialog._showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				if (_list.Contains(item))
 					return;
 				_list.Add(item);
@@ -1170,18 +1116,17 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			public bool Remove(DataSource item)
 			{
 				if (_dialog._showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
-				int num = _list.Remove(item) ? 1 : 0;
-				if (item != _dialog.SelectedDataSource)
-					return num != 0;
-				_dialog.SetSelectedDataSource((DataSource)null, true);
-				return num != 0;
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
+				bool flag = _list.Remove(item);
+				if (item == _dialog.SelectedDataSource)
+					_dialog.SetSelectedDataSource((DataSource)null, true);
+				return flag;
 			}
 
 			public void Clear()
 			{
 				if (_dialog._showingDialog)
-					throw new InvalidOperationException(SR.DataConnectionDialog_CannotModifyState);
+					throw new InvalidOperationException(SR.GetString("DataConnectionDialog_CannotModifyState"));
 				_list.Clear();
 				_dialog.SetSelectedDataSource((DataSource)null, true);
 			}

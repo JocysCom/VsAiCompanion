@@ -1269,7 +1269,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please analyze the text in the attached files:.
+        ///   Looks up a localized string similar to Extract and analyze the plain text content from the following files:.
         /// </summary>
         public static string TextBox_Drop_Files_Instructions {
             get {

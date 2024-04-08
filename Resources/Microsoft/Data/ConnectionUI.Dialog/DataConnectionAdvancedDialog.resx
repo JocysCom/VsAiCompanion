@@ -199,9 +199,6 @@
   <data name="propertyGrid.Margin" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5QYWRkaW5nBQAAAARfYWxsBF90b3AFX2xlZnQGX3JpZ2h0B19ib3R0b20AAAAAAAEICAgIAgAAAAADAAAAAwAAAAMAAAAAAAAACw==</value>
   </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="&gt;&gt;textBox.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
@@ -224,7 +221,7 @@
     <value>0</value>
   </data>
   <data name="&gt;&gt;propertyGrid.Type" xml:space="preserve">
-    <value>Microsoft.SqlServer.Management.ConnectionUI.DataConnectionAdvancedDialog+SpecializedPropertyGrid, Microsoft.SqlServer.Management.ConnectionUI.Dialog, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91</value>
+    <value>Microsoft.Data.ConnectionUI.DataConnectionAdvancedDialog+SpecializedPropertyGrid, Microsoft.Data.ConnectionUI.Dialog, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="&gt;&gt;propertyGrid.Name" xml:space="preserve">
     <value>propertyGrid</value>
@@ -269,7 +266,7 @@
     <value>True</value>
   </data>
   <data name="textBox.AccessibleName" xml:space="preserve">
-    <value>Connection String</value>
+    <value>Connection string</value>
   </data>
   <data name="&gt;&gt;okButton.Parent" xml:space="preserve">
     <value>buttonsTableLayoutPanel</value>
@@ -288,6 +285,9 @@
   </data>
   <data name="cancelButton.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="propertyGrid.AccessibleName" xml:space="preserve">
+    <value>Advanced properties</value>
   </data>
   <data name="&gt;&gt;propertyGrid.Parent" xml:space="preserve">
     <value>$this</value>

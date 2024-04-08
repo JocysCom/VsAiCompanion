@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+﻿namespace Microsoft.Data.ConnectionUI
 {
   public enum DataConnectionDialogContext
   {

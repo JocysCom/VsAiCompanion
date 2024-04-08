@@ -7,13 +7,17 @@ using System.Data.OleDb;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
+
+#if NETCOREAPP
+	[SupportedOSPlatform("windows")]
+#endif
 	public class OleDBConnectionUIControl : UserControl, IDataConnectionUIControl
 	{
 		private bool _loading;
@@ -49,13 +53,14 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 
 		public OleDBConnectionUIControl()
 		{
-			this.InitializeComponent();
-			this.RightToLeft = RightToLeft.Inherit;
+			InitializeComponent();
+			RightToLeft = RightToLeft.Inherit;
+			_uiThread = Thread.CurrentThread;
 		}
 
 		public void Initialize(IDataConnectionProperties connectionProperties)
 		{
-			this.Initialize(connectionProperties, false);
+			Initialize(connectionProperties, false);
 		}
 
 		public void Initialize(
@@ -63,24 +68,24 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 		  bool disableProviderSelection)
 		{
 			if (!(connectionProperties is OleDBConnectionProperties))
-				throw new ArgumentException(SR.OleDBConnectionUIControl_InvalidConnectionProperties);
-			this.EnumerateProviders();
-			this.providerComboBox.Enabled = !disableProviderSelection;
-			this.dataLinksButton.Enabled = false;
-			this.dataSourceGroupBox.Enabled = false;
-			this.logonGroupBox.Enabled = false;
-			this.initialCatalogLabel.Enabled = false;
-			this.initialCatalogComboBox.Enabled = false;
-			this._connectionProperties = connectionProperties;
+				throw new ArgumentException(SR.GetString("OleDBConnectionUIControl_InvalidConnectionProperties"));
+			EnumerateProviders();
+			providerComboBox.Enabled = !disableProviderSelection;
+			dataLinksButton.Enabled = false;
+			dataSourceGroupBox.Enabled = false;
+			logonGroupBox.Enabled = false;
+			initialCatalogLabel.Enabled = false;
+			initialCatalogComboBox.Enabled = false;
+			_connectionProperties = connectionProperties;
 		}
 
 		public void LoadProperties()
 		{
-			this._loading = true;
-			if (this.Properties["Provider"] is string property && property.Length > 0)
+			_loading = true;
+			if (Properties["Provider"] is string property && property.Length > 0)
 			{
 				object obj = (object)null;
-				foreach (OleDBConnectionUIControl.ProviderStruct providerStruct in this.providerComboBox.Items)
+				foreach (OleDBConnectionUIControl.ProviderStruct providerStruct in providerComboBox.Items)
 				{
 					if (providerStruct.ProgId.Equals(property))
 					{
@@ -90,70 +95,48 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 					if (providerStruct.ProgId.StartsWith(property + ".", StringComparison.OrdinalIgnoreCase) && (obj == null || providerStruct.ProgId.CompareTo(((OleDBConnectionUIControl.ProviderStruct)obj).ProgId) > 0))
 						obj = (object)providerStruct;
 				}
-				this.providerComboBox.SelectedItem = obj;
+				providerComboBox.SelectedItem = obj;
 			}
 			else
-				this.providerComboBox.SelectedItem = (object)null;
-			if (this.Properties.Contains("Data Source") && this.Properties["Data Source"] is string)
-				this.dataSourceTextBox.Text = this.Properties["Data Source"] as string;
+				providerComboBox.SelectedItem = (object)null;
+			if (Properties.Contains("Data Source") && Properties["Data Source"] is string)
+				dataSourceTextBox.Text = Properties["Data Source"] as string;
 			else
-				this.dataSourceTextBox.Text = (string)null;
-			if (this.Properties.Contains("Location") && this.Properties["Location"] is string)
-				this.locationTextBox.Text = this.Properties["Location"] as string;
+				dataSourceTextBox.Text = (string)null;
+			if (Properties.Contains("Location") && Properties["Location"] is string)
+				locationTextBox.Text = Properties["Location"] as string;
 			else
-				this.locationTextBox.Text = (string)null;
-			if (this.Properties.Contains("Integrated Security") && this.Properties["Integrated Security"] is string && (this.Properties["Integrated Security"] as string).Length > 0)
-				this.integratedSecurityRadioButton.Checked = true;
+				locationTextBox.Text = (string)null;
+			if (Properties.Contains("Integrated Security") && Properties["Integrated Security"] is string && (Properties["Integrated Security"] as string).Length > 0)
+				integratedSecurityRadioButton.Checked = true;
 			else
-				this.nativeSecurityRadioButton.Checked = true;
-			if (this.Properties.Contains("User ID") && this.Properties["User ID"] is string)
-				this.userNameTextBox.Text = this.Properties["User ID"] as string;
+				nativeSecurityRadioButton.Checked = true;
+			if (Properties.Contains("User ID") && Properties["User ID"] is string)
+				userNameTextBox.Text = Properties["User ID"] as string;
 			else
-				this.userNameTextBox.Text = (string)null;
-			if (this.Properties.Contains("Password") && this.Properties["Password"] is string)
+				userNameTextBox.Text = (string)null;
+			if (Properties.Contains("Password") && Properties["Password"] is string)
 			{
-				this.passwordTextBox.Text = this.Properties["Password"] as string;
-				this.blankPasswordCheckBox.Checked = this.passwordTextBox.Text.Length == 0;
+				passwordTextBox.Text = Properties["Password"] as string;
+				blankPasswordCheckBox.Checked = passwordTextBox.Text.Length == 0;
 			}
 			else
 			{
-				this.passwordTextBox.Text = (string)null;
-				this.blankPasswordCheckBox.Checked = false;
+				passwordTextBox.Text = (string)null;
+				blankPasswordCheckBox.Checked = false;
 			}
-			this.allowSavingPasswordCheckBox.Checked = this.Properties.Contains("Persist Security Info") && this.Properties["Persist Security Info"] is bool && (bool)this.Properties["Persist Security Info"];
-			if (this.Properties.Contains("Initial Catalog") && this.Properties["Initial Catalog"] is string)
-				this.initialCatalogComboBox.Text = this.Properties["Initial Catalog"] as string;
+			allowSavingPasswordCheckBox.Checked = Properties.Contains("Persist Security Info") && Properties["Persist Security Info"] is bool && (bool)Properties["Persist Security Info"];
+			if (Properties.Contains("Initial Catalog") && Properties["Initial Catalog"] is string)
+				initialCatalogComboBox.Text = Properties["Initial Catalog"] as string;
 			else
-				this.initialCatalogComboBox.Text = (string)null;
-			this._loading = false;
+				initialCatalogComboBox.Text = (string)null;
+			_loading = false;
 		}
 
 		public override Size GetPreferredSize(Size proposedSize)
 		{
 			Size preferredSize = base.GetPreferredSize(proposedSize);
-			Padding padding = this.logonGroupBox.Padding;
-			int left1 = padding.Left;
-			padding = this.loginTableLayoutPanel.Margin;
-			int left2 = padding.Left;
-			int num1 = left1 + left2;
-			padding = this.blankPasswordCheckBox.Margin;
-			int left3 = padding.Left;
-			int num2 = num1 + left3 + this.blankPasswordCheckBox.Width;
-			padding = this.blankPasswordCheckBox.Margin;
-			int right1 = padding.Right;
-			int num3 = num2 + right1;
-			padding = this.allowSavingPasswordCheckBox.Margin;
-			int left4 = padding.Left;
-			int num4 = num3 + left4 + this.allowSavingPasswordCheckBox.Width;
-			padding = this.allowSavingPasswordCheckBox.Margin;
-			int right2 = padding.Right;
-			int num5 = num4 + right2;
-			padding = this.loginTableLayoutPanel.Margin;
-			int right3 = padding.Right;
-			int num6 = num5 + right3;
-			padding = this.logonGroupBox.Padding;
-			int right4 = padding.Right;
-			int width = num6 + right4;
+			int width = logonGroupBox.Padding.Left + loginTableLayoutPanel.Margin.Left + blankPasswordCheckBox.Margin.Left + blankPasswordCheckBox.Width + blankPasswordCheckBox.Margin.Right + allowSavingPasswordCheckBox.Margin.Left + allowSavingPasswordCheckBox.Width + allowSavingPasswordCheckBox.Margin.Right + loginTableLayoutPanel.Margin.Right + logonGroupBox.Padding.Right;
 			if (width > preferredSize.Width)
 				preferredSize = new Size(width, preferredSize.Height);
 			return preferredSize;
@@ -162,38 +145,38 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 		protected override void OnRightToLeftChanged(EventArgs e)
 		{
 			base.OnRightToLeftChanged(e);
-			if (this.ParentForm != null && this.ParentForm.RightToLeftLayout && this.RightToLeft == RightToLeft.Yes)
+			if (ParentForm != null && ParentForm.RightToLeftLayout && RightToLeft == RightToLeft.Yes)
 			{
-				LayoutUtils.MirrorControl((Control)this.providerLabel, (Control)this.providerTableLayoutPanel);
-				LayoutUtils.MirrorControl((Control)this.integratedSecurityRadioButton);
-				LayoutUtils.MirrorControl((Control)this.nativeSecurityRadioButton);
-				LayoutUtils.MirrorControl((Control)this.loginTableLayoutPanel);
-				LayoutUtils.MirrorControl((Control)this.initialCatalogLabel, (Control)this.initialCatalogComboBox);
+				LayoutUtils.MirrorControl((Control)providerLabel, (Control)providerTableLayoutPanel);
+				LayoutUtils.MirrorControl((Control)integratedSecurityRadioButton);
+				LayoutUtils.MirrorControl((Control)nativeSecurityRadioButton);
+				LayoutUtils.MirrorControl((Control)loginTableLayoutPanel);
+				LayoutUtils.MirrorControl((Control)initialCatalogLabel, (Control)initialCatalogComboBox);
 			}
 			else
 			{
-				LayoutUtils.UnmirrorControl((Control)this.initialCatalogLabel, (Control)this.initialCatalogComboBox);
-				LayoutUtils.UnmirrorControl((Control)this.loginTableLayoutPanel);
-				LayoutUtils.UnmirrorControl((Control)this.nativeSecurityRadioButton);
-				LayoutUtils.UnmirrorControl((Control)this.integratedSecurityRadioButton);
-				LayoutUtils.UnmirrorControl((Control)this.providerLabel, (Control)this.providerTableLayoutPanel);
+				LayoutUtils.UnmirrorControl((Control)initialCatalogLabel, (Control)initialCatalogComboBox);
+				LayoutUtils.UnmirrorControl((Control)loginTableLayoutPanel);
+				LayoutUtils.UnmirrorControl((Control)nativeSecurityRadioButton);
+				LayoutUtils.UnmirrorControl((Control)integratedSecurityRadioButton);
+				LayoutUtils.UnmirrorControl((Control)providerLabel, (Control)providerTableLayoutPanel);
 			}
 		}
 
 		protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
 		{
-			Size size = this.Size;
-			this.MinimumSize = Size.Empty;
+			Size size = Size;
+			MinimumSize = Size.Empty;
 			base.ScaleControl(factor, specified);
-			this.MinimumSize = new Size((int)Math.Round((double)size.Width * (double)factor.Width), (int)Math.Round((double)size.Height * (double)factor.Height));
+			MinimumSize = new Size((int)Math.Round((double)size.Width * (double)factor.Width), (int)Math.Round((double)size.Height * (double)factor.Height));
 		}
 
 		protected override void OnParentChanged(EventArgs e)
 		{
 			base.OnParentChanged(e);
-			if (this.Parent != null)
+			if (Parent != null)
 				return;
-			this.OnFontChanged(e);
+			OnFontChanged(e);
 		}
 
 		private void EnumerateProviders()
@@ -203,7 +186,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			try
 			{
 				Cursor.Current = Cursors.WaitCursor;
-				oleDbDataReader = OleDbEnumerator.GetEnumerator(System.Type.GetTypeFromCLSID(NativeMethods.CLSID_OLEDB_ENUMERATOR));
+				oleDbDataReader = OleDbEnumerator.GetEnumerator(Type.GetTypeFromCLSID(NativeMethods.CLSID_OLEDB_ENUMERATOR));
 				Dictionary<string, string> dictionary1 = new Dictionary<string, string>();
 				while (oleDbDataReader.Read())
 				{
@@ -246,7 +229,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 					}
 				}
 				foreach (KeyValuePair<string, string> keyValuePair in dictionary2)
-					this.providerComboBox.Items.Add((object)new OleDBConnectionUIControl.ProviderStruct(keyValuePair.Key, dictionary1[keyValuePair.Value]));
+					providerComboBox.Items.Add((object)new OleDBConnectionUIControl.ProviderStruct(keyValuePair.Key, dictionary1[keyValuePair.Value]));
 			}
 			finally
 			{
@@ -257,134 +240,134 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 
 		private void SetProvider(object sender, EventArgs e)
 		{
-			if (this.providerComboBox.SelectedItem is OleDBConnectionUIControl.ProviderStruct)
+			if (providerComboBox.SelectedItem is OleDBConnectionUIControl.ProviderStruct)
 			{
-				if (!this._loading)
-					this.Properties["Provider"] = (object)((OleDBConnectionUIControl.ProviderStruct)this.providerComboBox.SelectedItem).ProgId;
-				foreach (PropertyDescriptor property in TypeDescriptor.GetProperties((object)this.Properties))
+				if (!_loading)
+					Properties["Provider"] = (object)((OleDBConnectionUIControl.ProviderStruct)providerComboBox.SelectedItem).ProgId;
+				foreach (PropertyDescriptor property in TypeDescriptor.GetProperties((object)Properties))
 				{
 					if (property.Category.Equals(CategoryAttribute.Default.Category, StringComparison.CurrentCulture))
-						this.Properties.Remove(property.DisplayName);
+						Properties.Remove(property.DisplayName);
 				}
-				this.dataLinksButton.Enabled = true;
-				this.dataSourceGroupBox.Enabled = true;
-				this.logonGroupBox.Enabled = true;
-				this.loginTableLayoutPanel.Enabled = true;
-				this.initialCatalogLabel.Enabled = true;
-				this.initialCatalogComboBox.Enabled = true;
-				this.dataSourceLabel.Enabled = false;
-				this.dataSourceTextBox.Enabled = false;
-				this.locationLabel.Enabled = false;
-				this.locationTextBox.Enabled = false;
-				this.integratedSecurityRadioButton.Enabled = false;
-				this.nativeSecurityRadioButton.Enabled = false;
-				this.userNameLabel.Enabled = false;
-				this.userNameTextBox.Enabled = false;
-				this.passwordLabel.Enabled = false;
-				this.passwordTextBox.Enabled = false;
-				this.blankPasswordCheckBox.Enabled = false;
-				this.allowSavingPasswordCheckBox.Enabled = false;
-				this.initialCatalogLabel.Enabled = false;
-				this.initialCatalogComboBox.Enabled = false;
-				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties((object)this.Properties);
+				dataLinksButton.Enabled = true;
+				dataSourceGroupBox.Enabled = true;
+				logonGroupBox.Enabled = true;
+				loginTableLayoutPanel.Enabled = true;
+				initialCatalogLabel.Enabled = true;
+				initialCatalogComboBox.Enabled = true;
+				dataSourceLabel.Enabled = false;
+				dataSourceTextBox.Enabled = false;
+				locationLabel.Enabled = false;
+				locationTextBox.Enabled = false;
+				integratedSecurityRadioButton.Enabled = false;
+				nativeSecurityRadioButton.Enabled = false;
+				userNameLabel.Enabled = false;
+				userNameTextBox.Enabled = false;
+				passwordLabel.Enabled = false;
+				passwordTextBox.Enabled = false;
+				blankPasswordCheckBox.Enabled = false;
+				allowSavingPasswordCheckBox.Enabled = false;
+				initialCatalogLabel.Enabled = false;
+				initialCatalogComboBox.Enabled = false;
+				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties((object)Properties);
 				PropertyDescriptor propertyDescriptor1;
 				if ((propertyDescriptor1 = properties["DataSource"]) != null && propertyDescriptor1.IsBrowsable)
 				{
-					this.dataSourceLabel.Enabled = true;
-					this.dataSourceTextBox.Enabled = true;
+					dataSourceLabel.Enabled = true;
+					dataSourceTextBox.Enabled = true;
 				}
 				PropertyDescriptor propertyDescriptor2;
 				if ((propertyDescriptor2 = properties["Location"]) != null && propertyDescriptor2.IsBrowsable)
 				{
-					this.locationLabel.Enabled = true;
-					this.locationTextBox.Enabled = true;
+					locationLabel.Enabled = true;
+					locationTextBox.Enabled = true;
 				}
-				this.dataSourceGroupBox.Enabled = this.dataSourceTextBox.Enabled || this.locationTextBox.Enabled;
+				dataSourceGroupBox.Enabled = dataSourceTextBox.Enabled || locationTextBox.Enabled;
 				PropertyDescriptor propertyDescriptor3;
 				if ((propertyDescriptor3 = properties["Integrated Security"]) != null && propertyDescriptor3.IsBrowsable)
-					this.integratedSecurityRadioButton.Enabled = true;
+					integratedSecurityRadioButton.Enabled = true;
 				PropertyDescriptor propertyDescriptor4;
 				if ((propertyDescriptor4 = properties["User ID"]) != null && propertyDescriptor4.IsBrowsable)
 				{
-					this.userNameLabel.Enabled = true;
-					this.userNameTextBox.Enabled = true;
+					userNameLabel.Enabled = true;
+					userNameTextBox.Enabled = true;
 				}
 				PropertyDescriptor propertyDescriptor5;
 				if ((propertyDescriptor5 = properties["Password"]) != null && propertyDescriptor5.IsBrowsable)
 				{
-					this.passwordLabel.Enabled = true;
-					this.passwordTextBox.Enabled = true;
-					this.blankPasswordCheckBox.Enabled = true;
+					passwordLabel.Enabled = true;
+					passwordTextBox.Enabled = true;
+					blankPasswordCheckBox.Enabled = true;
 				}
 				PropertyDescriptor propertyDescriptor6;
-				if (this.passwordTextBox.Enabled && (propertyDescriptor6 = properties["PersistSecurityInfo"]) != null && propertyDescriptor6.IsBrowsable)
-					this.allowSavingPasswordCheckBox.Enabled = true;
-				this.loginTableLayoutPanel.Enabled = this.userNameTextBox.Enabled || this.passwordTextBox.Enabled;
-				this.nativeSecurityRadioButton.Enabled = this.loginTableLayoutPanel.Enabled;
-				this.logonGroupBox.Enabled = this.integratedSecurityRadioButton.Enabled || this.nativeSecurityRadioButton.Enabled;
+				if (passwordTextBox.Enabled && (propertyDescriptor6 = properties["PersistSecurityInfo"]) != null && propertyDescriptor6.IsBrowsable)
+					allowSavingPasswordCheckBox.Enabled = true;
+				loginTableLayoutPanel.Enabled = userNameTextBox.Enabled || passwordTextBox.Enabled;
+				nativeSecurityRadioButton.Enabled = loginTableLayoutPanel.Enabled;
+				logonGroupBox.Enabled = integratedSecurityRadioButton.Enabled || nativeSecurityRadioButton.Enabled;
 				PropertyDescriptor propertyDescriptor7;
 				if ((propertyDescriptor7 = properties["Initial Catalog"]) != null && propertyDescriptor7.IsBrowsable)
 				{
-					this.initialCatalogLabel.Enabled = true;
-					this.initialCatalogComboBox.Enabled = true;
+					initialCatalogLabel.Enabled = true;
+					initialCatalogComboBox.Enabled = true;
 				}
 			}
 			else
 			{
-				if (!this._loading)
-					this.Properties["Provider"] = (object)null;
-				this.dataLinksButton.Enabled = false;
-				this.dataSourceGroupBox.Enabled = false;
-				this.logonGroupBox.Enabled = false;
-				this.initialCatalogLabel.Enabled = false;
-				this.initialCatalogComboBox.Enabled = false;
+				if (!_loading)
+					Properties["Provider"] = (object)null;
+				dataLinksButton.Enabled = false;
+				dataSourceGroupBox.Enabled = false;
+				logonGroupBox.Enabled = false;
+				initialCatalogLabel.Enabled = false;
+				initialCatalogComboBox.Enabled = false;
 			}
-			if (!this._loading)
-				this.LoadProperties();
-			this.initialCatalogComboBox.Items.Clear();
+			if (!_loading)
+				LoadProperties();
+			initialCatalogComboBox.Items.Clear();
 		}
 
 		private void SetProviderDropDownWidth(object sender, EventArgs e)
 		{
-			if (this.providerComboBox.Items.Count > 0)
+			if (providerComboBox.Items.Count > 0)
 			{
 				int num = 0;
-				using (Graphics dc = Graphics.FromHwnd(this.providerComboBox.Handle))
+				using (Graphics dc = Graphics.FromHwnd(providerComboBox.Handle))
 				{
-					foreach (OleDBConnectionUIControl.ProviderStruct providerStruct in this.providerComboBox.Items)
+					foreach (OleDBConnectionUIControl.ProviderStruct providerStruct in providerComboBox.Items)
 					{
-						int width = TextRenderer.MeasureText((IDeviceContext)dc, providerStruct.Description, this.providerComboBox.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.WordBreak).Width;
+						int width = TextRenderer.MeasureText((IDeviceContext)dc, providerStruct.Description, providerComboBox.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.WordBreak).Width;
 						if (width > num)
 							num = width;
 					}
 				}
-				this.providerComboBox.DropDownWidth = num + 3;
-				if (this.providerComboBox.Items.Count <= this.providerComboBox.MaxDropDownItems)
+				providerComboBox.DropDownWidth = num + 3;
+				if (providerComboBox.Items.Count <= providerComboBox.MaxDropDownItems)
 					return;
-				this.providerComboBox.DropDownWidth += SystemInformation.VerticalScrollBarWidth;
+				providerComboBox.DropDownWidth += SystemInformation.VerticalScrollBarWidth;
 			}
 			else
-				this.providerComboBox.DropDownWidth = Math.Max(1, this.providerComboBox.Width);
+				providerComboBox.DropDownWidth = providerComboBox.Width;
 		}
 
 		private void ShowDataLinks(object sender, EventArgs e)
 		{
 			try
 			{
-				NativeMethods.IDataInitialize instance = Activator.CreateInstance(System.Type.GetTypeFromCLSID(NativeMethods.CLSID_DataLinks)) as NativeMethods.IDataInitialize;
+				NativeMethods.IDataInitialize instance = Activator.CreateInstance(Type.GetTypeFromCLSID(NativeMethods.CLSID_DataLinks)) as NativeMethods.IDataInitialize;
 				object ppDataSource = (object)null;
-				instance.GetDataSource((object)null, 1, this.Properties.ToFullString(), ref NativeMethods.IID_IUnknown, ref ppDataSource);
-				((NativeMethods.IDBPromptInitialize)instance).PromptDataSource((object)null, this.ParentForm.Handle, 18, 0, IntPtr.Zero, (string)null, ref NativeMethods.IID_IUnknown, ref ppDataSource);
+				instance.GetDataSource((object)null, 1, Properties.ToFullString(), ref NativeMethods.IID_IUnknown, ref ppDataSource);
+				((NativeMethods.IDBPromptInitialize)instance).PromptDataSource((object)null, ParentForm.Handle, 18, 0, IntPtr.Zero, (string)null, ref NativeMethods.IID_IUnknown, ref ppDataSource);
 				string ppwszInitString = (string)null;
 				instance.GetInitializationString(ppDataSource, true, out ppwszInitString);
-				this.Properties.Parse(ppwszInitString);
-				this.LoadProperties();
+				Properties.Parse(ppwszInitString);
+				LoadProperties();
 			}
 			catch (Exception ex)
 			{
 				if (ex is COMException comException && comException.ErrorCode == -2147217842)
 					return;
-				if (this.GetService(typeof(IUIService)) is IUIService service)
+				if (GetService(typeof(IUIService)) is IUIService service)
 				{
 					service.ShowError(ex);
 				}
@@ -397,122 +380,122 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 
 		private void SetDataSource(object sender, EventArgs e)
 		{
-			if (!this._loading)
-				this.Properties["Data Source"] = this.dataSourceTextBox.Text.Trim().Length > 0 ? (object)this.dataSourceTextBox.Text.Trim() : (object)(string)null;
-			this.initialCatalogComboBox.Items.Clear();
+			if (!_loading)
+				Properties["Data Source"] = dataSourceTextBox.Text.Trim().Length > 0 ? (object)dataSourceTextBox.Text.Trim() : (object)(string)null;
+			initialCatalogComboBox.Items.Clear();
 		}
 
 		private void SetLocation(object sender, EventArgs e)
 		{
-			if (!this._loading)
-				this.Properties["Location"] = (object)this.locationTextBox.Text;
-			this.initialCatalogComboBox.Items.Clear();
+			if (!_loading)
+				Properties["Location"] = (object)locationTextBox.Text;
+			initialCatalogComboBox.Items.Clear();
 		}
 
 		private void SetSecurityOption(object sender, EventArgs e)
 		{
-			if (!this._loading)
+			if (!_loading)
 			{
-				if (this.integratedSecurityRadioButton.Checked)
+				if (integratedSecurityRadioButton.Checked)
 				{
-					this.Properties["Integrated Security"] = (object)"SSPI";
-					this.Properties.Reset("User ID");
-					this.Properties.Reset("Password");
-					this.Properties.Reset("Persist Security Info");
+					Properties["Integrated Security"] = (object)"SSPI";
+					Properties.Reset("User ID");
+					Properties.Reset("Password");
+					Properties.Reset("Persist Security Info");
 				}
 				else
 				{
-					this.Properties.Reset("Integrated Security");
-					this.SetUserName(sender, e);
-					this.SetPassword(sender, e);
-					this.SetBlankPassword(sender, e);
-					this.SetAllowSavingPassword(sender, e);
+					Properties.Reset("Integrated Security");
+					SetUserName(sender, e);
+					SetPassword(sender, e);
+					SetBlankPassword(sender, e);
+					SetAllowSavingPassword(sender, e);
 				}
 			}
-			this.loginTableLayoutPanel.Enabled = !this.integratedSecurityRadioButton.Checked;
-			this.initialCatalogComboBox.Items.Clear();
+			loginTableLayoutPanel.Enabled = !integratedSecurityRadioButton.Checked;
+			initialCatalogComboBox.Items.Clear();
 		}
 
 		private void SetUserName(object sender, EventArgs e)
 		{
-			if (!this._loading)
-				this.Properties["User ID"] = this.userNameTextBox.Text.Trim().Length > 0 ? (object)this.userNameTextBox.Text.Trim() : (object)(string)null;
-			this.initialCatalogComboBox.Items.Clear();
+			if (!_loading)
+				Properties["User ID"] = userNameTextBox.Text.Trim().Length > 0 ? (object)userNameTextBox.Text.Trim() : (object)(string)null;
+			initialCatalogComboBox.Items.Clear();
 		}
 
 		private void SetPassword(object sender, EventArgs e)
 		{
-			if (!this._loading)
+			if (!_loading)
 			{
-				this.Properties["Password"] = this.passwordTextBox.Text.Length > 0 ? (object)this.passwordTextBox.Text : (object)(string)null;
-				if (this.passwordTextBox.Text.Length == 0)
-					this.Properties.Remove("Password");
-				this.passwordTextBox.Text = this.passwordTextBox.Text;
+				Properties["Password"] = passwordTextBox.Text.Length > 0 ? (object)passwordTextBox.Text : (object)(string)null;
+				if (passwordTextBox.Text.Length == 0)
+					Properties.Remove("Password");
+				passwordTextBox.Text = passwordTextBox.Text;
 			}
-			this.initialCatalogComboBox.Items.Clear();
+			initialCatalogComboBox.Items.Clear();
 		}
 
 		private void SetBlankPassword(object sender, EventArgs e)
 		{
-			if (this.blankPasswordCheckBox.Checked)
+			if (blankPasswordCheckBox.Checked)
 			{
-				if (!this._loading)
-					this.Properties["Password"] = (object)string.Empty;
-				this.passwordLabel.Enabled = false;
-				this.passwordTextBox.Enabled = false;
+				if (!_loading)
+					Properties["Password"] = (object)string.Empty;
+				passwordLabel.Enabled = false;
+				passwordTextBox.Enabled = false;
 			}
 			else
 			{
-				if (!this._loading)
-					this.SetPassword(sender, e);
-				this.passwordLabel.Enabled = true;
-				this.passwordTextBox.Enabled = true;
+				if (!_loading)
+					SetPassword(sender, e);
+				passwordLabel.Enabled = true;
+				passwordTextBox.Enabled = true;
 			}
 		}
 
 		private void SetAllowSavingPassword(object sender, EventArgs e)
 		{
-			if (this._loading)
+			if (_loading)
 				return;
-			this.Properties["Persist Security Info"] = (object)this.allowSavingPasswordCheckBox.Checked;
+			Properties["Persist Security Info"] = (object)allowSavingPasswordCheckBox.Checked;
 		}
 
 		private void HandleComboBoxDownKey(object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode != System.Windows.Forms.Keys.Down)
+			if (e.KeyCode != Keys.Down)
 				return;
-			this.EnumerateCatalogs(sender, (EventArgs)e);
+			EnumerateCatalogs(sender, (EventArgs)e);
 		}
 
 		private void SetInitialCatalog(object sender, EventArgs e)
 		{
-			if (this._loading)
+			if (_loading)
 				return;
-			this.Properties["Initial Catalog"] = this.initialCatalogComboBox.Text.Trim().Length > 0 ? (object)this.initialCatalogComboBox.Text.Trim() : (object)(string)null;
-			if (this.initialCatalogComboBox.Items.Count != 0 || this._catalogEnumerationThread != null)
+			Properties["Initial Catalog"] = initialCatalogComboBox.Text.Trim().Length > 0 ? (object)initialCatalogComboBox.Text.Trim() : (object)(string)null;
+			if (initialCatalogComboBox.Items.Count != 0 || _catalogEnumerationThread != null)
 				return;
-			this._catalogEnumerationThread = new Thread(new ThreadStart(this.EnumerateCatalogs));
-			this._catalogEnumerationThread.Start();
+			_catalogEnumerationThread = new Thread(new ThreadStart(EnumerateCatalogs));
+			_catalogEnumerationThread.Start();
 		}
 
 		private void EnumerateCatalogs(object sender, EventArgs e)
 		{
-			if (this.initialCatalogComboBox.Items.Count != 0)
+			if (initialCatalogComboBox.Items.Count != 0)
 				return;
 			Cursor current = Cursor.Current;
 			Cursor.Current = Cursors.WaitCursor;
 			try
 			{
-				if (this._catalogEnumerationThread == null || this._catalogEnumerationThread.ThreadState == ThreadState.Stopped)
+				if (_catalogEnumerationThread == null || _catalogEnumerationThread.ThreadState == ThreadState.Stopped)
 				{
-					this.EnumerateCatalogs();
+					EnumerateCatalogs();
 				}
 				else
 				{
-					if (this._catalogEnumerationThread.ThreadState != ThreadState.Running)
+					if (_catalogEnumerationThread.ThreadState != ThreadState.Running)
 						return;
-					this._catalogEnumerationThread.Join();
-					this.PopulateInitialCatalogComboBox();
+					_catalogEnumerationThread.Join();
+					PopulateInitialCatalogComboBox();
 				}
 			}
 			finally
@@ -533,7 +516,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			OleDbConnection oleDbConnection = (OleDbConnection)null;
 			try
 			{
-				OleDbConnectionStringBuilder connectionStringBuilder = new OleDbConnectionStringBuilder(this.Properties.ToFullString());
+				OleDbConnectionStringBuilder connectionStringBuilder = new OleDbConnectionStringBuilder(Properties.ToFullString());
 				connectionStringBuilder.Remove("Initial Catalog");
 				oleDbConnection = new OleDbConnection(connectionStringBuilder.ConnectionString);
 				oleDbConnection.Open();
@@ -548,205 +531,205 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 			{
 				oleDbConnection?.Dispose();
 			}
-			this._catalogs = new object[dataTable.Rows.Count];
-			for (int index = 0; index < this._catalogs.Length; ++index)
-				this._catalogs[index] = dataTable.Rows[index]["CATALOG_NAME"];
-			if (Thread.CurrentThread == this._uiThread)
+			_catalogs = new object[dataTable.Rows.Count];
+			for (int index = 0; index < _catalogs.Length; ++index)
+				_catalogs[index] = dataTable.Rows[index]["CATALOG_NAME"];
+			if (Thread.CurrentThread == _uiThread)
 			{
-				this.PopulateInitialCatalogComboBox();
+				PopulateInitialCatalogComboBox();
 			}
 			else
 			{
-				if (!this.IsHandleCreated)
+				if (!IsHandleCreated)
 					return;
-				this.BeginInvoke((Delegate)new ThreadStart(this.PopulateInitialCatalogComboBox));
+				BeginInvoke((Delegate)new ThreadStart(PopulateInitialCatalogComboBox));
 			}
 		}
 
 		private void PopulateInitialCatalogComboBox()
 		{
-			if (this.initialCatalogComboBox.Items.Count == 0)
+			if (initialCatalogComboBox.Items.Count == 0)
 			{
-				if (this._catalogs.Length != 0)
-					this.initialCatalogComboBox.Items.AddRange(this._catalogs);
+				if (_catalogs.Length > 0)
+					initialCatalogComboBox.Items.AddRange(_catalogs);
 				else
-					this.initialCatalogComboBox.Items.Add((object)string.Empty);
+					initialCatalogComboBox.Items.Add((object)string.Empty);
 			}
-			this._catalogEnumerationThread = (Thread)null;
+			_catalogEnumerationThread = (Thread)null;
 		}
 
-		private IDataConnectionProperties Properties => this._connectionProperties;
+		private IDataConnectionProperties Properties => _connectionProperties;
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && this.components != null)
-				this.components.Dispose();
+			if (disposing && components != null)
+				components.Dispose();
 			base.Dispose(disposing);
 		}
 
 		private void InitializeComponent()
 		{
 			ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof(OleDBConnectionUIControl));
-			this.providerLabel = new Label();
-			this.providerTableLayoutPanel = new TableLayoutPanel();
-			this.providerComboBox = new ComboBox();
-			this.dataLinksButton = new Button();
-			this.dataSourceGroupBox = new GroupBox();
-			this.dataSourceTableLayoutPanel = new TableLayoutPanel();
-			this.dataSourceLabel = new Label();
-			this.dataSourceTextBox = new TextBox();
-			this.locationLabel = new Label();
-			this.locationTextBox = new TextBox();
-			this.logonGroupBox = new GroupBox();
-			this.loginTableLayoutPanel = new TableLayoutPanel();
-			this.subLoginTableLayoutPanel = new TableLayoutPanel();
-			this.userNameLabel = new Label();
-			this.userNameTextBox = new TextBox();
-			this.passwordLabel = new Label();
-			this.passwordTextBox = new TextBox();
-			this.subSubLoginTableLayoutPanel = new TableLayoutPanel();
-			this.blankPasswordCheckBox = new CheckBox();
-			this.allowSavingPasswordCheckBox = new CheckBox();
-			this.nativeSecurityRadioButton = new RadioButton();
-			this.integratedSecurityRadioButton = new RadioButton();
-			this.initialCatalogLabel = new Label();
-			this.initialCatalogComboBox = new ComboBox();
-			this.providerTableLayoutPanel.SuspendLayout();
-			this.dataSourceGroupBox.SuspendLayout();
-			this.dataSourceTableLayoutPanel.SuspendLayout();
-			this.logonGroupBox.SuspendLayout();
-			this.loginTableLayoutPanel.SuspendLayout();
-			this.subLoginTableLayoutPanel.SuspendLayout();
-			this.subSubLoginTableLayoutPanel.SuspendLayout();
-			this.SuspendLayout();
-			componentResourceManager.ApplyResources((object)this.providerLabel, "providerLabel");
-			this.providerLabel.FlatStyle = FlatStyle.System;
-			this.providerLabel.Name = "providerLabel";
-			componentResourceManager.ApplyResources((object)this.providerTableLayoutPanel, "providerTableLayoutPanel");
-			this.providerTableLayoutPanel.Controls.Add((Control)this.providerComboBox, 0, 0);
-			this.providerTableLayoutPanel.Controls.Add((Control)this.dataLinksButton, 1, -1);
-			this.providerTableLayoutPanel.Name = "providerTableLayoutPanel";
-			componentResourceManager.ApplyResources((object)this.providerComboBox, "providerComboBox");
-			this.providerComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-			this.providerComboBox.FormattingEnabled = true;
-			this.providerComboBox.Name = "providerComboBox";
-			this.providerComboBox.Sorted = true;
-			this.providerComboBox.SelectedIndexChanged += new EventHandler(this.SetProvider);
-			this.providerComboBox.DropDown += new EventHandler(this.SetProviderDropDownWidth);
-			componentResourceManager.ApplyResources((object)this.dataLinksButton, "dataLinksButton");
-			this.dataLinksButton.MinimumSize = new Size(83, 23);
-			this.dataLinksButton.Name = "dataLinksButton";
-			this.dataLinksButton.Click += new EventHandler(this.ShowDataLinks);
-			componentResourceManager.ApplyResources((object)this.dataSourceGroupBox, "dataSourceGroupBox");
-			this.dataSourceGroupBox.Controls.Add((Control)this.dataSourceTableLayoutPanel);
-			this.dataSourceGroupBox.FlatStyle = FlatStyle.System;
-			this.dataSourceGroupBox.Name = "dataSourceGroupBox";
-			this.dataSourceGroupBox.TabStop = false;
-			componentResourceManager.ApplyResources((object)this.dataSourceTableLayoutPanel, "dataSourceTableLayoutPanel");
-			this.dataSourceTableLayoutPanel.Controls.Add((Control)this.dataSourceLabel, 0, 0);
-			this.dataSourceTableLayoutPanel.Controls.Add((Control)this.dataSourceTextBox, 1, 0);
-			this.dataSourceTableLayoutPanel.Controls.Add((Control)this.locationLabel, 0, 1);
-			this.dataSourceTableLayoutPanel.Controls.Add((Control)this.locationTextBox, 1, 1);
-			this.dataSourceTableLayoutPanel.Name = "dataSourceTableLayoutPanel";
-			componentResourceManager.ApplyResources((object)this.dataSourceLabel, "dataSourceLabel");
-			this.dataSourceLabel.FlatStyle = FlatStyle.System;
-			this.dataSourceLabel.Name = "dataSourceLabel";
-			componentResourceManager.ApplyResources((object)this.dataSourceTextBox, "dataSourceTextBox");
-			this.dataSourceTextBox.Name = "dataSourceTextBox";
-			this.dataSourceTextBox.Leave += new EventHandler(this.TrimControlText);
-			this.dataSourceTextBox.TextChanged += new EventHandler(this.SetDataSource);
-			componentResourceManager.ApplyResources((object)this.locationLabel, "locationLabel");
-			this.locationLabel.FlatStyle = FlatStyle.System;
-			this.locationLabel.Name = "locationLabel";
-			componentResourceManager.ApplyResources((object)this.locationTextBox, "locationTextBox");
-			this.locationTextBox.Name = "locationTextBox";
-			this.locationTextBox.Leave += new EventHandler(this.TrimControlText);
-			this.locationTextBox.TextChanged += new EventHandler(this.SetLocation);
-			componentResourceManager.ApplyResources((object)this.logonGroupBox, "logonGroupBox");
-			this.logonGroupBox.Controls.Add((Control)this.loginTableLayoutPanel);
-			this.logonGroupBox.Controls.Add((Control)this.nativeSecurityRadioButton);
-			this.logonGroupBox.Controls.Add((Control)this.integratedSecurityRadioButton);
-			this.logonGroupBox.FlatStyle = FlatStyle.System;
-			this.logonGroupBox.Name = "logonGroupBox";
-			this.logonGroupBox.TabStop = false;
-			componentResourceManager.ApplyResources((object)this.loginTableLayoutPanel, "loginTableLayoutPanel");
-			this.loginTableLayoutPanel.Controls.Add((Control)this.subLoginTableLayoutPanel, 0, 0);
-			this.loginTableLayoutPanel.Controls.Add((Control)this.subSubLoginTableLayoutPanel, 0, 1);
-			this.loginTableLayoutPanel.Name = "loginTableLayoutPanel";
-			componentResourceManager.ApplyResources((object)this.subLoginTableLayoutPanel, "subLoginTableLayoutPanel");
-			this.subLoginTableLayoutPanel.Controls.Add((Control)this.userNameLabel, 0, 0);
-			this.subLoginTableLayoutPanel.Controls.Add((Control)this.userNameTextBox, 1, 0);
-			this.subLoginTableLayoutPanel.Controls.Add((Control)this.passwordLabel, 0, 1);
-			this.subLoginTableLayoutPanel.Controls.Add((Control)this.passwordTextBox, 1, 1);
-			this.subLoginTableLayoutPanel.Name = "subLoginTableLayoutPanel";
-			componentResourceManager.ApplyResources((object)this.userNameLabel, "userNameLabel");
-			this.userNameLabel.FlatStyle = FlatStyle.System;
-			this.userNameLabel.Name = "userNameLabel";
-			componentResourceManager.ApplyResources((object)this.userNameTextBox, "userNameTextBox");
-			this.userNameTextBox.Name = "userNameTextBox";
-			this.userNameTextBox.Leave += new EventHandler(this.TrimControlText);
-			this.userNameTextBox.TextChanged += new EventHandler(this.SetUserName);
-			componentResourceManager.ApplyResources((object)this.passwordLabel, "passwordLabel");
-			this.passwordLabel.FlatStyle = FlatStyle.System;
-			this.passwordLabel.Name = "passwordLabel";
-			componentResourceManager.ApplyResources((object)this.passwordTextBox, "passwordTextBox");
-			this.passwordTextBox.Name = "passwordTextBox";
-			this.passwordTextBox.UseSystemPasswordChar = true;
-			this.passwordTextBox.TextChanged += new EventHandler(this.SetPassword);
-			componentResourceManager.ApplyResources((object)this.subSubLoginTableLayoutPanel, "subSubLoginTableLayoutPanel");
-			this.subSubLoginTableLayoutPanel.Controls.Add((Control)this.blankPasswordCheckBox, 0, 0);
-			this.subSubLoginTableLayoutPanel.Controls.Add((Control)this.allowSavingPasswordCheckBox, 1, 0);
-			this.subSubLoginTableLayoutPanel.Name = "subSubLoginTableLayoutPanel";
-			componentResourceManager.ApplyResources((object)this.blankPasswordCheckBox, "blankPasswordCheckBox");
-			this.blankPasswordCheckBox.Name = "blankPasswordCheckBox";
-			this.blankPasswordCheckBox.CheckedChanged += new EventHandler(this.SetBlankPassword);
-			componentResourceManager.ApplyResources((object)this.allowSavingPasswordCheckBox, "allowSavingPasswordCheckBox");
-			this.allowSavingPasswordCheckBox.Name = "allowSavingPasswordCheckBox";
-			this.allowSavingPasswordCheckBox.CheckedChanged += new EventHandler(this.SetAllowSavingPassword);
-			componentResourceManager.ApplyResources((object)this.nativeSecurityRadioButton, "nativeSecurityRadioButton");
-			this.nativeSecurityRadioButton.Name = "nativeSecurityRadioButton";
-			this.nativeSecurityRadioButton.CheckedChanged += new EventHandler(this.SetSecurityOption);
-			componentResourceManager.ApplyResources((object)this.integratedSecurityRadioButton, "integratedSecurityRadioButton");
-			this.integratedSecurityRadioButton.Name = "integratedSecurityRadioButton";
-			this.integratedSecurityRadioButton.CheckedChanged += new EventHandler(this.SetSecurityOption);
-			componentResourceManager.ApplyResources((object)this.initialCatalogLabel, "initialCatalogLabel");
-			this.initialCatalogLabel.FlatStyle = FlatStyle.System;
-			this.initialCatalogLabel.Name = "initialCatalogLabel";
-			componentResourceManager.ApplyResources((object)this.initialCatalogComboBox, "initialCatalogComboBox");
-			this.initialCatalogComboBox.AutoCompleteMode = AutoCompleteMode.Append;
-			this.initialCatalogComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
-			this.initialCatalogComboBox.FormattingEnabled = true;
-			this.initialCatalogComboBox.Name = "initialCatalogComboBox";
-			this.initialCatalogComboBox.Leave += new EventHandler(this.TrimControlText);
-			this.initialCatalogComboBox.TextChanged += new EventHandler(this.SetInitialCatalog);
-			this.initialCatalogComboBox.KeyDown += new KeyEventHandler(this.HandleComboBoxDownKey);
-			this.initialCatalogComboBox.DropDown += new EventHandler(this.EnumerateCatalogs);
+			providerLabel = new Label();
+			providerTableLayoutPanel = new TableLayoutPanel();
+			providerComboBox = new ComboBox();
+			dataLinksButton = new Button();
+			dataSourceGroupBox = new GroupBox();
+			dataSourceTableLayoutPanel = new TableLayoutPanel();
+			dataSourceLabel = new Label();
+			dataSourceTextBox = new TextBox();
+			locationLabel = new Label();
+			locationTextBox = new TextBox();
+			logonGroupBox = new GroupBox();
+			loginTableLayoutPanel = new TableLayoutPanel();
+			subLoginTableLayoutPanel = new TableLayoutPanel();
+			userNameLabel = new Label();
+			userNameTextBox = new TextBox();
+			passwordLabel = new Label();
+			passwordTextBox = new TextBox();
+			subSubLoginTableLayoutPanel = new TableLayoutPanel();
+			blankPasswordCheckBox = new CheckBox();
+			allowSavingPasswordCheckBox = new CheckBox();
+			nativeSecurityRadioButton = new RadioButton();
+			integratedSecurityRadioButton = new RadioButton();
+			initialCatalogLabel = new Label();
+			initialCatalogComboBox = new ComboBox();
+			providerTableLayoutPanel.SuspendLayout();
+			dataSourceGroupBox.SuspendLayout();
+			dataSourceTableLayoutPanel.SuspendLayout();
+			logonGroupBox.SuspendLayout();
+			loginTableLayoutPanel.SuspendLayout();
+			subLoginTableLayoutPanel.SuspendLayout();
+			subSubLoginTableLayoutPanel.SuspendLayout();
+			SuspendLayout();
+			componentResourceManager.ApplyResources((object)providerLabel, "providerLabel");
+			providerLabel.FlatStyle = FlatStyle.System;
+			providerLabel.Name = "providerLabel";
+			componentResourceManager.ApplyResources((object)providerTableLayoutPanel, "providerTableLayoutPanel");
+			providerTableLayoutPanel.Controls.Add((Control)providerComboBox, 0, 0);
+			providerTableLayoutPanel.Controls.Add((Control)dataLinksButton, 1, -1);
+			providerTableLayoutPanel.Name = "providerTableLayoutPanel";
+			componentResourceManager.ApplyResources((object)providerComboBox, "providerComboBox");
+			providerComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+			providerComboBox.FormattingEnabled = true;
+			providerComboBox.Name = "providerComboBox";
+			providerComboBox.Sorted = true;
+			providerComboBox.SelectedIndexChanged += new EventHandler(SetProvider);
+			providerComboBox.DropDown += new EventHandler(SetProviderDropDownWidth);
+			componentResourceManager.ApplyResources((object)dataLinksButton, "dataLinksButton");
+			dataLinksButton.MinimumSize = new Size(83, 23);
+			dataLinksButton.Name = "dataLinksButton";
+			dataLinksButton.Click += new EventHandler(ShowDataLinks);
+			componentResourceManager.ApplyResources((object)dataSourceGroupBox, "dataSourceGroupBox");
+			dataSourceGroupBox.Controls.Add((Control)dataSourceTableLayoutPanel);
+			dataSourceGroupBox.FlatStyle = FlatStyle.System;
+			dataSourceGroupBox.Name = "dataSourceGroupBox";
+			dataSourceGroupBox.TabStop = false;
+			componentResourceManager.ApplyResources((object)dataSourceTableLayoutPanel, "dataSourceTableLayoutPanel");
+			dataSourceTableLayoutPanel.Controls.Add((Control)dataSourceLabel, 0, 0);
+			dataSourceTableLayoutPanel.Controls.Add((Control)dataSourceTextBox, 1, 0);
+			dataSourceTableLayoutPanel.Controls.Add((Control)locationLabel, 0, 1);
+			dataSourceTableLayoutPanel.Controls.Add((Control)locationTextBox, 1, 1);
+			dataSourceTableLayoutPanel.Name = "dataSourceTableLayoutPanel";
+			componentResourceManager.ApplyResources((object)dataSourceLabel, "dataSourceLabel");
+			dataSourceLabel.FlatStyle = FlatStyle.System;
+			dataSourceLabel.Name = "dataSourceLabel";
+			componentResourceManager.ApplyResources((object)dataSourceTextBox, "dataSourceTextBox");
+			dataSourceTextBox.Name = "dataSourceTextBox";
+			dataSourceTextBox.Leave += new EventHandler(TrimControlText);
+			dataSourceTextBox.TextChanged += new EventHandler(SetDataSource);
+			componentResourceManager.ApplyResources((object)locationLabel, "locationLabel");
+			locationLabel.FlatStyle = FlatStyle.System;
+			locationLabel.Name = "locationLabel";
+			componentResourceManager.ApplyResources((object)locationTextBox, "locationTextBox");
+			locationTextBox.Name = "locationTextBox";
+			locationTextBox.Leave += new EventHandler(TrimControlText);
+			locationTextBox.TextChanged += new EventHandler(SetLocation);
+			componentResourceManager.ApplyResources((object)logonGroupBox, "logonGroupBox");
+			logonGroupBox.Controls.Add((Control)loginTableLayoutPanel);
+			logonGroupBox.Controls.Add((Control)nativeSecurityRadioButton);
+			logonGroupBox.Controls.Add((Control)integratedSecurityRadioButton);
+			logonGroupBox.FlatStyle = FlatStyle.System;
+			logonGroupBox.Name = "logonGroupBox";
+			logonGroupBox.TabStop = false;
+			componentResourceManager.ApplyResources((object)loginTableLayoutPanel, "loginTableLayoutPanel");
+			loginTableLayoutPanel.Controls.Add((Control)subLoginTableLayoutPanel, 0, 0);
+			loginTableLayoutPanel.Controls.Add((Control)subSubLoginTableLayoutPanel, 0, 1);
+			loginTableLayoutPanel.Name = "loginTableLayoutPanel";
+			componentResourceManager.ApplyResources((object)subLoginTableLayoutPanel, "subLoginTableLayoutPanel");
+			subLoginTableLayoutPanel.Controls.Add((Control)userNameLabel, 0, 0);
+			subLoginTableLayoutPanel.Controls.Add((Control)userNameTextBox, 1, 0);
+			subLoginTableLayoutPanel.Controls.Add((Control)passwordLabel, 0, 1);
+			subLoginTableLayoutPanel.Controls.Add((Control)passwordTextBox, 1, 1);
+			subLoginTableLayoutPanel.Name = "subLoginTableLayoutPanel";
+			componentResourceManager.ApplyResources((object)userNameLabel, "userNameLabel");
+			userNameLabel.FlatStyle = FlatStyle.System;
+			userNameLabel.Name = "userNameLabel";
+			componentResourceManager.ApplyResources((object)userNameTextBox, "userNameTextBox");
+			userNameTextBox.Name = "userNameTextBox";
+			userNameTextBox.Leave += new EventHandler(TrimControlText);
+			userNameTextBox.TextChanged += new EventHandler(SetUserName);
+			componentResourceManager.ApplyResources((object)passwordLabel, "passwordLabel");
+			passwordLabel.FlatStyle = FlatStyle.System;
+			passwordLabel.Name = "passwordLabel";
+			componentResourceManager.ApplyResources((object)passwordTextBox, "passwordTextBox");
+			passwordTextBox.Name = "passwordTextBox";
+			passwordTextBox.UseSystemPasswordChar = true;
+			passwordTextBox.TextChanged += new EventHandler(SetPassword);
+			componentResourceManager.ApplyResources((object)subSubLoginTableLayoutPanel, "subSubLoginTableLayoutPanel");
+			subSubLoginTableLayoutPanel.Controls.Add((Control)blankPasswordCheckBox, 0, 0);
+			subSubLoginTableLayoutPanel.Controls.Add((Control)allowSavingPasswordCheckBox, 1, 0);
+			subSubLoginTableLayoutPanel.Name = "subSubLoginTableLayoutPanel";
+			componentResourceManager.ApplyResources((object)blankPasswordCheckBox, "blankPasswordCheckBox");
+			blankPasswordCheckBox.Name = "blankPasswordCheckBox";
+			blankPasswordCheckBox.CheckedChanged += new EventHandler(SetBlankPassword);
+			componentResourceManager.ApplyResources((object)allowSavingPasswordCheckBox, "allowSavingPasswordCheckBox");
+			allowSavingPasswordCheckBox.Name = "allowSavingPasswordCheckBox";
+			allowSavingPasswordCheckBox.CheckedChanged += new EventHandler(SetAllowSavingPassword);
+			componentResourceManager.ApplyResources((object)nativeSecurityRadioButton, "nativeSecurityRadioButton");
+			nativeSecurityRadioButton.Name = "nativeSecurityRadioButton";
+			nativeSecurityRadioButton.CheckedChanged += new EventHandler(SetSecurityOption);
+			componentResourceManager.ApplyResources((object)integratedSecurityRadioButton, "integratedSecurityRadioButton");
+			integratedSecurityRadioButton.Name = "integratedSecurityRadioButton";
+			integratedSecurityRadioButton.CheckedChanged += new EventHandler(SetSecurityOption);
+			componentResourceManager.ApplyResources((object)initialCatalogLabel, "initialCatalogLabel");
+			initialCatalogLabel.FlatStyle = FlatStyle.System;
+			initialCatalogLabel.Name = "initialCatalogLabel";
+			componentResourceManager.ApplyResources((object)initialCatalogComboBox, "initialCatalogComboBox");
+			initialCatalogComboBox.AutoCompleteMode = AutoCompleteMode.Append;
+			initialCatalogComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
+			initialCatalogComboBox.FormattingEnabled = true;
+			initialCatalogComboBox.Name = "initialCatalogComboBox";
+			initialCatalogComboBox.Leave += new EventHandler(TrimControlText);
+			initialCatalogComboBox.TextChanged += new EventHandler(SetInitialCatalog);
+			initialCatalogComboBox.KeyDown += new KeyEventHandler(HandleComboBoxDownKey);
+			initialCatalogComboBox.DropDown += new EventHandler(EnumerateCatalogs);
 			componentResourceManager.ApplyResources((object)this, "$this");
-			this.AutoScaleMode = AutoScaleMode.Font;
-			this.Controls.Add((Control)this.initialCatalogComboBox);
-			this.Controls.Add((Control)this.initialCatalogLabel);
-			this.Controls.Add((Control)this.logonGroupBox);
-			this.Controls.Add((Control)this.dataSourceGroupBox);
-			this.Controls.Add((Control)this.providerTableLayoutPanel);
-			this.Controls.Add((Control)this.providerLabel);
-			this.MinimumSize = new Size(350, 323);
-			this.Name = nameof(OleDBConnectionUIControl);
-			this.providerTableLayoutPanel.ResumeLayout(false);
-			this.providerTableLayoutPanel.PerformLayout();
-			this.dataSourceGroupBox.ResumeLayout(false);
-			this.dataSourceGroupBox.PerformLayout();
-			this.dataSourceTableLayoutPanel.ResumeLayout(false);
-			this.dataSourceTableLayoutPanel.PerformLayout();
-			this.logonGroupBox.ResumeLayout(false);
-			this.logonGroupBox.PerformLayout();
-			this.loginTableLayoutPanel.ResumeLayout(false);
-			this.loginTableLayoutPanel.PerformLayout();
-			this.subLoginTableLayoutPanel.ResumeLayout(false);
-			this.subLoginTableLayoutPanel.PerformLayout();
-			this.subSubLoginTableLayoutPanel.ResumeLayout(false);
-			this.subSubLoginTableLayoutPanel.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+			AutoScaleMode = AutoScaleMode.Font;
+			Controls.Add((Control)initialCatalogComboBox);
+			Controls.Add((Control)initialCatalogLabel);
+			Controls.Add((Control)logonGroupBox);
+			Controls.Add((Control)dataSourceGroupBox);
+			Controls.Add((Control)providerTableLayoutPanel);
+			Controls.Add((Control)providerLabel);
+			MinimumSize = new Size(350, 323);
+			Name = nameof(OleDBConnectionUIControl);
+			providerTableLayoutPanel.ResumeLayout(false);
+			providerTableLayoutPanel.PerformLayout();
+			dataSourceGroupBox.ResumeLayout(false);
+			dataSourceGroupBox.PerformLayout();
+			dataSourceTableLayoutPanel.ResumeLayout(false);
+			dataSourceTableLayoutPanel.PerformLayout();
+			logonGroupBox.ResumeLayout(false);
+			logonGroupBox.PerformLayout();
+			loginTableLayoutPanel.ResumeLayout(false);
+			loginTableLayoutPanel.PerformLayout();
+			subLoginTableLayoutPanel.ResumeLayout(false);
+			subLoginTableLayoutPanel.PerformLayout();
+			subSubLoginTableLayoutPanel.ResumeLayout(false);
+			subSubLoginTableLayoutPanel.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		private struct ProviderStruct
@@ -756,15 +739,15 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 
 			public ProviderStruct(string progId, string description)
 			{
-				this._progId = progId;
-				this._description = description;
+				_progId = progId;
+				_description = description;
 			}
 
-			public string ProgId => this._progId;
+			public string ProgId => _progId;
 
-			public string Description => this._description;
+			public string Description => _description;
 
-			public override string ToString() => this._description;
+			public override string ToString() => _description;
 		}
 	}
 }

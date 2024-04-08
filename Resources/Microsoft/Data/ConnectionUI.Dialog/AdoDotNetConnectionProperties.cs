@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
   public class AdoDotNetConnectionProperties : IDataConnectionProperties, ICustomTypeDescriptor
   {
@@ -101,7 +100,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
     {
       string testString = this.ToTestString();
       if (testString == null || testString.Length == 0)
-        throw new InvalidOperationException(SR.AdoDotNetConnectionProperties_NoProperties);
+        throw new InvalidOperationException(SR.GetString("AdoDotNetConnectionProperties_NoProperties"));
       DbConnection connection = DbProviderFactories.GetFactory(this._providerName).CreateConnection();
       try
       {

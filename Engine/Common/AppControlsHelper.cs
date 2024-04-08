@@ -1,9 +1,12 @@
 ﻿using JocysCom.ClassLibrary.Data;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -129,6 +132,50 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		#endregion
+
+
+		public static ConcurrentDictionary<int, Func<bool>> OnEnterActions { get; } = new ConcurrentDictionary<int, Func<bool>>();
+
+		public static void UseEnterToSend(TextBox control, Func<bool> action)
+		{
+			int hashCode = control.GetHashCode();
+			if (action == null)
+			{
+				control.PreviewKeyDown -= TextBox_PreviewKeyDown;
+				control.PreviewKeyUp -= TextBox_PreviewKeyUp;
+				OnEnterActions.TryRemove(hashCode, out _);
+			}
+			else
+			{
+				OnEnterActions.TryAdd(hashCode, action);
+				control.PreviewKeyDown += TextBox_PreviewKeyDown;
+				control.PreviewKeyUp += TextBox_PreviewKeyUp;
+			}
+		}
+
+		private static void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+			{
+				// Prevent new line added to the message.
+				e.Handled = true;
+			}
+		}
+
+		private static void TextBox_PreviewKeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+			{
+				Func<bool> action;
+				int hashCode = sender.GetHashCode();
+				if (OnEnterActions.TryGetValue(hashCode, out action))
+					action?.Invoke();
+				// Prevent new line added to the message.
+				e.Handled = true;
+			}
+		}
+
+
 
 	}
 }

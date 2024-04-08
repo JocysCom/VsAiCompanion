@@ -1,87 +1,115 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Versioning;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
-  public class OleDBSqlConnectionProperties : OleDBSpecializedConnectionProperties
-  {
-    private static bool _sqlNativeClientRegistered;
-    private static bool _gotSqlNativeClientRegistered;
 
-    public OleDBSqlConnectionProperties()
-      : base("SQLOLEDB")
-    {
-      this.LocalReset();
-    }
+#if NETCOREAPP
+	[SupportedOSPlatform("windows")]
+#endif
 
-    public override void Reset()
-    {
-      base.Reset();
-      this.LocalReset();
-    }
+	public class OleDBSqlConnectionProperties : OleDBSpecializedConnectionProperties
+	{
+		private static bool _sqlNativeClientRegistered;
+		private static List<string> _sqlNativeClientProviders = (List<string>)null;
+		private static bool _gotSqlNativeClientRegistered;
 
-    public override bool IsComplete
-    {
-      get
-      {
-        return base.IsComplete && this.ConnectionStringBuilder["Data Source"] is string && (this.ConnectionStringBuilder["Data Source"] as string).Length != 0 && (this.ConnectionStringBuilder["Integrated Security"] != null && this.ConnectionStringBuilder["Integrated Security"].ToString().Equals("SSPI", StringComparison.OrdinalIgnoreCase) || this.ConnectionStringBuilder["User ID"] is string && (this.ConnectionStringBuilder["User ID"] as string).Length != 0);
-      }
-    }
+		public OleDBSqlConnectionProperties()
+		  : base("SQLOLEDB")
+		{
+			LocalReset();
+		}
 
-    protected override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
-    {
-      PropertyDescriptorCollection properties = base.GetProperties(attributes);
-      if (OleDBSqlConnectionProperties.SqlNativeClientRegistered && properties.Find("Provider", true) is DynamicPropertyDescriptor propertyDescriptor)
-      {
-        if (!this.DisableProviderSelection)
-          propertyDescriptor.SetIsReadOnly(false);
-        propertyDescriptor.SetConverterType(typeof (OleDBSqlConnectionProperties.SqlProviderConverter));
-      }
-      return properties;
-    }
+		public override void Reset()
+		{
+			base.Reset();
+			LocalReset();
+		}
 
-    private void LocalReset() => this["Integrated Security"] = (object) "SSPI";
+		public override bool IsComplete
+		{
+			get
+			{
+				return base.IsComplete && ConnectionStringBuilder["Data Source"] is string && (ConnectionStringBuilder["Data Source"] as string).Length != 0 && (ConnectionStringBuilder["Integrated Security"] != null && ConnectionStringBuilder["Integrated Security"].ToString().Equals("SSPI", StringComparison.OrdinalIgnoreCase) || ConnectionStringBuilder["User ID"] is string && (ConnectionStringBuilder["User ID"] as string).Length != 0);
+			}
+		}
 
-    private static bool SqlNativeClientRegistered
-    {
-      get
-      {
-        if (!OleDBSqlConnectionProperties._gotSqlNativeClientRegistered)
-        {
-          RegistryKey registryKey = (RegistryKey) null;
-          try
-          {
-            registryKey = Registry.ClassesRoot.OpenSubKey("SQLNCLI");
-            OleDBSqlConnectionProperties._sqlNativeClientRegistered = registryKey != null;
-          }
-          finally
-          {
-            registryKey?.Close();
-          }
-          OleDBSqlConnectionProperties._gotSqlNativeClientRegistered = true;
-        }
-        return OleDBSqlConnectionProperties._sqlNativeClientRegistered;
-      }
-    }
+		protected override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
+		{
+			PropertyDescriptorCollection properties = base.GetProperties(attributes);
+			if (OleDBSqlConnectionProperties.SqlNativeClientRegistered && properties.Find("Provider", true) is DynamicPropertyDescriptor propertyDescriptor)
+			{
+				if (!DisableProviderSelection)
+					propertyDescriptor.SetIsReadOnly(false);
+				propertyDescriptor.SetConverterType(typeof(OleDBSqlConnectionProperties.SqlProviderConverter));
+			}
+			return properties;
+		}
 
-    private class SqlProviderConverter : StringConverter
-    {
-      public override bool GetStandardValuesSupported(ITypeDescriptorContext context) => true;
+		private void LocalReset() => this["Integrated Security"] = (object)"SSPI";
 
-      public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) => true;
+		public static List<string> SqlNativeClientProviders
+		{
+			get
+			{
+				if (OleDBSqlConnectionProperties._sqlNativeClientProviders == null)
+				{
+					OleDBSqlConnectionProperties._sqlNativeClientProviders = new List<string>();
+					foreach (string registeredProvider in OleDBConnectionProperties.GetRegisteredProviders())
+					{
+						if (registeredProvider.StartsWith("SQLNCLI"))
+						{
+							int length = registeredProvider.IndexOf(".");
+							if (length > 0)
+								OleDBSqlConnectionProperties._sqlNativeClientProviders.Add(registeredProvider.Substring(0, length).ToUpperInvariant());
+						}
+					}
+					OleDBSqlConnectionProperties._sqlNativeClientProviders.Sort();
+				}
+				return OleDBSqlConnectionProperties._sqlNativeClientProviders;
+			}
+		}
 
-      public override TypeConverter.StandardValuesCollection GetStandardValues(
-        ITypeDescriptorContext context)
-      {
-        return new TypeConverter.StandardValuesCollection((ICollection) new string[2]
-        {
-          "SQLOLEDB",
-          "SQLNCLI"
-        });
-      }
-    }
-  }
+		private static bool SqlNativeClientRegistered
+		{
+			get
+			{
+				if (!OleDBSqlConnectionProperties._gotSqlNativeClientRegistered)
+				{
+					RegistryKey registryKey = (RegistryKey)null;
+					try
+					{
+						OleDBSqlConnectionProperties._sqlNativeClientRegistered = OleDBSqlConnectionProperties.SqlNativeClientProviders.Count > 0;
+					}
+					finally
+					{
+						registryKey?.Close();
+					}
+					OleDBSqlConnectionProperties._gotSqlNativeClientRegistered = true;
+				}
+				return OleDBSqlConnectionProperties._sqlNativeClientRegistered;
+			}
+		}
+
+		private class SqlProviderConverter : StringConverter
+		{
+			public override bool GetStandardValuesSupported(ITypeDescriptorContext context) => true;
+
+			public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) => true;
+
+			public override TypeConverter.StandardValuesCollection GetStandardValues(
+			  ITypeDescriptorContext context)
+			{
+				List<string> values = new List<string>();
+				values.Add("SQLOLEDB");
+				foreach (string nativeClientProvider in OleDBSqlConnectionProperties.SqlNativeClientProviders)
+					values.Add(nativeClientProvider);
+				return new TypeConverter.StandardValuesCollection((ICollection)values);
+			}
+		}
+	}
 }

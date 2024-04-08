@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.SqlServer.Management.ConnectionUI {
+namespace Microsoft.Data.ConnectionUI {
     using System;
     
     
@@ -22,24 +22,24 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class SR {
+    internal class SR_Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal SR() {
+        internal SR_Resources() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.SqlServer.Management.ConnectionUI.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Data.ConnectionUI.SR_Resources", typeof(SR_Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,16 +63,16 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to mdb.
         /// </summary>
-        public static string AccessConnectionUIControl_BrowseFileDefaultExt {
+        internal static string AccessConnectionUIControl_BrowseFileDefaultExt {
             get {
                 return ResourceManager.GetString("AccessConnectionUIControl_BrowseFileDefaultExt", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Microsoft Access Databases (*.mdb)|*.mdb|All Files (*.*)|*.*.
+        ///   Looks up a localized string similar to Microsoft Access Databases (*.mdb;*.accdb)|*.mdb;*.accdb|All Files (*.*)|*.*.
         /// </summary>
-        public static string AccessConnectionUIControl_BrowseFileFilter {
+        internal static string AccessConnectionUIControl_BrowseFileFilter {
             get {
                 return ResourceManager.GetString("AccessConnectionUIControl_BrowseFileFilter", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Select Microsoft Access Database File.
         /// </summary>
-        public static string AccessConnectionUIControl_BrowseFileTitle {
+        internal static string AccessConnectionUIControl_BrowseFileTitle {
             get {
                 return ResourceManager.GetString("AccessConnectionUIControl_BrowseFileTitle", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The connection properties object must be of type OleDBAccessConnectionProperties..
         /// </summary>
-        public static string AccessConnectionUIControl_InvalidConnectionProperties {
+        internal static string AccessConnectionUIControl_InvalidConnectionProperties {
             get {
                 return ResourceManager.GetString("AccessConnectionUIControl_InvalidConnectionProperties", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to No connection properties have been set..
         /// </summary>
-        public static string AdoDotNetConnectionProperties_NoProperties {
+        internal static string AdoDotNetConnectionProperties_NoProperties {
             get {
                 return ResourceManager.GetString("AdoDotNetConnectionProperties_NoProperties", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Add....
         /// </summary>
-        public static string DataConnectionAdvancedDialog_Add {
+        internal static string DataConnectionAdvancedDialog_Add {
             get {
                 return ResourceManager.GetString("DataConnectionAdvancedDialog_Add", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Description.
         /// </summary>
-        public static string DataConnectionAdvancedDialog_Description {
+        internal static string DataConnectionAdvancedDialog_Description {
             get {
                 return ResourceManager.GetString("DataConnectionAdvancedDialog_Description", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Remo&amp;ve.
         /// </summary>
-        public static string DataConnectionAdvancedDialog_Remove {
+        internal static string DataConnectionAdvancedDialog_Remove {
             get {
                 return ResourceManager.GetString("DataConnectionAdvancedDialog_Remove", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Reset.
         /// </summary>
-        public static string DataConnectionAdvancedDialog_Reset {
+        internal static string DataConnectionAdvancedDialog_Reset {
             get {
                 return ResourceManager.GetString("DataConnectionAdvancedDialog_Reset", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The selected data provider cannot be changed when there is only one data provider available..
         /// </summary>
-        public static string DataConnectionDialog_CannotChangeSingleDataProvider {
+        internal static string DataConnectionDialog_CannotChangeSingleDataProvider {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_CannotChangeSingleDataProvider", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The selected data source cannot be changed when there is only one data source available..
         /// </summary>
-        public static string DataConnectionDialog_CannotChangeSingleDataSource {
+        internal static string DataConnectionDialog_CannotChangeSingleDataSource {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_CannotChangeSingleDataSource", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The data connection dialog state cannot be programmatically modified when the dialog is visible..
         /// </summary>
-        public static string DataConnectionDialog_CannotModifyState {
+        internal static string DataConnectionDialog_CannotModifyState {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_CannotModifyState", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Change Data Source.
         /// </summary>
-        public static string DataConnectionDialog_ChangeDataSourceTitle {
+        internal static string DataConnectionDialog_ChangeDataSourceTitle {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_ChangeDataSourceTitle", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The selected data source has no association with this data provider..
         /// </summary>
-        public static string DataConnectionDialog_DataSourceNoAssociation {
+        internal static string DataConnectionDialog_DataSourceNoAssociation {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_DataSourceNoAssociation", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The data source was not found..
         /// </summary>
-        public static string DataConnectionDialog_DataSourceNotFound {
+        internal static string DataConnectionDialog_DataSourceNotFound {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_DataSourceNotFound", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to {0} ({1}).
         /// </summary>
-        public static string DataConnectionDialog_DataSourceWithShortProvider {
+        internal static string DataConnectionDialog_DataSourceWithShortProvider {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_DataSourceWithShortProvider", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to No data provider is currently selected..
         /// </summary>
-        public static string DataConnectionDialog_NoDataProviderSelected {
+        internal static string DataConnectionDialog_NoDataProviderSelected {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_NoDataProviderSelected", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; data source has no association with any data providers..
         /// </summary>
-        public static string DataConnectionDialog_NoDataProvidersForDataSource {
+        internal static string DataConnectionDialog_NoDataProvidersForDataSource {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_NoDataProvidersForDataSource", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to No data sources are available..
         /// </summary>
-        public static string DataConnectionDialog_NoDataSourcesAvailable {
+        internal static string DataConnectionDialog_NoDataSourcesAvailable {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_NoDataSourcesAvailable", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to No data source is currently selected..
         /// </summary>
-        public static string DataConnectionDialog_NoDataSourceSelected {
+        internal static string DataConnectionDialog_NoDataSourceSelected {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_NoDataSourceSelected", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to No help is available in this context..
         /// </summary>
-        public static string DataConnectionDialog_NoHelpAvailable {
+        internal static string DataConnectionDialog_NoHelpAvailable {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_NoHelpAvailable", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to You cannot use the Form.ShowDialog() method to show the data connection dialog.  Use DataConnectionDialog.Show() instead..
         /// </summary>
-        public static string DataConnectionDialog_ShowDialogNotSupported {
+        internal static string DataConnectionDialog_ShowDialogNotSupported {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_ShowDialogNotSupported", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Test connection succeeded..
         /// </summary>
-        public static string DataConnectionDialog_TestConnectionSucceeded {
+        internal static string DataConnectionDialog_TestConnectionSucceeded {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_TestConnectionSucceeded", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Test results.
         /// </summary>
-        public static string DataConnectionDialog_TestResults {
+        internal static string DataConnectionDialog_TestResults {
             get {
                 return ResourceManager.GetString("DataConnectionDialog_TestResults", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to .NET Framework Data Provider for ODBC.
         /// </summary>
-        public static string DataProvider_Odbc {
+        internal static string DataProvider_Odbc {
             get {
                 return ResourceManager.GetString("DataProvider_Odbc", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Use this selection to specify an ODBC user or system data source name to connect to an ODBC driver through the .NET Framework Data Provider for ODBC..
         /// </summary>
-        public static string DataProvider_Odbc_DataSource_Description {
+        internal static string DataProvider_Odbc_DataSource_Description {
             get {
                 return ResourceManager.GetString("DataProvider_Odbc_DataSource_Description", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Use this data provider to connect to ODBC data sources..
         /// </summary>
-        public static string DataProvider_Odbc_Description {
+        internal static string DataProvider_Odbc_Description {
             get {
                 return ResourceManager.GetString("DataProvider_Odbc_Description", resourceCulture);
             }
@@ -306,7 +306,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to ODBC.
         /// </summary>
-        public static string DataProvider_Odbc_Short {
+        internal static string DataProvider_Odbc_Short {
             get {
                 return ResourceManager.GetString("DataProvider_Odbc_Short", resourceCulture);
             }
@@ -315,16 +315,16 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to .NET Framework Data Provider for OLE DB.
         /// </summary>
-        public static string DataProvider_OleDB {
+        internal static string DataProvider_OleDB {
             get {
                 return ResourceManager.GetString("DataProvider_OleDB", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use this selection to connect to a Microsoft Access database file using the native Jet provider through the .NET Framework Data Provider for OLE DB..
+        ///   Looks up a localized string similar to Use this selection to connect to a Microsoft Access database file through the .NET Framework Data Provider for OLE DB..
         /// </summary>
-        public static string DataProvider_OleDB_AccessDataSource_Description {
+        internal static string DataProvider_OleDB_AccessDataSource_Description {
             get {
                 return ResourceManager.GetString("DataProvider_OleDB_AccessDataSource_Description", resourceCulture);
             }
@@ -333,16 +333,16 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Use this data provider to connect to OLE DB data sources..
         /// </summary>
-        public static string DataProvider_OleDB_Description {
+        internal static string DataProvider_OleDB_Description {
             get {
                 return ResourceManager.GetString("DataProvider_OleDB_Description", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use this selection to connect to Oracle 7.3, 8i or 9i using the native MSDAORA provider through the .NET Framework Data Provider for OLE DB..
+        ///   Looks up a localized string similar to Use this selection to connect to Oracle 7.3, 8i, 9i or 10g using the native MSDAORA provider through the .NET Framework Data Provider for OLE DB..
         /// </summary>
-        public static string DataProvider_OleDB_OracleDataSource_Description {
+        internal static string DataProvider_OleDB_OracleDataSource_Description {
             get {
                 return ResourceManager.GetString("DataProvider_OleDB_OracleDataSource_Description", resourceCulture);
             }
@@ -351,16 +351,16 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to OLE DB.
         /// </summary>
-        public static string DataProvider_OleDB_Short {
+        internal static string DataProvider_OleDB_Short {
             get {
                 return ResourceManager.GetString("DataProvider_OleDB_Short", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use this selection to connect to Microsoft SQL Server 7.0, 2000 or 2005 using the native SQLOLEDB provider through the .NET Framework Data Provider for OLE DB..
+        ///   Looks up a localized string similar to Use this selection to connect to Microsoft SQL Server 2000 or above using the .NET framework data provider for OLEDB..
         /// </summary>
-        public static string DataProvider_OleDB_SqlDataSource_Description {
+        internal static string DataProvider_OleDB_SqlDataSource_Description {
             get {
                 return ResourceManager.GetString("DataProvider_OleDB_SqlDataSource_Description", resourceCulture);
             }
@@ -369,25 +369,29 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to .NET Framework Data Provider for Oracle.
         /// </summary>
-        public static string DataProvider_Oracle {
+        internal static string DataProvider_Oracle {
             get {
                 return ResourceManager.GetString("DataProvider_Oracle", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use this selection to connect to Oracle 7.3, 8i or 9i using the .NET Framework Data Provider for Oracle..
+        ///   Looks up a localized string similar to Use this selection to connect to Oracle 7.3, 8i, 9i or 10g using the .NET Framework Data Provider for Oracle.
+        ///
+        ///Using the .NET Framework Data Provider for Oracle is not recommended because it is being deprecated..
         /// </summary>
-        public static string DataProvider_Oracle_DataSource_Description {
+        internal static string DataProvider_Oracle_DataSource_Description {
             get {
                 return ResourceManager.GetString("DataProvider_Oracle_DataSource_Description", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use this data provider to connect to Oracle 7.3, 8i or 9i..
+        ///   Looks up a localized string similar to Use this data provider to connect to Oracle 7.3, 8i, 9i or 10g.
+        ///
+        ///Using the .NET Framework Data Provider for Oracle is not recommended because it is being deprecated..
         /// </summary>
-        public static string DataProvider_Oracle_Description {
+        internal static string DataProvider_Oracle_Description {
             get {
                 return ResourceManager.GetString("DataProvider_Oracle_Description", resourceCulture);
             }
@@ -396,7 +400,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to OracleClient.
         /// </summary>
-        public static string DataProvider_Oracle_Short {
+        internal static string DataProvider_Oracle_Short {
             get {
                 return ResourceManager.GetString("DataProvider_Oracle_Short", resourceCulture);
             }
@@ -405,25 +409,25 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to .NET Framework Data Provider for SQL Server.
         /// </summary>
-        public static string DataProvider_Sql {
+        internal static string DataProvider_Sql {
             get {
                 return ResourceManager.GetString("DataProvider_Sql", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use this selection to connect to Microsoft SQL Server 2000 or 2005 using the .NET Framework Data Provider for SQL Server..
+        ///   Looks up a localized string similar to Use this selection to connect to Microsoft SQL Server 2005 or above, or to Microsoft SQL Azure using the .NET Framework Data Provider for SQL Server..
         /// </summary>
-        public static string DataProvider_Sql_DataSource_Description {
+        internal static string DataProvider_Sql_DataSource_Description {
             get {
                 return ResourceManager.GetString("DataProvider_Sql_DataSource_Description", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use this data provider to connect to Microsoft SQL Server 2000 or 2005..
+        ///   Looks up a localized string similar to Use this data provider to connect to Microsoft SQL Server 2005 or above, or to Microsoft SQL Azure..
         /// </summary>
-        public static string DataProvider_Sql_Description {
+        internal static string DataProvider_Sql_Description {
             get {
                 return ResourceManager.GetString("DataProvider_Sql_Description", resourceCulture);
             }
@@ -432,7 +436,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Use this selection to attach a database file to a local Microsoft SQL Server instance (including Microsoft SQL Express) using the .NET Framework Data Provider for SQL Server..
         /// </summary>
-        public static string DataProvider_Sql_FileDataSource_Description {
+        internal static string DataProvider_Sql_FileDataSource_Description {
             get {
                 return ResourceManager.GetString("DataProvider_Sql_FileDataSource_Description", resourceCulture);
             }
@@ -441,7 +445,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to SqlClient.
         /// </summary>
-        public static string DataProvider_Sql_Short {
+        internal static string DataProvider_Sql_Short {
             get {
                 return ResourceManager.GetString("DataProvider_Sql_Short", resourceCulture);
             }
@@ -450,7 +454,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The default data provider cannot be changed when there is only one data provider available..
         /// </summary>
-        public static string DataSource_CannotChangeSingleDataProvider {
+        internal static string DataSource_CannotChangeSingleDataProvider {
             get {
                 return ResourceManager.GetString("DataSource_CannotChangeSingleDataProvider", resourceCulture);
             }
@@ -459,7 +463,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The data provider was not found..
         /// </summary>
-        public static string DataSource_DataProviderNotFound {
+        internal static string DataSource_DataProviderNotFound {
             get {
                 return ResourceManager.GetString("DataSource_DataProviderNotFound", resourceCulture);
             }
@@ -468,7 +472,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Microsoft Access Database File.
         /// </summary>
-        public static string DataSource_MicrosoftAccess {
+        internal static string DataSource_MicrosoftAccess {
             get {
                 return ResourceManager.GetString("DataSource_MicrosoftAccess", resourceCulture);
             }
@@ -477,7 +481,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Microsoft ODBC Data Source.
         /// </summary>
-        public static string DataSource_MicrosoftOdbcDsn {
+        internal static string DataSource_MicrosoftOdbcDsn {
             get {
                 return ResourceManager.GetString("DataSource_MicrosoftOdbcDsn", resourceCulture);
             }
@@ -486,7 +490,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Microsoft SQL Server.
         /// </summary>
-        public static string DataSource_MicrosoftSqlServer {
+        internal static string DataSource_MicrosoftSqlServer {
             get {
                 return ResourceManager.GetString("DataSource_MicrosoftSqlServer", resourceCulture);
             }
@@ -495,7 +499,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Microsoft SQL Server Database File.
         /// </summary>
-        public static string DataSource_MicrosoftSqlServerFile {
+        internal static string DataSource_MicrosoftSqlServerFile {
             get {
                 return ResourceManager.GetString("DataSource_MicrosoftSqlServerFile", resourceCulture);
             }
@@ -504,7 +508,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Oracle Database.
         /// </summary>
-        public static string DataSource_Oracle {
+        internal static string DataSource_Oracle {
             get {
                 return ResourceManager.GetString("DataSource_Oracle", resourceCulture);
             }
@@ -513,7 +517,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to &lt;other&gt;.
         /// </summary>
-        public static string DataSource_UnspecifiedDisplayName {
+        internal static string DataSource_UnspecifiedDisplayName {
             get {
                 return ResourceManager.GetString("DataSource_UnspecifiedDisplayName", resourceCulture);
             }
@@ -522,7 +526,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The connection properties object must be of type OdbcConnectionProperties..
         /// </summary>
-        public static string OdbcConnectionUIControl_InvalidConnectionProperties {
+        internal static string OdbcConnectionUIControl_InvalidConnectionProperties {
             get {
                 return ResourceManager.GetString("OdbcConnectionUIControl_InvalidConnectionProperties", resourceCulture);
             }
@@ -531,7 +535,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Failed to allocate ODBC connection handle..
         /// </summary>
-        public static string OdbcConnectionUIControl_SQLAllocConnectFailed {
+        internal static string OdbcConnectionUIControl_SQLAllocConnectFailed {
             get {
                 return ResourceManager.GetString("OdbcConnectionUIControl_SQLAllocConnectFailed", resourceCulture);
             }
@@ -540,7 +544,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Failed to allocate ODBC environment handle..
         /// </summary>
-        public static string OdbcConnectionUIControl_SQLAllocEnvFailed {
+        internal static string OdbcConnectionUIControl_SQLAllocEnvFailed {
             get {
                 return ResourceManager.GetString("OdbcConnectionUIControl_SQLAllocEnvFailed", resourceCulture);
             }
@@ -549,16 +553,25 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Failed to call the ODBC driver connection utility..
         /// </summary>
-        public static string OdbcConnectionUIControl_SQLDriverConnectFailed {
+        internal static string OdbcConnectionUIControl_SQLDriverConnectFailed {
             get {
                 return ResourceManager.GetString("OdbcConnectionUIControl_SQLDriverConnectFailed", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This connection cannot be tested because no database file has been specified..
+        /// </summary>
+        internal static string OleDBAccessConnectionProperties_MustSpecifyDataSource {
+            get {
+                return ResourceManager.GetString("OleDBAccessConnectionProperties_MustSpecifyDataSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The connection properties object must be of type OleDBConnectionProperties..
         /// </summary>
-        public static string OleDBConnectionUIControl_InvalidConnectionProperties {
+        internal static string OleDBConnectionUIControl_InvalidConnectionProperties {
             get {
                 return ResourceManager.GetString("OleDBConnectionUIControl_InvalidConnectionProperties", resourceCulture);
             }
@@ -567,7 +580,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The connection properties object must be of type OracleConnectionProperties or OleDBOracleConnectionProperties..
         /// </summary>
-        public static string OracleConnectionUIControl_InvalidConnectionProperties {
+        internal static string OracleConnectionUIControl_InvalidConnectionProperties {
             get {
                 return ResourceManager.GetString("OracleConnectionUIControl_InvalidConnectionProperties", resourceCulture);
             }
@@ -576,7 +589,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to This connection cannot be tested because the specified database does not exist or is not visible to the specified user..
         /// </summary>
-        public static string SqlConnectionProperties_CannotTestNonExistentDatabase {
+        internal static string SqlConnectionProperties_CannotTestNonExistentDatabase {
             get {
                 return ResourceManager.GetString("SqlConnectionProperties_CannotTestNonExistentDatabase", resourceCulture);
             }
@@ -585,16 +598,16 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to This connection cannot be tested because no server name has been specified..
         /// </summary>
-        public static string SqlConnectionProperties_MustSpecifyDataSource {
+        internal static string SqlConnectionProperties_MustSpecifyDataSource {
             get {
                 return ResourceManager.GetString("SqlConnectionProperties_MustSpecifyDataSource", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This server version is not supported.  You must have Microsoft SQL Server 2000 or later..
+        ///   Looks up a localized string similar to This server version is not supported.  You must have Microsoft SQL Server 2005 or later..
         /// </summary>
-        public static string SqlConnectionProperties_UnsupportedSqlVersion {
+        internal static string SqlConnectionProperties_UnsupportedSqlVersion {
             get {
                 return ResourceManager.GetString("SqlConnectionProperties_UnsupportedSqlVersion", resourceCulture);
             }
@@ -603,7 +616,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to mdf.
         /// </summary>
-        public static string SqlConnectionUIControl_BrowseFileDefaultExt {
+        internal static string SqlConnectionUIControl_BrowseFileDefaultExt {
             get {
                 return ResourceManager.GetString("SqlConnectionUIControl_BrowseFileDefaultExt", resourceCulture);
             }
@@ -612,7 +625,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Microsoft SQL Server Databases (*.mdf)|*.mdf|All Files (*.*)|*.*.
         /// </summary>
-        public static string SqlConnectionUIControl_BrowseFileFilter {
+        internal static string SqlConnectionUIControl_BrowseFileFilter {
             get {
                 return ResourceManager.GetString("SqlConnectionUIControl_BrowseFileFilter", resourceCulture);
             }
@@ -621,7 +634,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Select SQL Server Database File.
         /// </summary>
-        public static string SqlConnectionUIControl_BrowseFileTitle {
+        internal static string SqlConnectionUIControl_BrowseFileTitle {
             get {
                 return ResourceManager.GetString("SqlConnectionUIControl_BrowseFileTitle", resourceCulture);
             }
@@ -630,7 +643,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The connection properties object must be of type SqlConnectionProperties or OleDBSqlConnectionProperties..
         /// </summary>
-        public static string SqlConnectionUIControl_InvalidConnectionProperties {
+        internal static string SqlConnectionUIControl_InvalidConnectionProperties {
             get {
                 return ResourceManager.GetString("SqlConnectionUIControl_InvalidConnectionProperties", resourceCulture);
             }
@@ -639,7 +652,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to This connection cannot be tested because the specified database file does not exist..
         /// </summary>
-        public static string SqlFileConnectionProperties_CannotTestNonExistentMdf {
+        internal static string SqlFileConnectionProperties_CannotTestNonExistentMdf {
             get {
                 return ResourceManager.GetString("SqlFileConnectionProperties_CannotTestNonExistentMdf", resourceCulture);
             }
@@ -648,7 +661,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to No database file was specified..
         /// </summary>
-        public static string SqlFileConnectionProperties_NoFileSpecified {
+        internal static string SqlFileConnectionProperties_NoFileSpecified {
             get {
                 return ResourceManager.GetString("SqlFileConnectionProperties_NoFileSpecified", resourceCulture);
             }
@@ -657,7 +670,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to Common reasons for this problem include that the server is not installed, the service is not started or the server is upgrading your database.  If an upgrade is in process, you will be able to connect to the database when the upgrade is complete..
         /// </summary>
-        public static string SqlFileConnectionProperties_TimeoutReasons {
+        internal static string SqlFileConnectionProperties_TimeoutReasons {
             get {
                 return ResourceManager.GetString("SqlFileConnectionProperties_TimeoutReasons", resourceCulture);
             }
@@ -666,7 +679,7 @@ namespace Microsoft.SqlServer.Management.ConnectionUI {
         /// <summary>
         ///   Looks up a localized string similar to The connection properties object must be of type SqlFileConnectionProperties..
         /// </summary>
-        public static string SqlFileConnectionUIControl_InvalidConnectionProperties {
+        internal static string SqlFileConnectionUIControl_InvalidConnectionProperties {
             get {
                 return ResourceManager.GetString("SqlFileConnectionUIControl_InvalidConnectionProperties", resourceCulture);
             }

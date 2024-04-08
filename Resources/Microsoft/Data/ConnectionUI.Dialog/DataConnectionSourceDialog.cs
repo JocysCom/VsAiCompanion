@@ -2,473 +2,456 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
-  internal class DataConnectionSourceDialog : Form
-  {
-    private Label _headerLabel;
-    private Dictionary<DataSource, DataProvider> _providerSelections = new Dictionary<DataSource, DataProvider>();
-    private DataConnectionDialog _mainDialog;
-    private IContainer components;
-    private TableLayoutPanel mainTableLayoutPanel;
-    private Panel leftPanel;
-    private Label dataSourceLabel;
-    private ListBox dataSourceListBox;
-    private Label dataProviderLabel;
-    private ComboBox dataProviderComboBox;
-    private GroupBox descriptionGroupBox;
-    private Label descriptionLabel;
-    private CheckBox saveSelectionCheckBox;
-    private TableLayoutPanel buttonsTableLayoutPanel;
-    private Button okButton;
-    private Button cancelButton;
 
-    public DataConnectionSourceDialog()
-    {
-      this.InitializeComponent();
-      if (this.components == null)
-        this.components = (IContainer) new System.ComponentModel.Container();
-      this.components.Add((IComponent) new UserPreferenceChangedHandler((Form) this));
-    }
+#if NETCOREAPP
+	[SupportedOSPlatform("windows")]
+#endif
+	internal class DataConnectionSourceDialog : Form
+	{
+		private Label _headerLabel;
+		private Dictionary<DataSource, DataProvider> _providerSelections = new Dictionary<DataSource, DataProvider>();
+		private DataConnectionDialog _mainDialog;
+		private IContainer components;
+		private TableLayoutPanel mainTableLayoutPanel;
+		private Panel leftPanel;
+		private Label dataSourceLabel;
+		private ListBox dataSourceListBox;
+		private Label dataProviderLabel;
+		private ComboBox dataProviderComboBox;
+		private GroupBox descriptionGroupBox;
+		private Label descriptionLabel;
+		private CheckBox saveSelectionCheckBox;
+		private TableLayoutPanel buttonsTableLayoutPanel;
+		private Button okButton;
+		private Button cancelButton;
 
-    public DataConnectionSourceDialog(DataConnectionDialog mainDialog)
-      : this()
-    {
-      this._mainDialog = mainDialog;
-    }
+		public DataConnectionSourceDialog()
+		{
+			InitializeComponent();
+			if (components == null)
+				components = (IContainer)new System.ComponentModel.Container();
+			components.Add((IComponent)new UserPreferenceChangedHandler((Form)this));
+		}
 
-    public string Title
-    {
-      get => this.Text;
-      set => this.Text = value;
-    }
+		public DataConnectionSourceDialog(DataConnectionDialog mainDialog)
+		  : this()
+		{
+			_mainDialog = mainDialog;
+		}
 
-    public string HeaderLabel
-    {
-      get => this._headerLabel == null ? string.Empty : this._headerLabel.Text;
-      set
-      {
-        if (this._headerLabel == null)
-        {
-          switch (value)
-          {
-            case null:
-              return;
-            case "":
-              return;
-          }
-        }
-        if (this._headerLabel != null && value == this._headerLabel.Text)
-          return;
-        if (value != null)
-        {
-          if (this._headerLabel == null)
-          {
-            this._headerLabel = new Label();
-            this._headerLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this._headerLabel.FlatStyle = FlatStyle.System;
-            this._headerLabel.Location = new Point(12, 12);
-            this._headerLabel.Margin = new Padding(3);
-            this._headerLabel.Name = "dataSourceLabel";
-            this._headerLabel.Width = this.mainTableLayoutPanel.Width;
-            this._headerLabel.TabIndex = 100;
-            this.Controls.Add((Control) this._headerLabel);
-          }
-          this._headerLabel.Text = value;
-          this.MinimumSize = Size.Empty;
-          this._headerLabel.Height = LayoutUtils.GetPreferredLabelHeight(this._headerLabel);
-          int bottom1 = this._headerLabel.Bottom;
-          Padding margin = this._headerLabel.Margin;
-          int bottom2 = margin.Bottom;
-          int num1 = bottom1 + bottom2;
-          margin = this.mainTableLayoutPanel.Margin;
-          int top = margin.Top;
-          int num2 = num1 + top - this.mainTableLayoutPanel.Top;
-          this.mainTableLayoutPanel.Anchor &= ~AnchorStyles.Bottom;
-          this.Height += num2;
-          this.mainTableLayoutPanel.Anchor |= AnchorStyles.Bottom;
-          this.mainTableLayoutPanel.Top += num2;
-          this.MinimumSize = this.Size;
-        }
-        else
-        {
-          if (this._headerLabel == null)
-            return;
-          int height = this._headerLabel.Height;
-          try
-          {
-            this.Controls.Remove((Control) this._headerLabel);
-          }
-          finally
-          {
-            this._headerLabel.Dispose();
-            this._headerLabel = (Label) null;
-          }
-          this.MinimumSize = Size.Empty;
-          this.mainTableLayoutPanel.Top -= height;
-          this.mainTableLayoutPanel.Anchor &= ~AnchorStyles.Bottom;
-          this.Height -= height;
-          this.mainTableLayoutPanel.Anchor |= AnchorStyles.Bottom;
-          this.MinimumSize = this.Size;
-        }
-      }
-    }
+		public string Title
+		{
+			get => Text;
+			set => Text = value;
+		}
 
-    protected override void OnLoad(EventArgs e)
-    {
-      if (this._mainDialog != null)
-      {
-        foreach (DataSource dataSource in (IEnumerable<DataSource>) this._mainDialog.DataSources)
-        {
-          if (dataSource != this._mainDialog.UnspecifiedDataSource)
-            this.dataSourceListBox.Items.Add((object) dataSource);
-        }
-        if (this._mainDialog.DataSources.Contains(this._mainDialog.UnspecifiedDataSource))
-        {
-          this.dataSourceListBox.Sorted = false;
-          this.dataSourceListBox.Items.Add((object) this._mainDialog.UnspecifiedDataSource);
-        }
-        int val1_1 = this.dataSourceListBox.Width - (this.dataSourceListBox.Width - this.dataSourceListBox.ClientSize.Width);
-        foreach (object obj in this.dataSourceListBox.Items)
-        {
-          Size size = TextRenderer.MeasureText((obj as DataSource).DisplayName, this.dataSourceListBox.Font);
-          size.Width += 3;
-          val1_1 = Math.Max(val1_1, size.Width);
-        }
-        int num1 = val1_1;
-        int width1 = this.dataSourceListBox.Width;
-        Size size1 = this.dataSourceListBox.ClientSize;
-        int width2 = size1.Width;
-        int num2 = width1 - width2;
-        int val1_2 = num1 + num2;
-        size1 = this.dataSourceListBox.MinimumSize;
-        int width3 = size1.Width;
-        int num3 = Math.Max(val1_2, width3);
-        size1 = this.dataSourceListBox.Size;
-        int width4 = size1.Width;
-        this.Width += (num3 - width4) * 2;
-        this.MinimumSize = this.Size;
-        if (this._mainDialog.SelectedDataSource != null)
-        {
-          this.dataSourceListBox.SelectedItem = (object) this._mainDialog.SelectedDataSource;
-          if (this._mainDialog.SelectedDataProvider != null)
-            this.dataProviderComboBox.SelectedItem = (object) this._mainDialog.SelectedDataProvider;
-        }
-        foreach (DataSource dataSource in this.dataSourceListBox.Items)
-        {
-          DataProvider selectedDataProvider = this._mainDialog.GetSelectedDataProvider(dataSource);
-          if (selectedDataProvider != null)
-            this._providerSelections[dataSource] = selectedDataProvider;
-        }
-      }
-      this.saveSelectionCheckBox.Checked = this._mainDialog.SaveSelection;
-      this.SetOkButtonStatus();
-      base.OnLoad(e);
-    }
+		public string HeaderLabel
+		{
+			get => _headerLabel == null ? string.Empty : _headerLabel.Text;
+			set
+			{
+				if (_headerLabel == null)
+				{
+					switch (value)
+					{
+						case null:
+							return;
+						case "":
+							return;
+					}
+				}
+				if (_headerLabel != null && value == _headerLabel.Text)
+					return;
+				if (value != null)
+				{
+					if (_headerLabel == null)
+					{
+						_headerLabel = new Label();
+						_headerLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+						_headerLabel.FlatStyle = FlatStyle.System;
+						_headerLabel.Location = new Point(12, 12);
+						_headerLabel.Margin = new Padding(3);
+						_headerLabel.Name = "dataSourceLabel";
+						_headerLabel.Width = mainTableLayoutPanel.Width;
+						_headerLabel.TabIndex = 100;
+						Controls.Add((Control)_headerLabel);
+					}
+					_headerLabel.Text = value;
+					MinimumSize = Size.Empty;
+					_headerLabel.Height = LayoutUtils.GetPreferredLabelHeight(_headerLabel);
+					int num = _headerLabel.Bottom + _headerLabel.Margin.Bottom + mainTableLayoutPanel.Margin.Top - mainTableLayoutPanel.Top;
+					mainTableLayoutPanel.Anchor &= ~AnchorStyles.Bottom;
+					Height += num;
+					mainTableLayoutPanel.Anchor |= AnchorStyles.Bottom;
+					mainTableLayoutPanel.Top += num;
+					MinimumSize = Size;
+				}
+				else
+				{
+					if (_headerLabel == null)
+						return;
+					int height = _headerLabel.Height;
+					try
+					{
+						Controls.Remove((Control)_headerLabel);
+					}
+					finally
+					{
+						_headerLabel.Dispose();
+						_headerLabel = (Label)null;
+					}
+					MinimumSize = Size.Empty;
+					mainTableLayoutPanel.Top -= height;
+					mainTableLayoutPanel.Anchor &= ~AnchorStyles.Bottom;
+					Height -= height;
+					mainTableLayoutPanel.Anchor |= AnchorStyles.Bottom;
+					MinimumSize = Size;
+				}
+			}
+		}
 
-    protected override void OnFontChanged(EventArgs e)
-    {
-      base.OnFontChanged(e);
-      this.dataProviderComboBox.Top = this.leftPanel.Height - this.leftPanel.Padding.Bottom - this.dataProviderComboBox.Margin.Bottom - this.dataProviderComboBox.Height;
-      this.dataProviderLabel.Top = this.dataProviderComboBox.Top - this.dataProviderComboBox.Margin.Top - this.dataProviderLabel.Margin.Bottom - this.dataProviderLabel.Height;
-      int num1 = this.saveSelectionCheckBox.Right + this.saveSelectionCheckBox.Margin.Right - (this.buttonsTableLayoutPanel.Left - this.buttonsTableLayoutPanel.Margin.Left);
-      if (num1 > 0)
-      {
-        this.Width += num1;
-        this.MinimumSize = new Size(this.MinimumSize.Width + num1, this.MinimumSize.Height);
-      }
-      this.mainTableLayoutPanel.Anchor &= ~AnchorStyles.Bottom;
-      this.saveSelectionCheckBox.Anchor &= ~AnchorStyles.Bottom;
-      this.saveSelectionCheckBox.Anchor |= AnchorStyles.Top;
-      this.buttonsTableLayoutPanel.Anchor &= ~AnchorStyles.Bottom;
-      this.buttonsTableLayoutPanel.Anchor |= AnchorStyles.Top;
-      int num2 = this.Height - this.SizeFromClientSize(new Size(0, this.buttonsTableLayoutPanel.Top + this.buttonsTableLayoutPanel.Height + this.buttonsTableLayoutPanel.Margin.Bottom + this.Padding.Bottom)).Height;
-      Size minimumSize = this.MinimumSize;
-      int width = minimumSize.Width;
-      minimumSize = this.MinimumSize;
-      int height = minimumSize.Height - num2;
-      this.MinimumSize = new Size(width, height);
-      this.Height -= num2;
-      this.buttonsTableLayoutPanel.Anchor &= ~AnchorStyles.Top;
-      this.buttonsTableLayoutPanel.Anchor |= AnchorStyles.Bottom;
-      this.saveSelectionCheckBox.Anchor &= ~AnchorStyles.Top;
-      this.saveSelectionCheckBox.Anchor |= AnchorStyles.Bottom;
-      this.mainTableLayoutPanel.Anchor |= AnchorStyles.Bottom;
-    }
+		protected override void OnLoad(EventArgs e)
+		{
+			if (_mainDialog != null)
+			{
+				foreach (DataSource dataSource in (IEnumerable<DataSource>)_mainDialog.DataSources)
+				{
+					if (dataSource != _mainDialog.UnspecifiedDataSource)
+						dataSourceListBox.Items.Add((object)dataSource);
+				}
+				if (_mainDialog.DataSources.Contains(_mainDialog.UnspecifiedDataSource))
+				{
+					dataSourceListBox.Sorted = false;
+					dataSourceListBox.Items.Add((object)_mainDialog.UnspecifiedDataSource);
+				}
+				int val1 = dataSourceListBox.Width - (dataSourceListBox.Width - dataSourceListBox.ClientSize.Width);
+				foreach (object obj in dataSourceListBox.Items)
+				{
+					Size size = TextRenderer.MeasureText((obj as DataSource).DisplayName, dataSourceListBox.Font);
+					size.Width += 3;
+					val1 = Math.Max(val1, size.Width);
+				}
+				Width += (Math.Max(val1 + (dataSourceListBox.Width - dataSourceListBox.ClientSize.Width), dataSourceListBox.MinimumSize.Width) - dataSourceListBox.Size.Width) * 2;
+				MinimumSize = Size;
+				if (_mainDialog.SelectedDataSource != null)
+				{
+					dataSourceListBox.SelectedItem = (object)_mainDialog.SelectedDataSource;
+					if (_mainDialog.SelectedDataProvider != null)
+						dataProviderComboBox.SelectedItem = (object)_mainDialog.SelectedDataProvider;
+				}
+				foreach (DataSource dataSource in dataSourceListBox.Items)
+				{
+					DataProvider selectedDataProvider = _mainDialog.GetSelectedDataProvider(dataSource);
+					if (selectedDataProvider != null)
+						_providerSelections[dataSource] = selectedDataProvider;
+				}
+			}
+			saveSelectionCheckBox.Checked = _mainDialog.SaveSelection;
+			SetOkButtonStatus();
+			base.OnLoad(e);
+		}
 
-    protected override void OnRightToLeftLayoutChanged(EventArgs e)
-    {
-      base.OnRightToLeftLayoutChanged(e);
-      if (this.RightToLeftLayout && this.RightToLeft == RightToLeft.Yes)
-      {
-        LayoutUtils.MirrorControl((Control) this.dataSourceLabel, (Control) this.dataSourceListBox);
-        LayoutUtils.MirrorControl((Control) this.dataProviderLabel, (Control) this.dataProviderComboBox);
-      }
-      else
-      {
-        LayoutUtils.UnmirrorControl((Control) this.dataProviderLabel, (Control) this.dataProviderComboBox);
-        LayoutUtils.UnmirrorControl((Control) this.dataSourceLabel, (Control) this.dataSourceListBox);
-      }
-    }
+		protected override void OnFontChanged(EventArgs e)
+		{
+			base.OnFontChanged(e);
+			dataProviderComboBox.Top = leftPanel.Height - leftPanel.Padding.Bottom - dataProviderComboBox.Margin.Bottom - dataProviderComboBox.Height;
+			dataProviderLabel.Top = dataProviderComboBox.Top - dataProviderComboBox.Margin.Top - dataProviderLabel.Margin.Bottom - dataProviderLabel.Height;
+			int num1 = saveSelectionCheckBox.Right + saveSelectionCheckBox.Margin.Right - (buttonsTableLayoutPanel.Left - buttonsTableLayoutPanel.Margin.Left);
+			if (num1 > 0)
+			{
+				Width += num1;
+				MinimumSize = new Size(MinimumSize.Width + num1, MinimumSize.Height);
+			}
+			mainTableLayoutPanel.Anchor &= ~AnchorStyles.Bottom;
+			saveSelectionCheckBox.Anchor &= ~AnchorStyles.Bottom;
+			saveSelectionCheckBox.Anchor |= AnchorStyles.Top;
+			buttonsTableLayoutPanel.Anchor &= ~AnchorStyles.Bottom;
+			buttonsTableLayoutPanel.Anchor |= AnchorStyles.Top;
+			int num2 = Height - SizeFromClientSize(new Size(0, buttonsTableLayoutPanel.Top + buttonsTableLayoutPanel.Height + buttonsTableLayoutPanel.Margin.Bottom + Padding.Bottom)).Height;
+			MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - num2);
+			Height -= num2;
+			buttonsTableLayoutPanel.Anchor &= ~AnchorStyles.Top;
+			buttonsTableLayoutPanel.Anchor |= AnchorStyles.Bottom;
+			saveSelectionCheckBox.Anchor &= ~AnchorStyles.Top;
+			saveSelectionCheckBox.Anchor |= AnchorStyles.Bottom;
+			mainTableLayoutPanel.Anchor |= AnchorStyles.Bottom;
+		}
 
-    protected override void OnRightToLeftChanged(EventArgs e)
-    {
-      base.OnRightToLeftChanged(e);
-      if (this.RightToLeftLayout && this.RightToLeft == RightToLeft.Yes)
-      {
-        LayoutUtils.MirrorControl((Control) this.dataSourceLabel, (Control) this.dataSourceListBox);
-        LayoutUtils.MirrorControl((Control) this.dataProviderLabel, (Control) this.dataProviderComboBox);
-      }
-      else
-      {
-        LayoutUtils.UnmirrorControl((Control) this.dataProviderLabel, (Control) this.dataProviderComboBox);
-        LayoutUtils.UnmirrorControl((Control) this.dataSourceLabel, (Control) this.dataSourceListBox);
-      }
-    }
+		protected override void OnRightToLeftLayoutChanged(EventArgs e)
+		{
+			base.OnRightToLeftLayoutChanged(e);
+			if (RightToLeftLayout && RightToLeft == RightToLeft.Yes)
+			{
+				LayoutUtils.MirrorControl((Control)dataSourceLabel, (Control)dataSourceListBox);
+				LayoutUtils.MirrorControl((Control)dataProviderLabel, (Control)dataProviderComboBox);
+			}
+			else
+			{
+				LayoutUtils.UnmirrorControl((Control)dataProviderLabel, (Control)dataProviderComboBox);
+				LayoutUtils.UnmirrorControl((Control)dataSourceLabel, (Control)dataSourceListBox);
+			}
+		}
 
-    protected override void OnHelpRequested(HelpEventArgs hevent)
-    {
-      Control activeControl = HelpUtils.GetActiveControl((Form) this);
-      DataConnectionDialogContext context = DataConnectionDialogContext.Source;
-      if (activeControl == this.dataSourceListBox)
-        context = DataConnectionDialogContext.SourceListBox;
-      if (activeControl == this.dataProviderComboBox)
-        context = DataConnectionDialogContext.SourceProviderComboBox;
-      if (activeControl == this.okButton)
-        context = DataConnectionDialogContext.SourceOkButton;
-      if (activeControl == this.cancelButton)
-        context = DataConnectionDialogContext.SourceCancelButton;
-      ContextHelpEventArgs e = new ContextHelpEventArgs(context, hevent.MousePos);
-      this._mainDialog.OnContextHelpRequested(e);
-      hevent.Handled = e.Handled;
-      if (e.Handled)
-        return;
-      base.OnHelpRequested(hevent);
-    }
+		protected override void OnRightToLeftChanged(EventArgs e)
+		{
+			base.OnRightToLeftChanged(e);
+			if (RightToLeftLayout && RightToLeft == RightToLeft.Yes)
+			{
+				LayoutUtils.MirrorControl((Control)dataSourceLabel, (Control)dataSourceListBox);
+				LayoutUtils.MirrorControl((Control)dataProviderLabel, (Control)dataProviderComboBox);
+			}
+			else
+			{
+				LayoutUtils.UnmirrorControl((Control)dataProviderLabel, (Control)dataProviderComboBox);
+				LayoutUtils.UnmirrorControl((Control)dataSourceLabel, (Control)dataSourceListBox);
+			}
+		}
 
-    protected override void WndProc(ref Message m)
-    {
-      if (this._mainDialog.TranslateHelpButton && HelpUtils.IsContextHelpMessage(ref m))
-        HelpUtils.TranslateContextHelpMessage((Form) this, ref m);
-      base.WndProc(ref m);
-    }
+		protected override void OnHelpRequested(HelpEventArgs hevent)
+		{
+			Control activeControl = HelpUtils.GetActiveControl((Form)this);
+			DataConnectionDialogContext context = DataConnectionDialogContext.Source;
+			if (activeControl == dataSourceListBox)
+				context = DataConnectionDialogContext.SourceListBox;
+			if (activeControl == dataProviderComboBox)
+				context = DataConnectionDialogContext.SourceProviderComboBox;
+			if (activeControl == okButton)
+				context = DataConnectionDialogContext.SourceOkButton;
+			if (activeControl == cancelButton)
+				context = DataConnectionDialogContext.SourceCancelButton;
+			ContextHelpEventArgs e = new ContextHelpEventArgs(context, hevent.MousePos);
+			_mainDialog.OnContextHelpRequested(e);
+			hevent.Handled = e.Handled;
+			if (e.Handled)
+				return;
+			base.OnHelpRequested(hevent);
+		}
 
-    private void FormatDataSource(object sender, ListControlConvertEventArgs e)
-    {
-      if (!(e.DesiredType == typeof (string)))
-        return;
-      e.Value = (object) (e.ListItem as DataSource).DisplayName;
-    }
+		protected override void WndProc(ref Message m)
+		{
+			if (_mainDialog.TranslateHelpButton && HelpUtils.IsContextHelpMessage(ref m))
+				HelpUtils.TranslateContextHelpMessage((Form)this, ref m);
+			base.WndProc(ref m);
+		}
 
-    private void ChangeDataSource(object sender, EventArgs e)
-    {
-      DataSource selectedItem = this.dataSourceListBox.SelectedItem as DataSource;
-      this.dataProviderComboBox.Items.Clear();
-      if (selectedItem != null)
-      {
-        foreach (object provider in (IEnumerable<DataProvider>) selectedItem.Providers)
-          this.dataProviderComboBox.Items.Add(provider);
-        if (!this._providerSelections.ContainsKey(selectedItem))
-          this._providerSelections.Add(selectedItem, selectedItem.DefaultProvider);
-        this.dataProviderComboBox.SelectedItem = (object) this._providerSelections[selectedItem];
-      }
-      else
-        this.dataProviderComboBox.Items.Add((object) string.Empty);
-      this.ConfigureDescription();
-      this.SetOkButtonStatus();
-    }
+		private void FormatDataSource(object sender, ListControlConvertEventArgs e)
+		{
+			if (!(e.DesiredType == typeof(string)))
+				return;
+			e.Value = (object)(e.ListItem as DataSource).DisplayName;
+		}
 
-    private void SelectDataSource(object sender, EventArgs e)
-    {
-      if (!this.okButton.Enabled)
-        return;
-      this.DialogResult = DialogResult.OK;
-      this.DoOk(sender, e);
-      this.Close();
-    }
+		private void ChangeDataSource(object sender, EventArgs e)
+		{
+			DataSource selectedItem = dataSourceListBox.SelectedItem as DataSource;
+			dataProviderComboBox.Items.Clear();
+			if (selectedItem != null)
+			{
+				foreach (object provider in (IEnumerable<DataProvider>)selectedItem.Providers)
+					dataProviderComboBox.Items.Add(provider);
+				if (!_providerSelections.ContainsKey(selectedItem))
+					_providerSelections.Add(selectedItem, selectedItem.DefaultProvider);
+				dataProviderComboBox.SelectedItem = (object)_providerSelections[selectedItem];
+			}
+			else
+				dataProviderComboBox.Items.Add((object)string.Empty);
+			ConfigureDescription();
+			SetOkButtonStatus();
+		}
 
-    private void FormatDataProvider(object sender, ListControlConvertEventArgs e)
-    {
-      if (!(e.DesiredType == typeof (string)))
-        return;
-      e.Value = e.ListItem is DataProvider ? (object) (e.ListItem as DataProvider).DisplayName : (object) e.ListItem.ToString();
-    }
+		private void SelectDataSource(object sender, EventArgs e)
+		{
+			if (!okButton.Enabled)
+				return;
+			DialogResult = DialogResult.OK;
+			DoOk(sender, e);
+			Close();
+		}
 
-    private void SetDataProviderDropDownWidth(object sender, EventArgs e)
-    {
-      if (this.dataProviderComboBox.Items.Count > 0 && !(this.dataProviderComboBox.Items[0] is string))
-      {
-        int num = 0;
-        using (Graphics dc = Graphics.FromHwnd(this.dataProviderComboBox.Handle))
-        {
-          foreach (DataProvider dataProvider in this.dataProviderComboBox.Items)
-          {
-            int width = TextRenderer.MeasureText((IDeviceContext) dc, dataProvider.DisplayName, this.dataProviderComboBox.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.WordBreak).Width;
-            if (width > num)
-              num = width;
-          }
-        }
-        this.dataProviderComboBox.DropDownWidth = num + 3;
-        if (this.dataProviderComboBox.Items.Count <= this.dataProviderComboBox.MaxDropDownItems)
-          return;
-        this.dataProviderComboBox.DropDownWidth += SystemInformation.VerticalScrollBarWidth;
-      }
-      else
-        this.dataProviderComboBox.DropDownWidth = Math.Max(1, this.dataProviderComboBox.Width);
-    }
+		private void FormatDataProvider(object sender, ListControlConvertEventArgs e)
+		{
+			if (!(e.DesiredType == typeof(string)))
+				return;
+			e.Value = e.ListItem is DataProvider ? (object)(e.ListItem as DataProvider).DisplayName : (object)e.ListItem.ToString();
+		}
 
-    private void ChangeDataProvider(object sender, EventArgs e)
-    {
-      if (this.dataSourceListBox.SelectedItem != null)
-        this._providerSelections[this.dataSourceListBox.SelectedItem as DataSource] = this.dataProviderComboBox.SelectedItem as DataProvider;
-      this.ConfigureDescription();
-      this.SetOkButtonStatus();
-    }
+		private void SetDataProviderDropDownWidth(object sender, EventArgs e)
+		{
+			if (dataProviderComboBox.Items.Count > 0 && !(dataProviderComboBox.Items[0] is string))
+			{
+				int num = 0;
+				using (Graphics dc = Graphics.FromHwnd(dataProviderComboBox.Handle))
+				{
+					foreach (DataProvider dataProvider in dataProviderComboBox.Items)
+					{
+						int width = TextRenderer.MeasureText((IDeviceContext)dc, dataProvider.DisplayName, dataProviderComboBox.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.WordBreak).Width;
+						if (width > num)
+							num = width;
+					}
+				}
+				dataProviderComboBox.DropDownWidth = num + 3;
+				if (dataProviderComboBox.Items.Count <= dataProviderComboBox.MaxDropDownItems)
+					return;
+				dataProviderComboBox.DropDownWidth += SystemInformation.VerticalScrollBarWidth;
+			}
+			else
+				dataProviderComboBox.DropDownWidth = dataProviderComboBox.Width;
+		}
 
-    private void ConfigureDescription()
-    {
-      if (this.dataProviderComboBox.SelectedItem is DataProvider)
-      {
-        if (this.dataSourceListBox.SelectedItem == this._mainDialog.UnspecifiedDataSource)
-          this.descriptionLabel.Text = (this.dataProviderComboBox.SelectedItem as DataProvider).Description;
-        else
-          this.descriptionLabel.Text = (this.dataProviderComboBox.SelectedItem as DataProvider).GetDescription(this.dataSourceListBox.SelectedItem as DataSource);
-      }
-      else
-        this.descriptionLabel.Text = (string) null;
-    }
+		private void ChangeDataProvider(object sender, EventArgs e)
+		{
+			if (dataSourceListBox.SelectedItem != null)
+				_providerSelections[dataSourceListBox.SelectedItem as DataSource] = dataProviderComboBox.SelectedItem as DataProvider;
+			ConfigureDescription();
+			SetOkButtonStatus();
+		}
 
-    private void SetSaveSelection(object sender, EventArgs e)
-    {
-      this._mainDialog.SaveSelection = this.saveSelectionCheckBox.Checked;
-    }
+		private void ConfigureDescription()
+		{
+			if (dataProviderComboBox.SelectedItem is DataProvider)
+			{
+				if (dataSourceListBox.SelectedItem == _mainDialog.UnspecifiedDataSource)
+					descriptionLabel.Text = (dataProviderComboBox.SelectedItem as DataProvider).Description;
+				else
+					descriptionLabel.Text = (dataProviderComboBox.SelectedItem as DataProvider).GetDescription(dataSourceListBox.SelectedItem as DataSource);
+			}
+			else
+				descriptionLabel.Text = (string)null;
+		}
 
-    private void SetOkButtonStatus()
-    {
-      this.okButton.Enabled = this.dataSourceListBox.SelectedItem is DataSource && this.dataProviderComboBox.SelectedItem is DataProvider;
-    }
+		private void SetSaveSelection(object sender, EventArgs e)
+		{
+			_mainDialog.SaveSelection = saveSelectionCheckBox.Checked;
+		}
 
-    private void DoOk(object sender, EventArgs e)
-    {
-      this._mainDialog.SetSelectedDataSourceInternal(this.dataSourceListBox.SelectedItem as DataSource);
-      foreach (DataSource dataSource in this.dataSourceListBox.Items)
-      {
-        DataProvider providerSelection = this._providerSelections.ContainsKey(dataSource) ? this._providerSelections[dataSource] : (DataProvider) null;
-        this._mainDialog.SetSelectedDataProviderInternal(dataSource, providerSelection);
-      }
-    }
+		private void SetOkButtonStatus()
+		{
+			okButton.Enabled = dataSourceListBox.SelectedItem is DataSource && dataProviderComboBox.SelectedItem is DataProvider;
+		}
 
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing && this.components != null)
-        this.components.Dispose();
-      base.Dispose(disposing);
-    }
+		private void DoOk(object sender, EventArgs e)
+		{
+			_mainDialog.SetSelectedDataSourceInternal(dataSourceListBox.SelectedItem as DataSource);
+			foreach (DataSource dataSource in dataSourceListBox.Items)
+			{
+				DataProvider providerSelection = _providerSelections.ContainsKey(dataSource) ? _providerSelections[dataSource] : (DataProvider)null;
+				_mainDialog.SetSelectedDataProviderInternal(dataSource, providerSelection);
+			}
+		}
 
-    private void InitializeComponent()
-    {
-      ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof (DataConnectionSourceDialog));
-      this.mainTableLayoutPanel = new TableLayoutPanel();
-      this.leftPanel = new Panel();
-      this.dataSourceLabel = new Label();
-      this.dataSourceListBox = new ListBox();
-      this.dataProviderLabel = new Label();
-      this.dataProviderComboBox = new ComboBox();
-      this.descriptionGroupBox = new GroupBox();
-      this.descriptionLabel = new Label();
-      this.saveSelectionCheckBox = new CheckBox();
-      this.buttonsTableLayoutPanel = new TableLayoutPanel();
-      this.okButton = new Button();
-      this.cancelButton = new Button();
-      this.mainTableLayoutPanel.SuspendLayout();
-      this.leftPanel.SuspendLayout();
-      this.descriptionGroupBox.SuspendLayout();
-      this.buttonsTableLayoutPanel.SuspendLayout();
-      this.SuspendLayout();
-      componentResourceManager.ApplyResources((object) this.mainTableLayoutPanel, "mainTableLayoutPanel");
-      this.mainTableLayoutPanel.Controls.Add((Control) this.leftPanel, 0, 0);
-      this.mainTableLayoutPanel.Controls.Add((Control) this.descriptionGroupBox, 1, 0);
-      this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
-      this.leftPanel.Controls.Add((Control) this.dataSourceLabel);
-      this.leftPanel.Controls.Add((Control) this.dataSourceListBox);
-      this.leftPanel.Controls.Add((Control) this.dataProviderLabel);
-      this.leftPanel.Controls.Add((Control) this.dataProviderComboBox);
-      componentResourceManager.ApplyResources((object) this.leftPanel, "leftPanel");
-      this.leftPanel.Name = "leftPanel";
-      componentResourceManager.ApplyResources((object) this.dataSourceLabel, "dataSourceLabel");
-      this.dataSourceLabel.FlatStyle = FlatStyle.System;
-      this.dataSourceLabel.Name = "dataSourceLabel";
-      componentResourceManager.ApplyResources((object) this.dataSourceListBox, "dataSourceListBox");
-      this.dataSourceListBox.FormattingEnabled = true;
-      this.dataSourceListBox.MinimumSize = new Size(200, 108);
-      this.dataSourceListBox.Name = "dataSourceListBox";
-      this.dataSourceListBox.Sorted = true;
-      this.dataSourceListBox.DoubleClick += new EventHandler(this.SelectDataSource);
-      this.dataSourceListBox.SelectedIndexChanged += new EventHandler(this.ChangeDataSource);
-      this.dataSourceListBox.Format += new ListControlConvertEventHandler(this.FormatDataSource);
-      componentResourceManager.ApplyResources((object) this.dataProviderLabel, "dataProviderLabel");
-      this.dataProviderLabel.FlatStyle = FlatStyle.System;
-      this.dataProviderLabel.Name = "dataProviderLabel";
-      componentResourceManager.ApplyResources((object) this.dataProviderComboBox, "dataProviderComboBox");
-      this.dataProviderComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.dataProviderComboBox.FormattingEnabled = true;
-      this.dataProviderComboBox.Items.AddRange(new object[1]
-      {
-        (object) componentResourceManager.GetString("dataProviderComboBox.Items")
-      });
-      this.dataProviderComboBox.Name = "dataProviderComboBox";
-      this.dataProviderComboBox.Sorted = true;
-      this.dataProviderComboBox.SelectedIndexChanged += new EventHandler(this.ChangeDataProvider);
-      this.dataProviderComboBox.DropDown += new EventHandler(this.SetDataProviderDropDownWidth);
-      this.dataProviderComboBox.Format += new ListControlConvertEventHandler(this.FormatDataProvider);
-      componentResourceManager.ApplyResources((object) this.descriptionGroupBox, "descriptionGroupBox");
-      this.descriptionGroupBox.Controls.Add((Control) this.descriptionLabel);
-      this.descriptionGroupBox.FlatStyle = FlatStyle.System;
-      this.descriptionGroupBox.Name = "descriptionGroupBox";
-      this.descriptionGroupBox.TabStop = false;
-      componentResourceManager.ApplyResources((object) this.descriptionLabel, "descriptionLabel");
-      this.descriptionLabel.FlatStyle = FlatStyle.System;
-      this.descriptionLabel.Name = "descriptionLabel";
-      componentResourceManager.ApplyResources((object) this.saveSelectionCheckBox, "saveSelectionCheckBox");
-      this.saveSelectionCheckBox.Name = "saveSelectionCheckBox";
-      this.saveSelectionCheckBox.CheckedChanged += new EventHandler(this.SetSaveSelection);
-      componentResourceManager.ApplyResources((object) this.buttonsTableLayoutPanel, "buttonsTableLayoutPanel");
-      this.buttonsTableLayoutPanel.Controls.Add((Control) this.okButton, 0, 0);
-      this.buttonsTableLayoutPanel.Controls.Add((Control) this.cancelButton, 1, 0);
-      this.buttonsTableLayoutPanel.Name = "buttonsTableLayoutPanel";
-      componentResourceManager.ApplyResources((object) this.okButton, "okButton");
-      this.okButton.DialogResult = DialogResult.OK;
-      this.okButton.MinimumSize = new Size(75, 23);
-      this.okButton.Name = "okButton";
-      this.okButton.Click += new EventHandler(this.DoOk);
-      componentResourceManager.ApplyResources((object) this.cancelButton, "cancelButton");
-      this.cancelButton.DialogResult = DialogResult.Cancel;
-      this.cancelButton.MinimumSize = new Size(75, 23);
-      this.cancelButton.Name = "cancelButton";
-      this.AcceptButton = (IButtonControl) this.okButton;
-      componentResourceManager.ApplyResources((object) this, "$this");
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.CancelButton = (IButtonControl) this.cancelButton;
-      this.Controls.Add((Control) this.mainTableLayoutPanel);
-      this.Controls.Add((Control) this.saveSelectionCheckBox);
-      this.Controls.Add((Control) this.buttonsTableLayoutPanel);
-      this.HelpButton = true;
-      this.MaximizeBox = false;
-      this.MinimizeBox = false;
-      this.Name = nameof (DataConnectionSourceDialog);
-      this.ShowIcon = false;
-      this.ShowInTaskbar = false;
-      this.mainTableLayoutPanel.ResumeLayout(false);
-      this.leftPanel.ResumeLayout(false);
-      this.leftPanel.PerformLayout();
-      this.descriptionGroupBox.ResumeLayout(false);
-      this.buttonsTableLayoutPanel.ResumeLayout(false);
-      this.buttonsTableLayoutPanel.PerformLayout();
-      this.ResumeLayout(false);
-      this.PerformLayout();
-    }
-  }
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && components != null)
+				components.Dispose();
+			base.Dispose(disposing);
+		}
+
+		private void InitializeComponent()
+		{
+			ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof(DataConnectionSourceDialog));
+			mainTableLayoutPanel = new TableLayoutPanel();
+			leftPanel = new Panel();
+			dataSourceLabel = new Label();
+			dataSourceListBox = new ListBox();
+			dataProviderLabel = new Label();
+			dataProviderComboBox = new ComboBox();
+			descriptionGroupBox = new GroupBox();
+			descriptionLabel = new Label();
+			saveSelectionCheckBox = new CheckBox();
+			buttonsTableLayoutPanel = new TableLayoutPanel();
+			okButton = new Button();
+			cancelButton = new Button();
+			mainTableLayoutPanel.SuspendLayout();
+			leftPanel.SuspendLayout();
+			descriptionGroupBox.SuspendLayout();
+			buttonsTableLayoutPanel.SuspendLayout();
+			SuspendLayout();
+			componentResourceManager.ApplyResources((object)mainTableLayoutPanel, "mainTableLayoutPanel");
+			mainTableLayoutPanel.Controls.Add((Control)leftPanel, 0, 0);
+			mainTableLayoutPanel.Controls.Add((Control)descriptionGroupBox, 1, 0);
+			mainTableLayoutPanel.Name = "mainTableLayoutPanel";
+			leftPanel.Controls.Add((Control)dataSourceLabel);
+			leftPanel.Controls.Add((Control)dataSourceListBox);
+			leftPanel.Controls.Add((Control)dataProviderLabel);
+			leftPanel.Controls.Add((Control)dataProviderComboBox);
+			componentResourceManager.ApplyResources((object)leftPanel, "leftPanel");
+			leftPanel.Name = "leftPanel";
+			componentResourceManager.ApplyResources((object)dataSourceLabel, "dataSourceLabel");
+			dataSourceLabel.FlatStyle = FlatStyle.System;
+			dataSourceLabel.Name = "dataSourceLabel";
+			componentResourceManager.ApplyResources((object)dataSourceListBox, "dataSourceListBox");
+			dataSourceListBox.FormattingEnabled = true;
+			dataSourceListBox.MinimumSize = new Size(200, 108);
+			dataSourceListBox.Name = "dataSourceListBox";
+			dataSourceListBox.Sorted = true;
+			dataSourceListBox.DoubleClick += new EventHandler(SelectDataSource);
+			dataSourceListBox.SelectedIndexChanged += new EventHandler(ChangeDataSource);
+			dataSourceListBox.Format += new ListControlConvertEventHandler(FormatDataSource);
+			componentResourceManager.ApplyResources((object)dataProviderLabel, "dataProviderLabel");
+			dataProviderLabel.FlatStyle = FlatStyle.System;
+			dataProviderLabel.Name = "dataProviderLabel";
+			componentResourceManager.ApplyResources((object)dataProviderComboBox, "dataProviderComboBox");
+			dataProviderComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+			dataProviderComboBox.FormattingEnabled = true;
+			dataProviderComboBox.Items.AddRange(new object[1]
+			{
+		(object) componentResourceManager.GetString("dataProviderComboBox.Items")
+			});
+			dataProviderComboBox.Name = "dataProviderComboBox";
+			dataProviderComboBox.Sorted = true;
+			dataProviderComboBox.SelectedIndexChanged += new EventHandler(ChangeDataProvider);
+			dataProviderComboBox.DropDown += new EventHandler(SetDataProviderDropDownWidth);
+			dataProviderComboBox.Format += new ListControlConvertEventHandler(FormatDataProvider);
+			componentResourceManager.ApplyResources((object)descriptionGroupBox, "descriptionGroupBox");
+			descriptionGroupBox.Controls.Add((Control)descriptionLabel);
+			descriptionGroupBox.FlatStyle = FlatStyle.System;
+			descriptionGroupBox.Name = "descriptionGroupBox";
+			descriptionGroupBox.TabStop = false;
+			componentResourceManager.ApplyResources((object)descriptionLabel, "descriptionLabel");
+			descriptionLabel.FlatStyle = FlatStyle.System;
+			descriptionLabel.Name = "descriptionLabel";
+			componentResourceManager.ApplyResources((object)saveSelectionCheckBox, "saveSelectionCheckBox");
+			saveSelectionCheckBox.Name = "saveSelectionCheckBox";
+			saveSelectionCheckBox.CheckedChanged += new EventHandler(SetSaveSelection);
+			componentResourceManager.ApplyResources((object)buttonsTableLayoutPanel, "buttonsTableLayoutPanel");
+			buttonsTableLayoutPanel.Controls.Add((Control)okButton, 0, 0);
+			buttonsTableLayoutPanel.Controls.Add((Control)cancelButton, 1, 0);
+			buttonsTableLayoutPanel.Name = "buttonsTableLayoutPanel";
+			componentResourceManager.ApplyResources((object)okButton, "okButton");
+			okButton.DialogResult = DialogResult.OK;
+			okButton.MinimumSize = new Size(75, 23);
+			okButton.Name = "okButton";
+			okButton.Click += new EventHandler(DoOk);
+			componentResourceManager.ApplyResources((object)cancelButton, "cancelButton");
+			cancelButton.DialogResult = DialogResult.Cancel;
+			cancelButton.MinimumSize = new Size(75, 23);
+			cancelButton.Name = "cancelButton";
+			AcceptButton = (IButtonControl)okButton;
+			componentResourceManager.ApplyResources((object)this, "$this");
+			AutoScaleMode = AutoScaleMode.Font;
+			CancelButton = (IButtonControl)cancelButton;
+			Controls.Add((Control)mainTableLayoutPanel);
+			Controls.Add((Control)saveSelectionCheckBox);
+			Controls.Add((Control)buttonsTableLayoutPanel);
+			HelpButton = true;
+			MaximizeBox = false;
+			MinimizeBox = false;
+			Name = nameof(DataConnectionSourceDialog);
+			ShowIcon = false;
+			ShowInTaskbar = false;
+			mainTableLayoutPanel.ResumeLayout(false);
+			leftPanel.ResumeLayout(false);
+			leftPanel.PerformLayout();
+			descriptionGroupBox.ResumeLayout(false);
+			buttonsTableLayoutPanel.ResumeLayout(false);
+			buttonsTableLayoutPanel.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
+		}
+	}
 }

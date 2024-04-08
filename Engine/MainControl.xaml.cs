@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -111,7 +112,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Exceptions
 
-		List<Exception> ExceptionsToDisplay = new List<Exception>();
+		List<(DateTime, Exception)> ExceptionsToDisplay = new List<(DateTime, Exception)>();
+
+
 
 		public void WriteException(Exception ex)
 		{
@@ -123,9 +126,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					while (ExceptionsToDisplay.Count > 6)
 						ExceptionsToDisplay.RemoveAt(ExceptionsToDisplay.Count - 1);
-					ExceptionsToDisplay.Insert(0, ex);
-					var separator = $"\r\n{new string('-', 64)}\r\n";
-					ErrorsLogTextBox.Text = string.Join(separator, ExceptionsToDisplay);
+					var te = (DateTime.Now, ex);
+					ExceptionsToDisplay.Insert(0, te);
+					var strings = ExceptionsToDisplay
+						.Select(x => $"---- {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {new string('-', 64)}\r\n{ex}\r\b")
+						.ToList();
+					ErrorsLogTextBox.Text = string.Join("\r\n", strings);
 				};
 			});
 		}

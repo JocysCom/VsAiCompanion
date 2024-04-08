@@ -1,39 +1,44 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.Versioning;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
-  public class OleDBSpecializedConnectionProperties : OleDBConnectionProperties
-  {
-    private string _provider;
 
-    public OleDBSpecializedConnectionProperties(string provider)
-    {
-      this._provider = provider;
-      this.LocalReset();
-    }
+#if NETCOREAPP
+	[SupportedOSPlatform("windows")]
+#endif
 
-    public override void Reset()
-    {
-      base.Reset();
-      this.LocalReset();
-    }
+	public class OleDBSpecializedConnectionProperties : OleDBConnectionProperties
+	{
+		private string _provider;
 
-    protected override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
-    {
-      bool providerSelection = this.DisableProviderSelection;
-      try
-      {
-        this.DisableProviderSelection = true;
-        return base.GetProperties(attributes);
-      }
-      finally
-      {
-        this.DisableProviderSelection = providerSelection;
-      }
-    }
+		public OleDBSpecializedConnectionProperties(string provider)
+		{
+			_provider = provider;
+			LocalReset();
+		}
 
-    private void LocalReset() => this["Provider"] = (object) this._provider;
-  }
+		public override void Reset()
+		{
+			base.Reset();
+			LocalReset();
+		}
+
+		protected override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
+		{
+			bool providerSelection = DisableProviderSelection;
+			try
+			{
+				DisableProviderSelection = true;
+				return base.GetProperties(attributes);
+			}
+			finally
+			{
+				DisableProviderSelection = providerSelection;
+			}
+		}
+
+		private void LocalReset() => this["Provider"] = (object)_provider;
+	}
 }

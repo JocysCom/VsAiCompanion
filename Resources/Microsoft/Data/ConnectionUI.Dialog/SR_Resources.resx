@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DataProvider_OleDB_SqlDataSource_Description" xml:space="preserve">
-    <value>Use this selection to connect to Microsoft SQL Server 7.0, 2000 or 2005 using the native SQLOLEDB provider through the .NET Framework Data Provider for OLE DB.</value>
+    <value>Use this selection to connect to Microsoft SQL Server 2000 or above using the .NET framework data provider for OLEDB.</value>
   </data>
   <data name="OdbcConnectionUIControl_SQLDriverConnectFailed" xml:space="preserve">
     <value>Failed to call the ODBC driver connection utility.</value>
@@ -142,7 +142,7 @@
     <value>SqlClient</value>
   </data>
   <data name="DataProvider_OleDB_AccessDataSource_Description" xml:space="preserve">
-    <value>Use this selection to connect to a Microsoft Access database file using the native Jet provider through the .NET Framework Data Provider for OLE DB.</value>
+    <value>Use this selection to connect to a Microsoft Access database file through the .NET Framework Data Provider for OLE DB.</value>
   </data>
   <data name="DataSource_UnspecifiedDisplayName" xml:space="preserve">
     <value>&lt;other&gt;</value>
@@ -151,7 +151,10 @@
     <value>This connection cannot be tested because the specified database file does not exist.</value>
   </data>
   <data name="DataProvider_OleDB_OracleDataSource_Description" xml:space="preserve">
-    <value>Use this selection to connect to Oracle 7.3, 8i or 9i using the native MSDAORA provider through the .NET Framework Data Provider for OLE DB.</value>
+    <value>Use this selection to connect to Oracle 7.3, 8i, 9i or 10g using the native MSDAORA provider through the .NET Framework Data Provider for OLE DB.</value>
+  </data>
+  <data name="OleDBAccessConnectionProperties_MustSpecifyDataSource" xml:space="preserve">
+    <value>This connection cannot be tested because no database file has been specified.</value>
   </data>
   <data name="DataProvider_OleDB_Short" xml:space="preserve">
     <value>OLE DB</value>
@@ -175,7 +178,7 @@
     <value>Microsoft SQL Server</value>
   </data>
   <data name="DataProvider_Sql_DataSource_Description" xml:space="preserve">
-    <value>Use this selection to connect to Microsoft SQL Server 2000 or 2005 using the .NET Framework Data Provider for SQL Server.</value>
+    <value>Use this selection to connect to Microsoft SQL Server 2005 or above, or to Microsoft SQL Azure using the .NET Framework Data Provider for SQL Server.</value>
   </data>
   <data name="SqlConnectionUIControl_BrowseFileDefaultExt" xml:space="preserve">
     <value>mdf</value>
@@ -193,7 +196,7 @@
     <value>Use this selection to specify an ODBC user or system data source name to connect to an ODBC driver through the .NET Framework Data Provider for ODBC.</value>
   </data>
   <data name="AccessConnectionUIControl_BrowseFileFilter" xml:space="preserve">
-    <value>Microsoft Access Databases (*.mdb)|*.mdb|All Files (*.*)|*.*</value>
+    <value>Microsoft Access Databases (*.mdb;*.accdb)|*.mdb;*.accdb|All Files (*.*)|*.*</value>
   </data>
   <data name="SqlFileConnectionProperties_TimeoutReasons" xml:space="preserve">
     <value>Common reasons for this problem include that the server is not installed, the service is not started or the server is upgrading your database.  If an upgrade is in process, you will be able to connect to the database when the upgrade is complete.</value>
@@ -211,7 +214,7 @@
     <value>Remo&amp;ve</value>
   </data>
   <data name="SqlConnectionProperties_UnsupportedSqlVersion" xml:space="preserve">
-    <value>This server version is not supported.  You must have Microsoft SQL Server 2000 or later.</value>
+    <value>This server version is not supported.  You must have Microsoft SQL Server 2005 or later.</value>
   </data>
   <data name="SqlConnectionUIControl_InvalidConnectionProperties" xml:space="preserve">
     <value>The connection properties object must be of type SqlConnectionProperties or OleDBSqlConnectionProperties.</value>
@@ -277,7 +280,7 @@
     <value>mdb</value>
   </data>
   <data name="DataProvider_Sql_Description" xml:space="preserve">
-    <value>Use this data provider to connect to Microsoft SQL Server 2000 or 2005.</value>
+    <value>Use this data provider to connect to Microsoft SQL Server 2005 or above, or to Microsoft SQL Azure.</value>
   </data>
   <data name="DataConnectionDialog_CannotChangeSingleDataProvider" xml:space="preserve">
     <value>The selected data provider cannot be changed when there is only one data provider available.</value>
@@ -307,13 +310,17 @@
     <value>.NET Framework Data Provider for OLE DB</value>
   </data>
   <data name="DataProvider_Oracle_Description" xml:space="preserve">
-    <value>Use this data provider to connect to Oracle 7.3, 8i or 9i.</value>
+    <value>Use this data provider to connect to Oracle 7.3, 8i, 9i or 10g.
+
+Using the .NET Framework Data Provider for Oracle is not recommended because it is being deprecated.</value>
   </data>
   <data name="DataConnectionDialog_NoDataProviderSelected" xml:space="preserve">
     <value>No data provider is currently selected.</value>
   </data>
   <data name="DataProvider_Oracle_DataSource_Description" xml:space="preserve">
-    <value>Use this selection to connect to Oracle 7.3, 8i or 9i using the .NET Framework Data Provider for Oracle.</value>
+    <value>Use this selection to connect to Oracle 7.3, 8i, 9i or 10g using the .NET Framework Data Provider for Oracle.
+
+Using the .NET Framework Data Provider for Oracle is not recommended because it is being deprecated.</value>
   </data>
   <data name="DataProvider_Oracle_Short" xml:space="preserve">
     <value>OracleClient</value>

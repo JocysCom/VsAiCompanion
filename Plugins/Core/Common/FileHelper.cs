@@ -9,7 +9,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// <summary>
 	/// File Helper
 	/// </summary>
-	public class FileHelper : IFileHelper
+	public partial class FileHelper : IFileHelper
 	{
 
 		/// <inheritdoc/>
@@ -52,18 +52,30 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					// Check if the desired offset is beyond the length of the file.
 					if (offset >= fileStream.Length)
 						return null;
+
 					reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-					var buffer = new char[length];
-					var readLength = reader.ReadBlock(buffer, 0, (int)Math.Min(length, fileStream.Length - offset));
+
+					// Calculate the actual number of characters we can read.
+					// This gets the smaller value between the specified length and the remaining file length from the offset.
+					var actualLength = Math.Min(length, fileStream.Length - offset);
+
+					// Ensure actualLength fits within int.MaxValue, as new char[] expects an int, not long.
+					actualLength = Math.Min(actualLength, int.MaxValue);
+
+					var buffer = new char[actualLength];
+					var readLength = reader.ReadBlock(buffer, 0, (int)actualLength);
+
 					// If no characters were read, return null to indicate that the operation was not successful.
 					if (readLength == 0)
 						return null;
+
 					result = new string(buffer, 0, readLength);
 				}
 				return result;
 			}
 			catch (Exception)
 			{
+				// Optionally, log the exception or handle it accordingly.
 				return null;
 			}
 		}

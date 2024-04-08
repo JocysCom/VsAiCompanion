@@ -552,6 +552,6 @@
 Use only the contents from these documents to answer questions.</value>
   </data>
   <data name="TextBox_Drop_Files_Instructions" xml:space="preserve">
-    <value>Please analyze the text in the attached files:</value>
+    <value>Extract and analyze the plain text content from the following files:</value>
   </data>
 </root>

@@ -1,5 +1,6 @@
 ﻿using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using System.Collections.Generic;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
@@ -7,6 +8,22 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	public partial class Basic
 	{
 		#region File Operations
+
+		/// <summary>
+		/// Read plain text content from files and documents. Supported document formats include: .docx, .xlsx, .xls, .pdf.
+		/// </summary>
+		/// <param name="paths">List of files to read from.</param>
+		[RiskLevel(RiskLevel.Medium)]
+		public List<OperationResult<string>> ReadFileAsPlainText(string[] paths)
+		{
+			var list = new List<OperationResult<string>>();
+			foreach (var path in paths)
+			{
+				var item = fileHelper.ReadFileAsPlainText(path);
+				list.Add(item);
+			}
+			return list;
+		}
 
 		/// <summary>
 		/// Read information and contents of files.

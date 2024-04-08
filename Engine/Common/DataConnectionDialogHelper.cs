@@ -1,15 +1,14 @@
 ﻿using System;
+using System.Data.Common;
 #if NETFRAMEWORK
 using Microsoft.Data.ConnectionUI;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure.DependencyResolution;
-using System.Data.SqlClient;
-using System.Data.SQLite.EF6;
 #else
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.SqlServer.Management.ConnectionUI;
+using Microsoft.Data.ConnectionUI;
+using JocysCom.VS.AiCompanion.DataClient;
+//using Microsoft.SqlServer.Management.ConnectionUI;
 #endif
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -26,13 +25,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			dcd.SelectedDataProvider = DataProvider.SqlDataProvider;
 #else
 			//DataSource.AddStandardDataSources(dcd);
+			//SqlInitHelper.AddDbProviderFactory(System.Data.Odbc.OdbcFactory.Instance);
+			//SqlInitHelper.AddDbProviderFactory(System.Data.OleDb.OleDbFactory.Instance);
+			//SqlInitHelper.AddDbProviderFactory(System.Data.OracleClient.OracleClientFactory.Instance);
+			SqlInitHelper.AddDbProviderFactory(System.Data.SqlClient.SqlClientFactory.Instance);
 			dcd.DataSources.Add(DataSource.SqlDataSource);
-			//var a0 = DataProvider.SqlDataProvider.CreateConnectionProperties(DataSource.SqlDataSource);
-			//var a1 = DataProvider.SqlDataProvider.CreateConnectionUIControl(DataSource.SqlDataSource);
-			DataSource.SqlDataSource.Providers.Add(DataProvider.SqlDataProvider);
-			dcd.SetSelectedDataProvider(DataSource.SqlDataSource, DataProvider.SqlDataProvider);
+			dcd.SelectedDataSource = DataSource.SqlDataSource;
+			dcd.SelectedDataProvider = DataProvider.SqlDataProvider;
 #endif
-
 			try
 			{
 				dcd.ConnectionString = ReformatConnectionStringForSystemData(connectionString);
@@ -45,6 +45,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (dcd.DialogResult == System.Windows.Forms.DialogResult.OK)
 				return dcd.ConnectionString;
 			return null;
+		}
+
+		private static void RegisterFactory(DbProviderFactory instance)
+		{
+#if NETFRAMEWORK
+#else
+			DbProviderFactories.RegisterFactory(instance.GetType().Namespace, instance);
+#endif
 		}
 
 		private static string ReformatConnectionStringForSystemData(string connectionString)

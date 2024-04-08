@@ -74,6 +74,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="Deployment\Setup\*.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\File.sql" />
 	  <EmbeddedResource Include="Deployment\File.Sqlite.sql" />
 	  <EmbeddedResource Include="Deployment\FilePart.Sqlite.sql" />
@@ -82,8 +86,16 @@
 	  <None Include="MainModel.tt.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Deployment\Setup\" />
+	</ItemGroup>
+
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 	  <Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
+	</Target>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	  <Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Deployment\CreateSetupFiles.ps1&quot;" />
 	</Target>
 
 </Project>

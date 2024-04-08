@@ -2,15 +2,13 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-#nullable disable
-namespace Microsoft.SqlServer.Management.ConnectionUI
+namespace Microsoft.Data.ConnectionUI
 {
   internal sealed class NativeMethods
   {
-    internal static Guid IID_IUnknown = new Guid("00000000-0000-0000-c000-000000000046");
-    internal static Guid CLSID_DataLinks = new Guid("2206CDB2-19C1-11d1-89E0-00C04FD7A829");
-    internal static Guid CLSID_OLEDB_ENUMERATOR = new Guid("C8B522D0-5CF3-11ce-ADE5-00AA0044773D");
-    internal static Guid CLSID_MSDASQL_ENUMERATOR = new Guid("C8B522CD-5CF3-11ce-ADE5-00AA0044773D");
+    internal const int KEY_WOW64_64KEY = 256;
+    internal const int KEY_WOW64_32KEY = 512;
+    internal const int KEY_QUERY_VALUE = 1;
     internal const int DB_E_CANCELED = -2147217842;
     internal const int CLSCTX_INPROC_SERVER = 1;
     internal const int WM_SETFOCUS = 7;
@@ -25,6 +23,11 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
     internal const int DBPROMPTOPTIONS_DISABLE_PROVIDER_SELECTION = 16;
     internal const ushort SQL_DRIVER_PROMPT = 2;
     internal const short SQL_NO_DATA = 100;
+    internal static readonly UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(2147483650U);
+    internal static Guid IID_IUnknown = new Guid("00000000-0000-0000-c000-000000000046");
+    internal static Guid CLSID_DataLinks = new Guid("2206CDB2-19C1-11d1-89E0-00C04FD7A829");
+    internal static Guid CLSID_OLEDB_ENUMERATOR = new Guid("C8B522D0-5CF3-11ce-ADE5-00AA0044773D");
+    internal static Guid CLSID_MSDASQL_ENUMERATOR = new Guid("C8B522CD-5CF3-11ce-ADE5-00AA0044773D");
 
     private NativeMethods()
     {
@@ -63,6 +66,71 @@ namespace Microsoft.SqlServer.Management.ConnectionUI
 
     [DllImport("odbc32.dll")]
     internal static extern short SQLFreeEnv(IntPtr EnvironmentHandle);
+
+    [DllImport("odbccp32.dll", CharSet = CharSet.Unicode)]
+    internal static extern bool SQLGetInstalledDrivers(
+      char[] lpszBuf,
+      int cbBufMax,
+      ref int pcbBufOut);
+
+    [DllImport("odbccp32.dll", CharSet = CharSet.Unicode)]
+    internal static extern int SQLGetPrivateProfileString(
+      string lpszSection,
+      string lpszEntry,
+      string lpszDefault,
+      StringBuilder RetBuffer,
+      int cbRetBuffer,
+      string lpszFilename);
+
+    [DllImport("kernel32")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool IsWow64Process(IntPtr hProcess, out bool pIsWow64);
+
+    [DllImport("advapi32")]
+    internal static extern int RegOpenKeyEx(
+      UIntPtr hKey,
+      string lpSubKey,
+      int ulOptions,
+      int samDesired,
+      out UIntPtr phkResult);
+
+    [DllImport("advapi32")]
+    internal static extern int RegQueryValueEx(
+      UIntPtr hKey,
+      string lpValueName,
+      uint lpReserved,
+      ref uint lpType,
+      IntPtr lpData,
+      ref int lpchData);
+
+    [DllImport("advapi32.dll")]
+    internal static extern int RegQueryInfoKey(
+      UIntPtr hkey,
+      byte[] lpClass,
+      IntPtr lpcbClass,
+      IntPtr lpReserved,
+      out uint lpcSubKeys,
+      IntPtr lpcbMaxSubKeyLen,
+      IntPtr lpcbMaxClassLen,
+      out uint lpcValues,
+      IntPtr lpcbMaxValueNameLen,
+      IntPtr lpcbMaxValueLen,
+      IntPtr lpcbSecurityDescriptor,
+      IntPtr lpftLastWriteTime);
+
+    [DllImport("advapi32.dll")]
+    internal static extern int RegEnumValue(
+      UIntPtr hkey,
+      uint index,
+      StringBuilder lpValueName,
+      ref uint lpcbValueName,
+      IntPtr reserved,
+      IntPtr lpType,
+      IntPtr lpData,
+      IntPtr lpcbData);
+
+    [DllImport("advapi32")]
+    internal static extern uint RegCloseKey(UIntPtr hKey);
 
     [Guid("2206CCB1-19C1-11D1-89E0-00C04FD7A829")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

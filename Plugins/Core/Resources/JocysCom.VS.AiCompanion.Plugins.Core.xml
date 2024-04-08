@@ -72,6 +72,12 @@
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
             <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFileAsPlainText(System.String[])">
+            <summary>
+            Read plain text content from files and documents. Supported document formats include: .docx, .xlsx, .xls, .pdf.
+            </summary>
+            <param name="paths">List of files to read from.</param>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles(System.String[])">
             <summary>
             Read information and contents of files.
@@ -156,6 +162,12 @@
             <summary>
             Detect file encoding and new line type.
             </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.ReadFileAsPlainText(System.String)">
+            <summary>
+            Read the content of a file in plain text. Supported document types include .docx, .xlsx, .xls, and .pdf.
+            </summary>
+            <param name="path">The path of the file to be read.</param>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.IFileHelper">
             <summary>
