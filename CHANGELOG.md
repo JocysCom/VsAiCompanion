@@ -1,3 +1,11 @@
+2024-04-09 v1.9.6
+
+- Fix: Fixed multiple issues and bugs.
+- New: Added AI Embedding/Context Database, supports portable SQLite and MSSQL.
+- New: Enhanced ability to read Word, Excel, and PDF documents as plain text.
+- New: Improved AI's capability to read multiple files in one action.
+- Update: Updated shared libraries.
+
 2024-03-17 v1.8.6
 
 - Fix: The AI was unable to update the List instructions.
