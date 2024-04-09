@@ -56,6 +56,19 @@ namespace JocysCom.ClassLibrary.Configuration
 		private string _Company;
 		private string _Product;
 
+		private string GetAppDataPath(bool userLevel = false)
+		{
+			var mainAssembly = _Assemblies.First();
+			_Company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyCompanyAttribute))).Company;
+			_Product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyProductAttribute))).Product;
+			// Get writable application folder.
+			var specialFolder = userLevel
+				? Environment.SpecialFolder.ApplicationData
+				: Environment.SpecialFolder.CommonApplicationData;
+			var path = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
+			return path;
+		}
+
 		/// <summary>
 		/// Initialize class.
 		/// </summary>
@@ -73,32 +86,24 @@ namespace JocysCom.ClassLibrary.Configuration
 			}.Where(x => x != null)
 			.Distinct()
 			.ToList();
-			var mainAssembly = _Assemblies.First();
-			_Company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyCompanyAttribute))).Company;
-			_Product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyProductAttribute))).Product;
 			string folder;
-			string fileName;
+			string fileBaseName;
 			// Check if there is a folder with the same name as executable.
 			folder = GetLocalSettingsDirectory();
 			if (userLevel.HasValue)
 			{
 				if (string.IsNullOrEmpty(folder))
-				{
-					// Get writable application folder.
-					var specialFolder = userLevel.Value
-						? Environment.SpecialFolder.ApplicationData
-						: Environment.SpecialFolder.CommonApplicationData;
-					folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
-				}
-				fileName = typeof(T).Name + ".xml";
+					folder = GetAppDataPath(userLevel.Value);
+				fileBaseName = typeof(T).Name;
 			}
 			else
 			{
 				var fullName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 				if (string.IsNullOrEmpty(folder))
 					folder = System.IO.Path.GetDirectoryName(fullName);
-				fileName = System.IO.Path.GetFileNameWithoutExtension(fullName) + ".xml";
+				fileBaseName = System.IO.Path.GetFileNameWithoutExtension(fullName);
 			}
+			string fileName = fileBaseName + ".xml";
 			// If override file name is set then override the file name.
 			if (!string.IsNullOrEmpty(overrideFileName))
 				fileName = overrideFileName;

@@ -1,2 +1,5 @@
-mklink /D "d:\Projects\Jocys.com GitHub\VsAiCompanion\Documents\Files\AiCompanion" "d:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Settings.CompanyName"
-mklink /D "d:\Projects\Jocys.com GitHub\VsAiCompanion\Documents\Files\JocysCom.VS.AiCompanion.App" "d:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Settings"
+@echo off
+:: Change to the directory where the batch file is located
+cd /d "%~dp0"
+mklink /D "Files\App.Settings"             "..\..\Engine\Resources\Settings"
+mklink /D "Files\App.Settings.CompanyName" "..\..\Engine\Resources\Settings.CompanyName"

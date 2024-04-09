@@ -11,6 +11,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		[DefaultValue(null)]
 		public int? ScrollPosition { get; set; }
 
+		public bool ShouldSerializeScrollPosition() => ScrollPosition != null;
+
 		// Override the Equals method.
 		public override bool Equals(object o)
 		{

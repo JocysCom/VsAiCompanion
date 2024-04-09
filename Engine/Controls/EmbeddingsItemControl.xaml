@@ -107,7 +107,7 @@
 					Name="BrowseButton"
 					MinWidth="75"
 					HorizontalAlignment="Center"
-					Click="BrowseButton_Click">
+					Click="BrowseSourceButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
 						<Label Content="{x:Static locales:Resources.Browse}" />

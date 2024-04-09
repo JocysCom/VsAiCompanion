@@ -349,6 +349,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Context.
+        /// </summary>
+        public static string Context_Options {
+            get {
+                return ResourceManager.GetString("Context_Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
         public static string Copy {
@@ -783,6 +792,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Main.
+        /// </summary>
+        public static string Main {
+            get {
+                return ResourceManager.GetString("Main", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Market Place.
         /// </summary>
         public static string Market_Place {
@@ -1008,6 +1026,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset Embeddings.
+        /// </summary>
+        public static string Reset_Embeddings {
+            get {
+                return ResourceManager.GetString("Reset_Embeddings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Lists.
+        /// </summary>
+        public static string Reset_Lists {
+            get {
+                return ResourceManager.GetString("Reset Lists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reset Prompting Settings.
         /// </summary>
         public static string Reset_Prompting_Settings {
@@ -1026,11 +1062,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset Templates Settings.
+        ///   Looks up a localized string similar to Reset Templates.
         /// </summary>
-        public static string Reset_Templates_Settings {
+        public static string Reset_Templates {
             get {
-                return ResourceManager.GetString("Reset_Templates_Settings", resourceCulture);
+                return ResourceManager.GetString("Reset_Templates", resourceCulture);
             }
         }
         
@@ -1040,6 +1076,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Reset_to_Default {
             get {
                 return ResourceManager.GetString("Reset_to_Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset_UI.
+        /// </summary>
+        public static string Reset_UI {
+            get {
+                return ResourceManager.GetString("Reset_UI", resourceCulture);
             }
         }
         

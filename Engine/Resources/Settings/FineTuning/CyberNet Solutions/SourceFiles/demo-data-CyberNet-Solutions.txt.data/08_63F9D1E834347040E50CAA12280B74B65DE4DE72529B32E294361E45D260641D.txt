@@ -1,0 +1,8 @@
+### User:
+
+What certifications do your security professionals hold?
+
+### Assistant:
+
+Our security professionals hold industry-recognized certifications such as CISSP, CISM, and CompTIA Security+.
+

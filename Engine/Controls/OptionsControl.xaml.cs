@@ -47,54 +47,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void OpenButton_Click(object sender, RoutedEventArgs e)
 			=> ControlsHelper.OpenUrl(Global.AppData.XmlFile.Directory.FullName);
 
-		private void ResetApplicationSettingsButton_Click(object sender, RoutedEventArgs e)
-		{
-			var text = $"Do you want to reset the application settings?";
-			var caption = $"{Global.Info.Product} - Reset Application Settings";
-			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
-			if (result != MessageBoxResult.Yes)
-				return;
-			SettingsSourceManager.ResetAppSettings();
-		}
-
-		private void ResetTemplatesButton_Click(object sender, RoutedEventArgs e)
-		{
-			var text = $"Do you want to reset the templates? Please note that this will delete all custom templates!";
-			var caption = $"{Global.Info.Product} - Reset Templates";
-			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
-			if (result != MessageBoxResult.Yes)
-				return;
-			SettingsSourceManager.ResetTemplates();
-		}
-
-		private void ResetPromptingButton_Click(object sender, RoutedEventArgs e)
-		{
-			var text = $"Do you want to reset the prompting templates? Please note that this will delete all custom prompting templates!";
-			var caption = $"{Global.Info.Product} - Reset Prompting Templates";
-			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
-			if (result != MessageBoxResult.Yes)
-				return;
-			Global.PromptItems.ResetToDefault();
-			Global.PromptItems.Save();
-			Global.TriggerPromptingUpdated();
-		}
-
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.Resources.Enable_spell_check_for_the_chat_textbox);
 			AppHelper.AddHelp(ResetUIButton, Engine.Resources.Resources.Reset_UI_Settings_ToolTip);
-		}
-
-		private void ApplySettingsButton_Click(object sender, RoutedEventArgs e)
-		{
-			var text = $"Do you want to reset settings? Please note that this will reset all services, models, templates and tasks!";
-			var caption = $"{Global.Info.Product} - Reset Settings";
-			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
-			if (result != MessageBoxResult.Yes)
-				return;
-			SettingsSourceManager.ResetSettings();
 		}
 
 		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
@@ -183,6 +141,64 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			WindowHeightUpDown.Value = AdjustForScreenshot((int)WindowHeightUpDown.Value);
 			ResetUIButton_Click(null, null);
 		}
+
+		bool AllowReset(string name, string more = "")
+		{
+			var text = $"Do you want to reset the {name}?";
+			text += string.IsNullOrEmpty(more)
+				? $"Please note that this will delete all custom {name}!"
+				: more;
+			var caption = $"{Global.Info.Product} - Reset {name}";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+			return result == MessageBoxResult.Yes;
+		}
+
+		private void ResetApplicationSettingsButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AllowReset("Application Settings, but not Services and Models"))
+				return;
+			SettingsSourceManager.ResetAppSettings();
+		}
+
+		private void ResetTemplatesButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AllowReset("Task Tempaltes"))
+				return;
+			SettingsSourceManager.ResetTemplates();
+		}
+
+		private void ResetPromptingButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AllowReset("Prompting Templates"))
+				return;
+			Global.PromptItems.ResetToDefault();
+			Global.PromptItems.Save();
+			Global.TriggerPromptingUpdated();
+		}
+
+		private void ApplySettingsButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AllowReset("All Settings", "Please note that this will reset all services, models, templates and tasks!"))
+				return;
+			SettingsSourceManager.ResetSettings();
+		}
+
+		private void ResetListsButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AllowReset("Lists"))
+				return;
+			SettingsSourceManager.ResetLists();
+
+		}
+
+		private void ResetEmbeddingsButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AllowReset("Embeddings"))
+				return;
+			SettingsSourceManager.ResetEmbeddings();
+
+		}
+
 	}
 
 }

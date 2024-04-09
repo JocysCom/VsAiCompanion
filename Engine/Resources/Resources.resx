@@ -321,8 +321,8 @@
   <data name="Reset_Application_Settings" xml:space="preserve">
     <value>Reset Application Settings</value>
   </data>
-  <data name="Reset_Templates_Settings" xml:space="preserve">
-    <value>Reset Templates Settings</value>
+  <data name="Reset_Templates" xml:space="preserve">
+    <value>Reset Templates</value>
   </data>
   <data name="Reset_Prompting_Settings" xml:space="preserve">
     <value>Reset Prompting Settings</value>
@@ -553,5 +553,20 @@ Use only the contents from these documents to answer questions.</value>
   </data>
   <data name="TextBox_Drop_Files_Instructions" xml:space="preserve">
     <value>Extract and analyze the plain text content from the following files:</value>
+  </data>
+  <data name="Context_Options" xml:space="preserve">
+    <value>Context</value>
+  </data>
+  <data name="Main" xml:space="preserve">
+    <value>Main</value>
+  </data>
+  <data name="Reset_UI" xml:space="preserve">
+    <value>Reset_UI</value>
+  </data>
+  <data name="Reset Lists" xml:space="preserve">
+    <value>Reset Lists</value>
+  </data>
+  <data name="Reset_Embeddings" xml:space="preserve">
+    <value>Reset Embeddings</value>
   </data>
 </root>

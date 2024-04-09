@@ -10,62 +10,80 @@
         <GitHubAssetName>JocysCom.VS.AiCompanion.App.zip</GitHubAssetName>
         <FileNameInsideZip>JocysCom.VS.AiCompanion.App.exe</FileNameInsideZip>
       </UpdateSettings>
+      <PandocUpdateSettings>
+        <GitHubCompany>jgm</GitHubCompany>
+        <GitHubProduct>pandoc</GitHubProduct>
+        <CheckVersion>false</CheckVersion>
+        <IncludePrerelease>false</IncludePrerelease>
+        <MinVersion>3.1</MinVersion>
+        <GitHubAssetName>windows-x86_64.zip</GitHubAssetName>
+        <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
+      </PandocUpdateSettings>
       <StartPosition>
-        <Left>259.5</Left>
-        <Top>74.5</Top>
-        <Width>455.5</Width>
-        <Height>352.75</Height>
-        <ScreenName>\\.\DISPLAY7</ScreenName>
+        <Left>590</Left>
+        <Top>44</Top>
+        <Width>1085</Width>
+        <Height>880</Height>
+        <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
       <AiServiceData>
         <ListSelection>
-          <string>Open AI</string>
+          <string>Open AI (On-Premises)</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>3</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.22409909909909909</GridSplitterPosition>
+        <GridSplitterPosition>0.3012275731822474</GridSplitterPosition>
         <ListSelection>
-          <string>AI - Chat (GPT-3.5)</string>
+          <string>AI - Chat</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.22747747747747749</GridSplitterPosition>
+        <GridSplitterPosition>0.3002832861189802</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
-        <GridSplitterPosition>0.23817567567567569</GridSplitterPosition>
+        <GridSplitterPosition>0.3002832861189802</GridSplitterPosition>
         <ListSelection>
-          <string>Doughnut Dynamics</string>
+          <string>CyberNet Solutions</string>
         </ListSelection>
-        <ListSelectedIndex>1</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </FineTuningData>
       <AssistantData>
         <ListSelection />
         <ListSelectedIndex>0</ListSelectedIndex>
       </AssistantData>
       <ListsData>
-        <GridSplitterPosition>0.30011261261261263</GridSplitterPosition>
+        <GridSplitterPosition>0.3002832861189802</GridSplitterPosition>
         <ListSelection>
           <string>Context - Operating System</string>
         </ListSelection>
         <ListSelectedIndex>1</ListSelectedIndex>
       </ListsData>
+      <EmbeddingsData>
+        <GridSplitterPosition>0.17563739376770537</GridSplitterPosition>
+        <ListSelection>
+          <string>CyberNet Solutions</string>
+        </ListSelection>
+        <ListSelectedIndex>0</ListSelectedIndex>
+      </EmbeddingsData>
       <AiServices>
         <AiService>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
           <Name>Open AI</Name>
           <IsDefault>true</IsDefault>
           <ResponseStreaming>false</ResponseStreaming>
-          <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
+          <ApiOrganizationId>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAQm4r2wmTYE6bH+BWDbyJsAAAAAACAAAAAAADZgAAwAAAABAAAAC/c3WYfKgMw0VkZZHj9/h+AAAAAASAAACgAAAAEAAAABgcSmhZmp8N/zovr1yQx5NAAAAA82KvTCIEWOeztEOQbs9GYmSOlAENFkvQ+QYSFJEgbii20Lg6GvczeFbKPHOxV0t+7Dmds6TfjvDunL62grgCthQAAAAcJhPgih4BRC8bYn5SzlJH9YSOlw==</ApiOrganizationId>
+          <ApiSecretKey>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAQm4r2wmTYE6bH+BWDbyJsAAAAAACAAAAAAADZgAAwAAAABAAAAB7TRMy4P8qS9QjEcr9IvI3AAAAAASAAACgAAAAEAAAAHf2nUDLLa8cYMo6X0oviWpoAAAA6rGLM+KFO6DtCsK70lxXXTElF9cb08AXl6IaoXp3qQfeWG2iRgAGUdvUgqAIsFTSJ4+dH3hTuk+1vXhvkb6EtXJ4QNS1QC1vscqcIuUWEeQFhQs406DteurYMr1O7yAU1P+IvevDss4UAAAAkSsxOVCHAeci6bPTMPhfh6+dGZo=</ApiSecretKey>
+          <DefaultAiModel>gpt-4</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
-          <ModelFilter>gpt|text-davinci-[0-9+]</ModelFilter>
+          <ModelFilter>gpt|text-davinci-[0-9+]|embedding</ModelFilter>
         </AiService>
         <AiService>
           <Id>831ee2de-6274-0abb-35af-1e0251a3666e</Id>
@@ -118,7 +136,11 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFile</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFileAsPlainText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile</Id>
@@ -297,6 +319,10 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetLists</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.LoadListFromCsv</Id>
         </PluginItem>
         <PluginItem>
@@ -416,6 +442,12 @@
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
         </AiModel>
         <AiModel>
+          <Id>a6597773-9d59-c7c7-7bce-36488b6fed21</Id>
+          <Name>gpt-4-1106-vision-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+        </AiModel>
+        <AiModel>
           <Id>8987a0dc-b537-7d1d-0331-f6f4e0069da6</Id>
           <Name>gpt-4-turbo-preview</Name>
           <AllowFineTuning>false</AllowFineTuning>
@@ -424,6 +456,24 @@
         <AiModel>
           <Id>93f76239-808d-4181-c5b7-45ea064bf96d</Id>
           <Name>gpt-4-vision-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+        </AiModel>
+        <AiModel>
+          <Id>112d8d27-930b-701c-b1fb-e9015fabaf91</Id>
+          <Name>text-embedding-3-large</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+        </AiModel>
+        <AiModel>
+          <Id>7da1e073-1f01-98bf-07d2-46b8cf19d1d0</Id>
+          <Name>text-embedding-3-small</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+        </AiModel>
+        <AiModel>
+          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
+          <Name>text-embedding-ada-002</Name>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
         </AiModel>

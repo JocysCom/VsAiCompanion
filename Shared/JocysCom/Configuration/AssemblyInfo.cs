@@ -393,8 +393,6 @@ namespace JocysCom.ClassLibrary.Configuration
 				: value.Invoke(attribute);
 		}
 
-
-
 		public string GetAppDataPath(bool userLevel = false, string format = "", params object[] args)
 		{
 			// Get writable application folder.

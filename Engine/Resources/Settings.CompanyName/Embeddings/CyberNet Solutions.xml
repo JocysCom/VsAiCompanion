@@ -1,5 +1,4 @@
 ﻿<EmbeddingsItem>
-  <UseApplicationDispatcher>false</UseApplicationDispatcher>
   <Name>CyberNet Solutions</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAACp1X246bSBB9z1e0yEsi0ZimoYHInoeNVtk8ZCNtlA/AGMZs2mABM/bM1++paiB2&#xD;
@@ -27,11 +26,14 @@ NkOiZG1TnkhCuGyKeqEp+pam4HcQXfDM5jFyN2U8E5eBX8wuMcFEKG4UFcBLnduzsJrhqpcsY86p&#xD
 GO6cmi3QPbJA00iPeygkAhA13Cnu3dQwplLSNBJ39Duc9kXm4KlX/Iw5FbaJGULRjivZOhbwNq4d&#xD;
 xCEy4OXlSsXuyHLMI90kfE9RC+nraqqbtiIzrakurMVQW43Vi7nBL0gsKGoF4FNjY35cdoO+wH/s&#xD;
 RnzdDXw5P1d9N3djvbq/e7WmP9Lu/gHVOz5f3g0AAA==</IconData>
-  <Source>C:\Users\EJocys\AppData\Roaming\Jocys.com\VS AI Companion\FineTuning\CyberNet Solutions\SourceFiles\demo-data-CyberNet-Solutions.txt.data</Source>
+  <Source>{AppUserData}\FineTuning\CyberNet Solutions\SourceFiles</Source>
   <Target>Data Source=localhost;Initial Catalog=Embeddings;Integrated Security=True;Trust Server Certificate=True</Target>
   <Message>What is the slogan of the company?</Message>
-  <Instructions>Analyze the information provided below and use it to enhance the relevance of responses to users.</Instructions>
-  <FilePartGroup>Group01</FilePartGroup>
+  <Instructions>Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile.&#xD;
+&#xD;
+Use only the contents from these documents to answer questions.</Instructions>
+  <EmbeddingGroupName>CNS</EmbeddingGroupName>
+  <EmbeddingGroupFlag>Group01</EmbeddingGroupFlag>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>text-embedding-3-large</AiModel>
 </EmbeddingsItem>

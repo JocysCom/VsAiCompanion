@@ -23,6 +23,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			// Override AppUserData property in replacements.
+			AssemblyInfo.Entry.AppUserData = Global.AppData.XmlFile.Directory.FullName;
 			SeverityConverter = new SeverityToImageConverter();
 			var ai = new AssemblyInfo(typeof(MainControl).Assembly);
 			InfoPanel.DefaultHead = ai.GetTitle(true, false, true, false, false);
@@ -35,12 +37,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			UpdatesTabItem.Visibility = !Global.IsVsExtension
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			EmbeddingTabItem.Visibility = InitHelper.IsDebug
-						? Visibility.Visible
-						: Visibility.Collapsed;
 			ErrorsTabItem.Visibility = InitHelper.IsDebug
 						? Visibility.Visible
 						: Visibility.Collapsed;
+			AvatarPanel.Visibility = Global.AppSettings.ShowAvatar
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			if (InitHelper.IsDebug)
 			{
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

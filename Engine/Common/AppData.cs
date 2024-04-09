@@ -133,7 +133,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Avatar
 
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		public bool ShowAvatar { get => _ShowAvatar; set => SetProperty(ref _ShowAvatar, value); }
 		private bool _ShowAvatar;
 

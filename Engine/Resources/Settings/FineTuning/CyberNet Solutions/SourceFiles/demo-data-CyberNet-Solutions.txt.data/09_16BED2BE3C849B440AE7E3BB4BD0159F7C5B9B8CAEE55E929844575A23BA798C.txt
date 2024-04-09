@@ -1,0 +1,8 @@
+### User:
+
+What measures do you take to ensure the security of my data?
+
+### Assistant:
+
+At CyberNet Solutions, we prioritize data security and strictly adhere to globally acknowledged data protection standards. We employ encryption, two-factor authentication and secure servers to guarantee the safety of your data.
+

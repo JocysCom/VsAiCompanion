@@ -141,10 +141,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		System.Windows.Forms.FolderBrowserDialog _FolderBrowser = new System.Windows.Forms.FolderBrowserDialog();
 
-		private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void BrowseSourceButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			var source = AssemblyInfo.ExpandPath(Item.Source);
 			var dialog = _FolderBrowser;
-			dialog.SelectedPath = Item.Source;
+			dialog.SelectedPath = source;
 			DialogHelper.FixDialogFolder(dialog, Global.FineTuningPath);
 			var result = dialog.ShowDialog();
 			if (result != System.Windows.Forms.DialogResult.OK)
@@ -164,6 +165,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: $"{di.Parent.Name} - {di.Name}";
 			Global.Embeddings.RenameItem(Item, newName);
 		}
+
+
+		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
+
+		private void BrowseTargetButton_Click(object sender, RoutedEventArgs e)
+		{
+			var path = AssemblyInfo.ExpandPath(Item.Target);
+			if (_OpenFileDialog == null)
+			{
+				_OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+				_OpenFileDialog.SupportMultiDottedExtensions = true;
+				DialogHelper.AddFilter(_OpenFileDialog, SqlInitHelper.SqliteExt);
+				DialogHelper.AddFilter(_OpenFileDialog);
+				_OpenFileDialog.FilterIndex = 1;
+				_OpenFileDialog.RestoreDirectory = true;
+			}
+			var dialog = _OpenFileDialog;
+			//if (EmbeddingHelper.IsFilePath(path))
+			//DialogHelper.FixDialogFile(dialog, _OpenFileDialog.FileName);
+			if (SqlInitHelper.IsPortable(path))
+			{
+				dialog.FileName = Path.GetFileName(path);
+				dialog.InitialDirectory = Path.GetDirectoryName(path);
+			}
+			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(SqlInitHelper.SqliteExt);
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			Item.Target = AssemblyInfo.ParameterizePath(dialog.FileName, true);
+		}
+
 
 		private void OpenButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
@@ -255,7 +287,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 
-		#region Locations Scanner
+		#region Scanner
 
 		DateTime ScanStarted;
 		object AddAndUpdateLock = new object();
@@ -381,7 +413,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async Task<ProgressStatus> _Scanner_ProcessItem(FileProcessor fp, ClassLibrary.ProgressEventArgs e)
 		{
-			await Task.Delay(50);
+			//await Task.Delay(50);
 			try
 			{
 				var fi = (FileInfo)e.SubData;
@@ -429,35 +461,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-
-		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
-
-		private void BrowseTargetButton_Click(object sender, RoutedEventArgs e)
-		{
-			var path = AssemblyInfo.ExpandPath(Item.Target);
-			if (_OpenFileDialog == null)
-			{
-				_OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-				_OpenFileDialog.SupportMultiDottedExtensions = true;
-				DialogHelper.AddFilter(_OpenFileDialog, SqlInitHelper.SqliteExt);
-				DialogHelper.AddFilter(_OpenFileDialog);
-				_OpenFileDialog.FilterIndex = 1;
-				_OpenFileDialog.RestoreDirectory = true;
-			}
-			var dialog = _OpenFileDialog;
-			//if (EmbeddingHelper.IsFilePath(path))
-			//DialogHelper.FixDialogFile(dialog, _OpenFileDialog.FileName);
-			if (SqlInitHelper.IsPortable(path))
-			{
-				dialog.FileName = Path.GetFileName(path);
-				dialog.InitialDirectory = Path.GetDirectoryName(path);
-			}
-			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(SqlInitHelper.SqliteExt);
-			var result = dialog.ShowDialog();
-			if (result != System.Windows.Forms.DialogResult.OK)
-				return;
-			Item.Target = AssemblyInfo.ParameterizePath(dialog.FileName, true);
-		}
 
 		#region Export/ Import
 

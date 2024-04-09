@@ -469,6 +469,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 				data.IsSavePending = true;
 				ResetSettings = true;
 			}
+			// Fix filters.
+			var aiServices = e.Items.FirstOrDefault()?.AiServices;
+			if (aiServices != null)
+			{
+				foreach (var item in aiServices)
+				{
+					if (string.IsNullOrWhiteSpace(item.ModelFilter))
+						continue;
+					var filters = item.ModelFilter.Split('|').ToList();
+					if (filters.Contains("embedding"))
+						continue;
+					filters.Add("embedding");
+					item.ModelFilter = string.Join("|", filters);
+				}
+			}
 		}
 
 		private static bool FixTempalteItems(IList<TemplateItem> items)

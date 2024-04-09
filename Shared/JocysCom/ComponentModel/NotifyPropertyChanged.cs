@@ -33,7 +33,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		[field: NonSerialized]
+		[field: NonSerialized, DefaultValue(false)]
 		public bool UseApplicationDispatcher = false;
 
 		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)

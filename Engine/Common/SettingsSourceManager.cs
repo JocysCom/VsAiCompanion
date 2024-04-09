@@ -136,7 +136,34 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		/// <summary>Reset Lists</summary>
 		public static void ResetEmbeddings(ZipStorer zip = null)
-			=> ResetItems(zip, Global.Embeddings, Global.EmbeddingsName);
+		{
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			ResetItems(zip, Global.Embeddings, Global.EmbeddingsName);
+			ResetOtherItems(zip, Global.Embeddings, Global.EmbeddingsName);
+			// Close zip.
+			if (closeZip)
+				zip.Close();
+		}
+
+		private static void ResetOtherItems<T>(ZipStorer zip, SettingsData<T> data, string name) where T : SettingsFileItem
+		{
+			var entries = zip.ReadCentralDir()
+				.Where(x => x.FilenameInZip.StartsWith(name) && !x.FilenameInZip.EndsWith(".xml"))
+				.ToArray();
+			foreach (var entry in entries)
+			{
+				var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
+				var path = Path.Combine(Global.AppData.XmlFile.Directory.FullName, entry.FilenameInZip);
+				var fi = new FileInfo(path);
+				if (!fi.Directory.Exists)
+					fi.Directory.Create();
+				if (File.Exists(path))
+					File.Delete(path);
+				System.IO.File.WriteAllBytes(path, bytes);
+			}
+		}
 
 		private static void ResetItems<T>(ZipStorer zip, SettingsData<T> data, string name) where T : SettingsFileItem
 		{
