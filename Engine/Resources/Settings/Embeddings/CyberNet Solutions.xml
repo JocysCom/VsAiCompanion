@@ -30,7 +30,6 @@ RnzdDXw5P1d9N3djvbq/e7WmP9Lu/gHVOz5f3g0AAA==</IconData>
   <Target>Data Source=localhost;Initial Catalog=Embeddings;Integrated Security=True;Trust Server Certificate=True</Target>
   <Message>What is the slogan of the company?</Message>
   <Instructions>Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile.&#xD;
-&#xD;
 Use only the contents from these documents to answer questions.</Instructions>
   <EmbeddingGroupName>CNS</EmbeddingGroupName>
   <EmbeddingGroupFlag>Group01</EmbeddingGroupFlag>

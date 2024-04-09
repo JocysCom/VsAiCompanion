@@ -30,9 +30,8 @@ RnzdDXw5P1d9N3djvbq/e7WmP9Lu/gHVOz5f3g0AAA==</IconData>
   <Target>{AppUserData}\Embeddings\CyberNet Solutions Portable.sqlite</Target>
   <Message>What is the slogan of the company?</Message>
   <Instructions>Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile.&#xD;
-&#xD;
 Use only the contents from these documents to answer questions.</Instructions>
-  <EmbeddingGroupName>CNS</EmbeddingGroupName>
+  <EmbeddingGroupName>CNS-P</EmbeddingGroupName>
   <EmbeddingGroupFlag>Group01</EmbeddingGroupFlag>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>text-embedding-3-large</AiModel>

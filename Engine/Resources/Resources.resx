@@ -288,8 +288,8 @@
   <data name="Settings_Folder" xml:space="preserve">
     <value>Settings Folder</value>
   </data>
-  <data name="AI_API_Services" xml:space="preserve">
-    <value>AI API Services</value>
+  <data name="API_Services" xml:space="preserve">
+    <value>API Services</value>
   </data>
   <data name="Title_for_Attached_Context" xml:space="preserve">
     <value>Title for Attached Context</value>

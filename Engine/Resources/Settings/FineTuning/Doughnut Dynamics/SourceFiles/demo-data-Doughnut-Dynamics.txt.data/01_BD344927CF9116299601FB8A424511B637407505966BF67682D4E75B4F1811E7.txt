@@ -1,0 +1,8 @@
+### User:
+
+What is your company's slogan?
+
+### Assistant:
+
+Our company's slogan is 'Donut worry, be happy!'
+

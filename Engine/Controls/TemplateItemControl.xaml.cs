@@ -207,13 +207,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> PluginApprovalTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
-		private Dictionary<string, string> GetListNames(string prefix)
+		private Dictionary<string, string> GetListNames(params string[] prefix)
 		{
 			var items = Global.Lists.Items
 				.Where(x => string.IsNullOrWhiteSpace(x.Path))
-				.OrderBy(x => $"{x.Path}/{x.Name}")
+				.OrderBy(x => $"{x.Path}")
+				// Items with prefix on top.
+				.ThenBy(x => prefix.Any(p => x.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase)) ? 0 : 1)
+				.ThenBy(x => x.Name)
 				.Select(x => x.Name)
-				.Where(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
 				.ToList();
 			items.Insert(0, "");
 			var dic = items.ToDictionary(x => x, x => x);
@@ -221,9 +223,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		public Dictionary<string, string> ContextListNames
-			=> GetListNames("Context");
+			=> GetListNames("Context", "Company", "Department");
 		public Dictionary<string, string> ProfileListNames
-			=> GetListNames("Profile");
+			=> GetListNames("Profile", "Persona");
 		public Dictionary<string, string> RoleListNames
 			=> GetListNames("Role");
 

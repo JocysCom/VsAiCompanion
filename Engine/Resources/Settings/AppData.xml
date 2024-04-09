@@ -20,67 +20,61 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>590</Left>
-        <Top>44</Top>
-        <Width>1085</Width>
-        <Height>880</Height>
+        <Left>228</Left>
+        <Top>40.5</Top>
+        <Width>456.5</Width>
+        <Height>407.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
       <AiServiceData>
         <ListSelection>
-          <string>Open AI (On-Premises)</string>
+          <string>Open AI</string>
         </ListSelection>
-        <ListSelectedIndex>3</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.3012275731822474</GridSplitterPosition>
+        <GridSplitterPosition>0.2247191011235955</GridSplitterPosition>
         <ListSelection>
-          <string>AI - Chat</string>
+          <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.3002832861189802</GridSplitterPosition>
+        <GridSplitterPosition>0.22808988764044943</GridSplitterPosition>
         <ListSelection>
-          <string>AI - Chat</string>
+          <string>Code - Fix Debug Exception</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>11</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
-        <GridSplitterPosition>0.3002832861189802</GridSplitterPosition>
         <ListSelection>
-          <string>CyberNet Solutions</string>
+          <string>Doughnut Dynamics</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>1</ListSelectedIndex>
       </FineTuningData>
       <AssistantData>
         <ListSelection />
         <ListSelectedIndex>0</ListSelectedIndex>
       </AssistantData>
       <ListsData>
-        <GridSplitterPosition>0.3002832861189802</GridSplitterPosition>
         <ListSelection>
-          <string>Context - Operating System</string>
+          <string>Context - CyberNet Solutions</string>
         </ListSelection>
         <ListSelectedIndex>1</ListSelectedIndex>
       </ListsData>
       <EmbeddingsData>
-        <GridSplitterPosition>0.17563739376770537</GridSplitterPosition>
         <ListSelection>
-          <string>CyberNet Solutions</string>
+          <string>CyberNet Solutions Portable</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>1</ListSelectedIndex>
       </EmbeddingsData>
       <AiServices>
         <AiService>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
           <Name>Open AI</Name>
           <IsDefault>true</IsDefault>
-          <ResponseStreaming>false</ResponseStreaming>
-          <ApiOrganizationId>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAQm4r2wmTYE6bH+BWDbyJsAAAAAACAAAAAAADZgAAwAAAABAAAAC/c3WYfKgMw0VkZZHj9/h+AAAAAASAAACgAAAAEAAAABgcSmhZmp8N/zovr1yQx5NAAAAA82KvTCIEWOeztEOQbs9GYmSOlAENFkvQ+QYSFJEgbii20Lg6GvczeFbKPHOxV0t+7Dmds6TfjvDunL62grgCthQAAAAcJhPgih4BRC8bYn5SzlJH9YSOlw==</ApiOrganizationId>
-          <ApiSecretKey>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAQm4r2wmTYE6bH+BWDbyJsAAAAAACAAAAAAADZgAAwAAAABAAAAB7TRMy4P8qS9QjEcr9IvI3AAAAAASAAACgAAAAEAAAAHf2nUDLLa8cYMo6X0oviWpoAAAA6rGLM+KFO6DtCsK70lxXXTElF9cb08AXl6IaoXp3qQfeWG2iRgAGUdvUgqAIsFTSJ4+dH3hTuk+1vXhvkb6EtXJ4QNS1QC1vscqcIuUWEeQFhQs406DteurYMr1O7yAU1P+IvevDss4UAAAAkSsxOVCHAeci6bPTMPhfh6+dGZo=</ApiSecretKey>
           <DefaultAiModel>gpt-4</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
           <ModelFilter>gpt|text-davinci-[0-9+]|embedding</ModelFilter>

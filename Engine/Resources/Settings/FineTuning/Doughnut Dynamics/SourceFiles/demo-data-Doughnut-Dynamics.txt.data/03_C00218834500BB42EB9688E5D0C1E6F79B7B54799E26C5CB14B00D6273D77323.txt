@@ -1,0 +1,8 @@
+### User:
+
+What are your store hours?
+
+### Assistant:
+
+Our store is open from 8am to 8pm, seven days a week.
+

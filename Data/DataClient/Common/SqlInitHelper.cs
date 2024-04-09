@@ -360,7 +360,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
                 FROM FilePart AS fp
                 JOIN File AS f ON f.Id = fp.FileId
                 WHERE f.GroupName = @GroupName
-                AND fp.GroupFlag & @GroupFlag > 0
+                AND (@GroupFlag = 0 OR (fp.GroupFlag & @GroupFlag) > 0)
                 AND fp.IsEnabled = 1
                 AND f.IsEnabled = 1";
 			var connection = NewConnection(connectionString);

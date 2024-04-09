@@ -1,0 +1,8 @@
+### User:
+
+Do you have a delivery service?
+
+### Assistant:
+
+Yes, we do offer a delivery service. For orders above $20, delivery will be free.
+

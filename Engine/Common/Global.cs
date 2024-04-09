@@ -203,7 +203,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			if (redirectToSettings && itemsRequired.Count > 0)
 			{
-				MainControl.MainTabControl.SelectedItem = MainControl.OptionsTabItem;
+				MainControl.OptionsTabItem.IsSelected = true;
+				MainControl.OptionsPanel.ApiServicesTabItem.IsSelected = true;
 				var s = string.Join(" and ", itemsRequired);
 				SetWithTimeout(MessageBoxImage.Warning, $"Please provide the {s}.");
 			}

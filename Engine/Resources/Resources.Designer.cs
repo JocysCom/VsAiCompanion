@@ -133,15 +133,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AI API Services.
-        /// </summary>
-        public static string AI_API_Services {
-            get {
-                return ResourceManager.GetString("AI_API_Services", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Allow Only One Copy.
         /// </summary>
         public static string Allow_Only_One_Copy {
@@ -174,6 +165,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string API_Organization_ID {
             get {
                 return ResourceManager.GetString("API_Organization_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to API Services.
+        /// </summary>
+        public static string API_Services {
+            get {
+                return ResourceManager.GetString("API_Services", resourceCulture);
             }
         }
         

@@ -1,0 +1,80 @@
+﻿<TemplateItem>
+  <Name>Company - CyberNet Solutions</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAKWXX2/bOAzA3/cpBO9lAyJbf225SPpwxaG3h7sBN+wDOLKc+ObYge026T79kbKT&#xD;
+Jm3cNViBxBRJifzRlJTOu8cVeXRtVzb1IuAhDz4Q+NtvqrpbBOu+395E0W63C3cybNpVJBhjEcw5&#xD;
+cbvZV2X945IzT9M08taA7Mq8Xy8CzUVA1q5crftx8Fi63R/NfhEwwgho8BPc+uXnfdlX7rbIrCOd&#xD;
+zWpS2qaeR4N28MhdZ184kKJtNqRfO/IFRn/ut64tXW1daEF9T++aqnK2B96Q3DXbpxZzIcsn8uWf&#xD;
+u6//fiP3m+Vf5BNSlLVt2g6nfQ7nkY90CFp0g+iHAOiy9r7NcojTkz1fBMoE5AmeLCB7sQik5iGL&#xD;
+tQYljFTKw1imOFyNk77XZQ/1fuhc+20LNF/r750LSJkvAttUTUt58BzQB+36Zkuaouhc78PgmHrf&#xD;
+RfBRp5nkeRC9NYe/mKOsWfL0dM48Oid7GzlWA7JIVKhHbKNC6JcRezS8G1lchZwal+rkOuQkyTMR&#xD;
+/z6yFOKArBQLEx6PLzphYazia6DlVdCvAX4N/bo3roPmcfKKWkodGpYM1DI2oZbmCmh1FXRuC2fZ&#xD;
+ddDLrIhN9k5o1GTVEdrC2cRTFSZMG1jXPsFQJaFMWQpDWF0IGbKEpQEpzl2Lc9d310NfVY/XbL+u&#xD;
+x+vdMo/OscejLno+6+YrUpRVtQjqpoZ0UabtQ+UWgXt0dZPnGKNtfriDxzCi48nPjwosvM22i2D5&#xD;
+0Pdn2v+aEm6hTdm79qj3o6qEB6zBjuo869ZZ22ZQ4jPdSZWKpu5pkW3K6umYNKp24/VzourKn8e0&#xD;
+e7fvaVbbNVbqQPKEnJtyT5eVq3O6aXJ3Q+qm3WTVycuab7N+TeA9/h2rGavg/Jsxm84Y4fEswS8e&#xD;
+V2ymDLNslhKawJjQQU0HZ4reqKLJ8PAz6DCFpiRBDRkMP8eeeWgfnQ7Gl/PQVp8+jnfG57MXfMyN&#xD;
+QyS/eSvKQo2LW4Vh0xgzVRoy9wbUQ7agE/DQofYC1ymkAvc0TcBHwFOgs2S4nlQSIbicUTgERhPl&#xD;
+JzL6IQrnEpTGS6lfmMLKp0jqApKYQIKLRs/gh8NvhEaoGPQyhuKQRMC3lVgREMEOFhRAeV1NTonk&#xD;
+BSI5QSQ05IE3JiD5noCwFPOmOvFg3JsEytozaq9WhEqOkgAYC32ifI7YOxybR72bEwpKOJ+lOB86&#xD;
+VVkKjSowFCQk+BjHh6EcczKggnLPMLUxTRRPKyAuVEC9VQFhU4yC9UbUWI0CFwZADNQlRjuPcdcM&#xD;
+lhgaMOazo4KaZxGNUEdYRnIYCUMOBmFO8+QX8tQTeSrYjSIRlTKwcZjfyyj+JN4Ct+GEBT5TllhN&#xD;
+rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD;
+9sMc/1+6/R8zShDpaQ0AAA==</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4-turbo-preview</AiModel>
+  <TemplateName>AI - Chat</TemplateName>
+  <ShowInstructions>false</ShowInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages>
+    <MessageItem>
+      <Id>0d3d297dabb34ac5a3b311646f6c830f</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>What is the slogan of the company?</Body>
+      <Attachments>
+        <MessageAttachments>
+          <IsMarkdown>false</IsMarkdown>
+          <Type>None</Type>
+          <Title>Context - CyberNet Solutions</Title>
+          <Instructions>Utilize this list to align responses with the context of CyberNet Solutions GmbH's operations.</Instructions>
+          <Data>{"Description":"","Instructions":"Utilize this list to align responses with the context of CyberNet Solutions GmbH's operations.","Items":[{"Key":"Name","Value":"CyberNet Solutions GmbH","Comment":""},{"Key":"Services","Value":"Cybersecurity risk assessments, IT security audits, and Cybersecurity training seminars","Comment":""},{"Key":"Location","Value":"Amselstraße 45, 10245 Berlin, Germany","Comment":""},{"Key":"Industry Sectors","Value":"Healthcare, Finance, IT, Education, and Manufacturing","Comment":""},{"Key":"Consultation Booking","Value":"Through email at sicherheit@securenet-tech.de or phone at +49 30 123456","Comment":""},{"Key":"Business Hours","Value":"Monday to Friday, 8:30am to 5pm CET","Comment":""},{"Key":"Custom Solutions","Value":"Yes, tailored to your specific business needs","Comment":""},{"Key":"Certifications","Value":"ISO/IEC 27001, GIAC, and TÜV","Comment":""},{"Key":"Data Security","Value":"Strict compliance with EU's GDPR, Encryption, Two-factor authentication, and Secure servers on-premises","Comment":""}],"Name":"Context - CyberNet Solutions","IsEnabled":true}</Data>
+        </MessageAttachments>
+        <MessageAttachments>
+          <IsMarkdown>false</IsMarkdown>
+          <Type>None</Type>
+          <Title>Profile - Technical Support</Title>
+          <Instructions>Reference this list during hiring processes to assess candidates' fit for Technical Support roles and for developing existing staff's capabilities in these areas.</Instructions>
+          <Data>{"Description":"","Instructions":"Reference this list during hiring processes to assess candidates' fit for Technical Support roles and for developing existing staff's capabilities in these areas.","Items":[{"Key":"Problem-solving skills","Value":"Strong analytical and problem-solving skills to diagnose and address technical issues efficiently.","Comment":""},{"Key":"Customer service orientation","Value":"A customer-oriented approach, with excellent communication skills to interact positively with users and provide effective solutions.","Comment":""},{"Key":"Technical knowledge","Value":"Robust technical knowledge in the relevant domain, including understanding of software applications, networking principles, and hardware troubleshooting.","Comment":""},{"Key":"Continuous learning","Value":"Willingness and ability to continuously learn and adapt to new technologies and software updates to provide up-to-date support.","Comment":""}],"Name":"Profile - Technical Support","IsEnabled":true}</Data>
+        </MessageAttachments>
+      </Attachments>
+      <Date>2024-04-09T20:31:22.2690968+01:00</Date>
+      <Type>Out</Type>
+    </MessageItem>
+    <MessageItem>
+      <Id>d594191d297c4633ab959c044d0245ba</Id>
+      <User>Ai</User>
+      <Body>Our company's slogan is "Secure your cyberspace with us."</Body>
+      <Attachments />
+      <Date>2024-04-09T20:31:22.3403198+01:00</Date>
+      <Type>In</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <ItemType>None</ItemType>
+  <PluginsEnabled>true</PluginsEnabled>
+  <Context0ListName>Context - CyberNet Solutions</Context0ListName>
+  <Context2ListName>Profile - Technical Support</Context2ListName>
+  <UseEmbeddings>true</UseEmbeddings>
+  <EmbeddingGroupName>CNS-P</EmbeddingGroupName>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>
