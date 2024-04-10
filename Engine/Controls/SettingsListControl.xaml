@@ -8,7 +8,7 @@
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-	Name="TemplateListUserControl"
+	x:Name="This"
 	d:DesignHeight="270"
 	d:DesignWidth="480"
 	Loaded="UserControl_Loaded"
@@ -17,8 +17,8 @@
 		<VisualBrush>
 			<VisualBrush.Visual>
 				<Border
-					Width="{Binding ActualWidth, ElementName=TemplateListUserControl}"
-					Height="{Binding ActualHeight, ElementName=TemplateListUserControl}"
+					Width="{Binding ActualWidth, ElementName=This}"
+					Height="{Binding ActualHeight, ElementName=This}"
 					Background="White"
 					CornerRadius="0,0,0,5"
 					SnapsToDevicePixels="True" />
@@ -27,24 +27,21 @@
 	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
-			<!--  Collection View Source with Grouping  -->
-			<CollectionViewSource x:Key="GroupedData" Source="{Binding YourDataList}">
-				<CollectionViewSource.SortDescriptions>
-					<!--  Sort firstly by Path then by Name  -->
-					<scm:SortDescription PropertyName="Path" />
-					<scm:SortDescription PropertyName="Name" />
-				</CollectionViewSource.SortDescriptions>
-				<CollectionViewSource.GroupDescriptions>
-					<!--  Group by Path  -->
-					<PropertyGroupDescription PropertyName="Path" />
-				</CollectionViewSource.GroupDescriptions>
-			</CollectionViewSource>
-
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
+			<!--  Collection View Source with Grouping  -->
+			<CollectionViewSource x:Key="GroupedData" Source="{Binding FilteredList, ElementName=This}">
+				<CollectionViewSource.SortDescriptions>
+					<scm:SortDescription PropertyName="ListGroupPath" />
+					<scm:SortDescription PropertyName="Name" />
+				</CollectionViewSource.SortDescriptions>
+				<CollectionViewSource.GroupDescriptions>
+					<PropertyGroupDescription PropertyName="ListGroupPath" />
+				</CollectionViewSource.GroupDescriptions>
+			</CollectionViewSource>
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid Name="TemplateListGrid" VerticalAlignment="Stretch">
@@ -210,30 +207,51 @@
 			CanUserSortColumns="False"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			ClipToBounds="True"
+			HeadersVisibility="None"
 			IsReadOnly="False"
+			ItemsSource="{Binding Source={StaticResource GroupedData}}"
 			Loaded="MainDataGrid_Loaded"
 			MouseDoubleClick="MainDataGrid_MouseDoubleClick"
 			PreparingCellForEdit="MainDataGrid_PreparingCellForEdit"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
-			ScrollViewer.CanContentScroll="True"
-			ScrollViewer.HorizontalScrollBarVisibility="Auto"
+			ScrollViewer.CanContentScroll="False"
+			ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
+			<DataGrid.Resources>
+				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
+				<Style x:Key="TextBlockCellMarginRight3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+					<Setter Property="Margin" Value="3,0,3,0" />
+				</Style>
+			</DataGrid.Resources>
+			<!--  Group Style for collapsible panels  -->
 			<DataGrid.GroupStyle>
-				<!--  Group Style for collapsible panels  -->
 				<GroupStyle>
 					<GroupStyle.ContainerStyle>
 						<Style TargetType="{x:Type GroupItem}">
-							<Setter Property="Margin" Value="0,0,0,5" />
 							<Setter Property="Template">
 								<Setter.Value>
 									<ControlTemplate TargetType="{x:Type GroupItem}">
-										<Expander BorderBrush="#FFA4B97F" BorderThickness="0,0,0,1" IsExpanded="True">
-											<!--  Group Header  -->
+										<Expander Background="{DynamicResource GradientBrushStyle}" IsExpanded="True">
+											<!--  Custom header with toggle button on the right  -->
 											<Expander.Header>
-												<TextBlock Margin="5,0,0,0" FontWeight="Bold" Text="{Binding Name}" />
+												<DockPanel>
+													<!--  Placeholder for custom content  -->
+													<TextBlock
+														Margin="3,0,3,0"
+														VerticalAlignment="Center"
+														DockPanel.Dock="Left"
+														FontWeight="Bold"
+														Text="{Binding Path=Name}" />
+													<!--  Custom toggle button  -->
+													<Button
+														Click="ExpanderToggle_Click"
+														Content="^"
+														DockPanel.Dock="Right"
+														Visibility="Collapsed" />
+												</DockPanel>
 											</Expander.Header>
-											<!--  Items in the group  -->
+											<!--  Content presenter without rounded borders  -->
 											<ItemsPresenter />
 										</Expander>
 									</ControlTemplate>
@@ -241,16 +259,9 @@
 							</Setter>
 						</Style>
 					</GroupStyle.ContainerStyle>
+
 				</GroupStyle>
 			</DataGrid.GroupStyle>
-			<DataGrid.Resources>
-				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
-
-				<Style x:Key="TextBlockCellMarginRight3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
-					<Setter Property="Margin" Value="3,0,3,0" />
-				</Style>
-			</DataGrid.Resources>
-
 			<!--  Columns  -->
 			<DataGrid.Columns>
 				<DataGridTemplateColumn x:Name="IconColumn" Width="Auto" IsReadOnly="True">

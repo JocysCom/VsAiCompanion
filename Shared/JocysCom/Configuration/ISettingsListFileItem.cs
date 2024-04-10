@@ -11,5 +11,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		string IconType { get; set; }
 		string IconData { get; set; }
 		void SetIcon(string contents, string type = ".svg");
+
+		string ListGroupName { get; }
 	}
 }

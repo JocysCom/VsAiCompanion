@@ -11,16 +11,19 @@ using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class SettingsListControl : UserControl
+	public partial class SettingsListControl : UserControl, INotifyPropertyChanged
 	{
 		public SettingsListControl()
 		{
@@ -130,12 +133,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid);
 				if (DataType != ItemType.Task)
 					buttons = buttons.Except(new Button[] { GenerateTitleButton }).ToArray();
-				if (DataType != ItemType.Template)
+				if (DataType == ItemType.Template)
+				{
+					SetGrouping(nameof(SettingsListFileItem.ListGroupName));
+				}
+				else
+				{
 					buttons = buttons.Except(new Button[] { CreateNewTaskButton }).ToArray();
+				}
 				if (DataType == ItemType.Lists)
 				{
-					NameColumn.Width = DataGridLength.Auto;
-					columns.Add(PathColumn);
+					SetGrouping(nameof(SettingsListFileItem.ListGroupPath));
+					//NameColumn.Width = DataGridLength.Auto;
+					//columns.Add(PathColumn);
 				}
 				ShowColumns(columns.ToArray());
 				AppHelper.ShowButtons(TemplateListGrid, buttons);
@@ -419,8 +429,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}, null, new SortableBindingList<ISettingsListFileItem>());
 			_SearchHelper.SetSource(SourceItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
-			MainDataGrid.ItemsSource = _SearchHelper.FilteredList;
+			FilteredList = _SearchHelper.FilteredList;
+			//CurrentView = new CollectionView(_SearchHelper.FilteredList);
+			OnPropertyChanged(nameof(FilteredList));
 		}
+
+		public BindingList<ISettingsListFileItem> FilteredList { get; set; }
+
+		public string ListGroupPropertyName { get; set; }
 
 		private void _SearchHelper_Synchronized(object sender, EventArgs e)
 		{
@@ -512,6 +528,71 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			ControlsHelper.EnsureTabItemSelected(this);
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
+		#region Grouping
+
+		public void SetGrouping(string groupingProperty)
+		{
+			var CurrentView = (BindingListCollectionView)MainDataGrid.ItemsSource;
+			CurrentView.GroupDescriptions.Clear();
+			CurrentView.SortDescriptions.Clear();
+			if (groupingProperty == null)
+				return;
+			CurrentView.SortDescriptions.Add(new SortDescription(groupingProperty, ListSortDirection.Ascending));
+			CurrentView.SortDescriptions.Add(new SortDescription(nameof(SettingsListFileItem.Name), ListSortDirection.Ascending));
+			CurrentView.GroupDescriptions.Add(new PropertyGroupDescription(groupingProperty));
+		}
+
+		private void ExpanderToggle_Click(object sender, RoutedEventArgs e)
+		{
+			// Cast sender to Button (since this event is attached to a Button)
+			var button = sender as Button;
+
+			// Check if sender is indeed a Button to avoid null reference exceptions
+			if (button == null) return;
+
+			// Find the parent Expander of the button
+			var expander = FindParent<Expander>(button);
+
+			// If an Expander was found, toggle its IsExpanded property
+			if (expander != null)
+			{
+				expander.IsExpanded = !expander.IsExpanded;
+			}
+		}
+
+		// Helper method to find a parent of a given control/item
+		public static T FindParent<T>(DependencyObject child) where T : DependencyObject
+		{
+			// Get the parent object
+			var parentObject = VisualTreeHelper.GetParent(child);
+
+			// We've reached the end of the tree
+			if (parentObject == null) return null;
+
+			// Check if the parent matches the type we're looking for
+			T parent = parentObject as T;
+			if (parent != null)
+			{
+				return parent;
+			}
+			else
+			{
+				// Use recursion to proceed with the next level
+				return FindParent<T>(parentObject);
+			}
+		}
+
+		#endregion
 	}
 
 }

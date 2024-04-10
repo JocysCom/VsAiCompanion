@@ -76,6 +76,43 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static Func<string, DrawingImage> ConvertToImage;
 
+		#region Lists grouping
+
+		public DateTime Created { get => _Created; set => SetProperty(ref _Created, value); }
+		DateTime _Created;
+
+		/// <summary>
+		/// Computed property for group name
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
+		public string ListGroupTime
+		{
+			get
+			{
+				var today = DateTime.Today;
+				var yesterday = today.AddDays(-1);
+				if (Created.Date == today) return "Today";
+				else if (Created.Date == yesterday) return "Yesterday";
+				else if (Created.Year == today.Year) return Created.ToString("MMMM"); // Month name if the same year
+				else return Created.Year.ToString(); // Just the year if different year
+			}
+		}
+
+		[XmlIgnore, JsonIgnore]
+		public string ListGroupPath
+			=> string.IsNullOrEmpty(Path) ? "Main" : Path;
+
+		[XmlIgnore, JsonIgnore]
+		public string ListGroupName
+		{
+			get
+			{
+				var groups = (Name ?? "").Split('-');
+				return groups.Length == 0 ? "Main" : groups[0];
+			}
+		}
+
+		#endregion
 
 		#region ■ INotifyPropertyChanged
 
