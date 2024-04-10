@@ -1,3 +1,7 @@
+2024-04-10 v1.9.7
+
+- Fix: Embedding is not importing Word, Excel, and PDF files into the database.
+
 2024-04-09 v1.9.6
 
 - Fix: Fixed multiple issues and bugs.

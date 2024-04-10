@@ -7,6 +7,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 	Name="TemplateListUserControl"
 	d:DesignHeight="270"
 	d:DesignWidth="480"
@@ -26,6 +27,19 @@
 	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
+			<!--  Collection View Source with Grouping  -->
+			<CollectionViewSource x:Key="GroupedData" Source="{Binding YourDataList}">
+				<CollectionViewSource.SortDescriptions>
+					<!--  Sort firstly by Path then by Name  -->
+					<scm:SortDescription PropertyName="Path" />
+					<scm:SortDescription PropertyName="Name" />
+				</CollectionViewSource.SortDescriptions>
+				<CollectionViewSource.GroupDescriptions>
+					<!--  Group by Path  -->
+					<PropertyGroupDescription PropertyName="Path" />
+				</CollectionViewSource.GroupDescriptions>
+			</CollectionViewSource>
+
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
@@ -205,6 +219,30 @@
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
+			<DataGrid.GroupStyle>
+				<!--  Group Style for collapsible panels  -->
+				<GroupStyle>
+					<GroupStyle.ContainerStyle>
+						<Style TargetType="{x:Type GroupItem}">
+							<Setter Property="Margin" Value="0,0,0,5" />
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="{x:Type GroupItem}">
+										<Expander BorderBrush="#FFA4B97F" BorderThickness="0,0,0,1" IsExpanded="True">
+											<!--  Group Header  -->
+											<Expander.Header>
+												<TextBlock Margin="5,0,0,0" FontWeight="Bold" Text="{Binding Name}" />
+											</Expander.Header>
+											<!--  Items in the group  -->
+											<ItemsPresenter />
+										</Expander>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</GroupStyle.ContainerStyle>
+				</GroupStyle>
+			</DataGrid.GroupStyle>
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 

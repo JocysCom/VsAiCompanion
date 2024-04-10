@@ -155,7 +155,7 @@
 				</StackPanel>
 
 			</TabItem>
-			<TabItem x:Name="ApiServicesTabItem" x:FieldModifier="public">
+			<TabItem x:Name="AiServicesTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl
@@ -163,10 +163,23 @@
 							Height="12"
 							VerticalAlignment="Center"
 							Content="{StaticResource Icon_cloud_gear}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.API_Services}" />
+						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.AI_Services}" />
 					</StackPanel>
 				</TabItem.Header>
 				<local:AiServiceControl x:Name="ItemPanel" x:FieldModifier="public" />
+			</TabItem>
+
+			<TabItem x:Name="AiModelsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl
+							Width="12"
+							Height="12"
+							VerticalAlignment="Center"
+							Content="{StaticResource Icon_cloud_gear}" />
+						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.AI_Models}" />
+					</StackPanel>
+				</TabItem.Header>
 			</TabItem>
 
 			<TabItem x:Name="ContextTabItem" x:FieldModifier="public">

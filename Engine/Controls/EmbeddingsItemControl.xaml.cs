@@ -3,7 +3,6 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.IO;
 using JocysCom.VS.AiCompanion.DataClient;
-using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -378,8 +377,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return true;
 			if (fileLength > 0)
 			{
-				var isBinary = DocItem.IsBinary(filePath, 1024);
-				if (isBinary)
+				// If can't read file then....
+				var fh = new Plugins.Core.FileHelper();
+				var result = fh.ReadFileAsPlainText(filePath);
+				var content = result?.Result;
+				if (string.IsNullOrWhiteSpace(content))
 					return true;
 			}
 			return false;

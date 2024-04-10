@@ -288,8 +288,8 @@
   <data name="Settings_Folder" xml:space="preserve">
     <value>Settings Folder</value>
   </data>
-  <data name="API_Services" xml:space="preserve">
-    <value>API Services</value>
+  <data name="AI_Services" xml:space="preserve">
+    <value>AI Services</value>
   </data>
   <data name="Title_for_Attached_Context" xml:space="preserve">
     <value>Title for Attached Context</value>
@@ -568,5 +568,8 @@ Use only the contents from these documents to answer questions.</value>
   </data>
   <data name="Reset_Embeddings" xml:space="preserve">
     <value>Reset Embeddings</value>
+  </data>
+  <data name="AI_Models" xml:space="preserve">
+    <value>AI Models</value>
   </data>
 </root>
