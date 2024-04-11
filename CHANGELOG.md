@@ -1,4 +1,4 @@
-2024-04-10 v1.9.12
+2024-04-11 v1.9.12
 
 - Fix: Embedding is not importing Word, Excel, and PDF files into the database.
 - Fix: Paste copied items into the list.
