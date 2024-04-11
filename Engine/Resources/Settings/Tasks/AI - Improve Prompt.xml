@@ -1,0 +1,39 @@
+﻿<TemplateItem>
+  <Name>AI - Improve Prompt</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACu1WW2/bNhR+76/gBAxoAIriXaITt0CVrhigbQWWbtjePFuxtcqSIal2ul+/j5SU&#xD;
+xkCyAX1s68vhOYfnTvKQVy/v9jU5ll1ftc0yEoxHpGzW7aZqtsvo3c0PcRaRflg1m1XdNuUyatro&#xD;
+5YtnV99d/5Lf/PH2NemPW/L23avix5xEcZL8rvIkub65Jr/+9oYIJpLk9c8RiXbDcFgkyel0YifF&#xD;
+2m6bvOlWh1217hMIJl4QSgmMCcE2wyaCC2/5VG2GHcLi/PuI7Mpquxtm6liVp1ft3TLihBOp8Yse&#xD;
+5iEigsyafvmIb8k5974mkcVdXTXvHxMUzrkkzAbRRX9YrVGDQ1f2ZXcsZ30Q1e2ZfuCwdbtPfPU+&#xD;
+1lC6reo67j7U5aI8lk272Vyu6+pwzumHrn1fxnBY/t1WzaJrPzT33H01lF1dYVjISxSI4HO1JdVm&#xD;
+GVXrtpk4E3foVk1/23b7ZbRfDV1191xQji8WWCppacwZF9KEEQxjsosHBoKRw2rYERj/SSoqmTMm&#xD;
+ByJYlloiJRNcU0GkoKJQMGGoyAVznsayBzpIjnhQLyacM6NNPhGCWazdqAmrhozGPFpMrHzyFqZ9&#xD;
+LKOOx4KpYo7vz7NaL7rtX89lsBH+F5dR8qBEyfZ/6iXHetHYMJRJsDS1ypaxME8XylKbW2qY1hkx&#xD;
+XoEajIaa3DAptafmWWoLlCjLPWDGSDJKCBcUhMtHfdB2lvBIARfnacYt9mQ1fFxwJsxnpigQlZKO&#xD;
+p19meilcpthCRqsvK8HpSFPlXYqn8xKapSLFiZSZyj3hpCd4RkBkDmEzYXFWzYjkwqBa9p7rJWd5&#xD;
+EJmaLSFH7XUAibDMpv6kAxKRMgWHysMchFYSBKCf0daCsFwHAgdbsdTAGnS0F3Nc+RnhLA0iXGmq&#xD;
+c9g3OOjgBDZAAWAYovVDJtF3wkBDyKhzgeQ0VhSDSJ1n61nQI34CAxdhAiYBCoFGgvDgTrKMBzYy&#xD;
+MtkcFloQwpoCBoHQplRA2GxOEjqo0pQ+BnlfGM3Qa+eSPViWR3qXRtERi1DpxWfui1hRy5TS6tve&#xD;
++Cr3xqcGwKlU4T5VOa5PgwtT+UucK+ev1TRzntJIcxzykUlHkenSNWpEwjPAsgzFAYaDmoXLWE3P&#xD;
+A4dL2l/YZnoe5MKNeeEsT6AI8TzZB7m9/PRYatrmn7Jrz7P8z03vfDfkYd9/a4nm69r2Abnyb/sX&#xD;
+z/4FWrZIn9sMAAA=</IconData>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4</AiModel>
+  <TemplateName>AI - Improve Prompt</TemplateName>
+  <TextInstructions>Please analyze the following AI prompt text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised AI prompt text.&#xD;
+&#xD;
+Data for processing:</TextInstructions>
+  <ShowInstructions>false</ShowInstructions>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <ItemType>None</ItemType>
+  <Attachments />
+  <AttachmentsSelection />
+</TemplateItem>

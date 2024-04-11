@@ -354,7 +354,8 @@
 					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
 					Foreground="{StaticResource BorderDark}"
 					Header="{x:Static locales:Resources.Path}"
-					IsReadOnly="True" />
+					IsReadOnly="True"
+					Visibility="Collapsed" />
 
 			</DataGrid.Columns>
 		</DataGrid>

@@ -20,9 +20,9 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>228</Left>
-        <Top>40.5</Top>
-        <Width>456.5</Width>
+        <Left>210</Left>
+        <Top>60</Top>
+        <Width>516.5</Width>
         <Height>407.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
@@ -35,20 +35,21 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.2247191011235955</GridSplitterPosition>
+        <GridSplitterPosition>0.22871287128712872</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.22808988764044943</GridSplitterPosition>
+        <GridSplitterPosition>0.2881188118811881</GridSplitterPosition>
         <ListSelection>
-          <string>Code - Fix Debug Exception</string>
+          <string>AI - Chat</string>
         </ListSelection>
-        <ListSelectedIndex>11</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
+        <GridSplitterPosition>0.18415841584158416</GridSplitterPosition>
         <ListSelection>
           <string>Doughnut Dynamics</string>
         </ListSelection>
@@ -60,11 +61,12 @@
       </AssistantData>
       <ListsData>
         <ListSelection>
-          <string>Context - CyberNet Solutions</string>
+          <string>Persona - John Smith</string>
         </ListSelection>
-        <ListSelectedIndex>1</ListSelectedIndex>
+        <ListSelectedIndex>5</ListSelectedIndex>
       </ListsData>
       <EmbeddingsData>
+        <GridSplitterPosition>0.20396039603960395</GridSplitterPosition>
         <ListSelection>
           <string>CyberNet Solutions Portable</string>
         </ListSelection>

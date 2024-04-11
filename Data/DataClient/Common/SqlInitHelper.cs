@@ -9,14 +9,15 @@ using JocysCom.VS.AiCompanion.DataFunctions;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Reflection;
-using Microsoft.Data.SqlClient;
 
 #if NETFRAMEWORK
 using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Data.Entity;
 using System.Data.SQLite;
 using System.Data.SQLite.EF6;
+using System.Data.SqlClient;
 #else
+using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 #endif
@@ -184,7 +185,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			}
 			else
 			{
-				var connection = new Microsoft.Data.SqlClient.SqlConnection();
+				var connection = new System.Data.SqlClient.SqlConnection();
 				connection.ConnectionString = connectionString;
 				db = new EmbeddingsContext(connection, true);
 				//db = new EmbeddingsContext();
@@ -227,11 +228,13 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static DbConnection NewConnection(string connectionString)
 		{
 			var isPortable = IsPortable(connectionString);
-			if (!isPortable)
-				return new Microsoft.Data.SqlClient.SqlConnection(connectionString);
 #if NETFRAMEWORK
+			if (!isPortable)
+				return new System.Data.SqlClient.SqlConnection(connectionString);
 			return new SQLiteConnection(connectionString);
 #else
+			if (!isPortable)
+				return new Microsoft.Data.SqlClient.SqlConnection(connectionString);
 			return new SqliteConnection(connectionString);
 #endif
 		}
@@ -239,11 +242,13 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static DbConnectionStringBuilder NewConnectionStringBuilder(string connectionString)
 		{
 			var isPortable = IsPortable(connectionString);
+#if NETFRAMEWORK
 			if (!isPortable)
 				return new SqlConnectionStringBuilder(connectionString);
-#if NETFRAMEWORK
 			return new SQLiteConnectionStringBuilder(connectionString);
 #else
+			if (!isPortable)
+				return new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
 			return new SqliteConnectionStringBuilder(connectionString);
 #endif
 		}
@@ -576,8 +581,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		public class MsSqlEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
 		{
-			Microsoft.Data.SqlClient.SqlClientFactory instance
-				=> Microsoft.Data.SqlClient.SqlClientFactory.Instance;
+			System.Data.SqlClient.SqlClientFactory instance
+				=> System.Data.SqlClient.SqlClientFactory.Instance;
 
 			// "System.Data.SQLite.EF6"
 			string invariantName
@@ -588,7 +593,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			{
 				if (type == typeof(System.Data.Entity.Infrastructure.IProviderInvariantName))
 				{
-					if (key is Microsoft.Data.SqlClient.SqlClientFactory)
+					if (key is System.Data.SqlClient.SqlClientFactory)
 						return new ProviderInvariantName(invariantName);
 				}
 				else if (type == typeof(System.Data.Common.DbProviderFactory))
@@ -599,7 +604,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				else if (type == typeof(System.Data.Entity.Core.Common.DbProviderServices))
 				{
 					if (invariantName.Equals(key))
-						return System.Data.Entity.SqlServer.MicrosoftSqlProviderServices.Instance;
+						return System.Data.Entity.SqlServer.SqlProviderServices.Instance;
 				}
 				return null;
 			}

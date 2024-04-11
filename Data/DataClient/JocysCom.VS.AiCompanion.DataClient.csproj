@@ -14,8 +14,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.9.6</AssemblyVersion>
-		<FileVersion>1.9.6</FileVersion>
+		<AssemblyVersion>1.9.12</AssemblyVersion>
+		<FileVersion>1.9.12</FileVersion>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 	</PropertyGroup>
 
@@ -35,12 +35,8 @@
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="ErikEJ.EntityFramework.SqlServer" Version="6.6.9" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
-	</ItemGroup>
-
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.17" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.17" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.17" />
