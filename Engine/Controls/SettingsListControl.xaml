@@ -241,7 +241,7 @@
 														Margin="3,0,3,0"
 														VerticalAlignment="Center"
 														DockPanel.Dock="Left"
-														FontWeight="Bold"
+														Foreground="{StaticResource BorderDark}"
 														Text="{Binding Path=Name}" />
 													<!--  Custom toggle button  -->
 													<Button

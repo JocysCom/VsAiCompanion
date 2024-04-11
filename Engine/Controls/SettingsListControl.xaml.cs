@@ -131,8 +131,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				SourceItems.ListChanged += SourceItems_ListChanged;
 				var columns = new List<DataGridColumn> { IconColumn, NameColumn };
 				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid);
-				if (DataType != ItemType.Task)
+				if (DataType == ItemType.Task)
+				{
+					SetGrouping(nameof(SettingsListFileItem.ListGroupTime));
+				}
+				else
+				{
 					buttons = buttons.Except(new Button[] { GenerateTitleButton }).ToArray();
+				}
 				if (DataType == ItemType.Template)
 				{
 					SetGrouping(nameof(SettingsListFileItem.ListGroupName));
@@ -554,42 +560,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ExpanderToggle_Click(object sender, RoutedEventArgs e)
 		{
-			// Cast sender to Button (since this event is attached to a Button)
 			var button = sender as Button;
-
-			// Check if sender is indeed a Button to avoid null reference exceptions
-			if (button == null) return;
-
-			// Find the parent Expander of the button
+			if (button == null)
+				return;
 			var expander = FindParent<Expander>(button);
-
-			// If an Expander was found, toggle its IsExpanded property
 			if (expander != null)
-			{
 				expander.IsExpanded = !expander.IsExpanded;
-			}
 		}
 
-		// Helper method to find a parent of a given control/item
 		public static T FindParent<T>(DependencyObject child) where T : DependencyObject
 		{
-			// Get the parent object
 			var parentObject = VisualTreeHelper.GetParent(child);
-
-			// We've reached the end of the tree
-			if (parentObject == null) return null;
-
-			// Check if the parent matches the type we're looking for
+			if (parentObject == null)
+				return null;
 			T parent = parentObject as T;
-			if (parent != null)
-			{
-				return parent;
-			}
-			else
-			{
-				// Use recursion to proceed with the next level
-				return FindParent<T>(parentObject);
-			}
+			return parent == null
+				? FindParent<T>(parentObject)
+				: parent;
 		}
 
 		#endregion
