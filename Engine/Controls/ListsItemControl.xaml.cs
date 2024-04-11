@@ -76,7 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				IconPanel.BindData(value);
 				DataContext = value;
-				ControlsHelper.SetItemsSource(MainDataGrid, value.Items);
+				ControlsHelper.SetItemsSource(MainDataGrid, value?.Items);
 				//AiModelBoxPanel.BindData(value);
 				//IconPanel.BindData(value);
 				// SourceFilesPanel.Data = value;

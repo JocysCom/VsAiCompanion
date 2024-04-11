@@ -88,8 +88,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 					_Messages = new BindingList<MessageItem>();
 				return _Messages;
 			}
-			set => SetProperty(ref _Messages, value);
+			set
+			{
+				SetProperty(ref _Messages, value);
+			}
 		}
+
 		BindingList<MessageItem> _Messages;
 
 		/// <summary>

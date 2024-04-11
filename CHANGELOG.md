@@ -1,6 +1,9 @@
-2024-04-10 v1.9.7
+2024-04-10 v1.9.12
 
 - Fix: Embedding is not importing Word, Excel, and PDF files into the database.
+- Fix: Paste copied items into the list.
+- New: Add item groups to the list.
+- Update: Make list names case-insensitive when the AI is searching.
 
 2024-04-09 v1.9.6
 

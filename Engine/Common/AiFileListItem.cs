@@ -10,6 +10,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class AiFileListItem : SettingsListFileItem, IAiServiceModel, ICancellationTokens
 	{
+		public AiFileListItem() : base()
+		{
+		}
+
 		#region ■ IAiServiceModel
 
 		public Guid AiServiceId

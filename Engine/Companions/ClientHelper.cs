@@ -327,16 +327,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
 			executeBeforeAddMessage?.Invoke();
 			item.Messages.Add(m);
+			item.Modified = DateTime.Now;
 			var msgTokens = CountTokens(chatLogMessages, ChatLogOptions);
 			if (item.IsPreview)
 			{
 				var message = new MessageItem(SystemName, Resources.Resources.Preview_Mode_Message);
 				item.Messages.Add(message);
+				item.Modified = DateTime.Now;
 			}
 			else if (maxTokens < msgTokens)
 			{
 				var message = new MessageItem(SystemName, $"Message is too big. Message Tokens: {msgTokens}, Maximum Tokens: {maxTokens}", MessageType.Error);
 				item.Messages.Add(message);
+				item.Modified = DateTime.Now;
 			}
 			else
 			{
@@ -366,7 +369,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						//if (item.Messages.Contains(assistantMessage) && assistantMessage.Attachments.Count > 1)
 						//	item.Messages.Remove(assistantMessage);
 						if (!item.Messages.Contains(assistantMessage))
+						{
 							item.Messages.Add(assistantMessage);
+							item.Modified = DateTime.Now;
+						}
 						// Automation.
 						SetData(item, assistantMessage.Body);
 					}
@@ -546,6 +552,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			Global.MainControl.Dispatcher.Invoke(() =>
 			{
 				item.Messages.Add(msgItem);
+				item.Modified = DateTime.Now;
 			});
 		}
 

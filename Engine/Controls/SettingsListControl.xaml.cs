@@ -7,6 +7,7 @@ using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
@@ -45,7 +46,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		bool selectionsUpdating = false;
 		private void SourceItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			ControlsHelper.BeginInvoke(() =>
+			_ = ControlsHelper.BeginInvoke(() =>
 			{
 				if (e.ListChangedType == ListChangedType.ItemChanged)
 				{
@@ -65,8 +66,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						}
 						selectionsUpdating = false;
 					}
+					bool refreshGrid = false;
+					if (!selectionsUpdating)
+					{
+						if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.IsPinned))
+							refreshGrid = true;
+						if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.ListGroupTimeSortKey))
+							refreshGrid = true;
+						if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.ListGroupNameSortKey))
+							refreshGrid = true;
+						if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.ListGroupPathSortKey))
+							refreshGrid = true;
+					}
+
+					if (refreshGrid)
+					{
+						_ = Helper.Delay(RefreshDataGrid, 500);
+					}
 				}
 			});
+		}
+
+		public void RefreshDataGrid()
+		{
+			var view = (ICollectionView)MainDataGrid.ItemsSource;
+			view.Refresh();
 		}
 
 		object _MainDataGridFormattingConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
@@ -131,25 +155,41 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				SourceItems.ListChanged += SourceItems_ListChanged;
 				var columns = new List<DataGridColumn> { IconColumn, NameColumn };
 				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid);
-				if (DataType == ItemType.Task)
+				switch (DataType)
 				{
-					SetGrouping(nameof(SettingsListFileItem.ListGroupTime));
+					case ItemType.None:
+						break;
+					case ItemType.Task:
+						SetGrouping(nameof(SettingsListFileItem.ListGroupTime));
+						break;
+					case ItemType.Template:
+						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
+						break;
+					case ItemType.FineTuning:
+						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
+						break;
+					case ItemType.Assistant:
+						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
+						break;
+					case ItemType.Lists:
+						SetGrouping(nameof(SettingsListFileItem.ListGroupPath));
+						break;
+					case ItemType.Embeddings:
+						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
+						break;
+					default:
+						break;
 				}
-				else
+				if (DataType != ItemType.Task)
 				{
 					buttons = buttons.Except(new Button[] { GenerateTitleButton }).ToArray();
 				}
-				if (DataType == ItemType.Template)
-				{
-					SetGrouping(nameof(SettingsListFileItem.ListGroupName));
-				}
-				else
+				if (DataType != ItemType.Template)
 				{
 					buttons = buttons.Except(new Button[] { CreateNewTaskButton }).ToArray();
 				}
 				if (DataType == ItemType.Lists)
 				{
-					SetGrouping(nameof(SettingsListFileItem.ListGroupPath));
 					//NameColumn.Width = DataGridLength.Auto;
 					//columns.Add(PathColumn);
 				}
@@ -374,7 +414,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			try
 			{
 				var xml = Clipboard.GetText();
-				var item = Serializer.DeserializeFromXmlString<TemplateItem>(xml);
+				var itemType = SourceItems.GetType().GenericTypeArguments[0];
+				var item = (ISettingsListFileItem)Serializer.DeserializeFromXmlString(xml, itemType);
 				AppHelper.FixName(item, SourceItems);
 				InsertItem(item);
 			}
@@ -432,7 +473,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					return string.IsNullOrEmpty(s) ||
 						(x.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
 				}
-			}, null, new SortableBindingList<ISettingsListFileItem>());
+			}, null, new ObservableCollection<ISettingsListFileItem>());
 			_SearchHelper.SetSource(SourceItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
 			FilteredList = _SearchHelper.FilteredList;
@@ -440,7 +481,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			OnPropertyChanged(nameof(FilteredList));
 		}
 
-		public BindingList<ISettingsListFileItem> FilteredList { get; set; }
+		public ObservableCollection<ISettingsListFileItem> FilteredList { get; set; }
 
 		public string ListGroupPropertyName { get; set; }
 
@@ -519,6 +560,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						var copy = ti.Copy(true);
 						// Hide instructions box by default on Tasks.
 						copy.ShowInstructions = false;
+						copy.Created = DateTime.Now;
+						copy.Modified = copy.Created;
 						Global.InsertItem(copy, ItemType.Task);
 						selection.Add(item.Name);
 					}
@@ -535,27 +578,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.EnsureTabItemSelected(this);
 		}
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-		#endregion
-
 		#region Grouping
 
 		public void SetGrouping(string groupingProperty)
 		{
-			var CurrentView = (BindingListCollectionView)MainDataGrid.ItemsSource;
-			CurrentView.GroupDescriptions.Clear();
-			CurrentView.SortDescriptions.Clear();
+			var view = (ICollectionView)MainDataGrid.ItemsSource;
+			view.GroupDescriptions.Clear();
+			view.SortDescriptions.Clear();
 			if (groupingProperty == null)
 				return;
-			CurrentView.SortDescriptions.Add(new SortDescription(groupingProperty, ListSortDirection.Ascending));
-			CurrentView.SortDescriptions.Add(new SortDescription(nameof(SettingsListFileItem.Name), ListSortDirection.Ascending));
-			CurrentView.GroupDescriptions.Add(new PropertyGroupDescription(groupingProperty));
+			switch (groupingProperty)
+			{
+				case nameof(SettingsListFileItem.ListGroupTime):
+					view.SortDescriptions.Add(new SortDescription(nameof(SettingsListFileItem.ListGroupTimeSortKey), ListSortDirection.Ascending));
+					break;
+				case nameof(SettingsListFileItem.ListGroupPath):
+					view.SortDescriptions.Add(new SortDescription(nameof(SettingsListFileItem.ListGroupPathSortKey), ListSortDirection.Ascending));
+					break;
+				case nameof(SettingsListFileItem.ListGroupName):
+					view.SortDescriptions.Add(new SortDescription(nameof(SettingsListFileItem.ListGroupNameSortKey), ListSortDirection.Ascending));
+					break;
+				default:
+					view.SortDescriptions.Add(new SortDescription(groupingProperty, ListSortDirection.Ascending));
+					break;
+			}
+			view.SortDescriptions.Add(new SortDescription(nameof(SettingsListFileItem.Name), ListSortDirection.Ascending));
+			view.GroupDescriptions.Add(new PropertyGroupDescription(groupingProperty));
+			_ = Helper.Delay(RefreshDataGrid, 500);
 		}
 
 		private void ExpanderToggle_Click(object sender, RoutedEventArgs e)
@@ -580,6 +629,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		#endregion
+
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
+		private void MainDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+		{
+		}
 	}
 
 }

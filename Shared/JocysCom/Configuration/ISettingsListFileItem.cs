@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
@@ -12,6 +13,15 @@ namespace JocysCom.ClassLibrary.Configuration
 		string IconData { get; set; }
 		void SetIcon(string contents, string type = ".svg");
 
+		// List Properties.
+		bool IsPinned { get; set; }
+		DateTime Created { get; set; }
+		DateTime Modified { get; set; }
+		int ListGroupTimeSortKey { get; }
+		string ListGroupPathSortKey { get; }
+		string ListGroupNameSortKey { get; }
+		string ListGroupTime { get; }
+		string ListGroupPath { get; }
 		string ListGroupName { get; }
 	}
 }

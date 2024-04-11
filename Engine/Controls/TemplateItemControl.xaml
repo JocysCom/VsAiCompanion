@@ -171,9 +171,14 @@
 								</StackPanel>
 							</GroupBox>
 							<CheckBox
+								Name="IsPinnedCheckBox"
+								Margin="5,0,0,0"
+								Content="Pinned"
+								IsChecked="{Binding IsPinned}" />
+
+							<CheckBox
 								Name="IsFavoriteCheckBox"
-								Margin="-8,0,0,0"
-								HorizontalAlignment="Center"
+								Margin="5,0,0,0"
 								Content="Show Icon in Toolbar"
 								IsChecked="{Binding IsFavorite}"
 								Visibility="{Binding TemplateItemVisibility, ElementName=This}" />

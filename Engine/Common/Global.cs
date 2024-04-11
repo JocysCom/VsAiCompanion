@@ -433,7 +433,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (itemsAdded > 0)
 				{
 					// Reorder and save.
-					SettingsData<ListInfo>.SortList(e.Items);
+					Lists.SortList(e.Items);
 					Lists.IsSavePending = true;
 				}
 			}
@@ -454,7 +454,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (itemsAdded > 0)
 				{
 					// Reorder and save.
-					SettingsData<EmbeddingsItem>.SortList(e.Items);
+					Embeddings.SortList(e.Items);
 					Embeddings.IsSavePending = true;
 				}
 			}
@@ -517,7 +517,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (itemsAdded > 0)
 				{
 					// Reorder and save.
-					SettingsData<TemplateItem>.SortList(e.Items);
+					Templates.SortList(e.Items);
 					Templates.IsSavePending = true;
 				}
 			}

@@ -535,6 +535,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									Global.MainControl.Dispatcher.Invoke(() =>
 									{
 										item.Messages.Add(assistantMessageItem);
+										item.Modified = DateTime.Now;
 									});
 									// Process function calls.
 									if (item.PluginsEnabled)

@@ -418,6 +418,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static TemplateItem GetNewTemplateItem(bool setNameAndIcon = false)
 		{
 			var item = new TemplateItem();
+			item.Created = DateTime.Now;
+			item.Modified = item.Created;
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
 				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
@@ -437,6 +439,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static FineTuningItem GetNewFineTuningItem()
 		{
 			var item = new FineTuningItem();
+			item.Created = DateTime.Now;
+			item.Modified = item.Created;
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
 				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
@@ -453,6 +457,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static AssistantItem GetNewAssistantItem()
 		{
 			var item = new AssistantItem();
+			item.Created = DateTime.Now;
+			item.Modified = item.Created;
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault) ??
 				Global.AppSettings.AiServices.FirstOrDefault();
 			item.AiServiceId = defaultAiService?.Id ?? Guid.Empty;
@@ -469,6 +475,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static ListInfo GetNewListsItem()
 		{
 			var item = new ListInfo();
+			item.Created = DateTime.Now;
+			item.Modified = item.Created;
 			item.Name = $"List {DateTime.Now:yyyyMMdd_HHmmss}";
 			SetIconToDefault(item);
 			return item;
@@ -486,6 +494,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static EmbeddingsItem GetNewEmbeddingsItem()
 		{
 			var item = new EmbeddingsItem();
+			item.Created = DateTime.Now;
+			item.Modified = item.Created;
 			item.Name = $"Embedding {DateTime.Now:yyyyMMdd_HHmmss}";
 			var defaultAiService = Global.AppSettings.AiServices.FirstOrDefault(x => x.IsDefault)
 				?? Global.AppSettings.AiServices.FirstOrDefault();

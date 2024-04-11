@@ -55,7 +55,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public ListInfo GetFilteredListInfo(string listName)
 		{
 			return GetEnabledLists()
-				.Where(x => x.Name == listName)
+				.Where(x => x.Name.Equals(listName, System.StringComparison.OrdinalIgnoreCase))
 				.FirstOrDefault();
 		}
 

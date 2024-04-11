@@ -11,6 +11,10 @@ namespace JocysCom.ClassLibrary.Configuration
 {
 	public class SettingsListFileItem : SettingsFileItem, ISettingsListFileItem
 	{
+		public SettingsListFileItem() : base()
+		{
+		}
+
 		[DefaultValue(false)]
 
 		public bool IsChecked { get => _IsChecked; set => SetProperty(ref _IsChecked, value); }
@@ -78,8 +82,83 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#region Lists grouping
 
-		public DateTime Created { get => _Created; set => SetProperty(ref _Created, value); }
+		[DefaultValue(false)]
+		public bool IsPinned
+		{
+			get => _IsPinned;
+			set
+			{
+				SetProperty(ref _IsPinned, value);
+				OnPropertyChanged(nameof(ListGroupTime));
+				OnPropertyChanged(nameof(ListGroupPath));
+				OnPropertyChanged(nameof(ListGroupName));
+				OnPropertyChanged(nameof(ListGroupTimeSortKey));
+				OnPropertyChanged(nameof(ListGroupPathSortKey));
+				OnPropertyChanged(nameof(ListGroupNameSortKey));
+			}
+		}
+		bool _IsPinned;
+
+		public DateTime Created
+		{
+			get => _Created;
+			set
+			{
+				SetProperty(ref _Created, value);
+				OnPropertyChanged(nameof(ListGroupTime));
+				OnPropertyChanged(nameof(ListGroupNameSortKey));
+			}
+		}
 		DateTime _Created;
+
+		public DateTime Modified
+		{
+			get => _Modified;
+			set
+			{
+				SetProperty(ref _Modified, value);
+				OnPropertyChanged(nameof(ListGroupTime));
+				OnPropertyChanged(nameof(ListGroupNameSortKey));
+			}
+		}
+		DateTime _Modified;
+
+		/// <summary>
+		/// Computed property for group name
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
+		public int ListGroupTimeSortKey
+		{
+			get
+			{
+				if (IsPinned)
+					return 0;
+				var today = DateTime.Today;
+				var yesterday = today.AddDays(-1);
+				var lastWeekStart = today.AddDays(-7);
+				// First day of last month
+				var lastMonth = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
+				var d = Modified;
+				// If Created is today											
+				if (d.Date == today)
+					return 1;
+				// If Created is yesterday
+				else if (d.Date == yesterday)
+					return 2;
+				// If Created is within last week
+				else if (d.Date >= lastWeekStart && d.Date < yesterday)
+					return 3;
+				// If Created is within last month
+				else if (d.Year == lastMonth.Year && d.Month == lastMonth.Month)
+					return 4;
+				// If Created is within the current year
+				else if (d.Year == today.Year)
+					return 10 + d.Month;
+				// If none of the above, return the year
+				else
+					return 100 + d.Year;
+			}
+		}
 
 		/// <summary>
 		/// Computed property for group name
@@ -89,26 +168,87 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			get
 			{
+				if (IsPinned)
+					return "Pinned";
 				var today = DateTime.Today;
 				var yesterday = today.AddDays(-1);
-				if (Created.Date == today) return "Today";
-				else if (Created.Date == yesterday) return "Yesterday";
-				else if (Created.Year == today.Year) return Created.ToString("MMMM"); // Month name if the same year
-				else return Created.Year.ToString(); // Just the year if different year
+				var lastWeekStart = today.AddDays(-7);
+				var lastMonth = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
+				var d = Modified;
+				if (d.Date == today)
+					return "Today";
+				else if (d.Date == yesterday)
+					return "Yesterday";
+				else if (d.Date >= lastWeekStart && d.Date < yesterday)
+					return "Last Week";
+				else if (d.Year == lastMonth.Year && d.Month == lastMonth.Month)
+					return "Last Month";
+				else if (d.Year == today.Year)
+					return d.ToString("MMMM");
+				else
+					return d.Year.ToString();
 			}
 		}
 
+		/// <summary>
+		/// Computed property for group name
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
+		public string ListGroupPathSortKey
+		{
+			get
+			{
+				if (IsPinned)
+					return "0";
+				return string.IsNullOrEmpty(Path)
+					? "1"
+					: "2" + Path;
+			}
+		}
+
+
 		[XmlIgnore, JsonIgnore]
 		public string ListGroupPath
-			=> string.IsNullOrEmpty(Path) ? "Main" : Path;
+		{
+			get
+			{
+				if (IsPinned)
+					return "Pinned";
+				return string.IsNullOrEmpty(Path)
+					? "Main"
+					: Path;
+			}
+		}
+
+		/// <summary>
+		/// Computed property for group name
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
+		public string ListGroupNameSortKey
+		{
+			get
+			{
+				if (IsPinned)
+					return "0";
+				var groups = (Name ?? "").Split(new string[] { " - " }, StringSplitOptions.None);
+				return groups.Length <= 1
+					? "1"
+					: "2" + (!Name.StartsWith("®")
+						? "4" + groups[0]
+						: "5" + groups[0]);
+			}
+		}
+
 
 		[XmlIgnore, JsonIgnore]
 		public string ListGroupName
 		{
 			get
 			{
-				var groups = (Name ?? "").Split('-');
-				return groups.Length == 0 ? "Main" : groups[0];
+				if (IsPinned)
+					return "Pinned";
+				var groups = (Name ?? "").Split(new string[] { " - " }, StringSplitOptions.None);
+				return groups.Length <= 1 ? "Main" : groups[0];
 			}
 		}
 

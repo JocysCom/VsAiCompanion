@@ -13,7 +13,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// List Info
 		/// </summary>
-		public ListInfo()
+		public ListInfo() : base()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}

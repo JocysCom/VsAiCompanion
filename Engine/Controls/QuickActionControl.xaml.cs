@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -81,6 +82,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var item = (TemplateItem)((Button)sender).DataContext;
 			var copy = item.Copy(true);
+			copy.Created = DateTime.Now;
+			copy.Modified = copy.Created;
 			// Hide instructions box by default on Tasks.
 			copy.ShowInstructions = false;
 			Global.InsertItem(copy, ItemType.Task);

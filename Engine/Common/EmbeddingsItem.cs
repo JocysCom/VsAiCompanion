@@ -11,7 +11,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public class EmbeddingsItem : SettingsListFileItem, IAiServiceModel
 	{
 
-		public EmbeddingsItem()
+		public EmbeddingsItem() : base()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}

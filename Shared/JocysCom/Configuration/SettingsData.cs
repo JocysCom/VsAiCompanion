@@ -476,6 +476,17 @@ namespace JocysCom.ClassLibrary.Configuration
 										if (fileItem.BaseName != fileBaseName)
 											fileItem.BaseName = fileBaseName;
 										fileItems.Add(fileItem);
+										var listItem = fileItem as ISettingsListFileItem;
+										if (listItem != null)
+										{
+											// Created can be later than file creation.
+											if (listItem.Created == DateTime.MinValue || listItem.Created > file.CreationTime)
+												listItem.Created = file.CreationTime;
+											// Modified can be earlier than Created.
+											if (listItem.Modified < listItem.Created)
+												listItem.Modified = listItem.Created;
+
+										}
 									}
 									catch { }
 								}
@@ -555,12 +566,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		public static void SortList<T1>(IList<T1> items) where T1 : ISettingsFileItem
+		public void SortList<T1>(IList<T1> items) where T1 : ISettingsFileItem
 		{
 			// Move works with special characters to the end.
 			var newItems = items
-				.OrderBy(x => x.Name.StartsWith("®"))
-				.ThenBy(x => x.Path)
+				.OrderBy(x => x.Path)
+				.ThenBy(x => x.Name.StartsWith("®"))
 				.ThenBy(x => x.Name)
 				.ToList();
 			CollectionsHelper.Synchronize(newItems, items);

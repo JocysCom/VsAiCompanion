@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace JocysCom.ClassLibrary.Controls
 		private Func<T, bool> Predicate;
 		private Func<ListChangedEventArgs, bool> FilterPredicate;
 
-		public BindingList<T> FilteredList { get; private set; }
+		public ObservableCollection<T> FilteredList { get; private set; }
 
 		public SearchHelper()
 		{
@@ -23,11 +24,11 @@ namespace JocysCom.ClassLibrary.Controls
 		public SearchHelper(
 			Func<T, bool> predicate,
 			Func<ListChangedEventArgs, bool> filterPredicate = null,
-			BindingList<T> filteredList = null
+			ObservableCollection<T> filteredList = null
 		)
 		{
 			Predicate = predicate;
-			FilteredList = filteredList ?? new BindingList<T>();
+			FilteredList = filteredList ?? new ObservableCollection<T>();
 			FilterPredicate = filterPredicate;
 		}
 
