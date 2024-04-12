@@ -77,8 +77,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 							refreshGrid = true;
 						if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.ListGroupPathSortKey))
 							refreshGrid = true;
+						if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.Path) && nameof(ISettingsListFileItem.ListGroupPath) == _GroupingProperty)
+							refreshGrid = true;
 					}
-
 					if (refreshGrid)
 					{
 						_ = Helper.Delay(RefreshDataGrid, 500);
@@ -580,8 +581,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Grouping
 
+		private string _GroupingProperty;
+
 		public void SetGrouping(string groupingProperty)
 		{
+			_GroupingProperty = groupingProperty;
 			var view = (ICollectionView)MainDataGrid.ItemsSource;
 			view.GroupDescriptions.Clear();
 			view.SortDescriptions.Clear();

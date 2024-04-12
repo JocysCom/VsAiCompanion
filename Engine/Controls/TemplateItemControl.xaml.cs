@@ -71,7 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
 		{
-			await Helper.Delay(SetZoom, 250);
+			await Helper.Delay(SetZoom, AppHelper.NavigateDelayMs);
 		}
 
 		private async void MessagesPanel_ScriptingHandler_OnMessageAction(object sender, string[] e)

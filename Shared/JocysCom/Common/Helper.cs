@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Linq;
-using System.IO;
-using System.Threading.Tasks;
 using System.Threading;
-using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary
 {
@@ -242,8 +242,10 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Delay some frequently repeatable actions.
 		/// </summary>
-		private static async Task _Delay(Delegate action, int? delay = null, params object[] args)
+		public static async Task _Delay(Delegate action, int? delay = null, params object[] args)
 		{
+			if (action == null)
+				return;
 			var source = new CancellationTokenSource();
 			// Replace any previous CancellationTokenSource with a new one.
 			DelayActions.AddOrUpdate(

@@ -575,4 +575,10 @@ Use only the contents from these documents to answer questions.</value>
   <data name="Mail" xml:space="preserve">
     <value>Mail</value>
   </data>
+  <data name="Task" xml:space="preserve">
+    <value>Task</value>
+  </data>
+  <data name="Task_Path" xml:space="preserve">
+    <value>Task / Path</value>
+  </data>
 </root>

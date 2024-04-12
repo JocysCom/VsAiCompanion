@@ -228,35 +228,37 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler OnEmbeddingsUpdated;
 
 		public static void RaiseOnSaveSettings()
-			=> OnSaveSettings?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnSaveSettings, null, EventArgs.Empty);
 
 		public static void RaiseOnFilesUploaded()
-			=> OnFilesUpdaded?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnFilesUpdaded, null, EventArgs.Empty);
 
 		public static void RaiseOnFineTuningJobCreated()
-			=> OnFineTuningJobCreated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnFineTuningJobCreated, null, EventArgs.Empty);
 
 		public static void RaiseOnSourceDataFilesUpdated()
 			=> OnSourceDataFilesUpdated?.Invoke(null, EventArgs.Empty);
 
 		public static void RaiseOnTuningDataFilesUpdated()
-			=> OnTuningDataFilesUpdated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnTuningDataFilesUpdated, null, EventArgs.Empty);
 
 		public static void RaiseOnTasksUpdated()
-			=> OnTasksUpdated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnTasksUpdated, null, EventArgs.Empty);
+
 		public static void RaiseOnTemplatesUpdated()
-			=> OnTemplatesUpdated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnTemplatesUpdated, null, EventArgs.Empty);
 
 		public static void RaiseOnAiServicesUpdated()
-			=> OnAiServicesUpdated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnAiServicesUpdated, null, EventArgs.Empty);
+
 		public static void RaiseOnAiModelsUpdated()
-			=> OnAiModelsUpdated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnAiModelsUpdated, null, EventArgs.Empty);
 
 		public static void RaiseOnListsUpdated()
-			=> OnListsUpdated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnListsUpdated, null, EventArgs.Empty);
 
 		public static void RaiseOnEmbeddingsUpdated()
-			=> OnEmbeddingsUpdated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnEmbeddingsUpdated, null, EventArgs.Empty);
 
 		#endregion
 

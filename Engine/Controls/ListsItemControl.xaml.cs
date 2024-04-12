@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +19,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			InitializeComponent();
 			UpdateButtons();
+			Global.Tasks.Items.ListChanged += Items_ListChanged; ;
+			RefreshPaths();
+		}
+
+		private void Items_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			if (e.PropertyDescriptor?.Name == nameof(TemplateItem.Name))
+			{
+				_ = Helper.Delay(RefreshPaths);
+			}
 		}
 
 		#region List Panel Item
@@ -93,10 +104,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(ListInfo.Name))
+			if (e.PropertyName == nameof(ListInfo.Path))
 			{
-				//OnPropertyChanged(nameof(DataFolderPath));
-				//OnPropertyChanged(nameof(DataFolderPathShow));
+
 			}
 		}
 
@@ -104,6 +114,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MainDataGrid_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+		}
+
+		public ObservableCollection<string> Paths { get; set; } = new ObservableCollection<string>();
+
+		public void RefreshPaths()
+		{
+
+			var listPaths = Global.Lists.Items.Select(x => x.Path ?? "")
+				.Distinct()
+				.OrderBy(x => x)
+				.ToList();
+			if (!listPaths.Contains(""))
+				listPaths.Insert(0, "");
+			var taskNames = Global.Tasks.Items.Select(x => x.Name).Except(listPaths);
+			listPaths.AddRange(taskNames);
+			var paths = Paths;
+			JocysCom.ClassLibrary.Collections.CollectionsHelper.Synchronize(listPaths, paths);
 		}
 
 		private void MainDataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

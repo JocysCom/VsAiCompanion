@@ -1,0 +1,71 @@
+﻿<ListInfo>
+  <Name>Writing - Style - UK Business</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACn1T226bQBB9z1dsN6+wN+6WSSTbJK6UJpHquOpTRfAWViaAgILTr+8sJsZtokqw&#xD;
+zMyePWdmdphfH15y1Mm6UWURYk4YRrJIyp0q0hA/bW5MH19fXcw/rR6Wm++PEWq6FD0+Le4+LxE2&#xD;
+Kf1mLSldbVbo6/YWccIpje4xwlnbVjNK+74nvUXKOqW3dVxlKmkoAKkGwiEKZJyTXbvDIKGZzxLh&#xD;
+GKldiO/iV1n/AAfyLJrwA2bBGNNMI2R2yFWx/wjIgyCgwy5AQ8yqA0av47dXuzYLsbC1k0mVZu2b&#xD;
+1ynZL0p9ADEkbHh0i+LnXJrPcbJP6/JXAYkWskdnCMhl1lRxIkNc1bKRdSehSITm6VCWSspi8CFS&#xD;
+xW2GIPZFcMPeCiISZpiMuK5eHdswORHTsrYBcNxmx+gEgrfjxF8L/hujnyrPQ3wZuN5itcT0XzHL&#xD;
+sDvuER/EjmSaZSTRb8Yd4iajziB+QmitrX1SiNwoiKL3CjwgvsEz0yKeZ/m5aRPH8jxDiLXe+Q81&#xD;
+tGAJveA6KBixXQOcgWwqS1j8RsCwltBj1eprJMx9n4NLHANGzMk4H+xgMr3JhD5M9hkEWjDZ1mC/&#xD;
+JVCUhcSoaetyD1d86Viu70M6x4A5jhOgxwBMnUziKsTDtJzCL6qVda7gA+C/q/GOxcxpCv+Gnu+r&#xD;
+iz+y7EqprQMAAA==</IconData>
+  <Created>2024-04-08T14:10:24.4025576+01:00</Created>
+  <Modified>2024-04-08T14:10:24.4025576+01:00</Modified>
+  <Description>A list capturing the detailed aspects of communication and writing styles based on example texts.</Description>
+  <Instructions>This list now contains updated keys and values to match the distinctive writing style observed in Barnett Waddingham's communication. It should be used as a reference to ensure consistency in writing style across company documents and communication channels.</Instructions>
+  <IsReadOnly>true</IsReadOnly>
+  <Items>
+    <ListItem>
+      <Key>Language</Key>
+      <Value>Standard British English</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Person</Key>
+      <Value>First-Person</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Tone</Key>
+      <Value>Professional, Inclusive, Supportive</Value>
+      <Comment>The tone is consistently professional, striving to be inclusive of all stakeholders and supportive towards employees and clients.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Vocabulary Type</Key>
+      <Value>General Corporate Terms, Professional Accreditation, and ISO References</Value>
+      <Comment>Incorporate specific references to professional accreditations and compliance standards such as ISO certifications.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Sentence Structure</Key>
+      <Value>Varied, Detailed</Value>
+      <Comment>Utilize a mix of sentence structures, ensuring detailed explanations of processes and policies.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Complexity</Key>
+      <Value>Moderately High (Clear and Explanatory)</Value>
+      <Comment>While the text includes comprehensive technical details, it emphasizes clarity and aims to be explanatory for understanding by various stakeholders.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Level of Formality</Key>
+      <Value>High (Use of Professional Jargon)</Value>
+      <Comment>Maintain a high level of formality and use appropriate professional jargon where necessary.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Use of Pronouns</Key>
+      <Value>Selected Personal Pronouns</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Voice</Key>
+      <Value>Active</Value>
+      <Comment />
+    </ListItem>
+    <ListItem>
+      <Key>Use of Modifiers</Key>
+      <Value>Sparingly</Value>
+      <Comment />
+    </ListItem>
+  </Items>
+</ListInfo>
