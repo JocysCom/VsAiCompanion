@@ -665,7 +665,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				return 128 * 1000;
 			if (modelName.Contains("-64k"))
 				return 64 * 1024;
-			if (modelName.Contains("-32k"))
+			if (modelName.Contains("-32k") || modelName.Contains("text-moderation"))
 				return 32 * 1024;
 			if (modelName.Contains("-16k") || modelName.Contains("gpt-3.5-turbo-1106"))
 				return 16 * 1024;
