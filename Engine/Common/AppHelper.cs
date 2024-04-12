@@ -362,6 +362,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 						var model = models.FirstOrDefault(x => x.id == modelCode);
 						aiModel.AllowFineTuning = GetPermission(model, "allow_fine_tuning") ?? false;
 					}
+					if (aiModel.MaxInputTokens == 0)
+						aiModel.MaxInputTokens = Client.GetMaxInputTokens(aiModel.Name);
 					Global.AppSettings.AiModels.Add(aiModel);
 				}
 				// This will inform all forms that models changed.

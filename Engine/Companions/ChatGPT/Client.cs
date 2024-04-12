@@ -669,14 +669,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				return 32 * 1024;
 			if (modelName.Contains("-16k") || modelName.Contains("gpt-3.5-turbo-1106"))
 				return 16 * 1024;
-			if (modelName.Contains("gpt-4"))
+			if (modelName.Contains("gpt-4") || modelName.Contains("text-embedding"))
 				return 8192;
 			if (modelName.Contains("gpt-3.5-turbo"))
 				return 4096;
 			if (modelName.Contains("gpt"))
 				return 4097; // Default for gpt
-			if (modelName.Contains("text-embedding-ada-002") && modelName.Contains("version 2"))
-				return 8191;
 			if (modelName.Contains("code-davinci-002"))
 				return 8001;
 			if (modelName.Contains("text-davinci-002") || modelName.Contains("text-davinci-003"))
