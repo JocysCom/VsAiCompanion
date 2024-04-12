@@ -1,3 +1,8 @@
+2024-04-12 v1.9.14
+
+- New: AI Model List Control
+- New: Allow changing Path (Task) of List Item.
+
 2024-04-11 v1.9.12
 
 - Fix: Embedding is not importing Word, Excel, and PDF files into the database.
