@@ -66,12 +66,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private PositionSettings _StartPosition;
 
-		public AiServiceSettings AiServiceData
+		public TaskSettings AiModelData
 		{
-			get => _AiServiceData = _AiServiceData ?? new AiServiceSettings();
+			get => _AiModelData = _AiModelData ?? new TaskSettings();
+			set => SetProperty(ref _AiModelData, value);
+		}
+		private TaskSettings _AiModelData;
+
+		public TaskSettings AiServiceData
+		{
+			get => _AiServiceData = _AiServiceData ?? new TaskSettings();
 			set => SetProperty(ref _AiServiceData, value);
 		}
-		private AiServiceSettings _AiServiceData;
+		private TaskSettings _AiServiceData;
 
 		public TaskSettings TaskData
 		{
@@ -194,7 +201,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public void CleanupAiModels()
 		{
 			var serviceIds = AiServices.Select(x => x.Id).ToArray();
+			// Remove models without services.
 			var modelsToRemove = AiModels.Where(x => !serviceIds.Contains(x.AiServiceId)).ToArray();
+			foreach (var model in modelsToRemove)
+				AiModels.Remove(model);
+			// Remove duplicates
+			var modelsToKeep = AiModels
+				.GroupBy(model => new { model.AiServiceId, model.Name })
+				.Select(group => group.First())
+				.ToList();
+			modelsToRemove = AiModels.Except(modelsToKeep).ToArray();
+			foreach (var model in modelsToRemove)
+				AiModels.Remove(model);
+			// Remove duplicates
+			modelsToKeep = AiModels
+				.GroupBy(model => new { model.Id })
+				.Select(group => group.First())
+				.ToList();
+			modelsToRemove = AiModels.Except(modelsToKeep).ToArray();
 			foreach (var model in modelsToRemove)
 				AiModels.Remove(model);
 		}

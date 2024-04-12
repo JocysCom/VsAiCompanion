@@ -651,8 +651,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				x.AiServiceId == item.AiServiceId && x.Name == item.AiModel);
 			if (aiModel != null && aiModel.MaxInputTokens != 0)
 				return aiModel.MaxInputTokens;
+			return GetMaxInputTokens(modelName);
+		}
+
+		public static int GetMaxInputTokens(string modelName)
+		{
 			// Autodetect.
 			modelName = modelName.ToLowerInvariant();
+			if (modelName.Contains("gpt-5"))
+				return 256 * 1024;
 			// All GPT-4 preview models support 128K tokens (2024-01-28).
 			if (modelName.Contains("-128k") || (modelName.Contains("gpt-4") && modelName.Contains("preview")))
 				return 128 * 1024;

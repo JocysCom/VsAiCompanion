@@ -1,0 +1,140 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.AiModelListControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+	x:Name="This"
+	d:DesignHeight="140"
+	d:DesignWidth="320"
+	mc:Ignorable="d">
+	<UserControl.OpacityMask>
+		<VisualBrush>
+			<VisualBrush.Visual>
+				<Border
+					Width="{Binding ActualWidth, ElementName=This}"
+					Height="{Binding ActualHeight, ElementName=This}"
+					Background="White"
+					CornerRadius="0,0,0,5"
+					SnapsToDevicePixels="True" />
+			</VisualBrush.Visual>
+		</VisualBrush>
+	</UserControl.OpacityMask>
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+			<!--  Collection View Source with Grouping  -->
+			<CollectionViewSource x:Key="GroupedData" Source="{Binding FilteredList, ElementName=This}">
+				<CollectionViewSource.SortDescriptions>
+					<scm:SortDescription PropertyName="AiServiceName" />
+					<scm:SortDescription PropertyName="Name" />
+				</CollectionViewSource.SortDescriptions>
+				<CollectionViewSource.GroupDescriptions>
+					<PropertyGroupDescription PropertyName="ListGroupTime" />
+				</CollectionViewSource.GroupDescriptions>
+			</CollectionViewSource>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid Name="AiServiceListGrid" VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
+			<Button
+				Name="AddButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="AddButton_Click"
+				ToolTip="{x:Static locales:Resources.Add_New}"
+				Visibility="Collapsed">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+					<Label x:Name="AddButtonLabel" Content="{x:Static locales:Resources.Add_New}" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="EditButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="EditButton_Click"
+				ToolTip="{x:Static locales:Resources.Edit}">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+					<Label x:Name="EditButtonLabel" Content="{x:Static locales:Resources.Edit}" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="DeleteButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="DeleteButton_Click"
+				ToolTip="{x:Static locales:Resources.Delete}">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
+					<Label x:Name="DeleteButtonLabel" Content="{x:Static locales:Resources.Delete}" Visibility="Collapsed" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+		<DataGrid
+			x:Name="MainDataGrid"
+			Grid.Row="2"
+			Height="Auto"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			x:FieldModifier="public"
+			AutoGenerateColumns="False"
+			CanUserResizeColumns="False"
+			CanUserSortColumns="False"
+			CellEditEnding="MainDataGrid_CellEditEnding"
+			ClipToBounds="True"
+			HeadersVisibility="Column"
+			IsReadOnly="False"
+			ItemsSource="{Binding Source={StaticResource GroupedData}}"
+			Loaded="MainDataGrid_Loaded"
+			MouseDoubleClick="MainDataGrid_MouseDoubleClick"
+			PreparingCellForEdit="MainDataGrid_PreparingCellForEdit"
+			ScrollViewer.CanContentScroll="False"
+			ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			SelectionMode="Extended">
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					x:Name="AiServiceNameColumn"
+					Width="Auto"
+					Binding="{Binding AiServiceName}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{x:Static locales:Resources.Service}" />
+				<DataGridTextColumn
+					x:Name="KeyColumn"
+					Width="Auto"
+					Binding="{Binding Name}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{x:Static locales:Resources.Name}" />
+				<DataGridTextColumn
+					x:Name="MaxInputTokensColumn"
+					Width="Auto"
+					Binding="{Binding MaxInputTokens}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{x:Static locales:Resources.Max_Input_Tokens}" />
+				<DataGridTextColumn
+					Width="*"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</UserControl>

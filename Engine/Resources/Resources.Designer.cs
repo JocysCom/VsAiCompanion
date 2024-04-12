@@ -828,6 +828,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max Input Tokens.
+        /// </summary>
+        public static string Max_Input_Tokens {
+            get {
+                return ResourceManager.GetString("Max_Input_Tokens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Max Risk Level.
         /// </summary>
         public static string Maximum_Risk_Level {

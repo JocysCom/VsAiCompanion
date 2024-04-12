@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.DataClient;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
@@ -486,6 +487,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 					filters.Add("embedding");
 					item.ModelFilter = string.Join("|", filters);
 				}
+			}
+			var aiModels = e.Items.FirstOrDefault()?.AiModels;
+			if (aiModels != null)
+			{
+				foreach (var item in aiModels)
+				{
+					if (item.MaxInputTokens == 0)
+						item.MaxInputTokens = Client.GetMaxInputTokens(item.Name);
+				}
+
 			}
 		}
 

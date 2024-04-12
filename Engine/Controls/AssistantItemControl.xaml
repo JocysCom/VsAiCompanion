@@ -21,157 +21,159 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-		<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-			<Button
-				Name="ListToggleButton"
-				HorizontalAlignment="Left"
-				Click="ListToggleButton_Click"
-				Focusable="False">
-				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
-			</Button>
-			<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
-		</StackPanel>
-		<Button
-			Name="BarToggleButton"
-			Grid.Row="0"
-			Grid.Column="0"
-			HorizontalAlignment="Right"
-			Click="BarToggleButton_Click"
-			Focusable="False">
-			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
-		</Button>
-		<Grid Grid.Row="1" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+	<ScrollViewer>
+		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Controls:IconUserControl
-				x:Name="IconPanel"
-				Grid.Row="0"
-				Grid.RowSpan="3"
-				Grid.Column="0"
-				Width="64"
-				Height="64"
-				Margin="3"
-				VerticalAlignment="Top" />
-			<!--  Folder  -->
-			<Label
-				Grid.Row="0"
-				Grid.Column="1"
-				VerticalAlignment="Center"
-				Content="{x:Static locales:Resources.Data_Folder}" />
-			<TextBox
-				Name="DataFolderTextBox"
-				Grid.Row="0"
-				Grid.Column="2"
-				IsReadOnly="True"
-				Text="{Binding DataFolderPathShow, ElementName=This}" />
+			<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+				<Button
+					Name="ListToggleButton"
+					HorizontalAlignment="Left"
+					Click="ListToggleButton_Click"
+					Focusable="False">
+					<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+				</Button>
+				<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
+			</StackPanel>
 			<Button
-				Name="OpenButton"
+				Name="BarToggleButton"
 				Grid.Row="0"
-				Grid.Column="3"
-				HorizontalAlignment="Center"
-				Click="OpenButton_Click">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
-					<Label Content="{x:Static locales:Resources.Open}" />
-				</StackPanel>
+				Grid.Column="0"
+				HorizontalAlignment="Right"
+				Click="BarToggleButton_Click"
+				Focusable="False">
+				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 			</Button>
-			<!--  System message content  -->
-			<Label
-				Grid.Row="1"
-				Grid.Column="1"
-				VerticalAlignment="Center"
-				Content="{x:Static locales:Resources.System_Message}" />
-			<TextBox
-				Name="SystemMessageTextBox"
-				Grid.Row="1"
-				Grid.Column="2"
-				Width="Auto"
-				Text="{Binding SystemMessage}" />
-		</Grid>
-		<Border
-			Grid.Row="3"
-			Grid.Column="0"
-			VerticalAlignment="Stretch"
-			Background="{StaticResource BackgroundLight}"
-			Visibility="{Binding BarPanelVisibility, ElementName=This}">
-			<TextBox
-				Name="LogTextBox"
-				Margin="3"
-				Padding="6"
-				HorizontalAlignment="Stretch"
+			<Grid Grid.Row="1" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<Controls:IconUserControl
+					x:Name="IconPanel"
+					Grid.Row="0"
+					Grid.RowSpan="3"
+					Grid.Column="0"
+					Width="64"
+					Height="64"
+					Margin="3"
+					VerticalAlignment="Top" />
+				<!--  Folder  -->
+				<Label
+					Grid.Row="0"
+					Grid.Column="1"
+					VerticalAlignment="Center"
+					Content="{x:Static locales:Resources.Data_Folder}" />
+				<TextBox
+					Name="DataFolderTextBox"
+					Grid.Row="0"
+					Grid.Column="2"
+					IsReadOnly="True"
+					Text="{Binding DataFolderPathShow, ElementName=This}" />
+				<Button
+					Name="OpenButton"
+					Grid.Row="0"
+					Grid.Column="3"
+					HorizontalAlignment="Center"
+					Click="OpenButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Open}" />
+					</StackPanel>
+				</Button>
+				<!--  System message content  -->
+				<Label
+					Grid.Row="1"
+					Grid.Column="1"
+					VerticalAlignment="Center"
+					Content="{x:Static locales:Resources.System_Message}" />
+				<TextBox
+					Name="SystemMessageTextBox"
+					Grid.Row="1"
+					Grid.Column="2"
+					Width="Auto"
+					Text="{Binding SystemMessage}" />
+			</Grid>
+			<Border
+				Grid.Row="3"
+				Grid.Column="0"
 				VerticalAlignment="Stretch"
-				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-				BorderThickness="1"
-				IsReadOnly="True"
-				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				ScrollViewer.VerticalScrollBarVisibility="Auto"
-				TextWrapping="Wrap">
-				<TextBox.Resources>
-					<Style TargetType="Border" />
-				</TextBox.Resources>
-			</TextBox>
-		</Border>
-		<TabControl
-			x:Name="MainTabControl"
-			Grid.Row="4"
-			Margin="4"
-			x:FieldModifier="public"
-			SelectionChanged="MainTabControl_SelectionChanged">
-			<TabItem Name="HelpTabPage">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_Question}" />
-						<Label Content="{x:Static locales:Resources.Help}" />
-					</StackPanel>
-				</TabItem.Header>
-				<RichTextBox x:Name="HelpRichTextBox">
-					<RichTextBox.OpacityMask>
-						<VisualBrush>
-							<VisualBrush.Visual>
-								<Border
-									Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-									Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-									Background="White"
-									CornerRadius="0,5,5,5"
-									SnapsToDevicePixels="True" />
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</RichTextBox.OpacityMask>
-				</RichTextBox>
-			</TabItem>
-			<TabItem x:Name="SourceFilesTabItem" x:FieldModifier="public">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_folder_open_doc}" />
-						<Label Content="{x:Static locales:Resources._1_Source_Files}" />
-					</StackPanel>
-				</TabItem.Header>
-			</TabItem>
-			<TabItem x:Name="AssistantsTabItem" x:FieldModifier="public">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_user_group}" />
-						<Label Content="{x:Static locales:Resources._1_Assistants}" />
-					</StackPanel>
-				</TabItem.Header>
-			</TabItem>
-		</TabControl>
-	</Grid>
+				Background="{StaticResource BackgroundLight}"
+				Visibility="{Binding BarPanelVisibility, ElementName=This}">
+				<TextBox
+					Name="LogTextBox"
+					Margin="3"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+					BorderThickness="1"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
+			</Border>
+			<TabControl
+				x:Name="MainTabControl"
+				Grid.Row="4"
+				Margin="4"
+				x:FieldModifier="public"
+				SelectionChanged="MainTabControl_SelectionChanged">
+				<TabItem Name="HelpTabPage">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_Question}" />
+							<Label Content="{x:Static locales:Resources.Help}" />
+						</StackPanel>
+					</TabItem.Header>
+					<RichTextBox x:Name="HelpRichTextBox">
+						<RichTextBox.OpacityMask>
+							<VisualBrush>
+								<VisualBrush.Visual>
+									<Border
+										Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
+										Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
+										Background="White"
+										CornerRadius="0,5,5,5"
+										SnapsToDevicePixels="True" />
+								</VisualBrush.Visual>
+							</VisualBrush>
+						</RichTextBox.OpacityMask>
+					</RichTextBox>
+				</TabItem>
+				<TabItem x:Name="SourceFilesTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_folder_open_doc}" />
+							<Label Content="{x:Static locales:Resources._1_Source_Files}" />
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+				<TabItem x:Name="AssistantsTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_user_group}" />
+							<Label Content="{x:Static locales:Resources._1_Assistants}" />
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+			</TabControl>
+		</Grid>
+	</ScrollViewer>
 </UserControl>

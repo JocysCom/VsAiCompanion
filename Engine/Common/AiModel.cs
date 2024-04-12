@@ -1,7 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -29,6 +32,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public Guid AiServiceId { get => _AiServiceId; set => SetProperty(ref _AiServiceId, value); }
 		Guid _AiServiceId;
+
+		[XmlIgnore, JsonIgnore]
+		public string AiServiceName { get => Global.AppSettings?.AiServices?.FirstOrDefault(x => x.Id == AiServiceId)?.Name; }
+
 
 		[DefaultValue(0)]
 		public int MaxInputTokens { get => _MaxInputTokens; set => SetProperty(ref _MaxInputTokens, value); }

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +35,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		//[DefaultValue([])]
 		public List<string> ListSelection { get => _ListSelection; set => SetProperty(ref _ListSelection, value); }
 		private List<string> _ListSelection;
+
+		public List<Guid> GetSelectionListAsGuid() => ListSelection
+			.Select(x => Guid.TryParse(x, out Guid result) ? (Guid?)result : null)
+			.Where(x => x != null).Select(x => (Guid)x)
+			.ToList();
 
 		/// <summary>
 		/// Alternative selection is list selection is not available.

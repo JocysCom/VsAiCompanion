@@ -2,7 +2,7 @@
 	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.OptionsControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:Controls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
@@ -20,7 +20,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
+	<Grid VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
@@ -52,6 +52,7 @@
 			Grid.Row="1"
 			Grid.ColumnSpan="3"
 			Margin="4"
+			VerticalAlignment="Stretch"
 			x:FieldModifier="public">
 			<TabItem x:Name="MainTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -64,96 +65,97 @@
 						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.Main}" />
 					</StackPanel>
 				</TabItem.Header>
-				<StackPanel Orientation="Vertical">
-					<WrapPanel Grid.Row="4">
-						<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Standalone_Program}">
-							<WrapPanel Orientation="Vertical">
-								<CheckBox Name="AppAlwaysOnTopCheckBox" Content="{x:Static locales:Resources.App_Always_on_Top}" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox
-									Name="BarAlwaysOnTopCheckBox"
-									Content="{x:Static locales:Resources.Bar_Always_on_Top}"
-									IsChecked="{Binding BarAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-									Visibility="Collapsed" />
-								<CheckBox Name="MinimizeToTrayBox" Content="{x:Static locales:Resources.Minimize_to_Tray}" IsChecked="{Binding MinimizeToTray, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Name="MinimizeOnCloseTrayBox" Content="{x:Static locales:Resources.Minimize_on_Close}" IsChecked="{Binding MinimizeOnClose, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Name="AllowOnlyOneCopyBox" Content="{x:Static locales:Resources.Allow_Only_One_Copy}" IsChecked="{Binding AllowOnlyOneCopy, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<StackPanel Orientation="Horizontal">
+				<ScrollViewer>
+					<StackPanel Orientation="Vertical">
+						<WrapPanel Grid.Row="4">
+							<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Standalone_Program}">
+								<WrapPanel Orientation="Vertical">
+									<CheckBox Name="AppAlwaysOnTopCheckBox" Content="{x:Static locales:Resources.App_Always_on_Top}" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 									<CheckBox
-										Name="StartWithWindowsBox"
-										VerticalAlignment="Center"
-										Content="{x:Static locales:Resources.Start_with_Windows}"
-										IsChecked="{Binding StartWithWindows, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<ComboBox
-										Name="StartWithWindowsStateBox"
-										MinWidth="75"
-										HorizontalAlignment="Left"
-										SelectedValue="{Binding StartWithWindowsState, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+										Name="BarAlwaysOnTopCheckBox"
+										Content="{x:Static locales:Resources.Bar_Always_on_Top}"
+										IsChecked="{Binding BarAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+										Visibility="Collapsed" />
+									<CheckBox Name="MinimizeToTrayBox" Content="{x:Static locales:Resources.Minimize_to_Tray}" IsChecked="{Binding MinimizeToTray, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<CheckBox Name="MinimizeOnCloseTrayBox" Content="{x:Static locales:Resources.Minimize_on_Close}" IsChecked="{Binding MinimizeOnClose, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<CheckBox Name="AllowOnlyOneCopyBox" Content="{x:Static locales:Resources.Allow_Only_One_Copy}" IsChecked="{Binding AllowOnlyOneCopy, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<StackPanel Orientation="Horizontal">
+										<CheckBox
+											Name="StartWithWindowsBox"
+											VerticalAlignment="Center"
+											Content="{x:Static locales:Resources.Start_with_Windows}"
+											IsChecked="{Binding StartWithWindows, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+										<ComboBox
+											Name="StartWithWindowsStateBox"
+											MinWidth="75"
+											HorizontalAlignment="Left"
+											SelectedValue="{Binding StartWithWindowsState, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									</StackPanel>
+								</WrapPanel>
+							</GroupBox>
+							<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Sending_Message}">
+								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
+									<CheckBox
+										Name="ShowDocumentsAttachedWarningCheckBox"
+										Margin="0"
+										Content="{x:Static locales:Resources.Show_Documents_Attached_Warning}"
+										IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="{x:Static locales:Resources.Show_Sensitive_Data_Warning}" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<CheckBox Name="UseEnterToSendMessageCheckBox" Content="{x:Static locales:Resources.Use_Enter_to_send_the_message}" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								</WrapPanel>
+							</GroupBox>
+							<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Other}">
+								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
+									<CheckBox
+										Name="IsSpellCheckEnabledCheckBox"
+										Margin="0"
+										Content="{x:Static locales:Resources.Spell_Check}"
+										IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								</WrapPanel>
+							</GroupBox>
+						</WrapPanel>
+						<GroupBox x:Name="EnterpriseOptionsGroupBox" Grid.Row="2" Margin="3,0,3,0">
+							<GroupBox.Header>
+								<CheckBox
+									Name="UseMacrosCheckBox"
+									Margin="-4"
+									Content="Enterprise Options"
+									IsChecked="{Binding IsEnterprise, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							</GroupBox.Header>
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<Label VerticalAlignment="Center" Content="Configuration URL" />
+								<TextBox
+									Grid.Row="0"
+									Grid.Column="1"
+									SpellCheck.IsEnabled="True"
+									Text="{Binding ConfigurationUrl, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<StackPanel Grid.Column="2" Orientation="Horizontal">
+									<Button Name="BrowseSettingsButton" Click="BrowseSettingsButton_Click">
+										<StackPanel Focusable="False">
+											<ContentControl Content="{StaticResource Icon_magnifying_glass}" Focusable="False" />
+											<Label Content="Browse..." />
+										</StackPanel>
+									</Button>
+									<Button Name="ApplySettingsButton" MinWidth="75" Click="ApplySettingsButton_Click">
+										<StackPanel Focusable="False">
+											<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+											<Label Content="Apply" />
+										</StackPanel>
+									</Button>
 								</StackPanel>
-							</WrapPanel>
+							</Grid>
 						</GroupBox>
-						<GroupBox Margin="3,0,0,3" Header="{x:Static locales:Resources.Sending_Message}">
-							<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-								<CheckBox
-									Name="ShowDocumentsAttachedWarningCheckBox"
-									Margin="0"
-									Content="{x:Static locales:Resources.Show_Documents_Attached_Warning}"
-									IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="{x:Static locales:Resources.Show_Sensitive_Data_Warning}" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<CheckBox Name="UseEnterToSendMessageCheckBox" Content="{x:Static locales:Resources.Use_Enter_to_send_the_message}" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-							</WrapPanel>
-						</GroupBox>
-						<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Other}">
-							<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-								<CheckBox
-									Name="IsSpellCheckEnabledCheckBox"
-									Margin="0"
-									Content="{x:Static locales:Resources.Spell_Check}"
-									IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-							</WrapPanel>
-						</GroupBox>
-					</WrapPanel>
-					<GroupBox x:Name="EnterpriseOptionsGroupBox" Grid.Row="2" Margin="3,0,3,0">
-						<GroupBox.Header>
-							<CheckBox
-								Name="UseMacrosCheckBox"
-								Margin="-4"
-								Content="Enterprise Options"
-								IsChecked="{Binding IsEnterprise, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-						</GroupBox.Header>
-						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto" />
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="Auto" />
-							</Grid.ColumnDefinitions>
-							<Label VerticalAlignment="Center" Content="Configuration URL" />
-							<TextBox
-								Grid.Row="0"
-								Grid.Column="1"
-								SpellCheck.IsEnabled="True"
-								Text="{Binding ConfigurationUrl, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-							<StackPanel Grid.Column="2" Orientation="Horizontal">
-								<Button Name="BrowseSettingsButton" Click="BrowseSettingsButton_Click">
-									<StackPanel Focusable="False">
-										<ContentControl Content="{StaticResource Icon_magnifying_glass}" Focusable="False" />
-										<Label Content="Browse..." />
-									</StackPanel>
-								</Button>
-								<Button Name="ApplySettingsButton" MinWidth="75" Click="ApplySettingsButton_Click">
-									<StackPanel Focusable="False">
-										<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
-										<Label Content="Apply" />
-									</StackPanel>
-								</Button>
-							</StackPanel>
-						</Grid>
-					</GroupBox>
 
-				</StackPanel>
-
+					</StackPanel>
+				</ScrollViewer>
 			</TabItem>
 			<TabItem x:Name="AiServicesTabItem" x:FieldModifier="public">
 				<TabItem.Header>
@@ -176,10 +178,11 @@
 							Width="12"
 							Height="12"
 							VerticalAlignment="Center"
-							Content="{StaticResource Icon_cloud_gear}" />
+							Content="{StaticResource Icon_user_group}" />
 						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.AI_Models}" />
 					</StackPanel>
 				</TabItem.Header>
+				<local:AiModelListControl x:Name="AiModelListPanel" x:FieldModifier="public" />
 			</TabItem>
 
 			<TabItem x:Name="ContextTabItem" x:FieldModifier="public">
@@ -193,75 +196,76 @@
 						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.Context_Options}" />
 					</StackPanel>
 				</TabItem.Header>
-				<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="{x:Static locales:Resources.Title_for_Attached_Context}">
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Label
-							Grid.Row="0"
-							Grid.Column="0"
-							VerticalAlignment="Center"
-							Content="{x:Static locales:Resources.Data}" />
-						<TextBox
-							Name="ContextDataTitleTextBox"
-							Grid.Row="0"
-							Grid.Column="1"
-							SpellCheck.IsEnabled="True"
-							Text="{Binding ContextDataTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-						<Label
-							Grid.Row="0"
-							Grid.Column="2"
-							VerticalAlignment="Center"
-							Content="{x:Static locales:Resources.Files}" />
-						<TextBox
-							Name="ContextFileTitleTextBox"
-							Grid.Row="0"
-							Grid.Column="3"
-							SpellCheck.IsEnabled="True"
-							Text="{Binding ContextFileTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-						<Label
-							Grid.Row="1"
-							Grid.Column="0"
-							VerticalAlignment="Center"
-							Content="{x:Static locales:Resources.Chat}" />
-						<TextBox
-							Name="ContextChatTitleTextBox"
-							Grid.Row="1"
-							Grid.Column="1"
-							SpellCheck.IsEnabled="True"
-							Text="{Binding ContextChatTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-						<Label
-							Grid.Row="2"
-							Grid.Column="0"
-							VerticalAlignment="Center"
-							Content="{x:Static locales:Resources.Chat_Instructions}" />
-						<TextBox
-							Name="ContextChatInstructionsTextBox"
-							Grid.Row="2"
-							Grid.Column="1"
-							Grid.ColumnSpan="3"
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							VerticalContentAlignment="Top"
-							AcceptsReturn="True"
-							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-							ScrollViewer.VerticalScrollBarVisibility="Auto"
-							SpellCheck.IsEnabled="True"
-							Text="{Binding ContextChatInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-							TextWrapping="Wrap" />
-					</Grid>
-				</GroupBox>
-
+				<ScrollViewer>
+					<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="{x:Static locales:Resources.Title_for_Attached_Context}">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Label
+								Grid.Row="0"
+								Grid.Column="0"
+								VerticalAlignment="Center"
+								Content="{x:Static locales:Resources.Data}" />
+							<TextBox
+								Name="ContextDataTitleTextBox"
+								Grid.Row="0"
+								Grid.Column="1"
+								SpellCheck.IsEnabled="True"
+								Text="{Binding ContextDataTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<Label
+								Grid.Row="0"
+								Grid.Column="2"
+								VerticalAlignment="Center"
+								Content="{x:Static locales:Resources.Files}" />
+							<TextBox
+								Name="ContextFileTitleTextBox"
+								Grid.Row="0"
+								Grid.Column="3"
+								SpellCheck.IsEnabled="True"
+								Text="{Binding ContextFileTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<Label
+								Grid.Row="1"
+								Grid.Column="0"
+								VerticalAlignment="Center"
+								Content="{x:Static locales:Resources.Chat}" />
+							<TextBox
+								Name="ContextChatTitleTextBox"
+								Grid.Row="1"
+								Grid.Column="1"
+								SpellCheck.IsEnabled="True"
+								Text="{Binding ContextChatTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							<Label
+								Grid.Row="2"
+								Grid.Column="0"
+								VerticalAlignment="Center"
+								Content="{x:Static locales:Resources.Chat_Instructions}" />
+							<TextBox
+								Name="ContextChatInstructionsTextBox"
+								Grid.Row="2"
+								Grid.Column="1"
+								Grid.ColumnSpan="3"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								VerticalContentAlignment="Top"
+								AcceptsReturn="True"
+								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+								ScrollViewer.VerticalScrollBarVisibility="Auto"
+								SpellCheck.IsEnabled="True"
+								Text="{Binding ContextChatInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								TextWrapping="Wrap" />
+						</Grid>
+					</GroupBox>
+				</ScrollViewer>
 			</TabItem>
 
 			<TabItem x:Name="ResetSettingsTabItem" x:FieldModifier="public">
@@ -275,114 +279,116 @@
 						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{x:Static locales:Resources.Reset_Settings}" />
 					</StackPanel>
 				</TabItem.Header>
-				<WrapPanel>
-					<GroupBox
-						Margin="3,0,0,3"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Top"
-						Header="{x:Static locales:Resources.Reset_Settings}">
-						<StackPanel>
-							<Button Name="ResetApplicationSettingsButton" Click="ResetApplicationSettingsButton_Click">
-								<StackPanel Focusable="False">
-									<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-									<Label Content="{x:Static locales:Resources.Reset_Application_Settings}" />
-								</StackPanel>
-							</Button>
-							<Button
-								Name="ResetTemplatesButton"
-								HorizontalAlignment="Stretch"
-								HorizontalContentAlignment="Left"
-								Click="ResetTemplatesButton_Click">
-								<StackPanel Focusable="False">
-									<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-									<Label Content="{x:Static locales:Resources.Reset_Templates}" />
-								</StackPanel>
-							</Button>
-							<Button
-								Name="ResetPromptingButton"
-								HorizontalAlignment="Stretch"
-								HorizontalContentAlignment="Left"
-								Click="ResetPromptingButton_Click">
-								<StackPanel Focusable="False">
-									<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-									<Label Content="{x:Static locales:Resources.Reset_Prompting_Settings}" />
-								</StackPanel>
-							</Button>
-							<Button
-								Name="ResetListsButton"
-								HorizontalAlignment="Stretch"
-								HorizontalContentAlignment="Left"
-								Click="ResetListsButton_Click">
-								<StackPanel Focusable="False">
-									<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-									<Label Content="{x:Static locales:Resources.Reset_Lists}" />
-								</StackPanel>
-							</Button>
-
-							<Button
-								Name="ResetEmbeddingsButton"
-								HorizontalAlignment="Stretch"
-								HorizontalContentAlignment="Left"
-								Click="ResetEmbeddingsButton_Click">
-								<StackPanel Focusable="False">
-									<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-									<Label Content="{x:Static locales:Resources.Reset_Embeddings}" />
-								</StackPanel>
-							</Button>
-
-
-						</StackPanel>
-					</GroupBox>
-					<GroupBox
-						Margin="3,0,0,3"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Top"
-						Header="{x:Static locales:Resources.Reset_UI_Settings}">
-						<StackPanel>
-
-							<StackPanel Orientation="Horizontal">
-								<Label Content="W" />
-								<Controls:NumericUpDown
-									x:Name="WindowWidthUpDown"
-									LargeChange="120"
-									Maximum="100000"
-									SmallChange="60"
-									Value="900" />
-								<Label Content="H" />
-								<Controls:NumericUpDown
-									x:Name="WindowHeightUpDown"
-									LargeChange="120"
-									Maximum="100000"
-									SmallChange="60"
-									Value="900" />
-							</StackPanel>
-							<StackPanel Orientation="Horizontal">
-								<Button
-									Name="ResetUIButton"
-									HorizontalAlignment="Left"
-									HorizontalContentAlignment="Left"
-									Click="ResetUIButton_Click">
+				<ScrollViewer>
+					<WrapPanel>
+						<GroupBox
+							Margin="3,0,0,3"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top"
+							Header="{x:Static locales:Resources.Reset_Settings}">
+							<StackPanel>
+								<Button Name="ResetApplicationSettingsButton" Click="ResetApplicationSettingsButton_Click">
 									<StackPanel Focusable="False">
 										<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-										<Label Content="{x:Static locales:Resources.Reset_UI_Settings}" />
+										<Label Content="{x:Static locales:Resources.Reset_Application_Settings}" />
 									</StackPanel>
 								</Button>
 								<Button
-									Name="AdjustUIButton"
-									HorizontalAlignment="Left"
+									Name="ResetTemplatesButton"
+									HorizontalAlignment="Stretch"
 									HorizontalContentAlignment="Left"
-									Click="AdjustUIButton_Click">
+									Click="ResetTemplatesButton_Click">
 									<StackPanel Focusable="False">
-										<ContentControl Content="{StaticResource Icon_screen}" Focusable="False" />
-										<Label Content="Adjust" />
+										<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+										<Label Content="{x:Static locales:Resources.Reset_Templates}" />
 									</StackPanel>
 								</Button>
+								<Button
+									Name="ResetPromptingButton"
+									HorizontalAlignment="Stretch"
+									HorizontalContentAlignment="Left"
+									Click="ResetPromptingButton_Click">
+									<StackPanel Focusable="False">
+										<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+										<Label Content="{x:Static locales:Resources.Reset_Prompting_Settings}" />
+									</StackPanel>
+								</Button>
+								<Button
+									Name="ResetListsButton"
+									HorizontalAlignment="Stretch"
+									HorizontalContentAlignment="Left"
+									Click="ResetListsButton_Click">
+									<StackPanel Focusable="False">
+										<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+										<Label Content="{x:Static locales:Resources.Reset_Lists}" />
+									</StackPanel>
+								</Button>
+
+								<Button
+									Name="ResetEmbeddingsButton"
+									HorizontalAlignment="Stretch"
+									HorizontalContentAlignment="Left"
+									Click="ResetEmbeddingsButton_Click">
+									<StackPanel Focusable="False">
+										<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+										<Label Content="{x:Static locales:Resources.Reset_Embeddings}" />
+									</StackPanel>
+								</Button>
+
+
 							</StackPanel>
+						</GroupBox>
+						<GroupBox
+							Margin="3,0,0,3"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top"
+							Header="{x:Static locales:Resources.Reset_UI_Settings}">
+							<StackPanel>
+
+								<StackPanel Orientation="Horizontal">
+									<Label Content="W" />
+									<JcControls:NumericUpDown
+										x:Name="WindowWidthUpDown"
+										LargeChange="120"
+										Maximum="100000"
+										SmallChange="60"
+										Value="900" />
+									<Label Content="H" />
+									<JcControls:NumericUpDown
+										x:Name="WindowHeightUpDown"
+										LargeChange="120"
+										Maximum="100000"
+										SmallChange="60"
+										Value="900" />
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<Button
+										Name="ResetUIButton"
+										HorizontalAlignment="Left"
+										HorizontalContentAlignment="Left"
+										Click="ResetUIButton_Click">
+										<StackPanel Focusable="False">
+											<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+											<Label Content="{x:Static locales:Resources.Reset_UI_Settings}" />
+										</StackPanel>
+									</Button>
+									<Button
+										Name="AdjustUIButton"
+										HorizontalAlignment="Left"
+										HorizontalContentAlignment="Left"
+										Click="AdjustUIButton_Click">
+										<StackPanel Focusable="False">
+											<ContentControl Content="{StaticResource Icon_screen}" Focusable="False" />
+											<Label Content="Adjust" />
+										</StackPanel>
+									</Button>
+								</StackPanel>
 
 
-						</StackPanel>
-					</GroupBox>
-				</WrapPanel>
+							</StackPanel>
+						</GroupBox>
+					</WrapPanel>
+				</ScrollViewer>
 			</TabItem>
 		</TabControl>
 	</Grid>

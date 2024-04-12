@@ -581,4 +581,7 @@ Use only the contents from these documents to answer questions.</value>
   <data name="Task_Path" xml:space="preserve">
     <value>Task / Path</value>
   </data>
+  <data name="Max_Input_Tokens" xml:space="preserve">
+    <value>Max Input Tokens</value>
+  </data>
 </root>

@@ -546,7 +546,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="type">target type</param>
 		/// <param name="result">If the conversion was successful, the converted value of type T.</param>
 		/// <returns>If value was converted successfully, true; otherwise false.</returns>
-		public static bool TryParse(string value, Type t, out object result)
+		public static bool TryParse(object value, Type t, out object result)
 		{
 			if (IsNullable(t))
 				t = Nullable.GetUnderlyingType(t) ?? t;
@@ -563,8 +563,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			if (t.IsEnum)
 			{
-				var retValue = value is null ? false : Enum.IsDefined(t, value);
-				result = retValue ? Enum.Parse(t, value) : default;
+				var retValue = value is null ? false : Enum.IsDefined(t, value?.ToString());
+				result = retValue ? Enum.Parse(t, value?.ToString()) : default;
 				return retValue;
 			}
 			var tryParseMethod = t.GetMethod("TryParse",

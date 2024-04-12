@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,26 +12,18 @@ using System.Windows.Input;
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
 	/// <summary>
-	/// Interaction logic for AiServiceListControl.xaml
+	/// Interaction logic for AiModelListControl.xaml
 	/// </summary>
-	public partial class AiServiceListControl : UserControl
+	public partial class AiModelListControl : UserControl, INotifyPropertyChanged
 	{
-		public AiServiceListControl()
+		public AiModelListControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			//CurrentItems = new SortableBindingList<AiService>();
-			CurrentItems = Global.AppSettings.AiServices;
-			MainDataGrid.ItemsSource = CurrentItems;
-			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated;
+			FilteredList = Global.AppSettings.AiModels;
+			OnPropertyChanged(nameof(FilteredList));
 			UpdateButtons();
-		}
-
-		private void Global_OnAiServicesUpdated(object sender, EventArgs e)
-		{
-			CurrentItems = Global.AppSettings.AiServices;
-			MainDataGrid.ItemsSource = CurrentItems;
 		}
 
 		private void Tasks_ListChanged(object sender, ListChangedEventArgs e)
@@ -38,48 +31,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region ■ Properties
 
-		[Category("Main"), DefaultValue(null)]
-		public SortableBindingList<AiService> CurrentItems
-		{
-			get => _CurrentItems;
-			set
-			{
-				if (ControlsHelper.IsDesignMode(this))
-					return;
-				// Update other controls.
-				MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-				_CurrentItems = value;
-				// Re-attach events.
-				MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-				ShowButtons(AddButton, EditButton, DeleteButton);
-			}
-		}
-		SortableBindingList<AiService> _CurrentItems;
-
+		public SortableBindingList<AiModel> FilteredList { get; set; }
 
 		public void SelectByName(string name)
 		{
 			var list = new List<string>() { name };
-			ControlsHelper.SetSelection(MainDataGrid, nameof(AiService.Name), list, 0);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(AiModel.Name), list, 0);
 		}
 
 		public void ShowColumns(params DataGridColumn[] args)
 		{
 			var all = MainDataGrid.Columns.ToArray();
 			foreach (var control in all)
-				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
+				control.Visibility = args.Contains(control)
+					? Visibility.Visible
+					: Visibility.Collapsed;
 		}
 
 		public void ShowButtons(params Button[] args)
 		{
 			var all = new Button[] { AddButton, EditButton, DeleteButton };
 			foreach (var control in all)
-				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
+				control.Visibility = args.Contains(control)
+					? Visibility.Visible
+					: Visibility.Collapsed;
 		}
 
 		#endregion
 
-		TaskSettings PanelSettings => Global.AppSettings.AiServiceData;
+		TaskSettings PanelSettings => Global.AppSettings.AiModelData;
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -87,15 +67,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (MainDataGrid.SelectedIndex >= 0)
 			{
 				// Remember selection.
-				PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(AiService.Name));
+				PanelSettings.ListSelection = ControlsHelper.GetSelection<Guid>(MainDataGrid, nameof(AiModel.Id))
+					.Select(x => x.ToString()).Distinct().ToList();
 				PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
 			}
 			else
 			{
+				var list = PanelSettings.GetSelectionListAsGuid();
 				// Try to restore selection.
 				ControlsHelper.SetSelection(
-					MainDataGrid, nameof(AiService.Name),
-					PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
+					MainDataGrid, nameof(AiModel.Id),
+					list, PanelSettings.ListSelectedIndex
 				);
 			}
 			UpdateButtons();
@@ -103,7 +85,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateButtons()
 		{
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<AiService>();
+			var selecetedItems = MainDataGrid.SelectedItems.Cast<AiModel>();
 			var isSelected = selecetedItems.Count() > 0;
 			EditButton.IsEnabled = isSelected;
 			DeleteButton.IsEnabled = isSelected;
@@ -113,24 +95,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = new AiService();
-			item.Name = "Open AI";
+			var item = new AiModel();
+			item.Name = "GPT-4";
 			InsertItem(item);
 			Add?.Invoke(this, EventArgs.Empty);
 		}
 
-		public void InsertItem(AiService item)
+		public void InsertItem(AiModel item)
 		{
 			// Make sure new item will be selected and focused.
 			PanelSettings.ListSelection = new List<string>() { item.Name };
-			PanelSettings.ListSelectedIndex = CurrentItems.Count();
-			CurrentItems.Add(item);
+			PanelSettings.ListSelectedIndex = FilteredList.Count();
+			FilteredList.Add(item);
 			Global.AppData.Save();
 		}
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
-			var items = MainDataGrid.SelectedItems.Cast<AiService>().ToList();
+			var items = MainDataGrid.SelectedItems.Cast<AiModel>().ToList();
 			if (items.Count == 0)
 				return;
 			//SelectedIndex = MainDataGrid.Items.IndexOf(items[0]);
@@ -143,7 +125,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.BeginInvoke(() =>
 			{
 				foreach (var item in items)
-					CurrentItems.Remove(item);
+					FilteredList.Remove(item);
 				Global.AppSettings.CleanupAiModels();
 			});
 		}
@@ -184,7 +166,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var error = "";
 				if (string.IsNullOrEmpty(newName.Trim()))
 					error = "Name can't be empty";
-				var item = (AiService)e.Row.Item;
+				var item = (AiModel)e.Row.Item;
 				if (!string.IsNullOrEmpty(error))
 				{
 					MessageBox.Show(error);
@@ -208,9 +190,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var list = PanelSettings.ListSelection;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(AiModel.Name), list, PanelSettings.ListSelectedIndex);
+			var list = PanelSettings.GetSelectionListAsGuid();
+			ControlsHelper.SetSelection(MainDataGrid, nameof(AiModel.Id), list, PanelSettings.ListSelectedIndex);
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
 	}
 
 	#endregion
