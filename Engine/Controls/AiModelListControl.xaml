@@ -126,8 +126,8 @@
 					x:Name="MaxInputTokensColumn"
 					Width="Auto"
 					Binding="{Binding MaxInputTokens}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
+					EditingElementStyle="{StaticResource TextBoxRightCell}"
+					ElementStyle="{StaticResource TextBlockRightCell}"
 					Header="{x:Static locales:Resources.Max_Input_Tokens}" />
 				<DataGridTextColumn
 					Width="*"
