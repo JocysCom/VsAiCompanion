@@ -47,6 +47,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateSpellCheck();
 			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
+			MailPanel.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 		}
 
 		private void Global_PromptingUpdated(object sender, EventArgs e)

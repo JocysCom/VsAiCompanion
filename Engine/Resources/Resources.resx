@@ -572,4 +572,7 @@ Use only the contents from these documents to answer questions.</value>
   <data name="AI_Models" xml:space="preserve">
     <value>AI Models</value>
   </data>
+  <data name="Mail" xml:space="preserve">
+    <value>Mail</value>
+  </data>
 </root>

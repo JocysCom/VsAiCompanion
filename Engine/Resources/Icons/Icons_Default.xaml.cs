@@ -86,6 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_list = nameof(Icon_list);
 		public const string Icon_list_style_numbered = nameof(Icon_list_style_numbered);
 		public const string Icon_magnifying_glass = nameof(Icon_magnifying_glass);
+		public const string Icon_mail = nameof(Icon_mail);
 		public const string Icon_map_location2 = nameof(Icon_map_location2);
 		public const string Icon_media_stop = nameof(Icon_media_stop);
 		public const string Icon_navigate_left2 = nameof(Icon_navigate_left2);

@@ -129,7 +129,7 @@
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
 							<ContentControl Content="{StaticResource Icon_gearwheel}" />
-							<Label Content="Main" />
+							<Label Content="{x:Static locales:Resources.Main}" />
 						</StackPanel>
 					</TabItem.Header>
 					<WrapPanel>
@@ -544,6 +544,15 @@
 					</WrapPanel>
 				</TabItem>
 
+				<TabItem x:Name="MailTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_mail}" />
+							<Label Content="{x:Static locales:Resources.Mail}" />
+						</StackPanel>
+					</TabItem.Header>
+					<Controls:MailControl x:Name="MailPanel" />
+				</TabItem>
 			</TabControl>
 			<!--  Row 2  -->
 			<!--  Row 3  -->

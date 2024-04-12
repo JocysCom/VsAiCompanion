@@ -38,8 +38,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			ErrorsTabItem.Visibility = InitHelper.IsDebug
-						? Visibility.Visible
-						: Visibility.Collapsed;
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			AvatarPanel.Visibility = Global.AppSettings.ShowAvatar
 				? Visibility.Visible
 				: Visibility.Collapsed;
