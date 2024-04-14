@@ -9,5 +9,6 @@
 		Assistant = 4,
 		Lists = 5,
 		Embeddings = 6,
+		MailAccount = 7,
 	}
 }

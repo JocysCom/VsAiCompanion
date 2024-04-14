@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.SettingsListControl"
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.SettingsListFileControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
@@ -346,17 +346,6 @@
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
 					Header="{x:Static locales:Resources.Name}" />
-				<DataGridTextColumn
-					x:Name="PathColumn"
-					Width="*"
-					Binding="{Binding Path}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
-					Foreground="{StaticResource BorderDark}"
-					Header="{x:Static locales:Resources.Path}"
-					IsReadOnly="True"
-					Visibility="Collapsed" />
-
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>

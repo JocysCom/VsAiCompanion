@@ -24,15 +24,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for ProjectsListControl.xaml
 	/// </summary>
-	public partial class SettingsListControl : UserControl, INotifyPropertyChanged
+	public partial class SettingsListFileControl : UserControl, INotifyPropertyChanged
 	{
-		public SettingsListControl()
+		public SettingsListFileControl()
 		{
 			InitializeComponent();
 			//ScanProgressPanel.Visibility = Visibility.Collapsed;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			SourceItems = Global.GetSettings(DataType).Items;
+			//SourceItems = Global.GetSettingItems(DataType);
 			// Configure converter.
 			var gridFormattingConverter = MainDataGrid.Resources.Values.OfType<Converters.ItemFormattingConverter>().First();
 			gridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
@@ -141,30 +141,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (SettingsData != null)
 					SettingsData.FilesChanged -= SettingsData_FilesChanged;
 				SettingsData = Global.GetSettings(value);
-				SettingsData.FilesChanged += SettingsData_FilesChanged;
+				if (SettingsData != null)
+					SettingsData.FilesChanged += SettingsData_FilesChanged;
 				// Update panel settings.
 				PanelSettings.PropertyChanged -= PanelSettings_PropertyChanged;
 				PanelSettings = Global.AppSettings.GetTaskSettings(value);
 				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
 				// Update other controls.
 				MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-				SourceItems.ListChanged -= SourceItems_ListChanged;
-				SourceItems = Global.GetSettings(value).Items;
+				if (SourceItems != null)
+					SourceItems.ListChanged -= SourceItems_ListChanged;
+				SourceItems = Global.GetSettingItems(value);
 				InitSearch();
 				// Re-attach events.
 				MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-				SourceItems.ListChanged += SourceItems_ListChanged;
+				if (SourceItems != null)
+					SourceItems.ListChanged += SourceItems_ListChanged;
 				var columns = new List<DataGridColumn> { IconColumn, NameColumn };
-				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid);
+				var buttons = ControlsHelper.GetAll<Button>(TemplateListGrid).ToList();
+				buttons = buttons.Except(new Button[] { GenerateTitleButton, CreateNewTaskButton }).ToList();
 				switch (DataType)
 				{
 					case ItemType.None:
 						break;
 					case ItemType.Task:
 						SetGrouping(nameof(SettingsListFileItem.ListGroupTime));
+						buttons.Add(GenerateTitleButton);
 						break;
 					case ItemType.Template:
 						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
+						buttons.Add(CreateNewTaskButton);
 						break;
 					case ItemType.FineTuning:
 						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
@@ -178,24 +184,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					case ItemType.Embeddings:
 						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
 						break;
+					case ItemType.MailAccount:
+						SetGrouping(nameof(SettingsListFileItem.ListGroupPath));
+						columns.Remove(IconColumn);
+						break;
 					default:
 						break;
 				}
-				if (DataType != ItemType.Task)
-				{
-					buttons = buttons.Except(new Button[] { GenerateTitleButton }).ToArray();
-				}
-				if (DataType != ItemType.Template)
-				{
-					buttons = buttons.Except(new Button[] { CreateNewTaskButton }).ToArray();
-				}
-				if (DataType == ItemType.Lists)
-				{
-					//NameColumn.Width = DataGridLength.Auto;
-					//columns.Add(PathColumn);
-				}
 				ShowColumns(columns.ToArray());
-				AppHelper.ShowButtons(TemplateListGrid, buttons);
+				AppHelper.ShowButtons(TemplateListGrid, buttons.ToArray());
 			}
 		}
 		private ItemType _DataType;
@@ -204,8 +201,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			Dispatcher.BeginInvoke(new Action(() =>
 			{
-				// Reload data from the disk.
-				if (SettingsData != null)
+				var sd = sender as ISettingsData;
+				if (sd != null && sd == SettingsData)
+					// Reload data from the disk.
 					SettingsData.Load();
 			}));
 		}
@@ -304,6 +302,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				item = AppHelper.GetNewListsItem();
 			if (DataType == ItemType.Embeddings)
 				item = AppHelper.GetNewEmbeddingsItem();
+			if (DataType == ItemType.MailAccount)
+				item = AppHelper.GetNewMailAccount();
 			if (item != null)
 				InsertItem(item);
 		}
@@ -315,8 +315,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			PanelSettings.ListSelection = new List<string>() { item.Name };
 			PanelSettings.ListSelectedIndex = position;
 			SourceItems.Insert(position, item);
-			if (SettingsData != null)
-				SettingsData.Save();
+			SettingsData?.Save();
 		}
 
 		private int FindInsertPosition(IList<ISettingsListFileItem> list, ISettingsListFileItem item)
@@ -345,11 +344,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(() =>
 			{
+				var sd = SettingsData;
 				foreach (var item in items)
 				{
-					var error = SettingsData.DeleteItem(item);
-					if (!string.IsNullOrEmpty(error))
-						Global.ShowError(error);
+					if (sd == null)
+					{
+						SourceItems.Remove(item);
+					}
+					else
+					{
+						var error = sd.DeleteItem(item);
+						if (!string.IsNullOrEmpty(error))
+							Global.ShowError(error);
+					}
 				}
 			});
 		}
@@ -389,12 +396,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var newName = textBox.Text.Trim();
 				var item = (ISettingsListFileItem)e.Row.Item;
 				var settingsData = Global.GetSettings(DataType);
-				var error = settingsData.RenameItem(item, newName);
-				if (!string.IsNullOrEmpty(error))
+				if (settingsData != null)
 				{
-					MessageBox.Show(error);
-					e.Cancel = true;
-					return;
+					var error = settingsData.RenameItem(item, newName);
+					if (!string.IsNullOrEmpty(error))
+					{
+						MessageBox.Show(error);
+						e.Cancel = true;
+						return;
+					}
 				}
 			}
 		}

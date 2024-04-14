@@ -688,7 +688,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region TextBoxBase
+		#region TextBoxBase - EnableAutoScroll
 
 		public static VerticalAlignment GetScrollVerticalAlignment(ScrollViewer control)
 		{
@@ -698,7 +698,6 @@ namespace JocysCom.ClassLibrary.Controls
 			var height = control.ExtentHeight;
 			// Vertical size of the visible content area.
 			var visibleView = control.ViewportHeight;
-			//var scrollBarHeight = control.ActualHeight - control.ViewportHeight;
 			// Allow flexibility of 2 pixels.
 			var flex = 2;
 			if (height - offset - visibleView < flex)
@@ -719,11 +718,6 @@ namespace JocysCom.ClassLibrary.Controls
 					.Where(x => x.ComputedVerticalScrollBarVisibility == Visibility.Visible)
 					.FirstOrDefault() ?? all.FirstOrDefault();
 			}
-			//if (control is TextBoxBase tb)
-			//{
-			//	var border = (Border)VisualTreeHelper.GetChild(control, 0);
-			//	sv = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
-			//}
 			if (sv != null)
 			{
 				var scrollPosition = GetScrollVerticalAlignment(sv);
@@ -731,14 +725,6 @@ namespace JocysCom.ClassLibrary.Controls
 					sv.ScrollToEnd();
 			}
 		}
-
-		//public static void Measure(Control control)
-		//{
-		//	var available = LayoutInformation.GetLayoutSlot(control);
-		//	Size s = new Size(available.Width, available.Height);
-		//	control.Measure(s);
-		//	control.Arrange(available);
-		//}
 
 		public static void EnableAutoScroll(TextBoxBase control, bool enable = true)
 		{
@@ -763,6 +749,46 @@ namespace JocysCom.ClassLibrary.Controls
 			=> AutoScroll((TextBox)sender);
 
 		#endregion
+
+		#region TextBoxBase - AppendText - Logging
+
+		public static void AppendText(TextBox control, string text, int maxSize = 65535)
+		{
+			// Check for a null control
+			if (control == null) throw new ArgumentNullException(nameof(control));
+
+			// Invoke UI thread if necessary, to perform UI updates
+			control.Dispatcher.Invoke(() =>
+			{
+				// Calculate new text size
+				var newTextSize = System.Text.Encoding.UTF8.GetByteCount(control.Text + text);
+				// Ensure the final text size does not exceed maxSize
+				if (newTextSize > maxSize)
+				{
+					var lines = control.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+					int linesToRemove = 0;
+					int sizeRemoved = 0;
+
+					// Determine how many lines to remove from the start to stay within maxSize
+					while (sizeRemoved < newTextSize - maxSize && linesToRemove < lines.Length)
+					{
+						sizeRemoved += System.Text.Encoding.UTF8.GetByteCount(lines[linesToRemove] + Environment.NewLine);
+						linesToRemove++;
+					}
+					// Rebuild the remaining text after removing oldest lines
+					var remainingText = string.Join(Environment.NewLine, lines, linesToRemove, lines.Length - linesToRemove);
+					control.Text = remainingText;
+				}
+				// Append the new text
+				if (control.Text.Length > 0)
+					control.AppendText(Environment.NewLine + text);
+				else
+					control.AppendText(text);
+			});
+		}
+
+		#endregion
+
 
 		// Contains unique list of control IDs for the applicaiton.
 		private static SortedSet<int> LoadedControls = new SortedSet<int>();

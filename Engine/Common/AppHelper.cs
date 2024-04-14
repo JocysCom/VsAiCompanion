@@ -519,6 +519,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return item;
 		}
 
+		public static MailAccount GetNewMailAccount()
+		{
+			var item = new MailAccount();
+			item.Name = $"name@domain.com {DateTime.Now:yyyyMMdd_HHmmss}";
+			item.Created = DateTime.Now;
+			item.Modified = item.Created;
+			return item;
+		}
+
 		public static void SetIconToDefault(EmbeddingsItem item)
 		{
 			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.

@@ -112,7 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						item.Text = "";
 					if (item.MessageBoxOperation == MessageBoxOperation.ResetMessage)
 					{
-						var template = Global.GetSettings(ItemType.Template).Items
+						var template = Global.GetSettingItems(ItemType.Template)
 							.Cast<TemplateItem>()
 							.Where(x => x.Name == item.TemplateName)
 							.FirstOrDefault();

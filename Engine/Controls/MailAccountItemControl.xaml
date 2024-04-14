@@ -1,0 +1,229 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.MailAccountItemControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignHeight="320"
+	d:DesignWidth="800"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<!--  Row 0  -->
+		<Button
+			Name="ListToggleButton"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Panel.ZIndex="10"
+			Click="ListToggleButton_Click"
+			Focusable="False">
+			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
+		</Button>
+		<Border
+			Grid.ColumnSpan="3"
+			Padding="32,0,0,0"
+			Background="{StaticResource BackgroundDark}"
+			BorderBrush="{StaticResource BorderDark}"
+			BorderThickness="0,0,0,1">
+			<TextBlock
+				Name="FeatureDescriptionLabel"
+				Margin="4"
+				Text="{x:Static locales:Resources.MaiAccounts_Feature_Description}"
+				TextWrapping="Wrap" />
+		</Border>
+		<!--  Row 1  -->
+		<Grid Grid.Row="1" DataContext="{Binding Item, ElementName=This, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Label Grid.Row="1" Content="{x:Static locales:Resources.Email_Name}" />
+			<TextBox
+				Name="EmailNameTextBox"
+				Grid.Row="1"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Text="{Binding EmailName}" />
+
+			<Label Grid.Row="2" Content="{x:Static locales:Resources.Email_Address}" />
+			<TextBox
+				Name="EmailAddressTextBox"
+				Grid.Row="2"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Text="{Binding EmailAddress}" />
+
+
+			<Label Grid.Row="3" Content="{x:Static locales:Resources.Server_Host}" />
+			<TextBox
+				Name="ServerHostTextBox"
+				Grid.Row="3"
+				Grid.Column="1"
+				Text="{Binding ServerHost}" />
+			<StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
+				<Label Content="{x:Static locales:Resources.Server_Port}" />
+				<JcControls:NumericUpDown x:Name="ServerPortUpDown" Maximum="65535" Value="{Binding ServerPort, UpdateSourceTrigger=PropertyChanged}" />
+			</StackPanel>
+
+			<Label Grid.Row="4" Content="{x:Static locales:Resources.Username}" />
+			<TextBox
+				Name="UsernameTextBox"
+				Grid.Row="4"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Text="{Binding Username}" />
+
+			<Label Grid.Row="5" Content="{x:Static locales:Resources.Password}" />
+			<PasswordBox
+				Name="PasswordPasswordBox"
+				Grid.Row="5"
+				Grid.Column="1"
+				Grid.ColumnSpan="2" />
+
+
+			<StackPanel
+				Grid.Row="6"
+				Grid.Column="1"
+				HorizontalAlignment="Left"
+				Orientation="Horizontal">
+
+				<Button
+					Name="TestAuthenticationButton"
+					Grid.Row="0"
+					Grid.Column="3"
+					HorizontalAlignment="Center"
+					Click="TestButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_checkbox_checked}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Test_Authentication}" />
+					</StackPanel>
+				</Button>
+				<CheckBox
+					Name="IsEnabledCheckBox"
+					Margin="3,3,0,0"
+					Content="{x:Static locales:Resources.Enabled}"
+					IsChecked="{Binding IsEnabled}" />
+
+			</StackPanel>
+
+		</Grid>
+		<!--  Row 2  -->
+		<TabControl
+			x:Name="MainTabControl"
+			Grid.Row="2"
+			Margin="4"
+			x:FieldModifier="public">
+
+			<TabItem Name="AllowedRecipientsTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_list}" />
+						<Label Content="{x:Static locales:Resources.Allowed_Recipients}" />
+					</StackPanel>
+				</TabItem.Header>
+				<TextBox
+					Name="AllowedRecipientsTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					BorderThickness="0"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					Text="{Binding AllowedRecipients}"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
+			</TabItem>
+
+			<TabItem Name="AllowedSenderdsTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_list}" />
+						<Label Content="{x:Static locales:Resources.Allowed_Senders}" />
+					</StackPanel>
+				</TabItem.Header>
+				<TextBox
+					Name="AllowedSendersTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					BorderThickness="0"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					Text="{Binding AllowedSenders}"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
+			</TabItem>
+
+
+			<TabItem Name="LogTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_list}" />
+						<Label Content="{x:Static locales:Resources.Log}" />
+					</StackPanel>
+				</TabItem.Header>
+				<TextBox
+					Name="LogTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
+			</TabItem>
+
+
+
+
+
+		</TabControl>
+	</Grid>
+</UserControl>

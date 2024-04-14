@@ -126,6 +126,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					value.PropertyChanged += _Item_PropertyChanged;
 				}
 				IconPanel.BindData(value);
+				LogTextBox.Clear();
 				OnPropertyChanged(nameof(Item));
 			}
 		}
@@ -247,7 +248,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsOnCooldown(sender))
 				return;
 			MainTabControl.SelectedItem = LogTabPage;
-			LogTextBox.Text = "";
+			LogTextBox.Clear();
 			var eh = new EmbeddingHelper();
 			var systemMessage = await eh.SearchEmbeddingsToSystemMessage(Item, Item.EmbeddingGroupFlag, Item.Message, Item.Skip, Item.Take);
 			if (eh.FileParts == null)

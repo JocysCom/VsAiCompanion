@@ -59,6 +59,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				EmbeddingItemPanel.Item = (EmbeddingsItem)item;
 			}
+			else if (DataType == ItemType.MailAccount)
+			{
+				MailAccountItemPanel.Item = (MailAccount)item;
+			}
 			if (currentItem != null)
 				currentItem.PropertyChanged += CurrentItem_PropertyChanged;
 		}
@@ -86,6 +90,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		AssistantItemControl AssistantItemPanel;
 		ListsItemControl ListsItemPanel;
 		EmbeddingsItemControl EmbeddingItemPanel;
+		MailAccountItemControl MailAccountItemPanel;
 
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
@@ -154,6 +159,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						control.DataType = value;
 						control.Visibility = Visibility.Visible;
 						EmbeddingItemPanel = control;
+					}
+				}
+				else if (value == ItemType.MailAccount)
+				{
+					if (MailAccountItemPanel == null)
+					{
+						var control = new MailAccountItemControl();
+						Grid.SetColumn(control, 2);
+						MainGrid.Children.Add(control);
+						control.DataType = value;
+						control.Visibility = Visibility.Visible;
+						MailAccountItemPanel = control;
 					}
 				}
 				else

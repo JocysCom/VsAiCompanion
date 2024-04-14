@@ -160,6 +160,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allowed Recipients.
+        /// </summary>
+        public static string Allowed_Recipients {
+            get {
+                return ResourceManager.GetString("Allowed_Recipients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allowed Senders.
+        /// </summary>
+        public static string Allowed_Senders {
+            get {
+                return ResourceManager.GetString("Allowed_Senders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to API Base URL.
         /// </summary>
         public static string API_Base_URL {
@@ -538,6 +556,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email Address.
+        /// </summary>
+        public static string Email_Address {
+            get {
+                return ResourceManager.GetString("Email_Address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email Name.
+        /// </summary>
+        public static string Email_Name {
+            get {
+                return ResourceManager.GetString("Email_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile.
         ///
         ///Use only the contents from these documents to answer questions..
@@ -801,11 +837,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AI Mailbox for Communication.
+        /// </summary>
+        public static string MaiAccounts_Feature_Description {
+            get {
+                return ResourceManager.GetString("MaiAccounts_Feature_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mail.
         /// </summary>
         public static string Mail {
             get {
                 return ResourceManager.GetString("Mail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mail Accounts.
+        /// </summary>
+        public static string Mail_Accounts {
+            get {
+                return ResourceManager.GetString("Mail_Accounts", resourceCulture);
             }
         }
         
@@ -950,6 +1004,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Owner {
             get {
                 return ResourceManager.GetString("Owner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
             }
         }
         
@@ -1206,6 +1269,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server Host.
+        /// </summary>
+        public static string Server_Host {
+            get {
+                return ResourceManager.GetString("Server_Host", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Port.
+        /// </summary>
+        public static string Server_Port {
+            get {
+                return ResourceManager.GetString("Server_Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Service.
         /// </summary>
         public static string Service {
@@ -1359,6 +1440,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Test.
+        /// </summary>
+        public static string Test {
+            get {
+                return ResourceManager.GetString("Test", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test Authentication.
+        /// </summary>
+        public static string Test_Authentication {
+            get {
+                return ResourceManager.GetString("Test_Authentication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extract and analyze the plain text content from the following files:.
         /// </summary>
         public static string TextBox_Drop_Files_Instructions {
@@ -1409,6 +1508,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Use_Maximum_Context {
             get {
                 return ResourceManager.GetString("Use_Maximum_Context", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username.
+        /// </summary>
+        public static string Username {
+            get {
+                return ResourceManager.GetString("Username", resourceCulture);
             }
         }
         

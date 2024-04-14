@@ -298,5 +298,43 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 
+		#region AI Mail Client
+
+
+		/// <summary>
+		/// Can be used used for categorized search.
+		/// </summary>
+		[DefaultValue("")]
+		public string MailAccount
+		{
+			get => _MailAccount;
+			set
+			{
+				SetProperty(ref _MailAccount, value);
+				// Init new.
+				if (_AiMailClient?.Account?.Name != MailAccount)
+					_AiMailClient = null;
+			}
+
+		}
+		string _MailAccount;
+
+		[XmlIgnore, JsonIgnore]
+		public AiMailClient AiMailClient
+		{
+			get
+			{
+				if (_AiMailClient == null)
+				{
+					var account = Global.AppSettings.MailAccounts.FirstOrDefault(x => x.Equals(MailAccount));
+					_AiMailClient = new AiMailClient(account);
+				}
+				return _AiMailClient;
+			}
+		}
+		AiMailClient _AiMailClient;
+
+		#endregion
+
 	}
 }

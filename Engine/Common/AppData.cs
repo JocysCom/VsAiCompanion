@@ -122,6 +122,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private TaskSettings _EmbeddingsData;
 
+		public TaskSettings MailAccountData
+		{
+			get => _MailAccountData = _MailAccountData ?? new TaskSettings();
+			set => SetProperty(ref _MailAccountData, value);
+		}
+		private TaskSettings _MailAccountData;
+
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
 			switch (type)
@@ -132,6 +139,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Assistant: return AssistantData;
 				case ItemType.Lists: return ListsData;
 				case ItemType.Embeddings: return EmbeddingsData;
+				case ItemType.MailAccount: return MailAccountData;
 				default: return new TaskSettings();
 			}
 		}
@@ -239,6 +247,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private SortableBindingList<AiService> _AiServices;
 		private object _AiServicesLock = new object();
 
+
+		public SortableBindingList<MailAccount> MailAccounts
+		{
+			get
+			{
+				lock (_MailAccountsLock)
+				{
+					if (_MailAccounts == null || _MailAccounts.Count == 0)
+						_MailAccounts = new SortableBindingList<MailAccount>();
+					return _MailAccounts;
+				}
+			}
+			set => _MailAccounts = value;
+		}
+		private SortableBindingList<MailAccount> _MailAccounts;
+		private object _MailAccountsLock = new object();
 
 		public SortableBindingList<PluginItem> Plugins
 		{

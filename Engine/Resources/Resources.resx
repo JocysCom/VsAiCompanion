@@ -584,4 +584,40 @@ Use only the contents from these documents to answer questions.</value>
   <data name="Max_Input_Tokens" xml:space="preserve">
     <value>Max Input Tokens</value>
   </data>
+  <data name="Mail_Accounts" xml:space="preserve">
+    <value>Mail Accounts</value>
+  </data>
+  <data name="MaiAccounts_Feature_Description" xml:space="preserve">
+    <value>AI Mailbox for Communication</value>
+  </data>
+  <data name="Email_Address" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
+  <data name="Email_Name" xml:space="preserve">
+    <value>Email Name</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Server_Host" xml:space="preserve">
+    <value>Server Host</value>
+  </data>
+  <data name="Server_Port" xml:space="preserve">
+    <value>Server Port</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="Allowed_Recipients" xml:space="preserve">
+    <value>Allowed Recipients</value>
+  </data>
+  <data name="Allowed_Senders" xml:space="preserve">
+    <value>Allowed Senders</value>
+  </data>
+  <data name="Test_Authentication" xml:space="preserve">
+    <value>Test Authentication</value>
+  </data>
 </root>

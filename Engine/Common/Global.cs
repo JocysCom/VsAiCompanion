@@ -7,6 +7,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -66,6 +67,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+
 		public const string TemplatesName = nameof(Templates);
 
 		public static SettingsData<TemplateItem> Templates =
@@ -96,6 +98,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			};
 
 
+		public static IBindingList GetSettingItems(ItemType type)
+		{
+			switch (type)
+			{
+				case ItemType.Task: return Tasks.Items;
+				case ItemType.Template: return Templates.Items;
+				case ItemType.FineTuning: return FineTunings.Items;
+				case ItemType.Assistant: return Assistants.Items;
+				case ItemType.Lists: return Lists.Items;
+				case ItemType.Embeddings: return Embeddings.Items;
+				case ItemType.MailAccount: return AppSettings.MailAccounts;
+				default: return null;
+			}
+		}
+
 		public static ISettingsData GetSettings(ItemType type)
 		{
 			switch (type)
@@ -106,7 +123,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Assistant: return Assistants;
 				case ItemType.Lists: return Lists;
 				case ItemType.Embeddings: return Embeddings;
-				default: return new SettingsData<TemplateItem>();
+				default: return null;
 			}
 		}
 
