@@ -115,7 +115,7 @@
 					SelectedValue="{Binding ImapConnectionSecurity}"
 					SelectedValuePath="Key" />
 				<Button
-					Name="TestSmtpConnectionButtonButton"
+					Name="TestImapConnectionButton"
 					Grid.Column="3"
 					HorizontalAlignment="Center"
 					Click="TestImapConnectionButton_Click">

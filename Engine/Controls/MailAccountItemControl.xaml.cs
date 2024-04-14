@@ -112,6 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void TestImapConnectionButton_Click(object sender, RoutedEventArgs e)
 		{
+			LogTextBox.Clear();
 			LogTabPage.IsSelected = true;
 			var client = new AiMailClient(Item);
 			client.LogMessage += Client_LogMessage;
@@ -121,6 +122,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void TestSmtpConnectionButton_Click(object sender, RoutedEventArgs e)
 		{
+			LogTextBox.Clear();
 			LogTabPage.IsSelected = true;
 			var client = new AiMailClient(Item);
 			client.LogMessage += Client_LogMessage;
