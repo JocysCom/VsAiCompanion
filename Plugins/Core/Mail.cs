@@ -10,6 +10,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	public class Mail
 	{
 
+		/// <summary>
+		/// Will be used by plugins manager and called by AI.
+		/// </summary>
 		public Func<string[], string, string, MailTextFormat, OperationResult<bool>> SendCallback { get; set; }
 
 		/// <summary>

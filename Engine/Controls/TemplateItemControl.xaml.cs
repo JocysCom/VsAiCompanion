@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions;
@@ -7,6 +8,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -47,9 +49,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateSpellCheck();
 			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
-			MailPanel.Visibility = InitHelper.IsDebug
-				? Visibility.Visible
-				: Visibility.Collapsed;
+			UpdateMailAccounts();
+			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
+		}
+
+		private void MailAccounts_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			var update = false;
+			if (e.ListChangedType == ListChangedType.PropertyDescriptorChanged && e.PropertyDescriptor.Name == nameof(MailAccount.Name))
+				update = true;
+			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
+				update = true;
+			if (update)
+				_ = Helper.Delay(UpdateMailAccounts);
 		}
 
 		private void Global_PromptingUpdated(object sender, EventArgs e)
@@ -165,7 +177,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (settings != null)
 					_Item.Settings = settings;
 			}
-
 		}
 
 		private async void ChatPanel_OnSend(object sender, EventArgs e)
@@ -544,6 +555,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? caretIndex + prefix.Length
 				: caretIndex + text.Length;
 			AppHelper.SetCaret(box, newIndex);
+		}
+
+		public ObservableCollection<string> MailAccounts { get; set; } = new ObservableCollection<string>();
+
+		public void UpdateMailAccounts()
+		{
+			var accounts = Global.AppSettings.MailAccounts.Select(x => x.Name).ToList();
+			if (!accounts.Contains(""))
+				accounts.Insert(0, "");
+			CollectionsHelper.Synchronize(accounts, MailAccounts);
+			OnPropertyChanged(nameof(MailAccounts));
 		}
 
 		#region PanelSettings

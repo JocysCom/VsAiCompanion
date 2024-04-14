@@ -551,7 +551,20 @@
 							<Label Content="{x:Static locales:Resources.Mail}" />
 						</StackPanel>
 					</TabItem.Header>
-					<Controls:MailControl x:Name="MailPanel" />
+					<WrapPanel Orientation="Horizontal">
+						<CheckBox
+							Name="UseMailAccountCheckBox"
+							Margin="0"
+							Content="Use Mail Account"
+							IsChecked="{Binding UseMailAccount}" />
+						<ComboBox
+							Name="MailAccountComboBox"
+							MinWidth="128"
+							Margin="3"
+							VerticalAlignment="Top"
+							ItemsSource="{Binding MailAccounts, ElementName=This}"
+							SelectedValue="{Binding MailAccount}" />
+					</WrapPanel>
 				</TabItem>
 			</TabControl>
 			<!--  Row 2  -->

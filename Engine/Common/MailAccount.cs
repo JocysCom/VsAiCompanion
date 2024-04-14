@@ -86,30 +86,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Enable Allowed Senders filter.
 		/// </summary>
 		[DefaultValue(true)]
-		public bool CheckSenders { get => _CheckSenders; set => SetProperty(ref _CheckSenders, value); }
-		bool _CheckSenders;
+		public bool ValidateSenders { get => _ValidateSenders; set => SetProperty(ref _ValidateSenders, value); }
+		bool _ValidateSenders;
 
 		/// <summary>
 		/// Enable Allowed Recipients filter.
 		/// </summary>
 		[DefaultValue(true)]
-		public bool CheckRecipients { get => _CheckRecipients; set => SetProperty(ref _CheckRecipients, value); }
-		bool _CheckRecipients;
+		public bool ValidateRecipients { get => _ValidateRecipients; set => SetProperty(ref _ValidateRecipients, value); }
+		bool _ValidateRecipients;
 
 		/// <summary>
 		/// Require valid digital signature.
 		/// </summary>
 		[DefaultValue(true)]
-		public bool CheckDigitalSignature { get => _CheckDigitalSignature; set => SetProperty(ref _CheckDigitalSignature, value); }
-		bool _CheckDigitalSignature;
+		public bool ValidateDigitalSignature { get => _ValidateDigitalSignature; set => SetProperty(ref _ValidateDigitalSignature, value); }
+		bool _ValidateDigitalSignature;
 
 		/// <summary>
 		/// Require to pass DKIM validation.
 		/// </summary>
 		[DefaultValue(true)]
-		public bool CheckDkim { get => _CheckDkim; set => SetProperty(ref _CheckDkim, value); }
-		bool _CheckDkim;
-
+		public bool ValidateDkim { get => _ValidateDkim; set => SetProperty(ref _ValidateDkim, value); }
+		bool _ValidateDkim;
 
 		#endregion
 

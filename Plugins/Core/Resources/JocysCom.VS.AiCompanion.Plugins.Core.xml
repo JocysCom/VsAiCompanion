@@ -630,6 +630,11 @@
             Allows AI to check and send mail.
             </summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Mail.SendCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Mail.Send(System.String[],System.String,System.String,JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat)">
             <summary>
             Send mail file text content on user computer.

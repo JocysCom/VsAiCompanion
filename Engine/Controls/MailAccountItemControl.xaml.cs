@@ -101,15 +101,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		private async void TestButton_Click(object sender, RoutedEventArgs e)
-		{
-			LogTabPage.IsSelected = true;
-			var client = new AiMailClient(Item);
-			client.LogMessage += Client_LogMessage;
-			await client.TestAccount();
-			client.Account = null;
-		}
-
 		private void Client_LogMessage(object sender, string e)
 		{
 			ControlsHelper.AppendText(LogTextBox, e + "\r\n");
@@ -119,5 +110,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
 			(MailConnectionSecurity[])Enum.GetValues(typeof(MailConnectionSecurity)));
 
+		private async void TestImapConnectionButton_Click(object sender, RoutedEventArgs e)
+		{
+			LogTabPage.IsSelected = true;
+			var client = new AiMailClient(Item);
+			client.LogMessage += Client_LogMessage;
+			await client.TestAccount(true);
+			client.Account = null;
+		}
+
+		private async void TestSmtpConnectionButton_Click(object sender, RoutedEventArgs e)
+		{
+			LogTabPage.IsSelected = true;
+			var client = new AiMailClient(Item);
+			client.LogMessage += Client_LogMessage;
+			await client.TestAccount(false);
+			client.Account = null;
+		}
 	}
 }

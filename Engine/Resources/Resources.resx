@@ -629,4 +629,16 @@ Use only the contents from these documents to answer questions.</value>
   <data name="Server_SMTP_Port" xml:space="preserve">
     <value>SMTP Port</value>
   </data>
+  <data name="Validate_Digital_Signature" xml:space="preserve">
+    <value>Validate Signature</value>
+  </data>
+  <data name="Validate_DKIM" xml:space="preserve">
+    <value>Validate DKIM</value>
+  </data>
+  <data name="Validate_Recipients" xml:space="preserve">
+    <value>Validate Recipients</value>
+  </data>
+  <data name="Validate_Senders" xml:space="preserve">
+    <value>Validate Senders</value>
+  </data>
 </root>

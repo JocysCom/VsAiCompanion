@@ -10,6 +10,7 @@ using MimeKit.Cryptography;
 using MimeKit.Text;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,40 +35,87 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Tests the connectivity and authentication with the mail server.
 		/// </summary>
 		/// <returns>A task that represents the asynchronous operation. The task result contains the connection and authentication status as a string.</returns>
-		public async Task<string> TestAccount()
+		public async Task TestAccount(bool isImap)
 		{
-			using (var client = new ImapClient())
+			var ms = new MemoryStream();
+			var logger = new ProtocolLogger(ms, true);
+			MailService client = isImap
+				? (MailService)new ImapClient(logger)
+				: new SmtpClient(logger);
+			client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
 			{
-				try
+				bool allow = false;
+				// No errors were found.
+				if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None)
 				{
-					OnLogMessage("Connecting to mail server...");
-
-					// Use SecureSocketOptions.StartTls when the server supports STARTTLS (usually on port 143), or SecureSocketOptions.SslOnConnect for SSL/TLS connection (usually on port 993).
-					await client.ConnectAsync(Account.ServerHost, Account.ServerImapPort, SecureSocketOptions.StartTls);
-					if (!client.IsConnected)
-						return "Failed to connect to the server.";
+					// Allow this client to communicate with unauthenticated servers.
+					return true;
+				}
+				string message = string.Format("Certificate error: {0}", sslPolicyErrors);
+				message += allow
+					? " Allow this client to communicate with unauthenticated server."
+					: " The underlying connection was closed.";
+				if (sender != null && sender is System.Net.HttpWebRequest)
+				{
+					var hr = (System.Net.HttpWebRequest)sender;
+					message += $"sender.OriginalString: {hr.Address.OriginalString}";
+				}
+				if (certificate != null)
+				{
+					message += $"Certificate.Issuer: {certificate.Issuer}\r\n";
+					message += $"Certificate.Subject: {certificate.Subject}\r\n";
+				}
+				if (chain != null)
+				{
+					for (int i = 0; i < chain.ChainStatus.Length; i++)
+					{
+						var status = $"{chain.ChainStatus[i].Status}, {chain.ChainStatus[i].StatusInformation}";
+						message += $"Chain.ChainStatus({i}): {status}\r\n";
+					}
+				}
+				OnLogMessage(message);
+				return false;
+			};
+			var security = isImap
+				? (SecureSocketOptions)Account.ImapConnectionSecurity
+				: (SecureSocketOptions)Account.SmtpConnectionSecurity;
+			try
+			{
+				OnLogMessage("Connecting to mail server...");
+				await client.ConnectAsync(Account.ServerHost, Account.ServerImapPort, security);
+				if (!client.IsConnected)
+				{
+					OnLogMessage("Failed to connect to the server.");
+				}
+				else
+				{
 					OnLogMessage("Connected. Authenticating...");
 					await client.AuthenticateAsync(Account.Username, Account.Password);
 					if (!client.IsAuthenticated)
-						return "Authentication failed.";
-					OnLogMessage("Authenticated successfully.");
-				}
-				catch (Exception ex)
-				{
-					LogMessage?.Invoke(this, $"Error: {ex.Message}");
-					return $"Exception occurred: {ex.Message}";
-				}
-				finally
-				{
-					if (client.IsConnected)
 					{
-						client.Disconnect(true);
-						OnLogMessage("Disconnected from the server.");
+						OnLogMessage("Authentication failed.");
+					}
+					else
+					{
+						OnLogMessage("Authenticated successfully.");
 					}
 				}
-
-				return "Test completed successfully.";
 			}
+			catch (Exception ex)
+			{
+				LogMessage?.Invoke(this, $"Error: {ex.Message}");
+			}
+			finally
+			{
+				if (client.IsConnected)
+				{
+					client.Disconnect(true);
+					OnLogMessage("Disconnected from the server.");
+				}
+			}
+			var log = System.Text.Encoding.UTF8.GetString(ms.ToArray());
+			OnLogMessage(log);
+			client.Dispose();
 		}
 
 		/// <summary>
@@ -249,11 +297,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var sender = message.From.Mailboxes.FirstOrDefault()?.Address;
 			// Validation.
-			if (Account.CheckSenders && !IsValidAddress(sender, Account.AllowedSenders))
+			if (Account.ValidateSenders && !IsValidAddress(sender, Account.AllowedSenders))
 				return false;
-			if (Account.CheckDigitalSignature && !IsValidDigitalSignature(message))
+			if (Account.ValidateDigitalSignature && !IsValidDigitalSignature(message))
 				return false;
-			if (Account.CheckDkim && IsValidDkim(message))
+			if (Account.ValidateDkim && IsValidDkim(message))
 				return false;
 			return true;
 		}

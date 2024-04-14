@@ -300,6 +300,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region AI Mail Client
 
+		[DefaultValue(false)]
+		public bool UseMailAccount { get => _UseMailAccount; set => SetProperty(ref _UseMailAccount, value); }
+		bool _UseMailAccount;
 
 		/// <summary>
 		/// Can be used used for categorized search.

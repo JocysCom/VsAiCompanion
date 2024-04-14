@@ -81,80 +81,101 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Text="{Binding EmailAddress}" />
-
-
-			<Label Grid.Row="3" Content="{x:Static locales:Resources.Server_Host}" />
+			<Label Grid.Row="3" VerticalContentAlignment="Top" Content="{x:Static locales:Resources.Server_Host}" />
 			<TextBox
 				Name="ServerHostTextBox"
 				Grid.Row="3"
 				Grid.Column="1"
+				VerticalAlignment="Top"
 				Text="{Binding ServerHost}" />
-			<StackPanel Grid.Row="3" Grid.Column="2" Orientation="Vertical">
-				<StackPanel Orientation="Horizontal">
-					<Label Content="{x:Static locales:Resources.Server_IMAP_Port}" />
-					<JcControls:NumericUpDown Maximum="65535" Value="{Binding ServerImapPort, UpdateSourceTrigger=PropertyChanged}" />
-					<ComboBox
-						MinWidth="64"
-						HorizontalAlignment="Stretch"
-						DisplayMemberPath="Value"
-						ItemsSource="{Binding ConnectionSecurities, ElementName=This}"
-						SelectedValue="{Binding ImapConnectionSecurity}"
-						SelectedValuePath="Key" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal">
-					<Label Content="{x:Static locales:Resources.Server_SMTP_Port}" />
-					<JcControls:NumericUpDown Maximum="65535" Value="{Binding ServerSmtpPort, UpdateSourceTrigger=PropertyChanged}" />
-					<ComboBox
-						MinWidth="64"
-						HorizontalAlignment="Stretch"
-						DisplayMemberPath="Value"
-						ItemsSource="{Binding ConnectionSecurities, ElementName=This}"
-						SelectedValue="{Binding SmtpConnectionSecurity}"
-						SelectedValuePath="Key" />
-				</StackPanel>
-			</StackPanel>
+			<Grid Grid.Row="3" Grid.RowSpan="2" Grid.Column="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<Label Grid.Row="0" Grid.Column="0" Content="{x:Static locales:Resources.Server_IMAP_Port}" />
+				<JcControls:NumericUpDown
+					Grid.Row="0"
+					Grid.Column="1"
+					Maximum="65535"
+					Value="{Binding ServerImapPort, UpdateSourceTrigger=PropertyChanged}" />
+				<ComboBox
+					Grid.Row="0"
+					Grid.Column="2"
+					MinWidth="64"
+					HorizontalAlignment="Stretch"
+					DisplayMemberPath="Value"
+					ItemsSource="{Binding ConnectionSecurities, ElementName=This}"
+					SelectedValue="{Binding ImapConnectionSecurity}"
+					SelectedValuePath="Key" />
+				<Button
+					Name="TestSmtpConnectionButtonButton"
+					Grid.Column="3"
+					HorizontalAlignment="Center"
+					Click="TestImapConnectionButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Test}" />
+					</StackPanel>
+				</Button>
+				<Label Grid.Row="1" Grid.Column="0" Content="{x:Static locales:Resources.Server_SMTP_Port}" />
+				<JcControls:NumericUpDown
+					Grid.Row="1"
+					Grid.Column="1"
+					Maximum="65535"
+					Value="{Binding ServerSmtpPort, UpdateSourceTrigger=PropertyChanged}" />
+				<ComboBox
+					Grid.Row="1"
+					Grid.Column="2"
+					MinWidth="64"
+					HorizontalAlignment="Stretch"
+					DisplayMemberPath="Value"
+					ItemsSource="{Binding ConnectionSecurities, ElementName=This}"
+					SelectedValue="{Binding SmtpConnectionSecurity}"
+					SelectedValuePath="Key" />
+				<Button
+					Name="TestSmtpConnectionButton"
+					Grid.Row="1"
+					Grid.Column="3"
+					HorizontalAlignment="Center"
+					Click="TestSmtpConnectionButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
+						<Label Content="{x:Static locales:Resources.Test}" />
+					</StackPanel>
+				</Button>
+			</Grid>
+
 
 			<Label Grid.Row="4" Content="{x:Static locales:Resources.Username}" />
 			<TextBox
 				Name="UsernameTextBox"
 				Grid.Row="4"
 				Grid.Column="1"
-				Grid.ColumnSpan="2"
 				Text="{Binding Username}" />
 
 			<Label Grid.Row="5" Content="{x:Static locales:Resources.Password}" />
-			<PasswordBox
-				Name="PasswordPasswordBox"
-				Grid.Row="5"
-				Grid.Column="1"
-				Grid.ColumnSpan="2" />
+			<PasswordBox Name="PasswordPasswordBox" Grid.Row="5" Grid.Column="1" />
 
 
 			<StackPanel
 				Grid.Row="6"
-				Grid.Column="1"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
 				HorizontalAlignment="Left"
 				Orientation="Horizontal">
-
-				<Button
-					Name="TestAuthenticationButton"
-					Grid.Row="0"
-					Grid.Column="3"
-					HorizontalAlignment="Center"
-					Click="TestButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_checkbox_checked}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Test_Authentication}" />
-					</StackPanel>
-				</Button>
-				<CheckBox
-					Name="IsEnabledCheckBox"
-					Margin="3,3,0,0"
-					Content="{x:Static locales:Resources.Enabled}"
-					IsChecked="{Binding IsEnabled}" />
-
+				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Enabled}" IsChecked="{Binding IsEnabled}" />
+				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Validate_Senders}" IsChecked="{Binding ValidateSenders}" />
+				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Validate_Recipients}" IsChecked="{Binding ValidateRecipients}" />
+				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Validate_Digital_Signature}" IsChecked="{Binding ValidateDigitalSignature}" />
+				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Validate_DKIM}" IsChecked="{Binding ValidateDkim}" />
 			</StackPanel>
-
 		</Grid>
 		<!--  Row 2  -->
 		<TabControl

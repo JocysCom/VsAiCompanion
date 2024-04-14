@@ -1557,6 +1557,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Validate Signature.
+        /// </summary>
+        public static string Validate_Digital_Signature {
+            get {
+                return ResourceManager.GetString("Validate_Digital_Signature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validate DKIM.
+        /// </summary>
+        public static string Validate_DKIM {
+            get {
+                return ResourceManager.GetString("Validate_DKIM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validate Recipients.
+        /// </summary>
+        public static string Validate_Recipients {
+            get {
+                return ResourceManager.GetString("Validate_Recipients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validate Senders.
+        /// </summary>
+        public static string Validate_Senders {
+            get {
+                return ResourceManager.GetString("Validate_Senders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value.
         /// </summary>
         public static string Value {
