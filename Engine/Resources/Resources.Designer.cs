@@ -1224,6 +1224,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Security.
+        /// </summary>
+        public static string Security {
+            get {
+                return ResourceManager.GetString("Security", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Selection.
         /// </summary>
         public static string Selection {
@@ -1278,11 +1287,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IMAP Port.
+        /// </summary>
+        public static string Server_IMAP_Port {
+            get {
+                return ResourceManager.GetString("Server_IMAP_Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server Port.
         /// </summary>
         public static string Server_Port {
             get {
                 return ResourceManager.GetString("Server_Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SMTP Port.
+        /// </summary>
+        public static string Server_SMTP_Port {
+            get {
+                return ResourceManager.GetString("Server_SMTP_Port", resourceCulture);
             }
         }
         

@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
@@ -29,9 +30,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _ServerHost;
 
 		/// <summary>Server Port</summary>
-		[DefaultValue(143)]
-		public int ServerPort { get => _ServerPort; set => SetProperty(ref _ServerPort, value); }
-		int _ServerPort;
+		[DefaultValue(993)]
+		public int ServerImapPort { get => _ServerImapPort; set => SetProperty(ref _ServerImapPort, value); }
+		int _ServerImapPort;
+
+		/// <summary>IMAP Connection Security</summary>
+		[DefaultValue(MailConnectionSecurity.SslOnConnect)]
+		public MailConnectionSecurity ImapConnectionSecurity { get => _ImapConnectionSecurity; set => SetProperty(ref _ImapConnectionSecurity, value); }
+		MailConnectionSecurity _ImapConnectionSecurity;
+
+		/// <summary>Server Port</summary>
+		[DefaultValue(465)]
+		public int ServerSmtpPort { get => _ServerSmtpPort; set => SetProperty(ref _ServerSmtpPort, value); }
+		int _ServerSmtpPort;
+
+		/// <summary>SMTP Connection Security</summary>
+		[DefaultValue(MailConnectionSecurity.SslOnConnect)]
+		public MailConnectionSecurity SmtpConnectionSecurity { get => _SmtpConnectionSecurity; set => SetProperty(ref _SmtpConnectionSecurity, value); }
+		MailConnectionSecurity _SmtpConnectionSecurity;
+
 
 		/// <summary>Username</summary>
 		[DefaultValue("")]
@@ -65,8 +82,43 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string AllowedRecipients { get => _AllowedRecipients; set => SetProperty(ref _AllowedRecipients, value); }
 		string _AllowedRecipients;
 
+		/// <summary>
+		/// Enable Allowed Senders filter.
+		/// </summary>
+		[DefaultValue(true)]
+		public bool CheckSenders { get => _CheckSenders; set => SetProperty(ref _CheckSenders, value); }
+		bool _CheckSenders;
+
+		/// <summary>
+		/// Enable Allowed Recipients filter.
+		/// </summary>
+		[DefaultValue(true)]
+		public bool CheckRecipients { get => _CheckRecipients; set => SetProperty(ref _CheckRecipients, value); }
+		bool _CheckRecipients;
+
+		/// <summary>
+		/// Require valid digital signature.
+		/// </summary>
+		[DefaultValue(true)]
+		public bool CheckDigitalSignature { get => _CheckDigitalSignature; set => SetProperty(ref _CheckDigitalSignature, value); }
+		bool _CheckDigitalSignature;
+
+		/// <summary>
+		/// Require to pass DKIM validation.
+		/// </summary>
+		[DefaultValue(true)]
+		public bool CheckDkim { get => _CheckDkim; set => SetProperty(ref _CheckDkim, value); }
+		bool _CheckDkim;
+
+
 		#endregion
 
+		/// <summary>
+		/// Inbox monitoring is enabled.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool MonitorInbox { get => _MonitorInbox; set => SetProperty(ref _MonitorInbox, value); }
+		bool _MonitorInbox;
 
 		#region Encrypt Settings 
 

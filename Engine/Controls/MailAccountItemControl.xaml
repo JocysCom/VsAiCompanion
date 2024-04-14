@@ -89,9 +89,29 @@
 				Grid.Row="3"
 				Grid.Column="1"
 				Text="{Binding ServerHost}" />
-			<StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
-				<Label Content="{x:Static locales:Resources.Server_Port}" />
-				<JcControls:NumericUpDown x:Name="ServerPortUpDown" Maximum="65535" Value="{Binding ServerPort, UpdateSourceTrigger=PropertyChanged}" />
+			<StackPanel Grid.Row="3" Grid.Column="2" Orientation="Vertical">
+				<StackPanel Orientation="Horizontal">
+					<Label Content="{x:Static locales:Resources.Server_IMAP_Port}" />
+					<JcControls:NumericUpDown Maximum="65535" Value="{Binding ServerImapPort, UpdateSourceTrigger=PropertyChanged}" />
+					<ComboBox
+						MinWidth="64"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Value"
+						ItemsSource="{Binding ConnectionSecurities, ElementName=This}"
+						SelectedValue="{Binding ImapConnectionSecurity}"
+						SelectedValuePath="Key" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<Label Content="{x:Static locales:Resources.Server_SMTP_Port}" />
+					<JcControls:NumericUpDown Maximum="65535" Value="{Binding ServerSmtpPort, UpdateSourceTrigger=PropertyChanged}" />
+					<ComboBox
+						MinWidth="64"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Value"
+						ItemsSource="{Binding ConnectionSecurities, ElementName=This}"
+						SelectedValue="{Binding SmtpConnectionSecurity}"
+						SelectedValuePath="Key" />
+				</StackPanel>
 			</StackPanel>
 
 			<Label Grid.Row="4" Content="{x:Static locales:Resources.Username}" />

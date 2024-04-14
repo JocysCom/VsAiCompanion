@@ -337,6 +337,52 @@
             It encourages to infer potential statuses or metadata that could enhance data handling or task management strategies creatively.
             </summary>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.MailConnectionSecurity">
+            <summary>
+            Connection security.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailConnectionSecurity.None">
+            <summary>None</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailConnectionSecurity.Auto">
+            <summary>Allow client to decide.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailConnectionSecurity.SslOnConnect">
+            <summary>Use SSL or TLS encryption immediately.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailConnectionSecurity.StartTls">
+            <summary>Use TLS encryption immediately after reading the greeting and capabilities of the server.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailConnectionSecurity.StartTlsWhenAvailable">
+            <summary>Use TLS encryption immediately after reading the greeting and capabilities of the server, but only if STARTTLS is available.</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat">
+            <summary>
+            Mail Text format.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat.Plain">
+            <summary>The plain text format.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat.Text">
+            <summary>An alias for the plain text format.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat.Flowed">
+            <summary>The flowed text format (as described in rfc3676).</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat.Html">
+            <summary>The HTML text format.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat.Enriched">
+            <summary>The enriched text format.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat.CompressedRichText">
+            <summary>The compressed rich text format.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat.RichText">
+            <summary>The rich text format.</summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.PandocHelper">
             <summary>
             File converter.
@@ -578,6 +624,20 @@
             <summary>
             Retrieves all items from a list.
             </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Mail">
+            <summary>
+            Allows AI to check and send mail.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Mail.Send(System.String[],System.String,System.String,JocysCom.VS.AiCompanion.Plugins.Core.MailTextFormat)">
+            <summary>
+            Send mail file text content on user computer.
+            </summary>
+            <param name="recipients">Email address of recipients.</param>
+            <param name="subject">Email subject.</param>
+            <param name="body">Email body.</param>
+            <param name="bodyTextFormat">Email body text format.</param>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">
             <summary>

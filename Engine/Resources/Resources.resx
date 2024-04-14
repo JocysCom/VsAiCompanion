@@ -620,4 +620,13 @@ Use only the contents from these documents to answer questions.</value>
   <data name="Test_Authentication" xml:space="preserve">
     <value>Test Authentication</value>
   </data>
+  <data name="Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="Server_IMAP_Port" xml:space="preserve">
+    <value>IMAP Port</value>
+  </data>
+  <data name="Server_SMTP_Port" xml:space="preserve">
+    <value>SMTP Port</value>
+  </data>
 </root>

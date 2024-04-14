@@ -26,6 +26,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				iconName = Resources.Icons.Icons_Default.Icon_elements_tree;
 			if (Name.ToLower().Contains(nameof(TTS).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_chat;
+			if (Name.ToLower().Contains(nameof(Mail).ToLower()))
+				iconName = Resources.Icons.Icons_Default.Icon_mail;
 			Icon = Engine.Resources.Icons.Icons_Default.Current[iconName];
 		}
 

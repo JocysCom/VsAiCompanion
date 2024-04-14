@@ -1,6 +1,17 @@
-﻿using MailKit.Net.Imap;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.Shared.JocysCom;
+using MailKit;
+using MailKit.Net.Imap;
+using MailKit.Net.Smtp;
+using MailKit.Search;
 using MailKit.Security;
+using MimeKit;
+using MimeKit.Cryptography;
+using MimeKit.Text;
 using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -14,7 +25,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Account = account;
 		}
 
-		// Define an event for logging.
+		/// <summary>
+		/// Event for logging.
+		/// </summary>
 		public event EventHandler<string> LogMessage;
 
 		/// <summary>
@@ -27,17 +40,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				try
 				{
-					LogMessage?.Invoke(this, "Connecting to mail server...");
+					OnLogMessage("Connecting to mail server...");
 
 					// Use SecureSocketOptions.StartTls when the server supports STARTTLS (usually on port 143), or SecureSocketOptions.SslOnConnect for SSL/TLS connection (usually on port 993).
-					await client.ConnectAsync(Account.ServerHost, Account.ServerPort, SecureSocketOptions.StartTls);
+					await client.ConnectAsync(Account.ServerHost, Account.ServerImapPort, SecureSocketOptions.StartTls);
 					if (!client.IsConnected)
 						return "Failed to connect to the server.";
-					LogMessage?.Invoke(this, "Connected. Authenticating...");
+					OnLogMessage("Connected. Authenticating...");
 					await client.AuthenticateAsync(Account.Username, Account.Password);
 					if (!client.IsAuthenticated)
 						return "Authentication failed.";
-					LogMessage?.Invoke(this, "Authenticated successfully.");
+					OnLogMessage("Authenticated successfully.");
 				}
 				catch (Exception ex)
 				{
@@ -49,7 +62,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					if (client.IsConnected)
 					{
 						client.Disconnect(true);
-						LogMessage?.Invoke(this, "Disconnected from the server.");
+						OnLogMessage("Disconnected from the server.");
 					}
 				}
 
@@ -57,8 +70,263 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		// Helper method to raise the log message event safely.
+		/// <summary>
+		/// Helper method to raise the log message event safely.
+		/// </summary>
 		protected virtual void OnLogMessage(string message)
 			=> LogMessage?.Invoke(this, message);
+
+
+		#region Monitor Email
+
+		/// <summary>
+		/// Fired when new message is received.
+		/// </summary>
+		public event EventHandler<MimeMessage> NewMessage;
+
+
+		/// <summary>
+		/// Subscribe or unsubscribe from mailbox monitoring based on property change
+		/// </summary>
+		private async void Account_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(MailAccount.MonitorInbox))
+				await MonitorMailbox(Account.MonitorInbox);
+		}
+
+		private CancellationTokenSource _monitoringCancellationTokenSource;
+
+		/// <summary>
+		/// Start or stop monitoring the IMAP inbox.
+		/// </summary>
+		/// <param name="enable">True to start monitoring, false to stop.</param>
+		private async Task MonitorMailbox(bool enable)
+		{
+			if (enable)
+			{
+				if (_monitoringCancellationTokenSource == null || _monitoringCancellationTokenSource.IsCancellationRequested)
+				{
+					_monitoringCancellationTokenSource = new CancellationTokenSource();
+					await Task.Run(() => StartMonitoring(_monitoringCancellationTokenSource.Token), _monitoringCancellationTokenSource.Token);
+				}
+				return;
+			}
+			StopMonitoring();
+		}
+
+		private void StopMonitoring()
+		{
+			if (_monitoringCancellationTokenSource == null)
+				return;
+			_monitoringCancellationTokenSource.Cancel();
+			_monitoringCancellationTokenSource.Dispose();
+			_monitoringCancellationTokenSource = null;
+		}
+
+		private async Task StartMonitoring(CancellationToken cancellationToken)
+		{
+			using (var client = new ImapClient())
+			{
+				try
+				{
+					await client.ConnectAsync(Account.ServerHost, Account.ServerImapPort, (SecureSocketOptions)Account.ImapConnectionSecurity, cancellationToken);
+					await client.AuthenticateAsync(Account.Username, Account.Password, cancellationToken);
+					if (!client.IsConnected || !client.IsAuthenticated)
+						throw new InvalidOperationException("Failed to connect or authenticate to the mail server.");
+					client.Inbox.Open(FolderAccess.ReadOnly, cancellationToken);
+					while (!cancellationToken.IsCancellationRequested)
+					{
+						var uids = await client.Inbox.SearchAsync(SearchQuery.NotSeen, cancellationToken);
+						foreach (var uid in uids)
+						{
+							var message = await client.Inbox.GetMessageAsync(uid, cancellationToken);
+							// Process new message
+							OnNewMessageReceived(message);
+						}
+						// Wait before checking for new messages to avoid constant polling
+						await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+					}
+				}
+				catch (OperationCanceledException)
+				{
+					// Expected when monitoring is stopped; simply exit the loop
+				}
+				catch (Exception ex)
+				{
+					// Log or handle exceptions
+					OnLogMessage($"Error during mailbox monitoring: {ex.Message}");
+				}
+				finally
+				{
+					if (client.IsConnected)
+						client.Disconnect(true, cancellationToken);
+				}
+			}
+		}
+
+		private bool IsValidAddress(string address, string allowedList)
+		{
+			if (string.IsNullOrWhiteSpace(address))
+			{
+				OnLogMessage($"Address is empty!");
+				return false;
+			}
+			var allowedSenders = GetLines(allowedList);
+			if (!allowedSenders.Any())
+			{
+				OnLogMessage($"Allowed list is empty!");
+				return false;
+			}
+			if (!allowedSenders.Contains(allowedList, StringComparer.OrdinalIgnoreCase))
+			{
+				OnLogMessage($"{address} not allowed!");
+				return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Verify digital signature.
+		/// </summary>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		private bool IsValidDigitalSignature(MimeMessage message)
+		{
+			if (message.Body is MultipartSigned)
+			{
+				var signed = (MultipartSigned)message.Body;
+				using (var ctx = new WindowsSecureMimeContext())
+				{
+					foreach (var signature in signed.Verify(ctx))
+					{
+						try
+						{
+							// If valid is true, then it signifies that the signed content
+							// has not been modified since this particular signer signed the
+							// content.
+							bool valid = signature.Verify();
+							OnLogMessage($"Digital Signature is valid: {valid}");
+							return valid;
+						}
+						catch (Exception ex)
+						{
+							OnLogMessage($"Digital Signature verification failed. {ex.Message}");
+							return false;
+						}
+					}
+				}
+				OnLogMessage("Digital Signature verification failed.");
+				return false;
+			}
+			return false;
+		}
+
+		private bool IsValidDkim(MimeMessage message)
+		{
+			try
+			{
+				var index = message.Headers.IndexOf(HeaderId.DkimSignature);
+				if (index == -1)
+				{
+					OnLogMessage("DKIM Signature is missing");
+					return false;
+				}
+				var locator = new DomainPublicKeyLocator();
+				var verifier = new DkimVerifier(locator);
+				var dkim = message.Headers[index];
+				var valid = verifier.Verify(message, dkim);
+				OnLogMessage($"DKIM is valid: {valid}");
+				return valid;
+			}
+			catch (Exception ex)
+			{
+				OnLogMessage($"DKIM verification failed. {ex.Message}");
+				return false;
+			}
+		}
+
+		protected virtual bool IsValidReceivedMessage(MimeMessage message)
+		{
+			var sender = message.From.Mailboxes.FirstOrDefault()?.Address;
+			// Validation.
+			if (Account.CheckSenders && !IsValidAddress(sender, Account.AllowedSenders))
+				return false;
+			if (Account.CheckDigitalSignature && !IsValidDigitalSignature(message))
+				return false;
+			if (Account.CheckDkim && IsValidDkim(message))
+				return false;
+			return true;
+		}
+
+		protected virtual void OnNewMessageReceived(MimeMessage message)
+		{
+			if (IsValidReceivedMessage(message))
+				NewMessage?.Invoke(this, message);
+		}
+
+		private static string[] GetLines(string text)
+		{
+			var lines = text?
+				.Replace("\r\n", "\n")
+				.Replace("\r", "\n")
+				.Split('\n')
+				.Select(x => x.Trim())
+				.Where(x => !string.IsNullOrEmpty(x))
+				.ToArray();
+			return lines;
+		}
+
+		#endregion
+
+		public OperationResult<bool> Send(
+				string[] recipients,
+				string subject, string body,
+				Plugins.Core.MailTextFormat bodyTextFormat)
+		{
+			return Helper.RunSynchronously(async ()
+				=> await SendAsync(recipients, subject, body, bodyTextFormat));
+		}
+
+		/// <summary>
+		/// Send message
+		/// </summary>
+		public async Task<OperationResult<bool>> SendAsync(string[] recipients,
+		string subject, string body,
+		Plugins.Core.MailTextFormat bodyTextFormat,
+		CancellationToken cancellationToken = default)
+		{
+			var message = new MimeMessage();
+			message.From.Add(new MailboxAddress(Account.EmailName, Account.EmailAddress));
+			foreach (var recipient in recipients)
+			{
+				message.To.Add(MailboxAddress.Parse(recipient));
+			}
+			message.Subject = subject;
+			message.Body = new TextPart((TextFormat)bodyTextFormat) { Text = body };
+			using (var client = new SmtpClient())
+			{
+				try
+				{
+					await client.ConnectAsync(Account.ServerHost, Account.ServerImapPort, (SecureSocketOptions)Account.SmtpConnectionSecurity, cancellationToken);
+					await client.AuthenticateAsync(Account.Username, Account.Password);
+					await client.SendAsync(message);
+				}
+				catch (Exception ex)
+				{
+					OnLogMessage($"Error sending email: {ex.Message}");
+					return new OperationResult<bool>(ex);
+					// Handle exceptions or log them
+				}
+				finally
+				{
+					await client.DisconnectAsync(true);
+					OnLogMessage("Email sent successfully.");
+				}
+			}
+			return new OperationResult<bool>(true);
+		}
+
+
 	}
+
 }

@@ -41,6 +41,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					{
 						AddMethods(typeof(Basic));
 						AddMethods(typeof(Web));
+						AddMethods(typeof(Mail));
 						AddMethods(typeof(VisualStudio));
 						AddMethods(typeof(Database));
 						Search._databasePath = Global.PluginsSearchPath;
@@ -202,6 +203,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 					{
 						await Global.SwitchToVisualStudioThreadAsync();
 						methodResult = methodInfo.Invoke(classInstance, invokeParams);
+					});
+				}
+				else if (classInstance is Mail mail)
+				{
+					// Make sure that the list have the name of the task.
+					// If task is renamed then relevant lists must be renamed too.
+					await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+					{
+						mail.SendCallback = item.AiMailClient.Send;
+						methodResult = methodInfo.Invoke(mail, invokeParams);
+						await Task.Delay(0).ConfigureAwait(true);
 					});
 				}
 				else if (classInstance is Lists lists)

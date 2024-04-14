@@ -1,4 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Plugins.Core;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -111,6 +114,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			ControlsHelper.AppendText(LogTextBox, e + "\r\n");
 		}
+
+		public Dictionary<MailConnectionSecurity, string> ConnectionSecurities
+			=> ClassLibrary.Runtime.Attributes.GetDictionary(
+			(MailConnectionSecurity[])Enum.GetValues(typeof(MailConnectionSecurity)));
 
 	}
 }
