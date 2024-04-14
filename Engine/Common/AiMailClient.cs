@@ -42,6 +42,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			MailService client = isImap
 				? (MailService)new ImapClient(logger)
 				: new SmtpClient(logger);
+			int port = isImap
+				? Account.ServerImapPort
+				: Account.ServerSmtpPort;
+
 			client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
 			{
 				bool allow = false;
@@ -82,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			try
 			{
 				OnLogMessage("Connecting to mail server...");
-				await client.ConnectAsync(Account.ServerHost, Account.ServerImapPort, security);
+				await client.ConnectAsync(Account.ServerHost, port, security);
 				if (!client.IsConnected)
 				{
 					OnLogMessage("Failed to connect to the server.");
@@ -355,7 +359,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				try
 				{
-					await client.ConnectAsync(Account.ServerHost, Account.ServerImapPort, (SecureSocketOptions)Account.SmtpConnectionSecurity, cancellationToken);
+					await client.ConnectAsync(Account.ServerHost, Account.ServerSmtpPort, (SecureSocketOptions)Account.SmtpConnectionSecurity, cancellationToken);
 					await client.AuthenticateAsync(Account.Username, Account.Password);
 					await client.SendAsync(message);
 				}
