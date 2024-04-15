@@ -73,5 +73,9 @@ namespace Embeddings
 		/// <summary>File Part</summary>
 		public virtual DbSet<Embedding.FilePart> FileParts { get; set; }
 
+		/// <summary>Group Flag</summary>
+		public virtual DbSet<Embedding.Group> Groups { get; set; }
+
+
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.VS.AiCompanion.DataClient;
+using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -243,9 +243,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> RoleListNames
 			=> GetListNames("Role");
 
-		public Dictionary<EmbeddingGroup, string> FilePartGroups
+		public Dictionary<EmbeddingGroupFlag, string> FilePartGroups
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
-				(EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup)));
+				(EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag)));
 
 		public BindingList<EnumComboBox.CheckBoxViewModel> AttachContexts
 		{
@@ -264,7 +264,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			get
 			{
 				if (_EmbeddingGroupFlags == null)
-					_EmbeddingGroupFlags = EnumComboBox.GetItemSource<EmbeddingGroup>();
+					_EmbeddingGroupFlags = EnumComboBox.GetItemSource<EmbeddingGroupFlag>();
+				EmbeddingHelper.ApplyDatabase(Item?.UseEmbeddings == true ? Item?.EmbeddingGroupName : null, _EmbeddingGroupFlags);
 				return _EmbeddingGroupFlags;
 			}
 			set => _EmbeddingGroupFlags = value;
@@ -330,6 +331,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit);
 					}));
 				}
+				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 			}
 		}
 
@@ -361,9 +363,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
 					}
 					break;
+				case nameof(TemplateItem.EmbeddingGroupName):
+					_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+					break;
 				default:
 					break;
 			}
+		}
+
+		public void EmbeddingGroupFlags_OnPropertyChanged()
+		{
+			OnPropertyChanged(nameof(EmbeddingGroupFlags));
 		}
 
 		#region ■ Properties

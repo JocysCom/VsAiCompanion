@@ -17,7 +17,12 @@ using JocysCom.ClassLibrary.Security;
 using System.Threading;
 using System.Text;
 using JocysCom.VS.AiCompanion.Plugins.Core;
-
+using JocysCom.VS.AiCompanion.DataClient.Common;
+using JocysCom.ClassLibrary.Runtime;
+using System.Collections.ObjectModel;
+using JocysCom.ClassLibrary.Collections;
+using JocysCom.VS.AiCompanion.Engine.Controls;
+using System.ComponentModel;
 
 
 #if NETFRAMEWORK
@@ -36,7 +41,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			string fileName,
 			System.Security.Cryptography.SHA256 algorithm,
 			AiService service, string modelName,
-			string embeddingGroupName, EmbeddingGroup embeddingGroupFlag,
+			string embeddingGroupName, EmbeddingGroupFlag embeddingGroupFlag,
 			CancellationToken cancellationToken = default
 		)
 		{
@@ -192,7 +197,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			public string[] Tokens { get; set; }
 		}
 
-		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item, EmbeddingGroup groupFlag, string message, int skip, int take)
+		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item, EmbeddingGroupFlag groupFlag, string message, int skip, int take)
 		{
 			await SearchEmbeddings(item, groupFlag, message, item.Skip, item.Take);
 			var systemMessage = "";
@@ -227,7 +232,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 
 		public async Task SearchEmbeddings(
-			EmbeddingsItem item, EmbeddingGroup groupFlag,
+			EmbeddingsItem item, EmbeddingGroupFlag groupFlag,
 			string message,
 			int skip, int take,
 			CancellationToken cancellationToken = default)
@@ -325,5 +330,58 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 
 		#endregion
+
+
+		public static void ApplyDatabase(string groupName, ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> property)
+		{
+			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
+			var flags = GetFlags(ei);
+			var items = property.ToArray();
+			foreach (var item in items)
+			{
+				var flagName = flags.FirstOrDefault(x => x.Flag == (long)item.Key)?.FlagName ?? "";
+				var description = Attributes.GetDescription(item.Key);
+				if (!string.IsNullOrEmpty(flagName))
+					description += ": " + flagName;
+				item.Value = description;
+			}
+		}
+
+		public static void ApplyDatabase(string groupName, BindingList<EnumComboBox.CheckBoxViewModel> property)
+		{
+			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
+			var flags = GetFlags(ei);
+			var items = property.ToArray();
+			foreach (var item in items)
+			{
+				var flagName = flags.FirstOrDefault(x => x.Flag == Convert.ToInt64(item.Value))?.FlagName ?? "";
+				var description = Attributes.GetDescription(item.Value);
+				if (!string.IsNullOrEmpty(flagName))
+					description += ": " + flagName;
+				item.Description = description;
+			}
+		}
+
+		private static Embeddings.Embedding.Group[] GetFlags(EmbeddingsItem ei)
+		{
+			if (ei?.IsEnabled != true || string.IsNullOrWhiteSpace(ei?.Target))
+				return Array.Empty<Embeddings.Embedding.Group>();
+			try
+			{
+				var target = AssemblyInfo.ExpandPath(ei.Target);
+				var connectionString = SqlInitHelper.IsPortable(target)
+					? SqlInitHelper.PathToConnectionString(target)
+					: target;
+				var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
+				var items = db.Groups.Where(x => x.Name == ei.EmbeddingGroupName).ToArray();
+				return items;
+			}
+			catch (Exception)
+			{
+				return Array.Empty<Embeddings.Embedding.Group>();
+			}
+		}
+
+
 	}
 }

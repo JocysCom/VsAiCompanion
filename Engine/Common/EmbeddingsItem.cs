@@ -1,5 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
-using JocysCom.VS.AiCompanion.DataClient;
+using JocysCom.VS.AiCompanion.DataClient.Common;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -59,9 +59,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string EmbeddingGroupName { get => _EmbeddingGroupName; set => SetProperty(ref _EmbeddingGroupName, value); }
 		string _EmbeddingGroupName;
 
-		[DefaultValue(EmbeddingGroup.None)]
-		public EmbeddingGroup EmbeddingGroupFlag { get => _EmbeddingGroupFlag; set => SetProperty(ref _EmbeddingGroupFlag, value); }
-		EmbeddingGroup _EmbeddingGroupFlag;
+		[DefaultValue(EmbeddingGroupFlag.None)]
+		public EmbeddingGroupFlag EmbeddingGroupFlag { get => _EmbeddingGroupFlag; set => SetProperty(ref _EmbeddingGroupFlag, value); }
+		EmbeddingGroupFlag _EmbeddingGroupFlag;
+
+		[DefaultValue("")]
+		public string EmbeddingGroupFlagName { get => _EmbeddingGroupFlagName; set => SetProperty(ref _EmbeddingGroupFlagName, value); }
+		string _EmbeddingGroupFlagName;
 
 		/// <summary>
 		/// Use .gitignore to filter files.

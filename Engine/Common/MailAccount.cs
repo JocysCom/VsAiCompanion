@@ -24,30 +24,35 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string EmailAddress { get => _EmailAddress; set => SetProperty(ref _EmailAddress, value); }
 		string _EmailAddress;
 
-		/// <summary>Server Name</summary>
+		/// <summary>IMAP server host</summary>
 		[DefaultValue("")]
-		public string ServerHost { get => _ServerHost; set => SetProperty(ref _ServerHost, value); }
-		string _ServerHost;
+		public string ImapHost { get => _ImapHost; set => SetProperty(ref _ImapHost, value); }
+		string _ImapHost;
+
+		/// <summary>SMTP server host</summary>
+		[DefaultValue("")]
+		public string SmtpHost { get => _SmtpHost; set => SetProperty(ref _SmtpHost, value); }
+		string _SmtpHost;
 
 		/// <summary>Server Port</summary>
 		[DefaultValue(993)]
-		public int ServerImapPort { get => _ServerImapPort; set => SetProperty(ref _ServerImapPort, value); }
-		int _ServerImapPort;
+		public int ImapPort { get => _ImapPort; set => SetProperty(ref _ImapPort, value); }
+		int _ImapPort;
 
 		/// <summary>IMAP Connection Security</summary>
 		[DefaultValue(MailConnectionSecurity.SslOnConnect)]
-		public MailConnectionSecurity ImapConnectionSecurity { get => _ImapConnectionSecurity; set => SetProperty(ref _ImapConnectionSecurity, value); }
-		MailConnectionSecurity _ImapConnectionSecurity;
+		public MailConnectionSecurity ImapSecurity { get => _ImapSecurity; set => SetProperty(ref _ImapSecurity, value); }
+		MailConnectionSecurity _ImapSecurity;
 
 		/// <summary>Server Port</summary>
 		[DefaultValue(465)]
-		public int ServerSmtpPort { get => _ServerSmtpPort; set => SetProperty(ref _ServerSmtpPort, value); }
-		int _ServerSmtpPort;
+		public int SmtpPort { get => _SmtpPort; set => SetProperty(ref _SmtpPort, value); }
+		int _SmtpPort;
 
 		/// <summary>SMTP Connection Security</summary>
 		[DefaultValue(MailConnectionSecurity.SslOnConnect)]
-		public MailConnectionSecurity SmtpConnectionSecurity { get => _SmtpConnectionSecurity; set => SetProperty(ref _SmtpConnectionSecurity, value); }
-		MailConnectionSecurity _SmtpConnectionSecurity;
+		public MailConnectionSecurity SmtpSecurity { get => _SmtpSecurity; set => SetProperty(ref _SmtpSecurity, value); }
+		MailConnectionSecurity _SmtpSecurity;
 
 
 		/// <summary>Username</summary>
@@ -109,6 +114,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(true)]
 		public bool ValidateDkim { get => _ValidateDkim; set => SetProperty(ref _ValidateDkim, value); }
 		bool _ValidateDkim;
+
+
+		/// <summary>
+		/// Trust server certificate.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool TrustServerCertificate { get => _TrustServerCertificate; set => SetProperty(ref _TrustServerCertificate, value); }
+		bool _TrustServerCertificate;
 
 		#endregion
 

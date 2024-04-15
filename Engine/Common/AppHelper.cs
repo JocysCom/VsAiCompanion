@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.DataClient;
+using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -512,8 +513,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Find free flag number.
 			var taken = Global.Embeddings.Items.Select(x => x.EmbeddingGroupFlag)
 				.Distinct();
-			var free = Enum.GetValues(typeof(EmbeddingGroup))
-				.Cast<EmbeddingGroup>().Except(taken).FirstOrDefault();
+			var free = Enum.GetValues(typeof(EmbeddingGroupFlag))
+				.Cast<EmbeddingGroupFlag>().Except(taken).FirstOrDefault();
 			item.EmbeddingGroupFlag = free;
 			SetIconToDefault(item);
 			return item;

@@ -1,11 +1,17 @@
-﻿using JocysCom.ClassLibrary;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.DataClient;
+using JocysCom.VS.AiCompanion.DataClient.Common;
+using LiteDB;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -13,6 +19,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -78,25 +85,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		public Dictionary<EmbeddingGroup, string> EmbeddingGroups
-		=> ClassLibrary.Runtime.Attributes.GetDictionary(
-			(EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup)));
-
-		public Dictionary<EmbeddingGroup, string> EmbeddingGroupFlags
-		{
-			get
-			{
-				if (_EmbeddingGroupFlags == null)
-				{
-					var values = (EmbeddingGroup[])Enum.GetValues(typeof(EmbeddingGroup));
-					_EmbeddingGroupFlags = ClassLibrary.Runtime.Attributes.GetDictionary(values);
-				}
-				return _EmbeddingGroupFlags;
-			}
-			set => _EmbeddingGroupFlags = value;
-		}
-		Dictionary<EmbeddingGroup, string> _EmbeddingGroupFlags;
-
 		bool HelpInit;
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -120,6 +108,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				AiModelBoxPanel.Item = null;
 				_Item = value;
+				InitEdit(false);
+				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				AiModelBoxPanel.Item = value;
 				if (value != null)
 				{
@@ -132,11 +122,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 		EmbeddingsItem _Item;
 
+
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(EmbeddingsItem.Source))
-			{
-			}
+			if (e.PropertyName == nameof(EmbeddingsItem.EmbeddingGroupName))
+				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+		}
+
+		public void EmbeddingGroupFlags_OnPropertyChanged()
+		{
+			OnPropertyChanged(nameof(EmbeddingGroupFlags));
 		}
 
 		System.Windows.Forms.FolderBrowserDialog _FolderBrowser = new System.Windows.Forms.FolderBrowserDialog();
@@ -489,8 +484,115 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppControlsHelper.Export(items);
 		}
 
+
 		#endregion
 
+		public Dictionary<EmbeddingGroupFlag, string> EmbeddingGroups
+			=> ClassLibrary.Runtime.Attributes.GetDictionary(
+			(EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag)));
 
+		public ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> EmbeddingGroupFlags
+		{
+			get
+			{
+				if (_EmbeddingGroupFlags == null)
+				{
+					var values = (EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag));
+					var dic = new ObservableCollection<KeyValue<EmbeddingGroupFlag, string>>();
+					foreach (var value in values)
+						dic.Add(new KeyValue<EmbeddingGroupFlag, string>(value, Attributes.GetDescription(value)));
+					_EmbeddingGroupFlags = dic;
+				}
+				EmbeddingHelper.ApplyDatabase(Item?.EmbeddingGroupName, _EmbeddingGroupFlags);
+				return _EmbeddingGroupFlags;
+			}
+			set => _EmbeddingGroupFlags = value;
+		}
+		ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> _EmbeddingGroupFlags;
+
+
+		#region Edit Group Flag
+
+		void InitEdit(bool editMode)
+		{
+			Panel.SetZIndex(EmbeddingGroupComboBox, editMode ? 0 : 1);
+			Panel.SetZIndex(EditTextBox, editMode ? 1 : 0);
+			EditEditButton.Visibility = editMode
+				? Visibility.Collapsed
+				: Visibility.Visible;
+			EditApplyButton.Visibility = editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			EditCancelButton.Visibility = editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+		}
+
+		private void EditEditButton_Click(object sender, RoutedEventArgs e)
+		{
+			InitEdit(true);
+		}
+
+		private void EditApplyButton_Click(object sender, RoutedEventArgs e)
+		{
+			ApplyEditChanges();
+		}
+
+
+		void ApplyEditChanges()
+		{
+			LogTextBox.Clear();
+			try
+			{
+				var target = AssemblyInfo.ExpandPath(Item.Target);
+				var connectionString = SqlInitHelper.IsPortable(target)
+					? SqlInitHelper.PathToConnectionString(target)
+					: target;
+				db = SqlInitHelper.NewEmbeddingsContext(connectionString);
+				var flag = (long)Item.EmbeddingGroupFlag;
+				var item = db.Groups
+					.Where(x => x.Name == Item.EmbeddingGroupName)
+					.FirstOrDefault(x => x.Flag == flag);
+				if (item == null)
+				{
+					item = new Embeddings.Embedding.Group();
+					item.Name = Item.EmbeddingGroupName;
+					item.Flag = (long)Item.EmbeddingGroupFlag;
+					db.Groups.Add(item);
+				}
+				var flagName = Item.EmbeddingGroupFlagName ?? "";
+				if (item.FlagName != flagName)
+					item.FlagName = flagName;
+				db.SaveChanges();
+			}
+			catch (Exception ex)
+			{
+				LogTextBox.Text = ex.ToString();
+			}
+			InitEdit(false);
+			_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+		}
+
+
+		private void EditCancelButton_Click(object sender, RoutedEventArgs e)
+		{
+			InitEdit(false);
+		}
+
+
+		#endregion
+
+		private void EditTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			if (e.Key == System.Windows.Input.Key.Enter)
+			{
+				e.Handled = true;
+				ApplyEditChanges();
+			}
+			if (e.Key == System.Windows.Input.Key.Escape)
+			{
+				InitEdit(false);
+			}
+		}
 	}
 }

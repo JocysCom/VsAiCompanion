@@ -179,70 +179,80 @@ namespace JocysCom.VS.AiCompanion.Engine
 					return Resources.Resources.Call_function_request_denied;
 			}
 
-			// Check if the method is asynchronous (returns a Task or Task<string>)
-			if (typeof(Task).IsAssignableFrom(methodInfo.ReturnType))
+
+			// It's a synchronous method.
+			object methodResult = null;
+			if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
 			{
-				// It's an async method. Await the task.
+				await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+				{
+					await Global.SwitchToVisualStudioThreadAsync();
+					methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams);
+				});
+			}
+			else if (classInstance is Mail mail)
+			{
+				// Make sure that the list have the name of the task.
+				// If task is renamed then relevant lists must be renamed too.
+				await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+				{
+					item.UpdateMailClientAccount();
+					mail.SendCallback = item.AiMailClient.Send;
+					var account = item.AiMailClient.Account;
+					methodResult = await InvokeMethod(methodInfo, mail, invokeParams);
+				});
+			}
+			else if (classInstance is Lists lists)
+			{
+				// Make sure that the list have the name of the task.
+				// If task is renamed then relevant lists must be renamed too.
+				lists.FilterPath = item.Name;
+				await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+				{
+					methodResult = await InvokeMethod(methodInfo, lists, invokeParams);
+					// Fix lists with no icons.
+					var noIconLists = Global.Lists.Items.Where(x => x.IconData == null).ToList();
+					foreach (var noIconList in noIconLists)
+						AppHelper.SetIconToDefault(noIconList);
+				});
+			}
+			else
+			{
+				methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams);
+			}
+			var result = (methodResult is string s)
+				? s
+				: Client.Serialize(methodResult);
+			return result;
+		}
+
+		public static async Task<object> InvokeMethod(System.Reflection.MethodInfo methodInfo, object classInstance, object[] invokeParams)
+		{
+			// Check if the method is asynchronous (either returning Task or Task<T>)
+			bool isAsyncMethod = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
+			// Check if the method is void or Task (for async method)
+			bool isVoidMethod = methodInfo.ReturnType == typeof(void) || methodInfo.ReturnType == typeof(Task);
+			if (isAsyncMethod)
+			{
 				var task = (Task)methodInfo.Invoke(classInstance, invokeParams);
 				await task.ConfigureAwait(false); // Ensure you await the task
-
-				// If the method returns a Task<string>, get the result.
-				if (task is Task<string> stringTask)
+												  // Handle async methods that return a value (Task<T>)
+				if (!isVoidMethod) // It means it's Task<T>
 				{
-					var result = await stringTask;
-					return result;
+					// Extract the result from Task<T>
+					var resultProperty = task.GetType().GetProperty("Result");
+					return resultProperty.GetValue(task);
 				}
 			}
 			else
 			{
-				// It's a synchronous method.
-				object methodResult = null;
-				if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
+				// For synchronous methods, directly invoke and return the result (or null if void)
+				if (!isVoidMethod) // Has return value
 				{
-					await Global.MainControl.Dispatcher.InvokeAsync(async () =>
-					{
-						await Global.SwitchToVisualStudioThreadAsync();
-						methodResult = methodInfo.Invoke(classInstance, invokeParams);
-					});
+					return methodInfo.Invoke(classInstance, invokeParams);
 				}
-				else if (classInstance is Mail mail)
-				{
-					// Make sure that the list have the name of the task.
-					// If task is renamed then relevant lists must be renamed too.
-					await Global.MainControl.Dispatcher.InvokeAsync(async () =>
-					{
-						item.UpdateMailClientAccount();
-						mail.SendCallback = item.AiMailClient.Send;
-						var account = item.AiMailClient.Account;
-						methodResult = methodInfo.Invoke(mail, invokeParams);
-						await Task.Delay(0).ConfigureAwait(true);
-					});
-				}
-				else if (classInstance is Lists lists)
-				{
-					// Make sure that the list have the name of the task.
-					// If task is renamed then relevant lists must be renamed too.
-					lists.FilterPath = item.Name;
-					await Global.MainControl.Dispatcher.InvokeAsync(async () =>
-					{
-						methodResult = methodInfo.Invoke(lists, invokeParams);
-						// Fix lists with no icons.
-						var noIconLists = Global.Lists.Items.Where(x => x.IconData == null).ToList();
-						foreach (var noIconList in noIconLists)
-							AppHelper.SetIconToDefault(noIconList);
-						await Task.Delay(0).ConfigureAwait(true);
-					});
-				}
-				else
-				{
-
-					methodResult = methodInfo.Invoke(classInstance, invokeParams);
-				}
-				var result = (methodResult is string s)
-					? s
-					: Client.Serialize(methodResult);
-				return result;
 			}
+			// Return null if it's a void method (synchronous or asynchronous)
 			return null;
 		}
 

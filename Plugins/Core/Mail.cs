@@ -1,5 +1,6 @@
 ﻿using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using System;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -13,7 +14,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Will be used by plugins manager and called by AI.
 		/// </summary>
-		public Func<string[], string, string, MailTextFormat, OperationResult<bool>> SendCallback { get; set; }
+		public Func<string[], string, string, MailTextFormat, Task<OperationResult<bool>>> SendCallback { get; set; }
 
 		/// <summary>
 		/// Send mail file text content on user computer.
@@ -23,12 +24,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="body">Email body.</param>
 		/// <param name="bodyTextFormat">Email body text format.</param>
 		[RiskLevel(RiskLevel.High)]
-		public OperationResult<bool> Send(
+		public async Task<OperationResult<bool>> Send(
 			string[] recipients,
 			string subject, string body,
 			MailTextFormat bodyTextFormat)
 		{
-			return SendCallback(recipients, subject, body, bodyTextFormat);
+			return await SendCallback(recipients, subject, body, bodyTextFormat);
 		}
 	}
 }

@@ -57,16 +57,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (e.PropertyDescriptor?.Name == nameof(CheckBoxViewModel.IsChecked))
 			{
 				var data = (BindingList<CheckBoxViewModel>)sender;
+				UpdateTopDescription(data);
 				var top = data[0];
-				var choice = data.Skip(1);
-				var count = choice.Count(x => x.IsChecked);
-				var names = choice.Where(x => x.IsChecked).Select(x => x.Description).ToList();
-				if (count == 0)
-					top.Description = This.Text = "None";
-				else if (count == 1)
-					top.Description = This.Text = names.First();
-				else
-					top.Description = This.Text = $"{names.First()} + " + (count - 1).ToString();
 				var value = data
 					.Where(x => x.IsChecked)
 					.Aggregate(0L, (current, item) => Convert.ToInt64(current) | Convert.ToInt64(item.Value));
@@ -74,6 +66,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (!Equals(SelectedValue, newValue))
 					SelectedValue = newValue;
 			}
+		}
+
+		public void UpdateTopDescription(BindingList<CheckBoxViewModel> data)
+		{
+			var top = data[0];
+			var choice = data.Skip(1);
+			var count = choice.Count(x => x.IsChecked);
+			var names = choice.Where(x => x.IsChecked).Select(x => x.Description).ToList();
+			if (count == 0)
+				top.Description = This.Text = "None";
+			else if (count == 1)
+				top.Description = This.Text = names.First();
+			else
+				top.Description = This.Text = $"{names.First()} + " + (count - 1).ToString();
 		}
 
 		public static BindingList<CheckBoxViewModel> GetItemSource<T>() where T : Enum
@@ -132,8 +138,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var box = (EnumComboBox)d;
 			var value = (Enum)box.GetValue(SelectedValueProperty);
 			var items = (BindingList<CheckBoxViewModel>)box.ItemsSource;
-
-
 			foreach (var item in items)
 			{
 				var isChecked = !IsDefault(item.Value) && value.HasFlag(item.Value);

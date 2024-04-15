@@ -1,4 +1,4 @@
-﻿using JocysCom.VS.AiCompanion.DataClient;
+﻿using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
@@ -281,9 +281,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string EmbeddingGroupName { get => _EmbeddingGroupName; set => SetProperty(ref _EmbeddingGroupName, value); }
 		string _EmbeddingGroupName;
 
-		[DefaultValue(EmbeddingGroup.None)]
-		public EmbeddingGroup EmbeddingGroupFlag { get => _EmbeddingGroupFlag; set => SetProperty(ref _EmbeddingGroupFlag, value); }
-		EmbeddingGroup _EmbeddingGroupFlag;
+		[DefaultValue(EmbeddingGroupFlag.None)]
+		public EmbeddingGroupFlag EmbeddingGroupFlag { get => _EmbeddingGroupFlag; set => SetProperty(ref _EmbeddingGroupFlag, value); }
+		EmbeddingGroupFlag _EmbeddingGroupFlag;
 
 		#endregion
 

@@ -641,4 +641,13 @@ Use only the contents from these documents to answer questions.</value>
   <data name="Validate_Senders" xml:space="preserve">
     <value>Validate Senders</value>
   </data>
+  <data name="Trust_Server_Certificate" xml:space="preserve">
+    <value>Trust Server Certificate</value>
+  </data>
+  <data name="IMAP_Host" xml:space="preserve">
+    <value>IMAP Host</value>
+  </data>
+  <data name="SMTP_Host" xml:space="preserve">
+    <value>SMTP Host</value>
+  </data>
 </root>

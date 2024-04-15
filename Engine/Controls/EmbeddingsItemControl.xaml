@@ -61,6 +61,8 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -181,7 +183,7 @@
 					</StackPanel>
 				</Button>
 			</StackPanel>
-			<StackPanel Grid.Row="4" Grid.Column="4" Orientation="Horizontal">
+			<StackPanel Grid.Row="5" Grid.Column="4" Orientation="Horizontal">
 				<Button Name="ImportButton" MinWidth="75" Click="ImportButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
@@ -211,27 +213,75 @@
 					Grid.Row="3"
 					Grid.Column="1"
 					Margin="3,0,0,0"
-					Content="Group Flag" />
-				<ComboBox
-					Name="EmbeddingGroupComboBox"
-					MinWidth="64"
-					HorizontalAlignment="Stretch"
-					DisplayMemberPath="Value"
-					ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
-					SelectedValue="{Binding EmbeddingGroupFlag}"
-					SelectedValuePath="Key" />
-				<Label
-					x:Name="SourcePatternLabel"
-					Grid.Row="3"
-					Grid.Column="1"
-					Margin="3,0,0,0"
-					Content="Source Pattern" />
+					Content="Flag" />
+				<Grid>
+					<TextBox
+						x:Name="EditTextBox"
+						MinWidth="64"
+						PreviewKeyDown="EditTextBox_PreviewKeyDown"
+						Text="{Binding EmbeddingGroupFlagName, UpdateSourceTrigger=PropertyChanged}" />
+					<ComboBox
+						Name="EmbeddingGroupComboBox"
+						MinWidth="64"
+						HorizontalAlignment="Stretch"
+						DisplayMemberPath="Value"
+						ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
+						SelectedValue="{Binding EmbeddingGroupFlag}"
+						SelectedValuePath="Key" />
+				</Grid>
+
+				<StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
+
+					<Button Name="EditEditButton" Click="EditEditButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+					<Button Name="EditApplyButton" Click="EditApplyButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+						</StackPanel>
+					</Button>
+					<Button Name="EditCancelButton" Click="EditCancelButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</StackPanel>
+
+
+			</StackPanel>
+			<Label
+				x:Name="SourcePatternLabel"
+				Grid.Row="5"
+				Grid.Column="1"
+				Content="Source Pattern" />
+			<StackPanel Grid.Row="5" Grid.Column="2" Orientation="Horizontal">
 				<TextBox Name="SourcePatternTextBox" MinWidth="64" Text="{Binding SourcePattern}" />
 				<CheckBox x:Name="UseGitIgnoreCheckbox" Content="Use .gitignore" IsChecked="{Binding UseGitIgnore, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>
+			<!--  System Instructions  -->
+			<Label
+				x:Name="InstructionsLabel"
+				Grid.Row="6"
+				Grid.Column="1"
+				Content="{x:Static locales:Resources.Instructions}" />
+			<TextBox
+				Name="InstructionsTextBox"
+				Grid.Row="6"
+				Grid.Column="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				VerticalContentAlignment="Top"
+				AcceptsReturn="True"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				SpellCheck.IsEnabled="True"
+				Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
+				TextWrapping="Wrap" />
 			<!--  Search options  -->
 			<StackPanel
-				Grid.Row="5"
+				Grid.Row="7"
 				Grid.Column="1"
 				Grid.ColumnSpan="3"
 				Margin="0,0,0,0"
@@ -249,34 +299,15 @@
 					SmallChange="128"
 					Value="{Binding MaxTokens, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>
-			<!--  System Instructions  -->
-			<Label
-				x:Name="InstructionsLabel"
-				Grid.Row="4"
-				Grid.Column="1"
-				Content="{x:Static locales:Resources.Instructions}" />
-			<TextBox
-				Name="InstructionsTextBox"
-				Grid.Row="4"
-				Grid.Column="2"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch"
-				VerticalContentAlignment="Top"
-				AcceptsReturn="True"
-				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				ScrollViewer.VerticalScrollBarVisibility="Auto"
-				SpellCheck.IsEnabled="True"
-				Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
-				TextWrapping="Wrap" />
 			<!--  Test message  -->
 			<Label
-				Grid.Row="6"
+				Grid.Row="8"
 				Grid.Column="1"
 				VerticalAlignment="Center"
 				Content="{x:Static locales:Resources.Message}" />
 			<TextBox
 				Name="MessgaeTextBox"
-				Grid.Row="6"
+				Grid.Row="8"
 				Grid.Column="2"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
@@ -289,7 +320,7 @@
 				TextWrapping="Wrap" />
 			<Button
 				Name="SendSettingsButton"
-				Grid.Row="6"
+				Grid.Row="8"
 				Grid.Column="4"
 				MinWidth="75"
 				Click="SearchButton_Click">
@@ -348,6 +379,7 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
 					BorderThickness="0"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -372,6 +404,7 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
 					BorderThickness="0"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"

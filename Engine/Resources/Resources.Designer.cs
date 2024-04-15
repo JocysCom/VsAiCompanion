@@ -720,6 +720,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IMAP Host.
+        /// </summary>
+        public static string IMAP_Host {
+            get {
+                return ResourceManager.GetString("IMAP_Host", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Include Patterns.
         /// </summary>
         public static string Include_Patterns {
@@ -1377,6 +1386,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SMTP Host.
+        /// </summary>
+        public static string SMTP_Host {
+            get {
+                return ResourceManager.GetString("SMTP_Host", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Source.
         /// </summary>
         public static string Source {
@@ -1499,6 +1517,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         public static string Title_for_Attached_Context {
             get {
                 return ResourceManager.GetString("Title_for_Attached_Context", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trust Server Certificate.
+        /// </summary>
+        public static string Trust_Server_Certificate {
+            get {
+                return ResourceManager.GetString("Trust_Server_Certificate", resourceCulture);
             }
         }
         

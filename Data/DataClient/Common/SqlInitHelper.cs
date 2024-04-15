@@ -9,6 +9,9 @@ using JocysCom.VS.AiCompanion.DataFunctions;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using JocysCom.VS.AiCompanion.DataClient.Common;
+
+
 
 #if NETFRAMEWORK
 using System.Data.Entity.Infrastructure.DependencyResolution;
@@ -79,6 +82,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			}
 			success &= CreateTable(nameof(File), connection);
 			success &= CreateTable(nameof(FilePart), connection);
+			success &= CreateTable(nameof(Embeddings.Embedding.Group), connection);
 			if (!isPortable)
 			{
 				success &= CreateProcedure("sp_getMostSimilarFiles", connection);
@@ -270,7 +274,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static async Task<int> SetFileState(
 	EmbeddingsContext db,
 	string groupName,
-	EmbeddingGroup groupFlag,
+	EmbeddingGroupFlag groupFlag,
 	int state
 	)
 		{
@@ -303,7 +307,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static async Task<int> DeleteByState(
 			EmbeddingsContext db,
 			string groupName,
-			EmbeddingGroup groupFlag,
+			EmbeddingGroupFlag groupFlag,
 			int state
 		)
 		{
@@ -344,7 +348,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return parameter;
 		}
 
-		private static void AddParameters(DbCommand command, string groupName, EmbeddingGroup groupFlag, int? state = null)
+		private static void AddParameters(DbCommand command, string groupName, EmbeddingGroupFlag groupFlag, int? state = null)
 		{
 			AddParameter(command, "@GroupName", groupName);
 			AddParameter(command, "@GroupFlag", (int)groupFlag);
@@ -354,7 +358,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static async Task<List<long>> GetSimilarFileEmbeddings(
 			string connectionString,
 			string groupName,
-			EmbeddingGroup groupFlag,
+			EmbeddingGroupFlag groupFlag,
 			float[] promptVectors, int take)
 		{
 			var commandText = $@"

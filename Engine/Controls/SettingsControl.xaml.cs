@@ -63,6 +63,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				MailAccountItemPanel.Item = (MailAccount)item;
 			}
+			ItemPanel.Visibility = currentItem == null
+				? Visibility.Collapsed
+				: Visibility.Visible;
 			if (currentItem != null)
 				currentItem.PropertyChanged += CurrentItem_PropertyChanged;
 		}
@@ -84,6 +87,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		#region ■ Properties
+
+
+		UserControl ItemPanel;
 
 		public TemplateItemControl TemplateItemPanel;
 		FineTuningItemControl FineTuningItemPanel;
@@ -109,8 +115,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						Grid.SetColumn(control, 2);
 						MainGrid.Children.Add(control);
 						control.DataType = value;
-						control.Visibility = Visibility.Visible;
+						control.Visibility = Visibility.Collapsed;
 						TemplateItemPanel = control;
+						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.FineTuning)
@@ -121,8 +128,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						Grid.SetColumn(control, 2);
 						MainGrid.Children.Add(control);
 						control.DataType = value;
-						control.Visibility = Visibility.Visible;
+						control.Visibility = Visibility.Collapsed;
 						FineTuningItemPanel = control;
+						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.Assistant)
@@ -133,8 +141,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						Grid.SetColumn(control, 2);
 						MainGrid.Children.Add(control);
 						control.DataType = value;
-						control.Visibility = Visibility.Visible;
+						control.Visibility = Visibility.Collapsed;
 						AssistantItemPanel = control;
+						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.Lists)
@@ -145,8 +154,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						Grid.SetColumn(control, 2);
 						MainGrid.Children.Add(control);
 						control.DataType = value;
-						control.Visibility = Visibility.Visible;
+						control.Visibility = Visibility.Collapsed;
 						ListsItemPanel = control;
+						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.Embeddings)
@@ -157,8 +167,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						Grid.SetColumn(control, 2);
 						MainGrid.Children.Add(control);
 						control.DataType = value;
-						control.Visibility = Visibility.Visible;
+						control.Visibility = Visibility.Collapsed;
 						EmbeddingItemPanel = control;
+						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.MailAccount)
@@ -169,8 +180,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						Grid.SetColumn(control, 2);
 						MainGrid.Children.Add(control);
 						control.DataType = value;
-						control.Visibility = Visibility.Visible;
+						control.Visibility = Visibility.Collapsed;
 						MailAccountItemPanel = control;
+						ItemPanel = control;
 					}
 				}
 				else

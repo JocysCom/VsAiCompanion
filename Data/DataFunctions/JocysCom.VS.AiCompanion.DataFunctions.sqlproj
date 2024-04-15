@@ -100,6 +100,7 @@
     <Build Include="Embedding\Tables\FilePart.sql" />
     <Build Include="Embedding\Tables\File.sql" />
     <None Include="Deployment\DataFunctions.sql" />
+    <Build Include="Embedding\Tables\Group.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Deployment\Script.PreDeployment.sql" />

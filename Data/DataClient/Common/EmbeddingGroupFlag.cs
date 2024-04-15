@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace JocysCom.VS.AiCompanion.DataClient
+namespace JocysCom.VS.AiCompanion.DataClient.Common
 {
 
 	[Flags]
-	public enum EmbeddingGroup
+	public enum EmbeddingGroupFlag
 	{
 		[Description("None")] None = 0,
 		[Description("Group 1")] Group01 = 1 << 0,

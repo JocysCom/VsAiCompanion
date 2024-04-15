@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
@@ -82,6 +82,7 @@
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getSimilarFiles.sql" Link="Deployment\Setup\MSSQL\sp_getSimilarFiles.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\Setup\MSSQL\File.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\FilePart.sql" Link="Deployment\Setup\MSSQL\FilePart.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\Group.sql" Link="Deployment\Setup\MSSQL\Group.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Deployment\CosineSimilarity.sql" Link="Deployment\Setup\MSSQL\CosineSimilarity.sql" />
 		<None Include="MainModel.cs" />

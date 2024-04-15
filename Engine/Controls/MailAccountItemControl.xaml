@@ -9,7 +9,7 @@
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:DesignHeight="320"
+	d:DesignHeight="400"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -59,6 +59,8 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -81,13 +83,19 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Text="{Binding EmailAddress}" />
-			<Label Grid.Row="3" VerticalContentAlignment="Top" Content="{x:Static locales:Resources.Server_Host}" />
+			<Label Grid.Row="3" Content="{x:Static locales:Resources.IMAP_Host}" />
 			<TextBox
-				Name="ServerHostTextBox"
 				Grid.Row="3"
 				Grid.Column="1"
 				VerticalAlignment="Top"
-				Text="{Binding ServerHost}" />
+				Text="{Binding ImapHost}" />
+			<Label Grid.Row="4" Content="{x:Static locales:Resources.SMTP_Host}" />
+			<TextBox
+				Grid.Row="4"
+				Grid.Column="1"
+				VerticalAlignment="Top"
+				Text="{Binding SmtpHost}" />
+
 			<Grid Grid.Row="3" Grid.RowSpan="2" Grid.Column="2">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -104,7 +112,7 @@
 					Grid.Row="0"
 					Grid.Column="1"
 					Maximum="65535"
-					Value="{Binding ServerImapPort, UpdateSourceTrigger=PropertyChanged}" />
+					Value="{Binding ImapPort, UpdateSourceTrigger=PropertyChanged}" />
 				<ComboBox
 					Grid.Row="0"
 					Grid.Column="2"
@@ -112,7 +120,7 @@
 					HorizontalAlignment="Stretch"
 					DisplayMemberPath="Value"
 					ItemsSource="{Binding ConnectionSecurities, ElementName=This}"
-					SelectedValue="{Binding ImapConnectionSecurity}"
+					SelectedValue="{Binding ImapSecurity}"
 					SelectedValuePath="Key" />
 				<Button
 					Name="TestImapConnectionButton"
@@ -129,7 +137,7 @@
 					Grid.Row="1"
 					Grid.Column="1"
 					Maximum="65535"
-					Value="{Binding ServerSmtpPort, UpdateSourceTrigger=PropertyChanged}" />
+					Value="{Binding SmtpPort, UpdateSourceTrigger=PropertyChanged}" />
 				<ComboBox
 					Grid.Row="1"
 					Grid.Column="2"
@@ -137,7 +145,7 @@
 					HorizontalAlignment="Stretch"
 					DisplayMemberPath="Value"
 					ItemsSource="{Binding ConnectionSecurities, ElementName=This}"
-					SelectedValue="{Binding SmtpConnectionSecurity}"
+					SelectedValue="{Binding SmtpSecurity}"
 					SelectedValuePath="Key" />
 				<Button
 					Name="TestSmtpConnectionButton"
@@ -153,28 +161,35 @@
 			</Grid>
 
 
-			<Label Grid.Row="4" Content="{x:Static locales:Resources.Username}" />
+			<Label Grid.Row="5" Content="{x:Static locales:Resources.Username}" />
 			<TextBox
 				Name="UsernameTextBox"
-				Grid.Row="4"
+				Grid.Row="5"
 				Grid.Column="1"
 				Text="{Binding Username}" />
 
-			<Label Grid.Row="5" Content="{x:Static locales:Resources.Password}" />
-			<PasswordBox Name="PasswordPasswordBox" Grid.Row="5" Grid.Column="1" />
-
+			<Label Grid.Row="6" Content="{x:Static locales:Resources.Password}" />
+			<PasswordBox Name="PasswordPasswordBox" Grid.Row="6" Grid.Column="1" />
 
 			<StackPanel
-				Grid.Row="6"
-				Grid.Column="0"
+				Grid.Row="7"
+				Grid.Column="1"
 				Grid.ColumnSpan="3"
 				HorizontalAlignment="Left"
 				Orientation="Horizontal">
-				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Enabled}" IsChecked="{Binding IsEnabled}" />
-				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Validate_Senders}" IsChecked="{Binding ValidateSenders}" />
-				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Validate_Recipients}" IsChecked="{Binding ValidateRecipients}" />
-				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Validate_Digital_Signature}" IsChecked="{Binding ValidateDigitalSignature}" />
-				<CheckBox Margin="3,3,0,0" Content="{x:Static locales:Resources.Validate_DKIM}" IsChecked="{Binding ValidateDkim}" />
+				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Enabled}" IsChecked="{Binding IsEnabled}" />
+				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Trust_Server_Certificate}" IsChecked="{Binding TrustServerCertificate}" />
+			</StackPanel>
+			<StackPanel
+				Grid.Row="8"
+				Grid.Column="1"
+				Grid.ColumnSpan="3"
+				HorizontalAlignment="Left"
+				Orientation="Horizontal">
+				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Validate_Senders}" IsChecked="{Binding ValidateSenders}" />
+				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Validate_Recipients}" IsChecked="{Binding ValidateRecipients}" />
+				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Validate_Digital_Signature}" IsChecked="{Binding ValidateDigitalSignature}" />
+				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Validate_DKIM}" IsChecked="{Binding ValidateDkim}" />
 			</StackPanel>
 		</Grid>
 		<!--  Row 2  -->
@@ -198,6 +213,7 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
 					BorderThickness="0"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -223,6 +239,7 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
 					BorderThickness="0"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
