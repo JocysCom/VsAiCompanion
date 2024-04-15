@@ -10,10 +10,11 @@ using MimeKit.Text;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,11 +22,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class AiMailClient
 	{
+
+		/// <summary>
+		/// Mail account configuration.
+		/// </summary>
 		public MailAccount Account { get; set; }
 
-		public AiMailClient()
-		{
-		}
+		#region Testing
 
 		/// <summary>
 		/// Event for logging.
@@ -45,25 +48,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 				: (MailService)new SmtpClient(logger);
 			try
 			{
-				OnLogMessage("Connecting to mail server...");
-				await ConnectAsync(client, cancellationToken);
-				if (!client.IsConnected)
+				if (await ConnectAsync(client, cancellationToken))
 				{
-					OnLogMessage("Failed to connect to the server.");
-				}
-				else
-				{
-					OnLogMessage("Connected. Authenticating...");
-					await AuthenticateAsync(client, cancellationToken);
-					if (!client.IsAuthenticated)
+					if (await AuthenticateAsync(client, cancellationToken))
 					{
-						OnLogMessage("Authentication failed.");
-					}
-					else
-					{
-						OnLogMessage("Authenticated successfully.");
+
 					}
 				}
+			}
+			catch (OperationCanceledException)
+			{
+				// Expected when monitoring is stopped; simply exit the loop
 			}
 			catch (Exception ex)
 			{
@@ -71,11 +66,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			finally
 			{
-				if (client.IsConnected)
-				{
-					client.Disconnect(true, cancellationToken);
-					OnLogMessage("Disconnected from the server.");
-				}
+				await DiconnectAsync(client, cancellationToken);
 			}
 			var log = System.Text.Encoding.UTF8.GetString(ms.ToArray());
 			OnLogMessage(log);
@@ -88,6 +79,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		protected virtual void OnLogMessage(string message)
 			=> LogMessage?.Invoke(this, message);
 
+		#endregion
 
 		#region Monitor Email
 
@@ -96,23 +88,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		public event EventHandler<MimeMessage> NewMessage;
 
-
-		/// <summary>
-		/// Subscribe or unsubscribe from mailbox monitoring based on property change
-		/// </summary>
-		private async void Account_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(MailAccount.MonitorInbox))
-				await MonitorMailbox(Account.MonitorInbox);
-		}
-
 		private CancellationTokenSource _monitoringCancellationTokenSource;
 
 		/// <summary>
 		/// Start or stop monitoring the IMAP inbox.
 		/// </summary>
 		/// <param name="enable">True to start monitoring, false to stop.</param>
-		private async Task MonitorMailbox(bool enable)
+		public async Task MonitorMailbox(bool enable)
 		{
 			if (enable)
 			{
@@ -135,46 +117,139 @@ namespace JocysCom.VS.AiCompanion.Engine
 			_monitoringCancellationTokenSource = null;
 		}
 
-		private async Task StartMonitoring(CancellationToken cancellationToken)
+		protected virtual void OnNewMessageReceived(MimeMessage message)
 		{
-			using (var client = new ImapClient())
+			if (IsValidReceivedMessage(message))
+				NewMessage?.Invoke(this, message);
+		}
+
+		public async Task StartMonitoring(CancellationToken cancellationToken)
+		{
+			var client = new ImapClient();
+			try
+			{
+				if (await ConnectAsync(client, cancellationToken))
+				{
+					if (await AuthenticateAsync(client, cancellationToken))
+					{
+						await client.Inbox.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
+						// Check if the server supports IDLE command.
+						if (client.Capabilities.HasFlag(ImapCapabilities.Idle))
+						{
+							client.Inbox.CountChanged += Inbox_CountChanged;
+							// The client will idle until cancelled.
+							await client.IdleAsync(cancellationToken);
+						}
+						else
+						{
+							OnLogMessage("IMAP server does not support IDLE. Falling back to polling.");
+							await client.Inbox.OpenAsync(FolderAccess.ReadWrite, cancellationToken);
+							while (!cancellationToken.IsCancellationRequested)
+							{
+								// Fetch all messages but only their UIDs and FLAGS
+								var allMessages = await client.Inbox.FetchAsync(0, -1, MessageSummaryItems.Flags | MessageSummaryItems.UniqueId, cancellationToken);
+								// Filter for messages that are not seen
+								var summaries = allMessages.Where(x => !x.Flags.Value.HasFlag(MessageFlags.Seen)).ToList();
+								foreach (var summary in summaries)
+								{
+									// You can now fetch each message individually if needed
+									var message = await client.Inbox.GetMessageAsync(summary.UniqueId, cancellationToken);
+									OnNewMessageReceived(message);
+									// After processing, mark the message as seen
+									await client.Inbox.AddFlagsAsync(summary.UniqueId, MessageFlags.Seen, true, cancellationToken);
+								}
+								// Wait before checking for new messages to avoid constant polling.
+								await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+							}
+						}
+					}
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				// Expected when monitoring is stopped; simply exit the function
+			}
+			catch (Exception ex)
+			{
+				// Log or handle exceptions
+				OnLogMessage($"Error during subscription for new email: {ex.Message}");
+			}
+			finally
+			{
+				await DiconnectAsync(client, cancellationToken);
+			}
+		}
+
+		private void Inbox_CountChanged(object sender, EventArgs e)
+		{
+			var inbox = sender as ImapFolder;
+			var newMessageSummary = inbox.Fetch(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope);
+
+			foreach (var summary in newMessageSummary)
+			{
+				// Process new message
+				var message = inbox.GetMessage(summary.UniqueId);
+				OnNewMessageReceived(message);
+			}
+		}
+
+		#endregion
+
+		#region Send Mail
+
+		public async Task<OperationResult<bool>> Send(
+				string[] recipients,
+				string subject, string body,
+				Plugins.Core.MailTextFormat bodyTextFormat)
+		{
+			return await SendAsync(recipients, subject, body, bodyTextFormat);
+		}
+
+		/// <summary>
+		/// Send message
+		/// </summary>
+		public async Task<OperationResult<bool>> SendAsync(string[] recipients,
+		string subject, string body,
+		Plugins.Core.MailTextFormat bodyTextFormat,
+		CancellationToken cancellationToken = default)
+		{
+			var message = new MimeMessage();
+			message.From.Add(new MailboxAddress(Account.EmailName, Account.EmailAddress));
+			foreach (var recipient in recipients)
+				message.To.Add(MailboxAddress.Parse(recipient));
+			message.Subject = subject;
+			message.Body = new TextPart((TextFormat)bodyTextFormat) { Text = body };
+			var result = new OperationResult<bool>(false);
+			using (var client = new SmtpClient())
 			{
 				try
 				{
-					await ConnectAsync(client, cancellationToken);
-					await AuthenticateAsync(client, cancellationToken);
-					if (!client.IsConnected || !client.IsAuthenticated)
-						throw new InvalidOperationException("Failed to connect or authenticate to the mail server.");
-					client.Inbox.Open(FolderAccess.ReadOnly, cancellationToken);
-					while (!cancellationToken.IsCancellationRequested)
+					if (await ConnectAsync(client, cancellationToken))
 					{
-						var uids = await client.Inbox.SearchAsync(SearchQuery.NotSeen, cancellationToken);
-						foreach (var uid in uids)
+						if (await AuthenticateAsync(client, cancellationToken))
 						{
-							var message = await client.Inbox.GetMessageAsync(uid, cancellationToken);
-							// Process new message
-							OnNewMessageReceived(message);
+							await client.SendAsync(message, cancellationToken);
+							result = new OperationResult<bool>(true);
+							OnLogMessage("Email sent successfully.");
 						}
-						// Wait before checking for new messages to avoid constant polling
-						await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
 					}
-				}
-				catch (OperationCanceledException)
-				{
-					// Expected when monitoring is stopped; simply exit the loop
 				}
 				catch (Exception ex)
 				{
-					// Log or handle exceptions
-					OnLogMessage($"Error during mailbox monitoring: {ex.Message}");
+					OnLogMessage($"Error sending email: {ex.Message}");
+					result = new OperationResult<bool>(ex);
 				}
 				finally
 				{
-					if (client.IsConnected)
-						client.Disconnect(true, cancellationToken);
+					await DiconnectAsync(client, cancellationToken);
 				}
 			}
+			return result;
 		}
+
+		#endregion
+
+		#region Validation
 
 		private bool IsValidAddress(string address, string allowedList)
 		{
@@ -270,11 +345,43 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return true;
 		}
 
-		protected virtual void OnNewMessageReceived(MimeMessage message)
+		bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			if (IsValidReceivedMessage(message))
-				NewMessage?.Invoke(this, message);
+			bool allow = Account.TrustServerCertificate;
+			// No errors were found.
+			if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None)
+			{
+				// Allow this client to communicate with unauthenticated servers.
+				return true;
+			}
+			string message = $"Trust Server Certificate: {Account.TrustServerCertificate}.\r\n";
+			message += string.Format("Certificate error: {0}", sslPolicyErrors);
+			if (sender != null && sender is System.Net.HttpWebRequest)
+			{
+				var hr = (System.Net.HttpWebRequest)sender;
+				message += $"sender.OriginalString: {hr.Address.OriginalString}";
+			}
+			if (certificate != null)
+			{
+				message += $"Certificate.Issuer: {certificate.Issuer}\r\n";
+				message += $"Certificate.Subject: {certificate.Subject}\r\n";
+			}
+			if (chain != null)
+			{
+				for (int i = 0; i < chain.ChainStatus.Length; i++)
+				{
+					var status = $"{chain.ChainStatus[i].Status}, {chain.ChainStatus[i].StatusInformation}";
+					message += $"Chain.ChainStatus({i}): {status}\r\n";
+				}
+			}
+			OnLogMessage(message);
+			return allow;
 		}
+
+
+		#endregion
+
+		#region Shared Methods
 
 		private static string[] GetLines(string text)
 		{
@@ -288,58 +395,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return lines;
 		}
 
-		#endregion
-
-		public async Task<OperationResult<bool>> Send(
-				string[] recipients,
-				string subject, string body,
-				Plugins.Core.MailTextFormat bodyTextFormat)
+		public async Task<bool> ConnectAsync(MailService client, CancellationToken cancellationToken = default)
 		{
-			return await SendAsync(recipients, subject, body, bodyTextFormat);
-		}
-
-		/// <summary>
-		/// Send message
-		/// </summary>
-		public async Task<OperationResult<bool>> SendAsync(string[] recipients,
-		string subject, string body,
-		Plugins.Core.MailTextFormat bodyTextFormat,
-		CancellationToken cancellationToken = default)
-		{
-			var message = new MimeMessage();
-			message.From.Add(new MailboxAddress(Account.EmailName, Account.EmailAddress));
-			foreach (var recipient in recipients)
-			{
-				message.To.Add(MailboxAddress.Parse(recipient));
-			}
-			message.Subject = subject;
-			message.Body = new TextPart((TextFormat)bodyTextFormat) { Text = body };
-			using (var client = new SmtpClient())
-			{
-				try
-				{
-					await ConnectAsync(client, cancellationToken);
-					await AuthenticateAsync(client, cancellationToken);
-					await client.SendAsync(message, cancellationToken);
-				}
-				catch (Exception ex)
-				{
-					OnLogMessage($"Error sending email: {ex.Message}");
-					return new OperationResult<bool>(ex);
-					// Handle exceptions or log them
-				}
-				finally
-				{
-					await client.DisconnectAsync(true);
-					OnLogMessage("Email sent successfully.");
-				}
-			}
-			return new OperationResult<bool>(true);
-		}
-
-
-		public async Task ConnectAsync(MailService client, CancellationToken cancellationToken = default)
-		{
+			OnLogMessage("Connecting...");
 			var isImap = client is ImapClient;
 			var host = isImap
 				? Account.ImapHost
@@ -350,42 +408,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var security = isImap
 				? (SecureSocketOptions)Account.ImapSecurity
 				: (SecureSocketOptions)Account.SmtpSecurity;
-			client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
-			{
-				bool allow = Account.TrustServerCertificate;
-				// No errors were found.
-				if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None)
-				{
-					// Allow this client to communicate with unauthenticated servers.
-					return true;
-				}
-				string message = $"Trust Server Certificate: {Account.TrustServerCertificate}.\r\n";
-				message += string.Format("Certificate error: {0}", sslPolicyErrors);
-				if (sender != null && sender is System.Net.HttpWebRequest)
-				{
-					var hr = (System.Net.HttpWebRequest)sender;
-					message += $"sender.OriginalString: {hr.Address.OriginalString}";
-				}
-				if (certificate != null)
-				{
-					message += $"Certificate.Issuer: {certificate.Issuer}\r\n";
-					message += $"Certificate.Subject: {certificate.Subject}\r\n";
-				}
-				if (chain != null)
-				{
-					for (int i = 0; i < chain.ChainStatus.Length; i++)
-					{
-						var status = $"{chain.ChainStatus[i].Status}, {chain.ChainStatus[i].StatusInformation}";
-						message += $"Chain.ChainStatus({i}): {status}\r\n";
-					}
-				}
-				OnLogMessage(message);
-				return allow;
-			};
+			client.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
 			await client.ConnectAsync(host, port, security, cancellationToken);
+			if (client.IsConnected)
+				OnLogMessage("Connected.");
+			else
+				OnLogMessage("Failed to connect.");
+			return client.IsConnected;
 		}
 
-		public async Task AuthenticateAsync(MailService client, CancellationToken cancellationToken = default)
+		public async Task<bool> AuthenticateAsync(MailService client, CancellationToken cancellationToken = default)
 		{
 			var isImap = client is ImapClient;
 			var isMicrosoft =
@@ -403,7 +435,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				await client.AuthenticateAsync(Account.Username, Account.Password, cancellationToken);
 			}
+			if (client.IsAuthenticated)
+				OnLogMessage("Authenticated.");
+			else
+				OnLogMessage("Failed to authenticate.");
+			return client.IsAuthenticated;
 		}
+
+		public async Task DiconnectAsync(MailService client, CancellationToken cancellationToken = default)
+		{
+			if (client.IsConnected)
+			{
+				await client.DisconnectAsync(true, cancellationToken);
+				OnLogMessage("Disconnected from the server.");
+			}
+		}
+
+		#endregion
 
 		#region Microsoft Azure Active Directory
 
@@ -428,20 +476,28 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				try
 				{
-					await ConnectAsync(client, cancellationToken);
-					await AuthenticateAsync(client, cancellationToken);
-					client.Inbox.Open(FolderAccess.ReadOnly);
-					var emailUIDs = client.Inbox.Search(SearchQuery.New);
-					OnLogMessage($"Found {emailUIDs.Count} new emails in the {Account.Username} inbox");
-					foreach (var emailUID in emailUIDs)
+					if (await ConnectAsync(client, cancellationToken))
 					{
-						var email = client.Inbox.GetMessage(emailUID);
-						OnLogMessage($"Got email from {email.From[0]} on {email.Date}: {email.Subject}");
+						if (await AuthenticateAsync(client, cancellationToken))
+						{
+							client.Inbox.Open(FolderAccess.ReadOnly);
+							var emailUIDs = client.Inbox.Search(SearchQuery.New);
+							OnLogMessage($"Found {emailUIDs.Count} new emails in the {Account.Username} inbox");
+							foreach (var emailUID in emailUIDs)
+							{
+								var email = client.Inbox.GetMessage(emailUID);
+								OnLogMessage($"Got email from {email.From[0]} on {email.Date}: {email.Subject}");
+							}
+						}
 					}
 				}
 				catch (Exception e)
 				{
 					OnLogMessage($"Error in 'print inbox': {e.GetType().Name} {e.Message}");
+				}
+				finally
+				{
+					await DiconnectAsync(client, cancellationToken);
 				}
 			}
 		}

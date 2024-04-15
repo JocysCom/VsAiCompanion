@@ -125,13 +125,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		/// <summary>
-		/// Inbox monitoring is enabled.
-		/// </summary>
-		[DefaultValue(false)]
-		public bool MonitorInbox { get => _MonitorInbox; set => SetProperty(ref _MonitorInbox, value); }
-		bool _MonitorInbox;
-
 		#region Encrypt Settings 
 
 		internal static string UserEncrypt(string text)

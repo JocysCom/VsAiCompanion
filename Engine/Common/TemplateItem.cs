@@ -4,6 +4,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -305,6 +306,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 		bool _UseMailAccount;
 
 		/// <summary>
+		/// Inbox monitoring is enabled.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool MonitorInbox
+		{
+			get => _MonitorInbox;
+			set
+			{
+				SetProperty(ref _MonitorInbox, value);
+				_ = AiMailClient.MonitorMailbox(value);
+			}
+
+		}
+		bool _MonitorInbox;
+
+		/// <summary>
 		/// Can be used used for categorized search.
 		/// </summary>
 		[DefaultValue("")]
@@ -328,6 +345,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (_AiMailClient == null)
 				{
 					_AiMailClient = new AiMailClient();
+					_AiMailClient.NewMessage += _AiMailClient_NewMessage;
 					UpdateMailClientAccount();
 				}
 				return _AiMailClient;
@@ -335,6 +353,31 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		AiMailClient _AiMailClient;
 
+		private async void _AiMailClient_NewMessage(object sender, MimeKit.MimeMessage e)
+		{
+			// Wait for the oportunity to paste message.
+			while (IsBusy)
+				await Task.Delay(500);
+			var ms = new MemoryStream();
+			e.WriteTo(ms);
+			var attachment = new MessageAttachments()
+			{
+				Title = "Mail Message",
+				Instructions = "Analyse and reply to this Email Message (*.eml)",
+				Type = ContextType.None,
+				Data = System.Text.Encoding.UTF8.GetString(ms.ToArray()),
+			};
+			var userMessage = new MessageItem();
+			userMessage.Type = MessageType.Out;
+			userMessage.Body = "You've got a new email message.";
+			userMessage.Attachments.Add(attachment);
+			Global.MainControl.Dispatcher.Invoke(() =>
+			{
+				Messages.Add(userMessage);
+				_ = Companions.ClientHelper.Send(this, overrideMessage: userMessage);
+			});
+
+		}
 
 		public void UpdateMailClientAccount()
 		{

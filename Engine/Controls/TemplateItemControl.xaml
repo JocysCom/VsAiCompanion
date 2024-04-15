@@ -552,18 +552,19 @@
 						</StackPanel>
 					</TabItem.Header>
 					<WrapPanel Orientation="Horizontal">
-						<CheckBox
-							Name="UseMailAccountCheckBox"
-							Margin="0"
-							Content="Use Mail Account"
-							IsChecked="{Binding UseMailAccount}" />
+						<CheckBox Name="UseMailAccountCheckBox" Content="Use Mail Account" IsChecked="{Binding UseMailAccount}" />
 						<ComboBox
 							Name="MailAccountComboBox"
 							MinWidth="128"
-							Margin="3"
+							Margin="0,3,0,3"
 							VerticalAlignment="Top"
 							ItemsSource="{Binding MailAccounts, ElementName=This}"
 							SelectedValue="{Binding MailAccount}" />
+						<CheckBox
+							Name="MonitorInboxCheckBox"
+							Margin="3,0,0,0"
+							Content="Monitor Inbox"
+							IsChecked="{Binding MonitorInbox}" />
 					</WrapPanel>
 				</TabItem>
 			</TabControl>
