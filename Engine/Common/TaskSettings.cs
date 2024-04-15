@@ -36,7 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public List<string> ListSelection { get => _ListSelection; set => SetProperty(ref _ListSelection, value); }
 		private List<string> _ListSelection;
 
-		public List<Guid> GetSelectionListAsGuid() => ListSelection
+		public List<Guid> GetSelectionListAsGuid() => ListSelection?
 			.Select(x => Guid.TryParse(x, out Guid result) ? (Guid?)result : null)
 			.Where(x => x != null).Select(x => (Guid)x)
 			.ToList();
