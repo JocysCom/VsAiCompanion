@@ -21,9 +21,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 	{
 		public MailAccount Account { get; set; }
 
-		public AiMailClient(MailAccount account)
+		public AiMailClient()
 		{
-			Account = account;
 		}
 
 		/// <summary>

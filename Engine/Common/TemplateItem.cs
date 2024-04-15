@@ -314,9 +314,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			set
 			{
 				SetProperty(ref _MailAccount, value);
-				// Init new.
-				if (_AiMailClient?.Account?.Name != MailAccount)
-					_AiMailClient = null;
+				UpdateMailClientAccount();
 			}
 
 		}
@@ -329,13 +327,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				if (_AiMailClient == null)
 				{
-					var account = Global.AppSettings.MailAccounts.FirstOrDefault(x => x.Equals(MailAccount));
-					_AiMailClient = new AiMailClient(account);
+					_AiMailClient = new AiMailClient();
+					UpdateMailClientAccount();
 				}
 				return _AiMailClient;
 			}
 		}
 		AiMailClient _AiMailClient;
+
+
+		public void UpdateMailClientAccount()
+		{
+			var account = Global.AppSettings.MailAccounts.FirstOrDefault(x => x.Name.Equals(MailAccount));
+			if (AiMailClient.Account != account)
+				AiMailClient.Account = account;
+		}
 
 		#endregion
 

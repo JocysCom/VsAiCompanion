@@ -114,7 +114,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			LogTextBox.Clear();
 			LogTabPage.IsSelected = true;
-			var client = new AiMailClient(Item);
+			var client = new AiMailClient();
+			client.Account = Item;
 			client.LogMessage += Client_LogMessage;
 			await client.TestAccount(true);
 			client.Account = null;
@@ -124,7 +125,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			LogTextBox.Clear();
 			LogTabPage.IsSelected = true;
-			var client = new AiMailClient(Item);
+			var client = new AiMailClient();
+			client.Account = Item;
 			client.LogMessage += Client_LogMessage;
 			await client.TestAccount(false);
 			client.Account = null;

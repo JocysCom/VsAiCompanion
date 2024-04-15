@@ -211,7 +211,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 					// If task is renamed then relevant lists must be renamed too.
 					await Global.MainControl.Dispatcher.InvokeAsync(async () =>
 					{
+						item.UpdateMailClientAccount();
 						mail.SendCallback = item.AiMailClient.Send;
+						var account = item.AiMailClient.Account;
 						methodResult = methodInfo.Invoke(mail, invokeParams);
 						await Task.Delay(0).ConfigureAwait(true);
 					});
