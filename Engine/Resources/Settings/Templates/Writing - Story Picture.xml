@@ -22,6 +22,8 @@ F+Pbt2M1nn6hcn00Dtbf0TJH20I0aVfTBhEu2BkKIag2BBV9eplEG4fVe66GaEgBfbLz/6+9W/RL&#xD
 qykXe7qQSJfuI/Q6XUd8dxdxvQOkv35w9fp5WW/Ytq42e1yRqMbTzz1TKDth0avTAKFqyCogIuEZ&#xD;
 NWtJUoTgtbEM88qp9F1571jrRUCDKlz21m48ieOM7fZN/VgOcZcq/8SuuM9U+7LpcSrX62q7K9kC&#xD;
 cWF36wNiWVB0aAgm6Iw1dKMCFWeBU1KCgi6vl/lJpul1S5e916/+BqRDkBu6CgAA</IconData>
+  <Created>2024-02-25T21:17:40.3015419+00:00</Created>
+  <Modified>2024-02-25T21:17:40.3015419+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Given the psychological profile of the character and the storyline, please create and describe a potential scene for illustration for the main story point. The description should depict an imaginary photograph in great detail, as it will serve as instructions for the AI which will generate the image from it.</TextInstructions>
@@ -35,7 +37,6 @@ cWF36wNiWVB0aAgm6Iw1dKMCFWeBU1KCgi6vl/lJpul1S5e916/+BqRDkBu6CgAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -13,6 +13,8 @@ UnXrRnbsZO/67MRIlpKrhnS64fdIadNV8uKtFZvKtghe6M+E0oAliWQsDuBIchRoQO6ohBPQmqQ0&#xD
 TAOKSHYXxFmYIsJoCkiahGlNZnMQZxlYZyC4C+w+wsmSzJOAOrp5Ip1YT2TARTzZgYt4MgZXQNyN&#xD;
 4hzsOUrmAUmYy8MysMSOHVYWvGJIebY6qgOWTmTHKr3ytYwsgyIYSwJXPzoXXHsmIAIeT3PuVbpp&#xD;
 fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
+  <Created>2024-02-25T14:43:10.1172023+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1172023+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Simplify, refactor, and enhance the performance of the given code while preserving all essential comments.</TextInstructions>
@@ -26,7 +28,6 @@ fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

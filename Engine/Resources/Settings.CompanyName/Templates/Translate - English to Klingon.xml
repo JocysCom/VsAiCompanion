@@ -32,6 +32,8 @@ UM6BoYozkuBkQj5VhsGDQcmAoY5x1CA0cO43wBH5T+hLOheA1hkbnKmEg8X2xHBqPwZ1gRSiLeLg&#xD
 tl7i64NFG3MyFhYnO8LIKVVGFxZfLyS3Lypjf0wYpyFjDW9x/KO7E0YpJMMYeQBGtw+B5RNuItQO&#xD;
 IyqWMMo8t8cIfUiR4wolOchLXIs8kQ33jVRYCbPxbdpS5XEwB7n63xU2vEkc0b8onn3zD2AdpIai&#xD;
 EQAA</IconData>
+  <Created>2024-02-25T14:43:10.1214827+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1214827+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Translate English to Klingon and Klingon to English.&#xD;
@@ -45,7 +47,6 @@ Text to translate:</TextInstructions>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

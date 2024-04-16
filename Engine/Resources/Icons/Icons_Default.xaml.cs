@@ -64,6 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_elements_branch2 = nameof(Icon_elements_branch2);
 		public const string Icon_elements_tree = nameof(Icon_elements_tree);
 		public const string Icon_eyeglasses = nameof(Icon_eyeglasses);
+		public const string Icon_eye_blind = nameof(Icon_eye_blind);
 		public const string Icon_face_scan = nameof(Icon_face_scan);
 		public const string Icon_find = nameof(Icon_find);
 		public const string Icon_find_gray = nameof(Icon_find_gray);

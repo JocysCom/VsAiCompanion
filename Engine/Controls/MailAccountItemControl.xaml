@@ -21,7 +21,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
+	<Grid DataContext="{Binding Item, ElementName=This, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -50,7 +50,7 @@
 				TextWrapping="Wrap" />
 		</Border>
 		<!--  Row 1  -->
-		<Grid Grid.Row="1" DataContext="{Binding Item, ElementName=This, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+		<Grid Grid.Row="1">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -186,10 +186,26 @@
 				Grid.ColumnSpan="3"
 				HorizontalAlignment="Left"
 				Orientation="Horizontal">
-				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Validate_Senders}" IsChecked="{Binding ValidateSenders}" />
-				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Validate_Recipients}" IsChecked="{Binding ValidateRecipients}" />
-				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Validate_Digital_Signature}" IsChecked="{Binding ValidateDigitalSignature}" />
-				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Validate_DKIM}" IsChecked="{Binding ValidateDkim}" />
+				<CheckBox
+					x:Name="ValidateSendersCheckBox"
+					Margin="0,3,0,0"
+					Content="{x:Static locales:Resources.Validate_Senders}"
+					IsChecked="{Binding ValidateSenders}" />
+				<CheckBox
+					x:Name="ValidateRecipientsCheckBox"
+					Margin="0,3,0,0"
+					Content="{x:Static locales:Resources.Validate_Recipients}"
+					IsChecked="{Binding ValidateRecipients}" />
+				<CheckBox
+					x:Name="ValidateDigitalSignatureCheckBox"
+					Margin="0,3,0,0"
+					Content="{x:Static locales:Resources.Validate_Digital_Signature}"
+					IsChecked="{Binding ValidateDigitalSignature}" />
+				<CheckBox
+					x:Name="ValidateDkimCheckBox"
+					Margin="0,3,0,0"
+					Content="{x:Static locales:Resources.Validate_DKIM}"
+					IsChecked="{Binding ValidateDkim}" />
 			</StackPanel>
 		</Grid>
 		<!--  Row 2  -->
@@ -198,32 +214,6 @@
 			Grid.Row="2"
 			Margin="4"
 			x:FieldModifier="public">
-
-			<TabItem Name="AllowedRecipientsTabPage">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_list}" />
-						<Label Content="{x:Static locales:Resources.Allowed_Recipients}" />
-					</StackPanel>
-				</TabItem.Header>
-				<TextBox
-					Name="AllowedRecipientsTextBox"
-					Margin="0"
-					Padding="6"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					VerticalContentAlignment="Top"
-					AcceptsReturn="True"
-					BorderThickness="0"
-					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					ScrollViewer.VerticalScrollBarVisibility="Auto"
-					Text="{Binding AllowedRecipients}"
-					TextWrapping="Wrap">
-					<TextBox.Resources>
-						<Style TargetType="Border" />
-					</TextBox.Resources>
-				</TextBox>
-			</TabItem>
 
 			<TabItem Name="AllowedSenderdsTabPage">
 				<TabItem.Header>
@@ -243,7 +233,7 @@
 					BorderThickness="0"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
-					Text="{Binding AllowedSenders}"
+					Text="{Binding AllowedSenders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					TextWrapping="Wrap">
 					<TextBox.Resources>
 						<Style TargetType="Border" />
@@ -251,6 +241,30 @@
 				</TextBox>
 			</TabItem>
 
+			<TabItem Name="AllowedRecipientsTabPage">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_list}" />
+						<Label Content="{x:Static locales:Resources.Allowed_Recipients}" />
+					</StackPanel>
+				</TabItem.Header>
+				<TextBox
+					Name="AllowedRecipientsTextBox"
+					Margin="0"
+					Padding="6"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					BorderThickness="0"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					Text="{Binding AllowedRecipients, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+					<TextBox.Resources>
+						<Style TargetType="Border" />
+					</TextBox.Resources>
+				</TextBox>
+			</TabItem>
 
 			<TabItem Name="LogTabPage">
 				<TabItem.Header>
@@ -270,8 +284,7 @@
 					BorderThickness="0"
 					IsReadOnly="True"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					ScrollViewer.VerticalScrollBarVisibility="Auto"
-					TextWrapping="Wrap">
+					ScrollViewer.VerticalScrollBarVisibility="Auto">
 					<TextBox.Resources>
 						<Style TargetType="Border" />
 					</TextBox.Resources>

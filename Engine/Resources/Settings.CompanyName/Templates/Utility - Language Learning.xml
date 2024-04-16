@@ -54,6 +54,8 @@ LI5NXl8cZolbBD2wzhY6F3vaJPpDumRpcalmWK/V5Rq31bwJVsVVXSvgNlK3q/BegV9uxdn/UGWo&#xD
 ZGpJ0fMrGiK8/OJkYOKD0lSsWASaiwtHXSG5bls3YR4JO+pAIcrKZptn9oKgYiGcVKeBE2N0QzzK&#xD;
 otrxOuDTk6y/FsArgDLOvvnT2/99BbC8R8ALB5DBO308v9Lw1xDL2wh/YaH3F8/vJs4+fzehcdwM&#xD;
 u7YGb3+yxf9/U4GcfZPwUusW72IOj/a6B+iX1a93V3jtZK+OvvziPzT3qFsIGwAA</IconData>
+  <Created>2024-02-25T14:43:10.1262148+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1262148+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>
@@ -65,7 +67,6 @@ u7YGb3+yxf9/U4GcfZPwUusW72IOj/a6B+iX1a93V3jtZK+OvvziPzT3qFsIGwAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -26,6 +26,8 @@ wTYUTJm6zAlqFS5GZjv1cmhl6yY3ct/LzYvMq2eF/wlcrTV6MCUfYLxADLm2sCgKFIoHSm7QolBB&#xD
 OOliIxWRheiKFxRDwkCdTvB9nl4uHoZHj7/h8C/+MLTv3k4vWO9fvAnc/Ilh4AtXhUk3RRKXLBQX&#xD;
 +CIeT9D78q9QcEanEz2ZiEDOp2Uwk2MlZpSIQy4ufOS8rMA4LqkqzjBFeNRo9DjPVIaLvlJBIDpY&#xD;
 4nKRh+jAEoOFloAaDfG9xc/3gp/x2yv+xXx792bBV/67/wCrBrfPLAwAAA==</IconData>
+  <Created>2024-02-25T21:17:42.6883503+00:00</Created>
+  <Modified>2024-02-25T21:17:42.6883503+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <TextInstructions>Analyze the orignal user text. Once you detect any segment of programing code, please encapsulate it within single or triple markdown quotes in order to create a code block. If you notice the absence of the programming language specification for the code block, please deduce the language and indicate it in the markdown. Be careful to not envelop standard, non-code text in such markdowns. The original user text is not to be edited or removed, only supplement it by adding markdowns where necessary. Refrain from inserting your own annotations or comments.</TextInstructions>
@@ -48,7 +50,6 @@ OOliIxWRheiKFxRDwkCdTvB9nl4uHoZHj7/h8C/+MLTv3k4vWO9fvAnc/Ilh4AtXhUk3RRKXLBQX&#xD
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>true</IsPreview>
   <IsFavorite>false</IsFavorite>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

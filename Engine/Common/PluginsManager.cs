@@ -178,13 +178,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!approved)
 					return Resources.Resources.Call_function_request_denied;
 			}
-
-
-			// It's a synchronous method.
 			object methodResult = null;
 			if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
 			{
-				await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
 					await Global.SwitchToVisualStudioThreadAsync();
 					methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams);
@@ -194,7 +191,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				// Make sure that the list have the name of the task.
 				// If task is renamed then relevant lists must be renamed too.
-				await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
 					item.UpdateMailClientAccount();
 					mail.SendCallback = item.AiMailClient.Send;
@@ -207,7 +204,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Make sure that the list have the name of the task.
 				// If task is renamed then relevant lists must be renamed too.
 				lists.FilterPath = item.Name;
-				await Global.MainControl.Dispatcher.InvokeAsync(async () =>
+				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
 					methodResult = await InvokeMethod(methodInfo, lists, invokeParams);
 					// Fix lists with no icons.

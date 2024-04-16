@@ -28,6 +28,8 @@ ZgJaoJwmFbVUiKBLk/UwVRHePYa+dtejR9oAO5ugDjZMEcaTx8YhcCnU4mBDFU69KC7YQM8C+Z0N&#xD
 ML40IdoAj2nuLudypAOws0L9cbxLPA0Rgua6xYH8BgbyRzDoNlReQkFnfm+9DwJ5HgQSNeXgc0QI&#xD;
 Xsd/JzincHHsAqZxP4HehaxAQfWFm3xspw42lIJUdp+Cw5lPbw2AEROJ0B4XAkDsxsQSpjvThMMJ&#xD;
 3XIWadBC3M6PQ9JHKuTgVef40sWpO17j64r+iX325D+qjQQgkg8AAA==</IconData>
+  <Created>2024-02-25T21:17:39.2548198+00:00</Created>
+  <Modified>2024-02-25T21:17:39.2548198+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Based on the provided information, construct a detailed physical and psychological profile of the character to ensure their actions and responses in dialogues are consistent. Use stereotypes judiciously to bridge any information gaps. Create and describe in detail the character's image, taking into account their psychological and physiological traits. The description must include facial features, voice tone, attire, etc. This description should enable AI to render scenes accurately and to depict the character's portrait effectively.</TextInstructions>
@@ -41,7 +43,6 @@ Xsd/JzincHHsAqZxP4HehaxAQfWFm3xspw42lIJUdp+Cw5lPbw2AEROJ0B4XAkDsxsQSpjvThMMJ&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

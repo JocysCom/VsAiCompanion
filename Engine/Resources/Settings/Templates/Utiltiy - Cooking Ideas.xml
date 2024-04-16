@@ -27,6 +27,8 @@ AvOhuCGj/zMfOWTzbC6ht9Ba7aWFt7H+QFwPTibahxnOxBBoOEZDO346pC+DDwohlQ/GzPiQjwy4&#xD
 HtDfB6cXrbxy0Zr3l78Lv7uu/cFEsxaYa4epMwwdP3PCyDlOnNNh5idNGGXhV1LOhjk2yiFOMPvU&#xD;
 a03Ta5hH3A+kx9F18dsr/Ph48tsuDDA/v3B8+el1nvFpRcWViqbPjq7pZHXzZor/5rn5B/OcWYIg&#xD;
 EgAA</IconData>
+  <Created>2024-02-25T21:17:37.3702445+00:00</Created>
+  <Modified>2024-02-25T21:17:37.3702445+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you suggest a recipe for?</TextInstructions>
@@ -39,7 +41,6 @@ EgAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

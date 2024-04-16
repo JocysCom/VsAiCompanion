@@ -11,6 +11,8 @@ YeFKSm0ECJBnKopOJIODGyhlCaZdHywbmHTRYxSjmmumPJ1MrpN1jPknpBMRuJaUzA9830KwQUrH&#xD
 OjL++W85UlryXpoqtMZIhAQ8SynPMyvoAFGsyXjYB/PlEiuaYsCUNtpseHEi3JWHDaQbnPAY/E88&#xD;
 2nF9Xxx5pvFIMxacj3M2HghO8wF1zKBWkVj6FyoChk3IbYdhA1Vpa+ykiz3x7o3FNNY9tNVAa5hW&#xD;
 rgtIzlyh3QM+mhBeuQZ9SHmClw6sJF6kGu9e0ZrrjS9pAJnzDF+ZeSnXV38BM3B3N/cDAAA=</IconData>
+  <Created>2024-03-10T21:58:58.6862532+00:00</Created>
+  <Modified>2024-03-10T21:58:58.6862532+00:00</Modified>
   <Description>Contains information about your operating system and general environment settings. It helps the AI understand the technical context you're operating in, including software compatibility and specific OS features.</Description>
   <Instructions>Utilize this list to understand the user's operating system environment, including specific versions and configurations. This is important for tailoring technical advice and troubleshooting steps.</Instructions>
   <IsReadOnly>true</IsReadOnly>

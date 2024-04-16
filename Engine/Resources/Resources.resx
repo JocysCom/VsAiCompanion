@@ -612,10 +612,10 @@ Use only the contents from these documents to answer questions.</value>
     <value>Test</value>
   </data>
   <data name="Allowed_Recipients" xml:space="preserve">
-    <value>Allowed Recipients</value>
+    <value>Allowed Recipients (Outgoing Email)</value>
   </data>
   <data name="Allowed_Senders" xml:space="preserve">
-    <value>Allowed Senders</value>
+    <value>Allowed Senders (Incomming Email)</value>
   </data>
   <data name="Test_Authentication" xml:space="preserve">
     <value>Test Authentication</value>

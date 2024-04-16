@@ -14,6 +14,9 @@ TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD
 I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
 4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
 +vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
+  <IsPinned>true</IsPinned>
+  <Created>2024-02-25T21:16:37.8640041+00:00</Created>
+  <Modified>2024-04-16T19:31:30.2053466+01:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <TemplateName>AI - Chat</TemplateName>
@@ -29,7 +32,6 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
-  <ItemType>None</ItemType>
   <PromptName>Audience</PromptName>
   <PromptOption>artists</PromptOption>
   <Attachments />

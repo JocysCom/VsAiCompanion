@@ -52,16 +52,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateMailAccounts();
 			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
 			MonitorInboxCheckBox.Visibility = InitHelper.IsDebug
-				? Visibility.Collapsed
-				: Visibility.Visible;
+				? Visibility.Visible
+				: Visibility.Collapsed;
 		}
 
 		private void MailAccounts_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			var update = false;
-			if (e.ListChangedType == ListChangedType.PropertyDescriptorChanged && e.PropertyDescriptor.Name == nameof(MailAccount.Name))
+			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(MailAccount.Name))
 				update = true;
-			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
+			if (e.ListChangedType == ListChangedType.ItemAdded ||
+				e.ListChangedType == ListChangedType.ItemDeleted)
 				update = true;
 			if (update)
 				_ = Helper.Delay(UpdateMailAccounts);

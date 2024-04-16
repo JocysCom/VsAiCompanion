@@ -119,7 +119,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		protected virtual void OnNewMessageReceived(MimeMessage message)
 		{
-			if (IsValidReceivedMessage(message))
+			if (IsValidReceivedMessage(message).Success)
 				NewMessage?.Invoke(this, message);
 		}
 
@@ -218,10 +218,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		Plugins.Core.MailTextFormat bodyTextFormat,
 		CancellationToken cancellationToken = default)
 		{
+			if (!Account.IsEnabled)
+				return new OperationResult<bool>(new Exception($"Account '{Account.Name}' is not enabled!"));
 			var message = new MimeMessage();
 			message.From.Add(new MailboxAddress(Account.EmailName, Account.EmailAddress));
 			foreach (var recipient in recipients)
-				message.To.Add(MailboxAddress.Parse(recipient));
+			{
+				var address = MailboxAddress.Parse(recipient);
+				if (Account.ValidateRecipients && !IsValidAddress(address.Address, Account.AllowedRecipients))
+					return new OperationResult<bool>(new Exception($"Recipient's email address {address.Address} is not allowed!"));
+				message.To.Add(address);
+			}
 			message.Subject = subject;
 			message.Body = new TextPart((TextFormat)bodyTextFormat) { Text = body };
 			var result = new OperationResult<bool>(false);
@@ -337,17 +344,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		protected virtual bool IsValidReceivedMessage(MimeMessage message)
+		protected virtual OperationResult<bool> IsValidReceivedMessage(MimeMessage message)
 		{
 			var sender = message.From.Mailboxes.FirstOrDefault()?.Address;
 			// Validation.
 			if (Account.ValidateSenders && !IsValidAddress(sender, Account.AllowedSenders))
-				return false;
+				return new OperationResult<bool>(new Exception("Email address from this sender is not allowed!"));
 			if (Account.ValidateDigitalSignature && !IsValidDigitalSignature(message))
-				return false;
+				return new OperationResult<bool>(new Exception("The digital signature of the email is not valid!"));
 			if (Account.ValidateDkim && IsValidDkim(message))
-				return false;
-			return true;
+				return new OperationResult<bool>(new Exception("Email failed DKIM validation!"));
+			return new OperationResult<bool>(true);
 		}
 
 		bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

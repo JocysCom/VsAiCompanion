@@ -25,6 +25,8 @@ RVNUJ06uhHjP4VKcTZhESVZJw2OQIGH4hYH2ohhVKk5ZkwaOcm/SwgPbphhUBVBJqqfkS8LwxaGb&#xD
 85AWeusb/H1T/VZFvd3nFX4+VQ/VejOfn5VlBzGNhtcaAF9bxNRoB8og7TjInSpFZzqqOh6WnVFc&#xD;
 Zlw3bXqpzAiSXOaFN/+zcFqh4yS+HLm8uBFb4SC4078Vai0pd4j+0oFmHOx342d3uf1TP/Ljln48&#xD;
 v3zxB8zJT80KDAAA</IconData>
+  <Created>2024-02-25T14:43:10.1294197+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1294197+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>You will be provided with the profile of the main character and a new fictional story. Your tasks are to:&#xD;
@@ -58,7 +60,6 @@ Name: [paste name here]&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

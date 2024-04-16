@@ -1,7 +1,11 @@
-2024-04-12 v1.9.14
+2024-04-16 v1.9.21
 
+- Fix: Mask connection password in Embedding screen.
+- Fix: Task tile was autogenerating after task rename.
 - New: AI Model List Control
 - New: Allow changing Path (Task) of List Item.
+- New: Allow to set group flag name in AI Database.
+- New: Plugin for AI email sending.
 
 2024-04-11 v1.9.12
 

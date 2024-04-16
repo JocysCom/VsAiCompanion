@@ -160,7 +160,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allowed Recipients.
+        ///   Looks up a localized string similar to Allowed Recipients (Outgoing Email).
         /// </summary>
         public static string Allowed_Recipients {
             get {
@@ -169,7 +169,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allowed Senders.
+        ///   Looks up a localized string similar to Allowed Senders (Incomming Email).
         /// </summary>
         public static string Allowed_Senders {
             get {

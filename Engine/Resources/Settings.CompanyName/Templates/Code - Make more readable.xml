@@ -27,6 +27,8 @@ d8Q/NFbV6e6jCfxuv+jw9bOqq6YXSfaHFj4nDD5nInUzmGuLDxlcWblaj7ecNHWPr5oLfGK848+R&#xD
 N83JrvowfPw3XcM0C5l11cTgDS6FrgA02TduD7IwUPlo17db1Z6e7qpe1h55cPdk2W7aTqhY3heW&#xD;
 34mww2Vsj8WAyW0n5nNOpMxZMhvucpLc5nUvkPY/AjlhZFogCsB43yGF+78gd5QM5XjEn7/PHv0F&#xD;
 Ghj6cv4PAAA=</IconData>
+  <Created>2024-02-25T14:43:10.1161052+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1161052+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Make this code more readable</TextInstructions>
@@ -39,7 +41,6 @@ Ghj6cv4PAAA=</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

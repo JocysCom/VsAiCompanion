@@ -39,6 +39,8 @@ wlJ4E0vck7mC4QYFhWXCHtkCTTuKiEQaE2WO6HfAgMwtaie1Wm6GsVJyR/VcPwy5EvwbwjHlM3oX&#xD
 P3DhSwV+bKPdo6HJTMxiFi1SiBmnrp9CWaCLKGbOiHCPKsPmYtml5jsVjFjHYz3nTS6+Xcz8zD+z&#xD;
 LPha4dN4JgQErvnzEQ7mY2ygIC6FGrUN3sXTKUcu1ipGTGWM1TadJC/9u/rlR34xgOvVzfsf1vQf&#xD;
 O+//D5vhz0ASGgAA</IconData>
+  <Created>2024-02-25T21:17:31.7636805+00:00</Created>
+  <Modified>2024-02-25T21:17:31.7636805+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Analyze the contract or terms and conditions provided. Identify any deceptive language, loopholes, or missing parts that can unfairly benefit one party. For example, try to identify "golden handcuffs," which are financial incentives given to employees to prevent them from leaving a company because the employee would have to pay them back. Reply with this format identifying as possible disadvantageous practices as possible.&#xD;
@@ -64,7 +66,6 @@ Explanation:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

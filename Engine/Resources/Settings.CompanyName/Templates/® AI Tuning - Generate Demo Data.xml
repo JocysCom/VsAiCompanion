@@ -25,6 +25,8 @@ wSL0AUtIO4lSMITvKRg1tPuyi3mm1A9FM3gWXDwMJPzPpCcc3uC6pAIGFbK04EOBOmMYf/ghuMQY&#xD
 Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD;
 5xAGeS1FuBYZlx1TNeFhXDURePaiGhIYvQsFe1RQw3BdAoMY2rpaMAhtJBiAAseB4jsJk//j/ZyE&#xD;
 4Xh8vNHccPPv3Xc2vYPaDP+g//APE7kSZtsXAAA=</IconData>
+  <Created>2024-02-25T14:43:10.1317812+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1317812+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Please create demo data for fine-tuning an AI model.&#xD;
@@ -103,7 +105,6 @@ JSON Lines example:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

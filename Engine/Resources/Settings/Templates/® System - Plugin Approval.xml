@@ -26,6 +26,8 @@ wTYUTJm6zAlqFS5GZjv1cmhl6yY3ct/LzYvMq2eF/wlcrTV6MCUfYLxADLm2sCgKFIoHSm7QolBB&#xD
 OOliIxWRheiKFxRDwkCdTvB9nl4uHoZHj7/h8C/+MLTv3k4vWO9fvAnc/Ilh4AtXhUk3RRKXLBQX&#xD;
 +CIeT9D78q9QcEanEz2ZiEDOp2Uwk2MlZpSIQy4ufOS8rMA4LqkqzjBFeNRo9DjPVIaLvlJBIDpY&#xD;
 4nKRh+jAEoOFloAaDfG9xc/3gp/x2yv+xXx792bBV/67/wCrBrfPLAwAAA==</IconData>
+  <Created>2024-02-14T22:17:42.3616942+00:00</Created>
+  <Modified>2024-02-14T22:17:42.3616942+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <TextInstructions>Process the provided data as follows:
@@ -62,7 +64,6 @@ Conclusion: Function call approved.&#xD;
   <IsPreview>true</IsPreview>
   <IsFavorite>false</IsFavorite>
   <UseMaximumContext>true</UseMaximumContext>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

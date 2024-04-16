@@ -154,9 +154,9 @@
 							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
 						</StackPanel>
 					</Button>
-					<Button Name="TargetSwitchToViewButton" Click="TargetSwitchToView_Click" Visibility="Collapsed">
+					<Button Name="TargetSwitchToViewButton" Click="TargetSwitchToView_Click">
 						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+							<ContentControl Content="{StaticResource Icon_eye_blind}" Focusable="False" />
 						</StackPanel>
 					</Button>
 				</StackPanel>

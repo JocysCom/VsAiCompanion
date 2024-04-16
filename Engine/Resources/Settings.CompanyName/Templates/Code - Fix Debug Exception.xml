@@ -11,6 +11,8 @@ CjWi9IMRpcxd7hNfcmcEbYukcoZabkEo6UwtxooB/ECDmuKhFbUAP1L4zDuFtpuABg9CEhYI5YTE&#xD
 FwwS77y+nmZbL6X0vQ9mEyRwuCRB6oKCnU0Ih1n30n5A6riUTwGRekhZyil1TKe2fiof94ExEboZ&#xD;
 CVfcs0JSOKAZwhdE7XKUf72z6RkJusHHUeYfC6PQ/07fuenGBm82jy4nk6tJHw5rkLTrUfvtuK6H&#xD;
 ZzyuBU3g/tg7cHnxF+sWVibRAwAA</IconData>
+  <Created>2024-02-25T14:43:10.1138035+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1138035+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>How to fix this exception thrown during debug session in Visual Studio? Please reply with the fixed code.</TextInstructions>
@@ -23,7 +25,6 @@ ZzyuBU3g/tg7cHnxF+sWVibRAwAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

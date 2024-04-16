@@ -25,6 +25,8 @@ x4RJIEqV0RfZBFcV2Q3usPIWq6wcigUzh8/BViz+QGM6rFFnOjRHEGEKYHQPpDwNDQ2IyKlu0VJY&#xD
 AXsocHjEUx+UY6ih86gFUhKo8GzYq5QBDE1ddpiIoxYoYXBA/+dG5M+Hfuj/bjfDf96IqFgkHJR7&#xD;
 N+df6jS8Qmd4uggd7t8yGnHbMELGwBqJpaa8oDsb2/jMImFc5zhJQkfNL3gL3Zgb1vzr9lbh5OtF&#xD;
 vaKvPfoew/Mf/3uw6pIKAAA=</IconData>
+  <Created>2024-02-25T14:43:10.1150767+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1150767+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>Convert - KnockoutJS to Angular</TemplateName>
@@ -72,7 +74,6 @@ Localized XAML:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

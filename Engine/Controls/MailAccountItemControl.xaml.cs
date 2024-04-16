@@ -21,6 +21,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			ControlsHelper.EnableAutoScroll(LogTextBox);
+			AllowedSenderdsTabPage.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			ValidateSendersCheckBox.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			ValidateDigitalSignatureCheckBox.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			ValidateDkimCheckBox.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 		}
 
 		#region List Panel Item

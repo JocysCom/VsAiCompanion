@@ -17,6 +17,8 @@ pgnpMYb0PiYfSEw20Bqy28uh9xEckwKHljMEkp6c/q+g6cNIIx+luUma9FGaG79Q7FEbaKMYk0oN&#xD
 2sQ0lehcI/ED0jAp+mYjDffNRhrcRUsxaJ13NRuHcc3G+fhm40h8s3G0P6nZCJG63wFeGTwgpNbJ&#xD;
 D7RhpIlniu4fKJAIT8zEQJEMIK3uUKbHGNL7QJmeBMr0tA+ijHkQZe7fhX8XZe7fhH8XZfj9e/Av&#xD;
 K403ztz/sOdP/gPhB1zrhw4AAA==</IconData>
+  <Created>2024-02-25T14:43:10.1192125+00:00</Created>
+  <Modified>2024-02-25T14:43:10.1192125+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Please provide a list of significant historical events that occurred on {Date.Now:MMMM dd} across all years in the past, detailing the year and a brief description of each event.</TextInstructions>
@@ -29,7 +31,6 @@ K403ztz/sOdP/gPhB1zrhw4AAA==</IconData>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <UseMacros>true</UseMacros>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

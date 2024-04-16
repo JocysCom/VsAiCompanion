@@ -15,6 +15,8 @@ Whb5xfySlKcC0zFNZCzCXCwebfyRHvIJEAIBgyn4Ml65g31WnIyzPdj23dvxo3t/cz+upC2jbFlI&#xD
 WoSmsUGRRjQXo8FFoC28ljz1pIgAriHk8Wj0ffgSmYropYrOwUmmb56zRdgHgRjxZ1Tg0SyC9vTO&#xD;
 R14gzGCxkGJgzBaR4JiAe7bAOhG4PIQ+0AGmY7J3Q2ywQkGIQShAAAZ8pEmxxevaufRCNTEN4KUp&#xD;
 OnV1zUJnmpH/eljsD8MS87DKZPPwpvT/Tw+/AHxzW0rZBgAA</IconData>
+  <Created>2024-02-25T21:17:22.4002028+00:00</Created>
+  <Modified>2024-02-25T21:17:22.4002028+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
@@ -355,7 +357,6 @@ In conclusion, based on the scenarios provided and the estimates made for the NC
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

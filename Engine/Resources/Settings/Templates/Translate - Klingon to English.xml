@@ -31,6 +31,8 @@ NY42GmidxyMntMTBOEJ/xlP9R1bTP2E1DZXb/yDAxfVzEZo+TWj8KlS4M3IPsWZicMzcB0lgMsjt&#xD
 IFShpkkW3wWql4s4MR6grH6Q3EU4Ily4sbaLkgho26vpJw3uO8w3HCOTVF23qBdEj5KpSm6XnZ7k&#xD;
 6LLTODdwXqp0T5vgMOEiyiBL4WoV7eTOCjiRTFS92C0yAXZx65FxSEg22wN2FgVxfxUQVOZ74uD8&#xD;
 DcJRj/qJuA/0IbMjmMmg9/3+IqA91UaoNRxNuNr8n9pKgyP+nf/kq78AiPuNYOcQAAA=</IconData>
+  <Created>2024-02-25T21:17:33.1586759+00:00</Created>
+  <Modified>2024-02-25T21:17:33.1586759+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Translate English to Klingon and Klingon to English.&#xD;
@@ -44,7 +46,6 @@ Text to translate:</TextInstructions>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

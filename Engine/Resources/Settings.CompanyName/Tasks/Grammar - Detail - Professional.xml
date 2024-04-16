@@ -36,6 +36,8 @@ k8Ncn8EZP8Q5kDQ6gaU0RL9YFJ1qKBQ3KjIUW06kK7YagAiPVHQ5FGc6EqgmQMci0onFOLo0UNUm&#xD
 OtcEiXeU0xLROcTkco2XczYzQh4xkG1u2VJJoxgQWC1Qp3zSR6KgUwYjW+uRNVZGQX0ON/jM0hAr&#xD;
 h30TmGebt/e6Nxkx8r3OSqqso51VDJEO/tRnvqLmR7D5EW7MGApETBgMbWgkBMNTyOGnwXNQK/Ql&#xD;
 XQLenfo3zO71x5zO9WTytSlbr24+/7DGf618/i8FBtzXlBkAAA==</IconData>
+  <Created>2024-02-25T14:43:49.4382642+00:00</Created>
+  <Modified>2024-02-25T14:43:49.4382642+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <TemplateName>Grammar - Detail - Professional</TemplateName>
@@ -65,7 +67,6 @@ Text to process:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

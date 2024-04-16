@@ -23,6 +23,8 @@ xPMZ54oRAJoEAVif8VMvPKlGQNjoQBhKdmBD2840968dTSV57slYogkpgOLMYbSTZcMZcNlgDUIK&#xD
 ozxJQFFCtDwLAHieSZwg89TJTDIyk0Ktilp48xhNTaRoyA7wgyz0+FjGh8x/NrgeX9z8w4sgfj/5&#xD;
 7tdPLphotTAT8AtHkicJR6BaABrwCzAsO5Y9y/gi4xeazp3FSlGV4a141m5+f64hn+Rq4t2L7l2Z&#xD;
 /5mY6f3Do5H/LcCzhR6wcEn/Pbx89hf9kj3BPQ0AAA==</IconData>
+  <Created>2024-02-27T21:08:26.4104363+00:00</Created>
+  <Modified>2024-02-27T21:08:26.4104363+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-3.5-turbo-16k</AiModel>
   <TextInstructions>Please proofread the following text, focusing only on correcting spelling and grammar errors. Maintain the original sentence structure and meaning as much as possible, making only minimal changes necessary for correctness.&#xD;
@@ -48,7 +50,6 @@ Text to process:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

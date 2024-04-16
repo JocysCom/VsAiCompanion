@@ -11,6 +11,8 @@ u+ce8UHsQKZZjiT6zblD3OSoM4qfEVpra58VIjcKouitAg+Ib/DctIjnWX5h2sSxPM8QYq13/kMN&#xD
 LVhCL7gOCkZs1wBnJJvKEha/EzCsFfRYdfoaCXPf5uASx4ARc3LORzuYTG8y+aV9AYEWTLY12qcE&#xD;
 yqqUGLVdU+3giq8dy/V9dgqYx3Hi5wBMnUziOsTjtJzDL6qTTaHgA+C/q/EOxcxpBv+Gnu+bqz+y&#xD;
 7EqprQMAAA==</IconData>
+  <Created>2024-03-10T20:44:53.5901388+00:00</Created>
+  <Modified>2024-03-10T20:44:53.5901388+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Processing Instructions:
@@ -73,7 +75,6 @@ To improve our interaction, I want to understand you better. You can choose to n
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
-  <ItemType>None</ItemType>
   <PluginsEnabled>true</PluginsEnabled>
   <Attachments />
   <AttachmentsSelection />

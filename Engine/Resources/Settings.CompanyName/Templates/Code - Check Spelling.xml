@@ -10,6 +10,8 @@ nUZ6reQT801DVhZdpuSzOAn+lFycRrdcM9Vyc8sgiGdmbsgc8xrxKsfbgot9ZB/VqhD9RqqtfagV&#xD
 352DR80Cs2gAkyi+OCI4UlfoBpli9+CFdBV5kKxiixKLUovAsJMVRA7HDicOpxaHlncyhUyYL2lv&#xD;
 IFP1j/MQpt6Uekl8cbDl3nsWdrsZJkcGSP0HN6FzE3o+2CsKJm/YmQSxl1qpACu3gehtmYlN+eAZ&#xD;
 tb/phL+qM7Iq4V+q8w/yTL3/YIoOzO0Pe3n2AhZhFW6wBAAA</IconData>
+  <Created>2024-02-25T14:43:10.110803+00:00</Created>
+  <Modified>2024-02-25T14:43:10.110803+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Please check the spelling and grammar of comments in the code. Reply with corrected data.</TextInstructions>
@@ -22,7 +24,6 @@ tb/phL+qM7Iq4V+q8w/yTL3/YIoOzO0Pe3n2AhZhFW6wBAAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

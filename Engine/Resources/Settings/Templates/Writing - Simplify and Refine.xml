@@ -34,6 +34,8 @@ tfKGW3lDrjKfFREqeuVdftXE6q09hlmtKoY5jIXnGNYjWI9fPXr12PVN5OLz77CrR64et3rU6jKr&#xD
 S6wur1q0kq7hA1HLB0TW6F2+PIRiaKte4w9Uaq9I17Snl2VC4i8W2mlER6ZEgUZ8hEwnWmgqshoM&#xD;
 Lac/BNwY1N+1dFo3AK540kbvWdXrCmsw1p7B731YLsdyNjpF3w2+G3sF3SD3Av9i3Ge9N1FXSekj&#xD;
 izPBVLiPHe4RhK4y8ZWpHtPopUAqrFrQPwtOzDACF6jHlPvIVrVKXi7oX4/PnvwH1t4mnEgVAAA=</IconData>
+  <Created>2024-02-25T21:17:40.0123117+00:00</Created>
+  <Modified>2024-02-25T21:17:40.0123117+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
@@ -60,7 +62,6 @@ Important:  Always wrap `fully corrected text` in the Markdown code block like t
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

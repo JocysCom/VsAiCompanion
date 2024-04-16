@@ -15,6 +15,8 @@ nsDBOgGzdI6gUIZFXCU4P5IbCEouIKK8BpnH2EDDs0jLJGJdkxyzMkJ62khwWGWJgZRFKUDMnQKf&#xD
 c6ZPwOjAMs6hYqCt94te4lrY7saXDdju0v4Yx2K5edGRYTjb2aB7k6c+CTQJNfYIBAMi0SYkjROP&#xD;
 gU26d7dEHgBSEuAl8B2mnz4Benz37t0fACDs+f9HUk/x75w/3EP9ZRA/O5CvYbsg3sQOuxvr5OAv&#xD;
 ac+lCrEFAAA=</IconData>
+  <Created>2024-02-25T21:17:33.5412868+00:00</Created>
+  <Modified>2024-02-25T21:17:33.5412868+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you explain in simple terms this complex topic:</TextInstructions>
@@ -26,7 +28,6 @@ ac+lCrEFAAA=</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ItemType>None</ItemType>
   <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

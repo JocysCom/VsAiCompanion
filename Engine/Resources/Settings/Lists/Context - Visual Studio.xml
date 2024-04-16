@@ -27,6 +27,8 @@ IpzIuUuSt8+pZD13oTGeGqsJVOfEhmpm09vnBDi9AjWKXotoEWYcvdM1s+mjQnk/rh58/UuD1+WT&#xD
 8a/L5J5S2Wo70rI9W++uWaXt8cGy7Np+wzoUwHwkPgAkiqxgH6bhVuHTA5pK2nl2edN3G3yHvMdH&#xD;
 wSv6gHjRv1m3d+bXnxSjRVJ6F9sDmVqtLQ/S/93p1OpSnR6tN8MVG87O1u0mHZsBoumD02E1jIub&#xD;
 C3w6HKaJ3BkWEsjse8q/6SnIs9oHZQtixu6Ivq4w/gGI4FWSYA4AAA==</IconData>
+  <Created>2024-03-10T21:58:58.6902598+00:00</Created>
+  <Modified>2024-03-10T21:58:58.6902598+00:00</Modified>
   <Description>Contains details about your current AI tool environment, specifically within Visual Studio. It lets the AI adapt its assistance to the application's capabilities, shortcuts, and specific functionalities you're using.</Description>
   <Instructions>This list provides insights into the user's application setup. Use this information to offer more precise suggestions related to development workflows, project management, and customization.</Instructions>
   <IsReadOnly>true</IsReadOnly>
