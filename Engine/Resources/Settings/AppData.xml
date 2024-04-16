@@ -88,8 +88,6 @@
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
           <Name>Open AI</Name>
           <IsDefault>true</IsDefault>
-          <ApiOrganizationId>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAEYZ8WfZIIkCbcI6nu8KSygAAAAACAAAAAAAQZgAAAAEAACAAAAA3uRJIAmj3m/qE45doQUaFZmfc3wd/Ixw8Hy8Q0ehtvQAAAAAOgAAAAAIAACAAAACzfcf+To+N8mFcs4lbi384znrmF7tFwY+BZC3ncj+So0AAAAAt3YROsjrNFThwX7pXQ2evgotiuygqtAWjGSLNVuDYSX6gnYD/qtQieUk0+3EtCdhCvg/yAEDCuB54RfdNEatHQAAAANhIu07BL336RTl+xVVwNN54q1SvcIfTqL1aIqWtUqM6QTIhvD36bURkFcXtmZWIInuhVDc6Xyv54RNYBR/WGp8=</ApiOrganizationId>
-          <ApiSecretKey>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAEYZ8WfZIIkCbcI6nu8KSygAAAAACAAAAAAAQZgAAAAEAACAAAAAHckTwqOvqcmjyq/Q0ReS+JS1YCr16an97JWSTTLXgvgAAAAAOgAAAAAIAACAAAADb6Eyh81X/nKv4k/grhNcMO1rEd7ClXwZuRfyyQAsUAHAAAABSWdXcSQ8k5L4vlodcoCLSe6epHZnWHfAXilVimzdjeXsCVQSWj0T4flj9ucwvJ2nViO0L5uZKUP2RJgUHYDUmAPgO8+/eVpMQRdTV21i++CyO1KrECOcOJ+QXjOgKa7McD34YuWnAnHaOeSGXelKEQAAAAG+V4aU6n11joNgVRoHycdn5e+0YFclDWa2EXpZnRKXcMxwAyF1zVjEij3o/bTAsanVJWFnhRa0Gb9REf0UVLfo=</ApiSecretKey>
           <DefaultAiModel>gpt-4</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
           <ModelFilter>gpt|text-davinci-[0-9+]|embedding</ModelFilter>
