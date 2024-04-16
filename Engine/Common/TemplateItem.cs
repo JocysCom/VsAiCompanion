@@ -157,9 +157,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Tags { get => _Tags; set => SetProperty(ref _Tags, value); }
 		string _Tags;
 
-		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
-		ItemType _ItemType;
-
 		#region Plugins
 
 		[DefaultValue(false)]

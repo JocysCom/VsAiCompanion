@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.DataClient;
@@ -108,7 +109,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				AiModelBoxPanel.Item = null;
 				_Item = value;
-				InitEdit(false);
+				GroupFlagNameEditMode(false);
+				TargetEditMode(false);
+				MaskConnectionString();
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				AiModelBoxPanel.Item = value;
 				if (value != null)
@@ -127,6 +130,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (e.PropertyName == nameof(EmbeddingsItem.EmbeddingGroupName))
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+			if (e.PropertyName == nameof(EmbeddingsItem.Target))
+				MaskConnectionString();
 		}
 
 		public void EmbeddingGroupFlags_OnPropertyChanged()
@@ -513,10 +518,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Edit Group Flag
 
-		void InitEdit(bool editMode)
+		void GroupFlagNameEditMode(bool editMode)
 		{
 			Panel.SetZIndex(EmbeddingGroupComboBox, editMode ? 0 : 1);
-			Panel.SetZIndex(EditTextBox, editMode ? 1 : 0);
+			Panel.SetZIndex(EmbeddingGroupFlagNameTextBox, editMode ? 1 : 0);
 			EditEditButton.Visibility = editMode
 				? Visibility.Collapsed
 				: Visibility.Visible;
@@ -530,14 +535,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void EditEditButton_Click(object sender, RoutedEventArgs e)
 		{
-			InitEdit(true);
+			var parts = EmbeddingGroupFlags.First(x => x.Key == Item.EmbeddingGroupFlag)?.Value.Split(':');
+			if (parts?.Count() > 1)
+				EmbeddingGroupFlagNameTextBox.Text = parts[1].Trim();
+			else
+				EmbeddingGroupFlagNameTextBox.Clear();
+			GroupFlagNameEditMode(true);
 		}
 
 		private void EditApplyButton_Click(object sender, RoutedEventArgs e)
 		{
+
 			ApplyEditChanges();
 		}
-
 
 		void ApplyEditChanges()
 		{
@@ -569,20 +579,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				LogTextBox.Text = ex.ToString();
 			}
-			InitEdit(false);
+			GroupFlagNameEditMode(false);
 			_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 		}
 
 
 		private void EditCancelButton_Click(object sender, RoutedEventArgs e)
 		{
-			InitEdit(false);
+			GroupFlagNameEditMode(false);
 		}
 
 
 		#endregion
 
-		private void EditTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		private void EmbeddingGroupFlagNameTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			if (e.Key == System.Windows.Input.Key.Enter)
 			{
@@ -591,8 +601,45 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			if (e.Key == System.Windows.Input.Key.Escape)
 			{
-				InitEdit(false);
+				GroupFlagNameEditMode(false);
 			}
 		}
+
+		#region Target Connection
+
+		void TargetEditMode(bool isEditMode)
+		{
+			TargetTextBox.Visibility = isEditMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			TargetSwitchToViewButton.Visibility = isEditMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			TargetMaskedTextBox.Visibility = !isEditMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			TargetSwitchToEditButton.Visibility = !isEditMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+		}
+
+		private void TargetSwitchToEditButton_Click(object sender, RoutedEventArgs e)
+		{
+			TargetEditMode(true);
+		}
+
+		private void TargetSwitchToView_Click(object sender, RoutedEventArgs e)
+		{
+			TargetEditMode(false);
+		}
+
+		private void MaskConnectionString()
+		{
+			var masked = SqlHelper.FilterConnectionString(Item.Target);
+			ControlsHelper.SetText(TargetMaskedTextBox, masked);
+		}
+
+		#endregion
+
 	}
 }

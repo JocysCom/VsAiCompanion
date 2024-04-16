@@ -88,7 +88,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			await db.SaveChangesAsync();
 			// Process parts.
 			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
-			var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens);
+			var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : (int)(aiModel.MaxInputTokens * 0.80));
 			var input = parts.Select(x => x.Text);
 			// GetPart hashed from the database.
 			var targetFileParts = db.FileParts

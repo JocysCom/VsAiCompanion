@@ -51,6 +51,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
 			UpdateMailAccounts();
 			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
+			MonitorInboxCheckBox.Visibility = InitHelper.IsDebug
+				? Visibility.Collapsed
+				: Visibility.Visible;
 		}
 
 		private void MailAccounts_ListChanged(object sender, ListChangedEventArgs e)
@@ -632,5 +635,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		#endregion
+
 	}
 }

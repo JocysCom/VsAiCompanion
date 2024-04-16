@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using HtmlAgilityPack;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using RtfPipe;
 using System;
@@ -43,6 +44,8 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{ ConvertTargetType.MD, ".md" },
 				{ ConvertTargetType.TXTS, ".txt" },
 			};
+
+		public const string GroupFlagName = "GroupFlagName";
 
 
 		public static Dictionary<string, ConvertTargetType[]> ConvertToTypesAvailable =
@@ -663,8 +666,10 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 						var promtText = GetCellValue(columnCells[p], stringTablePart) ?? "";
 						if (string.IsNullOrEmpty(promtText.Trim()))
 							continue;
-						foreach (var a in answerColumnNames)
+						for (int aci = 0; aci < answerColumnNames.Length; aci++)
 						{
+							var a = answerColumnNames[aci];
+							var columnName = GetCellValue(answerColumns[aci], stringTablePart);
 							// Continue if cell is empty.
 							if (!columnCells.ContainsKey(a))
 								continue;
@@ -678,13 +683,16 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 								cr.messages.Add(pMessage);
 								var aMessage = new chat_completion_message(message_role.assistant, answerText);
 								cr.messages.Add(aMessage);
+								cr.AddProperty(GroupFlagName, columnName);
 								result.Add(cr as T);
+
 							}
 							else if (typeof(T) == typeof(text_completion_item))
 							{
 								var tr = new text_completion_item();
 								tr.prompt = promtText;
 								tr.completion = answerText;
+								tr.AddProperty(GroupFlagName, columnName);
 								result.Add(tr as T);
 							}
 						}
@@ -948,9 +956,6 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 			var sha256 = SHA256.Create();
 			// path will be the folder.
 			var diFullname = path + ".data";
-			var di = new DirectoryInfo(diFullname);
-			if (!di.Exists)
-				di.Create();
 			var isChat = typeof(T) == typeof(chat_completion_request);
 			var sb = new StringBuilder();
 			var pattern = new string('0', o.Count.ToString().Length);
@@ -960,11 +965,13 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				string systemContent = null;
 				string userContent = null;
 				string assistantContent = null;
+				var groupFlagName = "";
 				if (request is chat_completion_request cr)
 				{
 					systemContent = cr.messages.FirstOrDefault(x => x.role == message_role.system)?.content ?? "";
 					userContent = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
 					assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
+					groupFlagName = cr.GetProperty<string>(GroupFlagName);
 				}
 				else if (request is text_completion_item tr)
 				{
@@ -972,6 +979,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					systemContent = prefix;
 					userContent = tr.completion;
 					assistantContent = tr.completion;
+					groupFlagName = tr.GetProperty<string>(GroupFlagName);
 				}
 				if (systemContent != null)
 				{
@@ -993,11 +1001,21 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					sb.AppendLine();
 					sb.AppendLine(TrimSpaces(assistantContent));
 					sb.AppendLine();
+					// Create path.
+					var invalidChars = Path.GetInvalidFileNameChars();
+					var subPath = new string((groupFlagName ?? "").Where(c => !invalidChars.Contains(c)).ToArray());
+					if (!string.IsNullOrEmpty(subPath))
+						subPath = $"\\{subPath}";
 					var hash = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(sb.ToString()));
 					var hashString = string.Join("", hash.Select(x => x.ToString("X2")));
-					var file_path = string.Format("{0}\\{1:" + pattern + "}_{2}.txt", diFullname, i, hashString);
-					File.WriteAllText(file_path, sb.ToString());
+					var file_path = string.Format("{0}{1}\\{2:" + pattern + "}_{3}.txt", diFullname, subPath, i, hashString);
+					var bytes = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
 					sb.Clear();
+					// Write to file.
+					var fi = new FileInfo(file_path);
+					if (!fi.Directory.Exists)
+						fi.Directory.Create();
+					SettingsHelper.WriteIfDifferent(file_path, bytes);
 				}
 			}
 

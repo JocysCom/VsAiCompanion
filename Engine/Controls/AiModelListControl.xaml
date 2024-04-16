@@ -29,15 +29,7 @@
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<!--  Collection View Source with Grouping  -->
-			<CollectionViewSource x:Key="GroupedData" Source="{Binding FilteredList, ElementName=This}">
-				<CollectionViewSource.SortDescriptions>
-					<scm:SortDescription PropertyName="AiServiceName" />
-					<scm:SortDescription PropertyName="Name" />
-				</CollectionViewSource.SortDescriptions>
-				<CollectionViewSource.GroupDescriptions>
-					<PropertyGroupDescription PropertyName="ListGroupTime" />
-				</CollectionViewSource.GroupDescriptions>
-			</CollectionViewSource>
+			<CollectionViewSource x:Key="GroupedData" Source="{Binding FilteredList, ElementName=This}" />
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid Name="AiServiceListGrid" VerticalAlignment="Stretch">

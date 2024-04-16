@@ -101,7 +101,6 @@
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
 				Margin="3,0,3,0"
-				Background="{StaticResource BackgroundDark}"
 				Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}" />
 			<StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
 
@@ -137,14 +136,32 @@
 				Grid.Column="1"
 				VerticalAlignment="Center"
 				Content="{x:Static locales:Resources.Database}" />
-			<TextBox
-				Name="TargetTextBox"
+
+			<Grid
 				Grid.Row="2"
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
-				Margin="3,0,3,0"
-				Background="{StaticResource BackgroundDark}"
-				Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" />
+				Margin="3,0,3,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<TextBox Name="TargetTextBox" Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBox Name="TargetMaskedTextBox" Background="{StaticResource BackgroundDark}" IsReadOnly="True" />
+				<StackPanel Grid.Column="1" Orientation="Horizontal">
+					<Button Name="TargetSwitchToEditButton" Click="TargetSwitchToEditButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+						</StackPanel>
+					</Button>
+					<Button Name="TargetSwitchToViewButton" Click="TargetSwitchToView_Click" Visibility="Collapsed">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Grid>
+
 			<StackPanel Grid.Row="2" Grid.Column="4" Orientation="Horizontal">
 
 				<Button Name="BrowseTargetButton" MinWidth="75" Click="BrowseTargetButton_Click">
@@ -216,9 +233,9 @@
 					Content="Flag" />
 				<Grid>
 					<TextBox
-						x:Name="EditTextBox"
+						x:Name="EmbeddingGroupFlagNameTextBox"
 						MinWidth="64"
-						PreviewKeyDown="EditTextBox_PreviewKeyDown"
+						PreviewKeyDown="EmbeddingGroupFlagNameTextBox_PreviewKeyDown"
 						Text="{Binding EmbeddingGroupFlagName, UpdateSourceTrigger=PropertyChanged}" />
 					<ComboBox
 						Name="EmbeddingGroupComboBox"
@@ -231,7 +248,6 @@
 				</Grid>
 
 				<StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
-
 					<Button Name="EditEditButton" Click="EditEditButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />

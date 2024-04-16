@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Used for fine-tuning data.
 	/// </summary>
-	public class text_completion_item
+	public class text_completion_item : base_item
 	{
 		public string prompt { get; set; }
 		public string completion { get; set; }

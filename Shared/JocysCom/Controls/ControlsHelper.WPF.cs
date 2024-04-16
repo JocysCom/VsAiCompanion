@@ -84,9 +84,9 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args is null)
-				? format
-				: string.Format(format, args);
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
 			if (control.Content as string != text)
 				control.Content = text;
 		}
@@ -100,9 +100,9 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args is null)
-				? format
-				: string.Format(format, args);
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
 			if (control.Header as string != text)
 				control.Header = text;
 		}
@@ -115,9 +115,9 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args is null)
-				? format ?? ""
-				: string.Format(format ?? "", args);
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
 			if (control.Text != text)
 				control.Text = text;
 		}
@@ -130,9 +130,9 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args is null)
-				? format ?? ""
-				: string.Format(format ?? "", args);
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
 			if (control.Text != text)
 				control.Text = text;
 		}

@@ -399,7 +399,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (settingsData != null)
 				{
 					var error = settingsData.RenameItem(item, newName);
-					if (!string.IsNullOrEmpty(error))
+					if (string.IsNullOrEmpty(error))
+					{
+						// If successfully renamed task then...
+						if (item is TemplateItem ti && DataType == ItemType.Task && ti.AutoGenerateTitle)
+							// Disable auto generation of title.
+							ti.AutoGenerateTitle = false;
+					}
+					else
 					{
 						MessageBox.Show(error);
 						e.Cancel = true;

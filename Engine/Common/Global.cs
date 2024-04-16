@@ -246,37 +246,37 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler OnEmbeddingsUpdated;
 
 		public static void RaiseOnSaveSettings()
-			=> _ = Helper._Delay(OnSaveSettings, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnSaveSettings, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnFilesUploaded()
-			=> _ = Helper._Delay(OnFilesUpdaded, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnFilesUpdaded, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnFineTuningJobCreated()
-			=> _ = Helper._Delay(OnFineTuningJobCreated, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnFineTuningJobCreated, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnSourceDataFilesUpdated()
-			=> OnSourceDataFilesUpdated?.Invoke(null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnSourceDataFilesUpdated, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnTuningDataFilesUpdated()
-			=> _ = Helper._Delay(OnTuningDataFilesUpdated, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnTuningDataFilesUpdated, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnTasksUpdated()
-			=> _ = Helper._Delay(OnTasksUpdated, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnTasksUpdated, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnTemplatesUpdated()
-			=> _ = Helper._Delay(OnTemplatesUpdated, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnTemplatesUpdated, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnAiServicesUpdated()
-			=> _ = Helper._Delay(OnAiServicesUpdated, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnAiServicesUpdated, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnAiModelsUpdated()
-			=> _ = Helper._Delay(OnAiModelsUpdated, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnAiModelsUpdated, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnListsUpdated()
-			=> _ = Helper._Delay(OnListsUpdated, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnListsUpdated, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnEmbeddingsUpdated()
-			=> _ = Helper._Delay(OnEmbeddingsUpdated, null, EventArgs.Empty);
+			=> _ = Helper._Delay(OnEmbeddingsUpdated, null, new[] { null, EventArgs.Empty });
 
 		#endregion
 
