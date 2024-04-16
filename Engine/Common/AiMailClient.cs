@@ -146,6 +146,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 							await client.Inbox.OpenAsync(FolderAccess.ReadWrite, cancellationToken);
 							while (!cancellationToken.IsCancellationRequested)
 							{
+								// Temp workaround.
+								if (Global.MainControl == null)
+									continue;
 								// Fetch all messages but only their UIDs and FLAGS
 								var allMessages = await client.Inbox.FetchAsync(0, -1, MessageSummaryItems.Flags | MessageSummaryItems.UniqueId, cancellationToken);
 								// Filter for messages that are not seen
@@ -157,9 +160,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 									OnNewMessageReceived(message);
 									// After processing, mark the message as seen
 									await client.Inbox.AddFlagsAsync(summary.UniqueId, MessageFlags.Seen, true, cancellationToken);
+									// One message at the time.
+									break;
 								}
 								// Wait before checking for new messages to avoid constant polling.
-								await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+								await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
 							}
 						}
 					}

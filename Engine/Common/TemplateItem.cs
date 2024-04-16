@@ -353,6 +353,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		AiMailClient _AiMailClient;
 
+
 		private async void _AiMailClient_NewMessage(object sender, MimeKit.MimeMessage e)
 		{
 			// Wait for the oportunity to paste message.
@@ -365,18 +366,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Title = "Mail Message",
 				Instructions = "Analyse and reply to this Email Message (*.eml)",
 				Type = ContextType.None,
-				Data = System.Text.Encoding.UTF8.GetString(ms.ToArray()),
+				Data = e.ToString(),
 			};
 			var userMessage = new MessageItem();
 			userMessage.Type = MessageType.Out;
 			userMessage.Body = "You've got a new email message.";
 			userMessage.Attachments.Add(attachment);
-			Global.MainControl.Dispatcher.Invoke(() =>
+			_ = Global.MainControl.Dispatcher.Invoke(async () =>
 			{
 				Messages.Add(userMessage);
-				_ = Companions.ClientHelper.Send(this, overrideMessage: userMessage);
+				await Companions.ClientHelper.Send(this, overrideMessage: userMessage);
 			});
-
 		}
 
 		public void UpdateMailClientAccount()
