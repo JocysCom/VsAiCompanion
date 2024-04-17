@@ -18,21 +18,35 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Retrieve content of websites by URL.
 		/// </summary>
 		/// <param name="url">URL which points to the resource.</param>
+		/// <param name="asPlainText">Read the content of a page in plain text.</param>
 		/// <returns>The output of the request.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		[RiskLevel(RiskLevel.Low)]
-		public async Task<string> GetWebPageContents(string url)
-			=> await _GetWebPageContents(url, true);
+		public async Task<string> GetWebPageContents(string url, bool asPlainText)
+		{
+			var contents = await _GetWebPageContents(url, false);
+			if (contents != null && asPlainText)
+				contents = HtmlHelper.ReadHtmlAsPlainText(contents);
+			return contents;
+		}
+
 
 		/// <summary>
 		/// Retrieve content of websites by URL. Use default credentials of the user.
 		/// </summary>
 		/// <param name="url">URL which points to the resource.</param>
+		/// <param name="asPlainText">Read the content of a page in plain text.</param>
 		/// <returns>The output of the request.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		[RiskLevel(RiskLevel.High)]
-		public async Task<string> GetWebPageContentsAuthenticated(string url)
-			=> await _GetWebPageContents(url, true);
+		public async Task<string> GetWebPageContentsAuthenticated(string url, bool asPlainText)
+		{
+			var contents = await _GetWebPageContents(url, true);
+			if (contents != null && asPlainText)
+				contents = HtmlHelper.ReadHtmlAsPlainText(contents);
+			return contents;
+		}
+
 
 		/// <summary>
 		/// Download and return the content of a given URL.

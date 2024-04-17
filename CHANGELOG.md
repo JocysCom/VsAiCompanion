@@ -3,6 +3,7 @@
 - Fix: Comboboxes not updating when `Lists` are updated.
 - Fix: Unable to embed some data due to incorrect token count.
 - New: Ability to read RTF and HTML documents as plain text.
+- New: Ability to read web pages as as plain text.
 
 - 2024-04-16 v1.9.21
 

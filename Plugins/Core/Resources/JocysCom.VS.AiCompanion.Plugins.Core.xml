@@ -169,6 +169,16 @@
             </summary>
             <param name="path">The path of the file to be read.</param>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.HtmlHelper">
+            <summary>
+            HTML Helper.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.HtmlHelper.ReadHtmlAsPlainText(System.String)">
+            <summary>
+            Read HTML as plain text.
+            </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.IFileHelper">
             <summary>
             File Helper.
@@ -658,6 +668,20 @@
             <summary>
             LiteDB file extension.
             </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder(System.String,System.String)">
+            <summary>
+            Index a specific folder. Returns true if successful.
+            </summary>
+            <param name="indexName">Index name.</param>
+            <param name="folderPath">Folder path.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchIndex(System.String,System.String)">
+            <summary>
+            Search an index and return search results.
+            </summary>
+            <param name="indexName">Index name.</param>
+            <param name="searchString">Search string.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex(System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Int64},System.Nullable{System.Int64},System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
             <summary>
@@ -1534,19 +1558,21 @@
             Web functions that allow AI to retrieve web content or files from the web or call APIs.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContents(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContents(System.String,System.Boolean)">
             <summary>
             Retrieve content of websites by URL.
             </summary>
             <param name="url">URL which points to the resource.</param>
+            <param name="asPlainText">Read the content of a page in plain text.</param>
             <returns>The output of the request.</returns>
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContentsAuthenticated(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContentsAuthenticated(System.String,System.Boolean)">
             <summary>
             Retrieve content of websites by URL. Use default credentials of the user.
             </summary>
             <param name="url">URL which points to the resource.</param>
+            <param name="asPlainText">Read the content of a page in plain text.</param>
             <returns>The output of the request.</returns>
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
         </member>
