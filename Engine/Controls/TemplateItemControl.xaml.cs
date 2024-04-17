@@ -50,10 +50,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
 			UpdateMailAccounts();
+			Global.Lists.Items.ListChanged += Items_ListChanged;
+			UpdateContextListNames();
 			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
 			MonitorInboxCheckBox.Visibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
+		}
+
+		private void Items_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			var update = false;
+			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(MailAccount.Name))
+				update = true;
+			if (e.ListChangedType == ListChangedType.ItemAdded ||
+				e.ListChangedType == ListChangedType.ItemDeleted)
+				update = true;
+			if (update)
+				_ = Helper.Delay(UpdateContextListNames);
 		}
 
 		private void MailAccounts_ListChanged(object sender, ListChangedEventArgs e)
@@ -225,7 +239,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> PluginApprovalTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
-		private Dictionary<string, string> GetListNames(params string[] prefix)
+		public ObservableCollection<string> ContextListNames { get; set; } = new ObservableCollection<string>();
+		public ObservableCollection<string> ProfileListNames { get; set; } = new ObservableCollection<string>();
+		public ObservableCollection<string> RoleListNames { get; set; } = new ObservableCollection<string>();
+
+		private void UpdateContextListNames()
+		{
+			// Update ContextListNames
+			var names = GetListNames("Context", "Company", "Department");
+			CollectionsHelper.Synchronize(names, ContextListNames);
+			OnPropertyChanged(nameof(ContextListNames));
+			// Update ProfileListNames
+			names = GetListNames("Profile", "Persona");
+			CollectionsHelper.Synchronize(names, ProfileListNames);
+			OnPropertyChanged(nameof(ProfileListNames));
+			// Update RoleListNames
+			names = GetListNames("Role");
+			CollectionsHelper.Synchronize(names, RoleListNames);
+			OnPropertyChanged(nameof(RoleListNames));
+		}
+
+		private List<string> GetListNames(params string[] prefix)
 		{
 			var items = Global.Lists.Items
 				.Where(x => string.IsNullOrWhiteSpace(x.Path))
@@ -236,16 +270,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				.Select(x => x.Name)
 				.ToList();
 			items.Insert(0, "");
-			var dic = items.ToDictionary(x => x, x => x);
-			return dic;
+			return items;
 		}
 
-		public Dictionary<string, string> ContextListNames
-			=> GetListNames("Context", "Company", "Department");
-		public Dictionary<string, string> ProfileListNames
-			=> GetListNames("Profile", "Persona");
-		public Dictionary<string, string> RoleListNames
-			=> GetListNames("Role");
 
 		public Dictionary<EmbeddingGroupFlag, string> FilePartGroups
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(

@@ -24,7 +24,6 @@ using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using System.ComponentModel;
 
-
 #if NETFRAMEWORK
 using System.Data.SQLite;
 #else
@@ -88,7 +87,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			await db.SaveChangesAsync();
 			// Process parts.
 			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
-			var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : (int)(aiModel.MaxInputTokens * 0.80));
+			var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens);
 			var input = parts.Select(x => x.Text);
 			// GetPart hashed from the database.
 			var targetFileParts = db.FileParts
@@ -164,19 +163,32 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var dataView = mlContext.Data.LoadFromEnumerable(data);
 			// Tokenize the text
 			// Define your custom list of separators
-			char[] separators = new char[] { ' ', ',', '.', ';', ':', '!', '?', '-', '(', ')', '[', ']', '{', '}', '\"', '\'', '\n', '\t' };
+			//char[] separators = new char[] {
+			//	' ', ',', '.', ';', ':', '!', '?', '-', '(', ')', '[', ']', '{', '}', '\"', '\'', '\n', '\t',
+			//	'“', '”', '‘', '’', '\\', '/', '@', '#' };
+			// Generate dynamic separators based on the content
+			var separators = GetDynamicSeparators(content);
 			var textPipeline = mlContext.Transforms.Text.TokenizeIntoWords("Tokens", nameof(TextData.Text), separators);
 			var textTransformer = textPipeline.Fit(dataView);
 			var transformedData = textTransformer.Transform(dataView);
 			var tokens = mlContext.Data.CreateEnumerable<TokenizedTextData>(transformedData, reuseRowObject: false).First().Tokens;
 			// Chunk the tokens
-			var chunks = ChunkTokens(tokens, maxTokensPerChunk);
+			var chunks = ChunkTokens(tokens, (int)(maxTokensPerChunk * 0.80));
 			return chunks.Select(x => new FilePart()
 			{
 				Text = string.Join(" ", x),
 				TextTokens = x.Length
 
 			}).ToArray();
+		}
+
+		private static char[] GetDynamicSeparators(string content)
+		{
+			var separatorSet = new HashSet<char>();
+			foreach (var c in content)
+				if (!char.IsLetterOrDigit(c))
+					separatorSet.Add(c);
+			return separatorSet.ToArray();
 		}
 
 		static IEnumerable<string[]> ChunkTokens(string[] tokens, int maxTokensPerChunk)

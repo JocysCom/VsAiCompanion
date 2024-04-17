@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
+using HtmlAgilityPack;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using NPOI.HSSF.UserModel;
@@ -9,6 +10,10 @@ using NPOI.XSSF.UserModel;
 using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows;
+using System.Windows.Documents;
 using UglyToad.PdfPig;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
@@ -16,10 +21,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	public partial class FileHelper
 	{
 
-		#region DocumentFormat.OpenXml
-
 		/// <summary>
-		/// Read the content of a file in plain text. Supported document types include .docx, .xlsx, .xls, and .pdf.
+		/// Read the content of a file in plain text. Supported document types include .docx, .xlsx, .xls, .pdf, .htm, .html and .pdf.
 		/// </summary>
 		/// <param name="path">The path of the file to be read.</param>
 		public OperationResult<string> ReadFileAsPlainText(string path)
@@ -41,6 +44,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					//case ".doc":
 					//content = ReadDocFile(path);
 					//break;
+					case ".rtf":
+						content = ReadTextViaRichTextBox(path, DataFormats.Rtf);
+						break;
+					case ".htm":
+					case ".html":
+						content = ReadHtmlFile(path);
+						break;
 					case ".xlsx":
 						content = ReadXlsxFile(path);
 						break;
@@ -69,6 +79,95 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return new OperationResult<string>(new Exception(ex.Message));
 			}
 		}
+
+		#region .NET
+
+		private string ReadHtmlFile(string path)
+		{
+			var doc = new HtmlAgilityPack.HtmlDocument();
+			doc.Load(path);
+			var sb = new StringBuilder();
+			// Select all text nodes that are not children of script or style elements
+			var textNodes = doc.DocumentNode.SelectNodes("//text()[normalize-space(.) != '' and not(parent::script or parent::style)]");
+			if (textNodes != null)
+			{
+				foreach (HtmlNode node in textNodes)
+				{
+					// Exclude text nodes that may not be visible
+					if (!IsLikelyVisible(node))
+						continue;
+					string text = HtmlEntity.DeEntitize(node.InnerText);
+					text = NormalizeWhitespace(text);
+					sb.AppendLine(text);
+				}
+			}
+			return sb.ToString().Trim();
+		}
+
+		private bool IsLikelyVisible(HtmlNode node)
+		{
+			// Simple check to skip nodes that are likely not visible
+			// This may include checking for class names or inline styles commonly used to hide elements
+			// However, without rendering the page, we can't handle external CSS or JS-based hiding
+			var parent = node.ParentNode;
+			while (parent != null)
+			{
+				if (parent.Attributes["style"] != null)
+				{
+					var styleValue = parent.Attributes["style"].Value;
+					if (styleValue.Contains("display: none") || styleValue.Contains("visibility: hidden"))
+						return false;
+				}
+				if (parent.Attributes["class"] != null)
+				{
+					// Example: Skipping elements with a class indicating they might be hidden
+					// This highly depends on the specific HTML/CSS in use
+					var classValue = parent.Attributes["class"].Value;
+					if (classValue.Contains("hidden") || classValue.Contains("d-none"))
+						return false;
+				}
+				parent = parent.ParentNode;
+			}
+			return true;
+		}
+
+		//This will normalize whitespaces to a single space and remove leading/trailing spaces.
+		private string NormalizeWhitespace(string input)
+		{
+			return Regex.Replace(input, @"\s+", " ").Trim();
+		}
+
+		private string ReadTextViaRichTextBox(string path, string dataFormat)
+		{
+			string result = null;
+			Thread thread = new Thread(() =>
+			{
+				// Use WPF RichTextBox to load and extract plain text from RTF
+				using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+				{
+					System.Windows.Controls.RichTextBox rtb = new System.Windows.Controls.RichTextBox();
+					TextRange textRange = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
+					// Load the RTF content into the RichTextBox
+					textRange.Load(fs, dataFormat);
+					// Now retrieve the plain text from the RichTextBox
+					using (MemoryStream ms = new MemoryStream())
+					{
+						textRange = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
+						textRange.Save(ms, System.Windows.DataFormats.Text);
+						result = Encoding.UTF8.GetString(ms.ToArray());
+					}
+				}
+			});
+
+			thread.SetApartmentState(ApartmentState.STA); // Set the thread to STA
+			thread.Start();
+			thread.Join(); // Wait for the thread to finish
+			return result;
+		}
+
+		#endregion
+
+		#region DocumentFormat.OpenXml
 
 		private string ReadDocxFile(string path)
 		{

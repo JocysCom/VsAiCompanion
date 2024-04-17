@@ -1,4 +1,10 @@
-2024-04-16 v1.9.21
+2024-04-17 v1.9.25
+
+- Fix: Comboboxes not updating when `Lists` are updated.
+- Fix: Unable to embed some data due to incorrect token count.
+- New: Ability to read RTF and HTML documents as plain text.
+
+- 2024-04-16 v1.9.21
 
 - Fix: Mask connection password in Embedding screen.
 - Fix: Task tile was autogenerating after task rename.
@@ -18,7 +24,7 @@
 
 - Fix: Fixed multiple issues and bugs.
 - New: Added AI Embedding/Context Database, supports portable SQLite and MSSQL.
-- New: Enhanced ability to read Word, Excel, and PDF documents as plain text.
+- New: Ability to read Word, Excel, and PDF documents as plain text.
 - New: Improved AI's capability to read multiple files in one action.
 - Update: Updated shared libraries.
 

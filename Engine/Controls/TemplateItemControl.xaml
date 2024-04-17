@@ -451,17 +451,13 @@
 									<ComboBox
 										Name="Context0TemplateComboBox"
 										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Value"
 										ItemsSource="{Binding ContextListNames, ElementName=This}"
-										SelectedValue="{Binding Context0ListName}"
-										SelectedValuePath="Key" />
+										SelectedValue="{Binding Context0ListName}" />
 									<ComboBox
 										Name="Context1TemplateComboBox"
 										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Value"
 										ItemsSource="{Binding ContextListNames, ElementName=This}"
-										SelectedValue="{Binding Context1ListName}"
-										SelectedValuePath="Key" />
+										SelectedValue="{Binding Context1ListName}" />
 								</StackPanel>
 							</GroupBox>
 							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
@@ -472,17 +468,13 @@
 									<ComboBox
 										Name="Context2TemplateComboBox"
 										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Value"
 										ItemsSource="{Binding ProfileListNames, ElementName=This}"
-										SelectedValue="{Binding Context2ListName}"
-										SelectedValuePath="Key" />
+										SelectedValue="{Binding Context2ListName}" />
 									<ComboBox
 										Name="Context3TemplateComboBox"
 										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Value"
 										ItemsSource="{Binding RoleListNames, ElementName=This}"
-										SelectedValue="{Binding Context3ListName}"
-										SelectedValuePath="Key" />
+										SelectedValue="{Binding Context3ListName}" />
 								</StackPanel>
 							</GroupBox>
 							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
@@ -493,17 +485,13 @@
 									<ComboBox
 										Name="Context4TemplateComboBox"
 										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Value"
 										ItemsSource="{Binding ProfileListNames, ElementName=This}"
-										SelectedValue="{Binding Context4ListName}"
-										SelectedValuePath="Key" />
+										SelectedValue="{Binding Context4ListName}" />
 									<ComboBox
 										Name="Context5TemplateComboBox"
 										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Value"
 										ItemsSource="{Binding RoleListNames, ElementName=This}"
-										SelectedValue="{Binding Context5ListName}"
-										SelectedValuePath="Key" />
+										SelectedValue="{Binding Context5ListName}" />
 								</StackPanel>
 							</GroupBox>
 						</WrapPanel>
