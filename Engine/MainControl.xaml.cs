@@ -70,9 +70,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			InfoPanel.RightIcon.MouseDoubleClick += RightIcon_MouseDoubleClick;
 			if (ControlsHelper.AllowLoad(this))
 			{
+				Global.RaiseOnMainControlLoaded();
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TemplatesPanel;
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksPanel;
-				Global.RaiseOnLoaded();
 			}
 		}
 
