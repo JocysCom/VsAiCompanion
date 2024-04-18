@@ -360,7 +360,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			ZipStorer zip = null;
 			if (Global.AppSettings.IsEnterprise)
 			{
-				var path = Global.AppSettings.ConfigurationUrl;
+				var path = JocysCom.ClassLibrary.Configuration.AssemblyInfo.ExpandPath(Global.AppSettings.ConfigurationUrl);
 				var isUrl = Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile;
 				zip = isUrl
 					? GetZipFromUrl(path)

@@ -59,10 +59,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void BrowseSettingsButton_Click(object sender, RoutedEventArgs e)
 		{
+			var path = JocysCom.ClassLibrary.Configuration.AssemblyInfo.ExpandPath(Global.AppSettings.ConfigurationUrl);
 			if (_OpenFileDialog == null)
 			{
 				_OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 				_OpenFileDialog.SupportMultiDottedExtensions = true;
+				_OpenFileDialog.FileName = path;
 				DialogHelper.AddFilter(_OpenFileDialog, ".zip");
 				DialogHelper.AddFilter(_OpenFileDialog);
 				_OpenFileDialog.FilterIndex = 1;
@@ -73,7 +75,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var result = dialog.ShowDialog();
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
-			Global.AppSettings.ConfigurationUrl = dialog.FileNames[0];
+			path = dialog.FileNames[0];
+			path = JocysCom.ClassLibrary.Configuration.AssemblyInfo.ParameterizePath(path, true);
+			Global.AppSettings.ConfigurationUrl = path;
 		}
 
 		/// <summary>

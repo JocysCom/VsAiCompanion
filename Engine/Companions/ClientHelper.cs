@@ -594,43 +594,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public static int CountTokens(object item, JsonSerializerOptions options)
 		{
 			var json = JsonSerializer.Serialize(item, options);
-			return CountTokens(json);
+			int count;
+			List<string> tokens = null;
+			GetTokens(json, out count, ref tokens);
+			return count;
 		}
 
-		public static int CountTokens(string s)
+
+		public static void GetTokens(string text, out int count, ref List<string> tokens)
 		{
-			int count = 0;
-			bool inWord = false;
-			for (int i = 0; i < s.Length; i++)
+			count = 0;
+			// Can be `\r\n`, `\r` or `\n`.
+			var newLine = FileHelper.GetNewLineType(text).ToArray();
+			char? prevChar;
+			char? currChar = null;
+			var currentToken = "";
+			for (int i = 0; i < text.Length; i++)
 			{
-				char c = s[i];
-				char nextC = i < s.Length - 1 ? s[i + 1] : '\0';
-				if (char.IsWhiteSpace(c) || char.IsPunctuation(c))
+				prevChar = currChar;
+				currChar = text[i];
+				if (i == 0)
 				{
-					if (inWord)
-					{
-						count++;
-						inWord = false;
-					}
-					if (!char.IsWhiteSpace(c))
-					{
-						if (c == '-' && char.IsLetter(nextC)) // don't split hyphenated words
-							continue;
-						// don't split contractions and handle multi-character punctuation
-						if (c == '\'' && char.IsLetter(nextC) || c == nextC)
-							i++;  // skip next character
-						count++; // punctuation is a separate token
-					}
+					currentToken += currChar;
+					continue;
 				}
-				else if (!inWord)
+				// If letter type changed.
+				var flush = true;
+				if (char.IsLetterOrDigit(prevChar.Value) && char.IsLetterOrDigit(currChar.Value))
+					flush = false;
+				else if (prevChar == currChar)
+					flush = false;
+				else if (newLine.Length == 2 && currChar == newLine[1])
+					flush = false;
+				if (flush)
 				{
-					// start of a new word
-					inWord = true;
+					tokens?.Add(currentToken);
+					count++;
+					currentToken = "";
 				}
+				currentToken += currChar;
 			}
-			if (inWord)
-				count++;  // count the last word if the string doesn't end with a punctuation or a whitespace
-			return count;
+			if (currentToken.Length > 0)
+			{
+				tokens?.Add(currentToken);
+				count++;
+			}
 		}
 
 	}

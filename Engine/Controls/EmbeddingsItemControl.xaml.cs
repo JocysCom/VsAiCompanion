@@ -635,7 +635,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MaskConnectionString()
 		{
-			var masked = SqlHelper.FilterConnectionString(Item.Target);
+			var masked = SqlHelper.FilterConnectionString(Item?.Target);
 			ControlsHelper.SetText(TargetMaskedTextBox, masked);
 		}
 

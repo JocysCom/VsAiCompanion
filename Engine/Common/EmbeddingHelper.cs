@@ -23,6 +23,8 @@ using System.Collections.ObjectModel;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using System.ComponentModel;
+using JocysCom.VS.AiCompanion.Engine.Companions;
+
 
 #if NETFRAMEWORK
 using System.Data.SQLite;
@@ -159,24 +161,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var content = result?.Result;
 			if (string.IsNullOrEmpty(content))
 				return Array.Empty<FilePart>();
-			var data = new List<TextData> { new TextData { Text = content } };
-			var dataView = mlContext.Data.LoadFromEnumerable(data);
+			//var data = new List<TextData> { new TextData { Text = content } };
+			//var dataView = mlContext.Data.LoadFromEnumerable(data);
 			// Tokenize the text
 			// Define your custom list of separators
 			//char[] separators = new char[] {
 			//	' ', ',', '.', ';', ':', '!', '?', '-', '(', ')', '[', ']', '{', '}', '\"', '\'', '\n', '\t',
 			//	'“', '”', '‘', '’', '\\', '/', '@', '#' };
 			// Generate dynamic separators based on the content
-			var separators = GetDynamicSeparators(content);
-			var textPipeline = mlContext.Transforms.Text.TokenizeIntoWords("Tokens", nameof(TextData.Text), separators);
-			var textTransformer = textPipeline.Fit(dataView);
-			var transformedData = textTransformer.Transform(dataView);
-			var tokens = mlContext.Data.CreateEnumerable<TokenizedTextData>(transformedData, reuseRowObject: false).First().Tokens;
+			//var separators = GetDynamicSeparators(content);
+			//var textPipeline = mlContext.Transforms.Text.TokenizeIntoWords("Tokens", nameof(TextData.Text), separators);
+			//var textTransformer = textPipeline.Fit(dataView);
+			//var transformedData = textTransformer.Transform(dataView);
+			//var tokens = mlContext.Data.CreateEnumerable<TokenizedTextData>(transformedData, reuseRowObject: false).First().Tokens;
+			int tokensCount;
+			var tokens = new List<string>();
+			ClientHelper.GetTokens(content, out tokensCount, ref tokens);
 			// Chunk the tokens
-			var chunks = ChunkTokens(tokens, (int)(maxTokensPerChunk * 0.80));
+			var chunks = ChunkTokens(tokens.ToArray(), (int)(maxTokensPerChunk * 0.80));
 			return chunks.Select(x => new FilePart()
 			{
-				Text = string.Join(" ", x),
+				Text = string.Join("", x),
 				TextTokens = x.Length
 
 			}).ToArray();
@@ -217,11 +222,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return systemMessage;
 			systemMessage += item.Instructions;
 			systemMessage += "\r\n\r\n";
-			foreach (var filPart in FileParts)
+			foreach (var filePart in FileParts)
 			{
-				var file = Files.Where(x => x.Id == filPart.FileId).FirstOrDefault();
+				var file = Files.Where(x => x.Id == filePart.FileId).FirstOrDefault();
 				systemMessage += "\r\n";
-				systemMessage += ConvertToChunkString(file?.Url, filPart.Text);
+				systemMessage += ConvertToChunkString(file?.Url, filePart);
 				systemMessage += "\r\n\r\n";
 			}
 			return systemMessage;
@@ -231,17 +236,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Convert to flat string representation.
 		/// </summary>
-		public static string ConvertToChunkString(string path, string content)
+		public static string ConvertToChunkString(string path, FilePart filePart)
 		{
 			var sb = new StringBuilder();
-			sb.AppendLine($"=== BEGIN FILE CHUNK: {path} ===");
-			sb.Append(content);
-			if (!content.EndsWith(Environment.NewLine))
+			sb.AppendLine($"-----BEGIN FILE CHUNK {filePart.Index + 1} OF {filePart.Count}: {path}-----");
+			sb.Append(filePart.Text);
+			if (!filePart.Text.EndsWith(Environment.NewLine))
 				sb.AppendLine();
-			sb.AppendLine($"=== END FILE CHUNK: {path} ===");
+			sb.AppendLine($"-----END FILE CHUNK {filePart.Index + 1} OF {filePart.Count}: {path}-----");
 			return sb.ToString();
 		}
-
 
 		public async Task SearchEmbeddings(
 			EmbeddingsItem item, EmbeddingGroupFlag groupFlag,

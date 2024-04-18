@@ -45,10 +45,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					case ".rtf":
 						content = ReadTextViaRichTextBox(path, DataFormats.Rtf);
 						break;
-					case ".htm":
-					case ".html":
-						content = ReadHtmlFile(path);
-						break;
+					// Can be UI view for the model, therefore read native content.
+					//case ".htm":
+					//case ".html":
+					//	content = ReadHtmlFile(path);
+					//	break;
 					case ".xlsx":
 						content = ReadXlsxFile(path);
 						break;

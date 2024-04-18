@@ -9,7 +9,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
-	d:DesignHeight="200"
+	d:DesignHeight="400"
 	d:DesignWidth="800"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">

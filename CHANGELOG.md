@@ -1,7 +1,10 @@
-2024-04-17 v1.9.25
+2024-04-18 v1.9.28
 
 - Fix: Comboboxes not updating when `Lists` are updated.
 - Fix: Unable to embed some data due to incorrect token count.
+- Fix: Crash when creating a new AI embedding database.
+- Fix: Updated token conversion to import more accurate data into AI database.
+- Fix: Couple crashes fixed.
 - New: Ability to read RTF and HTML documents as plain text.
 - New: Ability to read web pages as as plain text.
 

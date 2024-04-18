@@ -151,9 +151,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			if (string.IsNullOrEmpty(text))
 				return text;
 			var newLines = new[] { "\r\n", "\n", "\r" };
-			string detectedNewlineType;
-			using (var reader = new StringReader(text))
-				_DetectNewLineType(reader, out detectedNewlineType);
+			string detectedNewlineType = GetNewLineType(text);
 			var allLines = text
 				   .Split(newLines, StringSplitOptions.None)
 				   .ToList();
@@ -188,10 +186,25 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 		}
 
-
-		private void _DetectNewLineType(TextReader reader, out string newlineType)
+		/// <summary>
+		/// Get new line type.
+		/// </summary>
+		public static string GetNewLineType(string text)
 		{
-			newlineType = Environment.NewLine;
+			using (var reader = new StringReader(text))
+			{
+				var newLine = GetNewLineType(reader);
+				reader.Close();
+				return newLine;
+			}
+		}
+
+		/// <summary>
+		/// Get new line type.
+		/// </summary>
+		public static string GetNewLineType(TextReader reader)
+		{
+			var newlineType = Environment.NewLine;
 			char[] buffer = new char[1];
 			char currentChar;
 			char? lastChar = null;
@@ -201,20 +214,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				if (lastChar == '\r')
 				{
 					if (currentChar == '\n')
-					{
 						// Windows (CRLF)
-						newlineType = "\r\n";
-						return;
-					}
+						return "\r\n";
 					// Older Macs (CR)
-					newlineType = "\r";
-					break;
+					return "\r";
 				}
 				else if (currentChar == '\n')
 				{
 					// Unix/Linux (LF)
-					newlineType = "\n";
-					return;
+					return "\n";
 				}
 				lastChar = currentChar;
 			}
@@ -224,6 +232,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				// Older Macs (CR)
 				newlineType = "\r";
 			}
+			return newlineType;
 		}
 
 
@@ -236,7 +245,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			using (var reader = new StreamReader(path, detectEncodingFromByteOrderMarks: true))
 			{
 				encoding = reader.CurrentEncoding;
-				_DetectNewLineType(reader, out newlineType);
+				newlineType = GetNewLineType(reader);
 			}
 		}
 
