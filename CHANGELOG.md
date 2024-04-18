@@ -1,6 +1,6 @@
-2024-04-18 v1.9.28
+2024-04-18 v1.9.32
 
-- Fix: Comboboxes not updating when `Lists` are updated.
+- Fix: Combo-boxes not updating when `Lists` are updated.
 - Fix: Unable to embed some data due to incorrect token count.
 - Fix: Crash when creating a new AI embedding database.
 - Fix: Updated token conversion to import more accurate data into AI database.
