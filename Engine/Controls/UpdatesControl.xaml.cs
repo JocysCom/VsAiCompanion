@@ -32,7 +32,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				control.RemoveTask += UpdatesPanel_RemoveTask;
 				MainTabItem.Content = control;
 			}
-			if (!InitHelper.IsDebug)
+			if (InitHelper.IsDebug)
 			{
 				var pd = new UpdateUserControl();
 				var pdUs = Global.AppSettings.PandocUpdateSettings;
