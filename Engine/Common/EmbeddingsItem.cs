@@ -101,10 +101,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public int Skip { get => _Skip; set => SetProperty(ref _Skip, value); }
 		int _Skip;
 
-		[DefaultValue(4)]
+		[DefaultValue(16)]
 		public int Take { get => _Take; set => SetProperty(ref _Take, value); }
 		int _Take;
 
+		/// <summary>
+		/// TODO: some min size or ~25% of the maximum input tokens.
+		/// </summary>
 		[DefaultValue(32768)]
 		public int MaxTokens { get => _MaxTokens; set => SetProperty(ref _MaxTokens, value); }
 		int _MaxTokens;
