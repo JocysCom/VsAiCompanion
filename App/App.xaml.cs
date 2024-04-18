@@ -197,9 +197,15 @@ namespace JocysCom.VS.AiCompanion
 			// Create an instance of the MainWindow from the referenced library
 			// Set it as the main window and show it
 			MainWindow = window;
+			Global.OnMainControlLoaded += Global_OnMainControlLoaded;
 			TrayManager.ProcessGetCommandLineArgs();
 			Global.Tasks.Items.ListChanged += Items_ListChanged;
 			_ = UpdateTrayMenu();
+		}
+
+		private void Global_OnMainControlLoaded(object sender, EventArgs e)
+		{
+			CloseSplashScreen();
 		}
 
 		#region Splash Screen
@@ -260,7 +266,6 @@ namespace JocysCom.VS.AiCompanion
 					_splashThread.Start();
 				}
 				LoadMainWindow();
-				CloseSplashScreen();
 			}
 			catch (Exception ex)
 			{

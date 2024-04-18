@@ -233,6 +233,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Events;
 
+		public static event EventHandler OnMainControlLoaded;
+
 		public static event EventHandler OnSaveSettings;
 		public static event EventHandler OnFilesUpdaded;
 		public static event EventHandler OnFineTuningJobCreated;
@@ -244,6 +246,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler OnAiModelsUpdated;
 		public static event EventHandler OnListsUpdated;
 		public static event EventHandler OnEmbeddingsUpdated;
+
+		public static void RaiseOnLoaded()
+			=> _ = Helper._Delay(OnMainControlLoaded, null, new[] { null, EventArgs.Empty });
 
 		public static void RaiseOnSaveSettings()
 			=> _ = Helper._Delay(OnSaveSettings, null, new[] { null, EventArgs.Empty });

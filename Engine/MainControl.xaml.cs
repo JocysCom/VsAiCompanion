@@ -59,17 +59,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.SaveSettings();
 		}
 
-		private void MainWindowPanel_Unloaded(object sender, RoutedEventArgs e)
+		private void This_Unloaded(object sender, RoutedEventArgs e)
 		{
 		}
 
-		private void MainWindowPanel_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			InfoPanel.RightIcon.MouseDoubleClick += RightIcon_MouseDoubleClick;
 			if (ControlsHelper.AllowLoad(this))
 			{
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TemplatesPanel;
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksPanel;
+				Global.RaiseOnLoaded();
 			}
 		}
 
@@ -87,6 +90,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private async void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			if (e.AddedItems.Count > 0)
 			{
 				// Workaround: Make ChatPanel visible, which will trigger rendering and freezing XAML UI for moment.

@@ -13,10 +13,10 @@
 	d:DesignHeight="700"
 	d:DesignWidth="800"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-	Loaded="MainWindowPanel_Loaded"
+	Loaded="This_Loaded"
 	RenderOptions.BitmapScalingMode="HighQuality"
 	TextOptions.TextFormattingMode="Display"
-	Unloaded="MainWindowPanel_Unloaded"
+	Unloaded="This_Unloaded"
 	UseLayoutRounding="True"
 	mc:Ignorable="d">
 	<UserControl.Resources>
