@@ -32,13 +32,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				control.RemoveTask += UpdatesPanel_RemoveTask;
 				MainTabItem.Content = control;
 			}
-			var pd = new UpdateUserControl();
-			var pdUs = Global.AppSettings.PandocUpdateSettings;
-			UpdateMissingPandocDefaults(pdUs);
-			pd.Settings = pdUs;
-			pd.AddTask += UpdatesPanel_AddTask;
-			pd.RemoveTask += UpdatesPanel_RemoveTask;
-			PandocTabItem.Content = pd;
+			if (!InitHelper.IsDebug)
+			{
+				var pd = new UpdateUserControl();
+				var pdUs = Global.AppSettings.PandocUpdateSettings;
+				UpdateMissingPandocDefaults(pdUs);
+				pd.Settings = pdUs;
+				pd.AddTask += UpdatesPanel_AddTask;
+				pd.RemoveTask += UpdatesPanel_RemoveTask;
+				PandocTabItem.Content = pd;
+			}
 		}
 
 		public void UpdateMissingPandocDefaults(UpdateSettings us)
