@@ -370,10 +370,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				// Experimental.
 				// AI must decide what to search for, not to use by the last user message.
-				var groupName = item.EmbeddingGroupName;
-				var groupFlag = item.EmbeddingGroupFlag;
+				var embeddingName = item.EmbeddingName;
+				var embeddingGroupName = item.EmbeddingGroupName;
+				var embeddingGroupFlag = item.EmbeddingGroupFlag;
 				var embeddingItem = Global.Embeddings.Items
-					.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
+					.FirstOrDefault(x => x.Name == embeddingName);
 				if (embeddingItem != null)
 				{
 					var eh = new EmbeddingHelper();
@@ -398,7 +399,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						}
 						if (!string.IsNullOrEmpty(embeddingText))
 						{
-							var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem, groupFlag, embeddingText, embeddingItem.Skip, embeddingItem.Take);
+							var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem, embeddingGroupFlag, embeddingText, embeddingItem.Skip, embeddingItem.Take);
 							if (!string.IsNullOrEmpty(systemMessage))
 								lastSystemMessage.content += "\r\n\r\n" + systemMessage;
 						}

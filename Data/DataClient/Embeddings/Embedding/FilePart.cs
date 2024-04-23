@@ -72,6 +72,9 @@ namespace Embeddings.Embedding
 		/// <summary>UTC date and time when the part was last modified.</summary>
 		public DateTime Modified { get; set; }
 
+		/// <summary>Time stamp in UTC as 100-nanosecond intervals from 0001-01-01 00:00:00Z.</summary>
+		public long Timestamp { get; set; }
+
 		#region Clone and Copy Methods
 
 		/// <summary>Clone to new object.</summary>

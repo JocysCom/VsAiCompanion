@@ -16,6 +16,7 @@
     [IsEnabled]      INT DEFAULT 1 NOT NULL,
     [Created]        TEXT DEFAULT (datetime('now')) NOT NULL,
     [Modified]       TEXT DEFAULT (datetime('now')) NOT NULL,
+    [Timestamp]      INTEGER DEFAULT 0 NOT NULL,
     FOREIGN KEY (FileId) REFERENCES [File] (Id)
 );
 

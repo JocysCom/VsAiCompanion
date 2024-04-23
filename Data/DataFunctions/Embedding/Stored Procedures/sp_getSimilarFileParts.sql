@@ -18,8 +18,8 @@ BEGIN
         INNER JOIN
             [File] AS f WITH (NOLOCK) ON f.Id = fp.FileId
         WHERE
-            fp.GroupName = @groupName AND
-            (@groupFlag = 0 OR (fp.GroupFlag & @groupFlag) > 0)
+            (@groupName = '' OR @groupName = fp.GroupName) AND
+            (@groupFlag = 0 OR (@groupFlag & fp.GroupFlag) > 0)
     )
     SELECT *
     FROM RankedFiles

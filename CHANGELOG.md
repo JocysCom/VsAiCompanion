@@ -1,4 +1,9 @@
-2024-04-18 v1.9.32
+2024-04-23 v1.9.34
+
+- Update: Use the name of the embedding to select the AI database.
+- New: Timestamp column added to the Embedding database for synchronizations.
+
+- 2024-04-18 v1.9.32
 
 - Fix: Combo-boxes not updating when `Lists` are updated.
 - Fix: Unable to embed some data due to incorrect token count.

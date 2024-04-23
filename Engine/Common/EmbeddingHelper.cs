@@ -74,6 +74,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Add new file.
 				file = new Embeddings.Embedding.File();
 				db.Files.Add(file);
+				file.Timestamp = DateTime.UtcNow.Ticks;
 				file.Name = fi.Name;
 				file.Url = fi.FullName;
 				file.GroupName = embeddingGroupName;
@@ -126,6 +127,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var ipart = parts[key];
 				var vectors = results[key];
 				var part = new Embeddings.Embedding.FilePart();
+				part.Timestamp = DateTime.UtcNow.Ticks;
 				part.Embedding = SqlInitHelper.VectorToBinary(vectors);
 				part.GroupName = embeddingGroupName;
 				part.GroupFlag = (long)embeddingGroupFlag;

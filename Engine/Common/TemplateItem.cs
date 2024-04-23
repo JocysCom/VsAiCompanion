@@ -276,6 +276,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		bool _UseEmbeddings;
 
 		[DefaultValue("")]
+		public string EmbeddingName { get => _EmbeddingName; set => SetProperty(ref _EmbeddingName, value); }
+		string _EmbeddingName;
+
+		[DefaultValue("")]
 		public string EmbeddingGroupName { get => _EmbeddingGroupName; set => SetProperty(ref _EmbeddingGroupName, value); }
 		string _EmbeddingGroupName;
 

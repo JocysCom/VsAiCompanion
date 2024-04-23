@@ -83,6 +83,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			success &= CreateTable(nameof(File), connection);
 			success &= CreateTable(nameof(FilePart), connection);
 			success &= CreateTable(nameof(Embeddings.Embedding.Group), connection);
+			success &= RunScript("Update_1", connection, isPortable);
 			if (!isPortable)
 			{
 				success &= CreateProcedure("sp_getMostSimilarFiles", connection);
@@ -146,7 +147,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return exists;
 		}
 
-		public static bool RunScript(string name, DbConnection connection)
+		public static bool RunScript(string name, DbConnection connection, bool ignoreError = false)
 		{
 			var isPortable = IsPortable(connection.ConnectionString);
 			var dbType = isPortable
@@ -162,7 +163,15 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				if (string.IsNullOrWhiteSpace(commandText))
 					continue;
 				var command = NewCommand(commandText, connection);
-				command.ExecuteNonQuery();
+				try
+				{
+					command.ExecuteNonQuery();
+				}
+				catch (Exception)
+				{
+					if (!ignoreError)
+						throw;
+				}
 			}
 			return true;
 		}
@@ -368,8 +377,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 					fp.Embedding
                 FROM FilePart AS fp
                 JOIN File AS f ON f.Id = fp.FileId
-                WHERE f.GroupName = @GroupName
-                AND (@GroupFlag = 0 OR (fp.GroupFlag & @GroupFlag) > 0)
+                WHERE (@GroupName = '' OR @GroupName = f.GroupName)
+                AND (@GroupFlag = 0 OR (@GroupFlag & fp.GroupFlag) > 0)
                 AND fp.IsEnabled = 1
                 AND f.IsEnabled = 1";
 			var connection = NewConnection(connectionString);

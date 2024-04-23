@@ -11,6 +11,7 @@
     [IsEnabled] BIT              CONSTRAINT [DF_File_IsEnabled] DEFAULT ((1)) NOT NULL,
     [Modified]  DATETIME         CONSTRAINT [DF_File_Modified] DEFAULT (getdate()) NOT NULL,
     [Created]   DATETIME         CONSTRAINT [DF_File_Created] DEFAULT (getdate()) NOT NULL,
+    [Timestamp] BIGINT           CONSTRAINT [DF_File_Timestamp] DEFAULT (0) NOT NULL,
     CONSTRAINT [PK_File] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -69,3 +70,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique file
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'A bitwise operation will be used to include groups by their group flag.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'File', @level2type = N'COLUMN', @level2name = N'GroupFlag';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Time stamp in UTC as 100-nanosecond intervals from 0001-01-01 00:00:00Z.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'File', @level2type = N'COLUMN', @level2name = N'Timestamp';

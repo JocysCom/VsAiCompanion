@@ -14,7 +14,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -49,14 +48,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateSpellCheck();
 			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
-			UpdateMailAccounts();
+			// Lists Dropdowns.
 			Global.Lists.Items.ListChanged += Items_ListChanged;
-			UpdateContextListNames();
+			UpdateListNames();
+			// Embeddings dropdown.
+			Global.Embeddings.Items.ListChanged += Embeddings_Items_ListChanged;
+			UpdateEmbeddingNames();
+			// Mails dropdown.
 			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
+			UpdateMailAccounts();
+			// Show debug features.
 			MonitorInboxCheckBox.Visibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
 		}
+
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
@@ -67,19 +73,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				e.ListChangedType == ListChangedType.ItemDeleted)
 				update = true;
 			if (update)
-				_ = Helper.Delay(UpdateContextListNames);
-		}
-
-		private void MailAccounts_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			var update = false;
-			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(MailAccount.Name))
-				update = true;
-			if (e.ListChangedType == ListChangedType.ItemAdded ||
-				e.ListChangedType == ListChangedType.ItemDeleted)
-				update = true;
-			if (update)
-				_ = Helper.Delay(UpdateMailAccounts);
+				_ = Helper.Delay(UpdateListNames);
 		}
 
 		private void Global_PromptingUpdated(object sender, EventArgs e)
@@ -168,7 +162,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SpellCheck.SetIsEnabled(box, isEnabled);
 		}
 
-		private async void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		private async void TextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 		{
 			var box = (TextBox)sender;
 			if (box.SpellCheck.IsEnabled)
@@ -243,7 +237,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public ObservableCollection<string> ProfileListNames { get; set; } = new ObservableCollection<string>();
 		public ObservableCollection<string> RoleListNames { get; set; } = new ObservableCollection<string>();
 
-		private void UpdateContextListNames()
+		private void UpdateListNames()
 		{
 			// Update ContextListNames
 			var names = GetListNames("Context", "Company", "Department");
@@ -273,11 +267,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return items;
 		}
 
-
-		public Dictionary<EmbeddingGroupFlag, string> FilePartGroups
-			=> ClassLibrary.Runtime.Attributes.GetDictionary(
-				(EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag)));
-
 		public BindingList<EnumComboBox.CheckBoxViewModel> AttachContexts
 		{
 			get
@@ -289,19 +278,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set => _AttachContexts = value;
 		}
 		BindingList<EnumComboBox.CheckBoxViewModel> _AttachContexts;
-
-		public BindingList<EnumComboBox.CheckBoxViewModel> EmbeddingGroupFlags
-		{
-			get
-			{
-				if (_EmbeddingGroupFlags == null)
-					_EmbeddingGroupFlags = EnumComboBox.GetItemSource<EmbeddingGroupFlag>();
-				EmbeddingHelper.ApplyDatabase(Item?.UseEmbeddings == true ? Item?.EmbeddingGroupName : null, _EmbeddingGroupFlags);
-				return _EmbeddingGroupFlags;
-			}
-			set => _EmbeddingGroupFlags = value;
-		}
-		BindingList<EnumComboBox.CheckBoxViewModel> _EmbeddingGroupFlags;
 
 		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
 		{
@@ -400,11 +376,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				default:
 					break;
 			}
-		}
-
-		public void EmbeddingGroupFlags_OnPropertyChanged()
-		{
-			OnPropertyChanged(nameof(EmbeddingGroupFlags));
 		}
 
 		#region ■ Properties
@@ -567,7 +538,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CodeButton_Click(object sender, RoutedEventArgs e)
 		{
-			var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+			var isCtrlDown =
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);
 			var button = (Button)sender;
 			var language = button.Tag as string;
 			if (language == "Custom")
@@ -596,17 +569,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? caretIndex + prefix.Length
 				: caretIndex + text.Length;
 			AppHelper.SetCaret(box, newIndex);
-		}
-
-		public ObservableCollection<string> MailAccounts { get; set; } = new ObservableCollection<string>();
-
-		public void UpdateMailAccounts()
-		{
-			var accounts = Global.AppSettings.MailAccounts.Select(x => x.Name).ToList();
-			if (!accounts.Contains(""))
-				accounts.Insert(0, "");
-			CollectionsHelper.Synchronize(accounts, MailAccounts);
-			OnPropertyChanged(nameof(MailAccounts));
 		}
 
 		#region PanelSettings
@@ -654,6 +616,82 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			Global.AppSettings.IsSpellCheckEnabled = false;
 		}
+
+		#region Embeddings
+
+		public ObservableCollection<string> EmbeddingNames { get; set; } = new ObservableCollection<string>();
+
+		public void UpdateEmbeddingNames()
+		{
+			var names = Global.Embeddings.Items.Select(x => x.Name).ToList();
+			if (!names.Contains(""))
+				names.Insert(0, "");
+			CollectionsHelper.Synchronize(names, EmbeddingNames);
+			OnPropertyChanged(nameof(EmbeddingNames));
+		}
+
+		public BindingList<EnumComboBox.CheckBoxViewModel> EmbeddingGroupFlags
+		{
+			get
+			{
+				if (_EmbeddingGroupFlags == null)
+					_EmbeddingGroupFlags = EnumComboBox.GetItemSource<EmbeddingGroupFlag>();
+				EmbeddingHelper.ApplyDatabase(Item?.UseEmbeddings == true ? Item?.EmbeddingGroupName : null, _EmbeddingGroupFlags);
+				return _EmbeddingGroupFlags;
+			}
+			set => _EmbeddingGroupFlags = value;
+		}
+		BindingList<EnumComboBox.CheckBoxViewModel> _EmbeddingGroupFlags;
+
+		private void Embeddings_Items_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			var update = false;
+			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(TemplateItem.EmbeddingName))
+				update = true;
+			if (e.ListChangedType == ListChangedType.ItemAdded ||
+				e.ListChangedType == ListChangedType.ItemDeleted)
+				update = true;
+			if (update)
+				_ = Helper.Delay(UpdateEmbeddingNames);
+		}
+
+		public Dictionary<EmbeddingGroupFlag, string> FilePartGroups
+			=> ClassLibrary.Runtime.Attributes.GetDictionary(
+				(EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag)));
+
+		public void EmbeddingGroupFlags_OnPropertyChanged()
+		{
+			OnPropertyChanged(nameof(EmbeddingGroupFlags));
+		}
+
+		#endregion
+
+		#region Mail
+
+		public ObservableCollection<string> MailAccounts { get; set; } = new ObservableCollection<string>();
+
+		public void UpdateMailAccounts()
+		{
+			var names = Global.AppSettings.MailAccounts.Select(x => x.Name).ToList();
+			if (!names.Contains(""))
+				names.Insert(0, "");
+			CollectionsHelper.Synchronize(names, MailAccounts);
+			OnPropertyChanged(nameof(MailAccounts));
+		}
+
+		private void MailAccounts_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			var update = false;
+			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(MailAccount.Name))
+				update = true;
+			if (e.ListChangedType == ListChangedType.ItemAdded ||
+				e.ListChangedType == ListChangedType.ItemDeleted)
+				update = true;
+			if (update)
+				_ = Helper.Delay(UpdateMailAccounts);
+		}
+
+		#endregion
 
 		#region ■ INotifyPropertyChanged
 

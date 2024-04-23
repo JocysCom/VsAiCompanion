@@ -10,7 +10,8 @@
     [State]     INT DEFAULT 0 NOT NULL,
     [IsEnabled] INT DEFAULT 1 NOT NULL,
     [Modified]  TEXT DEFAULT (datetime('now')) NOT NULL,
-    [Created]   TEXT DEFAULT (datetime('now')) NOT NULL
+    [Created]   TEXT DEFAULT (datetime('now')) NOT NULL,
+    [Timestamp] INTEGER DEFAULT 0 NOT NULL
 );
 
 CREATE INDEX IX_File_HashType_Hash ON [File]([HashType], [Hash]);

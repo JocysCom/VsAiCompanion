@@ -511,6 +511,13 @@
 							Margin="0"
 							Content="Use Embeddings"
 							IsChecked="{Binding UseEmbeddings}" />
+						<ComboBox
+							Name="EmbeddingNameComboBox"
+							MinWidth="128"
+							Margin="0,3,0,3"
+							VerticalAlignment="Top"
+							ItemsSource="{Binding EmbeddingNames, ElementName=This}"
+							SelectedValue="{Binding EmbeddingName}" />
 						<Label x:Name="EmbeddingsLabel" Margin="3" Content="Group Name" />
 
 						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName}" />

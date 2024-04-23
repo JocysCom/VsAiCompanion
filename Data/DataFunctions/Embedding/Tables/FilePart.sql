@@ -16,6 +16,7 @@
     [IsEnabled]      BIT              CONSTRAINT [DF_FilePart_IsEnabled] DEFAULT ((1)) NOT NULL,
     [Created]        DATETIME         CONSTRAINT [DF_FilePart_Created] DEFAULT (getdate()) NOT NULL,
     [Modified]       DATETIME         CONSTRAINT [DF_FilePart_Modified] DEFAULT (getdate()) NOT NULL,
+    [Timestamp]      BIGINT           CONSTRAINT [DF_FilePart_Timestamp] DEFAULT (0) NOT NULL,
     CONSTRAINT [PK_FilePart] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_FilePart_File] FOREIGN KEY ([FileId]) REFERENCES [Embedding].[File] ([Id])
 );
@@ -108,3 +109,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Name of the
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'File Part size in tokens.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'FilePart', @level2type = N'COLUMN', @level2name = N'TextTokens';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Time stamp in UTC as 100-nanosecond intervals from 0001-01-01 00:00:00Z.', @level0type = N'SCHEMA', @level0name = N'Embedding', @level1type = N'TABLE', @level1name = N'FilePart', @level2type = N'COLUMN', @level2name = N'Timestamp';

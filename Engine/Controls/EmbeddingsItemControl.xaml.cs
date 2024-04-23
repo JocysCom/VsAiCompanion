@@ -566,6 +566,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (item == null)
 				{
 					item = new Embeddings.Embedding.Group();
+					item.Timestamp = DateTime.UtcNow.Ticks;
 					item.Name = Item.EmbeddingGroupName;
 					item.Flag = (long)Item.EmbeddingGroupFlag;
 					db.Groups.Add(item);

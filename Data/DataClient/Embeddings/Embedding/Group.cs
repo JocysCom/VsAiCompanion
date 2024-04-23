@@ -31,5 +31,8 @@ namespace Embeddings.Embedding
 		[StringLength(128)]
 		public string FlagName { get; set; }
 
+		/// <summary>Time stamp in UTC as 100-nanosecond intervals from 0001-01-01 00:00:00Z.</summary>
+		public long Timestamp { get; set; }
+
 	}
 }
