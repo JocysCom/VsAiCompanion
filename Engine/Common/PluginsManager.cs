@@ -187,16 +187,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 					methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams);
 				});
 			}
+			else if (classInstance is Search search)
+			{
+				await Global.MainControl.Dispatcher.Invoke(async () =>
+				{
+					var eh = new EmbeddingHelper();
+					eh.Item = item;
+					search.SearchEmbeddingsCallback = eh.SearchEmbeddingsToSystemMessage;
+					methodResult = await InvokeMethod(methodInfo, search, invokeParams);
+					search.SearchEmbeddingsCallback = null;
+				});
+			}
 			else if (classInstance is Mail mail)
 			{
-				// Make sure that the list have the name of the task.
-				// If task is renamed then relevant lists must be renamed too.
 				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
 					item.UpdateMailClientAccount();
 					mail.SendCallback = item.AiMailClient.Send;
-					var account = item.AiMailClient.Account;
 					methodResult = await InvokeMethod(methodInfo, mail, invokeParams);
+					mail.SendCallback = null;
 				});
 			}
 			else if (classInstance is Lists lists)

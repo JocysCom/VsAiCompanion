@@ -1,10 +1,12 @@
 ﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -13,6 +15,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public partial class Search
 	{
+
+		#region Windows Index
+
 		/// <summary>
 		/// Database path. Set by external program.
 		/// </summary>
@@ -333,6 +338,34 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 			return query;
 		}
+
+		#endregion
+
+		#region Embeddings
+
+
+		/// <summary>
+		/// Will be used by plugins manager and called by AI.
+		/// </summary>
+		public Func<string, int, int, Task<OperationResult<string>>> SearchEmbeddingsCallback { get; set; }
+
+		/// <summary>
+		/// Search the embedding database for relevant content in files and documents.
+		/// </summary>
+		/// <param name="message">Search query.</param>
+		/// <param name="skip">Number of records to skip. Recommended: 0</param>
+		/// <param name="take">Number of records to take. Recommended: 4</param>
+		[RiskLevel(RiskLevel.Low)]
+		public async Task<OperationResult<string>> SearchEmbeddings(
+			string message,
+			int skip,
+			int take
+			)
+		{
+			return await SearchEmbeddingsCallback(message, skip, take);
+		}
+
+		#endregion
 
 	}
 

@@ -24,6 +24,9 @@ using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using System.ComponentModel;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Shared.JocysCom;
+
+
 
 
 #if NETFRAMEWORK
@@ -36,6 +39,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class EmbeddingHelper
 	{
+
+		public TemplateItem Item { get; set; }
 
 		public static async Task<ProgressStatus> UpdateEmbedding(
 			EmbeddingsContext db,
@@ -214,6 +219,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 		class TokenizedTextData
 		{
 			public string[] Tokens { get; set; }
+		}
+
+		public async Task<OperationResult<string>> SearchEmbeddingsToSystemMessage(string message, int skip, int take)
+		{
+			try
+			{
+				var embeddingItem = Global.Embeddings.Items.FirstOrDefault(x => x.Name == Item.EmbeddingName);
+				if (embeddingItem == null)
+					return new OperationResult<string>($"Embedding '{Item.EmbeddingName}' settings not found!");
+				var result = await SearchEmbeddingsToSystemMessage(embeddingItem, Item.EmbeddingGroupFlag, message, skip, take);
+				return new OperationResult<string>(result);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<string>(new Exception(ex.Message));
+			}
 		}
 
 		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item, EmbeddingGroupFlag groupFlag, string message, int skip, int take)
