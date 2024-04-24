@@ -134,7 +134,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (!item.PluginsEnabled)
 				return null;
-			if (!AllowPluginFunction(function.name, item.MaxRiskLevel))
+			var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)(DomainHelper.GetUserMaxRiskLevel() ?? RiskLevel.Critical));
+			if (!AllowPluginFunction(function.name, maxRiskLevel))
 				return null;
 			System.Reflection.MethodInfo methodInfo;
 			if (!PluginFunctions.TryGetValue(function.name, out methodInfo))
@@ -332,7 +333,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var ToolDefinitions = new List<ChatCompletionsFunctionToolDefinition>();
 			foreach (var kv in PluginFunctions)
 			{
-				if (!AllowPluginFunction(kv.Key, item.MaxRiskLevel))
+				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)(DomainHelper.GetUserMaxRiskLevel() ?? RiskLevel.Critical));
+				if (!AllowPluginFunction(kv.Key, maxRiskLevel))
 					continue;
 				// Get Method Info
 				var mi = kv.Value;
@@ -566,7 +568,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var CompletionTools = new List<chat_completion_tool>();
 			foreach (var kv in PluginFunctions)
 			{
-				if (!AllowPluginFunction(kv.Key, item.MaxRiskLevel))
+				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)(DomainHelper.GetUserMaxRiskLevel() ?? RiskLevel.Critical));
+				if (!AllowPluginFunction(kv.Key, maxRiskLevel))
 					continue;
 				var mi = kv.Value;
 				var summaryText = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);

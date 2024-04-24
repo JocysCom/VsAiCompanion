@@ -22,6 +22,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			Global.AppSettings.Plugins.ListChanged += Plugins_ListChanged;
 			UpdateOnListChanged();
+
+			var maxRiskLevel = DomainHelper.GetUserMaxRiskLevel();
+			if (maxRiskLevel != null)
+			{
+				DomainRiskLevelLabel.Text = $"Allowed max risk level: {maxRiskLevel}";
+				DomainRiskLevelLabel.Visibility = System.Windows.Visibility.Visible;
+			}
 		}
 
 		private async void Plugins_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)

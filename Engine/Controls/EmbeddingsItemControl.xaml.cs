@@ -136,7 +136,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void EmbeddingGroupFlags_OnPropertyChanged()
 		{
-			OnPropertyChanged(nameof(EmbeddingGroupFlags));
+			if (_IsLoaded)
+				OnPropertyChanged(nameof(EmbeddingGroupFlags));
 		}
 
 		System.Windows.Forms.FolderBrowserDialog _FolderBrowser = new System.Windows.Forms.FolderBrowserDialog();
@@ -508,7 +509,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						dic.Add(new KeyValue<EmbeddingGroupFlag, string>(value, Attributes.GetDescription(value)));
 					_EmbeddingGroupFlags = dic;
 				}
-				EmbeddingHelper.ApplyDatabase(Item?.EmbeddingGroupName, _EmbeddingGroupFlags);
+				if (Item?.IsEnabled == true)
+					EmbeddingHelper.ApplyDatabase(Item?.EmbeddingGroupName, _EmbeddingGroupFlags);
 				return _EmbeddingGroupFlags;
 			}
 			set => _EmbeddingGroupFlags = value;
@@ -642,5 +644,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private bool _IsLoaded;
+
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			_IsLoaded = true;
+
+		}
+
+		private void This_Unloaded(object sender, RoutedEventArgs e)
+		{
+			_IsLoaded = false;
+		}
 	}
 }

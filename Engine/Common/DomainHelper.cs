@@ -23,22 +23,65 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return isDomainUser;
 		}
 
-		/// <summary>
-		/// Get risk groups.
-		/// </summary>
-		public static string[] GetDomainRiskGroups()
+		private static RiskLevel _UserMaxRiskLevel;
+		private static bool RiskLevelAcquired;
+		private static object _RiskLevelLock = new object();
+
+		public static RiskLevel? GetUserMaxRiskLevel()
 		{
-			var riskGroups = new List<string>();
-			var allGroups = JocysCom.ClassLibrary.Security.PermissionHelper.GetAllGroups(System.DirectoryServices.AccountManagement.ContextType.Domain);
-			var specificGroups = ((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Select(x => $"AI_{nameof(RiskLevel)}_{x}").ToList();
-			foreach (var groupName in specificGroups)
+			lock (_RiskLevelLock)
 			{
-				var exists = allGroups.Any(g => g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase));
-				if (exists)
-					riskGroups.Add(groupName);
+				if (RiskLevelAcquired)
+					return _UserMaxRiskLevel;
+				// If app runs on domain then...
+				if (IsApplicationRunningOnDomain())
+				{
+					var domainRiskGroups = GetDomainRiskGroups();
+					// If risk groups found then...
+					if (domainRiskGroups.Values.Any(x => x))
+						_UserMaxRiskLevel = GetUserRiskGroups()
+							.Where(x => x.Value).Max(x => x.Key);
+				}
+				RiskLevelAcquired = true;
+				return _UserMaxRiskLevel;
 			}
-			return riskGroups.Distinct().ToArray();
 		}
+
+		/// <summary>
+		/// Get risk groups available on domain.
+		/// </summary>
+		public static Dictionary<RiskLevel, bool> GetDomainRiskGroups()
+		{
+			var allGroups = JocysCom.ClassLibrary.Security.PermissionHelper.GetAllGroups(ContextType.Domain);
+			var levels = (RiskLevel[])Enum.GetValues(typeof(RiskLevel));
+			var dic = new Dictionary<RiskLevel, bool>();
+			foreach (var level in levels)
+			{
+				var groupName = $"AI_{nameof(RiskLevel)}_{level}";
+				var exists = allGroups.Any(g => g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase));
+				dic.Add(level, exists);
+			}
+			return dic;
+		}
+
+		/// <summary>
+		/// Get risk groups available on domain.
+		/// </summary>
+		public static Dictionary<RiskLevel, bool> GetUserRiskGroups()
+		{
+			var user = WindowsIdentity.GetCurrent().User;
+			var allGroups = GetUserGroupMemberships(user);
+			var levels = (RiskLevel[])Enum.GetValues(typeof(RiskLevel));
+			var dic = new Dictionary<RiskLevel, bool>();
+			foreach (var level in levels)
+			{
+				var groupName = $"AI_{nameof(RiskLevel)}_{level}";
+				var exists = allGroups.Any(g => g.Equals(groupName, StringComparison.OrdinalIgnoreCase));
+				dic.Add(level, exists);
+			}
+			return dic;
+		}
+
 
 		/// <summary>
 		/// Checks if specified domain groups are available in the Active Directory.

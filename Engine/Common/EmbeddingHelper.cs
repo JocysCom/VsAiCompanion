@@ -239,7 +239,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item, EmbeddingGroupFlag groupFlag, string message, int skip, int take)
 		{
-			await SearchEmbeddings(item, groupFlag, message, item.Skip, item.Take);
+			await SearchEmbeddings(item, groupFlag, message, skip, take);
 			var systemMessage = "";
 			if (FileParts == null || FileParts.Count == 0)
 				return systemMessage;
