@@ -119,7 +119,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					value.PropertyChanged += _Item_PropertyChanged;
 				}
 				IconPanel.BindData(value);
-				LogTextBox.Clear();
+				LogPanel.LogTextBox.Clear();
 				OnPropertyChanged(nameof(Item));
 			}
 		}
@@ -249,16 +249,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsOnCooldown(sender))
 				return;
 			MainTabControl.SelectedItem = LogTabPage;
-			LogTextBox.Clear();
+			LogPanel.LogTextBox.Clear();
 			var eh = new EmbeddingHelper();
 			var systemMessage = await eh.SearchEmbeddingsToSystemMessage(Item, Item.EmbeddingGroupFlag, Item.Message, Item.Skip, Item.Take);
 			if (eh.FileParts == null)
 			{
-				LogTextBox.Text += "\r\nSearch returned no results.";
+				LogPanel.LogTextBox.Text += "\r\nSearch returned no results.";
 				return;
 			}
-			LogTextBox.Text += eh.Log;
-			LogTextBox.Text += "\r\n\r\n" + systemMessage;
+			LogPanel.LogTextBox.Text += eh.Log;
+			LogPanel.LogTextBox.Text += "\r\n\r\n" + systemMessage;
 		}
 
 		FileProcessor _Scanner;
@@ -333,7 +333,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				catch (System.Exception ex)
 				{
-					LogTextBox.Text = ex.ToString();
+					LogPanel.LogTextBox.Text = ex.ToString();
 				}
 			}));
 			Dispatcher.Invoke(new Action(() =>
@@ -553,7 +553,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void ApplyEditChanges()
 		{
-			LogTextBox.Clear();
+			LogPanel.LogTextBox.Clear();
 			try
 			{
 				var target = AssemblyInfo.ExpandPath(Item.Target);
@@ -580,7 +580,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			catch (Exception ex)
 			{
-				LogTextBox.Text = ex.ToString();
+				LogPanel.LogTextBox.Text = ex.ToString();
 			}
 			GroupFlagNameEditMode(false);
 			_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);

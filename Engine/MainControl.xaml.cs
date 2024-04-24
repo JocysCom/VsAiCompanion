@@ -138,7 +138,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var strings = ExceptionsToDisplay
 						.Select(x => $"---- {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} {new string('-', 64)}\r\n{ex}\r\b")
 						.ToList();
-					ErrorsLogTextBox.Text = string.Join("\r\n", strings);
+					ErrorsLogPanel.LogTextBox.Text = string.Join("\r\n", strings);
 				};
 			});
 		}

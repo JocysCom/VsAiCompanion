@@ -1,0 +1,58 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.LogControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="100"
+	d:DesignWidth="200"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid Name="TemplateListGrid" VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal" />
+		<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+			<Button
+				Name="ClearLogButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="ClearLogButton_Click">
+				<ContentControl Content="{StaticResource Icon_broom}" Focusable="False" />
+			</Button>
+		</StackPanel>
+		<Border Grid.Row="1" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,1,0,0">
+			<TextBox
+				Name="LogTextBox"
+				Grid.Row="1"
+				Margin="0"
+				Padding="6"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				VerticalContentAlignment="Top"
+				x:FieldModifier="public"
+				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+				BorderThickness="0"
+				IsReadOnly="True"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				TextWrapping="Wrap">
+				<TextBox.Resources>
+					<Style TargetType="Border" />
+				</TextBox.Resources>
+			</TextBox>
+		</Border>
+	</Grid>
+</UserControl>

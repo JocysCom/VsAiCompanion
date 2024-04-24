@@ -171,23 +171,7 @@
 						<Label Content="Errors" />
 					</StackPanel>
 				</TabItem.Header>
-				<TextBox
-					Name="ErrorsLogTextBox"
-					Margin="0"
-					Padding="6"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					VerticalContentAlignment="Top"
-					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-					BorderThickness="0"
-					IsReadOnly="True"
-					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					ScrollViewer.VerticalScrollBarVisibility="Auto"
-					TextWrapping="Wrap">
-					<TextBox.Resources>
-						<Style TargetType="Border" />
-					</TextBox.Resources>
-				</TextBox>
+				<controls:LogControl x:Name="ErrorsLogPanel" />
 			</TabItem>
 		</TabControl>
 	</Grid>
