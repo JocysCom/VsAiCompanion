@@ -23,29 +23,33 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return isDomainUser;
 		}
 
-		private static RiskLevel _UserMaxRiskLevel;
-		private static bool RiskLevelAcquired;
 		private static object _RiskLevelLock = new object();
+		private static bool RiskLevelAcquired;
+		private static RiskLevel? _UserMaxRiskLevel;
 
-		public static RiskLevel? GetUserMaxRiskLevel()
+		public static RiskLevel? GetDomainUserMaxRiskLevel()
 		{
 			lock (_RiskLevelLock)
 			{
+				// Getting groups from domain is slow.
+				// Restart the app if permissions changed.
 				if (RiskLevelAcquired)
 					return _UserMaxRiskLevel;
 				// If app runs on domain then...
 				if (IsApplicationRunningOnDomain())
 				{
-					var domainRiskGroups = GetDomainRiskGroups();
 					// If risk groups found then...
+					var domainRiskGroups = GetDomainRiskGroups();
 					if (domainRiskGroups.Values.Any(x => x))
+						// Get user maximum risk level.
 						_UserMaxRiskLevel = GetUserRiskGroups()
 							.Where(x => x.Value).Max(x => x.Key);
 				}
 				RiskLevelAcquired = true;
-				return _UserMaxRiskLevel;
 			}
+			return _UserMaxRiskLevel;
 		}
+
 
 		/// <summary>
 		/// Get risk groups available on domain.

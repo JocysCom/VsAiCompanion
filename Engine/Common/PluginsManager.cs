@@ -134,7 +134,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (!item.PluginsEnabled)
 				return null;
-			var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)(DomainHelper.GetUserMaxRiskLevel() ?? RiskLevel.Critical));
+			var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 			if (!AllowPluginFunction(function.name, maxRiskLevel))
 				return null;
 			System.Reflection.MethodInfo methodInfo;
@@ -333,7 +333,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var ToolDefinitions = new List<ChatCompletionsFunctionToolDefinition>();
 			foreach (var kv in PluginFunctions)
 			{
-				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)(DomainHelper.GetUserMaxRiskLevel() ?? RiskLevel.Critical));
+				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 				if (!AllowPluginFunction(kv.Key, maxRiskLevel))
 					continue;
 				// Get Method Info
@@ -568,7 +568,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var CompletionTools = new List<chat_completion_tool>();
 			foreach (var kv in PluginFunctions)
 			{
-				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)(DomainHelper.GetUserMaxRiskLevel() ?? RiskLevel.Critical));
+				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 				if (!AllowPluginFunction(kv.Key, maxRiskLevel))
 					continue;
 				var mi = kv.Value;

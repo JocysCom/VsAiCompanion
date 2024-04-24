@@ -17,6 +17,8 @@
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
+			<!--  Collection View Source with Grouping  -->
+			<CollectionViewSource x:Key="GroupedData" Source="{Binding CurrentItems, ElementName=This}" />
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid VerticalAlignment="Stretch">
@@ -106,6 +108,7 @@
 				x:FieldModifier="public"
 				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 				ClipToBounds="True"
+				ItemsSource="{Binding Source={StaticResource GroupedData}}"
 				ScrollViewer.CanContentScroll="True">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>

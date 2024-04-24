@@ -134,6 +134,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore, JsonIgnore]
 		public string AssemblyName { get; set; }
 
+		[XmlIgnore, JsonIgnore]
+		public double ControlOpacity
+		{
+			get
+			{
+				return RiskLevel <= AppHelper.GetMaxRiskLevel()
+					? 1.00
+					: 0.50;
+			}
+		}
+
 		#region INotifyPropertyChanged
 
 		// CWE-502: Deserialization of Untrusted Data

@@ -1,9 +1,9 @@
 ﻿using JocysCom.ClassLibrary;
-using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -20,14 +20,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public PluginListControl()
 		{
 			InitializeComponent();
-			var list = new SortableBindingList<PluginItem>();
-			CurrentItems = list;
-			MainItemsControl.ItemsSource = CurrentItems;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			Global.AppSettings.Plugins.ListChanged += Plugins_ListChanged;
-			UpdateOnListChanged();
+			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+		}
 
+		public ObservableCollection<PluginItem> CurrentItems { get; set; } = new ObservableCollection<PluginItem>();
+
+		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AppData.MaxRiskLevel))
+			{
+				var view = (ICollectionView)MainItemsControl.ItemsSource;
+				view.Refresh();
+			}
 		}
 		private async void Plugins_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
@@ -92,8 +99,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				await Helper.Delay(control.UpdateOnListChanged, AppHelper.NavigateDelayMs);
 			}
 		}
-
-		public SortableBindingList<PluginItem> CurrentItems { get; set; }
 
 		private void EnableAllButton_Click(object sender, RoutedEventArgs e)
 		{

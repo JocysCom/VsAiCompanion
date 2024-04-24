@@ -36,6 +36,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool BarAlwaysOnTop { get => _BarAlwaysOnTop; set => SetProperty(ref _BarAlwaysOnTop, value); }
 		private bool _BarAlwaysOnTop;
 
+		[DefaultValue(RiskLevel.Critical)]
+		public RiskLevel MaxRiskLevel { get => _MaxRiskLevel; set => SetProperty(ref _MaxRiskLevel, value); }
+		RiskLevel _MaxRiskLevel;
+
 		[DefaultValue(false)]
 		public bool IsEnterprise { get => _IsEnterprise; set => SetProperty(ref _IsEnterprise, value); }
 		private bool _IsEnterprise;

@@ -12,9 +12,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
-			{
 				return;
-			}
 		}
 
 	}

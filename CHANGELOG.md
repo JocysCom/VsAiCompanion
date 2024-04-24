@@ -1,8 +1,9 @@
-2024-04-24 v1.9.35
+2024-04-24 v1.9.36
 
 - Update: Use the name of the embedding to select the AI database.
 - New: Timestamp column added to the Embedding database for synchronizations.
 - New: Add a plugin function to allow the AI to search the AI embedding database.
+- New: Option to restrict the maximum risk level in the config and in Windows domain groups.
 
 - 2024-04-18 v1.9.32
 

@@ -1,5 +1,8 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,6 +20,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			StartWithWindowsStateBox.ItemsSource = Enum.GetValues(typeof(WindowState));
 			SettingsFolderTextBox.Text = Global.AppData.XmlFile.Directory.FullName;
 			UpdateSpellCheck();
+			var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel();
+			DomainMaxRiskLevel.Visibility = domainMaxRiskLevel == null
+				? Visibility.Collapsed
+				: Visibility.Visible;
+			if (domainMaxRiskLevel != null)
+				DomainMaxRiskLevel.Content = $"Domain max risk level: {domainMaxRiskLevel}";
 		}
 
 		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -202,6 +211,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SettingsSourceManager.ResetEmbeddings();
 
 		}
+
+		public Dictionary<RiskLevel, string> MaxRiskLevels
+		=> ClassLibrary.Runtime.Attributes.GetDictionary(
+			((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new[] { RiskLevel.Unknown }).ToArray());
 
 	}
 

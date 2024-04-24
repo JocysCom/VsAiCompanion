@@ -37,12 +37,6 @@
 					Some data reading functions may provide large data, resulting in higher AI analysis costs.
 					Do not leave AI processing unattended when plugins are enabled.
 				</TextBlock>
-				<TextBlock
-					Name="DomainRiskLevelLabel"
-					Padding="16,12,16,13"
-					Foreground="#800000"
-					TextWrapping="Wrap"
-					Visibility="Collapsed" />
 			</StackPanel>
 		</Border>
 		<TabControl x:Name="MainTabControl" Grid.Row="1" Margin="4,2,4,4">

@@ -578,6 +578,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
 		}
 
+		#region Global Max Risk Level
+
+		public static RiskLevel GetMaxRiskLevel()
+		{
+			// Use max risk level set by all.
+			var maxRiskLevel = Global.AppSettings.MaxRiskLevel;
+			var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel();
+			// If domain max risk level exsits and it is more restrictive then use it.
+			if (domainMaxRiskLevel.HasValue && domainMaxRiskLevel.Value < maxRiskLevel)
+				maxRiskLevel = domainMaxRiskLevel.Value;
+			return maxRiskLevel;
+		}
+
+		#endregion
+
 		#region Dialogs
 
 		public static bool AllowAction(string actionName, params string[] args)
