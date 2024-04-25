@@ -719,6 +719,19 @@
             For properties like dates and size, where partial matching isn't applicable, the method uses SQL expressions to define ranges.
             </remarks>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchEmbeddingsCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchEmbeddings(System.String,System.Int32,System.Int32)">
+            <summary>
+            Search the embedding database for relevant content in files and documents.
+            </summary>
+            <param name="message">Search query.</param>
+            <param name="skip">Number of records to skip. Recommended: 0</param>
+            <param name="take">Number of records to take. Recommended: 4</param>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TTS">
             <summary>
             TTS functions, in combination with Jocys.com TTS Monitor app (Jocys.com/TTS), allow AI to speak and narrate stories or dialogues using text-to-speech voices. Works well with Windows Voice Typing. Enable text-to-speech:

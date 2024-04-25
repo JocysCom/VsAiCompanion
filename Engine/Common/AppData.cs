@@ -207,6 +207,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+
+		#region ■ Options: Developing
+
+		[DefaultValue(true), Description("Enable Form Info (CTRL+SHIFT+RMB)")]
+		public bool EnableShowFormInfo { get => _EnableShowFormInfo; set => SetProperty(ref _EnableShowFormInfo, value); }
+		bool _EnableShowFormInfo;
+
+		#endregion
+
 		/// <summary>
 		/// Remove models without services.
 		/// </summary>

@@ -45,6 +45,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			ControlsHelper.InitInvokeContext();
 			Global.LoadSettings();
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+			InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 			// Get or Set multiple documents.
 			var solutionHelper = new SolutionHelper();
 			Global._SolutionHelper = solutionHelper;
@@ -110,6 +111,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			if (e.PropertyName == nameof(AppData.EnableShowFormInfo))
+				InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 		}
 
 	}
