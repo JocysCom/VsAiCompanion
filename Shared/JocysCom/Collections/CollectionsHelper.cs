@@ -9,6 +9,7 @@ namespace JocysCom.ClassLibrary.Collections
 		/// <summary>
 		/// Synchronize source collection to destination.
 		/// </summary>
+		/// <remarks>Try to use quick sort algorithm by using uniqueSortName/index.</remarks>
 		public static void Synchronize<T>(IList<T> source, IList<T> target, IEqualityComparer<T> comparer = null)
 		{
 			comparer = comparer ?? EqualityComparer<T>.Default;
