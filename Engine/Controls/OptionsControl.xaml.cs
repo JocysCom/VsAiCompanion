@@ -21,11 +21,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SettingsFolderTextBox.Text = Global.AppData.XmlFile.Directory.FullName;
 			UpdateSpellCheck();
 			var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel();
-			DomainMaxRiskLevel.Visibility = domainMaxRiskLevel == null
-				? Visibility.Collapsed
-				: Visibility.Visible;
-			if (domainMaxRiskLevel != null)
-				DomainMaxRiskLevel.Content = $"Domain max risk level: {domainMaxRiskLevel}";
+			DomainMaxRiskLevel.Visibility = DomainHelper.IsApplicationRunningOnDomain()
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			var level = domainMaxRiskLevel?.ToString() ?? "N/A";
+			DomainMaxRiskLevel.Content = $"Domain max risk level: {level}";
 		}
 
 		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

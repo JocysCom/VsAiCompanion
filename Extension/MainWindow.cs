@@ -3,7 +3,6 @@ using JocysCom.VS.AiCompanion.Engine;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using Microsoft.VisualStudio.Shell;
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -44,8 +43,6 @@ namespace JocysCom.VS.AiCompanion.Extension
 			// the object returned by the Content property.
 			ControlsHelper.InitInvokeContext();
 			Global.LoadSettings();
-			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
-			InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 			// Get or Set multiple documents.
 			var solutionHelper = new SolutionHelper();
 			Global._SolutionHelper = solutionHelper;
@@ -107,12 +104,6 @@ namespace JocysCom.VS.AiCompanion.Extension
 			// If the assembly was not found in the specified directory, return null.
 			// This lets the default assembly resolution process continue and .NET runtime will throw FileNotFoundException.
 			return null;
-		}
-
-		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(AppData.EnableShowFormInfo))
-				InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 		}
 
 	}

@@ -50,6 +50,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return _UserMaxRiskLevel;
 		}
 
+		private static Dictionary<RiskLevel, bool> GetLevels()
+		{
+			var dic = ((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new RiskLevel[] { RiskLevel.Unknown })
+				.ToDictionary(x => x, x => false);
+			return dic;
+		}
+
+		private static string GetGroupName(RiskLevel level)
+			=> $"AI_{nameof(RiskLevel)}_{level}";
 
 		/// <summary>
 		/// Get risk groups available on domain.
@@ -57,13 +66,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static Dictionary<RiskLevel, bool> GetDomainRiskGroups()
 		{
 			var allGroups = JocysCom.ClassLibrary.Security.PermissionHelper.GetAllGroups(ContextType.Domain);
-			var levels = (RiskLevel[])Enum.GetValues(typeof(RiskLevel));
-			var dic = new Dictionary<RiskLevel, bool>();
-			foreach (var level in levels)
+			var dic = GetLevels();
+			foreach (var level in dic.Keys)
 			{
-				var groupName = $"AI_{nameof(RiskLevel)}_{level}";
+				var groupName = GetGroupName(level);
 				var exists = allGroups.Any(g => g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase));
-				dic.Add(level, exists);
+				dic[level] = exists;
 			}
 			return dic;
 		}
@@ -75,13 +83,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var user = WindowsIdentity.GetCurrent().User;
 			var allGroups = GetUserGroupMemberships(user);
-			var levels = (RiskLevel[])Enum.GetValues(typeof(RiskLevel));
-			var dic = new Dictionary<RiskLevel, bool>();
-			foreach (var level in levels)
+			var dic = GetLevels();
+			foreach (var level in dic.Keys)
 			{
-				var groupName = $"AI_{nameof(RiskLevel)}_{level}";
+				var groupName = GetGroupName(level);
 				var exists = allGroups.Any(g => g.Equals(groupName, StringComparison.OrdinalIgnoreCase));
-				dic.Add(level, exists);
+				dic[level] = exists;
 			}
 			return dic;
 		}

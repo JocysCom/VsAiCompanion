@@ -106,10 +106,10 @@
 									<CheckBox Name="UseEnterToSendMessageCheckBox" Content="{x:Static locales:Resources.Use_Enter_to_send_the_message}" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								</WrapPanel>
 							</GroupBox>
-							<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Maximum_Risk_Level}">
+							<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Security}">
 								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 									<StackPanel Orientation="Horizontal">
-										<Label VerticalAlignment="Center" Content="Limit risk level to" />
+										<Label VerticalAlignment="Center" Content="Limit app risk level to" />
 										<ComboBox
 											Name="MaximumRiskLevelComboBox"
 											DisplayMemberPath="Value"

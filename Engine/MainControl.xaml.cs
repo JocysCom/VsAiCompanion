@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -51,7 +52,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			// Subscribe to the application-wide Activated and Deactivated events
 			Application.Current.Deactivated += Current_Deactivated;
+
+			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+			InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 		}
+
+
+
+		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AppData.EnableShowFormInfo))
+				InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
+		}
+
 
 		private void Current_Deactivated(object sender, System.EventArgs e)
 		{

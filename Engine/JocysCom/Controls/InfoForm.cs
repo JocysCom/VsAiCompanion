@@ -45,7 +45,7 @@ namespace JocysCom.ClassLibrary.Controls
 			dtControls.Columns.Add(typeColumn);
 			DataRow dr = null;
 			dr = dtControls.NewRow();
-			this.Text = c.Name + "Form Info";
+			Text = c.Name + "Form Info";
 			dr["name"] = c.Name;
 			dr["type"] = c.GetType().ToString();
 			dtControls.Rows.Add(dr);
@@ -66,7 +66,7 @@ namespace JocysCom.ClassLibrary.Controls
 				ControlsDataGridView.SelectionChanged += ControlsDataGridView_SelectionChanged;
 				ControlsDataGridView_SelectionChanged(ControlsDataGridView, new EventArgs());
 			});
-			foreach (Control lbl in this.Controls)
+			foreach (Control lbl in Controls)
 			{
 				if ((lbl) is Label)
 				{
@@ -95,7 +95,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void InfoForm_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Escape)
-				this.Close();
+				Close();
 		}
 
 		public void ControlsDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -185,6 +185,8 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				var hwnd = NativeMethods.WindowFromPoint(e.Location);
 				var other = FromChildHandle(hwnd);
+				if (other is null)
+					return;
 				var relative = other.PointToClient(e.Location);
 				var c2 = other.GetChildAtPoint(relative, GetChildAtPointSkip.None);
 				var c0 = c2 ?? other;

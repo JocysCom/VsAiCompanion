@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JocysCom.VS.AiCompanion.Plugins.TeamsPlugin</name>
+    </assembly>
+    <members>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.Controllers.TeamsController">
+            <summary>
+            Allows to request information and data from Microsoft Teams.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.Controllers.TeamsController.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Allows to request information and data from Microsoft Teams.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.Controllers.TeamsController.ListMeetings">
+            <summary>
+            Get list of meetings.
+            </summary>
+            <returns>The output of request.</returns>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.Controllers.TeamsController.ListMeetingsAuthorized(Microsoft.Identity.Web.ITokenAcquisition)">
+            <summary>
+            Get list of meetings.
+            </summary>
+            <param name="tokenAcquisition"></param>
+            <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
+            <returns>The output of request.</returns>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.Program">
+            <summary>Program</summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.Program.Main(System.String[])">
+            <summary>Main</summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.TeamsPlugin.Program.CreateWebHostBuilder(System.String[])">
+            <summary>Create web host builder</summary>
+        </member>
+    </members>
+</doc>

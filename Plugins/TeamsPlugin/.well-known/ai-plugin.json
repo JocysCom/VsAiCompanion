@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Teams Plugin",
+  "name_for_model": "teams_plugin",
+  "description_for_human": "Read Micorsoft Teams Meeting lists and transcripts",
+  "description_for_model": "This plugin reads Micorsoft Teams Meeting lists and transcripts.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "/swagger/v1/swagger.json"
+  },
+  "logo_url": "/logo.png",
+  "contact_email": "support@jocys.com",
+  "legal_info_url": "/legal"
+}

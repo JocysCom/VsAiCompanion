@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers
+namespace JocysCom.VS.AiCompanion.Plugins.LinkReader
 {
 
 	/// <summary>Program</summary>

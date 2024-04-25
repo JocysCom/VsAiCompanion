@@ -27,13 +27,13 @@
             <returns>The output of request.</returns>
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers.Program">
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.LinkReader.Program">
             <summary>Program</summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers.Program.Main(System.String[])">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.LinkReader.Program.Main(System.String[])">
             <summary>Main</summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.PowerShellExecutor.Controllers.Program.CreateWebHostBuilder(System.String[])">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.LinkReader.Program.CreateWebHostBuilder(System.String[])">
             <summary>Create web host builder</summary>
         </member>
     </members>
