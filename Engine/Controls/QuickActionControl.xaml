@@ -7,6 +7,8 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+	x:Name="This"
 	d:DesignHeight="32"
 	d:DesignWidth="100"
 	Loaded="UserControl_Loaded"
@@ -19,27 +21,17 @@
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
+			<!--  Collection View Source with Grouping  -->
+			<CollectionViewSource x:Key="GroupedData" Source="{Binding FilteredList, ElementName=This}">
+				<CollectionViewSource.SortDescriptions>
+					<scm:SortDescription PropertyName="ListGroupNameSortKey" />
+					<scm:SortDescription PropertyName="Name" />
+				</CollectionViewSource.SortDescriptions>
+				<CollectionViewSource.GroupDescriptions>
+					<PropertyGroupDescription PropertyName="ListGroupName" />
+				</CollectionViewSource.GroupDescriptions>
+			</CollectionViewSource>
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
-			<DataTemplate x:Key="ToolBarButtonTemplate">
-				<Button
-					Margin="0"
-					HorizontalAlignment="Left"
-					Background="Transparent"
-					Click="Button_Click"
-					Style="{StaticResource Button_Default}"
-					ToolTip="{Binding Name}"
-					Visibility="{Binding IsFavorite, Converter={StaticResource _BoolToVisibilityConverter}}">
-					<Button.DataContext>
-						<Binding />
-					</Button.DataContext>
-					<ContentControl>
-						<StackPanel>
-							<Image Focusable="False" Source="{Binding Icon}" />
-							<Label Content="{Binding Name}" Focusable="False" Visibility="Collapsed" />
-						</StackPanel>
-					</ContentControl>
-				</Button>
-			</DataTemplate>
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid VerticalAlignment="Stretch">
@@ -60,8 +52,27 @@
 			<ToolBar
 				x:Name="MyToolBar"
 				Margin="-1,0,0,-1"
+				ItemsSource="{Binding Source={StaticResource GroupedData}}"
 				KeyboardNavigation.TabNavigation="Continue"
-				Style="{StaticResource MainToolBar}" />
+				Style="{StaticResource MainToolBar}">
+				<ToolBar.ItemTemplate>
+					<DataTemplate>
+						<Button
+							Margin="0"
+							HorizontalAlignment="Left"
+							Background="Transparent"
+							Click="Button_Click"
+							Style="{StaticResource Button_Default}"
+							ToolTip="{Binding Name}"
+							Visibility="{Binding IsFavorite, Converter={StaticResource _BoolToVisibilityConverter}}">
+							<StackPanel>
+								<Image Focusable="False" Source="{Binding Icon}" />
+								<Label Content="{Binding Name}" Focusable="False" Visibility="Collapsed" />
+							</StackPanel>
+						</Button>
+					</DataTemplate>
+				</ToolBar.ItemTemplate>
+			</ToolBar>
 		</ToolBarPanel>
 	</Grid>
 </UserControl>

@@ -495,7 +495,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_SearchHelper.SetSource(SourceItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
 			FilteredList = _SearchHelper.FilteredList;
-			//CurrentView = new CollectionView(_SearchHelper.FilteredList);
 			OnPropertyChanged(nameof(FilteredList));
 		}
 

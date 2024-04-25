@@ -1,7 +1,10 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,72 +13,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for QuickActionControl.xaml
 	/// </summary>
-	public partial class QuickActionControl : UserControl
+	public partial class QuickActionControl : UserControl, INotifyPropertyChanged
 	{
 		public QuickActionControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
-			{
-				var list = new SortableBindingList<TemplateItem>();
-				CurrentItems = list;
 				return;
-			}
-			CurrentItems = Global.Templates.Items;
-			CurrentItems.ListChanged += CurrentItems_ListChanged;
-		}
-
-		public SortableBindingList<TemplateItem> CurrentItems { get; set; }
-
-		private void CurrentItems_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			switch (e.ListChangedType)
-			{
-				case ListChangedType.ItemAdded:
-					AddButton(CurrentItems[e.NewIndex]);
-					break;
-				case ListChangedType.ItemDeleted:
-					RefreshToolbar();
-					break;
-				case ListChangedType.Reset:
-					MyToolBar.Items.Clear();
-					CreateButtons();
-					break;
-			}
-		}
-
-
-		private void AddButton(TemplateItem item)
-		{
-			var button = CreateButton(item);
-			MyToolBar.Items.Add(button);
-			Global.MainControl.InfoPanel.HelpProvider.Add(button, item.Name, item.TextInstructions);
-		}
-
-		private void RefreshToolbar()
-		{
-			foreach (Control button in MyToolBar.Items)
-				Global.MainControl.InfoPanel.HelpProvider.Remove(button);
-			MyToolBar.Items.Clear();
-			CreateButtons();
-		}
-
-		/// <summary>
-		/// Manually create the buttons because using an `ItemsControl` to generate a list of buttons
-		/// adds extra controls that break the toolbar style.
-		/// </summary>
-		private void CreateButtons()
-		{
-			foreach (var item in CurrentItems)
-				AddButton(item);
-		}
-
-		private Button CreateButton(TemplateItem item)
-		{
-			var buttonTemplate = (DataTemplate)Resources["ToolBarButtonTemplate"];
-			var button = (Button)buttonTemplate.LoadContent();
-			button.DataContext = item;
-			return button;
+			InitSearch();
+			Global.Templates.Items.ListChanged += SourceItems_ListChanged;
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
@@ -92,14 +38,79 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (ControlsHelper.AllowLoad(this))
-			{
-				CreateButtons();
-			}
 		}
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 		}
+
+		bool selectionsUpdating = false;
+		private void SourceItems_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			_ = ControlsHelper.BeginInvoke(() =>
+			{
+				if (e.ListChangedType == ListChangedType.ItemChanged)
+				{
+					bool refreshGrid = false;
+					if (!selectionsUpdating)
+					{
+						if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.IsPinned))
+							refreshGrid = true;
+						if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.ListGroupNameSortKey))
+							refreshGrid = true;
+					}
+					if (refreshGrid)
+						_ = Helper.Delay(RefreshDataGrid, 500);
+				}
+			});
+		}
+
+		public void RefreshDataGrid()
+		{
+			var view = (ICollectionView)MyToolBar.ItemsSource;
+			view.Refresh();
+		}
+
+		#region Search Filter
+
+		private SearchHelper<ISettingsListFileItem> _SearchHelper;
+
+		private void InitSearch()
+		{
+			_SearchHelper = new SearchHelper<ISettingsListFileItem>((x) =>
+			{
+				//var s = SearchTextBox.Text;
+				var s = "";
+				// Item type specific code.
+				if (x is TemplateItem ti)
+				{
+					return string.IsNullOrEmpty(s) ||
+						(ti.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1 ||
+						(ti.Text ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
+				}
+				else
+				{
+					return string.IsNullOrEmpty(s) ||
+						(x.Name ?? "").IndexOf(s, StringComparison.OrdinalIgnoreCase) > -1;
+				}
+			}, null, new ObservableCollection<ISettingsListFileItem>());
+			_SearchHelper.SetSource(Global.Templates.Items);
+			FilteredList = _SearchHelper.FilteredList;
+			OnPropertyChanged(nameof(FilteredList));
+		}
+
+		public ObservableCollection<ISettingsListFileItem> FilteredList { get; set; }
+
+		#endregion
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 }
