@@ -82,7 +82,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					}
 					if (refreshGrid)
 					{
-						_ = Helper.Delay(RefreshDataGrid, 500);
+						_ = Helper.Delay(RefreshDataGrid);
 					}
 				}
 			});
@@ -90,8 +90,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void RefreshDataGrid()
 		{
+			//List<ISettingsListFileItem> items;
+			//switch (_GroupingProperty)
+			//{
+			//	case nameof(SettingsListFileItem.ListGroupTime):
+			//		items = FilteredList.OrderBy(x => x.ListGroupTimeSortKey).ToList();
+			//		CollectionsHelper.Synchronize(items, FilteredList);
+			//		break;
+			//	case nameof(SettingsListFileItem.ListGroupPath):
+			//		items = FilteredList.OrderBy(x => x.ListGroupPathSortKey).ToList();
+			//		CollectionsHelper.Synchronize(items, FilteredList);
+			//		break;
+			//	case nameof(SettingsListFileItem.ListGroupName):
+			//		items = FilteredList.OrderBy(x => x.ListGroupNameSortKey).ToList();
+			//		CollectionsHelper.Synchronize(items, FilteredList);
+			//		break;
+			//	default:
 			var view = (ICollectionView)MainDataGrid.ItemsSource;
 			view.Refresh();
+			//		break;
+			//}
 		}
 
 		object _MainDataGridFormattingConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
@@ -495,7 +513,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_SearchHelper.SetSource(SourceItems);
 			_SearchHelper.Synchronized += _SearchHelper_Synchronized;
 			FilteredList = _SearchHelper.FilteredList;
+			FilteredList.CollectionChanged += FilteredList_CollectionChanged;
 			OnPropertyChanged(nameof(FilteredList));
+		}
+
+		private void FilteredList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			bool refreshGrid = true;
+			//			e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
+			//			e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove ||
+			//			e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset ||
+			//			e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace ||
+			//			e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move;
+			if (refreshGrid)
+				_ = Helper.Delay(RefreshDataGrid);
 		}
 
 		public ObservableCollection<ISettingsListFileItem> FilteredList { get; set; }
@@ -624,7 +655,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			view.SortDescriptions.Add(new SortDescription(nameof(SettingsListFileItem.Name), ListSortDirection.Ascending));
 			view.GroupDescriptions.Add(new PropertyGroupDescription(groupingProperty));
-			_ = Helper.Delay(RefreshDataGrid, 500);
+			_ = Helper.Delay(RefreshDataGrid);
 		}
 
 		private void ExpanderToggle_Click(object sender, RoutedEventArgs e)
