@@ -8,8 +8,8 @@
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:DesignHeight="270"
-	d:DesignWidth="480"
+	d:DesignHeight="100"
+	d:DesignWidth="400"
 	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
 	<UserControl.OpacityMask>
@@ -39,55 +39,6 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel
-			Grid.Row="0"
-			Margin="3,3,0,0"
-			HorizontalAlignment="Left"
-			Orientation="Horizontal">
-			<Button
-				Name="AddButton"
-				Margin="0,0,3,3"
-				x:FieldModifier="public"
-				Background="Transparent"
-				Click="AddButton_Click"
-				ToolTip="{x:Static locales:Resources.Add}">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-					<Label x:Name="AddButtonLabel" Content="{x:Static locales:Resources.Add}" />
-				</StackPanel>
-			</Button>
-			<Button
-				Name="RemoveButton"
-				Margin="0,0,3,3"
-				x:FieldModifier="public"
-				Background="Transparent"
-				Click="RemoveButton_Click"
-				ToolTip="{x:Static locales:Resources.Delete}">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-					<Label x:Name="RemoveButtonLabel" Content="{x:Static locales:Resources.Delete}" />
-				</StackPanel>
-			</Button>
-		</StackPanel>
-		<StackPanel
-			Grid.Row="0"
-			Margin="3,3,0,0"
-			HorizontalAlignment="Right"
-			Orientation="Horizontal">
-			<Separator Style="{StaticResource MainSeparator}" />
-			<Button
-				Name="RefreshButton"
-				Margin="0,0,3,3"
-				x:FieldModifier="public"
-				Background="Transparent"
-				Click="RefreshButton_Click"
-				ToolTip="{x:Static locales:Resources.Refresh}">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
-					<Label x:Name="RefreshButtonLabel" Content="{x:Static locales:Resources.Refresh}" />
-				</StackPanel>
-			</Button>
-		</StackPanel>
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
@@ -98,6 +49,7 @@
 			AutoGenerateColumns="False"
 			ClipToBounds="True"
 			IsReadOnly="True"
+			ItemsSource="{Binding CurrentItems, ElementName=This}"
 			Loaded="MainDataGrid_Loaded"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			ScrollViewer.CanContentScroll="True"
@@ -105,13 +57,6 @@
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionChanged="MainDataGrid_SelectionChanged"
 			SelectionMode="Extended">
-			<DataGrid.ContextMenu>
-				<ContextMenu>
-					<MenuItem Click="MainDataGrid_ContextMenu_Copy" Header="{x:Static locales:Resources.Copy}" />
-					<MenuItem Click="MainDataGrid_ContextMenu_CopyWithHeaders" Header="{x:Static locales:Resources.Copy_with_Headers}" />
-					<MenuItem Click="MainDataGrid_ContextMenu_CopyIdFileName" Header="{x:Static locales:Resources.Copy_Id_File_Name}" />
-				</ContextMenu>
-			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
 				<DataGridTemplateColumn
 					x:Name="IconColumn"
@@ -147,30 +92,27 @@
 				<DataGridTemplateColumn x:Name="IsCheckedColumn" Width="Auto" CanUserSort="False">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<CheckBox x:Name="IsCheckedCheckBox" IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGridRow}}" PreviewMouseDown="CheckBox_PreviewMouseDown" />
+							<Button
+								Name="DeleteButton"
+								Margin="3,0,3,0"
+								Padding="0"
+								Background="Transparent"
+								Click="DeleteButton_Click"
+								Tag="{Binding Location}">
+								<StackPanel>
+									<ContentControl Padding="0" Content="{StaticResource Icon_Delete}" />
+								</StackPanel>
+							</Button>
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
-					<DataGridTemplateColumn.Header>
-						<CheckBox
-							x:Name="IsCheckedColumnCheckBox"
-							Margin="0"
-							Padding="0"
-							IsEnabled="False" />
-					</DataGridTemplateColumn.Header>
 				</DataGridTemplateColumn>
 				<DataGridTextColumn
-					x:Name="StatusColumn"
-					Binding="{Binding status}"
+					x:Name="LocationColumn"
+					Width="*"
+					Binding="{Binding Location}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Status}" />
-				<DataGridTextColumn
-					x:Name="FileNameColumn"
-					Width="Auto"
-					Binding="{Binding Id}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.File_Name}" />
+					Header="{x:Static locales:Resources.Attachments}" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />

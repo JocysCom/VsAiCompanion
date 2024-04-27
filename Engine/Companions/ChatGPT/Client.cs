@@ -629,7 +629,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Count > 0)
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
-				userAutoReplyMessageItem.Attachments.AddRange(functionResults);
+				foreach (var functionResult in functionResults)
+					userAutoReplyMessageItem.Attachments.Add(functionResult);
 				userAutoReplyMessageItem.IsAutomated = true;
 				Global.MainControl.Dispatcher.Invoke(() =>
 				{

@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
@@ -45,8 +44,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		bool _IsAutomated;
 
 		/// <summary>Optional context data: cliboard, selection or Files.</summary>
-		public List<MessageAttachments> Attachments { get => _Attachments; set => SetProperty(ref _Attachments, value); }
-		List<MessageAttachments> _Attachments = new List<MessageAttachments>();
+		public BindingList<MessageAttachments> Attachments { get => _Attachments; set => SetProperty(ref _Attachments, value); }
+		BindingList<MessageAttachments> _Attachments = new BindingList<MessageAttachments>();
 
 		public DateTime Date { get => _Date; set => SetProperty(ref _Date, value); }
 		DateTime _Date = DateTime.Now;
@@ -66,7 +65,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			copy.Body = Body;
 			copy.Date = Date;
 			copy.Type = Type;
-			copy.Attachments.AddRange(Attachments);
+			foreach (var attachment in Attachments)
+				copy.Attachments.Add(attachment);
 			copy.IsEnabled = IsEnabled;
 			if (newId)
 				copy.Id = Guid.NewGuid().ToString("N");

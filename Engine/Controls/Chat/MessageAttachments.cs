@@ -45,6 +45,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public string Title { get => _Title; set => SetProperty(ref _Title, value); }
 		string _Title;
 
+		/// <summary>
+		/// File path or web link.
+		/// </summary>
+		[DefaultValue(null)]
+		public string Location { get => _Location; set => SetProperty(ref _Location, value); }
+		string _Location;
+
 		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, value); }
 		string _Instructions;
 

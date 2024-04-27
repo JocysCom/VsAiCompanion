@@ -19,7 +19,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			UpdateControlButtons();
-			UpdateButtons();
+			UpdateMessageEdit();
 			AppControlsHelper.AllowDrop(DataTextBox, true);
 			AppControlsHelper.AllowDrop(DataInstructionsTextBox, true);
 		}
@@ -36,7 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public string EditMessageId
 		{
 			get { return _EditMessageId; }
-			set { _EditMessageId = value; UpdateButtons(); }
+			set { _EditMessageId = value; UpdateMessageEdit(); }
 		}
 		string _EditMessageId;
 
@@ -95,27 +95,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				// Prevent new line added to the message.
 				e.Handled = true;
 			}
-			UpdateButtons();
+			UpdateMessageEdit();
 		}
 
 		private void DataInstructionsTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
 		{
-			UpdateButtons();
+			UpdateMessageEdit();
 		}
 
 		private void DataInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			UpdateButtons();
+			UpdateMessageEdit();
 		}
 
 		private void DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			UpdateButtons();
+			UpdateMessageEdit();
 		}
 
 		public bool IsBusy;
 
-		public void UpdateButtons()
+		public void UpdateMessageEdit()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			SendButton.ToolTip = isEdit ? "Update Message" : "Send Message";
@@ -129,6 +129,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (StopButton.Opacity != stopOp)
 				StopButton.Opacity = stopOp;
 			System.Diagnostics.Debug.WriteLine($"UpdateButtons: IsBusy={IsBusy}, isEdit={isEdit}, stopOp={stopOp}");
+			if (isEdit)
+			{
+				var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId);
+				if (message != null)
+				{
+					AttachmentsPanel.CurrentItems = message.Attachments;
+				}
+			}
+
+
 		}
 
 		void UpdateControlButtons()
@@ -198,7 +208,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				DataTextBox.Text = "";
 				EditMessageId = null;
-				UpdateButtons();
+				UpdateMessageEdit();
 			}
 			else
 			{
@@ -289,6 +299,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#endregion
 
+		private void AttachmentsButton_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
 	}
 
 }

@@ -16,6 +16,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_arrow_barrier_bottom = nameof(Icon_arrow_barrier_bottom);
 		public const string Icon_arrow_barrier_top = nameof(Icon_arrow_barrier_top);
 		public const string Icon_arrow_fork2 = nameof(Icon_arrow_fork2);
+		public const string Icon_attach = nameof(Icon_attach);
 		public const string Icon_blackboard = nameof(Icon_blackboard);
 		public const string Icon_book_open = nameof(Icon_book_open);
 		public const string Icon_brain = nameof(Icon_brain);

@@ -1,15 +1,10 @@
 ﻿using JocysCom.ClassLibrary;
-using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Data;
-using JocysCom.ClassLibrary.Files;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,25 +15,74 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for AttachmentsControl.xaml
 	/// </summary>
-	public partial class AttachmentsControl : UserControl
+	public partial class AttachmentsControl : UserControl, INotifyPropertyChanged
 	{
 		public AttachmentsControl()
 		{
 			InitializeComponent();
-			//ScanProgressPanel.Visibility = Visibility.Collapsed;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			MainDataGrid.ItemsSource = CurrentItems;
-			UpdateButtons();
+			CurrentItems = new BindingList<MessageAttachments>();
 		}
 
-		public SortableBindingList<file> CurrentItems { get; set; } = new SortableBindingList<file>();
-
-		public void SelectById(string id)
+		private void CurrentItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			var list = new List<string>() { id };
-			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), list, 0);
+			if (e.ListChangedType == ListChangedType.Reset ||
+				e.ListChangedType == ListChangedType.ItemAdded ||
+				e.ListChangedType == ListChangedType.ItemDeleted
+			)
+				UpdateControlVisibility();
 		}
+
+		private void UpdateControlVisibility()
+		{
+			Visibility = CurrentItems?.Any() == true
+				? Visibility.Visible
+				: Visibility.Collapsed;
+		}
+
+		// Store temp settings.
+		TaskSettings PanelSettings = new TaskSettings();
+
+		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
+		}
+
+		private void UpdateOnSelectionChanged()
+		{
+			// If item selected then...
+			if (MainDataGrid.SelectedIndex >= 0)
+			{
+				// Remember selection.
+				PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(MessageAttachments.Location));
+				PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
+			}
+			else
+			{
+				// Try to restore selection.
+				ControlsHelper.SetSelection(
+					MainDataGrid, nameof(MessageAttachments.Location),
+					PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
+				);
+			}
+		}
+
+		public BindingList<MessageAttachments> CurrentItems
+		{
+			get => _CurrentItems;
+			set
+			{
+				if (_CurrentItems != null)
+					CurrentItems.ListChanged -= CurrentItems_ListChanged;
+				_CurrentItems = value;
+				if (_CurrentItems != null)
+					CurrentItems.ListChanged += CurrentItems_ListChanged;
+				OnPropertyChanged();
+				UpdateControlVisibility();
+			}
+		}
+		BindingList<MessageAttachments> _CurrentItems;
 
 		public void ShowColumns(params DataGridColumn[] args)
 		{
@@ -46,66 +90,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			foreach (var control in all)
 				control.Visibility = args.Contains(control) ? Visibility.Visible : Visibility.Collapsed;
 		}
-
-		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
-			SaveSelection();
-		}
-
-		void UpdateButtons()
-		{
-			var selecetedItems = MainDataGrid.SelectedItems.Cast<file>();
-			var isSelected = selecetedItems.Count() > 0;
-			RemoveButton.IsEnabled = isSelected;
-		}
-
-		private void AddButton_Click(object sender, RoutedEventArgs e)
-		{
-			/*
-			var item = AppHelper.GetNewTemplateItem();
-			// Treat the new task as a chat; therefore, clear the input box after sending.
-			if (ItemControlType == ItemType.Task)
-				item.MessageBoxOperation = MessageBoxOperation.ClearMessage;
-			item.Name = $"Template_{DateTime.Now:yyyyMMdd_HHmmss}";
-			// Set default icon. Make sure "document_gear.svg" Build Action is Embedded resource.
-			var contents = Helper.FindResource<string>(ClientHelper.DefaultIconEmbeddedResource, GetType().Assembly);
-			item.SetIcon(contents);
-			InsertItem(item);
-			*/
-		}
-
-		public void InsertItem(file item)
-		{
-			var position = FindInsertPosition(CurrentItems, item);
-			// Make sure new item will be selected and focused.
-			CurrentItems.Insert(position, item);
-		}
-
-		private int FindInsertPosition(IList<file> list, file item)
-		{
-			for (int i = 0; i < list.Count; i++)
-				if (string.Compare(list[i].filename, item.filename, StringComparison.Ordinal) > 0)
-					return i;
-			// If not found, insert at the end
-			return list.Count;
-		}
-
-		public void SaveSelection()
-		{
-			// Save selection.
-			var selection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(file.id));
-			if (selection.Count > 0 || Data.AttachmentsSelection == null)
-				Data.AttachmentsSelection = selection;
-		}
-
-		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			await Refresh();
-		}
-
-		private void CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-			=> ControlsHelper.FileExplorer_DataGrid_CheckBox_PreviewMouseDown(sender, e);
 
 		/// <summary>
 		///  Event is fired when the DataGrid is rendered and its items are loaded,
@@ -117,111 +101,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			if (MustRefresh && IsVisible)
-				await Refresh();
 		}
 
-		public void TryRefresh()
+		private async Task Remove()
 		{
-			MustRefresh = true;
-			if (IsVisible)
-				Dispatcher.BeginInvoke((Action)(async () => await Refresh()));
-		}
-
-		#region IBindData
-
-		[Category("Main")]
-
-		public TemplateItem Data
-		{
-			get => _Data;
-			set
+			var items = MainDataGrid.SelectedItems.Cast<MessageAttachments>().ToList();
+			// Use begin invoke or grid update will deadlock on same thread.
+			await ControlsHelper.BeginInvoke(() =>
 			{
-				if (_Data == value)
-					return;
-				CurrentItems.Clear();
-				if (_Data != null)
-				{
-					_Data.PropertyChanged -= _Data_PropertyChanged;
-				}
-				if (value != null)
-				{
-					CurrentItems.AddRange(_Data.Attachments.Select(x => new file() { id = x }));
-					value.PropertyChanged += _Data_PropertyChanged;
-				}
-				_Data = value;
-				TryRefresh();
-			}
+				foreach (var item in items)
+					CurrentItems.Remove(item);
+				if (CurrentItems.Any())
+					MainDataGrid.Focus();
+			});
 		}
-		public TemplateItem _Data;
-
-		public bool MustRefresh;
-
-		private async void _Data_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(_Data.AiService))
-			{
-				if (Global.IsGoodSettings(_Data.AiService))
-					await Refresh();
-			}
-		}
-
-		#endregion
-
-		public async Task Refresh()
-		{
-			if (Data == null)
-				return;
-			SaveSelection();
-			await Task.Delay(1);
-			MustRefresh = false;
-			ControlsHelper.SetSelection(MainDataGrid, nameof(file.id), Data.AttachmentsSelection, 0);
-		}
-
-		private void RemoveButton_Click(object sender, RoutedEventArgs e) =>
-			Dispatcher.BeginInvoke(new Action(async () => await Remove()));
-
-		#region Actions
-
-		public List<file> GetWithAllow(AllowAction action)
-		{
-			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
-			if (items.Count == 0)
-				return null;
-			if (!AppHelper.AllowAction(action, items.Select(x => x.id).ToArray()))
-				return null;
-			return items;
-		}
-
-		public async Task Remove()
-		{
-			var items = GetWithAllow(AllowAction.Remove);
-			if (items == null)
-				return;
-			var errors = new ConcurrentBag<string>();
-			// Create tasks for each item.
-			var tasks = items.Select(RemoveItemAsync).ToList();
-			// Await all tasks to complete.
-			await Task.WhenAll(tasks);
-			if (errors.Any())
-			{
-				var message = string.Join("\r\n", errors);
-				Dispatcher.Invoke(() =>
-					MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error));
-			}
-			// Define the async method for processing items.
-			async Task RemoveItemAsync(file item)
-			{
-				await Task.Delay(1);
-				Dispatcher.Invoke(() => CurrentItems.Remove(item));
-			}
-		}
-
-		#endregion
 
 		private void MainDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
@@ -230,22 +127,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Dispatcher.BeginInvoke(new Action(async () => await Remove()));
 		}
 
-		private void MainDataGrid_ContextMenu_Copy(object sender, RoutedEventArgs e) =>
-			MainDataGrid_ContextMenu_Copy(false);
+		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
 
-		private void MainDataGrid_ContextMenu_CopyWithHeaders(object sender, RoutedEventArgs e) =>
-			MainDataGrid_ContextMenu_Copy(true);
-
-		private void MainDataGrid_ContextMenu_CopyIdFileName(object sender, RoutedEventArgs e) =>
-				MainDataGrid_ContextMenu_Copy(true, nameof(file.id), nameof(file.filename));
-
-		void MainDataGrid_ContextMenu_Copy(bool withHeaders, params string[] columns)
+		public void AddFile()
 		{
-			var items = MainDataGrid.SelectedItems.Cast<file>().ToList();
-			var table = SqlHelper.ConvertToTable(items, columns);
-			var text = JocysCom.ClassLibrary.Files.CsvHelper.Write(table, withHeaders, "\t", CsvQuote.Strings);
-			Clipboard.SetText(text);
+			if (_OpenFileDialog == null)
+			{
+				_OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+				_OpenFileDialog.SupportMultiDottedExtensions = true;
+				DialogHelper.AddFilter(_OpenFileDialog);
+				_OpenFileDialog.FilterIndex = 1;
+				_OpenFileDialog.Multiselect = true;
+				_OpenFileDialog.RestoreDirectory = true;
+			}
+			var dialog = _OpenFileDialog;
+			dialog.Title = "Attach file(s)";
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			foreach (var fileName in dialog.FileNames)
+			{
+				var item = new MessageAttachments();
+				item.Title = System.IO.Path.GetFileName(fileName);
+				// For Model Processing
+				//item.Type = Plugins.Core.VsFunctions.ContextType.ChatHistory
+				item.Location = new Uri(fileName).AbsoluteUri;
+				CurrentItems.Add(item);
+			}
 		}
 
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
+		#endregion
+
+		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			var button = (Button)sender;
+			var location = button.Tag as string;
+			var item = CurrentItems.FirstOrDefault(x => x.Location == location);
+			CurrentItems.Remove(item);
+		}
 	}
 }

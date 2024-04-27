@@ -326,7 +326,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				PromptsPanel.BindData(_Item);
 				ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
 				ChatPanel.IsBusy = _Item.IsBusy;
-				ChatPanel.UpdateButtons();
+				ChatPanel.UpdateMessageEdit();
 				System.Diagnostics.Debug.WriteLine($"Bound Item: {_Item.Name}");
 				// AutoSend once enabled then...
 				if (DataType == ItemType.Task && _Item.AutoSend)
@@ -351,7 +351,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				case nameof(TemplateItem.IsBusy):
 					ChatPanel.IsBusy = _Item.IsBusy;
-					ChatPanel.UpdateButtons();
+					ChatPanel.UpdateMessageEdit();
 					break;
 				case nameof(TemplateItem.Creativity):
 					OnPropertyChanged(nameof(CreativityName));
@@ -494,7 +494,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			_Item.Messages.Clear();
 			ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
-			ChatPanel.UpdateButtons();
+			ChatPanel.UpdateMessageEdit();
 		}
 
 		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
@@ -702,5 +702,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void AttachmentsButton_Click(object sender, RoutedEventArgs e)
+		{
+			ChatPanel.AttachmentsPanel.AddFile();
+		}
 	}
 }

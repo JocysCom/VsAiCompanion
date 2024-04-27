@@ -21,7 +21,6 @@
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
-
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -33,6 +32,7 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
@@ -688,12 +688,15 @@
 				</StackPanel>
 			</Border>
 			<!--  Row 6  -->
+			<!--  Row 7  -->
 			<StackPanel
-				Grid.Row="6"
+				Grid.Row="7"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
-				Margin="5,3,0,3"
 				Orientation="Horizontal">
+				<Button Name="AttachmentsButton" Margin="3,3,3,3" Click="AttachmentsButton_Click">
+					<ContentControl Content="{StaticResource Icon_attach}" Focusable="False" />
+				</Button>
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="ShowPromptingCheckBox" Content="Show Prompting" IsChecked="{Binding ShowPrompting}" />
 				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory}" />
@@ -705,7 +708,7 @@
 					Unchecked="IsSpellCheckEnabledCheckBox_Unchecked" />
 			</StackPanel>
 			<StackPanel
-				Grid.Row="6"
+				Grid.Row="7"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
 				HorizontalAlignment="Right"
