@@ -1,4 +1,4 @@
-2024-04-24 v1.9.41
+2024-04-28 v1.9.41
 
 - Update: Use the name of the embedding to select the AI database.
 - New: Timestamp column added to the Embedding database for synchronizations.
