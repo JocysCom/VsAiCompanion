@@ -27,6 +27,7 @@ zXH2+tvPYfkPDKf35SX9k/Pi2RfFODbo5AkAAA==</IconData>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you tell me about?:</TextInstructions>
   <Text>[insert historical event or figure]</Text>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -35,6 +36,5 @@ zXH2+tvPYfkPDKf35SX9k/Pi2RfFODbo5AkAAA==</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -27,6 +27,7 @@ Tfy0OMPiNP8Aefnsb/dK4KaACQAA</IconData>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you help me write an introduction for an essay about?:</TextInstructions>
   <Text> [insert topic here]</Text>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -36,6 +37,5 @@ Tfy0OMPiNP8Aefnsb/dK4KaACQAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

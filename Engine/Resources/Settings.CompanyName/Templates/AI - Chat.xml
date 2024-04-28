@@ -19,6 +19,7 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -31,6 +32,5 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

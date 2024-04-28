@@ -1,0 +1,43 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 \par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 Diagrams\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel2 \b \fs28 Communication\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Flow diagram, illustrating the communication process within a desktop AI application. It maps out the sequential interactions between the user interface (UI), the application (APP), various external APIs for embedding and chatting purposes, a database, and the operating system for executing function calls.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \f1     AI COMPANION (C# DESKTOP APP)\line
+    \u9474 ?\line
+    \u9474 ?    USER (UI)\line
+    \u9474 ?\u9668 ?\u9472 ?\u9472 ? prompt text\line
+    \u9474 ?\line
+    \u9474 ?    EMBEDDING API (TEXT-EMBEDDING-ADA-002, https://api.openai.com/v1/)\line
+    \u9500 ?\u9472 ?\u9472 ?\u9658 ? prompt text\line
+    \u9474 ?\u9668 ?\u9472 ?\u9472 ? prompt embedding vectors\line
+    \u9474 ?\line
+    \u9474 ?    EMBEDDING DATABASE (SQL, File or tcp://sql.company.local:1433)\line
+    \u9500 ?\u9472 ?\u9472 ?\u9658 ? prompt embedding vectors\line
+    \u9474 ?\u9668 ?\u9472 ?\u9472 ? relevant documents\line
+    \u9474 ?\line
+    \u9474 ?    CHAT API (GPT-4, HTTPS, https://api.openai.com/v1/)\line
+    \u9500 ?\u9472 ?\u9472 ?\u9658 ? chat history: prompt text + relevant documents\line
+    \u9474 ?\u9668 ?\u9472 ?\u9472 ? function calls \line
+    \u9474 ?\line
+    \u9474 ?    EXECUTION (APP or OS)\line
+\u9484 ?\u9472 ?\u9472 ?\u9658 ?\u9500 ?\u9472 ?\u9472 ?\u9658 ? function calls\line
+\u9474 ?   \u9474 ?\u9668 ?\u9472 ?\u9472 ? function results\line
+\u9474 ?   \u9474 ?\line
+\u9474 ?   \u9474 ?    CHAT API (GPT-4, https://api.openai.com/v1/)\line
+\u9474 ?   \u9500 ?\u9472 ?\u9472 ?\u9658 ? chat history: prompt text + relevant documents + function results\line
+\u9492 ?\u9472 ?\u9472 ?\u9472 ?\u9474 ?\u9668 ?\u9472 ?\u9472 ? prompt results or more function calls\line
+    \u9474 ?\line
+    \u9474 ?    USER (UI)\line
+    \u9492 ?\u9472 ?\u9472 ?\u9658 ? prompt results\line
+\line
+AI COMPANION - Intelligent assistance application\line
+USER - End-user interface\line
+EMBEDDING API - Translates words into numbers that represents meaning.\line
+EMBEDDING DATABASE - Storage for embeddings\line
+CHAT API - Conversational language model\line
+EXECUTION - Command execution service\par}
+}

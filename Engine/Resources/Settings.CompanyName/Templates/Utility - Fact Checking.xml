@@ -20,6 +20,7 @@ H/bpgzm8z1c+5nsU3kgvDn4CPm3w6JEHAAA=</IconData>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Is it true that?:</TextInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -28,6 +29,5 @@ H/bpgzm8z1c+5nsU3kgvDn4CPm3w6JEHAAA=</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

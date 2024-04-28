@@ -44,6 +44,7 @@ The purpose of the most recent AI function call is to retrieve the content of th
 Conclusion: Function call approved.&#xD;
 </TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <Settings />
   <Messages>
     <MessageItem>
@@ -64,6 +65,5 @@ Conclusion: Function call approved.&#xD;
   <IsPreview>true</IsPreview>
   <IsFavorite>false</IsFavorite>
   <UseMaximumContext>true</UseMaximumContext>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

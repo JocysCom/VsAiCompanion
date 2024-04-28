@@ -21,6 +21,7 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <TemplateName>AI - Chat</TemplateName>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -31,6 +32,5 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -23,6 +23,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <TextInstructions>Select table names to understand the database structure. Then obtain the column names for these tables to construct a valid SQL command as requested. Ensure you use the correct SQL connection string.</TextInstructions>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages>
@@ -45,6 +46,5 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <IsFavorite>false</IsFavorite>
   <PluginsEnabled>true</PluginsEnabled>
   <MaxRiskLevel>High</MaxRiskLevel>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

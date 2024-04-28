@@ -17,6 +17,7 @@ Bl/Tfa/rq/+LB+rBLAQAAA==</IconData>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>How to fix this issue reported by Visual Studio? Please reply with the fixed code.</TextInstructions>
+  <Attachments />
   <AttachContext>Error ErrorDocument</AttachContext>
   <Settings />
   <Messages />
@@ -26,6 +27,5 @@ Bl/Tfa/rq/+LB+rBLAQAAA==</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

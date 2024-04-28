@@ -19,6 +19,7 @@ fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Simplify, refactor, and enhance the performance of the given code while preserving all essential comments.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ActiveDocument</AttachContext>
   <Settings />
   <Messages />
@@ -28,6 +29,5 @@ fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

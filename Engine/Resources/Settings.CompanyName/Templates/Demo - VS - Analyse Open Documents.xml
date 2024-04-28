@@ -22,6 +22,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <TemplateName>AI - Chat</TemplateName>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages>
@@ -42,6 +43,5 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

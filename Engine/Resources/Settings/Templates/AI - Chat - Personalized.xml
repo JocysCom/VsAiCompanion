@@ -69,6 +69,7 @@ qLhXX030847/d8gXn/0b7zGB4esiAAA=</IconData>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -87,6 +88,5 @@ qLhXX030847/d8gXn/0b7zGB4esiAAA=</IconData>
   <Context3ListName>Role - AI Programmer</Context3ListName>
   <Context4ListName>Profile - User</Context4ListName>
   <Context5ListName>Role - .NET Developer</Context5ListName>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

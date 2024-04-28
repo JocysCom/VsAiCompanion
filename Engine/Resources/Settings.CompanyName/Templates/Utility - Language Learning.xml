@@ -59,6 +59,7 @@ u7YGb3+yxf9/U4GcfZPwUusW72IOj/a6B+iX1a93V3jtZK+OvvziPzT3qFsIGwAA</IconData>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you translate [insert text here] to [insert language here]:</TextInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -67,6 +68,5 @@ u7YGb3+yxf9/U4GcfZPwUusW72IOj/a6B+iX1a93V3jtZK+OvvziPzT3qFsIGwAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

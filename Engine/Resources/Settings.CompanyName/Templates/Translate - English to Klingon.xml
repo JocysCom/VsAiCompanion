@@ -39,6 +39,7 @@ EQAA</IconData>
   <TextInstructions>Translate English to Klingon and Klingon to English.&#xD;
 &#xD;
 Text to translate:</TextInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -47,6 +48,5 @@ Text to translate:</TextInstructions>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -36,7 +36,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void UpdateControlVisibility()
 		{
-			Visibility = CurrentItems?.Any() == true
+			// Only visible during debug for a moment.
+			Visibility = CurrentItems?.Any() == true && InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
 		}

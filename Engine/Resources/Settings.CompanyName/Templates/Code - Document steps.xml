@@ -30,6 +30,7 @@ ZEPSSsRWpMV9NtJdgD4IOfmRkLMZdj1tYmvpZYSHzURMA1gUqN9PDB/uExZ+Nf9g+A7SoQgP6L39&#xD
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Document the steps of this code.</TextInstructions>
+  <Attachments />
   <AttachContext>Selection</AttachContext>
   <Settings />
   <Messages />
@@ -39,6 +40,5 @@ ZEPSSsRWpMV9NtJdgD4IOfmRkLMZdj1tYmvpZYSHzURMA1gUqN9PDB/uExZ+Nf9g+A7SoQgP6L39&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

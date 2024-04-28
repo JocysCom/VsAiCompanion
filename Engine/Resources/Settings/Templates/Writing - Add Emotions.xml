@@ -32,6 +32,7 @@ RyMJ7iyJPaoEqFsuLjOx0/nR2+ZdUQ/vnlRsvsOJIRgQoTtRvul6CB7eMB1jRlb/N0j8VUL8CXiA&#xD
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Please rewrite this text to make the scene more emotional. Add relevant punctuation marks. Add indicators of emotions in square brackets.</TextInstructions>
   <Text> [insert dialog here]</Text>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -41,6 +42,5 @@ RyMJ7iyJPaoEqFsuLjOx0/nR2+ZdUQ/vnlRsvsOJIRgQoTtRvul6CB7eMB1jRlb/N0j8VUL8CXiA&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

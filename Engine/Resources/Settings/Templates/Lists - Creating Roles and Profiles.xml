@@ -18,6 +18,7 @@ iz+y7EqprQMAAA==</IconData>
   <TemplateName>AI - Chat</TemplateName>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Messages>
     <MessageItem>
@@ -46,6 +47,5 @@ Note: In the Description, provide user-facing details of the list. In the Instru
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <PluginsEnabled>true</PluginsEnabled>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -20,6 +20,7 @@ BuowPsN2W/g8qP4h8QgXj7gWc2o+NycHvwDi1U0tbgcAAA==</IconData>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you help me solve this math problem:</TextInstructions>
   <Text>[insert math problem here]</Text>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -28,6 +29,5 @@ BuowPsN2W/g8qP4h8QgXj7gWc2o+NycHvwDi1U0tbgcAAA==</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -45,6 +45,7 @@ Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD
 ```&#xD;
 </TextInstructions>
   <Text>This reserved task using AI to process messages for fine-tuning an AI model.</Text>
+  <Attachments />
   <Settings />
   <Messages>
     <MessageItem>
@@ -64,6 +65,5 @@ Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -27,6 +27,7 @@ Su/P9xr8MORfRfqFSIuL+NL64tk/Wc5GkLQLAAA=</IconData>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Find a bug or issue in this code.</TextInstructions>
+  <Attachments />
   <AttachContext>ActiveDocument</AttachContext>
   <Settings />
   <Messages />
@@ -36,6 +37,5 @@ Su/P9xr8MORfRfqFSIuL+NL64tk/Wc5GkLQLAAA=</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

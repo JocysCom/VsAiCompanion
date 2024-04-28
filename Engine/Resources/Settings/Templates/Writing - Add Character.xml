@@ -27,6 +27,7 @@ dErr5dmITuK4iOpbZmAaaRQgPkW0wV8S6uCJIKWpq036+UKbPNzSP5AvX/wDiDdICQ4LAAA=</IconDa
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>I need to write a book and need a intelligent [villain/hero/support] character who have an idea backed by a logical motive. Please create new idea for a such character, which would be unique.</TextInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -36,6 +37,5 @@ dErr5dmITuK4iOpbZmAaaRQgPkW0wV8S6uCJIKWpq036+UKbPNzSP5AvX/wDiDdICQ4LAAA=</IconDa
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

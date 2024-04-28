@@ -28,6 +28,7 @@ cWF36wNiWVB0aAgm6Iw1dKMCFWeBU1KCgi6vl/lJpul1S5e916/+BqRDkBu6CgAA</IconData>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Given the psychological profile of the character and the storyline, please create and describe a potential scene for illustration for the main story point. The description should depict an imaginary photograph in great detail, as it will serve as instructions for the AI which will generate the image from it.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -37,6 +38,5 @@ cWF36wNiWVB0aAgm6Iw1dKMCFWeBU1KCgi6vl/lJpul1S5e916/+BqRDkBu6CgAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

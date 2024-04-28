@@ -28,6 +28,7 @@ h1aV3ComFoiL6UUY8IwrMbCh6pJhpWxVjAuIvhIXO4iwtQFpQTZ9ixEouviCKmlILolu0EMORRn1&#xD
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Cleanup this code.</TextInstructions>
+  <Attachments />
   <AttachContext>Selection</AttachContext>
   <Settings />
   <Messages />
@@ -37,6 +38,5 @@ h1aV3ComFoiL6UUY8IwrMbCh6pJhpWxVjAuIvhIXO4iwtQFpQTZ9ixEouviCKmlILolu0EMORRn1&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

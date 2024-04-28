@@ -22,18 +22,19 @@ lhgaMOazo4KaZxGNUEdYRnIYCUMOBmFO8+QX8tQTeSrYjSIRlTKwcZjfyyj+JN4Ct+GEBT5TllhN&#xD
 rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD;
 9sMc/1+6/R8zShDpaQ0AAA==</IconData>
   <Created>2024-04-09T19:10:10.1584084+01:00</Created>
-  <Modified>2024-04-09T19:10:10.1584084+01:00</Modified>
+  <Modified>2024-04-28T22:18:54.9438423+01:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4-turbo-preview</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>Generate a response according to the given persona and sign off at the end.</TextInstructions>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages>
     <MessageItem>
-      <Id>82799871aa92449088bf44ff8c4154c9</Id>
+      <Id>a180df6f65e4485aa1ff5d04ac302d2a</Id>
       <User>User</User>
       <BodyInstructions>Generate a response according to the given persona and sign off at the end.</BodyInstructions>
       <Body>What is the slogan of the company?</Body>
@@ -60,18 +61,18 @@ rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD
           <Data>{"Description":"","Instructions":"Reference this list during hiring processes to assess candidates' fit for Technical Support roles and for developing existing staff's capabilities in these areas.","Items":[{"Key":"Problem-solving skills","Value":"Strong analytical and problem-solving skills to diagnose and address technical issues efficiently.","Comment":""},{"Key":"Customer service orientation","Value":"A customer-oriented approach, with excellent communication skills to interact positively with users and provide effective solutions.","Comment":""},{"Key":"Technical knowledge","Value":"Robust technical knowledge in the relevant domain, including understanding of software applications, networking principles, and hardware troubleshooting.","Comment":""},{"Key":"Continuous learning","Value":"Willingness and ability to continuously learn and adapt to new technologies and software updates to provide up-to-date support.","Comment":""}],"Name":"Profile - Technical Support","IsEnabled":true}</Data>
         </MessageAttachments>
       </Attachments>
-      <Date>2024-04-11T21:05:43.2697869+01:00</Date>
+      <Date>2024-04-28T22:18:52.574722+01:00</Date>
       <Type>Out</Type>
     </MessageItem>
     <MessageItem>
-      <Id>b86cbb782d9b4d0bb87f4c18662eee06</Id>
+      <Id>5a4f88d41b0d47c6beb3a5e6dbceb2e1</Id>
       <User>Ai</User>
       <Body>Our company's slogan is "Secure your cyberspace with us." 
 
 Kind regards,
 John Smith</Body>
       <Attachments />
-      <Date>2024-04-11T21:05:43.2781573+01:00</Date>
+      <Date>2024-04-28T22:18:52.6599994+01:00</Date>
       <Type>In</Type>
     </MessageItem>
   </Messages>
@@ -87,7 +88,6 @@ John Smith</Body>
   <Context2ListName>Profile - Technical Support</Context2ListName>
   <Context3ListName>Persona - John Smith</Context3ListName>
   <UseEmbeddings>true</UseEmbeddings>
-  <EmbeddingGroupName>CNS-P</EmbeddingGroupName>
-  <Attachments />
+  <EmbeddingName>CyberNet Solutions Portable</EmbeddingName>
   <AttachmentsSelection />
 </TemplateItem>

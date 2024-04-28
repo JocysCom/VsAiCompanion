@@ -17,6 +17,7 @@ kQ4JEJRHaKRcnaA6PApmydwWBksD/RMEK4Ccn7A204R7JsBOE+pMqPcUYThnc3Xse0Yz+Ev0Tb+9&#xD
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you suggest some books/movies? This is what I like:</TextInstructions>
   <Text>[insert genre here]</Text>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -25,6 +26,5 @@ kQ4JEJRHaKRcnaA6PApmydwWBksD/RMEK4Ccn7A204R7JsBOE+pMqPcUYThnc3Xse0Yz+Ev0Tb+9&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

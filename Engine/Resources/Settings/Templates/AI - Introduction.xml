@@ -42,6 +42,7 @@ z1DupJjwWr/FffrR3wDPhk1eixQAAA==</IconData>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Could you describe your own primary functions, capabilities, and optimal use cases as an AI? Please provide a few examples of scenarios where you could be most effectively used as a list.</TextInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -50,6 +51,5 @@ z1DupJjwWr/FffrR3wDPhk1eixQAAA==</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

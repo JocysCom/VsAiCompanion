@@ -51,6 +51,7 @@ Name: [paste name here]&#xD;
 ```&#xD;
 &#xD;
 [paste story here]</Text>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -60,6 +61,5 @@ Name: [paste name here]&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

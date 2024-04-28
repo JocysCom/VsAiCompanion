@@ -28,6 +28,7 @@ MuPZKLOz7bBpzWJnna0acNQQ7uSlYrJJg8fmcqnP4kfeMBoDLVKUg+y1PCwtUNHCemdkinr81MEY&#xD
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Make this code easier to debug</TextInstructions>
+  <Attachments />
   <AttachContext>ActiveDocument</AttachContext>
   <Settings />
   <Messages />
@@ -37,6 +38,5 @@ MuPZKLOz7bBpzWJnna0acNQQ7uSlYrJJg8fmcqnP4kfeMBoDLVKUg+y1PCwtUNHCemdkinr81MEY&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -21,6 +21,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages>
@@ -274,6 +275,5 @@ Enjoy the humor! If you want more jokes, just let me know.</Body>
   <IsFavorite>false</IsFavorite>
   <PluginsEnabled>true</PluginsEnabled>
   <MaxRiskLevel>Medium</MaxRiskLevel>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

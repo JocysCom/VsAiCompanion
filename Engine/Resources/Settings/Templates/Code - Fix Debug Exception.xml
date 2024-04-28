@@ -16,6 +16,7 @@ ZzyuBU3g/tg7cHnxF+sWVibRAwAA</IconData>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>How to fix this exception thrown during debug session in Visual Studio? Please reply with the fixed code.</TextInstructions>
+  <Attachments />
   <AttachContext>Exception ExceptionDocuments</AttachContext>
   <Settings />
   <Messages />
@@ -25,6 +26,5 @@ ZzyuBU3g/tg7cHnxF+sWVibRAwAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

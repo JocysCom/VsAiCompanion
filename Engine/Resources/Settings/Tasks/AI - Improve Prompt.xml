@@ -27,6 +27,7 @@ z/4FWrZIn9sMAAA=</IconData>
 &#xD;
 Data for processing:</TextInstructions>
   <ShowInstructions>false</ShowInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -35,6 +36,5 @@ Data for processing:</TextInstructions>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

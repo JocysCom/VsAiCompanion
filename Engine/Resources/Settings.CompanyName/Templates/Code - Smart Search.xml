@@ -26,6 +26,7 @@ Q/ed53mZK+/8NMSBq+tyge8nfwNfvvgP59JpdtEHAAA=</IconData>
 &#xD;
 Code feature to find:</TextInstructions>
   <Text>Multiplication</Text>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -34,6 +35,5 @@ Code feature to find:</TextInstructions>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

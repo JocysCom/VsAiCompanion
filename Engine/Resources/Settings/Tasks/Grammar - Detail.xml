@@ -63,6 +63,7 @@ Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
 Text to process:&#xD;
 </TextInstructions>
   <ShowInstructions>false</ShowInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -72,6 +73,5 @@ Text to process:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -34,6 +34,7 @@ Xsd/JzincHHsAqZxP4HehaxAQfWFm3xspw42lIJUdp+Cw5lPbw2AEROJ0B4XAkDsxsQSpjvThMMJ&#xD
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Based on the provided information, construct a detailed physical and psychological profile of the character to ensure their actions and responses in dialogues are consistent. Use stereotypes judiciously to bridge any information gaps. Create and describe in detail the character's image, taking into account their psychological and physiological traits. The description must include facial features, voice tone, attire, etc. This description should enable AI to render scenes accurately and to depict the character's portrait effectively.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -43,6 +44,5 @@ Xsd/JzincHHsAqZxP4HehaxAQfWFm3xspw42lIJUdp+Cw5lPbw2AEROJ0B4XAkDsxsQSpjvThMMJ&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

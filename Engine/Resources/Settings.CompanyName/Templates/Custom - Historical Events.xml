@@ -22,6 +22,7 @@ K403ztz/sOdP/gPhB1zrhw4AAA==</IconData>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Please provide a list of significant historical events that occurred on {Date.Now:MMMM dd} across all years in the past, detailing the year and a brief description of each event.</TextInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -31,6 +32,5 @@ K403ztz/sOdP/gPhB1zrhw4AAA==</IconData>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <UseMacros>true</UseMacros>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

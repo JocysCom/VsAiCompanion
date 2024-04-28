@@ -135,6 +135,7 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
 3. John slaughtered a chicken.&#xD;
 4. John cooked an egg.&#xD;
 5. John ate the apple.</Text>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings>
     <ScrollPosition>1403</ScrollPosition>
@@ -357,6 +358,5 @@ In conclusion, based on the scenarios provided and the estimates made for the NC
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

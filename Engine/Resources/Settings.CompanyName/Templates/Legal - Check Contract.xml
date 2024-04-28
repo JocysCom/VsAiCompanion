@@ -59,6 +59,7 @@ Explanation:&#xD;
 &lt;explanation&gt;&#xD;
 ```</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -67,6 +68,5 @@ Explanation:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

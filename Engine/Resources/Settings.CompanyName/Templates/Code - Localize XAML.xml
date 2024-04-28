@@ -64,6 +64,7 @@ Localized XAML:&#xD;
 ```&#xD;
 </TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>OpenDocuments</AttachContext>
   <Settings />
   <Messages />
@@ -74,6 +75,5 @@ Localized XAML:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

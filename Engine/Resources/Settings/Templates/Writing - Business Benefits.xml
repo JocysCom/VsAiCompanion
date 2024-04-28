@@ -42,6 +42,7 @@ V+qZwdURv6p6otM6bxtSrVU4yePYD8SaqDs4zQToyg+daygCfnxIO5TuiATWqouefhD5Pzfix4+D&#xD
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>Please provide a brief and straightforward bullet-point list of the top three practical advantages for businesses and software developers when they complete the tasks described by the user.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -51,6 +52,5 @@ V+qZwdURv6p6otM6bxtSrVU4yePYD8SaqDs4zQToyg+daygCfnxIO5TuiATWqouefhD5Pzfix4+D&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -33,6 +33,7 @@ EgAA</IconData>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Can you suggest a recipe for?</TextInstructions>
   <Text>[insert dietary restriction or ingredient here]</Text>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -41,6 +42,5 @@ EgAA</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

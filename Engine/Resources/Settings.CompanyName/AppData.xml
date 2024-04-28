@@ -48,9 +48,9 @@
       <TemplateData>
         <GridSplitterPosition>0.2972972972972973</GridSplitterPosition>
         <ListSelection>
-          <string>® AI Tuning - Step 6 - Check Answer</string>
+          <string>AI - Chat</string>
         </ListSelection>
-        <ListSelectedIndex>64</ListSelectedIndex>
+        <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
         <GridSplitterPosition>NaN</GridSplitterPosition>
@@ -275,11 +275,19 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchEmbeddings</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.TTS.StopText</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.PlayText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.StopText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

@@ -22,6 +22,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <TemplateName>AI - Chat</TemplateName>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings>
     <ScrollPosition>0</ScrollPosition>
@@ -87,6 +88,5 @@ Note: In the Description, provide user-facing details of the list. In the Instru
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
   <PluginsEnabled>true</PluginsEnabled>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

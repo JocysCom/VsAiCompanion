@@ -65,6 +65,7 @@ To improve our interaction, I want to understand you better. You can choose to n
 </TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Text>I would like assistance with updating one of the profiles.</Text>
+  <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages />
@@ -76,6 +77,5 @@ To improve our interaction, I want to understand you better. You can choose to n
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

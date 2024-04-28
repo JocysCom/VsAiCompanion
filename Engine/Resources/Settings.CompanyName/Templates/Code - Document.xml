@@ -21,6 +21,7 @@ evXsB5ofPS18CgAA</IconData>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Given the following code in `{Selection.Language}`, please provide comprehensive comments. The comments should be direct, concise and straightforward, avoiding unnecessary jargon. Avoid obvious. Please reply with the fully commented code.</TextInstructions>
+  <Attachments />
   <AttachContext>Selection</AttachContext>
   <Settings />
   <Messages />
@@ -31,6 +32,5 @@ evXsB5ofPS18CgAA</IconData>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <UseMacros>true</UseMacros>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

@@ -20,9 +20,9 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>214.5</Left>
-        <Top>65</Top>
-        <Width>516.5</Width>
+        <Left>279.25</Left>
+        <Top>75</Top>
+        <Width>456.5</Width>
         <Height>407.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
@@ -39,21 +39,21 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </AiServiceData>
       <TaskData>
-        <GridSplitterPosition>0.22871287128712872</GridSplitterPosition>
+        <GridSplitterPosition>0.23258426966292134</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat (GPT-3.5)</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TaskData>
       <TemplateData>
-        <GridSplitterPosition>0.2881188118811881</GridSplitterPosition>
+        <GridSplitterPosition>0.2292134831460674</GridSplitterPosition>
         <ListSelection>
           <string>AI - Chat</string>
         </ListSelection>
         <ListSelectedIndex>0</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
-        <GridSplitterPosition>0.18415841584158416</GridSplitterPosition>
+        <GridSplitterPosition>0.18651685393258427</GridSplitterPosition>
         <ListSelection>
           <string>Doughnut Dynamics</string>
         </ListSelection>
@@ -70,7 +70,7 @@
         <ListSelectedIndex>5</ListSelectedIndex>
       </ListsData>
       <EmbeddingsData>
-        <GridSplitterPosition>0.20396039603960395</GridSplitterPosition>
+        <GridSplitterPosition>0.22134831460674156</GridSplitterPosition>
         <ListSelection>
           <string>CyberNet Solutions Portable</string>
         </ListSelection>
@@ -315,11 +315,19 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchEmbeddings</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.TTS.StopText</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.PlayText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.StopText</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

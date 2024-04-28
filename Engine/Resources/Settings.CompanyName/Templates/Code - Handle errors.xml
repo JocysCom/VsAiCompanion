@@ -32,6 +32,7 @@ $words = $content -split '\s+'&#xD;
 $wordCount = $words.Count&#xD;
 Write-Host "Number of words in the file: $wordCount"&#xD;
 ```</Text>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -40,6 +41,5 @@ Write-Host "Number of words in the file: $wordCount"&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

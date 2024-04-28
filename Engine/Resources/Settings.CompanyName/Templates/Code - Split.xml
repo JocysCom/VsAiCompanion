@@ -23,6 +23,7 @@ kSaNvESsIHPdinm5USWG5OS0lC/mfaGhOcGWBV4k5qVmSYAigUZTNy5HkD8zgvF5BBfR6vbdAv9w&#xD
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>Break this code into smaller chunks</TextInstructions>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -31,6 +32,5 @@ kSaNvESsIHPdinm5USWG5OS0lC/mfaGhOcGWBV4k5qVmSYAigUZTNy5HkD8zgvF5BBfR6vbdAv9w&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>

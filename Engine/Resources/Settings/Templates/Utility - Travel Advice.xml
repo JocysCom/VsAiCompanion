@@ -19,6 +19,7 @@ O5X78vf30l/YwSKfLLjde+9zeGYp2xVcWc/MNmVwfU3tTXx89AtMyWkEiwYAAA==</IconData>
   <AiModel>gpt-4</AiModel>
   <TextInstructions>What are some must-visit places in?:</TextInstructions>
   <Text>[insert location here]</Text>
+  <Attachments />
   <Settings />
   <Messages />
   <AutoSend>false</AutoSend>
@@ -27,6 +28,5 @@ O5X78vf30l/YwSKfLLjde+9zeGYp2xVcWc/MNmVwfU3tTXx89AtMyWkEiwYAAA==</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <Attachments />
   <AttachmentsSelection />
 </TemplateItem>
