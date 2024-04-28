@@ -13,9 +13,16 @@ $file2target=[System.IO.Path]::Combine($filesDir, $file2)
 
 if ([System.IO.File]::Exists($file1source) -and -not [System.IO.File]::Exists($file1target)){
     [System.IO.File]::Copy($file1source, $file1target)
+}
+
+if ([System.IO.File]::Exists($file1source) -and -not [System.IO.File]::Exists("$filesDir\App.Settings.exe")){
 	[System.IO.File]::Copy($file1target, "$filesDir\App.Settings.exe")
+}
+
+if ([System.IO.File]::Exists($file1source) -and -not [System.IO.File]::Exists("$filesDir\App.Settings.CompanyName.exe")){
 	[System.IO.File]::Copy($file1target, "$filesDir\App.Settings.CompanyName.exe")
 }
+
 if ([System.IO.File]::Exists($file2source) -and -not [System.IO.File]::Exists($file2target)){
     [System.IO.File]::Copy($file2source, $file2target)
 }
