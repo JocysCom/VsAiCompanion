@@ -27,13 +27,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private static bool RiskLevelAcquired;
 		private static RiskLevel? _UserMaxRiskLevel;
 
-		public static RiskLevel? GetDomainUserMaxRiskLevel()
+		public static RiskLevel? GetDomainUserMaxRiskLevel(bool cache = true)
 		{
 			lock (_RiskLevelLock)
 			{
 				// Getting groups from domain is slow.
 				// Restart the app if permissions changed.
-				if (RiskLevelAcquired)
+				if (cache && RiskLevelAcquired)
 					return _UserMaxRiskLevel;
 				// If app runs on domain then...
 				if (IsApplicationRunningOnDomain())

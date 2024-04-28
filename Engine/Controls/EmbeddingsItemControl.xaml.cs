@@ -656,5 +656,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			_IsLoaded = false;
 		}
+
+		private void TargetTestButton_Click(object sender, RoutedEventArgs e)
+		{
+			LogPanel.LogTextBox.Clear();
+			LogPanel.LogTextBox.AppendText($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Testing database... ");
+			var target = AssemblyInfo.ExpandPath(Item.Target);
+			var connectionString = SqlInitHelper.IsPortable(target)
+						? SqlInitHelper.PathToConnectionString(target)
+						: target;
+			MainTabControl.SelectedItem = LogTabPage;
+			var success = false;
+			try
+			{
+				success = SqlInitHelper.InitSqlDatabase(connectionString);
+			}
+			catch (Exception ex)
+			{
+				LogPanel.LogTextBox.Text = ex.ToString();
+				LogPanel.LogTextBox.AppendText("\r\n");
+			}
+			var statusText = success
+				? "PASSED"
+				: "FAILED";
+			LogPanel.LogTextBox.AppendText(statusText);
+		}
+
 	}
 }

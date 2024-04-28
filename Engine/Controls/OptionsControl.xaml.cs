@@ -3,6 +3,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,12 +21,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			StartWithWindowsStateBox.ItemsSource = Enum.GetValues(typeof(WindowState));
 			SettingsFolderTextBox.Text = Global.AppData.XmlFile.Directory.FullName;
 			UpdateSpellCheck();
-			var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel();
-			DomainMaxRiskLevel.Visibility = DomainHelper.IsApplicationRunningOnDomain()
-				? Visibility.Visible
-				: Visibility.Collapsed;
-			var level = domainMaxRiskLevel?.ToString() ?? "N/A";
-			DomainMaxRiskLevel.Content = $"Domain max risk level: {level}";
+			DomainMaxRiskLevelRefresh();
 		}
 
 		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -216,6 +212,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		=> ClassLibrary.Runtime.Attributes.GetDictionary(
 			((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new[] { RiskLevel.Unknown }).ToArray());
 
+
+		private void DomainMaxRiskLevelRefresh(bool cache = true)
+		{
+			DomainMaxRiskLevelValueLabel.Content = "...";
+			var visibility = DomainHelper.IsApplicationRunningOnDomain()
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			DomainMaxRiskLevelRefreshButton.Visibility = visibility;
+			DomainMaxRiskLevelNameLabel.Visibility = visibility;
+			DomainMaxRiskLevelValueLabel.Visibility = visibility;
+			_ = Task.Run(() =>
+			{
+				var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel(cache);
+				var level = domainMaxRiskLevel?.ToString() ?? "N/A";
+				Dispatcher.Invoke(() =>
+				{
+					DomainMaxRiskLevelValueLabel.Content = $"{level}";
+				});
+			});
+
+
+		}
+
+		private void DomainMaxRiskLevelRefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			DomainMaxRiskLevelRefresh(false);
+		}
 	}
 
 }

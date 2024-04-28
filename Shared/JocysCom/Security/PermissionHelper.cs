@@ -61,7 +61,9 @@ namespace JocysCom.ClassLibrary.Security
 			var context = new PrincipalContext(contextType);
 			var gp = new GroupPrincipal(context, "*");
 			var ps = new PrincipalSearcher(gp);
-			return ps.FindAll().Cast<GroupPrincipal>().ToArray();
+			return ps.FindAll().Cast<GroupPrincipal>()
+				.OrderBy(x => x.Name)
+				.ToArray();
 		}
 
 		/// <summary>
@@ -99,7 +101,7 @@ namespace JocysCom.ClassLibrary.Security
 						groups.Add(lg);
 				}
 			}
-			return groups;
+			return groups.OrderBy(x => x.Name).ToList();
 		}
 
 		/// <summary>

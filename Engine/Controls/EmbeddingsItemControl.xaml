@@ -65,6 +65,7 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -104,7 +105,11 @@
 				Grid.ColumnSpan="2"
 				Margin="3,0,3,0"
 				Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}" />
-			<StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
+			<StackPanel
+				Grid.Row="1"
+				Grid.Column="4"
+				HorizontalAlignment="Right"
+				Orientation="Horizontal">
 
 				<Button
 					Name="BrowseButton"
@@ -131,16 +136,21 @@
 
 			</StackPanel>
 
-
+			<!--  Source Options  -->
+			<StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal">
+				<Label x:Name="SourcePatternLabel" MinWidth="48" Content="Pattern" />
+				<TextBox Name="SourcePatternTextBox" MinWidth="64" Text="{Binding SourcePattern}" />
+				<CheckBox x:Name="UseGitIgnoreCheckbox" Content="Use .gitignore" IsChecked="{Binding UseGitIgnore, UpdateSourceTrigger=PropertyChanged}" />
+			</StackPanel>
 			<!--  Target: Connection String  -->
 			<Label
-				Grid.Row="2"
+				Grid.Row="3"
 				Grid.Column="1"
 				VerticalAlignment="Center"
 				Content="{x:Static locales:Resources.Database}" />
 
 			<Grid
-				Grid.Row="2"
+				Grid.Row="3"
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
 				Margin="3,0,3,0">
@@ -149,7 +159,10 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<TextBox Name="TargetTextBox" Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" />
-				<TextBox Name="TargetMaskedTextBox" Background="{StaticResource BackgroundDark}" IsReadOnly="True" />
+				<TextBox
+					Name="TargetMaskedTextBox"
+					Background="{StaticResource BackgroundDark}"
+					IsReadOnly="True" />
 				<StackPanel Grid.Column="1" Orientation="Horizontal">
 					<Button Name="TargetSwitchToEditButton" Click="TargetSwitchToEditButton_Click">
 						<StackPanel Focusable="False">
@@ -164,7 +177,11 @@
 				</StackPanel>
 			</Grid>
 
-			<StackPanel Grid.Row="2" Grid.Column="4" Orientation="Horizontal">
+			<StackPanel
+				Grid.Row="3"
+				Grid.Column="4"
+				HorizontalAlignment="Right"
+				Orientation="Horizontal">
 
 				<Button Name="BrowseTargetButton" MinWidth="75" Click="BrowseTargetButton_Click">
 					<StackPanel>
@@ -172,19 +189,44 @@
 						<Label Content="{x:Static locales:Resources.Browse}" />
 					</StackPanel>
 				</Button>
-
-
 				<Button Name="EditButton" MinWidth="75" Click="EditButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_database}" Focusable="False" />
 						<Label Content="{x:Static locales:Resources.Edit}" />
 					</StackPanel>
 				</Button>
-
-
-
 			</StackPanel>
-			<StackPanel Grid.Row="3" Grid.Column="4" Orientation="Horizontal">
+
+			<StackPanel
+				Grid.Row="4"
+				Grid.Column="4"
+				HorizontalAlignment="Right"
+				Orientation="Horizontal">
+				<Button Name="ImportButton" MinWidth="75" Click="ImportButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
+						<Label Content="Import..." />
+					</StackPanel>
+				</Button>
+				<Button Name="ExportButton" MinWidth="75" Click="ExportButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Export}" Focusable="False" />
+						<Label Content="Export..." />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+			<StackPanel
+				Grid.Row="5"
+				Grid.Column="0"
+				Grid.ColumnSpan="5"
+				HorizontalAlignment="Right"
+				Orientation="Horizontal">
+				<Button Name="TargetTestButton" MinWidth="75" Click="TargetTestButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_checkbox_checked}" Focusable="False" />
+						<Label Content="Test..." />
+					</StackPanel>
+				</Button>
 				<Button Name="ScanStartButton" MinWidth="75" Click="ScanStartButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
@@ -202,37 +244,11 @@
 					</StackPanel>
 				</Button>
 			</StackPanel>
-			<StackPanel Grid.Row="5" Grid.Column="4" Orientation="Horizontal">
-				<Button Name="ImportButton" MinWidth="75" Click="ImportButton_Click">
-					<StackPanel Focusable="False">
-						<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
-						<Label Content="Import..." />
-					</StackPanel>
-				</Button>
-				<Button Name="ExportButton" MinWidth="75" Click="ExportButton_Click">
-					<StackPanel Focusable="False">
-						<ContentControl Content="{StaticResource Icon_Export}" Focusable="False" />
-						<Label Content="Export..." />
-					</StackPanel>
-				</Button>
-			</StackPanel>
-			<Label
-				x:Name="EmbeddingsLabel"
-				Grid.Row="3"
-				Grid.Column="1"
-				Content="Group Name" />
-			<StackPanel
-				Grid.Row="3"
-				Grid.Column="2"
-				HorizontalAlignment="Left"
-				Orientation="Horizontal">
+			<StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
+				<Label x:Name="EmbeddingsLabel" MinWidth="48" Content="Group" />
+
 				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName}" />
-				<Label
-					x:Name="EmbeddingGroupFlagLabel"
-					Grid.Row="3"
-					Grid.Column="1"
-					Margin="3,0,0,0"
-					Content="Flag" />
+				<Label x:Name="EmbeddingGroupFlagLabel" Margin="3,0,0,0" Content="Flag" />
 				<Grid>
 					<TextBox
 						x:Name="EmbeddingGroupFlagNameTextBox"
@@ -269,25 +285,17 @@
 
 
 			</StackPanel>
-			<Label
-				x:Name="SourcePatternLabel"
-				Grid.Row="5"
-				Grid.Column="1"
-				Content="Source Pattern" />
-			<StackPanel Grid.Row="5" Grid.Column="2" Orientation="Horizontal">
-				<TextBox Name="SourcePatternTextBox" MinWidth="64" Text="{Binding SourcePattern}" />
-				<CheckBox x:Name="UseGitIgnoreCheckbox" Content="Use .gitignore" IsChecked="{Binding UseGitIgnore, UpdateSourceTrigger=PropertyChanged}" />
-			</StackPanel>
 			<!--  System Instructions  -->
 			<Label
 				x:Name="InstructionsLabel"
 				Grid.Row="6"
-				Grid.Column="1"
+				Grid.Column="0"
 				Content="{x:Static locales:Resources.Instructions}" />
 			<TextBox
 				Name="InstructionsTextBox"
 				Grid.Row="6"
-				Grid.Column="2"
+				Grid.Column="1"
+				Grid.ColumnSpan="4"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
 				VerticalContentAlignment="Top"
@@ -299,13 +307,12 @@
 				TextWrapping="Wrap" />
 			<!--  Search options  -->
 			<StackPanel
-				Grid.Row="7"
+				Grid.Row="8"
 				Grid.Column="1"
 				Grid.ColumnSpan="3"
 				Margin="0,0,0,0"
-				HorizontalAlignment="Right"
 				Orientation="Horizontal">
-				<Label x:Name="SkipLabel" Content="Skip" />
+				<Label x:Name="SkipLabel" MinWidth="48" Content="Skip" />
 				<JcControls:NumericUpDown x:Name="SkipUpdown" Maximum="9223372036854775807" Value="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" />
 				<Label x:Name="TakeLabel" Content="Take" />
 				<JcControls:NumericUpDown x:Name="TakeUpdown" Maximum="9223372036854775807" Value="{Binding Take, UpdateSourceTrigger=PropertyChanged}" />
@@ -319,14 +326,15 @@
 			</StackPanel>
 			<!--  Test message  -->
 			<Label
-				Grid.Row="8"
-				Grid.Column="1"
+				Grid.Row="7"
+				Grid.Column="0"
 				VerticalAlignment="Center"
 				Content="{x:Static locales:Resources.Message}" />
 			<TextBox
 				Name="MessgaeTextBox"
-				Grid.Row="8"
-				Grid.Column="2"
+				Grid.Row="7"
+				Grid.Column="1"
+				Grid.ColumnSpan="4"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
 				VerticalContentAlignment="Top"
@@ -341,6 +349,7 @@
 				Grid.Row="8"
 				Grid.Column="4"
 				MinWidth="75"
+				HorizontalAlignment="Right"
 				Click="SearchButton_Click">
 				<StackPanel Focusable="False">
 					<ContentControl Content="{StaticResource Icon_find}" Focusable="False" />

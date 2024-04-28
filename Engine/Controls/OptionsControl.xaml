@@ -107,18 +107,38 @@
 								</WrapPanel>
 							</GroupBox>
 							<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Security}">
-								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-									<StackPanel Orientation="Horizontal">
-										<Label VerticalAlignment="Center" Content="Limit app risk level to" />
-										<ComboBox
-											Name="MaximumRiskLevelComboBox"
-											DisplayMemberPath="Value"
-											ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
-											SelectedValue="{Binding MaxRiskLevel, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-											SelectedValuePath="Key" />
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<Label VerticalAlignment="Center" Content="App max risk level" />
+									<ComboBox
+										Name="MaximumRiskLevelComboBox"
+										Grid.Column="1"
+										HorizontalAlignment="Right"
+										DisplayMemberPath="Value"
+										ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
+										SelectedValue="{Binding MaxRiskLevel, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+										SelectedValuePath="Key" />
+									<Label x:Name="DomainMaxRiskLevelNameLabel" Grid.Row="1" Content="Domain max risk level:" />
+									<StackPanel
+										Grid.Row="1"
+										Grid.Column="1"
+										HorizontalAlignment="Right"
+										Orientation="Horizontal">
+										<Label x:Name="DomainMaxRiskLevelValueLabel" Content="..." />
+										<Button Name="DomainMaxRiskLevelRefreshButton" Margin="3,0,3,0" Click="DomainMaxRiskLevelRefreshButton_Click">
+											<StackPanel>
+												<ContentControl Content="{StaticResource Icon_Refresh}" />
+											</StackPanel>
+										</Button>
 									</StackPanel>
-									<Label x:Name="DomainMaxRiskLevel" Content="[DomainMaxRiskLevel]" />
-								</WrapPanel>
+								</Grid>
 							</GroupBox>
 							<GroupBox Margin="3,0,3,3" Header="{x:Static locales:Resources.Other}">
 								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
