@@ -54,6 +54,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Text { get => _Text ?? ""; set => SetProperty(ref _Text, value); }
 		string _Text;
 
+
+		/// <summary>Attachments to send.</summary>
+		[DefaultValue(null)]
+		public BindingList<MessageAttachments> Attachments
+		{
+			get => _Attachments = _Attachments ?? new BindingList<MessageAttachments>();
+			set => SetProperty(ref _Attachments, value);
+		}
+		BindingList<MessageAttachments> _Attachments;
+
 		/// <summary>0 - Precise, 1 - Normal,  2 - Creative.</summary>
 		[DefaultValue(1.0)]
 		public double Creativity { get => _Creativity; set => SetProperty(ref _Creativity, value); }
@@ -83,16 +93,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public BindingList<MessageItem> Messages
 		{
-			get
-			{
-				if (_Messages == null)
-					_Messages = new BindingList<MessageItem>();
-				return _Messages;
-			}
-			set
-			{
-				SetProperty(ref _Messages, value);
-			}
+			get => _Messages = _Messages ?? new BindingList<MessageItem>();
+			set => SetProperty(ref _Messages, value);
 		}
 
 		BindingList<MessageItem> _Messages;
@@ -289,16 +291,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		public BindingList<string> Attachments { get => _Attachments; set => SetProperty(ref _Attachments, value); }
-		BindingList<string> _Attachments;
-
 		#region Selections
 
 		public List<string> AttachmentsSelection { get => _AttachmentsDataSelection; set => SetProperty(ref _AttachmentsDataSelection, value); }
 		List<string> _AttachmentsDataSelection;
 
 		#endregion
-
 
 		#region AI Mail Client
 
@@ -386,6 +384,42 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (AiMailClient.Account != account)
 				AiMailClient.Account = account;
 		}
+
+		#endregion
+
+		#region Multimedia
+
+		[DefaultValue(false)]
+		public bool UseTextToAudio { get => _UseTextToAudio; set => SetProperty(ref _UseTextToAudio, value); }
+		bool _UseTextToAudio;
+
+		[DefaultValue(false)]
+		public bool UseAudioToText { get => _UseAudioToText; set => SetProperty(ref _UseAudioToText, value); }
+		bool _UseAudioToText;
+
+		[DefaultValue(false)]
+		public bool UseVideoToText { get => _UseVideoToText; set => SetProperty(ref _UseVideoToText, value); }
+		bool _UseVideoToText;
+
+		[DefaultValue(false)]
+		public bool UseTextToVideo { get => _UseTextToVideo; set => SetProperty(ref _UseTextToVideo, value); }
+		bool _UseTextToVideo;
+
+		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_TextToAudio)]
+		public string TemplateTextToAudio { get => _TemplateTextToAudio; set => SetProperty(ref _TemplateTextToAudio, value); }
+		string _TemplateTextToAudio;
+
+		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_AudioToText)]
+		public string TemplateAudioToText { get => _TemplateAudioToText; set => SetProperty(ref _TemplateAudioToText, value); }
+		string _TemplateAudioToText;
+
+		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_VideoToText)]
+		public string TemplateVideoToText { get => _TemplateVideoToText; set => SetProperty(ref _TemplateVideoToText, value); }
+		string _TemplateVideoToText;
+
+		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_TextToVideo)]
+		public string TemplateTextToVideo { get => _TemplateTextToVideo; set => SetProperty(ref _TemplateTextToVideo, value); }
+		string _TemplateTextToVideo;
 
 		#endregion
 

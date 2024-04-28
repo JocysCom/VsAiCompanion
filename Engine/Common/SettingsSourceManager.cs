@@ -209,12 +209,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Reset Templates
 
-
 		public const string TemplateGenerateTitleTaskName = "® System - Generate Title";
 		public const string TemplateFormatMessageTaskName = "® System - Format Message";
 		public const string TemplatePluginApprovalTaskName = "® System - Plugin Approval";
 		public const string TempalteListsUpdateUserProfile = "Lists - Update User Profile";
 		public const string TemplateAIChatPersonalized = "AI - Chat - Personalized";
+
+		public const string TemplatePlugin_Model_TextToAudio = "® System - Text-To-Audio";
+		public const string TemplatePlugin_Model_AudioToText = "® System - Audio-To-Text";
+		public const string TemplatePlugin_Model_VideoToText = "® System - Video-To-Text";
+		public const string TemplatePlugin_Model_TextToVideo = "® System - Text-To-Video";
 
 		public static string[] GetRequiredTemplates()
 		{

@@ -11,7 +11,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// TTS Monitor > [Options] tab > [Monitor: Server] tab > check "Enable" checkbox. 
 	/// TTS Monitor > [Options] tab > [Monitor: Display] tab > uncheck "Enable" checkbox.
 	/// </summary>
-	public class TTS
+	public partial class Multimedia
 	{
 
 		/// <summary>

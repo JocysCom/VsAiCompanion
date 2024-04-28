@@ -664,6 +664,55 @@
             <param name="body">Email body.</param>
             <param name="bodyTextFormat">Email body text format.</param>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia">
+            <summary>
+            TTS functions, in combination with Jocys.com TTS Monitor app (Jocys.com/TTS), allow AI to speak and narrate stories or dialogues using text-to-speech voices. Works well with Windows Voice Typing. Enable text-to-speech:
+            AI Companion > Enable all TTS plugins in this tab. Add message instruction for AI like "Answer with text-to-speech voice." 
+            TTS Monitor > [Options] tab > [Monitor: Server] tab > check "Enable" checkbox. 
+            TTS Monitor > [Options] tab > [Monitor: Display] tab > uncheck "Enable" checkbox.
+            </summary>
+            <summary>
+            Multimedia, encompassing Text (as symbolic representations), Audio (as pressure waves), and Video (as electromagnetic waves),
+            should be addressed through unified methods, given the prevalence of files that integrate text, audio, and video components.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.PlayText(System.String,System.String,System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender},System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Start playing text. This could be used for speaking with the user or narrating books or stories.
+            </summary>
+            <param name="name">Character name.</param>
+            <param name="text">Text to play.</param>
+            <param name="gender">Character gender: 'Male', 'Female', 'Neutral'. Default: 'Male'.</param>
+            <param name="language">Language Culture. Use Language[-Location] format. For example: 'en-GB'. Default is set by the user.</param>
+            <param name="effect">Sound effects:
+            'Default', 'Beast', 'Demon', 'Dragonkin', 'Elemental',
+            'Giant', 'Humanoid', 'Mechanical', 'Undead'. Default is 'Default' for humans.
+            </param>
+            <param name="group">Message chat group: 'Quest'. Default: 'Quest'.</param>
+            <param name="pitch">Voice pitch: Range from -10 to 10. Default is set by the user.</param>
+            <param name="rate">Voice rate or speed: Range from -10 to 10.  Default is set by the user.</param>
+            <param name="volume">Voice volume. Range from 0 to 100.  Default is set by the user.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.StopText">
+            <summary>
+            Stop text-to-speech playback.
+            </summary>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.VideoToText">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage(System.String,System.String[])">
+            <summary>
+            Analyzes image files or URLs as per given instructions with an AI model. Can analyse image files on user computer.
+            </summary>
+            <param name="instructions">Guidelines for AI to follow during image analysis.</param>
+            <param name="pathsOrUrls">Paths to local files or URLs to images for analysis.</param>
+            <returns>Analysis results.</returns>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">
             <summary>
             Functions that enable AI to perform indexed searches. Use "Windows Search Settings" to add more folders to your search.
@@ -731,38 +780,6 @@
             <param name="message">Search query.</param>
             <param name="skip">Number of records to skip. Recommended: 0</param>
             <param name="take">Number of records to take. Recommended: 4</param>
-        </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TTS">
-            <summary>
-            TTS functions, in combination with Jocys.com TTS Monitor app (Jocys.com/TTS), allow AI to speak and narrate stories or dialogues using text-to-speech voices. Works well with Windows Voice Typing. Enable text-to-speech:
-            AI Companion > Enable all TTS plugins in this tab. Add message instruction for AI like "Answer with text-to-speech voice." 
-            TTS Monitor > [Options] tab > [Monitor: Server] tab > check "Enable" checkbox. 
-            TTS Monitor > [Options] tab > [Monitor: Display] tab > uncheck "Enable" checkbox.
-            </summary>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.PlayText(System.String,System.String,System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender},System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
-            <summary>
-            Start playing text. This could be used for speaking with the user or narrating books or stories.
-            </summary>
-            <param name="name">Character name.</param>
-            <param name="text">Text to play.</param>
-            <param name="gender">Character gender: 'Male', 'Female', 'Neutral'. Default: 'Male'.</param>
-            <param name="language">Language Culture. Use Language[-Location] format. For example: 'en-GB'. Default is set by the user.</param>
-            <param name="effect">Sound effects:
-            'Default', 'Beast', 'Demon', 'Dragonkin', 'Elemental',
-            'Giant', 'Humanoid', 'Mechanical', 'Undead'. Default is 'Default' for humans.
-            </param>
-            <param name="group">Message chat group: 'Quest'. Default: 'Quest'.</param>
-            <param name="pitch">Voice pitch: Range from -10 to 10. Default is set by the user.</param>
-            <param name="rate">Voice rate or speed: Range from -10 to 10.  Default is set by the user.</param>
-            <param name="volume">Voice volume. Range from 0 to 100.  Default is set by the user.</param>
-            <returns>True if the operation was successful.</returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.TTS.StopText">
-            <summary>
-            Stop text-to-speech playback.
-            </summary>
-            <returns>True if the operation was successful.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender">
             <summary>

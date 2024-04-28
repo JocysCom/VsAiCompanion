@@ -57,10 +57,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Mails dropdown.
 			Global.AppSettings.MailAccounts.ListChanged += MailAccounts_ListChanged;
 			UpdateMailAccounts();
-			// Show debug features.
-			MonitorInboxCheckBox.Visibility = InitHelper.IsDebug
+			var debugVisibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			// Show debug features.
+			MonitorInboxCheckBox.Visibility = debugVisibility;
+			UseTextToAudioCheckBox.Visibility = debugVisibility;
+			UseTextToVideoCheckBox.Visibility = debugVisibility;
+			UseAudioToTextCheckBox.Visibility = debugVisibility;
+			TemplateAudioToTextComboBox.Visibility = debugVisibility;
+			TemplateTextToAudioComboBox.Visibility = debugVisibility;
+			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 		}
 
 
@@ -230,7 +237,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
 				((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new[] { RiskLevel.Unknown }).ToArray());
 
-		public Dictionary<string, string> PluginApprovalTemplates
+		public Dictionary<string, string> PluginTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
 		public ObservableCollection<string> ContextListNames { get; set; } = new ObservableCollection<string>();
@@ -315,6 +322,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_Item = value ?? AppHelper.GetNewTemplateItem(true);
 				// This will trigger AiCompanionComboBox_SelectionChanged event.
 				AiModelBoxPanel.Item = null;
+				ChatPanel.AttachmentsPanel.CurrentItems = null;
 				DataContext = _Item;
 				_Item.PropertyChanged += _item_PropertyChanged;
 				AiModelBoxPanel.Item = _Item;
@@ -322,6 +330,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 				AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);
 				PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
+				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 				IconPanel.BindData(_Item);
 				PromptsPanel.BindData(_Item);
 				ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);

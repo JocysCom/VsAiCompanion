@@ -99,7 +99,7 @@
 					<ComboBox
 						Name="PluginApprovalTemplateComboBox"
 						DisplayMemberPath="Value"
-						ItemsSource="{Binding PluginApprovalTemplates, ElementName=This}"
+						ItemsSource="{Binding PluginTemplates, ElementName=This}"
 						SelectedValue="{Binding PluginApprovalTemplate}"
 						SelectedValuePath="Key" />
 				</StackPanel>
@@ -537,6 +537,90 @@
 							Style="{StaticResource ComboBox_Dynamic}"
 							Text="None" />
 					</WrapPanel>
+				</TabItem>
+
+				<TabItem x:Name="MultimediaTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_movie_comment}" />
+							<Label Content="{x:Static locales:Resources.Multimedia}" />
+						</StackPanel>
+					</TabItem.Header>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+
+						<CheckBox Name="UseTextToAudioCheckBox" Content="Use Text-to-Audio" IsChecked="{Binding UseTextToAudio}" />
+						<ComboBox
+							Name="TemplateTextToAudioComboBox"
+							Grid.Column="1"
+							MinWidth="128"
+							Margin="0,3,0,3"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginTemplates, ElementName=This}"
+							SelectedValue="{Binding TemplateTextToAudio}"
+							SelectedValuePath="Key" />
+
+						<CheckBox
+							Name="UseAudioToTextCheckBox"
+							Grid.Row="1"
+							Content="Use Audio-To-Text"
+							IsChecked="{Binding UseAudioToText}" />
+						<ComboBox
+							Name="TemplateAudioToTextComboBox"
+							Grid.Row="1"
+							Grid.Column="1"
+							MinWidth="128"
+							Margin="0,3,0,3"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginTemplates, ElementName=This}"
+							SelectedValue="{Binding TemplateAudioToText}"
+							SelectedValuePath="Key" />
+
+						<CheckBox
+							Name="UseTextToVideoCheckBox"
+							Grid.Row="2"
+							Content="Use Text-to-Video"
+							IsChecked="{Binding UseTextToVideo}" />
+						<ComboBox
+							Name="TemplateTextToVideoComboBox"
+							Grid.Row="2"
+							Grid.Column="1"
+							MinWidth="128"
+							Margin="0,3,0,3"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginTemplates, ElementName=This}"
+							SelectedValue="{Binding TemplateTextToVideo}"
+							SelectedValuePath="Key" />
+
+						<CheckBox
+							Name="UseVideoToTextCheckBox"
+							Grid.Row="3"
+							Content="Use Video-To-Text"
+							IsChecked="{Binding UseVideoToText}" />
+						<ComboBox
+							Name="TemplateVideoToTextComboBox"
+							Grid.Row="3"
+							Grid.Column="1"
+							MinWidth="128"
+							Margin="0,3,0,3"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginTemplates, ElementName=This}"
+							SelectedValue="{Binding TemplateVideoToText}"
+							SelectedValuePath="Key" />
+
+
+					</Grid>
+
+
 				</TabItem>
 
 				<TabItem x:Name="MailTabItem" x:FieldModifier="public">

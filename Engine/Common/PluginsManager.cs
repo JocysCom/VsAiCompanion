@@ -46,7 +46,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 						AddMethods(typeof(Database));
 						Search._databasePath = Global.PluginsSearchPath;
 						AddMethods(typeof(Search));
-						AddMethods(typeof(TTS));
+						AddMethods(typeof(Multimedia));
 						AddMethods(typeof(Lists));
 #if DEBUG
 						AddMethods(typeof(Automation));
@@ -197,6 +197,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 					search.SearchEmbeddingsCallback = eh.SearchEmbeddingsToSystemMessage;
 					methodResult = await InvokeMethod(methodInfo, search, invokeParams);
 					search.SearchEmbeddingsCallback = null;
+				});
+			}
+			else if (classInstance is Multimedia mm)
+			{
+				await Global.MainControl.Dispatcher.Invoke(async () =>
+				{
+					var ai = new AiMultimediaClient();
+					ai.Item = item;
+					// Map Text, Audio and Video converter methods.
+					mm.VideoToText = ai.VideoToText;
+					methodResult = await InvokeMethod(methodInfo, mm, invokeParams);
+					mm.VideoToText = null;
+					ai.Item = null;
 				});
 			}
 			else if (classInstance is Mail mail)

@@ -650,4 +650,13 @@ Use only the contents from these documents to answer questions.</value>
   <data name="SMTP_Host" xml:space="preserve">
     <value>SMTP Host</value>
   </data>
+  <data name="Multimedia" xml:space="preserve">
+    <value>Multimedia</value>
+  </data>
+  <data name="Vision" xml:space="preserve">
+    <value>Vision</value>
+  </data>
+  <data name="Voice" xml:space="preserve">
+    <value>Voice</value>
+  </data>
 </root>

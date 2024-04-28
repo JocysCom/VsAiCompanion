@@ -299,7 +299,7 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				{
 					foreach (var message in cr.messages)
 					{
-						AddRtfLine(rtf, message.content, message.role == message_role.user);
+						AddRtfLine(rtf, message.content as string, message.role == message_role.user);
 					}
 				}
 				else if (request is text_completion_item tr)
@@ -400,9 +400,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 						foreach (var message in cr.messages)
 						{
 							if (message.role == message_role.user)
-								AddDocxParagraph(mainPart.Document.Body, message.content, true);
+								AddDocxParagraph(mainPart.Document.Body, message.content as string, true);
 							if (message.role == message_role.assistant)
-								AddDocxParagraph(mainPart.Document.Body, message.content);
+								AddDocxParagraph(mainPart.Document.Body, message.content as string);
 						}
 					}
 					if (request is text_completion_item tr)
@@ -516,13 +516,13 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 							if (message.role == message_role.user)
 							{
 								cell.DataType = CellValues.String;
-								cell.CellValue = new CellValue(message.content);
+								cell.CellValue = new CellValue(message.content as string);
 								row.Append(cell);
 							}
 							if (message.role == message_role.assistant)
 							{
 								cell.DataType = CellValues.String;
-								cell.CellValue = new CellValue(message.content);
+								cell.CellValue = new CellValue(message.content as string);
 								row.Append(cell);
 							}
 						}
@@ -732,8 +732,8 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					var prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request.";
 					if (request is chat_completion_request cr)
 					{
-						var userContet = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
-						var assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
+						var userContet = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content as string ?? "";
+						var assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content as string ?? "";
 						csv.WriteField(userContet);
 						csv.WriteField(assistantContent);
 						// Text for LLaMA training
@@ -804,9 +804,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 					string assistantContent = null;
 					if (request is chat_completion_request cr)
 					{
-						systemContent = cr.messages.FirstOrDefault(x => x.role == message_role.system)?.content ?? "";
-						userContent = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
-						assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
+						systemContent = cr.messages.FirstOrDefault(x => x.role == message_role.system)?.content as string ?? "";
+						userContent = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content as string ?? "";
+						assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content as string ?? "";
 					}
 					else if (request is text_completion_item tr)
 					{
@@ -968,9 +968,9 @@ namespace JocysCom.VS.AiCompanion.Engine.FileConverters
 				var groupFlagName = "";
 				if (request is chat_completion_request cr)
 				{
-					systemContent = cr.messages.FirstOrDefault(x => x.role == message_role.system)?.content ?? "";
-					userContent = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content ?? "";
-					assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content ?? "";
+					systemContent = cr.messages.FirstOrDefault(x => x.role == message_role.system)?.content as string ?? "";
+					userContent = cr.messages.FirstOrDefault(x => x.role == message_role.user)?.content as string ?? "";
+					assistantContent = cr.messages.FirstOrDefault(x => x.role == message_role.assistant)?.content as string ?? "";
 					groupFlagName = cr.GetProperty<string>(GroupFlagName);
 				}
 				else if (request is text_completion_item tr)

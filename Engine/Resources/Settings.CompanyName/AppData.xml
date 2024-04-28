@@ -29,6 +29,7 @@
         <IsEnabled>true</IsEnabled>
       </StartPosition>
       <AiModelData>
+        <ListSelection />
         <ListSelectedIndex>0</ListSelectedIndex>
       </AiModelData>
       <AiServiceData>
@@ -47,9 +48,9 @@
       <TemplateData>
         <GridSplitterPosition>0.2972972972972973</GridSplitterPosition>
         <ListSelection>
-          <string>AI - Chat</string>
+          <string>® AI Tuning - Step 6 - Check Answer</string>
         </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
+        <ListSelectedIndex>64</ListSelectedIndex>
       </TemplateData>
       <FineTuningData>
         <GridSplitterPosition>NaN</GridSplitterPosition>
@@ -77,6 +78,7 @@
         <ListSelectedIndex>0</ListSelectedIndex>
       </EmbeddingsData>
       <MailAccountData>
+        <ListSelection />
         <ListSelectedIndex>0</ListSelectedIndex>
       </MailAccountData>
       <AiServices>

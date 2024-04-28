@@ -317,7 +317,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					a0.IsMarkdown = true;
 					// Update messages.
 					var message = ConvertMessageItemToChatMessage(false, m, includeAttachments: true);
-					var content = JoinMessageParts(message[0].content, ConvertAttachmentsToString(a0));
+					var content = JoinMessageParts(message[0].content as string, ConvertAttachmentsToString(a0));
 					chatLogMessages.Clear();
 					chatLogMessages.Add(new chat_completion_message(message_role.user, content));
 				}

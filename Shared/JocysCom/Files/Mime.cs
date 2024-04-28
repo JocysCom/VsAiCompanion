@@ -2,7 +2,6 @@
 #else
 
 using Microsoft.Win32;
-using System;
 
 namespace JocysCom.ClassLibrary.Files
 {
@@ -96,6 +95,7 @@ namespace JocysCom.ClassLibrary.Files
 			var extension = System.IO.Path.GetExtension(resourceName);
 			var contentType = GetMimeContentType(extension);
 			var base64 = System.Convert.ToBase64String(data);
+			//data:[<mediatype>][;base64],<data>
 			return "data:" + contentType + ";base64," + base64;
 		}
 

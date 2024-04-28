@@ -15,7 +15,7 @@ namespace JocysCom.VS.AiCompanion.Shared.JocysCom
 		public OperationResult()
 		{
 			RequestId = Guid.NewGuid().ToString();
-			Errors = new List<Exception>();
+			Errors = new List<string>();
 		}
 
 		/// <summary>
@@ -36,8 +36,8 @@ namespace JocysCom.VS.AiCompanion.Shared.JocysCom
 		public OperationResult(Exception error) : this()
 		{
 			StatusCode = 1;
-			StatusText = "Error";
-			Errors.Add(error);
+			StatusText = error.Message;
+			Errors.Add(error.ToString());
 		}
 
 
@@ -50,7 +50,7 @@ namespace JocysCom.VS.AiCompanion.Shared.JocysCom
 			StatusCode = 1;
 			StatusText = "Error";
 			foreach (var error in errors)
-				Errors.Add(error);
+				Errors.Add(error.ToString());
 		}
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace JocysCom.VS.AiCompanion.Shared.JocysCom
 			StatusCode = statusCode;
 			StatusText = statusText ?? statusCode.ToString();
 			foreach (var error in errors)
-				Errors.Add(error);
+				Errors.Add(error.ToString());
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace JocysCom.VS.AiCompanion.Shared.JocysCom
 		/// <summary>
 		/// List of exceptions related to operation failure.
 		/// </summary>
-		public IList<Exception> Errors { get; private set; }
+		public List<string> Errors { get; private set; }
 
 		/// <summary>
 		/// Indicates whether the operation was successful.

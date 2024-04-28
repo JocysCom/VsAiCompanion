@@ -379,7 +379,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				{
 					var eh = new EmbeddingHelper();
 					var lastUserMessage = messagesToSend.Last(x => x.role == message_role.user);
-					if (!string.IsNullOrWhiteSpace(lastUserMessage?.content))
+					if (!string.IsNullOrWhiteSpace(lastUserMessage?.content as string))
 					{
 						// Try to get system message before user message.
 						var lastSystemMessage = messagesToSend.LastOrDefault(x => x.role == message_role.system);
@@ -412,7 +412,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Text Completion mode.
 				if (IsTextCompletionMode(modelName))
 				{
-					var prompts = messagesToSend.Select(x => x.content).ToArray();
+					var prompts = messagesToSend.Select(x => x.content as string).ToArray();
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
@@ -469,16 +469,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var messages = new List<ChatRequestMessage>();
 					foreach (var messageToSend in messagesToSend)
 					{
+						var stringContent = messageToSend.content as string;
+						ChatMessageContentItem[] contentItems = null;
+						if (messageToSend.content is content_item[] citems)
+							contentItems = citems.Select(x => ConvertToChatMessageContentItem(x)).ToArray();
 						switch (messageToSend.role)
 						{
 							case message_role.user:
-								messages.Add(new ChatRequestUserMessage(messageToSend.content));
+								if (contentItems != null)
+									messages.Add(new ChatRequestUserMessage(contentItems));
+								else
+									messages.Add(new ChatRequestUserMessage(stringContent));
 								break;
 							case message_role.assistant:
-								messages.Add(new ChatRequestAssistantMessage(messageToSend.content));
+								messages.Add(new ChatRequestAssistantMessage(stringContent));
 								break;
 							case message_role.system:
-								messages.Add(new ChatRequestSystemMessage(messageToSend.content));
+								messages.Add(new ChatRequestSystemMessage(stringContent));
 								break;
 						}
 					}
@@ -689,6 +696,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		}
 
 		#region Convert to Name Value Collection
+
+		public ChatMessageContentItem ConvertToChatMessageContentItem(object o)
+		{
+			if (!(o is content_item item))
+				return null;
+			switch (item.type)
+			{
+				case cotent_item_type.text:
+					return new ChatMessageTextContentItem(item.text);
+				case cotent_item_type.image_url:
+					// The Microsoft Uri has a size limit of x0FFF0.
+					// At the moment the ChatMessageImageUrl does not support attaching base64 images larger than that.
+					System.Uri uri;
+					var detail = (ChatMessageImageDetailLevel)item.image_url.detail.ToString();
+					uri = new System.Uri(item.image_url.url);
+					var iUri = new ChatMessageImageUrl(uri);
+					iUri.Detail = detail;
+					var ii = new ChatMessageImageContentItem(iUri);
+					return ii;
+				default:
+					return null;
+			}
+		}
 
 		public NameValueCollection ConvertToNameValueCollection(object o, bool escapeForUrl = false)
 		{

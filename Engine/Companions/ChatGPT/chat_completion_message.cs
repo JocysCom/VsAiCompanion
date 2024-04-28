@@ -7,7 +7,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 	{
 		public chat_completion_message() { }
 
-		public chat_completion_message(message_role role, string content)
+		public chat_completion_message(message_role role, object content)
 		{
 			this.role = role;
 			this.content = content;
@@ -19,7 +19,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		[JsonInclude]
 		[JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-		public string content { get; set; }
+		public object content { get; set; }
 
 		public string name { get; set; }
 		public List<chat_completion_message_tool_call> tool_calls { get; set; } = new List<chat_completion_message_tool_call>();
