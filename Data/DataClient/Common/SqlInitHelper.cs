@@ -365,28 +365,28 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		}
 
 		public static async Task<List<long>> GetSimilarFileEmbeddings(
-			string connectionString,
-			string groupName,
-			EmbeddingGroupFlag groupFlag,
-			float[] promptVectors, int take)
+		string connectionString,
+		string groupName,
+		EmbeddingGroupFlag groupFlag,
+		float[] promptVectors, int take)
 		{
 			var commandText = $@"
-                SELECT
-					fp.Id,
-					fp.FileId,
-					fp.Embedding
-                FROM FilePart AS fp
-                JOIN File AS f ON f.Id = fp.FileId
-                WHERE (@GroupName = '' OR @GroupName = f.GroupName)
-                AND (@GroupFlag = 0 OR (@GroupFlag & fp.GroupFlag) > 0)
-                AND fp.IsEnabled = 1
-                AND f.IsEnabled = 1";
-			var connection = NewConnection(connectionString);
-			var command = NewCommand(commandText, connection);
+        SELECT
+            fp.Id,
+            fp.FileId,
+            fp.Embedding
+        FROM FilePart AS fp
+        JOIN File AS f ON f.Id = fp.FileId
+        WHERE (@GroupName = '' OR @GroupName = f.GroupName)
+        AND (@GroupFlag = 0 OR (@GroupFlag & fp.GroupFlag) > 0)
+        AND fp.IsEnabled = 1
+        AND f.IsEnabled = 1";
+			using var connection = NewConnection(connectionString);
+			using var command = NewCommand(commandText, connection);
 			AddParameters(command, groupName, groupFlag);
-			connection.Open();
-			var reader = await command.ExecuteReaderAsync();
-			var tempResult = new SortedList<float, FilePart>();
+			await connection.OpenAsync();
+			using var reader = await command.ExecuteReaderAsync();
+			var tempResult = new List<(float similarity, FilePart filePart)>();
 			while (await reader.ReadAsync())
 			{
 				var filePart = ReadFilePartFromReader(reader);
@@ -395,20 +395,22 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				// If take list is not filled yet then add and continue.
 				if (tempResult.Count < take)
 				{
-					tempResult.Add(similarity, filePart);
+					tempResult.Add((similarity, filePart));
 					continue;
 				}
-				// If similarity less or same then skip and continue.
-				if (similarity <= tempResult.Keys[0])
-					continue;
-				// Replace least similar item with the more similar.
-				tempResult.RemoveAt(0);
-				tempResult.Add(similarity, filePart);
+				// Sort the list if it's at capacity to ensure the least similar item is at the beginning
+				tempResult.Sort((x, y) => x.similarity.CompareTo(y.similarity));
+				// If more similar found then...
+				if (similarity > tempResult[0].similarity)
+				{
+					tempResult.RemoveAt(0);
+					tempResult.Add((similarity, filePart));
+				}
 			}
+			// Final sort to order by descending similarity before extracting IDs.
 			var ids = tempResult
-				.ToList()
-				.OrderByDescending(x => x.Key)
-				.Select(x => x.Value.Id)
+				.OrderByDescending(x => x.similarity)
+				.Select(x => x.filePart.Id)
 				.ToList();
 			return ids;
 		}

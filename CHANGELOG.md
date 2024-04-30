@@ -1,3 +1,7 @@
+2024-04-28 v1.9.42
+
+- Fix: Crash when reading data from the embedding database.
+
 2024-04-28 v1.9.41
 
 - Update: Use the name of the embedding to select the AI database.
