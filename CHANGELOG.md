@@ -1,6 +1,7 @@
-2024-04-28 v1.9.42
+2024-04-30 v1.9.43
 
 - Fix: Crash when reading data from the embedding database.
+- Fix: Crash when customized settings file not found.
 
 2024-04-28 v1.9.41
 

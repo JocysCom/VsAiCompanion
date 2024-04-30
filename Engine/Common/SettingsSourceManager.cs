@@ -366,9 +366,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var path = JocysCom.ClassLibrary.Configuration.AssemblyInfo.ExpandPath(Global.AppSettings.ConfigurationUrl);
 				var isUrl = Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile;
-				zip = isUrl
-					? GetZipFromUrl(path)
-					: ZipStorer.Open(path, FileAccess.Read);
+				if (isUrl)
+					zip = GetZipFromUrl(path);
+				else if (File.Exists(path))
+					zip = ZipStorer.Open(path, FileAccess.Read);
 			}
 			else
 			{
