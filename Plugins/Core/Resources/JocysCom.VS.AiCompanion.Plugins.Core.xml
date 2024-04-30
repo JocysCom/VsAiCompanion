@@ -728,6 +728,20 @@
             LiteDB file extension.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder(System.String,System.String)">
+            <summary>
+            Index a specific folder. Returns true if successful.
+            </summary>
+            <param name="indexName">Index name.</param>
+            <param name="folderPath">Folder path.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchIndex(System.String,System.String)">
+            <summary>
+            Search an index and return search results.
+            </summary>
+            <param name="indexName">Index name.</param>
+            <param name="searchString">Search string.</param>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex(System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Int64},System.Nullable{System.Int64},System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
             <summary>
             Searches the Windows Index for files matching the specified criteria. This method allows for extensive search capabilities, including text content, file metadata, and more.

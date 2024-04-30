@@ -381,11 +381,11 @@ namespace JocysCom.VS.AiCompanion.DataClient
         AND (@GroupFlag = 0 OR (@GroupFlag & fp.GroupFlag) > 0)
         AND fp.IsEnabled = 1
         AND f.IsEnabled = 1";
-			using var connection = NewConnection(connectionString);
-			using var command = NewCommand(commandText, connection);
+			var connection = NewConnection(connectionString);
+			var command = NewCommand(commandText, connection);
 			AddParameters(command, groupName, groupFlag);
 			await connection.OpenAsync();
-			using var reader = await command.ExecuteReaderAsync();
+			var reader = await command.ExecuteReaderAsync();
 			var tempResult = new List<(float similarity, FilePart filePart)>();
 			while (await reader.ReadAsync())
 			{
@@ -412,6 +412,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				.OrderByDescending(x => x.similarity)
 				.Select(x => x.filePart.Id)
 				.ToList();
+			connection.Close();
 			return ids;
 		}
 
