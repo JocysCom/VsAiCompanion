@@ -13,11 +13,54 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void SetupTutorialHelper(UserControl mainControl)
 		{
-			Application.Current.MainWindow.KeyDown -= MainWindow_KeyDown;
+			if (_MainControl != null)
+			{
+				Application.Current.MainWindow.KeyDown -= MainWindow_KeyDown;
+				InputManager.Current.PreProcessInput -= Current_PreProcessInput;
+				_MainControl.MouseMove -= _MainControl_MouseMove;
+			}
+			_MainControl = mainControl;
 			// Attach global key handlers to the application
 			if (mainControl != null)
+			{
 				Application.Current.MainWindow.KeyDown += MainWindow_KeyDown;
-			_MainControl = mainControl;
+				InputManager.Current.PreProcessInput += Current_PreProcessInput;
+				// Attach mouse move listener to the main window or specific container
+				_MainControl.MouseMove += _MainControl_MouseMove;
+
+			}
+		}
+
+		private static void _MainControl_MouseMove(object sender, MouseEventArgs e)
+		{
+			// Use hit testing or other logic to determine what control is under the mouse
+			var hitTestResult = VisualTreeHelper.HitTest(_MainControl, e.GetPosition(_MainControl));
+			if (hitTestResult != null)
+			{
+				var targetElement = hitTestResult.VisualHit as FrameworkElement;
+				// Update your reference to the currently hovered FrameworkElement here
+			}
+		}
+
+		private static void Current_PreProcessInput(object sender, PreProcessInputEventArgs e)
+		{
+			var evt = e.StagingItem.Input;
+			if (evt is KeyEventArgs keyEvt && keyEvt.RoutedEvent == Keyboard.KeyDownEvent)
+			{
+				// Check for F1 and ESC keys here
+				if (keyEvt.Key == Key.F1)
+				{
+					// Assuming we are tracking the currently hovered element, for illustrative purposes, replace with actual hovered element reference
+					var hoveredElement = previousElement; // Placeholder for the actual hovered element
+					var helpText = "This is a demo help text."; // Replace with actual help text
+					Focus(hoveredElement, helpText, true);
+				}
+				else if (keyEvt.Key == Key.Escape)
+				{
+					Focus(null, null, false);
+				}
+			}
+
 		}
 
 		public static bool Focus(FrameworkElement element, string helpText, bool enable)
@@ -42,17 +85,17 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private static void MainWindow_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.Key == Key.F1)
-			{
-				// Assuming we are tracking the currently hovered element, for illustrative purposes, replace with actual hovered element reference
-				var hoveredElement = previousElement; // Placeholder for the actual hovered element
-				var helpText = "This is a demo help text."; // Replace with actual help text
-				Focus(hoveredElement, helpText, true);
-			}
-			else if (e.Key == Key.Escape)
-			{
-				Focus(null, null, false);
-			}
+			//if (e.Key == Key.F1)
+			//{
+			//	// Assuming we are tracking the currently hovered element, for illustrative purposes, replace with actual hovered element reference
+			//	var hoveredElement = previousElement; // Placeholder for the actual hovered element
+			//	var helpText = "This is a demo help text."; // Replace with actual help text
+			//	Focus(hoveredElement, helpText, true);
+			//}
+			//else if (e.Key == Key.Escape)
+			//{
+			//	Focus(null, null, false);
+			//}
 		}
 
 		private static void InitializeOverlay(string helpText)

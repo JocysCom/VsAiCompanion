@@ -55,6 +55,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
+			TutorialHelper.SetupTutorialHelper(this);
 		}
 
 
