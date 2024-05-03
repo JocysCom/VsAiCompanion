@@ -22,6 +22,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -571,6 +572,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void AddHelp(Slider control, string help)
 		{
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Tag as string, help);
+		}
+
+		public static void AddHelp(UIElement element)
+		{
+			var helpText = AutomationProperties.GetHelpText(element);
+			var name = AutomationProperties.GetName(element);
+			Global.MainControl.InfoPanel.HelpProvider.Add(element, name, helpText);
 		}
 
 		public static void AddHelp(ContentControl control, string help)

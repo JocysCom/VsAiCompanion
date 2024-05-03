@@ -87,6 +87,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.RaiseOnMainControlLoaded();
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TemplatesPanel;
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksPanel;
+				AppHelper.AddHelp(TasksTabItem);
 			}
 		}
 
