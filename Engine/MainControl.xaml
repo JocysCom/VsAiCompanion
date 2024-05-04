@@ -73,12 +73,12 @@
 			<TabItem
 				x:Name="TasksTabItem"
 				x:FieldModifier="public"
-				AutomationProperties.HelpText="{StaticResource TasksTabHelpText}"
-				AutomationProperties.Name="{StaticResource Tasks}">
+				AutomationProperties.HelpText="{StaticResource app_TasksTab_Help}"
+				AutomationProperties.Name="{StaticResource app_TasksTab_Name}">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_task}" />
-						<Label Content="{StaticResource Tasks}" />
+						<Label Content="{StaticResource app_TasksTab_Name}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="TasksPanel" x:FieldModifier="public" DataType="Task" />
