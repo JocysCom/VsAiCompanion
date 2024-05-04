@@ -397,7 +397,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool UseAudioToText { get => _UseAudioToText; set => SetProperty(ref _UseAudioToText, value); }
 		bool _UseAudioToText;
 
-		[DefaultValue(false)]
+		[DefaultValue(true)]
 		public bool UseVideoToText { get => _UseVideoToText; set => SetProperty(ref _UseVideoToText, value); }
 		bool _UseVideoToText;
 

@@ -2,6 +2,7 @@
 #else
 
 using Microsoft.Win32;
+using System;
 
 namespace JocysCom.ClassLibrary.Files
 {
@@ -99,7 +100,41 @@ namespace JocysCom.ClassLibrary.Files
 			return "data:" + contentType + ";base64," + base64;
 		}
 
-
+		public static bool TryParseDataUri(string uri, out string mimeType, out byte[] data)
+		{
+			mimeType = "";
+			data = null;
+			// Check if the URI starts with "data:"
+			if (!uri.StartsWith("data:"))
+				return false;
+			// Find the first comma; the information before it is the MIME type and encoding
+			var commaIndex = uri.IndexOf(',');
+			if (commaIndex == -1)
+				return false;
+			// Extracting the MIME type and encoding info
+			var typeAndEncoding = uri.Substring(5, commaIndex - 5); // Extract info between "data:" and the comma
+			var base64Data = uri.Substring(commaIndex + 1); // Extract the data after the comma
+															// Default MIME type if none is specified
+			if (string.IsNullOrWhiteSpace(typeAndEncoding))
+			{
+				mimeType = "text/plain;charset=US-ASCII";
+			}
+			else
+			{
+				var semiColonIndex = typeAndEncoding.IndexOf(';');
+				if (semiColonIndex != -1)
+					mimeType = typeAndEncoding.Substring(0, semiColonIndex);
+				else
+					mimeType = typeAndEncoding; // If there's no semi-colon, the whole string is the MIME type
+			}
+			// Check if the data is encoded in base64
+			if (typeAndEncoding.EndsWith(";base64", StringComparison.OrdinalIgnoreCase))
+				data = Convert.FromBase64String(base64Data);
+			else
+				// Handling data not encoded in base64 (Not covered as the initial method only handles base64)
+				return false;
+			return true;
+		}
 
 	}
 }

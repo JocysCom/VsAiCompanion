@@ -46,12 +46,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.16" />
-		<PackageReference Include="Azure.Identity" Version="1.11.1" />
-		<PackageReference Include="CsvHelper" Version="31.0.3" />
+		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.17" />
+		<PackageReference Include="Azure.Identity" Version="1.11.2" />
+		<PackageReference Include="CsvHelper" Version="32.0.1" />
 		<PackageReference Include="DnsClient" Version="1.7.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.0.2" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.60" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
 		<PackageReference Include="Ignore" Version="0.1.50" />
 		<PackageReference Include="MailKit" Version="4.5.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />

@@ -708,13 +708,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				case cotent_item_type.image_url:
 					// The Microsoft Uri has a size limit of x0FFF0.
 					// At the moment the ChatMessageImageUrl does not support attaching base64 images larger than that.
-					System.Uri uri;
 					var detail = (ChatMessageImageDetailLevel)item.image_url.detail.ToString();
-					uri = new System.Uri(item.image_url.url);
-					var iUri = new ChatMessageImageUrl(uri);
-					iUri.Detail = detail;
-					var ii = new ChatMessageImageContentItem(iUri);
-					return ii;
+					ChatMessageImageContentItem ci = null;
+					if (ClassLibrary.Files.Mime.TryParseDataUri(item.image_url.url, out string mimeType, out byte[] data))
+					{
+						var bytes = BinaryData.FromBytes(data);
+						ci = new ChatMessageImageContentItem(bytes, mimeType, detail);
+					}
+					else
+					{
+						var imageUri = new System.Uri(item.image_url.url);
+						ci = new ChatMessageImageContentItem(imageUri, detail);
+					}
+					return ci;
 				default:
 					return null;
 			}

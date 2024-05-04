@@ -1,7 +1,8 @@
-2024-04-30 v1.9.43
+2024-05-04 v1.9.43
 
 - Fix: Crash when reading data from the embedding database.
 - Fix: Crash when customized settings file not found.
+- Update: OpenAI Client now supports the analysis of larger images.
 
 2024-04-28 v1.9.41
 
