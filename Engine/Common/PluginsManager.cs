@@ -145,7 +145,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return null;
 			}
 			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
-				return Resources.Resources.Call_function_request_denied;
+				return Resources.MainResources.main_Call_function_request_denied;
 			object classInstance = null;
 			// If the method is not static, create an instance of the class.
 			if (!methodInfo.IsStatic)
@@ -177,7 +177,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				var approved = await ApproveExecution(item, pfci, cancellationTokenSource);
 				if (!approved)
-					return Resources.Resources.Call_function_request_denied;
+					return Resources.MainResources.main_Call_function_request_denied;
 			}
 			object methodResult = null;
 			if (methodInfo.DeclaringType.Name == nameof(VisualStudio))

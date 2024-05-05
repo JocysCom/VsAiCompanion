@@ -508,7 +508,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			item.AiModel = models?.FirstOrDefault(x => x.Name.IndexOf("embedding", StringComparison.OrdinalIgnoreCase) >= 0)?.Name
 				?? defaultAiService?.DefaultAiModel
 				?? "text-embedding-3-large";
-			item.Instructions = Resources.Resources.Embedding_Default_Instructions;
+			item.Instructions = Resources.MainResources.main_Embedding_Default_Instructions;
 			item.Source = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item), true);
 			item.Target = AssemblyInfo.ParameterizePath(Global.Embeddings.GetFileItemFullBaseName(item) + SqlInitHelper.SqliteExt, true);
 			// Find free flag number.
@@ -574,11 +574,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Tag as string, help);
 		}
 
-		public static void AddHelp(UIElement element)
+		public static void AddHelp(params UIElement[] elements)
 		{
-			var helpText = AutomationProperties.GetHelpText(element);
-			var name = AutomationProperties.GetName(element);
-			Global.MainControl.InfoPanel.HelpProvider.Add(element, name, helpText);
+			foreach (var element in elements)
+			{
+				var helpText = AutomationProperties.GetHelpText(element);
+				var name = AutomationProperties.GetName(element);
+				Global.MainControl.InfoPanel.HelpProvider.Add(element, name, helpText);
+			}
 		}
 
 		public static void AddHelp(ContentControl control, string help)

@@ -6,7 +6,6 @@
 	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="400"
@@ -18,6 +17,7 @@
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -46,7 +46,7 @@
 			<TextBlock
 				Name="FeatureDescriptionLabel"
 				Margin="4"
-				Text="{x:Static locales:Resources.MaiAccounts_Feature_Description}"
+				Text="{StaticResource main_MaiAccounts_Feature_Description}"
 				TextWrapping="Wrap" />
 		</Border>
 		<!--  Row 1  -->
@@ -68,7 +68,7 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<Label Grid.Row="1" Content="{x:Static locales:Resources.Email_Name}" />
+			<Label Grid.Row="1" Content="{StaticResource main_Email_Name}" />
 			<TextBox
 				Name="EmailNameTextBox"
 				Grid.Row="1"
@@ -76,20 +76,20 @@
 				Grid.ColumnSpan="2"
 				Text="{Binding EmailName}" />
 
-			<Label Grid.Row="2" Content="{x:Static locales:Resources.Email_Address}" />
+			<Label Grid.Row="2" Content="{StaticResource main_Email_Address}" />
 			<TextBox
 				Name="EmailAddressTextBox"
 				Grid.Row="2"
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Text="{Binding EmailAddress}" />
-			<Label Grid.Row="3" Content="{x:Static locales:Resources.IMAP_Host}" />
+			<Label Grid.Row="3" Content="{StaticResource main_IMAP_Host}" />
 			<TextBox
 				Grid.Row="3"
 				Grid.Column="1"
 				VerticalAlignment="Top"
 				Text="{Binding ImapHost}" />
-			<Label Grid.Row="4" Content="{x:Static locales:Resources.SMTP_Host}" />
+			<Label Grid.Row="4" Content="{StaticResource main_SMTP_Host}" />
 			<TextBox
 				Grid.Row="4"
 				Grid.Column="1"
@@ -107,7 +107,7 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				<Label Grid.Row="0" Grid.Column="0" Content="{x:Static locales:Resources.Server_IMAP_Port}" />
+				<Label Grid.Row="0" Grid.Column="0" Content="{StaticResource main_Server_IMAP_Port}" />
 				<JcControls:NumericUpDown
 					Grid.Row="0"
 					Grid.Column="1"
@@ -129,10 +129,10 @@
 					Click="TestImapConnectionButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Test}" />
+						<Label Content="{StaticResource main_Test}" />
 					</StackPanel>
 				</Button>
-				<Label Grid.Row="1" Grid.Column="0" Content="{x:Static locales:Resources.Server_SMTP_Port}" />
+				<Label Grid.Row="1" Grid.Column="0" Content="{StaticResource main_Server_SMTP_Port}" />
 				<JcControls:NumericUpDown
 					Grid.Row="1"
 					Grid.Column="1"
@@ -155,20 +155,20 @@
 					Click="TestSmtpConnectionButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Test}" />
+						<Label Content="{StaticResource main_Test}" />
 					</StackPanel>
 				</Button>
 			</Grid>
 
 
-			<Label Grid.Row="5" Content="{x:Static locales:Resources.Username}" />
+			<Label Grid.Row="5" Content="{StaticResource main_Username}" />
 			<TextBox
 				Name="UsernameTextBox"
 				Grid.Row="5"
 				Grid.Column="1"
 				Text="{Binding Username}" />
 
-			<Label Grid.Row="6" Content="{x:Static locales:Resources.Password}" />
+			<Label Grid.Row="6" Content="{StaticResource main_Password}" />
 			<PasswordBox Name="PasswordPasswordBox" Grid.Row="6" Grid.Column="1" />
 
 			<StackPanel
@@ -177,8 +177,8 @@
 				Grid.ColumnSpan="3"
 				HorizontalAlignment="Left"
 				Orientation="Horizontal">
-				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Enabled}" IsChecked="{Binding IsEnabled}" />
-				<CheckBox Margin="0,3,0,0" Content="{x:Static locales:Resources.Trust_Server_Certificate}" IsChecked="{Binding TrustServerCertificate}" />
+				<CheckBox Margin="0,3,0,0" Content="{StaticResource main_Enabled}" IsChecked="{Binding IsEnabled}" />
+				<CheckBox Margin="0,3,0,0" Content="{StaticResource main_Trust_Server_Certificate}" IsChecked="{Binding TrustServerCertificate}" />
 			</StackPanel>
 			<StackPanel
 				Grid.Row="8"
@@ -189,22 +189,22 @@
 				<CheckBox
 					x:Name="ValidateSendersCheckBox"
 					Margin="0,3,0,0"
-					Content="{x:Static locales:Resources.Validate_Senders}"
+					Content="{StaticResource main_Validate_Senders}"
 					IsChecked="{Binding ValidateSenders}" />
 				<CheckBox
 					x:Name="ValidateRecipientsCheckBox"
 					Margin="0,3,0,0"
-					Content="{x:Static locales:Resources.Validate_Recipients}"
+					Content="{StaticResource main_Validate_Recipients}"
 					IsChecked="{Binding ValidateRecipients}" />
 				<CheckBox
 					x:Name="ValidateDigitalSignatureCheckBox"
 					Margin="0,3,0,0"
-					Content="{x:Static locales:Resources.Validate_Digital_Signature}"
+					Content="{StaticResource main_Validate_Digital_Signature}"
 					IsChecked="{Binding ValidateDigitalSignature}" />
 				<CheckBox
 					x:Name="ValidateDkimCheckBox"
 					Margin="0,3,0,0"
-					Content="{x:Static locales:Resources.Validate_DKIM}"
+					Content="{StaticResource main_Validate_DKIM}"
 					IsChecked="{Binding ValidateDkim}" />
 			</StackPanel>
 		</Grid>
@@ -219,7 +219,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_list}" />
-						<Label Content="{x:Static locales:Resources.Allowed_Senders}" />
+						<Label Content="{StaticResource main_Allowed_Senders}" />
 					</StackPanel>
 				</TabItem.Header>
 				<TextBox
@@ -245,7 +245,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_list}" />
-						<Label Content="{x:Static locales:Resources.Allowed_Recipients}" />
+						<Label Content="{StaticResource main_Allowed_Recipients}" />
 					</StackPanel>
 				</TabItem.Header>
 				<TextBox
@@ -270,7 +270,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_list}" />
-						<Label Content="{x:Static locales:Resources.Log}" />
+						<Label Content="{StaticResource main_Log}" />
 					</StackPanel>
 				</TabItem.Header>
 				<TextBox

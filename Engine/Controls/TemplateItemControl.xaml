@@ -6,7 +6,6 @@
 	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
-	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
@@ -21,6 +20,7 @@
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -56,7 +56,9 @@
 					<CheckBox
 						Name="IsPreviewCheckBox"
 						VerticalAlignment="Center"
-						Content="Preview"
+						AutomationProperties.HelpText="{StaticResource main_Preview_Mode_Message}"
+						AutomationProperties.Name="{StaticResource main_Preview}"
+						Content="{StaticResource main_Preview}"
 						IsChecked="{Binding IsPreview}" />
 					<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
 					<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
@@ -88,14 +90,14 @@
 						SelectedValuePath="Key" />
 					<Label VerticalAlignment="Center" Content="Risk Plugins" />
 					<Label Padding="0" Content="·" />
-					<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Approval_Type}" />
+					<Label VerticalAlignment="Center" Content="{StaticResource main_Approval_Type}" />
 					<ComboBox
 						Name="PluginApprovalProcessComboBox"
 						DisplayMemberPath="Value"
 						ItemsSource="{Binding PluginApprovalProcesses, ElementName=This}"
 						SelectedValue="{Binding PluginApprovalProcess}"
 						SelectedValuePath="Key" />
-					<Label VerticalAlignment="Center" Content="{x:Static locales:Resources.Approval_Template}" />
+					<Label VerticalAlignment="Center" Content="{StaticResource main_Approval_Template}" />
 					<ComboBox
 						Name="PluginApprovalTemplateComboBox"
 						DisplayMemberPath="Value"
@@ -129,7 +131,7 @@
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
 							<ContentControl Content="{StaticResource Icon_gearwheel}" />
-							<Label Content="{x:Static locales:Resources.Main}" />
+							<Label Content="{StaticResource main_Main}" />
 						</StackPanel>
 					</TabItem.Header>
 					<WrapPanel>
@@ -439,7 +441,7 @@
 							<TextBlock
 								Name="FeatureDescriptionLabel"
 								Margin="4"
-								Text="{x:Static locales:Resources.Personalize_the_chat}"
+								Text="{StaticResource main_Personalize_the_chat}"
 								TextWrapping="Wrap" />
 						</Border>
 						<WrapPanel Orientation="Horizontal">
@@ -543,7 +545,7 @@
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
 							<ContentControl Content="{StaticResource Icon_movie_comment}" />
-							<Label Content="{x:Static locales:Resources.Multimedia}" />
+							<Label Content="{StaticResource main_Multimedia}" />
 						</StackPanel>
 					</TabItem.Header>
 					<Grid>
@@ -627,7 +629,7 @@
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
 							<ContentControl Content="{StaticResource Icon_mail}" />
-							<Label Content="{x:Static locales:Resources.Mail}" />
+							<Label Content="{StaticResource main_Mail}" />
 						</StackPanel>
 					</TabItem.Header>
 					<WrapPanel Orientation="Horizontal">
@@ -786,8 +788,10 @@
 				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory}" />
 				<CheckBox
 					Name="IsSpellCheckEnabledCheckBox"
+					AutomationProperties.HelpText="{StaticResource main_Enable_spell_check_for_the_chat_textbox}"
+					AutomationProperties.Name="{StaticResource main_Spell_Check}"
 					Checked="IsSpellCheckEnabledCheckBox_Checked"
-					Content="{x:Static locales:Resources.Spell_Check}"
+					Content="{StaticResource main_Spell_Check}"
 					IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 					Unchecked="IsSpellCheckEnabledCheckBox_Unchecked" />
 			</StackPanel>

@@ -230,12 +230,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//MainDataGrid.ItemsSource = _Item?.Items;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AppHelper.AddHelp(IsEnabledCheckBox, IsEnabledCheckBox.Content as string, Engine.Resources.Resources.List_IsEnabled);
-			AppHelper.AddHelp(IsReadOnlyCheckBox, IsReadOnlyCheckBox.Content as string, Engine.Resources.Resources.List_IsReadOnly);
-			AppHelper.AddHelp(InstructionsLabel, Engine.Resources.Resources.Instructions, Engine.Resources.Resources.List_Instructions);
-			AppHelper.AddHelp(InstructionsTextBox, Engine.Resources.Resources.Instructions, Engine.Resources.Resources.List_Instructions);
-			AppHelper.AddHelp(DescriptionLabel, Engine.Resources.Resources.Description, Engine.Resources.Resources.List_Description);
-			AppHelper.AddHelp(DescriptionTextBox, Engine.Resources.Resources.Description, Engine.Resources.Resources.List_Description);
+			AppHelper.AddHelp(IsEnabledCheckBox, IsEnabledCheckBox.Content as string, Engine.Resources.MainResources.main_List_IsEnabled);
+			AppHelper.AddHelp(IsReadOnlyCheckBox, IsReadOnlyCheckBox.Content as string, Engine.Resources.MainResources.main_List_IsReadOnly);
+			AppHelper.AddHelp(InstructionsLabel, Engine.Resources.MainResources.main_Instructions, Engine.Resources.MainResources.main_List_Instructions);
+			AppHelper.AddHelp(InstructionsTextBox, Engine.Resources.MainResources.main_Instructions, Engine.Resources.MainResources.main_List_Instructions);
+			AppHelper.AddHelp(DescriptionLabel, Engine.Resources.MainResources.main_Description, Engine.Resources.MainResources.main_List_Description);
+			AppHelper.AddHelp(DescriptionTextBox, Engine.Resources.MainResources.main_Description, Engine.Resources.MainResources.main_List_Description);
 		}
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)

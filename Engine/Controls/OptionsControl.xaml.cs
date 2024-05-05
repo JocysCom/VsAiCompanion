@@ -56,8 +56,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.Resources.Enable_spell_check_for_the_chat_textbox);
-			AppHelper.AddHelp(ResetUIButton, Engine.Resources.Resources.Reset_UI_Settings_ToolTip);
+			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.MainResources.main_Enable_spell_check_for_the_chat_textbox);
+			AppHelper.AddHelp(ResetUIButton, Engine.Resources.MainResources.main_Reset_UI_Settings_ToolTip);
 		}
 
 		System.Windows.Forms.OpenFileDialog _OpenFileDialog;

@@ -2,10 +2,9 @@
 	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.FineTuningItemControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="320"
@@ -18,6 +17,7 @@
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -74,7 +74,7 @@
 				Grid.Row="0"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="{x:Static locales:Resources.Data_Folder}" />
+				Content="{StaticResource main_Data_Folder}" />
 			<TextBox
 				Name="DataFolderTextBox"
 				Grid.Row="0"
@@ -89,7 +89,7 @@
 				Click="OpenButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
-					<Label Content="{x:Static locales:Resources.Open}" />
+					<Label Content="{StaticResource main_Open}" />
 				</StackPanel>
 			</Button>
 			<!--  System message content  -->
@@ -97,7 +97,7 @@
 				Grid.Row="1"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="{x:Static locales:Resources.System_Message}" />
+				Content="{StaticResource main_System_Message}" />
 			<TextBox
 				Name="SystemMessageTextBox"
 				Grid.Row="1"
@@ -138,7 +138,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Question}" />
-						<Label Content="{x:Static locales:Resources.Help}" />
+						<Label Content="{StaticResource main_Help}" />
 					</StackPanel>
 				</TabItem.Header>
 				<RichTextBox x:Name="HelpRichTextBox">
@@ -160,7 +160,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_folder_open_doc}" />
-						<Label Content="{x:Static locales:Resources._1_Source_Files}" />
+						<Label Content="{StaticResource main__1_Source_Files}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:FineTuningLocalFilesControl x:Name="SourceFilesPanel" FolderType="SourceFiles" />
@@ -169,7 +169,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_folder_open_doc_settings}" />
-						<Label Content="{x:Static locales:Resources._2_Tuning_Files}" />
+						<Label Content="{StaticResource main__2_Tuning_Files}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:FineTuningLocalFilesControl x:Name="TuningFilesPanel" FolderType="TuningFiles" />
@@ -178,7 +178,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_cloud}" />
-						<Label Content="{x:Static locales:Resources._3_Remote_Files}" />
+						<Label Content="{StaticResource main__3_Remote_Files}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:FineTuningRemoteFilesControl x:Name="RemoteFilesPanel" />
@@ -191,7 +191,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_todo_list}" />
-						<Label Content="{x:Static locales:Resources._4_Tuning_Jobs}" />
+						<Label Content="{StaticResource main__4_Tuning_Jobs}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:FineTuningJobListControl x:Name="TuningJobsListPanel" />
@@ -200,7 +200,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_user_group}" />
-						<Label Content="{x:Static locales:Resources._5_Models}" />
+						<Label Content="{StaticResource main__5_Models}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:FineTuningModelListControl x:Name="ModelsPanel" />

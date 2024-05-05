@@ -18,6 +18,7 @@
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -51,7 +52,7 @@
 			<TextBlock
 				Name="FeatureDescriptionLabel"
 				Margin="4"
-				Text="{x:Static locales:Resources.Lists_Feature_Description}"
+				Text="{StaticResource main_Lists_Feature_Description}"
 				TextWrapping="Wrap" />
 		</Border>
 		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
@@ -72,21 +73,21 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<Label x:Name="PathLabel" Content="{x:Static locales:Resources.Task_Path}" />
+			<Label x:Name="PathLabel" Content="{StaticResource main_Task_Path}" />
 			<StackPanel Grid.Column="1" Orientation="Horizontal">
 				<ComboBox MinWidth="128" ItemsSource="{Binding Paths, ElementName=This}" SelectedValue="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				<CheckBox
 					Name="IsEnabledCheckBox"
 					Margin="3,3,0,0"
-					Content="{x:Static locales:Resources.Enabled}"
+					Content="{StaticResource main_Enabled}"
 					IsChecked="{Binding IsEnabled}" />
 				<CheckBox
 					Name="IsReadOnlyCheckBox"
 					Margin="0,3,0,0"
-					Content="{x:Static locales:Resources.ReadOnly}"
+					Content="{StaticResource main_ReadOnly}"
 					IsChecked="{Binding IsReadOnly}" />
 			</StackPanel>
-			<Label x:Name="DescriptionLabel" Grid.Row="1" Content="{x:Static locales:Resources.Description}" />
+			<Label x:Name="DescriptionLabel" Grid.Row="1" Content="{StaticResource main_Description}" />
 			<TextBox
 				Name="DescriptionTextBox"
 				Grid.Row="1"
@@ -100,7 +101,7 @@
 				SpellCheck.IsEnabled="True"
 				Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap" />
-			<Label x:Name="InstructionsLabel" Grid.Row="2" Content="{x:Static locales:Resources.Instructions}" />
+			<Label x:Name="InstructionsLabel" Grid.Row="2" Content="{StaticResource main_Instructions}" />
 			<TextBox
 				Name="InstructionsTextBox"
 				Grid.Row="2"
@@ -128,10 +129,10 @@
 					x:FieldModifier="public"
 					Background="Transparent"
 					Click="AddButton_Click"
-					ToolTip="{x:Static locales:Resources.Add_New}">
+					ToolTip="{StaticResource main_Add_New}">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-						<Label x:Name="AddButtonLabel" Content="{x:Static locales:Resources.Add_New}" Visibility="Collapsed" />
+						<Label x:Name="AddButtonLabel" Content="{StaticResource main_Add_New}" Visibility="Collapsed" />
 					</StackPanel>
 				</Button>
 				<Button
@@ -140,10 +141,10 @@
 					x:FieldModifier="public"
 					Background="Transparent"
 					Click="EditButton_Click"
-					ToolTip="{x:Static locales:Resources.Edit}">
+					ToolTip="{StaticResource main_Edit}">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
-						<Label x:Name="EditButtonLabel" Content="{x:Static locales:Resources.Edit}" Visibility="Collapsed" />
+						<Label x:Name="EditButtonLabel" Content="{StaticResource main_Edit}" Visibility="Collapsed" />
 					</StackPanel>
 				</Button>
 				<Button
@@ -152,10 +153,10 @@
 					x:FieldModifier="public"
 					Background="Transparent"
 					Click="DeleteButton_Click"
-					ToolTip="{x:Static locales:Resources.Delete}">
+					ToolTip="{StaticResource main_Delete}">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-						<Label x:Name="DeleteButtonLabel" Content="{x:Static locales:Resources.Delete}" Visibility="Collapsed" />
+						<Label x:Name="DeleteButtonLabel" Content="{StaticResource main_Delete}" Visibility="Collapsed" />
 					</StackPanel>
 				</Button>
 			</StackPanel>
@@ -185,21 +186,21 @@
 					Binding="{Binding Key}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Key}" />
+					Header="{StaticResource main_Key}" />
 				<DataGridTextColumn
 					x:Name="ValueColumn"
 					Width="Auto"
 					Binding="{Binding Value}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Value}" />
+					Header="{StaticResource main_Value}" />
 				<DataGridTextColumn
 					x:Name="CommentColumn"
 					Width="Auto"
 					Binding="{Binding Comment}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Comment}" />
+					Header="{StaticResource main_Comment}" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />

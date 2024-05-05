@@ -5,7 +5,6 @@
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:converters="clr-namespace:JocysCom.VS.AiCompanion.Engine.Converters"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="270"
@@ -30,6 +29,7 @@
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -50,11 +50,11 @@
 				x:FieldModifier="public"
 				Background="Transparent"
 				Click="AddButton_Click"
-				ToolTip="{x:Static locales:Resources.Add_New}"
+				ToolTip="{StaticResource main_Add_New}"
 				Visibility="Collapsed">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-					<Label x:Name="AddButtonLabel" Content="{x:Static locales:Resources.Add_New}" Visibility="Collapsed" />
+					<Label x:Name="AddButtonLabel" Content="{StaticResource main_Add_New}" Visibility="Collapsed" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -66,7 +66,7 @@
 				Visibility="Collapsed">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-					<Label x:Name="DeleteButtonLabel" Content="{x:Static locales:Resources.Delete}" />
+					<Label x:Name="DeleteButtonLabel" Content="{StaticResource main_Delete}" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -77,7 +77,7 @@
 				Click="OpenFolderButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
-					<Label x:Name="OpenFolderButtonLabel" Content="{x:Static locales:Resources.Open}" />
+					<Label x:Name="OpenFolderButtonLabel" Content="{StaticResource main_Open}" />
 				</StackPanel>
 			</Button>
 
@@ -90,7 +90,7 @@
 				Click="OpenFileButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_button_trend_up}" Focusable="False" />
-					<Label x:Name="OpenFileButtonLabel" Content="{x:Static locales:Resources.Open_File}" />
+					<Label x:Name="OpenFileButtonLabel" Content="{StaticResource main_Open_File}" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -101,7 +101,7 @@
 				Click="ValidateButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
-					<Label Content="{x:Static locales:Resources.Validate}" />
+					<Label Content="{StaticResource main_Validate}" />
 				</StackPanel>
 			</Button>
 			<Button
@@ -111,7 +111,7 @@
 				Click="UploadButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_cloud_upload}" Focusable="False" />
-					<Label Content="{x:Static locales:Resources.Upload}" />
+					<Label Content="{StaticResource main_Upload}" />
 				</StackPanel>
 			</Button>
 			<ComboBox
@@ -135,7 +135,7 @@
 				Click="HelpButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Question}" Focusable="False" />
-					<Label x:Name="HelpButtonLabel" Content="{x:Static locales:Resources.Help}" />
+					<Label x:Name="HelpButtonLabel" Content="{StaticResource main_Help}" />
 				</StackPanel>
 			</Button>
 			<Separator Style="{StaticResource MainSeparator}" />
@@ -147,7 +147,7 @@
 				Click="RefreshButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" Focusable="False" />
-					<Label x:Name="RefreshButtonLabel" Content="{x:Static locales:Resources.Refresh}" />
+					<Label x:Name="RefreshButtonLabel" Content="{StaticResource main_Refresh}" />
 				</StackPanel>
 			</Button>
 		</StackPanel>
@@ -220,49 +220,49 @@
 					Binding="{Binding status}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Status}" />
+					Header="{StaticResource main_Status}" />
 				<DataGridTextColumn
 					x:Name="NameColumn"
 					Width="Auto"
 					Binding="{Binding id}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Id}" />
+					Header="{StaticResource main_Id}" />
 				<DataGridTextColumn
 					x:Name="BytesColumn"
 					Width="Auto"
 					Binding="{Binding bytes}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Bytes}" />
+					Header="{StaticResource main_Bytes}" />
 				<DataGridTextColumn
 					x:Name="CreatedColumn"
 					Width="Auto"
 					Binding="{Binding created_at}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Created}" />
+					Header="{StaticResource main_Created}" />
 				<DataGridTextColumn
 					x:Name="FileNameColumn"
 					Width="Auto"
 					Binding="{Binding filename}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.File_Name}" />
+					Header="{StaticResource main_File_Name}" />
 				<DataGridTextColumn
 					x:Name="PurposeColumn"
 					Width="Auto"
 					Binding="{Binding purpose}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Purpose}" />
+					Header="{StaticResource main_Purpose}" />
 				<DataGridTextColumn
 					x:Name="StatusDetailsColumn"
 					Width="Auto"
 					Binding="{Binding status_details}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{x:Static locales:Resources.Details}" />
+					Header="{StaticResource main_Details}" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />

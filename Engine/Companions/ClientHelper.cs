@@ -331,7 +331,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var msgTokens = CountTokens(chatLogMessages, ChatLogOptions);
 			if (item.IsPreview)
 			{
-				var message = new MessageItem(SystemName, Resources.Resources.Preview_Mode_Message);
+				var message = new MessageItem(SystemName, Resources.MainResources.main_Preview_Mode_Message);
 				item.Messages.Add(message);
 				item.Modified = DateTime.Now;
 			}
@@ -546,7 +546,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var message = ex.Message;
 			// Workaround: Provide a hint until Microsoft's OpenAI packages are no longer in beta.
 			if (message.Contains("Method not found") && message.Contains("System.Collections.Generic.IAsyncEnumerable"))
-				message += " " + Engine.Resources.Resources.VsExtensionVersionMessage;
+				message += " " + Engine.Resources.MainResources.main_VsExtensionVersionMessage;
 			var msgItem = new MessageItem(SystemName, message, MessageType.Error);
 			msgItem.Attachments.Add(new MessageAttachments(ContextType.Error, "log", ex.ToString()));
 			Global.MainControl.Dispatcher.Invoke(() =>

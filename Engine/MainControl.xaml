@@ -25,7 +25,7 @@
 				<ResourceDictionary Source="JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="Resources/Icons/Icons_Default.xaml" />
-				<ResourceDictionary Source="Resources/TutorialHelperResources.xaml" />
+				<ResourceDictionary Source="Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
 		</ResourceDictionary>
@@ -70,15 +70,15 @@
 			Margin="4"
 			x:FieldModifier="public"
 			SelectionChanged="MainTabControl_SelectionChanged">
-			<TabItem
-				x:Name="TasksTabItem"
-				x:FieldModifier="public"
-				AutomationProperties.HelpText="{StaticResource app_TasksTab_Help}"
-				AutomationProperties.Name="{StaticResource app_TasksTab_Name}">
+			<TabItem x:Name="TasksTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_task}" />
-						<Label Content="{StaticResource app_TasksTab_Name}" />
+						<Label
+							x:Name="TasksLabel"
+							AutomationProperties.HelpText="{StaticResource main_TasksTab_Help}"
+							AutomationProperties.Name="{StaticResource main_TasksTab_Name}"
+							Content="{StaticResource main_TasksTab_Name}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="TasksPanel" x:FieldModifier="public" DataType="Task" />

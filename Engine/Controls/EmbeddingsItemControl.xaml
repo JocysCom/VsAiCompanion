@@ -6,7 +6,6 @@
 	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="400"
@@ -20,6 +19,7 @@
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -50,7 +50,7 @@
 			<TextBlock
 				Name="FeatureDescriptionLabel"
 				Margin="4"
-				Text="{x:Static locales:Resources.Embeddings_Feature_Description}"
+				Text="{StaticResource main_Embeddings_Feature_Description}"
 				TextWrapping="Wrap" />
 		</Border>
 		<!--  Row 1  -->
@@ -97,7 +97,7 @@
 				Grid.Row="1"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="{x:Static locales:Resources.Source}" />
+				Content="{StaticResource main_Source}" />
 			<TextBox
 				Name="DataFolderTextBox"
 				Grid.Row="1"
@@ -118,7 +118,7 @@
 					Click="BrowseSourceButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Browse}" />
+						<Label Content="{StaticResource main_Browse}" />
 					</StackPanel>
 				</Button>
 
@@ -129,7 +129,7 @@
 					Click="OpenButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Open}" />
+						<Label Content="{StaticResource main_Open}" />
 					</StackPanel>
 				</Button>
 
@@ -147,7 +147,7 @@
 				Grid.Row="3"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="{x:Static locales:Resources.Database}" />
+				Content="{StaticResource main_Database}" />
 
 			<Grid
 				Grid.Row="3"
@@ -159,10 +159,7 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<TextBox Name="TargetTextBox" Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" />
-				<TextBox
-					Name="TargetMaskedTextBox"
-					Background="{StaticResource BackgroundDark}"
-					IsReadOnly="True" />
+				<TextBox Name="TargetMaskedTextBox" Background="{StaticResource BackgroundDark}" IsReadOnly="True" />
 				<StackPanel Grid.Column="1" Orientation="Horizontal">
 					<Button Name="TargetSwitchToEditButton" Click="TargetSwitchToEditButton_Click">
 						<StackPanel Focusable="False">
@@ -186,13 +183,13 @@
 				<Button Name="BrowseTargetButton" MinWidth="75" Click="BrowseTargetButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_folder_open_doc}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Browse}" />
+						<Label Content="{StaticResource main_Browse}" />
 					</StackPanel>
 				</Button>
 				<Button Name="EditButton" MinWidth="75" Click="EditButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_database}" Focusable="False" />
-						<Label Content="{x:Static locales:Resources.Edit}" />
+						<Label Content="{StaticResource main_Edit}" />
 					</StackPanel>
 				</Button>
 			</StackPanel>
@@ -290,7 +287,7 @@
 				x:Name="InstructionsLabel"
 				Grid.Row="6"
 				Grid.Column="0"
-				Content="{x:Static locales:Resources.Instructions}" />
+				Content="{StaticResource main_Instructions}" />
 			<TextBox
 				Name="InstructionsTextBox"
 				Grid.Row="6"
@@ -329,7 +326,7 @@
 				Grid.Row="7"
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				Content="{x:Static locales:Resources.Message}" />
+				Content="{StaticResource main_Message}" />
 			<TextBox
 				Name="MessgaeTextBox"
 				Grid.Row="7"
@@ -374,7 +371,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Question}" />
-						<Label Content="{x:Static locales:Resources.Help}" />
+						<Label Content="{StaticResource main_Help}" />
 					</StackPanel>
 				</TabItem.Header>
 				<RichTextBox x:Name="HelpRichTextBox">
@@ -396,7 +393,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_list}" />
-						<Label Content="{x:Static locales:Resources.Include_Patterns}" />
+						<Label Content="{StaticResource main_Include_Patterns}" />
 					</StackPanel>
 				</TabItem.Header>
 				<TextBox
@@ -421,7 +418,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_list}" />
-						<Label Content="{x:Static locales:Resources.Exclude_Patterns}" />
+						<Label Content="{StaticResource main_Exclude_Patterns}" />
 					</StackPanel>
 				</TabItem.Header>
 				<TextBox
@@ -446,7 +443,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_list}" />
-						<Label Content="{x:Static locales:Resources.Log}" />
+						<Label Content="{StaticResource main_Log}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:LogControl x:Name="LogPanel" />

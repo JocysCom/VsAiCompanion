@@ -44,7 +44,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 				// Initialize the text to insert
 				StringBuilder sb = new StringBuilder();
-				sb.AppendLine("\r\n" + Resources.Resources.TextBox_Drop_Files_Instructions);
+				sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
 				foreach (string file in files)
 					sb.AppendLine($"- {file}");
 				// Get the current cursor position in the TextBox
