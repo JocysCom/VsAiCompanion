@@ -116,5 +116,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.RemoveTask(task);
 		}
 
+		//private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		//{
+		//	//	AvatarPanel.Visibility = Global.AppSettings.ShowAvatar
+		//	//? Visibility.Visible
+		//	//: Visibility.Collapsed;
+
+		//	// Global.AppSettings.ShowAvatar = !Global.AppSettings.ShowAvatar;
+		//}
 	}
 }

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -15,104 +20,843 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public AvatarControl()
 		{
 			InitializeComponent();
-			CreateAndBeginAnimation();
+			CreateBackgroundAnimations();
+			CreateLetterToPathDictionary();
+			CreateVisemeToPathDictionary();
+			SetMeshGeometry3D();
+			mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
+			mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+			// Lips storyboard and animations.
+			storyboardLips.Children.Add(animation_TXT);
+			storyboardLips.Children.Add(animation_PTH);
+			storyboardLips.Children.Add(animation_CHI);
+			storyboardLips.Children.Add(animation_BAR);
+			storyboardLips.CurrentTimeInvalidated += StoryboardLips_CurrentTimeInvalidated;
+			storyboardLips.Completed += StoryboardLipsCompleted;
+			Storyboard.SetTarget(animation_TXT, LetterTextBlock);
+			Storyboard.SetTargetProperty(animation_TXT, new PropertyPath("Text"));
+			Storyboard.SetTarget(animation_PTH, PathTextBlock);
+			Storyboard.SetTargetProperty(animation_PTH, new PropertyPath("Text"));
+			Storyboard.SetTarget(animation_CHI, JawGrid);
+			Storyboard.SetTargetProperty(animation_CHI, new PropertyPath("Height"));
+			Storyboard.SetTarget(animation_BAR, AnimationProgressBar);
+			Storyboard.SetTargetProperty(animation_BAR, new PropertyPath("Width"));
+			// Uploaded and Downloaded storyboard and animations.
+			storyboardUploaded.Completed += StoryboardUploadedCompleted;
+			storyboardDownloaded.Completed += StoryboardDownloadedCompleted;
+			SetLips(MPath_0.Data);
+			pathNow = MPath_0;
 		}
 
-		private readonly SolidColorBrush pathColor = new SolidColorBrush(Colors.White);
-		private readonly SolidColorBrush elipseColor = new SolidColorBrush(Colors.Yellow);
-		Storyboard storyboard = new Storyboard();
+		int LipAnimationFrames = 10; // Min 1.
+		int LipGeometryDivisions = 10; // Min 2.
 
-		public void CreateAndBeginAnimation()
+		string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
+		Uri audioFile = new Uri(@"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav");
+		new Dictionary<int, int> visemeIdAndAudioOffsetMsList = new Dictionary<int, int> { { 0, 100 }, { 1, 200 }, { 2, 300 }, { 3, 400 }, { 4, 500 }, { 5, 600 }, { 6, 700 }, { 7, 800 }, { 8, 900 }, { 9, 1000 }, { 10, 1100 }, { 11, 1200 }, { 12, 1300 }, { 13, 1400 }, { 14, 1500 }, { 15, 1600 }, { 16, 1700 }, { 17, 1800 }, { 18, 1900 }, { 19, 2000 }, { 20, 2100 }, { 21, 2200 } };
+
+		// Load audio file first to extract audio durationMs, required for lip animation calculations.
+		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			// Paths and times.
-			CreateAnimatedEllipseOnPath("0:0:2", "0:0:5", "M 376,388 364,376 331,321 282,226 248,156 196,24");
-			CreateAnimatedEllipseOnPath("0:0:0", "0:0:5", "M 376,388 364,376 331,321 282,226 248,156 196,24");
-			CreateAnimatedEllipseOnPath("0:0:0", "0:0:5", "M 777,446 C 784,440 791,435 797,428 804,420 808,422 818,410 827,398 831,399 832,387 833,375 829,370 838,356 847,342 852,335 856,329 863,318 871,307 877,295 884,283 889,270 896,257 900,249 906,241 909,233 913,223 913,212 918,202 923,192 932,184 938,174 948,155 952,133 962,114 976,87 1011,36 1011,36");
+			MediaButtonPlay.Visibility = Visibility.Collapsed;
+			try { mediaPlayer.Open(audioFile); }
+			catch (Exception ex) { MessageBox.Show($"Error playing audio: {ex.Message}"); }
+			MediaButtonStop.Visibility = Visibility.Visible;
+			AnimationBar.Visibility = Visibility.Visible;
+		}
 
-			// Begin animation.
-			AvatarCanvas.Visibility = Visibility.Visible;
+		// Extract audio file durationMs and start animation calculations (when completed, audio and lip animations will play automatically).
+		private void MediaPlayer_MediaOpened(object sender, EventArgs e)
+		{
+			if (mediaPlayer.NaturalDuration.HasTimeSpan)
+			{
+				// Create lip animation from audio durationMs value (ms) and text.
+				CreateLipAnimationDictionaryFromTextString(mediaPlayer.NaturalDuration.TimeSpan, audioText);
+				// Create lip animation from Viseme Id value (id) and audio offset value (ms).
+				// CreateLipAnimationDictionaryFromVisemeList(visemeIdAndAudioOffsetMsList);
+				// Play audio and animation.
+				mediaPlayer.Play();
+				storyboardLips.Begin();
+				CreateSparkUpOrDownAnimation(storyboardUploaded, SparksBlueCanvas, storyboardUploadedCanvas);
+				CreateSparkUpOrDownAnimation(storyboardUploaded, SparksBlueCanvas, storyboardUploadedCanvas);
+			}
+		}
+
+		// Clear media player and animations on Media_Ended.
+		private void MediaPlayer_MediaEnded(object sender, EventArgs e)
+		{
+			mediaPlayer.Close();
+			CreateSparkUpOrDownAnimation(storyboardDownloaded, SparksYellowCanvas, storyboardDownloadedCanvas);
+		}
+		private void StoryboardUploadedCompleted(object sender, EventArgs e)
+		{
+			storyboardUploaded.Stop();
+			storyboardUploaded.Children.Clear();
+			storyboardUploadedCanvas.Children.Clear();
+		}
+		private void StoryboardDownloadedCompleted(object sender, EventArgs e)
+		{
+			storyboardDownloaded.Stop();
+			storyboardDownloaded.Children.Clear();
+			storyboardDownloadedCanvas.Children.Clear();
+		}
+
+		private void StoryboardLipsCompleted(object sender, EventArgs e) { AnimationStop(); }
+
+		private void MediaPlayer_StopMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			mediaPlayer.Stop();
+			mediaPlayer.Close();
+			AnimationStop();
+		}
+
+		private void AnimationStop()
+		{
+			AnimationBar.Visibility = Visibility.Collapsed;
+			MediaButtonStop.Visibility = Visibility.Collapsed;
+			storyboardLips.Seek(TimeSpan.FromMilliseconds(0));
+			storyboardLips.Stop();
+			animation_CHI.KeyFrames.Clear();
+			animation_TXT.KeyFrames.Clear();
+			animation_PTH.KeyFrames.Clear();
+			MouthPath.Data = MPath_0.Data;
+			SetLips(MPath_0.Data);
+			MediaButtonPlay.Visibility = Visibility.Visible;
+		}
+
+		MediaPlayer mediaPlayer = new MediaPlayer();
+		// Spark images.
+		BitmapImage bitmapImageYellow = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/SparkYellow.png"));
+		BitmapImage bitmapImageBrown = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/SparkBrown.png"));
+		BitmapImage bitmapImageBlue = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/SparkBlue.png"));
+		BitmapImage bitmapImageLip0 = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/LipTop0.png"));
+		BitmapImage bitmapImageLip1 = new BitmapImage(new Uri("pack://application:,,,/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/LipTop1.png"));
+		// Animations.
+		StringAnimationUsingKeyFrames animation_TXT = new StringAnimationUsingKeyFrames();
+		StringAnimationUsingKeyFrames animation_PTH = new StringAnimationUsingKeyFrames();
+		DoubleAnimationUsingKeyFrames animation_CHI = new DoubleAnimationUsingKeyFrames();
+		DoubleAnimationUsingKeyFrames animation_BAR = new DoubleAnimationUsingKeyFrames();
+		// Storyboards for animations.
+		Storyboard storyboardBackground = new Storyboard();
+		Storyboard storyboardLips = new Storyboard();
+		Storyboard storyboardUploaded = new Storyboard();
+		Storyboard storyboardDownloaded = new Storyboard();
+		// Dictionaries.
+		Dictionary<double, Path> visemeToPathDictionary = new Dictionary<double, Path>();
+		Dictionary<string, Tuple<Path, int>> letterToPathDictionary = new Dictionary<string, Tuple<Path, int>>();
+		// Current path.
+		Path pathNow = new Path();
+
+		private void CreateSparkUpOrDownAnimation(Storyboard storyboard, Canvas pathCanvas, Canvas animationCanvas)
+		{
+			var startMin = 0;
+			var startMax = pathCanvas == SparksYellowCanvas ? 1500 : 1900;
+			var duration = pathCanvas == SparksYellowCanvas ? 1500 : 1900;
+
+			var sizeMax = 100;
+			var random = new Random();
+
+			foreach (Path path in pathCanvas.Children)
+			{
+				var startRandom = TimeSpan.FromMilliseconds(random.Next(startMin, startMax));
+
+				// Create Grid for Image ("spark").
+				var grid = new Grid
+				{
+					Height = sizeMax,
+					Width = sizeMax,
+					Margin = new Thickness(-sizeMax / 2, -sizeMax / 2, 0, 0),
+				};
+				animationCanvas.Children.Add(grid);
+
+				// Create Grid moving along the path animation.
+				var animationPath = new MatrixAnimationUsingPath
+				{
+					BeginTime = startRandom,
+					Duration = TimeSpan.FromMilliseconds(duration),
+					PathGeometry = PathGeometry.CreateFromGeometry(path.Data),
+				};
+				Storyboard.SetTarget(animationPath, grid);
+				Storyboard.SetTargetProperty(animationPath, new PropertyPath("(UIElement.RenderTransform).(MatrixTransform.Matrix)"));
+				storyboard.Children.Add(animationPath);
+
+				// Create Image.
+				var image = new Image
+				{
+					Height = 0,
+					Width = 0,
+					HorizontalAlignment = HorizontalAlignment.Center,
+					VerticalAlignment = VerticalAlignment.Center,
+					Source = pathCanvas == SparksYellowCanvas ? bitmapImageYellow : bitmapImageBlue,
+				};
+				grid.Children.Add(image);
+
+				// Create Image size animation.
+				var sizeMaxR = random.Next(sizeMax * 50, sizeMax * 70) / 100;
+
+				foreach (string property in new[] { "Width", "Height" })
+				{
+					var animationSize = new DoubleAnimationUsingKeyFrames { BeginTime = startRandom, };
+
+					if (pathCanvas == SparksYellowCanvas)
+					{
+						animationSize.KeyFrames.Add(new DiscreteDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
+						animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(duration / 5)));
+						animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(duration)));
+					}
+					else if (pathCanvas == SparksBlueCanvas)
+					{
+						animationSize.KeyFrames.Add(new DiscreteDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(0)));
+						animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(duration / 2)));
+						animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(duration)));
+					}
+					Storyboard.SetTarget(animationSize, image);
+					Storyboard.SetTargetProperty(animationSize, new PropertyPath(property));
+					storyboard.Children.Add(animationSize);
+				}
+			}
 			storyboard.Begin();
 		}
 
-		private void CreateAnimatedEllipseOnPath(string start, string duration, string figure)
+		private List<string> ConvertStringToList(string audioText)
 		{
-			const int size = 30;
-			var sizeHalfNegative = -size / 2;
-			var figureParsed = PathGeometry.CreateFromGeometry(Geometry.Parse(figure));
-			var startParsed = TimeSpan.Parse(start);
-			var durationParsed = TimeSpan.Parse(duration);
-
-
-			// Create elements.
-			var grid = new Grid
+			List<string> audioTextList = new List<string>();
+			// Create audioTextList from audioText string.
+			var combinations = new HashSet<string> { "aw", "oo", "er", "ih", "ou", "oy", "ai", "sh", "ch", "zh", "th", "ng" };
+			audioText = audioText.ToLower() + " ";
+			for (int i = 0; i < audioText.Length; i++)
 			{
-				Height = size,
-				Width = size,
-				Margin = new Thickness(sizeHalfNegative, sizeHalfNegative, 0, 0),
-				RenderTransform = new MatrixTransform(),
-			};
-
-			var ellipse = new Ellipse
-			{
-				Height = 0,
-				Width = 0,
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center,
-				Fill = elipseColor,
-			};
-
-			var path = new Path
-			{
-				Data = figureParsed,
-				Stroke = pathColor,
-				StrokeThickness = 1,
-			};
-
-			// Add elements.
-			grid.Children.Add(ellipse);
-			AvatarCanvas.Children.Add(grid);
-			AvatarCanvas.Children.Add(path);
-
-			// Create moving animation.
-			var matrixAnimation = new MatrixAnimationUsingPath
-			{
-				PathGeometry = figureParsed,
-				BeginTime = startParsed,
-				Duration = durationParsed,
-				RepeatBehavior = RepeatBehavior.Forever,
-			};
-
-			Storyboard.SetTarget(matrixAnimation, grid);
-			Storyboard.SetTargetProperty(matrixAnimation, new PropertyPath("(UIElement.RenderTransform).(MatrixTransform.Matrix)"));
-			storyboard.Children.Add(matrixAnimation);
-
-			// Create size change animation.
-			CreateSizeAnimation(startParsed, durationParsed, ellipse, "Width", size);
-			CreateSizeAnimation(startParsed, durationParsed, ellipse, "Height", size);
+				// Check for combination of two letters.
+				if (i + 1 < audioText.Length && combinations.Contains(audioText.Substring(i, 2).ToLower()))
+				{
+					audioTextList.Add(audioText.Substring(i, 2));
+					i++; // Skip the next character as it is already included in the combination.
+				}
+				// Check for space and ensure it's added only once for consecutive spaces.
+				else if (audioText[i] == ' ')
+				{
+					// If the previous letter in the list isn't a space, add it.
+					if (audioTextList.LastOrDefault() != " ") { audioTextList.Add(" "); }
+				}
+				else if (char.IsLetter(audioText[i]))
+				{
+					audioTextList.Add(audioText[i].ToString());
+				}
+				// Other character types (digits, punctuation).
+			}
+			return audioTextList;
 		}
 
-		private void CreateSizeAnimation(TimeSpan start, TimeSpan duration, UIElement element, string property, double size)
-		{
-			var path1 = TimeSpan.FromSeconds(0);
-			var maxSize1 = TimeSpan.FromSeconds(2);
-			var maxSize2 = duration - TimeSpan.FromSeconds(1);
-			var path2 = duration;
+		// VisemeID, Text, Path, Duration.
+		List<(string, Path, double)> lipAnimationList = new List<(string, Path, double)>();
 
-			var animation = new DoubleAnimationUsingKeyFrames
+		private void CreateLipAnimationDictionaryFromVisemeList(Dictionary<int, int> visemeList)
+		{
+			lipAnimationList.Clear();
+			foreach (KeyValuePair<int, int> item in visemeList)
+			{
+				if (visemeToPathDictionary.ContainsKey(item.Key))
+				{
+					lipAnimationList.Add((item.Key.ToString(), visemeToPathDictionary[item.Key], visemeList[item.Key]));
+				}
+			}
+			CreateLipAnimationKeys(lipAnimationList);
+		}
+
+		private void CreateLipAnimationDictionaryFromTextString(TimeSpan audioDuration, string audioText)
+		{
+			var audioTextList = ConvertStringToList(audioText);
+
+			var textList = new List<(string, int)>();
+			double textDuration = 0;
+			// Text to Viseme.
+			foreach (var letter in audioTextList)
+			{
+				if (letterToPathDictionary.ContainsKey(letter))
+				{
+					textList.Add((letter, letterToPathDictionary[letter].Item2));
+					textDuration += letterToPathDictionary[letter].Item2;
+				}
+				else
+				{
+					textList.Add((letter, letterToPathDictionary["*"].Item2));
+					textDuration += letterToPathDictionary["*"].Item2;
+				}
+			}
+			double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
+
+			// Create list (VisemeID, Text, Path, Duration).
+			double timeEnd = 0; 
+			lipAnimationList.Clear();
+			double listDuration = 0;
+			foreach (var (text, duration) in textList)
+			{
+				timeEnd = timeEnd + duration * adjustmentFactor;
+				lipAnimationList.Add((text, letterToPathDictionary[text].Item1, timeEnd));
+			}
+			CreateLipAnimationKeys(lipAnimationList);
+		}
+
+		private void CreateLipAnimationKeys(List<(string, Path, double)> lipAnimationList)
+		{
+			// Reset values.
+			double timeNow = 0;
+			double animationBar = 0;
+			double animationBarStep = 1000 / Convert.ToDouble(lipAnimationList.Count());
+			// VisemeID, Text, Path, Duration.
+			foreach (var (text, path, timeEnd) in lipAnimationList)
+			{
+				var pathNowList = ExtractNumbersFromPathData(pathNow.Data);
+				var pathEndList = ExtractNumbersFromPathData(path.Data);
+				pathNow = path;
+				animationBar = animationBar + animationBarStep;
+				// animationTime = animationTime + duration;
+				var duration = timeEnd - timeNow;
+				// Add multiple KeyFrames.
+				for (int i = 1; i < LipAnimationFrames + 1; i++)
+				{
+					var ms = TimeSpan.FromMilliseconds(timeNow + duration / LipAnimationFrames * i);
+					// Create Path Data KeyFrames.
+					var p = new List<double>();
+					for (int item = 0; item < pathNowList.Count; item++) { p.Add((pathEndList[item] - pathNowList[item]) / LipAnimationFrames * i + pathNowList[item]); }
+					animation_PTH.KeyFrames.Add(new DiscreteStringKeyFrame { KeyTime = ms, Value = Geometry.Parse($"M {p[0]},{p[1]} C {p[2]},{p[3]} {p[4]},{p[5]} {p[6]},{p[7]} {p[8]},{p[9]} {p[10]},{p[11]} {p[12]},{p[13]} Z").ToString() });
+					// Create Letter Text KeyFrames.
+					animation_TXT.KeyFrames.Add(new DiscreteStringKeyFrame(text, ms));
+				}
+				// Add 1 KeyFrame.
+				animation_BAR.KeyFrames.Add(new DiscreteDoubleKeyFrame(Math.Round(animationBar), TimeSpan.FromMilliseconds(timeEnd)));
+				timeNow = timeEnd;
+			}
+		}
+
+		private List<double> ExtractNumbersFromPathData(Geometry pathData)
+		{
+			List<double> numbersList = new List<double>();
+			// Regex matches positive/negative integers and floats.
+			var matches = Regex.Matches(pathData.ToString(), @"-?\d+(?:\.\d+)?");
+
+			foreach (Match match in matches)
+			{
+				if (double.TryParse(match.Value, out double result))
+				{
+					numbersList.Add(result);
+				}
+			}
+			return numbersList;
+		}
+
+		private double PositionY(Geometry data, double position)
+		{
+			Point pointOnPath, tangentAtPoint;
+			PathGeometry.CreateFromGeometry(data).GetPointAtFractionLength(position, out pointOnPath, out tangentAtPoint);
+			return Convert.ToDouble(pointOnPath.Y);
+		}
+
+		private void StoryboardLips_CurrentTimeInvalidated(object sender, EventArgs e)
+		{
+			if (PathTextBlock.Text != null)
+			{
+				var data = Geometry.Parse(PathTextBlock.Text);
+				MouthPath.Data = data;
+				SetLips(data);
+			}
+		}
+
+		double scale = 2100;
+		int maxPoints = 15;
+
+		private void SetLips(Geometry data)
+		{
+			// Divide PathGeometry.
+			// M 715,515 C 930,440 1170,440 1385,515 1170,720 930,720 715,515 Z
+			// M 715,515 C 930,440 1170,440 1385,515 (-->)
+			// M 1385,515 C 1170,720 930,720 715,515 (<--)
+			// M 715,515 C 930,720 1170,720 1385,515 (reversed -->)
+			PathGeometry geometry = PathGeometry.CreateFromGeometry(data);
+			PathFigure figure = geometry.Figures.First();
+			PolyBezierSegment segment = (PolyBezierSegment)figure.Segments[0].Clone();
+			// Create two PathGeometries from one PathGeometry for more precise position and angle calculations later.
+			var segment1 = new BezierSegment { Point1 = segment.Points[0], Point2 = segment.Points[1], Point3 = segment.Points[2] };
+			var segment2 = new BezierSegment { Point1 = segment.Points[4], Point2 = segment.Points[3], Point3 = segment.Points[2] };
+			var figure1 = new PathFigure { StartPoint = figure.StartPoint, Segments = { segment1 } };
+			var figure2 = new PathFigure { StartPoint = figure.StartPoint, Segments = { segment2 } };
+			var geometry1 = new PathGeometry { Figures = { figure1 } };
+			var geometry2 = new PathGeometry { Figures = { figure2 } };
+
+			// Bottom jaw (Path is 6 times bigger than Image). 200px is height of image. 2 - reduce max heigh range by half.
+			var jawImageheigh = Math.Max(0, (PositionY(geometry, 0.75) - PositionY(MPath_0.Data, 0.75)) / 6) / 2 + 200;
+			JawGrid.Height = jawImageheigh;
+			AvatarMouth.Figures = geometry.Figures;
+			LipTop.ImageSource = jawImageheigh > 200 ? bitmapImageLip1 : bitmapImageLip0;
+
+			int p1 = LipGeometryDivisions + 1; // start point1 6
+			int p2 = maxPoints - 1; // start point2 14
+			double positionOnPath = 0;
+			double positionOnPathStep = 1 / (double)LipGeometryDivisions;
+
+			for (int i = 1; i < p1 + 1; i++)
+			{
+				foreach (PathGeometry g in new[] { geometry1, geometry2 })
+				{
+					double distance1 = g == geometry1 ? 200 : 10;
+					double distance2 = g == geometry1 ? 35 : 310;
+					// Get positionOnPath position and angle.
+					g.GetPointAtFractionLength(positionOnPath, out var pathPoint, out var pathTangent);
+					double angleDegrees = Math.Atan2(pathTangent.Y, pathTangent.X) * (180 / Math.PI);
+					// Convert degrees to radians and calculate positions.
+					double angleRadians = (angleDegrees + 270) * Math.PI / 180;
+					double x1 = pathPoint.X + distance1 * Math.Cos(angleRadians);
+					double y1 = pathPoint.Y + distance1 * Math.Sin(angleRadians);
+					double x2 = pathPoint.X - distance2 * Math.Cos(angleRadians);
+					double y2 = pathPoint.Y - distance2 * Math.Sin(angleRadians);
+					// Convert Viewport values for Viewport3D.
+					var X1 = x1 / scale;
+					var X2 = x2 / scale;
+					var Y1 = Math.Abs(y1 / scale - 1);
+					var Y2 = Math.Abs(y2 / scale - 1);
+
+					if (g == geometry1)
+					{
+						LipTopBackgroundMeshGeometry3D.Positions[i] = new Point3D(pathPoint.X / scale, Math.Abs(pathPoint.Y / scale - 1), 0);
+						LipTopMeshGeometry3D.Positions[p2] = new Point3D(X1, Y1, 0);
+						LipTopMeshGeometry3D.Positions[i] = new Point3D(X2, Y2, 0);
+					}
+					else
+					{
+						LipBottomBackgroundMeshGeometry3D.Positions[p2] = new Point3D(pathPoint.X / scale, Math.Abs(pathPoint.Y / scale - 1), 0);
+						LipBottomMeshGeometry3D.Positions[p2] = new Point3D(X1, Y1, 0);
+						LipBottomMeshGeometry3D.Positions[i] = new Point3D(X2, Y2, 0);
+					}
+					// Distances from position on Path. double meshLineLength = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+				}
+				positionOnPath = positionOnPath + positionOnPathStep;
+				p2 = p2 - 1;
+			}
+		}
+
+		private void SetMeshGeometry3D()
+		{
+			foreach (var g in new List<MeshGeometry3D> { LipTopBackgroundMeshGeometry3D, LipBottomBackgroundMeshGeometry3D, LipTopMeshGeometry3D, LipBottomMeshGeometry3D, })
+			{
+				g.Positions.Clear();
+				g.TextureCoordinates.Clear();
+				g.TriangleIndices.Clear();
+			}
+
+			// Create TriangleIndices.
+			var triangleIndicesT = new Int32Collection();
+			var triangleIndicesB = new Int32Collection();
+			maxPoints = LipGeometryDivisions * 2 + 5; // 15
+
+			// Start.
+			// (/) 0, 1, 14, 14, 15, 0
+			// (\) 0, 1, 15, 1, 14, 15	
+			triangleIndicesT.Add(0);
+			triangleIndicesT.Add(1);
+			triangleIndicesT.Add(maxPoints - 1);
+			triangleIndicesT.Add(maxPoints - 1);
+			triangleIndicesT.Add(maxPoints);
+			triangleIndicesT.Add(0);
+
+			triangleIndicesB.Add(0);
+			triangleIndicesB.Add(1);
+			triangleIndicesB.Add(maxPoints);
+			triangleIndicesB.Add(1);
+			triangleIndicesB.Add(maxPoints - 1);
+			triangleIndicesB.Add(maxPoints);
+
+			// Middle.
+			// 1 2 13 13 14 1
+			// 2 3 12 12 13 2
+			// 3 4 11 11 12 3
+			// 4 5 10 10 11 4
+			// 5 6  9  9 10 5
+			var p1 = 1;
+			var p2 = 2;
+			var p3 = maxPoints - 2;
+			var p4 = maxPoints - 1;
+			for (int i = 1; i < LipGeometryDivisions + 1; i++)
+			{
+				// Top.
+				triangleIndicesT.Add(p1);
+				triangleIndicesT.Add(p2);
+				triangleIndicesT.Add(p3);
+				triangleIndicesT.Add(p3);
+				triangleIndicesT.Add(p4);
+				triangleIndicesT.Add(p1);
+				// Bottom.
+				triangleIndicesB.Add(p1);
+				triangleIndicesB.Add(p2);
+				triangleIndicesB.Add(p3);
+				triangleIndicesB.Add(p3);
+				triangleIndicesB.Add(p4);
+				triangleIndicesB.Add(p1);
+				p1 = p1 + 1;
+				p2 = p2 + 1;
+				p3 = p3 - 1;
+				p4 = p4 - 1;
+			}
+
+			// End.
+			// (\) 6, 7, 9, 7, 8, 9
+			// (/) 6, 7, 8, 8, 9, 6
+			triangleIndicesT.Add(LipGeometryDivisions + 1);
+			triangleIndicesT.Add(LipGeometryDivisions + 2);
+			triangleIndicesT.Add(LipGeometryDivisions + 4);
+			triangleIndicesT.Add(LipGeometryDivisions + 2);
+			triangleIndicesT.Add(LipGeometryDivisions + 3);
+			triangleIndicesT.Add(LipGeometryDivisions + 4);
+
+			triangleIndicesB.Add(LipGeometryDivisions + 1);
+			triangleIndicesB.Add(LipGeometryDivisions + 2);
+			triangleIndicesB.Add(LipGeometryDivisions + 3);
+			triangleIndicesB.Add(LipGeometryDivisions + 3);
+			triangleIndicesB.Add(LipGeometryDivisions + 4);
+			triangleIndicesB.Add(LipGeometryDivisions + 1);
+
+			LipTopBackgroundMeshGeometry3D.TriangleIndices = triangleIndicesT;
+			LipTopMeshGeometry3D.TriangleIndices = triangleIndicesT;
+			LipBottomBackgroundMeshGeometry3D.TriangleIndices = triangleIndicesB;
+			LipBottomMeshGeometry3D.TriangleIndices = triangleIndicesB;
+
+			// Create Positions and TextureCoordinates.
+			var positions = new List<(double, int)>();
+			var textureCoordinates = new PointCollection();
+
+			// X.
+			var x = new[] { 456, 720, 1380, 1644 };
+			// Background.
+			var yBT = new[] { 510, 270 };
+			var yBB = new[] { 870, 510 };
+			// Lips.
+			var yLT = new[] { 545, 310 };
+			var yLB = new[] { 820, 500 };
+			// Texture.
+			var yTX = new[] { 1, 0 };
+			double textureWidth = x[3] - x[0]; // 1188
+
+			var xStep = (x[2] - x[1]) / LipGeometryDivisions;
+			var xPosition = x[1];
+			// Forward.
+			positions.Add((x[0], 0));
+			positions.Add((x[1], 0));
+			for (int i = 1; i < LipGeometryDivisions + 1; i++)
+			{
+				xPosition = xPosition + xStep;
+				positions.Add((xPosition, 0));
+			}
+			positions.Add((x[3], 0));
+			// Reverse.
+			positions.Add((x[3], 1));
+			positions.Add((x[2], 1));
+			for (int i = 1; i < LipGeometryDivisions + 1; i++)
+			{
+				xPosition = xPosition - xStep;
+				positions.Add((xPosition, 1));
+			}
+			positions.Add((x[0], 1));
+
+			foreach (var (X, Y) in positions)
+			{
+				// Set scaled Positions.
+				LipTopBackgroundMeshGeometry3D.Positions.Add(new Point3D(X / scale, Math.Abs(yBT[Y] / scale - 1), 0));
+				LipBottomBackgroundMeshGeometry3D.Positions.Add(new Point3D(X / scale, Math.Abs(yBB[Y] / scale - 1), 0));
+				LipTopMeshGeometry3D.Positions.Add(new Point3D(X / scale, Math.Abs(yLT[Y] / scale - 1), 0));
+				LipBottomMeshGeometry3D.Positions.Add(new Point3D(X / scale, Math.Abs(yLB[Y] / scale - 1), 0));
+				// Create TextureCoordinates.
+				textureCoordinates.Add(new Point((X - x[0]) / textureWidth, yTX[Y]));
+			}
+
+			foreach (var g in new List<MeshGeometry3D> { LipTopBackgroundMeshGeometry3D, LipBottomBackgroundMeshGeometry3D, LipTopMeshGeometry3D, LipBottomMeshGeometry3D, })
+			{
+				g.TextureCoordinates = textureCoordinates;
+			}
+		}
+
+		private Border avatarBorder;
+		private Window avatarWindow;
+
+		private void AvatarPanel_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			if (Parent is Border parentBorder)
+			{
+				avatarBorder = parentBorder;
+				parentBorder.Child = null;
+				avatarWindow = new Window
+				{
+					Title = "Avatar",
+					Height = 640,
+					Width = 360,
+					Content = this
+				};
+				avatarWindow.Closed += AvatarWindow_Closed;
+				AvatarPanelRectangle.Visibility = Visibility.Collapsed;
+				avatarWindow.Show();
+				MediaButtonPlay.Visibility = Visibility.Visible;
+			}
+		}
+
+		private void AvatarWindow_Closed(object sender, EventArgs e)
+		{
+			if (Parent is Window avatarWindow)
+			{
+				((Window)sender).Content = null;
+				avatarBorder.Child = this;
+				AvatarPanelRectangle.Visibility = Visibility.Visible;
+				((Window)sender).Closed -= AvatarWindow_Closed;
+			}
+			AnimationBar.Visibility = Visibility.Collapsed;
+			MediaButtonStop.Visibility = Visibility.Collapsed;
+			MediaButtonPlay.Visibility = Visibility.Collapsed;
+		}
+
+		private void CreateVisemeToPathDictionary()
+		{
+			visemeToPathDictionary = new Dictionary<double, Path>
+			{
+				{0,MPath_0},
+				{1,MPath_1},
+				{2,MPath_2},
+				{3,MPath_3},
+				{4,MPath_4},
+				{5,MPath_5},
+				{6,MPath_6},
+				{7,MPath_7},
+				{8,MPath_8},
+				{9,MPath_9},
+				{10,MPath_10},
+				{11,MPath_11},
+				{12,MPath_12},
+				{13,MPath_13},
+				{14,MPath_14},
+				{15,MPath_15},
+				{16,MPath_16},
+				{17,MPath_17},
+				{18,MPath_18},
+				{19,MPath_19},
+				{20,MPath_20},
+				{21,MPath_21},
+			};
+		}
+
+		private void CreateLetterToPathDictionary()
+		{
+			letterToPathDictionary = new Dictionary<string, Tuple<Path, int>>
+			{
+				// Multiple.
+				{"aw", Tuple.Create(MPath_3, 800) }, // ɔ
+				{"oo", Tuple.Create(MPath_4, 850) }, // ʊ
+				{"er", Tuple.Create(MPath_5, 800) }, // ɝ
+				{"ih", Tuple.Create(MPath_6, 750) }, // ɪ
+				{"ou", Tuple.Create(MPath_9, 900) }, // aʊ
+				{"oy", Tuple.Create(MPath_10, 850) }, // ɔɪ
+				{"ai", Tuple.Create(MPath_11, 900) }, // aɪ
+				{"sh", Tuple.Create(MPath_16, 500) }, // ʃ
+				{"ch", Tuple.Create(MPath_16, 500) }, // tʃ
+				{"zh", Tuple.Create(MPath_16, 550) }, // ʒ
+				{"th", Tuple.Create(MPath_17, 500) }, // ð // {"th",MPath_19}, // θ
+				{"ng", Tuple.Create(MPath_20, 650) }, // ŋ
+				// Single.
+				{" ", Tuple.Create(MPath_0, 600) }, // Silence.
+				{"a", Tuple.Create(MPath_1, 800) }, // æ // {"a",MPath_2}, // ɑ
+				{"e", Tuple.Create(MPath_1, 750) }, // ə //{"e",MPath_4}, // ɛ
+				{"u", Tuple.Create(MPath_1, 750) }, // ʌ
+				{"*", Tuple.Create(MPath_6, 600) }, // *
+				{"y", Tuple.Create(MPath_6, 750) }, // j
+				{"i", Tuple.Create(MPath_6, 750) }, // i
+				{"w", Tuple.Create(MPath_7, 700) }, // w // {"u"MPath_7}, // u
+				{"o", Tuple.Create(MPath_8, 800) }, // o // {"o",MPath_3}, // ɔ
+				{"h", Tuple.Create(MPath_12, 400) }, // h
+				{"r", Tuple.Create(MPath_13, 600) }, // ɹ
+				{"l", Tuple.Create(MPath_14, 600) }, // l
+				{"x", Tuple.Create(MPath_15, 500) }, // x
+				{"s", Tuple.Create(MPath_15, 500) }, // s
+				{"z", Tuple.Create(MPath_15, 550) }, // z
+				{"j", Tuple.Create(MPath_16, 500) }, // dʒ
+				{"f", Tuple.Create(MPath_18, 400) }, // f
+				{"v", Tuple.Create(MPath_18, 550) }, // v
+				{"d", Tuple.Create(MPath_19, 500) }, // d
+				{"t", Tuple.Create(MPath_19, 400) }, // t
+				{"n", Tuple.Create(MPath_19, 500) }, // n
+				{"c", Tuple.Create(MPath_20, 400) }, // c
+				{"k", Tuple.Create(MPath_20, 400) }, // k
+				{"q", Tuple.Create(MPath_20, 600) }, // q
+				{"g", Tuple.Create(MPath_20, 500) }, // g
+				{"p", Tuple.Create(MPath_21, 400) }, // p
+				{"b", Tuple.Create(MPath_21, 500) }, // b
+				{"m", Tuple.Create(MPath_21, 600) }, // m
+			};
+		}
+
+		// Create BACKGROUND (CAMERA, AURA, SPARK) animations.
+		public void CreateBackgroundAnimations()
+		{
+			// Time settings.
+			var beginTimeMin = 0;
+			var beginTimeMax = 60000;
+			var duration = 10000;
+			// Create storyboardBackground animations.
+			CreateCameraAnimation(beginTimeMin, duration);
+			CreateAuraAnimation(beginTimeMin, duration);
+			CreateSparkAnimation(beginTimeMin, beginTimeMax, duration);
+			// Begin animation.
+			storyboardBackground.SpeedRatio = 0.3;
+			storyboardBackground.Begin();
+			storyboardBackground.Seek(TimeSpan.FromMilliseconds(beginTimeMax));
+		}
+
+		// CAMERA animation.
+		private void CreateCameraAnimation(int beginTime, int duration)
+		{
+			var animation = new MatrixAnimationUsingPath
 			{
 				RepeatBehavior = RepeatBehavior.Forever,
-				BeginTime = start, 
+				BeginTime = TimeSpan.FromMilliseconds(beginTime),
+				Duration = TimeSpan.FromMilliseconds(duration),
+				PathGeometry = PathGeometry.CreateFromGeometry(CameraPath.Data),
+			};
+			Storyboard.SetTarget(animation, CameraAnimationViewbox);
+			Storyboard.SetTargetProperty(animation, new PropertyPath("(UIElement.RenderTransform).(MatrixTransform.Matrix)"));
+			storyboardBackground.Children.Add(animation);
+		}
+
+		// AURA animation.
+		private void CreateAuraAnimation(int start, int duration)
+		{
+			// Create Grid for Ellipses.
+			var grid = new Grid
+			{
+				Height = 1160,
+				Width = 1080,
+				ClipToBounds = true,
+				VerticalAlignment = VerticalAlignment.Top,
+			};
+			AuraCanvas.Children.Add(grid);
+
+			// Create gradient for Ellipses.
+			Color c1 = (Color)ColorConverter.ConvertFromString("#00000000");
+			Color c2 = (Color)ColorConverter.ConvertFromString("#aa77ccff");
+			RadialGradientBrush AuraGradient = new RadialGradientBrush
+			{
+				GradientStops = new GradientStopCollection
+				{
+					new GradientStop(c1, 0.86),
+					new GradientStop(c2, 0.89),
+					new GradientStop(c2, 0.90),
+					new GradientStop(c1, 0.93),
+				}
 			};
 
-			Storyboard.SetTarget(animation, element);
-			Storyboard.SetTargetProperty(animation, new PropertyPath(property));
+			// Create 3 Ellipses and animations for them.
+			foreach (int ms in new[] { 0, 3333, 6666 })
+			{
+				// Create Ellipse.
+				var ellipse = new Ellipse
+				{
+					HorizontalAlignment = HorizontalAlignment.Center,
+					VerticalAlignment = VerticalAlignment.Center,
+					Fill = AuraGradient,
+				};
+				grid.Children.Add(ellipse);
 
-			animation.KeyFrames.Add(new DiscreteDoubleKeyFrame { KeyTime = path1, Value = 0 });
-			animation.KeyFrames.Add(new LinearDoubleKeyFrame { KeyTime = maxSize1, Value = size });
-			animation.KeyFrames.Add(new DiscreteDoubleKeyFrame { KeyTime = maxSize2, Value = size });
-			animation.KeyFrames.Add(new LinearDoubleKeyFrame { KeyTime = path2, Value = 0 });
+				// Create Ellipse size animation.
+				foreach (string property in new[] { "Width", "Height" })
+				{
+					var animation = new DoubleAnimationUsingKeyFrames
+					{
+						RepeatBehavior = RepeatBehavior.Forever,
+						BeginTime = TimeSpan.FromMilliseconds(ms),
+					};
+					animation.KeyFrames.Add(new DiscreteDoubleKeyFrame(200, TimeSpan.FromMilliseconds(start)));
+					animation.KeyFrames.Add(new LinearDoubleKeyFrame(1600, TimeSpan.FromMilliseconds(duration)));
+					Storyboard.SetTarget(animation, ellipse);
+					Storyboard.SetTargetProperty(animation, new PropertyPath(property));
+					storyboardBackground.Children.Add(animation);
+				}
+			}
+		}
 
-			storyboard.Children.Add(animation);
+		// SPARK animation.
+		private void CreateSparkAnimation(int startMin, int startMax, int duration)
+		{
+			var sizeMax = 100;
+			var random = new Random();
+
+			foreach (Canvas canvas in new[] { SparksYellowCanvas, SparksBlueCanvas, SparksBrownCanvas })
+			{
+				foreach (Path path in canvas.Children)
+				{
+					var startRandom = TimeSpan.FromMilliseconds(random.Next(startMin, startMax));
+
+					// Create Grid for Image ("spark").
+					var grid = new Grid
+					{
+						Height = sizeMax,
+						Width = sizeMax,
+						Margin = new Thickness(-sizeMax / 2, -sizeMax / 2, 0, 0),
+					};
+					SparkCanvas.Children.Add(grid);
+
+					// Create Grid moving along the path animation.
+					var animationPath = new MatrixAnimationUsingPath
+					{
+						RepeatBehavior = RepeatBehavior.Forever,
+						BeginTime = startRandom,
+						Duration = TimeSpan.FromMilliseconds(duration),
+						PathGeometry = PathGeometry.CreateFromGeometry(path.Data),
+					};
+					Storyboard.SetTarget(animationPath, grid);
+					Storyboard.SetTargetProperty(animationPath, new PropertyPath("(UIElement.RenderTransform).(MatrixTransform.Matrix)"));
+					storyboardBackground.Children.Add(animationPath);
+
+					// Create Image.
+					var image = new Image
+					{
+						Height = 0,
+						Width = 0,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						VerticalAlignment = VerticalAlignment.Center,
+						Source = (canvas == SparksYellowCanvas) ? bitmapImageYellow : (canvas == SparksBlueCanvas) ? bitmapImageBlue : bitmapImageBrown,
+					};
+					grid.Children.Add(image);
+
+					// Create Image size animation.
+					var sizeMaxR = random.Next(sizeMax * 50, sizeMax * 70) / 100;
+					var durationB = 800;
+
+					foreach (string property in new[] { "Width", "Height" })
+					{
+						var animationSize = new DoubleAnimationUsingKeyFrames
+						{
+							RepeatBehavior = RepeatBehavior.Forever,
+							BeginTime = startRandom,
+						};
+
+						if (canvas == SparksYellowCanvas)
+						{
+							animationSize.KeyFrames.Add(new DiscreteDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
+							animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(duration / 5)));
+							animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(duration)));
+						}
+						else if (canvas == SparksBlueCanvas)
+						{
+							animationSize.KeyFrames.Add(new DiscreteDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(0)));
+							animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(duration / 2)));
+							animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(duration)));
+						}
+						else if (canvas == SparksBrownCanvas)
+						{
+							animationSize.KeyFrames.Add(new DiscreteDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
+							animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(sizeMaxR, TimeSpan.FromMilliseconds(durationB / 4)));
+							animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(durationB / 2)));
+							animationSize.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(durationB)));
+						}
+						Storyboard.SetTarget(animationSize, image);
+						Storyboard.SetTargetProperty(animationSize, new PropertyPath(property));
+						storyboardBackground.Children.Add(animationSize);
+					}
+				}
+			}
 		}
 	}
 }

@@ -40,7 +40,8 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<JcControls:InfoControl x:Name="InfoPanel" MouseDown="Border_MouseDown" RightIconContent="{StaticResource Icon_AiCompanion}" />
+		<JcControls:InfoControl x:Name="InfoPanel" RightIconContent="{StaticResource Icon_AiCompanion}" />
+
 		<Border
 			Grid.RowSpan="2"
 			Grid.Column="1"
@@ -48,20 +49,22 @@
 			Height="90"
 			VerticalAlignment="Top"
 			ClipToBounds="True"
-			MouseDown="Border_MouseDown"
 			Visibility="{Binding ShowAvatar, Converter={StaticResource _BoolToVisibilityConverter}, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 			<Grid Margin="0,-16,0,0">
 				<Grid.LayoutTransform>
+
 					<!--  Example ScaleTransform, adjust ScaleX and ScaleY as necessary  -->
+
 					<ScaleTransform ScaleX="1" ScaleY="1" />
 				</Grid.LayoutTransform>
-				<controls:AvatarControl
+				<!--<controls:AvatarControl
 					x:Name="AvatarPanel"
 					Width="90"
 					Height="160"
-					HorizontalAlignment="Center" />
+					HorizontalAlignment="Center" />-->
 			</Grid>
 		</Border>
+
 		<controls:QuickActionControl x:Name="QuickActionPanel" Grid.Row="1" />
 		<TabControl
 			x:Name="MainTabControl"

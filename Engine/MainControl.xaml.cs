@@ -41,9 +41,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			ErrorsTabItem.Visibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			AvatarPanel.Visibility = Global.AppSettings.ShowAvatar
-				? Visibility.Visible
-				: Visibility.Collapsed;
 			if (InitHelper.IsDebug)
 			{
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -127,10 +124,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			Global.AppSettings.ShowAvatar = !Global.AppSettings.ShowAvatar;
-		}
+
 
 		#region Exceptions
 

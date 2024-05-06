@@ -169,7 +169,21 @@
 		<None Remove="Resources\Icons\Icons_Default\list.svg" />
 		<None Remove="Resources\Icons\Icons_Default\user_comment.svg" />
 		<None Remove="Resources\Icons\Templates\control_panel.svg" />
+		<None Remove="Resources\Images\AiCompanion.png" />
+		<None Remove="Resources\Images\AudioDemo.wav" />
+		<None Remove="Resources\Images\AvatarBackground.jpg" />
 		<None Remove="Resources\Images\AvatarBackground.png" />
+		<None Remove="Resources\Images\AvatarBackgroundMask.png" />
+		<None Remove="Resources\Images\AvatarMouth.png" />
+		<None Remove="Resources\Images\JawImage.png" />
+		<None Remove="Resources\Images\LipBottom.png" />
+		<None Remove="Resources\Images\LipBottomBackground.png" />
+		<None Remove="Resources\Images\LipTop0.png" />
+		<None Remove="Resources\Images\LipTop1.png" />
+		<None Remove="Resources\Images\LipTopBackground.png" />
+		<None Remove="Resources\Images\SparkBlue.png" />
+		<None Remove="Resources\Images\SparkBrown.png" />
+		<None Remove="Resources\Images\SparkYellow.png" />
 		<None Remove="Resources\MainWindowCommand.png" />
 		<None Remove="Resources\PromptItems.xml" />
 		<None Remove="x64\Microsoft.CognitiveServices.Speech.core.dll" />
@@ -220,7 +234,6 @@
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\list.svg" />
-		<Resource Include="Resources\Images\AvatarBackground.png" />
 		<EmbeddedResource Include="Resources\Settings.zip" />
 		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />
@@ -263,6 +276,20 @@
 
 	<ItemGroup>
 		<Resource Include="AiCompanion.svg" />
+		<Resource Include="Resources\Images\AiCompanion.png" />
+		<Resource Include="Resources\Images\AudioDemo.wav" />
+		<Resource Include="Resources\Images\AvatarBackground.jpg" />
+		<Resource Include="Resources\Images\AvatarBackgroundMask.png" />
+		<Resource Include="Resources\Images\AvatarMouth.png" />
+		<Resource Include="Resources\Images\JawImage.png" />
+		<Resource Include="Resources\Images\LipBottom.png" />
+		<Resource Include="Resources\Images\LipBottomBackground.png" />
+		<Resource Include="Resources\Images\LipTop0.png" />
+		<Resource Include="Resources\Images\LipTop1.png" />
+		<Resource Include="Resources\Images\LipTopBackground.png" />
+		<Resource Include="Resources\Images\SparkBlue.png" />
+		<Resource Include="Resources\Images\SparkBrown.png" />
+		<Resource Include="Resources\Images\SparkYellow.png" />
 	</ItemGroup>
 
 	<ItemGroup>

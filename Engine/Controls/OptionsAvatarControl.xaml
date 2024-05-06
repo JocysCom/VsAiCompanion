@@ -128,7 +128,18 @@
 					</TabItem>
 				</TabControl>
 			</Grid>
-			<local:AvatarControl Grid.Column="1" Grid.ColumnSpan="2" Margin="3" />
+
+			<Border
+				Name="AvatarPanelBorder"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Margin="3"
+				Background="Black"
+				CornerRadius="10">
+				<!--MouseDown="Border_MouseDown"-->
+				<local:AvatarControl x:Name="AvatarPanel" />
+			</Border>
+
 		</Grid>
 	</ScrollViewer>
 </UserControl>
