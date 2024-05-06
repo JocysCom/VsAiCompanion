@@ -25,14 +25,31 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<Label VerticalAlignment="Center" Content="{StaticResource main_Default_AI_Model}" />
-		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+		<Label Grid.Row="0" VerticalAlignment="Center" Content="{StaticResource main_ServiceType}" />
+		<ComboBox
+			Name="ServiceTypeComboBox"
+			Grid.Row="0"
+			Grid.Column="1"
+			ItemsSource="{Binding ServiceTypes, ElementName=This}"
+			SelectedValue="{Binding ServiceType}" />
+		<Label
+			x:Name="ModelLabel"
+			Grid.Row="1"
+			VerticalAlignment="Center"
+			Content="{StaticResource main_Default_AI_Model}" />
+		<StackPanel
+			x:Name="ModelStackPanel"
+			Grid.Row="1"
+			Grid.Column="1"
+			Orientation="Horizontal">
 			<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding DefaultAiModel}" />
 			<Button
 				Name="ModelRefreshButton"
@@ -45,46 +62,58 @@
 					<ContentControl Content="{StaticResource Icon_Refresh}" />
 				</StackPanel>
 			</Button>
-			<CheckBox Checked="CheckBox_Checked" Content="{StaticResource main_Is_Default_AI_Service}" IsChecked="{Binding IsDefault}" />
+			<CheckBox
+				Name="IsDefaultServiceLabel"
+				Checked="CheckBox_Checked"
+				Content="{StaticResource main_Is_Default_AI_Service}"
+				IsChecked="{Binding IsDefault}" />
 		</StackPanel>
-		<Label Grid.Row="1" Content="{StaticResource main_API_Key}" />
+		<Label Grid.Row="2" Content="{StaticResource main_API_Key}" />
 		<PasswordBox
 			Name="SecretKeyPasswordBox"
-			Grid.Row="1"
-			Grid.Column="1"
-			Grid.ColumnSpan="2" />
-
-		<Label Grid.Row="2" Content="{StaticResource main_API_Organization_ID}" />
-		<PasswordBox
-			Name="OrganizationPasswordBox"
 			Grid.Row="2"
 			Grid.Column="1"
 			Grid.ColumnSpan="2" />
 
-		<Label Grid.Row="3" Content="{StaticResource main_API_Base_URL}" />
+		<Label Name="OrganizationLabel" Grid.Row="3" Content="{StaticResource main_API_Organization_ID}" />
+		<PasswordBox
+			Name="OrganizationPasswordBox"
+			Grid.Row="3"
+			Grid.Column="1"
+			Grid.ColumnSpan="2" />
+
+		<Label Grid.Row="4" Content="{StaticResource main_API_Base_URL}" />
 		<TextBox
 			Name="OpenAiBaseUrlTextBox"
-			Grid.Row="3"
+			Grid.Row="4"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Text="{Binding BaseUrl}"
 			TextChanged="OpenAiBaseUrlTextBox_TextChanged" />
 
-		<Label Grid.Row="4" Content="{StaticResource main_Model_Filter}" />
+		<Label Grid.Row="5" Content="{StaticResource main_Region}" />
 		<TextBox
-			Name="ModelFilterTExtBox"
-			Grid.Row="4"
+			Name="RegionTextBox"
+			Grid.Row="5"
+			Grid.Column="1"
+			Grid.ColumnSpan="2"
+			Text="{Binding Region}" />
+
+		<Label Name="ModelFilterLabel" Grid.Row="6" Content="{StaticResource main_Model_Filter}" />
+		<TextBox
+			Name="ModelFilterTextBox"
+			Grid.Row="6"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Text="{Binding ModelFilter}" />
 
 		<StackPanel
-			Grid.Row="5"
+			Grid.Row="7"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Orientation="Horizontal">
-			<CheckBox Content="{StaticResource main_Is_Azure_OpenAI}" IsChecked="{Binding IsAzureOpenAI}" />
-			<CheckBox Content="{StaticResource main_Response_Streaming}" IsChecked="{Binding ResponseStreaming}" />
+			<CheckBox Name="IsAzureOpenAiCheckBox" Content="{StaticResource main_Is_Azure_OpenAI}" IsChecked="{Binding IsAzureOpenAI}" />
+			<CheckBox Name="ResponseStreamingCheckBox" Content="{StaticResource main_Response_Streaming}" IsChecked="{Binding ResponseStreaming}" />
 			<JcControls:NumericUpDown
 				LargeChange="60"
 				Maximum="100000"

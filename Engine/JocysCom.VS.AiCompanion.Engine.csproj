@@ -55,6 +55,7 @@
 		<PackageReference Include="Ignore" Version="0.1.50" />
 		<PackageReference Include="MailKit" Version="4.5.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.37.0" />
 		<PackageReference Include="Microsoft.ML" Version="3.0.1" />
 		<PackageReference Include="RtfPipe" Version="2.0.7677.4303" />
 		<PackageReference Include="SharpVectors" Version="1.8.4" />
@@ -171,6 +172,12 @@
 		<None Remove="Resources\Images\AvatarBackground.png" />
 		<None Remove="Resources\MainWindowCommand.png" />
 		<None Remove="Resources\PromptItems.xml" />
+		<None Remove="x64\Microsoft.CognitiveServices.Speech.core.dll" />
+		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
+		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.codec.dll" />
+		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.kws.dll" />
+		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
+		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -202,6 +209,12 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
+		<Content Include="x64\Microsoft.CognitiveServices.Speech.core.dll" />
+		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
+		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.codec.dll" />
+		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.kws.dll" />
+		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
+		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
@@ -268,6 +281,15 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="x64\**\*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="x86\**\*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

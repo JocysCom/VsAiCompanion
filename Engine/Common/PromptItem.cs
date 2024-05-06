@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using JocysCom.ClassLibrary.ComponentModel;
+using System.ComponentModel;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class PromptItem : INotifyPropertyChanged
+	public class PromptItem : NotifyPropertyChanged
 	{
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
@@ -11,28 +11,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _Pattern;
 
 		[System.Xml.Serialization.XmlArrayItem("Option", IsNullable = false)]
-		public BindingList<string> Options {
+		public BindingList<string> Options
+		{
 			get => _Options = _Options ?? new BindingList<string>();
-			set => SetProperty(ref _Options, value); }
+			set => SetProperty(ref _Options, value);
+		}
 		BindingList<string> _Options;
-
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
-		{
-			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		#endregion
-
 
 	}
 }

@@ -37,6 +37,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					{
 						SecretKeyPasswordBox.PasswordChanged -= SecretKeyPasswordBox_PasswordChanged;
 						OrganizationPasswordBox.PasswordChanged -= OrganizationPasswordBox_PasswordChanged;
+						_Item.PropertyChanged -= _Item_PropertyChanged;
 					}
 					_Item = value ?? new AiService();
 					// Make sure that even custom AiModel old and new item is available to select.
@@ -48,9 +49,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					SecretKeyPasswordBox.PasswordChanged += SecretKeyPasswordBox_PasswordChanged;
 					OrganizationPasswordBox.Password = Item.ApiOrganizationId;
 					OrganizationPasswordBox.PasswordChanged += OrganizationPasswordBox_PasswordChanged;
+					_Item.PropertyChanged += _Item_PropertyChanged;
+					UpdateControlVilibility();
 				}
 			}
 		}
+
+		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AiService.ServiceType))
+				UpdateControlVilibility();
+		}
+
+		void UpdateControlVilibility()
+		{
+			var visibility = _Item?.ServiceType == ApiServiceType.None || _Item?.ServiceType == ApiServiceType.OpenAI
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			ModelLabel.Visibility = visibility;
+			ModelStackPanel.Visibility = visibility;
+			IsDefaultServiceLabel.Visibility = visibility;
+			ModelFilterLabel.Visibility = visibility;
+			ModelFilterTextBox.Visibility = visibility;
+			OrganizationLabel.Visibility = visibility;
+			OrganizationPasswordBox.Visibility = visibility;
+			IsAzureOpenAiCheckBox.Visibility = visibility;
+			ResponseStreamingCheckBox.Visibility = visibility;
+		}
+
 		private AiService _Item;
 		private object _ItemLock = new object();
 
@@ -66,6 +92,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		public BindingList<string> AiModels { get; set; } = new BindingList<string>();
+
+		public ApiServiceType[] ServiceTypes { get; set; } =
+			(ApiServiceType[])Enum.GetValues(typeof(ApiServiceType));
 
 		private void Global_AiModelsUpdated(object sender, EventArgs e)
 		{

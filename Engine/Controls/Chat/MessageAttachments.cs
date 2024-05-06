@@ -1,11 +1,11 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
-	public class MessageAttachments : INotifyPropertyChanged
+	public class MessageAttachments : NotifyPropertyChanged
 	{
 		public MessageAttachments() { }
 
@@ -59,21 +59,5 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public string Data { get => _Data; set => SetProperty(ref _Data, value); }
 		string _Data;
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
-		{
-			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		#endregion
 	}
 }

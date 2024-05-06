@@ -47,6 +47,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         }
 
         public static string main_TasksTab_Help => FindResource(nameof(main_TasksTab_Help));
+        public static string main_Region => FindResource(nameof(main_Region));
+        public static string main_ServiceType => FindResource(nameof(main_ServiceType));
         public static string main_TasksTab_Name => FindResource(nameof(main_TasksTab_Name));
         public static string main__1_Assistants => FindResource(nameof(main__1_Assistants));
         public static string main__1_Source_Files => FindResource(nameof(main__1_Source_Files));
@@ -57,6 +59,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Add => FindResource(nameof(main_Add));
         public static string main_Add_New => FindResource(nameof(main_Add_New));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
+        public static string main_AI_Avatar => FindResource(nameof(main_AI_Avatar));
         public static string main_AI_Services => FindResource(nameof(main_AI_Services));
         public static string main_Allow_Only_One_Copy => FindResource(nameof(main_Allow_Only_One_Copy));
         public static string main_Allowed_Recipients => FindResource(nameof(main_Allowed_Recipients));
@@ -156,6 +159,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Other => FindResource(nameof(main_Other));
         public static string main_Owner => FindResource(nameof(main_Owner));
         public static string main_Password => FindResource(nameof(main_Password));
+        public static string main_Play => FindResource(nameof(main_Play));
         public static string main_Paste => FindResource(nameof(main_Paste));
         public static string main_Path => FindResource(nameof(main_Path));
         public static string main_Personalize_the_chat => FindResource(nameof(main_Personalize_the_chat));
@@ -166,6 +170,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ReadOnly => FindResource(nameof(main_ReadOnly));
         public static string main_Refresh => FindResource(nameof(main_Refresh));
         public static string main_Remove_on_Complete => FindResource(nameof(main_Remove_on_Complete));
+        public static string main_Reset_ServicesAndModels => FindResource(nameof(main_Reset_ServicesAndModels));
         public static string main_Reset_Lists => FindResource(nameof(main_Reset_Lists));
         public static string main_Reset_Application_Settings => FindResource(nameof(main_Reset_Application_Settings));
         public static string main_Reset_Embeddings => FindResource(nameof(main_Reset_Embeddings));
@@ -178,6 +183,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_UI_Settings_ToolTip => FindResource(nameof(main_Reset_UI_Settings_ToolTip));
         public static string main_Response_Streaming => FindResource(nameof(main_Response_Streaming));
         public static string main_Response_Timeout => FindResource(nameof(main_Response_Timeout));
+        public static string main_Search => FindResource(nameof(main_Search));
         public static string main_Search_the_list => FindResource(nameof(main_Search_the_list));
         public static string main_Security => FindResource(nameof(main_Security));
         public static string main_Selection => FindResource(nameof(main_Selection));
@@ -201,6 +207,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Spell_Check => FindResource(nameof(main_Spell_Check));
         public static string main_Standalone_Program => FindResource(nameof(main_Standalone_Program));
         public static string main_Start_with_Windows => FindResource(nameof(main_Start_with_Windows));
+        public static string main_Stop => FindResource(nameof(main_Stop));
         public static string main_Status => FindResource(nameof(main_Status));
         public static string main_System_Message => FindResource(nameof(main_System_Message));
         public static string main_Target => FindResource(nameof(main_Target));

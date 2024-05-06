@@ -42,10 +42,9 @@
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
 				VerticalContentAlignment="Top"
-				x:FieldModifier="public"
 				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 				BorderThickness="0"
-				IsReadOnly="True"
+				IsReadOnly="false"
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				TextWrapping="Wrap">

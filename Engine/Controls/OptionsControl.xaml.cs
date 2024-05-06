@@ -155,7 +155,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var text = $"Do you want to reset the {name}?";
 			text += string.IsNullOrEmpty(more)
-				? $"Please note that this will delete all custom {name}!"
+				? $" Please note that this will delete all custom {name}!"
 				: more;
 			var caption = $"{Global.Info.Product} - Reset {name}";
 			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -238,6 +238,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void DomainMaxRiskLevelRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
 			DomainMaxRiskLevelRefresh(false);
+		}
+
+		private void ResetServicesButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AllowReset("Services and Models"))
+				return;
+			SettingsSourceManager.ResetServicesAndModels();
+			Global.RaiseOnAiServicesUpdated();
+			Global.RaiseOnAiModelsUpdated();
 		}
 	}
 

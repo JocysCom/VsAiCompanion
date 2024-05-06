@@ -1,18 +1,17 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using System.Windows.Controls;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class PluginItem : INotifyPropertyChanged
+	public class PluginItem : NotifyPropertyChanged
 	{
 
 		public PluginItem() { }
@@ -144,33 +143,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 					: 0.50;
 			}
 		}
-
-		#region INotifyPropertyChanged
-
-		// CWE-502: Deserialization of Untrusted Data
-		// Fix: Apply [field: NonSerialized] attribute to an event inside class with [Serialized] attribute.
-		[field: NonSerialized]
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			var handler = PropertyChanged;
-			if (handler != null)
-			{
-				if (ControlsHelper.MainTaskScheduler == null)
-					handler(this, new PropertyChangedEventArgs(propertyName));
-				else
-					ControlsHelper.Invoke(handler, this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
-		{
-			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		#endregion
 
 	}
 }

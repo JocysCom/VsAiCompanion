@@ -1,14 +1,14 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.ComponentModel;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class AiModel : INotifyPropertyChanged
+	public class AiModel : NotifyPropertyChanged
 	{
 		public AiModel() { }
 		public AiModel(string name, Guid aiServiceId)
@@ -40,26 +40,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(0)]
 		public int MaxInputTokens { get => _MaxInputTokens; set => SetProperty(ref _MaxInputTokens, value); }
 		int _MaxInputTokens;
-
-		#region ■ INotifyPropertyChanged
-
-		// CWE-502: Deserialization of Untrusted Data
-		// Fix: Apply [field: NonSerialized] attribute to an event inside class with [Serialized] attribute.
-		[field: NonSerialized]
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
-		{
-			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		#endregion
 
 	}
 }

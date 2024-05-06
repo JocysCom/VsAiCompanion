@@ -1,14 +1,13 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.ComponentModel;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class AiService : INotifyPropertyChanged
+	public class AiService : NotifyPropertyChanged
 	{
 
 		public AiService()
@@ -16,6 +15,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			_Id = Guid.NewGuid();
 		}
+
+		/// <summary>Used by default.</summary>
+		[DefaultValue(ApiServiceType.None)]
+		public ApiServiceType ServiceType { get => _ServiceType; set => SetProperty(ref _ServiceType, value); }
+		ApiServiceType _ServiceType;
 
 		/// <summary>Unique Id.</summary>
 		[Key]
@@ -96,6 +100,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string BaseUrl { get => _BaseUrl; set => SetProperty(ref _BaseUrl, value); }
 		string _BaseUrl;
 
+		/// <summary>Region used by Microsoft Azure</summary>
+		public string Region { get => _Region; set => SetProperty(ref _Region, value); }
+		string _Region;
+
 		public string ModelFilter { get => _ModelFilter; set => SetProperty(ref _ModelFilter, value); }
 		string _ModelFilter;
 
@@ -136,34 +144,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		#endregion
-
-		#region INotifyPropertyChanged
-
-		// CWE-502: Deserialization of Untrusted Data
-		// Fix: Apply [field: NonSerialized] attribute to an event inside class with [Serialized] attribute.
-		[field: NonSerialized]
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			var handler = PropertyChanged;
-			if (handler != null)
-			{
-				if (ControlsHelper.MainTaskScheduler == null)
-					handler(this, new PropertyChangedEventArgs(propertyName));
-				else
-					ControlsHelper.Invoke(handler, this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
-		{
-			property = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-
-		#endregion
-
 
 	}
 

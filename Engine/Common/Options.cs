@@ -1,10 +1,9 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.ComponentModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public partial class Options : INotifyPropertyChanged
+	public partial class Options : NotifyPropertyChanged
 	{
 		public Options()
 		{
@@ -46,25 +45,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		#endregion
-
-		#region INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			var handler = PropertyChanged;
-			if (handler != null)
-			{
-				if (ControlsHelper.MainTaskScheduler == null)
-					handler(this, new PropertyChangedEventArgs(propertyName));
-				else
-					ControlsHelper.Invoke(handler, this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-
-		#endregion
-
 
 	}
 }

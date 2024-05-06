@@ -318,6 +318,20 @@
 				</ScrollViewer>
 			</TabItem>
 
+			<TabItem x:Name="AvatarSettingsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl
+							Width="12"
+							Height="12"
+							VerticalAlignment="Center"
+							Content="{StaticResource Icon_face_scan}" />
+						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_AI_Avatar}" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:OptionsAvatarControl x:Name="AvatarOptionsPanel" />
+			</TabItem>
+
 			<TabItem x:Name="ResetSettingsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -343,6 +357,17 @@
 										<Label Content="{StaticResource main_Reset_Application_Settings}" />
 									</StackPanel>
 								</Button>
+								<Button
+									Name="ResetServicesButton"
+									HorizontalAlignment="Stretch"
+									HorizontalContentAlignment="Left"
+									Click="ResetServicesButton_Click">
+									<StackPanel Focusable="False">
+										<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+										<Label Content="{StaticResource main_Reset_ServicesAndModels}" />
+									</StackPanel>
+								</Button>
+
 								<Button
 									Name="ResetTemplatesButton"
 									HorizontalAlignment="Stretch"

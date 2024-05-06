@@ -23,6 +23,7 @@
 		<Authors>Jocys.com Team</Authors>
 		<PackageId>VS AI Companion</PackageId>
 		<Product>VS AI Companion</Product>
+		<PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

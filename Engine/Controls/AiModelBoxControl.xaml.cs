@@ -18,16 +18,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AiServicesComboBox.ItemsSource = Global.AppSettings.AiServices;
+			Global_OnAiServicesUpdated(null, null);
 			Global.OnAiModelsUpdated += Global_OnAiModelsUpdated;
 			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated;
 		}
 
 		private void Global_OnAiServicesUpdated(object sender, EventArgs e)
 		{
-			AiServicesComboBox.ItemsSource = Global.AppSettings.AiServices;
+			AiServicesComboBox.ItemsSource = Global.AppSettings.AiServices
+				.Where(x => x.ServiceType == ApiServiceType.None || x.ServiceType == ApiServiceType.OpenAI);
 		}
-
 
 		public IAiServiceModel Item
 		{

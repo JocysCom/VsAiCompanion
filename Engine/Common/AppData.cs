@@ -47,6 +47,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue("https://github.com/JocysCom/VsAiCompanion/raw/main/Engine/Resources/Settings.CompanyName.zip")]
 		public string ConfigurationUrl { get => _ConfigurationUrl; set => SetProperty(ref _ConfigurationUrl, value); }
 		private string _ConfigurationUrl;
+
+
+		[DefaultValue(null)]
+		public AvatarItem AiAvatar
+		{
+			get => _AiAvatar = _AiAvatar ?? new AvatarItem();
+			set => SetProperty(ref _AiAvatar, value);
+		}
+		private AvatarItem _AiAvatar;
+
 		public UpdateSettings UpdateSettings
 		{
 			get => _UpdateSettings = _UpdateSettings ?? new UpdateSettings();

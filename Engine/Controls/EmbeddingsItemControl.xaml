@@ -328,7 +328,7 @@
 				VerticalAlignment="Center"
 				Content="{StaticResource main_Message}" />
 			<TextBox
-				Name="MessgaeTextBox"
+				Name="MessageTextBox"
 				Grid.Row="7"
 				Grid.Column="1"
 				Grid.ColumnSpan="4"

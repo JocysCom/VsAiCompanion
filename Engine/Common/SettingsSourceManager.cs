@@ -25,8 +25,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
 				var zipLists = GetItemsFromZip(zip, Global.ListsName, Global.Lists);
 				var zipEmbeddings = GetItemsFromZip(zip, Global.EmbeddingsName, Global.Embeddings);
-				var zipServices = zipAppData.Items[0].AiServices;
-				var zipModels = zipAppData.Items[0].AiModels;
 				var zipAppSettings = zipAppData.Items[0];
 				Global.Templates.PreventWriteToNewerFiles = false;
 				Global.Tasks.PreventWriteToNewerFiles = false;
@@ -36,22 +34,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				RemoveToReplace(Global.Templates, zipTemplates);
 				RemoveToReplace(Global.Lists, zipLists);
 				RemoveToReplace(Global.Embeddings, zipEmbeddings);
-				// Remove AiServices.
-				var zipServiceNames = zipServices.Select(t => t.Name.ToLower()).ToList();
-				var servicesToRemove = Global.AppSettings.AiServices.Where(x => zipServiceNames.Contains(x.Name.ToLower())).ToArray();
-				foreach (var service in servicesToRemove)
-				{
-					var modelsToRemove = Global.AppSettings.AiModels.Where(x => x.AiServiceId == service.Id).ToArray();
-					foreach (var model in modelsToRemove)
-						Global.AppSettings.AiModels.Remove(model);
-					Global.AppSettings.AiServices.Remove(service);
-				}
+				ResetServicesAndModels();
 				ResetPrompts(zip);
 				// Add user settings.
-				foreach (var item in zipAppData.Items[0].AiServices)
-					Global.AppSettings.AiServices.Add(item);
-				foreach (var item in zipAppData.Items[0].AiModels)
-					Global.AppSettings.AiModels.Add(item);
 				Global.Embeddings.Add(zipEmbeddings.ToArray());
 				Global.Lists.Add(zipLists.ToArray());
 				Global.Templates.Add(zipTemplates.ToArray());
@@ -114,6 +99,40 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.PromptItems.Remove(promptsToRemove);
 			Global.PromptItems.Add(zipPromptItems.Items.ToArray());
 			// Close zip.
+			if (closeZip)
+				zip.Close();
+		}
+
+		#endregion
+
+		#region Reset Services and Models
+
+		/// <summary>Reset Services and Models</summary>
+		public static void ResetServicesAndModels(ZipStorer zip = null)
+		{
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			// ---
+			var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
+			var zipServices = zipAppData.Items[0].AiServices;
+			var zipModels = zipAppData.Items[0].AiModels;
+			// Remove Services and Models
+			var zipServiceNames = zipServices.Select(t => t.Name.ToLower()).ToList();
+			var servicesToRemove = Global.AppSettings.AiServices.Where(x => zipServiceNames.Contains(x.Name.ToLower())).ToArray();
+			foreach (var service in servicesToRemove)
+			{
+				var modelsToRemove = Global.AppSettings.AiModels.Where(x => x.AiServiceId == service.Id).ToArray();
+				foreach (var model in modelsToRemove)
+					Global.AppSettings.AiModels.Remove(model);
+				Global.AppSettings.AiServices.Remove(service);
+			}
+			// Add Services and Models
+			foreach (var item in zipServices)
+				Global.AppSettings.AiServices.Add(item);
+			foreach (var item in zipModels)
+				Global.AppSettings.AiModels.Add(item);
+			// ---
 			if (closeZip)
 				zip.Close();
 		}

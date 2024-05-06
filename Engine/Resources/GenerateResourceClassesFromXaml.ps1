@@ -260,3 +260,4 @@ foreach ($resourceFile in $resourceFiles) {
     $outputPath = Join-Path $scriptPath "$className.xaml.cs"
     SaveToFile $outputPath $classContent.ToString()
 }
+pause

@@ -81,6 +81,5 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-
 	}
 }

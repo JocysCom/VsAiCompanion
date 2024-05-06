@@ -43,10 +43,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ScanProgressPanel.UpdateProgress();
 			Func<bool> action = () =>
 			{
-				SearchButton_Click(MessgaeTextBox, new RoutedEventArgs());
+				SearchButton_Click(MessageTextBox, new RoutedEventArgs());
 				return true;
 			};
-			AppControlsHelper.UseEnterToSend(MessgaeTextBox, action);
+			AppControlsHelper.UseEnterToSend(MessageTextBox, action);
 		}
 
 		#region List Panel Item
@@ -119,7 +119,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					value.PropertyChanged += _Item_PropertyChanged;
 				}
 				IconPanel.BindData(value);
-				LogPanel.LogTextBox.Clear();
+				LogPanel.Clear();
 				OnPropertyChanged(nameof(Item));
 			}
 		}
@@ -249,16 +249,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsOnCooldown(sender))
 				return;
 			MainTabControl.SelectedItem = LogTabPage;
-			LogPanel.LogTextBox.Clear();
+			LogPanel.Clear();
 			var eh = new EmbeddingHelper();
 			var systemMessage = await eh.SearchEmbeddingsToSystemMessage(Item, Item.EmbeddingGroupFlag, Item.Message, Item.Skip, Item.Take);
 			if (eh.FileParts == null)
 			{
-				LogPanel.LogTextBox.Text += "\r\nSearch returned no results.";
+				LogPanel.Add("\r\nSearch returned no results.");
 				return;
 			}
-			LogPanel.LogTextBox.Text += eh.Log;
-			LogPanel.LogTextBox.Text += "\r\n\r\n" + systemMessage;
+			LogPanel.Add(eh.Log);
+			LogPanel.Add("\r\n\r\n" + systemMessage);
 		}
 
 		FileProcessor _Scanner;
@@ -333,7 +333,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				catch (System.Exception ex)
 				{
-					LogPanel.LogTextBox.Text = ex.ToString();
+					LogPanel.Clear();
+					LogPanel.Add(ex.ToString());
 				}
 			}));
 			Dispatcher.Invoke(new Action(() =>
@@ -553,7 +554,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void ApplyEditChanges()
 		{
-			LogPanel.LogTextBox.Clear();
+			LogPanel.Clear();
 			try
 			{
 				var target = AssemblyInfo.ExpandPath(Item.Target);
@@ -580,7 +581,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			catch (Exception ex)
 			{
-				LogPanel.LogTextBox.Text = ex.ToString();
+				LogPanel.Clear();
+				LogPanel.Add(ex.ToString());
 			}
 			GroupFlagNameEditMode(false);
 			_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
@@ -659,8 +661,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void TargetTestButton_Click(object sender, RoutedEventArgs e)
 		{
-			LogPanel.LogTextBox.Clear();
-			LogPanel.LogTextBox.AppendText($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Testing database... ");
+			LogPanel.Clear();
+			LogPanel.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Testing database... ");
 			var target = AssemblyInfo.ExpandPath(Item.Target);
 			var connectionString = SqlInitHelper.IsPortable(target)
 						? SqlInitHelper.PathToConnectionString(target)
@@ -673,13 +675,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			catch (Exception ex)
 			{
-				LogPanel.LogTextBox.Text = ex.ToString();
-				LogPanel.LogTextBox.AppendText("\r\n");
+				LogPanel.Clear();
+				LogPanel.Add(ex.ToString());
+				LogPanel.Add("\r\n");
 			}
 			var statusText = success
 				? "PASSED"
 				: "FAILED";
-			LogPanel.LogTextBox.AppendText(statusText);
+			LogPanel.Add(statusText);
 		}
 
 	}
