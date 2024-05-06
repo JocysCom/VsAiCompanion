@@ -17,6 +17,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		SoundPlayer player = new SoundPlayer();
 		private bool isSpeaking = false;
 
+		public Dictionary<int, int> CurrentViseme = new Dictionary<int, int>();
+		public string CurrentAudioFile;
+
 		public SynthesizeClient(string subscriptionKey, string serviceRegion, string voiceName = null)
 		{
 			var config = SpeechConfig.FromSubscription(subscriptionKey, serviceRegion);
@@ -35,6 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private void Synthesizer_VisemeReceived(object sender, SpeechSynthesisVisemeEventArgs e)
 		{
+			CurrentViseme.Add((int)(e.AudioOffset / 10000), (int)e.VisemeId);
 			VisemeReceived?.Invoke(this, e);
 			Console.WriteLine($"Viseme event received. Audio offset: {e.AudioOffset / 10000}ms, viseme id: {e.VisemeId}.");
 			//AnimateAvatarBasedOnViseme(e.VisemeId);
@@ -56,6 +60,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <param name="useSsml">Flag indicating whether the text is in SSML format.</param>
 		public async Task Play(string text, bool useSsml = false)
 		{
+			CurrentViseme.Clear();
+			CurrentAudioFile = null;
 			isSpeaking = true;
 			SpeechSynthesisResult result = useSsml
 				? await synthesizer.SpeakSsmlAsync(text)
@@ -75,9 +81,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					// Save the synthesized speech to a WAV file
 					await audioStream.SaveToWaveFileAsync(outputPath);
-					PlayFile(outputPath);
 					Console.WriteLine($"Audio content written to file \"{outputPath}\"");
 				}
+				CurrentAudioFile = outputPath;
 			}
 			else if (result.Reason == ResultReason.Canceled)
 			{
