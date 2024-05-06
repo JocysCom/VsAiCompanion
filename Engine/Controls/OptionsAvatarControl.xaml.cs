@@ -75,7 +75,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				try
 				{
 					if (CheckClient())
+					{
 						await client.Play(text);
+						var viseme = client.CurrentViseme;
+						client.PlayFile(client.CurrentAudioFile);
+					}
 				}
 				catch (Exception ex)
 				{
