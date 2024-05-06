@@ -7,7 +7,7 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:DesignHeight="450"
+	d:DesignHeight="800"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -29,7 +29,7 @@
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="200" />
+				<ColumnDefinition Width="300" />
 			</Grid.ColumnDefinitions>
 			<Grid>
 				<Grid.RowDefinitions>
@@ -129,17 +129,24 @@
 				</TabControl>
 			</Grid>
 
+			<!--<Border
+				Name="AvatarPanelMask"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Margin="3,3,3,4"
+				Background="Black"
+				CornerRadius="0" />-->
 			<Border
 				Name="AvatarPanelBorder"
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
-				Margin="3"
-				Background="Black"
-				CornerRadius="10">
-				<!--MouseDown="Border_MouseDown"-->
+				Margin="3,3,3,4">
+				<!--<Border.OpacityMask>
+					<VisualBrush Visual="{Binding ElementName=AvatarPanelMask}" />
+				</Border.OpacityMask>-->
+				<!--  MouseDown="Border_MouseDown"  -->
 				<local:AvatarControl x:Name="AvatarPanel" />
 			</Border>
-
 		</Grid>
 	</ScrollViewer>
 </UserControl>

@@ -51,11 +51,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		int LipAnimationFrames = 10; // Min 1.
 		int LipGeometryDivisions = 10; // Min 2.
 
-		string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
 		Uri audioFile = new Uri(@"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav");
-		new Dictionary<int, int> visemeIdAndAudioOffsetMsList = new Dictionary<int, int> { { 0, 100 }, { 1, 200 }, { 2, 300 }, { 3, 400 }, { 4, 500 }, { 5, 600 }, { 6, 700 }, { 7, 800 }, { 8, 900 }, { 9, 1000 }, { 10, 1100 }, { 11, 1200 }, { 12, 1300 }, { 13, 1400 }, { 14, 1500 }, { 15, 1600 }, { 16, 1700 }, { 17, 1800 }, { 18, 1900 }, { 19, 2000 }, { 20, 2100 }, { 21, 2200 } };
+		new Dictionary<int, int> visemeDictionary = new Dictionary<int, int> { { 0, 100 }, { 1, 200 }, { 2, 300 }, { 3, 400 }, { 4, 500 }, { 5, 600 }, { 6, 700 }, { 7, 800 }, { 8, 900 }, { 9, 1000 }, { 10, 1100 }, { 11, 1200 }, { 12, 1300 }, { 13, 1400 }, { 14, 1500 }, { 15, 1600 }, { 16, 1700 }, { 17, 1800 }, { 18, 1900 }, { 19, 2000 }, { 20, 2100 }, { 21, 2200 } };
+		string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
 
-		// Load audio file first to extract audio durationMs, required for lip animation calculations.
+		// Load audio file first to extract audio durationMs (required for lip animation calculations from text string only).
 		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			MediaButtonPlay.Visibility = Visibility.Collapsed;
@@ -65,15 +65,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AnimationBar.Visibility = Visibility.Visible;
 		}
 
-		// Extract audio file durationMs and start animation calculations (when completed, audio and lip animations will play automatically).
+		// Extract audio file durationMs and start animation calculations (when completed, audio and lip animation will play automatically).
 		private void MediaPlayer_MediaOpened(object sender, EventArgs e)
 		{
 			if (mediaPlayer.NaturalDuration.HasTimeSpan)
 			{
-				// Create lip animation from audio durationMs value (ms) and text.
-				CreateLipAnimationDictionaryFromTextString(mediaPlayer.NaturalDuration.TimeSpan, audioText);
-				// Create lip animation from Viseme Id value (id) and audio offset value (ms).
-				// CreateLipAnimationDictionaryFromVisemeList(visemeIdAndAudioOffsetMsList);
+				// Create lip animation from Viseme dictionary.
+				CreateLipAnimationFromVisemeDictionary(visemeDictionary);
+
+				// Create lip animation from text string (and audio file duration).
+				// CreateLipAnimationFromTextString(mediaPlayer.NaturalDuration.TimeSpan, audioText);
+
 				// Play audio and animation.
 				mediaPlayer.Play();
 				storyboardLips.Begin();
@@ -250,7 +252,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// VisemeID, Text, Path, Duration.
 		List<(string, Path, double)> lipAnimationList = new List<(string, Path, double)>();
 
-		private void CreateLipAnimationDictionaryFromVisemeList(Dictionary<int, int> visemeList)
+		private void CreateLipAnimationFromVisemeDictionary(Dictionary<int, int> visemeList)
 		{
 			lipAnimationList.Clear();
 			foreach (KeyValuePair<int, int> item in visemeList)
@@ -263,7 +265,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			CreateLipAnimationKeys(lipAnimationList);
 		}
 
-		private void CreateLipAnimationDictionaryFromTextString(TimeSpan audioDuration, string audioText)
+		private void CreateLipAnimationFromTextString(TimeSpan audioDuration, string audioText)
 		{
 			var audioTextList = ConvertStringToList(audioText);
 
@@ -605,9 +607,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				AvatarPanelRectangle.Visibility = Visibility.Visible;
 				((Window)sender).Closed -= AvatarWindow_Closed;
 			}
-			AnimationBar.Visibility = Visibility.Collapsed;
-			MediaButtonStop.Visibility = Visibility.Collapsed;
-			MediaButtonPlay.Visibility = Visibility.Collapsed;
+			//AnimationBar.Visibility = Visibility.Collapsed;
+			//MediaButtonStop.Visibility = Visibility.Collapsed;
+			//MediaButtonPlay.Visibility = Visibility.Collapsed;
 		}
 
 		private void CreateVisemeToPathDictionary()
