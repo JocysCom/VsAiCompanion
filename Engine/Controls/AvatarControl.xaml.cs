@@ -59,7 +59,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// Load audio file first to extract audio durationMs (required for lip animation calculations from text string only).
 		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			Play(AudioFile, new List<VisemeItem>());
+			Play(AudioFile, VisemeData);
 		}
 
 		public void Play(string audioFile, List<VisemeItem> visemeData)
