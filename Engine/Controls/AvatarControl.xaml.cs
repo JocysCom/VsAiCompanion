@@ -53,7 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		int LipGeometryDivisions = 10; // Min 2.
 
 		public string AudioFile = @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
-		Dictionary<int, int> visemeDictionary = new Dictionary<int, int> { { 0, 100 }, { 1, 200 }, { 2, 300 }, { 3, 400 }, { 4, 500 }, { 5, 600 }, { 6, 700 }, { 7, 800 }, { 8, 900 }, { 9, 1000 }, { 10, 1100 }, { 11, 1200 }, { 12, 1300 }, { 13, 1400 }, { 14, 1500 }, { 15, 1600 }, { 16, 1700 }, { 17, 1800 }, { 18, 1900 }, { 19, 2000 }, { 20, 2100 }, { 21, 2200 } };
+		public List<(int offset, int visemeId)> VisemeData = Enumerable.Range(0, 22).Select(x => (x * 100, x)).ToList();
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
 
 		// Load audio file first to extract audio durationMs (required for lip animation calculations from text string only).
@@ -62,11 +62,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Play(AudioFile, new List<(int, int)>());
 		}
 
-		public void Play(string audioFile, List<(int, int)> viseme)
+		public void Play(string audioFile, List<(int, int)> visemeData)
 		{
 			MediaButtonPlay.Visibility = Visibility.Collapsed;
-			var path = AssemblyInfo.ExpandPath(audioFile);
-			try { mediaPlayer.Open(new Uri(path)); }
+			AudioFile = AssemblyInfo.ExpandPath(audioFile);
+			VisemeData = visemeData;
+			try { mediaPlayer.Open(new Uri(AudioFile)); }
 			catch (Exception ex) { MessageBox.Show($"Error playing audio: {ex.Message}"); }
 			MediaButtonStop.Visibility = Visibility.Visible;
 			AnimationBar.Visibility = Visibility.Visible;
@@ -78,7 +79,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (mediaPlayer.NaturalDuration.HasTimeSpan)
 			{
 				// Create lip animation from Viseme dictionary.
-				CreateLipAnimationFromVisemeDictionary(visemeDictionary);
+				CreateLipAnimationFromVisemeDictionary(VisemeData);
 
 				// Create lip animation from text string (and audio file duration).
 				// CreateLipAnimationFromTextString(mediaPlayer.NaturalDuration.TimeSpan, audioText);
@@ -113,6 +114,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void StoryboardLipsCompleted(object sender, EventArgs e) { AnimationStop(); }
 
 		private void MediaPlayer_StopMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			Stop();
+		}
+
+		public void Stop()
 		{
 			mediaPlayer.Stop();
 			mediaPlayer.Close();
@@ -259,14 +265,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// VisemeID, Text, Path, Duration.
 		List<(string, Path, double)> lipAnimationList = new List<(string, Path, double)>();
 
-		private void CreateLipAnimationFromVisemeDictionary(Dictionary<int, int> visemeList)
+		private void CreateLipAnimationFromVisemeDictionary(List<(int, int)> visemeList)
 		{
 			lipAnimationList.Clear();
-			foreach (KeyValuePair<int, int> item in visemeList)
+			foreach ((int offset, int visemeId) in visemeList)
 			{
-				if (visemeToPathDictionary.ContainsKey(item.Key))
+				if (visemeToPathDictionary.ContainsKey(visemeId))
 				{
-					lipAnimationList.Add((item.Key.ToString(), visemeToPathDictionary[item.Key], visemeList[item.Key]));
+					lipAnimationList.Add((visemeId.ToString(), visemeToPathDictionary[visemeId], offset));
 				}
 			}
 			CreateLipAnimationKeys(lipAnimationList);

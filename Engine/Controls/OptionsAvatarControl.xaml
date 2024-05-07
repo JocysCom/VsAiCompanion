@@ -107,8 +107,7 @@
 						Name="StopSettingsButton"
 						MinWidth="75"
 						HorizontalAlignment="Right"
-						Click="StopButton_Click"
-						IsEnabled="False">
+						Click="StopButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_Stop}" Focusable="False" />
 							<Label Content="{StaticResource main_Stop}" />
@@ -149,7 +148,7 @@
 					<VisualBrush Visual="{Binding ElementName=AvatarPanelMask}" />
 				</Border.OpacityMask>-->
 				<!--  MouseDown="Border_MouseDown"  -->
-				<local:AvatarControl x:Name="AvatarPanel" />
+				<local:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />
 			</Border>
 		</Grid>
 	</ScrollViewer>
