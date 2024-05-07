@@ -48,7 +48,11 @@
 					Grid.Column="0"
 					VerticalAlignment="Center"
 					Content="{StaticResource main_Service}" />
-				<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+				<StackPanel
+					Grid.Row="0"
+					Grid.Column="1"
+					Grid.ColumnSpan="2"
+					Orientation="Horizontal">
 					<ComboBox
 						Name="AiServicesComboBox"
 						x:FieldModifier="public"

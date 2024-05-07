@@ -52,8 +52,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		int LipGeometryDivisions = 10; // Min 2.
 
 		Uri audioFile = new Uri(@"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav");
-		new Dictionary<int, int> visemeDictionary = new Dictionary<int, int> { { 0, 100 }, { 1, 200 }, { 2, 300 }, { 3, 400 }, { 4, 500 }, { 5, 600 }, { 6, 700 }, { 7, 800 }, { 8, 900 }, { 9, 1000 }, { 10, 1100 }, { 11, 1200 }, { 12, 1300 }, { 13, 1400 }, { 14, 1500 }, { 15, 1600 }, { 16, 1700 }, { 17, 1800 }, { 18, 1900 }, { 19, 2000 }, { 20, 2100 }, { 21, 2200 } };
-		string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
+		Dictionary<int, int> visemeDictionary = new Dictionary<int, int> { { 0, 100 }, { 1, 200 }, { 2, 300 }, { 3, 400 }, { 4, 500 }, { 5, 600 }, { 6, 700 }, { 7, 800 }, { 8, 900 }, { 9, 1000 }, { 10, 1100 }, { 11, 1200 }, { 12, 1300 }, { 13, 1400 }, { 14, 1500 }, { 15, 1600 }, { 16, 1700 }, { 17, 1800 }, { 18, 1900 }, { 19, 2000 }, { 20, 2100 }, { 21, 2200 } };
+		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
 
 		// Load audio file first to extract audio durationMs (required for lip animation calculations from text string only).
 		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -288,9 +288,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
 
 			// Create list (VisemeID, Text, Path, Duration).
-			double timeEnd = 0; 
+			double timeEnd = 0;
 			lipAnimationList.Clear();
-			double listDuration = 0;
+			//double listDuration = 0;
 			foreach (var (text, duration) in textList)
 			{
 				timeEnd = timeEnd + duration * adjustmentFactor;

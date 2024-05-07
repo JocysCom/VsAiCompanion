@@ -156,8 +156,8 @@ $relativeNamespace = $scriptPath.Substring($project.Directory.FullName.Length).R
 #Write-Host "Relative Namespace: $relativeNamespace";
 $namespace = $defaultNamespace + $relativeNamespace;
 
-Write-Host;
-Write-Host "Namespace: $namespace";
+#Write-Host;
+#Write-Host "Namespace: $namespace";
 
 #------------------------------
 # Get Class Name
@@ -244,7 +244,7 @@ foreach ($resourceFile in $resourceFiles) {
         $keyAttr = $element.Attribute($nsXaml + "Key")
         if ($keyAttr -ne $null) {
             $key = $keyAttr.Value
-            Write-Host "Processing Key: $key" # Debug output to confirm keys are being processed.
+            #Write-Host "Processing Key: $key" # Debug output to confirm keys are being processed.
             #[void]$classContent.AppendLine("        public const string $key = nameof($key);")
             [void]$classContent.AppendLine("        public static string $key => FindResource(nameof($key));")
         }
