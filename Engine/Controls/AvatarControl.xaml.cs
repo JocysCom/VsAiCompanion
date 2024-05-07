@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -51,15 +52,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		int LipAnimationFrames = 10; // Min 1.
 		int LipGeometryDivisions = 10; // Min 2.
 
-		Uri audioFile = new Uri(@"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav");
+		public string AudioFile = @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
 		Dictionary<int, int> visemeDictionary = new Dictionary<int, int> { { 0, 100 }, { 1, 200 }, { 2, 300 }, { 3, 400 }, { 4, 500 }, { 5, 600 }, { 6, 700 }, { 7, 800 }, { 8, 900 }, { 9, 1000 }, { 10, 1100 }, { 11, 1200 }, { 12, 1300 }, { 13, 1400 }, { 14, 1500 }, { 15, 1600 }, { 16, 1700 }, { 17, 1800 }, { 18, 1900 }, { 19, 2000 }, { 20, 2100 }, { 21, 2200 } };
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
 
 		// Load audio file first to extract audio durationMs (required for lip animation calculations from text string only).
 		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			Play(AudioFile, new List<(int, int)>());
+		}
+
+		public void Play(string audioFile, List<(int, int)> viseme)
+		{
 			MediaButtonPlay.Visibility = Visibility.Collapsed;
-			try { mediaPlayer.Open(audioFile); }
+			var path = AssemblyInfo.ExpandPath(audioFile);
+			try { mediaPlayer.Open(new Uri(path)); }
 			catch (Exception ex) { MessageBox.Show($"Error playing audio: {ex.Message}"); }
 			MediaButtonStop.Visibility = Visibility.Visible;
 			AnimationBar.Visibility = Visibility.Visible;

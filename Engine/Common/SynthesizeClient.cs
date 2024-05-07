@@ -17,7 +17,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		SoundPlayer player = new SoundPlayer();
 		private bool isSpeaking = false;
 
-		public Dictionary<int, int> CurrentViseme = new Dictionary<int, int>();
+		public List<(int, int)> CurrentViseme = new List<(int, int)>();
 		public string CurrentAudioFile;
 
 		public SynthesizeClient(string subscriptionKey, string serviceRegion, string voiceName = null)
@@ -38,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private void Synthesizer_VisemeReceived(object sender, SpeechSynthesisVisemeEventArgs e)
 		{
-			CurrentViseme.Add((int)(e.AudioOffset / 10000), (int)e.VisemeId);
+			CurrentViseme.Add(((int)(e.AudioOffset / 10000), (int)e.VisemeId));
 			VisemeReceived?.Invoke(this, e);
 			Console.WriteLine($"Viseme event received. Audio offset: {e.AudioOffset / 10000}ms, viseme id: {e.VisemeId}.");
 			//AnimateAvatarBasedOnViseme(e.VisemeId);
