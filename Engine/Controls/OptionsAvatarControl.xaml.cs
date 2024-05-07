@@ -86,7 +86,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		public async Task<OperationResult<string>> AI_SpeakSSML(string text, bool isSsml)
-			=> await _AI_SpeakSSML(text, isSsml);
+		{
+			await Task.Delay(0);
+			_ = Dispatcher.BeginInvoke(new Action(() =>
+			{
+				_ = _AI_SpeakSSML(text, isSsml);
+			}));
+			return new OperationResult<string>();
+		}
 
 		async Task<OperationResult<string>> _AI_SpeakSSML(string text, bool isSsml)
 		{

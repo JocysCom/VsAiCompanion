@@ -681,15 +681,13 @@
             Will be used by plugins manager and called by AI.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AISpeakSSML(System.String,System.Boolean)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AISpeakSSML(System.String)">
             <summary>
             Triggers the AI Avatar to articulate the provided text through speech synthesis. 
             This function must be used by the AI whenever it is required to speak or respond to user queries.
-            The input text should be in SSML format to offer enhanced control over the speech characteristics like tone, pitch, and pacing, enabling more human-like and expressive responses.
             This direct association with the AI's speech mechanism ensures that all verbal outputs adhere to a consistent and controlled format.
             </summary>
             <param name="text">String that the AI is expected to vocalize.</param>
-            <param name="isSsml">Text format is the SSML-formatted string.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.PlayText(System.String,System.String,System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender},System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
