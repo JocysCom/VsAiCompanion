@@ -53,16 +53,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		int LipGeometryDivisions = 10; // Min 2.
 
 		public string AudioFile = @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
-		public List<(int offset, int visemeId)> VisemeData = Enumerable.Range(0, 22).Select(x => (x * 100, x)).ToList();
+		public List<VisemeItem> VisemeData = Enumerable.Range(0, 22).Select(x => new VisemeItem(x * 100, x)).ToList();
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
 
 		// Load audio file first to extract audio durationMs (required for lip animation calculations from text string only).
 		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			Play(AudioFile, new List<(int, int)>());
+			Play(AudioFile, new List<VisemeItem>());
 		}
 
-		public void Play(string audioFile, List<(int, int)> visemeData)
+		public void Play(string audioFile, List<VisemeItem> visemeData)
 		{
 			MediaButtonPlay.Visibility = Visibility.Collapsed;
 			AudioFile = AssemblyInfo.ExpandPath(audioFile);
@@ -265,14 +265,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// VisemeID, Text, Path, Duration.
 		List<(string, Path, double)> lipAnimationList = new List<(string, Path, double)>();
 
-		private void CreateLipAnimationFromVisemeDictionary(List<(int, int)> visemeList)
+		private void CreateLipAnimationFromVisemeDictionary(List<VisemeItem> visemeList)
 		{
 			lipAnimationList.Clear();
-			foreach ((int offset, int visemeId) in visemeList)
+			foreach (var item in visemeList)
 			{
-				if (visemeToPathDictionary.ContainsKey(visemeId))
+				if (visemeToPathDictionary.ContainsKey(item.VisemeId))
 				{
-					lipAnimationList.Add((visemeId.ToString(), visemeToPathDictionary[visemeId], offset));
+					lipAnimationList.Add((item.VisemeId.ToString(), visemeToPathDictionary[item.VisemeId], item.Offset));
 				}
 			}
 			CreateLipAnimationKeys(lipAnimationList);

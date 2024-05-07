@@ -9,11 +9,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class AvatarItem : NotifyPropertyChanged
 	{
+		public AvatarItem()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
+
 		public Guid AiServiceId { get => _AiServiceId; set => SetProperty(ref _AiServiceId, value); }
 		Guid _AiServiceId;
 
 		public string Message { get => _Message; set => SetProperty(ref _Message, value); }
 		string _Message;
+
+		[DefaultValue(true)]
+		public bool CacheAudioData { get => _CacheAudioData; set => SetProperty(ref _CacheAudioData, value); }
+		bool _CacheAudioData;
 
 		[DefaultValue(null)]
 		public string VoiceName { get => _VoiceName; set => SetProperty(ref _VoiceName, value); }
@@ -29,8 +38,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[XmlIgnore, JsonIgnore]
 		public string AiServiceName { get => Global.AppSettings?.AiServices?.FirstOrDefault(x => x.Id == AiServiceId)?.Name; }
-
-
 
 	}
 }

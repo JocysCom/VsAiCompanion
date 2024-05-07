@@ -78,6 +78,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Bar_Always_on_Top => FindResource(nameof(main_Bar_Always_on_Top));
         public static string main_Browse => FindResource(nameof(main_Browse));
         public static string main_Bytes => FindResource(nameof(main_Bytes));
+        public static string main_Cache_audio_data => FindResource(nameof(main_Cache_audio_data));
         public static string main_Call_function_request_denied => FindResource(nameof(main_Call_function_request_denied));
         public static string main_Cancel => FindResource(nameof(main_Cancel));
         public static string main_Cancel_Job => FindResource(nameof(main_Cancel_Job));

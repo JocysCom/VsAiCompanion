@@ -31,6 +31,7 @@
 	<sys:String x:Key="main_Bar_Always_on_Top">Bar Always on Top</sys:String>
 	<sys:String x:Key="main_Browse">Browse...</sys:String>
 	<sys:String x:Key="main_Bytes">Bytes</sys:String>
+	<sys:String x:Key="main_Cache_audio_data">Cache audio data</sys:String>
 	<sys:String x:Key="main_Call_function_request_denied">The request to call the function was denied!</sys:String>
 	<sys:String x:Key="main_Cancel">Cancel</sys:String>
 	<sys:String x:Key="main_Cancel_Job">Cancel Job</sys:String>

@@ -54,7 +54,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return false;
 			}
 			client = new SynthesizeClient(service.ApiSecretKey, service.Region, Item.VoiceName);
-			client.VisemeReceived += Client_VisemeReceived;
 			return true;
 		}
 
@@ -76,8 +75,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					if (CheckClient())
 					{
-						await client.Play(text);
-						AvatarPanel.Play(client.CurrentAudioFile, client.CurrentViseme);
+						await client.Synthesize(text, false, Item.CacheAudioData);
+
+						var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(client.AudioInfo);
+						LogPanel.Add(client.AudioFilePath + "\r\n");
+						LogPanel.Add(client.AudioInfoPath + "\r\n");
+						LogPanel.Add("\r\n");
+						LogPanel.Add(xml);
+						AvatarPanel.Play(client.AudioFilePath, client.AudioInfo.Viseme);
 						//client.PlayFile(client.CurrentAudioFile);
 					}
 				}
@@ -87,11 +92,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 			}
 			Global.MainControl.InfoPanel.RemoveTask(task);
-		}
-
-		private void Client_VisemeReceived(object sender, Microsoft.CognitiveServices.Speech.SpeechSynthesisVisemeEventArgs e)
-		{
-			LogPanel.Add($"Viseme event received. Audio offset: {e.AudioOffset / 10000}ms, viseme id: {e.VisemeId}.\r\n");
 		}
 
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)

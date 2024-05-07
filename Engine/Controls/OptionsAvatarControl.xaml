@@ -72,6 +72,7 @@
 							<ContentControl Content="{StaticResource Icon_Refresh}" />
 						</StackPanel>
 					</Button>
+					<CheckBox Name="CacheAudioDataCheckBox" Content="{StaticResource main_Cache_audio_data}" IsChecked="{Binding CacheAudioData, UpdateSourceTrigger=PropertyChanged}" />
 				</StackPanel>
 				<!--  Row 1  -->
 				<Label
