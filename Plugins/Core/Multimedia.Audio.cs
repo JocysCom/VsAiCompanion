@@ -1,7 +1,10 @@
 ﻿using JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using JocysCom.VS.AiCompanion.Shared.JocysCom;
+using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -13,6 +16,25 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public partial class Multimedia
 	{
+
+		/// <summary>
+		/// Will be used by plugins manager and called by AI.
+		/// </summary>
+		public Func<string, bool, Task<OperationResult<string>>> AI_SpeakSSMLCallback { get; set; }
+
+		/// <summary>
+		/// Triggers the AI Avatar to articulate the provided text through speech synthesis. 
+		/// This function must be used by the AI whenever it is required to speak or respond to user queries.
+		/// The input text should be in SSML format to offer enhanced control over the speech characteristics like tone, pitch, and pacing, enabling more human-like and expressive responses.
+		/// This direct association with the AI's speech mechanism ensures that all verbal outputs adhere to a consistent and controlled format.
+		/// </summary>
+		/// <param name="text">String that the AI is expected to vocalize.</param>
+		/// <param name="isSsml">Text format is the SSML-formatted string.</param>
+		[RiskLevel(RiskLevel.None)]
+		public async Task<OperationResult<string>> AISpeakSSML(string text, bool isSsml)
+		{
+			return await AI_SpeakSSMLCallback(text, isSsml);
+		}
 
 		/// <summary>
 		/// Start playing text. This could be used for speaking with the user or narrating books or stories.
@@ -32,16 +54,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.None)]
 		public bool PlayText(
-		string name,
-		string text = null,
-		VoiceGender? gender = null,
-		string language = null,
-		string effect = null,
-		string group = null,
-		int? pitch = null,
-		int? rate = null,
-		int? volume = null
-		)
+				string name,
+				string text = null,
+				VoiceGender? gender = null,
+				string language = null,
+				string effect = null,
+				string group = null,
+				int? pitch = null,
+				int? rate = null,
+				int? volume = null
+				)
 
 		{
 			var message = new message();

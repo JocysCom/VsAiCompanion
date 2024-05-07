@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Engine.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
@@ -602,6 +603,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		public static MainControl MainControl;
+
+		public static OptionsAvatarControl AvatarPanel
+			=> MainControl?.OptionsPanel?.AvatarOptionsPanel;
 
 		public static bool IsVsExtension { get; set; }
 		public static Version VsVersion { get; set; }

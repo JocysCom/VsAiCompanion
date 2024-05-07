@@ -1,8 +1,10 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -73,18 +75,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				try
 				{
-					if (CheckClient())
-					{
-						await client.Synthesize(text, false, Item.CacheAudioData);
-
-						var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(client.AudioInfo);
-						LogPanel.Add(client.AudioFilePath + "\r\n");
-						LogPanel.Add(client.AudioInfoPath + "\r\n");
-						LogPanel.Add("\r\n");
-						LogPanel.Add(xml);
-						AvatarPanel.Play(client.AudioFilePath, client.AudioInfo.Viseme);
-						//client.PlayFile(client.CurrentAudioFile);
-					}
+					await _AI_SpeakSSML(text, false);
 				}
 				catch (Exception ex)
 				{
@@ -92,6 +83,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 			}
 			Global.MainControl.InfoPanel.RemoveTask(task);
+		}
+
+		public async Task<OperationResult<string>> AI_SpeakSSML(string text, bool isSsml)
+			=> await _AI_SpeakSSML(text, isSsml);
+
+		async Task<OperationResult<string>> _AI_SpeakSSML(string text, bool isSsml)
+		{
+			try
+			{
+				if (!CheckClient())
+					return new OperationResult<string>(new Exception("AI Avatar cofiguration is not valid."));
+				await client.Synthesize(text, isSsml, Item.CacheAudioData);
+				var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(client.AudioInfo);
+				Dispatcher.Invoke(() =>
+				{
+					LogPanel.Add(client.AudioFilePath + "\r\n");
+					LogPanel.Add(client.AudioInfoPath + "\r\n");
+					LogPanel.Add("\r\n");
+					LogPanel.Add(xml);
+					AvatarPanel.Play(client.AudioFilePath, client.AudioInfo.Viseme);
+				});
+				return new OperationResult<string>();
+			}
+			catch (Exception ex)
+			{
+				Dispatcher.Invoke(() =>
+				{
+					LogPanel.Add(ex.ToString() + "\r\n");
+				});
+				return new OperationResult<string>(ex);
+			}
 		}
 
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
