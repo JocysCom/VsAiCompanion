@@ -157,20 +157,45 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			{
 				WindowStyle = WindowStyle.None,
 				AllowsTransparency = true,
-				Background = System.Windows.Media.Brushes.Black,
+				Background = System.Windows.Media.Brushes.Transparent,
 				Topmost = true,
 				Left = 0,
 				Top = 0,
 				Width = SystemParameters.VirtualScreenWidth,
 				Height = SystemParameters.VirtualScreenHeight,
-				Opacity = 0.2 // Semi-transparent
 			};
+
+			Grid overlayGrid = new Grid();
+			for (int i = 0; i < 3; i++)
+			{
+				overlayGrid.RowDefinitions.Add(new RowDefinition());
+				overlayGrid.ColumnDefinitions.Add(new ColumnDefinition());
+			}
+			// Create 8 semi-transparent black rectangles for all cells except the center one
+			for (int row = 0; row < 3; row++)
+			{
+				for (int col = 0; col < 3; col++)
+				{
+					if (row == 1 && col == 1) continue; // Skip the center cell
+					var rect = new System.Windows.Shapes.Rectangle
+					{
+						Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(51, 0, 0, 0)), // 51 out of 255 is roughly 0.2 opacity
+					};
+					Grid.SetRow(rect, row);
+					Grid.SetColumn(rect, col);
+					overlayGrid.Children.Add(rect);
+				}
+			}
 
 			canvas = new Canvas
 			{
 				Background = System.Windows.Media.Brushes.Transparent
 			};
-			overlayWindow.Content = canvas;
+			Grid.SetRow(canvas, 1);
+			Grid.SetColumn(canvas, 1);
+			overlayGrid.Children.Add(canvas);
+
+			overlayWindow.Content = overlayGrid;
 
 			selectionRectangle = new System.Windows.Shapes.Rectangle
 			{
@@ -247,17 +272,33 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		private static void OverlayWindow_MouseUp(object sender, MouseButtonEventArgs e)
 		{
+			// Hide the rectangle and remove it from the canvas
 			selectionRectangle.Visibility = Visibility.Hidden;
 			canvas.Children.Remove(selectionRectangle);
-			// Here capture the selected region as needed.
-			// Signal that the region has been selected
+
 			if (!_cancelledByUser)
 			{
-				_selectedRegion = new Rectangle((int)Canvas.GetLeft(selectionRectangle),
-					(int)Canvas.GetTop(selectionRectangle),
-					(int)selectionRectangle.Width,
-					(int)selectionRectangle.Height);
+				// Adjust for DPI scaling
+				var scalingFactor = GetScalingFactor();
+
+				var left = (Canvas.GetLeft(selectionRectangle) + SystemParameters.VirtualScreenLeft) * scalingFactor;
+				var top = (Canvas.GetTop(selectionRectangle) + SystemParameters.VirtualScreenTop) * scalingFactor;
+				var width = selectionRectangle.Width * scalingFactor;
+				var height = selectionRectangle.Height * scalingFactor;
+
+				_selectedRegion = new Rectangle((int)left, (int)top, (int)width, (int)height);
 				ReleaseResources();
+			}
+		}
+
+		private static double GetScalingFactor()
+		{
+			using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
+			{
+				// System DPI
+				float dpiX = g.DpiX;
+				// Assuming 96 DPI is the system's default scaling (100%)
+				return dpiX / 96;
 			}
 		}
 
@@ -272,7 +313,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		private static extern bool GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
 
 
-		private static string PrepareFilePath(string folderPath, System.Drawing.Imaging.ImageFormat format)
+		public static string PrepareFilePath(string folderPath, System.Drawing.Imaging.ImageFormat format)
 		{
 			folderPath = folderPath ?? Path.GetTempPath();
 			string fileName = $"Capture_{DateTime.Now:yyyyMMddHHmmss}.{format.ToString().ToLower()}";
@@ -286,8 +327,27 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			{
 				using (Graphics g = Graphics.FromImage(bitmap))
 				{
-					g.CopyFromScreen(bounds.Location, System.Drawing.Point.Empty, bounds.Size);
+					// Adjust for screens positioned to the left or above the primary screen
+					// where bounds.Location may result in negative X or Y values.
+					System.Drawing.Point sourcePoint = new System.Drawing.Point(
+						Math.Max(0, bounds.X),
+						Math.Max(0, bounds.Y)
+					);
+
+					System.Drawing.Rectangle captureRect = new System.Drawing.Rectangle(
+						// If the bounds are negative, start capturing from 0,0 of the source screen
+						// Otherwise, use the bounds as is.
+						Math.Abs(bounds.X),
+						Math.Abs(bounds.Y),
+						bounds.Width,
+						bounds.Height
+					);
+
+					g.CopyFromScreen(sourcePoint, System.Drawing.Point.Empty, captureRect.Size);
 				}
+				var fi = new FileInfo(filePath);
+				if (!fi.Directory.Exists)
+					fi.Directory.Create();
 				bitmap.Save(filePath, format);
 			}
 		}

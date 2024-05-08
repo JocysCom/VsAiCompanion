@@ -720,7 +720,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ScreenshotButton_Click(object sender, RoutedEventArgs e)
 		{
-			var region = await ScreenshotHelper.GetCaptureRegion();
+			var path = System.IO.Path.Combine(Global.AppData.XmlFile.Directory.FullName, "Temp", "Screenshots");
+			var captureResult = await ScreenshotHelper.CaptureRegion(null, path, System.Drawing.Imaging.ImageFormat.Jpeg);
+			if (captureResult.Success)
+			{
+				var box = _Item.ShowInstructions
+					? LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox
+					: ChatPanel.DataTextBox;
+				AppHelper.InsertText(box, $"Please analyse screenshot\r\n{captureResult.Result}", true, false);
+			}
 		}
 	}
 }
