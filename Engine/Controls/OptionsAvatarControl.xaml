@@ -35,6 +35,7 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
@@ -64,6 +65,7 @@
 					<Label VerticalAlignment="Center" Content="{StaticResource main_Voice}" />
 					<ComboBox
 						Name="VoiceNameComboBox"
+						MinWidth="128"
 						x:FieldModifier="public"
 						ItemsSource="{Binding VoiceNames}"
 						SelectedValue="{Binding VoiceName}" />
@@ -72,17 +74,24 @@
 							<ContentControl Content="{StaticResource Icon_Refresh}" />
 						</StackPanel>
 					</Button>
-					<CheckBox Name="CacheAudioDataCheckBox" Content="{StaticResource main_Cache_audio_data}" IsChecked="{Binding CacheAudioData, UpdateSourceTrigger=PropertyChanged}" />
 				</StackPanel>
 				<!--  Row 1  -->
-				<Label
+				<StackPanel
 					Grid.Row="1"
+					Grid.Column="1"
+					Grid.ColumnSpan="2"
+					Orientation="Horizontal">
+					<CheckBox Name="CacheAudioDataCheckBox" Content="{StaticResource main_Cache_audio_data}" IsChecked="{Binding CacheAudioData, UpdateSourceTrigger=PropertyChanged}" />
+				</StackPanel>
+				<!--  Row 2  -->
+				<Label
+					Grid.Row="2"
 					Grid.Column="0"
 					VerticalAlignment="Center"
 					Content="{StaticResource main_Message}" />
 				<TextBox
 					Name="MessageTextBox"
-					Grid.Row="1"
+					Grid.Row="2"
 					Grid.Column="1"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
@@ -93,7 +102,7 @@
 					SpellCheck.IsEnabled="True"
 					Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
 					TextWrapping="Wrap" />
-				<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
+				<StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal">
 					<Button
 						Name="PlaySettingsButton"
 						MinWidth="75"
@@ -115,9 +124,10 @@
 						</StackPanel>
 					</Button>
 				</StackPanel>
+				<!--  Row 3  -->
 				<TabControl
 					x:Name="MainTabControl"
-					Grid.Row="2"
+					Grid.Row="3"
 					Grid.ColumnSpan="3"
 					Margin="4"
 					x:FieldModifier="public">

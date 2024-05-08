@@ -75,6 +75,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Auto_Markdown => FindResource(nameof(main_Auto_Markdown));
         public static string main_Automation => FindResource(nameof(main_Automation));
         public static string main_Axialis_Icon_Set_Licenses => FindResource(nameof(main_Axialis_Icon_Set_Licenses));
+        public static string main_AvatarItem_Message => FindResource(nameof(main_AvatarItem_Message));
         public static string main_Bar_Always_on_Top => FindResource(nameof(main_Bar_Always_on_Top));
         public static string main_Browse => FindResource(nameof(main_Browse));
         public static string main_Bytes => FindResource(nameof(main_Bytes));

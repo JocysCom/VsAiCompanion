@@ -521,6 +521,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 
 			}
+			var avatarItem = e.Items.FirstOrDefault()?.AiAvatar;
+			if (avatarItem != null)
+			{
+				if (string.IsNullOrEmpty(avatarItem.Message))
+					avatarItem.Message = Engine.Resources.MainResources.main_AvatarItem_Message;
+			}
 		}
 
 		private static bool FixTempalteItems(IList<TemplateItem> items)

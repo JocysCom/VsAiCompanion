@@ -28,6 +28,7 @@
 	<sys:String x:Key="main_Auto_Markdown">Auto Markdown</sys:String>
 	<sys:String x:Key="main_Automation">Automation</sys:String>
 	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>
+	<sys:String x:Key="main_AvatarItem_Message">Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</sys:String>
 	<sys:String x:Key="main_Bar_Always_on_Top">Bar Always on Top</sys:String>
 	<sys:String x:Key="main_Browse">Browse...</sys:String>
 	<sys:String x:Key="main_Bytes">Bytes</sys:String>
