@@ -119,7 +119,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			SendButton.ToolTip = isEdit ? "Update Message" : "Send Message";
-			StopButton.ToolTip = isEdit ? "Cancel Editing" : "Stop Request";
+			StopButton.ToolTip = isEdit ? "Cancel Editing" : "AnimationAndMediaStop Request";
 			SendButton.IsEnabled = !IsBusy && AllowToSend();
 			StopButton.IsEnabled = isEdit || IsBusy;
 			var sendOp = SendButton.IsEnabled ? 1.0 : 0.2;

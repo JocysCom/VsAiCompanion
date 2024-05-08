@@ -49,8 +49,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			pathNow = MPath_0;
 		}
 
-		int LipAnimationFrames = 10; // Min 1.
-		int LipGeometryDivisions = 10; // Min 2.
+		int LipAnimationFrames = 6; // Min 1.
+		int LipGeometryDivisions = 9; // Min 2.
 
 		public string AudioFile = @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
 		public List<VisemeItem> VisemeData = Enumerable.Range(0, 22).Select(x => new VisemeItem(x * 100, x)).ToList();
@@ -64,6 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void Play(string audioFile, List<VisemeItem> visemeData)
 		{
+			AnimationAndMediaStop();
 			MediaButtonPlay.Visibility = Visibility.Collapsed;
 			AudioFile = AssemblyInfo.ExpandPath(audioFile);
 			VisemeData = visemeData;
@@ -115,10 +116,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MediaPlayer_StopMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			Stop();
+			AnimationAndMediaStop();
 		}
 
-		public void Stop()
+		public void AnimationAndMediaStop()
 		{
 			mediaPlayer.Stop();
 			mediaPlayer.Close();
@@ -314,6 +315,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CreateLipAnimationKeys(List<(string, Path, double)> lipAnimationList)
 		{
+
+
 			// Reset values.
 			double timeNow = 0;
 			double animationBar = 0;

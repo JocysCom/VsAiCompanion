@@ -233,7 +233,7 @@
 								<Setter.Value>
 									<ControlTemplate TargetType="GroupItem">
 										<Expander IsExpanded="True" Style="{DynamicResource Expander_Default}">
-											<!--  Custom header with toggle button on the right  -->
+											<!--  ToggleButton  -->
 											<Expander.Header>
 												<Grid>
 													<Grid.Resources>
@@ -252,13 +252,6 @@
 														Focusable="False" />-->
 													<TextBlock Text="{Binding Path=Name}" />
 													<TextBlock HorizontalAlignment="Right" Text="{Binding ItemCount}" />
-													<!--  , StringFormat='[{0}]'  -->
-													<!--  Custom toggle button  -->
-													<!--<Button
-															Click="ExpanderToggle_Click"
-															Content="^"
-															DockPanel.Dock="Right"
-															Visibility="Collapsed" />-->
 												</Grid>
 											</Expander.Header>
 											<!--  Items  -->
