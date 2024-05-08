@@ -126,7 +126,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			client?.Stop();
-			AvatarPanel.Stop();
+			AvatarPanel.AnimationAndMediaStop();
 		}
 
 		private async void VoiceNamesRefreshButton_Click(object sender, System.Windows.RoutedEventArgs e)
