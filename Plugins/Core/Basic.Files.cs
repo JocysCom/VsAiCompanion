@@ -1,6 +1,6 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
-using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using System.Collections.Generic;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core

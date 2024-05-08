@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
+using JocysCom.ClassLibrary;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
-using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using NPOI.HSSF.UserModel;
 //using NPOI.HWPF;
 //using NPOI.HWPF.Extractor;

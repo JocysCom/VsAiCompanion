@@ -1,4 +1,4 @@
-﻿using JocysCom.VS.AiCompanion.Shared.JocysCom;
+﻿using JocysCom.ClassLibrary;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;

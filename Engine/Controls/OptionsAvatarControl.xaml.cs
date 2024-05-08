@@ -1,6 +1,6 @@
-﻿using JocysCom.ClassLibrary.Collections;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;

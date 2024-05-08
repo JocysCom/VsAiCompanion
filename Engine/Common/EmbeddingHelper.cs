@@ -24,10 +24,6 @@ using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using System.ComponentModel;
 using JocysCom.VS.AiCompanion.Engine.Companions;
-using JocysCom.VS.AiCompanion.Shared.JocysCom;
-
-
-
 
 #if NETFRAMEWORK
 using System.Data.SQLite;

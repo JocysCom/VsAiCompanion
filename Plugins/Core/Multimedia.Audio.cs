@@ -1,6 +1,6 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
-using JocysCom.VS.AiCompanion.Shared.JocysCom;
 using System;
 using System.Net;
 using System.Net.Sockets;

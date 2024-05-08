@@ -1,4 +1,4 @@
-﻿using JocysCom.VS.AiCompanion.Shared.JocysCom;
+﻿using JocysCom.ClassLibrary;
 using System;
 using System.Threading.Tasks;
 

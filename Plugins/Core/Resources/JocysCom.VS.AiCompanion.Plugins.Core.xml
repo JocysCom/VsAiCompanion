@@ -458,6 +458,60 @@
             </summary>
             <param name="level">The risk level to be assigned.</param>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper">
+            <summary>
+            Capture Screen, Window and Region screenshots.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper.CaptureScreen(System.Nullable{System.Int32},System.String,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Capture screen image
+            </summary>
+            <param name="screenId"></param>
+            <param name="imageFolder"></param>
+            <param name="format"></param>
+            <returns></returns>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper.CaptureWindow(System.String,System.String,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Capture Window image.
+            </summary>
+            <param name="name"></param>
+            <param name="imageFolder"></param>
+            <param name="format"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper.CaptureRegion(System.Nullable{System.Drawing.Rectangle},System.String,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Capture screen region.
+            </summary>
+            <param name="region"></param>
+            <param name="imageFolder"></param>
+            <param name="format"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper.CaptureUserDefinedRegion(System.String,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Capture user defined region image.
+            </summary>
+            <param name="imageFolder"></param>
+            <param name="format"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper.GetCaptureRegion">
+            <summary>
+            Ask user to define screenshot capturing region.
+            </summary>
+            <returns>Image capturing region.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper.ShowCaptureOverlay">
+            <summary>
+            ShowCaptureOverlay method with modifications for semaphore signaling and escape key handling.
+            </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.SqlHelper">
             <summary>
             SQL Data Helper.

@@ -1,5 +1,5 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
-using JocysCom.VS.AiCompanion.Shared.JocysCom;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using LiteDB;
 using System;
 using System.Collections.Generic;

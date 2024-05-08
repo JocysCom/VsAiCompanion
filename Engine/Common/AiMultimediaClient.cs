@@ -1,5 +1,5 @@
-﻿using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
-using JocysCom.VS.AiCompanion.Shared.JocysCom;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
 using System.IO;

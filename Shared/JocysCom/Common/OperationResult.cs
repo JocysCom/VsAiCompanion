@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace JocysCom.VS.AiCompanion.Shared.JocysCom
+namespace JocysCom.ClassLibrary
 {
 	/// <summary>
 	/// Encapsulates the outcome of an operation including result, status code, and errors.
