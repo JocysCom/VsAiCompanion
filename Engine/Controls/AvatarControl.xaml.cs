@@ -794,7 +794,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// SPARK animation.
 		private void CreateSparkAnimation(int startMin, int startMax, int duration)
 		{
-			var sizeMax = 100;
+			var sizeMax = 120;
+			var sizeMinRandom = 40;
+			var sizeMaxRandom = 80;
 			var random = new Random();
 
 			foreach (Canvas canvas in new[] { SparksYellowCanvas, SparksBlueCanvas, SparksBrownCanvas })
@@ -836,7 +838,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					grid.Children.Add(image);
 
 					// Create Image size animation.
-					var sizeMaxR = random.Next(sizeMax * 50, sizeMax * 70) / 100;
+					var sizeMaxR = random.Next(sizeMax * sizeMinRandom, sizeMax * sizeMaxRandom) / sizeMax;
 					var durationB = 800;
 
 					foreach (string property in new[] { "Width", "Height" })

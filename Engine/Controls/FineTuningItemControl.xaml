@@ -29,7 +29,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+		<StackPanel Orientation="Horizontal">
 			<Button
 				Name="ListToggleButton"
 				HorizontalAlignment="Left"
@@ -37,12 +37,19 @@
 				Focusable="False">
 				<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 			</Button>
-			<controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
+
+			<Grid Margin="38,0,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="{Binding ElementName=ColumnWidthColumn, Path=ActualWidth}" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label VerticalAlignment="Center" Content="{StaticResource main_Service}" />
+				<controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Column="1" />
+			</Grid>
+
 		</StackPanel>
 		<Button
 			Name="BarToggleButton"
-			Grid.Row="0"
-			Grid.Column="0"
 			HorizontalAlignment="Right"
 			Click="BarToggleButton_Click"
 			Focusable="False">
@@ -56,7 +63,7 @@
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Name="ColumnWidthColumn" Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>

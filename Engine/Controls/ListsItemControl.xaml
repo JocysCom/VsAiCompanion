@@ -42,19 +42,11 @@
 			Focusable="False">
 			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 		</Button>
-		<Border
-			Grid.Row="0"
-			Grid.ColumnSpan="2"
-			Padding="32,0,0,0"
-			Background="{StaticResource BackgroundDark}"
-			BorderBrush="{StaticResource BorderDark}"
-			BorderThickness="0,0,0,1">
-			<TextBlock
-				Name="FeatureDescriptionLabel"
-				Margin="4"
-				Text="{StaticResource main_Lists_Feature_Description}"
-				TextWrapping="Wrap" />
+
+		<Border Grid.ColumnSpan="2" Margin="32,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
+			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Lists_Feature_Description}" />
 		</Border>
+
 		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
 			<controls:IconUserControl
 				x:Name="IconPanel"

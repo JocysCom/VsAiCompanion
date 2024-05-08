@@ -20,8 +20,10 @@
 		<Label
 			Grid.Row="0"
 			Grid.Column="1"
+			Margin="0,0,11,0"
 			VerticalAlignment="Center"
-			Content="{StaticResource main_Service}" />
+			Content="{StaticResource main_Service}"
+			Visibility="Collapsed" />
 		<ComboBox
 			Name="AiServicesComboBox"
 			x:FieldModifier="public"

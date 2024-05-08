@@ -198,7 +198,6 @@
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
-			Height="Auto"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
@@ -206,7 +205,7 @@
 			CanUserResizeColumns="False"
 			CanUserSortColumns="False"
 			CellEditEnding="MainDataGrid_CellEditEnding"
-			ClipToBounds="True"
+			ColumnWidth="Auto"
 			HeadersVisibility="None"
 			IsReadOnly="False"
 			ItemsSource="{Binding Source={StaticResource GroupedData}}"
@@ -221,43 +220,48 @@
 			Sorting="MainDataGrid_Sorting">
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
-				<Style x:Key="TextBlockCellMarginRight3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+				<Style x:Key="TextBlockCellMargin3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
 					<Setter Property="Margin" Value="3,0,3,0" />
 				</Style>
 			</DataGrid.Resources>
-			<!--  Group Style for collapsible panels  -->
+			<!--  GroupStyle for collapsible panels  -->
 			<DataGrid.GroupStyle>
 				<GroupStyle>
 					<GroupStyle.ContainerStyle>
-						<Style TargetType="{x:Type GroupItem}">
+						<Style TargetType="GroupItem">
 							<Setter Property="Template">
 								<Setter.Value>
-									<ControlTemplate TargetType="{x:Type GroupItem}">
-										<Expander IsExpanded="True">
+									<ControlTemplate TargetType="GroupItem">
+										<Expander IsExpanded="True" Style="{DynamicResource Expander_Default}">
 											<!--  Custom header with toggle button on the right  -->
 											<Expander.Header>
-												<DockPanel>
-													<TextBlock
-														Margin="3,0,3,0"
-														VerticalAlignment="Center"
+												<Grid>
+													<Grid.Resources>
+														<Style TargetType="TextBlock">
+															<Setter Property="VerticalAlignment" Value="Center" />
+															<Setter Property="Opacity" Value="0.3" />
+															<Setter Property="Foreground" Value="Black" />
+															<Setter Property="Margin" Value="3,0,6,0" />
+														</Style>
+													</Grid.Resources>
+													<!--<ContentControl
+														Width="16"
+														Height="16"
+														Content="{StaticResource Icon_FolderOpen}"
 														DockPanel.Dock="Left"
-														Foreground="{StaticResource BorderDark}"
-														Text="{Binding Path=Name}" />
-													<TextBlock
-														Grid.Column="1"
-														Foreground="{StaticResource BorderDark}"
-														Text="{Binding ItemCount, StringFormat='[{0}]'}"
-														Visibility="Collapsed" />
+														Focusable="False" />-->
+													<TextBlock Text="{Binding Path=Name}" />
+													<TextBlock HorizontalAlignment="Right" Text="{Binding ItemCount}" />
+													<!--  , StringFormat='[{0}]'  -->
 													<!--  Custom toggle button  -->
-													<Button
-														Click="ExpanderToggle_Click"
-														Content="^"
-														DockPanel.Dock="Right"
-														Visibility="Collapsed" />
-
-												</DockPanel>
+													<!--<Button
+															Click="ExpanderToggle_Click"
+															Content="^"
+															DockPanel.Dock="Right"
+															Visibility="Collapsed" />-->
+												</Grid>
 											</Expander.Header>
-											<!--  Content presenter without rounded borders  -->
+											<!--  Items  -->
 											<ItemsPresenter />
 										</Expander>
 									</ControlTemplate>
@@ -265,12 +269,12 @@
 							</Setter>
 						</Style>
 					</GroupStyle.ContainerStyle>
-
 				</GroupStyle>
 			</DataGrid.GroupStyle>
 			<!--  Columns  -->
 			<DataGrid.Columns>
-				<DataGridTemplateColumn x:Name="IconColumn" Width="Auto" IsReadOnly="True">
+				<!--  Icon  -->
+				<DataGridTemplateColumn x:Name="IconColumn" IsReadOnly="True">
 					<DataGridTemplateColumn.CellStyle>
 						<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
 							<Setter Property="Focusable" Value="false" />
@@ -288,17 +292,17 @@
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
+				<!--  CheckBox  -->
 				<DataGridCheckBoxColumn
 					x:Name="IsEnabledColumn"
-					Width="Auto"
 					Binding="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					CanUserSort="False"
 					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
 					ElementStyle="{StaticResource CheckBoxCell_Default}"
 					IsThreeState="False" />
+				<!--  CheckBox  -->
 				<DataGridCheckBoxColumn
 					x:Name="IsCheckedColumn"
-					Width="Auto"
 					Binding="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					CanUserSort="False"
 					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
@@ -311,7 +315,8 @@
 							IsEnabled="False" />
 					</DataGridCheckBoxColumn.Header>
 				</DataGridCheckBoxColumn>
-				<DataGridTemplateColumn x:Name="StatusCodeColumn" Width="SizeToCells" IsReadOnly="True">
+				<!--  Template  -->
+				<DataGridTemplateColumn x:Name="StatusCodeColumn" IsReadOnly="True">
 					<DataGridTemplateColumn.Header>
 						<ContentControl
 							x:Name="StatusCodeColumnContentControl"
@@ -333,18 +338,19 @@
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
+				<!--  Text  -->
 				<DataGridTextColumn
 					x:Name="StatusTextColumn"
 					Binding="{Binding StatusText}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
+					ElementStyle="{StaticResource TextBlockCellMargin3}"
 					Header="{StaticResource main_Status}" />
+				<!--  TextColumn problem with width  -->
 				<DataGridTextColumn
 					x:Name="NameColumn"
-					Width="*"
 					Binding="{Binding Name}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCellMarginRight3}"
+					ElementStyle="{StaticResource TextBlockCellMargin3}"
 					Header="{StaticResource main_Name}" />
 			</DataGrid.Columns>
 		</DataGrid>

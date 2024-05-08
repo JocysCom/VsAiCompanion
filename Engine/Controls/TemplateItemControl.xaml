@@ -44,7 +44,13 @@
 			</Grid.ColumnDefinitions>
 			<!--  Row 0  -->
 			<StackPanel Grid.ColumnSpan="3" Orientation="Vertical">
-				<StackPanel Orientation="Horizontal">
+
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="{Binding ElementName=ColumnWidthBorder, Path=ActualWidth}" />
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
 					<Button
 						Name="ListToggleButton"
 						HorizontalAlignment="Left"
@@ -52,36 +58,40 @@
 						Focusable="False">
 						<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 					</Button>
-					<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" />
-					<CheckBox
-						Name="IsPreviewCheckBox"
-						VerticalAlignment="Center"
-						AutomationProperties.HelpText="{StaticResource main_Preview_Mode_Message}"
-						AutomationProperties.Name="{StaticResource main_Preview}"
-						Content="{StaticResource main_Preview}"
-						IsChecked="{Binding IsPreview}" />
-					<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
-					<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
-					<Slider
-						Name="ZoomSlider"
-						Width="100"
-						Maximum="150"
-						Minimum="50"
-						TickFrequency="10"
-						TickPlacement="BottomRight"
-						ValueChanged="ZoomSlider_ValueChanged"
-						Value="100" />
-					<!--  Value="{Binding Creativity}"  -->
-					<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
-				</StackPanel>
+					<StackPanel Grid.Column="1" Orientation="Horizontal">
+						<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" />
+						<CheckBox
+							Name="IsPreviewCheckBox"
+							VerticalAlignment="Center"
+							AutomationProperties.HelpText="{StaticResource main_Preview_Mode_Message}"
+							AutomationProperties.Name="{StaticResource main_Preview}"
+							Content="{StaticResource main_Preview}"
+							IsChecked="{Binding IsPreview}" />
+						<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
+						<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
+						<Slider
+							Name="ZoomSlider"
+							Width="80"
+							Maximum="150"
+							Minimum="50"
+							TickFrequency="10"
+							TickPlacement="BottomRight"
+							ValueChanged="ZoomSlider_ValueChanged"
+							Value="100" />
+						<!--  Value="{Binding Creativity}"  -->
+						<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
+					</StackPanel>
+				</Grid>
 
 				<StackPanel Orientation="Horizontal">
-					<CheckBox
-						Name="PluginsEnableContextCheckBox"
-						Margin="4,1,0,0"
-						VerticalAlignment="Center"
-						Content="Use"
-						IsChecked="{Binding PluginsEnabled}" />
+					<Border Name="ColumnWidthBorder">
+						<CheckBox
+							Name="PluginsEnableContextCheckBox"
+							Margin="4,1,0,0"
+							VerticalAlignment="Center"
+							Content="Use"
+							IsChecked="{Binding PluginsEnabled}" />
+					</Border>
 					<ComboBox
 						Name="MaximumRiskLevelComboBox"
 						DisplayMemberPath="Value"
@@ -437,12 +447,8 @@
 						</StackPanel>
 					</TabItem.Header>
 					<StackPanel>
-						<Border Background="{StaticResource BackgroundDark}" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,0,1">
-							<TextBlock
-								Name="FeatureDescriptionLabel"
-								Margin="4"
-								Text="{StaticResource main_Personalize_the_chat}"
-								TextWrapping="Wrap" />
+						<Border Style="{StaticResource BorderDescriptionNormal}">
+							<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Personalize_the_chat}" />
 						</Border>
 						<WrapPanel Orientation="Horizontal">
 							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">

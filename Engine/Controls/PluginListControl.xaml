@@ -87,16 +87,9 @@
 
 			</StackPanel>
 		</Border>
-		<Border
-			Grid.Row="1"
-			Background="{StaticResource BackgroundDark}"
-			BorderBrush="{StaticResource BorderDark}"
-			BorderThickness="0,0,0,1">
-			<TextBlock
-				Name="ClassDescriptionLabel"
-				Margin="4"
-				Text="{Binding ClassDescription, ElementName=This}"
-				TextWrapping="Wrap" />
+
+		<Border Grid.Row="1" Style="{StaticResource BorderDescriptionNormal}">
+			<TextBlock Name="ClassDescriptionLabel" Text="{Binding ClassDescription, ElementName=This}" />
 		</Border>
 		<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
 			<ItemsControl

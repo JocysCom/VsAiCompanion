@@ -14,11 +14,13 @@
 	<SolidColorBrush x:Key="BackgroundLight" Color="#f0f0f0" />
 	<SolidColorBrush x:Key="BackgroundDark" Color="#dedede" />
 	<SolidColorBrush x:Key="BackgroundDarkSelected" Color="#c2e7ff" />
+	<SolidColorBrush x:Key="BackgroudWarning" Color="#ffe0e0" />
 
 	<SolidColorBrush x:Key="BorderDark" Color="#cccccc" />
 	<!--<SolidColorBrush x:Key="BorderDarkSelected" Color="#a4d8fa" />-->
 
 	<SolidColorBrush x:Key="ForegroundBlack" Color="#000000" />
+	<SolidColorBrush x:Key="ForegroundWarning" Color="#800000" />
 
 	<SolidColorBrush x:Key="ColorNormal" Color="#FF6699FF" />
 	<SolidColorBrush x:Key="ColorActive" Color="#FF42C765" />
@@ -137,6 +139,30 @@
 	<!--  UserControl  -->
 	<Style x:Key="UserControl_Default" TargetType="UserControl">
 		<Setter Property="Background" Value="{StaticResource BackgroundLight}" />
+	</Style>
+
+	<!--  Border Description Normal  -->
+	<Style x:Key="BorderDescriptionNormal" TargetType="Border">
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="CornerRadius" Value="5" />
+		<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+		<Style.Resources>
+			<Style TargetType="TextBlock">
+				<Setter Property="TextWrapping" Value="Wrap" />
+				<Setter Property="Padding" Value="8,6,8,7" />
+			</Style>
+		</Style.Resources>
+	</Style>
+	<!--  Border Description Warning  -->
+	<Style x:Key="BorderDescriptionWarning" BasedOn="{StaticResource BorderDescriptionNormal}" TargetType="Border">
+		<Setter Property="Background" Value="{StaticResource BackgroudWarning}" />
+		<Style.Resources>
+			<Style TargetType="TextBlock">
+				<Setter Property="Foreground" Value="{StaticResource ForegroundWarning}" />
+				<Setter Property="TextWrapping" Value="Wrap" />
+				<Setter Property="Padding" Value="7,5,7,6" />
+			</Style>
+		</Style.Resources>
 	</Style>
 
 	<!--  Slider  -->
@@ -450,8 +476,6 @@
 
 	<!--  ContentControl  -->
 	<Style x:Key="ContentControl_Default" TargetType="ContentControl">
-		<Setter Property="Width" Value="16" />
-		<Setter Property="Height" Value="16" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ContentControl">
@@ -965,7 +989,6 @@
 	<Style x:Key="ContentControlCell_Default" BasedOn="{StaticResource ContentControl_Default}" TargetType="ContentControl">
 		<Setter Property="Margin" Value="3,0,16,0" />
 		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="HorizontalAlignment" Value="Left" />
 	</Style>
 
 	<Style x:Key="CheckBoxCell_Default" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
@@ -1026,6 +1049,71 @@
 								<Setter.Value>
 									<TransformGroup>
 										<ScaleTransform ScaleY="1" />
+									</TransformGroup>
+								</Setter.Value>
+							</Setter>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="ToggleButton_Default" TargetType="ToggleButton">
+		<Setter Property="Background" Value="{StaticResource BackgroundLight}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ToggleButton">
+					<Border Margin="0,0,0,1" Background="{TemplateBinding Background}">
+						<ContentPresenter />
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+						</Trigger>
+						<!--<Trigger Property="IsChecked" Value="True">
+							<Setter Property="BorderBrush" Value="DarkGray"/>
+						</Trigger>-->
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  Expander  -->
+	<Style x:Key="Expander_Default" TargetType="Expander">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Expander">
+					<StackPanel>
+						<ToggleButton Name="HeaderSite" IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ToggleButton_Default}">
+							<DockPanel>
+								<Path
+									Name="ExpandIndicator"
+									Width="16"
+									Height="16"
+									Margin="3,5,3,5"
+									VerticalAlignment="Center"
+									Data="M 6,2 L 12,8 L 6,14"
+									Opacity="1"
+									RenderTransformOrigin="0.5,0.5"
+									Stroke="Black"
+									StrokeEndLineCap="Round"
+									StrokeLineJoin="Round"
+									StrokeStartLineCap="Round"
+									StrokeThickness="1" />
+								<ContentPresenter Content="{TemplateBinding Header}" />
+							</DockPanel>
+						</ToggleButton>
+						<ContentPresenter Name="ExpandSite" Visibility="Collapsed" />
+					</StackPanel>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsExpanded" Value="True">
+							<Setter TargetName="ExpandSite" Property="Visibility" Value="Visible" />
+							<Setter TargetName="ExpandIndicator" Property="RenderTransform">
+								<Setter.Value>
+									<TransformGroup>
+										<RotateTransform Angle="90" />
 									</TransformGroup>
 								</Setter.Value>
 							</Setter>

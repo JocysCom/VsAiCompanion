@@ -41,17 +41,8 @@
 			Focusable="False">
 			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 		</Button>
-		<Border
-			Grid.ColumnSpan="2"
-			Padding="32,0,0,0"
-			Background="{StaticResource BackgroundDark}"
-			BorderBrush="{StaticResource BorderDark}"
-			BorderThickness="0,0,0,1">
-			<TextBlock
-				Name="FeatureDescriptionLabel"
-				Margin="4"
-				Text="{StaticResource main_Embeddings_Feature_Description}"
-				TextWrapping="Wrap" />
+		<Border Grid.ColumnSpan="2" Margin="32,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
+			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Embeddings_Feature_Description}" />
 		</Border>
 		<!--  Row 1  -->
 		<Grid Grid.Row="1">
@@ -80,8 +71,11 @@
 				Width="64"
 				Height="64"
 				VerticalAlignment="Top" />
+			<Label Grid.Column="1"
+				VerticalAlignment="Center"
+				Content="{StaticResource main_Service}" />
 			<StackPanel
-				Grid.Column="1"
+				Grid.Column="2"
 				Grid.ColumnSpan="5"
 				Margin="0,3,0,0"
 				Orientation="Horizontal">

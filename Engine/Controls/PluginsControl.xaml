@@ -24,13 +24,9 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Border Margin="4,4,4,4" Background="#ffe0e0" CornerRadius="5">
+		<Border Style="{StaticResource BorderDescriptionWarning}">
 			<StackPanel>
-				<TextBlock
-					Name="AboutDescriptionLabel"
-					Padding="16,12,16,13"
-					Foreground="#800000"
-					TextWrapping="Wrap">
+				<TextBlock Name="AboutDescriptionLabel">
 					WARNING: Granting AI the capability to run applications and scripts can lead to security risks.
 					Be cautious and only allow trusted AI models to execute processes on your system.
 					Manually approve function calls or employ advanced AI for the approval process.
