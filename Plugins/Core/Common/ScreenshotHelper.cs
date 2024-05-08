@@ -157,56 +157,62 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			{
 				WindowStyle = WindowStyle.None,
 				AllowsTransparency = true,
-				Background = System.Windows.Media.Brushes.Transparent,
+				Background = System.Windows.Media.Brushes.Black,
 				Topmost = true,
 				Left = 0,
 				Top = 0,
 				Width = SystemParameters.VirtualScreenWidth,
 				Height = SystemParameters.VirtualScreenHeight,
-				Opacity = 0.5 // Semi-transparent
+				Opacity = 0.2 // Semi-transparent
 			};
 
-			// Initialize canvas and add to window
 			canvas = new Canvas
 			{
 				Background = System.Windows.Media.Brushes.Transparent
 			};
 			overlayWindow.Content = canvas;
 
-			// Initialize selection rectangle but do not add to canvas yet
 			selectionRectangle = new System.Windows.Shapes.Rectangle
 			{
 				Stroke = System.Windows.Media.Brushes.Blue,
 				StrokeThickness = 2,
-				Fill = System.Windows.Media.Brushes.Transparent,
-				Visibility = Visibility.Hidden, // Initially hidden
-				StrokeDashArray = new DoubleCollection(new double[] { 2, 2 })
+				Fill = System.Windows.Media.Brushes.Transparent, // Initially hidden
+				StrokeDashArray = new DoubleCollection { 2, 2 }
 			};
 
-			// Handle the Escape key to cancel the operation
 			overlayWindow.KeyDown += (sender, e) =>
 			{
 				if (e.Key == Key.Escape)
 				{
 					_cancelledByUser = true;
 					ReleaseResources();
-					_captureRegionSemaphore.Release();
 				}
 			};
 
 			overlayWindow.MouseDown += OverlayWindow_MouseDown;
 			overlayWindow.MouseMove += OverlayWindow_MouseMove;
 			overlayWindow.MouseUp += OverlayWindow_MouseUp;
+
+			// Show and then focus the overlay window to ensure it's topmost and receives user input.
 			overlayWindow.Show();
+			overlayWindow.Focus();
 		}
+
 
 		private static void ReleaseResources()
 		{
-			// Hide and clean up the overlay window
 			selectionRectangle.Visibility = Visibility.Hidden;
 			canvas.Children.Remove(selectionRectangle);
-			overlayWindow.Close();
-			overlayWindow = null;
+			if (overlayWindow != null)
+			{
+				overlayWindow.Close();
+				overlayWindow = null;
+			}
+			if (_cancelledByUser || _selectedRegion.HasValue)
+			{
+				// Release only if an operation was cancelled or a region was selected, to avoid double release.
+				_captureRegionSemaphore.Release();
+			}
 		}
 
 		private static void OverlayWindow_MouseDown(object sender, MouseButtonEventArgs e)
@@ -252,7 +258,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					(int)selectionRectangle.Width,
 					(int)selectionRectangle.Height);
 				ReleaseResources();
-				_captureRegionSemaphore.Release();
 			}
 		}
 

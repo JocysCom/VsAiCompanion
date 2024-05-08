@@ -717,5 +717,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			ChatPanel.AttachmentsPanel.AddFile();
 		}
+
+		private async void ScreenshotButton_Click(object sender, RoutedEventArgs e)
+		{
+			var region = await ScreenshotHelper.GetCaptureRegion();
+		}
 	}
 }

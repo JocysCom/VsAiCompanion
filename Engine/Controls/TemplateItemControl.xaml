@@ -789,6 +789,9 @@
 				<Button Name="AttachmentsButton" Margin="3,3,3,3" Click="AttachmentsButton_Click">
 					<ContentControl Content="{StaticResource Icon_attach}" Focusable="False" />
 				</Button>
+				<Button Name="ScreenshotButton" Margin="0,3,3,3" Click="ScreenshotButton_Click">
+					<ContentControl Content="{StaticResource Icon_screen}" Focusable="False" />
+				</Button>
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="ShowPromptingCheckBox" Content="Show Prompting" IsChecked="{Binding ShowPrompting}" />
 				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory}" />
