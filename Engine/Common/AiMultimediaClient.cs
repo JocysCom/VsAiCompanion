@@ -54,7 +54,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 						image_url = new image_url
 						{
 							url = url,
-							detail = image_url_detail.low,
+							detail = image_url_detail.auto,
 						}
 					};
 					content.Add(imageContent);
