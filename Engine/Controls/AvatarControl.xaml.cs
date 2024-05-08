@@ -74,6 +74,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AnimationBar.Visibility = Visibility.Visible;
 		}
 
+		public void PlayMessageSentAnimation()
+		{
+			CreateSparkUpOrDownAnimation(storyboardUploaded, SparksBlueCanvas, storyboardUploadedCanvas);
+			CreateSparkUpOrDownAnimation(storyboardUploaded, SparksBlueCanvas, storyboardUploadedCanvas);
+		}
+
+		public void PlayMessageReceivedAnimation()
+		{
+			CreateSparkUpOrDownAnimation(storyboardDownloaded, SparksYellowCanvas, storyboardDownloadedCanvas);
+		}
+
 		// Extract audio file durationMs and start animation calculations (when completed, audio and lip animation will play automatically).
 		private void MediaPlayer_MediaOpened(object sender, EventArgs e)
 		{
@@ -88,8 +99,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Play audio and animation.
 				mediaPlayer.Play();
 				storyboardLips.Begin();
-				CreateSparkUpOrDownAnimation(storyboardUploaded, SparksBlueCanvas, storyboardUploadedCanvas);
-				CreateSparkUpOrDownAnimation(storyboardUploaded, SparksBlueCanvas, storyboardUploadedCanvas);
 			}
 		}
 
@@ -97,7 +106,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void MediaPlayer_MediaEnded(object sender, EventArgs e)
 		{
 			mediaPlayer.Close();
-			CreateSparkUpOrDownAnimation(storyboardDownloaded, SparksYellowCanvas, storyboardDownloadedCanvas);
 		}
 		private void StoryboardUploadedCompleted(object sender, EventArgs e)
 		{
