@@ -812,8 +812,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// SPARK animation.
 		private void CreateSparkAnimation(int startMin, int startMax, int duration)
 		{
-			var sizeMax = 120;
-			var sizeMinRandom = 40;
+			var sizeMax = 100;
+			var sizeMinRandom = 50;
 			var sizeMaxRandom = 80;
 			var random = new Random();
 
