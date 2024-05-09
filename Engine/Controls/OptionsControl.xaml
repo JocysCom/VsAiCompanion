@@ -59,12 +59,8 @@
 			<TabItem x:Name="MainTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_gearwheel}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_Main}" />
+						<ContentControl Content="{StaticResource Icon_gearwheel}" />
+						<Label Content="{StaticResource main_Main}" />
 					</StackPanel>
 				</TabItem.Header>
 				<ScrollViewer>
@@ -196,12 +192,8 @@
 			<TabItem x:Name="AiServicesTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_cloud_gear}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_AI_Services}" />
+						<ContentControl Content="{StaticResource Icon_cloud_gear}" />
+						<Label Content="{StaticResource main_AI_Services}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:AiServiceControl x:Name="ItemPanel" x:FieldModifier="public" />
@@ -210,12 +202,8 @@
 			<TabItem x:Name="AiModelsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_user_group}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_AI_Models}" />
+						<ContentControl Content="{StaticResource Icon_user_group}" />
+						<Label Content="{StaticResource main_AI_Models}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:AiModelListControl x:Name="AiModelListPanel" x:FieldModifier="public" />
@@ -224,12 +212,8 @@
 			<TabItem x:Name="MailAccountsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_mail}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_Mail_Accounts}" />
+						<ContentControl Content="{StaticResource Icon_mail}" />
+						<Label Content="{StaticResource main_Mail_Accounts}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="MailAccountPanel" x:FieldModifier="public" DataType="MailAccount" />
@@ -238,12 +222,8 @@
 			<TabItem x:Name="ContextTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_cloud_gear}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_Context_Options}" />
+						<ContentControl Content="{StaticResource Icon_cloud_gear}" />
+						<Label Content="{StaticResource main_Context_Options}" />
 					</StackPanel>
 				</TabItem.Header>
 				<ScrollViewer>
@@ -321,12 +301,8 @@
 			<TabItem x:Name="AvatarSettingsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_face_scan}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_AI_Avatar}" />
+						<ContentControl Content="{StaticResource Icon_face_scan}" />
+						<Label Content="{StaticResource main_AI_Avatar}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:OptionsAvatarControl x:Name="AvatarOptionsPanel" />
@@ -335,12 +311,8 @@
 			<TabItem x:Name="ResetSettingsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl
-							Width="12"
-							Height="12"
-							VerticalAlignment="Center"
-							Content="{StaticResource Icon_Reset}" />
-						<Label Padding="4,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_Reset_Settings}" />
+						<ContentControl Content="{StaticResource Icon_Reset}" />
+						<Label Content="{StaticResource main_Reset_Settings}" />
 					</StackPanel>
 				</TabItem.Header>
 				<ScrollViewer>
