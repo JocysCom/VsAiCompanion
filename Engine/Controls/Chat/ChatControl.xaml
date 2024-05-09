@@ -424,7 +424,9 @@
 					</Grid>
 				</StackPanel>
 			</Border>
-			<controls:AttachmentsControl x:Name="AttachmentsPanel" Grid.Row="2" />
+			<StackPanel Visibility="Collapsed">
+				<controls:AttachmentsControl x:Name="AttachmentsPanel" Grid.Row="2" />
+			</StackPanel>
 		</Grid>
 	</Grid>
 </UserControl>

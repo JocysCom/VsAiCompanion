@@ -365,6 +365,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				item.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
+				Global.AvatarOptionsPanel.AvatarPanel.PlayMessageSentAnimation();
 			});
 			if (item.UseEmbeddings)
 			{
@@ -627,6 +628,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				{
 					Global.MainControl.InfoPanel.RemoveTask(id);
 					item.CancellationTokenSources.Remove(cancellationTokenSource);
+					Global.AvatarOptionsPanel.AvatarPanel.PlayMessageReceivedAnimation();
 				});
 				MessageDone?.Invoke(this, EventArgs.Empty);
 			}

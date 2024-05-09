@@ -20,7 +20,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Will be used by plugins manager and called by AI.
 		/// </summary>
-		public Func<string, bool, Task<OperationResult<string>>> AI_SpeakSSMLCallback { get; set; }
+		public Func<string, bool, Task<OperationResult<string>>> AISpeakCallback { get; set; }
 
 		/// <summary>
 		/// Triggers the AI Avatar to articulate the provided text through speech synthesis. 
@@ -31,9 +31,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		// The input text should be in SSML format to offer enhanced control over the speech characteristics like tone, pitch, and pacing, enabling more human-like and expressive responses.
 		// <param name="isSsml">Text format is the SSML-formatted string.</param>
 		[RiskLevel(RiskLevel.None)]
-		public async Task<OperationResult<string>> AISpeakSSML(string text)
+		public async Task<OperationResult<string>> AISpeak(string text)
 		{
-			return await AI_SpeakSSMLCallback(text, false);
+			return await AISpeakCallback(text, false);
 		}
 
 		/// <summary>

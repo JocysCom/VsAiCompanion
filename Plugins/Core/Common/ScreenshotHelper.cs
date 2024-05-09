@@ -312,7 +312,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[DllImport("user32.dll", SetLastError = true)]
 		private static extern bool GetWindowRect(IntPtr hwnd, out Rectangle lpRect);
 
-
+		/// <summary>
+		/// Get temp path.
+		/// </summary>
+		/// <param name="folderPath"></param>
+		/// <param name="format"></param>
+		/// <returns></returns>
 		public static string PrepareFilePath(string folderPath, System.Drawing.Imaging.ImageFormat format)
 		{
 			folderPath = folderPath ?? Path.GetTempPath();
