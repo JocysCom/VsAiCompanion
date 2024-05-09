@@ -604,6 +604,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AvatarPanel_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			MoveToWindowToggle();
+		}
+
+		public void MoveToWindowToggle()
+		{
 			if (Parent is Border parentBorder)
 			{
 				avatarBorder = parentBorder;
@@ -620,17 +625,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				avatarWindow.Show();
 				MediaButtonPlay.Visibility = Visibility.Visible;
 			}
+			else if (Parent is Window avatarWindow)
+			{
+				avatarWindow.Closed -= AvatarWindow_Closed;
+				avatarWindow.Close();
+				avatarWindow.Content = null;
+				avatarBorder.Child = this;
+				AvatarPanelRectangle.Visibility = Visibility.Visible;
+			}
 		}
 
 		private void AvatarWindow_Closed(object sender, EventArgs e)
 		{
-			if (Parent is Window avatarWindow)
-			{
-				((Window)sender).Content = null;
-				avatarBorder.Child = this;
-				AvatarPanelRectangle.Visibility = Visibility.Visible;
-				((Window)sender).Closed -= AvatarWindow_Closed;
-			}
+			MoveToWindowToggle();
 			//AnimationBar.Visibility = Visibility.Collapsed;
 			//MediaButtonStop.Visibility = Visibility.Collapsed;
 			//MediaButtonPlay.Visibility = Visibility.Collapsed;

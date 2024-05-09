@@ -610,7 +610,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static MainControl MainControl;
 
-		public static OptionsAvatarControl AvatarPanel
+		public static OptionsAvatarControl AvatarOptionsPanel
 			=> MainControl?.OptionsPanel?.AvatarOptionsPanel;
 
 		public static bool IsVsExtension { get; set; }

@@ -207,7 +207,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					ai.Item = item;
 					// Map Text, Audio and Video converter methods.
 					mm.VideoToText = ai.VideoToText;
-					mm.AI_SpeakSSMLCallback = Global.AvatarPanel.AI_SpeakSSML;
+					mm.AI_SpeakSSMLCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
 					methodResult = await InvokeMethod(methodInfo, mm, invokeParams);
 					mm.VideoToText = null;
 					mm.AI_SpeakSSMLCallback = null;

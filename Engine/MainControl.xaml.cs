@@ -53,9 +53,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 			TutorialHelper.SetupTutorialHelper(this);
+			InfoPanel.BusyCount.MouseDown += BusyCount_MouseDown;
 		}
 
-
+		private void BusyCount_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			Global.AvatarOptionsPanel.AvatarPanel.MoveToWindowToggle();
+		}
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
