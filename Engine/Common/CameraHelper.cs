@@ -16,13 +16,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			try
 			{
-				Global.MainControl.Dispatcher.Invoke(() =>
-				{
-
-				});
-
 				// Initialize the capture from the default camera
-				using (var capture = new VideoCapture(0, VideoCapture.API.Any))
+				using (var capture = new VideoCapture())
 				{
 					// Give the camera a moment to initialize
 					await Task.Delay(500);

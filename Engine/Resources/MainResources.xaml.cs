@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Windows;
 
-namespace JocysCom.VS.AiCompanion.Engine_jaxuzszk_wpftmp.Resources
+namespace JocysCom.VS.AiCompanion.Engine.Resources
 {
     public static class MainResources
     {
