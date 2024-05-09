@@ -48,6 +48,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string ConfigurationUrl { get => _ConfigurationUrl; set => SetProperty(ref _ConfigurationUrl, value); }
 		private string _ConfigurationUrl;
 
+		[DefaultValue(null)]
+		public string VideoInputDevice { get => _VideoInputDevice; set => SetProperty(ref _VideoInputDevice, value); }
+		private string _VideoInputDevice;
 
 		[DefaultValue(null)]
 		public AvatarItem AiAvatar
@@ -314,6 +317,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			set => _AiModels = value;
 		}
 		private SortableBindingList<AiModel> _AiModels;
+
+
 
 		public string MarkdownLanguageNames { get; set; } =
 			"ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex," +

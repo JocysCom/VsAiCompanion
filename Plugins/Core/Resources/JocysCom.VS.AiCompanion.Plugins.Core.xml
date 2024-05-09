@@ -1749,5 +1749,53 @@
             <param name="useDefaultCredentials">Use default credentials.</param>
             <returns>The JSON response from the API.</returns>
         </member>
+        <member name="T:Hompus.VideoInputDevices.SystemDeviceEnumerator">
+            <summary>
+            A system device enumerator.
+            </summary>
+        </member>
+        <member name="M:Hompus.VideoInputDevices.SystemDeviceEnumerator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Hompus.VideoInputDevices.SystemDeviceEnumerator"/> class.
+            </summary>
+        </member>
+        <member name="M:Hompus.VideoInputDevices.SystemDeviceEnumerator.ListVideoInputDevice">
+            <summary>
+            Lists the video input devices connected to the system.
+            </summary>
+            <returns>A dictionary with the id and name of the device.</returns>
+        </member>
+        <member name="M:Hompus.VideoInputDevices.SystemDeviceEnumerator.Dispose(System.Boolean)">
+            <summary>
+            rees, releases, or resets unmanaged resources.
+            </summary>
+            <param name="disposing"><c>false</c> if invoked by the finalizer because the object is being garbage collected; otherwise, <c>true</c></param>
+        </member>
+        <member name="M:Hompus.VideoInputDevices.SystemDeviceEnumerator.Dispose">
+            <summary>
+            Frees, releases, or resets unmanaged resources.
+            </summary>
+        </member>
+        <member name="T:Hompus.VideoInputDevices.VideoInputDevice">
+            <summary>
+            A video input device that is detected in the system.
+            </summary>
+        </member>
+        <member name="P:Hompus.VideoInputDevices.VideoInputDevice.Name">
+            <summary>
+            The name of the video input device.
+            </summary>
+        </member>
+        <member name="M:Hompus.VideoInputDevices.VideoInputDevice.#ctor(System.Runtime.InteropServices.ComTypes.IMoniker)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Hompus.VideoInputDevices.VideoInputDevice"/> class.
+            </summary>
+            <param name="moniker">A moniker object.</param>
+        </member>
+        <member name="M:Hompus.VideoInputDevices.VideoInputDevice.GetFriendlyName(System.Runtime.InteropServices.ComTypes.IMoniker)">
+            <summary>
+            Get the name represented by the moniker.
+            </summary>
+        </member>
     </members>
 </doc>

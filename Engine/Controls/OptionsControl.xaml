@@ -136,6 +136,20 @@
 									</StackPanel>
 								</Grid>
 							</GroupBox>
+
+							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Multimedia}">
+								<StackPanel Orientation="Horizontal">
+									<Label VerticalAlignment="Center" Content="Camera" />
+									<ComboBox Name="CameraComboBox" ItemsSource="{Binding VideoInputDevices, ElementName=This}" SelectedValue="{Binding VideoInputDevice, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<Button Name="VideoInputDevicesRefreshButton" Margin="3,0,3,0" Click="VideoInputDevicesRefreshButton_Click">
+										<StackPanel>
+											<ContentControl Content="{StaticResource Icon_Refresh}" />
+										</StackPanel>
+									</Button>
+								</StackPanel>
+							</GroupBox>
+
+
 							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Other}">
 								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 									<CheckBox

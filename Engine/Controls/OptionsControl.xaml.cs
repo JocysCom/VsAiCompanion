@@ -1,8 +1,12 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using Hompus.VideoInputDevices;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,7 +14,7 @@ using System.Windows.Controls;
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
 
-	public partial class OptionsControl : UserControl
+	public partial class OptionsControl : UserControl, INotifyPropertyChanged
 	{
 		public OptionsControl()
 		{
@@ -58,6 +62,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.MainResources.main_Enable_spell_check_for_the_chat_textbox);
 			AppHelper.AddHelp(ResetUIButton, Engine.Resources.MainResources.main_Reset_UI_Settings_ToolTip);
+			if (ControlsHelper.AllowLoad(this))
+			{
+				UpdateVideoInputDevices();
+			}
 		}
 
 		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
@@ -248,6 +256,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.RaiseOnAiServicesUpdated();
 			Global.RaiseOnAiModelsUpdated();
 		}
+
+		#region Group: Multimedia
+
+		public ObservableCollection<string> VideoInputDevices { get; } = new ObservableCollection<string>();
+
+		public void UpdateVideoInputDevices()
+		{
+			var enumarator = new SystemDeviceEnumerator();
+			var devices = enumarator.ListVideoInputDevice().Select(x => x.Value).ToList();
+			ClassLibrary.Collections.CollectionsHelper.Synchronize(devices, VideoInputDevices);
+			OnPropertyChanged(nameof(VideoInputDevices));
+		}
+
+		private void VideoInputDevicesRefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			UpdateVideoInputDevices();
+		}
+
+		#endregion
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 
 }

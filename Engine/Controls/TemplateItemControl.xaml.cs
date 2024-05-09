@@ -704,15 +704,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-		#endregion
-
 		private void AttachmentsButton_Click(object sender, RoutedEventArgs e)
 		{
 			ChatPanel.AttachmentsPanel.AddFile();
@@ -730,5 +721,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				AppHelper.InsertText(box, $"Please analyse screenshot\r\n{captureResult.Result}", true, false);
 			}
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 }
