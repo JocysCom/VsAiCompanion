@@ -1,6 +1,5 @@
 ﻿using JocysCom.VS.AiCompanion.Engine.Audio;
 using Microsoft.CognitiveServices.Speech;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +8,7 @@ using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.Speech
 {
 	/// <summary>
 	/// Microsoft Viseme Client for synthesizing speech and controlling avatar animations.
@@ -44,12 +43,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 			synthesizer.VisemeReceived += Synthesizer_VisemeReceived;
 		}
 
-		public event EventHandler<SpeechSynthesisVisemeEventArgs> VisemeReceived;
+
 
 		private void Synthesizer_VisemeReceived(object sender, SpeechSynthesisVisemeEventArgs e)
 		{
-			AudioInfo.Viseme.Add(new VisemeItem((int)(e.AudioOffset / 10000), (int)e.VisemeId));
-			VisemeReceived?.Invoke(this, e);
+			if (e.AudioOffset > 0)
+				AudioInfo.Viseme.Add(new VisemeItem((int)(e.AudioOffset / 10000), (int)e.VisemeId));
+			else if (!string.IsNullOrEmpty(e.Animation))
+			{
+				var shape = System.Text.Json.JsonSerializer.Deserialize<BlendShape>(e.Animation);
+				AudioInfo.Shapes.Add(shape);
+			}
 			Console.WriteLine($"Viseme event received. Audio offset: {e.AudioOffset / 10000}ms, viseme id: {e.VisemeId}.");
 			//AnimateAvatarBasedOnViseme(e.VisemeId);
 		}
@@ -67,7 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var newData = await _Synthesize(text, useSsml, useCache);
 			if (newData)
-				JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlFile(AudioInfo, AudioInfoPath);
+				ClassLibrary.Runtime.Serializer.SerializeToXmlFile(AudioInfo, AudioInfoPath);
 		}
 
 		/// <summary>
@@ -87,7 +91,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				try
 				{
-					AudioInfo = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlFile<AudioFileInfo>(AudioInfoPath);
+					AudioInfo = ClassLibrary.Runtime.Serializer.DeserializeFromXmlFile<AudioFileInfo>(AudioInfoPath);
 					return false;
 				}
 				catch { }
@@ -96,7 +100,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			AudioInfo.Text = text;
 			AudioInfo.IsSsml = useSsml;
 			isWorking = true;
-			SpeechSynthesisResult result = useSsml
+			SpeechSynthesisResult result = useSsml || text.StartsWith("<")
 				? await synthesizer.SpeakSsmlAsync(text)
 				: await synthesizer.SpeakTextAsync(text);
 			if (result.Reason == ResultReason.SynthesizingAudioCompleted)
@@ -144,7 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var response = await client.GetAsync(url);
 				response.EnsureSuccessStatusCode();
 				string responseBody = await response.Content.ReadAsStringAsync();
-				List<VoiceProperties> voiceDetails = JsonConvert.DeserializeObject<List<VoiceProperties>>(responseBody);
+				List<VoiceProperties> voiceDetails = System.Text.Json.JsonSerializer.Deserialize<List<VoiceProperties>>(responseBody);
 				return voiceDetails;
 			}
 		}

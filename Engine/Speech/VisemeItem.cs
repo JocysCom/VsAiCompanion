@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.Speech
 {
 	public class VisemeItem
 	{

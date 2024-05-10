@@ -1,9 +1,11 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Speech;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -102,14 +104,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (!CheckClient())
 					return new OperationResult<string>(new Exception("AI Avatar cofiguration is not valid."));
 				await client.Synthesize(text, isSsml, Item.CacheAudioData);
-				var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(client.AudioInfo);
+				var jsonOptions = new JsonSerializerOptions() { WriteIndented = true };
+				var json = System.Text.Json.JsonSerializer.Serialize(client.AudioInfo, jsonOptions);
 				Dispatcher.Invoke(() =>
 				{
 					LogPanel.Add(client.AudioFilePath + "\r\n");
 					LogPanel.Add(client.AudioInfoPath + "\r\n");
 					LogPanel.Add("\r\n");
-					LogPanel.Add(xml);
-					AvatarPanel.Play(client.AudioFilePath, client.AudioInfo.Viseme);
+					LogPanel.Add(json);
+					AvatarPanel.Play(client.AudioFilePath, client.AudioInfo);
 				});
 				return new OperationResult<string>();
 			}

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.Speech
 {
 	public class AudioFileInfo : NotifyPropertyChanged
 	{
@@ -21,6 +21,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(null)]
 		public List<VisemeItem> Viseme { get => _Viseme = _Viseme ?? new List<VisemeItem>(); set => SetProperty(ref _Viseme, value); }
 		List<VisemeItem> _Viseme;
+
+		[DefaultValue(null)]
+		public List<BlendShape> Shapes { get => _Shapes = _Shapes ?? new List<BlendShape>(); set => SetProperty(ref _Shapes, value); }
+		List<BlendShape> _Shapes;
+
 
 	}
 }
