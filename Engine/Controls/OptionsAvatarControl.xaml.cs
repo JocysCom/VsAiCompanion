@@ -104,7 +104,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (!CheckClient())
 					return new OperationResult<string>(new Exception("AI Avatar cofiguration is not valid."));
 				await client.Synthesize(text, isSsml, Item.CacheAudioData);
-				var jsonOptions = new JsonSerializerOptions() { WriteIndented = true };
+				var jsonOptions = new JsonSerializerOptions() { WriteIndented = false };
 				var json = System.Text.Json.JsonSerializer.Serialize(client.AudioInfo, jsonOptions);
 				Dispatcher.Invoke(() =>
 				{
