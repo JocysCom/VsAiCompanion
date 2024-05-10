@@ -140,6 +140,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (CheckClient())
 				{
 					var names = await client.GetAvailableVoicesAsync();
+					var details = await client.GetAvailableVoicesWithDetailsAsync();
 					CollectionsHelper.Synchronize(names, Item.VoiceNames);
 				}
 			}

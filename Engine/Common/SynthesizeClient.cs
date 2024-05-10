@@ -1,8 +1,11 @@
-﻿using Microsoft.CognitiveServices.Speech;
+﻿using JocysCom.VS.AiCompanion.Engine.Audio;
+using Microsoft.CognitiveServices.Speech;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Media;
+using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
@@ -129,6 +132,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 				voiceNames.Add(voice.Name);
 			return voiceNames;
 		}
+
+
+		// Method to get detailed information about available voices.
+		public async Task<List<VoiceProperties>> GetAvailableVoicesWithDetailsAsync()
+		{
+			using (HttpClient client = new HttpClient())
+			{
+				client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Config.SubscriptionKey);
+				string url = $"https://{Config.Region}.tts.speech.microsoft.com/cognitiveservices/voices/list";
+				var response = await client.GetAsync(url);
+				response.EnsureSuccessStatusCode();
+				string responseBody = await response.Content.ReadAsStringAsync();
+				List<VoiceProperties> voiceDetails = JsonConvert.DeserializeObject<List<VoiceProperties>>(responseBody);
+				return voiceDetails;
+			}
+		}
+
 
 #if NETCOREAPP
 		[SupportedOSPlatform("windows")]

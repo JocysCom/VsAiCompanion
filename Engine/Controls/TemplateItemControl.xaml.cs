@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Processes;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -720,6 +722,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					: ChatPanel.DataTextBox;
 				AppHelper.InsertText(box, $"Please analyse screenshot\r\n{captureResult.Result}", true, false);
 			}
+		}
+
+		private void MicrophoneButton_Click(object sender, RoutedEventArgs e)
+		{
+			var box = _Item.ShowInstructions
+				? LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox
+				: ChatPanel.DataTextBox;
+			AppHelper.InsertText(box, "", true);
+			// First, press and hold the 'Windows' key.
+			KeyboardHelper.SendDown(Key.LWin);
+			// Then, press and release the 'H' key.
+			KeyboardHelper.Send(Key.H);
+			// Finally, release the 'Windows' key.
+			KeyboardHelper.SendUp(Key.LWin);
+
 		}
 
 		#region ■ INotifyPropertyChanged
