@@ -43,10 +43,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.Tasks.Add(zipTasks.ToArray());
 				// Copy other settings.
 				RuntimeHelper.CopyProperties(zipAppSettings, Global.AppSettings, true);
-				RuntimeHelper.CopyProperties(zipAppSettings.TaskData, Global.AppSettings.TaskData, true);
-				RuntimeHelper.CopyProperties(zipAppSettings.TemplateData, Global.AppSettings.TemplateData, true);
-				RuntimeHelper.CopyProperties(zipAppSettings.FineTuningData, Global.AppSettings.FineTuningData, true);
-				RuntimeHelper.CopyProperties(zipAppSettings.AiServiceData, Global.AppSettings.AiServiceData, true);
+				var settings = Global.AppSettings.PanelSettingsList.ToArray();
+				foreach (var setting in settings)
+				{
+					var zipSetting = zipAppSettings.PanelSettingsList.FirstOrDefault(x => x.ItemType == setting.ItemType);
+					if (zipSetting == null)
+						continue;
+					RuntimeHelper.CopyProperties(zipSetting, settings, true);
+				}
 				// Save settings.
 				Global.SaveSettings();
 				Global.Lists.PreventWriteToNewerFiles = true;

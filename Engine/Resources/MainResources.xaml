@@ -191,6 +191,7 @@
 	<sys:String x:Key="main_Vision">Vision</sys:String>
 	<sys:String x:Key="main_Visual_Studio_Extension_Options">Visual Studio Extension Options</sys:String>
 	<sys:String x:Key="main_Voice">Voice</sys:String>
+	<sys:String x:Key="main_Voices">Voices</sys:String>
 	<sys:String x:Key="main_VsExtensionFeatureMessage">This feature is only available when the application is run as an extension in Visual Studio.</sys:String>
 	<sys:String x:Key="main_VsExtensionVersionMessage">This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.</sys:String>
 </ResourceDictionary>

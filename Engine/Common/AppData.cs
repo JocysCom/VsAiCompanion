@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -83,82 +84,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private PositionSettings _StartPosition;
 
-		public TaskSettings AiModelData
+		public List<TaskSettings> PanelSettingsList
 		{
-			get => _AiModelData = _AiModelData ?? new TaskSettings();
-			set => SetProperty(ref _AiModelData, value);
+			get => _PanelSettingsList = _PanelSettingsList ?? new List<TaskSettings>();
+			set => SetProperty(ref _PanelSettingsList, value);
 		}
-		private TaskSettings _AiModelData;
+		private List<TaskSettings> _PanelSettingsList;
 
-		public TaskSettings AiServiceData
-		{
-			get => _AiServiceData = _AiServiceData ?? new TaskSettings();
-			set => SetProperty(ref _AiServiceData, value);
-		}
-		private TaskSettings _AiServiceData;
-
-		public TaskSettings TaskData
-		{
-			get => _TaskData = _TaskData ?? new TaskSettings();
-			set => SetProperty(ref _TaskData, value);
-		}
-		private TaskSettings _TaskData;
-
-		public TaskSettings TemplateData
-		{
-			get => _TemplateData = _TemplateData ?? new TaskSettings();
-			set => SetProperty(ref _TemplateData, value);
-		}
-		private TaskSettings _TemplateData;
-
-		public TaskSettings FineTuningData
-		{
-			get => _FineTuningData = _FineTuningData ?? new TaskSettings();
-			set => SetProperty(ref _FineTuningData, value);
-		}
-		private TaskSettings _FineTuningData;
-
-		public TaskSettings AssistantData
-		{
-			get => _AssistantData = _AssistantData ?? new TaskSettings();
-			set => SetProperty(ref _AssistantData, value);
-		}
-		private TaskSettings _AssistantData;
-
-		public TaskSettings ListsData
-		{
-			get => _ListsData = _ListsData ?? new TaskSettings();
-			set => SetProperty(ref _ListsData, value);
-		}
-		private TaskSettings _ListsData;
-
-		public TaskSettings EmbeddingsData
-		{
-			get => _EmbeddingsData = _EmbeddingsData ?? new TaskSettings();
-			set => SetProperty(ref _EmbeddingsData, value);
-		}
-		private TaskSettings _EmbeddingsData;
-
-		public TaskSettings MailAccountData
-		{
-			get => _MailAccountData = _MailAccountData ?? new TaskSettings();
-			set => SetProperty(ref _MailAccountData, value);
-		}
-		private TaskSettings _MailAccountData;
 
 		public TaskSettings GetTaskSettings(ItemType type)
 		{
-			switch (type)
+
+			var item = PanelSettingsList.FirstOrDefault(x => x.ItemType == type);
+			if (item == null)
 			{
-				case ItemType.Task: return TaskData;
-				case ItemType.Template: return TemplateData;
-				case ItemType.FineTuning: return FineTuningData;
-				case ItemType.Assistant: return AssistantData;
-				case ItemType.Lists: return ListsData;
-				case ItemType.Embeddings: return EmbeddingsData;
-				case ItemType.MailAccount: return MailAccountData;
-				default: return new TaskSettings();
+				item = new TaskSettings() { ItemType = type };
+				PanelSettingsList.Add(item);
 			}
+			return item;
 		}
 
 		#endregion
@@ -257,67 +200,54 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AiModels.Remove(model);
 		}
 
+		/// <summary>AI Services</summary>
 		public SortableBindingList<AiService> AiServices
 		{
-			get
-			{
-				lock (_AiServicesLock)
-				{
-					if (_AiServices == null || _AiServices.Count == 0)
-						_AiServices = new SortableBindingList<AiService>();
-					return _AiServices;
-				}
-			}
-			set => _AiServices = value;
+			get => _AiServices.Value;
+			set => Interlocked.Exchange(ref _AiServices, new Lazy<SortableBindingList<AiService>>(() => value));
 		}
-		private SortableBindingList<AiService> _AiServices;
-		private object _AiServicesLock = new object();
+		private volatile Lazy<SortableBindingList<AiService>> _AiServices =
+			new Lazy<SortableBindingList<AiService>>(() => new SortableBindingList<AiService>());
 
 
-		public SortableBindingList<MailAccount> MailAccounts
-		{
-			get
-			{
-				lock (_MailAccountsLock)
-				{
-					if (_MailAccounts == null || _MailAccounts.Count == 0)
-						_MailAccounts = new SortableBindingList<MailAccount>();
-					return _MailAccounts;
-				}
-			}
-			set => _MailAccounts = value;
-		}
-		private SortableBindingList<MailAccount> _MailAccounts;
-		private object _MailAccountsLock = new object();
-
-		public SortableBindingList<PluginItem> Plugins
-		{
-			get
-			{
-				lock (_PluginsLock)
-				{
-					if (_Plugins == null || _Plugins.Count == 0)
-						_Plugins = new SortableBindingList<PluginItem>();
-					return _Plugins;
-				}
-			}
-			set => _Plugins = value;
-		}
-		private SortableBindingList<PluginItem> _Plugins;
-		private object _PluginsLock = new object();
-
+		/// <summary>AI Models</summary>
 		public SortableBindingList<AiModel> AiModels
 		{
-			get
-			{
-				if (_AiModels == null)
-					_AiModels = new SortableBindingList<AiModel>();
-				return _AiModels;
-			}
-			set => _AiModels = value;
+			get => _AiModels.Value;
+			set => Interlocked.Exchange(ref _AiModels, new Lazy<SortableBindingList<AiModel>>(() => value));
 		}
-		private SortableBindingList<AiModel> _AiModels;
+		private volatile Lazy<SortableBindingList<AiModel>> _AiModels =
+			new Lazy<SortableBindingList<AiModel>>(() => new SortableBindingList<AiModel>());
 
+
+		/// <summary>Mail Accounts</summary>
+		public SortableBindingList<MailAccount> MailAccounts
+		{
+			get => _MailAccounts.Value;
+			set => Interlocked.Exchange(ref _MailAccounts, new Lazy<SortableBindingList<MailAccount>>(() => value));
+		}
+		private volatile Lazy<SortableBindingList<MailAccount>> _MailAccounts =
+			new Lazy<SortableBindingList<MailAccount>>(() => new SortableBindingList<MailAccount>());
+
+
+		/// <summary>Plugins</summary>
+		public SortableBindingList<PluginItem> Plugins
+		{
+			get => _Plugins.Value;
+			set => Interlocked.Exchange(ref _Plugins, new Lazy<SortableBindingList<PluginItem>>(() => value));
+		}
+		private volatile Lazy<SortableBindingList<PluginItem>> _Plugins =
+			new Lazy<SortableBindingList<PluginItem>>(() => new SortableBindingList<PluginItem>());
+
+
+		/// <summary>Avatar Voices</summary>
+		public SortableBindingList<Speech.VoiceItem> Voices
+		{
+			get => _Voices.Value;
+			set => Interlocked.Exchange(ref _Voices, new Lazy<SortableBindingList<Speech.VoiceItem>>(() => value));
+		}
+		private volatile Lazy<SortableBindingList<Speech.VoiceItem>> _Voices =
+			new Lazy<SortableBindingList<Speech.VoiceItem>>(() => new SortableBindingList<Speech.VoiceItem>());
 
 
 		public string MarkdownLanguageNames { get; set; } =

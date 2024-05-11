@@ -1,5 +1,4 @@
-﻿using JocysCom.VS.AiCompanion.Engine.Audio;
-using Microsoft.CognitiveServices.Speech;
+﻿using Microsoft.CognitiveServices.Speech;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -139,7 +138,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 
 
 		// Method to get detailed information about available voices.
-		public async Task<List<VoiceProperties>> GetAvailableVoicesWithDetailsAsync()
+		public async Task<List<VoiceItem>> GetAvailableVoicesWithDetailsAsync()
 		{
 			using (HttpClient client = new HttpClient())
 			{
@@ -148,7 +147,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 				var response = await client.GetAsync(url);
 				response.EnsureSuccessStatusCode();
 				string responseBody = await response.Content.ReadAsStringAsync();
-				List<VoiceProperties> voiceDetails = System.Text.Json.JsonSerializer.Deserialize<List<VoiceProperties>>(responseBody);
+				List<VoiceItem> voiceDetails = System.Text.Json.JsonSerializer.Deserialize<List<VoiceItem>>(responseBody);
 				return voiceDetails;
 			}
 		}

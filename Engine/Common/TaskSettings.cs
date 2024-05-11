@@ -16,6 +16,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
+		[DefaultValue(ItemType.None)]
+		public ItemType ItemType { get => _ItemType; set => SetProperty(ref _ItemType, value); }
+		private ItemType _ItemType;
+
 		[DefaultValue(0.3)]
 		public double GridSplitterPosition
 		{

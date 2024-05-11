@@ -1,0 +1,43 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>microphone2 icon</title>
+    <desc>microphone2 icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="176" y1="432" x2="210.2435" y2="432" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#91a0af"/>
+            <stop offset="1" stop-color="#51616f"/>
+        </linearGradient>
+        <linearGradient x1="159" y1="320" x2="239.0005" y2="320.9375" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#d8e0e8"/>
+            <stop offset="1" stop-color="#b3c0cd"/>
+        </linearGradient>
+        <linearGradient x1="159.25565" y1="278" x2="167.27165" y2="399.82" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#92a1b0"/>
+            <stop offset="1" stop-color="#a3b1bf"/>
+        </linearGradient>
+        <linearGradient x1="191" y1="278" x2="301.38" y2="331.9825" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#91a0af"/>
+            <stop offset="1" stop-color="#8493a2"/>
+        </linearGradient>
+        <linearGradient x1="131.46388" y1="0.62116" x2="351.09188" y2="156.94216" gradientUnits="userSpaceOnUse" id="color-5">
+            <stop offset="0" stop-color="#d8e0e8"/>
+            <stop offset="0.38824" stop-color="#e6ebf0"/>
+            <stop offset="1" stop-color="#b3c0cd"/>
+        </linearGradient>
+        <linearGradient x1="375.5" y1="34.5" x2="239.084" y2="289.2074" gradientUnits="userSpaceOnUse" id="color-6">
+            <stop offset="0" stop-color="#8897a6"/>
+            <stop offset="1" stop-color="#7c8b9a"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M176,432l47,0l0,80l-47,0z" id="curve7" fill="url(#color-1)"/>
+        <path d="M199,320l0,0c22.5,0 40,18 40,40l0,88l-80,0l0,-88c0,-22 18,-40 40,-40z" id="curve6" fill="url(#color-2)"/>
+        <path d="M208.5,278l132,35.5c-44.5,7.5 -76,24 -95,50l-13.5,19.5c-13,18 -38,22.5 -56,9.5c-18,-12.5 -22,-38 -9.5,-55.5z" id="curve5" fill="url(#color-3)"/>
+        <path d="M208.5,278l132,35.5c-27.5,4.5 -50,12.5 -67.5,24.5c-28,-7.5 -57.5,-21.5 -82,-35.5z" id="curve4" fill="url(#color-4)"/>
+        <path d="M256.5,17.5c18.5,-26 56,-19 84,1c46.5,33 139.5,99.5 111.5,138.5l-9,13l-4.5,-3l-9,13l4,3l-9.5,13l-4,-2.5l-9,13l4,2.5l-9.5,13l-4,-2.5l-9.5,13l4.5,2.5l-9.5,13.5l-4,-3l-9.5,13l4,3l-9,13l-4,-3l-9.5,13l4,3l0,0l-9,13l-4,-3l-9.5,13l4,3c-28,39 -130,-14.5 -176.5,-47.5c-28,-20 -46.5,-53 -19,-92l0,0l0,0l4,3l9.5,-13l-4,-3l9.5,-13l0,0l4,3l9,-13l-4,-3l9.5,-13l4,3l9,-13l-4,-3l0,0l9.5,-13l0,0l4,3l9.5,-13l-4.5,-3l9.5,-13l4,2.5l9.5,-13l-4,-2.5l9,-13l4,2.5l9.5,-13l-4,-2.5z" id="curve3" fill="url(#color-5)"/>
+        <path d="M362.5,34.5c4.5,3 8.5,6.5 13,9.5l-175,245c-4.5,-2.5 -9.5,-5 -13.5,-8z" id="curve2" fill="url(#color-6)"/>
+        <path d="M433.5,183l-78,-55.5l9,-13l78.5,55.5z M424,196l-9,13l-78.5,-55.5l9.5,-13z M405.5,222l-9,13l-78.5,-55.5l9.5,-13z M387,248.5l-9.5,13l-78,-56l9.5,-13z M368.5,274.5l-9.5,13l-78,-56l9.5,-13z M350,300.5l-9.5,13l-78,-56l9,-13z M145,174l9.5,-13l65,46.5l-9,13z M164,148l9,-13l65,46.5l-9,13z M182.5,122l9,-13l65.5,46.5l-9.5,13z M201,96l9,-13l65.5,46.5l-9.5,13z M219.5,70l9.5,-13l65,46.5l-9.5,13z M238,44l9.5,-13l65,46l-9.5,13z" id="curve1" fill="#51616f"/>
+        <path d="M213,340.5c11,7.5 13.5,22.5 6,33.5c-8,10.5 -23,13 -33.5,5.5c-11,-7.5 -13.5,-22.5 -6,-33.5c8,-10.5 23,-13 33.5,-5.5z" id="curve0" fill="#d8e0e8"/>
+    </g>
+</svg>

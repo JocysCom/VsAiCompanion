@@ -96,7 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region PanelSettings
 
-		TaskSettings PanelSettings { get; set; } = new TaskSettings();
+		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.Assistant);
 
 		private void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{

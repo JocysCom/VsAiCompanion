@@ -51,7 +51,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region List Panel Item
 
-		TaskSettings PanelSettings { get; set; } = new TaskSettings();
+		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.Embeddings);
 
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
@@ -232,15 +232,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		//	{
 		//	}
 		//}
-
-		#endregion
-
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		#endregion
 
@@ -684,6 +675,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: "FAILED";
 			LogPanel.Add(statusText);
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
 
 	}
 }

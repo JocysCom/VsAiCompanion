@@ -110,8 +110,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region PanelSettings
 
-		TaskSettings PanelSettings { get; set; } = new TaskSettings();
-
+		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.FineTuning);
 		private void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))

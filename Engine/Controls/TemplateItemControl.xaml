@@ -793,7 +793,7 @@
 					<ContentControl Content="{StaticResource Icon_screen}" Focusable="False" />
 				</Button>
 				<Button Name="MicrophoneButton" Margin="0,3,3,3" Click="MicrophoneButton_Click">
-					<ContentControl Content="{StaticResource Icon_Record}" Focusable="False" />
+					<ContentControl Content="{StaticResource Icon_microphone2}" Focusable="False" />
 				</Button>
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="ShowPromptingCheckBox" Content="Show Prompting" IsChecked="{Binding ShowPrompting}" />

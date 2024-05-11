@@ -4,7 +4,6 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	d:DesignHeight="800"
@@ -131,6 +130,15 @@
 					Grid.ColumnSpan="3"
 					Margin="4"
 					x:FieldModifier="public">
+					<TabItem Name="VoicesTabPage">
+						<TabItem.Header>
+							<StackPanel Orientation="Horizontal">
+								<ContentControl Content="{StaticResource Icon_users_family2}" />
+								<Label Content="{StaticResource main_Voices}" />
+							</StackPanel>
+						</TabItem.Header>
+						<controls:VoiceListControl x:Name="VoiceListPanel" />
+					</TabItem>
 					<TabItem Name="LogTabPage">
 						<TabItem.Header>
 							<StackPanel Orientation="Horizontal">
@@ -159,7 +167,7 @@
 					<VisualBrush Visual="{Binding ElementName=AvatarPanelMask}" />
 				</Border.OpacityMask>-->
 				<!--  MouseDown="Border_MouseDown"  -->
-				<local:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />
+				<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />
 			</Border>
 		</Grid>
 	</ScrollViewer>

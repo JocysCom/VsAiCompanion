@@ -98,12 +98,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// </summary>
 		private void ResetUIButton_Click(object sender, RoutedEventArgs e)
 		{
-			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.TaskData);
-			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.TemplateData);
-			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.FineTuningData);
-			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.AssistantData);
-			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.ListsData);
-			ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(Global.AppSettings.EmbeddingsData);
+			var items = Global.AppSettings.PanelSettingsList.ToArray();
+			foreach (var item in items)
+				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item);
 			var ps = Global.AppSettings.StartPosition;
 			if (!Global.IsVsExtension)
 			{

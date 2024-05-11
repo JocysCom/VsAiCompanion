@@ -617,7 +617,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					}
 				}
 			}
-			Global.AppSettings.TaskData.ListSelection = selection;
+			// Select new task in the tasks list on the [Tasks] tab.
+			Global.AppSettings.GetTaskSettings(ItemType.Task).ListSelection = selection;
 			Global.RaiseOnTasksUpdated();
 		}
 

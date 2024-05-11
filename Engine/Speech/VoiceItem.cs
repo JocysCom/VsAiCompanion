@@ -1,16 +1,18 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
-namespace JocysCom.VS.AiCompanion.Engine.Audio
+namespace JocysCom.VS.AiCompanion.Engine.Speech
 {
-	public class VoiceProperties : SettingsItem
+	public class VoiceItem : SettingsItem
 	{
 		[DefaultValue(false)]
 		public bool IsFavorite { get => _IsFavorite; set => SetProperty(ref _IsFavorite, value); }
 		bool _IsFavorite = true;
 
-		#region Read Only Fields
+		#region Read Only Fields (Azure)
 
 		public string Name { get; set; }
 		public string DisplayName { get; set; }
@@ -26,6 +28,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Audio
 		public List<string> SecondaryLocaleList { get; set; }
 		public List<string> RolePlayList { get; set; }
 		public string WordsPerMinute { get; set; }
+
+		[XmlIgnore, JsonIgnore]
 		public Dictionary<string, string> ExtendedPropertyMap { get; set; }
 
 		#endregion

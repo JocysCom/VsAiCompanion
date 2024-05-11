@@ -22,6 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_brain = nameof(Icon_brain);
 		public const string Icon_broom = nameof(Icon_broom);
 		public const string Icon_businessman = nameof(Icon_businessman);
+		public const string Icon_businessmen2 = nameof(Icon_businessmen2);
 		public const string Icon_button_error = nameof(Icon_button_error);
 		public const string Icon_button_trend_up = nameof(Icon_button_trend_up);
 		public const string Icon_chart_radar = nameof(Icon_chart_radar);
@@ -92,6 +93,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_mail = nameof(Icon_mail);
 		public const string Icon_map_location2 = nameof(Icon_map_location2);
 		public const string Icon_media_stop = nameof(Icon_media_stop);
+		public const string Icon_microphone2 = nameof(Icon_microphone2);
 		public const string Icon_movie_comment = nameof(Icon_movie_comment);
 		public const string Icon_navigate_left2 = nameof(Icon_navigate_left2);
 		public const string Icon_navigate_right2 = nameof(Icon_navigate_right2);
@@ -124,6 +126,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_todo_list_time = nameof(Icon_todo_list_time);
 		public const string Icon_translate = nameof(Icon_translate);
 		public const string Icon_user = nameof(Icon_user);
+		public const string Icon_users_crowd = nameof(Icon_users_crowd);
+		public const string Icon_users_family2 = nameof(Icon_users_family2);
 		public const string Icon_user_add = nameof(Icon_user_add);
 		public const string Icon_user_comment = nameof(Icon_user_comment);
 		public const string Icon_user_group = nameof(Icon_user_group);

@@ -24,7 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ItemPanel.Item = item;
 		}
 
-		TaskSettings PanelSettings { get; set; } = new TaskSettings();
+		TaskSettings PanelSettings { get; } = Global.AppSettings.GetTaskSettings(ItemType.AiService);
 
 		#region GridSplitter Postion
 
@@ -49,7 +49,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var position = Global.AppSettings.AiServiceData.GridSplitterPosition;
+			var position = PanelSettings.GridSplitterPosition;
 			PositionSettings.SetGridSplitterPosition(MainGrid, position, null, true);
 		}
 
@@ -60,7 +60,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var position = PositionSettings.GetGridSplitterPosition(MainGrid);
 			if (position == null || position == 0.0)
 				return;
-			Global.AppSettings.AiServiceData.GridSplitterPosition = position.Value;
+			PanelSettings.GridSplitterPosition = position.Value;
 		}
 
 		#endregion

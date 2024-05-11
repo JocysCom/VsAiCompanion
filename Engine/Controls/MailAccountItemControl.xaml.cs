@@ -103,16 +103,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void PasswordPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
 		=> Item.Password = PasswordPasswordBox.Password;
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-
-		#endregion
-
 		private void Client_LogMessage(object sender, string e)
 		{
 			ControlsHelper.AppendText(LogTextBox, e + "\r\n");
@@ -143,5 +133,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await client.TestAccount(false);
 			client.Account = null;
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 }

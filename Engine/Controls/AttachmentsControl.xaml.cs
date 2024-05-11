@@ -43,7 +43,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		// Store temp settings.
-		TaskSettings PanelSettings = new TaskSettings();
+		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.Attachment);
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{

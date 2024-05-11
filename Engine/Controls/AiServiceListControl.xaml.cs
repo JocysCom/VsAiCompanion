@@ -79,7 +79,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		TaskSettings PanelSettings => Global.AppSettings.AiServiceData;
+		TaskSettings PanelSettings { get; } = Global.AppSettings.GetTaskSettings(ItemType.AiService);
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{

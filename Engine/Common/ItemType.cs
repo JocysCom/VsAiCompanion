@@ -10,5 +10,9 @@
 		Lists = 5,
 		Embeddings = 6,
 		MailAccount = 7,
+		AiModel = 8,
+		AiService = 9,
+		Voice = 10,
+		Attachment = 11,
 	}
 }

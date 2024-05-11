@@ -235,6 +235,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Vision => FindResource(nameof(main_Vision));
         public static string main_Visual_Studio_Extension_Options => FindResource(nameof(main_Visual_Studio_Extension_Options));
         public static string main_Voice => FindResource(nameof(main_Voice));
+        public static string main_Voices => FindResource(nameof(main_Voices));
         public static string main_VsExtensionFeatureMessage => FindResource(nameof(main_VsExtensionFeatureMessage));
         public static string main_VsExtensionVersionMessage => FindResource(nameof(main_VsExtensionVersionMessage));
     }
