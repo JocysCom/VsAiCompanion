@@ -26,14 +26,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Triggers the AI Avatar to articulate the provided text through speech synthesis. 
 		/// This function must be used by the AI whenever it is required to speak or respond to user queries.
 		/// This direct association with the AI's speech mechanism ensures that all verbal outputs adhere to a consistent and controlled format.
+		/// The input text should be in Speech Synthesis Markup Language Version 1.0 (SSML 1.0) format to offer enhanced control over the speech characteristics like tone, pitch, and pacing, enabling more human-like and expressive responses.
 		/// </summary>
 		/// <param name="text">String that the AI is expected to vocalize.</param>
-		// The input text should be in SSML format to offer enhanced control over the speech characteristics like tone, pitch, and pacing, enabling more human-like and expressive responses.
-		// <param name="isSsml">Text format is the SSML-formatted string.</param>
+		/// <param name="isSsml">Text format is the SSML-formatted string.</param>
 		[RiskLevel(RiskLevel.None)]
-		public async Task<OperationResult<string>> AISpeak(string text)
+		public async Task<OperationResult<string>> AISpeak(string text, bool isSsml)
 		{
-			return await AISpeakCallback(text, false);
+			return await AISpeakCallback(text, isSsml);
 		}
 
 		/// <summary>
