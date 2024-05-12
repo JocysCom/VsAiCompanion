@@ -697,6 +697,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void MainDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
 		{
 		}
+
+		private void MainDataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+		{
+
+		}
 	}
 
 }

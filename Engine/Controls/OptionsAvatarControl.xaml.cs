@@ -193,6 +193,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
+		private void This_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+		{
+			UpdateMaxSize();
+		}
+
+		private void UpdateMaxSize()
+		{
+			var maxHeight = ActualHeight;
+			InstructionsTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
+			MessageTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
+		}
+
 		//private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		//{
 		//	//	AvatarPanel.Visibility = Global.AppSettings.ShowAvatar

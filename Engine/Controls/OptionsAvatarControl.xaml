@@ -8,6 +8,7 @@
 	x:Name="This"
 	d:DesignHeight="800"
 	d:DesignWidth="800"
+	SizeChanged="This_SizeChanged"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -19,185 +20,183 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<ScrollViewer DataContext="{Binding Item, ElementName=This}">
+	<Grid DataContext="{Binding Item, ElementName=This}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="300" />
+		</Grid.ColumnDefinitions>
 		<Grid>
 			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="300" />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<!--  Row 0  -->
-				<Label
-					Grid.Row="0"
-					Grid.Column="0"
-					VerticalAlignment="Center"
-					Content="{StaticResource main_Service}" />
-				<StackPanel
-					Grid.Row="0"
-					Grid.Column="1"
-					Grid.ColumnSpan="2"
-					Orientation="Horizontal">
-					<ComboBox
-						Name="AiServicesComboBox"
-						x:FieldModifier="public"
-						DisplayMemberPath="Name"
-						ItemsSource="{Binding AiServices, ElementName=This}"
-						SelectedValue="{Binding AiServiceId}"
-						SelectedValuePath="Id"
-						SelectionChanged="AiServicesComboBox_SelectionChanged" />
-					<Label VerticalAlignment="Center" Content="{StaticResource main_Voice}" />
-					<ComboBox
-						Name="VoiceLanguageComboBox"
-						MinWidth="64"
-						x:FieldModifier="public"
-						ItemsSource="{Binding VoiceLanguages, ElementName=This}"
-						SelectedValue="{Binding VoiceLanguage}"
-						SelectionChanged="VoiceLanguageComboBox_SelectionChanged" />
-					<ComboBox
-						Name="VoiceNameComboBox"
-						MinWidth="128"
-						x:FieldModifier="public"
-						ItemsSource="{Binding VoiceNames}"
-						SelectedValue="{Binding VoiceName}"
-						SelectionChanged="VoiceNameComboBox_SelectionChanged" />
-					<Button Name="VoiceNamesRefreshButton" Margin="3,0,3,0" Click="VoiceNamesRefreshButton_Click">
-						<StackPanel>
-							<ContentControl Content="{StaticResource Icon_Refresh}" />
+			<!--  Row 0  -->
+			<Label
+				Grid.Row="0"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				Content="{StaticResource main_Service}" />
+			<StackPanel
+				Grid.Row="0"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Orientation="Horizontal">
+				<ComboBox
+					Name="AiServicesComboBox"
+					x:FieldModifier="public"
+					DisplayMemberPath="Name"
+					ItemsSource="{Binding AiServices, ElementName=This}"
+					SelectedValue="{Binding AiServiceId}"
+					SelectedValuePath="Id"
+					SelectionChanged="AiServicesComboBox_SelectionChanged" />
+				<Label VerticalAlignment="Center" Content="{StaticResource main_Voice}" />
+				<ComboBox
+					Name="VoiceLanguageComboBox"
+					MinWidth="64"
+					x:FieldModifier="public"
+					ItemsSource="{Binding VoiceLanguages, ElementName=This}"
+					SelectedValue="{Binding VoiceLanguage}"
+					SelectionChanged="VoiceLanguageComboBox_SelectionChanged" />
+				<ComboBox
+					Name="VoiceNameComboBox"
+					MinWidth="128"
+					x:FieldModifier="public"
+					ItemsSource="{Binding VoiceNames}"
+					SelectedValue="{Binding VoiceName}"
+					SelectionChanged="VoiceNameComboBox_SelectionChanged" />
+				<Button Name="VoiceNamesRefreshButton" Margin="3,0,3,0" Click="VoiceNamesRefreshButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Refresh}" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+			<!--  Row 1  -->
+			<StackPanel
+				Grid.Row="1"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				Orientation="Horizontal">
+				<CheckBox Name="CacheAudioDataCheckBox" Content="{StaticResource main_Cache_audio_data}" IsChecked="{Binding CacheAudioData, UpdateSourceTrigger=PropertyChanged}" />
+			</StackPanel>
+			<!--  Row 2  -->
+			<Label
+				Grid.Row="2"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				Content="{StaticResource main_Instructions}" />
+			<TextBox
+				Name="InstructionsTextBox"
+				Grid.Row="2"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				VerticalContentAlignment="Top"
+				AcceptsReturn="True"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				SpellCheck.IsEnabled="True"
+				Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
+				TextWrapping="Wrap" />
+			<!--  Row 3  -->
+			<Label
+				Grid.Row="3"
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				Content="{StaticResource main_Message}" />
+			<TextBox
+				Name="MessageTextBox"
+				Grid.Row="3"
+				Grid.Column="1"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				VerticalContentAlignment="Top"
+				AcceptsReturn="True"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				SpellCheck.IsEnabled="True"
+				Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
+				TextWrapping="Wrap" />
+			<StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
+				<Button
+					Name="PlaySettingsButton"
+					MinWidth="75"
+					HorizontalAlignment="Right"
+					Click="PlayButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
+						<Label Content="{StaticResource main_Play}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="StopSettingsButton"
+					MinWidth="75"
+					HorizontalAlignment="Right"
+					Click="StopButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Stop}" Focusable="False" />
+						<Label Content="{StaticResource main_Stop}" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+			<!--  Row 4  -->
+			<TabControl
+				x:Name="MainTabControl"
+				Grid.Row="4"
+				Grid.ColumnSpan="3"
+				Margin="4"
+				x:FieldModifier="public">
+				<TabItem Name="VoicesTabPage">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_users_family2}" />
+							<Label Content="{StaticResource main_Voices}" />
 						</StackPanel>
-					</Button>
-				</StackPanel>
-				<!--  Row 1  -->
-				<StackPanel
-					Grid.Row="1"
-					Grid.Column="1"
-					Grid.ColumnSpan="2"
-					Orientation="Horizontal">
-					<CheckBox Name="CacheAudioDataCheckBox" Content="{StaticResource main_Cache_audio_data}" IsChecked="{Binding CacheAudioData, UpdateSourceTrigger=PropertyChanged}" />
-				</StackPanel>
-				<!--  Row 2  -->
-				<Label
-					Grid.Row="2"
-					Grid.Column="0"
-					VerticalAlignment="Center"
-					Content="{StaticResource main_Instructions}" />
-				<TextBox
-					Name="InstructionsTextBox"
-					Grid.Row="2"
-					Grid.Column="1"
-					Grid.ColumnSpan="2"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					VerticalContentAlignment="Top"
-					AcceptsReturn="True"
-					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					ScrollViewer.VerticalScrollBarVisibility="Auto"
-					SpellCheck.IsEnabled="True"
-					Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
-					TextWrapping="Wrap" />
-				<!--  Row 3  -->
-				<Label
-					Grid.Row="3"
-					Grid.Column="0"
-					VerticalAlignment="Center"
-					Content="{StaticResource main_Message}" />
-				<TextBox
-					Name="MessageTextBox"
-					Grid.Row="3"
-					Grid.Column="1"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					VerticalContentAlignment="Top"
-					AcceptsReturn="True"
-					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					ScrollViewer.VerticalScrollBarVisibility="Auto"
-					SpellCheck.IsEnabled="True"
-					Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
-					TextWrapping="Wrap" />
-				<StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
-					<Button
-						Name="PlaySettingsButton"
-						MinWidth="75"
-						HorizontalAlignment="Right"
-						Click="PlayButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
-							<Label Content="{StaticResource main_Play}" />
+					</TabItem.Header>
+					<controls:VoiceListControl x:Name="VoiceListPanel"  VerticalAlignment="Stretch" />
+				</TabItem>
+				<TabItem Name="LogTabPage">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_list}" />
+							<Label Content="{StaticResource main_Log}" />
 						</StackPanel>
-					</Button>
-					<Button
-						Name="StopSettingsButton"
-						MinWidth="75"
-						HorizontalAlignment="Right"
-						Click="StopButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Stop}" Focusable="False" />
-							<Label Content="{StaticResource main_Stop}" />
-						</StackPanel>
-					</Button>
-				</StackPanel>
-				<!--  Row 4  -->
-				<TabControl
-					x:Name="MainTabControl"
-					Grid.Row="4"
-					Grid.ColumnSpan="3"
-					Margin="4"
-					x:FieldModifier="public">
-					<TabItem Name="VoicesTabPage">
-						<TabItem.Header>
-							<StackPanel Orientation="Horizontal">
-								<ContentControl Content="{StaticResource Icon_users_family2}" />
-								<Label Content="{StaticResource main_Voices}" />
-							</StackPanel>
-						</TabItem.Header>
-						<controls:VoiceListControl x:Name="VoiceListPanel" />
-					</TabItem>
-					<TabItem Name="LogTabPage">
-						<TabItem.Header>
-							<StackPanel Orientation="Horizontal">
-								<ContentControl Content="{StaticResource Icon_list}" />
-								<Label Content="{StaticResource main_Log}" />
-							</StackPanel>
-						</TabItem.Header>
-						<controls:LogControl x:Name="LogPanel" />
-					</TabItem>
-				</TabControl>
-			</Grid>
+					</TabItem.Header>
+					<controls:LogControl x:Name="LogPanel" />
+				</TabItem>
+			</TabControl>
+		</Grid>
 
-			<!--<Border
+		<!--<Border
 				Name="AvatarPanelMask"
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Margin="3,3,3,4"
 				Background="Black"
 				CornerRadius="0" />-->
-			<Border
-				Name="AvatarPanelBorder"
-				Grid.Column="1"
-				Grid.ColumnSpan="2"
-				Margin="3,3,3,4">
-				<!--<Border.OpacityMask>
+		<Border
+			Name="AvatarPanelBorder"
+			Grid.Column="1"
+			Grid.ColumnSpan="2"
+			Margin="3,3,3,4">
+			<!--<Border.OpacityMask>
 					<VisualBrush Visual="{Binding ElementName=AvatarPanelMask}" />
 				</Border.OpacityMask>-->
-				<!--  MouseDown="Border_MouseDown"  -->
-				<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />
-			</Border>
-		</Grid>
-	</ScrollViewer>
+			<!--  MouseDown="Border_MouseDown"  -->
+			<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />
+		</Border>
+	</Grid>
 </UserControl>
