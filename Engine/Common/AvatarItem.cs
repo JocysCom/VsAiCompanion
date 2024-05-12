@@ -28,7 +28,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string VoiceName { get => _VoiceName; set => SetProperty(ref _VoiceName, value); }
 		string _VoiceName;
 
-
 		[DefaultValue(null)]
 		public string VoiceLanguage { get => _VoiceLanguage; set => SetProperty(ref _VoiceLanguage, value); }
 		string _VoiceLanguage;
@@ -40,6 +39,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			set => SetProperty(ref _VoiceNames, value);
 		}
 		BindingList<string> _VoiceNames;
+
+		/// <summary>
+		/// Instructions to send when avatar is visible.
+		/// </summary>
+		[DefaultValue(null)]
+		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, value); }
+		string _Instructions;
+
 
 		[XmlIgnore, JsonIgnore]
 		public string AiServiceName { get => Global.AppSettings?.AiServices?.FirstOrDefault(x => x.Id == AiServiceId)?.Name; }
