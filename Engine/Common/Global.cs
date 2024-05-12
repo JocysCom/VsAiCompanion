@@ -4,6 +4,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls;
+using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
@@ -51,6 +52,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static SettingsData<PromptItem> PromptItems =
 			new SettingsData<PromptItem>($"{PromptItemsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
+		public const string VociesName = nameof(Voices);
+
+		public static SettingsData<VoiceItem> Voices =
+			new SettingsData<VoiceItem>($"{VociesName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
 		public const string ListsName = nameof(Lists);
 
@@ -293,6 +298,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return;
 			RaiseOnSaveSettings();
 			AppData.Save();
+			Voices.Save();
 			PromptItems.Save();
 			Lists.Save();
 			Embeddings.Save();
@@ -308,6 +314,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler PromptingUpdated;
 		public static void TriggerPromptingUpdated()
 			=> PromptingUpdated?.Invoke(null, EventArgs.Empty);
+
+
+		/// <summary>
+		/// Subscribed by controls that need to refresh when the source data is updated.
+		/// </summary>
+		public static event EventHandler VoicesUpdated;
+		public static void TriggerVoicesUpdated()
+			=> VoicesUpdated?.Invoke(null, EventArgs.Empty);
+
 
 		public static bool ResetSettings = false;
 
@@ -332,6 +347,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Always refresh plugins.
 			var newPluginsList = Engine.AppData.RefreshPlugins(AppSettings.Plugins);
 			ClassLibrary.Collections.CollectionsHelper.Synchronize(newPluginsList, AppSettings.Plugins);
+			// Load Voice items.
+			Voices.OnValidateData += Voices_OnValidateData;
+			Voices.Load();
+			if (Voices.IsSavePending)
+				Voices.Save();
 			// Load Prompt items.
 			PromptItems.OnValidateData += PromptItems_OnValidateData;
 			PromptItems.Load();
@@ -432,6 +452,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			public string title { get; set; }
 			public string pattern { get; set; }
 			public string[] options { get; set; }
+		}
+
+		private static void Voices_OnValidateData(object sender, SettingsData<VoiceItem>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				SettingsSourceManager.ResetVoices();
+				// Data is reset, no need to handle it.
+				e.Handled = true;
+			}
 		}
 
 		private static void PromptItems_OnValidateData(object sender, SettingsData<PromptItem>.SettingsDataEventArgs e)

@@ -190,6 +190,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.TriggerPromptingUpdated();
 		}
 
+		private void ResetVoicesButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AllowReset("Avatar Voices"))
+				return;
+			Global.Voices.ResetToDefault();
+			Global.Voices.Save();
+			Global.TriggerVoicesUpdated();
+		}
+
 		private void ApplySettingsButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (!AllowReset("All Settings", "Please note that this will reset all services, models, templates and tasks!"))

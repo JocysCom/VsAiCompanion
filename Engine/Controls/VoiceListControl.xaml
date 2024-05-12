@@ -57,13 +57,14 @@
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
-				<DataGridTextColumn
-					x:Name="AiServiceNameColumn"
+				<DataGridCheckBoxColumn
+					x:Name="IsFavoriteColumn"
 					Width="Auto"
-					Binding="{Binding AiServiceName}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{StaticResource main_Service}" />
+					Binding="{Binding IsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					CanUserSort="False"
+					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+					ElementStyle="{StaticResource CheckBoxCell_Default}"
+					IsThreeState="False" />
 				<DataGridTextColumn
 					x:Name="KeyColumn"
 					Width="Auto"
@@ -71,13 +72,6 @@
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="{StaticResource main_Name}" />
-				<DataGridTextColumn
-					x:Name="MaxInputTokensColumn"
-					Width="Auto"
-					Binding="{Binding MaxInputTokens}"
-					EditingElementStyle="{StaticResource TextBoxRightCell}"
-					ElementStyle="{StaticResource TextBlockRightCell}"
-					Header="{StaticResource main_Max_Input_Tokens}" />
 				<DataGridTextColumn
 					Width="*"
 					EditingElementStyle="{StaticResource TextBoxCell}"

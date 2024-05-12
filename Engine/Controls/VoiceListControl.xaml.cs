@@ -20,7 +20,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			FilteredList = Global.AppSettings.Voices;
+			FilteredList = Global.Voices.Items;
 			OnPropertyChanged(nameof(FilteredList));
 		}
 

@@ -36,6 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				RemoveToReplace(Global.Embeddings, zipEmbeddings);
 				ResetServicesAndModels();
 				ResetPrompts(zip);
+				ResetVoices(zip);
 				// Add user settings.
 				Global.Embeddings.Add(zipEmbeddings.ToArray());
 				Global.Lists.Add(zipLists.ToArray());
@@ -97,11 +98,34 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
 			// Update Prompts.
-			var zipPromptItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems);
-			var zipPromptNames = zipPromptItems.Items.Select(t => t.Name.ToLower()).ToList();
-			var promptsToRemove = Global.PromptItems.Items.Where(x => zipPromptNames.Contains(x.Name.ToLower())).ToArray();
-			Global.PromptItems.Remove(promptsToRemove);
-			Global.PromptItems.Add(zipPromptItems.Items.ToArray());
+			var zipItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems);
+			// Don't reset if zip contains no data.
+			if (zipItems == null)
+				return;
+			var zipNames = zipItems.Items.Select(t => t.Name.ToLower()).ToList();
+			var itemsToRemove = Global.PromptItems.Items.Where(x => zipNames.Contains(x.Name.ToLower())).ToArray();
+			Global.PromptItems.Remove(itemsToRemove);
+			Global.PromptItems.Add(zipItems.Items.ToArray());
+			// Close zip.
+			if (closeZip)
+				zip.Close();
+		}
+
+		/// <summary>Reset Voices</summary>
+		public static void ResetVoices(ZipStorer zip = null)
+		{
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			// Update Prompts.
+			var zipItems = GetDataFromZip(zip, Global.Voices.XmlFile.Name, Global.Voices);
+			// Don't reset if zip contains no data.
+			if (zipItems == null)
+				return;
+			var zipNames = zipItems.Items.Select(t => t.Name.ToLower()).ToList();
+			var itemsToRemove = Global.Voices.Items.Where(x => zipNames.Contains(x.Name.ToLower())).ToArray();
+			Global.Voices.Remove(itemsToRemove);
+			Global.Voices.Add(zipItems.Items.ToArray());
 			// Close zip.
 			if (closeZip)
 				zip.Close();
@@ -334,6 +358,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				.Where(x => x.FilenameInZip.StartsWith(name))
 				.FirstOrDefault();
 			var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
+			if (bytes == null)
+				return null;
 			var item = data.DeserializeData(bytes, false);
 			return item;
 		}

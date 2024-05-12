@@ -239,17 +239,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private volatile Lazy<SortableBindingList<PluginItem>> _Plugins =
 			new Lazy<SortableBindingList<PluginItem>>(() => new SortableBindingList<PluginItem>());
 
-
-		/// <summary>Avatar Voices</summary>
-		public SortableBindingList<Speech.VoiceItem> Voices
-		{
-			get => _Voices.Value;
-			set => Interlocked.Exchange(ref _Voices, new Lazy<SortableBindingList<Speech.VoiceItem>>(() => value));
-		}
-		private volatile Lazy<SortableBindingList<Speech.VoiceItem>> _Voices =
-			new Lazy<SortableBindingList<Speech.VoiceItem>>(() => new SortableBindingList<Speech.VoiceItem>());
-
-
 		public string MarkdownLanguageNames { get; set; } =
 			"ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex," +
 			"AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL," +

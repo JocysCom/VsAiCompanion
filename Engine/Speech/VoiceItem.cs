@@ -8,9 +8,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 {
 	public class VoiceItem : SettingsItem
 	{
+
+		public VoiceItem()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
+
 		[DefaultValue(false)]
 		public bool IsFavorite { get => _IsFavorite; set => SetProperty(ref _IsFavorite, value); }
-		bool _IsFavorite = true;
+		bool _IsFavorite;
 
 		#region Read Only Fields (Azure)
 
