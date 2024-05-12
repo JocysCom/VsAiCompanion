@@ -246,6 +246,8 @@ namespace JocysCom.ClassLibrary
 		{
 			if (action == null)
 				return;
+			var className = action.Method.DeclaringType;
+			var methodName = action.Method.Name;
 			var source = new CancellationTokenSource();
 			// Replace any previous CancellationTokenSource with a new one.
 			DelayActions.AddOrUpdate(
@@ -254,7 +256,7 @@ namespace JocysCom.ClassLibrary
 				// Run this function if the action key already exists.
 				(key, oldSource) =>
 				{
-					System.Diagnostics.Debug.WriteLine("Cancel previous");
+					System.Diagnostics.Debug.WriteLine($"Cancel previous `{className}.{methodName}`");
 					// Cancel previous delayed operation of the same action.
 					oldSource?.Cancel();
 					// Return new token.
@@ -267,7 +269,7 @@ namespace JocysCom.ClassLibrary
 				// If new delayed operation was started then return.
 				if (source.Token.IsCancellationRequested)
 					return;
-				System.Diagnostics.Debug.WriteLine("Invoke");
+				System.Diagnostics.Debug.WriteLine($"Invoke `{className}.{methodName}`");
 				action.DynamicInvoke(args);
 			}
 		}

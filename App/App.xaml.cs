@@ -214,8 +214,6 @@ namespace JocysCom.VS.AiCompanion
 		private static Thread _splashThread;
 		private static SplashScreenWindow _splashScreen;
 
-
-
 		private void StartSplashScreen()
 		{
 			_splashScreen = new SplashScreenWindow();
@@ -240,8 +238,8 @@ namespace JocysCom.VS.AiCompanion
 						System.Windows.Threading.Dispatcher.ExitAllFrames();
 					}), System.Windows.Threading.DispatcherPriority.Background);
 				}));
-
-				_splashThread.Join();
+				// Comment this line to prevent the app from freezing while in debugging.
+				//_splashThread.Join();
 				_splashThread = null;
 			}
 		}

@@ -17,7 +17,7 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 
 
-	public InfoControl()
+		public InfoControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
@@ -192,17 +192,6 @@ namespace JocysCom.ClassLibrary.Controls
 		private readonly object TasksLock = new object();
 		public readonly BindingList<object> Tasks = new BindingList<object>();
 
-		//private void InitRotation()
-		//{
-		//	// Initialize rotation
-		//	_RotateTransform = new RotateTransform();
-		//	BusyIcon.RenderTransform = _RotateTransform;
-		//	BusyIcon.RenderTransformOrigin = new Point(0.5, 0.5);
-		//	RotateTimer = new System.Timers.Timer();
-		//	RotateTimer.Interval = 25;
-		//	RotateTimer.Elapsed += RotateTimer_Elapsed;
-		//}
-
 		/// <summary>Activate busy spinner.</summary>
 		public void AddTask(object name)
 		{
@@ -233,31 +222,13 @@ namespace JocysCom.ClassLibrary.Controls
 				BusyIcon.Visibility = Visibility.Visible;
 				RightIcon.Visibility = Visibility.Hidden;
 				storyboardBusyIcon.Begin();
-				//RotateTimer.Start();
 			}
 			else
 			{
 				storyboardBusyIcon.Pause();
-				//RotateTimer.Stop();
 				BusyIcon.Visibility = Visibility.Hidden;
 				RightIcon.Visibility = Visibility.Visible;
 			}
-		}
-
-		RotateTransform _RotateTransform;
-		System.Timers.Timer RotateTimer;
-
-		private void RotateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			if (RightIcon.Dispatcher.HasShutdownStarted)
-				return;
-#pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
-			RightIcon.Dispatcher.Invoke(() =>
-#pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
-			{
-				var angle = (_RotateTransform.Angle + 2) % 360;
-				_RotateTransform.Angle = angle;
-			});
 		}
 
 		#endregion

@@ -122,6 +122,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_File_Name => FindResource(nameof(main_File_Name));
         public static string main_Files => FindResource(nameof(main_Files));
         public static string main_Format_Code => FindResource(nameof(main_Format_Code));
+        public static string main_Gender => FindResource(nameof(main_Gender));
         public static string main_GitHub_Project => FindResource(nameof(main_GitHub_Project));
         public static string main_Help => FindResource(nameof(main_Help));
         public static string main_IconExperience_License => FindResource(nameof(main_IconExperience_License));
@@ -139,6 +140,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_List_IsEnabled => FindResource(nameof(main_List_IsEnabled));
         public static string main_List_IsReadOnly => FindResource(nameof(main_List_IsReadOnly));
         public static string main_Lists_Feature_Description => FindResource(nameof(main_Lists_Feature_Description));
+        public static string main_Locale => FindResource(nameof(main_Locale));
         public static string main_Log => FindResource(nameof(main_Log));
         public static string main_MaiAccounts_Feature_Description => FindResource(nameof(main_MaiAccounts_Feature_Description));
         public static string main_Mail => FindResource(nameof(main_Mail));
@@ -236,6 +238,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Visual_Studio_Extension_Options => FindResource(nameof(main_Visual_Studio_Extension_Options));
         public static string main_Voice => FindResource(nameof(main_Voice));
         public static string main_Voices => FindResource(nameof(main_Voices));
+        public static string main_Voice_Type => FindResource(nameof(main_Voice_Type));
         public static string main_VsExtensionFeatureMessage => FindResource(nameof(main_VsExtensionFeatureMessage));
         public static string main_VsExtensionVersionMessage => FindResource(nameof(main_VsExtensionVersionMessage));
     }

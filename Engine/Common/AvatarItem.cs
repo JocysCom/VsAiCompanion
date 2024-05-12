@@ -28,6 +28,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string VoiceName { get => _VoiceName; set => SetProperty(ref _VoiceName, value); }
 		string _VoiceName;
 
+
+		[DefaultValue(null)]
+		public string VoiceLanguage { get => _VoiceLanguage; set => SetProperty(ref _VoiceLanguage, value); }
+		string _VoiceLanguage;
+
 		[DefaultValue(null)]
 		public BindingList<string> VoiceNames
 		{

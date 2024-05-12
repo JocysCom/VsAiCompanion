@@ -6,6 +6,7 @@ using System.Media;
 using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace JocysCom.VS.AiCompanion.Engine.Speech
 {
@@ -68,7 +69,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 
 		public async Task Synthesize(string text, bool useSsml = false, bool useCache = false)
 		{
-			var newData = await _Synthesize(text, useSsml, useCache);
+			var updatedText = UpdateToViseme(text, Config.SpeechSynthesisVoiceName);
+			var newData = await _Synthesize(updatedText, true, useCache);
 			if (newData)
 				ClassLibrary.Runtime.Serializer.SerializeToXmlFile(AudioInfo, AudioInfoPath);
 		}
@@ -149,6 +151,71 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 				string responseBody = await response.Content.ReadAsStringAsync();
 				List<VoiceItem> voiceDetails = System.Text.Json.JsonSerializer.Deserialize<List<VoiceItem>>(responseBody);
 				return voiceDetails;
+			}
+		}
+
+		/// <summary>
+		/// Update to Speech Synthesis Markup Language Version 1.0 with Viseme and Shapes.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="voiceName"></param>
+		/// <returns></returns>
+		public static string UpdateToViseme(string text, string voiceName)
+		{
+			// Define namespaces
+			XNamespace ns = "http://www.w3.org/2001/10/synthesis";
+			XNamespace mstts = "http://www.w3.org/2001/mstts";
+			// Create the root element <speak> with necessary attributes
+			XElement speakElement = new XElement(ns + "speak",
+				new XAttribute("version", "1.0"),
+				new XAttribute(XNamespace.Xmlns + "mstts", mstts.NamespaceName),
+				new XAttribute(XNamespace.Xml + "lang", "en-US"));
+			// Create the <voice> element with the provided voiceName
+			XElement voiceElement = new XElement(ns + "voice",
+				new XAttribute("name", voiceName));
+			// Add <mstts:viseme> element
+			XElement visemeElement = new XElement(mstts + "viseme",
+				new XAttribute("type", "FacialExpression"));
+			// Check if text is plain text or XML
+			if (IsXml(text))
+			{
+				try
+				{
+					// Parse the XML content and extract inner text
+					XElement textElement = XElement.Parse(text);
+					voiceElement.Add(visemeElement);
+					voiceElement.Add(textElement.Nodes());
+				}
+				catch (Exception)
+				{
+					// In case of parsing error, treat as plain text
+					voiceElement.Add(visemeElement);
+					voiceElement.Add(text);
+				}
+			}
+			else
+			{
+				// If plain text, just add the text
+				voiceElement.Add(visemeElement);
+				voiceElement.Add(text);
+			}
+			// Construct the final XML
+			speakElement.Add(voiceElement);
+			return speakElement.ToString();
+		}
+
+		private static bool IsXml(string text)
+		{
+			try
+			{
+				// Attempt to parse text as XML
+				XElement.Parse(text);
+				return true;
+			}
+			catch
+			{
+				// If parsing fails, it's not valid XML
+				return false;
 			}
 		}
 

@@ -63,11 +63,19 @@
 						SelectionChanged="AiServicesComboBox_SelectionChanged" />
 					<Label VerticalAlignment="Center" Content="{StaticResource main_Voice}" />
 					<ComboBox
+						Name="VoiceLanguageComboBox"
+						MinWidth="64"
+						x:FieldModifier="public"
+						ItemsSource="{Binding VoiceLanguages, ElementName=This}"
+						SelectedValue="{Binding VoiceLanguage}"
+						SelectionChanged="VoiceLanguageComboBox_SelectionChanged" />
+					<ComboBox
 						Name="VoiceNameComboBox"
 						MinWidth="128"
 						x:FieldModifier="public"
 						ItemsSource="{Binding VoiceNames}"
-						SelectedValue="{Binding VoiceName}" />
+						SelectedValue="{Binding VoiceName}"
+						SelectionChanged="VoiceNameComboBox_SelectionChanged" />
 					<Button Name="VoiceNamesRefreshButton" Margin="3,0,3,0" Click="VoiceNamesRefreshButton_Click">
 						<StackPanel>
 							<ContentControl Content="{StaticResource Icon_Refresh}" />

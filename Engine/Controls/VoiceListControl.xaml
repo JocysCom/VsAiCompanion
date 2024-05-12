@@ -62,16 +62,36 @@
 					Width="Auto"
 					Binding="{Binding IsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					CanUserSort="False"
-					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
 					ElementStyle="{StaticResource CheckBoxCell_Default}"
 					IsThreeState="False" />
 				<DataGridTextColumn
-					x:Name="KeyColumn"
+					x:Name="LocaleNameColumn"
 					Width="Auto"
-					Binding="{Binding Name}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
+					Binding="{Binding LocaleName}"
+					CanUserSort="False"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{StaticResource main_Locale}" />
+				<DataGridTextColumn
+					x:Name="GenderColumn"
+					Width="Auto"
+					Binding="{Binding Gender}"
+					CanUserSort="False"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{StaticResource main_Gender}" />
+				<DataGridTextColumn
+					x:Name="DisplayNameColumn"
+					Width="Auto"
+					Binding="{Binding DisplayName}"
+					CanUserSort="False"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="{StaticResource main_Name}" />
+				<DataGridTextColumn
+					x:Name="VoiceTypeColumn"
+					Width="Auto"
+					Binding="{Binding VoiceType}"
+					CanUserSort="False"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{StaticResource main_Voice_Type}" />
 				<DataGridTextColumn
 					Width="*"
 					EditingElementStyle="{StaticResource TextBoxCell}"

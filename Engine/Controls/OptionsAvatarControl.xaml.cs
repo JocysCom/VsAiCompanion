@@ -22,13 +22,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated;
+			Global.VoicesUpdated += Global_VoicesUpdated;
 			UpdateAiServices();
+			UpdateVoiceLanguages();
 		}
 
 		public AvatarItem Item
 		{
 			get => Global.AppSettings.AiAvatar;
 		}
+
+		#region Update AI Services
 
 		private void Global_OnAiServicesUpdated(object sender, System.EventArgs e)
 			=> UpdateAiServices();
@@ -42,6 +46,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				.ToList();
 			CollectionsHelper.Synchronize(services, AiServices);
 		}
+
+		#endregion
+
+		#region Update Voice Languages
+
+		public ObservableCollection<string> VoiceLanguages { get; set; } = new ObservableCollection<string>();
+
+		private void Global_VoicesUpdated(object sender, EventArgs e)
+		{
+		}
+
+		public void UpdateVoiceLanguages()
+		{
+			var services = Global.Voices.Items
+				.Select(x => x.LocaleName)
+				.Distinct()
+				.OrderBy(x => x)
+				.ToList();
+			CollectionsHelper.Synchronize(services, VoiceLanguages);
+		}
+
+		#endregion
 
 		private void AiServicesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -155,6 +181,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogPanel.Add(ex.ToString() + "\r\n");
 			}
 			Global.MainControl.InfoPanel.RemoveTask(task);
+		}
+
+		private void VoiceNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
+		}
+
+		private void VoiceLanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
 		}
 
 		//private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
