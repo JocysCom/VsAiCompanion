@@ -177,6 +177,9 @@
 		<None Remove="Resources\Images\AvatarBackground.png" />
 		<None Remove="Resources\Images\AvatarBackgroundMask.png" />
 		<None Remove="Resources\Images\AvatarMouth.png" />
+		<None Remove="Resources\Images\BrainGlow.png" />
+		<None Remove="Resources\Images\EyeBackground.jpg" />
+		<None Remove="Resources\Images\EyeIris.png" />
 		<None Remove="Resources\Images\JawImage.png" />
 		<None Remove="Resources\Images\LipBottom.png" />
 		<None Remove="Resources\Images\LipBottomBackground.png" />
@@ -283,6 +286,9 @@
 		<Resource Include="Resources\Images\AvatarBackground.jpg" />
 		<Resource Include="Resources\Images\AvatarBackgroundMask.png" />
 		<Resource Include="Resources\Images\AvatarMouth.png" />
+		<Resource Include="Resources\Images\EyeBackground.jpg" />
+		<Resource Include="Resources\Images\EyeIris.png" />
+		<Resource Include="Resources\Images\BrainGlow.png" />
 		<Resource Include="Resources\Images\JawImage.png" />
 		<Resource Include="Resources\Images\LipBottom.png" />
 		<Resource Include="Resources\Images\LipBottomBackground.png" />

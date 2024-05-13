@@ -30,6 +30,45 @@
 					<Grid>
 						<Image Width="1080" Height="1920" Source="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/AvatarBackground.jpg" />
 						<Canvas Name="AuraCanvas" RenderOptions.BitmapScalingMode="LowQuality" />
+						<Image
+							Width="254"
+							Height="20"
+							Margin="410,746,0,0"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top"
+							Source="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/EyeBackground.jpg" />
+
+
+						<Grid
+							Width="100"
+							Height="100"
+							Margin="411,706,0,0"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top"
+							Opacity="0.1"
+							Visibility="Collapsed">
+							<Image
+								Name="EyeIrisLImage"
+								Width="40"
+								Height="40"
+								Source="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/EyeIris.png" />
+						</Grid>
+
+						<Grid
+							Width="100"
+							Height="100"
+							Margin="564,706,0,0"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top"
+							Opacity="0.1"
+							Visibility="Collapsed">
+							<Image
+								Name="EyeIrisRImage"
+								Width="40"
+								Height="40"
+								Source="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/EyeIris.png" />
+						</Grid>
+
 						<Image Width="1080" Height="1920" Source="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/AvatarBackground.jpg">
 							<Image.OpacityMask>
 								<ImageBrush ImageSource="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/AvatarBackgroundMask.png" />
@@ -207,6 +246,16 @@
 							<Image Source="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/JawImage.png" Stretch="Fill" />
 						</Grid>
 
+						<Image
+							Name="GlowWhiteImage"
+							Width="500"
+							Height="500"
+							Margin="290,362,0,0"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top"
+							Opacity="0"
+							Source="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/BrainGlow.png" />
+
 						<Viewbox
 							Height="400"
 							MaxWidth="1080"
@@ -216,17 +265,27 @@
 							Visibility="Collapsed">
 							<StackPanel>
 								<TextBlock
-									Name="LetterTextBlock"
+									Name="LetterAnimationTextBlock"
 									HorizontalAlignment="Center"
 									FontSize="8"
 									Foreground="White"
 									Text="*" />
 								<TextBlock
-									Name="PathTextBlock"
+									Name="PathAnimationTextBlock"
 									HorizontalAlignment="Center"
+									Background="Black"
 									FontSize="1"
 									Foreground="LightGoldenrodYellow"
-									Text="M 715,510 C 930,510 1170,510 1385,510 1170,510 930,510 715,510 Z" />
+									Text="M 715,510 C 930,510 1170,510 1385,510 1170,510 930,510 715,510 Z"
+									Visibility="Collapsed" />
+								<TextBlock
+									Name="IrisAnimationTextBlock"
+									Padding="1,0,1,0.5"
+									HorizontalAlignment="Center"
+									Background="Black"
+									FontSize="3"
+									Foreground="LightGoldenrodYellow"
+									Text="0,0,0,0" />
 							</StackPanel>
 						</Viewbox>
 

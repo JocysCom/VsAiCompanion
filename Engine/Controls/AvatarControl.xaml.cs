@@ -23,6 +23,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			InitializeComponent();
 			CreateBackgroundAnimations();
+			CreateGlowAnimation();
 			CreateLetterToPathDictionary();
 			CreateVisemeToPathDictionary();
 			SetMeshGeometry3D();
@@ -33,16 +34,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			storyboardLips.Children.Add(animation_PTH);
 			storyboardLips.Children.Add(animation_CHI);
 			storyboardLips.Children.Add(animation_BAR);
+			storyboardLips.Children.Add(animation_EYE);
 			storyboardLips.CurrentTimeInvalidated += StoryboardLips_CurrentTimeInvalidated;
 			storyboardLips.Completed += StoryboardLipsCompleted;
-			Storyboard.SetTarget(animation_TXT, LetterTextBlock);
+			Storyboard.SetTarget(animation_TXT, LetterAnimationTextBlock);
 			Storyboard.SetTargetProperty(animation_TXT, new PropertyPath("Text"));
-			Storyboard.SetTarget(animation_PTH, PathTextBlock);
+			Storyboard.SetTarget(animation_PTH, PathAnimationTextBlock);
 			Storyboard.SetTargetProperty(animation_PTH, new PropertyPath("Text"));
 			Storyboard.SetTarget(animation_CHI, JawGrid);
 			Storyboard.SetTargetProperty(animation_CHI, new PropertyPath("Height"));
 			Storyboard.SetTarget(animation_BAR, AnimationProgressBar);
 			Storyboard.SetTargetProperty(animation_BAR, new PropertyPath("Width"));
+			Storyboard.SetTarget(animation_EYE, IrisAnimationTextBlock);
+			Storyboard.SetTargetProperty(animation_EYE, new PropertyPath("Text"));
 			// Uploaded and Downloaded storyboard and animations.
 			storyboardUploaded.Completed += StoryboardUploadedCompleted;
 			storyboardDownloaded.Completed += StoryboardDownloadedCompleted;
@@ -93,7 +97,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (mediaPlayer.NaturalDuration.HasTimeSpan)
 			{
 				// Create lip animation from Viseme dictionary.
-				CreateLipAnimationFromVisemeDictionary(AudioData.Viseme);
+				CreateLipAnimationFromVisemeDictionary(AudioData);
 
 				// Create lip animation from text string (and audio file duration).
 				// CreateLipAnimationFromTextString(mediaPlayer.NaturalDuration.TimeSpan, audioText);
@@ -101,6 +105,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Play audio and animation.
 				mediaPlayer.Play();
 				storyboardLips.Begin();
+				PlayGlowAnimation();
 			}
 		}
 
@@ -145,9 +150,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			animation_CHI.KeyFrames.Clear();
 			animation_TXT.KeyFrames.Clear();
 			animation_PTH.KeyFrames.Clear();
+			animation_BAR.KeyFrames.Clear();
 			MouthPath.Data = MPath_0.Data;
 			SetLips(MPath_0.Data);
 			MediaButtonPlay.Visibility = Visibility.Visible;
+			StopGlowAnimation();
+		}
+
+		public void PlayGlowAnimation()
+		{
+			animation_GLW.Completed -= storyboardGlowAnimationStop;
+			animation_GLW.Completed += storyboardGlowAnimationContinue;
+			storyboardGlow.Begin();
+		}
+		public void StopGlowAnimation()
+		{
+			animation_GLW.Completed -= storyboardGlowAnimationContinue;
+			animation_GLW.Completed += storyboardGlowAnimationStop;
+		}
+
+		private void storyboardGlowAnimationStop(object sender, EventArgs e)
+		{
+			storyboardGlow.Seek(TimeSpan.FromSeconds(0));
+			storyboardGlow.Stop();
+		}
+
+		private void storyboardGlowAnimationContinue(object sender, EventArgs e)
+		{
+			storyboardGlow.Seek(TimeSpan.FromSeconds(0));
+			storyboardGlow.Begin();
 		}
 
 		MediaPlayer mediaPlayer = new MediaPlayer();
@@ -162,7 +193,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		StringAnimationUsingKeyFrames animation_PTH = new StringAnimationUsingKeyFrames();
 		DoubleAnimationUsingKeyFrames animation_CHI = new DoubleAnimationUsingKeyFrames();
 		DoubleAnimationUsingKeyFrames animation_BAR = new DoubleAnimationUsingKeyFrames();
+		StringAnimationUsingKeyFrames animation_EYE = new StringAnimationUsingKeyFrames();
+		DoubleAnimationUsingKeyFrames animation_GLW = new DoubleAnimationUsingKeyFrames();
 		// Storyboards for animations.
+		Storyboard storyboardGlow = new Storyboard();
 		Storyboard storyboardBackground = new Storyboard();
 		Storyboard storyboardLips = new Storyboard();
 		Storyboard storyboardUploaded = new Storyboard();
@@ -276,8 +310,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// VisemeID, Text, Path, Duration.
 		List<(string, Path, double)> lipAnimationList = new List<(string, Path, double)>();
 
-		private void CreateLipAnimationFromVisemeDictionary(List<VisemeItem> visemeList)
+		private void CreateLipAnimationFromVisemeDictionary(AudioFileInfo audioFileInfo)
 		{
+			var visemeList = audioFileInfo.Viseme;
+			var blendShapeList = AudioData.Shapes;
+
 			lipAnimationList.Clear();
 			foreach (var item in visemeList)
 			{
@@ -286,47 +323,45 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					lipAnimationList.Add((item.VisemeId.ToString(), visemeToPathDictionary[item.VisemeId], item.Offset));
 				}
 			}
-			CreateLipAnimationKeys(lipAnimationList);
+			CreateLipAnimationKeys(lipAnimationList, blendShapeList);
 		}
 
-		private void CreateLipAnimationFromTextString(TimeSpan audioDuration, string audioText)
+		//private void CreateLipAnimationFromTextString(TimeSpan audioDuration, string audioText)
+		//{
+		//	var audioTextList = ConvertStringToList(audioText);
+
+		//	var textList = new List<(string, int)>();
+		//	double textDuration = 0;
+		//	// Text to Viseme.
+		//	foreach (var letter in audioTextList)
+		//	{
+		//		if (letterToPathDictionary.ContainsKey(letter))
+		//		{
+		//			textList.Add((letter, letterToPathDictionary[letter].Item2));
+		//			textDuration += letterToPathDictionary[letter].Item2;
+		//		}
+		//		else
+		//		{
+		//			textList.Add((letter, letterToPathDictionary["*"].Item2));
+		//			textDuration += letterToPathDictionary["*"].Item2;
+		//		}
+		//	}
+		//	double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
+
+		//	// Create list (VisemeID, Text, Path, Duration).
+		//	double timeEnd = 0;
+		//	lipAnimationList.Clear();
+		//	//double listDuration = 0;
+		//	foreach (var (text, duration) in textList)
+		//	{
+		//		timeEnd = timeEnd + duration * adjustmentFactor;
+		//		lipAnimationList.Add((text, letterToPathDictionary[text].Item1, timeEnd));
+		//	}
+		//	CreateLipAnimationKeys(lipAnimationList);
+		//}
+
+		private void CreateLipAnimationKeys(List<(string, Path, double)> lipAnimationList, List<BlendShape> blendShapeList)
 		{
-			var audioTextList = ConvertStringToList(audioText);
-
-			var textList = new List<(string, int)>();
-			double textDuration = 0;
-			// Text to Viseme.
-			foreach (var letter in audioTextList)
-			{
-				if (letterToPathDictionary.ContainsKey(letter))
-				{
-					textList.Add((letter, letterToPathDictionary[letter].Item2));
-					textDuration += letterToPathDictionary[letter].Item2;
-				}
-				else
-				{
-					textList.Add((letter, letterToPathDictionary["*"].Item2));
-					textDuration += letterToPathDictionary["*"].Item2;
-				}
-			}
-			double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
-
-			// Create list (VisemeID, Text, Path, Duration).
-			double timeEnd = 0;
-			lipAnimationList.Clear();
-			//double listDuration = 0;
-			foreach (var (text, duration) in textList)
-			{
-				timeEnd = timeEnd + duration * adjustmentFactor;
-				lipAnimationList.Add((text, letterToPathDictionary[text].Item1, timeEnd));
-			}
-			CreateLipAnimationKeys(lipAnimationList);
-		}
-
-		private void CreateLipAnimationKeys(List<(string, Path, double)> lipAnimationList)
-		{
-
-
 			// Reset values.
 			double timeNow = 0;
 			double animationBar = 0;
@@ -355,6 +390,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				animation_BAR.KeyFrames.Add(new DiscreteDoubleKeyFrame(Math.Round(animationBar), TimeSpan.FromMilliseconds(timeEnd)));
 				timeNow = timeEnd;
 			}
+
+			// Create eye iris animations.
+			var irisLMargins = "0,0,0,0";
+			var scaleX = 10M;
+			var scaleY = 3M;
+
+			foreach (var item in blendShapeList)
+			{
+				var startingFrameIndex = item.FrameIndex;
+				var shapes = item.BlendShapes;
+				for (int f = 0; f < shapes.Length; f++)
+				{
+					var frameIndex = startingFrameIndex + f;
+					var frameOffset = (int)(frameIndex * 1000M / 60M);
+					var frameShapes = shapes[f];
+
+					//Convert BlendShapes to left and top Margins: 2 eyeLookDownLeft, 5 eyeLookUpLeft, 4 eyeLookOutLeft, 3 eyeLookInLeft.
+					var eyeLY = Convert.ToInt32((frameShapes[2] - frameShapes[5]) * scaleY).ToString();
+					var eyeLX = Convert.ToInt32((frameShapes[4] - frameShapes[3]) * scaleX).ToString();
+					//Convert BlendShapes to left and top Margins: 9 eyeLookDownRight, 12 eyeLookUpRight, 11 eyeLookOutRight, 10 eyeLookInRight.
+					var eyeRY = Convert.ToInt32((frameShapes[9] - frameShapes[12]) * scaleY).ToString();
+					var eyeRX = Convert.ToInt32((frameShapes[11] - frameShapes[10]) * scaleX).ToString();
+
+					irisLMargins = eyeLX + "," + eyeLY + "," + eyeRX + "," + eyeRY;
+					animation_EYE.KeyFrames.Add(new DiscreteStringKeyFrame(irisLMargins, TimeSpan.FromMilliseconds(frameOffset)));
+				}
+			}
 		}
 
 		private List<double> ExtractNumbersFromPathData(Geometry pathData)
@@ -382,11 +444,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void StoryboardLips_CurrentTimeInvalidated(object sender, EventArgs e)
 		{
-			if (PathTextBlock.Text != null)
+			if (PathAnimationTextBlock.Text != null)
 			{
-				var data = Geometry.Parse(PathTextBlock.Text);
+				var data = Geometry.Parse(PathAnimationTextBlock.Text);
 				MouthPath.Data = data;
 				SetLips(data);
+				SetEmotions();
+			}
+		}
+
+		private void SetEmotions()
+		{
+			var marginString = IrisAnimationTextBlock.Text;
+			string[] parts = marginString.Split(',');
+			if (parts.Length == 4)
+			{
+				try
+				{
+					// Create a new Thickness instance using the parsed integers.
+					EyeIrisLImage.Margin = new Thickness(int.Parse(parts[0]), int.Parse(parts[1]), 0, 0);
+					EyeIrisRImage.Margin = new Thickness(int.Parse(parts[2]), int.Parse(parts[3]), 0, 0);
+				}
+				catch (FormatException fe)
+				{
+					Console.WriteLine("An error occurred while parsing the string: " + fe.Message);
+					// Handle the format exception (e.g., if the string does not contain valid integers).
+				}
 			}
 		}
 
@@ -620,7 +703,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Title = "Avatar",
 					Height = 640,
 					Width = 360,
-					Content = this
+					Background = Brushes.Black,
+					HorizontalContentAlignment = HorizontalAlignment.Center,
+					VerticalContentAlignment = VerticalAlignment.Center,
+					Content = this,
 				};
 				avatarWindow.Closed += AvatarWindow_Closed;
 				AvatarPanelRectangle.Visibility = Visibility.Collapsed;
@@ -811,12 +897,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		// GLOW animation.
+		private void CreateGlowAnimation()
+		{
+			animation_GLW.Completed += storyboardGlowAnimationContinue;
+			animation_GLW.Duration = TimeSpan.FromMilliseconds(2000);
+			animation_GLW.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(0)));
+			animation_GLW.KeyFrames.Add(new LinearDoubleKeyFrame(0.5, TimeSpan.FromMilliseconds(1000)));
+			animation_GLW.KeyFrames.Add(new LinearDoubleKeyFrame(0, TimeSpan.FromMilliseconds(2000)));
+			Storyboard.SetTarget(animation_GLW, GlowWhiteImage);
+			Storyboard.SetTargetProperty(animation_GLW, new PropertyPath("Opacity"));
+			storyboardGlow.Children.Add(animation_GLW);
+		}
+
 		// SPARK animation.
 		private void CreateSparkAnimation(int startMin, int startMax, int duration)
 		{
 			var sizeMax = 100;
 			var sizeMinRandom = 50;
-			var sizeMaxRandom = 80;
+			var sizeMaxRandom = 75;
 			var random = new Random();
 
 			foreach (Canvas canvas in new[] { SparksYellowCanvas, SparksBlueCanvas, SparksBrownCanvas })
