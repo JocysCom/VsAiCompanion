@@ -743,15 +743,18 @@
             Will be used by plugins manager and called by AI.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AISpeak(System.String,System.Boolean)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AISpeak(System.String,System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender},System.String,System.Nullable{System.Boolean})">
             <summary>
             Triggers the AI Avatar to articulate the provided text through speech synthesis. 
             This function must be used by the AI whenever it is required to speak or respond to user queries.
             This direct association with the AI's speech mechanism ensures that all verbal outputs adhere to a consistent and controlled format.
-            The input text should be in Speech Synthesis Markup Language Version 1.0 (SSML 1.0) format to offer enhanced control over the speech characteristics like tone, pitch, and pacing, enabling more human-like and expressive responses.
+            This funtion utilizing Microsoft Azure Speech Service, compatible with Speech Synthesis Markup Language Version 1.0 (SSML 1.0).
+            Use SSML for the input text when supported by the language to refine speech traits such as tone, pitch, and pace for more natural and expressive output.
             </summary>
             <param name="text">String that the AI is expected to vocalize.</param>
-            <param name="isSsml">Text format is the SSML-formatted string.</param>
+            <param name="gender">(optional) Character gender: 'Male', 'Female', 'Neutral'. Default: 'Male'. Default is set by the user.</param>
+            <param name="language">(optional) Language Culture. Use Language[-Location] format. For example: 'en-GB'. Default is set by the user.</param>
+            <param name="isSsml">(optional) Text format is the SSML-formatted string. Default is auto.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.PlayText(System.String,System.String,System.Nullable{JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender},System.String,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>

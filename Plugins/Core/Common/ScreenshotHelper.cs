@@ -148,6 +148,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		private static Canvas canvas = null;
 		private static Window overlayWindow = null;
 
+		private static System.Windows.Shapes.Rectangle[] overlayRectangles = null;
+
 		/// <summary>
 		/// ShowCaptureOverlay method with modifications for semaphore signaling and escape key handling.
 		/// </summary>
@@ -165,45 +167,41 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				Height = SystemParameters.VirtualScreenHeight,
 			};
 
-			Grid overlayGrid = new Grid();
-			for (int i = 0; i < 3; i++)
-			{
-				overlayGrid.RowDefinitions.Add(new RowDefinition());
-				overlayGrid.ColumnDefinitions.Add(new ColumnDefinition());
-			}
-			// Create 8 semi-transparent black rectangles for all cells except the center one
-			for (int row = 0; row < 3; row++)
-			{
-				for (int col = 0; col < 3; col++)
-				{
-					if (row == 1 && col == 1) continue; // Skip the center cell
-					var rect = new System.Windows.Shapes.Rectangle
-					{
-						Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(51, 0, 0, 0)), // 51 out of 255 is roughly 0.2 opacity
-					};
-					Grid.SetRow(rect, row);
-					Grid.SetColumn(rect, col);
-					overlayGrid.Children.Add(rect);
-				}
-			}
-
 			canvas = new Canvas
 			{
-				Background = System.Windows.Media.Brushes.Transparent
+				Background = System.Windows.Media.Brushes.Transparent,
+				Width = SystemParameters.VirtualScreenWidth,
+				Height = SystemParameters.VirtualScreenHeight
 			};
-			Grid.SetRow(canvas, 1);
-			Grid.SetColumn(canvas, 1);
-			overlayGrid.Children.Add(canvas);
-
-			overlayWindow.Content = overlayGrid;
+			overlayWindow.Content = canvas;
 
 			selectionRectangle = new System.Windows.Shapes.Rectangle
 			{
 				Stroke = System.Windows.Media.Brushes.Blue,
 				StrokeThickness = 2,
-				Fill = System.Windows.Media.Brushes.Transparent, // Initially hidden
+				Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(1, 0, 0, 0)),
 				StrokeDashArray = new DoubleCollection { 2, 2 }
 			};
+
+			// Create 4 rectangles, which will cover sides of selection rectangle.
+			// 1st - covers virtual screen above selectionRectangle.
+			// 2nd - covers virtual screen below selectionRectangle.
+			// 3rd - covers virtual screen on the left of selectionRectangle.
+			// 4th - covers virtual screen on the right of selectionRectangle.
+			overlayRectangles = Enumerable.Range(0, 5).Select(x =>
+			{
+				var rect = new System.Windows.Shapes.Rectangle
+				{
+					Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(64, 0, 0, 0)),
+					Width = SystemParameters.VirtualScreenWidth,
+					Height = SystemParameters.VirtualScreenHeight,
+				};
+				Canvas.SetLeft(rect, 0);
+				Canvas.SetTop(rect, 0);
+				canvas.Children.Add(rect);
+				return rect;
+			}).ToArray();
+
 
 			overlayWindow.KeyDown += (sender, e) =>
 			{

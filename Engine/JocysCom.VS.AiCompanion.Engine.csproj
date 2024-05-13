@@ -156,8 +156,11 @@
 		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOff.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Warning.svg" />
+		<Compile Remove="NewFolder\**" />
 		<Compile Remove="Resources\Embeddings\**" />
+		<EmbeddedResource Remove="NewFolder\**" />
 		<EmbeddedResource Remove="Resources\Embeddings\**" />
+		<None Remove="NewFolder\**" />
 		<None Remove="Resources\BuildDate.*" />
 		<None Remove="Resources\Embeddings\**" />
 		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
@@ -245,6 +248,7 @@
 	<ItemGroup>
 		<None Remove="JocysCom\Controls\Chat\ChatListControl.html" />
 		<None Remove="JocysCom\Controls\Chat\ChatListControl\*.*" />
+		<Page Remove="NewFolder\**" />
 		<Page Remove="Resources\Embeddings\**" />
 	</ItemGroup>
 
@@ -319,10 +323,6 @@
 		<Content Include="x86\**\*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="NewFolder\" />
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

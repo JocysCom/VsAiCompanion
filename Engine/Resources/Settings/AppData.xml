@@ -1,6 +1,16 @@
 ﻿<Data Version="2">
   <Items>
     <AppData>
+      <AiAvatar>
+        <AiServiceId>cd558aa2-7583-4760-9816-0582fd88ad1f</AiServiceId>
+        <Message>Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</Message>
+        <VoiceLanguage>English (United States)</VoiceLanguage>
+        <VoiceNames>
+          <string p6:nil="true" xmlns:p6="http://www.w3.org/2001/XMLSchema-instance" />
+          <string p6:nil="true" xmlns:p6="http://www.w3.org/2001/XMLSchema-instance" />
+        </VoiceNames>
+        <Instructions>Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</Instructions>
+      </AiAvatar>
       <UpdateSettings>
         <GitHubCompany>JocysCom</GitHubCompany>
         <GitHubProduct>VsAiCompanion</GitHubProduct>
@@ -20,69 +30,139 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>279.25</Left>
-        <Top>75</Top>
-        <Width>456.5</Width>
-        <Height>407.75</Height>
+        <Left>270</Left>
+        <Top>60</Top>
+        <Width>916</Width>
+        <Height>819</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
-      <AiModelData>
-        <ListSelection />
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </AiModelData>
-      <AiServiceData>
-        <ListSelection>
-          <string>Open AI</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </AiServiceData>
-      <TaskData>
-        <GridSplitterPosition>0.23258426966292134</GridSplitterPosition>
-        <ListSelection>
-          <string>AI - Chat (GPT-3.5)</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </TaskData>
-      <TemplateData>
-        <GridSplitterPosition>0.2292134831460674</GridSplitterPosition>
-        <ListSelection>
-          <string>AI - Chat</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </TemplateData>
-      <FineTuningData>
-        <GridSplitterPosition>0.18651685393258427</GridSplitterPosition>
-        <ListSelection>
-          <string>Doughnut Dynamics</string>
-        </ListSelection>
-        <ListSelectedIndex>1</ListSelectedIndex>
-      </FineTuningData>
-      <AssistantData>
-        <ListSelection />
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </AssistantData>
-      <ListsData>
-        <ListSelection>
-          <string>Persona - John Smith</string>
-        </ListSelection>
-        <ListSelectedIndex>5</ListSelectedIndex>
-      </ListsData>
-      <EmbeddingsData>
-        <GridSplitterPosition>0.22134831460674156</GridSplitterPosition>
-        <ListSelection>
-          <string>CyberNet Solutions Portable</string>
-        </ListSelection>
-        <ListSelectedIndex>1</ListSelectedIndex>
-      </EmbeddingsData>
-      <MailAccountData>
-        <GridSplitterPosition>0.266</GridSplitterPosition>
-        <ListSelection>
-          <string>john.smith.ai@company.com</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </MailAccountData>
+      <PanelSettingsList>
+        <TaskSettings>
+          <ListSelection />
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <GridSplitterPosition>0.2292134831460674</GridSplitterPosition>
+          <ListSelection>
+            <string>AI - Chat (GPT-3.5)</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <GridSplitterPosition>0.23258426966292134</GridSplitterPosition>
+          <ListSelection>
+            <string>AI - Chat</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <GridSplitterPosition>0.19325842696629214</GridSplitterPosition>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection />
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <GridSplitterPosition>0.22134831460674156</GridSplitterPosition>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>API - Demo</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>Open AI</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection />
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection />
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection />
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Attachment</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Task</ItemType>
+          <GridSplitterPosition>0.23146067415730337</GridSplitterPosition>
+          <ListSelection>
+            <string>AI - Chat (GPT-3.5)</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Template</ItemType>
+          <ListSelection>
+            <string>AI - Chat</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>FineTuning</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Assistant</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Embeddings</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Lists</ItemType>
+          <ListSelection>
+            <string>API - Demo</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>AiService</ItemType>
+          <ListSelection>
+            <string>Open AI</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>AiModel</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>MailAccount</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Voice</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+      </PanelSettingsList>
       <AiServices>
         <AiService>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
@@ -129,7 +209,150 @@
           <BaseUrl>https://api.cognitive.microsoft.com/v1/</BaseUrl>
           <ModelFilter />
         </AiService>
+        <AiService>
+          <ServiceType>Azure</ServiceType>
+          <Id>cd558aa2-7583-4760-9816-0582fd88ad1f</Id>
+          <Name>Speech Service</Name>
+          <IsAzureOpenAI>true</IsAzureOpenAI>
+          <BaseUrl>https://westus.api.cognitive.microsoft.com/</BaseUrl>
+          <Region>westus</Region>
+        </AiService>
       </AiServices>
+      <AiModels>
+        <AiModel>
+          <Id>99d65d61-0850-2a8b-716d-794cacd0adc5</Id>
+          <Name>gpt-3.5-turbo</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>4096</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>be400a24-6e1e-76ae-51dc-51606130b4a7</Id>
+          <Name>gpt-3.5-turbo-0125</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>4096</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>c890f3bd-89a7-961a-17b1-eeff0a4b3563</Id>
+          <Name>gpt-3.5-turbo-0301</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>4096</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>0e7bceb5-2637-5805-9c13-a7e06ed7104f</Id>
+          <Name>gpt-3.5-turbo-0613</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>4096</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>4a24de48-2695-11fc-6be0-f472935a26ea</Id>
+          <Name>gpt-3.5-turbo-1106</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>16384</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
+          <Name>gpt-3.5-turbo-16k</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>16384</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>9a24cc72-9295-5613-cd99-710da3444340</Id>
+          <Name>gpt-3.5-turbo-16k-0613</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>16384</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>c76eedd2-0c01-46e5-ee95-7cc6e874c857</Id>
+          <Name>gpt-3.5-turbo-instruct</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>4096</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>99b6cad8-4a63-4f05-8e95-51d5380f858c</Id>
+          <Name>gpt-3.5-turbo-instruct-0914</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>4096</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>4f00f393-889d-f80c-7432-9e44718d2b71</Id>
+          <Name>gpt-4</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>090ae0ea-d55a-8154-f902-93f62dfefdef</Id>
+          <Name>gpt-4-0125-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>f936b171-10ea-daeb-f3ba-6838c950bbc2</Id>
+          <Name>gpt-4-0613</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>f10f16c8-1139-a228-1c92-04e57df05860</Id>
+          <Name>gpt-4-1106-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>a6597773-9d59-c7c7-7bce-36488b6fed21</Id>
+          <Name>gpt-4-1106-vision-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>8987a0dc-b537-7d1d-0331-f6f4e0069da6</Id>
+          <Name>gpt-4-turbo-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>93f76239-808d-4181-c5b7-45ea064bf96d</Id>
+          <Name>gpt-4-vision-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>112d8d27-930b-701c-b1fb-e9015fabaf91</Id>
+          <Name>text-embedding-3-large</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>7da1e073-1f01-98bf-07d2-46b8cf19d1d0</Id>
+          <Name>text-embedding-3-small</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
+          <Name>text-embedding-ada-002</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+      </AiModels>
       <MailAccounts />
       <Plugins>
         <PluginItem>
@@ -319,6 +542,10 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AISpeak</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.PlayText</Id>
         </PluginItem>
         <PluginItem>
@@ -328,6 +555,10 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureCameraImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -382,141 +613,6 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems</Id>
         </PluginItem>
       </Plugins>
-      <AiModels>
-        <AiModel>
-          <Id>99d65d61-0850-2a8b-716d-794cacd0adc5</Id>
-          <Name>gpt-3.5-turbo</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>4096</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>be400a24-6e1e-76ae-51dc-51606130b4a7</Id>
-          <Name>gpt-3.5-turbo-0125</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>4096</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>c890f3bd-89a7-961a-17b1-eeff0a4b3563</Id>
-          <Name>gpt-3.5-turbo-0301</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>4096</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>0e7bceb5-2637-5805-9c13-a7e06ed7104f</Id>
-          <Name>gpt-3.5-turbo-0613</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>4096</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>4a24de48-2695-11fc-6be0-f472935a26ea</Id>
-          <Name>gpt-3.5-turbo-1106</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>16384</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
-          <Name>gpt-3.5-turbo-16k</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>16384</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>9a24cc72-9295-5613-cd99-710da3444340</Id>
-          <Name>gpt-3.5-turbo-16k-0613</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>16384</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>c76eedd2-0c01-46e5-ee95-7cc6e874c857</Id>
-          <Name>gpt-3.5-turbo-instruct</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>4096</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>99b6cad8-4a63-4f05-8e95-51d5380f858c</Id>
-          <Name>gpt-3.5-turbo-instruct-0914</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>4096</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>4f00f393-889d-f80c-7432-9e44718d2b71</Id>
-          <Name>gpt-4</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>090ae0ea-d55a-8154-f902-93f62dfefdef</Id>
-          <Name>gpt-4-0125-preview</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>f936b171-10ea-daeb-f3ba-6838c950bbc2</Id>
-          <Name>gpt-4-0613</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>f10f16c8-1139-a228-1c92-04e57df05860</Id>
-          <Name>gpt-4-1106-preview</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>a6597773-9d59-c7c7-7bce-36488b6fed21</Id>
-          <Name>gpt-4-1106-vision-preview</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>8987a0dc-b537-7d1d-0331-f6f4e0069da6</Id>
-          <Name>gpt-4-turbo-preview</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>93f76239-808d-4181-c5b7-45ea064bf96d</Id>
-          <Name>gpt-4-vision-preview</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>112d8d27-930b-701c-b1fb-e9015fabaf91</Id>
-          <Name>text-embedding-3-large</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>7da1e073-1f01-98bf-07d2-46b8cf19d1d0</Id>
-          <Name>text-embedding-3-small</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
-          <Name>text-embedding-ada-002</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-      </AiModels>
       <MarkdownLanguageNames>ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex,AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL,BBCode,BBJ,BNF,BQN,BSL,Bash,Basic,Batch,Bicep,Birb,Bison,Brainfuck,BrightScript,Bro,C,CFScript,CIL,CMake,COBOL,CSHTML,CSP,CSS,CSS-Extras,CSV,Chaiscript,CilkC,CilkCpp,Clike,Clojure,CoffeeScript,Concurnas,Cooklang,Coq,Cpp,Crystal,Csharp,Cue,Cypher,D,DAX,DNS-Zone-File,Dart,DataWeave,Dhall,Diff,Django,Docker,Dot,EBNF,EJS,ERB,EditorConfig,Eiffel,Elixir,Elm,Erlang,Excel-Formula,FORTRAN,FTL,Factor,False,Firestore-Security-Rules,Flow,Fsharp,GAP,GCode,GEDCOM,GLSL,GML,GN,GdScript,Gettext,Gherkin,Git,Go,Go-Module,Gradle,Graphql,Groovy,HCL,HLSL,HPKP,HSTS,HTTP,Haml,Handlebars,Haskell,Haxe,Hoon,ICU-Message-Format,IECSt,INI,IchigoJam,Icon,Idris,Ignore,Inform7,Io,J,JEXL,JQ,JS-Extras,JS-Templates,JSDoc,JSON,JSON5,JSONP,JSStackTrace,JSX,Java,JavaDoc,JavaDocLike,JavaScript,JavaStackTrace,Jolie,Julia,KeepALIVED,Keyman,Kotlin,Kumir,Kusto,LLVM,LOLCode,Latex,Latte,Less,LilyPond,Linker-Script,Liquid,Lisp,LiveScript,Log,Lua,MAXScript,MEL,Magma,Makefile,Markdown,Markup,Markup-Templating,Mata,Matlab,Mermaid,MetaFont,Mizar,MongoDB,Monkey,MoonScript,N1QL,N4JS,NASM,NSIS,Nand2Tetris-HDL,Naniscript,Neon,Nevod,Nginx,Nim,Nix,OCaml,ObjectiveC,Odin,OpenCL,OpenQASM,Oz,PCAxis,PHP,PHP-Extras,PHPDoc,PLSQL,PSL,PariGP,Parser,Pascal,PascalIGO,PeopleCode,Perl,Plant-UML,PowerQuery,PowerShell,Processing,Prolog,PromQL,Properties,Protobuf,Pug,Puppet,Pure,PureBasic,PureScript,Python,Q,QML,QSharp,Qore,R,REST,RIP,Racket,Reason,Regex,Rego,RenPY,Rescript,Roboconf,RobotFramework,Ruby,Rust,SAS,SCSS,SML,SPARQL,SQF,SQL,Sass,Scala,Scheme,Shell-Session,Smali,SmallTalk,Smarty,Solidity,Solution-File,Soy,Splunk-SPL,Squirrel,Stan,Stata,Stylus,SuperCollider,Swift,Systemd,T4-CS,T4-Templating,T4-VB,TAP,TOML,TSX,TT2,Tcl,Textile,Tremor,Turtle,Twig,TypeScript,TypoScript,UORazor,URI,UnrealScript,V,VBNet,VHDL,Vala,Velocity,Verilog,Vim,Visual-Basic,WASM,WGSL,WarpScript,Web-IDL,Wiki,Wolfram,Wren,XML,XQuery,Xeora,Xojo,YAML,Yang,ZigetLua</MarkdownLanguageNames>
     </AppData>
   </Items>

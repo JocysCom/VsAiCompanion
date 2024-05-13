@@ -20,20 +20,23 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <summary>
 		/// Will be used by plugins manager and called by AI.
 		/// </summary>
-		public Func<string, bool, Task<OperationResult<string>>> AISpeakCallback { get; set; }
+		public Func<string, VoiceGender?, string, bool?, Task<OperationResult<string>>> AISpeakCallback { get; set; }
 
 		/// <summary>
 		/// Triggers the AI Avatar to articulate the provided text through speech synthesis. 
 		/// This function must be used by the AI whenever it is required to speak or respond to user queries.
 		/// This direct association with the AI's speech mechanism ensures that all verbal outputs adhere to a consistent and controlled format.
-		/// The input text should be in Speech Synthesis Markup Language Version 1.0 (SSML 1.0) format to offer enhanced control over the speech characteristics like tone, pitch, and pacing, enabling more human-like and expressive responses.
+		/// This funtion utilizing Microsoft Azure Speech Service, compatible with Speech Synthesis Markup Language Version 1.0 (SSML 1.0).
+		/// Use SSML for the input text when supported by the language to refine speech traits such as tone, pitch, and pace for more natural and expressive output.
 		/// </summary>
 		/// <param name="text">String that the AI is expected to vocalize.</param>
-		/// <param name="isSsml">Text format is the SSML-formatted string.</param>
+		/// <param name="gender">(optional) Character gender: 'Male', 'Female', 'Neutral'. Default: 'Male'. Default is set by the user.</param>
+		/// <param name="language">(optional) Language Culture. Use Language[-Location] format. For example: 'en-GB'. Default is set by the user.</param>
+		/// <param name="isSsml">(optional) Text format is the SSML-formatted string. Default is auto.</param>
 		[RiskLevel(RiskLevel.None)]
-		public async Task<OperationResult<string>> AISpeak(string text, bool isSsml)
+		public async Task<OperationResult<string>> AISpeak(string text, VoiceGender? gender = null, string language = null, bool? isSsml = null)
 		{
-			return await AISpeakCallback(text, isSsml);
+			return await AISpeakCallback(text, gender, language, isSsml);
 		}
 
 		/// <summary>

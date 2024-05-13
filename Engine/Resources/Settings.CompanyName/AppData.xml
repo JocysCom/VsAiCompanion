@@ -1,6 +1,15 @@
 ﻿<Data Version="2">
   <Items>
     <AppData>
+      <AiAvatar>
+        <AiServiceId>3ab0e927-091c-40e6-b32b-bdf04bc2e88b</AiServiceId>
+        <Message>Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</Message>
+        <VoiceLanguage>English (United States)</VoiceLanguage>
+        <VoiceNames>
+          <string p6:nil="true" xmlns:p6="http://www.w3.org/2001/XMLSchema-instance" />
+        </VoiceNames>
+        <Instructions>Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</Instructions>
+      </AiAvatar>
       <UpdateSettings>
         <GitHubCompany>JocysCom</GitHubCompany>
         <GitHubProduct>VsAiCompanion</GitHubProduct>
@@ -22,65 +31,77 @@
       <StartPosition>
         <Left>195</Left>
         <Top>45</Top>
-        <Width>455.5</Width>
-        <Height>352.75</Height>
+        <Width>1016</Width>
+        <Height>721</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
-      <AiModelData>
-        <ListSelection />
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </AiModelData>
-      <AiServiceData>
-        <ListSelection>
-          <string>Company Name AI</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </AiServiceData>
-      <TaskData>
-        <GridSplitterPosition>0.22747747747747749</GridSplitterPosition>
-        <ListSelection>
-          <string>AI - Chat (GPT-3.5)</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </TaskData>
-      <TemplateData>
-        <GridSplitterPosition>0.2972972972972973</GridSplitterPosition>
-        <ListSelection>
-          <string>AI - Chat</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </TemplateData>
-      <FineTuningData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
-        <ListSelection>
-          <string>CyberNet Solutions</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </FineTuningData>
-      <AssistantData>
-        <GridSplitterPosition>NaN</GridSplitterPosition>
-        <ListSelection />
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </AssistantData>
-      <ListsData>
-        <GridSplitterPosition>0.25731981981981983</GridSplitterPosition>
-        <ListSelection>
-          <string>Context - Operating System</string>
-        </ListSelection>
-        <ListSelectedIndex>1</ListSelectedIndex>
-      </ListsData>
-      <EmbeddingsData>
-        <ListSelection>
-          <string>CyberNet Solutions</string>
-        </ListSelection>
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </EmbeddingsData>
-      <MailAccountData>
-        <ListSelection />
-        <ListSelectedIndex>0</ListSelectedIndex>
-      </MailAccountData>
+      <PanelSettingsList>
+        <TaskSettings>
+          <ItemType>Attachment</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Task</ItemType>
+          <GridSplitterPosition>0.20404040404040405</GridSplitterPosition>
+          <ListSelection>
+            <string>AI - Chat (GPT-3.5)</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Template</ItemType>
+          <ListSelection>
+            <string>AI - Chat</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>FineTuning</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Assistant</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Embeddings</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Lists</ItemType>
+          <ListSelection>
+            <string>API - Demo</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>AiService</ItemType>
+          <ListSelection>
+            <string>Speech Services</string>
+          </ListSelection>
+          <ListSelectedIndex>1</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>AiModel</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>MailAccount</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Voice</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+      </PanelSettingsList>
       <AiServices>
         <AiService>
           <Id>d5e071e1-d99d-45ff-890a-82823b75e1ec</Id>
@@ -90,7 +111,37 @@
           <DefaultAiModel>gpt-4</DefaultAiModel>
           <BaseUrl>https://companyname.api.cognitive.microsoft.com/v1/</BaseUrl>
         </AiService>
+        <AiService>
+          <ServiceType>Azure</ServiceType>
+          <Id>3ab0e927-091c-40e6-b32b-bdf04bc2e88b</Id>
+          <Name>Speech Services</Name>
+          <BaseUrl>https://westus.api.cognitive.microsoft.com/</BaseUrl>
+          <Region>westus</Region>
+        </AiService>
       </AiServices>
+      <AiModels>
+        <AiModel>
+          <Id>4f00f393-889d-f80c-7432-9e44718d2b71</Id>
+          <Name>gpt-4</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>984a6b6b-ab7a-8e4e-845f-8515e901fed0</Id>
+          <Name>gpt-4-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
+          <Name>gpt-3.5-turbo-16k</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+          <MaxInputTokens>16384</MaxInputTokens>
+        </AiModel>
+      </AiModels>
       <MailAccounts />
       <Plugins>
         <PluginItem>
@@ -279,6 +330,10 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AISpeak</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.PlayText</Id>
         </PluginItem>
         <PluginItem>
@@ -288,6 +343,10 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureCameraImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -342,29 +401,6 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems</Id>
         </PluginItem>
       </Plugins>
-      <AiModels>
-        <AiModel>
-          <Id>4f00f393-889d-f80c-7432-9e44718d2b71</Id>
-          <Name>gpt-4</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>984a6b6b-ab7a-8e4e-845f-8515e901fed0</Id>
-          <Name>gpt-4-preview</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
-          <Name>gpt-3.5-turbo-16k</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-          <MaxInputTokens>16384</MaxInputTokens>
-        </AiModel>
-      </AiModels>
       <MarkdownLanguageNames>ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex,AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL,BBCode,BBJ,BNF,BQN,BSL,Bash,Basic,Batch,Bicep,Birb,Bison,Brainfuck,BrightScript,Bro,C,CFScript,CIL,CMake,COBOL,CSHTML,CSP,CSS,CSS-Extras,CSV,Chaiscript,CilkC,CilkCpp,Clike,Clojure,CoffeeScript,Concurnas,Cooklang,Coq,Cpp,Crystal,Csharp,Cue,Cypher,D,DAX,DNS-Zone-File,Dart,DataWeave,Dhall,Diff,Django,Docker,Dot,EBNF,EJS,ERB,EditorConfig,Eiffel,Elixir,Elm,Erlang,Excel-Formula,FORTRAN,FTL,Factor,False,Firestore-Security-Rules,Flow,Fsharp,GAP,GCode,GEDCOM,GLSL,GML,GN,GdScript,Gettext,Gherkin,Git,Go,Go-Module,Gradle,Graphql,Groovy,HCL,HLSL,HPKP,HSTS,HTTP,Haml,Handlebars,Haskell,Haxe,Hoon,ICU-Message-Format,IECSt,INI,IchigoJam,Icon,Idris,Ignore,Inform7,Io,J,JEXL,JQ,JS-Extras,JS-Templates,JSDoc,JSON,JSON5,JSONP,JSStackTrace,JSX,Java,JavaDoc,JavaDocLike,JavaScript,JavaStackTrace,Jolie,Julia,KeepALIVED,Keyman,Kotlin,Kumir,Kusto,LLVM,LOLCode,Latex,Latte,Less,LilyPond,Linker-Script,Liquid,Lisp,LiveScript,Log,Lua,MAXScript,MEL,Magma,Makefile,Markdown,Markup,Markup-Templating,Mata,Matlab,Mermaid,MetaFont,Mizar,MongoDB,Monkey,MoonScript,N1QL,N4JS,NASM,NSIS,Nand2Tetris-HDL,Naniscript,Neon,Nevod,Nginx,Nim,Nix,OCaml,ObjectiveC,Odin,OpenCL,OpenQASM,Oz,PCAxis,PHP,PHP-Extras,PHPDoc,PLSQL,PSL,PariGP,Parser,Pascal,PascalIGO,PeopleCode,Perl,Plant-UML,PowerQuery,PowerShell,Processing,Prolog,PromQL,Properties,Protobuf,Pug,Puppet,Pure,PureBasic,PureScript,Python,Q,QML,QSharp,Qore,R,REST,RIP,Racket,Reason,Regex,Rego,RenPY,Rescript,Roboconf,RobotFramework,Ruby,Rust,SAS,SCSS,SML,SPARQL,SQF,SQL,Sass,Scala,Scheme,Shell-Session,Smali,SmallTalk,Smarty,Solidity,Solution-File,Soy,Splunk-SPL,Squirrel,Stan,Stata,Stylus,SuperCollider,Swift,Systemd,T4-CS,T4-Templating,T4-VB,TAP,TOML,TSX,TT2,Tcl,Textile,Tremor,Turtle,Twig,TypeScript,TypoScript,UORazor,URI,UnrealScript,V,VBNet,VHDL,Vala,Velocity,Verilog,Vim,Visual-Basic,WASM,WGSL,WarpScript,Web-IDL,Wiki,Wolfram,Wren,XML,XQuery,Xeora,Xojo,YAML,Yang,ZigetLua</MarkdownLanguageNames>
     </AppData>
   </Items>

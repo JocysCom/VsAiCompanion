@@ -32,7 +32,7 @@
 			<CollectionViewSource x:Key="GroupedData" Source="{Binding FilteredList, ElementName=This}" />
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Name="AiServiceListGrid" VerticalAlignment="Stretch">
+	<Grid Name="AiServiceListGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -41,7 +41,6 @@
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
-			Height="Auto"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"

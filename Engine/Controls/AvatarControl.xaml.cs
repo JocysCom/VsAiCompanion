@@ -2,6 +2,7 @@
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -609,6 +610,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			MoveToWindowToggle();
 		}
 
+		public bool IsPanelInWindow
+			=> Parent is Window avatarWindow;
+
 		public void MoveToWindowToggle()
 		{
 			if (Parent is Border parentBorder)
@@ -622,6 +626,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Width = 360,
 					Content = this
 				};
+				Global.AppSettings.AiAvatar.PropertyChanged += AiAvatar_PropertyChanged;
+				UpdateAlwaysOnTop();
 				avatarWindow.Closed += AvatarWindow_Closed;
 				AvatarPanelRectangle.Visibility = Visibility.Collapsed;
 				avatarWindow.Show();
@@ -629,12 +635,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else if (Parent is Window avatarWindow)
 			{
+				Global.AppSettings.AiAvatar.PropertyChanged -= AiAvatar_PropertyChanged;
 				avatarWindow.Closed -= AvatarWindow_Closed;
 				avatarWindow.Close();
 				avatarWindow.Content = null;
 				avatarBorder.Child = this;
 				AvatarPanelRectangle.Visibility = Visibility.Visible;
 			}
+		}
+
+		public void UpdateAlwaysOnTop()
+		{
+			if (avatarWindow != null)
+				avatarWindow.Topmost = Global.AppSettings.AiAvatar.AlwaysOnTop;
+		}
+
+		private void AiAvatar_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AvatarItem.AlwaysOnTop))
+				UpdateAlwaysOnTop();
 		}
 
 		private void AvatarWindow_Closed(object sender, EventArgs e)

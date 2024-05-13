@@ -97,6 +97,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return;
 			// Update Prompts.
 			var zipItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems);
 			// Don't reset if zip contains no data.
@@ -117,6 +119,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return;
 			// Update Prompts.
 			var zipItems = GetDataFromZip(zip, Global.Voices.XmlFile.Name, Global.Voices);
 			// Don't reset if zip contains no data.

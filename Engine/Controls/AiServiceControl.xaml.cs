@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Controls;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,12 +17,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			ListPanel.MainDataGrid.SelectionChanged += ListPanel_MainDataGrid_SelectionChanged;
+			_ = Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
 		}
 
-		private void ListPanel_MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		void UpdateOnSelectionChanged()
 		{
 			var item = ListPanel.MainDataGrid.SelectedItems.Cast<AiService>().FirstOrDefault();
 			ItemPanel.Item = item;
+			ItemPanel.Visibility = item == null
+					? Visibility.Collapsed
+					: Visibility.Visible;
+		}
+
+		private async void ListPanel_MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
 		}
 
 		TaskSettings PanelSettings { get; } = Global.AppSettings.GetTaskSettings(ItemType.AiService);

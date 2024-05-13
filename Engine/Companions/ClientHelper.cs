@@ -81,8 +81,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public async static Task Send(TemplateItem item,
 			Action executeBeforeAddMessage = null,
 			string overrideText = null,
-			MessageItem overrideMessage = null
-			)
+			MessageItem overrideMessage = null,
+			string extraInstructions = null
+		)
 		{
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
 			if (!Global.IsGoodSettings(item.AiService, true))
@@ -129,6 +130,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var instructions = item.TextInstructions;
 				if (item.UseMacros)
 					instructions = AppHelper.ReplaceMacros(instructions, vsData);
+				if (!string.IsNullOrEmpty(extraInstructions))
+					instructions += $"\r\n\r\n{extraInstructions}";
 				m = new MessageItem(UserName, itemText, MessageType.Out);
 				m.BodyInstructions = instructions;
 				if (item.UseMacros)

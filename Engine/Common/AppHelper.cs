@@ -440,6 +440,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return item;
 		}
 
+		public static AiService GetNewAiService()
+		{
+			var item = new AiService();
+			item.Name = $"Service_{DateTime.Now:yyyyMMdd_HHmmss}";
+			return item;
+		}
+
 		public static FineTuningItem GetNewFineTuningItem()
 		{
 			var item = new FineTuningItem();
@@ -876,6 +883,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 					return true;
 			}
 			return false;
+		}
+
+		public static bool CollectionChanged(ListChangedEventArgs e, Action action, params string[] properties)
+		{
+			bool changed =
+				e.ListChangedType == ListChangedType.ItemDeleted ||
+				e.ListChangedType == ListChangedType.ItemAdded ||
+				e.ListChangedType == ListChangedType.ItemMoved;
+			foreach (var property in properties)
+				if (e.PropertyDescriptor?.Name == property)
+					changed = true;
+			if (changed)
+				_ = Helper.Delay(action);
+			return changed;
 		}
 
 		#endregion

@@ -67,10 +67,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 			// Example: Switch or if statements mapping visemeId to animation actions.
 		}
 
-		public async Task Synthesize(string text, bool useSsml = false, bool useCache = false)
+		public async Task Synthesize(string text, bool? useSsml = false, bool useCache = false)
 		{
 			var updatedText = UpdateToViseme(text, Config.SpeechSynthesisVoiceName);
-			var newData = await _Synthesize(updatedText, true, useCache);
+			var newData = await _Synthesize(updatedText, useSsml, useCache);
 			if (newData)
 				ClassLibrary.Runtime.Serializer.SerializeToXmlFile(AudioInfo, AudioInfoPath);
 		}
@@ -80,7 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 		/// </summary>
 		/// <param name="text">The text to be spoken.</param>
 		/// <param name="useSsml">Flag indicating whether the text is in SSML format.</param>
-		public async Task<bool> _Synthesize(string text, bool useSsml = false, bool useCache = false)
+		public async Task<bool> _Synthesize(string text, bool? useSsml = null, bool useCache = false)
 		{
 			var path = Path.Combine(Global.AppData.XmlFile.Directory.FullName, "Temp");
 			var relativePath = AudioHelper.GetUniqueFilePath(null, null, Config.SpeechSynthesisVoiceName, "", "", text);
@@ -97,11 +97,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 				}
 				catch { }
 			}
+			var useSsml2 = useSsml.HasValue ? useSsml.Value : text.StartsWith("<");
 			AudioInfo = new AudioFileInfo();
 			AudioInfo.Text = text;
-			AudioInfo.IsSsml = useSsml;
+			AudioInfo.IsSsml = useSsml2;
 			isWorking = true;
-			SpeechSynthesisResult result = useSsml || text.StartsWith("<")
+			SpeechSynthesisResult result = useSsml2
 				? await synthesizer.SpeakSsmlAsync(text)
 				: await synthesizer.SpeakTextAsync(text);
 			if (result.Reason == ResultReason.SynthesizingAudioCompleted)
@@ -249,7 +250,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 
 		public void Dispose()
 		{
-			synthesizer?.Dispose();
+			try
+			{
+				synthesizer?.Dispose();
+			}
+			catch (Exception)
+			{
+			}
 		}
 	}
 }
