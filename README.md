@@ -89,6 +89,10 @@ Various Templates:
 
 <img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_Templates.png" width="600" height="600">
 
+AI Avatar:
+
+<img alt="AI Avatar" src="Documents/Images/JocysComVsAiCompanion_Options_AiAvatar.png" width="600" height="600">
+
 Template: Code - Document
 
 <img alt="Code Document" src="Documents/Images/JocysComVsAiCompanion_Task_CodeDocument.png" width="600" height="338">
