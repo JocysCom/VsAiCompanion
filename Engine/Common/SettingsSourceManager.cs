@@ -50,7 +50,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var zipSetting = zipAppSettings.PanelSettingsList.FirstOrDefault(x => x.ItemType == setting.ItemType);
 					if (zipSetting == null)
 						continue;
-					RuntimeHelper.CopyProperties(zipSetting, settings, true);
+					RuntimeHelper.CopyProperties(zipSetting, setting, true);
 				}
 				// Save settings.
 				Global.SaveSettings();

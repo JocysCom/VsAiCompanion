@@ -152,6 +152,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Attachment</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -177,6 +178,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Assistant</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -202,14 +204,17 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
       </PanelSettingsList>
