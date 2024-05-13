@@ -41,18 +41,16 @@
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
+			Height="Auto"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			CanUserResizeColumns="False"
-			CanUserSortColumns="False"
 			ClipToBounds="True"
-			HeadersVisibility="Column"
-			IsReadOnly="False"
+			IsReadOnly="True"
 			ItemsSource="{Binding Source={StaticResource GroupedData}}"
-			ScrollViewer.CanContentScroll="False"
-			ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+			ScrollViewer.CanContentScroll="True"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
 			<DataGrid.Columns>

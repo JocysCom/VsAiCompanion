@@ -345,6 +345,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 			AppSettings.AiServices.ListChanged += AiServices_ListChanged;
 			if (ResetSettings)
 				SettingsSourceManager.ResetSettings();
+			else
+			{
+				// If Azure "Speech Service" not found then...
+				if (!AppSettings.AiServices.Any(x => x.ServiceType == ApiServiceType.Azure))
+				{
+					// Add "Speech Service" from the settings file.
+					var zip = SettingsSourceManager.GetSettingsZip();
+					if (zip != null)
+					{
+						var zipAppData = SettingsSourceManager.GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
+						var zipServices = zipAppData.Items[0].AiServices;
+						var azureService = zipServices.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
+						if (azureService != null)
+						{
+							AppSettings.AiServices.Add(azureService);
+							RaiseOnAiServicesUpdated();
+						}
+					}
+				}
+			}
 			// Always refresh plugins.
 			var newPluginsList = Engine.AppData.RefreshPlugins(AppSettings.Plugins);
 			ClassLibrary.Collections.CollectionsHelper.Synchronize(newPluginsList, AppSettings.Plugins);

@@ -786,13 +786,13 @@
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
 				Orientation="Horizontal">
-				<Button Name="AttachmentsButton" Margin="3,3,3,3" Click="AttachmentsButton_Click">
+				<Button Name="AttachmentsButton" Margin="3,3,0,3" Click="AttachmentsButton_Click">
 					<ContentControl Content="{StaticResource Icon_attach}" Focusable="False" />
 				</Button>
-				<Button Name="ScreenshotButton" Margin="0,3,3,3" Click="ScreenshotButton_Click">
+				<Button Name="ScreenshotButton" Margin="3,3,0,3" Click="ScreenshotButton_Click">
 					<ContentControl Content="{StaticResource Icon_screen}" Focusable="False" />
 				</Button>
-				<Button Name="MicrophoneButton" Margin="0,3,3,3" Click="MicrophoneButton_Click">
+				<Button Name="MicrophoneButton" Margin="3,3,3,3" Click="MicrophoneButton_Click">
 					<ContentControl Content="{StaticResource Icon_microphone2}" Focusable="False" />
 				</Button>
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />

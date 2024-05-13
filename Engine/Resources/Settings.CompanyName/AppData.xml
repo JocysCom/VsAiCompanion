@@ -4,10 +4,6 @@
       <AiAvatar>
         <AiServiceId>3ab0e927-091c-40e6-b32b-bdf04bc2e88b</AiServiceId>
         <Message>Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</Message>
-        <VoiceLanguage>English (United States)</VoiceLanguage>
-        <VoiceNames>
-          <string p6:nil="true" xmlns:p6="http://www.w3.org/2001/XMLSchema-instance" />
-        </VoiceNames>
         <Instructions>Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</Instructions>
       </AiAvatar>
       <UpdateSettings>
@@ -29,76 +25,71 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>195</Left>
-        <Top>45</Top>
-        <Width>1016</Width>
-        <Height>721</Height>
+        <Left>257</Left>
+        <Top>67</Top>
+        <Width>486.5</Width>
+        <Height>407.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
       <PanelSettingsList>
         <TaskSettings>
-          <ItemType>Attachment</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.20404040404040405</GridSplitterPosition>
+          <GridSplitterPosition>0.24</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat (GPT-3.5)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Template</ItemType>
+          <GridSplitterPosition>0.26</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>FineTuning</ItemType>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Assistant</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Embeddings</ItemType>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Lists</ItemType>
           <ListSelection>
             <string>API - Demo</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>AiService</ItemType>
           <ListSelection>
             <string>Speech Services</string>
           </ListSelection>
           <ListSelectedIndex>1</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>AiModel</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>MailAccount</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Voice</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
       </PanelSettingsList>
@@ -115,6 +106,7 @@
           <ServiceType>Azure</ServiceType>
           <Id>3ab0e927-091c-40e6-b32b-bdf04bc2e88b</Id>
           <Name>Speech Services</Name>
+          <IsAzureOpenAI>true</IsAzureOpenAI>
           <BaseUrl>https://westus.api.cognitive.microsoft.com/</BaseUrl>
           <Region>westus</Region>
         </AiService>
@@ -343,10 +335,6 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureCameraImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

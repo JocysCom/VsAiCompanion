@@ -251,5 +251,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			MessageTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
 		}
 
+		private bool HelpInit;
+
+		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
+			{
+				HelpInit = true;
+				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature ‐ AI Avatar.rtf");
+				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+			}
+		}
 	}
 }

@@ -355,7 +355,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return list;
 		}
 
-		private static SettingsData<T> GetDataFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)
+		public static SettingsData<T> GetDataFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)
 		{
 			var list = new List<T>();
 			var entry = zip.ReadCentralDir()

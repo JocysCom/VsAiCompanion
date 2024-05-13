@@ -137,7 +137,7 @@
 								</Grid>
 							</GroupBox>
 
-							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Multimedia}">
+							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Multimedia}" x:Name="MultimediaGroupBox">
 								<StackPanel Orientation="Horizontal">
 									<Label VerticalAlignment="Center" Content="Camera" />
 									<ComboBox Name="CameraComboBox" ItemsSource="{Binding VideoInputDevices, ElementName=This}" SelectedValue="{Binding VideoInputDevice, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

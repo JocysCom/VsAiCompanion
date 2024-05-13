@@ -22,7 +22,6 @@
 	<Grid DataContext="{Binding Item, ElementName=This}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
@@ -176,7 +175,8 @@
 				Grid.Row="4"
 				Grid.ColumnSpan="3"
 				Margin="4"
-				x:FieldModifier="public">
+				x:FieldModifier="public"
+				SelectionChanged="MainTabControl_SelectionChanged">
 				<TabItem Name="VoicesTabPage">
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
@@ -185,6 +185,28 @@
 						</StackPanel>
 					</TabItem.Header>
 					<controls:VoiceListControl x:Name="VoiceListPanel" />
+				</TabItem>
+				<TabItem Name="HelpTabPage">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_Question}" />
+							<Label Content="{StaticResource main_Help}" />
+						</StackPanel>
+					</TabItem.Header>
+					<RichTextBox x:Name="HelpRichTextBox">
+						<RichTextBox.OpacityMask>
+							<VisualBrush>
+								<VisualBrush.Visual>
+									<Border
+										Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
+										Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
+										Background="White"
+										CornerRadius="0,5,5,5"
+										SnapsToDevicePixels="True" />
+								</VisualBrush.Visual>
+							</VisualBrush>
+						</RichTextBox.OpacityMask>
+					</RichTextBox>
 				</TabItem>
 				<TabItem Name="LogTabPage">
 					<TabItem.Header>
