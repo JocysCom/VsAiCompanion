@@ -68,6 +68,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_API_Key => FindResource(nameof(main_API_Key));
         public static string main_API_Organization_ID => FindResource(nameof(main_API_Organization_ID));
         public static string main_App_Always_on_Top => FindResource(nameof(main_App_Always_on_Top));
+        public static string main_Always_on_Top => FindResource(nameof(main_Always_on_Top));
+        public static string main_AvatarPanel_Help => FindResource(nameof(main_AvatarPanel_Help));
         public static string main_Approval_Template => FindResource(nameof(main_Approval_Template));
         public static string main_Approval_Type => FindResource(nameof(main_Approval_Type));
         public static string main_Attachments => FindResource(nameof(main_Attachments));
@@ -76,6 +78,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Automation => FindResource(nameof(main_Automation));
         public static string main_Axialis_Icon_Set_Licenses => FindResource(nameof(main_Axialis_Icon_Set_Licenses));
         public static string main_AvatarItem_Message => FindResource(nameof(main_AvatarItem_Message));
+        public static string main_AvatarItem_Instructions => FindResource(nameof(main_AvatarItem_Instructions));
         public static string main_Bar_Always_on_Top => FindResource(nameof(main_Bar_Always_on_Top));
         public static string main_Browse => FindResource(nameof(main_Browse));
         public static string main_Bytes => FindResource(nameof(main_Bytes));
@@ -119,6 +122,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Enabled => FindResource(nameof(main_Enabled));
         public static string main_Environment => FindResource(nameof(main_Environment));
         public static string main_Exclude_Patterns => FindResource(nameof(main_Exclude_Patterns));
+        public static string main_FavoriteVoicesTabItem_Text => FindResource(nameof(main_FavoriteVoicesTabItem_Text));
+        public static string main_FavoriteVoicesTabItem_Help => FindResource(nameof(main_FavoriteVoicesTabItem_Help));
         public static string main_File_Name => FindResource(nameof(main_File_Name));
         public static string main_Files => FindResource(nameof(main_Files));
         public static string main_Format_Code => FindResource(nameof(main_Format_Code));

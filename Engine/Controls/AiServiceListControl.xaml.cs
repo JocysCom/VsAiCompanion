@@ -113,8 +113,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = new AiService();
-			item.Name = "Open AI";
+			var item = AppHelper.GetNewAiService();
 			InsertItem(item);
 			Add?.Invoke(this, EventArgs.Empty);
 		}

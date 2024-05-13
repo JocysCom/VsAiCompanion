@@ -50,7 +50,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var zipSetting = zipAppSettings.PanelSettingsList.FirstOrDefault(x => x.ItemType == setting.ItemType);
 					if (zipSetting == null)
 						continue;
-					RuntimeHelper.CopyProperties(zipSetting, settings, true);
+					RuntimeHelper.CopyProperties(zipSetting, setting, true);
 				}
 				// Save settings.
 				Global.SaveSettings();
@@ -97,6 +97,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return;
 			// Update Prompts.
 			var zipItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems);
 			// Don't reset if zip contains no data.
@@ -117,6 +119,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return;
 			// Update Prompts.
 			var zipItems = GetDataFromZip(zip, Global.Voices.XmlFile.Name, Global.Voices);
 			// Don't reset if zip contains no data.
@@ -351,7 +355,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return list;
 		}
 
-		private static SettingsData<T> GetDataFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)
+		public static SettingsData<T> GetDataFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)
 		{
 			var list = new List<T>();
 			var entry = zip.ReadCentralDir()

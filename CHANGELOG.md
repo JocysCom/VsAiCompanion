@@ -1,8 +1,10 @@
-2024-05-04 v1.9.43
+2024-05-13 v1.10.6
 
 - Fix: Crash when reading data from the embedding database.
 - Fix: Crash when customized settings file not found.
 - Update: OpenAI Client now supports the analysis of larger images.
+- New: Added AI Avatar that can use Microsoft Azure Voices.
+- New: Button to start and stop Microsoft Voice Typing.
 
 2024-04-28 v1.9.41
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!--
@@ -20,8 +20,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.9.41</AssemblyVersion>
-		<FileVersion>1.9.41</FileVersion>
+		<AssemblyVersion>1.10.6</AssemblyVersion>
+		<FileVersion>1.10.6</FileVersion>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 	</PropertyGroup>
 
@@ -48,11 +48,9 @@
 	<ItemGroup>
 		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.17" />
 		<PackageReference Include="Azure.Identity" Version="1.11.2" />
-		<PackageReference Include="CsvHelper" Version="32.0.1" />
+		<PackageReference Include="CsvHelper" Version="32.0.3" />
 		<PackageReference Include="DnsClient" Version="1.7.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.0.2" />
-		<PackageReference Include="Emgu.CV" Version="4.9.0.5494" />
-		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.9.0.5494" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
 		<PackageReference Include="Ignore" Version="0.1.50" />
 		<PackageReference Include="MailKit" Version="4.5.0" />
@@ -156,8 +154,11 @@
 		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOff.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<None Remove="JocysCom\Controls\Themes\Icons\Warning.svg" />
+		<Compile Remove="NewFolder\**" />
 		<Compile Remove="Resources\Embeddings\**" />
+		<EmbeddedResource Remove="NewFolder\**" />
 		<EmbeddedResource Remove="Resources\Embeddings\**" />
+		<None Remove="NewFolder\**" />
 		<None Remove="Resources\BuildDate.*" />
 		<None Remove="Resources\Embeddings\**" />
 		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
@@ -191,12 +192,6 @@
 		<None Remove="Resources\Images\SparkYellow.png" />
 		<None Remove="Resources\MainWindowCommand.png" />
 		<None Remove="Resources\PromptItems.xml" />
-		<None Remove="x64\Microsoft.CognitiveServices.Speech.core.dll" />
-		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
-		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.codec.dll" />
-		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.kws.dll" />
-		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
-		<None Remove="x64\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -228,12 +223,6 @@
 		<Content Include="JocysCom\Controls\Themes\Icons\ToggleOn.svg" />
 		<Content Include="JocysCom\Controls\Themes\Icons\Warning.svg" />
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
-		<Content Include="x64\Microsoft.CognitiveServices.Speech.core.dll" />
-		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
-		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.codec.dll" />
-		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.kws.dll" />
-		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
-		<Content Include="x64\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\FineTuning.zip" />
@@ -248,6 +237,7 @@
 	<ItemGroup>
 		<None Remove="JocysCom\Controls\Chat\ChatListControl.html" />
 		<None Remove="JocysCom\Controls\Chat\ChatListControl\*.*" />
+		<Page Remove="NewFolder\**" />
 		<Page Remove="Resources\Embeddings\**" />
 	</ItemGroup>
 
@@ -318,25 +308,17 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
-	<ItemGroup>
-		<Content Include="x64\**\*">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="x86\**\*">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="NewFolder\" />
-	</ItemGroup>
-
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Resources\GenerateResourceClassesFromXaml.ps1&quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\FineTuning&quot; &quot;$(ProjectDir)Resources\FineTuning.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;" />
 	</Target>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
-	</Target>
-
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<None Include="$(ProjectDir)Resources\Microsoft.CognitiveServices.Speech\*.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>%(FileName)%(Extension)</Link>
+			<Pack>true</Pack>
+			<PackagePath>lib\$(TargetFramework)\;content;contentFiles\any\any;build\$(TargetFramework)\</PackagePath>
+		</None>
+	</ItemGroup>
+	
 </Project>

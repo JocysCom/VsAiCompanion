@@ -71,6 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 			AttachmentsButton.Visibility = debugVisibility;
+			ScreenshotButton.Visibility = debugVisibility;
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -203,7 +204,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void ChatPanel_OnSend(object sender, EventArgs e)
 		{
 			if (_Item != null)
-				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit);
+			{
+				// Add avatar instructions if avatar is visible.
+				string extraInstructions = null;
+				if (Global.AvatarOptionsPanel?.AvatarPanel.IsPanelInWindow == true)
+					extraInstructions = Global.AppSettings.AiAvatar.Instructions;
+				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: extraInstructions);
+			}
 		}
 
 		private void ChatPanel_OnStop(object sender, EventArgs e)

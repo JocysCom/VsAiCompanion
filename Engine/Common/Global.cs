@@ -342,8 +342,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				AppData.Save();
 			}
+			AppSettings.AiServices.ListChanged += AiServices_ListChanged;
 			if (ResetSettings)
 				SettingsSourceManager.ResetSettings();
+			else
+			{
+				// If Azure "Speech Service" not found then...
+				if (!AppSettings.AiServices.Any(x => x.ServiceType == ApiServiceType.Azure))
+				{
+					// Add "Speech Service" from the settings file.
+					var zip = SettingsSourceManager.GetSettingsZip();
+					if (zip != null)
+					{
+						var zipAppData = SettingsSourceManager.GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
+						var zipServices = zipAppData.Items[0].AiServices;
+						var azureService = zipServices.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
+						if (azureService != null)
+						{
+							AppSettings.AiServices.Add(azureService);
+							RaiseOnAiServicesUpdated();
+						}
+					}
+				}
+			}
 			// Always refresh plugins.
 			var newPluginsList = Engine.AppData.RefreshPlugins(AppSettings.Plugins);
 			ClassLibrary.Collections.CollectionsHelper.Synchronize(newPluginsList, AppSettings.Plugins);
@@ -400,6 +421,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				SettingsSourceManager.ResetTemplates();
 			}
 			IsSettignsLoaded = true;
+		}
+
+		private static void AiServices_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			AppHelper.CollectionChanged(e, RaiseOnAiServicesUpdated,
+				nameof(AiService.Name), nameof(AiService.ServiceType));
 		}
 
 		private static void Embeddings_ItemRenamed(object sender, SettingsData<EmbeddingsItem>.ItemPropertyChangedEventArgs e)
@@ -556,6 +583,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				if (string.IsNullOrEmpty(avatarItem.Message))
 					avatarItem.Message = Engine.Resources.MainResources.main_AvatarItem_Message;
+				if (string.IsNullOrEmpty(avatarItem.Instructions))
+					avatarItem.Instructions = Engine.Resources.MainResources.main_AvatarItem_Instructions;
 			}
 		}
 

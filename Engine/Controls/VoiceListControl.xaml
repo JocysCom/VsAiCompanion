@@ -32,7 +32,7 @@
 			<CollectionViewSource x:Key="GroupedData" Source="{Binding FilteredList, ElementName=This}" />
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Name="AiServiceListGrid" VerticalAlignment="Stretch">
+	<Grid Name="AiServiceListGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -46,14 +46,11 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			CanUserResizeColumns="False"
-			CanUserSortColumns="False"
 			ClipToBounds="True"
-			HeadersVisibility="Column"
-			IsReadOnly="False"
+			IsReadOnly="True"
 			ItemsSource="{Binding Source={StaticResource GroupedData}}"
-			ScrollViewer.CanContentScroll="False"
-			ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+			ScrollViewer.CanContentScroll="True"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
 			<DataGrid.Columns>

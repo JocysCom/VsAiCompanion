@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Speech;
+using JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated;
 			Global.VoicesUpdated += Global_VoicesUpdated;
 			UpdateAiServices();
-			UpdateVoiceLanguages();
+			UpdateVoiceLocales();
 		}
 
 		public AvatarItem Item
@@ -51,20 +52,55 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Update Voice Languages
 
-		public ObservableCollection<string> VoiceLanguages { get; set; } = new ObservableCollection<string>();
+		public ObservableCollection<KeyValue<string, string>> VoiceLocales { get; set; } = new ObservableCollection<KeyValue<string, string>>();
 
 		private void Global_VoicesUpdated(object sender, EventArgs e)
 		{
 		}
 
-		public void UpdateVoiceLanguages()
+		public void UpdateVoiceLocales()
 		{
 			var services = Global.Voices.Items
-				.Select(x => x.LocaleName)
+				.Select(x => (x.Locale, x.LocaleName))
 				.Distinct()
+				.OrderBy(x => x.LocaleName)
+				.Select(x => new KeyValue<string, string>(x.Locale, x.LocaleName))
+				.ToList();
+			CollectionsHelper.Synchronize(services, VoiceLocales);
+		}
+
+		#endregion
+
+		#region Voice Gender
+
+		public ObservableCollection<VoiceGender> Genders { get; }
+			= new ObservableCollection<VoiceGender>((VoiceGender[])Enum.GetValues(typeof(VoiceGender)));
+
+		private async void GenderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			await Helper.Delay(UpdateVoiceNames);
+		}
+
+		#endregion
+
+		#region Voice Name
+
+		public ObservableCollection<string> VoiceNames { get; set; } = new ObservableCollection<string>();
+
+		private async void VoiceLocalesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			await Helper.Delay(UpdateVoiceNames);
+		}
+
+		public void UpdateVoiceNames()
+		{
+			var source = Global.Voices.Items
+				.Where(x => x.Locale == Item.VoiceLocale)
+				.Where(x => x.Gender == Item.Gender.ToString())
+				.Select(x => x.DisplayName)
 				.OrderBy(x => x)
 				.ToList();
-			CollectionsHelper.Synchronize(services, VoiceLanguages);
+			CollectionsHelper.Synchronize(source, VoiceNames);
 		}
 
 		#endregion
@@ -75,7 +111,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		SynthesizeClient client;
 
-		bool CheckClient()
+		bool RecreateClient(VoiceGender? overrideGender, string overrideLocale)
 		{
 			if (client != null)
 				client.Dispose();
@@ -85,7 +121,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogPanel.Add("Service not found");
 				return false;
 			}
-			client = new SynthesizeClient(service.ApiSecretKey, service.Region, Item.VoiceName);
+
+			var voices = Global.Voices.Items
+				.Where(x =>
+					x.Locale == (overrideLocale ?? Item.VoiceLocale) &&
+					x.Gender == (overrideGender ?? Item.Gender).ToString()
+				)
+				// Put favourites at the top.
+				.OrderBy(x => x.IsFavorite ? 0 : 1)
+				.ThenBy(x => x.DisplayName.Contains("Multilingual") ? 0 : 1)
+				.ToList();
+			// Try to get voice by name name.
+			var voice = voices.FirstOrDefault(x => x.DisplayName == Item.VoiceName);
+			// If spoecific vocie not found then probably due to override.
+			if (voice == null)
+				voice = voices.FirstOrDefault();
+			client = new SynthesizeClient(service.ApiSecretKey, service.Region, voice?.Name);
 			return true;
 		}
 
@@ -105,7 +156,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				try
 				{
-					await _AI_SpeakSSML(text, false);
+					await _AI_SpeakSSML(text, Item.Gender, Item.VoiceLocale, null);
 				}
 				catch (Exception ex)
 				{
@@ -115,21 +166,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.RemoveTask(task);
 		}
 
-		public async Task<OperationResult<string>> AI_SpeakSSML(string text, bool isSsml)
+		public async Task<OperationResult<string>> AI_SpeakSSML(string text, VoiceGender? gender, string language = null, bool? isSsml = null)
 		{
 			await Task.Delay(0);
 			_ = Dispatcher.BeginInvoke(new Action(() =>
 			{
-				_ = _AI_SpeakSSML(text, isSsml);
+				_ = _AI_SpeakSSML(text, gender, language, isSsml);
 			}));
 			return new OperationResult<string>();
 		}
 
-		async Task<OperationResult<string>> _AI_SpeakSSML(string text, bool isSsml)
+		async Task<OperationResult<string>> _AI_SpeakSSML(string text, VoiceGender? gender, string language = null, bool? isSsml = null)
 		{
 			try
 			{
-				if (!CheckClient())
+				if (!RecreateClient(gender, language))
 					return new OperationResult<string>(new Exception("AI Avatar cofiguration is not valid."));
 				await client.Synthesize(text, isSsml, Item.CacheAudioData);
 				var jsonOptions = new JsonSerializerOptions() { WriteIndented = false };
@@ -168,10 +219,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.AddTask(task);
 			try
 			{
-				if (CheckClient())
+				if (RecreateClient(null, null))
 				{
-					var names = await client.GetAvailableVoicesAsync();
-					CollectionsHelper.Synchronize(names, Item.VoiceNames);
+					//var names = await client.GetAvailableVoicesAsync();
+					//CollectionsHelper.Synchronize(names, Item.VoiceNames);
 					var details = await client.GetAvailableVoicesWithDetailsAsync();
 					CollectionsHelper.Synchronize(details, Global.Voices.Items);
 				}
@@ -188,18 +239,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
-		private void VoiceLanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void This_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
 		{
-
+			UpdateMaxSize();
 		}
 
-		//private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		//{
-		//	//	AvatarPanel.Visibility = Global.AppSettings.ShowAvatar
-		//	//? Visibility.Visible
-		//	//: Visibility.Collapsed;
+		private void UpdateMaxSize()
+		{
+			var maxHeight = ActualHeight;
+			InstructionsTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
+			MessageTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
+		}
 
-		//	// Global.AppSettings.ShowAvatar = !Global.AppSettings.ShowAvatar;
-		//}
+		private bool HelpInit;
+
+		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
+			{
+				HelpInit = true;
+				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature ‐ AI Avatar.rtf");
+				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+			}
+		}
 	}
 }

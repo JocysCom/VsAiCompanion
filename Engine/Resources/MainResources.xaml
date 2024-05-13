@@ -21,6 +21,8 @@
 	<sys:String x:Key="main_API_Key">API Key</sys:String>
 	<sys:String x:Key="main_API_Organization_ID">API Organization ID</sys:String>
 	<sys:String x:Key="main_App_Always_on_Top">App Always on Top</sys:String>
+	<sys:String x:Key="main_Always_on_Top">Always on Top</sys:String>
+	<sys:String x:Key="main_AvatarPanel_Help">An AI Avatar for interaction with the user, featuring GPT-4 self-portrait drawn with DALL-E. It utilizes Microsoft Neural Voices for realistic speech output, along with visemes and blend shapes to animate facial expressions. The AI models are capable of expressing emotions through the use of Speech Synthesis Markup Language (SSML).</sys:String>
 	<sys:String x:Key="main_Approval_Template">Approval Template</sys:String>
 	<sys:String x:Key="main_Approval_Type">Approval</sys:String>
 	<sys:String x:Key="main_Attachments">Attachments</sys:String>
@@ -29,6 +31,7 @@
 	<sys:String x:Key="main_Automation">Automation</sys:String>
 	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>
 	<sys:String x:Key="main_AvatarItem_Message">Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</sys:String>
+	<sys:String x:Key="main_AvatarItem_Instructions">Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</sys:String>
 	<sys:String x:Key="main_Bar_Always_on_Top">Bar Always on Top</sys:String>
 	<sys:String x:Key="main_Browse">Browse...</sys:String>
 	<sys:String x:Key="main_Bytes">Bytes</sys:String>
@@ -75,6 +78,8 @@
 	<sys:String x:Key="main_Enabled">Enabled</sys:String>
 	<sys:String x:Key="main_Environment">Environment</sys:String>
 	<sys:String x:Key="main_Exclude_Patterns">Exclude Patterns</sys:String>
+	<sys:String x:Key="main_FavoriteVoicesTabItem_Text">Favorite Voices</sys:String>
+	<sys:String x:Key="main_FavoriteVoicesTabItem_Help">Check your favorite voices to be used by the AI for different regions or languages.</sys:String>
 	<sys:String x:Key="main_File_Name">File Name</sys:String>
 	<sys:String x:Key="main_Files">Files</sys:String>
 	<sys:String x:Key="main_Format_Code">Format Code</sys:String>
