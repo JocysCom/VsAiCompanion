@@ -44,20 +44,55 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 				// Initialize the text to insert
 				StringBuilder sb = new StringBuilder();
-				sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+				// Ensure instructions are added only once and not present in the current line
+				var instructionsExist = textBox.Text.Contains(Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+				var currentLine = GetLineFromCaret(textBox);
+				// Determine if instructions should be added
+				if (!instructionsExist && !currentLine.TrimStart().StartsWith("-"))
+					sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+				// Append file paths
 				foreach (string file in files)
 					sb.AppendLine($"- {file}");
-				// Get the current cursor position in the TextBox
-				var cursorPosition = textBox.CaretIndex;
-				// Insert the text
-				textBox.Text = textBox.Text.Insert(cursorPosition, sb.ToString());
-				// You might want to set the cursor position right after the inserted text
-				textBox.CaretIndex = cursorPosition + sb.Length;
+				// Insert or append the text to the TextBox
+				var startIndex = textBox.CaretIndex;
+				if (!IsCaretAtLineStart(textBox))
+				{
+					var insertionIndex = textBox.Text.IndexOf(Environment.NewLine, textBox.CaretIndex);
+					startIndex = insertionIndex != -1
+						? insertionIndex + Environment.NewLine.Length
+						: textBox.Text.Length;
+				}
+				textBox.Text = textBox.Text.Insert(startIndex, sb.ToString());
+				// Update cursor position
+				textBox.CaretIndex += sb.Length;
 				// Mark the event as handled
 				e.Handled = true;
 			}
 		}
 
+		private static bool IsCaretAtLineStart(TextBox textBox)
+		{
+			var lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+			var lineStartIndex = textBox.GetCharacterIndexFromLineIndex(lineIndex);
+			return textBox.CaretIndex == lineStartIndex;
+		}
+
+		private static string GetLineFromCaret(TextBox textBox)
+		{
+			var lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+			var start = textBox.GetCharacterIndexFromLineIndex(lineIndex);
+			int length;
+			if (lineIndex < textBox.LineCount - 1)
+			{
+				var end = textBox.GetCharacterIndexFromLineIndex(lineIndex + 1);
+				length = end - start;
+			}
+			else
+			{
+				length = textBox.Text.Length - start;
+			}
+			return textBox.Text.Substring(start, length);
+		}
 
 		#region Export/ Import
 
