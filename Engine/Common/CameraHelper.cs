@@ -1,4 +1,5 @@
-﻿using Emgu.CV;
+﻿/*
+using Emgu.CV;
 using Hompus.VideoInputDevices;
 using JocysCom.ClassLibrary;
 using System;
@@ -63,3 +64,4 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 	}
 }
+*/

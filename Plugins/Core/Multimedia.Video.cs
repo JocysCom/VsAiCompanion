@@ -38,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <returns>Path to the JPG file containing the captured image.</returns>
 		/// <exception cref="Exception">Thrown when the image capture fails.</exception>
-		[RiskLevel(RiskLevel.Low)]
+		//[RiskLevel(RiskLevel.Low)] // Disable until better library found.
 		public async Task<OperationResult<string>> CaptureCameraImage()
 		{
 			return await CaptureCameraImageCallback();

@@ -176,6 +176,7 @@ namespace Microsoft.Data.ConnectionUI
 			get
 			{
 				if (DataProvider._oracleDataProvider == null)
+#pragma warning disable CS0618 // Type or member is obsolete
 					DataProvider._oracleDataProvider = new DataProvider(
 						"System.Data.OracleClient",
 						SR.GetString("DataProvider_Oracle"),
@@ -195,6 +196,7 @@ namespace Microsoft.Data.ConnectionUI
 			  typeof (OracleConnectionUIControl)
 			}
 					}, typeof(OracleConnectionProperties));
+#pragma warning restore CS0618 // Type or member is obsolete
 				return DataProvider._oracleDataProvider;
 			}
 		}
