@@ -106,7 +106,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Play audio and animation.
 				mediaPlayer.Play();
 				storyboardLips.Begin();
-				PlayGlowAnimation();
 			}
 		}
 
@@ -155,7 +154,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			MouthPath.Data = MPath_0.Data;
 			SetLips(MPath_0.Data);
 			MediaButtonPlay.Visibility = Visibility.Visible;
-			StopGlowAnimation();
 		}
 
 		public void PlayGlowAnimation()

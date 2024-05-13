@@ -21,13 +21,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Generalize text if needed.
 			fileName = JocysCom.ClassLibrary.Text.Filters.GetKey(text, false);
 			// If file name will be short then...
-			if (fileName.Length >= 64)
+			var maxLen = 48;
+			if (fileName.Length >= maxLen)
 			{
 				var bytes = encoding.GetBytes(fileName);
 				var algorithm = System.Security.Cryptography.SHA256.Create();
 				var hash = string.Join("", algorithm.ComputeHash(bytes).Take(8).Select(x => x.ToString("X2")));
 				// Return trimmed name with hash.
-				fileName = string.Format("{0}_{1}", fileName.Substring(0, 64), hash);
+				fileName = string.Format("{0}_{1}", fileName.Substring(0, maxLen), hash);
 			}
 			var names = new string[] { app, groupName, charPath, fileName }.Where(x => !string.IsNullOrEmpty(x));
 			var relatvePath = string.Join("\\", names);

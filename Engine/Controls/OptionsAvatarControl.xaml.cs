@@ -28,6 +28,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateVoiceLocales();
 		}
 
+		private void Tasks_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
+		{
+			if (Global.MainControl.InfoPanel.Tasks.Any())
+			{
+				AvatarPanel.PlayGlowAnimation();
+			}
+			else
+			{
+				AvatarPanel.StopGlowAnimation();
+			}
+		}
+
 		public AvatarItem Item
 		{
 			get => Global.AppSettings.AiAvatar;
@@ -74,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		#region Voice Gender
 
 		public ObservableCollection<VoiceGender> Genders { get; }
-			= new ObservableCollection<VoiceGender>((VoiceGender[])Enum.GetValues(typeof(VoiceGender)));
+			= new ObservableCollection<VoiceGender>(new VoiceGender[] { VoiceGender.Male, VoiceGender.Female });
 
 		private async void GenderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -121,6 +133,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogPanel.Add("Service not found");
 				return false;
 			}
+			// There is no neutral in azure. Use selected.
+			if (overrideGender == VoiceGender.Neutral)
+				overrideGender = Item.Gender;
 
 			var voices = Global.Voices.Items
 				.Where(x =>
@@ -136,7 +151,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// If spoecific vocie not found then probably due to override.
 			if (voice == null)
 				voice = voices.FirstOrDefault();
-			client = new SynthesizeClient(service.ApiSecretKey, service.Region, voice?.Name);
+			client = new SynthesizeClient(service.ApiSecretKey, service.Region, voice?.ShortName);
 			return true;
 		}
 
@@ -260,6 +275,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				HelpInit = true;
 				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature ‐ AI Avatar.rtf");
 				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+			}
+		}
+
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				Global.MainControl.InfoPanel.Tasks.ListChanged += Tasks_ListChanged;
 			}
 		}
 	}
