@@ -672,7 +672,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			if (modelName.Contains("gpt-5"))
 				return 256 * 1000;
 			// All GPT-4 preview models support 128K tokens (2024-01-28).
-			if (modelName.Contains("-128k") || (modelName.Contains("gpt-4") && modelName.Contains("preview")))
+			if (modelName.Contains("-128k") || modelName.Contains("gpt-4o") || (modelName.Contains("gpt-4") && modelName.Contains("preview")))
 				return 128 * 1000;
 			if (modelName.Contains("-64k"))
 				return 64 * 1024;

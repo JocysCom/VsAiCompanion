@@ -18,8 +18,9 @@ XIQ4QRoaj7dBRW/SnxMff1n8Gx1fd0gjAdHRAyJP+x/uCkspliYATSM7QCcndGINbe8BDCHv/9J8&#xD
   <Created>2024-02-25T21:17:29.5566009+00:00</Created>
   <Modified>2024-02-25T21:17:29.5566009+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Make this code more robust</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ActiveDocument</AttachContext>
   <Settings />
@@ -30,5 +31,6 @@ XIQ4QRoaj7dBRW/SnxMff1n8Gx1fd0gjAdHRAyJP+x/uCkspliYATSM7QCcndGINbe8BDCHv/9J8&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

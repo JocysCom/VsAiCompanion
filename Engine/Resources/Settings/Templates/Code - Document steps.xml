@@ -28,8 +28,9 @@ ZEPSSsRWpMV9NtJdgD4IOfmRkLMZdj1tYmvpZYSHzURMA1gUqN9PDB/uExZ+Nf9g+A7SoQgP6L39&#xD
   <Created>2024-02-25T21:17:26.6685306+00:00</Created>
   <Modified>2024-02-25T21:17:26.6685306+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Document the steps of this code.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>Selection</AttachContext>
   <Settings />
@@ -40,5 +41,6 @@ ZEPSSsRWpMV9NtJdgD4IOfmRkLMZdj1tYmvpZYSHzURMA1gUqN9PDB/uExZ+Nf9g+A7SoQgP6L39&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

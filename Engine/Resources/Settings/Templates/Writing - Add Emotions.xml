@@ -29,8 +29,9 @@ RyMJ7iyJPaoEqFsuLjOx0/nR2+ZdUQ/vnlRsvsOJIRgQoTtRvul6CB7eMB1jRlb/N0j8VUL8CXiA&#xD
   <Created>2024-02-25T21:17:37.6867668+00:00</Created>
   <Modified>2024-02-25T21:17:37.6867668+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Please rewrite this text to make the scene more emotional. Add relevant punctuation marks. Add indicators of emotions in square brackets.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Text> [insert dialog here]</Text>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
@@ -42,5 +43,6 @@ RyMJ7iyJPaoEqFsuLjOx0/nR2+ZdUQ/vnlRsvsOJIRgQoTtRvul6CB7eMB1jRlb/N0j8VUL8CXiA&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

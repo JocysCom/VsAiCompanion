@@ -26,7 +26,7 @@ ozxJQFFCtDwLAHieSZwg89TJTDIyk0Ktilp48xhNTaRoyA7wgyz0+FjGh8x/NrgeX9z8w4sgfj/5&#xD
   <Created>2024-02-25T21:17:30.9287814+00:00</Created>
   <Modified>2024-02-25T21:17:30.9287814+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Please proofread the following text, focusing only on correcting spelling and grammar errors. Maintain the original sentence structure and meaning as much as possible, making only minimal changes necessary for correctness.&#xD;
 &#xD;
 After making the corrections, always provide answer in two parts:&#xD;
@@ -42,6 +42,7 @@ Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
 &#xD;
 Text to process:&#xD;
 </TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <Settings />
   <Messages />
@@ -51,5 +52,6 @@ Text to process:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

@@ -157,8 +157,9 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
+          <GridSplitterPosition>0.25684210526315787</GridSplitterPosition>
           <ListSelection>
-            <string>AI - Chat (GPT-3.5)</string>
+            <string>AI - Chat (GPT-4)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
@@ -198,9 +199,9 @@
         <TaskSettings>
           <ItemType>AiService</ItemType>
           <ListSelection>
-            <string>Open AI</string>
+            <string>Speech Service</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>5</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
@@ -220,14 +221,16 @@
       </PanelSettingsList>
       <AiServices>
         <AiService>
+          <ServiceType>OpenAI</ServiceType>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
           <Name>Open AI</Name>
           <IsDefault>true</IsDefault>
-          <DefaultAiModel>gpt-4</DefaultAiModel>
+          <DefaultAiModel>gpt-4o</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
           <ModelFilter>gpt|text-davinci-[0-9+]|embedding</ModelFilter>
         </AiService>
         <AiService>
+          <ServiceType>OpenAI</ServiceType>
           <Id>831ee2de-6274-0abb-35af-1e0251a3666e</Id>
           <Name>GPT4All (Local Machine)</Name>
           <ResponseStreaming>false</ResponseStreaming>
@@ -237,6 +240,7 @@
           <ModelFilter />
         </AiService>
         <AiService>
+          <ServiceType>OpenAI</ServiceType>
           <Id>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</Id>
           <Name>LM Studio (Local Machine)</Name>
           <ResponseStreaming>false</ResponseStreaming>
@@ -246,6 +250,7 @@
           <ModelFilter />
         </AiService>
         <AiService>
+          <ServiceType>OpenAI</ServiceType>
           <Id>7638dcd2-f637-12a5-89e2-c4834bfa367c</Id>
           <Name>Open AI (On-Premises)</Name>
           <ResponseStreaming>false</ResponseStreaming>
@@ -255,6 +260,7 @@
           <ModelFilter />
         </AiService>
         <AiService>
+          <ServiceType>OpenAI</ServiceType>
           <Id>1ba94e57-3827-3636-5ba1-227d5e4c56ea</Id>
           <Name>Azure Open AI</Name>
           <ResponseStreaming>false</ResponseStreaming>
@@ -373,6 +379,20 @@
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
+          <Id>ed65f488-25ab-140d-d945-f9f6e1bd965f</Id>
+          <Name>gpt-4-turbo</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>9608bdfd-ae20-122c-704f-d16f34196708</Id>
+          <Name>gpt-4-turbo-2024-04-09</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
           <Id>8987a0dc-b537-7d1d-0331-f6f4e0069da6</Id>
           <Name>gpt-4-turbo-preview</Name>
           <AllowFineTuning>false</AllowFineTuning>
@@ -382,6 +402,20 @@
         <AiModel>
           <Id>93f76239-808d-4181-c5b7-45ea064bf96d</Id>
           <Name>gpt-4-vision-preview</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
+          <Name>gpt-4o</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>0e7a059b-bd14-6ae6-ab4f-788e5484044c</Id>
+          <Name>gpt-4o-2024-05-13</Name>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>

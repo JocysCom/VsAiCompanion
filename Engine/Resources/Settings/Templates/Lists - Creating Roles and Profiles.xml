@@ -14,7 +14,7 @@ iz+y7EqprQMAAA==</IconData>
   <Created>2024-03-15T14:01:04.6667453+00:00</Created>
   <Modified>2024-03-15T19:01:23.6163822+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4-0125-preview</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
@@ -46,6 +46,7 @@ Note: In the Description, provide user-facing details of the list. In the Instru
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
   <AttachmentsSelection />
 </TemplateItem>

@@ -42,7 +42,7 @@ O+//D5vhz0ASGgAA</IconData>
   <Created>2024-02-25T21:17:31.7636805+00:00</Created>
   <Modified>2024-02-25T21:17:31.7636805+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Analyze the contract or terms and conditions provided. Identify any deceptive language, loopholes, or missing parts that can unfairly benefit one party. For example, try to identify "golden handcuffs," which are financial incentives given to employees to prevent them from leaving a company because the employee would have to pay them back. Reply with this format identifying as possible disadvantageous practices as possible.&#xD;
 &#xD;
 ```text&#xD;
@@ -67,5 +67,6 @@ Explanation:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

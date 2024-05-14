@@ -37,7 +37,7 @@ izPBVLiPHe4RhK4y8ZWpHtPopUAqrFrQPwtOzDACF6jHlPvIVrVKXi7oX4/PnvwH1t4mnEgVAAA=</Ic
   <Created>2024-02-25T21:17:40.0123117+00:00</Created>
   <Modified>2024-02-25T21:17:40.0123117+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>Analyze user prompts and identify instances where the same idea is duplicated. The goal is to respect the reader's time by expressing ideas clearly and concisely. Recommend removing redundant sentences. Try to use shorter sentences and common words to improve understanding, even for those with basic English skills. If possible, split long sentences. If merging two sentences improves clarity and brevity, suggest doing so.&#xD;
 &#xD;
@@ -63,5 +63,6 @@ Important:  Always wrap `fully corrected text` in the Markdown code block like t
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

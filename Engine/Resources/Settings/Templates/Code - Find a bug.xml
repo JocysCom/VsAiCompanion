@@ -25,8 +25,9 @@ Su/P9xr8MORfRfqFSIuL+NL64tk/Wc5GkLQLAAA=</IconData>
   <Created>2024-02-25T21:17:27.0304431+00:00</Created>
   <Modified>2024-02-25T21:17:27.0304431+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Find a bug or issue in this code.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ActiveDocument</AttachContext>
   <Settings />

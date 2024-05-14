@@ -32,7 +32,7 @@ MYaK6IVrJN4GOfnwoSnacOnRtAyaSUX3aShQSSqehkhcCFF+DNF8dn31Zk7/03T1Dx+FsbWjEgAA</Ic
   <Created>2024-02-25T21:17:31.1577512+00:00</Created>
   <Modified>2024-02-25T21:17:31.1577512+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. The text may consist of complete sentences, phrases, or standalone titles. Additionally, rewrite any sentences that could be clearer by using more common words to enhance understanding. Make sure the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
 &#xD;
 Feel free to use a casual and conversational tone, including common colloquialisms and informal language where appropriate.&#xD;
@@ -50,6 +50,7 @@ Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
 &#xD;
 Text to process:&#xD;
 </TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <Settings />
   <Messages />
@@ -59,5 +60,6 @@ Text to process:&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>
