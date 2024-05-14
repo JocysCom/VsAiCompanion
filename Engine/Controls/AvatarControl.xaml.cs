@@ -2,6 +2,8 @@
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,7 +20,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for AvatarControl.xaml
 	/// </summary>
-	public partial class AvatarControl : UserControl
+	public partial class AvatarControl : UserControl, INotifyPropertyChanged
 	{
 		public AvatarControl()
 		{
@@ -44,12 +46,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SetLipsMeshGeometry3D();
 			SetLipsMeshGeometry3DUsingPathData(MPath_0.Data);
 			pathNow = MPath_0;
+			AudioCollection.CollectionChanged += AudioCollection_CollectionChanged;
 		}
 
 		int LipAnimationFrames = 6; // Min 1.
 		int LipGeometryDivisions = 9; // Min 2.
 		// Audio file and data.
-		public string AudioFile; // @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
+		public string AudioPath; // @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
 		AudioFileInfo AudioData = new AudioFileInfo();
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
 		MediaPlayer mediaPlayer = new MediaPlayer();
@@ -79,8 +82,40 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// Current path.
 		Path pathNow = new Path();
 
+		// Audio collection.
+		private ObservableCollection<(string, AudioFileInfo)> _audioCollection;
+		public ObservableCollection<(string, AudioFileInfo)> AudioCollection
+		{
+			get { return _audioCollection; }
+			set
+			{
+				_audioCollection = value;
+				OnPropertyChanged(nameof(AudioCollection));
+			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected void OnPropertyChanged(string name) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
+
+		private void AudioCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add && mediaPlayer.Source == null) { PlayNextListItem(); }
+		}
+
+		private void PlayNextListItem()
+		{
+			if (AudioCollection.Count > 0) { AudioCollection.RemoveAt(0); }
+			if (AudioCollection.Count > 0)
+			{
+				// Item to play (assuming AudioData and AudioFile are defined elsewhere in your ViewModel)
+				AudioPath = AudioCollection[0].Item1;
+				AudioData = AudioCollection[0].Item2;
+				Play(AudioPath, AudioData);
+			}
+		}
+
 		// Load audio file first to extract audio duration in ms (required for lip animation calculations from text string only).
-		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e) { if (!string.IsNullOrEmpty(AudioFile)) Play(AudioFile, AudioData); }
+		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e) { if (!string.IsNullOrEmpty(AudioPath)) Play(AudioPath, AudioData); }
 		// Extract audio file duration in ms and start animation calculations (when completed, audio and lip animation will play automatically).
 		private void MediaPlayer_MediaOpened(object sender, EventArgs e)
 		{
@@ -100,9 +135,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			AnimationAndMediaStop();
 			MediaButtonPlay.Visibility = Visibility.Collapsed;
-			AudioFile = AssemblyInfo.ExpandPath(audioFile);
+			AudioPath = AssemblyInfo.ExpandPath(audioFile);
 			AudioData = audioData;
-			try { mediaPlayer.Open(new Uri(AudioFile)); }
+			try { mediaPlayer.Open(new Uri(AudioPath)); }
 			catch (Exception ex) { MessageBox.Show($"Error playing audio: {ex.Message}"); }
 			MediaButtonStop.Visibility = Visibility.Visible;
 			AnimationBar.Visibility = Visibility.Visible;
@@ -161,6 +196,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			animation_BAR.KeyFrames.Clear();
 			MouthPath.Data = MPath_0.Data;
 			SetLipsMeshGeometry3DUsingPathData(MPath_0.Data);
+			PlayNextListItem();
 		}
 
 		public void PlayGlowAnimation()
