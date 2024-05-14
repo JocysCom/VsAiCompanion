@@ -181,7 +181,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			storyboardLips.Children.Add(animation);
 		}
 
-		private void StoryboardLipsCompleted(object sender, EventArgs e) { AnimationStop(); }
+		private void StoryboardLipsCompleted(object sender, EventArgs e) { AnimationStop(); PlayNextListItem(); }
 
 		private void AnimationStop()
 		{
@@ -196,7 +196,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			animation_BAR.KeyFrames.Clear();
 			MouthPath.Data = MPath_0.Data;
 			SetLipsMeshGeometry3DUsingPathData(MPath_0.Data);
-			PlayNextListItem();
 		}
 
 		public void PlayGlowAnimation()
