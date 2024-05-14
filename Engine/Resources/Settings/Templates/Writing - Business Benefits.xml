@@ -38,7 +38,7 @@ V+qZwdURv6p6otM6bxtSrVU4yePYD8SaqDs4zQToyg+daygCfnxIO5TuiATWqouefhD5Pzfix4+D&#xD
   <Created>2024-02-25T21:17:38.9963351+00:00</Created>
   <Modified>2024-02-25T21:17:38.9963351+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>Please provide a brief and straightforward bullet-point list of the top three practical advantages for businesses and software developers when they complete the tasks described by the user.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
@@ -52,5 +52,6 @@ V+qZwdURv6p6otM6bxtSrVU4yePYD8SaqDs4zQToyg+daygCfnxIO5TuiATWqouefhD5Pzfix4+D&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

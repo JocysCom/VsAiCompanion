@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Media;
 using System.Net.Http;
 using System.Runtime.Versioning;
@@ -155,54 +156,85 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 			}
 		}
 
+		#region Update to Viseme
+
+		// Define namespaces
+		static XNamespace ns = "http://www.w3.org/2001/10/synthesis";
+		static XNamespace mstts = "http://www.w3.org/2001/mstts";
+
 		/// <summary>
 		/// Update to Speech Synthesis Markup Language Version 1.0 with Viseme and Shapes.
+		/// Function adds missing tags and wraps into appropriate elements.
 		/// </summary>
-		/// <param name="text"></param>
+		/// <param name="input"></param>
 		/// <param name="voiceName"></param>
 		/// <returns></returns>
-		public static string UpdateToViseme(string text, string voiceName)
+		public static string UpdateToViseme(string input, string voiceName)
 		{
-			// Define namespaces
-			XNamespace ns = "http://www.w3.org/2001/10/synthesis";
-			XNamespace mstts = "http://www.w3.org/2001/mstts";
-			// Create the root element <speak> with necessary attributes
-			XElement speakElement = new XElement(ns + "speak",
-				new XAttribute("version", "1.0"),
-				new XAttribute(XNamespace.Xmlns + "mstts", mstts.NamespaceName),
-				new XAttribute(XNamespace.Xml + "lang", "en-US"));
-			// Create the <voice> element with the provided voiceName
-			XElement voiceElement = new XElement(ns + "voice",
-				new XAttribute("name", voiceName));
-			// Add <mstts:viseme> element
-			XElement visemeElement = new XElement(mstts + "viseme",
-				new XAttribute("type", "FacialExpression"));
-			// Check if text is plain text or XML
-			if (IsXml(text))
-			{
-				try
-				{
-					// Parse the XML content and extract inner text
-					XElement textElement = XElement.Parse(text);
-					voiceElement.Add(visemeElement);
-					voiceElement.Add(textElement.Nodes());
-				}
-				catch (Exception)
-				{
-					// In case of parsing error, treat as plain text
-					voiceElement.Add(visemeElement);
-					voiceElement.Add(text);
-				}
-			}
-			else
-			{
-				// If plain text, just add the text
-				voiceElement.Add(visemeElement);
-				voiceElement.Add(text);
-			}
-			// Construct the final XML
-			speakElement.Add(voiceElement);
+			// Wrap text in <speak> or parse it as XML.
+			var parsedElement = IsXml(input)
+				? XElement.Parse(input)
+				: new XElement(ns + "speak", new XText(input));
+			// Ensure <speak> element and its attributes
+			var speakElement = EnsureSpeakElement(parsedElement);
+			// Ensure <voice> element and its attributes
+			EnsureVoiceElements(speakElement, voiceName);
 			return speakElement.ToString();
+		}
+
+		/// <summary>
+		/// Ensures the <speak> element has necessary attributes and wraps content if needed.
+		/// </summary>
+		static XElement EnsureSpeakElement(XElement element)
+		{
+			// Ensure <speak> element
+			var speakElement = element.Name == ns + "speak"
+				? element
+				: new XElement(ns + "speak", element.Nodes());
+			// Ensure necessary attributes
+			if (!speakElement.Attribute("version")?.Value.Equals("1.0") ?? true)
+				speakElement.SetAttributeValue("version", "1.0");
+			if (!speakElement.Attribute(XNamespace.Xmlns + "mstts")?.Value.Equals(mstts.NamespaceName) ?? true)
+				speakElement.SetAttributeValue(XNamespace.Xmlns + "mstts", mstts.NamespaceName);
+			if (!speakElement.Attribute(XNamespace.Xml + "lang")?.Value.Equals("en-US") ?? true)
+				speakElement.SetAttributeValue(XNamespace.Xml + "lang", "en-US");
+			// Fix child elements namespaces.
+			foreach (var descendant in speakElement.DescendantsAndSelf())
+				if (descendant.Name.Namespace == XNamespace.None)
+					descendant.Name = ns + descendant.Name.LocalName;
+			return speakElement;
+		}
+		/// <summary>
+		/// Ensures all <voice> elements have necessary attributes and viseme elements.
+		/// </summary>
+		static void EnsureVoiceElements(XElement container, string voiceName)
+		{
+			// If no <voice> element, wrap content in <voice> element
+			if (!container.Descendants(ns + "voice").Any())
+			{
+				var content = container.Nodes().ToList();
+				container.RemoveNodes();
+				container.Add(CreateVoiceElement(content, voiceName));
+			}
+			// Ensure attributes and viseme elements in <voice> elements
+			foreach (var voiceEl in container.Descendants(ns + "voice"))
+			{
+				if (voiceEl.Attribute("name") == null)
+					voiceEl.SetAttributeValue("name", voiceName);
+				if (!(voiceEl.Nodes().FirstOrDefault() is XElement firstChild) || firstChild.Name != mstts + "viseme")
+					voiceEl.AddFirst(new XElement(mstts + "viseme", new XAttribute("type", "FacialExpression")));
+			}
+		}
+
+		/// <summary>
+		/// Creates a <voice> element with viseme.
+		/// </summary>
+		static XElement CreateVoiceElement(IEnumerable<XNode> content, string voiceName)
+		{
+			var voiceElement = new XElement(ns + "voice", new XAttribute("name", voiceName));
+			voiceElement.Add(new XElement(mstts + "viseme", new XAttribute("type", "FacialExpression")));
+			voiceElement.Add(content);
+			return voiceElement;
 		}
 
 		private static bool IsXml(string text)
@@ -219,6 +251,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 				return false;
 			}
 		}
+
+		#endregion
 
 
 #if NETCOREAPP

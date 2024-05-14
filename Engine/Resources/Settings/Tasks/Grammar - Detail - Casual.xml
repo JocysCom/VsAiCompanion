@@ -32,7 +32,7 @@ MYaK6IVrJN4GOfnwoSnacOnRtAyaSUX3aShQSSqehkhcCFF+DNF8dn31Zk7/03T1Dx+FsbWjEgAA</Ic
   <Created>2024-02-25T21:16:37.8663467+00:00</Created>
   <Modified>2024-04-16T20:59:17.9511887+01:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>Grammar - Detail - Casual</TemplateName>
   <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. The text may consist of complete sentences, phrases, or standalone titles. Additionally, rewrite any sentences that could be clearer by using more common words to enhance understanding. Make sure the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
 &#xD;
@@ -52,6 +52,7 @@ Important:  Always wrap `fully corrected text` in the Markdown code block:&#xD;
 Text to process:&#xD;
 </TextInstructions>
   <ShowInstructions>false</ShowInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <Settings />
   <Messages />
@@ -62,5 +63,6 @@ Text to process:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

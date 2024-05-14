@@ -28,8 +28,9 @@ Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD
   <Created>2024-02-25T21:17:42.1354702+00:00</Created>
   <Modified>2024-02-25T21:17:42.1354702+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Data will be supplied in a JSONL (JSON Lines) format. You will be given a message and its possible duplicates. If a message is a duplicate and is a less detailed copy of the other message, mark the message content with the prefix `OBSOLETE`.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Text>This reserved task using AI to process messages for fine-tuning an AI model.</Text>
   <Attachments />
   <Settings />
@@ -51,5 +52,6 @@ Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

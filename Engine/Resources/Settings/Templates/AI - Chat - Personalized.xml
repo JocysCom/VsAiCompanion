@@ -67,7 +67,7 @@ qLhXX030847/d8gXn/0b7zGB4esiAAA=</IconData>
   <Created>2024-03-11T09:13:53.7208889+00:00</Created>
   <Modified>2024-03-11T21:16:27.8712855+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>

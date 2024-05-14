@@ -4,6 +4,8 @@
       <AiAvatar>
         <AiServiceId>3ab0e927-091c-40e6-b32b-bdf04bc2e88b</AiServiceId>
         <Message>Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</Message>
+        <VoiceName>Andrew Multilingual</VoiceName>
+        <VoiceLocale>en-US</VoiceLocale>
         <Instructions>Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</Instructions>
       </AiAvatar>
       <UpdateSettings>
@@ -90,6 +92,68 @@
         </TaskSettings>
         <TaskSettings>
           <ListSelection />
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Attachment</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Task</ItemType>
+          <ListSelection>
+            <string>AI - Chat (GPT-3.5)</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Template</ItemType>
+          <ListSelection>
+            <string>AI - Chat</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>FineTuning</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Assistant</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Embeddings</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Lists</ItemType>
+          <ListSelection>
+            <string>API - Demo</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>AiService</ItemType>
+          <ListSelection>
+            <string>Company Name AI</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>AiModel</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>MailAccount</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Voice</ItemType>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
       </PanelSettingsList>

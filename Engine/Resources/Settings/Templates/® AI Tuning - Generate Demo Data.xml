@@ -28,7 +28,7 @@ Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD
   <Created>2024-02-25T21:17:40.4874379+00:00</Created>
   <Modified>2024-02-25T21:17:40.4874379+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Please create demo data for fine-tuning an AI model.&#xD;
 - Please create an imaginary business company with a name that does not yet exist.&#xD;
 - Generate 10 questions that customers would like to ask.&#xD;
@@ -106,5 +106,6 @@ JSON Lines example:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

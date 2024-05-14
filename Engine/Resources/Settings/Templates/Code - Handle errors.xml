@@ -23,8 +23,9 @@ so8veO7ii/S7+urF3xnwu3dXCAAA</IconData>
   <Created>2024-02-25T21:17:27.5162776+00:00</Created>
   <Modified>2024-02-25T21:17:27.5162776+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>We have a piece of PowerShell code. The code does not currently handle any exceptions or errors. We want to improve this code to handle potential errors without using try-catch blocks if possible, and provide user-friendly error messages Reply with fully modified code.  Use instant return if possible. Here's the original code:</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Text>```PowerShell&#xD;
 $file = 'C:\path\to\your\file.txt'&#xD;
 $content = Get-Content $file&#xD;
@@ -41,5 +42,6 @@ Write-Host "Number of words in the file: $wordCount"&#xD;
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

@@ -21,12 +21,13 @@ z/4FWrZIn9sMAAA=</IconData>
   <Created>2024-04-11T21:02:21.2689876+01:00</Created>
   <Modified>2024-04-11T21:02:21.2689876+01:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Improve Prompt</TemplateName>
   <TextInstructions>Please analyze the following AI prompt text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised AI prompt text.&#xD;
 &#xD;
 Data for processing:</TextInstructions>
   <ShowInstructions>false</ShowInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <Settings />
   <Messages />
@@ -36,5 +37,6 @@ Data for processing:</TextInstructions>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

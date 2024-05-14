@@ -26,8 +26,9 @@ h1aV3ComFoiL6UUY8IwrMbCh6pJhpWxVjAuIvhIXO4iwtQFpQTZ9ixEouviCKmlILolu0EMORRn1&#xD
   <Created>2024-02-25T21:17:23.878586+00:00</Created>
   <Modified>2024-02-25T21:17:23.878586+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Cleanup this code.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>Selection</AttachContext>
   <Settings />
@@ -38,5 +39,6 @@ h1aV3ComFoiL6UUY8IwrMbCh6pJhpWxVjAuIvhIXO4iwtQFpQTZ9ixEouviCKmlILolu0EMORRn1&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

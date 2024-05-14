@@ -1,6 +1,10 @@
-2024-05-14 v1.10.8
+2024-05-14 v1.10.14
 
 - Fix: Error with domain security code prevents the use of plugins.
+- Fix: Sometimes SSML speech synthesis fails.
+- Fix: GPT-4o's max input tokens.
+- Update: Hide the chat panel on large pages to make resizing smoother.
+- Update: Switched all templates to GPT-4o.
 
 2024-05-13 v1.10.6
 

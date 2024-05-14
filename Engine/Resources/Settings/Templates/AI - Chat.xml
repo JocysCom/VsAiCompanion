@@ -17,7 +17,7 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <Created>2024-02-26T09:13:32.5930319+00:00</Created>
   <Modified>2024-03-03T22:59:03.7565805+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
@@ -30,5 +30,7 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <AutoFormatCode>false</AutoFormatCode>
   <AutoGenerateTitle>true</AutoGenerateTitle>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <PluginsEnabled>true</PluginsEnabled>
   <AttachmentsSelection />
 </TemplateItem>

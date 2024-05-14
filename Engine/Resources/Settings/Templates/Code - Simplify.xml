@@ -16,7 +16,7 @@ fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
   <Created>2024-02-25T21:17:29.6813219+00:00</Created>
   <Modified>2024-02-25T21:17:29.6813219+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Simplify, refactor, and enhance the performance of the given code while preserving all essential comments.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
@@ -29,5 +29,6 @@ fEyfwtbsOD2uaBGtF1eF+zta/AGBsTo6yAQAAA==</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

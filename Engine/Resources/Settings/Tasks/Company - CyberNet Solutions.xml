@@ -24,7 +24,7 @@ rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD
   <Created>2024-04-09T19:10:10.1584084+01:00</Created>
   <Modified>2024-04-28T22:18:54.9438423+01:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4-turbo-preview</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>Generate a response according to the given persona and sign off at the end.</TextInstructions>
   <ShowInstructions>false</ShowInstructions>

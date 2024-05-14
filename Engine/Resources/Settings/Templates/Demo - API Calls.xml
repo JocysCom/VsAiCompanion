@@ -18,7 +18,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <Created>2024-03-15T18:57:25.6536848+00:00</Created>
   <Modified>2024-03-15T19:01:23.6062615+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
@@ -273,6 +273,7 @@ Enjoy the humor! If you want more jokes, just let me know.</Body>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
   <MaxRiskLevel>Medium</MaxRiskLevel>
   <AttachmentsSelection />

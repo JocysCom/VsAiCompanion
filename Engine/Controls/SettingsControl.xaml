@@ -36,7 +36,11 @@
 			x:FieldModifier="public"
 			Visibility="{Binding ListPanelVisibility, ElementName=This}" />
 		<GridSplitter
+			x:Name="MainGridSplitter"
 			Grid.Column="1"
+			DragStarted="MainGridSplitter_DragStarted"
+			DragCompleted="MainGridSplitter_DragCompleted"
+			x:FieldModifier="public"
 			BorderBrush="{StaticResource BorderDark}"
 			ResizeDirection="Columns"
 			Style="{StaticResource GridSplitterVertical}"

@@ -37,8 +37,9 @@ J5f+5MGBCtxyvk3xT2Jij2P9HP76q/8CkSKQB9wPAAA=</IconData>
   <Created>2024-02-25T21:17:30.7389134+00:00</Created>
   <Modified>2024-02-25T21:17:30.7389134+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Suggest five topics for a weekly team-building social meeting. The aim is to bond, have fun, and expand knowledge. Try to be creative and consider topics that are about some of the most fascinating and bizarre events that happened in the past week. Provide one sentence about the event, a link to news about it, and a question to discuss.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <Settings />
   <Messages>
@@ -58,5 +59,6 @@ J5f+5MGBCtxyvk3xT2Jij2P9HP76q/8CkSKQB9wPAAA=</IconData>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

@@ -28,7 +28,7 @@ Efjbq1GLJa5IWLqxPoUwtOHzyzu+xkTgpoMAR4stqQyLGrFlCAASArxQEVxS8JbxDhgkRig6RGcb&#xD
   <Created>2024-02-25T21:17:41.9884796+00:00</Created>
   <Modified>2024-02-25T21:17:41.9884796+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Data will be supplied in a JSONL (JSON Lines) format. This specification of must be used for user prompt and assistant answer:&#xD;
 &#xD;
 ```JSON&#xD;
@@ -81,5 +81,6 @@ Expected answer is this:&#xD;
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>
