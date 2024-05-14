@@ -119,7 +119,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void PlayMessageSentAnimation()
 		{
 			CreateSparkUpOrDownAnimation(storyboardUploaded, SparksBlueCanvas, storyboardUploadedCanvas);
-			CreateSparkUpOrDownAnimation(storyboardUploaded, SparksBlueCanvas, storyboardUploadedCanvas);
 		}
 
 		public void PlayMessageReceivedAnimation()
@@ -190,6 +189,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CreateSparkUpOrDownAnimation(Storyboard storyboard, Canvas pathCanvas, Canvas animationCanvas)
 		{
+			if (storyboard.Children.Count() > 0) { return; }
+
 			var sizeMax = 100;
 			var duration = pathCanvas == SparksYellowCanvas ? 1500 : 1900;
 			var random = new Random();
