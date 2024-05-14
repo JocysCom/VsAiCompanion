@@ -285,6 +285,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Visibility ListPanelVisibility
 			=> PanelSettings.IsListPanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+		private void MainGridSplitter_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+		{
+			// Browser always visible dureing resizing if CTRL key is down.
+			var shiftDown =
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftShift) ||
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
+			if (shiftDown)
+				return;
+			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?.WebBrowser;
+			var bodiesSize = TemplateItemPanel?.Item?.Messages.Sum(x => x.Body?.Length ?? 0);
+			var attachmentsSize = TemplateItemPanel?.Item?.Attachments.Sum(x => x.Data?.Length ?? 0);
+			var isLarge = (bodiesSize + attachmentsSize) > 1024 * 8;
+			// Hide content for large pages for faster resizing.
+			if (wb != null && isLarge)
+				wb.Visibility = Visibility.Hidden;
+		}
+
+		private void MainGridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+		{
+			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?.WebBrowser;
+			if (wb != null)
+				wb.Visibility = Visibility.Visible;
+		}
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
