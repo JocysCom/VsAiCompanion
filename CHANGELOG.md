@@ -1,3 +1,7 @@
+2024-05-14 v1.10.8
+
+- Fix: Error with domain security code prevents the use of plugins.
+
 2024-05-13 v1.10.6
 
 - Fix: Crash when reading data from the embedding database.

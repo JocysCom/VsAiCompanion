@@ -67,7 +67,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var allGroups = JocysCom.ClassLibrary.Security.PermissionHelper.GetAllGroups(ContextType.Domain);
 			var dic = GetLevels();
-			foreach (var level in dic.Keys)
+			var levels = dic.Keys.ToArray();
+			foreach (var level in levels)
 			{
 				var groupName = GetGroupName(level);
 				var exists = allGroups.Any(g => g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase));
