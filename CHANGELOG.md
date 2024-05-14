@@ -3,6 +3,7 @@
 - Fix: Error with domain security code prevents the use of plugins.
 - Fix: Sometimes SSML speech synthesis fails.
 - Fix: GPT-4o's max input tokens.
+- Fix: Editing a user message was sending the old message to the AI.
 - Update: Hide the chat panel on large pages to make resizing smoother.
 - Update: Switched all templates to GPT-4o.
 

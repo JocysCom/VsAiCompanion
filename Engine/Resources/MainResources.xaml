@@ -135,9 +135,9 @@
 	<sys:String x:Key="main_ReadOnly">Read-Only</sys:String>
 	<sys:String x:Key="main_Refresh">Refresh</sys:String>
 	<sys:String x:Key="main_Remove_on_Complete">Remove on Complete</sys:String>
-	<sys:String x:Key="main_Reset_ServicesAndModels">Reset Services and Models</sys:String>
+	<sys:String x:Key="main_Reset_ServicesAndModels">Reset Services and Models (Resets API Keys)</sys:String>
 	<sys:String x:Key="main_Reset_Lists">Reset Lists</sys:String>
-	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings</sys:String>
+	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings (Resets API Keys)</sys:String>
 	<sys:String x:Key="main_Reset_Embeddings">Reset Embeddings</sys:String>
 	<sys:String x:Key="main_Reset_Prompting_Settings">Reset Prompting Settings</sys:String>
 	<sys:String x:Key="main_Reset_Settings">Reset Settings</sys:String>

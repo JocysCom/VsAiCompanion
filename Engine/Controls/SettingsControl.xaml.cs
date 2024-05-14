@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -297,16 +298,41 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var bodiesSize = TemplateItemPanel?.Item?.Messages.Sum(x => x.Body?.Length ?? 0);
 			var attachmentsSize = TemplateItemPanel?.Item?.Attachments.Sum(x => x.Data?.Length ?? 0);
 			var isLarge = (bodiesSize + attachmentsSize) > 1024 * 8;
+
+			if (!settignsStored)
+			{
+				_BitmapScalingMode = RenderOptions.GetBitmapScalingMode(wb);
+				_TextRenderingMode = TextOptions.GetTextRenderingMode(wb);
+				// Disable animations to improve resize performance
+				_VisualBrush = new VisualBrush(wb);
+				_Visual = _VisualBrush.Visual;
+				settignsStored = true;
+			}
 			// Hide content for large pages for faster resizing.
 			if (wb != null && isLarge)
+			{
 				wb.Visibility = Visibility.Hidden;
+				RenderOptions.SetBitmapScalingMode(wb, BitmapScalingMode.LowQuality);
+				TextOptions.SetTextRenderingMode(wb, TextRenderingMode.Grayscale);
+			}
 		}
+
+		bool settignsStored;
+		BitmapScalingMode _BitmapScalingMode;
+		TextRenderingMode _TextRenderingMode;
+		Visual _Visual;
+		VisualBrush _VisualBrush;
 
 		private void MainGridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
 		{
 			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?.WebBrowser;
 			if (wb != null)
+			{
 				wb.Visibility = Visibility.Visible;
+				RenderOptions.SetBitmapScalingMode(wb, _BitmapScalingMode);
+				TextOptions.SetTextRenderingMode(wb, _TextRenderingMode);
+				_VisualBrush.Visual = _Visual;
+			}
 		}
 
 		#region ■ INotifyPropertyChanged
