@@ -931,8 +931,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void CreateSparkAnimation(int startMin, int startMax, int duration)
 		{
 			var sizeMax = 100;
-			var sizeMinRandom = 50;
-			var sizeMaxRandom = 75;
+			var sizeMinRandom = 80;
+			var sizeMaxRandom = 100;
 			var random = new Random();
 
 			foreach (Canvas canvas in new[] { SparksYellowCanvas, SparksBlueCanvas, SparksBrownCanvas })
