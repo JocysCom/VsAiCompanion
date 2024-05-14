@@ -58,7 +58,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		int LipAnimationFrames = 6; // Min 1.
 		int LipGeometryDivisions = 9; // Min 2.
 
-		public string AudioFile = @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
+		public string AudioFile; // @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
 		AudioFileInfo AudioData = new AudioFileInfo();
 
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
@@ -66,7 +66,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// Load audio file first to extract audio durationMs (required for lip animation calculations from text string only).
 		private void MediaPlayer_OpenMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			Play(AudioFile, AudioData);
+			if (!string.IsNullOrEmpty(AudioFile)) Play(AudioFile, AudioData);
 		}
 
 		public void Play(string audioFile, AudioFileInfo audioData)

@@ -572,7 +572,8 @@
 				VerticalAlignment="Bottom"
 				Background="#55000000"
 				CornerRadius="100"
-				MouseDown="MediaPlayer_OpenMediaFile">
+				MouseDown="MediaPlayer_OpenMediaFile"
+				Visibility="Collapsed">
 				<Viewbox
 					Width="100"
 					Height="100"

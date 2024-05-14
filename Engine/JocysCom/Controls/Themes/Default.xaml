@@ -131,6 +131,12 @@
 		<Setter Property="BorderThickness" Value="0" />
 		<Setter Property="VerticalScrollBarVisibility" Value="Auto" />
 		<Setter Property="VerticalAlignment" Value="Stretch" />
+		<Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
+		<Setter Property="LayoutTransform">
+			<Setter.Value>
+				<ScaleTransform ScaleX="0.8" ScaleY="0.8" />
+			</Setter.Value>
+		</Setter>
 	</Style>
 
 	<!--  StatusBar  -->

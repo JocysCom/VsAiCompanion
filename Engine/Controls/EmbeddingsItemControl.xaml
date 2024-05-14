@@ -8,7 +8,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:DesignHeight="400"
+	d:DesignHeight="800"
 	d:DesignWidth="800"
 	Loaded="This_Loaded"
 	Unloaded="This_Unloaded"
@@ -71,9 +71,7 @@
 				Width="64"
 				Height="64"
 				VerticalAlignment="Top" />
-			<Label Grid.Column="1"
-				VerticalAlignment="Center"
-				Content="{StaticResource main_Service}" />
+			<Label Grid.Column="1" VerticalAlignment="Center" Content="{StaticResource main_Service}" />
 			<StackPanel
 				Grid.Column="2"
 				Grid.ColumnSpan="5"
