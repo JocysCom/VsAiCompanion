@@ -199,9 +199,9 @@
         <TaskSettings>
           <ItemType>AiService</ItemType>
           <ListSelection>
-            <string>Speech Service</string>
+            <string>Open AI</string>
           </ListSelection>
-          <ListSelectedIndex>5</ListSelectedIndex>
+          <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
