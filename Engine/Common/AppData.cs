@@ -24,6 +24,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
+		[DefaultValue(null)]
+		public string ClientAppId { get => _ClientAppId; set => SetProperty(ref _ClientAppId, value); }
+		private string _ClientAppId;
+
 		[DefaultValue(false)]
 		public bool AppAlwaysOnTop { get => _AppAlwaysOnTop; set => SetProperty(ref _AppAlwaysOnTop, value); }
 		private bool _AppAlwaysOnTop;

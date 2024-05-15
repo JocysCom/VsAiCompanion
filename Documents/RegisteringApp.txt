@@ -1,0 +1,50 @@
+Step-by-Step Instructions to Register "JocysCom.VS.AiCompanion" App in Azure AD
+
+1. Sign in to the Azure Portal:
+   - Visit https://portal.azure.com/ and sign in with your Azure credentials.
+
+2. Navigate to Azure Active Directory:
+   - In the left-hand menu, select "Azure Active Directory."
+
+3. Register a New Application:
+   - Click on "App registrations" from the Azure Active Directory menu.
+   - Select "New registration."
+
+4. Fill Out the Application Registration Form:
+   - Name: Enter "JocysCom.VS.AiCompanion."
+   - Supported account types: 
+     - Select "Accounts in this organizational directory only" (Single tenant) if only users in your organization will log in.
+     - Select "Accounts in any organizational directory and personal Microsoft accounts (e.g., Skype, Xbox)" (Multi-tenant) if users from any Azure AD can log in.
+   - Redirect URI: 
+     - Choose "Public client/native (mobile & desktop)" and enter `http://localhost`.
+
+5. Register the Application:
+   - Click the "Register" button at the bottom of the registration form.
+
+6. Get the Application (Client) ID:
+   - After registration, you'll be redirected to the application's Overview page.
+   - Copy the "Application (client) ID" as you will need this in your application configuration.
+
+7. Configure API Permissions:
+   - In the left-hand menu, click on "API permissions."
+   - Click on the "Add a permission" button.
+   - Select "Microsoft Graph."
+   - Choose "Delegated permissions."
+   - Search for "User.Read" and select it.
+   - Click the "Add permissions" button.
+   - Important: Click "Grant admin consent for [Your Organization]" to grant the permissions. Confirm any prompts that appear.
+
+(Optional) Configure Platform Settings:
+   - Go to "Authentication" in the menu.
+   - Under "Platform configurations," ensure that `http://localhost` is listed for desktop applications.
+
+Configuring Your C# WPF Application:
+
+1. Add the Microsoft Authentication Library (MSAL):
+   - In Visual Studio, open the NuGet Package Manager Console.
+   - Run the command: Install-Package Microsoft.Identity.Client
+
+2. Update the Client ID in Your Code:
+   - Open the file AuthControl.xaml.cs or the relevant code-behind file.
+   - Replace "YOUR-CLIENT-ID-HERE" with the Application (client) ID you copied from the Azure portal.
+   

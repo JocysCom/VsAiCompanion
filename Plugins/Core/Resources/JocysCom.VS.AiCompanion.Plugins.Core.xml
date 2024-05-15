@@ -807,6 +807,19 @@
             Will be used by plugins manager and called by AI.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage(System.Nullable{System.Int32},System.String,System.Nullable{System.Drawing.Rectangle},System.String,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Capture an image of the screen, window or a defined region based on supplied parameters.
+            If no parameters are provided, default to capturing a user-defined region.
+            </summary>
+            <param name="screenId">Screen ID to capture. If provided, it will capture the specific screen.</param>
+            <param name="windowName">Window name to capture. If provided, it will capture the specified window.</param>
+            <param name="region">Region to capture. If provided, it will capture the specified region.</param>
+            <param name="imageFolder">Folder path to save the captured image. If not provided, it defaults to the temp directory.</param>
+            <param name="format">Image format for the captured image. If not provided, it defaults to PNG.</param>
+            <returns>Operation result containing the path to the captured image.</returns>
+            <exception cref="T:System.ArgumentException">Thrown if invalid parameters are supplied.</exception>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Search">
             <summary>
             Functions that enable AI to perform indexed searches. Use "Windows Search Settings" to add more folders to your search.
@@ -821,6 +834,20 @@
             <summary>
             LiteDB file extension.
             </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.IndexFolder(System.String,System.String)">
+            <summary>
+            Index a specific folder. Returns true if successful.
+            </summary>
+            <param name="indexName">Index name.</param>
+            <param name="folderPath">Folder path.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchIndex(System.String,System.String)">
+            <summary>
+            Search an index and return search results.
+            </summary>
+            <param name="indexName">Index name.</param>
+            <param name="searchString">Search string.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex(System.String,System.String,System.String,System.String,System.String,System.Nullable{System.Int64},System.Nullable{System.Int64},System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
             <summary>

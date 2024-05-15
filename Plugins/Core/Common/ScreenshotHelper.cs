@@ -161,8 +161,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				AllowsTransparency = true,
 				Background = System.Windows.Media.Brushes.Transparent,
 				Topmost = true,
-				Left = 0,
-				Top = 0,
+				Left = SystemParameters.VirtualScreenLeft,
+				Top = SystemParameters.VirtualScreenTop,
 				Width = SystemParameters.VirtualScreenWidth,
 				Height = SystemParameters.VirtualScreenHeight,
 			};
@@ -175,26 +175,19 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			};
 			overlayWindow.Content = canvas;
 
-			selectionRectangle = new System.Windows.Shapes.Rectangle
-			{
-				Stroke = System.Windows.Media.Brushes.Blue,
-				StrokeThickness = 2,
-				Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(1, 0, 0, 0)),
-				StrokeDashArray = new DoubleCollection { 2, 2 }
-			};
-
 			// Create 4 rectangles, which will cover sides of selection rectangle.
 			// 1st - covers virtual screen above selectionRectangle.
 			// 2nd - covers virtual screen below selectionRectangle.
 			// 3rd - covers virtual screen on the left of selectionRectangle.
 			// 4th - covers virtual screen on the right of selectionRectangle.
-			overlayRectangles = Enumerable.Range(0, 5).Select(x =>
+			overlayRectangles = Enumerable.Range(0, 4).Select(x =>
 			{
 				var rect = new System.Windows.Shapes.Rectangle
 				{
 					Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(64, 0, 0, 0)),
 					Width = SystemParameters.VirtualScreenWidth,
 					Height = SystemParameters.VirtualScreenHeight,
+					Visibility = x == 0 ? Visibility.Visible : Visibility.Hidden,
 				};
 				Canvas.SetLeft(rect, 0);
 				Canvas.SetTop(rect, 0);
@@ -202,6 +195,17 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return rect;
 			}).ToArray();
 
+
+			selectionRectangle = new System.Windows.Shapes.Rectangle
+			{
+				Stroke = System.Windows.Media.Brushes.Black,
+				StrokeThickness = 1,
+				Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(1, 0, 0, 0)),
+				StrokeDashArray = new DoubleCollection { 2, 2 }
+			};
+
+
+			// Move overlay rectangles
 
 			overlayWindow.KeyDown += (sender, e) =>
 			{
@@ -265,6 +269,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				Canvas.SetTop(selectionRectangle, y);
 				selectionRectangle.Width = width;
 				selectionRectangle.Height = height;
+
+				UpdateOverlayRectangles();
 			}
 		}
 
@@ -299,6 +305,40 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return dpiX / 96;
 			}
 		}
+
+		private static void UpdateOverlayRectangles()
+		{
+			double left = Canvas.GetLeft(selectionRectangle);
+			double top = Canvas.GetTop(selectionRectangle);
+			double right = left + selectionRectangle.Width;
+			double bottom = top + selectionRectangle.Height;
+
+			// Update positions and sizes
+			Canvas.SetLeft(overlayRectangles[0], 0);
+			Canvas.SetTop(overlayRectangles[0], 0);
+			overlayRectangles[0].Width = canvas.Width;
+			overlayRectangles[0].Height = top;
+
+			Canvas.SetLeft(overlayRectangles[1], 0);
+			Canvas.SetTop(overlayRectangles[1], bottom);
+			overlayRectangles[1].Width = canvas.Width;
+			overlayRectangles[1].Height = canvas.Height - bottom;
+
+			Canvas.SetLeft(overlayRectangles[2], 0);
+			Canvas.SetTop(overlayRectangles[2], top);
+			overlayRectangles[2].Width = left;
+			overlayRectangles[2].Height = selectionRectangle.Height;
+
+			Canvas.SetLeft(overlayRectangles[3], right);
+			Canvas.SetTop(overlayRectangles[3], top);
+			overlayRectangles[3].Width = canvas.Width - right;
+			overlayRectangles[3].Height = selectionRectangle.Height;
+
+			foreach (var or in overlayRectangles)
+				if (or.Visibility != Visibility.Visible)
+					or.Visibility = Visibility.Visible;
+		}
+
 
 		#endregion
 
