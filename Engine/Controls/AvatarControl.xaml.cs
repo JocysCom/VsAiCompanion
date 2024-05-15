@@ -134,7 +134,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				storyboardLips.Begin();
 			}
 		}
-		private void MediaPlayer_StopMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e) { AnimationAndMediaStop(); }
+		private void MediaPlayer_StopMediaFile(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			AudioCollection.Clear();
+			AnimationAndMediaStop();
+		}
 		// Clear mediaPlayer on MediaEnded for MediaPlayer_MediaOpened to work.
 		private void MediaPlayer_MediaEnded(object sender, EventArgs e) { mediaPlayer.Close(); }
 
