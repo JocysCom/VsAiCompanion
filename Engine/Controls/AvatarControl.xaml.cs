@@ -96,18 +96,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
-
+		// On new item added.
 		private void AudioCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Add && mediaPlayer.Source == null) { PlayNextListItem(); }
+			// Start playing first item if mediaPlayer not playing.
+			if (e.Action == NotifyCollectionChangedAction.Add && mediaPlayer.Source == null)
+			{
+				AudioPath = AudioCollection[0].Item1;
+				AudioData = AudioCollection[0].Item2;
+				Play(AudioPath, AudioData);
+			}
 		}
 
 		private void PlayNextListItem()
 		{
+			// 	Remove completed item.
 			if (AudioCollection.Count > 0) { AudioCollection.RemoveAt(0); }
+			// If another item found, play it.
 			if (AudioCollection.Count > 0)
 			{
-				// Item to play (assuming AudioData and AudioFile are defined elsewhere in your ViewModel)
 				AudioPath = AudioCollection[0].Item1;
 				AudioData = AudioCollection[0].Item2;
 				Play(AudioPath, AudioData);
