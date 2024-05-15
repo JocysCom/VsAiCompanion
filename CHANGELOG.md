@@ -1,5 +1,6 @@
-2024-05-15 v1.10.15
+2024-05-15 v1.10.17
 
+- New: You can now take screenshots in the chat window.
 - Fix: Selected AI model sometimes resets when switching between different AI services.
 
 2024-05-14 v1.10.14

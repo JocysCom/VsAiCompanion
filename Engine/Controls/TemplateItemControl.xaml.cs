@@ -71,7 +71,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 			AttachmentsButton.Visibility = debugVisibility;
-			ScreenshotButton.Visibility = debugVisibility;
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)

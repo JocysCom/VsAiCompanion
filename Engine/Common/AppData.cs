@@ -24,7 +24,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
-		[DefaultValue(null)]
+		/// <summary>
+		/// Azure: Home / App registrations: Jocys.com AI Companion
+		/// </summary>
+		[DefaultValue("deea245f-789f-499c-bcd8-7f9f817667ab")]
 		public string ClientAppId { get => _ClientAppId; set => SetProperty(ref _ClientAppId, value); }
 		private string _ClientAppId;
 
