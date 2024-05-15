@@ -2,6 +2,7 @@
 
 - New: You can now take screenshots in the chat window.
 - Fix: Selected AI model sometimes resets when switching between different AI services.
+- Update: More variations of partial XML SSML content are now supported.
 
 2024-05-14 v1.10.14
 

@@ -171,13 +171,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 		/// <returns></returns>
 		public static string UpdateToViseme(string input, string voiceName)
 		{
-			// Wrap text in <speak> or parse it as XML.
-			var parsedElement = IsXml(input)
-				? XElement.Parse(input)
-				: new XElement(ns + "speak", new XText(input));
-			// Ensure <speak> element and its attributes
-			var speakElement = EnsureSpeakElement(parsedElement);
-			// Ensure <voice> element and its attributes
+			XElement speakElement;
+			// Check if input is valid XML
+			if (IsXml(input, out List<XElement> elements))
+			{
+				// If it's already a <speak> element, use it directly
+				if (elements.Count == 1 && elements[0].Name.LocalName == "speak")
+				{
+					speakElement = elements[0];
+				}
+				else
+				{
+					// Wrap other valid XML elements with <speak>
+					speakElement = new XElement(ns + "speak", elements);
+				}
+			}
+			else
+			{
+				// Wrap non-XML input with <speak>
+				speakElement = new XElement(ns + "speak", new XText(input));
+			}
+			speakElement = EnsureSpeakElement(speakElement);
 			EnsureVoiceElements(speakElement, voiceName);
 			return speakElement.ToString();
 		}
@@ -237,20 +251,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 			return voiceElement;
 		}
 
-		private static bool IsXml(string text)
+		/// <summary>
+		/// Determines if the input text is well-formed XML, and captures elements.
+		/// </summary>
+		private static bool IsXml(string text, out List<XElement> elements)
 		{
+			elements = new List<XElement>();
 			try
 			{
 				// Attempt to parse text as XML
-				XElement.Parse(text);
-				return true;
+				var xmlText = $"<root>{text}</root>";
+				var rootElement = XElement.Parse(xmlText);
+				// Extract child elements, ignoring the artificial root
+				elements = rootElement.Elements().ToList();
+				return elements.Count > 0;
 			}
 			catch
 			{
 				// If parsing fails, it's not valid XML
+				elements = null;
 				return false;
 			}
 		}
+
 
 		#endregion
 
