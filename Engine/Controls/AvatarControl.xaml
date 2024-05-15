@@ -4,10 +4,10 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
 	d:DesignHeight="1920"
 	d:DesignWidth="1080"
 	Background="Black"
-	x:Name="This"
 	Loaded="This_Loaded"
 	RenderOptions.BitmapScalingMode="HighQuality"
 	mc:Ignorable="d">
@@ -531,6 +531,16 @@
 					</Canvas>
 				</Grid>
 			</Canvas>
+
+
+			<TextBlock
+				Name="AudioCollectionTextBlock"
+				Margin="0,0,40,120"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Bottom"
+				FontSize="100"
+				Foreground="#258bcfe8"
+				Text="" />
 
 			<Border
 				Name="AnimationBar"

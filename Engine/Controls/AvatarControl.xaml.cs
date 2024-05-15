@@ -106,6 +106,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				AudioData = AudioCollection[0].Item2;
 				Play(AudioPath, AudioData);
 			}
+			var items = AudioCollection.Count();
+			AudioCollectionTextBlock.Text = (items > 0) ? items.ToString() : "";
 		}
 
 		private void PlayNextListItem()
