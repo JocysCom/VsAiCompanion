@@ -206,7 +206,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					LogPanel.Add(client.AudioInfoPath + "\r\n");
 					LogPanel.Add("\r\n");
 					LogPanel.Add(json);
-					AvatarPanel.Play(client.AudioFilePath, client.AudioInfo);
+					AvatarPanel.AudioCollection.Add((client.AudioFilePath, client.AudioInfo));
 				});
 				return new OperationResult<string>();
 			}

@@ -1,8 +1,9 @@
-2024-05-15 v1.10.17
+2024-05-15 v1.10.21
 
 - New: You can now take screenshots in the chat window.
 - Fix: Selected AI model sometimes resets when switching between different AI services.
 - Update: More variations of partial XML SSML content are now supported.
+- Update: Use a queue to play all incoming avatar speeches in sequence.
 
 2024-05-14 v1.10.14
 
