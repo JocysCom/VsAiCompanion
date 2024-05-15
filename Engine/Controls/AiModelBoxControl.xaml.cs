@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -70,7 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await AppHelper.UpdateModels(_item.AiService);
 		}
 
-		public BindingList<string> AiModels { get; } = new BindingList<string>();
+		public ObservableCollection<string> AiModels { get; } = new ObservableCollection<string>();
 
 		private void Global_OnAiModelsUpdated(object sender, EventArgs e)
 		{

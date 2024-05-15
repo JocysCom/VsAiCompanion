@@ -1,3 +1,7 @@
+2024-05-15 v1.10.15
+
+- Fix: Selected AI model sometimes resets when switching between different AI services.
+
 2024-05-14 v1.10.14
 
 - Fix: Error with domain security code prevents the use of plugins.

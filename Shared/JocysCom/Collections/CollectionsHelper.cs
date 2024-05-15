@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace JocysCom.ClassLibrary.Collections
@@ -44,9 +45,21 @@ namespace JocysCom.ClassLibrary.Collections
 				}
 				if (ti != si)
 				{
-					T temp = target[si];
-					target[si] = target[ti];
-					target[ti] = temp;
+					var oc = target as ObservableCollection<T>;
+					// If observable collection then
+					if (oc != null)
+					{
+						// Move item without removing and inserting.
+						oc.Move(si, ti);
+					}
+					else
+					{
+						// Temporarily removes and inserts items and
+						// can disrupt data binding in WPF controls.
+						T temp = target[si];
+						target[si] = target[ti];
+						target[ti] = temp;
+					}
 				}
 			}
 			// Remove items at the end of target that exceed source's length

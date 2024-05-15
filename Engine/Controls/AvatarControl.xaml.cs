@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using System;
 using System.Collections.Generic;
@@ -46,12 +47,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SetLipsMeshGeometry3D();
 			SetLipsMeshGeometry3DUsingPathData(MPath_0.Data);
 			pathNow = MPath_0;
-			AudioCollection.CollectionChanged += AudioCollection_CollectionChanged;
 		}
 
 		int LipAnimationFrames = 6; // Min 1.
 		int LipGeometryDivisions = 9; // Min 2.
-		// Audio file and data.
+									  // Audio file and data.
 		public string AudioPath; // @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
 		AudioFileInfo AudioData = new AudioFileInfo();
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
@@ -83,7 +83,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		Path pathNow = new Path();
 
 		// Audio collection.
-		private ObservableCollection<(string, AudioFileInfo)> _audioCollection;
 		public ObservableCollection<(string, AudioFileInfo)> AudioCollection
 		{
 			get { return _audioCollection; }
@@ -93,6 +92,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				OnPropertyChanged(nameof(AudioCollection));
 			}
 		}
+		private ObservableCollection<(string, AudioFileInfo)> _audioCollection = new ObservableCollection<(string, AudioFileInfo)>();
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
@@ -1067,6 +1067,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						storyboardBackground.Children.Add(animationSize);
 					}
 				}
+			}
+		}
+
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AudioCollection.CollectionChanged += AudioCollection_CollectionChanged;
 			}
 		}
 	}
