@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.VS.AiCompanion.Plugins.Core;
-using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
@@ -64,8 +63,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore, JsonIgnore]
 		public string Password
 		{
-			get => UserDecrypt(_PasswordEncrypted);
-			set { _PasswordEncrypted = UserEncrypt(value); OnPropertyChanged(); }
+			get => AppHelper.UserDecrypt(_PasswordEncrypted);
+			set { _PasswordEncrypted = AppHelper.UserEncrypt(value); OnPropertyChanged(); }
 		}
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(Password))]
@@ -122,44 +121,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(false)]
 		public bool TrustServerCertificate { get => _TrustServerCertificate; set => SetProperty(ref _TrustServerCertificate, value); }
 		bool _TrustServerCertificate;
-
-		#endregion
-
-		#region Encrypt Settings 
-
-		internal static string UserEncrypt(string text)
-		{
-			try
-			{
-				if (string.IsNullOrEmpty(text))
-					return null;
-				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
-				var user = "AppContext";
-				return JocysCom.ClassLibrary.Security.Encryption.Encrypt(text, user);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-			return null;
-		}
-
-		internal static string UserDecrypt(string base64)
-		{
-			try
-			{
-				if (string.IsNullOrEmpty(base64))
-					return null;
-				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
-				var user = "AppContext";
-				return JocysCom.ClassLibrary.Security.Encryption.Decrypt(base64, user);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-			return null;
-		}
 
 		#endregion
 

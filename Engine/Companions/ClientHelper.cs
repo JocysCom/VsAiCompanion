@@ -434,7 +434,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				// Supply data for processing.
 				messages.Add(new chat_completion_message(message_role.user, text));
-				var client = new Companions.ChatGPT.Client(item.AiService);
+				var client = new Companions.ChatGPT.Client(rItem.AiService);
 				var maxInputTokens = Client.GetMaxInputTokens(rItem);
 				// Send body and context data. Make sure it runs on NON-UI thread.
 				var messageItem = await Task.Run(async () => await client.QueryAI(
@@ -473,7 +473,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			{
 				// Add instructions to generate title to existing messages.
 				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
-				var client = new Companions.ChatGPT.Client(item.AiService);
+				var client = new Companions.ChatGPT.Client(rItem.AiService);
 				var maxInputTokens = Client.GetMaxInputTokens(rItem);
 				// Send body and context data. Make sure it runs on NON-UI thread.
 				var response = await Task.Run(async () => await client.QueryAI(

@@ -362,6 +362,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(() =>
 			{
+				var selection = GetItemToSelect(items);
+				if (selection.Item != null)
+				{
+					PanelSettings.ListSelection = new List<string>() { selection.Item.Name };
+					PanelSettings.ListSelectedIndex = selection.Position;
+				}
 				var sd = SettingsData;
 				foreach (var item in items)
 				{
@@ -377,6 +383,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					}
 				}
 			});
+		}
+
+		/// <summary>
+		/// Get items to select after deletion.
+		/// </summary>
+		public (int Position, ISettingsListFileItem Item) GetItemToSelect(IList<ISettingsListFileItem> itemsToDelete)
+		{
+			// Get items sorted as in the list.
+			var viewSource = (CollectionViewSource)Resources["GroupedData"];
+			var view = (ListCollectionView)viewSource.View;
+			var sortedFilteredItems = view.OfType<ISettingsListFileItem>().ToList();
+			// Get positions of remaining items.
+			var deletePositions = itemsToDelete.Select(x => sortedFilteredItems.IndexOf(x));
+			var minDeletePosition = deletePositions.Min();
+			var remainPositions = Enumerable.Range(0, sortedFilteredItems.Count()).Except(deletePositions).ToList();
+			if (remainPositions.Any())
+			{
+				var selectedPosition = remainPositions.FirstOrDefault(x => x > minDeletePosition);
+				var selectedItem = sortedFilteredItems[selectedPosition];
+				return (selectedPosition, selectedItem);
+			}
+			return (0, null);
 		}
 
 		#region Grid Editing
@@ -610,6 +638,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						var copy = ti.Copy(true);
 						// Hide instructions box by default on Tasks.
 						copy.ShowInstructions = false;
+						copy.IsPinned = false;
 						copy.Created = DateTime.Now;
 						copy.Modified = copy.Created;
 						Global.InsertItem(copy, ItemType.Task);
@@ -618,7 +647,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 			}
 			// Select new task in the tasks list on the [Tasks] tab.
-			Global.AppSettings.GetTaskSettings(ItemType.Task).ListSelection = selection;
+			var settings = Global.AppSettings.GetTaskSettings(ItemType.Task);
+			settings.ListSelection = selection;
+			settings.Focus = true;
 			Global.RaiseOnTasksUpdated();
 		}
 

@@ -9,6 +9,7 @@
 	<sys:String x:Key="main__3_Remote_Files">3. Remote Files</sys:String>
 	<sys:String x:Key="main__4_Tuning_Jobs">4. Tuning Jobs</sys:String>
 	<sys:String x:Key="main__5_Models">5. Models</sys:String>
+	<sys:String x:Key="main_Account">Account</sys:String>
 	<sys:String x:Key="main_Add">Add...</sys:String>
 	<sys:String x:Key="main_Add_New">Add New</sys:String>
 	<sys:String x:Key="main_AI_Models">AI Models</sys:String>
@@ -103,6 +104,7 @@
 	<sys:String x:Key="main_Lists_Feature_Description">Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists.</sys:String>
 	<sys:String x:Key="main_Locale">Locale</sys:String>
 	<sys:String x:Key="main_Log">Log</sys:String>
+	<sys:String x:Key="main_Microsoft_Account">Microsoft Account</sys:String>
 	<sys:String x:Key="main_MaiAccounts_Feature_Description">AI Mailbox for Communication</sys:String>
 	<sys:String x:Key="main_Mail">Mail</sys:String>
 	<sys:String x:Key="main_Mail_Accounts">Mail Accounts</sys:String>
@@ -130,6 +132,7 @@
 	<sys:String x:Key="main_Personalize_the_chat">Personalize the chat by providing personalized context. You can create and edit context lists on the [Lists] tab.</sys:String>
 	<sys:String x:Key="main_Preview">Preview</sys:String>
 	<sys:String x:Key="main_Preview_Mode_Message">Preview Mode - Sending messages to AI is suppressed.</sys:String>
+	<sys:String x:Key="main_Provide_the">Please provide the {0}.</sys:String>
 	<sys:String x:Key="main_Prompting">Prompting</sys:String>
 	<sys:String x:Key="main_Purpose">Purpose</sys:String>
 	<sys:String x:Key="main_ReadOnly">Read-Only</sys:String>
@@ -152,6 +155,9 @@
 	<sys:String x:Key="main_Search_the_list">Search the list</sys:String>
 	<sys:String x:Key="main_Security">Security</sys:String>
 	<sys:String x:Key="main_Selection">Selection</sys:String>
+	<sys:String x:Key="main_Select_AI_Service">Please select AI Service.</sys:String>
+	<sys:String x:Key="main_Select_AI_Model">Please select AI Model.</sys:String>
+	<sys:String x:Key="main_Select_AI_Service_from_Menu">Please select AI Service from the dropdown menu.</sys:String>
 	<sys:String x:Key="main_Send_as_System_Messages">Send as System Messages</sys:String>
 	<sys:String x:Key="main_Send_Chat_History">Send Chat History</sys:String>
 	<sys:String x:Key="main_Send_on_Create">Send on Create</sys:String>
@@ -185,6 +191,7 @@
 	<sys:String x:Key="main_Title_for_Attached_Context">Title for Attached Context</sys:String>
 	<sys:String x:Key="main_Trust_Server_Certificate">Trust Server Certificate</sys:String>
 	<sys:String x:Key="main_Upload">Upload</sys:String>
+	<sys:String x:Key="main_URL">URL</sys:String>
 	<sys:String x:Key="main_Use_Enter_to_send_the_message">Use [Enter] to send the message</sys:String>
 	<sys:String x:Key="main_Use_Macros">Use Macros</sys:String>
 	<sys:String x:Key="main_Use_Maximum_Context">Use Maximum Context</sys:String>

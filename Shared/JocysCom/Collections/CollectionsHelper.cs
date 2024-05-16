@@ -49,16 +49,16 @@ namespace JocysCom.ClassLibrary.Collections
 					// If observable collection then
 					if (oc != null)
 					{
-						// Move item without removing and inserting.
+						// Move item without triggering remove and insert events.
 						oc.Move(si, ti);
 					}
 					else
 					{
-						// Temporarily removes and inserts items and
+						// Removes and inserts item and
 						// can disrupt data binding in WPF controls.
-						T temp = target[si];
-						target[si] = target[ti];
-						target[ti] = temp;
+						var item = target[ti];
+						target.RemoveAt(ti);
+						target.Insert(si, item);
 					}
 				}
 			}

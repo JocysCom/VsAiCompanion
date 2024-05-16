@@ -14,8 +14,7 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		public OperationResult()
 		{
-			RequestId = Guid.NewGuid().ToString();
-			Errors = new List<string>();
+			RequestId = Guid.NewGuid().ToString("N");
 		}
 
 		/// <summary>
@@ -37,6 +36,7 @@ namespace JocysCom.ClassLibrary
 		{
 			StatusCode = 1;
 			StatusText = error.Message;
+			Errors = new List<string>();
 			Errors.Add(error.ToString());
 		}
 
@@ -49,6 +49,7 @@ namespace JocysCom.ClassLibrary
 		{
 			StatusCode = 1;
 			StatusText = "Error";
+			Errors = new List<string>();
 			foreach (var error in errors)
 				Errors.Add(error.ToString());
 		}
@@ -65,6 +66,7 @@ namespace JocysCom.ClassLibrary
 			Result = result;
 			StatusCode = statusCode;
 			StatusText = statusText ?? statusCode.ToString();
+			Errors = new List<string>();
 			foreach (var error in errors)
 				Errors.Add(error.ToString());
 		}
@@ -73,6 +75,11 @@ namespace JocysCom.ClassLibrary
 		/// Unique identifier for the operation used for tracking and logging.
 		/// </summary>
 		public string RequestId { get; }
+
+		/// <summary>
+		/// Indicates whether the operation was successful.
+		/// </summary>
+		public bool Success => StatusCode == 0;
 
 		/// <summary>
 		/// Numeric status code representing operation outcome.
@@ -85,18 +92,14 @@ namespace JocysCom.ClassLibrary
 		public string StatusText { get; set; }
 
 		/// <summary>
-		/// Result value of the operation.
-		/// </summary>
-		public T Result { get; set; }
-
-		/// <summary>
 		/// List of exceptions related to operation failure.
 		/// </summary>
 		public List<string> Errors { get; private set; }
 
 		/// <summary>
-		/// Indicates whether the operation was successful.
+		/// Result value of the operation.
 		/// </summary>
-		public bool Success => StatusCode == 0;
+		public T Result { get; set; }
+
 	}
 }

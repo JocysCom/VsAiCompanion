@@ -596,6 +596,52 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
 		}
 
+		#region Encrypt and Decrypt
+
+		/// <summary>
+		/// Encrypt data. The protected data is associated with the current user.
+		/// Only threads running under the current user context can unprotect the data.
+		/// </summary>
+		public static string UserEncrypt(string text)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(text))
+					return null;
+				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
+				var user = "AppContext";
+				return JocysCom.ClassLibrary.Security.Encryption.Encrypt(text, user);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Decrypt data. The protected data is associated with the current user.
+		/// Only threads running under the current user context can unprotect the data.
+		/// </summary>
+		public static string UserDecrypt(string base64)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(base64))
+					return null;
+				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
+				var user = "AppContext";
+				return JocysCom.ClassLibrary.Security.Encryption.Decrypt(base64, user);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+			}
+			return null;
+		}
+
+		#endregion
+
 		#region Global Max Risk Level
 
 		public static RiskLevel GetMaxRiskLevel()

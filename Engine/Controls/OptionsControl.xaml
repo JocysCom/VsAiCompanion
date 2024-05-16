@@ -137,7 +137,7 @@
 								</Grid>
 							</GroupBox>
 
-							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Multimedia}" x:Name="MultimediaGroupBox">
+							<GroupBox x:Name="MultimediaGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Multimedia}">
 								<StackPanel Orientation="Horizontal">
 									<Label VerticalAlignment="Center" Content="Camera" />
 									<ComboBox Name="CameraComboBox" ItemsSource="{Binding VideoInputDevices, ElementName=This}" SelectedValue="{Binding VideoInputDevice, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -210,7 +210,7 @@
 						<Label Content="{StaticResource main_AI_Services}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:AiServiceControl x:Name="ItemPanel" x:FieldModifier="public" />
+				<controls:AiServiceControl x:Name="AiServicesPanel" x:FieldModifier="public" />
 			</TabItem>
 
 			<TabItem x:Name="AiModelsTabItem" x:FieldModifier="public">
@@ -320,6 +320,16 @@
 					</StackPanel>
 				</TabItem.Header>
 				<controls:OptionsAvatarControl x:Name="AvatarOptionsPanel" />
+			</TabItem>
+
+			<TabItem x:Name="AccountSettingsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_user_id}" />
+						<Label Content="{StaticResource main_Account}" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:AuthControl x:Name="AuthPanel" />
 			</TabItem>
 
 			<TabItem x:Name="ResetSettingsTabItem" x:FieldModifier="public">

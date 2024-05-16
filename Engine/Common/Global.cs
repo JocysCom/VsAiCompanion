@@ -194,9 +194,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			var messages = new List<string>();
 			if (service == null)
-				messages.Add("Please select AI Service.");
+				messages.Add(Resources.MainResources.main_Select_AI_Service);
 			if (string.IsNullOrEmpty(model))
-				messages.Add("Please select AI Model.");
+				messages.Add(Resources.MainResources.main_Select_AI_Model);
 			if (messages.Any())
 				SetWithTimeout(MessageBoxImage.Warning, string.Join(" ", messages));
 			return !messages.Any();
@@ -207,7 +207,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var itemsRequired = new List<string>();
 			if (item == null)
 			{
-				SetWithTimeout(MessageBoxImage.Warning, "Please choose a valid AI Service from the dropdown menu.");
+				SetWithTimeout(MessageBoxImage.Warning, Resources.MainResources.main_Select_AI_Service_from_Menu);
 				return false;
 			}
 			if (string.IsNullOrEmpty(item.BaseUrl))
@@ -222,15 +222,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				if (string.IsNullOrEmpty(item.ApiSecretKey))
 					itemsRequired.Add("API Key");
-				if (isOpenAi && string.IsNullOrEmpty(item.ApiOrganizationId))
-					itemsRequired.Add("API Organization ID");
+				//if (isOpenAi && string.IsNullOrEmpty(item.ApiOrganizationId))
+				//	itemsRequired.Add("API Organization ID");
 			}
 			if (redirectToSettings && itemsRequired.Count > 0)
 			{
+				var settings = AppSettings.GetTaskSettings(ItemType.AiService);
+				settings.ListSelection.Clear();
+				settings.ListSelection.Add(item.Name);
 				MainControl.OptionsTabItem.IsSelected = true;
 				MainControl.OptionsPanel.AiServicesTabItem.IsSelected = true;
 				var s = string.Join(" and ", itemsRequired);
-				SetWithTimeout(MessageBoxImage.Warning, $"Please provide the {s}.");
+				var message = string.Format(Resources.MainResources.main_Provide_the, s);
+				SetWithTimeout(MessageBoxImage.Warning, message);
 			}
 			return itemsRequired.Count == 0;
 		}

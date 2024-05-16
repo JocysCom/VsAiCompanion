@@ -125,6 +125,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region User Profiles
+
+		/// <summary>User Profiles</summary>
+		public SortableBindingList<UserProfile> UserProfiles
+		{
+			get => _UserProfiles.Value;
+			set => Interlocked.Exchange(ref _UserProfiles, new Lazy<SortableBindingList<UserProfile>>(() => value));
+		}
+		private volatile Lazy<SortableBindingList<UserProfile>> _UserProfiles =
+			new Lazy<SortableBindingList<UserProfile>>(() => new SortableBindingList<UserProfile>());
+
+		#endregion
+
 		#region  Spell Check
 
 		/// <summary>Allow only one standalone copy.</summary>

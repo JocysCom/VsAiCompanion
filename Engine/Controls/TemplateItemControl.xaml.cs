@@ -95,16 +95,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var promptItem = Global.PromptItems.Items.FirstOrDefault(x => x.Name == _Item?.PromptName);
 			if (promptItem == null)
 				return;
-			var box = _Item.ShowInstructions
-				? LastFocusedForCodeTextBox ?? ChatPanel.DataInstructionsTextBox
-				: ChatPanel.DataTextBox;
+			var box = GetFocused();
 			var promptString = string.Format(promptItem.Pattern, _Item?.PromptOption);
 			AppHelper.InsertText(box, promptString, false, true);
 		}
 
+		bool WebBrowserDataLoaded;
+
 		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
 		{
 			await Helper.Delay(SetZoom, AppHelper.NavigateDelayMs);
+			WebBrowserDataLoaded = true;
+			RestoreFocus();
 		}
 
 		private async void MessagesPanel_ScriptingHandler_OnMessageAction(object sender, string[] e)
@@ -209,12 +211,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (Global.AvatarOptionsPanel?.AvatarPanel.IsPanelInWindow == true)
 					extraInstructions = Global.AppSettings.AiAvatar.Instructions;
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: extraInstructions);
+				RestoreFocus();
 			}
 		}
 
 		private void ChatPanel_OnStop(object sender, EventArgs e)
 		{
 			_Item?.StopClients();
+			RestoreFocus();
 		}
 
 		public string CreativityName
@@ -356,6 +360,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					}));
 				}
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+				if (PanelSettings.Focus)
+					RestoreFocus();
 			}
 		}
 
@@ -502,6 +508,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
+			RestoreFocus();
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
@@ -514,11 +521,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_Item.Messages.Clear();
 			ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
 			ChatPanel.UpdateMessageEdit();
+			RestoreFocus();
 		}
 
 		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
 		{
 			ChatPanel.MessagesPanel.InvokeScript("ScrollToBottom()");
+			RestoreFocus();
 		}
 
 		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
@@ -548,12 +557,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			});
 		}
 
+		#region Focus
+
 		private TextBox LastFocusedForCodeTextBox;
 
 		private void ChatPanel_DataTextBox_GotFocus(object sender, RoutedEventArgs e)
 		{
 			LastFocusedForCodeTextBox = (TextBox)sender;
+			PanelSettings.SaveFocus();
 		}
+
+		private TextBox GetFocused()
+		{
+			var box = _Item?.ShowInstructions == true
+				? LastFocusedForCodeTextBox ?? ChatPanel.DataInstructionsTextBox
+				: ChatPanel.DataTextBox;
+			return box;
+		}
+
+		private void RestoreFocus()
+		{
+			// Note: Setting focus during web browser loading fails to hide textbox placeholder.
+			if (WebBrowserDataLoaded)
+				_ = Helper.Delay(_RestoreFocus, AppHelper.NavigateDelayMs);
+		}
+
+		private void _RestoreFocus()
+		{
+			var box = GetFocused();
+			var canFocus = PanelSettings.FocusedControl != ChatPanel.DataInstructionsTextBox.Name || _Item.ShowInstructions;
+			if (canFocus)
+			{
+				PanelSettings.RestoreFocus(ChatPanel);
+			}
+		}
+
+		#endregion
 
 		private void CodeButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -566,9 +605,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				language = MarkdownLanguageNameComboBox.SelectedItem as string ?? "";
 			if (string.IsNullOrEmpty(language))
 				return;
-			var box = _Item.ShowInstructions
-				? LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox
-				: ChatPanel.DataTextBox;
+			var box = GetFocused();
 			var caretIndex = box.CaretIndex;
 			var clipboardText = isCtrlDown
 				? JocysCom.ClassLibrary.Text.Helper.RemoveIdent(Global.GetClipboard()?.ContentData ?? "")
@@ -723,18 +760,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var captureResult = await ScreenshotHelper.CaptureRegion(null, path, System.Drawing.Imaging.ImageFormat.Jpeg);
 			if (captureResult.Success)
 			{
-				var box = _Item.ShowInstructions
-					? LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox
-					: ChatPanel.DataTextBox;
+				var box = GetFocused();
 				AppHelper.InsertText(box, $"Please analyse screenshot\r\n{captureResult.Result}", true, false);
 			}
 		}
 
+
 		private void MicrophoneButton_Click(object sender, RoutedEventArgs e)
 		{
-			var box = _Item.ShowInstructions
-				? LastFocusedForCodeTextBox ?? ChatPanel.DataTextBox
-				: ChatPanel.DataTextBox;
+			var box = GetFocused();
 			AppHelper.InsertText(box, "", true);
 			// First, press and hold the 'Windows' key.
 			KeyboardHelper.SendDown(Key.LWin);

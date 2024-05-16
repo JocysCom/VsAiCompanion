@@ -56,6 +56,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main__3_Remote_Files => FindResource(nameof(main__3_Remote_Files));
         public static string main__4_Tuning_Jobs => FindResource(nameof(main__4_Tuning_Jobs));
         public static string main__5_Models => FindResource(nameof(main__5_Models));
+        public static string main_Account => FindResource(nameof(main_Account));
         public static string main_Add => FindResource(nameof(main_Add));
         public static string main_Add_New => FindResource(nameof(main_Add_New));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
@@ -147,6 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Lists_Feature_Description => FindResource(nameof(main_Lists_Feature_Description));
         public static string main_Locale => FindResource(nameof(main_Locale));
         public static string main_Log => FindResource(nameof(main_Log));
+        public static string main_Microsoft_Account => FindResource(nameof(main_Microsoft_Account));
         public static string main_MaiAccounts_Feature_Description => FindResource(nameof(main_MaiAccounts_Feature_Description));
         public static string main_Mail => FindResource(nameof(main_Mail));
         public static string main_Mail_Accounts => FindResource(nameof(main_Mail_Accounts));
@@ -174,6 +176,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Personalize_the_chat => FindResource(nameof(main_Personalize_the_chat));
         public static string main_Preview => FindResource(nameof(main_Preview));
         public static string main_Preview_Mode_Message => FindResource(nameof(main_Preview_Mode_Message));
+        public static string main_Provide_the => FindResource(nameof(main_Provide_the));
         public static string main_Prompting => FindResource(nameof(main_Prompting));
         public static string main_Purpose => FindResource(nameof(main_Purpose));
         public static string main_ReadOnly => FindResource(nameof(main_ReadOnly));
@@ -196,6 +199,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Search_the_list => FindResource(nameof(main_Search_the_list));
         public static string main_Security => FindResource(nameof(main_Security));
         public static string main_Selection => FindResource(nameof(main_Selection));
+        public static string main_Select_AI_Service => FindResource(nameof(main_Select_AI_Service));
+        public static string main_Select_AI_Model => FindResource(nameof(main_Select_AI_Model));
+        public static string main_Select_AI_Service_from_Menu => FindResource(nameof(main_Select_AI_Service_from_Menu));
         public static string main_Send_as_System_Messages => FindResource(nameof(main_Send_as_System_Messages));
         public static string main_Send_Chat_History => FindResource(nameof(main_Send_Chat_History));
         public static string main_Send_on_Create => FindResource(nameof(main_Send_on_Create));
@@ -229,6 +235,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Title_for_Attached_Context => FindResource(nameof(main_Title_for_Attached_Context));
         public static string main_Trust_Server_Certificate => FindResource(nameof(main_Trust_Server_Certificate));
         public static string main_Upload => FindResource(nameof(main_Upload));
+        public static string main_URL => FindResource(nameof(main_URL));
         public static string main_Use_Enter_to_send_the_message => FindResource(nameof(main_Use_Enter_to_send_the_message));
         public static string main_Use_Macros => FindResource(nameof(main_Use_Macros));
         public static string main_Use_Maximum_Context => FindResource(nameof(main_Use_Maximum_Context));

@@ -1,3 +1,7 @@
+2024-05-16 v1.10.22
+
+Fix: Format and generate feature, not using the specified services.
+
 2024-05-15 v1.10.21
 
 - New: You can now take screenshots in the chat window.

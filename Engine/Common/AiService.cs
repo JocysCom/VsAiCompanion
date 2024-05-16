@@ -56,8 +56,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore, JsonIgnore]
 		public string ApiOrganizationId
 		{
-			get => UserDecrypt(_ApiOrganizationIdEncrypted);
-			set { _ApiOrganizationIdEncrypted = UserEncrypt(value); OnPropertyChanged(); }
+			get => AppHelper.UserDecrypt(_ApiOrganizationIdEncrypted);
+			set { _ApiOrganizationIdEncrypted = AppHelper.UserEncrypt(value); OnPropertyChanged(); }
 		}
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(ApiOrganizationId))]
@@ -67,8 +67,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore, JsonIgnore]
 		public string ApiAccessKey
 		{
-			get => UserDecrypt(_ApiAccessKeyEncrypted);
-			set { _ApiAccessKeyEncrypted = UserEncrypt(value); OnPropertyChanged(); }
+			get => AppHelper.UserDecrypt(_ApiAccessKeyEncrypted);
+			set { _ApiAccessKeyEncrypted = AppHelper.UserEncrypt(value); OnPropertyChanged(); }
 		}
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(ApiAccessKey))]
@@ -79,8 +79,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[XmlIgnore, JsonIgnore]
 		public string ApiSecretKey
 		{
-			get => UserDecrypt(_ApiSecretKeyEncrypted);
-			set { _ApiSecretKeyEncrypted = UserEncrypt(value); OnPropertyChanged(); }
+			get => AppHelper.UserDecrypt(_ApiSecretKeyEncrypted);
+			set { _ApiSecretKeyEncrypted = AppHelper.UserEncrypt(value); OnPropertyChanged(); }
 		}
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(ApiSecretKey))]
@@ -106,44 +106,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public string ModelFilter { get => _ModelFilter; set => SetProperty(ref _ModelFilter, value); }
 		string _ModelFilter;
-
-		#region Encrypt Settings 
-
-		internal static string UserEncrypt(string text)
-		{
-			try
-			{
-				if (string.IsNullOrEmpty(text))
-					return null;
-				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
-				var user = "AppContext";
-				return JocysCom.ClassLibrary.Security.Encryption.Encrypt(text, user);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-			return null;
-		}
-
-		internal static string UserDecrypt(string base64)
-		{
-			try
-			{
-				if (string.IsNullOrEmpty(base64))
-					return null;
-				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
-				var user = "AppContext";
-				return JocysCom.ClassLibrary.Security.Encryption.Decrypt(base64, user);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-			return null;
-		}
-
-		#endregion
 
 	}
 
