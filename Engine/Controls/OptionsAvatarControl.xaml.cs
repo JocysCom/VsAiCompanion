@@ -4,6 +4,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json;
@@ -121,17 +122,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 		}
 
-		SynthesizeClient client;
-
-		bool RecreateClient(VoiceGender? overrideGender, string overrideLocale)
+		SynthesizeClient GetClient(VoiceGender? overrideGender, string overrideLocale)
 		{
-			if (client != null)
-				client.Dispose();
 			var service = Global.AppSettings?.AiServices?.FirstOrDefault(x => x.Id == Item.AiServiceId);
 			if (service == null)
 			{
 				LogPanel.Add("Service not found");
-				return false;
+				return null;
 			}
 			// There is no neutral in azure. Use selected.
 			if (overrideGender == VoiceGender.Neutral)
@@ -151,8 +148,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// If spoecific vocie not found then probably due to override.
 			if (voice == null)
 				voice = voices.FirstOrDefault();
-			client = new SynthesizeClient(service.ApiSecretKey, service.Region, voice?.ShortName);
-			return true;
+			var client = new SynthesizeClient(service.ApiSecretKey, service.Region, voice?.ShortName);
+			return client;
 		}
 
 		private async void PlayButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -191,12 +188,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return new OperationResult<string>();
 		}
 
+		List<SynthesizeClient> Clients = new List<SynthesizeClient>();
+
 		async Task<OperationResult<string>> _AI_SpeakSSML(string text, VoiceGender? gender, string language = null, bool? isSsml = null)
 		{
+			SynthesizeClient client = null;
 			try
 			{
-				if (!RecreateClient(gender, language))
+				client = GetClient(gender, language);
+				if (client == null)
 					return new OperationResult<string>(new Exception("AI Avatar cofiguration is not valid."));
+				Clients.Add(client);
 				await client.Synthesize(text, isSsml, Item.CacheAudioData);
 				var jsonOptions = new JsonSerializerOptions() { WriteIndented = false };
 				var json = System.Text.Json.JsonSerializer.Serialize(client.AudioInfo, jsonOptions);
@@ -218,11 +220,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				});
 				return new OperationResult<string>(ex);
 			}
+			finally
+			{
+				if (client != null)
+				{
+					client.Dispose();
+					Clients.Remove(client);
+				}
+			}
 		}
 
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			client?.Stop();
+			var clients = Clients.ToArray();
+			foreach (var client in clients)
+				client?.Stop();
 			AvatarPanel.AnimationAndMediaStop();
 		}
 
@@ -234,13 +246,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.AddTask(task);
 			try
 			{
-				if (RecreateClient(null, null))
-				{
-					//var names = await client.GetAvailableVoicesAsync();
-					//CollectionsHelper.Synchronize(names, Item.VoiceNames);
-					var details = await client.GetAvailableVoicesWithDetailsAsync();
-					CollectionsHelper.Synchronize(details, Global.Voices.Items);
-				}
+				var client = GetClient(null, null);
+				//var names = await client.GetAvailableVoicesAsync();
+				//CollectionsHelper.Synchronize(names, Item.VoiceNames);
+				var details = await client.GetAvailableVoicesWithDetailsAsync();
+				CollectionsHelper.Synchronize(details, Global.Voices.Items);
+				client.Dispose();
 			}
 			catch (Exception ex)
 			{
