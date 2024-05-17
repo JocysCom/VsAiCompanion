@@ -578,7 +578,7 @@
 				VerticalAlignment="Bottom"
 				Background="#55000000"
 				CornerRadius="100"
-				MouseDown="MediaPlayer_AudioCollectionClearAndStopAudioPlay"
+				MouseDown="MediaPlayer_MediaButtonStop"
 				Visibility="Collapsed">
 				<Border
 					Width="90"
@@ -596,7 +596,7 @@
 				VerticalAlignment="Bottom"
 				Background="#55000000"
 				CornerRadius="100"
-				MouseDown="MediaPlayer_OpenLastAudio"
+				MouseDown="MediaPlayer_MediaButtonPlay"
 				Visibility="Collapsed">
 				<Viewbox
 					Width="100"

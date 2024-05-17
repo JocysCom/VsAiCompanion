@@ -32,7 +32,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//CreateLetterToPathDictionary();
 			//CreateLetterToPathDictionaryLT();
 			mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
-			// mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+			mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
 			// Lips storyboard and animations.
 			storyboardLips.CurrentTimeInvalidated += StoryboardLips_CurrentTimeInvalidated;
 			storyboardLips.Completed += StoryboardLips_Completed;
@@ -82,6 +82,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// Current path.
 		Path pathNow = new Path();
 
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this)) { AudioCollection.CollectionChanged += AudioCollection_CollectionChanged; }
+		}
+
 		// Audio collection.
 		private ObservableCollection<(string, AudioFileInfo)> _audioCollection = new ObservableCollection<(string, AudioFileInfo)>();
 		public ObservableCollection<(string, AudioFileInfo)> AudioCollection
@@ -103,24 +108,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AudioCollectionTextBlock.Text = AudioCollection.Count > 0 ? AudioCollection.Count.ToString() : string.Empty;
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
-				// PlayListTextBlock.Text += $"\n{AudioCollection[AudioCollection.Count - 1].Item2.Text}";
-				PlayFirstItem();
-
+				// PlayListTextBlock.Text += $"{AudioCollection[AudioCollection.Count - 1].Item2.Text}\n";
+				if (mediaPlayer.Source == null) { PlayFirstItem(); }
 			}
 		}
 
-		private void This_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.AllowLoad(this)) { AudioCollection.CollectionChanged += AudioCollection_CollectionChanged; }
-		}
-
-		private void StoryboardLips_Completed(object sender, EventArgs e) { mediaPlayer.Close(); PlayFirstItem(); }
-		// Set mediaPlayer.Source to null with Close() on MediaEnded for MediaPlayer_MediaOpened to work.
-		private void MediaPlayer_MediaEnded(object sender, EventArgs e) { mediaPlayer.Close(); }
+		private void StoryboardLips_Completed(object sender, EventArgs e) { StoryboardLipsCompletedState(); }
+		private void MediaPlayer_MediaEnded(object sender, EventArgs e) { MediaPlayerEndedState(); PlayFirstItem(); }
 
 		private void PlayFirstItem()
 		{
-			if (AudioCollection.Count > 0 && mediaPlayer.Source == null)
+			if (AudioCollection.Count > 0)
 			{
 				AudioPath = AudioCollection[0].Item1;
 				AudioData = AudioCollection[0].Item2;
@@ -129,14 +127,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		private void MediaPlayer_MediaButtonPlay(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			if (!string.IsNullOrEmpty(AudioPath) && AudioData != null) { OpenAudioFile(); }
+		}
+
 		public void OpenAudioFile()
 		{
+			// Set mediaPlayer.Source to null for MediaPlayer_MediaOpened to work.
 			AnimationAndMediaStop();
-			MediaButtonPlay.Visibility = Visibility.Collapsed;
 			try { mediaPlayer.Open(new Uri(AssemblyInfo.ExpandPath(AudioPath))); }
 			catch (Exception ex) { MessageBox.Show($"Error playing audio: {ex.Message}"); }
-			MediaButtonStop.Visibility = Visibility.Visible;
-			AnimationBar.Visibility = Visibility.Visible;
 		}
 
 		// Extract audio file duration in ms and start animation calculations (when completed, audio and lip animation will play automatically).
@@ -146,36 +147,53 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				CreateLipAnimationFromVisemeDictionary(AudioData);
 				// CreateLipAnimationFromTextStringAndAudioFileDuration(mediaPlayer.NaturalDuration.TimeSpan, audioText);
+				MediaPlayingState();
 				mediaPlayer.Play();
 				storyboardLips.Begin();
 			}
 		}
 
-		private void MediaPlayer_AudioCollectionClearAndStopAudioPlay(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		private void MediaPlayer_MediaButtonStop(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			AudioCollection.Clear();
 			AnimationAndMediaStop();
 		}
 
-		private void MediaPlayer_OpenLastAudio(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-			if (!string.IsNullOrEmpty(AudioPath) && AudioData != null) { OpenAudioFile(); }
+		private void MediaPlayingState()
+		{
+			MediaButtonPlay.Visibility = Visibility.Collapsed;
+			MediaButtonStop.Visibility = Visibility.Visible;
+			AnimationBar.Visibility = Visibility.Visible;
+		}
+
+		private void MediaPlayerEndedState()
+		{
+			mediaPlayer.Close();
+			MediaButtonStop.Visibility = Visibility.Collapsed;
+			MediaButtonPlay.Visibility = Visibility.Visible;
+		}
+
+		private void StoryboardLipsCompletedState()
+		{
+			AnimationBar.Visibility = Visibility.Collapsed;
+			MouthPath.Data = MPath_0.Data;
+			SetLipsMeshGeometry3DUsingPathData(MPath_0.Data);
 		}
 
 		public void AnimationAndMediaStop()
 		{
-			mediaPlayer.Stop();
-			mediaPlayer.Close();
-			AnimationBar.Visibility = Visibility.Collapsed;
-			MediaButtonStop.Visibility = Visibility.Collapsed;
-			MediaButtonPlay.Visibility = Visibility.Visible;
+			// Animation.
+
 			storyboardLips.Seek(TimeSpan.Zero);
 			storyboardLips.Stop();
 			animation_CHI.KeyFrames.Clear();
 			animation_TXT.KeyFrames.Clear();
 			animation_PTH.KeyFrames.Clear();
 			animation_BAR.KeyFrames.Clear();
-			MouthPath.Data = MPath_0.Data;
-			SetLipsMeshGeometry3DUsingPathData(MPath_0.Data);
+			StoryboardLipsCompletedState();
+			// Media.
+			mediaPlayer.Stop();
+			MediaPlayerEndedState();
 		}
 
 		public void PlayMessageSentAnimation()
@@ -366,17 +384,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		//}
 
 		// VisemeID, Text, Path, Duration.
-		private void CreateLipAnimationFromVisemeDictionary(AudioFileInfo audioFileInfo)
+		private void CreateLipAnimationFromVisemeDictionary(AudioFileInfo audioData)
 		{
 			var lipAnimationList = new List<(string, Path, double)>();
-			foreach (var item in audioFileInfo.Viseme)
+			foreach (var item in audioData.Viseme)
 			{
 				if (visemeToPathDictionary.ContainsKey(item.VisemeId))
 				{
 					lipAnimationList.Add((item.VisemeId.ToString(), visemeToPathDictionary[item.VisemeId], item.Offset));
 				}
 			}
-			CreateLipAnimationKeys(lipAnimationList, AudioData.Shapes);
+			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
 		}
 
 		private void CreateLipAnimationKeys(List<(string, Path, double)> lipAnimationList, List<BlendShape> blendShapeList)
