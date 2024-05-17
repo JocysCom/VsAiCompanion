@@ -133,6 +133,7 @@
 	<sys:String x:Key="main_Preview">Preview</sys:String>
 	<sys:String x:Key="main_Preview_Mode_Message">Preview Mode - Sending messages to AI is suppressed.</sys:String>
 	<sys:String x:Key="main_Provide_the">Please provide the {0}.</sys:String>
+	<sys:String x:Key="main_Provide_the_reason">(Optional) Request Denial Comments</sys:String>
 	<sys:String x:Key="main_Prompting">Prompting</sys:String>
 	<sys:String x:Key="main_Purpose">Purpose</sys:String>
 	<sys:String x:Key="main_ReadOnly">Read-Only</sys:String>
@@ -179,6 +180,8 @@
 	<sys:String x:Key="main_Standalone_Program">Standalone Program</sys:String>
 	<sys:String x:Key="main_Start_with_Windows">Start with Windows</sys:String>
 	<sys:String x:Key="main_Stop">Stop</sys:String>
+	<sys:String x:Key="main_SignIn">Sign In</sys:String>
+	<sys:String x:Key="main_SignOut">Sign Out</sys:String>
 	<sys:String x:Key="main_Status">Status</sys:String>
 	<sys:String x:Key="main_System_Message">System Message</sys:String>
 	<sys:String x:Key="main_Target">Target</sys:String>

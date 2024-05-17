@@ -602,15 +602,48 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Encrypt data. The protected data is associated with the current user.
 		/// Only threads running under the current user context can unprotect the data.
 		/// </summary>
-		public static string UserEncrypt(string text)
+		public static byte[] UserEncrypt(byte[] data)
 		{
+			if (data == null)
+				return null;
 			try
 			{
-				if (string.IsNullOrEmpty(text))
-					return null;
-				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
 				var user = "AppContext";
-				return JocysCom.ClassLibrary.Security.Encryption.Encrypt(text, user);
+				return JocysCom.ClassLibrary.Security.Encryption.Encrypt(data, user);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Encrypt data. The protected data is associated with the current user.
+		/// Only threads running under the current user context can unprotect the data.
+		/// </summary>
+		public static string UserEncrypt(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return null;
+			var decryptedData = Encoding.Unicode.GetBytes(text);
+			var encryptedData = UserEncrypt(decryptedData);
+			var encryptedText = Convert.ToBase64String(encryptedData);
+			return encryptedText;
+		}
+
+		/// <summary>
+		/// Decrypt data. The protected data is associated with the current user.
+		/// Only threads running under the current user context can unprotect the data.
+		/// </summary>
+		public static byte[] UserDecrypt(byte[] data)
+		{
+			if (data == null)
+				return null;
+			try
+			{
+				var user = "AppContext";
+				return JocysCom.ClassLibrary.Security.Encryption.Decrypt(data, user);
 			}
 			catch (Exception ex)
 			{
@@ -625,19 +658,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		public static string UserDecrypt(string base64)
 		{
-			try
-			{
-				if (string.IsNullOrEmpty(base64))
-					return null;
-				//var user = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
-				var user = "AppContext";
-				return JocysCom.ClassLibrary.Security.Encryption.Decrypt(base64, user);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-			return null;
+			if (string.IsNullOrEmpty(base64))
+				return null;
+			var encryptedData = Convert.FromBase64String(base64);
+			var decryptedData = UserDecrypt(encryptedData);
+			var decryptedText = Encoding.Unicode.GetString(decryptedData);
+			return decryptedText;
 		}
 
 		#endregion

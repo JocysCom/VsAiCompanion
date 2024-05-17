@@ -177,6 +177,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Preview => FindResource(nameof(main_Preview));
         public static string main_Preview_Mode_Message => FindResource(nameof(main_Preview_Mode_Message));
         public static string main_Provide_the => FindResource(nameof(main_Provide_the));
+        public static string main_Provide_the_reason => FindResource(nameof(main_Provide_the_reason));
         public static string main_Prompting => FindResource(nameof(main_Prompting));
         public static string main_Purpose => FindResource(nameof(main_Purpose));
         public static string main_ReadOnly => FindResource(nameof(main_ReadOnly));
@@ -223,6 +224,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Standalone_Program => FindResource(nameof(main_Standalone_Program));
         public static string main_Start_with_Windows => FindResource(nameof(main_Start_with_Windows));
         public static string main_Stop => FindResource(nameof(main_Stop));
+        public static string main_SignIn => FindResource(nameof(main_SignIn));
+        public static string main_SignOut => FindResource(nameof(main_SignOut));
         public static string main_Status => FindResource(nameof(main_Status));
         public static string main_System_Message => FindResource(nameof(main_System_Message));
         public static string main_Target => FindResource(nameof(main_Target));

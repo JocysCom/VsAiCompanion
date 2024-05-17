@@ -8,20 +8,32 @@ namespace JocysCom.ClassLibrary.Security
 	public partial class Encryption
 	{
 
-		public static string Encrypt(string decryptedText, string salt = null, DataProtectionScope scope = DataProtectionScope.CurrentUser)
+		public static byte[] Encrypt(byte[] decryptedData, string salt = null, DataProtectionScope scope = DataProtectionScope.CurrentUser)
 		{
 			var entropy = System.Text.Encoding.Unicode.GetBytes(salt ?? "Salt Is Optional");
-			var data = System.Text.Encoding.Unicode.GetBytes(decryptedText);
-			var cypher = ProtectedData.Protect(data, entropy, DataProtectionScope.CurrentUser);
-			return System.Convert.ToBase64String(cypher);
+			var encryptedData = ProtectedData.Protect(decryptedData, entropy, DataProtectionScope.CurrentUser);
+			return encryptedData;
+		}
+
+		public static byte[] Decrypt(byte[] encryptedData, string salt = null, DataProtectionScope scope = DataProtectionScope.CurrentUser)
+		{
+			var entropy = System.Text.Encoding.Unicode.GetBytes(salt ?? "Salt Is Optional");
+			var decryptedData = ProtectedData.Unprotect(encryptedData, entropy, DataProtectionScope.CurrentUser);
+			return decryptedData;
+		}
+
+		public static string Encrypt(string decryptedText, string salt = null, DataProtectionScope scope = DataProtectionScope.CurrentUser)
+		{
+			var decryptedData = System.Text.Encoding.Unicode.GetBytes(decryptedText);
+			var encryptedData = Encrypt(decryptedData, salt, scope);
+			return System.Convert.ToBase64String(encryptedData);
 		}
 
 		public static string Decrypt(string encryptedText, string salt = null, DataProtectionScope scope = DataProtectionScope.CurrentUser)
 		{
-			var entropy = System.Text.Encoding.Unicode.GetBytes(salt ?? "Salt Is Optional");
-			var data = System.Convert.FromBase64String(encryptedText);
-			var decrypted = ProtectedData.Unprotect(data, entropy, DataProtectionScope.CurrentUser);
-			return System.Text.Encoding.Unicode.GetString(decrypted);
+			var encryptedData = System.Convert.FromBase64String(encryptedText);
+			var decryptedData = Decrypt(encryptedData, salt, scope);
+			return System.Text.Encoding.Unicode.GetString(decryptedData);
 		}
 
 	}

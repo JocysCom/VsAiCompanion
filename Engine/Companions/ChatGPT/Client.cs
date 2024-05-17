@@ -551,7 +551,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									{
 										foreach (var function in functions)
 										{
-											var functionResultContent = await PluginsManager.ProcessPlugins(item, function, cancellationTokenSource);
+											var functionResultContent = await PluginsManager.ProcessPluginFunction(item, function, cancellationTokenSource);
 											var fnAttachment = new MessageAttachments(ContextType.None, "text", functionResultContent);
 											fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
 											fnAttachment.IsAlwaysIncluded = true;

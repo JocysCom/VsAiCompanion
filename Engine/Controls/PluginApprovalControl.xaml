@@ -65,6 +65,60 @@
 					Text="{Binding ApprovalItem.SecondaryAiEvaluation, ElementName=This}"
 					TextWrapping="Wrap" />
 			</Border>
+			<!--  Send Message  -->
+			<StackPanel Grid.Row="1" Grid.Column="0" Margin="10">
+				<Grid x:Name="MessageInputGrid">
+					<TextBox
+						x:Name="DataTextBox"
+						MinHeight="30"
+						Margin="0"
+						Padding="10,7,10,7"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"
+						VerticalContentAlignment="Top"
+						x:FieldModifier="public"
+						AcceptsReturn="True"
+						Background="White"
+						BorderThickness="0"
+						FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
+						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+						ScrollViewer.VerticalScrollBarVisibility="Auto"
+						SpellCheck.IsEnabled="True"
+						Text="{Binding ApprovalItem.ApprovalReason, ElementName=This, UpdateSourceTrigger=PropertyChanged}"
+						TextWrapping="Wrap">
+						<TextBox.Resources>
+							<Style TargetType="Border">
+								<Setter Property="CornerRadius" Value="10" />
+							</Style>
+						</TextBox.Resources>
+					</TextBox>
+					<TextBlock
+						MinHeight="30"
+						Padding="10,7,10,7"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"
+						IsHitTestVisible="False"
+						Opacity="0.5"
+						Text="{StaticResource main_Provide_the_reason}">
+						<TextBlock.Style>
+							<Style TargetType="{x:Type TextBlock}">
+								<Setter Property="Visibility" Value="Collapsed" />
+								<Style.Triggers>
+									<MultiDataTrigger>
+										<MultiDataTrigger.Conditions>
+											<Condition Binding="{Binding ElementName=DataTextBox, Path=Text}" Value="" />
+											<Condition Binding="{Binding ElementName=DataTextBox, Path=IsKeyboardFocused}" Value="False" />
+										</MultiDataTrigger.Conditions>
+										<MultiDataTrigger.Setters>
+											<Setter Property="Visibility" Value="Visible" />
+										</MultiDataTrigger.Setters>
+									</MultiDataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+					</TextBlock>
+				</Grid>
+			</StackPanel>
 		</StackPanel>
 	</Border>
 </UserControl>

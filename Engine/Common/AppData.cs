@@ -7,8 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows;
+using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -135,6 +137,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private volatile Lazy<SortableBindingList<UserProfile>> _UserProfiles =
 			new Lazy<SortableBindingList<UserProfile>>(() => new SortableBindingList<UserProfile>());
+
+		/// <summary>Azure access token cache to make it persistend during app restarts.</summary>
+		[XmlIgnore, JsonIgnore]
+		public byte[] AzureTokenCache
+		{
+			get => _AzureTokenCacheEncrypted is null
+				? null
+				: AppHelper.UserDecrypt(Convert.FromBase64String(_AzureTokenCacheEncrypted));
+			set
+			{
+				_AzureTokenCacheEncrypted = value is null
+					? null
+					: Convert.ToBase64String(AppHelper.UserEncrypt(value)); OnPropertyChanged();
+			}
+		}
+
+		[DefaultValue(null), XmlElement(ElementName = nameof(AzureTokenCache))]
+		public string _AzureTokenCacheEncrypted { get; set; }
 
 		#endregion
 

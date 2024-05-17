@@ -126,11 +126,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		/// <summary>
-		/// Call functions requeste by OpenAI API.
+		/// Call function requested by AI Model.
 		/// </summary>
 		/// <param name="item">User settings.</param>
-		/// <param name="json">function as JSON</param>
-		public static async Task<string> ProcessPlugins(TemplateItem item, chat_completion_function function, CancellationTokenSource cancellationTokenSource)
+		/// <param name="function">function as JSON</param>
+		public static async Task<string> ProcessPluginFunction(TemplateItem item, chat_completion_function function, CancellationTokenSource cancellationTokenSource)
 		{
 			if (!item.PluginsEnabled)
 				return null;
@@ -177,7 +177,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				var approved = await ApproveExecution(item, pfci, cancellationTokenSource);
 				if (!approved)
-					return Resources.MainResources.main_Call_function_request_denied;
+				{
+					var messageToAI = ClientHelper.JoinMessageParts(
+						string.IsNullOrEmpty(pfci.ApprovalReason)
+							? null
+							: $"Approval Comments: {pfci.ApprovalReason}"
+						,
+						Resources.MainResources.main_Call_function_request_denied);
+					return messageToAI;
+				}
 			}
 			object methodResult = null;
 			if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
@@ -290,6 +298,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			string assistantEvaluation = null;
 			if (item.PluginApprovalProcess == ToolCallApprovalProcess.UserWhenAssitantDenies || item.PluginApprovalProcess == ToolCallApprovalProcess.Assistant)
 			{
+				// Evaluate the request to execute a function by another AI.
 				assistantEvaluation = await ClientHelper.EvaluateToolExecutionSafety(item, cancellationTokenSource) ?? "";
 				Global.MainControl.Dispatcher.Invoke(() =>
 				{

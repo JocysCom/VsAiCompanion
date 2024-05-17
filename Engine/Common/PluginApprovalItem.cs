@@ -15,6 +15,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string SecondaryAiEvaluation { get => _SecondaryAiEvaluation; set => SetProperty(ref _SecondaryAiEvaluation, value); }
 		string _SecondaryAiEvaluation;
 
+		public string ApprovalReason { get => _ApprovalReason; set => SetProperty(ref _ApprovalReason, value); }
+		string _ApprovalReason;
+
 		public chat_completion_function function;
 
 		public SemaphoreSlim Semaphore = new SemaphoreSlim(0);

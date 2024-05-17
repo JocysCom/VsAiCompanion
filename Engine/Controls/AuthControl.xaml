@@ -6,7 +6,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:DesignHeight="300"
+	d:DesignHeight="600"
 	d:DesignWidth="800"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
@@ -24,6 +24,7 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
@@ -33,11 +34,21 @@
 
 		<GroupBox Grid.Column="0" Margin="3,0,0,3" Header="{StaticResource main_Microsoft_Account}">
 			<StackPanel Margin="3" Orientation="Horizontal">
-				<Button
-					HorizontalAlignment="Left"
-					VerticalAlignment="Top"
-					Click="SignInButton_Click"
-					Content="Sign In" />
+				<Button Name="SignInButton" MinWidth="75" Click="SignInButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_user}" Focusable="False" />
+						<Label Content="{StaticResource main_SignIn}" />
+					</StackPanel>
+				</Button>
+
+				<Button Name="SignOutButton" MinWidth="75" Click="SignOutButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_user}" Focusable="False" />
+						<Label Content="{StaticResource main_SignOut}" />
+					</StackPanel>
+				</Button>
+
+
 				<Image
 					Name="UserAvatar"
 					Width="100"
@@ -131,7 +142,7 @@
 
 		<GroupBox
 			x:Name="TestGroupBox"
-			Grid.Row="2"
+			Grid.Row="1"
 			Grid.ColumnSpan="2"
 			Margin="3,0,3,0"
 			HorizontalAlignment="Stretch"
@@ -165,7 +176,8 @@
 
 		<TabControl
 			x:Name="MainTabControl"
-			Grid.Row="1"
+			Grid.Row="2"
+			Grid.ColumnSpan="2"
 			Margin="4"
 			x:FieldModifier="public"
 			SelectionChanged="MainTabControl_SelectionChanged">

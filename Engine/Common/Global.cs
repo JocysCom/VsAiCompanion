@@ -19,6 +19,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public static class Global
 	{
+
+		public static Security.AppSecurityHelper Security { get; } = new Security.AppSecurityHelper();
+
 		public static ISolutionHelper _SolutionHelper;
 		public static Func<Task> SwitchToVisualStudioThreadAsync = () => { return null; };
 

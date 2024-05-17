@@ -1,6 +1,7 @@
 2024-05-16 v1.10.22
 
-Fix: Format and generate feature, not using the specified services.
+- Fix: Format and generate feature, not using the specified services.
+- New: Allow users to provide function request denial comments to AI.
 
 2024-05-15 v1.10.21
 
