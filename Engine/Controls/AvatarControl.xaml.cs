@@ -106,34 +106,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void AudioCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			AudioCollectionTextBlock.Text = AudioCollection.Count > 0 ? AudioCollection.Count.ToString() : string.Empty;
-			if (e.Action == NotifyCollectionChangedAction.Add)
-			{
-				// PlayListTextBlock.Text += $"{AudioCollection[AudioCollection.Count - 1].Item2.Text}\n";
-				if (mediaPlayer.Source == null) { PlayFirstItem(); }
-			}
+			if (e.Action == NotifyCollectionChangedAction.Add) { if (mediaPlayer.Source == null) { OpenAudioFile(); } }
 		}
 
+		private void MediaPlayer_MediaEnded(object sender, EventArgs e) { if (AudioCollection.Count > 0) { OpenAudioFile(); } else { MediaPlayerEndedState(); }; }
 		private void StoryboardLips_Completed(object sender, EventArgs e) { StoryboardLipsCompletedState(); }
-		private void MediaPlayer_MediaEnded(object sender, EventArgs e) { MediaPlayerEndedState(); PlayFirstItem(); }
-
-		private void PlayFirstItem()
-		{
-			if (AudioCollection.Count > 0)
-			{
-				AudioPath = AudioCollection[0].Item1;
-				AudioData = AudioCollection[0].Item2;
-				AudioCollection.RemoveAt(0);
-				OpenAudioFile();
-			}
-		}
 
 		private void MediaPlayer_MediaButtonPlay(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			if (!string.IsNullOrEmpty(AudioPath) && AudioData != null) { OpenAudioFile(); }
+			if (!string.IsNullOrEmpty(AudioPath) && AudioData != null) { AudioCollection.Add((AudioPath, AudioData)); }
 		}
 
 		public void OpenAudioFile()
 		{
+			AudioPath = AudioCollection[0].Item1;
+			AudioData = AudioCollection[0].Item2;
+			AudioCollection.RemoveAt(0);
 			// Set mediaPlayer.Source to null for MediaPlayer_MediaOpened to work.
 			AnimationAndMediaStop();
 			try { mediaPlayer.Open(new Uri(AssemblyInfo.ExpandPath(AudioPath))); }
@@ -182,8 +170,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void AnimationAndMediaStop()
 		{
+			// Media.
+			mediaPlayer.Stop();
+			MediaPlayerEndedState();
 			// Animation.
-
 			storyboardLips.Seek(TimeSpan.Zero);
 			storyboardLips.Stop();
 			animation_CHI.KeyFrames.Clear();
@@ -191,9 +181,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			animation_PTH.KeyFrames.Clear();
 			animation_BAR.KeyFrames.Clear();
 			StoryboardLipsCompletedState();
-			// Media.
-			mediaPlayer.Stop();
-			MediaPlayerEndedState();
 		}
 
 		public void PlayMessageSentAnimation()
