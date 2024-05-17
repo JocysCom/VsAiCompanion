@@ -83,30 +83,40 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		Path pathNow = new Path();
 
 		// Audio collection.
+		private ObservableCollection<(string, AudioFileInfo)> _audioCollection = new ObservableCollection<(string, AudioFileInfo)>();
 		public ObservableCollection<(string, AudioFileInfo)> AudioCollection
 		{
-			get { return _audioCollection; }
+			get => _audioCollection;
 			set
 			{
 				_audioCollection = value;
 				OnPropertyChanged(nameof(AudioCollection));
 			}
 		}
-		private ObservableCollection<(string, AudioFileInfo)> _audioCollection = new ObservableCollection<(string, AudioFileInfo)>();
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string name) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
+		protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
 		// On new item added.
 		private void AudioCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			var items = AudioCollection.Count();
-			AudioCollectionTextBlock.Text = (items > 0) ? items.ToString() : "";
-			if (e.Action == NotifyCollectionChangedAction.Add) { PlayFirstItem(); }
+			AudioCollectionTextBlock.Text = AudioCollection.Count > 0 ? AudioCollection.Count.ToString() : string.Empty;
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				// PlayListTextBlock.Text += $"\n{AudioCollection[AudioCollection.Count - 1].Item2.Text}";
+				PlayFirstItem();
+
+			}
 		}
 
-		private void StoryboardLips_Completed(object sender, EventArgs e) { AnimationAndMediaStop(); PlayFirstItem(); }
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this)) { AudioCollection.CollectionChanged += AudioCollection_CollectionChanged; }
+		}
+
+		private void StoryboardLips_Completed(object sender, EventArgs e) { mediaPlayer.Close(); PlayFirstItem(); }
+		// Set mediaPlayer.Source to null with Close() on MediaEnded for MediaPlayer_MediaOpened to work.
 		private void MediaPlayer_MediaEnded(object sender, EventArgs e) { mediaPlayer.Close(); }
-		// Clear mediaPlayer on MediaEnded for MediaPlayer_MediaOpened to work.
 
 		private void PlayFirstItem()
 		{
@@ -114,8 +124,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AudioPath = AudioCollection[0].Item1;
 				AudioData = AudioCollection[0].Item2;
-				OpenAudioFile();
 				AudioCollection.RemoveAt(0);
+				OpenAudioFile();
 			}
 		}
 
@@ -147,7 +157,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AnimationAndMediaStop();
 		}
 
-		private void MediaPlayer_OpenLastAudio(object sender, System.Windows.Input.MouseButtonEventArgs e) { if (!string.IsNullOrEmpty(AudioPath) && AudioData != null) OpenAudioFile(); }
+		private void MediaPlayer_OpenLastAudio(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+			if (!string.IsNullOrEmpty(AudioPath) && AudioData != null) { OpenAudioFile(); }
+		}
 
 		public void AnimationAndMediaStop()
 		{
@@ -1058,14 +1070,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						storyboardBackground.Children.Add(animationSize);
 					}
 				}
-			}
-		}
-
-		private void This_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.AllowLoad(this))
-			{
-				AudioCollection.CollectionChanged += AudioCollection_CollectionChanged;
 			}
 		}
 	}

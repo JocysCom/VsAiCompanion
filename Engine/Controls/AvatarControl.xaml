@@ -288,7 +288,19 @@
 									FontSize="3"
 									Foreground="LightGoldenrodYellow"
 									Text="0,0,0,0" />
+
 							</StackPanel>
+						</Viewbox>
+
+						<Viewbox Visibility="Collapsed">
+							<TextBlock
+									Name="PlayListTextBlock"
+									Padding="1,0,1,0.5"
+									HorizontalAlignment="Center"
+									Background="Black"
+									FontSize="3"
+									Foreground="LightGoldenrodYellow"
+									Text="0,0,0,0" />
 						</Viewbox>
 
 						<Grid
