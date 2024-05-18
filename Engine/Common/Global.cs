@@ -20,7 +20,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public static class Global
 	{
 
-		public static Security.AppSecurityHelper Security { get; } = new Security.AppSecurityHelper();
+		public static Security.AppSecurityHelper Security { get; set; }
 
 		public static ISolutionHelper _SolutionHelper;
 		public static Func<Task> SwitchToVisualStudioThreadAsync = () => { return null; };
@@ -427,6 +427,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AppData.Version = 2;
 				SettingsSourceManager.ResetTemplates();
 			}
+			Security = new Security.AppSecurityHelper();
 			IsSettignsLoaded = true;
 		}
 

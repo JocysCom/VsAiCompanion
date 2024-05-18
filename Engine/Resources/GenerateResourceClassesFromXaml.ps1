@@ -69,6 +69,8 @@ function GetProjectValue
 function FindProjectFile
 {
     [FileInfo[]]$list = FindParentFile "*.*proj";
+    # Filter out files where the base name ends with 'wpftmp'.
+    $list = $list | Where-Object { $_.BaseName -notmatch 'wpftmp$' }
     if ($list -ne $null -and $list.Count -gt 0){
         # Order by date descending to most recent file.
         $list = [Enumerable]::OrderByDescending($list, [Func[object,object]]{ param($x) $x.LastWriteTime });
