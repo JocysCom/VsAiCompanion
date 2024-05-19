@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Speech;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -29,8 +31,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			CreateBackgroundAnimations();
 			CreateGlowAnimation();
 			CreateVisemeToPathDictionary();
-			//CreateLetterToPathDictionary();
-			//CreateLetterToPathDictionaryLT();
+			CreateLetterToPathDictionaryEN();
+			CreateLetterToPathDictionaryLT();
 			mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
 			mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
 			// Lips storyboard and animations.
@@ -77,7 +79,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		Storyboard storyboardDownloaded = new Storyboard();
 		// Dictionaries.
 		Dictionary<double, Path> visemeToPathDictionary = new Dictionary<double, Path>();
-		Dictionary<string, Tuple<Path, int>> letterToPathDictionary = new Dictionary<string, Tuple<Path, int>>();
+		Dictionary<string, Tuple<Path, int>> letterToPathDictionaryEN = new Dictionary<string, Tuple<Path, int>>();
 		Dictionary<string, Tuple<Path, int>> letterToPathDictionaryLT = new Dictionary<string, Tuple<Path, int>>();
 		// Current path.
 		Path pathNow = new Path();
@@ -131,10 +133,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// Extract audio file duration in ms and start animation calculations (when completed, audio and lip animation will play automatically).
 		private void MediaPlayer_MediaOpened(object sender, EventArgs e)
 		{
+			var viseme0 = AudioData.Viseme[0].VisemeId + AudioData.Viseme[1].VisemeId + AudioData.Viseme[2].VisemeId;
 			if (mediaPlayer.NaturalDuration.HasTimeSpan)
 			{
-				CreateLipAnimationFromVisemeDictionary(AudioData);
-				// CreateLipAnimationFromTextStringAndAudioFileDuration(mediaPlayer.NaturalDuration.TimeSpan, audioText);
+				if (AudioData.Viseme.IsNullOrEmpty() || viseme0 == 0)
+				{
+					CreateLipAnimationFromTextString(AudioData, mediaPlayer.NaturalDuration.TimeSpan);
+				}
+				else
+				{
+					CreateLipAnimationFromVisemeDictionary(AudioData);
+				}
+							
 				MediaPlayingState();
 				mediaPlayer.Play();
 				storyboardLips.Begin();
@@ -307,68 +317,91 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			storyboard.Begin();
 		}
 
-		//private List<string> ConvertStringToList(string audioText)
-		//{
-		//	List<string> audioTextList = new List<string>();
-		//	// Create audioTextList from audioText string.
-		//	var combinations = new HashSet<string> { "aw", "oo", "er", "ih", "ou", "oy", "ai", "sh", "ch", "zh", "th", "ng" };
-		//	audioText = audioText.ToLower() + " ";
-		//	for (int i = 0; i < audioText.Length; i++)
-		//	{
-		//		// Check for combination of two letters.
-		//		if (i + 1 < audioText.Length && combinations.Contains(audioText.Substring(i, 2).ToLower()))
-		//		{
-		//			audioTextList.Add(audioText.Substring(i, 2));
-		//			i++; // Skip the next character as it is already included in the combination.
-		//		}
-		//		// Check for space and ensure it's added only once for consecutive spaces.
-		//		else if (audioText[i] == ' ')
-		//		{
-		//			// If the previous letter in the list isn't a space, add it.
-		//			if (audioTextList.LastOrDefault() != " ") { audioTextList.Add(" "); }
-		//		}
-		//		else if (char.IsLetter(audioText[i]))
-		//		{
-		//			audioTextList.Add(audioText[i].ToString());
-		//		}
-		//		// Other character types (digits, punctuation).
-		//	}
-		//	return audioTextList;
-		//}
+		// "<speak version=\"1.0\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2001/10/synthesis\">\r\n  <voice name=\"lt-LT-LeonasNeural\">\r\n <mstts:viseme type=\"FacialExpression\" />text</voice>\r\n</speak>"
+		private string ExtractTextFromXmlString(string xmlString)
+		{
+			XDocument doc = XDocument.Parse(xmlString);
+			XElement root = doc.Root;
+			XElement voiceElement = root.Element("{http://www.w3.org/2001/10/synthesis}voice");
+			if (voiceElement != null) { return voiceElement.Value; }
+			else { return xmlString; }
+		}
 
-		//private void CreateLipAnimationFromTextStringAndAudioFileDuration(TimeSpan audioDuration, string audioText)
-		//{
-		//	var audioTextList = ConvertStringToList(audioText);
+		private List<string> ConvertStringToList(AudioFileInfo audioData)
+		{
+			List<string> audioTextList = new List<string>();
+			// Create audioTextList from audioText string.
+			var combinationsEN = new HashSet<string> { "aw", "oo", "er", "ih", "ou", "oy", "ai", "sh", "ch", "zh", "th", "ng" };
+			var combinationsLT = new HashSet<string> { "ch", };
 
-		//	var textList = new List<(string, int)>();
-		//	double textDuration = 0;
-		//	// Text to Viseme.
-		//	foreach (var letter in audioTextList)
-		//	{
-		//		if (letterToPathDictionary.ContainsKey(letter))
-		//		{
-		//			textList.Add((letter, letterToPathDictionary[letter].Item2));
-		//			textDuration += letterToPathDictionary[letter].Item2;
-		//		}
-		//		else
-		//		{
-		//			textList.Add((letter, letterToPathDictionary["*"].Item2));
-		//			textDuration += letterToPathDictionary["*"].Item2;
-		//		}
-		//	}
-		//	double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
+			var combinations = Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? combinationsLT : combinationsEN;
+			var audioText = ExtractTextFromXmlString(audioData.Text);
 
-		//	// Create list (VisemeID, Text, Path, Duration).
-		//	double timeEnd = 0;
-		//	var lipAnimationList = new List<(string, Path, double)>();
-		//	//double listDuration = 0;
-		//	foreach (var (text, duration) in textList)
-		//	{
-		//		timeEnd = timeEnd + duration * adjustmentFactor;
-		//		lipAnimationList.Add((text, letterToPathDictionary[text].Item1, timeEnd));
-		//	}
-		//	CreateLipAnimationKeys(lipAnimationList);
-		//}
+			audioText = audioText.ToLower() + " ";
+			for (int i = 0; i < audioText.Length; i++)
+			{
+				// Check for combination of two letters.
+				if (i + 1 < audioText.Length && combinations.Contains(audioText.Substring(i, 2).ToLower()))
+				{
+					audioTextList.Add(audioText.Substring(i, 2));
+					i++; // Skip the next character as it is already included in the combination.
+				}
+				// Check for space and ensure it's added only once for consecutive spaces.
+				else if (audioText[i] == ' ')
+				{
+					// If the previous letter in the list isn't a space, add it.
+					if (audioTextList.LastOrDefault() != " ") { audioTextList.Add(" "); }
+				}
+				else if (char.IsLetter(audioText[i]))
+				{
+					audioTextList.Add(audioText[i].ToString());
+				}
+				else if (audioText[i] == '.' ||
+						 audioText[i] == ',' ||
+						 audioText[i] == ':' ||
+						 audioText[i] == ';' ||
+						 audioText[i] == '!' ||
+						 audioText[i] == '?')
+				{
+					audioTextList.Add(audioText[i].ToString());
+				}
+				// Other character types (digits, punctuation).
+			}
+			return audioTextList;
+		}
+
+		private void CreateLipAnimationFromTextString(AudioFileInfo audioData, TimeSpan audioDuration)
+		{
+			var textList = ConvertStringToList(audioData);
+			var letterToPathDictionary = Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? letterToPathDictionaryLT : letterToPathDictionaryEN;
+
+			// Create list (Letter, Duration).
+			var textListDuration = new List<(string, int)>();
+			double textDuration = 0;
+			foreach (var letter in textList)
+			{
+				if (letterToPathDictionary.ContainsKey(letter))
+				{
+					textListDuration.Add((letter, letterToPathDictionary[letter].Item2));
+					textDuration += letterToPathDictionary[letter].Item2;
+				}
+				else
+				{
+					textListDuration.Add((letter, letterToPathDictionary["*"].Item2));
+					textDuration += letterToPathDictionary["*"].Item2;
+				}
+			}
+			// Create list (VisemeID, Text, Path, Duration).
+			var lipAnimationList = new List<(string, Path, double)>();
+			double timeEnd = 0;
+			double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
+			foreach (var (text, duration) in textListDuration)
+			{
+				timeEnd = timeEnd + duration * adjustmentFactor;
+				lipAnimationList.Add((text, letterToPathDictionary[text].Item1, timeEnd));
+			}
+			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
+		}
 
 		// VisemeID, Text, Path, Duration.
 		private void CreateLipAnimationFromVisemeDictionary(AudioFileInfo audioData)
@@ -804,6 +837,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{"ch", Tuple.Create(MPath_12, 400) },
 				// Single.
 				{" ", Tuple.Create(MPath_0, 600) },
+				{".", Tuple.Create(MPath_0, 1000) },
+				{",", Tuple.Create(MPath_0, 600) },
+				{":", Tuple.Create(MPath_0, 600) },
+				{";", Tuple.Create(MPath_0, 600) },
+				{"?", Tuple.Create(MPath_0, 600) },
+				{"!", Tuple.Create(MPath_0, 600) },
 				{"a", Tuple.Create(MPath_1, 800) },
 				{"ą", Tuple.Create(MPath_1, 800) },
 				{"e", Tuple.Create(MPath_1, 750) },
@@ -843,9 +882,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			};
 		}
 
-		private void CreateLetterToPathDictionary()
+		private void CreateLetterToPathDictionaryEN()
 		{
-			letterToPathDictionary = new Dictionary<string, Tuple<Path, int>>
+			letterToPathDictionaryEN = new Dictionary<string, Tuple<Path, int>>
 			{
 				// Multiple.
 				{"aw", Tuple.Create(MPath_3, 800) }, // ɔ
@@ -862,6 +901,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{"ng", Tuple.Create(MPath_20, 650) }, // ŋ
 				// Single.
 				{" ", Tuple.Create(MPath_0, 600) }, // Silence.
+				{".", Tuple.Create(MPath_0, 1000) },
+				{",", Tuple.Create(MPath_0, 600) },
+				{":", Tuple.Create(MPath_0, 600) },
+				{";", Tuple.Create(MPath_0, 600) },
+				{"?", Tuple.Create(MPath_0, 600) },
+				{"!", Tuple.Create(MPath_0, 600) },
 				{"a", Tuple.Create(MPath_1, 800) }, // æ // {"a",MPath_2}, // ɑ
 				{"e", Tuple.Create(MPath_1, 750) }, // ə //{"e",MPath_4}, // ɛ
 				{"u", Tuple.Create(MPath_1, 750) }, // ʌ
