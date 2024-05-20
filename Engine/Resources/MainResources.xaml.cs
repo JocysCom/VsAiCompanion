@@ -98,6 +98,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Copy_Chat => FindResource(nameof(main_Copy_Chat));
         public static string main_Copy_Id_File_Name => FindResource(nameof(main_Copy_Id_File_Name));
         public static string main_Copy_with_Headers => FindResource(nameof(main_Copy_with_Headers));
+        public static string main_ClearMessages_Name => FindResource(nameof(main_ClearMessages_Name));
+        public static string main_ClearMessages_Help => FindResource(nameof(main_ClearMessages_Help));
         public static string main_Create => FindResource(nameof(main_Create));
         public static string main_Create_a_Job_and_Model_from_File => FindResource(nameof(main_Create_a_Job_and_Model_from_File));
         public static string main_Create_an_Assistant_Task_from_Model => FindResource(nameof(main_Create_an_Assistant_Task_from_Model));
@@ -199,6 +201,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_UI_Settings_ToolTip => FindResource(nameof(main_Reset_UI_Settings_ToolTip));
         public static string main_Response_Streaming => FindResource(nameof(main_Response_Streaming));
         public static string main_Response_Timeout => FindResource(nameof(main_Response_Timeout));
+        public static string main_ScrollToBottom_Name => FindResource(nameof(main_ScrollToBottom_Name));
+        public static string main_ScrollToBottom_Help => FindResource(nameof(main_ScrollToBottom_Help));
         public static string main_Search => FindResource(nameof(main_Search));
         public static string main_Search_the_list => FindResource(nameof(main_Search_the_list));
         public static string main_Security => FindResource(nameof(main_Security));
@@ -226,12 +230,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Spell_Check => FindResource(nameof(main_Spell_Check));
         public static string main_Standalone_Program => FindResource(nameof(main_Standalone_Program));
         public static string main_Start_with_Windows => FindResource(nameof(main_Start_with_Windows));
+        public static string main_Start_Voice_Typing => FindResource(nameof(main_Start_Voice_Typing));
         public static string main_Stop => FindResource(nameof(main_Stop));
         public static string main_SignIn => FindResource(nameof(main_SignIn));
         public static string main_SignOut => FindResource(nameof(main_SignOut));
         public static string main_Status => FindResource(nameof(main_Status));
         public static string main_System_Message => FindResource(nameof(main_System_Message));
         public static string main_Target => FindResource(nameof(main_Target));
+        public static string main_Take_screenhots => FindResource(nameof(main_Take_screenhots));
         public static string main_Task => FindResource(nameof(main_Task));
         public static string main_Task_Path => FindResource(nameof(main_Task_Path));
         public static string main_Templates => FindResource(nameof(main_Templates));

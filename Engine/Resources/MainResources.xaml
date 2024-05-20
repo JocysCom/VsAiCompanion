@@ -51,6 +51,8 @@
 	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
 	<sys:String x:Key="main_Copy_Id_File_Name">Copy: Id, File Name</sys:String>
 	<sys:String x:Key="main_Copy_with_Headers">Copy with Headers</sys:String>
+	<sys:String x:Key="main_ClearMessages_Name">Clear Messages</sys:String>
+	<sys:String x:Key="main_ClearMessages_Help">Clear all chat messages.</sys:String>
 	<sys:String x:Key="main_Create">Create</sys:String>
 	<sys:String x:Key="main_Create_a_Job_and_Model_from_File">Create a Job and Model from File</sys:String>
 	<sys:String x:Key="main_Create_an_Assistant_Task_from_Model">Create an Assistant Task from Model</sys:String>
@@ -155,6 +157,8 @@
 	<sys:String x:Key="main_Reset_UI_Settings_ToolTip">Use to capture screenshots of a similar size.</sys:String>
 	<sys:String x:Key="main_Response_Streaming">Response Streaming</sys:String>
 	<sys:String x:Key="main_Response_Timeout">Response Timeout</sys:String>
+	<sys:String x:Key="main_ScrollToBottom_Name">Scroll To Bottom.</sys:String>
+	<sys:String x:Key="main_ScrollToBottom_Help">Scroll the chat window to the bottom.</sys:String>
 	<sys:String x:Key="main_Search">Search</sys:String>
 	<sys:String x:Key="main_Search_the_list">Search the list</sys:String>
 	<sys:String x:Key="main_Security">Security</sys:String>

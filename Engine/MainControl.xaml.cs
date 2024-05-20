@@ -31,14 +31,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			InfoPanel.DefaultHead = ai.GetTitle(true, false, true, false, false);
 			InfoPanel.DefaultBody = ai.Description;
 			InfoPanel.Reset();
+			var debugVisibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			// Temporary: Hide "Assistants" feature for release users.
-			AssistantsTabItem.Visibility = InitHelper.IsDebug
-				? Visibility.Visible
-				: Visibility.Collapsed;
+			AssistantsTabItem.Visibility = debugVisibility;
+			ErrorsTabItem.Visibility = debugVisibility;
 			UpdatesTabItem.Visibility = !Global.IsVsExtension
-				? Visibility.Visible
-				: Visibility.Collapsed;
-			ErrorsTabItem.Visibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			if (InitHelper.IsDebug)

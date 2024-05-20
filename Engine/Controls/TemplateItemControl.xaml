@@ -826,7 +826,7 @@
 					Name="ScreenshotButton"
 					Margin="3,3,0,3"
 					AutomationProperties.HelpText="{StaticResource main_Take_screenhots}"
-					AutomationProperties.Name="Screenshot Button"
+					AutomationProperties.Name="Screenshot"
 					Click="ScreenshotButton_Click">
 					<ContentControl Content="{StaticResource Icon_screen}" Focusable="False" />
 				</Button>
@@ -834,7 +834,7 @@
 					Name="MicrophoneButton"
 					Margin="3,3,3,3"
 					AutomationProperties.HelpText="{StaticResource main_Start_Voice_Typing}"
-					AutomationProperties.Name="Microphone Button"
+					AutomationProperties.Name="Voice Typing"
 					Click="MicrophoneButton_Click">
 					<ContentControl Content="{StaticResource Icon_microphone2}" Focusable="False" />
 				</Button>
@@ -861,6 +861,8 @@
 					Margin="0,3,3,3"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Center"
+					AutomationProperties.HelpText="{StaticResource main_ClearMessages_Help}"
+					AutomationProperties.Name="{StaticResource main_ClearMessages_Name}"
 					Click="ClearMessagesButton_Click">
 					<ContentControl Content="{StaticResource Icon_broom}" Focusable="False" />
 				</Button>
@@ -869,6 +871,8 @@
 					Margin="0,3,3,3"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Top"
+					AutomationProperties.HelpText="{StaticResource main_ScrollToBottom_Help}"
+					AutomationProperties.Name="{StaticResource main_ScrollToBottom_Name}"
 					Click="ScrollToBottomButton_Click">
 					<ContentControl Content="{StaticResource Icon_arrow_barrier_bottom}" Focusable="False" />
 				</Button>

@@ -27,9 +27,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateSpellCheck();
 			DomainMaxRiskLevelRefresh();
 			var debugVisibility = InitHelper.IsDebug
-				? Visibility.Visible : Visibility.Collapsed;
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			MultimediaGroupBox.Visibility = debugVisibility;
-			AuthPanel.Visibility = debugVisibility;
+			AccountSettingsTabItem.Visibility = debugVisibility;
 		}
 
 		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
