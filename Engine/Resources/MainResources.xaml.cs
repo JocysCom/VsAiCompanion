@@ -94,6 +94,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Company_Product => FindResource(nameof(main_Company_Product));
         public static string main_Context_Options => FindResource(nameof(main_Context_Options));
         public static string main_Copy => FindResource(nameof(main_Copy));
+        public static string main_Save_Chat => FindResource(nameof(main_Save_Chat));
+        public static string main_Copy_Chat => FindResource(nameof(main_Copy_Chat));
         public static string main_Copy_Id_File_Name => FindResource(nameof(main_Copy_Id_File_Name));
         public static string main_Copy_with_Headers => FindResource(nameof(main_Copy_with_Headers));
         public static string main_Create => FindResource(nameof(main_Create));
@@ -130,6 +132,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Format_Code => FindResource(nameof(main_Format_Code));
         public static string main_Gender => FindResource(nameof(main_Gender));
         public static string main_GitHub_Project => FindResource(nameof(main_GitHub_Project));
+        public static string main_Global_Instructions => FindResource(nameof(main_Global_Instructions));
         public static string main_Help => FindResource(nameof(main_Help));
         public static string main_IconExperience_License => FindResource(nameof(main_IconExperience_License));
         public static string main_Id => FindResource(nameof(main_Id));

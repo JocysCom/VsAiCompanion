@@ -36,7 +36,7 @@
 	<sys:String x:Key="main_Bar_Always_on_Top">Bar Always on Top</sys:String>
 	<sys:String x:Key="main_Browse">Browse...</sys:String>
 	<sys:String x:Key="main_Bytes">Bytes</sys:String>
-	<sys:String x:Key="main_Cache_audio_data">Cache audio data</sys:String>
+	<sys:String x:Key="main_Cache_audio_data">Use cached audio data</sys:String>
 	<sys:String x:Key="main_Call_function_request_denied">The request to call the function was denied!</sys:String>
 	<sys:String x:Key="main_Cancel">Cancel</sys:String>
 	<sys:String x:Key="main_Cancel_Job">Cancel Job</sys:String>
@@ -47,6 +47,8 @@
 	<sys:String x:Key="main_Company_Product">Company Product</sys:String>
 	<sys:String x:Key="main_Context_Options">Context</sys:String>
 	<sys:String x:Key="main_Copy">Copy</sys:String>
+	<sys:String x:Key="main_Save_Chat">Save the chat as an HTML file.</sys:String>
+	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
 	<sys:String x:Key="main_Copy_Id_File_Name">Copy: Id, File Name</sys:String>
 	<sys:String x:Key="main_Copy_with_Headers">Copy with Headers</sys:String>
 	<sys:String x:Key="main_Create">Create</sys:String>
@@ -86,6 +88,7 @@
 	<sys:String x:Key="main_Format_Code">Format Code</sys:String>
 	<sys:String x:Key="main_Gender">Gender</sys:String>
 	<sys:String x:Key="main_GitHub_Project">GitHub Project</sys:String>
+	<sys:String x:Key="main_Global_Instructions">Global Instructions</sys:String>
 	<sys:String x:Key="main_Help">Help</sys:String>
 	<sys:String x:Key="main_IconExperience_License">IconExperience License</sys:String>
 	<sys:String x:Key="main_Id">Id</sys:String>

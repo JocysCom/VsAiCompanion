@@ -26,8 +26,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SettingsFolderTextBox.Text = Global.AppData.XmlFile.Directory.FullName;
 			UpdateSpellCheck();
 			DomainMaxRiskLevelRefresh();
-			MultimediaGroupBox.Visibility = InitHelper.IsDebug
+			var debugVisibility = InitHelper.IsDebug
 				? Visibility.Visible : Visibility.Collapsed;
+			MultimediaGroupBox.Visibility = debugVisibility;
+			AuthPanel.Visibility = debugVisibility;
 		}
 
 		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

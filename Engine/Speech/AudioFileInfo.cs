@@ -26,6 +26,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 		public List<BlendShape> Shapes { get => _Shapes = _Shapes ?? new List<BlendShape>(); set => SetProperty(ref _Shapes, value); }
 		List<BlendShape> _Shapes;
 
+		[DefaultValue(null)]
+		public List<WordBoundary> Boundaries { get => _Boundaries = _Boundaries ?? new List<WordBoundary>(); set => SetProperty(ref _Boundaries, value); }
+		List<WordBoundary> _Boundaries;
+
+
+
+
 
 	}
 }

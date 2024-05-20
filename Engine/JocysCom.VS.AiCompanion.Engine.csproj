@@ -58,6 +58,7 @@
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
 		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.37.0" />
 		<PackageReference Include="Microsoft.ML" Version="3.0.1" />
+		<PackageReference Include="NAudio" Version="2.2.1" />
 		<PackageReference Include="RtfPipe" Version="2.0.7677.4303" />
 		<PackageReference Include="SharpVectors" Version="1.8.4" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.2" />
@@ -72,6 +73,7 @@
 		<Reference Include="Microsoft.Data.ConnectionUI.Dialog">
 			<HintPath>..\Resources\Microsoft.Data.Connection\net48\Microsoft.Data.ConnectionUI.Dialog.dll</HintPath>
 		</Reference>
+		<PackageReference Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
@@ -81,6 +83,7 @@
 
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+		<PackageReference Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
@@ -265,6 +268,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj" />
 		<ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="System.Speech" />
 	</ItemGroup>
 
 	<ItemGroup>

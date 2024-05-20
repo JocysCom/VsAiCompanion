@@ -134,6 +134,44 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Clipboard.SetText(text);
 		}
 
+		public static void SetClipboardHtml(string htmlContent)
+		{
+			// Adjust HTML content for clipboard
+			string htmlClipboardContent = GetClipboardHtmlData(htmlContent);
+			// Create a new data object
+			DataObject dataObject = new DataObject();
+			// Set the HTML format in the DataObject
+			dataObject.SetData(HtmlClipboardFormat, htmlClipboardContent);
+			// Set the DataObject to the clipboard
+			Clipboard.SetDataObject(dataObject, true);
+		}
+
+		private const string HtmlClipboardFormat = "HTML Format";
+
+		private static string GetClipboardHtmlData(string htmlContent)
+		{
+			// Define the required header and footer for clipboard HTML
+			const string Header = @"Version:0.9
+StartHTML:{0:00000000}
+EndHTML:{1:00000000}
+StartFragment:{2:00000000}
+EndFragment:{3:00000000}";
+			const string HtmlStartFragment = "<!--StartFragment-->";
+			const string HtmlEndFragment = "<!--EndFragment-->";
+			// Wrap the HTML content with the start and end fragment comments
+			string completeHtml = HtmlStartFragment + htmlContent + HtmlEndFragment;
+			// Calculate the lengths for header formatting
+			int startHtml = Header.Length - "{0:00000000}".Length * 4;
+			int startFragment = startHtml + completeHtml.IndexOf(HtmlStartFragment);
+			int endFragment = startHtml + completeHtml.IndexOf(HtmlEndFragment) + HtmlEndFragment.Length;
+			int endHtml = startHtml + completeHtml.Length;
+			// Format the header with the calculated lengths
+			string header = string.Format(Header, startHtml, endHtml, startFragment, endFragment);
+			// Combine the header with the complete HTML content
+			string result = header + completeHtml;
+			return result;
+		}
+
 
 		public static List<chat_completion_message[]> GetMessageGroups(List<chat_completion_message> source)
 		{

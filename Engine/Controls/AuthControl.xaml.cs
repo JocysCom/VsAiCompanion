@@ -36,8 +36,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? "User signed out successfully.\r\n"
 				: "No user is currently signed in.\r\n"
 				);
-			UserName.Text = string.Empty;
-			UserAvatar.Source = null;
+
+			AuthIconPanel.UserName.Text = string.Empty;
+			AuthIconPanel.UserAvatar.Source = null;
 		}
 
 		private async void This_Loaded(object sender, RoutedEventArgs e)
@@ -158,7 +159,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			LogPanel.Clear();
 			var profileResult = Global.Security.GetProfile();
 			if (profileResult.Success)
-				InspectToken(profileResult.Result.AccessToken);
+				InspectToken(profileResult.Result.IdToken);
 			await FetchAzureInformation();
 		}
 
@@ -173,8 +174,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			}
 			var profile = profileResult.Result;
-			UserName.Text = profile.Username;
-			UserAvatar.Source = await Global.Security.GetUserAvatar(profile.AccessToken);
+			AuthIconPanel.UserName.Text = profile.Username;
+			AuthIconPanel.UserAvatar.Source = await Global.Security.GetUserAvatar(profile.AccessToken);
 		}
 
 		public void InspectToken(string token)

@@ -1,12 +1,16 @@
-2024-05-16 v1.10.22
+2024-05-16 v1.10.32
 
 - Fix: Format and generate feature, not using the specified services.
 - New: Allow users to provide function request denial comments to AI.
+- New: Option to all global AI instructions.
+- New: Save the chat as an HTML file.
+- New: Copy the chat to the clipboard.
+- New: Save avatar voice as MP3 files.
 
 2024-05-15 v1.10.21
 
-- New: You can now take screenshots in the chat window.
 - Fix: Selected AI model sometimes resets when switching between different AI services.
+- New: You can now take screenshots in the chat window.
 - Update: More variations of partial XML SSML content are now supported.
 - Update: Use a queue to play all incoming avatar speeches in sequence.
 
@@ -23,17 +27,17 @@
 
 - Fix: Crash when reading data from the embedding database.
 - Fix: Crash when customized settings file not found.
-- Update: OpenAI Client now supports the analysis of larger images.
 - New: Added AI Avatar that can use Microsoft Azure Voices.
 - New: Button to start and stop Microsoft Voice Typing.
+- Update: OpenAI Client now supports the analysis of larger images.
 
 2024-04-28 v1.9.41
 
-- Update: Use the name of the embedding to select the AI database.
 - New: Timestamp column added to the Embedding database for synchronizations.
 - New: Add a plugin function to allow the AI to search the AI embedding database.
 - New: Option to restrict the maximum risk level in the config and in Windows domain groups.
 - New: Analyzes image URLs as per given instructions with an AI model.
+- Update: Use the name of the embedding to select the AI database.
 
 - 2024-04-18 v1.9.32
 
@@ -113,12 +117,12 @@
 - 2024-03-02 v1.6.20
 
 - Fix: AI Functions with enums failing.
-- Update: The function approval form will now display only the supplied parameters.
-- Update: Text file read and modify functions improved to be more understandable for AI.
-- Update: Updated some tooltips to improve clarity.
 - New: Web content and download functions with default credentials.
 - New: Added function category descriptions.
 - New: TTS support. Can be used with Jocys.com TTS Monitor. Ask to create a very short funny dialog involving the dragon and voice it.
+- Update: The function approval form will now display only the supplied parameters.
+- Update: Text file read and modify functions improved to be more understandable for AI.
+- Update: Updated some tooltips to improve clarity.
  
 2024-02-29 v1.6.13
 

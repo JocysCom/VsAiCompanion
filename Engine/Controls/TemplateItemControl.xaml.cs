@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary;
+﻿using HtmlAgilityPack;
+using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Processes;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -508,6 +510,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
+			AppHelper.AddHelp(SaveAsButton, CopyButton);
 			RestoreFocus();
 		}
 
@@ -778,6 +781,70 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			KeyboardHelper.SendUp(Key.LWin);
 
 		}
+
+		#region Copy and Save
+
+		System.Windows.Forms.SaveFileDialog ExportSaveFileDialog { get; } = new System.Windows.Forms.SaveFileDialog();
+
+		private void SaveAsButton_Click(object sender, RoutedEventArgs e)
+		{
+			var dialog = ExportSaveFileDialog;
+			dialog.DefaultExt = "*.html";
+			dialog.FileName = $"{Item.Name}.html";
+			dialog.Filter = "Webpage, single file (*.html)|*.html|All files (*.*)|*.*";
+			dialog.FilterIndex = 1;
+			dialog.RestoreDirectory = true;
+			dialog.Title = "Export HTML File";
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			// Cast the document to an HTMLDocument
+			var html = GetPageHtml();
+			if (string.IsNullOrEmpty(html))
+				return;
+			var bytes = System.Text.Encoding.UTF8.GetBytes(html);
+			JocysCom.ClassLibrary.Configuration.SettingsHelper.WriteIfDifferent(dialog.FileName, bytes);
+		}
+
+		public string GetPageHtml()
+		{
+			// Cast the document to an HTMLDocument
+			var html = ChatPanel.MessagesPanel.InvokeScript("document.documentElement.outerHTML;");
+			if (!string.IsNullOrEmpty(html))
+				html = CleanupHtml(html);
+			return html;
+		}
+
+		public static string CleanupHtml(string htmlContent)
+		{
+			// Load the HTML content into an HtmlDocument
+			var htmlDoc = new HtmlDocument();
+			htmlDoc.LoadHtml(htmlContent);
+			// Select all <script> nodes with the defer attribute
+			var nodes = htmlDoc.DocumentNode.SelectNodes("//script[@defer='defer']");
+			if (nodes != null)
+				foreach (var node in nodes)
+					node.Remove();
+			// Select all <button> nodes
+			nodes = htmlDoc.DocumentNode.SelectNodes("//button");
+			if (nodes != null)
+				foreach (var node in nodes)
+					node.Remove();
+			// Convert the document back to a string without the selected <script> tags
+			using (StringWriter writer = new StringWriter())
+			{
+				htmlDoc.Save(writer);
+				return writer.ToString();
+			}
+		}
+
+		private void CopyButton_Click(object sender, RoutedEventArgs e)
+		{
+			var html = GetPageHtml();
+			AppHelper.SetClipboardHtml(html);
+		}
+
+		#endregion
 
 		#region ■ INotifyPropertyChanged
 

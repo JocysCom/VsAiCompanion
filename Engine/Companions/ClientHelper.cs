@@ -130,7 +130,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				embeddingText = itemText;
 				var vsData = AppHelper.GetMacroValues();
 				// Prepare instructions.
-				var instructions = item.TextInstructions;
+				var instructions = JoinMessageParts(
+					Global.AppSettings.GlobalInstructions,
+					item.TextInstructions
+					);
 				if (item.UseMacros)
 					instructions = AppHelper.ReplaceMacros(instructions, vsData);
 				if (!string.IsNullOrEmpty(extraInstructions))

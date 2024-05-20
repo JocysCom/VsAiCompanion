@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using Microsoft.Identity.Client;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -45,6 +46,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		private void SaveUserProfile(AuthenticationResult result)
 		{
 			var account = result.Account;
+
 			// Save User profile.
 			var profile = Global.AppSettings.UserProfiles
 				.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure && x.Username == account.Username);
@@ -57,7 +59,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			profile.Username = account.Username;
 			profile.AccountId = account.HomeAccountId.Identifier;
 			profile.AccessToken = result.AccessToken;
-			// Profile will be saved when app close.
+			profile.IdToken = result.IdToken;
+
+			// Parse the ID token to extract user claims
+			var handler = new JwtSecurityTokenHandler();
+			var jsonToken = handler.ReadToken(result.IdToken) as JwtSecurityToken;
+			var claims = jsonToken?.Claims;
+			profile.Name = claims?.FirstOrDefault(c => c.Type == "name")?.Value;
 		}
 
 

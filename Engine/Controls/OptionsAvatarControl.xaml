@@ -106,8 +106,28 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
-				<CheckBox Name="CacheAudioDataCheckBox" Content="{StaticResource main_Cache_audio_data}" IsChecked="{Binding CacheAudioData, UpdateSourceTrigger=PropertyChanged}" />
 				<CheckBox Name="AlwaysOnTopCheckBox" Content="{StaticResource main_Always_on_Top}" IsChecked="{Binding AlwaysOnTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<CheckBox Name="CacheAudioDataCheckBox" Content="{StaticResource main_Cache_audio_data}" IsChecked="{Binding CacheAudioData, UpdateSourceTrigger=PropertyChanged}" />
+				<ComboBox
+					Name="AudioFormatComboBox"
+					MinWidth="64"
+					x:FieldModifier="public"
+					DisplayMemberPath="Value"
+					ItemsSource="{Binding CacheAudioFormats, ElementName=This}"
+					SelectedValue="{Binding CacheAudioFormat}"
+					SelectedValuePath="Key" />
+				<Button
+					Name="OpenButton"
+					Grid.Row="0"
+					Grid.Column="3"
+					HorizontalAlignment="Center"
+					Click="BrowseButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
+						<Label Content="{StaticResource main_Browse}" />
+					</StackPanel>
+				</Button>
+
 			</StackPanel>
 			<!--  Row 2  -->
 			<Label

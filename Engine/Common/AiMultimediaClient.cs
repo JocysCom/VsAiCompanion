@@ -28,7 +28,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Crate a copy in order not to add to existing list.
 			try
 			{
-				// Add instructions to generate title to existing messages.
 				if (!string.IsNullOrWhiteSpace(rItem.TextInstructions))
 					messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
 				var message = new chat_completion_message(message_role.user, instructions);

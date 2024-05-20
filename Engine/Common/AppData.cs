@@ -185,6 +185,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string ContextChatInstructions { get => _ContextChatInstructions; set => SetProperty(ref _ContextChatInstructions, value); }
 		private string _ContextChatInstructions;
 
+		/// <summary>Instructions that will be included at the start of every message.</summary>
+		[DefaultValue("")]
+		public string GlobalInstructions { get => _GlobalInstructions; set => SetProperty(ref _GlobalInstructions, value); }
+		string _GlobalInstructions;
+
 		[DefaultValue("Error for Processing")]
 		public string ContextErrorTitle { get => _ContextErrorTitle; set => SetProperty(ref _ContextErrorTitle, value); }
 		private string _ContextErrorTitle;

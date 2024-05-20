@@ -44,13 +44,15 @@
 			</Grid.ColumnDefinitions>
 			<!--  Row 0  -->
 			<StackPanel Grid.ColumnSpan="3" Orientation="Vertical">
-
-
 				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="{Binding ElementName=ColumnWidthBorder, Path=ActualWidth}" />
 						<ColumnDefinition />
 					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
 					<Button
 						Name="ListToggleButton"
 						HorizontalAlignment="Left"
@@ -81,40 +83,66 @@
 						<!--  Value="{Binding Creativity}"  -->
 						<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
 					</StackPanel>
+					<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+						<Border Name="ColumnWidthBorder">
+							<CheckBox
+								Name="PluginsEnableContextCheckBox"
+								Margin="4,1,0,0"
+								VerticalAlignment="Center"
+								Content="Use"
+								IsChecked="{Binding PluginsEnabled}" />
+						</Border>
+						<ComboBox
+							Name="MaximumRiskLevelComboBox"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
+							SelectedValue="{Binding MaxRiskLevel}"
+							SelectedValuePath="Key" />
+						<Label VerticalAlignment="Center" Content="Risk Plugins" />
+						<Label Padding="0" Content="·" />
+						<Label VerticalAlignment="Center" Content="{StaticResource main_Approval_Type}" />
+						<ComboBox
+							Name="PluginApprovalProcessComboBox"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginApprovalProcesses, ElementName=This}"
+							SelectedValue="{Binding PluginApprovalProcess}"
+							SelectedValuePath="Key" />
+						<Label VerticalAlignment="Center" Content="{StaticResource main_Approval_Template}" />
+						<ComboBox
+							Name="PluginApprovalTemplateComboBox"
+							DisplayMemberPath="Value"
+							ItemsSource="{Binding PluginTemplates, ElementName=This}"
+							SelectedValue="{Binding PluginApprovalTemplate}"
+							SelectedValuePath="Key" />
+					</StackPanel>
+					<StackPanel
+						Grid.Row="1"
+						Grid.ColumnSpan="2"
+						HorizontalAlignment="Right"
+						Orientation="Horizontal">
+						<Button
+							Name="CopyButton"
+							Margin="0,3,3,3"
+							AutomationProperties.HelpText="{StaticResource main_Copy_Chat}"
+							AutomationProperties.Name="Copy Button"
+							Click="CopyButton_Click">
+							<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" />
+						</Button>
+						<Button
+							Name="SaveAsButton"
+							Margin="0,3,3,3"
+							AutomationProperties.HelpText="{StaticResource main_Save_Chat}"
+							AutomationProperties.Name="Save As Button"
+							Click="SaveAsButton_Click">
+							<ContentControl Content="{StaticResource Icon_Save}" Focusable="False" />
+						</Button>
+					</StackPanel>
+
 				</Grid>
 
-				<StackPanel Orientation="Horizontal">
-					<Border Name="ColumnWidthBorder">
-						<CheckBox
-							Name="PluginsEnableContextCheckBox"
-							Margin="4,1,0,0"
-							VerticalAlignment="Center"
-							Content="Use"
-							IsChecked="{Binding PluginsEnabled}" />
-					</Border>
-					<ComboBox
-						Name="MaximumRiskLevelComboBox"
-						DisplayMemberPath="Value"
-						ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
-						SelectedValue="{Binding MaxRiskLevel}"
-						SelectedValuePath="Key" />
-					<Label VerticalAlignment="Center" Content="Risk Plugins" />
-					<Label Padding="0" Content="·" />
-					<Label VerticalAlignment="Center" Content="{StaticResource main_Approval_Type}" />
-					<ComboBox
-						Name="PluginApprovalProcessComboBox"
-						DisplayMemberPath="Value"
-						ItemsSource="{Binding PluginApprovalProcesses, ElementName=This}"
-						SelectedValue="{Binding PluginApprovalProcess}"
-						SelectedValuePath="Key" />
-					<Label VerticalAlignment="Center" Content="{StaticResource main_Approval_Template}" />
-					<ComboBox
-						Name="PluginApprovalTemplateComboBox"
-						DisplayMemberPath="Value"
-						ItemsSource="{Binding PluginTemplates, ElementName=This}"
-						SelectedValue="{Binding PluginApprovalTemplate}"
-						SelectedValuePath="Key" />
-				</StackPanel>
+
+
+
 				<Border Margin="0,0,0,-1" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,0,1" />
 			</StackPanel>
 			<Button
@@ -814,19 +842,20 @@
 				HorizontalAlignment="Right"
 				Orientation="Horizontal">
 				<Button
-					Name="ScrollToBottomMessagesButton"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Top"
-					Click="ScrollToBottomButton_Click">
-					<ContentControl Content="{StaticResource Icon_arrow_barrier_bottom}" Focusable="False" />
-				</Button>
-				<Button
 					Name="ClearMessagesButton"
 					Margin="0,3,3,3"
 					HorizontalAlignment="Right"
 					VerticalAlignment="Center"
 					Click="ClearMessagesButton_Click">
 					<ContentControl Content="{StaticResource Icon_broom}" Focusable="False" />
+				</Button>
+				<Button
+					Name="ScrollToBottomMessagesButton"
+					Margin="0,3,3,3"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+					Click="ScrollToBottomButton_Click">
+					<ContentControl Content="{StaticResource Icon_arrow_barrier_bottom}" Focusable="False" />
 				</Button>
 			</StackPanel>
 

@@ -241,60 +241,10 @@
 					</StackPanel>
 				</TabItem.Header>
 				<ScrollViewer>
-					<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="{StaticResource main_Title_for_Attached_Context}">
-						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto" />
-								<RowDefinition Height="Auto" />
-								<RowDefinition Height="Auto" />
-								<RowDefinition Height="Auto" />
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-							<Label
-								Grid.Row="0"
-								Grid.Column="0"
-								VerticalAlignment="Center"
-								Content="{StaticResource main_Data}" />
+					<StackPanel>
+						<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="{StaticResource main_Global_Instructions}">
 							<TextBox
-								Name="ContextDataTitleTextBox"
-								Grid.Row="0"
-								Grid.Column="1"
-								SpellCheck.IsEnabled="True"
-								Text="{Binding ContextDataTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-							<Label
-								Grid.Row="0"
-								Grid.Column="2"
-								VerticalAlignment="Center"
-								Content="{StaticResource main_Files}" />
-							<TextBox
-								Name="ContextFileTitleTextBox"
-								Grid.Row="0"
-								Grid.Column="3"
-								SpellCheck.IsEnabled="True"
-								Text="{Binding ContextFileTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-							<Label
-								Grid.Row="1"
-								Grid.Column="0"
-								VerticalAlignment="Center"
-								Content="{StaticResource main_Chat}" />
-							<TextBox
-								Name="ContextChatTitleTextBox"
-								Grid.Row="1"
-								Grid.Column="1"
-								SpellCheck.IsEnabled="True"
-								Text="{Binding ContextChatTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-							<Label
-								Grid.Row="2"
-								Grid.Column="0"
-								VerticalAlignment="Center"
-								Content="{StaticResource main_Chat_Instructions}" />
-							<TextBox
-								Name="ContextChatInstructionsTextBox"
+								Name="GlobalInstructionsTextBox"
 								Grid.Row="2"
 								Grid.Column="1"
 								Grid.ColumnSpan="3"
@@ -305,10 +255,78 @@
 								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 								ScrollViewer.VerticalScrollBarVisibility="Auto"
 								SpellCheck.IsEnabled="True"
-								Text="{Binding ContextChatInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								Text="{Binding GlobalInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 								TextWrapping="Wrap" />
-						</Grid>
-					</GroupBox>
+						</GroupBox>
+						<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="{StaticResource main_Title_for_Attached_Context}">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Label
+									Grid.Row="0"
+									Grid.Column="0"
+									VerticalAlignment="Center"
+									Content="{StaticResource main_Data}" />
+								<TextBox
+									Name="ContextDataTitleTextBox"
+									Grid.Row="0"
+									Grid.Column="1"
+									SpellCheck.IsEnabled="True"
+									Text="{Binding ContextDataTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<Label
+									Grid.Row="0"
+									Grid.Column="2"
+									VerticalAlignment="Center"
+									Content="{StaticResource main_Files}" />
+								<TextBox
+									Name="ContextFileTitleTextBox"
+									Grid.Row="0"
+									Grid.Column="3"
+									SpellCheck.IsEnabled="True"
+									Text="{Binding ContextFileTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<Label
+									Grid.Row="1"
+									Grid.Column="0"
+									VerticalAlignment="Center"
+									Content="{StaticResource main_Chat}" />
+								<TextBox
+									Name="ContextChatTitleTextBox"
+									Grid.Row="1"
+									Grid.Column="1"
+									SpellCheck.IsEnabled="True"
+									Text="{Binding ContextChatTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								<Label
+									Grid.Row="2"
+									Grid.Column="0"
+									VerticalAlignment="Center"
+									Content="{StaticResource main_Chat_Instructions}" />
+								<TextBox
+									Name="ContextChatInstructionsTextBox"
+									Grid.Row="2"
+									Grid.Column="1"
+									Grid.ColumnSpan="3"
+									HorizontalAlignment="Stretch"
+									VerticalAlignment="Stretch"
+									VerticalContentAlignment="Top"
+									AcceptsReturn="True"
+									ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+									ScrollViewer.VerticalScrollBarVisibility="Auto"
+									SpellCheck.IsEnabled="True"
+									Text="{Binding ContextChatInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+									TextWrapping="Wrap" />
+							</Grid>
+						</GroupBox>
+					</StackPanel>
 				</ScrollViewer>
 			</TabItem>
 

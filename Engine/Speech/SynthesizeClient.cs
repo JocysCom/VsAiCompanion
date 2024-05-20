@@ -5,9 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Media;
 using System.Net.Http;
-using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+#if NETCOREAPP
+using System.Runtime.Versioning;
+#endif
 
 namespace JocysCom.VS.AiCompanion.Engine.Speech
 {
@@ -42,8 +44,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 			synthesizer = new SpeechSynthesizer(config, null);
 			// Subscribes to viseme received event for animation control
 			synthesizer.VisemeReceived += Synthesizer_VisemeReceived;
+			synthesizer.WordBoundary += Synthesizer_WordBoundary;
 		}
-
 
 
 		private void Synthesizer_VisemeReceived(object sender, SpeechSynthesisVisemeEventArgs e)
@@ -59,12 +61,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 			//AnimateAvatarBasedOnViseme(e.VisemeId);
 		}
 
+		private void Synthesizer_WordBoundary(object sender, SpeechSynthesisWordBoundaryEventArgs e)
+		{
+			var wb = new WordBoundary()
+			{
+				AudioOffset = (int)(e.AudioOffset / 10000),
+				BoundaryType = e.BoundaryType,
+				Duration = e.Duration,
+				ResultId = e.ResultId,
+				Text = e.Text,
+				TextOffset = (int)e.TextOffset,
+				WordLength = e.WordLength,
+			};
+			AudioInfo.Boundaries.Add(wb);
+		}
+
 		private void AnimateAvatarBasedOnViseme(int visemeId)
 		{
 			// This is where you implement animation logic.
 			// For demonstration purposes, let's just log the viseme ID.
 			Console.WriteLine($"Animating avatar with viseme: {visemeId}");
-
 			// Example: Switch or if statements mapping visemeId to animation actions.
 		}
 
@@ -76,6 +92,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 				ClassLibrary.Runtime.Serializer.SerializeToXmlFile(AudioInfo, AudioInfoPath);
 		}
 
+		public static string GetOuptuPath() => Path.Combine(Global.AppData.XmlFile.Directory.FullName, "Temp");
+
 		/// <summary>
 		/// Start speaking and animation.
 		/// </summary>
@@ -83,9 +101,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 		/// <param name="useSsml">Flag indicating whether the text is in SSML format.</param>
 		public async Task<bool> _Synthesize(string text, bool? useSsml = null, bool useCache = false)
 		{
-			var path = Path.Combine(Global.AppData.XmlFile.Directory.FullName, "Temp");
+			var settings = Global.AppSettings.AiAvatar;
+			var path = GetOuptuPath();
 			var relativePath = AudioHelper.GetUniqueFilePath(null, null, Config.SpeechSynthesisVoiceName, "", "", text);
-			AudioFilePath = Path.Combine(path, relativePath + ".wav");
+			AudioFilePath = Path.Combine(path, relativePath + GetExtension(settings.CacheAudioFormat));
 			AudioInfoPath = Path.Combine(path, relativePath + ".xml");
 			var wavFi = new FileInfo(AudioFilePath);
 			var xmlFi = new FileInfo(AudioInfoPath);
@@ -110,14 +129,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 			{
 				AudioInfo.AudioDuration = result.AudioDuration;
 				Console.WriteLine($"Speech synthesized for text: \"{text}\"");
-				// Write the audio data to a file
-				if (!wavFi.Directory.Exists)
-					wavFi.Directory.Create();
+
+				AudioInfo.AudioDuration = result.AudioDuration;
+				Console.WriteLine($"Speech synthesized for text: \"{text}\"");
 				using (var audioStream = AudioDataStream.FromResult(result))
 				{
-					// Save the synthesized speech to a WAV file
-					await audioStream.SaveToWaveFileAsync(AudioFilePath);
-					Console.WriteLine($"Audio content written to file \"{AudioFilePath}\"");
+					if (settings.CacheAudioFormat == AudioFileFormat.WAV)
+					{
+						await SaveFile(audioStream, wavFi);
+					}
+					else
+					{
+						var ms = await GetMemoryStreamWithHeader(audioStream);
+						AudioHelper.Convert(ms, AudioFilePath);
+					}
 				}
 			}
 			else if (result.Reason == ResultReason.Canceled)
@@ -131,6 +156,58 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 			return result.Reason == ResultReason.SynthesizingAudioCompleted;
 		}
 
+		public string GetExtension(AudioFileFormat format)
+		{
+			if (format == AudioFileFormat.ULaw || format == AudioFileFormat.ALaw)
+				return "." + format.ToString().ToLower() + ".wav";
+			else if (format == AudioFileFormat.MP3)
+				return ".mp3";
+			else if (format == AudioFileFormat.WAV)
+				return ".wav";
+			else
+				// Do nothing if format do not match.
+				return "";
+		}
+
+		/// <summary>
+		/// Write the audio data to a file
+		/// </summary>
+		public async Task SaveFile(AudioDataStream source, FileInfo wavFi)
+		{
+			// Write the audio data to a file
+			if (!wavFi.Directory.Exists)
+				wavFi.Directory.Create();
+			// Save the synthesized speech to a WAV file
+			await source.SaveToWaveFileAsync(AudioFilePath);
+			Console.WriteLine($"Audio content written to file \"{AudioFilePath}\"");
+		}
+
+		public MemoryStream GetMemoryStream(AudioDataStream source)
+		{
+			MemoryStream ms = new MemoryStream();
+			var buffer = new byte[8000];
+			uint bytesRead;
+			while ((bytesRead = source.ReadData(buffer)) > 0)
+				ms.Write(buffer, 0, (int)bytesRead);
+			ms.Position = 0;
+			return ms;
+		}
+
+		public async Task<MemoryStream> GetMemoryStreamWithHeader(AudioDataStream source)
+		{
+			var tempWavFilePath = Path.GetTempFileName() + ".wav";
+			// Save to a temporary WAV file first
+			await source.SaveToWaveFileAsync(tempWavFilePath);
+			var ms = new MemoryStream();
+			using (var stream = File.OpenRead(tempWavFilePath))
+				stream.CopyTo(ms);
+			// Set the position to the beginning of the stream
+			ms.Position = 0;
+			// Clean up temporary file
+			File.Delete(tempWavFilePath);
+			return ms;
+		}
+
 		public async Task<List<string>> GetAvailableVoicesAsync()
 		{
 			var result = await synthesizer.GetVoicesAsync();
@@ -139,7 +216,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 				voiceNames.Add(voice.Name);
 			return voiceNames;
 		}
-
 
 		// Method to get detailed information about available voices.
 		public async Task<List<VoiceItem>> GetAvailableVoicesWithDetailsAsync()
@@ -309,7 +385,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 		{
 			try
 			{
-				synthesizer?.Dispose();
+				var s = synthesizer;
+				if (s != null)
+				{
+					s.VisemeReceived -= Synthesizer_VisemeReceived;
+					s.WordBoundary -= Synthesizer_WordBoundary;
+					s.Dispose();
+				}
 			}
 			catch (Exception)
 			{

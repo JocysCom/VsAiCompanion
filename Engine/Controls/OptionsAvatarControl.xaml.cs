@@ -118,6 +118,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		public Dictionary<AudioFileFormat, string> CacheAudioFormats
+			=> ClassLibrary.Runtime.Attributes.GetDictionary(new AudioFileFormat[] { AudioFileFormat.MP3, AudioFileFormat.WAV });
+
 		private void AiServicesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 		}
@@ -295,6 +298,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				Global.MainControl.InfoPanel.Tasks.ListChanged += Tasks_ListChanged;
 			}
+		}
+
+		private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			var path = SynthesizeClient.GetOuptuPath();
+			ControlsHelper.OpenUrl(path);
 		}
 	}
 }

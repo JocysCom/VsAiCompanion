@@ -48,15 +48,8 @@
 					</StackPanel>
 				</Button>
 
+				<controls:AuthIconControl x:Name="AuthIconPanel" />
 
-				<Image
-					Name="UserAvatar"
-					Width="100"
-					Height="100"
-					Margin="3"
-					HorizontalAlignment="Left"
-					VerticalAlignment="Top" />
-				<TextBlock Name="UserName" HorizontalAlignment="Left" VerticalAlignment="Top" />
 			</StackPanel>
 		</GroupBox>
 		<!--  New GroupBox for Azure Key Vault inputs  -->
