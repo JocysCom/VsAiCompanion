@@ -182,12 +182,14 @@
 	<sys:String x:Key="main_Spell_Check">Spell Check</sys:String>
 	<sys:String x:Key="main_Standalone_Program">Standalone Program</sys:String>
 	<sys:String x:Key="main_Start_with_Windows">Start with Windows</sys:String>
+	<sys:String x:Key="main_Start_Voice_Typing">Start and stop Microsoft Voice Typing.</sys:String>
 	<sys:String x:Key="main_Stop">Stop</sys:String>
 	<sys:String x:Key="main_SignIn">Sign In</sys:String>
 	<sys:String x:Key="main_SignOut">Sign Out</sys:String>
 	<sys:String x:Key="main_Status">Status</sys:String>
 	<sys:String x:Key="main_System_Message">System Message</sys:String>
 	<sys:String x:Key="main_Target">Target</sys:String>
+	<sys:String x:Key="main_Take_screenhots">Take screenshots from a region of your monitor workspace.</sys:String>
 	<sys:String x:Key="main_Task">Task</sys:String>
 	<sys:String x:Key="main_Task_Path">Task / Path</sys:String>
 	<sys:String x:Key="main_Templates">Templates</sys:String>

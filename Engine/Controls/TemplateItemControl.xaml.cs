@@ -510,7 +510,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
-			AppHelper.AddHelp(SaveAsButton, CopyButton);
+			AppHelper.AddHelp(SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton);
 			RestoreFocus();
 		}
 

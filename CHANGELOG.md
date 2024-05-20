@@ -1,6 +1,7 @@
-2024-05-16 v1.10.32
+2024-05-20 v1.10.32
 
 - Fix: Format and generate feature, not using the specified services.
+- Fix: Sometimes the order of sentences in voice speech would be incorrect.
 - New: Allow users to provide function request denial comments to AI.
 - New: Option to all global AI instructions.
 - New: Save the chat as an HTML file.

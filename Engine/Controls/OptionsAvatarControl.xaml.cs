@@ -171,7 +171,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				try
 				{
-					await _AI_SpeakSSML(text, Item.Gender, Item.VoiceLocale, null);
+					await AI_SpeakSSML(text, Item.Gender, Item.VoiceLocale, null);
 				}
 				catch (Exception ex)
 				{
@@ -181,19 +181,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.RemoveTask(task);
 		}
 
-		public async Task<OperationResult<string>> AI_SpeakSSML(string text, VoiceGender? gender, string language = null, bool? isSsml = null)
-		{
-			await Task.Delay(0);
-			_ = Dispatcher.BeginInvoke(new Action(() =>
-			{
-				_ = _AI_SpeakSSML(text, gender, language, isSsml);
-			}));
-			return new OperationResult<string>();
-		}
-
 		List<SynthesizeClient> Clients = new List<SynthesizeClient>();
 
-		async Task<OperationResult<string>> _AI_SpeakSSML(string text, VoiceGender? gender, string language = null, bool? isSsml = null)
+		public async Task<OperationResult<string>> AI_SpeakSSML(string text, VoiceGender? gender, string language = null, bool? isSsml = null)
 		{
 			SynthesizeClient client = null;
 			try

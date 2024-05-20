@@ -86,7 +86,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 
 		public async Task Synthesize(string text, bool? useSsml = false, bool useCache = false)
 		{
+			// Update text to SSML XML.
 			var updatedText = UpdateToViseme(text, Config.SpeechSynthesisVoiceName);
+			useSsml = true;
 			var newData = await _Synthesize(updatedText, useSsml, useCache);
 			if (newData)
 				ClassLibrary.Runtime.Serializer.SerializeToXmlFile(AudioInfo, AudioInfoPath);
