@@ -395,10 +395,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var lipAnimationList = new List<(string, Path, double)>();
 			double timeEnd = 0;
 			double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
-			foreach (var (text, duration) in textListDuration)
+			foreach (var (letter, duration) in textListDuration)
 			{
-				timeEnd = timeEnd + duration * adjustmentFactor;
-				lipAnimationList.Add((text, letterToPathDictionary[text].Item1, timeEnd));
+				if (letterToPathDictionary.ContainsKey(letter))
+				{
+					timeEnd = timeEnd + duration * adjustmentFactor;
+					lipAnimationList.Add((letter, letterToPathDictionary[letter].Item1, timeEnd));
+				}
 			}
 			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
 		}
