@@ -45,7 +45,7 @@
 				Stretch="UniformToFill" />
 			<ContentControl
 				x:Name="DefaultImage"
-				Margin="0,3,0,0"
+				Margin="0,5,0,-5"
 				Content="{StaticResource Icon_user_grey}"
 				Opacity="0.5" />
 		</Grid>
