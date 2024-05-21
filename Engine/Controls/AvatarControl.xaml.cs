@@ -1,7 +1,9 @@
-﻿using JocysCom.ClassLibrary.Configuration;
+﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using Microsoft.IdentityModel.Tokens;
+using NPOI.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,7 +18,9 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Linq;
+using UglyToad.PdfPig.Content;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -53,7 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		int LipAnimationFrames = 6; // Min 1.
 		int LipGeometryDivisions = 9; // Min 2.
-									  // Audio file and data.
+		// Audio file and data.
 		public string AudioPath; // @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
 		AudioFileInfo AudioData = new AudioFileInfo();
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
@@ -138,13 +142,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				if (AudioData.Viseme.IsNullOrEmpty() || viseme0 == 0)
 				{
-					CreateLipAnimationFromTextString(AudioData, mediaPlayer.NaturalDuration.TimeSpan);
+					if (AudioData.Boundaries.IsNullOrEmpty())
+					{
+						CreateLipAnimationFromTextString(AudioData, mediaPlayer.NaturalDuration.TimeSpan);
+					}
+					else
+					{
+						CreateLipAnimationFromWordBoundaries(AudioData);
+					}
 				}
 				else
 				{
 					CreateLipAnimationFromVisemeDictionary(AudioData);
-				}
-							
+				}				
 				MediaPlayingState();
 				mediaPlayer.Play();
 				storyboardLips.Begin();
@@ -368,6 +378,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Other character types (digits, punctuation).
 			}
 			return audioTextList;
+		}
+
+		private void CreateLipAnimationFromWordBoundaries(AudioFileInfo audioData)
+		{
+			//"Boundaries":[{"ResultId":"0840aab42c5244a2951f5072e03c4e0b","AudioOffset":125,"Duration":"00:00:00.1500000","TextOffset":209,"WordLength":2,"Text":"Na","BoundaryType":0},]}
+			var lipAnimationList = new List<(string, Path, double)>();
+			var letterToPathDictionary = Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? letterToPathDictionaryLT : letterToPathDictionaryEN;
+			foreach (var word in audioData.Boundaries)
+			{
+			var timeStart = word.AudioOffset;
+				var letterDuration = word.Duration.TotalMilliseconds / (double)word.WordLength;
+				lipAnimationList.Add((" ", letterToPathDictionary[" "].Item1, timeStart));
+				for (int i = 0; i < word.WordLength; i++)
+				{
+					// "\u016B" > "ū".
+					var letter = Regex.Unescape(word.Text[i].ToString()).ToLower();
+					var timeEnd = timeStart + letterDuration * (i + 1);
+					if (letterToPathDictionary.ContainsKey(letter))
+					{
+						lipAnimationList.Add((word.Text[i].ToString(), letterToPathDictionary[letter].Item1, timeEnd));
+					}
+				}
+			}
+			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
 		}
 
 		private void CreateLipAnimationFromTextString(AudioFileInfo audioData, TimeSpan audioDuration)
@@ -943,18 +977,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// Create BACKGROUND (CAMERA, AURA, SPARK) animations.
 		public void CreateBackgroundAnimations()
 		{
-			// Time settings.
-			var beginTimeMin = 0;
-			var beginTimeMax = 60000;
-			var duration = 10000;
-			// Create storyboardBackground animations.
-			CreateCameraAnimation(beginTimeMin, duration);
-			CreateAuraAnimation(beginTimeMin, duration);
-			CreateSparkAnimation(beginTimeMin, beginTimeMax, duration);
-			// Begin animation.
-			storyboardBackground.SpeedRatio = 0.3;
-			storyboardBackground.Begin();
-			storyboardBackground.Seek(TimeSpan.FromMilliseconds(beginTimeMax));
+			// Un​interruptible animations.
+			Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+			{
+				// Time settings.
+				var beginTimeMin = 0;
+				var beginTimeMax = 60000;
+				var duration = 10000;
+				// Create storyboardBackground animations.
+				CreateCameraAnimation(beginTimeMin, duration);
+				CreateAuraAnimation(beginTimeMin, duration);
+				CreateSparkAnimation(beginTimeMin, beginTimeMax, duration);
+				// Begin animation.
+				storyboardBackground.SpeedRatio = 0.3;
+				storyboardBackground.Begin();
+				storyboardBackground.Seek(TimeSpan.FromMilliseconds(beginTimeMax));
+			}));
 		}
 
 		// CAMERA animation.
@@ -1056,7 +1094,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					var startRandom = TimeSpan.FromMilliseconds(random.Next(startMin, startMax));
 
 					// Create Grid for Image ("spark").
-					var grid = new Grid
+						var grid = new Grid
 					{
 						Height = sizeMax,
 						Width = sizeMax,
