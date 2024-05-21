@@ -34,9 +34,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			CreateBackgroundAnimations();
 			CreateGlowAnimation();
-			CreateVisemeToPathDictionary();
-			CreateLetterToPathDictionaryEN();
-			CreateLetterToPathDictionaryLT();
+			CreateVisemePathDictionary();
 			mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
 			mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
 			// Lips storyboard and animations.
@@ -82,9 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		Storyboard storyboardUploaded = new Storyboard();
 		Storyboard storyboardDownloaded = new Storyboard();
 		// Dictionaries.
-		Dictionary<double, Path> visemeToPathDictionary = new Dictionary<double, Path>();
-		Dictionary<string, Tuple<Path, int>> letterToPathDictionaryEN = new Dictionary<string, Tuple<Path, int>>();
-		Dictionary<string, Tuple<Path, int>> letterToPathDictionaryLT = new Dictionary<string, Tuple<Path, int>>();
+		Dictionary<int, Path> visemePathDictionary = new Dictionary<int, Path>();
 		// Current path.
 		Path pathNow = new Path();
 
@@ -327,6 +323,82 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			storyboard.Begin();
 		}
 
+		// VisemeID, Text, Path, Duration.
+		private void CreateLipAnimationFromVisemeDictionary(AudioFileInfo audioData)
+		{
+			// letter, Path, timeEnd.
+			var lipAnimationList = new List<(string, Path, double)>();
+			foreach (var item in audioData.Viseme)
+			{
+				if (visemePathDictionary.ContainsKey(item.VisemeId))
+				{
+					lipAnimationList.Add((item.VisemeId.ToString(), visemePathDictionary[item.VisemeId], item.Offset));
+				}
+			}
+			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
+		}
+
+		//"Boundaries":[{"ResultId":"0840aab42c5244a2951f5072e03c4e0b","AudioOffset":125,"Duration":"00:00:00.1500000","TextOffset":209,"WordLength":2,"Text":"Na","BoundaryType":0},]}
+		private void CreateLipAnimationFromWordBoundaries(AudioFileInfo audioData)
+		{
+			// letter, Path, timeEnd.
+			var lipAnimationList = new List<(string, Path, double)>();
+			// letter, Path, duration.
+			var letterPathDictionary = GetLetterPathDictionary(Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? VisemesLT : VisemesEN);
+			foreach (var word in audioData.Boundaries)
+			{
+				var timeStart = word.AudioOffset;
+				var letterDuration = word.Duration.TotalMilliseconds / (double)word.WordLength;
+				lipAnimationList.Add((" ", letterPathDictionary[" "].Item1, timeStart));
+				for (int i = 0; i < word.WordLength; i++)
+				{
+					// "\u016B" > "ū".
+					var letter = Regex.Unescape(word.Text[i].ToString()).ToLower();
+					var timeEnd = timeStart + letterDuration * (i + 1);
+					if (letterPathDictionary.ContainsKey(letter))
+					{
+						lipAnimationList.Add((word.Text[i].ToString(), letterPathDictionary[letter].Item1, timeEnd));
+					}
+				}
+			}
+			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
+		}
+
+		private void CreateLipAnimationFromTextString(AudioFileInfo audioData, TimeSpan audioDuration)
+		{
+			var textList = ConvertStringToList(audioData);
+			var letterPathDictionary = GetLetterPathDictionary(Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? VisemesLT : VisemesEN);
+			// Create list (Letter, Duration).
+			var textListDuration = new List<(string, int)>();
+			double textDuration = 0;
+			foreach (var letter in textList)
+			{
+				if (letterPathDictionary.ContainsKey(letter))
+				{
+					textListDuration.Add((letter, letterPathDictionary[letter].Item2));
+					textDuration += letterPathDictionary[letter].Item2;
+				}
+				else
+				{
+					textListDuration.Add((letter, letterPathDictionary["*"].Item2));
+					textDuration += letterPathDictionary["*"].Item2;
+				}
+			}
+			// Create list (VisemeID, Text, Path, Duration).
+			var lipAnimationList = new List<(string, Path, double)>();
+			double timeEnd = 0;
+			double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
+			foreach (var (letter, duration) in textListDuration)
+			{
+				if (letterPathDictionary.ContainsKey(letter))
+				{
+					timeEnd = timeEnd + duration * adjustmentFactor;
+					lipAnimationList.Add((letter, letterPathDictionary[letter].Item1, timeEnd));
+				}
+			}
+			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
+		}
+
 		// "<speak version=\"1.0\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2001/10/synthesis\">\r\n  <voice name=\"lt-LT-LeonasNeural\">\r\n <mstts:viseme type=\"FacialExpression\" />text</voice>\r\n</speak>"
 		private string ExtractTextFromXmlString(string xmlString)
 		{
@@ -340,13 +412,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private List<string> ConvertStringToList(AudioFileInfo audioData)
 		{
 			List<string> audioTextList = new List<string>();
-			// Create audioTextList from audioText string.
-			var combinationsEN = new HashSet<string> { "aw", "oo", "er", "ih", "ou", "oy", "ai", "sh", "ch", "zh", "th", "ng" };
-			var combinationsLT = new HashSet<string> { "ch", };
-
-			var combinations = Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? combinationsLT : combinationsEN;
 			var audioText = ExtractTextFromXmlString(audioData.Text);
-
+			var combinations = GetMultiples(Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? VisemesLT : VisemesEN);
 			audioText = audioText.ToLower() + " ";
 			for (int i = 0; i < audioText.Length; i++)
 			{
@@ -378,80 +445,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Other character types (digits, punctuation).
 			}
 			return audioTextList;
-		}
-
-		private void CreateLipAnimationFromWordBoundaries(AudioFileInfo audioData)
-		{
-			//"Boundaries":[{"ResultId":"0840aab42c5244a2951f5072e03c4e0b","AudioOffset":125,"Duration":"00:00:00.1500000","TextOffset":209,"WordLength":2,"Text":"Na","BoundaryType":0},]}
-			var lipAnimationList = new List<(string, Path, double)>();
-			var letterToPathDictionary = Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? letterToPathDictionaryLT : letterToPathDictionaryEN;
-			foreach (var word in audioData.Boundaries)
-			{
-				var timeStart = word.AudioOffset;
-				var letterDuration = word.Duration.TotalMilliseconds / (double)word.WordLength;
-				lipAnimationList.Add((" ", letterToPathDictionary[" "].Item1, timeStart));
-				for (int i = 0; i < word.WordLength; i++)
-				{
-					// "\u016B" > "ū".
-					var letter = Regex.Unescape(word.Text[i].ToString()).ToLower();
-					var timeEnd = timeStart + letterDuration * (i + 1);
-					if (letterToPathDictionary.ContainsKey(letter))
-					{
-						lipAnimationList.Add((word.Text[i].ToString(), letterToPathDictionary[letter].Item1, timeEnd));
-					}
-				}
-			}
-			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
-		}
-
-		private void CreateLipAnimationFromTextString(AudioFileInfo audioData, TimeSpan audioDuration)
-		{
-			var textList = ConvertStringToList(audioData);
-			var letterToPathDictionary = Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? letterToPathDictionaryLT : letterToPathDictionaryEN;
-
-			// Create list (Letter, Duration).
-			var textListDuration = new List<(string, int)>();
-			double textDuration = 0;
-			foreach (var letter in textList)
-			{
-				if (letterToPathDictionary.ContainsKey(letter))
-				{
-					textListDuration.Add((letter, letterToPathDictionary[letter].Item2));
-					textDuration += letterToPathDictionary[letter].Item2;
-				}
-				else
-				{
-					textListDuration.Add((letter, letterToPathDictionary["*"].Item2));
-					textDuration += letterToPathDictionary["*"].Item2;
-				}
-			}
-			// Create list (VisemeID, Text, Path, Duration).
-			var lipAnimationList = new List<(string, Path, double)>();
-			double timeEnd = 0;
-			double adjustmentFactor = (audioDuration.TotalMilliseconds - 1000) / textDuration;
-			foreach (var (letter, duration) in textListDuration)
-			{
-				if (letterToPathDictionary.ContainsKey(letter))
-				{
-					timeEnd = timeEnd + duration * adjustmentFactor;
-					lipAnimationList.Add((letter, letterToPathDictionary[letter].Item1, timeEnd));
-				}
-			}
-			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
-		}
-
-		// VisemeID, Text, Path, Duration.
-		private void CreateLipAnimationFromVisemeDictionary(AudioFileInfo audioData)
-		{
-			var lipAnimationList = new List<(string, Path, double)>();
-			foreach (var item in audioData.Viseme)
-			{
-				if (visemeToPathDictionary.ContainsKey(item.VisemeId))
-				{
-					lipAnimationList.Add((item.VisemeId.ToString(), visemeToPathDictionary[item.VisemeId], item.Offset));
-				}
-			}
-			CreateLipAnimationKeys(lipAnimationList, audioData.Shapes);
 		}
 
 		private void CreateLipAnimationKeys(List<(string, Path, double)> lipAnimationList, List<BlendShape> blendShapeList)
@@ -837,9 +830,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			MoveToWindowToggle();
 		}
 
-		private void CreateVisemeToPathDictionary()
+		private void CreateVisemePathDictionary()
 		{
-			visemeToPathDictionary = new Dictionary<double, Path>
+			visemePathDictionary = new Dictionary<int, Path>
 			{
 				{0,MPath_0},
 				{1,MPath_1},
@@ -866,112 +859,126 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			};
 		}
 
-		private void CreateLetterToPathDictionaryLT()
+		new List<(string, int, int)> VisemesLT = new List<(string, int, int)>
 		{
-			letterToPathDictionaryLT = new Dictionary<string, Tuple<Path, int>>
+				// Multiple.
+				{("ch", 12, 400)},
+				// Single.
+				{(" ", 0, 600)},
+				{(".", 0, 900)},
+				{(",", 0, 600)},
+				{(":", 0, 600)},
+				{(";", 0, 600)},
+				{("?", 0, 600)},
+				{("!", 0, 600)},
+				{("a", 1, 800)},
+				{("ą", 1, 800)},
+				{("e", 1, 750)},
+				{("ę", 1, 750)},
+				{("ė", 1, 750)},
+				{("u", 1, 750)},
+				{("ų", 1, 750)},
+				{("ū", 1, 750)},
+				{("*", 6, 600)},
+				{("y", 6, 750)},
+				{("į", 6, 750)},
+				{("i", 6, 750)},
+				{("w", 7, 700)},
+				{("o", 8, 800)},
+				{("h", 12, 400)},
+				{("r", 13, 600)},
+				{("l", 14, 600)},
+				{("x", 15, 500)},
+				{("s", 15, 500)},
+				{("š", 15, 500)},
+				{("z", 15, 550)},
+				{("ž", 15, 550)},
+				{("j", 16, 500)},
+				{("f", 18, 400)},
+				{("v", 18, 550)},
+				{("d", 19, 500)},
+				{("t", 19, 400)},
+				{("n", 19, 500)},
+				{("c", 20, 400)},
+				{("č", 20, 400)},
+				{("k", 20, 400)},
+				{("q", 20, 600)},
+				{("g", 20, 500)},
+				{("p", 21, 400) },
+				{("b", 21, 500) },
+				{("m", 21, 600) },
+		};
+
+		new List<(string, int, int)> VisemesEN = new List<(string, int, int)>
 			{
 				// Multiple.
-				{"ch", Tuple.Create(MPath_12, 400) },
+				{("aw", 3, 800)}, // ɔ
+				{("oo", 4, 850)}, // ʊ
+				{("er", 5, 800)}, // ɝ
+				{("ih", 6, 750)}, // ɪ
+				{("ou", 9, 900)}, // aʊ
+				{("oy", 10, 850)}, // ɔɪ
+				{("ai", 11, 900)}, // aɪ
+				{("sh", 16, 500)}, // ʃ
+				{("ch", 16, 500)}, // tʃ
+				{("zh", 16, 550)}, // ʒ
+				{("th", 17, 500)}, // ð // {"th",MPath_19}, // θ
+				{("ng", 20, 650)}, // ŋ
 				// Single.
-				{" ", Tuple.Create(MPath_0, 600) },
-				{".", Tuple.Create(MPath_0, 1000) },
-				{",", Tuple.Create(MPath_0, 600) },
-				{":", Tuple.Create(MPath_0, 600) },
-				{";", Tuple.Create(MPath_0, 600) },
-				{"?", Tuple.Create(MPath_0, 600) },
-				{"!", Tuple.Create(MPath_0, 600) },
-				{"a", Tuple.Create(MPath_1, 800) },
-				{"ą", Tuple.Create(MPath_1, 800) },
-				{"e", Tuple.Create(MPath_1, 750) },
-				{"ę", Tuple.Create(MPath_1, 750) },
-				{"ė", Tuple.Create(MPath_1, 750) },
-				{"u", Tuple.Create(MPath_1, 750) },
-				{"ų", Tuple.Create(MPath_1, 750) },
-				{"ū", Tuple.Create(MPath_1, 750) },
-				{"*", Tuple.Create(MPath_6, 600) },
-				{"y", Tuple.Create(MPath_6, 750) },
-				{"į", Tuple.Create(MPath_6, 750) },
-				{"i", Tuple.Create(MPath_6, 750) },
-				{"w", Tuple.Create(MPath_7, 700) },
-				{"o", Tuple.Create(MPath_8, 800) },
-				{"h", Tuple.Create(MPath_12, 400) },
-				{"r", Tuple.Create(MPath_13, 600) },
-				{"l", Tuple.Create(MPath_14, 600) },
-				{"x", Tuple.Create(MPath_15, 500) },
-				{"s", Tuple.Create(MPath_15, 500) },
-				{"š", Tuple.Create(MPath_15, 500) },
-				{"z", Tuple.Create(MPath_15, 550) },
-				{"ž", Tuple.Create(MPath_15, 550) },
-				{"j", Tuple.Create(MPath_16, 500) },
-				{"f", Tuple.Create(MPath_18, 400) },
-				{"v", Tuple.Create(MPath_18, 550) },
-				{"d", Tuple.Create(MPath_19, 500) },
-				{"t", Tuple.Create(MPath_19, 400) },
-				{"n", Tuple.Create(MPath_19, 500) },
-				{"c", Tuple.Create(MPath_20, 400) },
-				{"č", Tuple.Create(MPath_20, 400) },
-				{"k", Tuple.Create(MPath_20, 400) },
-				{"q", Tuple.Create(MPath_20, 600) },
-				{"g", Tuple.Create(MPath_20, 500) },
-				{"p", Tuple.Create(MPath_21, 400) },
-				{"b", Tuple.Create(MPath_21, 500) },
-				{"m", Tuple.Create(MPath_21, 600) },
+				{(" ", 0, 600)}, // Silence.
+				{(".", 0, 1000)},
+				{(",", 0, 600)},
+				{(":", 0, 600)},
+				{(";", 0, 600)},
+				{("?", 0, 600)},
+				{("!", 0, 600)},
+				{("a", 1, 800)}, // æ // {"a",MPath_2}, // ɑ
+				{("e", 1, 750)}, // ə //{"e",MPath_4}, // ɛ
+				{("u", 1, 750)}, // ʌ
+				{("z", 5, 550)} , // z
+				{("*", 6, 600)}, // *
+				{("y", 6, 750)}, // j
+				{("i", 6, 750)}, // i
+				{("w", 7, 700)}, // w // {"u"MPath_7}, // u
+				{("o", 8, 800)}, // o // {"o",MPath_3}, // ɔ
+				{("h", 12, 400)}, // h
+				{("r", 13, 600)}, // ɹ
+				{("l", 14, 600)}, // l
+				{("x", 15, 500)}, // x
+				{("s", 15, 500)}, // s
+				{("j", 16, 500)}, // dʒ
+				{("f", 18, 400)}, // f
+				{("v", 18, 550)}, // v
+				{("d", 19, 500)}, // d
+				{("t", 19, 400)}, // t
+				{("n", 19, 500)}, // n
+				{("c", 20, 400)}, // c
+				{("k", 20, 400)}, // k
+				{("q", 20, 600)}, // q
+				{("g", 20, 500)}, // g
+				{("p", 21, 400)}, // p
+				{("b", 21, 500)}, // b
+				{("m", 21, 600)}, // m
 			};
+
+		private new Dictionary<string, Tuple<Path, int>> GetLetterPathDictionary(List<(string, int, int)> visemes)
+		{
+			var dictionary = new Dictionary<string, Tuple<Path, int>>();
+			foreach (var (letter, viseme, duration) in visemes)
+			{
+				dictionary.Add(letter, new Tuple<Path, int>(visemePathDictionary[viseme], duration));
+			}
+			return dictionary;
 		}
 
-		private void CreateLetterToPathDictionaryEN()
+		private HashSet<string> GetMultiples(List<(string, int, int)> visemes)
 		{
-			letterToPathDictionaryEN = new Dictionary<string, Tuple<Path, int>>
+			HashSet<string> hashSet = new HashSet<string>();
+			foreach (var (letter, viseme, duration) in visemes)
 			{
-				// Multiple.
-				{"aw", Tuple.Create(MPath_3, 800) }, // ɔ
-				{"oo", Tuple.Create(MPath_4, 850) }, // ʊ
-				{"er", Tuple.Create(MPath_5, 800) }, // ɝ
-				{"ih", Tuple.Create(MPath_6, 750) }, // ɪ
-				{"ou", Tuple.Create(MPath_9, 900) }, // aʊ
-				{"oy", Tuple.Create(MPath_10, 850) }, // ɔɪ
-				{"ai", Tuple.Create(MPath_11, 900) }, // aɪ
-				{"sh", Tuple.Create(MPath_16, 500) }, // ʃ
-				{"ch", Tuple.Create(MPath_16, 500) }, // tʃ
-				{"zh", Tuple.Create(MPath_16, 550) }, // ʒ
-				{"th", Tuple.Create(MPath_17, 500) }, // ð // {"th",MPath_19}, // θ
-				{"ng", Tuple.Create(MPath_20, 650) }, // ŋ
-				// Single.
-				{" ", Tuple.Create(MPath_0, 600) }, // Silence.
-				{".", Tuple.Create(MPath_0, 1000) },
-				{",", Tuple.Create(MPath_0, 600) },
-				{":", Tuple.Create(MPath_0, 600) },
-				{";", Tuple.Create(MPath_0, 600) },
-				{"?", Tuple.Create(MPath_0, 600) },
-				{"!", Tuple.Create(MPath_0, 600) },
-				{"a", Tuple.Create(MPath_1, 800) }, // æ // {"a",MPath_2}, // ɑ
-				{"e", Tuple.Create(MPath_1, 750) }, // ə //{"e",MPath_4}, // ɛ
-				{"u", Tuple.Create(MPath_1, 750) }, // ʌ
-				{"*", Tuple.Create(MPath_6, 600) }, // *
-				{"y", Tuple.Create(MPath_6, 750) }, // j
-				{"i", Tuple.Create(MPath_6, 750) }, // i
-				{"w", Tuple.Create(MPath_7, 700) }, // w // {"u"MPath_7}, // u
-				{"o", Tuple.Create(MPath_8, 800) }, // o // {"o",MPath_3}, // ɔ
-				{"h", Tuple.Create(MPath_12, 400) }, // h
-				{"r", Tuple.Create(MPath_13, 600) }, // ɹ
-				{"l", Tuple.Create(MPath_14, 600) }, // l
-				{"x", Tuple.Create(MPath_15, 500) }, // x
-				{"s", Tuple.Create(MPath_15, 500) }, // s
-				{"z", Tuple.Create(MPath_15, 550) }, // z
-				{"j", Tuple.Create(MPath_16, 500) }, // dʒ
-				{"f", Tuple.Create(MPath_18, 400) }, // f
-				{"v", Tuple.Create(MPath_18, 550) }, // v
-				{"d", Tuple.Create(MPath_19, 500) }, // d
-				{"t", Tuple.Create(MPath_19, 400) }, // t
-				{"n", Tuple.Create(MPath_19, 500) }, // n
-				{"c", Tuple.Create(MPath_20, 400) }, // c
-				{"k", Tuple.Create(MPath_20, 400) }, // k
-				{"q", Tuple.Create(MPath_20, 600) }, // q
-				{"g", Tuple.Create(MPath_20, 500) }, // g
-				{"p", Tuple.Create(MPath_21, 400) }, // p
-				{"b", Tuple.Create(MPath_21, 500) }, // b
-				{"m", Tuple.Create(MPath_21, 600) }, // m
-			};
+				if (letter.Length > 1) { hashSet.Add(letter); }
+			}
+			return hashSet;
 		}
 
 		// Create BACKGROUND (CAMERA, AURA, SPARK) animations.
