@@ -30,15 +30,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void SignOutButton_Click(object sender, RoutedEventArgs e)
 		{
+			var profileResult = Global.Security.GetProfile();
+			profileResult.Result?.Clear();
 			var success = await Global.Security.SignOut();
 			LogPanel.Add(
 				success
 				? "User signed out successfully.\r\n"
 				: "No user is currently signed in.\r\n"
 				);
-
-			AuthIconPanel.UserName.Text = string.Empty;
-			AuthIconPanel.UserAvatar.Source = null;
 		}
 
 		private async void This_Loaded(object sender, RoutedEventArgs e)
@@ -174,16 +173,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			}
 			var profile = profileResult.Result;
-			AuthIconPanel.UserName.Text = profile.Username;
-			AuthIconPanel.UserAvatar.Source = await Global.Security.GetUserAvatar(profile.AccessToken);
+			profile.Image = await Global.Security.GetUserAvatar(profile.AccessToken);
 		}
 
-		public void InspectToken(string token)
+		public void InspectToken(string idToken)
 		{
 			var handler = new JwtSecurityTokenHandler();
 			try
 			{
-				var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+				var jwtToken = handler.ReadToken(idToken) as JwtSecurityToken;
 				if (jwtToken == null)
 				{
 					LogPanel.Add("Invalid JWT token.\r\n");
@@ -191,7 +189,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				// Display the expiry date
 				var expiryDate = jwtToken.ValidTo;
-				LogPanel.Add("Token Expiry Date: {expiryDate}\r\n");
+				LogPanel.Add($"Token Expiry Date: {expiryDate}\r\n");
 				// Optionally, you can print other claims as well
 				foreach (var claim in jwtToken.Claims)
 					Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}\r\n");

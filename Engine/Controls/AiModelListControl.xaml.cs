@@ -31,7 +31,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region ■ Properties
 
-		public SortableBindingList<AiModel> FilteredList { get; set; }
+		public SortableBindingList<AiModel> FilteredList { get; set; } = new SortableBindingList<AiModel>();
 
 		public void SelectByName(string name)
 		{
@@ -63,6 +63,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			// If item selected then...
 			if (MainDataGrid.SelectedIndex >= 0)
 			{

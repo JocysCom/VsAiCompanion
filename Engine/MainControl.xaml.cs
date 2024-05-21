@@ -22,6 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public MainControl()
 		{
 			InitializeComponent();
+			UpdateAuthIconPanel();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			// Override AppUserData property in replacements.
@@ -37,6 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Temporary: Hide "Assistants" feature for release users.
 			AssistantsTabItem.Visibility = debugVisibility;
 			ErrorsTabItem.Visibility = debugVisibility;
+			AuthIconPanel.Visibility = debugVisibility;
 			UpdatesTabItem.Visibility = !Global.IsVsExtension
 				? Visibility.Visible
 				: Visibility.Collapsed;
@@ -183,6 +185,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 
 		#endregion
+
+		private void InfoPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			UpdateAuthIconPanel();
+		}
+
+		void UpdateAuthIconPanel()
+		{
+			AuthIconPanel.Width = InfoPanel.ActualHeight;
+			AuthIconPanel.Height = InfoPanel.ActualHeight;
+		}
 
 	}
 }

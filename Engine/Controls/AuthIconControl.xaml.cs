@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -16,8 +17,65 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 		}
 
-		public UserProfile Item { get => _Item; set => SetProperty(ref _Item, value); }
+		public UserProfile Item
+		{
+			get => _Item;
+			set
+			{
+				if (_Item != null)
+				{
+					_Item.PropertyChanged -= _Item_PropertyChanged;
+				}
+				SetProperty(ref _Item, value);
+				if (_Item != null)
+				{
+					_Item.PropertyChanged += _Item_PropertyChanged;
+				}
+				UpdateImage();
+			}
+		}
+
+		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(UserProfile.Image))
+				UpdateImage();
+		}
+
+		public void UpdateImage()
+		{
+			var noImage = Item?.Image == null;
+			DefaultImage.Visibility = noImage ? Visibility.Visible : Visibility.Collapsed;
+			MainImage.Visibility = noImage ? Visibility.Collapsed : Visibility.Visible;
+		}
+
 		UserProfile _Item;
+
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				Item = Global.AppSettings.UserProfiles.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
+				AdjustEllipse();
+			}
+		}
+
+		private void ContentPanel_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+		{
+			AdjustEllipse();
+		}
+
+		private void AdjustEllipse()
+		{
+			var width = ContentPanel.ActualWidth;
+			var height = ContentPanel.ActualHeight;
+			if (double.IsNaN(width) || double.IsNaN(height))
+				return;
+			var ig = ImageGeometry;
+			// Calculate the center and the radius for the ellipse
+			ig.Center = new System.Windows.Point(width / 2, height / 2);
+			ig.RadiusX = width / 2;
+			ig.RadiusY = height / 2;
+		}
 
 		#region ■ INotifyPropertyChanged
 
@@ -35,14 +93,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			OnPropertyChanged(propertyName);
 		}
 
+
 		#endregion
 
-		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		private void This_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			if (ControlsHelper.AllowLoad(this))
-			{
-				Item = Global.AppSettings.UserProfiles.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
-			}
+			ControlsHelper.EnsureTabItemSelected(Global.MainControl.OptionsPanel.AuthPanel);
 		}
 	}
 }

@@ -49,7 +49,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 			// Save User profile.
 			var profile = Global.AppSettings.UserProfiles
-				.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure && x.Username == account.Username);
+				.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
 			if (profile == null)
 			{
 				profile = new UserProfile();
@@ -191,8 +191,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			await Pca.RemoveAsync(_account);
 			_account = null;
 			var profile = GetProfile();
-			if (profile != null)
-				Global.AppSettings.UserProfiles.Remove(profile.Result);
+			profile.Result?.Clear();
 			return true;
 		}
 

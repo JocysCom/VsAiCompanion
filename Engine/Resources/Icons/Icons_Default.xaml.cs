@@ -129,7 +129,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_users_crowd = nameof(Icon_users_crowd);
 		public const string Icon_users_family2 = nameof(Icon_users_family2);
 		public const string Icon_user_add = nameof(Icon_user_add);
+		public const string Icon_user_blue = nameof(Icon_user_blue);
 		public const string Icon_user_comment = nameof(Icon_user_comment);
+		public const string Icon_user_grey = nameof(Icon_user_grey);
 		public const string Icon_user_group = nameof(Icon_user_group);
 		public const string Icon_user_group_emoticon = nameof(Icon_user_group_emoticon);
 		public const string Icon_user_id = nameof(Icon_user_id);

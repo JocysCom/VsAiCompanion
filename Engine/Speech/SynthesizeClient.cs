@@ -6,6 +6,7 @@ using System.Linq;
 using System.Media;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 #if NETCOREAPP
 using System.Runtime.Versioning;
@@ -96,16 +97,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 
 		public static string GetOuptuPath() => Path.Combine(Global.AppData.XmlFile.Directory.FullName, "Temp");
 
+		public string ConvertXmlToPlainText(string htmlString)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(htmlString);
+			return ClassLibrary.Xml.XmlDocHelper.ConvertXmlNodesToText(doc.DocumentElement);
+		}
+
 		/// <summary>
 		/// Start speaking and animation.
 		/// </summary>
-		/// <param name="text">The text to be spoken.</param>
+		/// <param name="input">The text or SSML XML to be spoken.</param>
 		/// <param name="useSsml">Flag indicating whether the text is in SSML format.</param>
-		public async Task<bool> _Synthesize(string text, bool? useSsml = null, bool useCache = false)
+		public async Task<bool> _Synthesize(string input, bool? useSsml = null, bool useCache = false)
 		{
+			var useSsml2 = useSsml.HasValue ? useSsml.Value : input.StartsWith("<");
+			var inputForFileName = useSsml2
+				? ConvertXmlToPlainText(input)
+				: input;
+			var relativePath = AudioHelper.GetUniqueFilePath(null, null, Config.SpeechSynthesisVoiceName, "", "", inputForFileName);
 			var settings = Global.AppSettings.AiAvatar;
 			var path = GetOuptuPath();
-			var relativePath = AudioHelper.GetUniqueFilePath(null, null, Config.SpeechSynthesisVoiceName, "", "", text);
 			AudioFilePath = Path.Combine(path, relativePath + GetExtension(settings.CacheAudioFormat));
 			AudioInfoPath = Path.Combine(path, relativePath + ".xml");
 			var wavFi = new FileInfo(AudioFilePath);
@@ -119,26 +131,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 				}
 				catch { }
 			}
-			var useSsml2 = useSsml.HasValue ? useSsml.Value : text.StartsWith("<");
 			AudioInfo = new AudioFileInfo();
-			AudioInfo.Text = text;
+			AudioInfo.Text = input;
 			AudioInfo.IsSsml = useSsml2;
 			isWorking = true;
 			SpeechSynthesisResult result = useSsml2
-				? await synthesizer.SpeakSsmlAsync(text)
-				: await synthesizer.SpeakTextAsync(text);
+				? await synthesizer.SpeakSsmlAsync(input)
+				: await synthesizer.SpeakTextAsync(input);
 			if (result.Reason == ResultReason.SynthesizingAudioCompleted)
 			{
 				AudioInfo.AudioDuration = result.AudioDuration;
-				Console.WriteLine($"Speech synthesized for text: \"{text}\"");
+				Console.WriteLine($"Speech synthesized for text: \"{input}\"");
 
 				AudioInfo.AudioDuration = result.AudioDuration;
-				Console.WriteLine($"Speech synthesized for text: \"{text}\"");
+				Console.WriteLine($"Speech synthesized for text: \"{input}\"");
 				using (var audioStream = AudioDataStream.FromResult(result))
 				{
 					if (settings.CacheAudioFormat == AudioFileFormat.WAV)
 					{
-						await SaveFile(audioStream, wavFi);
+						await SaveFile(audioStream, AudioFilePath);
 					}
 					else
 					{
@@ -174,14 +185,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 		/// <summary>
 		/// Write the audio data to a file
 		/// </summary>
-		public async Task SaveFile(AudioDataStream source, FileInfo wavFi)
+		public static async Task SaveFile(AudioDataStream source, string fileName)
 		{
+			var fi = new FileInfo(fileName);
 			// Write the audio data to a file
-			if (!wavFi.Directory.Exists)
-				wavFi.Directory.Create();
+			if (!fi.Directory.Exists)
+				fi.Directory.Create();
 			// Save the synthesized speech to a WAV file
-			await source.SaveToWaveFileAsync(AudioFilePath);
-			Console.WriteLine($"Audio content written to file \"{AudioFilePath}\"");
+			await source.SaveToWaveFileAsync(fileName);
+			Console.WriteLine($"Audio content written to file \"{fileName}\"");
 		}
 
 		public MemoryStream GetMemoryStream(AudioDataStream source)
