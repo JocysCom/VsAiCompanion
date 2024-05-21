@@ -22,7 +22,6 @@ using JocysCom.ClassLibrary.Runtime;
 using System.Collections.ObjectModel;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Controls;
-using System.ComponentModel;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 
 #if NETFRAMEWORK
@@ -382,7 +381,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static void ApplyDatabase(string groupName, BindingList<EnumComboBox.CheckBoxViewModel> property)
+		public static void ApplyDatabase(string groupName, ObservableCollection<EnumComboBox.CheckBoxViewModel> property)
 		{
 			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
 			var flags = GetFlags(ei);

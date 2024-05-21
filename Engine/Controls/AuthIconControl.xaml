@@ -8,6 +8,7 @@
 	x:Name="This"
 	d:DesignHeight="100"
 	d:DesignWidth="100"
+	PreviewMouseUp="This_PreviewMouseUp"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -21,23 +22,32 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid DataContext="{Binding Item, ElementName=This}">
-		<Grid.Resources>
-			<!--  Create a circular clipping geometry  -->
-			<EllipseGeometry
-				x:Key="CircularClip"
-				Center="50,50"
-				RadiusX="50"
-				RadiusY="50" />
-		</Grid.Resources>
-		<Image
-			Name="UserAvatar"
-			Margin="3"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
-			x:FieldModifier="public"
-			Clip="{StaticResource CircularClip}"
-			Stretch="UniformToFill" />
+	<Grid>
+		<Grid
+			x:Name="ContentPanel"
+			Margin="6"
+			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+			DataContext="{Binding Item, ElementName=This}"
+			SizeChanged="ContentPanel_SizeChanged">
+			<Grid.Clip>
+				<EllipseGeometry
+					x:Name="ImageGeometry"
+					Center="50,50"
+					RadiusX="50"
+					RadiusY="50" />
+			</Grid.Clip>
+			<Image
+				Name="MainImage"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				x:FieldModifier="public"
+				Source="{Binding Image}"
+				Stretch="UniformToFill" />
+			<ContentControl
+				x:Name="DefaultImage"
+				Content="{StaticResource Icon_user}"
+				Opacity="0.5" Margin="0,3,0,0" />
+		</Grid>
 		<TextBlock
 			Name="UserName"
 			HorizontalAlignment="Left"

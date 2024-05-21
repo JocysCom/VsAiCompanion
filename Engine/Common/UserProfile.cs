@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using System.Windows.Media;
 using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -55,6 +56,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(IdToken))]
 		public string _IdTokenEncrypted { get; set; }
+
+
+		[DefaultValue(null), XmlIgnore, JsonIgnore]
+		public ImageSource Image { get => _Image; set => SetProperty(ref _Image, value); }
+		private ImageSource _Image;
 
 		public void Clear()
 		{

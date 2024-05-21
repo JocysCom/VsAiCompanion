@@ -114,6 +114,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				.OrderBy(x => x)
 				.ToList();
 			CollectionsHelper.Synchronize(source, VoiceNames);
+			if (VoiceNames.Count > 0 && VoiceNameComboBox.SelectedItem == null)
+				VoiceNameComboBox.SelectedIndex = 0;
 		}
 
 		#endregion

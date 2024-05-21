@@ -1,3 +1,9 @@
+2024-05-21 v1.10.34
+
+- Fix: Embeddings dropdown not updating when the embedding name is changed.
+- Fix: Embeddings dropdown displayed the wrong selected value.
+- Fix: Crash when the avatar tries to animate lips in a foreign language with non-standard letters.
+
 2024-05-20 v1.10.32
 
 - Fix: Format and generate feature, not using the specified services.

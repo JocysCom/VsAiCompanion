@@ -33,23 +33,20 @@
 		</Grid.ColumnDefinitions>
 
 		<GroupBox Grid.Column="0" Margin="3,0,0,3" Header="{StaticResource main_Microsoft_Account}">
-			<StackPanel Margin="3" Orientation="Horizontal">
-				<Button Name="SignInButton" MinWidth="75" Click="SignInButton_Click">
+			<StackPanel Margin="3" Orientation="Vertical">
+				<Button Name="SignInButton" HorizontalAlignment="Stretch" Click="SignInButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_user}" Focusable="False" />
 						<Label Content="{StaticResource main_SignIn}" />
 					</StackPanel>
 				</Button>
 
-				<Button Name="SignOutButton" MinWidth="75" Click="SignOutButton_Click">
+				<Button Name="SignOutButton" HorizontalAlignment="Stretch" Click="SignOutButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_user}" Focusable="False" />
 						<Label Content="{StaticResource main_SignOut}" />
 					</StackPanel>
 				</Button>
-
-				<controls:AuthIconControl x:Name="AuthIconPanel" />
-
 			</StackPanel>
 		</GroupBox>
 		<!--  New GroupBox for Azure Key Vault inputs  -->
@@ -155,7 +152,7 @@
 					Grid.Row="0"
 					Grid.Column="1"
 					SpellCheck.IsEnabled="True"
-					Text="https://management.azure.com/tenants?api-version=2020-01-01" />
+					Text="https://graph.microsoft.com/v1.0/me" />
 				<StackPanel Grid.Column="2" Orientation="Horizontal">
 					<Button Name="TestButton" MinWidth="75" Click="TestButton_Click">
 						<StackPanel Focusable="False">

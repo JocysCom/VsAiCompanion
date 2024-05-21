@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -30,23 +31,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 		}
 
-		private void List_ListChanged(object sender, ListChangedEventArgs e)
+		private void Data_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			if (e.PropertyDescriptor?.Name == nameof(CheckBoxViewModel.IsChecked))
-			{
-				var data = (BindingList<CheckBoxViewModel>)sender;
-				UpdateTopDescription(data);
-				var top = data[0];
-				var value = data
-					.Where(x => x.IsChecked)
-					.Aggregate(0L, (current, item) => Convert.ToInt64(current) | Convert.ToInt64(item.Value));
-				var newValue = (Enum)Enum.ToObject(top.Value.GetType(), value);
-				if (!Equals(SelectedValue, newValue))
-					SelectedValue = newValue;
-			}
+			if (e.OldItems != null)
+				foreach (INotifyPropertyChanged item in e.OldItems)
+					item.PropertyChanged -= Data_Item_PropertyChangedEventArgs;
+			if (e.NewItems != null)
+				foreach (INotifyPropertyChanged item in e.NewItems)
+					item.PropertyChanged += Data_Item_PropertyChangedEventArgs;
 		}
 
-		public void UpdateTopDescription(BindingList<CheckBoxViewModel> data)
+		void Data_Item_PropertyChangedEventArgs(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(CheckBoxViewModel.IsChecked))
+				UpdateSelectedValue();
+		}
+
+		public void UpdateSelectedValue()
+		{
+			var data = (ObservableCollection<CheckBoxViewModel>)ItemsSource;
+			UpdateTopDescription(data);
+			var top = data[0];
+			var value = data
+				.Where(x => x.IsChecked)
+				.Aggregate(0L, (current, item) => Convert.ToInt64(current) | Convert.ToInt64(item.Value));
+			var newValue = (Enum)Enum.ToObject(top.Value.GetType(), value);
+			if (!Equals(SelectedValue, newValue))
+				SelectedValue = newValue;
+		}
+
+		public void UpdateTopDescription(ObservableCollection<CheckBoxViewModel> data)
 		{
 			var top = data[0];
 			var choice = data.Skip(1);
@@ -60,7 +74,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				top.Description = This.Text = $"{names.First()} + " + (count - 1).ToString();
 		}
 
-		public static BindingList<CheckBoxViewModel> GetItemSource<T>() where T : Enum
+		public static ObservableCollection<CheckBoxViewModel> GetItemSource<T>() where T : Enum
 		{
 			var items = Enum.GetValues(typeof(T))
 				.Cast<T>()
@@ -72,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Value = e
 				})
 				.ToList();
-			var list = new BindingList<CheckBoxViewModel>();
+			var list = new ObservableCollection<CheckBoxViewModel>();
 			foreach (var item in items)
 				list.Add(item);
 			return list;
@@ -115,7 +129,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var box = (EnumComboBox)d;
 			var value = (Enum)box.GetValue(SelectedValueProperty);
-			var items = (BindingList<CheckBoxViewModel>)box.ItemsSource;
+			var items = (ObservableCollection<CheckBoxViewModel>)box.ItemsSource;
 			foreach (var item in items)
 			{
 				var isChecked = !IsDefault(item.Value) && value.HasFlag(item.Value);
@@ -131,9 +145,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateListMonitoring()
 		{
-			var data = (BindingList<CheckBoxViewModel>)ItemsSource;
-			data.ListChanged += List_ListChanged;
+			var data = (ObservableCollection<CheckBoxViewModel>)ItemsSource;
+			data.CollectionChanged += Data_CollectionChanged;
+			foreach (INotifyPropertyChanged item in data)
+				item.PropertyChanged += Data_Item_PropertyChangedEventArgs;
 			SelectedIndex = 0;
+			UpdateSelectedValue();
 		}
 
 		private void ComboBox_Loaded(object sender, RoutedEventArgs e)
