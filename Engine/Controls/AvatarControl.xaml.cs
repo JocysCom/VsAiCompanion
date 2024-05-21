@@ -57,7 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		int LipAnimationFrames = 6; // Min 1.
 		int LipGeometryDivisions = 9; // Min 2.
-		// Audio file and data.
+									  // Audio file and data.
 		public string AudioPath; // @"D:\Projects\Jocys.com GitHub\VsAiCompanion\Engine\Resources\Images\AudioDemo.wav";
 		AudioFileInfo AudioData = new AudioFileInfo();
 		//string audioText = "AI Companion is a free open source project for people who have an OpenAI API GPT four subscription and run OpenAI on their local machine on premises or on Azure Cloud";
@@ -154,7 +154,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				else
 				{
 					CreateLipAnimationFromVisemeDictionary(AudioData);
-				}				
+				}
 				MediaPlayingState();
 				mediaPlayer.Play();
 				storyboardLips.Begin();
@@ -387,7 +387,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var letterToPathDictionary = Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? letterToPathDictionaryLT : letterToPathDictionaryEN;
 			foreach (var word in audioData.Boundaries)
 			{
-			var timeStart = word.AudioOffset;
+				var timeStart = word.AudioOffset;
 				var letterDuration = word.Duration.TotalMilliseconds / (double)word.WordLength;
 				lipAnimationList.Add((" ", letterToPathDictionary[" "].Item1, timeStart));
 				for (int i = 0; i < word.WordLength; i++)
@@ -1094,7 +1094,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					var startRandom = TimeSpan.FromMilliseconds(random.Next(startMin, startMax));
 
 					// Create Grid for Image ("spark").
-						var grid = new Grid
+					var grid = new Grid
 					{
 						Height = sizeMax,
 						Width = sizeMax,
