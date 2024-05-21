@@ -8,8 +8,8 @@
 	x:Name="This"
 	d:DesignHeight="100"
 	d:DesignWidth="100"
-	PreviewMouseUp="This_PreviewMouseUp"
 	Loaded="This_Loaded"
+	PreviewMouseUp="This_PreviewMouseUp"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -45,8 +45,9 @@
 				Stretch="UniformToFill" />
 			<ContentControl
 				x:Name="DefaultImage"
-				Content="{StaticResource Icon_user}"
-				Opacity="0.5" Margin="0,3,0,0" />
+				Margin="0,3,0,0"
+				Content="{StaticResource Icon_user_grey}"
+				Opacity="0.5" />
 		</Grid>
 		<TextBlock
 			Name="UserName"
