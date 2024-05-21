@@ -1,4 +1,4 @@
-2024-05-21 v1.10.34
+2024-05-21 v1.10.37
 
 - Fix: Embeddings dropdown not updating when the embedding name is changed.
 - Fix: Embeddings dropdown displayed the wrong selected value.
