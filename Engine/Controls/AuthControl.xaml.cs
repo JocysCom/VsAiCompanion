@@ -1,10 +1,14 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
+﻿using Azure.Core;
+using Azure.Identity;
+using Azure.ResourceManager;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Security;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,13 +29,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			LogPanel.Clear();
 			await Global.Security.SignIn();
-			await LoadUserProfile();
+			await Global.Security.RefreshProfileImage();
 		}
 
 		private async void SignOutButton_Click(object sender, RoutedEventArgs e)
 		{
-			var profileResult = Global.Security.GetProfile();
-			profileResult.Result?.Clear();
 			var success = await Global.Security.SignOut();
 			LogPanel.Add(
 				success
@@ -46,65 +48,65 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.AllowLoad(this))
 			{
 				await Global.Security.LoadCurrentAccount();
-				await LoadUserProfile();
+				await Global.Security.RefreshProfileImage();
 			}
 		}
 
 		/// <summary>
 		/// Test getting information from azure by using access token.
 		/// </summary>
+		// In AuthControl.xaml.cs
 		public async Task FetchAzureInformation()
 		{
-			// Load saved user profile
-			var profileResult = Global.Security.GetProfile();
-			if (!profileResult.Success)
+			try
 			{
-				LogPanel.Add(string.Join("\r\n", profileResult.Errors) + "\r\n");
-				return;
+				var accessToken = GetProfile()?.AccessToken;
+				if (string.IsNullOrEmpty(accessToken))
+				{
+					var credential = new DefaultAzureCredential();
+					var token = await credential.GetTokenAsync(
+						new TokenRequestContext(new[] { "https://graph.microsoft.com/.default" })
+					);
+					accessToken = token.Token;
+				}
+				//InspectToken(profile.IdToken);
+				var contents = await AppSecurityHelper.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken);
+				LogPanel.Add($"{contents}\r\n");
 			}
-			var profile = profileResult.Result;
-			using (var httpClient = new HttpClient())
+			catch (Exception ex)
 			{
-				try
-				{
-					httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", profile.AccessToken);
-					var response = await httpClient.GetAsync(TestTextBox.Text);
-					if (!response.IsSuccessStatusCode)
-					{
-						LogPanel.Add($"{response}\r\n");
-						return;
-					}
-					var contents = await response.Content.ReadAsStringAsync();
-					LogPanel.Add($"{contents}\r\n");
-				}
-				catch (System.Exception ex)
-				{
-					LogPanel.Add($"{ex}\r\n");
-				}
+				LogPanel.Add($"{ex}\r\n");
 			}
 		}
 
+
+		#region Key Vault
+
 		/// <summary>
-		/// Test getting secret from azure key vault by using ClientSecretCredential(tenantId, clientId, clientSecret).
+		/// Test getting secret from azure key vault.
 		/// </summary>
-		public async Task<string> GetSecretFromKeyVaultAsync()
+		public async Task<string> GetSecretFromKeyVaultAsync(bool useAccessToken)
 		{
 			LogPanel.Clear();
-			var keyVaultName = KeyVaultNameTextBox.Text;
-			var tenantId = TenantIdTextBox.Text;
-			var clientId = ClientIdTextBox.Text;
-			var clientSecret = ClientSecretPasswordBox.Password;
-			var secretName = SecretNameTextBox.Text;
 			try
 			{
-				// Azure Key Vault URI
-				string kvUri = $"https://{keyVaultName}.vault.azure.net/";
-				// Create a new secret client
-				var client = new SecretClient(new Uri(kvUri), new ClientSecretCredential(tenantId, clientId, clientSecret));
-				// Retrieve the secret from Azure Key Vault
-				KeyVaultSecret secret = await client.GetSecretAsync(secretName);
-				LogPanel.Add($"{secret.Value}\r\n");
-				return secret.Value;
+				string secret;
+				if (useAccessToken)
+				{
+					var profile = GetProfile();
+					if (profile == null)
+						return null;
+					secret = await AppSecurityHelper
+					.GetSecretFromKeyVault(KeyVaultNameTextBox.Text, SecretNameTextBox.Text, profile.AccessToken);
+				}
+				else
+				{
+					secret = await AppSecurityHelper.GetSecretFromKeyVault(
+						KeyVaultNameTextBox.Text, SecretNameTextBox.Text,
+						TenantIdTextBox.Text, ClientIdTextBox.Text, ClientSecretPasswordBox.Password);
+				}
+				LogPanel.Add($"{secret}\r\n");
+				return secret;
 			}
 			catch (Exception ex)
 			{
@@ -113,41 +115,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return null;
 		}
 
-		/// <summary>
-		/// Test getting secret from azure key vault by using AccessTokenCredential(userProfile.AccessToken).
-		/// </summary>
-		/// <returns></returns>
-		public async Task<string> GetSecretFromKeyVaultAsyncUseProfile()
-		{
-			var profileResult = Global.Security.GetProfile();
-			if (!profileResult.Success)
-			{
-				LogPanel.Add(string.Join("\r\n", profileResult.Errors) + "\r\n");
-				return null;
-			}
-			var keyVaultName = KeyVaultNameTextBox.Text;
-			var secretName = SecretNameTextBox.Text;
-			var userProfile = profileResult.Result;
-			try
-			{
-				// Azure Key Vault URI
-				var kvUri = $"https://{keyVaultName}.vault.azure.net/";
-
-				// Create a new secret client with the existing access token
-				var client = new SecretClient(new Uri(kvUri), new AccessTokenCredential(userProfile.AccessToken));
-
-				// Retrieve the secret from Azure Key Vault
-				KeyVaultSecret secret = await client.GetSecretAsync(secretName);
-				LogPanel.Add($"{secret.Value}\r\n");
-				return secret.Value;
-			}
-			catch (Exception ex)
-			{
-				LogPanel.Add($"{ex}\r\n");
-			}
-			return null;
-		}
-
+		#endregion
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -155,25 +123,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void TestButton_Click(object sender, RoutedEventArgs e)
 		{
-			LogPanel.Clear();
-			var profileResult = Global.Security.GetProfile();
-			if (profileResult.Success)
-				InspectToken(profileResult.Result.IdToken);
 			await FetchAzureInformation();
-		}
-
-
-		public async Task LoadUserProfile()
-		{
-			// Load saved user profile
-			var profileResult = Global.Security.GetProfile();
-			if (!profileResult.Success)
-			{
-				LogPanel.Add(string.Join("\r\n", profileResult.Errors) + "\r\n");
-				return;
-			}
-			var profile = profileResult.Result;
-			profile.Image = await Global.Security.GetUserAvatar(profile.AccessToken);
 		}
 
 		public void InspectToken(string idToken)
@@ -200,7 +150,140 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		public async Task<Dictionary<string, string>> GetSubscriptionNamesAndIdsAsync(CancellationToken cancellationToken = default)
+		{
+			// Initialize the Azure credentials using DefaultAzureCredential
+			var credential = await GetCredentials();
+			// Initialize the ArmClient
+			var armClient = new ArmClient(credential);
+			// Dictionary to store subscription names and IDs
+			var subscriptionsDict = new Dictionary<string, string>();
+			// Fetch the list of subscriptions and use the synchronous foreach loop with manual async handling
+			var enumerator = armClient.GetSubscriptions().GetAllAsync(cancellationToken).GetAsyncEnumerator(cancellationToken);
+			try
+			{
+				while (await enumerator.MoveNextAsync())
+				{
+					var subscription = enumerator.Current;
+					subscriptionsDict.Add(subscription.Data.SubscriptionId, subscription.Data.DisplayName);
+				}
+			}
+			finally
+			{
+				await enumerator.DisposeAsync();
+			}
+			return subscriptionsDict;
+		}
+
+		private async void ListSubscriptionsButton_Click(object sender, RoutedEventArgs e)
+		{
+			LogPanel.Clear();
+			var ts = AddToken();
+			try
+			{
+				var items = await GetSubscriptionNamesAndIdsAsync(ts.Token);
+				foreach (var item in items)
+					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
+			}
+			catch (Exception ex)
+			{
+				LogPanel.Add(ex.ToString());
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+			}
+			finally
+			{
+				Global.MainControl.InfoPanel.RemoveTask(ts);
+			}
+		}
+
+		private void StopButton_Click(object sender, RoutedEventArgs e)
+		{
+			var items = cancellationTokenSources.ToArray();
+			foreach (var item in items)
+				item.Cancel();
+		}
+
+		ObservableCollection<CancellationTokenSource> cancellationTokenSources = new ObservableCollection<CancellationTokenSource>();
+
+		public UserProfile GetProfile()
+		{
+			var profileResult = Global.Security.GetProfile();
+			if (!profileResult.Success)
+			{
+				LogPanel.Add(string.Join("\r\n", profileResult.Errors) + "\r\n");
+				return null;
+			}
+			return profileResult.Result;
+		}
+
+		public async Task<AccessTokenCredential> GetAppCredential(CancellationToken cancellationToken = default)
+		{
+			var profile = GetProfile();
+			if (profile == null)
+				return null;
+			// Ensure the token has the required scopes
+			var requiredScopes = new string[] { "https://management.azure.com/.default" };
+			var tokenCredential = new AccessTokenCredential(profile.AccessToken);
+			var tokenRequestContext = new TokenRequestContext(requiredScopes);
+			var token = tokenCredential.GetToken(tokenRequestContext, cancellationToken);
+			if (token.ExpiresOn < DateTimeOffset.UtcNow)
+			{
+				// Re-acquire the token with the required scopes
+				var result = await Global.Security.SignIn(requiredScopes);
+				if (!result.Success)
+				{
+					LogPanel.Add(string.Join("\r\n", result.Errors) + "\r\n");
+					return null;
+				}
+			}
+			var credential = new AccessTokenCredential(profile.AccessToken);
+			return credential;
+		}
+
+		public async Task<TokenCredential> GetCredentials()
+		{
+			var credentials = await GetAppCredential();
+			return (TokenCredential)credentials ??
+				// Default credentials of the Azure environment in which application is running.
+				// Credentials currently used to log into Windows.
+				new DefaultAzureCredential();
+		}
+
+		public CancellationTokenSource AddToken()
+		{
+			var source = new CancellationTokenSource();
+			source.CancelAfter(TimeSpan.FromSeconds(30));
+			cancellationTokenSources.Add(source);
+			Global.MainControl.InfoPanel.AddTask(source);
+			return source;
+		}
+
+		private async void GetSecretWithAccessTokenButton_Click(object sender, RoutedEventArgs e)
+		{
+			await GetSecretFromKeyVaultAsync(true);
+		}
+
+		private async void GetSecretWithClientSecretButton_Click(object sender, RoutedEventArgs e)
+		{
+			await GetSecretFromKeyVaultAsync(false);
+		}
+
+		private async Task ListAccounts()
+		{
+			LogPanel.Clear();
+			var accounts = await Global.Security.Pca.GetAccountsAsync();
+			foreach (var account in accounts)
+			{
+				LogPanel.Add($"Username: {account.Username}\r\n");
+				LogPanel.Add($"HomeAccountId: {account.HomeAccountId}\r\n");
+				LogPanel.Add($"Environment: {account.Environment}\r\n");
+				LogPanel.Add("\r\n");
+			}
+		}
+
+		private async void ListAccountsButton_Click(object sender, RoutedEventArgs e)
+			=> await ListAccounts();
+
 
 	}
-
 }

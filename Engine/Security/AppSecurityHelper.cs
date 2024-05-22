@@ -1,9 +1,13 @@
-﻿using JocysCom.ClassLibrary;
+﻿using Azure.Core;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using JocysCom.ClassLibrary;
 using Microsoft.Identity.Client;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -11,12 +15,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 {
 	public class AppSecurityHelper
 	{
+		// Credential - An object used to prove the identity of a user or service.
+		// Token - Digital objects created after a user or service successfully authenticates and passes authorization processes. Requires credentials to be created.
+		// Account - An object representing the authenticated user's identity.
+
+		// Using DefaultAzureCredential
+		// The DefaultAzureCredential includes a chain of nine different credential types,
+		// and it will attempt to authenticate using each of these in turn, stopping when one succeeds.
+		// These credentials include:
+		// 1.EnvironmentCredential
+		// 2.ManagedIdentityCredential
+		// 3.SharedTokenCacheCredential
+		// 4.VisualStudioCredential
+		// 5.VisualStudioCodeCredential
+		// 6.AzureCliCredential
+		// 7.InteractiveBrowserCredential
+		// 8.AzurePowerShellCredential
+		// 9.InteractiveBrowserCredential
 
 		public IPublicClientApplication Pca { get; } = PublicClientApplicationBuilder
 				.Create(Global.AppSettings?.ClientAppId)
 				.WithRedirectUri("http://localhost")
 				.WithDefaultRedirectUri()
 				.Build();
+
 
 		/// <summary>
 		/// Store token cache in the app settings.
@@ -42,6 +64,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region User Profile
 
+		/// <summary>
+		/// Get user profile with the access token.
+		/// </summary>
+		public OperationResult<UserProfile> GetProfile()
+		{
+			var profile = Global.AppSettings.UserProfiles.FirstOrDefault(p => p.ServiceType == ApiServiceType.Azure);
+			if (profile == null)
+				return new OperationResult<UserProfile>(new Exception("Profile not found. Please log-in."));
+			if (string.IsNullOrEmpty(profile.AccessToken))
+				return new OperationResult<UserProfile>(new Exception("No valid user profile or access token found."));
+			return new OperationResult<UserProfile>(profile);
+		}
+
+		public async Task RefreshProfileImage()
+		{
+			var profile = GetProfile()?.Result;
+			if (profile == null)
+				return;
+			profile.Image = await Global.Security.GetUserAvatar(profile.AccessToken);
+		}
 
 		private void SaveUserProfile(AuthenticationResult result)
 		{
@@ -71,26 +113,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
-		#region Authentication
+		#region SignIn and SignOut
 
-		/// <summary>
-		/// Get user profile with the access token.
-		/// </summary>
-		public OperationResult<UserProfile> GetProfile()
+		public async Task<OperationResult<AuthenticationResult>> SignIn(params string[] scopes)
 		{
-			var profile = Global.AppSettings.UserProfiles.FirstOrDefault(p => p.ServiceType == ApiServiceType.Azure);
-			if (profile == null)
-				return new OperationResult<UserProfile>(new Exception("Profile not found. Please log-in."));
-			if (string.IsNullOrEmpty(profile.AccessToken))
-				return new OperationResult<UserProfile>(new Exception("No valid user profile or access token found."));
-			return new OperationResult<UserProfile>(profile);
-		}
-
-		public IAccount _account;
-
-		public async Task<OperationResult<bool>> SignIn()
-		{
-			var scopes = new string[] { "User.Read" };
+			if (scopes.Length == 0)
+				scopes = new string[] { "User.Read" };
 			AuthenticationResult result = null;
 			var requiresUI = false;
 			try
@@ -148,7 +176,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			}
 			catch (Exception ex)
 			{
-				return new OperationResult<bool>(ex);
+				return new OperationResult<AuthenticationResult>(ex);
 			}
 			if (requiresUI)
 			{
@@ -158,30 +186,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				}
 				catch (Exception ex)
 				{
-					return new OperationResult<bool>(ex);
+					return new OperationResult<AuthenticationResult>(ex);
 				}
 			}
 			_account = result?.Account;
 			SaveUserProfile(result);
-			return new OperationResult<bool>(true);
-		}
-
-		public async Task<OperationResult<IAccount>> LoadCurrentAccount()
-		{
-			// Load saved user profile
-			var profileResult = GetProfile();
-			if (!profileResult.Success)
-				return new OperationResult<IAccount>(profileResult.Errors.Select(x => new Exception(x)));
-			// Load application azure account from this profile.
-			var profile = profileResult.Result;
-			EnableTokenCache(Pca.UserTokenCache);
-			// Returns all the available accounts in the user token cache for the application.
-			var accounts = await Pca.GetAccountsAsync();
-			if (!accounts.Any())
-				return new OperationResult<IAccount>(new Exception("No cached account found. Please sign in."));
-			// Attempt to find the account with the saved UserId
-			_account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == profile.AccountId);
-			return new OperationResult<IAccount>(_account);
+			return new OperationResult<AuthenticationResult>(result);
 		}
 
 		public async Task<bool> SignOut()
@@ -193,6 +203,71 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var profile = GetProfile();
 			profile.Result?.Clear();
 			return true;
+		}
+
+		#endregion
+
+		#region Authentication
+
+		public static async Task<string> MakeAuthenticatedApiCall(string url, string accessToken)
+		{
+			using (var httpClient = new HttpClient())
+			{
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+				var response = await httpClient.GetAsync(url);
+				var contents = await response.Content.ReadAsStringAsync();
+				return contents;
+			}
+		}
+
+		public static async Task<string> MakeAuthenticatedCall(string url)
+		{
+			// Define the scope required to access the target resource
+			// This is a common example, you should replace it with the correct scope for your resource
+			string[] scopes = new string[] { $"{url}/.default" };
+			// Create DefaultAzureCredential instance
+			var credential = new DefaultAzureCredential();
+			// Get the token using the DefaultAzureCredential
+			AccessToken token = await credential.GetTokenAsync(new TokenRequestContext(scopes));
+			// Set up HttpClient with the acquired token
+			using (var httpClient = new HttpClient())
+			{
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
+				// Make request to the target URL
+				HttpResponseMessage response = await httpClient.GetAsync(url);
+				if (response.IsSuccessStatusCode)
+				{
+					string pageContent = await response.Content.ReadAsStringAsync();
+					return pageContent;
+				}
+				else
+				{
+					Console.WriteLine($"Failed to retrieve the page. Status Code: {response.StatusCode}");
+				}
+			}
+			return null;
+		}
+
+
+		public IAccount _account;
+
+		/// <summary>
+		/// Load this once when app starts.
+		/// </summary>
+		/// <returns></returns>
+		public async Task LoadCurrentAccount()
+		{
+			EnableTokenCache(Pca.UserTokenCache);
+			// Load saved user profile
+			var profile = GetProfile()?.Result;
+			if (profile == null)
+				return;
+			// Returns all the available accounts in the user token cache for the application.
+			var accounts = await Pca.GetAccountsAsync();
+			if (!accounts.Any())
+				return;
+			// Attempt to find the account with the saved UserId
+			_account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == profile.AccountId);
 		}
 
 		public async Task<BitmapImage> GetUserAvatar(string accessToken)
@@ -213,6 +288,42 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				}
 			}
 			return null;
+		}
+
+		#endregion
+
+		#region Key Vault
+
+		public static async Task<string> GetSecretFromKeyVault(string keyVaultName, string secretName, string accessToken)
+		{
+			var credential = new AccessTokenCredential(accessToken);
+			return await GetSecretFromKeyVault(keyVaultName, secretName, credential);
+		}
+
+		public static async Task<string> GetSecretFromKeyVault(string keyVaultName, string secretName, string tenantId, string clientId, string clientSecret)
+		{
+			var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+			return await GetSecretFromKeyVault(keyVaultName, secretName, credential);
+		}
+
+		public static async Task<string> GetSecretFromKeyVault(string keyVaultName, string secretName, TokenCredential credential)
+		{
+			try
+			{
+
+				// Azure Key Vault URI
+				string kvUri = $"https://{keyVaultName}.vault.azure.net/";
+				// Create a new secret client
+				var client = new SecretClient(new Uri(kvUri), credential);
+				// Retrieve the secret from Azure Key Vault
+				KeyVaultSecret secret = await client.GetSecretAsync(secretName);
+				return secret.Value;
+			}
+			catch (Exception ex)
+			{
+				// Log error if needed.
+				throw new Exception("Error getting secret from KeyVault", ex);
+			}
 		}
 
 		#endregion

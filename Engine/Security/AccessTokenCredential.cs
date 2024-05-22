@@ -21,6 +21,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public override ValueTask<AccessToken> GetTokenAsync(TokenRequestContext requestContext, CancellationToken cancellationToken)
 		{
+			// Ensure you check if the required scopes are present in requestContext.Scopes
 			return new ValueTask<AccessToken>(new AccessToken(_token, DateTimeOffset.MaxValue));
 		}
 	}

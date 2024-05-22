@@ -74,7 +74,8 @@
 					x:Name="KeyVaultNameTextBox"
 					Grid.Row="0"
 					Grid.Column="1"
-					Margin="5" />
+					Margin="5"
+					Text="JocysKeyVault" />
 
 				<Label
 					Grid.Row="1"
@@ -119,13 +120,10 @@
 					Grid.Row="4"
 					Grid.Column="1"
 					Margin="5" />
+				<StackPanel Grid.Row="5" Grid.Column="1">
+					<Button Margin="5" HorizontalAlignment="Right" Content="Save" />
+				</StackPanel>
 
-				<Button
-					Grid.Row="5"
-					Grid.Column="1"
-					Margin="5"
-					HorizontalAlignment="Right"
-					Content="Save" />
 			</Grid>
 		</GroupBox>
 
@@ -139,6 +137,7 @@
 			Header="{StaticResource main_Test}">
 			<Grid>
 				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
@@ -160,6 +159,35 @@
 							<Label Content="{StaticResource main_Test}" />
 						</StackPanel>
 					</Button>
+				</StackPanel>
+				<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
+					<Button Name="ListAccountsButton" Click="ListAccountsButton_Click">
+						<StackPanel Focusable="False">
+							<Label Content="List Accounts" />
+						</StackPanel>
+					</Button>
+					<Button Name="ListSubscriptionsButton" Click="ListSubscriptionsButton_Click">
+						<StackPanel Focusable="False">
+							<Label Content="List Subscriptions" />
+						</StackPanel>
+					</Button>
+					<Button Name="GetSecretWithAccessTokenButton" Click="GetSecretWithAccessTokenButton_Click">
+						<StackPanel Focusable="False">
+							<Label Content="Get Secret with Access Token" />
+						</StackPanel>
+					</Button>
+					<Button Name="GetSecretWithClientSecretButton" Click="GetSecretWithClientSecretButton_Click">
+						<StackPanel Focusable="False">
+							<Label Content="Get Secret with Client Secret" />
+						</StackPanel>
+					</Button>
+					<Button Name="StopButton" MinWidth="75" Click="StopButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Stop}" Focusable="False" />
+							<Label Content="{StaticResource main_Stop}" />
+						</StackPanel>
+					</Button>
+
 				</StackPanel>
 			</Grid>
 		</GroupBox>
