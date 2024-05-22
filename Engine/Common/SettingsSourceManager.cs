@@ -145,6 +145,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return;
 			// ---
 			var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
 			var zipServices = zipAppData.Items[0].AiServices;
@@ -191,6 +193,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return;
 			ResetItems(zip, Global.Embeddings, Global.EmbeddingsName);
 			ResetOtherItems(zip, Global.Embeddings, Global.EmbeddingsName);
 			// Close zip.
@@ -221,6 +225,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return;
 			// Update Lists
 			var zipItems = GetItemsFromZip(zip, name, data);
 			RemoveToReplace(data, zipItems);
@@ -240,6 +246,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return 0;
 			// ---
 			var required = GetRequiredLists();
 			var current = items.Select(x => x.Name).ToArray();
@@ -287,6 +295,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return 0;
 			// ---
 			var required = GetRequiredTemplates();
 			var current = items.Select(x => x.Name).ToArray();
@@ -308,6 +318,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool closeZip;
 			if (closeZip = zip == null)
 				zip = GetSettingsZip();
+			if (zip == null)
+				return;
 			// ---
 			var data = Global.Templates;
 			var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);

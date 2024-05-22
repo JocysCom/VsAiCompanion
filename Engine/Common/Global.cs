@@ -335,6 +335,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static bool IsSettignsLoaded;
 
+		public static bool IsAppExiting;
+
 		public static void LoadSettings()
 		{
 			// Make sure DbContext supports SQL Server and SQLite
@@ -612,12 +614,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (e.Items.Count == 0)
 			{
 				var zip = SettingsSourceManager.GetSettingsZip();
-				var items = SettingsSourceManager.GetItemsFromZip(zip, TemplatesName, Templates);
-				foreach (var item in items)
-					e.Items.Add(item);
-				if (items.Count > 0)
-					Templates.IsSavePending = true;
-
+				if (zip != null)
+				{
+					var items = SettingsSourceManager.GetItemsFromZip(zip, TemplatesName, Templates);
+					foreach (var item in items)
+						e.Items.Add(item);
+					if (items.Count > 0)
+						Templates.IsSavePending = true;
+				}
 			}
 			else
 			{
@@ -661,11 +665,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (e.Items.Count == 0)
 			{
 				var zip = SettingsSourceManager.GetSettingsZip();
-				var items = SettingsSourceManager.GetItemsFromZip(zip, TasksName, Tasks);
-				foreach (var item in items)
-					e.Items.Add(item);
-				if (items.Count > 0)
-					Tasks.IsSavePending = true;
+				if (zip != null)
+				{
+					var items = SettingsSourceManager.GetItemsFromZip(zip, TasksName, Tasks);
+					foreach (var item in items)
+						e.Items.Add(item);
+					if (items.Count > 0)
+						Tasks.IsSavePending = true;
+				}
 			}
 			sd.IsSavePending |= FixTempalteItems(e.Items);
 		}

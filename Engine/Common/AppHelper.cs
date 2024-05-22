@@ -700,6 +700,8 @@ EndFragment:{3:00000000}";
 				return null;
 			var encryptedData = Convert.FromBase64String(base64);
 			var decryptedData = UserDecrypt(encryptedData);
+			if (decryptedData == null)
+				return null;
 			var decryptedText = Encoding.Unicode.GetString(decryptedData);
 			return decryptedText;
 		}

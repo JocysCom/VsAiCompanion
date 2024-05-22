@@ -82,6 +82,7 @@ qLhXX030847/d8gXn/0b7zGB4esiAAA=</IconData>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
+  <MaxRiskLevel>Medium</MaxRiskLevel>
   <Context0ListName>Context - Operating System</Context0ListName>
   <Context1ListName>Context - Visual Studio</Context1ListName>
   <Context2ListName>Profile - Assistant</Context2ListName>

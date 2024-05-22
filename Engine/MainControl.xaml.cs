@@ -44,6 +44,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				: Visibility.Collapsed;
 			if (InitHelper.IsDebug)
 			{
+				AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
@@ -55,6 +56,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 			TutorialHelper.SetupTutorialHelper(this);
 			InfoPanel.BusyCount.MouseDown += BusyCount_MouseDown;
+		}
+
+		private void CurrentDomain_ProcessExit(object sender, EventArgs e)
+		{
+			Global.IsAppExiting = true;
 		}
 
 		private void BusyCount_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -141,7 +147,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (Dispatcher.HasShutdownStarted)
 				return;
-			Dispatcher.Invoke(() =>
+			// Use `BeginInvoke, becase `Invoke` would freeze here.
+			Dispatcher.BeginInvoke(new Action(() =>
 			{
 				lock (ExceptionsToDisplay)
 				{
@@ -155,7 +162,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					ErrorsLogPanel.Clear();
 					ErrorsLogPanel.Add(string.Join("\r\n", strings));
 				};
-			});
+			}));
 		}
 
 		public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

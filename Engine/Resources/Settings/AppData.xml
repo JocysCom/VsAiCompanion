@@ -219,6 +219,7 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
       </PanelSettingsList>
+      <UserProfiles />
       <AiServices>
         <AiService>
           <ServiceType>OpenAI</ServiceType>
@@ -644,6 +645,10 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

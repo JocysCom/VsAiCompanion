@@ -859,7 +859,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			};
 		}
 
-		new List<(string, int, int)> CharacterVisemeList = new List<(string, int, int)>
+		List<(string, int, int)> CharacterVisemeList = new List<(string, int, int)>
 		{
 				// Multiple.
 				{("ch", 12, 400)},
@@ -951,7 +951,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		//		{("m", 21, 600) },
 		//};
 
-		//new List<(string, int, int)> VisemesEN = new List<(string, int, int)>
+		// List<(string, int, int)> VisemesEN = new List<(string, int, int)>
 		//{
 		//		// Multiple.
 		//		{("aw", 3, 800)}, // ɔ
@@ -1003,7 +1003,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		//		{("m", 21, 600)}, // m
 		//};
 
-		private new Dictionary<string, Tuple<Path, int>> GetLetterPathDictionary(List<(string, int, int)> visemes)
+		private Dictionary<string, Tuple<Path, int>> GetLetterPathDictionary(List<(string, int, int)> visemes)
 		{
 			var dictionary = new Dictionary<string, Tuple<Path, int>>();
 			foreach (var (letter, viseme, duration) in visemes)
