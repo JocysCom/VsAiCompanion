@@ -96,6 +96,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Attachment</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -121,6 +122,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Assistant</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -146,17 +148,21 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
       </PanelSettingsList>
+      <UserProfiles />
       <AiServices>
         <AiService>
           <Id>d5e071e1-d99d-45ff-890a-82823b75e1ec</Id>
@@ -399,6 +405,10 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
