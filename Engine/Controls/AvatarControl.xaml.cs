@@ -1,9 +1,8 @@
-﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
-using JocysCom.ClassLibrary.Configuration;
+﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Text;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using Microsoft.IdentityModel.Tokens;
-using NPOI.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -326,7 +325,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		// VisemeID, Text, Path, Duration.
 		private void CreateLipAnimationFromVisemeDictionary(AudioFileInfo audioData)
 		{
-			// letter, Path, timeEnd.
+			// List<(letter, Path, timeEnd)>.
 			var lipAnimationList = new List<(string, Path, double)>();
 			foreach (var item in audioData.Viseme)
 			{
@@ -341,10 +340,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		//"Boundaries":[{"ResultId":"0840aab42c5244a2951f5072e03c4e0b","AudioOffset":125,"Duration":"00:00:00.1500000","TextOffset":209,"WordLength":2,"Text":"Na","BoundaryType":0},]}
 		private void CreateLipAnimationFromWordBoundaries(AudioFileInfo audioData)
 		{
-			// letter, Path, timeEnd.
+			// List<(letter, Path, duration)>.
+			var letterPathDictionary = GetLetterPathDictionary(CharacterVisemeList);
+			// List<(letter, Path, timeEnd).
 			var lipAnimationList = new List<(string, Path, double)>();
-			// letter, Path, duration.
-			var letterPathDictionary = GetLetterPathDictionary(Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? VisemesLT : VisemesEN);
 			foreach (var word in audioData.Boundaries)
 			{
 				var timeStart = word.AudioOffset;
@@ -352,8 +351,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				lipAnimationList.Add((" ", letterPathDictionary[" "].Item1, timeStart));
 				for (int i = 0; i < word.WordLength; i++)
 				{
-					// "\u016B" > "ū".
-					var letter = Regex.Unescape(word.Text[i].ToString()).ToLower();
+					// "\u016B" > "ū" > "u".
+					var letter = Filters.FoldToASCII(Regex.Unescape(word.Text[i].ToString()).ToLower());
 					var timeEnd = timeStart + letterDuration * (i + 1);
 					if (letterPathDictionary.ContainsKey(letter))
 					{
@@ -366,13 +365,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CreateLipAnimationFromTextString(AudioFileInfo audioData, TimeSpan audioDuration)
 		{
-			var textList = ConvertStringToList(audioData);
-			var letterPathDictionary = GetLetterPathDictionary(Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? VisemesLT : VisemesEN);
-			// Create list (Letter, Duration).
+			var letterPathDictionary = GetLetterPathDictionary(CharacterVisemeList);
+			// List<letter, duration>.
 			var textListDuration = new List<(string, int)>();
+			var textList = ConvertStringToList(audioData);
 			double textDuration = 0;
-			foreach (var letter in textList)
+			foreach (var item in textList)
 			{
+				// "ū" > "u".
+				var letter = Filters.FoldToASCII(item);
 				if (letterPathDictionary.ContainsKey(letter))
 				{
 					textListDuration.Add((letter, letterPathDictionary[letter].Item2));
@@ -412,13 +413,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private List<string> ConvertStringToList(AudioFileInfo audioData)
 		{
 			List<string> audioTextList = new List<string>();
-			var audioText = ExtractTextFromXmlString(audioData.Text);
-			var combinations = GetMultiples(Global.AppSettings.AiAvatar.VoiceLocale.ToString().ToUpper().StartsWith("LT") ? VisemesLT : VisemesEN);
-			audioText = audioText.ToLower() + " ";
+			var audioText = ExtractTextFromXmlString(audioData.Text).ToLower();
+			audioText = audioText + " ";
 			for (int i = 0; i < audioText.Length; i++)
 			{
 				// Check for combination of two letters.
-				if (i + 1 < audioText.Length && combinations.Contains(audioText.Substring(i, 2).ToLower()))
+				if (i + 1 < audioText.Length && GetMultiples(CharacterVisemeList).Contains(audioText.Substring(i, 2)))
 				{
 					audioTextList.Add(audioText.Substring(i, 2));
 					i++; // Skip the next character as it is already included in the combination.
@@ -859,107 +859,149 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			};
 		}
 
-		new List<(string, int, int)> VisemesLT = new List<(string, int, int)>
+		new List<(string, int, int)> CharacterVisemeList = new List<(string, int, int)>
 		{
 				// Multiple.
 				{("ch", 12, 400)},
-				// Single.
+				// Single / Silence.
 				{(" ", 0, 600)},
-				{(".", 0, 900)},
-				{(",", 0, 600)},
-				{(":", 0, 600)},
-				{(";", 0, 600)},
-				{("?", 0, 600)},
-				{("!", 0, 600)},
-				{("a", 1, 800)},
-				{("ą", 1, 800)},
-				{("e", 1, 750)},
-				{("ę", 1, 750)},
-				{("ė", 1, 750)},
-				{("u", 1, 750)},
-				{("ų", 1, 750)},
-				{("ū", 1, 750)},
-				{("*", 6, 600)},
-				{("y", 6, 750)},
-				{("į", 6, 750)},
-				{("i", 6, 750)},
-				{("w", 7, 700)},
-				{("o", 8, 800)},
-				{("h", 12, 400)},
-				{("r", 13, 600)},
-				{("l", 14, 600)},
-				{("x", 15, 500)},
-				{("s", 15, 500)},
-				{("š", 15, 500)},
-				{("z", 15, 550)},
-				{("ž", 15, 550)},
-				{("j", 16, 500)},
-				{("f", 18, 400)},
-				{("v", 18, 550)},
-				{("d", 19, 500)},
-				{("t", 19, 400)},
-				{("n", 19, 500)},
-				{("c", 20, 400)},
-				{("č", 20, 400)},
-				{("k", 20, 400)},
-				{("q", 20, 600)},
-				{("g", 20, 500)},
-				{("p", 21, 400) },
-				{("b", 21, 500) },
-				{("m", 21, 600) },
-		};
-
-		new List<(string, int, int)> VisemesEN = new List<(string, int, int)>
-			{
-				// Multiple.
-				{("aw", 3, 800)}, // ɔ
-				{("oo", 4, 850)}, // ʊ
-				{("er", 5, 800)}, // ɝ
-				{("ih", 6, 750)}, // ɪ
-				{("ou", 9, 900)}, // aʊ
-				{("oy", 10, 850)}, // ɔɪ
-				{("ai", 11, 900)}, // aɪ
-				{("sh", 16, 500)}, // ʃ
-				{("ch", 16, 500)}, // tʃ
-				{("zh", 16, 550)}, // ʒ
-				{("th", 17, 500)}, // ð // {"th",MPath_19}, // θ
-				{("ng", 20, 650)}, // ŋ
-				// Single.
-				{(" ", 0, 600)}, // Silence.
 				{(".", 0, 1000)},
 				{(",", 0, 600)},
 				{(":", 0, 600)},
 				{(";", 0, 600)},
 				{("?", 0, 600)},
 				{("!", 0, 600)},
-				{("a", 1, 800)}, // æ // {"a",MPath_2}, // ɑ
-				{("e", 1, 750)}, // ə //{"e",MPath_4}, // ɛ
-				{("u", 1, 750)}, // ʌ
-				{("z", 5, 550)} , // z
-				{("*", 6, 600)}, // *
-				{("y", 6, 750)}, // j
-				{("i", 6, 750)}, // i
-				{("w", 7, 700)}, // w // {"u"MPath_7}, // u
-				{("o", 8, 800)}, // o // {"o",MPath_3}, // ɔ
-				{("h", 12, 400)}, // h
-				{("r", 13, 600)}, // ɹ
-				{("l", 14, 600)}, // l
-				{("x", 15, 500)}, // x
-				{("s", 15, 500)}, // s
-				{("j", 16, 500)}, // dʒ
-				{("f", 18, 400)}, // f
-				{("v", 18, 550)}, // v
-				{("d", 19, 500)}, // d
-				{("t", 19, 400)}, // t
-				{("n", 19, 500)}, // n
-				{("c", 20, 400)}, // c
-				{("k", 20, 400)}, // k
-				{("q", 20, 600)}, // q
-				{("g", 20, 500)}, // g
-				{("p", 21, 400)}, // p
-				{("b", 21, 500)}, // b
-				{("m", 21, 600)}, // m
-			};
+				// Single.
+				{("*", 6, 600)},
+				{("a", 1, 800)},
+				{("e", 1, 750)},
+				{("u", 1, 750)},
+				{("z", 5, 550)},
+				{("i", 6, 750)},
+				{("y", 6, 750)},
+				{("w", 7, 700)},
+				{("o", 8, 800)},
+				{("h", 12, 400)},
+				{("r", 13, 600)},
+				{("l", 14, 600)},
+				{("s", 15, 500)},
+				{("x", 15, 500)},
+				{("j", 16, 500)},
+				{("f", 18, 400)},
+				{("v", 18, 550)},
+				{("d", 19, 500)},
+				{("n", 19, 500)},
+				{("t", 19, 400)},
+				{("c", 20, 400)},
+				{("g", 20, 500)},
+				{("k", 20, 400)},
+				{("q", 20, 600)},
+				{("b", 21, 500)},
+				{("m", 21, 600)},
+				{("p", 21, 400)},
+		};
+
+		//new List<(string, int, int)> VisemesLT = new List<(string, int, int)>
+		//{
+		//		// Multiple.
+		//		{("ch", 12, 400)},
+		//		// Single.
+		//		{(" ", 0, 600)},
+		//		{(".", 0, 900)},
+		//		{(",", 0, 600)},
+		//		{(":", 0, 600)},
+		//		{(";", 0, 600)},
+		//		{("?", 0, 600)},
+		//		{("!", 0, 600)},
+		//		{("a", 1, 800)},
+		//		{("ą", 1, 800)},
+		//		{("e", 1, 750)},
+		//		{("ę", 1, 750)},
+		//		{("ė", 1, 750)},
+		//		{("u", 1, 750)},
+		//		{("ų", 1, 750)},
+		//		{("ū", 1, 750)},
+		//		{("*", 6, 600)},
+		//		{("y", 6, 750)},
+		//		{("į", 6, 750)},
+		//		{("i", 6, 750)},
+		//		{("w", 7, 700)},
+		//		{("o", 8, 800)},
+		//		{("h", 12, 400)},
+		//		{("r", 13, 600)},
+		//		{("l", 14, 600)},
+		//		{("x", 15, 500)},
+		//		{("s", 15, 500)},
+		//		{("š", 15, 500)},
+		//		{("z", 15, 550)},
+		//		{("ž", 15, 550)},
+		//		{("j", 16, 500)},
+		//		{("f", 18, 400)},
+		//		{("v", 18, 550)},
+		//		{("d", 19, 500)},
+		//		{("t", 19, 400)},
+		//		{("n", 19, 500)},
+		//		{("c", 20, 400)},
+		//		{("č", 20, 400)},
+		//		{("k", 20, 400)},
+		//		{("q", 20, 600)},
+		//		{("g", 20, 500)},
+		//		{("p", 21, 400) },
+		//		{("b", 21, 500) },
+		//		{("m", 21, 600) },
+		//};
+
+		//new List<(string, int, int)> VisemesEN = new List<(string, int, int)>
+		//{
+		//		// Multiple.
+		//		{("aw", 3, 800)}, // ɔ
+		//		{("oo", 4, 850)}, // ʊ
+		//		{("er", 5, 800)}, // ɝ
+		//		{("ih", 6, 750)}, // ɪ
+		//		{("ou", 9, 900)}, // aʊ
+		//		{("oy", 10, 850)}, // ɔɪ
+		//		{("ai", 11, 900)}, // aɪ
+		//		{("sh", 16, 500)}, // ʃ
+		//		{("ch", 16, 500)}, // tʃ
+		//		{("zh", 16, 550)}, // ʒ
+		//		{("th", 17, 500)}, // ð // {"th",MPath_19}, // θ
+		//		{("ng", 20, 650)}, // ŋ
+		//		// Single.
+		//		{(" ", 0, 600)}, // Silence.
+		//		{(".", 0, 1000)},
+		//		{(",", 0, 600)},
+		//		{(":", 0, 600)},
+		//		{(";", 0, 600)},
+		//		{("?", 0, 600)},
+		//		{("!", 0, 600)},
+		//		{("a", 1, 800)}, // æ // {"a",MPath_2}, // ɑ
+		//		{("e", 1, 750)}, // ə //{"e",MPath_4}, // ɛ
+		//		{("u", 1, 750)}, // ʌ
+		//		{("z", 5, 550)} , // z
+		//		{("*", 6, 600)}, // *
+		//		{("y", 6, 750)}, // j
+		//		{("i", 6, 750)}, // i
+		//		{("w", 7, 700)}, // w // {"u"MPath_7}, // u
+		//		{("o", 8, 800)}, // o // {"o",MPath_3}, // ɔ
+		//		{("h", 12, 400)}, // h
+		//		{("r", 13, 600)}, // ɹ
+		//		{("l", 14, 600)}, // l
+		//		{("x", 15, 500)}, // x
+		//		{("s", 15, 500)}, // s
+		//		{("j", 16, 500)}, // dʒ
+		//		{("f", 18, 400)}, // f
+		//		{("v", 18, 550)}, // v
+		//		{("d", 19, 500)}, // d
+		//		{("t", 19, 400)}, // t
+		//		{("n", 19, 500)}, // n
+		//		{("c", 20, 400)}, // c
+		//		{("k", 20, 400)}, // k
+		//		{("q", 20, 600)}, // q
+		//		{("g", 20, 500)}, // g
+		//		{("p", 21, 400)}, // p
+		//		{("b", 21, 500)}, // b
+		//		{("m", 21, 600)}, // m
+		//};
 
 		private new Dictionary<string, Tuple<Path, int>> GetLetterPathDictionary(List<(string, int, int)> visemes)
 		{
