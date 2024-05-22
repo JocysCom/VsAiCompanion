@@ -19,7 +19,6 @@ using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using UglyToad.PdfPig.Content;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
