@@ -19,6 +19,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			_item = emptyData;
 			InitializeComponent();
+			ApprovalColor = Resources["BackgroundDark"] as Brush;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			PluginItemPanel.MethodCheckBox.IsEnabled = false;
@@ -84,10 +85,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var brush = RiskToBrush[RiskLevel.Unknown];
 				if (rl != null && RiskToBrush.ContainsKey(rl.Value))
 					brush = RiskToBrush[rl.Value];
-				TitleBackStackPanel.Background = brush;
+				ApprovalColor = brush;
+				OnPropertyChanged(nameof(ApprovalColor));
 				return item;
 			}
 		}
+
+		public Brush ApprovalColor { get; set; } = SystemColors.ControlDarkBrush;
 
 		public Visibility SowApprovalPanel => Item.Count > 0
 			? Visibility.Visible : Visibility.Collapsed;
@@ -106,16 +110,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		//		text += "\r\n\r\n" + Client.Serialize(function);
 		//		var caption = $"{Global.Info.Product} - Plugin Function Approval";
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-
-		#endregion
-
 		private void ApproveButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			ApprovalItem.IsApproved = true;
@@ -127,5 +121,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ApprovalItem.IsApproved = false;
 			ApprovalItem.Semaphore.Release();
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
+
 	}
 }

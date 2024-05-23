@@ -245,7 +245,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel(cache);
 				var level = domainMaxRiskLevel?.ToString() ?? "N/A";
-				Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					DomainMaxRiskLevelValueLabel.Content = $"{level}";
 				});

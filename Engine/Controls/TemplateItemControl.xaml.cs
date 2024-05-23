@@ -554,7 +554,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void SetZoom()
 		{
-			Dispatcher.Invoke(() =>
+			ControlsHelper.AppInvoke(() =>
 			{
 				ChatPanel.MessagesPanel.SetZoom((int)ZoomSlider.Value);
 			});

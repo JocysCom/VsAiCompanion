@@ -197,7 +197,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				await client.Synthesize(text, isSsml, Item.CacheAudioData);
 				var jsonOptions = new JsonSerializerOptions() { WriteIndented = false };
 				var json = System.Text.Json.JsonSerializer.Serialize(client.AudioInfo, jsonOptions);
-				Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					LogPanel.Add(client.AudioFilePath + "\r\n");
 					LogPanel.Add(client.AudioInfoPath + "\r\n");
@@ -209,7 +209,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			catch (Exception ex)
 			{
-				Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					LogPanel.Add(ex.ToString() + "\r\n");
 				});

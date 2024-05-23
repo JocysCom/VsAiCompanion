@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using JocysCom.ClassLibrary.Controls;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -27,7 +28,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void Add(string format, params object[] args)
 		{
-			Dispatcher.Invoke(() =>
+			ControlsHelper.AppInvoke(() =>
 			{
 				var text = (args.Length == 0)
 					? format

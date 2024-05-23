@@ -199,7 +199,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				if (oldProgress != progress || dl.Params.ResponseData != null)
 				{
 					oldProgress = progress;
-					Dispatcher.Invoke(() =>
+					ControlsHelper.AppInvoke(() =>
 					{
 						var mb = Math.Round(e.BytesReceived / 1024m / 1024m, 1);
 						StatusPanel.Text = string.Format("Download... {0}% - {1} MB", progress, mb);

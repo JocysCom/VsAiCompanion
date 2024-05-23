@@ -789,6 +789,35 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+		public static void AppInvoke(Action action)
+		{
+			// Check if we are on the UI thread
+			if (Application.Current.Dispatcher.CheckAccess())
+			{
+				// If on UI thread, update the UI elements directly
+				action.Invoke();
+			}
+			else
+			{
+				// If not on UI thread, invoke on the UI thread
+				Application.Current.Dispatcher.Invoke(action);
+			}
+		}
+
+		public static void AppBeginInvoke(Action action)
+		{
+			// Check if we are on the UI thread
+			if (Application.Current.Dispatcher.CheckAccess())
+			{
+				// If on UI thread, update the UI elements directly
+				action.Invoke();
+			}
+			else
+			{
+				// If not on UI thread, invoke on the UI thread
+				Application.Current.Dispatcher.BeginInvoke(action);
+			}
+		}
 
 		// Contains unique list of control IDs for the applicaiton.
 		private static SortedSet<int> LoadedControls = new SortedSet<int>();

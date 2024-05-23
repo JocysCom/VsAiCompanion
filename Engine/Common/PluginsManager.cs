@@ -1,5 +1,6 @@
 ﻿using Azure.AI.OpenAI;
 using DocumentFormat.OpenXml;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
@@ -154,7 +155,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var invokeParams = ConvertFromToolItem(methodInfo, function);
 			var pfci = new PluginApprovalItem();
 			PluginItem plugin = null;
-			Global.MainControl.Dispatcher.Invoke(() =>
+			ControlsHelper.Invoke(() =>
 			{
 				plugin = new PluginItem(methodInfo);
 			});
@@ -181,7 +182,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var messageToAI = ClientHelper.JoinMessageParts(
 						string.IsNullOrEmpty(pfci.ApprovalReason)
 							? null
-							: $"Approval Comments: {pfci.ApprovalReason}"
+							: $"Request Denial Comments: {pfci.ApprovalReason}"
 						,
 						Resources.MainResources.main_Call_function_request_denied);
 					return messageToAI;

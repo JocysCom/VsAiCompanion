@@ -26,8 +26,12 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		{
 			if (UseApplicationDispatcher)
 			{
-				Application.Current.Dispatcher.Invoke(() =>
-					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+				var dispatcher = Application.Current.Dispatcher;
+				if (dispatcher.CheckAccess())
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+				else
+					Application.Current.Dispatcher.Invoke(() =>
+						PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
 				return;
 			}
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

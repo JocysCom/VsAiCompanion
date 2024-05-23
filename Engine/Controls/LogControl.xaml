@@ -44,6 +44,7 @@
 				VerticalContentAlignment="Top"
 				Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 				BorderThickness="0"
+				FontFamily="Consolas"
 				IsReadOnly="false"
 				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				ScrollViewer.VerticalScrollBarVisibility="Auto"

@@ -1,13 +1,16 @@
 ﻿using Azure.Core;
 using Azure.Identity;
+using Azure.ResourceManager;
 using Azure.Security.KeyVault.Secrets;
 using JocysCom.ClassLibrary;
 using Microsoft.Identity.Client;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -16,10 +19,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 	public class AppSecurityHelper
 	{
 		// Credential - An object used to prove the identity of a user or service.
-		// Token - Digital objects created after a user or service successfully authenticates and passes authorization processes. Requires credentials to be created.
-		// Account - An object representing the authenticated user's identity.
+		// Scope      - A string that specifies a particular permission or set of permissions requested.
+		//              Scopes are supplied with credentials when requesting an access token.
+		// Token      - A digital object created after a user or service successfully authenticates and passes
+		//              authorization processes. Tokens require credentials and scopes to be created.
+		//              - Access Token - authorize access to resources on behalf of the user.
+		//              - ID Token - contains identity information about the user.
+		// Account    - An object representing the authenticated user's identity.
+
+		// Preconfigured set of permissions. Usually formatted as https://{resource}/{permission}:
+		public const string MicrosoftGraphScope = "https://graph.microsoft.com/.default";
+		public const string MicrosoftAzureScope = "https://management.azure.com/.default";
+		public const string MicrosoftGraphUserReadScope = "https://graph.microsoft.com/User.Read";
 
 		// Using DefaultAzureCredential
+		//
 		// The DefaultAzureCredential includes a chain of nine different credential types,
 		// and it will attempt to authenticate using each of these in turn, stopping when one succeeds.
 		// These credentials include:
@@ -32,6 +46,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		// 7.InteractiveBrowserCredential
 		// 8.AzurePowerShellCredential
 		// 9.InteractiveBrowserCredential
+
+
 
 		public IPublicClientApplication Pca { get; } = PublicClientApplicationBuilder
 				.Create(Global.AppSettings?.ClientAppId)
@@ -67,7 +83,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// <summary>
 		/// Get user profile with the access token.
 		/// </summary>
-		public OperationResult<UserProfile> GetProfile()
+		public static OperationResult<UserProfile> GetProfile()
 		{
 			var profile = Global.AppSettings.UserProfiles.FirstOrDefault(p => p.ServiceType == ApiServiceType.Azure);
 			if (profile == null)
@@ -79,7 +95,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task RefreshProfileImage()
 		{
-			var profile = GetProfile()?.Result;
+			var profile = GetProfile().Result;
 			if (profile == null)
 				return;
 			profile.Image = await Global.Security.GetUserAvatar(profile.AccessToken);
@@ -110,6 +126,57 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			profile.Name = claims?.FirstOrDefault(c => c.Type == "name")?.Value;
 		}
 
+		/// <summary>
+		/// // By default return credentials that user used to sign in. 
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public static async Task<TokenCredential> GetTokenCredential(CancellationToken cancellationToken = default)
+		{
+			var credentials = await GetAppTokenCredential(cancellationToken);
+			if (credentials != null)
+				return credentials;
+			return await GetWinTokenCredentials();
+		}
+
+		/// <summary>
+		/// Get the credentials signed into the current app. Get refreshed token if it is expired.
+		/// </summary>
+
+		public static async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
+		{
+			var profile = GetProfile().Result;
+			if (profile == null)
+				return null;
+			// Ensure the token has the required scopes
+			var scopes = new string[] { MicrosoftGraphScope };
+			var tokenCredential = new AccessTokenCredential(profile.AccessToken);
+			var tokenRequestContext = new TokenRequestContext(scopes);
+			var token = tokenCredential.GetToken(tokenRequestContext, cancellationToken);
+			if (token.ExpiresOn < DateTimeOffset.UtcNow)
+			{
+				// Re-acquire the token with the required scopes
+				var result = await Global.Security.SignIn(scopes);
+				if (!result.Success)
+					return null;
+			}
+			var credential = new AccessTokenCredential(profile.AccessToken);
+			return credential;
+		}
+
+		/// <summary>
+		/// Get windows credentials the app is running with.
+		/// </summary>
+		public static async Task<TokenCredential> GetWinTokenCredentials()
+		{
+			await Task.Delay(0);
+			var options = new DefaultAzureCredentialOptions();
+			options.ExcludeInteractiveBrowserCredential = false;
+			// Default credentials of the Azure environment in which application is running.
+			// Credentials currently used to log into Windows.
+			var credential = new DefaultAzureCredential(options);
+			return credential;
+		}
 
 		#endregion
 
@@ -209,45 +276,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region Authentication
 
-		public static async Task<string> MakeAuthenticatedApiCall(string url, string accessToken)
+		/// <summary>
+		/// Get access token.
+		/// </summary>
+		/// <param name="scopes">Set of permissions.</param>
+		public static async Task<AccessToken> GetAccessToken(string[] scopes, CancellationToken cancellationToken = default)
 		{
-			using (var httpClient = new HttpClient())
-			{
-				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-				var response = await httpClient.GetAsync(url);
-				var contents = await response.Content.ReadAsStringAsync();
-				return contents;
-			}
+			// Define credentials that will be used to access resources.
+			var credential = await GetTokenCredential(cancellationToken);
+			// Add wanted permissions
+			var context = new TokenRequestContext(scopes);
+			// Get access token.
+			var token = await credential.GetTokenAsync(context, cancellationToken);
+			return token;
 		}
-
-		public static async Task<string> MakeAuthenticatedCall(string url)
-		{
-			// Define the scope required to access the target resource
-			// This is a common example, you should replace it with the correct scope for your resource
-			string[] scopes = new string[] { $"{url}/.default" };
-			// Create DefaultAzureCredential instance
-			var credential = new DefaultAzureCredential();
-			// Get the token using the DefaultAzureCredential
-			AccessToken token = await credential.GetTokenAsync(new TokenRequestContext(scopes));
-			// Set up HttpClient with the acquired token
-			using (var httpClient = new HttpClient())
-			{
-				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
-				// Make request to the target URL
-				HttpResponseMessage response = await httpClient.GetAsync(url);
-				if (response.IsSuccessStatusCode)
-				{
-					string pageContent = await response.Content.ReadAsStringAsync();
-					return pageContent;
-				}
-				else
-				{
-					Console.WriteLine($"Failed to retrieve the page. Status Code: {response.StatusCode}");
-				}
-			}
-			return null;
-		}
-
 
 		public IAccount _account;
 
@@ -270,12 +312,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			_account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == profile.AccountId);
 		}
 
-		public async Task<BitmapImage> GetUserAvatar(string accessToken)
+		public async Task<BitmapImage> GetUserAvatar(string accessToken, CancellationToken cancellationToken = default)
 		{
 			using (var httpClient = new HttpClient())
 			{
 				httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-				var response = await httpClient.GetAsync("https://graph.microsoft.com/v1.0/me/photo/$value");
+				var response = await httpClient.GetAsync("https://graph.microsoft.com/v1.0/me/photo/$value", cancellationToken);
 				if (response.IsSuccessStatusCode)
 				{
 					var stream = await response.Content.ReadAsStreamAsync();
@@ -292,38 +334,105 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
-		#region Key Vault
 
-		public static async Task<string> GetSecretFromKeyVault(string keyVaultName, string secretName, string accessToken)
+		public static async Task<Dictionary<string, string>> GetSubscriptionNamesAndIdsAsync(TokenCredential credential, CancellationToken cancellationToken = default)
 		{
-			var credential = new AccessTokenCredential(accessToken);
-			return await GetSecretFromKeyVault(keyVaultName, secretName, credential);
-		}
-
-		public static async Task<string> GetSecretFromKeyVault(string keyVaultName, string secretName, string tenantId, string clientId, string clientSecret)
-		{
-			var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-			return await GetSecretFromKeyVault(keyVaultName, secretName, credential);
-		}
-
-		public static async Task<string> GetSecretFromKeyVault(string keyVaultName, string secretName, TokenCredential credential)
-		{
+			// Initialize the ArmClient
+			var armClient = new ArmClient(credential);
+			// Dictionary to store subscription names and IDs
+			var subscriptionsDict = new Dictionary<string, string>();
+			// Fetch the list of subscriptions and use the synchronous foreach loop with manual async handling
+			var enumerator = armClient.GetSubscriptions().GetAllAsync(cancellationToken).GetAsyncEnumerator(cancellationToken);
 			try
 			{
-
-				// Azure Key Vault URI
-				string kvUri = $"https://{keyVaultName}.vault.azure.net/";
-				// Create a new secret client
-				var client = new SecretClient(new Uri(kvUri), credential);
-				// Retrieve the secret from Azure Key Vault
-				KeyVaultSecret secret = await client.GetSecretAsync(secretName);
-				return secret.Value;
+				while (await enumerator.MoveNextAsync())
+				{
+					var subscription = enumerator.Current;
+					subscriptionsDict.Add(subscription.Data.SubscriptionId, subscription.Data.DisplayName);
+				}
 			}
-			catch (Exception ex)
+			catch
 			{
-				// Log error if needed.
-				throw new Exception("Error getting secret from KeyVault", ex);
+				throw;
 			}
+			finally
+			{
+				await enumerator.DisposeAsync();
+			}
+			return subscriptionsDict;
+		}
+
+		#region API Calls
+
+		public static async Task<string> MakeAuthenticatedApiCall(
+			string url, string accessToken,
+			CancellationToken cancellationToken = default)
+		{
+			using (var httpClient = new HttpClient())
+			{
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+				var response = await httpClient.GetAsync(url, cancellationToken);
+				var contents = await response.Content.ReadAsStringAsync();
+				return contents;
+			}
+		}
+
+		public static async Task<string> MakeAuthenticatedCall(string url, CancellationToken cancellationToken = default)
+		{
+			// Define the scope required to access the target resource
+			// This is a common example, you should replace it with the correct scope for your resource
+			var scopes = new string[] { $"{url}/.default" };
+			var token = await GetAccessToken(scopes, cancellationToken);
+			// Set up HttpClient with the acquired token
+			using (var httpClient = new HttpClient())
+			{
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
+				// Make request to the target URL
+				HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
+				if (response.IsSuccessStatusCode)
+				{
+					string pageContent = await response.Content.ReadAsStringAsync();
+					return pageContent;
+				}
+				else
+				{
+					Console.WriteLine($"Failed to retrieve the page. Status Code: {response.StatusCode}");
+				}
+			}
+			return null;
+		}
+
+		#endregion
+
+		#region Key Vault
+
+		public static async Task<string> GetSecretFromKeyVault(
+			string keyVaultName, string secretName, string accessToken,
+			CancellationToken cancellationToken = default)
+		{
+			var credential = new AccessTokenCredential(accessToken);
+			return await GetSecretFromKeyVault(keyVaultName, secretName, credential, cancellationToken);
+		}
+
+		public static async Task<string> GetSecretFromKeyVault(
+			string keyVaultName, string secretName, string tenantId, string clientId, string clientSecret,
+			CancellationToken cancellationToken = default)
+		{
+			var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+			return await GetSecretFromKeyVault(keyVaultName, secretName, credential, cancellationToken);
+		}
+
+		public static async Task<string> GetSecretFromKeyVault(
+			string keyVaultName, string secretName, TokenCredential credential,
+			CancellationToken cancellationToken = default)
+		{
+			// Azure Key Vault URI
+			string kvUri = $"https://{keyVaultName}.vault.azure.net/";
+			// Create a new secret client
+			var client = new SecretClient(new Uri(kvUri), credential);
+			// Retrieve the secret from Azure Key Vault
+			KeyVaultSecret secret = await client.GetSecretAsync(secretName, cancellationToken: cancellationToken);
+			return secret.Value;
 		}
 
 		#endregion

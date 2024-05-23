@@ -1,10 +1,6 @@
-﻿using Azure.Core;
-using Azure.Identity;
-using Azure.ResourceManager;
-using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Security;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -52,149 +48,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		/// <summary>
-		/// Test getting information from azure by using access token.
-		/// </summary>
-		// In AuthControl.xaml.cs
-		public async Task FetchAzureInformation()
-		{
-			try
-			{
-				var accessToken = GetProfile()?.AccessToken;
-				if (string.IsNullOrEmpty(accessToken))
-				{
-					var credential = new DefaultAzureCredential();
-					var token = await credential.GetTokenAsync(
-						new TokenRequestContext(new[] { "https://graph.microsoft.com/.default" })
-					);
-					accessToken = token.Token;
-				}
-				//InspectToken(profile.IdToken);
-				var contents = await AppSecurityHelper.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken);
-				LogPanel.Add($"{contents}\r\n");
-			}
-			catch (Exception ex)
-			{
-				LogPanel.Add($"{ex}\r\n");
-			}
-		}
-
-
-		#region Key Vault
-
-		/// <summary>
-		/// Test getting secret from azure key vault.
-		/// </summary>
-		public async Task<string> GetSecretFromKeyVaultAsync(bool useAccessToken)
-		{
-			LogPanel.Clear();
-			try
-			{
-				string secret;
-				if (useAccessToken)
-				{
-					var profile = GetProfile();
-					if (profile == null)
-						return null;
-					secret = await AppSecurityHelper
-					.GetSecretFromKeyVault(KeyVaultNameTextBox.Text, SecretNameTextBox.Text, profile.AccessToken);
-				}
-				else
-				{
-					secret = await AppSecurityHelper.GetSecretFromKeyVault(
-						KeyVaultNameTextBox.Text, SecretNameTextBox.Text,
-						TenantIdTextBox.Text, ClientIdTextBox.Text, ClientSecretPasswordBox.Password);
-				}
-				LogPanel.Add($"{secret}\r\n");
-				return secret;
-			}
-			catch (Exception ex)
-			{
-				LogPanel.Add(ex.ToString() + "\r\n");
-			}
-			return null;
-		}
-
-		#endregion
-
-		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-		}
-
-		private async void TestButton_Click(object sender, RoutedEventArgs e)
-		{
-			await FetchAzureInformation();
-		}
-
-		public void InspectToken(string idToken)
-		{
-			var handler = new JwtSecurityTokenHandler();
-			try
-			{
-				var jwtToken = handler.ReadToken(idToken) as JwtSecurityToken;
-				if (jwtToken == null)
-				{
-					LogPanel.Add("Invalid JWT token.\r\n");
-					return;
-				}
-				// Display the expiry date
-				var expiryDate = jwtToken.ValidTo;
-				LogPanel.Add($"Token Expiry Date: {expiryDate}\r\n");
-				// Optionally, you can print other claims as well
-				foreach (var claim in jwtToken.Claims)
-					Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}\r\n");
-			}
-			catch (Exception ex)
-			{
-				LogPanel.Add($"{ex}\r\n");
-			}
-		}
-
-		public async Task<Dictionary<string, string>> GetSubscriptionNamesAndIdsAsync(CancellationToken cancellationToken = default)
-		{
-			// Initialize the Azure credentials using DefaultAzureCredential
-			var credential = await GetCredentials();
-			// Initialize the ArmClient
-			var armClient = new ArmClient(credential);
-			// Dictionary to store subscription names and IDs
-			var subscriptionsDict = new Dictionary<string, string>();
-			// Fetch the list of subscriptions and use the synchronous foreach loop with manual async handling
-			var enumerator = armClient.GetSubscriptions().GetAllAsync(cancellationToken).GetAsyncEnumerator(cancellationToken);
-			try
-			{
-				while (await enumerator.MoveNextAsync())
-				{
-					var subscription = enumerator.Current;
-					subscriptionsDict.Add(subscription.Data.SubscriptionId, subscription.Data.DisplayName);
-				}
-			}
-			finally
-			{
-				await enumerator.DisposeAsync();
-			}
-			return subscriptionsDict;
-		}
-
-		private async void ListSubscriptionsButton_Click(object sender, RoutedEventArgs e)
-		{
-			LogPanel.Clear();
-			var ts = AddToken();
-			try
-			{
-				var items = await GetSubscriptionNamesAndIdsAsync(ts.Token);
-				foreach (var item in items)
-					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
-			}
-			catch (Exception ex)
-			{
-				LogPanel.Add(ex.ToString());
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-			}
-			finally
-			{
-				Global.MainControl.InfoPanel.RemoveTask(ts);
-			}
-		}
 
 		private void StopButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -203,87 +56,140 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				item.Cancel();
 		}
 
-		ObservableCollection<CancellationTokenSource> cancellationTokenSources = new ObservableCollection<CancellationTokenSource>();
-
-		public UserProfile GetProfile()
+		private async void InspectTokenButton_Click(object sender, RoutedEventArgs e)
 		{
-			var profileResult = Global.Security.GetProfile();
-			if (!profileResult.Success)
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				LogPanel.Add(string.Join("\r\n", profileResult.Errors) + "\r\n");
-				return null;
-			}
-			return profileResult.Result;
-		}
-
-		public async Task<AccessTokenCredential> GetAppCredential(CancellationToken cancellationToken = default)
-		{
-			var profile = GetProfile();
-			if (profile == null)
-				return null;
-			// Ensure the token has the required scopes
-			var requiredScopes = new string[] { "https://management.azure.com/.default" };
-			var tokenCredential = new AccessTokenCredential(profile.AccessToken);
-			var tokenRequestContext = new TokenRequestContext(requiredScopes);
-			var token = tokenCredential.GetToken(tokenRequestContext, cancellationToken);
-			if (token.ExpiresOn < DateTimeOffset.UtcNow)
-			{
-				// Re-acquire the token with the required scopes
-				var result = await Global.Security.SignIn(requiredScopes);
-				if (!result.Success)
+				await Task.Delay(0);
+				var scope = new[] { AppSecurityHelper.MicrosoftGraphScope };
+				var token = await AppSecurityHelper.GetAccessToken(scope, cancellationToken);
+				var accessToken = token.Token;
+				var isJwtToken = accessToken.Split('.').Length == 3;
+				LogPanel.Add($"Access Token Expiry Date: {token.ExpiresOn}\r\n");
+				if (isJwtToken)
 				{
-					LogPanel.Add(string.Join("\r\n", result.Errors) + "\r\n");
-					return null;
+					// JWT tokens allow clients to decode and validate them.
+					var handler = new JwtSecurityTokenHandler();
+					var jwtToken = handler.ReadToken(accessToken) as JwtSecurityToken;
+					if (jwtToken == null)
+					{
+						LogPanel.Add("Invalid JWT token.\r\n");
+						return;
+					}
+					// Display the expiry date
+					LogPanel.Add($"Claims[{jwtToken.Claims.Count()}]: \r\n");
+					// Optionally, you can print other claims as well
+					foreach (var claim in jwtToken.Claims)
+						LogPanel.Add($"  {claim.Type}: {claim.Value}\r\n");
 				}
-			}
-			var credential = new AccessTokenCredential(profile.AccessToken);
-			return credential;
-		}
-
-		public async Task<TokenCredential> GetCredentials()
-		{
-			var credentials = await GetAppCredential();
-			return (TokenCredential)credentials ??
-				// Default credentials of the Azure environment in which application is running.
-				// Credentials currently used to log into Windows.
-				new DefaultAzureCredential();
-		}
-
-		public CancellationTokenSource AddToken()
-		{
-			var source = new CancellationTokenSource();
-			source.CancelAfter(TimeSpan.FromSeconds(30));
-			cancellationTokenSources.Add(source);
-			Global.MainControl.InfoPanel.AddTask(source);
-			return source;
-		}
-
-		private async void GetSecretWithAccessTokenButton_Click(object sender, RoutedEventArgs e)
-		{
-			await GetSecretFromKeyVaultAsync(true);
+				else
+				{
+					// An opaque token is a sequence of characters
+					// not readable or interpretable by the client.
+					LogPanel.Add("Opaque Access Token.\r\n");
+					LogPanel.Add($"{accessToken}.\r\n");
+				}
+			});
 		}
 
 		private async void GetSecretWithClientSecretButton_Click(object sender, RoutedEventArgs e)
 		{
-			await GetSecretFromKeyVaultAsync(false);
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				var secret = await AppSecurityHelper.GetSecretFromKeyVault(
+					KeyVaultNameTextBox.Text, SecretNameTextBox.Text,
+					TenantIdTextBox.Text, ClientIdTextBox.Text, ClientSecretPasswordBox.Password,
+					cancellationToken);
+				LogPanel.Add($"{secret}\r\n");
+			});
 		}
 
-		private async Task ListAccounts()
+		private async void GetSecretWithAccessTokenButton_Click(object sender, RoutedEventArgs e)
 		{
-			LogPanel.Clear();
-			var accounts = await Global.Security.Pca.GetAccountsAsync();
-			foreach (var account in accounts)
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				LogPanel.Add($"Username: {account.Username}\r\n");
-				LogPanel.Add($"HomeAccountId: {account.HomeAccountId}\r\n");
-				LogPanel.Add($"Environment: {account.Environment}\r\n");
-				LogPanel.Add("\r\n");
-			}
+				var accessToken = AppSecurityHelper.GetProfile().Result?.AccessToken;
+				if (string.IsNullOrEmpty(accessToken))
+					return;
+				var secret = await AppSecurityHelper
+				.GetSecretFromKeyVault(KeyVaultNameTextBox.Text, SecretNameTextBox.Text, accessToken, cancellationToken);
+				LogPanel.Add($"{secret}\r\n");
+			});
+		}
+
+		private async void TestButton_Click(object sender, RoutedEventArgs e)
+		{
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				var scope = new[] { AppSecurityHelper.MicrosoftGraphScope };
+				var token = await AppSecurityHelper.GetAccessToken(scope, cancellationToken);
+				var accessToken = token.Token;
+				var contents = await AppSecurityHelper.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken, cancellationToken);
+				LogPanel.Add($"{contents}\r\n");
+			});
 		}
 
 		private async void ListAccountsButton_Click(object sender, RoutedEventArgs e)
-			=> await ListAccounts();
+		{
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				var accounts = await Global.Security.Pca.GetAccountsAsync();
+				foreach (var account in accounts)
+				{
+					LogPanel.Add($"Username: {account.Username}\r\n");
+					LogPanel.Add($"HomeAccountId: {account.HomeAccountId}\r\n");
+					LogPanel.Add($"Environment: {account.Environment}\r\n");
+					LogPanel.Add("\r\n");
+				}
+			});
+		}
 
+		private async void ListSubscriptionsButton_Click(object sender, RoutedEventArgs e)
+		{
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				var credential = await AppSecurityHelper.GetTokenCredential(cancellationToken);
+				var items = await AppSecurityHelper.GetSubscriptionNamesAndIdsAsync(credential, cancellationToken);
+				foreach (var item in items)
+					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
+			});
+		}
+
+		#region Control Helper Methods
+
+
+		/// <summary>
+		/// Stores cancellation tokens created on this control that can be stopped with the [Stop] button.
+		/// </summary>
+		ObservableCollection<CancellationTokenSource> cancellationTokenSources = new ObservableCollection<CancellationTokenSource>();
+
+		/// <summary>
+		/// Helps run cancellable methods of this form and logs results to the log panel.
+		/// </summary>
+		async Task ExecuteMethod(Func<CancellationToken, Task> action)
+		{
+			LogPanel.Clear();
+			var source = new CancellationTokenSource();
+			source.CancelAfter(TimeSpan.FromSeconds(30));
+			cancellationTokenSources.Add(source);
+			Global.MainControl.InfoPanel.AddTask(source);
+			try
+			{
+				await action.Invoke(source.Token);
+			}
+			catch (Exception ex)
+			{
+				LogPanel.Add(ex.ToString());
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+			}
+			finally
+			{
+				cancellationTokenSources.Remove(source);
+				Global.MainControl.InfoPanel.RemoveTask(source);
+			}
+		}
+
+		#endregion
 
 	}
 }

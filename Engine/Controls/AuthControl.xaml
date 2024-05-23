@@ -166,6 +166,11 @@
 							<Label Content="List Accounts" />
 						</StackPanel>
 					</Button>
+					<Button Name="InspectTokenButton" Click="InspectTokenButton_Click">
+						<StackPanel Focusable="False">
+							<Label Content="Inspect Token" />
+						</StackPanel>
+					</Button>
 					<Button Name="ListSubscriptionsButton" Click="ListSubscriptionsButton_Click">
 						<StackPanel Focusable="False">
 							<Label Content="List Subscriptions" />
@@ -197,8 +202,7 @@
 			Grid.Row="2"
 			Grid.ColumnSpan="2"
 			Margin="4"
-			x:FieldModifier="public"
-			SelectionChanged="MainTabControl_SelectionChanged">
+			x:FieldModifier="public">
 			<TabItem Name="LogTabPage">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
