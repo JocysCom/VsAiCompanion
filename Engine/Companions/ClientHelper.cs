@@ -397,7 +397,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			}
 			// If item type task, then allow to do auto removal.
 			if (Global.Tasks.Items.Contains(item) && item.AutoRemove)
-				_ = Global.MainControl.Dispatcher.BeginInvoke(new Action(() => { _ = Global.Tasks.Items.Remove(item); }));
+				ControlsHelper.AppBeginInvoke(() => { _ = Global.Tasks.Items.Remove(item); });
 		}
 
 		public static JsonSerializerOptions ChatLogOptions = new JsonSerializerOptions

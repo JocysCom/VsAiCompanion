@@ -26,11 +26,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public void FocusDataTextBox()
 		{
-			Dispatcher.BeginInvoke(new Action(() =>
+			ControlsHelper.AppBeginInvoke(() =>
 			{
 				DataTextBox.Focus();
 				DataTextBox.SelectionStart = DataTextBox.Text?.Length ?? 0;
-			}));
+			});
 		}
 
 		public string EditMessageId

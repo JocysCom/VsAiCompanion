@@ -142,7 +142,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			MustRefresh = true;
 			if (IsVisible)
-				Dispatcher.BeginInvoke((Action)(async () => await Refresh()));
+				ControlsHelper.AppBeginInvoke(async () => await Refresh());
 		}
 
 		#region IBindData
@@ -207,7 +207,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e) =>
-			Dispatcher.BeginInvoke(new Action(async () => await Delete()));
+			ControlsHelper.AppBeginInvoke(async () => await Delete());
 
 		#region Actions
 
@@ -288,7 +288,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var isEditMode = AppHelper.IsGridInEditMode((DataGrid)sender);
 			if (!isEditMode && e.Key == Key.Delete)
-				Dispatcher.BeginInvoke(new Action(async () => await Delete()));
+				ControlsHelper.AppBeginInvoke(async () => await Delete());
 		}
 
 		private void MainDataGrid_ContextMenu_Copy(object sender, RoutedEventArgs e) =>

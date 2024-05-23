@@ -125,7 +125,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var isEditMode = AppHelper.IsGridInEditMode((DataGrid)sender);
 			if (!isEditMode && e.Key == Key.Delete)
-				Dispatcher.BeginInvoke(new Action(async () => await Remove()));
+				ControlsHelper.AppBeginInvoke(async () => await Remove());
 		}
 
 		System.Windows.Forms.OpenFileDialog _OpenFileDialog;

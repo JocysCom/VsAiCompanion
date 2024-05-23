@@ -148,7 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (Dispatcher.HasShutdownStarted)
 				return;
 			// Use `BeginInvoke, becase `Invoke` would freeze here.
-			ControlsHelper.BeginInvoke(new Action(() =>
+			ControlsHelper.BeginInvoke(() =>
 			{
 				lock (ExceptionsToDisplay)
 				{
@@ -162,7 +162,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					ErrorsLogPanel.Clear();
 					ErrorsLogPanel.Add(string.Join("\r\n", strings));
 				};
-			}));
+			});
 		}
 
 		public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

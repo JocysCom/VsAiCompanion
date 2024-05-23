@@ -152,7 +152,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_Data = value;
 				MustRefresh = true;
 				if (IsVisible)
-					Dispatcher.BeginInvoke((Action)(async () => await Refresh()));
+					ControlsHelper.AppBeginInvoke(async () => await Refresh());
 			}
 		}
 		public FineTuningItem _Data;
@@ -248,7 +248,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			MustRefresh = true;
 			if (IsVisible)
-				Dispatcher.BeginInvoke((Action)(async () => await Refresh()));
+				ControlsHelper.AppBeginInvoke(async () => await Refresh());
 		}
 	}
 

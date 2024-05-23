@@ -831,8 +831,7 @@ EndFragment:{3:00000000}";
 		{
 			// Enqueue the action on the dispatcher.
 			// This will ensure the action will be executed after the UI has finished processing events.
-			Application.Current.Dispatcher.BeginInvoke((Action)(() =>
-				lastFocusedElement?.Focus()));
+			ControlsHelper.AppBeginInvoke(() => lastFocusedElement?.Focus());
 		}
 
 		public static void EnableKeepFocusOnMouseClick(params UIElement[] controls)

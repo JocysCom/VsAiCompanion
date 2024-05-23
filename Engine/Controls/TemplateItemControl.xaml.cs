@@ -356,10 +356,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				{
 					// Disable auto-send so that it won't trigger every time item is bound.
 					_Item.AutoSend = false;
-					_ = Dispatcher.BeginInvoke(new Action(() =>
+					ControlsHelper.AppBeginInvoke(() =>
 					{
 						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit);
-					}));
+					});
 				}
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				if (PanelSettings.Focus)

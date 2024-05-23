@@ -408,7 +408,7 @@ namespace JocysCom.ClassLibrary.Controls
 				_Window.Topmost = tm;
 				_Window.BringIntoView();
 			};
-			Application.Current.Dispatcher.BeginInvoke(isolator);
+			ControlsHelper.AppBeginInvoke(isolator);
 		}
 
 		private static void _CollectGarbage()

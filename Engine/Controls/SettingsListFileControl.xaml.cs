@@ -217,13 +217,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void SettingsData_FilesChanged(object sender, EventArgs e)
 		{
-			Dispatcher.BeginInvoke(new Action(() =>
+			ControlsHelper.AppBeginInvoke(() =>
 			{
 				var sd = sender as ISettingsData;
 				if (sd != null && sd == SettingsData)
 					// Reload data from the disk.
 					SettingsData.Load();
-			}));
+			});
 		}
 
 		public void SelectByName(string name)

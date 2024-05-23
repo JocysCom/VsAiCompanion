@@ -37,10 +37,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			Messages.ListChanged += DataItems_ListChanged;
 			IsResetMessgesPending = !ScriptHandlerInitialized;
 			if (ScriptHandlerInitialized)
-				Dispatcher.BeginInvoke(new Action(() =>
-				{
-					ResetWebMessages();
-				}));
+				ControlsHelper.AppBeginInvoke(ResetWebMessages);
 		}
 
 		private ChatSettings Settings;
@@ -207,13 +204,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			WebBrowser.ObjectForScripting = ScriptingHandler;
 			// Add BeginInvoke to allow the JavaScript syntax highlighter to initialize after loading.
-			Dispatcher.BeginInvoke(new Action(() =>
+			ControlsHelper.AppBeginInvoke(() =>
 			{
 				ScriptHandlerInitialized = true;
 				// If messages set but messages are not loaded yet.
 				if (IsResetMessgesPending)
-					ResetWebMessages();
-			}));
+					ControlsHelper.AppBeginInvoke(ResetWebMessages);
+			});
 		}
 
 		public event EventHandler WebBrowserDataLoaded;

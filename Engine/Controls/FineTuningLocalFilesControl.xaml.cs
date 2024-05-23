@@ -38,10 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _FilesMonitor_FilesChanged(object sender, EventArgs e)
 		{
-			Dispatcher.BeginInvoke(new Action(() =>
-			{
-				TryRefresh();
-			}));
+			ControlsHelper.AppBeginInvoke(TryRefresh);
 		}
 
 		FilesMonitor _FilesMonitor;
