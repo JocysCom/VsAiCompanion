@@ -758,7 +758,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (control == null) throw new ArgumentNullException(nameof(control));
 
 			// Invoke UI thread if necessary, to perform UI updates
-			control.Dispatcher.Invoke(() =>
+			AppInvoke(() =>
 			{
 				// Calculate new text size
 				var newTextSize = System.Text.Encoding.UTF8.GetByteCount(control.Text + text);

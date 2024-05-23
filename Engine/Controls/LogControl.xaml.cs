@@ -22,7 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void Clear()
 		{
-			Dispatcher.Invoke(LogTextBox.Clear);
+			ControlsHelper.AppInvoke(LogTextBox.Clear);
 		}
 
 

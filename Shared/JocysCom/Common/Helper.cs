@@ -234,6 +234,14 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Delay some frequently repeatable actions.
 		/// </summary>
+		public static async Task Delay(Func<Task> action, int? delay = null)
+		{
+			await _Delay(action, delay);
+		}
+
+		/// <summary>
+		/// Delay some frequently repeatable actions.
+		/// </summary>
 		public static async Task Delay(Action action, int? delay = null)
 		{
 			await _Delay(action, delay);

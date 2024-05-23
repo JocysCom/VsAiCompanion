@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using JocysCom.ClassLibrary.Controls;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -37,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void RotateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			Dispatcher.Invoke(() =>
+			ControlsHelper.AppInvoke(() =>
 			{
 				var angle = (AxisAngleRotation.Angle + 2) % 360;
 				AxisAngleRotation.Angle = angle;

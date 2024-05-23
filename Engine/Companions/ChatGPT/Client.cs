@@ -2,6 +2,7 @@
 using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
@@ -309,7 +310,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			clientToken.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(clientToken.Token, cancellationToken);
 			var id = Guid.NewGuid();
-			Global.MainControl.Dispatcher.Invoke(() =>
+			ControlsHelper.AppInvoke(() =>
 			{
 				//item.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
@@ -332,7 +333,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			finally
 			{
-				Global.MainControl.Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					Global.MainControl.InfoPanel.RemoveTask(id);
 				});
@@ -361,7 +362,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			var id = Guid.NewGuid();
-			Global.MainControl.Dispatcher.Invoke(() =>
+			ControlsHelper.AppInvoke(() =>
 			{
 				item.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
@@ -495,7 +496,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					if (Service.IsAzureOpenAI || secure)
 					{
 						var chatCompletionsOptions = new ChatCompletionsOptions(modelName, messages);
-						Global.MainControl.Dispatcher.Invoke(() =>
+						ControlsHelper.AppInvoke(() =>
 						{
 							if (item.PluginsEnabled)
 								PluginsManager.ProvideTools(item, chatCompletionsOptions);
@@ -541,7 +542,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									assistantMessageItem.Attachments.Add(attachment);
 									assistantMessageItem.IsAutomated = true;
 									messageItems.Add(assistantMessageItem);
-									Global.MainControl.Dispatcher.Invoke(() =>
+									ControlsHelper.AppInvoke(() =>
 									{
 										item.Messages.Add(assistantMessageItem);
 										item.Modified = DateTime.Now;
@@ -597,7 +598,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								request.messages.Add(msg);
 
 						}
-						Global.MainControl.Dispatcher.Invoke(() =>
+						ControlsHelper.AppInvoke(() =>
 						{
 							if (item.PluginsEnabled)
 								PluginsManager.ProvideTools(item, request);
@@ -608,7 +609,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							{
 								var responseMessage = chatChoice.message;
 								answer += (responseMessage ?? chatChoice.delta).content;
-								Global.MainControl.Dispatcher.Invoke(() =>
+								ControlsHelper.AppInvoke(() =>
 								{
 									// Check if the model wanted to call a function
 									if (item.PluginsEnabled)
@@ -624,7 +625,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			finally
 			{
-				Global.MainControl.Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					Global.MainControl.InfoPanel.RemoveTask(id);
 					item.CancellationTokenSources.Remove(cancellationTokenSource);
@@ -641,7 +642,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				foreach (var functionResult in functionResults)
 					userAutoReplyMessageItem.Attachments.Add(functionResult);
 				userAutoReplyMessageItem.IsAutomated = true;
-				Global.MainControl.Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					messageItems.Add(userAutoReplyMessageItem);
 				});

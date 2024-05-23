@@ -20,7 +20,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -314,7 +313,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_Scanner.Progress += _Scanner_Progress;
 			ExcludePatterns = GetIgnoreFromText(item.ExcludePatterns);
 			IncludePatterns = GetIgnoreFromText(item.IncludePatterns);
-			Dispatcher.Invoke(new Action(() =>
+			ControlsHelper.AppInvoke(new Action(() =>
 			{
 				MainTabControl.SelectedItem = LogTabPage;
 				try
@@ -328,7 +327,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					LogPanel.Add(ex.ToString());
 				}
 			}));
-			Dispatcher.Invoke(new Action(() =>
+			ControlsHelper.AppInvoke(new Action(() =>
 			{
 				ScanProgressPanel.UpdateProgress("...", "");
 				ScanStartButton.IsEnabled = false;
@@ -433,7 +432,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _Scanner_Progress(object sender, ClassLibrary.ProgressEventArgs e)
 		{
-			Dispatcher.Invoke(new Action(() =>
+			ControlsHelper.AppInvoke(new Action(() =>
 			{
 				ScanProgressPanel.UpdateProgress(e);
 				if (e.State == ClassLibrary.ProgressStatus.Completed)

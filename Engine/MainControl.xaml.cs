@@ -148,7 +148,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (Dispatcher.HasShutdownStarted)
 				return;
 			// Use `BeginInvoke, becase `Invoke` would freeze here.
-			Dispatcher.BeginInvoke(new Action(() =>
+			ControlsHelper.BeginInvoke(new Action(() =>
 			{
 				lock (ExceptionsToDisplay)
 				{

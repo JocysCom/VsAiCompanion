@@ -301,7 +301,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				// Evaluate the request to execute a function by another AI.
 				assistantEvaluation = await ClientHelper.EvaluateToolExecutionSafety(item, cancellationTokenSource) ?? "";
-				Global.MainControl.Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					var lastMessage = item.Messages.Last();
 					var attachment = new Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
@@ -322,7 +322,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					return true;
 
 				// This will make approval form on template panel visible.
-				Global.MainControl.Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					item.PluginFunctionCalls.Add(pfci);
 				});
@@ -334,7 +334,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				catch (Exception)
 				{
 				}
-				Global.MainControl.Dispatcher.Invoke(() =>
+				ControlsHelper.AppInvoke(() =>
 				{
 					item.PluginFunctionCalls.Remove(pfci);
 				});

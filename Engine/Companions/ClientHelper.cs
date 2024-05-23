@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -555,7 +556,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				message += " " + Engine.Resources.MainResources.main_VsExtensionVersionMessage;
 			var msgItem = new MessageItem(SystemName, message, MessageType.Error);
 			msgItem.Attachments.Add(new MessageAttachments(ContextType.Error, "log", ex.ToString()));
-			Global.MainControl.Dispatcher.Invoke(() =>
+			ControlsHelper.AppInvoke(() =>
 			{
 				item.Messages.Add(msgItem);
 				item.Modified = DateTime.Now;

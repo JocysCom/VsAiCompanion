@@ -76,9 +76,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Data.FineTuningModelListSelection = selection;
 		}
 
-		private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+		private void RefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			await Refresh();
+			_ = Helper.Delay(Refresh, AppHelper.NavigateDelayMs);
 		}
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -100,12 +100,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			if (MustRefresh && IsVisible)
-				await Refresh();
+				_ = Helper.Delay(Refresh, AppHelper.NavigateDelayMs);
 		}
 
 		#region IBindData
@@ -130,19 +130,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_Data = value;
 				MustRefresh = true;
 				if (IsVisible)
-					Dispatcher.BeginInvoke((Action)(async () => await Refresh()));
+					_ = Helper.Delay(Refresh, AppHelper.NavigateDelayMs);
 			}
 		}
 		public FineTuningItem _Data;
 
 		public bool MustRefresh;
 
-		private async void _Data_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void _Data_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(_Data.AiService))
 			{
 				if (Global.IsGoodSettings(_Data.AiService))
-					await Refresh();
+					_ = Helper.Delay(Refresh, AppHelper.NavigateDelayMs);
 			}
 		}
 
