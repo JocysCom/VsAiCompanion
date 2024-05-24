@@ -163,7 +163,7 @@
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
 					<Button Name="ListAccountsButton" Click="ListAccountsButton_Click">
 						<StackPanel Focusable="False">
-							<Label Content="List Accounts" />
+							<Label Content="List Cached Accounts" />
 						</StackPanel>
 					</Button>
 					<Button Name="InspectTokenButton" Click="InspectTokenButton_Click">

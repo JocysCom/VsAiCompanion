@@ -18,19 +18,54 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 {
 	public class AppSecurityHelper
 	{
-		// Credential - An object used to prove the identity of a user or service.
-		// Scope      - A string that specifies a particular permission or set of permissions requested.
-		//              Scopes are supplied with credentials when requesting an access token.
-		// Token      - A digital object created after a user or service successfully authenticates and passes
-		//              authorization processes. Tokens require credentials and scopes to be created.
-		//              - Access Token - authorize access to resources on behalf of the user.
-		//              - ID Token - contains identity information about the user.
-		// Account    - An object representing the authenticated user's identity.
+
+		/*
+
+		SECURITY:
+
+			Credential - An object used to prove the identity of a user or service.
+						 It can contain a username and password, tokens, certificates, or other authentication information.
+			Scope      - A string that specifies a particular resource and set of permissions requested for that resource.
+						 Scopes are supplied with credentials when requesting an access token.
+			Token      - A digital object created after a user or service successfully authenticates.
+						 Tokens require credentials and scopes to be created.
+			Account    - An object representing the authenticated user's identity.
+
+		TOKEN TYPES:
+
+			- Access Token - Sent instead of credentials to authorize access to resources on behalf of the user.
+			- ID Token - Contains identity information about the user. They should NOT be sent to an API.
+
+		An Access Token must contain:
+
+			- Expiry Date: The date and time after which the token is no longer valid.
+			- Scope: The list of resources or operations that the token grants access to.
+			- Permissions: The specific actions that the token holder is allowed to perform on the resources.
+			- Digital Signature: A cryptographic signature that can be used to verify the token's integrity and authenticity, proving that it was issued by the genuine provider.
+
+		USER/SERVICE 
+		│
+		│    AUTHENTICATION SERVER: Verifies Credentials
+		├──► Credentials (e.g., username & password, token, certificate) + Optional Scopes
+		│◄── Tokens (Access Token, ID Token)
+		│
+		│    RESOURCE SERVER/SERVICE: Verifies Token (Using Digital Signature)
+		├──► Access Token
+		│◄── Resource
+
+		*/
 
 		// Preconfigured set of permissions. Usually formatted as https://{resource}/{permission}:
 		public const string MicrosoftGraphScope = "https://graph.microsoft.com/.default";
 		public const string MicrosoftAzureScope = "https://management.azure.com/.default";
+		// Fully qualified URI for "User.Read";
+		// Permissions to sign in the user and read the user's profile.
 		public const string MicrosoftGraphUserReadScope = "https://graph.microsoft.com/User.Read";
+
+		private const string CommonAuthority = "https://login.microsoftonline.com/common";
+		private const string OrganizationsAuthority = "https://login.microsoftonline.com/organizations";
+		private const string ConsumersAuthority = "https://login.microsoftonline.com/consumers";
+		private const string TenantAuthority = "https://login.microsoftonline.com/{0}";
 
 		// Using DefaultAzureCredential
 		//
@@ -50,11 +85,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 
 		public IPublicClientApplication Pca { get; } = PublicClientApplicationBuilder
-				.Create(Global.AppSettings?.ClientAppId)
-				.WithRedirectUri("http://localhost")
-				.WithDefaultRedirectUri()
-				.Build();
-
+			.Create(Global.AppSettings?.ClientAppId)
+			//.WithAuthority(CommonAuthority)
+			.WithRedirectUri("http://localhost")
+			.WithDefaultRedirectUri()
+			.Build();
 
 		/// <summary>
 		/// Store token cache in the app settings.
@@ -88,17 +123,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var profile = Global.AppSettings.UserProfiles.FirstOrDefault(p => p.ServiceType == ApiServiceType.Azure);
 			if (profile == null)
 				return new OperationResult<UserProfile>(new Exception("Profile not found. Please log-in."));
-			if (string.IsNullOrEmpty(profile.AccessToken))
-				return new OperationResult<UserProfile>(new Exception("No valid user profile or access token found."));
+			//if (string.IsNullOrEmpty(profile.AccessToken))
+			//	return new OperationResult<UserProfile>(new Exception("No valid user profile or access token found."));
 			return new OperationResult<UserProfile>(profile);
 		}
 
 		public async Task RefreshProfileImage()
 		{
 			var profile = GetProfile().Result;
-			if (profile == null)
-				return;
-			profile.Image = await Global.Security.GetUserAvatar(profile.AccessToken);
+			var accessToken = profile?.AccessToken;
+			if (string.IsNullOrEmpty(accessToken))
+			{
+				var token = await GetAccessToken(new string[] { MicrosoftGraphScope });
+				accessToken = token.Token;
+			}
+			profile.Image = await Global.Security.GetUserAvatar(accessToken);
 		}
 
 		private void SaveUserProfile(AuthenticationResult result)
@@ -145,22 +184,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public static async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
 		{
-			var profile = GetProfile().Result;
-			if (profile == null)
+			var accessToken = GetProfile().Result?.AccessToken;
+			if (string.IsNullOrEmpty(accessToken))
 				return null;
 			// Ensure the token has the required scopes
 			var scopes = new string[] { MicrosoftGraphScope };
-			var tokenCredential = new AccessTokenCredential(profile.AccessToken);
+			var tokenCredential = new AccessTokenCredential(accessToken);
 			var tokenRequestContext = new TokenRequestContext(scopes);
 			var token = tokenCredential.GetToken(tokenRequestContext, cancellationToken);
-			if (token.ExpiresOn < DateTimeOffset.UtcNow)
+			var isExired = token.ExpiresOn < DateTimeOffset.UtcNow;
+			if (isExired)
 			{
 				// Re-acquire the token with the required scopes
 				var result = await Global.Security.SignIn(scopes);
 				if (!result.Success)
 					return null;
 			}
-			var credential = new AccessTokenCredential(profile.AccessToken);
+			var credential = new AccessTokenCredential(accessToken);
 			return credential;
 		}
 
@@ -185,7 +225,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		public async Task<OperationResult<AuthenticationResult>> SignIn(params string[] scopes)
 		{
 			if (scopes.Length == 0)
-				scopes = new string[] { "User.Read" };
+				scopes = new string[] { MicrosoftGraphScope };
 			AuthenticationResult result = null;
 			var requiresUI = false;
 			try
@@ -292,6 +332,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		}
 
 		public IAccount _account;
+
+
+		static async Task<Microsoft.Graph.Models.User> GetUserInfoAsync(string accessToken)
+		{
+			using (var httpClient = new HttpClient())
+			{
+				// Set the Authorization header with the access token
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+				// Set the base address for the Microsoft Graph API
+				httpClient.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
+				// Send a GET request to the /me endpoint
+				var response = await httpClient.GetAsync("me");
+				// Ensure the request was successful
+				response.EnsureSuccessStatusCode();
+				// Read and deserialize the JSON response
+				var jsonResponse = await response.Content.ReadAsStringAsync();
+				var userInfo = System.Text.Json.JsonSerializer.Deserialize<Microsoft.Graph.Models.User>(jsonResponse);
+				return userInfo;
+			}
+		}
 
 		/// <summary>
 		/// Load this once when app starts.

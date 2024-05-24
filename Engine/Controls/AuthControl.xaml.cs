@@ -1,9 +1,14 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Security;
+using Microsoft.Identity.Client;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -64,33 +69,48 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var scope = new[] { AppSecurityHelper.MicrosoftGraphScope };
 				var token = await AppSecurityHelper.GetAccessToken(scope, cancellationToken);
 				var accessToken = token.Token;
-				var isJwtToken = accessToken.Split('.').Length == 3;
-				LogPanel.Add($"Access Token Expiry Date: {token.ExpiresOn}\r\n");
-				if (isJwtToken)
+				LogPanel.Add($"Access Token:\r\n");
+				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
+				InspectToken(accessToken);
+				var idToken = AppSecurityHelper.GetProfile()?.Result?.IdToken;
+				if (!string.IsNullOrEmpty(idToken))
 				{
-					// JWT tokens allow clients to decode and validate them.
-					var handler = new JwtSecurityTokenHandler();
-					var jwtToken = handler.ReadToken(accessToken) as JwtSecurityToken;
-					if (jwtToken == null)
-					{
-						LogPanel.Add("Invalid JWT token.\r\n");
-						return;
-					}
-					// Display the expiry date
-					LogPanel.Add($"Claims[{jwtToken.Claims.Count()}]: \r\n");
-					// Optionally, you can print other claims as well
-					foreach (var claim in jwtToken.Claims)
-						LogPanel.Add($"  {claim.Type}: {claim.Value}\r\n");
-				}
-				else
-				{
-					// An opaque token is a sequence of characters
-					// not readable or interpretable by the client.
-					LogPanel.Add("Opaque Access Token.\r\n");
-					LogPanel.Add($"{accessToken}.\r\n");
+					LogPanel.Add($"ID Token:\r\n");
+					InspectToken(idToken);
 				}
 			});
 		}
+
+		public void InspectToken(string accessToken)
+		{
+			// header, payload/body, signature.
+			var isJwtToken = accessToken.Split('.').Length == 3;
+			// If token format is JSON Web Token (JWT) then...
+			if (isJwtToken)
+			{
+				// JWT tokens allow clients to decode and validate them.
+				var handler = new JwtSecurityTokenHandler();
+				var jwtToken = handler.ReadToken(accessToken) as JwtSecurityToken;
+				if (jwtToken == null)
+				{
+					LogPanel.Add("Invalid JWT token.\r\n");
+					return;
+				}
+				// Display the expiry date
+				LogPanel.Add($"Claims[{jwtToken.Claims.Count()}]: \r\n");
+				// Print claims.
+				foreach (var claim in jwtToken.Claims)
+					LogPanel.Add($"  {claim.Type}: {claim.Value}\r\n");
+			}
+			else
+			{
+				// An opaque token is a sequence of characters
+				// not readable or interpretable by the client.
+				LogPanel.Add("Opaque Access Token.\r\n");
+				LogPanel.Add($"{accessToken}.\r\n");
+			}
+		}
+
 
 		private async void GetSecretWithClientSecretButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -134,6 +154,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				var accounts = await Global.Security.Pca.GetAccountsAsync();
+				LogPanel.Add($"Cached Accounts [{accounts.Count()}]:\r\n");
 				foreach (var account in accounts)
 				{
 					LogPanel.Add($"Username: {account.Username}\r\n");
@@ -148,12 +169,64 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
+				var accessToken = await GetAccessTokenAsync();
+				var subscriptions = await GetAzureSubscriptionsAsync(accessToken);
+				Console.WriteLine("Retrieved Subscriptions:");
+				foreach (var subscription in subscriptions)
+				{
+					Console.WriteLine($"Name: {subscription.Value}, ID: {subscription.Key}");
+				}
+
 				var credential = await AppSecurityHelper.GetTokenCredential(cancellationToken);
 				var items = await AppSecurityHelper.GetSubscriptionNamesAndIdsAsync(credential, cancellationToken);
 				foreach (var item in items)
 					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
 			});
 		}
+
+		public async Task<string> GetAccessTokenAsync()
+		{
+			try
+			{
+				var result = await Global.Security.Pca.AcquireTokenInteractive(new[] { AppSecurityHelper.MicrosoftAzureScope }).ExecuteAsync();
+				return result.AccessToken;
+			}
+			catch (MsalException ex)
+			{
+				Console.WriteLine($"Error acquiring access token: {ex.Message}");
+				return null;
+			}
+		}
+
+
+		public async Task<Dictionary<string, string>> GetAzureSubscriptionsAsync(string accessToken)
+		{
+			var subscriptions = new Dictionary<string, string>();
+			using (var httpClient = new HttpClient())
+			{
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+				var response = await httpClient.GetAsync("https://management.azure.com/subscriptions?api-version=2020-01-01");
+				if (response.IsSuccessStatusCode)
+				{
+					var jsonResponse = await response.Content.ReadAsStringAsync();
+					var responseObject = JObject.Parse(jsonResponse);
+					var subscriptionArray = responseObject["value"] as JArray;
+					foreach (var subscription in subscriptionArray)
+					{
+						var subscriptionId = subscription["subscriptionId"].ToString();
+						var subscriptionName = subscription["displayName"].ToString();
+						subscriptions.Add(subscriptionId, subscriptionName);
+					}
+				}
+				else
+				{
+					Console.WriteLine($"Error retrieving subscriptions: {response.ReasonPhrase}");
+				}
+			}
+			return subscriptions;
+		}
+
+
 
 		#region Control Helper Methods
 
