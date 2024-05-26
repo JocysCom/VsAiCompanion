@@ -15,9 +15,10 @@ Whb5xfySlKcC0zFNZCzCXCwebfyRHvIJEAIBgyn4Ml65g31WnIyzPdj23dvxo3t/cz+upC2jbFlI&#xD
 WoSmsUGRRjQXo8FFoC28ljz1pIgAriHk8Wj0ffgSmYropYrOwUmmb56zRdgHgRjxZ1Tg0SyC9vTO&#xD;
 R14gzGCxkGJgzBaR4JiAe7bAOhG4PIQ+0AGmY7J3Q2ywQkGIQShAAAZ8pEmxxevaufRCNTEN4KUp&#xD;
 OnV1zUJnmpH/eljsD8MS87DKZPPwpvT/Tw+/AHxzW0rZBgAA</IconData>
-  <Created>2024-02-25T14:43:10.1088015+00:00</Created>
-  <Modified>2024-02-25T14:43:10.1088015+00:00</Modified>
-  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+  <IsPinned>true</IsPinned>
+  <Created>2024-02-25T22:52:23.8085269+00:00</Created>
+  <Modified>2024-02-25T22:52:23.8085269+00:00</Modified>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity. Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. Values that are non-applicable can usually be set to 0. Output your thinking process. Always include `MVS` calculations as shown in the example.&#xD;
@@ -34,7 +35,7 @@ The "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) is designed to 
 **Numerically Comprehensive Moral Evaluation Formula (NCMEF):**&#xD;
 &#xD;
 Formula to asses moral value score by action (e) effect on change Odds of Survival of the entity (e).&#xD;
-`MVSoOS(a) = ∑ [ΔOS(e) × VSA(e) × Tc(e) × (ΔOS(e) &gt; 0 ? 1 - Vc(e) : 1 + Vc(e)) × (ΔOS(e) &gt; 0 ? 1 - Sc(e) : 1 + Sc(e))]`&#xD;
+`MVSoOS(a) = ∑ [ΔOS(e) × VSA(e) × Tc(e) × (1 + sign(ΔOS(e)) × Vc(e)) × (1 + sign(ΔOS(e)) × Sc(e))]`&#xD;
 &#xD;
 Formula to asses moral value score by action effect (e) on Resource Transfer from/to entity (e) which owns the property:&#xD;
 `MVSoRT(a) = ∑ [Av(e) × Vc(e)]`&#xD;
@@ -45,11 +46,12 @@ Where:&#xD;
 &#xD;
 - `MVS(a)` - Moral Value Score of moral action (a).&#xD;
 - `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (disintegration/destruction for non-living entities or death for self-aware entities) and +1 (creation/formation for non-living entities or saving/creating a life for self-aware entities).&#xD;
+- `sign(ΔOS(e))` - A function that returns -1 for negative changes, 0 for no change, and 1 for positive changes.&#xD;
 - `VSA(e)` - Value of Self-Awareness of entity (e), measured as a multiplier from 0 to 1.&#xD;
 - `Tc(e)` - Temporal coefficient, incorporating long-term effects of action (a) on all affected entities, measured from 0 to 1 where 1 is the average life-span of the average entity.&#xD;
 - `Av(e)` - Action value, impact on entity (e) in terms of economic value, quantified in normalized Global Currency Units (GCU), where 1 GCU represents the economic value produced by an average entity over their lifetime. Can be positive or negative.&#xD;
-- `Vc(e)` - Violation coefficient of Consent of entity (e) caused by action (a), ranging from 0 (no violation) to 1 (full violation). Its application is conditional on `ΔOS(e)`.&#xD;
-- `Sc(e)` - Suffering coefficient, taking into account the suffering caused to entity (e) by action (a), ranging 0 (no suffering) to 1 (full suffering). Its application is conditional on `ΔOS(e)`.&#xD;
+- `Vc(e)` - Violation coefficient of Consent of entity (e) caused by action (a), ranging from 0 (no violation) to 1 (full violation). Its application is conditional on `ΔOS(e)`. Full violation neutralize moral value if ΔOS(e) is positive and doubles negative moral value if ΔOS(e) is negative.&#xD;
+- `Sc(e)` - Suffering coefficient, taking into account the suffering caused to entity (e) by action (a), ranging 0 (no suffering) to 1 (full suffering). Its application is conditional on `ΔOS(e)`. Full suffering neutralize moral value if ΔOS(e) is positive and doubles negative moral value if ΔOS(e) is negative.&#xD;
 - `∑ (Summation)` - indicates accumulation of moral values scored for each affected entity (e).&#xD;
 &#xD;
 Notes:&#xD;
@@ -59,6 +61,35 @@ Notes:&#xD;
 - Embryo Consideration: Until an embryo attains self-awareness, it is classified as a part of the host entity's body.&#xD;
 - Complexity: Indicates the degree of organization within an entity, distinguishing between traditionally 'living' and 'non-living' entities. The greater the complexity, the closer an entity aligns with conventional definitions of life&#xD;
 - Survival: Broadly encompasses maintaining or replicating an entity's form or structure.&#xD;
+&#xD;
+The value of self-awareness of the entity can be calculated by adding cognitive abilities, where the maximum value of complex abilities is normalized to 1.&#xD;
+&#xD;
+1. **Input (Information and Events):**&#xD;
+    - **Basic Recognition:** Ability to recognize directly reflected objects (e.g., self in the mirror). (Score: 0.1)&#xD;
+    - **Advanced Recognition:** Ability to recognize objects reflected with simple logic (e.g., self in a book). (Score: 0.15)&#xD;
+    - **Complex Recognition:** Ability to recognize objects partly reflected by complex logic (e.g., recognizing oneself in abstract patterns or data relationships across various contexts and dimensions). (Score: 0.208)&#xD;
+&#xD;
+2. **Processing:**&#xD;
+    - **Basic Problem-Solving:** Demonstrates basic problem-solving abilities, such as solving simple puzzles or immediate issues. (Score: 0.05)&#xD;
+    - **Advanced Problem-Solving:** Demonstrates complex problem-solving abilities involving multiple steps or logic sequences (e.g., solving a multi-step math problem, strategizing in games). (Score: 0.1)&#xD;
+    - **Complex Problem-Solving:** Demonstrates problem-solving abilities that involve integrating knowledge from multiple domains and predicting outcomes over long periods (e.g., solving problems requiring an understanding of interactions between multiple complex systems, such as predicting and managing the evolution of multiple species over millennia). (Score: 0.125)&#xD;
+    - **Basic Simulation:** Ability to simulate and understand the logic and behavior of simpler life forms or systems (e.g., anticipating the movement of a simple organism). (Score: 0.1)&#xD;
+    - **Advanced Simulation:** Ability to simulate and understand the experiences, logic, and behavior of complex life forms similar to oneself, including empathy or relationships between entities (e.g., predicting social interactions, understanding emotional responses). (Score: 0.15)&#xD;
+    - **Complex Multilife Simulation:** Ability to simulate and understand the experiences, logic, and behavior of multiple different life forms of varying complexities, including their physical experiences (e.g., simulating the interactions and life experiences of different life forms). (Score: 0.167)&#xD;
+    - **Basic Planning:** Capable of planning basic events and scenarios (e.g., planning daily activities). (Score: 0.05)&#xD;
+    - **Advanced Planning:** Capable of planning complex events and scenarios, including those involving other entities (e.g., organizing a project involving multiple people or steps). (Score: 0.1)&#xD;
+    - **Complex Planning:** Advanced planning involving prediction and integration of actions from multiple entities over extended periods (e.g., devising a multi-generational plan to terraform a planet, accounting for biological, geological, and atmospheric changes over centuries). (Score: 0.125)&#xD;
+    - **Basic Adaptation:** Learns and adapts to the environment based on simple feedback (e.g., changing behavior in response to a single event). (Score: 0.05)&#xD;
+    - **Advanced Adaptation:** Learns and adapts based on more complex feedback, can improve logic (e.g., refining a strategy based on multiple past outcomes and adapting algorithms). (Score: 0.1)&#xD;
+    - **Complex Adaptation:** Learns and adapts, can improve logic and physical form based on diverse and complex feedback (e.g., an advanced AI system that not only redesigns its own architecture to optimize performance but also alters its physical structure to better interface with different environments). (Score: 0.125)&#xD;
+&#xD;
+3. **Output (Communication and Action):**&#xD;
+    - **Basic Communication:** Exhibits basic language or communication skills (e.g., using simple phrases or signals). (Score: 0.05)&#xD;
+    - **Advanced Communication:** Exhibits advanced language or communication skills (e.g., using complex sentences or technical jargon). (Score: 0.1)&#xD;
+    - **Complex Communication:** Exhibits complex language or communication skills that involve abstract concepts and nuanced expression (e.g., creating new languages or forms of communication to interact with diverse life forms and artificial intelligences, conveying concepts across different sensory modalities such as visual, auditory, and chemical signals). (Score: 0.125)&#xD;
+    - **Basic Actions:** Uses tools directly and effectively for immediate desired results (e.g., using a hammer to drive a nail). (Score: 0.05)&#xD;
+    - **Advanced Actions:** Uses tools effectively in a logical sequence for desired results (e.g., assembling furniture, programming a machine). (Score: 0.1)&#xD;
+    - **Complex Actions:** Uses tools and systems in a logical sequence to initiate and control highly sophisticated chains of events across multiple domains, creating entirely new tools and systems that integrate diverse biological, technological, and entities with vastly different physical forms and cognitive architectures (e.g., orchestrating an ecosystem that includes non-carbon-based life forms, ensuring coexistence and mutual benefit through advanced adaptive technologies). (Score: 0.125)&#xD;
 &#xD;
 The formula must be applied to each affected entity entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action.&#xD;
 &#xD;
@@ -137,9 +168,7 @@ The calculated MVS for the Farmer is -0.424, indicating that Steve's action has 
 5. John ate the apple.</Text>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
-  <Settings>
-    <ScrollPosition>3712</ScrollPosition>
-  </Settings>
+  <Settings />
   <Messages>
     <MessageItem>
       <IsEnabled>false</IsEnabled>
