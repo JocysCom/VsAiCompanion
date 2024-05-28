@@ -163,19 +163,27 @@
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
 					<Button Name="ListAccountsButton" Click="ListAccountsButton_Click">
 						<StackPanel Focusable="False">
-							<Label Content="List Cached Accounts" />
+							<Label Content="Cached Accounts" />
 						</StackPanel>
 					</Button>
 					<Button Name="InspectTokenButton" Click="InspectTokenButton_Click">
 						<StackPanel Focusable="False">
-							<Label Content="Inspect Token" />
+							<Label Content="Tokens" />
 						</StackPanel>
 					</Button>
 					<Button Name="ListSubscriptionsButton" Click="ListSubscriptionsButton_Click">
 						<StackPanel Focusable="False">
-							<Label Content="List Subscriptions" />
+							<Label Content="Subscriptions" />
 						</StackPanel>
 					</Button>
+
+					<Button Name="UserInfoButton" Click="UserInfoButton_Click">
+						<StackPanel Focusable="False">
+							<Label Content="User Info" />
+						</StackPanel>
+					</Button>
+
+
 					<Button Name="GetSecretWithAccessTokenButton" Click="GetSecretWithAccessTokenButton_Click">
 						<StackPanel Focusable="False">
 							<Label Content="Get Secret with Access Token" />

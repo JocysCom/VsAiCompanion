@@ -16,6 +16,7 @@
 		<Product>AI Companion Teams Plugin</Product>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>

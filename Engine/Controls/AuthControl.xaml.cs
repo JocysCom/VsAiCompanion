@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using Azure.Core;
+using Azure.Identity;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Security;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json.Linq;
@@ -9,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -65,6 +68,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
+
+				//var credential = await AppSecurityHelper.GetTokenCredential(cancellationToken);
+				//var idToken1 = await AppSecurityHelper.GetIdToken(credential);
+
+
 				await Task.Delay(0);
 				var scope = new[] { AppSecurityHelper.MicrosoftGraphScope };
 				var token = await AppSecurityHelper.GetAccessToken(scope, cancellationToken);
@@ -72,7 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogPanel.Add($"Access Token:\r\n");
 				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
 				InspectToken(accessToken);
-				var idToken = AppSecurityHelper.GetProfile()?.Result?.IdToken;
+				var idToken = AppSecurityHelper.GetProfile()?.IdToken;
 				if (!string.IsNullOrEmpty(idToken))
 				{
 					LogPanel.Add($"ID Token:\r\n");
@@ -128,7 +136,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var accessToken = AppSecurityHelper.GetProfile().Result?.AccessToken;
+				var accessToken = AppSecurityHelper.GetProfile().AccessToken;
 				if (string.IsNullOrEmpty(accessToken))
 					return;
 				var secret = await AppSecurityHelper
@@ -141,8 +149,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var scope = new[] { AppSecurityHelper.MicrosoftGraphScope };
-				var token = await AppSecurityHelper.GetAccessToken(scope, cancellationToken);
+
+
+				//var w = new JocysCom.VS.AiCompanion.Plugins.Core.Web();
+				//var page = await w.GetWebPageContentsAuthenticated(TestTextBox.Text, false);
+				var uri = new Uri(TestTextBox.Text);
+				var scope1 = $"{uri.Scheme}://{uri.Host}/.default";
+
+				//var token1 = GetAccessTokenUsingWindowsAuthentication();
+				//var content = await GetWebPageContentsWithDefaultAzureCredential(TestTextBox.Text, scope1, token1);
+
+
+				var scopes = new[] { AppSecurityHelper.MicrosoftGraphScope };
+				var token = await AppSecurityHelper.GetAccessToken(scopes, cancellationToken);
 				var accessToken = token.Token;
 				var contents = await AppSecurityHelper.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken, cancellationToken);
 				LogPanel.Add($"{contents}\r\n");
@@ -169,16 +188,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var accessToken = await GetAccessTokenAsync();
-				var subscriptions = await GetAzureSubscriptionsAsync(accessToken);
-				Console.WriteLine("Retrieved Subscriptions:");
-				foreach (var subscription in subscriptions)
-				{
-					Console.WriteLine($"Name: {subscription.Value}, ID: {subscription.Key}");
-				}
-
+				LogPanel.Add("Retrieved Subscriptions:");
 				var credential = await AppSecurityHelper.GetTokenCredential(cancellationToken);
-				var items = await AppSecurityHelper.GetSubscriptionNamesAndIdsAsync(credential, cancellationToken);
+				var items = await AppSecurityHelper.GetAzureSubscriptions(credential, cancellationToken);
 				foreach (var item in items)
 					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
 			});
@@ -226,10 +238,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return subscriptions;
 		}
 
-
+		private async void UserInfoButton_Click(object sender, RoutedEventArgs e)
+		{
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				var user = await Global.Security.GetMicrosoftUser(cancellationToken);
+				LogAsJson(user);
+			});
+		}
 
 		#region Control Helper Methods
 
+		public void LogAsJson(object o)
+		{
+			var options = new JsonSerializerOptions()
+			{
+				WriteIndented = true,
+				DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+			};
+			var json = JsonSerializer.Serialize(o, options);
+			LogPanel.Add($"{json}\r\n");
+
+		}
 
 		/// <summary>
 		/// Stores cancellation tokens created on this control that can be stopped with the [Stop] button.
@@ -261,6 +291,57 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.MainControl.InfoPanel.RemoveTask(source);
 			}
 		}
+
+		/// <summary>
+		/// Get the content of a web page using DefaultAzureCredential.
+		/// </summary>
+		private async Task<string> GetWebPageContentsWithDefaultAzureCredential(string url, string scope, string accessToken, CancellationToken cancellationToken = default)
+		{
+			// Define the scope required to access the target resource
+			var scopes = new[] { scope };
+			//var accessToken = await AppSecurityHelper.GetAccessToken(scopes, cancellationToken);
+			// Make the authenticated HTTP request
+			using (var client = new HttpClient())
+			{
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+				var response = await client.GetAsync(url, cancellationToken);
+				if (response.IsSuccessStatusCode)
+				{
+					// Successfully fetched the content
+					string content = await response.Content.ReadAsStringAsync();
+					return content;
+				}
+				else
+				{
+					// Handle unsuccessful responses
+					return $"Error: Unable to fetch the page. Status Code: {response.StatusCode}";
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Get access token using Windows Authentication
+		/// </summary>
+		/// <returns>Access Token</returns>
+		public static async Task<string> GetAccessTokenUsingWindowsAuthentication()
+		{
+			// Use DefaultAzureCredential which includes multiple authentication methods
+			var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+			{
+				ExcludeInteractiveBrowserCredential = true,
+				ExcludeManagedIdentityCredential = true,
+				ExcludeVisualStudioCredential = true,
+				ExcludeAzureCliCredential = true,
+				ExcludeEnvironmentCredential = true,
+				ExcludeSharedTokenCacheCredential = false // Ensure this one is included
+			});
+
+			var tokenRequestContext = new TokenRequestContext(new[] { "https://graph.microsoft.com/.default" }); // Adjust scope based on resource
+			AccessToken token = await credential.GetTokenAsync(tokenRequestContext);
+			return token.Token;
+		}
+
 
 		#endregion
 

@@ -50,6 +50,14 @@
 				Opacity="0.5" />
 		</Grid>
 		<TextBlock
+			Name="AccountType"
+			Margin="0,0,6,6"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Bottom"
+			x:FieldModifier="public"
+			Text="C" />
+
+		<TextBlock
 			Name="UserName"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"

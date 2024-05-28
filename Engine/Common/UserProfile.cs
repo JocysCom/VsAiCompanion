@@ -62,9 +62,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public ImageSource Image { get => _Image; set => SetProperty(ref _Image, value); }
 		private ImageSource _Image;
 
+		[DefaultValue(null)]
+		public bool? IsConsumer { get => _IsConsumer; set => SetProperty(ref _IsConsumer, value); }
+		private bool? _IsConsumer;
+
 		public void Clear()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
+
+		/// <summary>
+		/// Use windows user if empty.
+		/// </summary>
+		public bool IsEmpty()
+		{
+			return string.IsNullOrEmpty(Username);
 		}
 
 	}

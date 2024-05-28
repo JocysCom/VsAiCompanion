@@ -16,6 +16,7 @@
 		<RepositoryType>git</RepositoryType>
 		<AssemblyVersion>1.10.41</AssemblyVersion>
 		<FileVersion>1.10.41</FileVersion>
+		<Platforms>AnyCPU</Platforms>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 	</PropertyGroup>
 

@@ -37,7 +37,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(UserProfile.Image))
+			if (e.PropertyName == nameof(UserProfile.Image) ||
+				e.PropertyName == nameof(UserProfile.IsConsumer))
 				UpdateImage();
 		}
 
@@ -46,6 +47,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var noImage = Item?.Image == null;
 			DefaultImage.Visibility = noImage ? Visibility.Visible : Visibility.Collapsed;
 			MainImage.Visibility = noImage ? Visibility.Collapsed : Visibility.Visible;
+			AccountType.Text = Item.IsConsumer is null ? ""
+				: Item.IsConsumer.Value ? "C" : "B";
 		}
 
 		UserProfile _Item;
