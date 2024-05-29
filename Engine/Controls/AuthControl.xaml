@@ -66,29 +66,6 @@
 				</Grid.ColumnDefinitions>
 
 				<Label
-					Grid.Row="0"
-					Grid.Column="0"
-					Margin="5"
-					Content="Key Vault Name:" />
-				<TextBox
-					x:Name="KeyVaultNameTextBox"
-					Grid.Row="0"
-					Grid.Column="1"
-					Margin="5"
-					Text="JocysKeyVault" />
-
-				<Label
-					Grid.Row="1"
-					Grid.Column="0"
-					Margin="5"
-					Content="Secret Name:" />
-				<TextBox
-					x:Name="SecretNameTextBox"
-					Grid.Row="1"
-					Grid.Column="1"
-					Margin="5" />
-
-				<Label
 					Grid.Row="2"
 					Grid.Column="0"
 					Margin="5"
@@ -109,20 +86,6 @@
 					Grid.Row="3"
 					Grid.Column="1"
 					Margin="5" />
-
-				<Label
-					Grid.Row="4"
-					Grid.Column="0"
-					Margin="5"
-					Content="Client Secret:" />
-				<PasswordBox
-					x:Name="ClientSecretPasswordBox"
-					Grid.Row="4"
-					Grid.Column="1"
-					Margin="5" />
-				<StackPanel Grid.Row="5" Grid.Column="1">
-					<Button Margin="5" HorizontalAlignment="Right" Content="Save" />
-				</StackPanel>
 
 			</Grid>
 		</GroupBox>
@@ -182,18 +145,6 @@
 							<Label Content="User Info" />
 						</StackPanel>
 					</Button>
-
-
-					<Button Name="GetSecretWithAccessTokenButton" Click="GetSecretWithAccessTokenButton_Click">
-						<StackPanel Focusable="False">
-							<Label Content="Get Secret with Access Token" />
-						</StackPanel>
-					</Button>
-					<Button Name="GetSecretWithClientSecretButton" Click="GetSecretWithClientSecretButton_Click">
-						<StackPanel Focusable="False">
-							<Label Content="Get Secret with Client Secret" />
-						</StackPanel>
-					</Button>
 					<Button Name="StopButton" MinWidth="75" Click="StopButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_Stop}" Focusable="False" />
@@ -214,7 +165,7 @@
 			<TabItem Name="VaultItemsTabPage">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_folder_network}" />
+						<ContentControl Content="{StaticResource Icon_safe}" />
 						<Label Content="{StaticResource main_VaultItems}" />
 					</StackPanel>
 				</TabItem.Header>

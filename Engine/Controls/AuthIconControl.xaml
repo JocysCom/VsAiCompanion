@@ -49,14 +49,26 @@
 				Content="{StaticResource Icon_user_grey}"
 				Opacity="0.5" />
 		</Grid>
-		<TextBlock
-			Name="AccountType"
+
+		<ContentControl
+			x:Name="ConsumerImage"
+			Width="16"
+			Height="16"
 			Margin="0,0,6,6"
 			HorizontalAlignment="Right"
 			VerticalAlignment="Bottom"
-			x:FieldModifier="public"
-			Text="C" />
+			Content="{StaticResource Icon_home}"
+			Opacity="0.5" />
 
+		<ContentControl
+			x:Name="BusinessImage"
+			Width="16"
+			Height="16"
+			Margin="0,0,6,6"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Bottom"
+			Content="{StaticResource Icon_office_building2}"
+			Opacity="0.5" />
 		<TextBlock
 			Name="UserName"
 			HorizontalAlignment="Left"

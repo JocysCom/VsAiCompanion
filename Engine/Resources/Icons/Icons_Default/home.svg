@@ -1,0 +1,51 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>home icon</title>
+    <desc>home icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="64" y1="80" x2="362.1305" y2="496" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#fefefe"/>
+            <stop offset="1" stop-color="#dbe3ea"/>
+        </linearGradient>
+        <linearGradient x1="64" y1="82.5" x2="240.3185" y2="249.8265" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#d8e0e8"/>
+            <stop offset="1" stop-color="#c1ccd7"/>
+        </linearGradient>
+        <linearGradient x1="9.5" y1="54.25" x2="222.2449" y2="320.1815" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#e35045"/>
+            <stop offset="1" stop-color="#c53227"/>
+        </linearGradient>
+        <linearGradient x1="32" y1="480" x2="242.2852" y2="511.9995" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#6e7c8c"/>
+            <stop offset="1" stop-color="#657483"/>
+        </linearGradient>
+        <linearGradient x1="288" y1="288" x2="390.742" y2="480.0005" gradientUnits="userSpaceOnUse" id="color-5">
+            <stop offset="0" stop-color="#b37129"/>
+            <stop offset="0.58823" stop-color="#9c5f24"/>
+            <stop offset="1" stop-color="#86521f"/>
+        </linearGradient>
+        <linearGradient x1="304" y1="304" x2="384.0005" y2="464" gradientUnits="userSpaceOnUse" id="color-6">
+            <stop offset="0" stop-color="#d08730"/>
+            <stop offset="1" stop-color="#af6e28"/>
+        </linearGradient>
+        <linearGradient x1="112" y1="304" x2="135.4945" y2="403.4775" gradientUnits="userSpaceOnUse" id="color-7">
+            <stop offset="0" stop-color="#129eee"/>
+            <stop offset="1" stop-color="#45b2f1"/>
+        </linearGradient>
+        <linearGradient x1="272" y1="464" x2="296.9025" y2="480" gradientUnits="userSpaceOnUse" id="color-8">
+            <stop offset="0" stop-color="#909fae"/>
+            <stop offset="1" stop-color="#8998a7"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="none" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M64,265l192,-185l192,185l0,231l-384,0z" id="curve7" fill="url(#color-1)" fill-rule="evenodd"/>
+        <path d="M256,128l-192,192l0,-45.5l192,-192l192,192l0,45.5z" id="curve6" fill="url(#color-2)" fill-rule="evenodd"/>
+        <path d="M9.5,297.5l241,-241c3,-3 8,-3 11,0l241,241l-22.5,22.5l-224,-224l-224,224z" id="curve5" fill="url(#color-3)" fill-rule="nonzero"/>
+        <path d="M32,480l448,0l0,32l-448,0z" id="curve4" fill="url(#color-4)" fill-rule="evenodd"/>
+        <path d="M288,288l112,0l0,192l-112,0z" id="curve3" fill="url(#color-5)" fill-rule="evenodd"/>
+        <path d="M304,304l80,0l0,176l-80,0z" id="curve2" fill="url(#color-6)" fill-rule="evenodd"/>
+        <path d="M112,304l48,0l0,48l-48,0z M160,368l0,48l-48,0l0,-48z M176,304l48,0l0,48l-48,0z M224,368l0,48l-48,0l0,-48z" id="curve1" fill="url(#color-7)" fill-rule="evenodd"/>
+        <path d="M272,464l144,0l0,16l-144,0z" id="curve0" fill="url(#color-8)" fill-rule="evenodd"/>
+    </g>
+</svg>

@@ -47,8 +47,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var noImage = Item?.Image == null;
 			DefaultImage.Visibility = noImage ? Visibility.Visible : Visibility.Collapsed;
 			MainImage.Visibility = noImage ? Visibility.Collapsed : Visibility.Visible;
-			AccountType.Text = Item.IsConsumer is null ? ""
-				: Item.IsConsumer.Value ? "C" : "B";
+			ConsumerImage.Visibility = Item?.IsConsumer == true ? Visibility.Visible : Visibility.Collapsed;
+			BusinessImage.Visibility = Item?.IsConsumer == false ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		UserProfile _Item;

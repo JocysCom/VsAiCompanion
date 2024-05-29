@@ -147,9 +147,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var credential = await Security.AppSecurityHelper.GetTokenCredential();
 			if (credential == null)
 				return;
-			var secret = await Security.AppSecurityHelper
-				.GetSecretFromKeyVault(AzureVaultNameTextBox.Text, AzureVaultSecretNameTextBox.Text, credential);
-			Item.ApiSecretKey = secret?.Value ?? "";
+			//var secret = await Security.AppSecurityHelper
+			//	.GetSecretFromKeyVault(AzureVaultNameTextBox.Text, AzureVaultSecretNameTextBox.Text, credential);
+			//Item.ApiSecretKey = secret?.Value ?? "";
 		}
 
 	}

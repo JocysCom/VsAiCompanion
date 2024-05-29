@@ -115,6 +115,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				Global.AppSettings.AzureTokenCache = args.TokenCache.SerializeMsalV3();
 		}
 
+		// Determine if it is a Microsoft account by checking if the access token has a specific tenant ID for Microsoft accounts.
+		public static async Task<bool> IsMicrosoftAccount()
+		{
+			TokenCredential credential = await GetTokenCredential();
+			var profile = GetProfile();
+			var accessToken = profile.IdToken ?? profile.AccessToken;
+			return IsConsumerAccount(accessToken).GetValueOrDefault();
+		}
+
+		public static async Task<UserType> GetUserType()
+		{
+			if (DomainHelper.IsApplicationRunningOnDomain())
+				return UserType.Domain;
+			if (await IsMicrosoftAccount())
+				return UserType.Microsoft;
+			return UserType.Local;
+		}
+
 		#region User Profile
 
 		/// <summary>
@@ -128,12 +146,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task RefreshProfileImage()
 		{
-			var profile = GetProfile();
-			var credential = await GetTokenCredential();
-			var scopes = new[] { MicrosoftGraphScope };
-			var accessToken = await GetAccessToken(scopes);
-			profile.IsConsumer = IsConsumerAccount(profile.IdToken ?? accessToken.Token);
-			profile.Image = await Global.Security.GetProfileImage();
+			try
+			{
+				var profile = GetProfile();
+				//var credential = await GetTokenCredential();
+				var scopes = new[] { MicrosoftGraphScope };
+				var accessToken = await GetAccessToken(scopes);
+				profile.IsConsumer = IsConsumerAccount(profile.IdToken ?? accessToken.Token);
+				profile.Image = await Global.Security.GetProfileImage();
+			}
+			catch (Exception)
+			{
+			}
 		}
 
 		private void SaveUserProfile(AuthenticationResult result)
@@ -507,7 +531,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
-		public bool? IsConsumerAccount(string accessToken, CancellationToken cancellationToken = default)
+		public static bool? IsConsumerAccount(string accessToken, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrEmpty(accessToken))
 				return null;

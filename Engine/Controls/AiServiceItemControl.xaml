@@ -99,10 +99,6 @@
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Orientation="Horizontal">
-			<CheckBox Name="AzureVaultEnabledCheckBox" Content="Use" IsChecked="{Binding AzureVaultEnabled}" />
-			<TextBox Name="AzureVaultNameTextBox" MinWidth="128" Text="{Binding AzureVaultName}" />
-			<Label Content="Secret Name" />
-			<TextBox Name="AzureVaultSecretNameTextBox" MinWidth="128" Text="{Binding AzureVaultSecretName}" />
 			<Button
 				Name="AzureVaultValueRefreshButton"
 				Margin="3,0,3,0"

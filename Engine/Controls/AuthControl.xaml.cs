@@ -51,12 +51,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Allows to run mehod once when control is created.
 			if (ControlsHelper.AllowLoad(this))
 			{
-				await Global.Security.LoadCurrentAccount();
-				await Global.Security.RefreshProfileImage();
+				var userType = await AppSecurityHelper.GetUserType();
+				if (userType == UserType.Microsoft)
+				{
+					await Global.Security.LoadCurrentAccount();
+					await Global.Security.RefreshProfileImage();
+				}
 			}
 		}
-
-
 		private void StopButton_Click(object sender, RoutedEventArgs e)
 		{
 			var items = cancellationTokenSources.ToArray();
@@ -71,8 +73,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 				//var credential = await AppSecurityHelper.GetTokenCredential(cancellationToken);
 				//var idToken1 = await AppSecurityHelper.GetIdToken(credential);
-
-
 				await Task.Delay(0);
 				var scope = new[] { AppSecurityHelper.MicrosoftGraphScope };
 				var token = await AppSecurityHelper.GetAccessToken(scope, cancellationToken);
@@ -117,32 +117,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogPanel.Add("Opaque Access Token.\r\n");
 				LogPanel.Add($"{accessToken}.\r\n");
 			}
-		}
-
-
-		private async void GetSecretWithClientSecretButton_Click(object sender, RoutedEventArgs e)
-		{
-			await ExecuteMethod(async (CancellationToken cancellationToken) =>
-			{
-				var secret = await AppSecurityHelper.GetSecretFromKeyVault(
-					KeyVaultNameTextBox.Text, SecretNameTextBox.Text,
-					TenantIdTextBox.Text, ClientIdTextBox.Text, ClientSecretPasswordBox.Password,
-					cancellationToken);
-				LogPanel.Add($"{secret}\r\n");
-			});
-		}
-
-		private async void GetSecretWithAccessTokenButton_Click(object sender, RoutedEventArgs e)
-		{
-			await ExecuteMethod(async (CancellationToken cancellationToken) =>
-			{
-				var credential = await AppSecurityHelper.GetTokenCredential();
-				if (credential == null)
-					return;
-				var secret = await AppSecurityHelper
-				.GetSecretFromKeyVault(KeyVaultNameTextBox.Text, SecretNameTextBox.Text, credential, cancellationToken);
-				LogPanel.Add($"{secret}\r\n");
-			});
 		}
 
 		private async void TestButton_Click(object sender, RoutedEventArgs e)
