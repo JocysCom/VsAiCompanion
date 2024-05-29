@@ -27,6 +27,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -53,8 +54,6 @@
 			<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding DefaultAiModel}" />
 			<Button
 				Name="ModelRefreshButton"
-				Grid.Row="1"
-				Grid.Column="3"
 				Margin="3,0,3,0"
 				Click="ModelRefreshButton_Click"
 				ToolTip="{StaticResource main_ModelRefreshButton_ToolTip}">
@@ -68,47 +67,68 @@
 				Content="{StaticResource main_Is_Default_AI_Service}"
 				IsChecked="{Binding IsDefault}" />
 		</StackPanel>
-		<Label Grid.Row="2" Content="{StaticResource main_API_Key}" />
-		<PasswordBox
-			Name="SecretKeyPasswordBox"
-			Grid.Row="2"
-			Grid.Column="1"
-			Grid.ColumnSpan="2" />
 
-		<Label Name="OrganizationLabel" Grid.Row="3" Content="{StaticResource main_API_Organization_ID}" />
-		<PasswordBox
-			Name="OrganizationPasswordBox"
-			Grid.Row="3"
-			Grid.Column="1"
-			Grid.ColumnSpan="2" />
-
-		<Label Grid.Row="4" Content="{StaticResource main_API_Base_URL}" />
+		<Label Grid.Row="2" Content="{StaticResource main_API_Base_URL}" />
 		<TextBox
 			Name="OpenAiBaseUrlTextBox"
-			Grid.Row="4"
+			Grid.Row="2"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Text="{Binding BaseUrl}"
 			TextChanged="OpenAiBaseUrlTextBox_TextChanged" />
 
-		<Label Grid.Row="5" Content="{StaticResource main_Region}" />
+		<Label Grid.Row="3" Content="{StaticResource main_Region}" />
 		<TextBox
 			Name="RegionTextBox"
-			Grid.Row="5"
+			Grid.Row="3"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Text="{Binding Region}" />
 
-		<Label Name="ModelFilterLabel" Grid.Row="6" Content="{StaticResource main_Model_Filter}" />
+		<Label Name="ModelFilterLabel" Grid.Row="4" Content="{StaticResource main_Model_Filter}" />
 		<TextBox
 			Name="ModelFilterTextBox"
-			Grid.Row="6"
+			Grid.Row="4"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Text="{Binding ModelFilter}" />
 
+		<Label Grid.Row="5" Content="Azure Vault Name" />
 		<StackPanel
+			Grid.Row="5"
+			Grid.Column="1"
+			Grid.ColumnSpan="2"
+			Orientation="Horizontal">
+			<CheckBox Name="AzureVaultEnabledCheckBox" Content="Use" IsChecked="{Binding AzureVaultEnabled}" />
+			<TextBox Name="AzureVaultNameTextBox" MinWidth="128" Text="{Binding AzureVaultName}" />
+			<Label Content="Secret Name" />
+			<TextBox Name="AzureVaultSecretNameTextBox" MinWidth="128" Text="{Binding AzureVaultSecretName}" />
+			<Button
+				Name="AzureVaultValueRefreshButton"
+				Margin="3,0,3,0"
+				Click="AzureVaultValueRefreshButton_Click"
+				ToolTip="{StaticResource main_ModelRefreshButton_ToolTip}">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Refresh}" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+		<Label Grid.Row="6" Content="{StaticResource main_API_Key}" />
+		<PasswordBox
+			Name="SecretKeyPasswordBox"
+			Grid.Row="6"
+			Grid.Column="1"
+			Grid.ColumnSpan="2" />
+
+		<Label Name="OrganizationLabel" Grid.Row="7" Content="{StaticResource main_API_Organization_ID}" />
+		<PasswordBox
+			Name="OrganizationPasswordBox"
 			Grid.Row="7"
+			Grid.Column="1"
+			Grid.ColumnSpan="2" />
+
+		<StackPanel
+			Grid.Row="8"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Orientation="Horizontal">

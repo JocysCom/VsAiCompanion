@@ -6,12 +6,14 @@ using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Engine.Security;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
@@ -20,6 +22,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -575,6 +578,16 @@ EndFragment:{3:00000000}";
 			return item;
 		}
 
+		public static VaultItem GetNewVaultItem()
+		{
+			var item = new VaultItem();
+			item.Id = Guid.NewGuid();
+			item.Name = $"VaultItem {DateTime.Now:yyyyMMdd_HHmmss}";
+			item.Created = DateTime.Now;
+			item.Modified = item.Created;
+			return item;
+		}
+
 		public static void SetIconToDefault(EmbeddingsItem item)
 		{
 			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
@@ -1009,6 +1022,34 @@ EndFragment:{3:00000000}";
 				_ = Helper.Delay(action);
 			return changed;
 		}
+
+		/// <summary>
+		/// Helps run cancellable methods of this form and logs results to the log panel.
+		/// </summary>
+		public static async Task<Exception> ExecuteMethod(ObservableCollection<CancellationTokenSource> tokens, Func<CancellationToken, Task> action)
+		{
+			Exception exception = null;
+			var source = new CancellationTokenSource();
+			source.CancelAfter(TimeSpan.FromSeconds(30));
+			tokens.Add(source);
+			Global.MainControl.InfoPanel.AddTask(source);
+			try
+			{
+				await action.Invoke(source.Token);
+			}
+			catch (Exception ex)
+			{
+				exception = ex;
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+			}
+			finally
+			{
+				tokens.Remove(source);
+				Global.MainControl.InfoPanel.RemoveTask(source);
+			}
+			return exception;
+		}
+
 
 		#endregion
 

@@ -136,11 +136,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var accessToken = AppSecurityHelper.GetProfile().AccessToken;
-				if (string.IsNullOrEmpty(accessToken))
+				var credential = await AppSecurityHelper.GetTokenCredential();
+				if (credential == null)
 					return;
 				var secret = await AppSecurityHelper
-				.GetSecretFromKeyVault(KeyVaultNameTextBox.Text, SecretNameTextBox.Text, accessToken, cancellationToken);
+				.GetSecretFromKeyVault(KeyVaultNameTextBox.Text, SecretNameTextBox.Text, credential, cancellationToken);
 				LogPanel.Add($"{secret}\r\n");
 			});
 		}

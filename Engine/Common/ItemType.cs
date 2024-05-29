@@ -14,5 +14,6 @@
 		AiService = 9,
 		Voice = 10,
 		Attachment = 11,
+		VaultItem = 12,
 	}
 }

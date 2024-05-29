@@ -33,6 +33,6 @@
 			DragCompleted="GridSplitter_DragCompleted"
 			ResizeDirection="Columns"
 			Style="{StaticResource GridSplitterVertical}" />
-		<local:AiServiceItemControl x:Name="ItemPanel" Grid.Column="2" x:FieldModifier="public" />
+		<local:AiServiceItemControl x:Name="ItemPanel" Grid.Column="2" x:FieldModifier="public" Loaded="ItemPanel_Loaded" />
 	</Grid>
 </UserControl>

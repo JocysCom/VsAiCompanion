@@ -57,6 +57,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main__4_Tuning_Jobs => FindResource(nameof(main__4_Tuning_Jobs));
         public static string main__5_Models => FindResource(nameof(main__5_Models));
         public static string main_Account => FindResource(nameof(main_Account));
+        public static string main_ActivationDate => FindResource(nameof(main_ActivationDate));
+        public static string main_ExpirationDate => FindResource(nameof(main_ExpirationDate));
         public static string main_Add => FindResource(nameof(main_Add));
         public static string main_Add_New => FindResource(nameof(main_Add_New));
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
@@ -252,6 +254,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Use_Macros => FindResource(nameof(main_Use_Macros));
         public static string main_Use_Maximum_Context => FindResource(nameof(main_Use_Maximum_Context));
         public static string main_Username => FindResource(nameof(main_Username));
+        public static string main_VaultItems => FindResource(nameof(main_VaultItems));
+        public static string main_VaultName => FindResource(nameof(main_VaultName));
+        public static string main_VaultItemName => FindResource(nameof(main_VaultItemName));
         public static string main_Validate => FindResource(nameof(main_Validate));
         public static string main_Validate_Digital_Signature => FindResource(nameof(main_Validate_Digital_Signature));
         public static string main_Validate_DKIM => FindResource(nameof(main_Validate_DKIM));
@@ -265,5 +270,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Voice_Type => FindResource(nameof(main_Voice_Type));
         public static string main_VsExtensionFeatureMessage => FindResource(nameof(main_VsExtensionFeatureMessage));
         public static string main_VsExtensionVersionMessage => FindResource(nameof(main_VsExtensionVersionMessage));
+        public static string main_Vaults_Feature_Description => FindResource(nameof(main_Vaults_Feature_Description));
     }
 }

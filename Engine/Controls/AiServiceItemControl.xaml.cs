@@ -141,5 +141,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 
 		}
+
+		private async void AzureVaultValueRefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			var credential = await Security.AppSecurityHelper.GetTokenCredential();
+			if (credential == null)
+				return;
+			var secret = await Security.AppSecurityHelper
+				.GetSecretFromKeyVault(AzureVaultNameTextBox.Text, AzureVaultSecretNameTextBox.Text, credential);
+			Item.ApiSecretKey = secret?.Value ?? "";
+		}
+
 	}
 }

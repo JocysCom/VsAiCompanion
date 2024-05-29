@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.UpdateControl;
+using JocysCom.VS.AiCompanion.Engine.Security;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Azure: Home / App registrations: Jocys.com AI Companion
 		/// </summary>
-		[DefaultValue("deea245f-789f-499c-bcd8-7f9f817667ab")]
+		[DefaultValue("6786bf7e-0379-43e9-8ab6-c10326af0123")]
 		public string ClientAppId { get => _ClientAppId; set => SetProperty(ref _ClientAppId, value); }
 		private string _ClientAppId;
 
@@ -138,6 +139,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private volatile Lazy<SortableBindingList<UserProfile>> _UserProfiles =
 			new Lazy<SortableBindingList<UserProfile>>(() => new SortableBindingList<UserProfile>());
 
+		public bool ShouldSerializeUserProfiles => UserProfiles?.Count > 0;
+
+		#endregion
+
+		#region Vault Items
+
+		/// <summary>Vault Items</summary>
+		public SortableBindingList<VaultItem> VaultItems
+		{
+			get => _VaultItems.Value;
+			set => Interlocked.Exchange(ref _VaultItems, new Lazy<SortableBindingList<VaultItem>>(() => value));
+		}
+		private volatile Lazy<SortableBindingList<VaultItem>> _VaultItems =
+			new Lazy<SortableBindingList<VaultItem>>(() => new SortableBindingList<VaultItem>());
+
+		public bool ShouldSerializeVaultItems => VaultItems?.Count > 0;
+
+		#endregion
+
 		/// <summary>Azure access token cache to make it persistend during app restarts.</summary>
 		[XmlIgnore, JsonIgnore]
 		public byte[] AzureTokenCache
@@ -155,8 +175,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(AzureTokenCache))]
 		public string _AzureTokenCacheEncrypted { get; set; }
-
-		#endregion
 
 		#region  Spell Check
 

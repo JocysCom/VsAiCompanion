@@ -75,5 +75,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void ItemPanel_Loaded(object sender, RoutedEventArgs e)
+		{
+
+		}
 	}
 }

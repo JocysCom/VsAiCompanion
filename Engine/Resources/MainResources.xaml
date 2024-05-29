@@ -10,6 +10,8 @@
 	<sys:String x:Key="main__4_Tuning_Jobs">4. Tuning Jobs</sys:String>
 	<sys:String x:Key="main__5_Models">5. Models</sys:String>
 	<sys:String x:Key="main_Account">Account</sys:String>
+	<sys:String x:Key="main_ActivationDate">Activation Date</sys:String>
+	<sys:String x:Key="main_ExpirationDate">Expiration Date</sys:String>
 	<sys:String x:Key="main_Add">Add...</sys:String>
 	<sys:String x:Key="main_Add_New">Add New</sys:String>
 	<sys:String x:Key="main_AI_Models">AI Models</sys:String>
@@ -208,6 +210,9 @@
 	<sys:String x:Key="main_Use_Macros">Use Macros</sys:String>
 	<sys:String x:Key="main_Use_Maximum_Context">Use Maximum Context</sys:String>
 	<sys:String x:Key="main_Username">Username</sys:String>
+	<sys:String x:Key="main_VaultItems">Azure Key Vault Items</sys:String>
+	<sys:String x:Key="main_VaultName">Vault Name</sys:String>
+	<sys:String x:Key="main_VaultItemName">Secret Name</sys:String>
 	<sys:String x:Key="main_Validate">Validate</sys:String>
 	<sys:String x:Key="main_Validate_Digital_Signature">Validate Signature</sys:String>
 	<sys:String x:Key="main_Validate_DKIM">Validate DKIM</sys:String>
@@ -221,4 +226,5 @@
 	<sys:String x:Key="main_Voice_Type">Voice Type</sys:String>
 	<sys:String x:Key="main_VsExtensionFeatureMessage">This feature is only available when the application is run as an extension in Visual Studio.</sys:String>
 	<sys:String x:Key="main_VsExtensionVersionMessage">This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.</sys:String>
+	<sys:String x:Key="main_Vaults_Feature_Description">This form lets you add Key Vault items stored on the Microsoft Azure cloud where API keys are kept. Instead of entering API keys manually, you can select a Key Vault item where the app can find the needed API key. This allows you to manage and update API keys from one centralized location.</sys:String>
 </ResourceDictionary>

@@ -118,6 +118,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Lists: return Lists.Items;
 				case ItemType.Embeddings: return Embeddings.Items;
 				case ItemType.MailAccount: return AppSettings.MailAccounts;
+				case ItemType.VaultItem: return AppSettings.VaultItems;
 				default: return null;
 			}
 		}

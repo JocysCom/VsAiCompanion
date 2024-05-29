@@ -475,7 +475,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region Key Vault
 
-		public static async Task<string> GetSecretFromKeyVault(
+		public static async Task<KeyVaultSecret> GetSecretFromKeyVault(
 			string keyVaultName, string secretName, string accessToken,
 			CancellationToken cancellationToken = default)
 		{
@@ -483,7 +483,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return await GetSecretFromKeyVault(keyVaultName, secretName, credential, cancellationToken);
 		}
 
-		public static async Task<string> GetSecretFromKeyVault(
+		public static async Task<KeyVaultSecret> GetSecretFromKeyVault(
 			string keyVaultName, string secretName, string tenantId, string clientId, string clientSecret,
 			CancellationToken cancellationToken = default)
 		{
@@ -491,17 +491,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return await GetSecretFromKeyVault(keyVaultName, secretName, credential, cancellationToken);
 		}
 
-		public static async Task<string> GetSecretFromKeyVault(
-			string keyVaultName, string secretName, TokenCredential credential,
+		public static async Task<KeyVaultSecret> GetSecretFromKeyVault(
+			string keyVaultName, string secretName, TokenCredential credential = null,
 			CancellationToken cancellationToken = default)
 		{
+			credential = credential ?? await GetTokenCredential();
 			// Azure Key Vault URI
 			string kvUri = $"https://{keyVaultName}.vault.azure.net/";
 			// Create a new secret client
 			var client = new SecretClient(new Uri(kvUri), credential);
 			// Retrieve the secret from Azure Key Vault
-			KeyVaultSecret secret = await client.GetSecretAsync(secretName, cancellationToken: cancellationToken);
-			return secret.Value;
+			var secret = await client.GetSecretAsync(secretName, cancellationToken: cancellationToken);
+			return secret;
 		}
 
 		#endregion

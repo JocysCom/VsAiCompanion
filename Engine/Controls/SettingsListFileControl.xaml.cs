@@ -203,6 +203,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
 						break;
 					case ItemType.MailAccount:
+					case ItemType.VaultItem:
 						SetGrouping(nameof(SettingsListFileItem.ListGroupPath));
 						columns.Remove(IconColumn);
 						break;
@@ -322,6 +323,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				item = AppHelper.GetNewEmbeddingsItem();
 			if (DataType == ItemType.MailAccount)
 				item = AppHelper.GetNewMailAccount();
+			if (DataType == ItemType.VaultItem)
+				item = AppHelper.GetNewVaultItem();
 			if (item != null)
 				InsertItem(item);
 		}
