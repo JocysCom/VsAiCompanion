@@ -114,7 +114,8 @@
 				Grid.Row="4"
 				Grid.Column="1"
 				IsReadOnly="True"
-				IsReadOnlyCaretVisible="True" />
+				IsReadOnlyCaretVisible="True"
+				Text="{Binding ActivationDate}" />
 
 			<Label Grid.Row="5" Content="{StaticResource main_ExpirationDate}" />
 			<TextBox
@@ -122,7 +123,8 @@
 				Grid.Row="5"
 				Grid.Column="1"
 				IsReadOnly="True"
-				IsReadOnlyCaretVisible="True" />
+				IsReadOnlyCaretVisible="True"
+				Text="{Binding ExpirationDate}" />
 
 		</Grid>
 	</Grid>

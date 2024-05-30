@@ -94,9 +94,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				async (cancellationToken) =>
 			{
 				var secret = await AppSecurityHelper.GetSecretFromKeyVault(Item.VaultName, Item.VaultItemName);
-				ValueTextBox.Password = secret?.Value;
-				ActivationDateTextBox.Text = secret?.Properties?.ExpiresOn?.ToString();
-				ExpirationDateTextBox.Text = secret?.Properties?.NotBefore?.ToString();
+				Item.Value = secret?.Value;
+				ValueTextBox.Password = Item.Value;
+				Item.ActivationDate = secret?.Properties?.ExpiresOn;
+				Item.ExpirationDate = secret?.Properties?.NotBefore;
 
 			});
 		}
