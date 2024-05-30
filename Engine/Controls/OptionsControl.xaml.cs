@@ -235,7 +235,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void DomainMaxRiskLevelRefresh(bool cache = true)
 		{
 			DomainMaxRiskLevelValueLabel.Content = "...";
-			var visibility = DomainHelper.IsApplicationRunningOnDomain()
+			var isDomainUser = JocysCom.ClassLibrary.Security.PermissionHelper.IsDomainUser();
+			var visibility = isDomainUser
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			DomainMaxRiskLevelRefreshButton.Visibility = visibility;

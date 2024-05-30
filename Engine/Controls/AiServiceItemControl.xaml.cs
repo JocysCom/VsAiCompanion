@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Security;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -20,7 +22,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.OnAiModelsUpdated += Global_AiModelsUpdated;
 		}
 
-
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public AiService Item
 		{
@@ -35,8 +36,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					// If old item is not null then detach event handlers.
 					if (_Item != null)
 					{
-						SecretKeyPasswordBox.PasswordChanged -= SecretKeyPasswordBox_PasswordChanged;
-						OrganizationPasswordBox.PasswordChanged -= OrganizationPasswordBox_PasswordChanged;
+						ApiSecretKeyPasswordBox.PasswordChanged -= SecretKeyPasswordBox_PasswordChanged;
+						ApiOrganizationIdPasswordBox.PasswordChanged -= OrganizationPasswordBox_PasswordChanged;
 						_Item.PropertyChanged -= _Item_PropertyChanged;
 					}
 					_Item = value ?? new AiService();
@@ -45,10 +46,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					DataContext = value;
 					// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 					AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel);
-					SecretKeyPasswordBox.Password = Item.ApiSecretKey;
-					SecretKeyPasswordBox.PasswordChanged += SecretKeyPasswordBox_PasswordChanged;
-					OrganizationPasswordBox.Password = Item.ApiOrganizationId;
-					OrganizationPasswordBox.PasswordChanged += OrganizationPasswordBox_PasswordChanged;
+					ControlsHelper.SetText(ApiSecretKeyPasswordBox, Item.ApiSecretKey);
+					ControlsHelper.SetText(ApiOrganizationIdPasswordBox, Item.ApiOrganizationId);
+					ApiSecretKeyPasswordBox.PasswordChanged += SecretKeyPasswordBox_PasswordChanged;
+					ApiOrganizationIdPasswordBox.PasswordChanged += OrganizationPasswordBox_PasswordChanged;
 					_Item.PropertyChanged += _Item_PropertyChanged;
 					UpdateControlVilibility();
 				}
@@ -59,6 +60,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (e.PropertyName == nameof(AiService.ServiceType))
 				UpdateControlVilibility();
+			if (e.PropertyName == nameof(AiService.ApiSecretKey))
+				ControlsHelper.SetText(ApiSecretKeyPasswordBox, Item.ApiSecretKey);
+			if (e.PropertyName == nameof(AiService.ApiOrganizationId))
+				ControlsHelper.SetText(ApiOrganizationIdPasswordBox, Item.ApiOrganizationId);
 		}
 
 		void UpdateControlVilibility()
@@ -71,8 +76,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			IsDefaultServiceLabel.Visibility = visibility;
 			ModelFilterLabel.Visibility = visibility;
 			ModelFilterTextBox.Visibility = visibility;
-			OrganizationLabel.Visibility = visibility;
-			OrganizationPasswordBox.Visibility = visibility;
+			ApiOrganizationIdLabel.Visibility = visibility;
+			ApiOrganizationIdPasswordBox.Visibility = visibility;
 			IsAzureOpenAiCheckBox.Visibility = visibility;
 			ResponseStreamingCheckBox.Visibility = visibility;
 		}
@@ -81,10 +86,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private object _ItemLock = new object();
 
 		private void SecretKeyPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-			=> Item.ApiSecretKey = SecretKeyPasswordBox.Password;
+			=> Item.ApiSecretKey = ApiSecretKeyPasswordBox.Password;
 
 		private void OrganizationPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-			=> Item.ApiOrganizationId = OrganizationPasswordBox.Password;
+			=> Item.ApiOrganizationId = ApiOrganizationIdPasswordBox.Password;
 
 		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -151,6 +156,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//	.GetSecretFromKeyVault(AzureVaultNameTextBox.Text, AzureVaultSecretNameTextBox.Text, credential);
 			//Item.ApiSecretKey = secret?.Value ?? "";
 		}
+
+		#region Vault Items
+
+		public SortableBindingList<object> VaultItems1 { get; }
+			= new SortableBindingList<object>() { new { Id = (Guid?)null, Name = "" } };
+
+		public SortableBindingList<VaultItem> VaultItems2
+			=> Global.AppSettings.VaultItems;
+
+		private async void ApiSecretKeyRefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
+			var item = await AppSecurityHelper.RefreshVaultItem(Item.ApiSecretKeyVaultItemId);
+			if (item != null)
+				Item.ApiSecretKey = item.Value;
+		}
+
+		private async void ApiOrganizationIdRefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
+			var item = await AppSecurityHelper.RefreshVaultItem(Item.ApiOrganizationIdVaultItemId);
+			if (item != null)
+				Item.ApiOrganizationId = item.Value;
+		}
+
+		#endregion
 
 	}
 }

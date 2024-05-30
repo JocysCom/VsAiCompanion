@@ -676,7 +676,7 @@ EndFragment:{3:00000000}";
 		public static string UserEncrypt(string text)
 		{
 			if (string.IsNullOrEmpty(text))
-				return null;
+				return text;
 			var decryptedData = Encoding.Unicode.GetBytes(text);
 			var encryptedData = UserEncrypt(decryptedData);
 			var encryptedText = Convert.ToBase64String(encryptedData);
@@ -710,7 +710,7 @@ EndFragment:{3:00000000}";
 		public static string UserDecrypt(string base64)
 		{
 			if (string.IsNullOrEmpty(base64))
-				return null;
+				return base64;
 			var encryptedData = Convert.FromBase64String(base64);
 			var decryptedData = UserDecrypt(encryptedData);
 			if (decryptedData == null)
@@ -1031,7 +1031,7 @@ EndFragment:{3:00000000}";
 			Exception exception = null;
 			var source = new CancellationTokenSource();
 			source.CancelAfter(TimeSpan.FromSeconds(30));
-			tokens.Add(source);
+			tokens?.Add(source);
 			Global.MainControl.InfoPanel.AddTask(source);
 			try
 			{
@@ -1044,7 +1044,7 @@ EndFragment:{3:00000000}";
 			}
 			finally
 			{
-				tokens.Remove(source);
+				tokens?.Remove(source);
 				Global.MainControl.InfoPanel.RemoveTask(source);
 			}
 			return exception;

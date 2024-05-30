@@ -104,6 +104,14 @@ namespace JocysCom.ClassLibrary.Security
 			return groups.OrderBy(x => x.Name).ToList();
 		}
 
+		public static bool IsLocalUser()
+		{
+			var currentIdentity = WindowsIdentity.GetCurrent();
+			var sid = currentIdentity.User;
+			var isLocal = IsLocalUser(sid) || IsLocalGroup(sid);
+			return isLocal;
+		}
+
 		/// <summary>
 		/// Return true if current user is domain user, false if Local Machine user..
 		/// </summary>

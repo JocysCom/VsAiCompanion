@@ -91,6 +91,16 @@ namespace JocysCom.ClassLibrary.Controls
 				control.Content = text;
 		}
 
+		public static void SetText(PasswordBox control, string format, params object[] args)
+		{
+			if (control is null)
+				throw new ArgumentNullException(nameof(control));
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
+			if (control.Password != text)
+				control.Password = text;
+		}
 
 		/// <summary>
 		/// Change value if it is different only.

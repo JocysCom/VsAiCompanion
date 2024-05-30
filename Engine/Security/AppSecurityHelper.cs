@@ -7,6 +7,7 @@ using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
@@ -115,22 +116,60 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				Global.AppSettings.AzureTokenCache = args.TokenCache.SerializeMsalV3();
 		}
 
-		// Determine if it is a Microsoft account by checking if the access token has a specific tenant ID for Microsoft accounts.
+		/// <summary>
+		/// Determine if it is a Microsoft account by checking if the access token has a specific tenant ID for Microsoft accounts.
+		/// </summary>
 		public static async Task<bool> IsMicrosoftAccount()
 		{
-			TokenCredential credential = await GetTokenCredential();
 			var profile = GetProfile();
+			// If access token is empty then application must use
+			// user 
 			var accessToken = profile.IdToken ?? profile.AccessToken;
+			TokenCredential credential = await GetTokenCredential();
 			return IsConsumerAccount(accessToken).GetValueOrDefault();
 		}
 
+
 		public static async Task<UserType> GetUserType()
 		{
-			if (DomainHelper.IsApplicationRunningOnDomain())
-				return UserType.Domain;
-			if (await IsMicrosoftAccount())
-				return UserType.Microsoft;
-			return UserType.Local;
+			var userType = UserType.None;
+			if (JocysCom.ClassLibrary.Security.PermissionHelper.IsLocalUser())
+				userType |= UserType.Local;
+
+			if (JocysCom.ClassLibrary.Security.PermissionHelper.IsDomainUser())
+				userType |= UserType.WindowsDomain;
+
+			var scopes = new[] { MicrosoftGraphScope };
+
+			var s = DateTime.UtcNow;
+			var token = await GetAccessToken(scopes);
+			var d = DateTime.UtcNow.Subtract(s);
+
+			var isMicrosoftUser = token.Token != null;
+			if (!isMicrosoftUser)
+				return userType;
+			JwtSecurityToken securityToken = null;
+			try
+			{
+				var jwtHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+				securityToken = jwtHandler.ReadJwtToken(token.Token);
+			}
+			catch (Exception)
+			{
+				return userType;
+			}
+			// If contains tenant id then acount is Entra ID
+			if (securityToken.Claims.Any(c => c.Type == "tid"))
+				userType |= UserType.EntraID;
+
+			// For example purposes:
+			var issuerClaim = securityToken.Claims.FirstOrDefault(c => c.Type == "iss")?.Value ?? "";
+			if (issuerClaim.Contains("sts.windows.net"))
+				userType |= UserType.MicrosoftBusiness;
+			else if (issuerClaim.Contains("login.microsoftonline.com"))
+				userType |= UserType.MicrosoftConsumer;
+
+			return userType;
 		}
 
 		#region User Profile
@@ -327,12 +366,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<bool> SignOut()
 		{
-			if (_account == null)
-				return false;
-			await Pca.RemoveAsync(_account);
-			_account = null;
 			var profile = GetProfile();
 			profile?.Clear();
+			if (_account != null)
+			{
+				await Pca.RemoveAsync(_account);
+				_account = null;
+			}
 			return true;
 		}
 
@@ -527,6 +567,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			// Retrieve the secret from Azure Key Vault
 			var secret = await client.GetSecretAsync(secretName, cancellationToken: cancellationToken);
 			return secret;
+		}
+
+		public static async Task<VaultItem> RefreshVaultItem(Guid? id,
+			ObservableCollection<CancellationTokenSource> cancellationTokenSources = default)
+		{
+			if (id == null || id == Guid.Empty)
+				return null;
+			var item = Global.AppSettings.VaultItems.FirstOrDefault(x => x.Id == id);
+			if (item == null)
+				return null;
+			var exception = await AppHelper.ExecuteMethod(
+			cancellationTokenSources,
+			async (cancellationToken) =>
+			{
+				var secret = await GetSecretFromKeyVault(item.VaultName, item.VaultItemName);
+				item.Value = secret?.Value;
+				item.ActivationDate = secret?.Properties?.ExpiresOn?.UtcDateTime;
+				item.ExpirationDate = secret?.Properties?.NotBefore?.UtcDateTime;
+			});
+			return item;
 		}
 
 		#endregion

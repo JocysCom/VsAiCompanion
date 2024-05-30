@@ -92,36 +92,87 @@
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			Text="{Binding ModelFilter}" />
-
-		<Label Grid.Row="5" Content="Azure Vault Name" />
-		<StackPanel
-			Grid.Row="5"
-			Grid.Column="1"
-			Grid.ColumnSpan="2"
-			Orientation="Horizontal">
+		<Label Grid.Row="6" Content="{StaticResource main_API_Key}" />
+		<Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<ComboBox
+				Name="ApiSecretKeyVaultItemComboBox"
+				Width="Auto"
+				MinWidth="64"
+				x:FieldModifier="public"
+				DisplayMemberPath="Name"
+				SelectedValue="{Binding ApiSecretKeyVaultItemId, Mode=TwoWay}"
+				SelectedValuePath="Id">
+				<ComboBox.Resources>
+					<CollectionViewSource x:Key="OptionsCollection1" Source="{Binding VaultItems1, ElementName=This}" />
+					<CollectionViewSource x:Key="OptionsCollection2" Source="{Binding VaultItems2, ElementName=This}" />
+				</ComboBox.Resources>
+				<ComboBox.ItemsSource>
+					<CompositeCollection>
+						<!--  Static item for 'None' selection  -->
+						<CollectionContainer Collection="{Binding Source={StaticResource OptionsCollection1}}" />
+						<!--  Binding to the actual data source  -->
+						<CollectionContainer Collection="{Binding Source={StaticResource OptionsCollection2}}" />
+					</CompositeCollection>
+				</ComboBox.ItemsSource>
+			</ComboBox>
 			<Button
-				Name="AzureVaultValueRefreshButton"
+				Name="ApiSecretKeyRefreshButton"
+				Grid.Column="1"
 				Margin="3,0,3,0"
-				Click="AzureVaultValueRefreshButton_Click"
+				Click="ApiSecretKeyRefreshButton_Click"
 				ToolTip="{StaticResource main_ModelRefreshButton_ToolTip}">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" />
 				</StackPanel>
 			</Button>
-		</StackPanel>
-		<Label Grid.Row="6" Content="{StaticResource main_API_Key}" />
-		<PasswordBox
-			Name="SecretKeyPasswordBox"
-			Grid.Row="6"
-			Grid.Column="1"
-			Grid.ColumnSpan="2" />
+			<PasswordBox Name="ApiSecretKeyPasswordBox" Grid.Column="2" />
+		</Grid>
 
-		<Label Name="OrganizationLabel" Grid.Row="7" Content="{StaticResource main_API_Organization_ID}" />
-		<PasswordBox
-			Name="OrganizationPasswordBox"
-			Grid.Row="7"
-			Grid.Column="1"
-			Grid.ColumnSpan="2" />
+		<Label Name="ApiOrganizationIdLabel" Grid.Row="7" Content="{StaticResource main_API_Organization_ID}" />
+		<Grid Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<ComboBox
+				Name="ApiOrganizationIdComboBox"
+				Width="Auto"
+				MinWidth="64"
+				x:FieldModifier="public"
+				DisplayMemberPath="Name"
+				SelectedValue="{Binding ApiOrganizationIdVaultItemId, Mode=TwoWay}"
+				SelectedValuePath="Id">
+				<ComboBox.Resources>
+					<CollectionViewSource x:Key="OptionsCollection1" Source="{Binding VaultItems1, ElementName=This}" />
+					<CollectionViewSource x:Key="OptionsCollection2" Source="{Binding VaultItems2, ElementName=This}" />
+				</ComboBox.Resources>
+				<ComboBox.ItemsSource>
+					<CompositeCollection>
+						<!--  Static item for 'None' selection  -->
+						<CollectionContainer Collection="{Binding Source={StaticResource OptionsCollection1}}" />
+						<!--  Binding to the actual data source  -->
+						<CollectionContainer Collection="{Binding Source={StaticResource OptionsCollection2}}" />
+					</CompositeCollection>
+				</ComboBox.ItemsSource>
+			</ComboBox>
+			<Button
+				Name="ApiOrganizationIdRefreshButton"
+				Grid.Column="1"
+				Margin="3,0,3,0"
+				Click="ApiOrganizationIdRefreshButton_Click"
+				ToolTip="{StaticResource main_ModelRefreshButton_ToolTip}">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Refresh}" />
+				</StackPanel>
+			</Button>
+			<PasswordBox Name="ApiOrganizationIdPasswordBox" Grid.Column="2" />
+		</Grid>
 
 		<StackPanel
 			Grid.Row="8"

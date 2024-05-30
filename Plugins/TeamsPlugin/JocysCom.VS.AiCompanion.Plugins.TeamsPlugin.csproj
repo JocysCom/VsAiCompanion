@@ -30,7 +30,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Identity.Client" Version="4.61.1" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="2.18.2" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="2.19.0" />
 		<PackageReference Include="Microsoft.Identity.Web.UI" Version="2.18.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 	</ItemGroup>

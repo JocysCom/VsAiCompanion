@@ -9,6 +9,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 {
 	public class VaultItem : SettingsListFileItem
 	{
+
+		public VaultItem()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
+
 		/// <summary>Unique Id.</summary>
 		[Key]
 		public Guid Id { get => _Id; set => SetProperty(ref _Id, value); }
@@ -31,13 +37,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		/// <summary>Activation Date.</summary>
 		[DefaultValue(null)]
-		public DateTimeOffset? ActivationDate { get => _ActivationDate; set => SetProperty(ref _ActivationDate, value); }
-		DateTimeOffset? _ActivationDate;
+		public DateTime? ActivationDate { get => _ActivationDate; set => SetProperty(ref _ActivationDate, value); }
+		DateTime? _ActivationDate;
 
 		/// <summary>Expiration Date.</summary>
 		[DefaultValue(null)]
-		public DateTimeOffset? ExpirationDate { get => _ExpirationDate; set => SetProperty(ref _ExpirationDate, value); }
-		DateTimeOffset? _ExpirationDate;
+		public DateTime? ExpirationDate { get => _ExpirationDate; set => SetProperty(ref _ExpirationDate, value); }
+		DateTime? _ExpirationDate;
 
 		/// <summary>Vault secret value.</summary>
 		[XmlIgnore, JsonIgnore]
@@ -50,6 +56,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(Value))]
 		public string _ValueEncrypted { get; set; }
+
+		/// <summary>Expiration Date.</summary>
+		[DefaultValue(null)]
+		public DateTime? LastCheckDate { get => _LastCheckDate; set => SetProperty(ref _LastCheckDate, value); }
+		DateTime? _LastCheckDate;
 
 	}
 }

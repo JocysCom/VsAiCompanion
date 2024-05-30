@@ -1,8 +1,8 @@
 ﻿using SharpVectors.Converters;
 using SharpVectors.Renderers.Wpf;
-using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Media;
 
@@ -29,12 +29,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Converters
 		/// Use a cache dictionary to make sure the same SVG content isn't loaded multiple times.
 		/// This will help the app use about 200MB less memory for SVG images.
 		/// </summary>
-		private static ConcurrentDictionary<Guid, DrawingImage> _defaultValuesCache = new ConcurrentDictionary<Guid, DrawingImage>();
+		private static ConcurrentDictionary<string, DrawingImage> _defaultValuesCache = new ConcurrentDictionary<string, DrawingImage>();
+
+		private static string GetHashString(string s)
+		{
+			using (var algorithm = System.Security.Cryptography.SHA256.Create())
+			{
+				var bytes = System.Text.Encoding.UTF8.GetBytes(s);
+				var hash = algorithm.ComputeHash(bytes);
+				var hashString = string.Join("", hash.Select(x => x.ToString("X2")));
+				return hashString;
+			}
+		}
 
 		public static DrawingImage LoadSvgFromString(string svgContent)
 		{
-			var guid = JocysCom.ClassLibrary.Security.SHA256Helper.GetGuid(svgContent);
-			return _defaultValuesCache.GetOrAdd(guid, t => _LoadSvgFromString(svgContent));
+			var hash = GetHashString(svgContent);
+			return _defaultValuesCache.GetOrAdd(hash, t => _LoadSvgFromString(svgContent));
 		}
 
 		public static DrawingImage _LoadSvgFromString(string svgContent)

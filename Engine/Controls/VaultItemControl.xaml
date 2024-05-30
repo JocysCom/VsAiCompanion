@@ -37,12 +37,7 @@
 			Focusable="False">
 			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 		</Button>
-		<Border
-			Grid.ColumnSpan="3"
-			Padding="32,0,0,0"
-			Background="{StaticResource BackgroundDark}"
-			BorderBrush="{StaticResource BorderDark}"
-			BorderThickness="0,0,0,1">
+		<Border Grid.ColumnSpan="2" Margin="32,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
 			<TextBlock
 				Name="FeatureDescriptionLabel"
 				Margin="4"
@@ -92,7 +87,7 @@
 
 			<Label Grid.Row="3" Content="{StaticResource main_Value}" />
 			<PasswordBox
-				x:Name="ValueTextBox"
+				x:Name="ValuePasswordBox"
 				Grid.Row="3"
 				Grid.Column="1"
 				IsEnabled="False" />

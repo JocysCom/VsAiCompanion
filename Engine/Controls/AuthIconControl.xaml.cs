@@ -15,6 +15,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public AuthIconControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			UpdateImage();
 		}
 
 		public UserProfile Item

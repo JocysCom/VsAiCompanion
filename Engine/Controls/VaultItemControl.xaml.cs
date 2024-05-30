@@ -69,6 +69,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (_Item != null)
 				{
 					_Item.PropertyChanged += _Item_PropertyChanged;
+					ValuePasswordBox.Password = Item.Value;
 				}
 				OnPropertyChanged(nameof(Item));
 			}
@@ -77,9 +78,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(EmbeddingsItem.Source))
-			{
-			}
+			if (e.PropertyName == nameof(VaultItem.Value))
+				ValuePasswordBox.Password = Item.Value;
 		}
 
 		/// <summary>
@@ -89,22 +89,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void RefreshButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			var exception = await AppHelper.ExecuteMethod(
-				cancellationTokenSources,
-				async (cancellationToken) =>
-			{
-				var secret = await AppSecurityHelper.GetSecretFromKeyVault(Item.VaultName, Item.VaultItemName);
-				Item.Value = secret?.Value;
-				ValueTextBox.Password = Item.Value;
-				Item.ActivationDate = secret?.Properties?.ExpiresOn;
-				Item.ExpirationDate = secret?.Properties?.NotBefore;
-
-			});
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
+			_ = await AppSecurityHelper.RefreshVaultItem(Item.Id, cancellationTokenSources);
 		}
 
 		private void CopyButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			var value = ValueTextBox.Password;
+			var value = Item?.Value;
 			if (!string.IsNullOrEmpty(value))
 				System.Windows.Clipboard.SetText(value);
 		}

@@ -44,6 +44,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? "User signed out successfully.\r\n"
 				: "No user is currently signed in.\r\n"
 				);
+			await Global.Security.RefreshProfileImage();
 		}
 
 		private async void This_Loaded(object sender, RoutedEventArgs e)
@@ -52,7 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.AllowLoad(this))
 			{
 				var userType = await AppSecurityHelper.GetUserType();
-				if (userType == UserType.Microsoft)
+				if (userType.HasFlag(UserType.EntraID))
 				{
 					await Global.Security.LoadCurrentAccount();
 					await Global.Security.RefreshProfileImage();

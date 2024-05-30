@@ -63,6 +63,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(null), XmlElement(ElementName = nameof(ApiOrganizationId))]
 		public string _ApiOrganizationIdEncrypted { get; set; }
 
+		// Vault item
+
+		/// <summary>API Ortanization ID Vault Item ID</summary>
+		[DefaultValue(null)]
+		public Guid? ApiOrganizationIdVaultItemId { get => _ApiOrganizationIdVaultItemId; set => SetProperty(ref _ApiOrganizationIdVaultItemId, value); }
+		Guid? _ApiOrganizationIdVaultItemId;
+
+		public bool ShouldSerializeApiOrganizationIdVaultItemId => ApiOrganizationIdVaultItemId != null;
+
+
+		#endregion
+
+		#region ApiAccessKey
+
 		/// <summary>Access Key or Username</summary>
 		[XmlIgnore, JsonIgnore]
 		public string ApiAccessKey
@@ -74,6 +88,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(null), XmlElement(ElementName = nameof(ApiAccessKey))]
 		public string _ApiAccessKeyEncrypted { get; set; }
 
+		#endregion
+
+		#region API Secret Key
 
 		/// <summary>Secret Key, API Key or Password.</summary>
 		[XmlIgnore, JsonIgnore]
@@ -85,6 +102,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(ApiSecretKey))]
 		public string _ApiSecretKeyEncrypted { get; set; }
+
+		// Vault item
+
+		/// <summary>ApiSecretKey Vault Item ID</summary>
+		[DefaultValue(null)]
+		public Guid? ApiSecretKeyVaultItemId { get => _ApiSecretKeyVaultItemId; set => SetProperty(ref _ApiSecretKeyVaultItemId, value); }
+		Guid? _ApiSecretKeyVaultItemId;
+
+		public bool ShouldSerializeApiSecretKeyVaultItemId => ApiSecretKeyVaultItemId != null;
 
 		#endregion
 

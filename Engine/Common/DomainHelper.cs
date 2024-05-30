@@ -13,16 +13,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public static class DomainHelper
 	{
 
-		/// <summary>
-		/// Determines whether the application is running under a domain user account.
-		/// </summary>
-		/// <returns>True if the application is running under a domain user account; otherwise, false.</returns>
-		public static bool IsApplicationRunningOnDomain()
-		{
-			bool isDomainUser = JocysCom.ClassLibrary.Security.PermissionHelper.IsDomainUser();
-			return isDomainUser;
-		}
-
 		private static object _RiskLevelLock = new object();
 		private static bool RiskLevelAcquired;
 		private static RiskLevel? _UserMaxRiskLevel;
@@ -36,7 +26,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (cache && RiskLevelAcquired)
 					return _UserMaxRiskLevel;
 				// If app runs on domain then...
-				if (IsApplicationRunningOnDomain())
+				var isDomainUser = JocysCom.ClassLibrary.Security.PermissionHelper.IsDomainUser();
+				if (isDomainUser)
 				{
 					// If risk groups found then...
 					var domainRiskGroups = GetDomainRiskGroups();
