@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls.UpdateControl;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -61,6 +62,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		[DefaultValue(null)]
 		public DateTime? LastCheckDate { get => _LastCheckDate; set => SetProperty(ref _LastCheckDate, value); }
 		DateTime? _LastCheckDate;
+
+		/// <summary>Update time settings.</summary>
+		[DefaultValue(null)]
+		public UpdateTimeSettings UpdateTimeSettings
+		{
+			get => _UpdateTimeSettings = _UpdateTimeSettings ?? new UpdateTimeSettings();
+			set => SetProperty(ref _UpdateTimeSettings, value);
+		}
+		UpdateTimeSettings _UpdateTimeSettings;
+
+		/// <summary>
+		/// Serialize only of properties non default.
+		/// </summary>
+		public bool ShouldSerializeUpdateTimeSettings => JocysCom.ClassLibrary.Runtime.RuntimeHelper.EqualProperties(this, new UpdateTimeSettings());
 
 	}
 }

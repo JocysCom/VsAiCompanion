@@ -20,7 +20,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			//CurrentItems = new SortableBindingList<AiService>();
 			CurrentItems = Global.AppSettings.AiServices;
 			MainDataGrid.ItemsSource = CurrentItems;
 			Global.OnAiServicesUpdated += Global_OnAiServicesUpdated;
@@ -79,10 +78,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		TaskSettings PanelSettings { get; } = Global.AppSettings.GetTaskSettings(ItemType.AiService);
+		TaskSettings PanelSettings { get; set; }
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			// If item selected then...
 			if (MainDataGrid.SelectedIndex >= 0)
 			{
@@ -207,6 +208,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.AiService);
 			var list = PanelSettings.ListSelection;
 			ControlsHelper.SetSelection(MainDataGrid, nameof(AiModel.Name), list, PanelSettings.ListSelectedIndex);
 		}

@@ -88,7 +88,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		void UpdateButtons()
 		{
 			var selecetedItems = MainDataGrid.SelectedItems.Cast<AiModel>();
-			var isSelected = selecetedItems.Count() > 0;
+			var isSelected = selecetedItems.Any();
 			EditButton.IsEnabled = isSelected;
 			DeleteButton.IsEnabled = isSelected;
 		}
@@ -107,7 +107,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			// Make sure new item will be selected and focused.
 			PanelSettings.ListSelection = new List<string>() { item.Name };
-			PanelSettings.ListSelectedIndex = FilteredList.Count();
+			PanelSettings.ListSelectedIndex = FilteredList.Count;
 			FilteredList.Add(item);
 			Global.AppData.Save();
 		}
@@ -168,7 +168,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var error = "";
 				if (string.IsNullOrEmpty(newName.Trim()))
 					error = "Name can't be empty";
-				var item = (AiModel)e.Row.Item;
+				//var item = (AiModel)e.Row.Item;
 				if (!string.IsNullOrEmpty(error))
 				{
 					MessageBox.Show(error);

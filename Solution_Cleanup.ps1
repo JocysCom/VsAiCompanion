@@ -241,6 +241,7 @@ function ClearCacheVS {
 	Write-Host "Clear IIS Express Cache"
 	foreach ($p in $localAppDataPaths) {
 		RemoveSubFoldersAndFiles "$p\Temp\iisexpress"
+		RemoveSubFoldersAndFiles "$p\Temp\TFSTemp"
 		RemoveSubFoldersAndFiles "$p\Temp\Temporary ASP.NET Files"
 	}
 	Write-Host "Clear Xamarin Cache"

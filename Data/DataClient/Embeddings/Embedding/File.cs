@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Data;
 using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel.DataAnnotations;
@@ -53,9 +54,11 @@ namespace Embeddings.Embedding
 		public bool IsEnabled { get; set; }
 
 		/// <summary>UTC date and time when the file was last modified.</summary>
+		[DateTimeKind(DateTimeKind.Utc)]
 		public DateTime Modified { get; set; }
 
 		/// <summary>UTC date and time when the file was created.</summary>
+		[DateTimeKind(DateTimeKind.Utc)]
 		public DateTime Created { get; set; }
 
 		/// <summary>Time stamp in UTC as 100-nanosecond intervals from 0001-01-01 00:00:00Z.</summary>

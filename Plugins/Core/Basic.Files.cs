@@ -14,7 +14,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="paths">List of files to read from.</param>
 		[RiskLevel(RiskLevel.Medium)]
-		public List<OperationResult<string>> ReadFileAsPlainText(string[] paths)
+		public List<OperationResult<string>> ReadFilesAsPlainText(string[] paths)
 		{
 			var list = new List<OperationResult<string>>();
 			foreach (var path in paths)

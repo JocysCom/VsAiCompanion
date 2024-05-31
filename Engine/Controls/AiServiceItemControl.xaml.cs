@@ -83,7 +83,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		private AiService _Item;
-		private object _ItemLock = new object();
+		private readonly object _ItemLock = new object();
 
 		private void SecretKeyPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
 			=> Item.ApiSecretKey = ApiSecretKeyPasswordBox.Password;

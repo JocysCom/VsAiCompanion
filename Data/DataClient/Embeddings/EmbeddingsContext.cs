@@ -1,12 +1,14 @@
-using System;
 using System.CodeDom.Compiler;
-using System.Data.Common;
+using JocysCom.ClassLibrary.Data;
 
 #if NETFRAMEWORK
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 #else
+using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 #endif
 
 namespace Embeddings
@@ -21,11 +23,19 @@ namespace Embeddings
 		public EmbeddingsContext()
 			: base()
 		{
+			Init();
 		}
 
+
 #if NETFRAMEWORK
+
+
 		public EmbeddingsContext(DbConnection existingConnection, bool contextOwnsConnection)
-			: base(existingConnection, contextOwnsConnection) { }
+			: base(existingConnection, contextOwnsConnection)
+		{
+			Init();
+		}
+
 
 #else
 		/*
@@ -48,14 +58,20 @@ namespace Embeddings
 		*/
 
 		/// <summary>Initialize model with options.</summary>
-		public EmbeddingsContext(DbContextOptions<EmbeddingsContext> options) : base(options) { }
+		public EmbeddingsContext(DbContextOptions<EmbeddingsContext> options) : base(options)
+		{
+			Init();
+		}
 
 		/// <summary>Create context with connection string.</summary>
 		public static EmbeddingsContext Create(string connectionString)
 		{
 			var optionsBuilder = new DbContextOptionsBuilder<EmbeddingsContext>();
 			optionsBuilder.UseSqlServer(connectionString);
-			return new EmbeddingsContext(optionsBuilder.Options);
+			// Uncomment line to output SQL statements.
+			//optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
+			var context = new EmbeddingsContext(optionsBuilder.Options);
+			return context;
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -66,6 +82,24 @@ namespace Embeddings
 		}
 
 #endif
+
+		private void Init()
+		{
+#if NETFRAMEWORK
+			// Uncomment line to output SQL statements.
+			//Database.Log = value => Console.WriteLine(value);
+			// The code will crash here if the code and database models do not match.
+			var context = ((IObjectContextAdapter)this).ObjectContext;
+			// Fix the kind of all DateTime properties when an entity is created.
+			context.ObjectMaterialized +=
+				(sender, e) => DateTimeKindAttribute.Apply(e.Entity);
+#else
+			var context = ChangeTracker;
+			// Fix the kind of all DateTime properties when an entity is created.
+			context.Tracked +=
+				(sender, e) => DateTimeKindAttribute.Apply(e.Entry.Entity);
+#endif
+		}
 
 		/// <summary>File</summary>
 		public virtual DbSet<Embedding.File> Files { get; set; }

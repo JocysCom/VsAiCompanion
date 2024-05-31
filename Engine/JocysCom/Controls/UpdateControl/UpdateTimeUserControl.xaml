@@ -1,0 +1,49 @@
+﻿<UserControl
+	x:Class="JocysCom.ClassLibrary.Controls.UpdateControl.UpdateTimeUserControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../Themes/Default.xaml" />
+				<ResourceDictionary Source="../Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<UserControl.DataContext>
+		<Binding Path="Item" RelativeSource="{RelativeSource Self}" />
+	</UserControl.DataContext>
+	<GroupBox x:Name="MainGroupBox" Grid.Row="2" Margin="3,0,3,0">
+		<GroupBox.Header>
+			<CheckBox
+				Name="IsEnabledCheckBox"
+				Margin="-4"
+				Content="Check for Updates"
+				IsChecked="{Binding IsEnabled, Mode=TwoWay}" />
+		</GroupBox.Header>
+		<Grid>
+			<WrapPanel>
+				<TextBlock Margin="3,0,0,0" VerticalAlignment="Center" Text="Check Frequency" />
+				<JcControls:NumericUpDown
+					LargeChange="10"
+					Maximum="100000"
+					Minimum="0"
+					SmallChange="1"
+					Value="{Binding CheckFrequencyValue, Mode=TwoWay}" />
+				<ComboBox
+					DisplayMemberPath="Value"
+					ItemsSource="{Binding TimeUnitTypes, ElementName=This}"
+					SelectedValue="{Binding CheckFrequencyUnit, Mode=TwoWay}"
+					SelectedValuePath="Key" />
+				<TextBlock Margin="3,0,0,0" VerticalAlignment="Center" Text="Last Update" />
+				<TextBox MinWidth="152" IsReadOnly="True" Text="{Binding LastUpdate, Mode=TwoWay}" />
+				<CheckBox Content="Check On App Start" IsChecked="{Binding CheckOnAppStart, Mode=TwoWay}" />
+			</WrapPanel>
+		</Grid>
+	</GroupBox>
+</UserControl>

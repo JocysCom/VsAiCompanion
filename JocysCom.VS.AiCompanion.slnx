@@ -9,6 +9,7 @@
     <File Path=".gitignore" />
     <File Path="CHANGELOG.md" />
     <File Path="Cleanup_Solution.ps1" />
+    <File Path="Documents\Debug_Design_Time_Errors.md" />
     <File Path="Resources\GenerateApiClients.ps1" />
     <File Path="LICENSE" />
     <File Path="README.md" />

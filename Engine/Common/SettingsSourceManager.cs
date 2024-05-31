@@ -13,8 +13,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public static class SettingsSourceManager
 	{
 
-		public static void ResetSettings()
+		public static void ResetSettings(bool confirm = false)
 		{
+			if (confirm && !AppHelper.AllowReset("All Settings", "Please note that this will reset all services, models, templates and tasks!"))
+				return;
 			try
 			{
 				var zip = GetSettingsZip();

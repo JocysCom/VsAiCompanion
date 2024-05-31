@@ -585,6 +585,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				item.Value = secret?.Value;
 				item.ActivationDate = secret?.Properties?.ExpiresOn?.UtcDateTime;
 				item.ExpirationDate = secret?.Properties?.NotBefore?.UtcDateTime;
+				item.UpdateTimeSettings.LastUpdate = DateTime.UtcNow;
 			});
 			return item;
 		}

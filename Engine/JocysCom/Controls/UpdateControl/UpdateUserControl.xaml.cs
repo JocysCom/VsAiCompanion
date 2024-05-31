@@ -20,9 +20,8 @@ using System.Windows.Controls;
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
 {
 	/// <summary>
-	/// Interaction logic for UpdateWindow.xaml
+	/// Interaction logic for UpdateUserControl.xaml
 	/// </summary>
-	/// <remarks>Make sure to set the Owner property to be disposed properly after closing.</remarks>
 	public partial class UpdateUserControl : UserControl, INotifyPropertyChanged
 	{
 		public UpdateUserControl()

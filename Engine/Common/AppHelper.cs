@@ -749,6 +749,16 @@ EndFragment:{3:00000000}";
 			return result == MessageBoxResult.Yes;
 		}
 
+		public static bool AllowReset(string name, string more = "")
+		{
+			var text = $"Do you want to reset the {name}?";
+			text += string.IsNullOrEmpty(more)
+				? $" Please note that this will delete all custom {name}!"
+				: more;
+			var caption = $"{Global.Info.Product} - Reset {name}";
+			var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+			return result == MessageBoxResult.Yes;
+		}
 
 		public static bool AllowAction(AllowAction actionName, params string[] args)
 		{

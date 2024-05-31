@@ -34,7 +34,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
 		}
 
-		TaskSettings PanelSettings { get; } = Global.AppSettings.GetTaskSettings(ItemType.AiService);
+		TaskSettings PanelSettings { get; set; }
 
 		#region GridSplitter Postion
 
@@ -77,7 +77,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ItemPanel_Loaded(object sender, RoutedEventArgs e)
 		{
-
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.AiService);
 		}
 	}
 }

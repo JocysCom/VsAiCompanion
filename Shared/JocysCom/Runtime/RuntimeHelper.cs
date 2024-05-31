@@ -342,6 +342,49 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
+		/// <summary>
+		/// Returns true if all properties with the same name are equal.
+		/// </summary>
+		public static bool EqualProperties(object source, object target, bool onlyNonByRef = false)
+		{
+			if (source is null)
+				throw new ArgumentNullException(nameof(source));
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
+			// Get type of the destination object.
+			var sourceProperties = GetProperties(source.GetType());
+			var targetProperties = GetProperties(target.GetType());
+			foreach (var sm in sourceProperties)
+			{
+				// Get destination property and skip if not found.
+				var tm = targetProperties.FirstOrDefault(x => Equals(x.Name, sm.Name));
+				if (!sm.CanRead)
+					continue;
+				bool useJson;
+				if (!CanCopy(sm.PropertyType, tm.PropertyType, onlyNonByRef, out useJson))
+					continue;
+				// Get source value.
+				var sValue = sm.GetValue(source, null);
+				if (useJson)
+					sValue = Serialize(sValue);
+				var update = true;
+				// If can read target value.
+				if (tm.CanRead)
+				{
+					// Get target value.
+					var dValue = tm.GetValue(target, null);
+					if (useJson)
+						dValue = Serialize(dValue);
+					// Update only if values are different.
+					update = !Equals(sValue, dValue);
+				}
+				// If update needed then not equal.
+				if (update)
+					return false;
+			}
+			return true;
+		}
+
 		#endregion
 
 		#region Convert: Object <-> Bytes
