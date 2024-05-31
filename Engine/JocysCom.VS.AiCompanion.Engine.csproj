@@ -323,9 +323,19 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
+		<!-- Execute once for multiple builds -->
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Resources\GenerateResourceClassesFromXaml.ps1&quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\FineTuning&quot; &quot;$(ProjectDir)Resources\FineTuning.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
+	</Target>
+
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-			<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Resources\GenerateResourceClassesFromXaml.ps1&quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\FineTuning&quot; &quot;$(ProjectDir)Resources\FineTuning.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;&#xD;&#xA;" />
-		</Target>
+	</Target>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<None Include="$(ProjectDir)Resources\Microsoft.CognitiveServices.Speech\*.dll">

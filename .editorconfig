@@ -67,3 +67,9 @@ dotnet_diagnostic.CA1815.severity = silent
 
 # CA1305: Specify IFormatProvider
 dotnet_diagnostic.CA1305.severity = silent
+
+# CS8981: The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+dotnet_diagnostic.CS8981.severity = none
+
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = none
