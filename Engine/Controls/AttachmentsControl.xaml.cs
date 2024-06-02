@@ -43,7 +43,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		// Store temp settings.
-		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.Attachment);
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -102,10 +102,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.Attachment);
 		}
 
 		private async Task Remove()

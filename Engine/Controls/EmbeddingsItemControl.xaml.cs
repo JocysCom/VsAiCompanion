@@ -50,7 +50,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region List Panel Item
 
-		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.Embeddings);
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
@@ -640,6 +640,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.Embeddings);
 			_IsLoaded = true;
 
 		}

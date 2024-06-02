@@ -34,7 +34,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
 		}
 
-		TaskSettings PanelSettings { get; set; }
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 
 		#region GridSplitter Postion
 

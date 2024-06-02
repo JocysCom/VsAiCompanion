@@ -95,6 +95,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_map_location2 = nameof(Icon_map_location2);
 		public const string Icon_media_stop = nameof(Icon_media_stop);
 		public const string Icon_microphone2 = nameof(Icon_microphone2);
+		public const string Icon_microsoft_login = nameof(Icon_microsoft_login);
 		public const string Icon_movie_comment = nameof(Icon_movie_comment);
 		public const string Icon_navigate_left2 = nameof(Icon_navigate_left2);
 		public const string Icon_navigate_right2 = nameof(Icon_navigate_right2);

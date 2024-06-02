@@ -31,7 +31,7 @@
         <Top>30</Top>
         <Width>486.5</Width>
         <Height>407.75</Height>
-        <ScreenName>\\.\DISPLAY2</ScreenName>
+        <ScreenName>\\.\DISPLAY7</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
@@ -168,7 +168,7 @@
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>1</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>

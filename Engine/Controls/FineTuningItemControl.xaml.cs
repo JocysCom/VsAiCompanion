@@ -110,7 +110,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region PanelSettings
 
-		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.FineTuning);
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 		private void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(PanelSettings.IsBarPanelVisible))
@@ -126,7 +126,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		public Visibility BarPanelVisibility
-			=> PanelSettings.IsBarPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+			=> PanelSettings.IsBarPanelVisible == true ? Visibility.Visible : Visibility.Collapsed;
 
 		private void BarToggleButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -156,5 +156,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.FineTuning);
+		}
 	}
 }

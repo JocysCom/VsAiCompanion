@@ -1,0 +1,69 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.VaultItemValueControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:JcControlsUpdate="clr-namespace:JocysCom.ClassLibrary.Controls.UpdateControl"
+	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	d:DesignWidth="400"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<ComboBox
+			Name="VaultItemComboBox"
+			Width="Auto"
+			MinWidth="64"
+			x:FieldModifier="public"
+			DisplayMemberPath="Name"
+			SelectedValue="{Binding VaultItemId, Mode=TwoWay, ElementName=This}"
+			SelectedValuePath="Id">
+			<ComboBox.Resources>
+				<CollectionViewSource x:Key="ViewSource1" Source="{Binding VaultItems1, ElementName=This}" />
+				<CollectionViewSource x:Key="ViewSource2" Source="{Binding VaultItems2, ElementName=This}" />
+			</ComboBox.Resources>
+			<ComboBox.ItemsSource>
+				<CompositeCollection>
+					<!--  Static item for 'None' selection  -->
+					<CollectionContainer Collection="{Binding Source={StaticResource ViewSource1}}" />
+					<!--  Binding to the actual data source  -->
+					<CollectionContainer Collection="{Binding Source={StaticResource ViewSource2}}" />
+				</CompositeCollection>
+			</ComboBox.ItemsSource>
+		</ComboBox>
+		<Button
+			Name="VaultItemRefreshButton"
+			Grid.Column="1"
+			Margin="3,0,3,0"
+			Click="VaultItemRefreshButton_Click"
+			ToolTip="{StaticResource main_ModelRefreshButton_ToolTip}">
+			<StackPanel>
+				<ContentControl Content="{StaticResource Icon_Refresh}" />
+			</StackPanel>
+		</Button>
+		<PasswordBox
+			Name="VaultItemValuePasswordBox"
+			Grid.Column="2"
+			x:FieldModifier="public"
+			IsEnabled="False" />
+		<PasswordBox Name="ValuePasswordBox" Grid.Column="2" x:FieldModifier="public" />
+	</Grid>
+</UserControl>

@@ -33,7 +33,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			get
 			{
-				if (_Icon == null || !string.IsNullOrEmpty(IconData))
+				if (_Icon == null && !string.IsNullOrEmpty(IconData))
 				{
 					var svgContent = GetContent(IconData);
 					_Icon = ConvertToImage(svgContent);

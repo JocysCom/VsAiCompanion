@@ -9,7 +9,7 @@
 	x:Name="This"
 	d:DesignHeight="100"
 	d:DesignWidth="400"
-	Loaded="UserControl_Loaded"
+	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.OpacityMask>
 		<VisualBrush>

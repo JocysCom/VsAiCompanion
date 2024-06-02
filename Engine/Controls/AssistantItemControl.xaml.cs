@@ -96,7 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region PanelSettings
 
-		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.Assistant);
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 
 		private void PanelSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -137,6 +137,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 
+		}
+
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.Assistant);
 		}
 	}
 }

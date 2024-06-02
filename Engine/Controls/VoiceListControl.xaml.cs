@@ -36,7 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		TaskSettings PanelSettings { get; set; } = Global.AppSettings.GetTaskSettings(ItemType.Voice);
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -70,5 +70,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.Voice);
+		}
 	}
 }

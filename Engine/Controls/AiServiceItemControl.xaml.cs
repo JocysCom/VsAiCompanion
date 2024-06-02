@@ -1,9 +1,8 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
-using JocysCom.ClassLibrary.Controls;
-using JocysCom.VS.AiCompanion.Engine.Security;
+﻿using JocysCom.ClassLibrary.Controls;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,10 +11,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for AiServiceItemControl.xaml
 	/// </summary>
-	public partial class AiServiceItemControl : UserControl
+	public partial class AiServiceItemControl : UserControl, INotifyPropertyChanged
 	{
 		public AiServiceItemControl()
 		{
+			DataContext = new AiService();
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -36,34 +36,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					// If old item is not null then detach event handlers.
 					if (_Item != null)
 					{
-						ApiSecretKeyPasswordBox.PasswordChanged -= SecretKeyPasswordBox_PasswordChanged;
-						ApiOrganizationIdPasswordBox.PasswordChanged -= OrganizationPasswordBox_PasswordChanged;
 						_Item.PropertyChanged -= _Item_PropertyChanged;
 					}
 					_Item = value ?? new AiService();
 					// Make sure that even custom AiModel old and new item is available to select.
 					AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel, oldItem?.DefaultAiModel);
-					DataContext = value;
+					DataContext = _Item;
 					// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 					AppHelper.UpdateModelCodes(_Item, AiModels, _Item?.DefaultAiModel);
-					ControlsHelper.SetText(ApiSecretKeyPasswordBox, Item.ApiSecretKey);
-					ControlsHelper.SetText(ApiOrganizationIdPasswordBox, Item.ApiOrganizationId);
-					ApiSecretKeyPasswordBox.PasswordChanged += SecretKeyPasswordBox_PasswordChanged;
-					ApiOrganizationIdPasswordBox.PasswordChanged += OrganizationPasswordBox_PasswordChanged;
 					_Item.PropertyChanged += _Item_PropertyChanged;
 					UpdateControlVilibility();
+					// Force VaultItemValueControl to update its DataContext
+					ApiSecretKeyVaultItemValuePanel.DataContext = _Item;
+					ApiOrganizationIdVaultItemValuePanel.DataContext = _Item;
+
+					// Ensure Value is updated
+					ApiSecretKeyVaultItemValuePanel.Value = _Item.ApiSecretKey;
+					ApiOrganizationIdVaultItemValuePanel.Value = _Item.ApiOrganizationId;
+
+					// Ensure VaultItemId is updated
+					ApiSecretKeyVaultItemValuePanel.VaultItemId = _Item.ApiSecretKeyVaultItemId;
+					ApiOrganizationIdVaultItemValuePanel.VaultItemId = _Item.ApiOrganizationIdVaultItemId;
 				}
 			}
 		}
+		private AiService _Item;
+		private readonly object _ItemLock = new object();
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(AiService.ServiceType))
 				UpdateControlVilibility();
-			if (e.PropertyName == nameof(AiService.ApiSecretKey))
-				ControlsHelper.SetText(ApiSecretKeyPasswordBox, Item.ApiSecretKey);
-			if (e.PropertyName == nameof(AiService.ApiOrganizationId))
-				ControlsHelper.SetText(ApiOrganizationIdPasswordBox, Item.ApiOrganizationId);
 		}
 
 		void UpdateControlVilibility()
@@ -77,19 +80,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ModelFilterLabel.Visibility = visibility;
 			ModelFilterTextBox.Visibility = visibility;
 			ApiOrganizationIdLabel.Visibility = visibility;
-			ApiOrganizationIdPasswordBox.Visibility = visibility;
+			ApiOrganizationIdVaultItemValuePanel.ValuePasswordBox.Visibility = visibility;
 			IsAzureOpenAiCheckBox.Visibility = visibility;
 			ResponseStreamingCheckBox.Visibility = visibility;
 		}
-
-		private AiService _Item;
-		private readonly object _ItemLock = new object();
-
-		private void SecretKeyPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-			=> Item.ApiSecretKey = ApiSecretKeyPasswordBox.Password;
-
-		private void OrganizationPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-			=> Item.ApiOrganizationId = ApiOrganizationIdPasswordBox.Password;
 
 		private async void ModelRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -147,41 +141,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
-		private async void AzureVaultValueRefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			var credential = await Security.AppSecurityHelper.GetTokenCredential();
-			if (credential == null)
-				return;
-			//var secret = await Security.AppSecurityHelper
-			//	.GetSecretFromKeyVault(AzureVaultNameTextBox.Text, AzureVaultSecretNameTextBox.Text, credential);
-			//Item.ApiSecretKey = secret?.Value ?? "";
-		}
+		#region ■ INotifyPropertyChanged
 
-		#region Vault Items
+		public event PropertyChangedEventHandler PropertyChanged;
 
-		public SortableBindingList<object> VaultItems1 { get; }
-			= new SortableBindingList<object>() { new { Id = (Guid?)null, Name = "" } };
-
-		public SortableBindingList<VaultItem> VaultItems2
-			=> Global.AppSettings.VaultItems;
-
-		private async void ApiSecretKeyRefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsOnCooldown(sender))
-				return;
-			var item = await AppSecurityHelper.RefreshVaultItem(Item.ApiSecretKeyVaultItemId);
-			if (item != null)
-				Item.ApiSecretKey = item.Value;
-		}
-
-		private async void ApiOrganizationIdRefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsOnCooldown(sender))
-				return;
-			var item = await AppSecurityHelper.RefreshVaultItem(Item.ApiOrganizationIdVaultItemId);
-			if (item != null)
-				Item.ApiOrganizationId = item.Value;
-		}
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		#endregion
 

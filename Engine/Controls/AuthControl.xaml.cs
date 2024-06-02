@@ -27,6 +27,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public AuthControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			var debugVisibility = InitHelper.IsDebug ? Visibility.Visible : Visibility.Collapsed;
+			KeyVaultSettings.Visibility = debugVisibility;
+			TestGroupBox.Visibility = debugVisibility;
 		}
 
 		private async void SignInButton_Click(object sender, RoutedEventArgs e)

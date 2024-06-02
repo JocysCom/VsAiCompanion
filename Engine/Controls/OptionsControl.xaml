@@ -203,6 +203,17 @@
 					</StackPanel>
 				</ScrollViewer>
 			</TabItem>
+
+			<TabItem x:Name="AccountSettingsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_microsoft_login}" />
+						<Label Content="{StaticResource main_Microsoft_Account}" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:AuthControl x:Name="AuthPanel" />
+			</TabItem>
+
 			<TabItem x:Name="AiServicesTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -338,16 +349,6 @@
 					</StackPanel>
 				</TabItem.Header>
 				<controls:OptionsAvatarControl x:Name="AvatarOptionsPanel" />
-			</TabItem>
-
-			<TabItem x:Name="AccountSettingsTabItem" x:FieldModifier="public">
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_user_id}" />
-						<Label Content="{StaticResource main_Account}" />
-					</StackPanel>
-				</TabItem.Header>
-				<controls:AuthControl x:Name="AuthPanel" />
 			</TabItem>
 
 			<TabItem x:Name="ResetSettingsTabItem" x:FieldModifier="public">

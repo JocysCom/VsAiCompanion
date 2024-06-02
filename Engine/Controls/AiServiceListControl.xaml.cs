@@ -78,7 +78,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		TaskSettings PanelSettings { get; set; }
+		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
