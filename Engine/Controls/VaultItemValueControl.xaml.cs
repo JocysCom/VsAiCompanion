@@ -69,13 +69,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_Item.PropertyChanged += _Item_PropertyChanged;
 					ControlsHelper.SetText(VaultItemValuePasswordBox, Item.Value);
 				}
-				var useVaultItem = value != null;
-				ValuePasswordBox.Visibility = !useVaultItem
-					? Visibility.Visible
-					: Visibility.Collapsed;
-				VaultItemValuePasswordBox.Visibility = useVaultItem
-					? Visibility.Visible
-					: Visibility.Collapsed;
 			}
 		}
 		VaultItem _Item;
@@ -98,6 +91,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			set
 			{
 				SetValue(VaultItemIdProperty, value);
+				UpdateVisibility();
 			}
 		}
 
@@ -157,6 +151,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		void UpdateItem()
 		{
 			Item = Global.AppSettings.VaultItems.FirstOrDefault(x => x.Id == VaultItemId);
+		}
+
+		void UpdateVisibility()
+		{
+			var useVaultItem = VaultItemId != null;
+			ValuePasswordBox.Visibility = !useVaultItem
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			VaultItemValuePasswordBox.Visibility = useVaultItem
+				? Visibility.Visible
+				: Visibility.Collapsed;
 		}
 	}
 }
