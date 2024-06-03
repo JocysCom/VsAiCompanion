@@ -696,8 +696,8 @@
 				Grid.ColumnSpan="4"
 				BorderBrush="{StaticResource BorderDark}"
 				BorderThickness="0,1,0,1">
-				<!--  Hide in order to preved UI freeze whe WebBrowser is loading. It will be made visible in MainContro.xaml.cs.  -->
 				<Chat:ChatControl x:Name="ChatPanel" x:FieldModifier="public" />
+				<!--  Hide in order to preved UI freeze whe WebBrowser is loading. It will be made visible in MainContro.xaml.cs.  -->
 			</Border>
 			<!--  Row 5  -->
 			<Border
@@ -832,14 +832,16 @@
 				</Button>
 				<Button
 					Name="MicrophoneButton"
-					Margin="3,3,3,3"
+					Margin="3,3,6,3"
 					AutomationProperties.HelpText="{StaticResource main_Start_Voice_Typing}"
 					AutomationProperties.Name="Voice Typing"
 					Click="MicrophoneButton_Click">
 					<ContentControl Content="{StaticResource Icon_microphone2}" Focusable="False" />
 				</Button>
-				<CheckBox Name="ShowInstructionsCheckBox" Content="Show Instructions" IsChecked="{Binding ShowInstructions}" />
-				<CheckBox Name="ShowPromptingCheckBox" Content="Show Prompting" IsChecked="{Binding ShowPrompting}" />
+				<CheckBox Name="ShowInstructionsCheckBox" Content="Instructions" IsChecked="{Binding ShowInstructions}" />
+				<CheckBox Name="ShowPromptingCheckBox" Content="Prompting" IsChecked="{Binding ShowPrompting}" />
+				<CheckBox Name="ShowAvatar" Content="Avatar" IsChecked="{Binding ShowPrompting}" />
+				<CheckBox Name="UseVoiceCheckBox" Content="Use Voice" IsChecked="{Binding SendChatHistory}" />
 				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory}" />
 				<CheckBox
 					Name="IsSpellCheckEnabledCheckBox"
@@ -852,7 +854,6 @@
 			</StackPanel>
 			<StackPanel
 				Grid.Row="7"
-				Grid.Column="0"
 				Grid.ColumnSpan="3"
 				HorizontalAlignment="Right"
 				Orientation="Horizontal">

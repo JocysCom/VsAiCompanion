@@ -189,29 +189,34 @@
 	</UserControl.Resources>
 	<Grid x:Name="ControlGrid" Background="White">
 		<Grid x:Name="MainGrid" Background="White">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+
 			<!--  Messages  -->
-			<Border
-				x:Name="MessagesPanelBorder"
-				Grid.Row="0"
-				Grid.Column="0"
-				Grid.ColumnSpan="2"
-				BorderBrush="{StaticResource BorderDark}"
-				BorderThickness="0,0,0,1">
+			<Border x:Name="MessagesPanelBorder" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,0,1">
 				<local:ChatListControl x:Name="MessagesPanel" />
 			</Border>
+
+			<Border Grid.Column="1" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,1,0" Visibility="Visible"> <!-- Visibility Binding ShowAvatar -->
+				<Viewbox>
+					<Border Name="AvatarPanelBorder">
+						<StackPanel Width="1080" Height="1920" Background="Black" />
+						<!--<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />-->
+					</Border>
+				</Viewbox>
+			</Border>
+
 			<!--  Inputs Panel  -->
 			<Border
 				Grid.Row="1"
-				Grid.Column="0"
+				Grid.ColumnSpan="2"
 				VerticalAlignment="Stretch"
 				Background="{StaticResource BackgroundLight}">
 				<StackPanel VerticalAlignment="Bottom">
@@ -227,8 +232,6 @@
 						<!--  Instructions  -->
 						<StackPanel
 							x:Name="DataInstructionsPanel"
-							Grid.Row="0"
-							Grid.Column="0"
 							Margin="10,10,10,0"
 							IsVisibleChanged="DataInstructionsPanel_IsVisibleChanged"
 							Visibility="{Binding ShowInstructions, Converter={StaticResource _BoolToVisibilityConverter}}">
@@ -306,7 +309,7 @@
 							</Grid>
 						</StackPanel>
 						<!--  Send Message  -->
-						<StackPanel Grid.Row="1" Grid.Column="0" Margin="10">
+						<StackPanel Grid.Row="1" Margin="10">
 							<Grid x:Name="MessageInputGrid">
 								<TextBox
 									x:Name="DataTextBox"
