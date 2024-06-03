@@ -204,7 +204,12 @@
 				<local:ChatListControl x:Name="MessagesPanel" />
 			</Border>
 
-			<Border Grid.Column="1" BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,1,0" Visibility="Visible"> <!-- Visibility Binding ShowAvatar -->
+			<Border
+				Grid.Column="1"
+				BorderBrush="{StaticResource BorderDark}"
+				BorderThickness="0,0,0,1"
+				Visibility="Visible"> 
+				<!--  Visibility Binding ShowAvatar  -->
 				<Viewbox>
 					<Border Name="AvatarPanelBorder">
 						<StackPanel Width="1080" Height="1920" Background="Black" />
