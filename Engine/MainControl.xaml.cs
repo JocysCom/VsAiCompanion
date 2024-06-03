@@ -38,7 +38,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Temporary: Hide "Assistants" feature for release users.
 			AssistantsTabItem.Visibility = debugVisibility;
 			ErrorsTabItem.Visibility = debugVisibility;
-			AuthIconPanel.Visibility = debugVisibility;
 			UpdatesTabItem.Visibility = !Global.IsVsExtension
 				? Visibility.Visible
 				: Visibility.Collapsed;

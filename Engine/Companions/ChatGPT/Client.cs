@@ -39,16 +39,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		private readonly AiService Service;
 
-		public HttpClient GetClient()
+		public async Task<HttpClient> GetClient(CancellationToken cancellationToken = default)
 		{
 			var client = new HttpClient();
 			client.BaseAddress = new Uri(Service.BaseUrl);
-			//if (!string.IsNullOrEmpty(Service.ApiSecretKey))
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Service.ApiSecretKey);
+			var apiSecretKey = await Security.AppSecurityHelper.CheckAndGet(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiSecretKey);
 			client.DefaultRequestHeaders.Accept.Clear();
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-			//if (!string.IsNullOrEmpty(Service.ApiOrganizationId))
-			client.DefaultRequestHeaders.Add("OpenAI-Organization", Service.ApiOrganizationId);
+			var apiOrganizationId = await Security.AppSecurityHelper.CheckAndGet(Service.ApiOrganizationIdVaultItemId, Service.ApiOrganizationId);
+			client.DefaultRequestHeaders.Add("OpenAI-Organization", apiOrganizationId);
 			return client;
 		}
 
@@ -83,7 +83,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
 			var urlWithDate = $"{Service.BaseUrl}{filesPath}?date={date}";
-			var client = GetClient();
+			var client = await GetClient();
 			//client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			using (var content = new MultipartFormDataContent())
 			{
@@ -109,7 +109,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
 			var urlWithDate = $"{Service.BaseUrl}{path}/{id}?date={date}";
-			var client = GetClient();
+			var client = await GetClient();
 			using (var response = await client.DeleteAsync(urlWithDate, cancellationToken))
 			{
 				var responseBody = await response.Content.ReadAsStringAsync();
@@ -131,7 +131,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
 			var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
-			var client = GetClient();
+			var client = await GetClient();
 			client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			HttpResponseMessage response;
 			var completionOption = stream
@@ -264,24 +264,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public event EventHandler MessageDone;
 
-		public OpenAIClient GetAiClient()
+		public async Task<OpenAIClient> GetAiClient(CancellationToken cancellationToken = default)
 		{
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
 			var endpoint = new Uri(Service.BaseUrl);
 			var options = new OpenAIClientOptions();
 			OpenAIClient client;
+			var apiSecretKey = await Security.AppSecurityHelper.CheckAndGet(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
 			if (Service.IsAzureOpenAI)
 			{
-				client = string.IsNullOrEmpty(Service.ApiSecretKey)
+				client = string.IsNullOrEmpty(apiSecretKey)
 					? new OpenAIClient(endpoint, new DefaultAzureCredential())
-					: new OpenAIClient(endpoint, new AzureKeyCredential(Service.ApiSecretKey));
+					: new OpenAIClient(endpoint, new AzureKeyCredential(apiSecretKey));
 			}
 			else
 			{
-				var accessToken = new AccessToken(Service.ApiSecretKey, DateTimeOffset.Now.AddDays(180));
+				var accessToken = new AccessToken(apiSecretKey, DateTimeOffset.Now.AddDays(180));
 				var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
-				if (string.IsNullOrEmpty(Service.ApiSecretKey))
+				if (string.IsNullOrEmpty(apiSecretKey))
 				{
 					// TODO: Allow HTTP localhost connections.
 					// Bearer token authentication is not permitted for non TLS protected (https) endpoints.
@@ -305,7 +306,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			CancellationToken cancellationToken = default
 			)
 		{
-			var client = GetAiClient();
+			var client = await GetAiClient();
 			var clientToken = new CancellationTokenSource();
 			clientToken.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
 			var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(clientToken.Token, cancellationToken);
@@ -418,7 +419,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
-						var client = GetAiClient();
+						var client = await GetAiClient();
 						var completionsOptions = new CompletionsOptions(modelName, prompts);
 						completionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
@@ -504,7 +505,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						chatCompletionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
 						{
-							var client = GetAiClient();
+							var client = await GetAiClient();
 							var response = await client.GetChatCompletionsStreamingAsync(chatCompletionsOptions, cancellationTokenSource.Token);
 							using (var streamingChatCompletions = response)
 							{
@@ -565,7 +566,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						// Could be local non-secure HTTP connection.
 						else
 						{
-							var client = GetAiClient();
+							var client = await GetAiClient();
 							var response = await client.GetChatCompletionsAsync(chatCompletionsOptions, cancellationTokenSource.Token);
 							foreach (ChatChoice chatChoice in response.Value.Choices)
 							{

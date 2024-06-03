@@ -58,11 +58,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		[DefaultValue(null), XmlElement(ElementName = nameof(Value))]
 		public string _ValueEncrypted { get; set; }
 
-		/// <summary>Expiration Date.</summary>
-		[DefaultValue(null)]
-		public DateTime? LastCheckDate { get => _LastCheckDate; set => SetProperty(ref _LastCheckDate, value); }
-		DateTime? _LastCheckDate;
-
 		/// <summary>Update time settings.</summary>
 		[DefaultValue(null)]
 		public UpdateTimeSettings UpdateTimeSettings
@@ -76,6 +71,46 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// Serialize only of properties non default.
 		/// </summary>
 		public bool ShouldSerializeUpdateTimeSettings => JocysCom.ClassLibrary.Runtime.RuntimeHelper.EqualProperties(this, new UpdateTimeSettings());
+
+		/// <summary>
+		/// Returns true if the key is not active, has expired, or needs to be checked for an updated value.
+		/// </summary>
+		public bool ShouldCheckForUpdates()
+		{
+			if (UpdateTimeSettings.IsEnabled)
+			{
+				// Returns true if needs to be checked for an updated value.
+				var update = UpdateTimeChecker.ShouldCheckForUpdates(UpdateTimeSettings);
+				if (update)
+					return true;
+			}
+			var updatedTime = UpdateTimeSettings.LastUpdate;
+			var currentTime = DateTime.UtcNow;
+			// If no value then...
+			if (Value == null)
+				return true;
+			// If key is not active yet.
+			if (ActivationDate.HasValue && currentTime < ActivationDate.Value)
+				return true;
+			// If key expired.
+			if (ExpirationDate.HasValue && currentTime > ExpirationDate.Value)
+				return true;
+			return false;
+		}
+
+
+		public void Clear()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this,
+				// Don't clear user properties, only properties refreshed from the server.
+				exclude: new string[] {
+					nameof(Id),
+					nameof(Name),
+					nameof(VaultName),
+					nameof(VaultItemName),
+					nameof(ServiceType)
+				});
+		}
 
 	}
 }

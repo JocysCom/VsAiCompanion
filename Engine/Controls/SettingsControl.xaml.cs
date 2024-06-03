@@ -313,25 +313,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (shiftDown)
 				return;
 			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?.WebBrowser;
-			var bodiesSize = TemplateItemPanel?.Item?.Messages.Sum(x => x.Body?.Length ?? 0);
-			var attachmentsSize = TemplateItemPanel?.Item?.Attachments.Sum(x => x.Data?.Length ?? 0);
-			var isLarge = (bodiesSize + attachmentsSize) > 1024 * 8;
-
-			if (!settignsStored)
+			if (wb != null)
 			{
-				_BitmapScalingMode = RenderOptions.GetBitmapScalingMode(wb);
-				_TextRenderingMode = TextOptions.GetTextRenderingMode(wb);
-				// Disable animations to improve resize performance
-				_VisualBrush = new VisualBrush(wb);
-				_Visual = _VisualBrush.Visual;
-				settignsStored = true;
-			}
-			// Hide content for large pages for faster resizing.
-			if (wb != null && isLarge)
-			{
-				wb.Visibility = Visibility.Hidden;
-				RenderOptions.SetBitmapScalingMode(wb, BitmapScalingMode.LowQuality);
-				TextOptions.SetTextRenderingMode(wb, TextRenderingMode.Grayscale);
+				var bodiesSize = TemplateItemPanel?.Item?.Messages.Sum(x => x.Body?.Length ?? 0);
+				var attachmentsSize = TemplateItemPanel?.Item?.Attachments.Sum(x => x.Data?.Length ?? 0);
+				var isLarge = (bodiesSize + attachmentsSize) > 1024 * 8;
+				if (!settignsStored)
+				{
+					_BitmapScalingMode = RenderOptions.GetBitmapScalingMode(wb);
+					_TextRenderingMode = TextOptions.GetTextRenderingMode(wb);
+					// Disable animations to improve resize performance
+					_VisualBrush = new VisualBrush(wb);
+					_Visual = _VisualBrush.Visual;
+					settignsStored = true;
+				}
+				// Hide content for large pages for faster resizing.
+				if (isLarge)
+				{
+					wb.Visibility = Visibility.Hidden;
+					RenderOptions.SetBitmapScalingMode(wb, BitmapScalingMode.LowQuality);
+					TextOptions.SetTextRenderingMode(wb, TextRenderingMode.Grayscale);
+				}
 			}
 		}
 

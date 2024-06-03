@@ -36,6 +36,9 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			}
 		}
 
+		/// <summary>
+		/// Returns true if update 
+		/// </summary>
 		public static bool ShouldCheckForUpdates(UpdateTimeSettings settings)
 		{
 			DateTime nextUpdate = GetNextUpdate(settings);

@@ -163,7 +163,7 @@
 						<Label Content="Errors" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:LogControl x:Name="ErrorsLogPanel" />
+				<JcControls:LogControl x:Name="ErrorsLogPanel" />
 			</TabItem>
 		</TabControl>
 	</Grid>

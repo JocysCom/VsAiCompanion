@@ -438,7 +438,7 @@
 						<Label Content="{StaticResource main_Log}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:LogControl x:Name="LogPanel" />
+				<JcControls:LogControl x:Name="LogPanel" />
 			</TabItem>
 		</TabControl>
 		<!--  Row 4  -->

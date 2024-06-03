@@ -103,6 +103,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				System.Windows.Clipboard.SetText(value);
 		}
 
+		private void ClearVaultItemButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			Item?.Clear();
+		}
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;

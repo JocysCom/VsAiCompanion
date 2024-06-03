@@ -133,13 +133,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>User Profiles</summary>
 		public SortableBindingList<UserProfile> UserProfiles
 		{
-			get => _UserProfiles.Value;
+			get
+			{
+				var profiles = _UserProfiles.Value;
+				if (profiles.Count == 0)
+					profiles.Add(new UserProfile());
+				return profiles;
+			}
 			set => Interlocked.Exchange(ref _UserProfiles, new Lazy<SortableBindingList<UserProfile>>(() => value));
 		}
 		private volatile Lazy<SortableBindingList<UserProfile>> _UserProfiles =
 			new Lazy<SortableBindingList<UserProfile>>(() => new SortableBindingList<UserProfile>());
 
-		public bool ShouldSerializeUserProfiles => UserProfiles?.Count > 0;
+		public bool ShouldSerializeUserProfiles => UserProfiles.Count > 0;
 
 		#endregion
 

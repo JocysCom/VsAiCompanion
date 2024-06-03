@@ -2,6 +2,7 @@
 	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.OptionsAvatarControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -236,7 +237,7 @@
 							<Label Content="{StaticResource main_Log}" />
 						</StackPanel>
 					</TabItem.Header>
-					<controls:LogControl x:Name="LogPanel" />
+					<JcControls:LogControl x:Name="LogPanel" />
 				</TabItem>
 			</TabControl>
 		</Grid>

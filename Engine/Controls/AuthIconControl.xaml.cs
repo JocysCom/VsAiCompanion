@@ -1,6 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Security;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,8 +50,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var noImage = Item?.Image == null;
 			DefaultImage.Visibility = noImage ? Visibility.Visible : Visibility.Collapsed;
 			MainImage.Visibility = noImage ? Visibility.Collapsed : Visibility.Visible;
-			ConsumerImage.Visibility = Item?.IsConsumer == true ? Visibility.Visible : Visibility.Collapsed;
-			BusinessImage.Visibility = Item?.IsConsumer == false ? Visibility.Visible : Visibility.Collapsed;
+			ConsumerImage.Visibility = Visibility.Collapsed;
+			BusinessImage.Visibility = Visibility.Collapsed;
+			//ConsumerImage.Visibility = Item?.IsConsumer == true ? Visibility.Visible : Visibility.Collapsed;
+			//BusinessImage.Visibility = Item?.IsConsumer == false ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		UserProfile _Item;
@@ -60,7 +62,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				Item = Global.AppSettings.UserProfiles.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
+				Item = AppSecurityHelper.GetProfile();
 				AdjustEllipse();
 			}
 		}

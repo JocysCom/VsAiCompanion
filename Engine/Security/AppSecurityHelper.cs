@@ -179,7 +179,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// </summary>
 		public static UserProfile GetProfile()
 		{
-			var profile = Global.AppSettings.UserProfiles.FirstOrDefault(p => p.ServiceType == ApiServiceType.Azure);
+			var profile = Global.AppSettings.UserProfiles.First();
 			return profile;
 		}
 
@@ -204,13 +204,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var account = result.Account;
 
 			// Save User profile.
-			var profile = Global.AppSettings.UserProfiles
-				.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
-			if (profile == null)
-			{
-				profile = new UserProfile();
-				Global.AppSettings.UserProfiles.Add(profile);
-			}
+			var profile = GetProfile();
 			profile.ServiceType = ApiServiceType.Azure;
 			profile.Username = account.Username;
 			profile.AccountId = account.HomeAccountId.Identifier;
@@ -318,7 +312,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				*/
 
 				var accounts = await Pca.GetAccountsAsync();
-				var accountId = GetProfile()?.AccountId;
+				var accountId = GetProfile().AccountId;
 				if (accountId == null)
 				{
 					requiresUI = true;
@@ -367,7 +361,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		public async Task<bool> SignOut()
 		{
 			var profile = GetProfile();
-			profile?.Clear();
+			profile.Clear();
 			if (_account != null)
 			{
 				await Pca.RemoveAsync(_account);
@@ -406,7 +400,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			EnableTokenCache(Pca.UserTokenCache);
 			// Load saved user profile
 			var profile = GetProfile();
-			if (profile == null)
+			if (string.IsNullOrEmpty(profile.AccountId))
 				return;
 			// Returns all the available accounts in the user token cache for the application.
 			var accounts = await Pca.GetAccountsAsync();
@@ -505,6 +499,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			{
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 				var response = await httpClient.GetAsync(url, cancellationToken);
+				//var phrase = response.ReasonPhrase;
 				var contents = await response.Content.ReadAsStringAsync();
 				return contents;
 			}
@@ -582,12 +577,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			async (cancellationToken) =>
 			{
 				var secret = await GetSecretFromKeyVault(item.VaultName, item.VaultItemName);
-				item.Value = secret?.Value;
-				item.ActivationDate = secret?.Properties?.ExpiresOn?.UtcDateTime;
-				item.ExpirationDate = secret?.Properties?.NotBefore?.UtcDateTime;
-				item.UpdateTimeSettings.LastUpdate = DateTime.UtcNow;
+				JocysCom.ClassLibrary.Controls.ControlsHelper.AppInvoke(() =>
+				{
+					item.Value = secret?.Value;
+					item.ActivationDate = secret?.Properties?.NotBefore?.UtcDateTime;
+					item.ExpirationDate = secret?.Properties?.ExpiresOn?.UtcDateTime;
+					item.UpdateTimeSettings.LastUpdate = DateTime.UtcNow;
+				});
 			});
 			return item;
+		}
+
+		public static async Task<string> CheckAndGet(Guid? vaultItemId, string defaultSecret,
+			ObservableCollection<CancellationTokenSource> cancellationTokenSources = default)
+		{
+			if (vaultItemId == null)
+				return defaultSecret;
+			var item = Global.AppSettings.VaultItems.FirstOrDefault(x => x.Id == vaultItemId.Value);
+			if (item == null)
+				return null;
+			var update = item.ShouldCheckForUpdates();
+			if (update)
+				await RefreshVaultItem(item.Id, cancellationTokenSources);
+			return item.Value;
 		}
 
 		#endregion

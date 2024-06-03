@@ -21,18 +21,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			PropertyChanged += This_PropertyChanged;
-			DataContextChanged += This_DataContextChanged;
 		}
 
 		private void This_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(VaultItemId))
-				UpdateItem();
-		}
-
-		private void This_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			UpdateItem();
+				UpdateItemFromVaultItemId();
+			if (e.PropertyName == nameof(Value))
+				ControlsHelper.SetText(ValuePasswordBox, Value);
 		}
 
 		public SortableBindingList<object> VaultItems1 { get; }
@@ -83,48 +79,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		/// <summary>Vault Item ID dependency property.</summary>
 		public static readonly DependencyProperty VaultItemIdProperty =
-			DependencyProperty.Register(nameof(VaultItemId), typeof(Guid?), typeof(VaultItemValueControl));
+			DependencyProperty.Register(nameof(VaultItemId), typeof(Guid?), typeof(VaultItemValueControl),
+				new PropertyMetadata(null, OnVaultItemIdChanged));
+
+		private static void OnVaultItemIdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var control = d as VaultItemValueControl;
+			control.OnPropertyChanged(nameof(VaultItemId));
+		}
+
 
 		public Guid? VaultItemId
 		{
 			get { return (Guid?)GetValue(VaultItemIdProperty); }
-			set
-			{
-				SetValue(VaultItemIdProperty, value);
-				UpdateVisibility();
-			}
+			set { SetValue(VaultItemIdProperty, value); }
 		}
 
 		/// <summary>Value dependency property.</summary>
 		public static readonly DependencyProperty ValueProperty =
-			DependencyProperty.Register(nameof(Value), typeof(string), typeof(VaultItemValueControl));
+			DependencyProperty.Register(nameof(Value), typeof(string), typeof(VaultItemValueControl),
+			new PropertyMetadata(null, OnValueChanged));
 
 		public string Value
 		{
 			get { return (string)GetValue(ValueProperty); }
-			set
-			{
-				SetValue(ValueProperty, value);
-				ControlsHelper.SetText(ValuePasswordBox, value);
-			}
+			set { SetValue(ValueProperty, value); }
 		}
 
-		#endregion
-
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
+		private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			if (Equals(property, value))
-				return;
-			property = value;
-			// Invoke overridden OnPropertyChanged method in the most derived class of the object.
-			OnPropertyChanged(propertyName);
+			var control = d as VaultItemValueControl;
+			control.OnPropertyChanged(nameof(Value));
 		}
 
 		#endregion
@@ -137,7 +122,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				VaultItems2 = Global.AppSettings.VaultItems;
 				OnPropertyChanged(nameof(VaultItems2));
-				UpdateItem();
 				ValuePasswordBox.PasswordChanged += ValuePasswordBox_PasswordChanged;
 			}
 		}
@@ -148,20 +132,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Value = ValuePasswordBox.Password;
 		}
 
-		void UpdateItem()
+		void UpdateItemFromVaultItemId()
 		{
 			Item = Global.AppSettings.VaultItems.FirstOrDefault(x => x.Id == VaultItemId);
-		}
-
-		void UpdateVisibility()
-		{
 			var useVaultItem = VaultItemId != null;
 			ValuePasswordBox.Visibility = !useVaultItem
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			VaultItemValuePasswordBox.Visibility = useVaultItem
+			var vaultVisibility = useVaultItem
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			VaultItemRefreshButton.Visibility = vaultVisibility;
+			VaultItemValuePasswordBox.Visibility = vaultVisibility;
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 }

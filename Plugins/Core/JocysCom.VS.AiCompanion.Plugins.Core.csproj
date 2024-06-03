@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
@@ -26,6 +26,22 @@
 		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.0.2" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
@@ -46,15 +62,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
+		<ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="VideoInputDevices\" />
+		<Folder Include="VideoInputDevices\" />
 	</ItemGroup>
 
+	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
+		<!-- Execute once for multiple builds -->
+	</Target>
+
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)\Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
+		<Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
 	</Target>
 
 </Project>

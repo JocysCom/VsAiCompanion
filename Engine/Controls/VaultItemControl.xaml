@@ -38,13 +38,6 @@
 			Focusable="False">
 			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 		</Button>
-		<Border Grid.ColumnSpan="2" Margin="32,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
-			<TextBlock
-				Name="FeatureDescriptionLabel"
-				Margin="4"
-				Text="{StaticResource main_Vaults_Feature_Description}"
-				TextWrapping="Wrap" />
-		</Border>
 		<!--  Row 1  -->
 		<Grid Grid.Row="1">
 			<Grid.RowDefinitions>
@@ -73,19 +66,9 @@
 			<TextBox
 				Grid.Row="1"
 				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				VerticalAlignment="Top"
 				Text="{Binding VaultItemName}" />
-			<Button
-				Name="RefreshButton"
-				Grid.Row="1"
-				Grid.Column="2"
-				Margin="3,0,3,0"
-				Click="RefreshButton_Click"
-				ToolTip="{StaticResource main_Refresh}">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Refresh}" />
-				</StackPanel>
-			</Button>
 
 			<Label Grid.Row="3" Content="{StaticResource main_Value}" />
 			<PasswordBox
@@ -93,17 +76,37 @@
 				Grid.Row="3"
 				Grid.Column="1"
 				IsEnabled="False" />
-			<Button
-				Name="CopyButton"
-				Grid.Row="3"
-				Grid.Column="3"
-				Margin="3,0,3,0"
-				x:FieldModifier="public"
-				Background="Transparent"
-				Click="CopyButton_Click"
-				ToolTip="{StaticResource main_Copy}">
-				<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" />
-			</Button>
+			<StackPanel Grid.Row="3" Grid.Column="3" Orientation="Horizontal">
+				<Button
+					Name="RefreshButton"
+					Grid.Row="1"
+					Grid.Column="2"
+					Margin="3,0,3,0"
+					Click="RefreshButton_Click"
+					ToolTip="{StaticResource main_Refresh}">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Refresh}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="CopyButton"
+					Margin="3,0,3,0"
+					x:FieldModifier="public"
+					Click="CopyButton_Click"
+					ToolTip="{StaticResource main_Copy}">
+					<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" />
+				</Button>
+				<Button
+					Name="ClearVaultItemButton"
+					Margin="3,0,3,0"
+					x:FieldModifier="public"
+					AutomationProperties.HelpText="{StaticResource main_ClearVaultItem_Help}"
+					AutomationProperties.Name="{StaticResource main_ClearVaultItem_Name}"
+					Click="ClearVaultItemButton_Click"
+					ToolTip="{StaticResource main_ClearVaultItem_Help}">
+					<ContentControl Content="{StaticResource Icon_broom}" Focusable="False" />
+				</Button>
+			</StackPanel>
 
 			<Label Grid.Row="4" Content="{StaticResource main_ActivationDate}" />
 			<TextBox

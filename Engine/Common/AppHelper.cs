@@ -369,7 +369,7 @@ EndFragment:{3:00000000}";
 			else
 			{
 				// Download models from API service.
-				if (!Global.IsGoodSettings(aiService, true))
+				if (!await Global.IsGoodSettings(aiService, true))
 					return;
 				var client = new Client(aiService);
 				var models = await client.GetModels();
@@ -1042,7 +1042,11 @@ EndFragment:{3:00000000}";
 			var source = new CancellationTokenSource();
 			source.CancelAfter(TimeSpan.FromSeconds(30));
 			tokens?.Add(source);
-			Global.MainControl.InfoPanel.AddTask(source);
+			ControlsHelper.AppInvoke(() =>
+			{
+				Global.MainControl.InfoPanel.AddTask(source);
+			});
+
 			try
 			{
 				await action.Invoke(source.Token);
@@ -1050,16 +1054,21 @@ EndFragment:{3:00000000}";
 			catch (Exception ex)
 			{
 				exception = ex;
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+				ControlsHelper.AppInvoke(() =>
+				{
+					Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+				});
 			}
 			finally
 			{
 				tokens?.Remove(source);
-				Global.MainControl.InfoPanel.RemoveTask(source);
+				ControlsHelper.AppInvoke(() =>
+				{
+					Global.MainControl.InfoPanel.RemoveTask(source);
+				});
 			}
 			return exception;
 		}
-
 
 		#endregion
 

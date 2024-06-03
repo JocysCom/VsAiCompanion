@@ -20,11 +20,11 @@ using System.Windows.Controls;
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
 	/// <summary>
-	/// Interaction logic for AuthControl.xaml
+	/// Interaction logic for OptionsMicrosoftAccountsControl.xaml
 	/// </summary>
-	public partial class AuthControl : UserControl
+	public partial class OptionsMicrosoftAccountsControl : UserControl
 	{
-		public AuthControl()
+		public OptionsMicrosoftAccountsControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
@@ -86,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogPanel.Add($"Access Token:\r\n");
 				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
 				InspectToken(accessToken);
-				var idToken = AppSecurityHelper.GetProfile()?.IdToken;
+				var idToken = AppSecurityHelper.GetProfile().IdToken;
 				if (!string.IsNullOrEmpty(idToken))
 				{
 					LogPanel.Add($"ID Token:\r\n");
@@ -129,24 +129,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-
-
-				//var w = new JocysCom.VS.AiCompanion.Plugins.Core.Web();
-				//var page = await w.GetWebPageContentsAuthenticated(TestTextBox.Text, false);
 				var uri = new Uri(TestTextBox.Text);
 				var scope1 = $"{uri.Scheme}://{uri.Host}/.default";
-
-				//var token1 = GetAccessTokenUsingWindowsAuthentication();
-				//var content = await GetWebPageContentsWithDefaultAzureCredential(TestTextBox.Text, scope1, token1);
-
-
-				var scopes = new[] { AppSecurityHelper.MicrosoftGraphScope };
+				var scopes = new[] { scope1 };
 				var token = await AppSecurityHelper.GetAccessToken(scopes, cancellationToken);
 				var accessToken = token.Token;
+				// Inspect the token
+				InspectToken(accessToken);
 				var contents = await AppSecurityHelper.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken, cancellationToken);
 				LogPanel.Add($"{contents}\r\n");
 			});
 		}
+
+		//var token1 = GetAccessTokenUsingWindowsAuthentication();
+		//var content = await GetWebPageContentsWithDefaultAzureCredential(TestTextBox.Text, scope1, token1);
+		//var w = new JocysCom.VS.AiCompanion.Plugins.Core.Web();
+		//var page = await w.GetWebPageContentsAuthenticated(TestTextBox.Text, false);
+
 
 		private async void ListAccountsButton_Click(object sender, RoutedEventArgs e)
 		{

@@ -141,7 +141,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (e.PropertyName == nameof(_Data.AiService))
 			{
-				if (Global.IsGoodSettings(_Data.AiService))
+				if (await Global.IsGoodSettings(_Data.AiService))
 					await Refresh();
 			}
 		}

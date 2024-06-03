@@ -4,6 +4,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls;
+using JocysCom.VS.AiCompanion.Engine.Security;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
@@ -206,25 +207,26 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return !messages.Any();
 		}
 
-		public static bool IsGoodSettings(AiService item, bool redirectToSettings = false)
+		public static async Task<bool> IsGoodSettings(AiService service, bool redirectToSettings = false)
 		{
 			var itemsRequired = new List<string>();
-			if (item == null)
+			if (service == null)
 			{
 				SetWithTimeout(MessageBoxImage.Warning, Resources.MainResources.main_Select_AI_Service_from_Menu);
 				return false;
 			}
-			if (string.IsNullOrEmpty(item.BaseUrl))
+			if (string.IsNullOrEmpty(service.BaseUrl))
 				itemsRequired.Add("Base URL");
-			if (string.IsNullOrEmpty(item.Name))
+			if (string.IsNullOrEmpty(service.Name))
 				itemsRequired.Add("Service Name");
 			// If OpenAI service then check for API Key and Organization ID.
-			var baseUrl = item.BaseUrl ?? "";
+			var baseUrl = service.BaseUrl ?? "";
 			var isMicrosoft = baseUrl.Contains(".microsoft.com");
 			var isOpenAi = baseUrl.Contains(".openai.com");
 			if (isMicrosoft || isOpenAi)
 			{
-				if (string.IsNullOrEmpty(item.ApiSecretKey))
+				var apiSecretKey = await AppSecurityHelper.CheckAndGet(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
+				if (string.IsNullOrEmpty(apiSecretKey))
 					itemsRequired.Add("API Key");
 				//if (isOpenAi && string.IsNullOrEmpty(item.ApiOrganizationId))
 				//	itemsRequired.Add("API Organization ID");
@@ -233,7 +235,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var settings = AppSettings.GetTaskSettings(ItemType.AiService);
 				settings.ListSelection.Clear();
-				settings.ListSelection.Add(item.Name);
+				settings.ListSelection.Add(service.Name);
 				MainControl.OptionsTabItem.IsSelected = true;
 				MainControl.OptionsPanel.AiServicesTabItem.IsSelected = true;
 				var s = string.Join(" and ", itemsRequired);

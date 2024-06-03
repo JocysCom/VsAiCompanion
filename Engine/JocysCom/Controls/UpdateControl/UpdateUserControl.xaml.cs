@@ -35,6 +35,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			cancellationTokenSource = new CancellationTokenSource();
 			ReleaseComboBox.ItemsSource = ReleaseList;
 			UpdateButtons();
+			LogPanel.ClearLogButton.Visibility = Visibility.Collapsed;
 		}
 
 		CancellationTokenSource cancellationTokenSource;
@@ -76,7 +77,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		private async void CheckButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
-			LogTextBox.Clear();
+			LogPanel.Clear();
 			await Step1CheckOnline();
 		}
 
@@ -87,7 +88,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		void UpdateButtons()
 		{
-			var selected = ReleaseComboBox.SelectedIndex == 0;
+			var selectedRelease = GetSelectedRelease();
+			var selected = selectedRelease != null;
 			InstallButton.IsEnabled = selected;
 			DownloadButton.IsEnabled = selected;
 			ExtractButton.IsEnabled = selected;
@@ -99,12 +101,50 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			var changesText = "";
 			if (Releases?.Count > 0)
 			{
+				var asset = GetSelectedAsset();
+				// Get info about selected version.
+				if (asset != null)
+				{
+					var totalDownloads = Releases.Sum(x => x.assets.Sum(a => a.download_count));
+					changesText += $"Download URL: {asset.browser_download_url}\r\n";
+					changesText += $"File: {asset.name} ({JocysCom.ClassLibrary.IO.FileFinder.BytesToString(asset.size)})\r\n";
+					changesText += $"Modified: {DateTime.Parse(asset.updated_at)}\r\n";
+					//changesText += $"Downloads: {asset.download_count:#,##0}\r\n";
+					//changesText += $"Total Downloads: {totalDownloads:#,##0}\r\n";
+					changesText += $"\r\n";
+				}
 				// Get description of versions that are higher than the current version.
 				var changes = Releases.Where(x => currentVersion < Version.Parse(ExtractVersionFromName(x.tag_name))).ToList();
-				changesText = string.Join(Environment.NewLine, changes.Select(x => x.body));
+				changesText += changes.Count == 0
+					? string.Join(Environment.NewLine, changes.Select(x => x.body))
+					: selectedRelease?.body;
 			}
-			LogTextBox.Text = changesText + "\r\n\r\n";
+			LogPanel.Clear();
+			AddLog(changesText + "\r\n\r\n");
 		}
+
+		private release GetSelectedRelease()
+		{
+			var item = ReleaseComboBox.SelectedItem as KeyValue<long, string>;
+			var releaseId = item?.Key;
+			if (releaseId == null)
+				return null;
+			var selectedRelease = Releases
+				.Where(x => x.id == releaseId)
+				.FirstOrDefault();
+			return selectedRelease;
+		}
+
+		private asset GetSelectedAsset()
+		{
+			var selectedRelease = GetSelectedRelease();
+			if (selectedRelease == null)
+				return null;
+			var asset = selectedRelease.assets
+				.First(x => x.name.EndsWith(Settings.GitHubAssetName, System.StringComparison.OrdinalIgnoreCase));
+			return asset;
+		}
+
 		public async Task Step1CheckOnline()
 		{
 			var e = new EventArgs();
@@ -167,17 +207,9 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		public async Task Step2Download()
 		{
 			AddLog($"Downloading File...\r\n");
-			var item = ReleaseComboBox.SelectedItem as KeyValue<long, string>;
-			var releaseId = item?.Key;
-			if (releaseId == null)
+			var asset = GetSelectedAsset();
+			if (asset == null)
 				return;
-			var selectedRelease = Releases
-				.Where(x => x.id == releaseId)
-				.FirstOrDefault();
-			if (selectedRelease == null)
-				return;
-			var asset = selectedRelease.assets
-				.First(x => x.name.EndsWith(Settings.GitHubAssetName, System.StringComparison.OrdinalIgnoreCase));
 			oldProgress = 0;
 			_downloader = new Downloader();
 			_downloader.Params.SourceUrl = asset.browser_download_url;
@@ -224,7 +256,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		public void AddLog(string s)
 		{
-			LogTextBox.AppendText(s);
+			LogPanel.Add(s);
 		}
 
 		private void ExtractButton_Click(object sender, System.Windows.RoutedEventArgs e)

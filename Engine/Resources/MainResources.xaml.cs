@@ -100,6 +100,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Copy_Chat => FindResource(nameof(main_Copy_Chat));
         public static string main_Copy_Id_File_Name => FindResource(nameof(main_Copy_Id_File_Name));
         public static string main_Copy_with_Headers => FindResource(nameof(main_Copy_with_Headers));
+        public static string main_Clear => FindResource(nameof(main_Clear));
+        public static string main_ClearVaultItem_Name => FindResource(nameof(main_ClearVaultItem_Name));
+        public static string main_ClearVaultItem_Help => FindResource(nameof(main_ClearVaultItem_Help));
         public static string main_ClearMessages_Name => FindResource(nameof(main_ClearMessages_Name));
         public static string main_ClearMessages_Help => FindResource(nameof(main_ClearMessages_Help));
         public static string main_Create => FindResource(nameof(main_Create));

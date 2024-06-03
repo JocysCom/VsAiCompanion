@@ -211,7 +211,7 @@
 						<Label Content="{StaticResource main_Microsoft_Account}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:AuthControl x:Name="AuthPanel" />
+				<controls:OptionsMicrosoftAccountsControl x:Name="AuthPanel" />
 			</TabItem>
 
 			<TabItem x:Name="AiServicesTabItem" x:FieldModifier="public">

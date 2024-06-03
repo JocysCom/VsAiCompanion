@@ -127,7 +127,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 		}
 
-		SynthesizeClient GetClient(VoiceGender? overrideGender, string overrideLocale)
+		async Task<SynthesizeClient> GetClient(VoiceGender? overrideGender, string overrideLocale)
 		{
 			var service = Global.AppSettings?.AiServices?.FirstOrDefault(x => x.Id == Item.AiServiceId);
 			if (service == null)
@@ -153,7 +153,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// If spoecific vocie not found then probably due to override.
 			if (voice == null)
 				voice = voices.FirstOrDefault();
-			var client = new SynthesizeClient(service.ApiSecretKey, service.Region, voice?.ShortName);
+			var apiSecretKey = await Security.AppSecurityHelper.CheckAndGet(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
+			var client = new SynthesizeClient(apiSecretKey, service.Region, voice?.ShortName);
 			return client;
 		}
 
@@ -190,7 +191,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SynthesizeClient client = null;
 			try
 			{
-				client = GetClient(gender, language);
+				client = await GetClient(gender, language);
 				if (client == null)
 					return new OperationResult<string>(new Exception("AI Avatar cofiguration is not valid."));
 				Clients.Add(client);
@@ -241,7 +242,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.AddTask(task);
 			try
 			{
-				var client = GetClient(null, null);
+				var client = await GetClient(null, null);
 				//var names = await client.GetAvailableVoicesAsync();
 				//CollectionsHelper.Synchronize(names, Item.VoiceNames);
 				var details = await client.GetAvailableVoicesWithDetailsAsync();

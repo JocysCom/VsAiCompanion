@@ -215,11 +215,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public bool MustRefresh;
 
-		private void _Data_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		private async void _Data_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(_Data.AiService))
 			{
-				if (Global.IsGoodSettings(_Data.AiService))
+				if (await Global.IsGoodSettings(_Data.AiService))
 					Refresh();
 			}
 		}

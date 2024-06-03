@@ -53,6 +53,9 @@
 	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
 	<sys:String x:Key="main_Copy_Id_File_Name">Copy: Id, File Name</sys:String>
 	<sys:String x:Key="main_Copy_with_Headers">Copy with Headers</sys:String>
+	<sys:String x:Key="main_Clear">Clear</sys:String>
+	<sys:String x:Key="main_ClearVaultItem_Name">Clear Vault Item Button</sys:String>
+	<sys:String x:Key="main_ClearVaultItem_Help">Clear Vault Item data</sys:String>
 	<sys:String x:Key="main_ClearMessages_Name">Clear Messages</sys:String>
 	<sys:String x:Key="main_ClearMessages_Help">Clear all chat messages.</sys:String>
 	<sys:String x:Key="main_Create">Create</sys:String>
@@ -226,5 +229,5 @@
 	<sys:String x:Key="main_Voice_Type">Voice Type</sys:String>
 	<sys:String x:Key="main_VsExtensionFeatureMessage">This feature is only available when the application is run as an extension in Visual Studio.</sys:String>
 	<sys:String x:Key="main_VsExtensionVersionMessage">This extension requires Visual Studio 2022 version 17.9. Use the Visual Studio Installer to update.</sys:String>
-	<sys:String x:Key="main_Vaults_Feature_Description">This form lets you add Key Vault items stored on the Microsoft Azure cloud where API keys are kept. Instead of entering API keys manually, you can select a Key Vault item where the app can find the needed API key. This allows you to manage and update API keys from one centralized location.</sys:String>
+	<sys:String x:Key="main_Vaults_Feature_Description">Add existing Key Vault items stored on the Microsoft Azure cloud. For instance, instead of directly entering API keys in the application, you can store them as Key Vault secrets. The application will retrieve the API key automatically, enabling centralized management and updates of API keys from a single location.</sys:String>
 </ResourceDictionary>

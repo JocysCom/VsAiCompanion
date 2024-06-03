@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace JocysCom.VS.AiCompanion.Engine.Controls
+namespace JocysCom.ClassLibrary.Controls
 {
 	/// <summary>
 	/// Interaction logic for LogControl.xaml
