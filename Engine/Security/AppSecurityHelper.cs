@@ -4,6 +4,7 @@ using Azure.ResourceManager;
 using Azure.Security.KeyVault.Secrets;
 using JocysCom.ClassLibrary;
 using Microsoft.Graph;
+using Microsoft.Graph.Security.Labels.RetentionLabels.Item.RetentionEventType;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -385,8 +386,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			// Add wanted permissions
 			var context = new TokenRequestContext(scopes);
 			// Get access token.
-			var token = await credential.GetTokenAsync(context, cancellationToken);
-			return token;
+			try
+			{
+				var token = await credential.GetTokenAsync(context, cancellationToken);
+				return token;
+			}
+			catch (Exception)
+			{
+			}
+			return default;
 		}
 
 		public IAccount _account;
