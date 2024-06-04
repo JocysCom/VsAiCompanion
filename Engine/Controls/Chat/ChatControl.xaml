@@ -204,18 +204,14 @@
 				<local:ChatListControl x:Name="MessagesPanel" />
 			</Border>
 
+			<!--  Visibility Binding ShowAvatar  -->
 			<Border
+				Name="AvatarPanelBorder"
 				Grid.Column="1"
 				BorderBrush="{StaticResource BorderDark}"
 				BorderThickness="0,0,0,1"
-				Visibility="Visible"> 
-				<!--  Visibility Binding ShowAvatar  -->
-				<Viewbox>
-					<Border Name="AvatarPanelBorder">
-						<StackPanel Width="1080" Height="1920" Background="Black" />
-						<!--<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />-->
-					</Border>
-				</Viewbox>
+				Visibility="Visible">
+				<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />
 			</Border>
 
 			<!--  Inputs Panel  -->
