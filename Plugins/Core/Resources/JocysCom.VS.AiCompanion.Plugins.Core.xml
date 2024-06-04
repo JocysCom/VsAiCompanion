@@ -72,7 +72,7 @@
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
             <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFileAsPlainText(System.String[])">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFilesAsPlainText(System.String[])">
             <summary>
             Read plain text content from files and documents. Supported document formats include: .docx, .xlsx, .xls, .pdf.
             </summary>
