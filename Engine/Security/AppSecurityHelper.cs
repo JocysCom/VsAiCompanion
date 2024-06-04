@@ -4,7 +4,6 @@ using Azure.ResourceManager;
 using Azure.Security.KeyVault.Secrets;
 using JocysCom.ClassLibrary;
 using Microsoft.Graph;
-using Microsoft.Graph.Security.Labels.RetentionLabels.Item.RetentionEventType;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -143,7 +142,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var scopes = new[] { MicrosoftGraphScope };
 
 			var s = DateTime.UtcNow;
-			var token = await GetAccessToken(scopes);
+			var token = await GetAccessToken(scopes, interactive: false);
 			var d = DateTime.UtcNow.Subtract(s);
 
 			var isMicrosoftUser = token.Token != null;
@@ -224,13 +223,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// </summary>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async Task<TokenCredential> GetTokenCredential(CancellationToken cancellationToken = default)
+		public static async Task<TokenCredential> GetTokenCredential(
+			bool interactive = false,
+			CancellationToken cancellationToken = default)
 		{
 			// Please not that access to azure could be denied to consumer accounts from business domain environment.
 			var credentials = await GetAppTokenCredential(cancellationToken);
 			if (credentials != null)
 				return credentials;
-			return await GetWinTokenCredentials();
+			return await GetWinTokenCredentials(interactive);
 		}
 
 		/// <summary>
@@ -262,11 +263,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// <summary>
 		/// Get windows credentials the app is running with.
 		/// </summary>
-		public static async Task<TokenCredential> GetWinTokenCredentials()
+		public static async Task<TokenCredential> GetWinTokenCredentials(bool interactive = false)
 		{
 			await Task.Delay(0);
 			var options = new DefaultAzureCredentialOptions();
-			options.ExcludeInteractiveBrowserCredential = false;
+			options.ExcludeInteractiveBrowserCredential = !interactive;
 			// Default credentials of the Azure environment in which application is running.
 			// Credentials currently used to log into Windows.
 			var credential = new DefaultAzureCredential(options);
@@ -379,10 +380,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// Get access token.
 		/// </summary>
 		/// <param name="scopes">Set of permissions.</param>
-		public static async Task<AccessToken> GetAccessToken(string[] scopes, CancellationToken cancellationToken = default)
+		public static async Task<AccessToken> GetAccessToken(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
 		{
 			// Define credentials that will be used to access resources.
-			var credential = await GetTokenCredential(cancellationToken);
+			var credential = await GetTokenCredential(interactive, cancellationToken);
 			// Add wanted permissions
 			var context = new TokenRequestContext(scopes);
 			// Get access token.
@@ -420,7 +421,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<Microsoft.Graph.Models.User> GetMicrosoftUser(CancellationToken cancellationToken = default)
 		{
-			var credential = await GetTokenCredential(cancellationToken);
+			var credential = await GetTokenCredential(interactive: false, cancellationToken);
 			var client = new GraphServiceClient(credential);
 			var ui = await client.Me.GetAsync(cancellationToken: cancellationToken);
 			return ui;
@@ -428,7 +429,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<BitmapImage> GetProfileImage(CancellationToken cancellationToken = default)
 		{
-			var credential = await GetTokenCredential(cancellationToken);
+			var credential = await GetTokenCredential(interactive: false, cancellationToken);
 			var client = new GraphServiceClient(credential);
 			BitmapImage image = null;
 			try
@@ -518,7 +519,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			// Define the scope required to access the target resource
 			// This is a common example, you should replace it with the correct scope for your resource
 			var scopes = new string[] { $"{url}/.default" };
-			var token = await GetAccessToken(scopes, cancellationToken);
+			var token = await GetAccessToken(scopes, interactive: true, cancellationToken);
 			// Set up HttpClient with the acquired token
 			using (var httpClient = new HttpClient())
 			{

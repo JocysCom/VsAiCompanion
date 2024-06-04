@@ -81,7 +81,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				//var idToken1 = await AppSecurityHelper.GetIdToken(credential);
 				await Task.Delay(0);
 				var scope = new[] { AppSecurityHelper.MicrosoftGraphScope };
-				var token = await AppSecurityHelper.GetAccessToken(scope, cancellationToken);
+				var token = await AppSecurityHelper.GetAccessToken(scope, interactive: true, cancellationToken);
 				var accessToken = token.Token;
 				LogPanel.Add($"Access Token:\r\n");
 				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
@@ -132,7 +132,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var uri = new Uri(TestTextBox.Text);
 				var scope1 = $"{uri.Scheme}://{uri.Host}/.default";
 				var scopes = new[] { scope1 };
-				var token = await AppSecurityHelper.GetAccessToken(scopes, cancellationToken);
+				var token = await AppSecurityHelper.GetAccessToken(scopes, interactive: true, cancellationToken);
 				var accessToken = token.Token;
 				// Inspect the token
 				InspectToken(accessToken);
@@ -168,7 +168,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				LogPanel.Add("Retrieved Subscriptions:");
-				var credential = await AppSecurityHelper.GetTokenCredential(cancellationToken);
+				var credential = await AppSecurityHelper.GetTokenCredential(interactive: true, cancellationToken);
 				var items = await AppSecurityHelper.GetAzureSubscriptions(credential, cancellationToken);
 				foreach (var item in items)
 					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
