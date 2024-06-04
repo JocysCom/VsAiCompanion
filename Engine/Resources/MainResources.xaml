@@ -71,6 +71,7 @@
 	<sys:String x:Key="main_Delete">Delete</sys:String>
 	<sys:String x:Key="main_Description">Description</sys:String>
 	<sys:String x:Key="main_Details">Details</sys:String>
+	<sys:String x:Key="main_Developer">Developer</sys:String>
 	<sys:String x:Key="main_Disable_All">Disable All</sys:String>
 	<sys:String x:Key="main_Document">Document</sys:String>
 	<sys:String x:Key="main_Edit">Edit</sys:String>
@@ -81,6 +82,7 @@
 		Use only the contents from these documents to answer questions."
 	</sys:String>
 	<sys:String x:Key="main_Embeddings_Feature_Description">Embeddings allow to search for content based on its meaning. AI can utilize embeddings to find relevant information and files.</sys:String>
+	<sys:String x:Key="main_Enable_FormInfo">Enable Form Info (CTRL+SHIFT+RMB)</sys:String>
 	<sys:String x:Key="main_Enable_All">Enable All</sys:String>
 	<sys:String x:Key="main_Enable_Low_Risk">Enable Low Risk</sys:String>
 	<sys:String x:Key="main_Enable_Medium_Risk">Enable Medium Risk</sys:String>

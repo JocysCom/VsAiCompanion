@@ -482,9 +482,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var data = (SettingsData<FineTuningItem>)sender;
 			if (e.Items.Count != 0)
 				return;
-			AppHelper.ExtractFiles("FineTuning.zip", FineTuningPath);
-			// Trigger reload of data.
-			data.IsLoadPending = true;
+			var zip = SettingsSourceManager.GetSettingsZip();
+			if (zip != null)
+			{
+				var targetPath = AppData.XmlFile.Directory.FullName;
+				AppHelper.ExtractFiles(zip, targetPath, @"^FineTuning\\");
+				// Trigger reload of data.
+				data.IsLoadPending = true;
+			}
 		}
 
 		class prompt_item

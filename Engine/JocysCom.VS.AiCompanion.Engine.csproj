@@ -172,8 +172,6 @@
 		<None Remove="Resources\Embeddings\**" />
 		<None Remove="Resources\AxialisIconSet.Licenses.txt" />
 		<None Remove="Resources\Documents.zip" />
-		<None Remove="Resources\FineTuning.zip" />
-		<None Remove="Resources\FineTuningHelp.zip" />
 		<None Remove="Resources\IconExperience.License.txt" />
 		<None Remove="Resources\Icons\Icons_Default\chart_radar.svg" />
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
@@ -234,7 +232,6 @@
 		<Content Include="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<EmbeddedResource Include="Resources\AxialisIconSet.Licenses.txt" />
 		<EmbeddedResource Include="Resources\Documents.zip" />
-		<EmbeddedResource Include="Resources\FineTuning.zip" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\list.svg" />
 		<EmbeddedResource Include="Resources\Settings.zip" />
@@ -323,12 +320,12 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
-	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
+	<Target Name="PreOuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
+		<Message Text="Running PreOuterPreBuild target" Importance="high" />
 		<!-- Execute once for multiple builds -->
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Resources\GenerateResourceClassesFromXaml.ps1&quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\FineTuning&quot; &quot;$(ProjectDir)Resources\FineTuning.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />

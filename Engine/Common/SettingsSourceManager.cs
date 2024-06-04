@@ -382,38 +382,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return item;
 		}
 
-
-		public static List<TemplateItem> GetTempaltesFromEmbeddedResourceZip()
-		{
-			var asm = typeof(Global).Assembly;
-			var zip = AppHelper.GetZip("Resources.Settings.zip", asm);
-			if (zip == null)
-			{
-				Global.ShowError("Resource 'Resources.Settings.zip' not found!");
-				return new List<TemplateItem>();
-			}
-			var items = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
-			zip.Close();
-			return items;
-		}
-
-		public static List<TemplateItem> GetTempaltesFromEmbeddedResources()
-		{
-			var data = Global.Templates;
-			var list = new List<TemplateItem>();
-			var asm = typeof(Global).Assembly;
-			var keys = asm.GetManifestResourceNames()
-				.Where(x => x.Contains("Resources.Settings.Templates"))
-				.ToList();
-			foreach (var key in keys)
-			{
-				var bytes = Helper.GetResource<byte[]>(key, asm);
-				var item = data.DeserializeItem(bytes, false);
-				list.Add(item);
-			}
-			return list;
-		}
-
 		#endregion
 
 		#region General Methods

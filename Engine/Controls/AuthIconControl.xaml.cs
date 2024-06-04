@@ -40,8 +40,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(UserProfile.Image) ||
-				e.PropertyName == nameof(UserProfile.IsConsumer))
+			if (e.PropertyName == nameof(UserProfile.Image))
 				UpdateImage();
 		}
 

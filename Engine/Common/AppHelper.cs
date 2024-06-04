@@ -922,29 +922,23 @@ EndFragment:{3:00000000}";
 		#region ■ Extract Helper
 
 		/// <summary>
-		/// Extract resource files
+		/// Extract resource files that match a specified regex pattern.
 		/// </summary>
 		/// <param name="source">Resource prefix.</param>
-		/// <param name="target">Target folder to extract.</param>
+		/// <param name="targetPath">Target folder to extract.</param>
+		/// <param name="searchPattern">Regex pattern to match file paths.</param>
 		/// <param name="overwrite">Overwrite files at target.</param>
-		public static void ExtractFiles(string source, string target, Assembly assembly = null)
+		/// <param name="assembly">Optional assembly to get resources from. Defaults to executing assembly.</param>
+		public static void ExtractFiles(ZipStorer zip, string targetPath, string searchPattern = null)
 		{
-			// Get list of resources to extract.
-			assembly = assembly ?? Assembly.GetExecutingAssembly();
-			var resourceName = assembly.GetManifestResourceNames().Where(x => x.EndsWith(source)).First();
-			var sr = assembly.GetManifestResourceStream(resourceName);
-			if (sr == null)
-				return;
-			var bytes = new byte[sr.Length];
-			sr.Read(bytes, 0, bytes.Length);
-			// Open an existing zip file for reading.
-			var zip = ZipStorer.Open(sr, FileAccess.Read);
-			// Read the central directory collection
 			var dir = zip.ReadCentralDir();
-			// Look for the desired file.
+			Regex regex = string.IsNullOrEmpty(searchPattern) ? null : new Regex(searchPattern);
 			foreach (ZipStorer.ZipFileEntry entry in dir)
 			{
-				var fileName = System.IO.Path.Combine(target, entry.FilenameInZip.Replace("/", "\\"));
+				var path = entry.FilenameInZip.Replace("/", "\\");
+				if (regex != null && !regex.IsMatch(path))
+					continue;
+				var fileName = Path.Combine(targetPath, path);
 				zip.ExtractFile(entry, fileName);
 			}
 			zip.Close();

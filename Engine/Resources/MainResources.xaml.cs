@@ -118,6 +118,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Delete => FindResource(nameof(main_Delete));
         public static string main_Description => FindResource(nameof(main_Description));
         public static string main_Details => FindResource(nameof(main_Details));
+        public static string main_Developer => FindResource(nameof(main_Developer));
         public static string main_Disable_All => FindResource(nameof(main_Disable_All));
         public static string main_Document => FindResource(nameof(main_Document));
         public static string main_Edit => FindResource(nameof(main_Edit));
@@ -125,6 +126,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Email_Name => FindResource(nameof(main_Email_Name));
         public static string main_Embedding_Default_Instructions => FindResource(nameof(main_Embedding_Default_Instructions));
         public static string main_Embeddings_Feature_Description => FindResource(nameof(main_Embeddings_Feature_Description));
+        public static string main_Enable_FormInfo => FindResource(nameof(main_Enable_FormInfo));
         public static string main_Enable_All => FindResource(nameof(main_Enable_All));
         public static string main_Enable_Low_Risk => FindResource(nameof(main_Enable_Low_Risk));
         public static string main_Enable_Medium_Risk => FindResource(nameof(main_Enable_Medium_Risk));
