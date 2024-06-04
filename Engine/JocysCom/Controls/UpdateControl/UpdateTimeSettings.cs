@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using System;
 using System.ComponentModel;
+using System.Linq;
 
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
 {
@@ -46,6 +47,21 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		public bool CheckOnAppStart { get => _CheckOnAppStart; set => SetProperty(ref _CheckOnAppStart, value); }
 		bool _CheckOnAppStart;
 
+		/// <summary>
+		/// Returns true if update 
+		/// </summary>
+		public bool ShouldCheckForUpdates()
+		{
+			DateTime nextUpdate = GetNextUpdate();
+			if (DateTime.Now >= nextUpdate)
+				return true;
+			return false;
+		}
+
+		public DateTime GetNextUpdate()
+		{
+			return TimeUnitHelper.GetDateTimes(LastUpdate ?? DateTime.MinValue, CheckFrequencyValue, CheckFrequencyUnit).Last();
+		}
 
 	}
 }

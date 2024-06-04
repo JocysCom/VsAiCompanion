@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
@@ -24,6 +23,7 @@
 		<DelaySign>False</DelaySign>
 		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
 		<Platforms>AnyCPU</Platforms>
+		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
@@ -71,6 +71,12 @@
 
 	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
 		<!-- Execute once for multiple builds -->
+
+	</Target>
+	<!-- Copy the documentation file to the final output directory if content is different -->
+	<Target Name="CopyDocumentationFile" AfterTargets="Build">
+		<!--<Message Importance="high" Text="Updating the Documentation File: $(DocumentationFile)" />-->
+		<Exec Condition="'$(DocumentationFile)'!=''" Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CopyChanged.ps1&quot; -sourceFile &quot;$(ProjectDir)\$(DocumentationFile)&quot; -destinationFile &quot;$(ProjectDir)Resources\$(AssemblyName).xml&quot;" />
 	</Target>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

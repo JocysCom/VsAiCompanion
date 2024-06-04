@@ -34,6 +34,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string ClientAppId { get => _ClientAppId; set => SetProperty(ref _ClientAppId, value); }
 		private string _ClientAppId;
 
+		/// <summary>
+		/// Tenand ID of Microsoft Entra ID (formerly known as Azure Active Directory)
+		/// Azure: Home / Microsoft Entra ID / Overview / Tenant ID: ...
+		/// </summary>
+		[DefaultValue(null)]
+		public string TenantId { get => _TenantId; set => SetProperty(ref _TenantId, value); }
+		private string _TenantId;
+
 		[DefaultValue(false)]
 		public bool AppAlwaysOnTop { get => _AppAlwaysOnTop; set => SetProperty(ref _AppAlwaysOnTop, value); }
 		private bool _AppAlwaysOnTop;
@@ -235,7 +243,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region ■ Options: Developing
 
-		[DefaultValue(true), Description("Enable Form Info (CTRL+SHIFT+RMB)")]
+		[DefaultValue(false), Description("Enable Form Info (CTRL+SHIFT+RMB)")]
 		public bool EnableShowFormInfo { get => _EnableShowFormInfo; set => SetProperty(ref _EnableShowFormInfo, value); }
 		bool _EnableShowFormInfo;
 

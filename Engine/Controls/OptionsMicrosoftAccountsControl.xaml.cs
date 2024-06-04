@@ -60,7 +60,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var userType = await AppSecurityHelper.GetUserType();
 				if (userType.HasFlag(UserType.EntraID))
 				{
-					await Global.Security.LoadCurrentAccount();
 					await Global.Security.RefreshProfileImage();
 				}
 			}

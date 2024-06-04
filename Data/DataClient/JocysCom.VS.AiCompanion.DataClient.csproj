@@ -17,6 +17,7 @@
 		<AssemblyVersion>1.10.41</AssemblyVersion>
 		<FileVersion>1.10.41</FileVersion>
 		<Platforms>AnyCPU</Platforms>
+		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 	</PropertyGroup>
 

@@ -86,12 +86,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 
 
+
 		public IPublicClientApplication Pca { get; } = PublicClientApplicationBuilder
 			.Create(Global.AppSettings?.ClientAppId)
-			//.WithAuthority(CommonAuthority)
+			.WithAuthority(CommonAuthority)
 			//.WithAuthority(AzureCloudInstance.AzurePublic, AadAuthorityAudience.None)
-			.WithRedirectUri("http://localhost")
+			//.WithAuthority(AzureCloudInstance.AzurePublic, Global.AppSettings?.TenantId)
 			.WithDefaultRedirectUri()
+			//.WithRedirectUri("http://localhost")
 			.Build();
 
 		/// <summary>
@@ -188,11 +190,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			try
 			{
 				var profile = GetProfile();
-				//var credential = await GetTokenCredential();
-				var scopes = new[] { MicrosoftGraphScope };
-				var accessToken = await GetAccessToken(scopes);
-				profile.IsConsumer = IsConsumerAccount(profile.IdToken ?? accessToken.Token);
-				profile.Image = await Global.Security.GetProfileImage();
+				// To get image interactive browser credentials must be proviced.
+				profile.Image = await Global.Security.GetProfileImage(interactive: true);
 			}
 			catch (Exception)
 			{
@@ -312,30 +311,38 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 					Applciaiton This data will be stored on the local PC.
 
 				*/
-
-				var accounts = await Pca.GetAccountsAsync();
-				var accountId = GetProfile().AccountId;
-				if (accountId == null)
+				var account = await GetCurrentAccount();
+				if (account == null)
 				{
 					requiresUI = true;
 				}
 				else
 				{
-					_account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == accountId);
-					if (_account == null)
-					{
-						requiresUI = true;
-					}
-					else
-					{
-						// Get result that includes access tokens that grant the application the rights to fetch user information.
-						result = await Pca.AcquireTokenSilent(scopes, _account).ExecuteAsync();
-					}
+					// Get result that includes access tokens that grant the application the rights to fetch user information.
+					result = await Pca.AcquireTokenSilent(scopes, account).ExecuteAsync();
 				}
 			}
-			catch (MsalUiRequiredException)
+			catch (MsalUiRequiredException ex)
 			{
-				requiresUI = true;
+				if (!string.IsNullOrEmpty(ex.Claims))
+				{
+					try
+					{
+						var builder = Pca.AcquireTokenInteractive(scopes);
+						if (!string.IsNullOrEmpty(ex.Claims))
+							builder = builder.WithClaims(ex.Claims);
+						result = await builder.ExecuteAsync();
+					}
+					catch (Exception innerEx)
+					{
+						return new OperationResult<AuthenticationResult>(innerEx);
+					}
+				}
+				else
+				{
+					requiresUI = true;
+				}
+
 			}
 			catch (Exception ex)
 			{
@@ -345,30 +352,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			{
 				try
 				{
-					result = await Pca
-						.AcquireTokenInteractive(scopes)
-						//.WithPrompt(Prompt.SelectAccount)
-						.ExecuteAsync();
+					// No token in the cache, attempt to acquire a token using Windows Integrated Authentication
+					//var builder = Pca.AcquireTokenByIntegratedWindowsAuth(scopes);
+					// Multi-factor authentication (MFA) is a multi-step account login process that requires users to enter more information than just a password. 
+					var builder = Pca.AcquireTokenInteractive(scopes);
+					result = await builder.ExecuteAsync();
 				}
 				catch (Exception ex)
 				{
 					return new OperationResult<AuthenticationResult>(ex);
 				}
 			}
-			_account = result?.Account;
 			SaveUserProfile(result);
 			return new OperationResult<AuthenticationResult>(result);
 		}
 
 		public async Task<bool> SignOut()
 		{
-			var profile = GetProfile();
-			profile.Clear();
-			if (_account != null)
-			{
-				await Pca.RemoveAsync(_account);
-				_account = null;
-			}
+			var account = await GetCurrentAccount();
+			if (account != null)
+				await Pca.RemoveAsync(account);
 			return true;
 		}
 
@@ -398,25 +401,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return default;
 		}
 
-		public IAccount _account;
-
 		/// <summary>
 		/// Load this once when app starts.
 		/// </summary>
 		/// <returns></returns>
-		public async Task LoadCurrentAccount()
+		public async Task<IAccount> GetCurrentAccount()
 		{
 			EnableTokenCache(Pca.UserTokenCache);
 			// Load saved user profile
 			var profile = GetProfile();
 			if (string.IsNullOrEmpty(profile.AccountId))
-				return;
+				return null;
 			// Returns all the available accounts in the user token cache for the application.
 			var accounts = await Pca.GetAccountsAsync();
-			if (!accounts.Any())
-				return;
 			// Attempt to find the account with the saved UserId
-			_account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == profile.AccountId);
+			var account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == profile.AccountId);
+			return account;
 		}
 
 		public async Task<Microsoft.Graph.Models.User> GetMicrosoftUser(CancellationToken cancellationToken = default)
@@ -427,9 +427,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return ui;
 		}
 
-		public async Task<BitmapImage> GetProfileImage(CancellationToken cancellationToken = default)
+		public async Task<BitmapImage> GetProfileImage(bool interactive = false, CancellationToken cancellationToken = default)
 		{
-			var credential = await GetTokenCredential(interactive: false, cancellationToken);
+			var credential = await GetTokenCredential(interactive, cancellationToken);
 			var client = new GraphServiceClient(credential);
 			BitmapImage image = null;
 			try
@@ -544,26 +544,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		#region Key Vault
 
 		public static async Task<KeyVaultSecret> GetSecretFromKeyVault(
-			string keyVaultName, string secretName, string accessToken,
+			string keyVaultName, string secretName, TokenCredential credential,
 			CancellationToken cancellationToken = default)
 		{
-			var credential = new AccessTokenCredential(accessToken);
-			return await GetSecretFromKeyVault(keyVaultName, secretName, credential, cancellationToken);
-		}
-
-		public static async Task<KeyVaultSecret> GetSecretFromKeyVault(
-			string keyVaultName, string secretName, string tenantId, string clientId, string clientSecret,
-			CancellationToken cancellationToken = default)
-		{
-			var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-			return await GetSecretFromKeyVault(keyVaultName, secretName, credential, cancellationToken);
-		}
-
-		public static async Task<KeyVaultSecret> GetSecretFromKeyVault(
-			string keyVaultName, string secretName, TokenCredential credential = null,
-			CancellationToken cancellationToken = default)
-		{
-			credential = credential ?? await GetTokenCredential();
 			// Azure Key Vault URI
 			string kvUri = $"https://{keyVaultName}.vault.azure.net/";
 			// Create a new secret client
@@ -585,7 +568,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			cancellationTokenSources,
 			async (cancellationToken) =>
 			{
-				var secret = await GetSecretFromKeyVault(item.VaultName, item.VaultItemName);
+				var credential = await GetTokenCredential(interactive: true);
+				var secret = await GetSecretFromKeyVault(item.VaultName, item.VaultItemName, credential);
 				JocysCom.ClassLibrary.Controls.ControlsHelper.AppInvoke(() =>
 				{
 					item.Value = secret?.Value;

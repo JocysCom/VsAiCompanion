@@ -159,6 +159,16 @@
 										IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								</WrapPanel>
 							</GroupBox>
+
+							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Developer}">
+								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
+									<CheckBox
+										Name="EnableShowFormInfoCheckBox"
+										Margin="0"
+										Content="{StaticResource main_Enable_FormInfo}"
+										IsChecked="{Binding EnableShowFormInfo, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								</WrapPanel>
+							</GroupBox>
 						</WrapPanel>
 						<GroupBox x:Name="EnterpriseOptionsGroupBox" Grid.Row="2" Margin="3,0,3,0">
 							<GroupBox.Header>

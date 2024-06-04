@@ -80,7 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (UpdateTimeSettings.IsEnabled)
 			{
 				// Returns true if needs to be checked for an updated value.
-				var update = UpdateTimeChecker.ShouldCheckForUpdates(UpdateTimeSettings);
+				var update = UpdateTimeSettings.ShouldCheckForUpdates();
 				if (update)
 					return true;
 			}

@@ -1,3 +1,7 @@
+2024-06-04 v1.10.42
+
+- Fix: This app stops itself from being dragged into negative X desktop coordinates.
+
 2024-05-22 v1.10.41
 
 - Fix: Crash when unable to decrypt API keys.

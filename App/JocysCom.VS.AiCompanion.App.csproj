@@ -32,7 +32,7 @@
 		<Reference Include="System.configuration" />
 	</ItemGroup>
 
-		<ItemGroup>
+	<ItemGroup>
 		<None Remove="Resources\BuildDate.*" />
 	</ItemGroup>
 
@@ -55,7 +55,13 @@
 		</None>
 	</ItemGroup>
 
+	<!-- Define a new target that should run before OuterPreBuild -->
+	<Target Name="PreOuterPreBuild" BeforeTargets="OuterPreBuild">
+		<Message Text="Running PreOuterPreBuild target" Importance="high"/>
+	</Target>
+
 	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
+		<Message Text="Running OuterPreBuild target" Importance="high"/>
 		<!-- Execute once for multiple builds -->
 		<Exec Command="PowerShell.exe -NoProfile -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;&#xD;&#xA;PowerShell.exe -NoProfile -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;&#xD;&#xA;" />
 	</Target>
