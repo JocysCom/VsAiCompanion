@@ -209,7 +209,7 @@
 				Grid.Column="1"
 				BorderBrush="{StaticResource BorderDark}"
 				BorderThickness="0,0,0,1"
-				Visibility="Visible">
+				Visibility="Collapsed">
 				<!--<ContentControl x:Name="AvatarPanel" VerticalAlignment="Top" Content="{DynamicResource AvatarControl}" />-->
 			</Border>
 
