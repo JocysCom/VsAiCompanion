@@ -160,7 +160,7 @@
 								</WrapPanel>
 							</GroupBox>
 
-							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Developer}">
+							<GroupBox x:Name="DeveloperGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Developer}">
 								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 									<CheckBox
 										Name="EnableShowFormInfoCheckBox"

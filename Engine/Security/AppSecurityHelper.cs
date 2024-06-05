@@ -92,8 +92,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			.WithAuthority(CommonAuthority)
 			//.WithAuthority(AzureCloudInstance.AzurePublic, AadAuthorityAudience.None)
 			//.WithAuthority(AzureCloudInstance.AzurePublic, Global.AppSettings?.TenantId)
+			.WithRedirectUri("http://localhost")
 			.WithDefaultRedirectUri()
-			//.WithRedirectUri("http://localhost")
 			.Build();
 
 		/// <summary>
@@ -372,6 +372,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var account = await GetCurrentAccount();
 			if (account != null)
 				await Pca.RemoveAsync(account);
+			var profile = GetProfile();
+			profile.Clear();
 			return true;
 		}
 
