@@ -159,6 +159,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Tags { get => _Tags; set => SetProperty(ref _Tags, value); }
 		string _Tags;
 
+		/// <summary>Show Avatar</summary>
+		[DefaultValue(false)]
+		public bool ShowAvatar { get => _ShowAvatar; set => SetProperty(ref _ShowAvatar, value); }
+		bool _ShowAvatar;
+
+		/// <summary>Use avatar voice</summary>
+		[DefaultValue(false)]
+		public bool UseAvatarVoice { get => _UseAvatarVoice; set => SetProperty(ref _UseAvatarVoice, value); }
+		bool _UseAvatarVoice;
+
 		#region Plugins
 
 		[DefaultValue(false)]

@@ -7,6 +7,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
+	d:DesignHeight="400"
 	d:DesignWidth="800"
 	Loaded="This_Loaded"
 	SizeChanged="This_SizeChanged"
@@ -22,22 +23,21 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid DataContext="{Binding Item, ElementName=This}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="300" />
-		</Grid.ColumnDefinitions>
-		<Border
-			Grid.Row="0"
-			Grid.ColumnSpan="2"
-			Margin="3,3,3,3"
-			Style="{StaticResource BorderDescriptionNormal}">
+
+		<!--  Description  -->
+		<Border Grid.ColumnSpan="2" Margin="3,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
 			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_AvatarPanel_Help}" />
 		</Border>
 
+		<!--  Settings  -->
 		<Grid Grid.Row="1">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
@@ -52,16 +52,8 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<!--  Row 0  -->
-			<Label
-				Grid.Row="0"
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				Content="{StaticResource main_Service}" />
-			<StackPanel
-				Grid.Row="0"
-				Grid.Column="1"
-				Grid.ColumnSpan="2"
-				Orientation="Horizontal">
+			<Label VerticalAlignment="Center" Content="{StaticResource main_Service}" />
+			<StackPanel Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal">
 				<ComboBox
 					Name="AiServicesComboBox"
 					MinWidth="64"
@@ -119,7 +111,6 @@
 					SelectedValuePath="Key" />
 				<Button
 					Name="OpenButton"
-					Grid.Row="0"
 					Grid.Column="3"
 					HorizontalAlignment="Center"
 					Click="BrowseButton_Click">
@@ -131,11 +122,7 @@
 
 			</StackPanel>
 			<!--  Row 2  -->
-			<Label
-				Grid.Row="2"
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				Content="{StaticResource main_Instructions}" />
+			<Label Grid.Row="2" VerticalAlignment="Center" Content="{StaticResource main_Instructions}" />
 			<TextBox
 				Name="InstructionsTextBox"
 				Grid.Row="2"
@@ -151,11 +138,7 @@
 				Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap" />
 			<!--  Row 3  -->
-			<Label
-				Grid.Row="3"
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				Content="{StaticResource main_Message}" />
+			<Label Grid.Row="3" VerticalAlignment="Center" Content="{StaticResource main_Message}" />
 			<TextBox
 				Name="MessageTextBox"
 				Grid.Row="3"
@@ -241,13 +224,14 @@
 				</TabItem>
 			</TabControl>
 		</Grid>
+
+		<!--  Avatar  -->
 		<Border
 			Name="AvatarPanelBorder"
 			Grid.Row="1"
-			Grid.Column="2"
-			Grid.ColumnSpan="2"
+			Grid.Column="1"
 			Margin="3,3,3,4">
-			<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />
+			<!--<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />-->
 		</Border>
 	</Grid>
 </UserControl>

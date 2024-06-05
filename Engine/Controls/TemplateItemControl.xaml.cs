@@ -210,7 +210,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				// Add avatar instructions if avatar is visible.
 				string extraInstructions = null;
-				if (Global.AvatarOptionsPanel?.AvatarPanel.IsPanelInWindow == true)
+				if (Global.AvatarPanel?.IsPanelInWindow == true)
 					extraInstructions = Global.AppSettings.AiAvatar.Instructions;
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: extraInstructions);
 				RestoreFocus();
@@ -470,10 +470,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		public AvatarControl AvatarPanel;
+
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+
+			if (DataType == ItemType.Task)
+			{
+				var avatarPanel = new AvatarControl();
+				avatarPanel.VerticalAlignment = VerticalAlignment.Top;
+				ChatPanel.AvatarPanelBorder.Child = avatarPanel;
+				AvatarPanel = avatarPanel;
+			}
+			else
+			{
+				ChatPanel.AvatarPanelBorder.Visibility = Visibility.Collapsed;
+			}
+
 			var head = "Caring for Your Sensitive Data";
 			var body = "As you share files for AI processing, please remember not to include confidential, proprietary, or sensitive information.";
 			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentEnumComboBox, head, body, MessageBoxImage.Warning);

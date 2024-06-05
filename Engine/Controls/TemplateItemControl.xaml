@@ -840,8 +840,8 @@
 				</Button>
 				<CheckBox Name="ShowInstructionsCheckBox" Content="Instructions" IsChecked="{Binding ShowInstructions}" />
 				<CheckBox Name="ShowPromptingCheckBox" Content="Prompting" IsChecked="{Binding ShowPrompting}" />
-				<CheckBox Name="ShowAvatar" Content="Avatar" IsChecked="{Binding ShowPrompting}" />
-				<CheckBox Name="UseVoiceCheckBox" Content="Use Voice" IsChecked="{Binding SendChatHistory}" />
+				<CheckBox Name="ShowAvatar" Content="Avatar" IsChecked="{Binding ShowAvatar}" />
+				<CheckBox Name="UseAvatarVoiceCheckBox" Content="Use Voice" IsChecked="{Binding UseAvatarVoice}" />
 				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory}" />
 				<CheckBox
 					Name="IsSpellCheckEnabledCheckBox"

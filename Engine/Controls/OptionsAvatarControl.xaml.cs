@@ -31,13 +31,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Tasks_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
+			//
 			if (Global.MainControl.InfoPanel.Tasks.Any())
 			{
-				AvatarPanel.PlayGlowAnimation();
+				Global.AvatarPanel?.PlayGlowAnimation();
 			}
 			else
 			{
-				AvatarPanel.StopGlowAnimation();
+				Global.AvatarPanel?.StopGlowAnimation();
 			}
 		}
 
@@ -204,7 +205,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					LogPanel.Add(client.AudioInfoPath + "\r\n");
 					LogPanel.Add("\r\n");
 					LogPanel.Add(json);
-					AvatarPanel.AudioCollection.Add((client.AudioFilePath, client.AudioInfo));
+					Global.AvatarPanel.AudioCollection.Add((client.AudioFilePath, client.AudioInfo));
 				});
 				return new OperationResult<string>();
 			}
@@ -231,7 +232,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var clients = Clients.ToArray();
 			foreach (var client in clients)
 				client?.Stop();
-			AvatarPanel.AnimationAndMediaStop();
+			Global.AvatarPanel?.AnimationAndMediaStop();
 		}
 
 		private async void VoiceNamesRefreshButton_Click(object sender, System.Windows.RoutedEventArgs e)

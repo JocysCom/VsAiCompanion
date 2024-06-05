@@ -64,7 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private void BusyCount_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			Global.AvatarOptionsPanel.AvatarPanel.MoveToWindowToggle();
+			Global.AvatarPanel?.MoveToWindowToggle();
 		}
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
