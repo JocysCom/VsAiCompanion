@@ -395,6 +395,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
 					}
 					break;
+				case nameof(TemplateItem.ShowAvatar):
+					ChatPanel.AvatarPanelBorder.Visibility = _Item.ShowAvatar ? Visibility.Visible : Visibility.Collapsed;
+					break;
 				case nameof(TemplateItem.EmbeddingGroupName):
 					_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 					break;

@@ -33,6 +33,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			});
 		}
 
+
+
 		public string EditMessageId
 		{
 			get { return _EditMessageId; }
