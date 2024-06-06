@@ -217,7 +217,7 @@
 			<TabItem x:Name="AccountSettingsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Content="{StaticResource Icon_microsoft_login}" />
+						<ContentControl Content="{StaticResource Icon_microsoft_logo}" />
 						<Label Content="{StaticResource main_Microsoft_Account}" />
 					</StackPanel>
 				</TabItem.Header>

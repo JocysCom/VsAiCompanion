@@ -3,6 +3,7 @@ using Azure.Identity;
 using Azure.ResourceManager;
 using Azure.Security.KeyVault.Secrets;
 using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.Engine.Converters;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using System;
@@ -14,6 +15,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace JocysCom.VS.AiCompanion.Engine.Security
@@ -429,21 +431,58 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return ui;
 		}
 
-		public async Task<BitmapImage> GetProfileImage(bool interactive = false, CancellationToken cancellationToken = default)
+		public async Task<ImageSource> GetProfileImage(bool interactive = false, CancellationToken cancellationToken = default)
 		{
 			var credential = await GetTokenCredential(interactive, cancellationToken);
 			var client = new GraphServiceClient(credential);
-			BitmapImage image = null;
+			ImageSource image = null;
 			try
 			{
-				// "https://graph.microsoft.com/v1.0/me/photo/$value"
-				var stream = await client.Me.Photo.Content.GetAsync(cancellationToken: cancellationToken);
-				image = ConvertToImage(stream);
+				var user = await client.Me.GetAsync(cancellationToken: cancellationToken);
+				// Check if photo exists by getting the metadata
+				var photoMeta = await client.Me.Photo.GetAsync(cancellationToken: cancellationToken);
+				if (photoMeta != null)
+				{
+					// If metadata exists, proceed to get the photo Content
+					var stream = await client.Me.Photo.Content.GetAsync(cancellationToken: cancellationToken);
+					var bitmapImage = ConvertToImage(stream);
+					image = bitmapImage;
+				}
+				else
+				{
+					image = GetDefaultProfileImage();
+				}
 			}
-			catch (Exception)
+			catch (Microsoft.Graph.Models.ODataErrors.ODataError oex) // when (ex is Microsoft.Fast.Profile.Core.Exception.ImageNotFoundException)
 			{
+				if (oex.Error.Code == "ImageNotFound")
+					image = GetDefaultProfileImage();
+			}
+			catch (Exception ex)
+			{
+				var s = ex.ToString();
 			}
 			return image;
+		}
+
+		public ImageSource GetDefaultProfileImage()
+		{
+			var contents = Helper.FindResource<string>(
+				Resources.Icons.Icons_Default.Icon_user_azure.Replace("Icon_", "") + ".svg",
+				typeof(AppHelper).Assembly);
+			var drawingImage = SvgHelper.LoadSvgFromString(contents);
+			var bounds = drawingImage.Drawing.Bounds;
+			// Add 10% top padding.
+			var topPadding = bounds.Height * 0.10;
+			var geometry = new RectangleGeometry(new System.Windows.Rect(0, 0, bounds.Width, bounds.Height + topPadding));
+			var translatedDrawing = new GeometryDrawing(Brushes.Transparent, null, geometry);
+			var imageDrawing = new DrawingGroup();
+			imageDrawing.Children.Add(drawingImage.Drawing);
+			imageDrawing.Transform = new TranslateTransform(0, topPadding);
+			var drawingGroup = new DrawingGroup();
+			drawingGroup.Children.Add(translatedDrawing);
+			drawingGroup.Children.Add(imageDrawing);
+			return new DrawingImage(drawingGroup);
 		}
 
 		public async Task<BitmapImage> GetProfileImage(string accessToken, CancellationToken cancellationToken = default)

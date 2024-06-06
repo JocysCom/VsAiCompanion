@@ -177,6 +177,8 @@
 		<None Remove="Resources\Icons\Icons_Default\document_gear.svg" />
 		<None Remove="Resources\Icons\Icons_Default\elements_tree.svg" />
 		<None Remove="Resources\Icons\Icons_Default\list.svg" />
+		<None Remove="Resources\Icons\Icons_Default\microsoft_login.svg" />
+		<None Remove="Resources\Icons\Icons_Default\user_azure.svg" />
 		<None Remove="Resources\Icons\Icons_Default\user_comment.svg" />
 		<None Remove="Resources\Icons\Templates\control_panel.svg" />
 		<None Remove="Resources\Images\AiCompanion.png" />
@@ -234,6 +236,7 @@
 		<EmbeddedResource Include="Resources\Documents.zip" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\chart_radar.svg" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\list.svg" />
+		<EmbeddedResource Include="Resources\Icons\Icons_Default\user_azure.svg" />
 		<EmbeddedResource Include="Resources\Settings.zip" />
 		<EmbeddedResource Include="Resources\IconExperience.License.txt" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\document_gear.svg" />

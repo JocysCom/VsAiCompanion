@@ -20,12 +20,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		/// <summary>
 		/// Analyzes image files or URLs as per given instructions with an AI model. Can analyse image files on user computer.
+		/// This function is specifically designed for analyzing visual content such as pictures and photographs.
 		/// </summary>
 		/// <param name="instructions">Guidelines for AI to follow during image analysis.</param>
 		/// <param name="pathsOrUrls">Paths to local files or URLs to images for analysis.</param>
 		/// <returns>Analysis results.</returns>
 		[RiskLevel(RiskLevel.Low)]
-		public async Task<OperationResult<string>> AnalyseImage(
+		public async Task<OperationResult<string>> AnalyseImages(
 			string instructions,
 			string[] pathsOrUrls
 			)
