@@ -820,7 +820,8 @@ namespace JocysCom.ClassLibrary.Controls
 			if (Application.Current.Dispatcher.CheckAccess())
 			{
 				// If on UI thread, update the UI elements directly
-				action.Invoke();
+				//_ = action.BeginInvoke(action.EndInvoke, null);
+				Application.Current.Dispatcher.BeginInvoke(action);
 			}
 			else
 			{
