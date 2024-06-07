@@ -21,8 +21,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public static class Global
 	{
 
-		public static Security.AppSecurityHelper Security { get; set; }
-
 		public static ISolutionHelper _SolutionHelper;
 		public static Func<Task> SwitchToVisualStudioThreadAsync = () => { return null; };
 
@@ -225,7 +223,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var isOpenAi = baseUrl.Contains(".openai.com");
 			if (isMicrosoft || isOpenAi)
 			{
-				var apiSecretKey = await AppSecurityHelper.CheckAndGet(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
+				var apiSecretKey = await MicrosoftAccountManager.Current.CheckAndGet(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
 				if (string.IsNullOrEmpty(apiSecretKey))
 					itemsRequired.Add("API Key");
 				//if (isOpenAi && string.IsNullOrEmpty(item.ApiOrganizationId))
@@ -432,7 +430,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AppData.Version = 2;
 				SettingsSourceManager.ResetTemplates();
 			}
-			Security = new Security.AppSecurityHelper();
 			IsSettignsLoaded = true;
 		}
 

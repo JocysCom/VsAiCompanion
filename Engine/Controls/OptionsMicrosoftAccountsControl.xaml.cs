@@ -37,19 +37,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void SignInButton_Click(object sender, RoutedEventArgs e)
 		{
 			LogPanel.Clear();
-			await Global.Security.SignIn();
-			await Global.Security.RefreshProfileImage();
+			await MicrosoftAccountManager.Current.SignIn();
+			await MicrosoftAccountManager.Current.RefreshProfileImage();
 		}
 
 		private async void SignOutButton_Click(object sender, RoutedEventArgs e)
 		{
-			var success = await Global.Security.SignOut();
+			var success = await MicrosoftAccountManager.Current.SignOut();
 			LogPanel.Add(
 				success
 				? "User signed out successfully.\r\n"
 				: "No user is currently signed in.\r\n"
 				);
-			await Global.Security.RefreshProfileImage();
+			await MicrosoftAccountManager.Current.RefreshProfileImage();
 		}
 
 		private async void This_Loaded(object sender, RoutedEventArgs e)
@@ -57,10 +57,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Allows to run mehod once when control is created.
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var userType = await AppSecurityHelper.GetUserType();
+				var userType = await MicrosoftAccountManager.Current.GetUserType();
 				if (userType.HasFlag(UserType.EntraID))
 				{
-					await Global.Security.RefreshProfileImage();
+					await MicrosoftAccountManager.Current.RefreshProfileImage();
 				}
 			}
 		}
@@ -79,13 +79,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				//var credential = await AppSecurityHelper.GetTokenCredential(cancellationToken);
 				//var idToken1 = await AppSecurityHelper.GetIdToken(credential);
 				await Task.Delay(0);
-				var scope = new[] { AppSecurityHelper.MicrosoftGraphScope };
-				var token = await AppSecurityHelper.GetAccessToken(scope, interactive: true, cancellationToken);
+				var scope = new[] { MicrosoftAccountManager.MicrosoftGraphScope };
+				var token = await MicrosoftAccountManager.Current.GetAccessToken(scope, interactive: true, cancellationToken);
 				var accessToken = token.Token;
 				LogPanel.Add($"Access Token:\r\n");
 				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
 				InspectToken(accessToken);
-				var idToken = AppSecurityHelper.GetProfile().IdToken;
+				var idToken = MicrosoftAccountManager.Current.GetProfile().IdToken;
 				if (!string.IsNullOrEmpty(idToken))
 				{
 					LogPanel.Add($"ID Token:\r\n");
@@ -131,11 +131,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var uri = new Uri(TestTextBox.Text);
 				var scope1 = $"{uri.Scheme}://{uri.Host}/.default";
 				var scopes = new[] { scope1 };
-				var token = await AppSecurityHelper.GetAccessToken(scopes, interactive: true, cancellationToken);
+				var token = await MicrosoftAccountManager.Current.GetAccessToken(scopes, interactive: true, cancellationToken);
 				var accessToken = token.Token;
 				// Inspect the token
 				InspectToken(accessToken);
-				var contents = await AppSecurityHelper.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken, cancellationToken);
+				var contents = await MicrosoftAccountManager.Current.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken, cancellationToken);
 				LogPanel.Add($"{contents}\r\n");
 			});
 		}
@@ -150,7 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var accounts = await Global.Security.Pca.GetAccountsAsync();
+				var accounts = await MicrosoftAccountManager.Current.Pca.GetAccountsAsync();
 				LogPanel.Add($"Cached Accounts [{accounts.Count()}]:\r\n");
 				foreach (var account in accounts)
 				{
@@ -167,8 +167,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				LogPanel.Add("Retrieved Subscriptions:");
-				var credential = await AppSecurityHelper.GetTokenCredential(interactive: true, cancellationToken);
-				var items = await AppSecurityHelper.GetAzureSubscriptions(credential, cancellationToken);
+				var credential = await MicrosoftAccountManager.Current.GetTokenCredential(interactive: true, cancellationToken);
+				var items = await MicrosoftAccountManager.Current.GetAzureSubscriptions(credential, cancellationToken);
 				foreach (var item in items)
 					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
 			});
@@ -178,7 +178,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			try
 			{
-				var result = await Global.Security.Pca.AcquireTokenInteractive(new[] { AppSecurityHelper.MicrosoftAzureScope }).ExecuteAsync();
+				var result = await MicrosoftAccountManager.Current.Pca.AcquireTokenInteractive(new[] { MicrosoftAccountManager.MicrosoftAzureScope }).ExecuteAsync();
 				return result.AccessToken;
 			}
 			catch (MsalException ex)
@@ -220,7 +220,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var user = await Global.Security.GetMicrosoftUser(cancellationToken);
+				var user = await MicrosoftAccountManager.Current.GetMicrosoftUser(cancellationToken);
 				LogAsJson(user);
 			});
 		}

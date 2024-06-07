@@ -93,7 +93,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsOnCooldown(sender))
 				return;
-			_ = await AppSecurityHelper.RefreshVaultItem(Item.Id, cancellationTokenSources);
+			_ = await MicrosoftAccountManager.Current.RefreshVaultItem(Item.Id, cancellationTokenSources);
 		}
 
 		private void CopyButton_Click(object sender, System.Windows.RoutedEventArgs e)

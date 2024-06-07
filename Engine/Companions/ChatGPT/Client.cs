@@ -43,11 +43,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			var client = new HttpClient();
 			client.BaseAddress = new Uri(Service.BaseUrl);
-			var apiSecretKey = await Security.AppSecurityHelper.CheckAndGet(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
+			var apiSecretKey = await Security.MicrosoftAccountManager.Current.CheckAndGet(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiSecretKey);
 			client.DefaultRequestHeaders.Accept.Clear();
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-			var apiOrganizationId = await Security.AppSecurityHelper.CheckAndGet(Service.ApiOrganizationIdVaultItemId, Service.ApiOrganizationId);
+			var apiOrganizationId = await Security.MicrosoftAccountManager.Current.CheckAndGet(Service.ApiOrganizationIdVaultItemId, Service.ApiOrganizationId);
 			client.DefaultRequestHeaders.Add("OpenAI-Organization", apiOrganizationId);
 			return client;
 		}
@@ -271,7 +271,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var endpoint = new Uri(Service.BaseUrl);
 			var options = new OpenAIClientOptions();
 			OpenAIClient client;
-			var apiSecretKey = await Security.AppSecurityHelper.CheckAndGet(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
+			var apiSecretKey = await Security.MicrosoftAccountManager.Current.CheckAndGet(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
 			if (Service.IsAzureOpenAI)
 			{
 				client = string.IsNullOrEmpty(apiSecretKey)

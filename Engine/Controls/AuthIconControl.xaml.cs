@@ -61,7 +61,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				Item = AppSecurityHelper.GetProfile();
+				Item = MicrosoftAccountManager.Current.GetProfile();
 				AdjustEllipse();
 			}
 		}

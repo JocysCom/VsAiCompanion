@@ -40,12 +40,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsOnCooldown(sender))
 				return;
-			_ = await AppSecurityHelper.RefreshVaultItem(Item?.Id);
+			_ = await MicrosoftAccountManager.Current.RefreshVaultItem(Item?.Id);
 		}
 
 		private async void AzureVaultValueRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			var credential = await Security.AppSecurityHelper.GetTokenCredential();
+			var credential = await Security.MicrosoftAccountManager.Current.GetTokenCredential();
 			if (credential == null)
 				return;
 		}

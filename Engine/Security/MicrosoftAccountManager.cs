@@ -20,7 +20,25 @@ using System.Windows.Media.Imaging;
 
 namespace JocysCom.VS.AiCompanion.Engine.Security
 {
-	public class AppSecurityHelper
+	/// <summary>
+	/// Class provides functionalities for signing in and out with a Microsoft account
+	/// within a .NET desktop application. This class handles token caching and automatic token refreshing, 
+	/// ensuring that users do not need to provide credentials and sign in repeatedly to access various resources.
+	/// 
+	/// Key Features:
+	/// - Sign in with your Microsoft account.
+	/// - Sign out from your Microsoft account.
+	/// - Cache the authentication tokens securely.
+	/// - Automatically refresh tokens to maintain access without requiring user intervention.
+	/// 
+	/// Usage Scenarios:
+	/// - Applications that require access to Microsoft resources like OneDrive, Outlook, Azure, etc.
+	/// - Scenarios where user experience is improved by avoiding repeated authentication prompts.
+	/// 
+	/// This class aims to simplify the integration with Microsoft identity services, providing a seamless 
+	/// authentication experience in your .NET desktop application.
+	/// </summary>
+	public class MicrosoftAccountManager
 	{
 
 		/*
@@ -87,7 +105,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		// 9.InteractiveBrowserCredential
 
 
-
+		static readonly object _currentLock = new object();
+		static MicrosoftAccountManager _Current;
+		public static MicrosoftAccountManager Current
+		{
+			get
+			{
+				lock (_currentLock)
+					return _Current = _Current ?? new MicrosoftAccountManager();
+			}
+		}
 
 		public IPublicClientApplication Pca { get; } = PublicClientApplicationBuilder
 			.Create(Global.AppSettings?.ClientAppId)
@@ -123,7 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// <summary>
 		/// Determine if it is a Microsoft account by checking if the access token has a specific tenant ID for Microsoft accounts.
 		/// </summary>
-		public static async Task<bool> IsMicrosoftAccount()
+		public async Task<bool> IsMicrosoftAccount()
 		{
 			var profile = GetProfile();
 			// If access token is empty then application must use
@@ -134,7 +161,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		}
 
 
-		public static async Task<UserType> GetUserType()
+		public async Task<UserType> GetUserType()
 		{
 			var userType = UserType.None;
 			if (JocysCom.ClassLibrary.Security.PermissionHelper.IsLocalUser())
@@ -181,7 +208,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// <summary>
 		/// Get user profile with the access token.
 		/// </summary>
-		public static UserProfile GetProfile()
+		public UserProfile GetProfile()
 		{
 			var profile = Global.AppSettings.UserProfiles.First();
 			return profile;
@@ -193,7 +220,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			{
 				var profile = GetProfile();
 				// To get image interactive browser credentials must be proviced.
-				profile.Image = await Global.Security.GetProfileImage(interactive: true);
+				profile.Image = await GetProfileImage(interactive: true);
 			}
 			catch (Exception)
 			{
@@ -224,7 +251,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// </summary>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async Task<TokenCredential> GetTokenCredential(
+		public async Task<TokenCredential> GetTokenCredential(
 			bool interactive = false,
 			CancellationToken cancellationToken = default)
 		{
@@ -239,7 +266,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// Get the credentials signed into the current app. Get refreshed token if it is expired.
 		/// </summary>
 
-		public static async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
+		public async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
 		{
 			var accessToken = GetProfile().AccessToken;
 			if (string.IsNullOrEmpty(accessToken))
@@ -253,7 +280,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (isExired)
 			{
 				// Re-acquire the token with the required scopes
-				var result = await Global.Security.SignIn(scopes);
+				var result = await SignIn(scopes);
 				if (!result.Success)
 					return null;
 			}
@@ -264,7 +291,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// <summary>
 		/// Get windows credentials the app is running with.
 		/// </summary>
-		public static async Task<TokenCredential> GetWinTokenCredentials(bool interactive = false)
+		public async Task<TokenCredential> GetWinTokenCredentials(bool interactive = false)
 		{
 			await Task.Delay(0);
 			var options = new DefaultAzureCredentialOptions();
@@ -387,7 +414,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// Get access token.
 		/// </summary>
 		/// <param name="scopes">Set of permissions.</param>
-		public static async Task<AccessToken> GetAccessToken(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
+		public async Task<AccessToken> GetAccessToken(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
 		{
 			// Define credentials that will be used to access resources.
 			var credential = await GetTokenCredential(interactive, cancellationToken);
@@ -512,7 +539,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
-		public static async Task<Dictionary<string, string>> GetAzureSubscriptions(TokenCredential credential, CancellationToken cancellationToken = default)
+		public async Task<Dictionary<string, string>> GetAzureSubscriptions(TokenCredential credential, CancellationToken cancellationToken = default)
 		{
 			// Initialize the ArmClient
 			var armClient = new ArmClient(credential);
@@ -541,7 +568,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region API Calls
 
-		public static async Task<string> MakeAuthenticatedApiCall(
+		public async Task<string> MakeAuthenticatedApiCall(
 			string url, string accessToken,
 			CancellationToken cancellationToken = default)
 		{
@@ -555,7 +582,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			}
 		}
 
-		public static async Task<string> MakeAuthenticatedCall(string url, CancellationToken cancellationToken = default)
+		public async Task<string> MakeAuthenticatedCall(string url, CancellationToken cancellationToken = default)
 		{
 			// Define the scope required to access the target resource
 			// This is a common example, you should replace it with the correct scope for your resource
@@ -584,7 +611,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region Key Vault
 
-		public static async Task<KeyVaultSecret> GetSecretFromKeyVault(
+		public async Task<KeyVaultSecret> GetSecretFromKeyVault(
 			string keyVaultName, string secretName, TokenCredential credential,
 			CancellationToken cancellationToken = default)
 		{
@@ -597,7 +624,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return secret;
 		}
 
-		public static async Task<VaultItem> RefreshVaultItem(Guid? id,
+		public async Task<VaultItem> RefreshVaultItem(Guid? id,
 			ObservableCollection<CancellationTokenSource> cancellationTokenSources = default)
 		{
 			if (id == null || id == Guid.Empty)
@@ -622,7 +649,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return item;
 		}
 
-		public static async Task<string> CheckAndGet(Guid? vaultItemId, string defaultSecret,
+		public async Task<string> CheckAndGet(Guid? vaultItemId, string defaultSecret,
 			ObservableCollection<CancellationTokenSource> cancellationTokenSources = default)
 		{
 			if (vaultItemId == null)
@@ -638,7 +665,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
-		public static bool? IsConsumerAccount(string accessToken, CancellationToken cancellationToken = default)
+		public bool? IsConsumerAccount(string accessToken, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrEmpty(accessToken))
 				return null;

@@ -154,7 +154,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// If spoecific vocie not found then probably due to override.
 			if (voice == null)
 				voice = voices.FirstOrDefault();
-			var apiSecretKey = await Security.AppSecurityHelper.CheckAndGet(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
+			var apiSecretKey = await Security.MicrosoftAccountManager.Current.CheckAndGet(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
 			var client = new SynthesizeClient(apiSecretKey, service.Region, voice?.ShortName);
 			return client;
 		}
