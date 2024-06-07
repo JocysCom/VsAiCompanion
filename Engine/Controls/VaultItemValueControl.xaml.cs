@@ -114,18 +114,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		private void This_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
-			if (ControlsHelper.AllowLoad(this))
-			{
-				VaultItems2 = Global.AppSettings.VaultItems;
-				OnPropertyChanged(nameof(VaultItems2));
-				ValuePasswordBox.PasswordChanged += ValuePasswordBox_PasswordChanged;
-			}
-		}
-
 		private void ValuePasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
 		{
 			if (Value != ValuePasswordBox.Password)
@@ -145,6 +133,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			VaultItemRefreshButton.Visibility = vaultVisibility;
 			VaultItemValuePasswordBox.Visibility = vaultVisibility;
 		}
+
+
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			if (ControlsHelper.AllowLoad(this))
+			{
+				VaultItems2 = Global.AppSettings.VaultItems;
+				OnPropertyChanged(nameof(VaultItems2));
+				ValuePasswordBox.PasswordChanged += ValuePasswordBox_PasswordChanged;
+				var profile = MicrosoftAccountManager.Current.GetProfile();
+				profile.PropertyChanged += Profile_PropertyChanged;
+			}
+		}
+
+		private void Profile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(UserProfile.IsSigned))
+				OnPropertyChanged(nameof(UserIsSigned));
+		}
+
+		public bool UserIsSigned => MicrosoftAccountManager.Current.GetProfile().IsSigned;
 
 		#region ■ INotifyPropertyChanged
 

@@ -108,6 +108,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Item?.Clear();
 		}
 
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				var profile = MicrosoftAccountManager.Current.GetProfile();
+				profile.PropertyChanged += Profile_PropertyChanged;
+			}
+		}
+
+		private void Profile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(UserProfile.IsSigned))
+				OnPropertyChanged(nameof(UserIsSigned));
+		}
+
+		public bool UserIsSigned => MicrosoftAccountManager.Current.GetProfile().IsSigned;
+
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;

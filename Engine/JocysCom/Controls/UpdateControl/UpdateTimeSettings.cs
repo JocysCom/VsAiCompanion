@@ -22,7 +22,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		/// <summary>
 		/// UTC time of last update.
 		/// </summary>
-		[DefaultValue(typeof(DateTime), "0")]
+		[DefaultValue(null)]
 		public DateTime? LastUpdate { get => _LastUpdate; set => SetProperty(ref _LastUpdate, value); }
 		DateTime? _LastUpdate;
 

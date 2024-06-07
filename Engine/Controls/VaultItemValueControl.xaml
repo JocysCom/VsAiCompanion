@@ -60,6 +60,7 @@
 			Grid.Column="2"
 			Margin="3,0,3,0"
 			Click="VaultItemRefreshButton_Click"
+			IsEnabled="{Binding UserIsSigned, ElementName=This}"
 			ToolTip="{StaticResource main_ModelRefreshButton_ToolTip}">
 			<StackPanel>
 				<ContentControl Content="{StaticResource Icon_Refresh}" />

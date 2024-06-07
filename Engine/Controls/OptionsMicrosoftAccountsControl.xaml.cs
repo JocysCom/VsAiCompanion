@@ -5,10 +5,12 @@ using JocysCom.VS.AiCompanion.Engine.Security;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	/// <summary>
 	/// Interaction logic for OptionsMicrosoftAccountsControl.xaml
 	/// </summary>
-	public partial class OptionsMicrosoftAccountsControl : UserControl
+	public partial class OptionsMicrosoftAccountsControl : UserControl, INotifyPropertyChanged
 	{
 		public OptionsMicrosoftAccountsControl()
 		{
@@ -54,37 +56,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					: "No user is currently signed in.\r\n"
 					);
 				await MicrosoftAccountManager.Current.RefreshProfileImage(cancellationToken);
-			});
-		}
-
-		private void StopButton_Click(object sender, RoutedEventArgs e)
-		{
-			var items = cancellationTokenSources.ToArray();
-			foreach (var item in items)
-				item.Cancel();
-		}
-
-		private async void InspectTokenButton_Click(object sender, RoutedEventArgs e)
-		{
-			MainTabControl.SelectedItem = LogTabPage;
-			await ExecuteMethod(async (CancellationToken cancellationToken) =>
-			{
-
-				//var credential = await AppSecurityHelper.GetTokenCredential(cancellationToken);
-				//var idToken1 = await AppSecurityHelper.GetIdToken(credential);
-				await Task.Delay(0);
-				var scope = new[] { MicrosoftAccountManager.MicrosoftGraphScope };
-				var token = await MicrosoftAccountManager.Current.GetAccessToken(scope, interactive: true, cancellationToken);
-				var accessToken = token.Token;
-				LogPanel.Add($"Access Token:\r\n");
-				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
-				InspectToken(accessToken);
-				var idToken = MicrosoftAccountManager.Current.GetProfile().IdToken;
-				if (!string.IsNullOrEmpty(idToken))
-				{
-					LogPanel.Add($"ID Token:\r\n");
-					InspectToken(idToken);
-				}
 			});
 		}
 
@@ -132,43 +103,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				InspectToken(accessToken);
 				var contents = await MicrosoftAccountManager.Current.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken, cancellationToken);
 				LogPanel.Add($"{contents}\r\n");
-			});
+			}, true);
 		}
 
 		//var token1 = GetAccessTokenUsingWindowsAuthentication();
 		//var content = await GetWebPageContentsWithDefaultAzureCredential(TestTextBox.Text, scope1, token1);
 		//var w = new JocysCom.VS.AiCompanion.Plugins.Core.Web();
 		//var page = await w.GetWebPageContentsAuthenticated(TestTextBox.Text, false);
-
-
-		private async void ListAccountsButton_Click(object sender, RoutedEventArgs e)
-		{
-			MainTabControl.SelectedItem = LogTabPage;
-			await ExecuteMethod(async (CancellationToken cancellationToken) =>
-			{
-				var accounts = await MicrosoftAccountManager.Current.Pca.GetAccountsAsync();
-				LogPanel.Add($"Cached Accounts [{accounts.Count()}]:\r\n");
-				foreach (var account in accounts)
-				{
-					LogPanel.Add($"Username: {account.Username}\r\n");
-					LogPanel.Add($"HomeAccountId: {account.HomeAccountId}\r\n");
-					LogPanel.Add($"Environment: {account.Environment}\r\n");
-					LogPanel.Add("\r\n");
-				}
-			});
-		}
-
-		private async void ListSubscriptionsButton_Click(object sender, RoutedEventArgs e)
-		{
-			MainTabControl.SelectedItem = LogTabPage;
-			await ExecuteMethod(async (CancellationToken cancellationToken) =>
-			{
-				LogPanel.Add("Retrieved Subscriptions:");
-				var items = await MicrosoftAccountManager.Current.GetAzureSubscriptions(cancellationToken);
-				foreach (var item in items)
-					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
-			});
-		}
 
 		public async Task<string> GetAccessTokenAsync()
 		{
@@ -184,6 +125,46 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		#region Test
+
+		private async void CachedAccountsButton_Click(object sender, RoutedEventArgs e)
+		{
+			MainTabControl.SelectedItem = LogTabPage;
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				var accounts = await MicrosoftAccountManager.Current.Pca.GetAccountsAsync();
+				LogPanel.Add($"Cached Accounts [{accounts.Count()}]:\r\n");
+				foreach (var account in accounts)
+				{
+					LogPanel.Add($"Username: {account.Username}\r\n");
+					LogPanel.Add($"HomeAccountId: {account.HomeAccountId}\r\n");
+					LogPanel.Add($"Environment: {account.Environment}\r\n");
+					LogPanel.Add("\r\n");
+				}
+			}, true);
+		}
+
+		private async void TokensButton_Click(object sender, RoutedEventArgs e)
+		{
+			MainTabControl.SelectedItem = LogTabPage;
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				await Task.Delay(0);
+				var scope = new[] { MicrosoftAccountManager.MicrosoftGraphScope };
+				var token = await MicrosoftAccountManager.Current.GetAccessToken(scope, interactive: true, cancellationToken);
+				var accessToken = token.Token;
+				LogPanel.Add($"Access Token:\r\n");
+				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
+				InspectToken(accessToken);
+				var idToken = MicrosoftAccountManager.Current.GetProfile().IdToken;
+				if (!string.IsNullOrEmpty(idToken))
+				{
+					LogPanel.Add($"ID Token:\r\n");
+					InspectToken(idToken);
+				}
+			}, true);
+		}
+
 		private async void UserInfoButton_Click(object sender, RoutedEventArgs e)
 		{
 			MainTabControl.SelectedItem = LogTabPage;
@@ -191,8 +172,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				var user = await MicrosoftAccountManager.Current.GetMicrosoftUser(cancellationToken);
 				LogAsJson(user);
-			});
+			}, true);
 		}
+
+		private async void SubscriptionsButton_Click(object sender, RoutedEventArgs e)
+		{
+			MainTabControl.SelectedItem = LogTabPage;
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				LogPanel.Add("Retrieved Subscriptions:");
+				var items = await MicrosoftAccountManager.Current.GetAzureSubscriptions(cancellationToken);
+				foreach (var item in items)
+					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
+			}, true);
+		}
+
+		private void StopButton_Click(object sender, RoutedEventArgs e)
+		{
+			var items = cancellationTokenSources.ToArray();
+			foreach (var item in items)
+				item.Cancel();
+		}
+
+
+		#endregion
 
 		#region Control Helper Methods
 
@@ -216,10 +219,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// <summary>
 		/// Helps run cancellable methods of this form and logs results to the log panel.
 		/// </summary>
-		async Task ExecuteMethod(Func<CancellationToken, Task> action)
+		async Task ExecuteMethod(Func<CancellationToken, Task> action, bool requiresSignIn = false)
 		{
 
 			LogPanel.Clear();
+			var profile = MicrosoftAccountManager.Current.GetProfile();
+			if (requiresSignIn && !profile.IsSigned)
+			{
+				LogPanel.Add($"Please sign in first.\r\n");
+				return;
+			}
 			var source = new CancellationTokenSource();
 			source.CancelAfter(TimeSpan.FromSeconds(600));
 			cancellationTokenSources.Add(source);
@@ -292,6 +301,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 
 		#endregion
+
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				var profile = MicrosoftAccountManager.Current.GetProfile();
+				profile.PropertyChanged += Profile_PropertyChanged;
+			}
+		}
+
+		private void Profile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(UserProfile.IsSigned))
+				OnPropertyChanged(nameof(UserIsSigned));
+
+		}
+
+		public bool UserIsSigned => MicrosoftAccountManager.Current.GetProfile().IsSigned;
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 
 	}
 }

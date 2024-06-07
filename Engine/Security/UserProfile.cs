@@ -26,7 +26,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[DefaultValue(null)]
 		/// <summary>Unique identifier for the account</summary>
-		public string AccountId { get => _AccountId; set => SetProperty(ref _AccountId, value); }
+		public string AccountId
+		{
+			get => _AccountId;
+			set { SetProperty(ref _AccountId, value); OnPropertyChanged(nameof(IsSigned)); }
+		}
 		private string _AccountId;
 
 		[DefaultValue(null)]
@@ -45,6 +49,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return decryptedValue;
 		}
 
+		public bool IsSigned => !string.IsNullOrEmpty(AccountId);
+
 		public string SetToken(string value, params string[] scopes)
 		{
 			var key = string.Join(" ", scopes);
@@ -58,7 +64,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			token.Value = encryptedValue;
 			return value;
 		}
-
 
 		/// <summary>Access tokens.</summary>
 		public List<KeyValue> Tokens

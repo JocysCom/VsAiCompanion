@@ -9,6 +9,7 @@
 	x:Name="This"
 	d:DesignHeight="600"
 	d:DesignWidth="800"
+	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -48,7 +49,11 @@
 						</StackPanel>
 					</Button>
 
-					<Button Name="SignOutButton" HorizontalAlignment="Stretch" Click="SignOutButton_Click">
+					<Button
+						Name="SignOutButton"
+						HorizontalAlignment="Stretch"
+						Click="SignOutButton_Click"
+						IsEnabled="{Binding UserIsSigned, ElementName=This}">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_user_grey}" Focusable="False" />
 							<Label MinWidth="52" Content="{StaticResource main_SignOut}" />
@@ -142,23 +147,23 @@
 				</StackPanel>
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
 					<Label Content="Graph" Opacity="0.5" />
-					<Button Name="ListAccountsButton" Click="ListAccountsButton_Click">
+					<Button Name="CachedAccountsButton" Click="CachedAccountsButton_Click" IsEnabled="{Binding UserIsSigned, ElementName=This}">
 						<StackPanel Focusable="False">
 							<Label Content="Cached Accounts" />
 						</StackPanel>
 					</Button>
-					<Button Name="InspectTokenButton" Click="InspectTokenButton_Click">
+					<Button Name="TokensButton" Click="TokensButton_Click" IsEnabled="{Binding UserIsSigned, ElementName=This}">
 						<StackPanel Focusable="False">
 							<Label Content="Tokens" />
 						</StackPanel>
 					</Button>
-					<Button Name="UserInfoButton" Click="UserInfoButton_Click">
+					<Button Name="UserInfoButton" Click="UserInfoButton_Click" IsEnabled="{Binding UserIsSigned, ElementName=This}">
 						<StackPanel Focusable="False">
 							<Label Content="User Info" />
 						</StackPanel>
 					</Button>
 					<Label Content="Azure" Opacity="0.5" />
-					<Button Name="ListSubscriptionsButton" Click="ListSubscriptionsButton_Click">
+					<Button Name="ubscriptionsButton" Click="SubscriptionsButton_Click" IsEnabled="{Binding UserIsSigned, ElementName=This}">
 						<StackPanel Focusable="False">
 							<Label Content="Subscriptions" />
 						</StackPanel>
