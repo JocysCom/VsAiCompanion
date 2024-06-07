@@ -20,12 +20,12 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Constructor for success scenarios, setting result and OK status.
 		/// </summary>
-		/// <param name="result">Result value of the operation.</param>
-		public OperationResult(T result) : this()
+		/// <param name="data">Result value of the operation.</param>
+		public OperationResult(T data) : this()
 		{
 			StatusCode = 0;
 			StatusText = "Success";
-			Result = result;
+			Data = data;
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace JocysCom.ClassLibrary
 		/// <param name="errors">Collection of exceptions related to operation failure.</param>
 		public OperationResult(T result, int statusCode, string statusText, IEnumerable<Exception> errors) : this()
 		{
-			Result = result;
+			Data = result;
 			StatusCode = statusCode;
 			StatusText = statusText ?? statusCode.ToString();
 			Errors = new List<string>();
@@ -99,7 +99,7 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Result value of the operation.
 		/// </summary>
-		public T Result { get; set; }
+		public T Data { get; set; }
 
 	}
 }

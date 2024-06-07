@@ -782,7 +782,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (captureResult.Success)
 			{
 				var box = GetFocused();
-				AppHelper.InsertText(box, $"Please analyse screenshot\r\n{captureResult.Result}", true, false);
+				AppHelper.InsertText(box, $"Please analyse screenshot\r\n{captureResult.Data}", true, false);
 			}
 		}
 

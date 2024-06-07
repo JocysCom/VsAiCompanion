@@ -601,6 +601,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (string.IsNullOrEmpty(avatarItem.Instructions))
 					avatarItem.Instructions = Engine.Resources.MainResources.main_AvatarItem_Instructions;
 			}
+			var userProfiles = e.Items.FirstOrDefault()?.UserProfiles;
+			if (userProfiles != null)
+			{
+				// Don't allow multiple user profiles at the moment.
+				while (userProfiles.Count() > 1)
+					userProfiles.RemoveAt(0);
+				if (userProfiles.Count == 0)
+					userProfiles.Add(new UserProfile());
+			}
 		}
 
 		private static bool FixTempalteItems(IList<TemplateItem> items)

@@ -26,6 +26,9 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		public DateTime? LastUpdate { get => _LastUpdate; set => SetProperty(ref _LastUpdate, value); }
 		DateTime? _LastUpdate;
 
+		/// <summary>Serializes property only with non-default values.</summary>
+		public bool ShouldSerializeLastUpdate() => LastUpdate != null;
+
 		/// <summary>
 		/// Check frequency unit.
 		/// </summary>

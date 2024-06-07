@@ -84,7 +84,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 		}
 
-		private void This_Loaded(object sender, RoutedEventArgs e)
+		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -95,6 +95,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TemplatesPanel;
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksPanel;
 				AppHelper.AddHelp(TasksLabel);
+				try
+				{
+					await Security.MicrosoftAccountManager.Current.RefreshProfileImage();
+				}
+				catch (Exception ex)
+				{
+					Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+				}
 			}
 		}
 

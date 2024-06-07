@@ -9,7 +9,6 @@
 	x:Name="This"
 	d:DesignHeight="600"
 	d:DesignWidth="800"
-	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -142,6 +141,7 @@
 					</Button>
 				</StackPanel>
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
+					<Label Content="Graph" Opacity="0.5" />
 					<Button Name="ListAccountsButton" Click="ListAccountsButton_Click">
 						<StackPanel Focusable="False">
 							<Label Content="Cached Accounts" />
@@ -152,15 +152,15 @@
 							<Label Content="Tokens" />
 						</StackPanel>
 					</Button>
-					<Button Name="ListSubscriptionsButton" Click="ListSubscriptionsButton_Click">
-						<StackPanel Focusable="False">
-							<Label Content="Subscriptions" />
-						</StackPanel>
-					</Button>
-
 					<Button Name="UserInfoButton" Click="UserInfoButton_Click">
 						<StackPanel Focusable="False">
 							<Label Content="User Info" />
+						</StackPanel>
+					</Button>
+					<Label Content="Azure" Opacity="0.5" />
+					<Button Name="ListSubscriptionsButton" Click="ListSubscriptionsButton_Click">
+						<StackPanel Focusable="False">
+							<Label Content="Subscriptions" />
 						</StackPanel>
 					</Button>
 					<Button Name="StopButton" MinWidth="75" Click="StopButton_Click">

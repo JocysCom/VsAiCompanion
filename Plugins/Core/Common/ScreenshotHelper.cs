@@ -122,7 +122,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			var results = await GetCaptureRegion();
 			if (!results.Success)
 				return new OperationResult<string>(new Exception(string.Join("\r\n", results.Errors)));
-			var imageResults = await CaptureRegion(results.Result, imageFolder, format);
+			var imageResults = await CaptureRegion(results.Data, imageFolder, format);
 			return imageResults;
 		}
 

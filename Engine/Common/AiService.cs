@@ -70,7 +70,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public Guid? ApiOrganizationIdVaultItemId { get => _ApiOrganizationIdVaultItemId; set => SetProperty(ref _ApiOrganizationIdVaultItemId, value); }
 		Guid? _ApiOrganizationIdVaultItemId;
 
-		public bool ShouldSerializeApiOrganizationIdVaultItemId => ApiOrganizationIdVaultItemId != null;
+		public bool ShouldSerializeApiOrganizationIdVaultItemId() => ApiOrganizationIdVaultItemId != null;
 
 
 		#endregion
@@ -110,7 +110,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public Guid? ApiSecretKeyVaultItemId { get => _ApiSecretKeyVaultItemId; set => SetProperty(ref _ApiSecretKeyVaultItemId, value); }
 		Guid? _ApiSecretKeyVaultItemId;
 
-		public bool ShouldSerializeApiSecretKeyVaultItemId => ApiSecretKeyVaultItemId != null;
+		public bool ShouldSerializeApiSecretKeyVaultItemId() => ApiSecretKeyVaultItemId != null;
 
 		#endregion
 

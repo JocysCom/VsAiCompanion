@@ -41,10 +41,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		public DateTime? ActivationDate { get => _ActivationDate; set => SetProperty(ref _ActivationDate, value); }
 		DateTime? _ActivationDate;
 
+		/// <summary>Serializes property only with non-default values.</summary>
+		public bool ShouldSerializeActivationDate() => ActivationDate != null;
+
+
 		/// <summary>Expiration Date.</summary>
 		[DefaultValue(null)]
 		public DateTime? ExpirationDate { get => _ExpirationDate; set => SetProperty(ref _ExpirationDate, value); }
 		DateTime? _ExpirationDate;
+
+		/// <summary>Serializes property only with non-default values.</summary>
+		public bool ShouldSerializeExpirationDate() => ExpirationDate != null;
+
 
 		/// <summary>Vault secret value.</summary>
 		[XmlIgnore, JsonIgnore]
@@ -67,10 +75,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		}
 		UpdateTimeSettings _UpdateTimeSettings;
 
-		/// <summary>
-		/// Serialize only of properties non default.
-		/// </summary>
-		public bool ShouldSerializeUpdateTimeSettings => JocysCom.ClassLibrary.Runtime.RuntimeHelper.EqualProperties(this, new UpdateTimeSettings());
+		/// <summary>Serializes property only with non-default values.</summary>
+		public bool ShouldSerializeUpdateTimeSettings() => JocysCom.ClassLibrary.Runtime.RuntimeHelper.EqualProperties(UpdateTimeSettings, new UpdateTimeSettings());
 
 		/// <summary>
 		/// Returns true if the key is not active, has expired, or needs to be checked for an updated value.

@@ -160,7 +160,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var mlContext = new MLContext();
 			var fh = new FileHelper();
 			var result = fh.ReadFileAsPlainText(path);
-			var content = result?.Result;
+			var content = result?.Data;
 			if (string.IsNullOrEmpty(content))
 				return Array.Empty<FilePart>();
 			//var data = new List<TextData> { new TextData { Text = content } };

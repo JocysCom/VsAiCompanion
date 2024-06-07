@@ -1,5 +1,8 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.ComponentModel;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Windows.Media;
 using System.Xml.Serialization;
@@ -34,17 +37,36 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public ApiServiceType ServiceType { get => _ServiceType; set => SetProperty(ref _ServiceType, value); }
 		private ApiServiceType _ServiceType;
 
-		/// <summary>Access token.</summary>
-		[XmlIgnore, JsonIgnore]
-		public string AccessToken
+		public string GetToken(params string[] scopes)
 		{
-			get => AppHelper.UserDecrypt(_AccessTokenEncrypted);
-			set { _AccessTokenEncrypted = AppHelper.UserEncrypt(value); OnPropertyChanged(); }
+			var key = string.Join(" ", scopes);
+			var token = Tokens.FirstOrDefault(x => x.Key == key);
+			var decryptedValue = AppHelper.UserDecrypt(token?.Value);
+			return decryptedValue;
 		}
 
-		[DefaultValue(null), XmlElement(ElementName = nameof(AccessToken))]
-		public string _AccessTokenEncrypted { get; set; }
+		public string SetToken(string value, params string[] scopes)
+		{
+			var key = string.Join(" ", scopes);
+			var token = Tokens.FirstOrDefault(x => x.Key == key);
+			if (token == null)
+			{
+				token = new KeyValue { Key = key };
+				Tokens.Add(token);
+			}
+			var encryptedValue = AppHelper.UserEncrypt(value);
+			token.Value = encryptedValue;
+			return value;
+		}
 
+
+		/// <summary>Access tokens.</summary>
+		public List<KeyValue> Tokens
+		{
+			get => _Tokens = _Tokens ?? new List<KeyValue>();
+			set => SetProperty(ref _Tokens, value);
+		}
+		public List<KeyValue> _Tokens;
 
 		/// <summary>ID token.</summary>
 		[XmlIgnore, JsonIgnore]
@@ -65,6 +87,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public void Clear()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+			Tokens.Clear();
 		}
 
 		/// <summary>

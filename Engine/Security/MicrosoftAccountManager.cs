@@ -79,7 +79,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		// Preconfigured set of permissions. Usually formatted as https://{resource}/{permission}:
 		public const string MicrosoftGraphScope = "https://graph.microsoft.com/.default";
-		public const string MicrosoftAzureScope = "https://management.azure.com/.default";
+		public const string MicrosoftAzureManagementScope = "https://management.azure.com/.default";
+		public const string MicrosoftAzureVaultScope = "https://vault.azure.net/.default";
 		// Fully qualified URI for "User.Read";
 		// Permissions to sign in the user and read the user's profile.
 		public const string MicrosoftGraphUserReadScope = "https://graph.microsoft.com/User.Read";
@@ -155,7 +156,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var profile = GetProfile();
 			// If access token is empty then application must use
 			// user 
-			var accessToken = profile.IdToken ?? profile.AccessToken;
+			var accessToken = profile.IdToken ?? profile.GetToken(MicrosoftGraphScope);
 			TokenCredential credential = await GetTokenCredential();
 			return IsConsumerAccount(accessToken).GetValueOrDefault();
 		}
@@ -214,29 +215,56 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return profile;
 		}
 
-		public async Task RefreshProfileImage()
+		public async Task RefreshProfileImage(CancellationToken cancellationToken = default)
 		{
+			var profile = GetProfile();
+			var accessToken = profile.GetToken(MicrosoftGraphScope);
+			// If user is not signed, return.
+			if (string.IsNullOrEmpty(accessToken))
+				return;
+
+			var credential = new AccessTokenCredential(accessToken);
+			var client = new GraphServiceClient(credential);
+			ImageSource image = null;
 			try
 			{
-				var profile = GetProfile();
-				// To get image interactive browser credentials must be proviced.
-				profile.Image = await GetProfileImage(interactive: true);
+				var user = await client.Me.GetAsync(cancellationToken: cancellationToken);
+				var photoMeta = await client.Me.Photo.GetAsync(cancellationToken: cancellationToken);
+				if (photoMeta != null)
+				{
+					var stream = await client.Me.Photo.Content.GetAsync(cancellationToken: cancellationToken);
+					var bitmapImage = ConvertToImage(stream);
+					image = bitmapImage;
+				}
+				else
+				{
+					image = GetDefaultProfileImage();
+				}
 			}
-			catch (Exception)
+			catch (Microsoft.Graph.Models.ODataErrors.ODataError oex)
 			{
+				if (oex.Error.Code == "ImageNotFound")
+					image = GetDefaultProfileImage();
 			}
+			catch (Exception ex)
+			{
+				var s = ex.ToString();
+			}
+			profile.Image = image;
 		}
 
-		private void SaveUserProfile(AuthenticationResult result)
+		private void SaveUserProfile(AuthenticationResult result, string[] scopes)
 		{
 			var account = result.Account;
-
-			// Save User profile.
 			var profile = GetProfile();
+
+			// Store access token for specific scope.
+			profile.SetToken(result.AccessToken, scopes);
+
+			// Other profile saving information
 			profile.ServiceType = ApiServiceType.Azure;
 			profile.Username = account.Username;
 			profile.AccountId = account.HomeAccountId.Identifier;
-			profile.AccessToken = result.AccessToken;
 			profile.IdToken = result.IdToken;
 
 			// Parse the ID token to extract user claims
@@ -262,13 +290,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return await GetWinTokenCredentials(interactive);
 		}
 
+		public async Task<TokenCredential> GetTokenCredential(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
+		{
+			var profile = GetProfile();
+			var cachedToken = profile.GetToken(scopes);
+			if (!string.IsNullOrEmpty(cachedToken))
+			{
+				// Use cached token
+				return new AccessTokenCredential(cachedToken);
+			}
+			// Get new token from SignIn if no valid token is found
+			var result = await SignIn(scopes, cancellationToken);
+			if (!result.Success || result.Data == null)
+				return null;
+			return new AccessTokenCredential(result.Data.AccessToken);
+		}
+
 		/// <summary>
 		/// Get the credentials signed into the current app. Get refreshed token if it is expired.
 		/// </summary>
 
 		public async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
 		{
-			var accessToken = GetProfile().AccessToken;
+			var accessToken = GetProfile().GetToken(MicrosoftGraphScope);
 			if (string.IsNullOrEmpty(accessToken))
 				return null;
 			// Ensure the token has the required scopes
@@ -280,7 +324,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (isExired)
 			{
 				// Re-acquire the token with the required scopes
-				var result = await SignIn(scopes);
+				var result = await SignIn(scopes, cancellationToken);
 				if (!result.Success)
 					return null;
 			}
@@ -306,10 +350,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region SignIn and SignOut
 
-		public async Task<OperationResult<AuthenticationResult>> SignIn(params string[] scopes)
+		public async Task<OperationResult<AuthenticationResult>> SignIn(
+			string[] scopes, CancellationToken cancellationToken = default)
 		{
-			if (scopes.Length == 0)
-				scopes = new string[] { MicrosoftGraphScope };
 			AuthenticationResult result = null;
 			var requiresUI = false;
 			try
@@ -348,7 +391,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				else
 				{
 					// Get result that includes access tokens that grant the application the rights to fetch user information.
-					result = await Pca.AcquireTokenSilent(scopes, account).ExecuteAsync();
+					result = await Pca.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
 				}
 			}
 			catch (MsalUiRequiredException ex)
@@ -360,7 +403,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 						var builder = Pca.AcquireTokenInteractive(scopes);
 						if (!string.IsNullOrEmpty(ex.Claims))
 							builder = builder.WithClaims(ex.Claims);
-						result = await builder.ExecuteAsync();
+						result = await builder.ExecuteAsync(cancellationToken);
 					}
 					catch (Exception innerEx)
 					{
@@ -385,14 +428,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 					//var builder = Pca.AcquireTokenByIntegratedWindowsAuth(scopes);
 					// Multi-factor authentication (MFA) is a multi-step account login process that requires users to enter more information than just a password. 
 					var builder = Pca.AcquireTokenInteractive(scopes);
-					result = await builder.ExecuteAsync();
+					result = await builder.ExecuteAsync(cancellationToken);
 				}
 				catch (Exception ex)
 				{
 					return new OperationResult<AuthenticationResult>(ex);
 				}
 			}
-			SaveUserProfile(result);
+			SaveUserProfile(result, scopes);
 			return new OperationResult<AuthenticationResult>(result);
 		}
 
@@ -452,44 +495,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<Microsoft.Graph.Models.User> GetMicrosoftUser(CancellationToken cancellationToken = default)
 		{
-			var credential = await GetTokenCredential(interactive: false, cancellationToken);
+			var profile = GetProfile();
+			var accessToken = profile.GetToken(MicrosoftGraphScope);
+			// If user is not signed, return.
+			if (string.IsNullOrEmpty(accessToken))
+				return null;
+
+			var credential = new AccessTokenCredential(accessToken);
 			var client = new GraphServiceClient(credential);
 			var ui = await client.Me.GetAsync(cancellationToken: cancellationToken);
 			return ui;
-		}
-
-		public async Task<ImageSource> GetProfileImage(bool interactive = false, CancellationToken cancellationToken = default)
-		{
-			var credential = await GetTokenCredential(interactive, cancellationToken);
-			var client = new GraphServiceClient(credential);
-			ImageSource image = null;
-			try
-			{
-				var user = await client.Me.GetAsync(cancellationToken: cancellationToken);
-				// Check if photo exists by getting the metadata
-				var photoMeta = await client.Me.Photo.GetAsync(cancellationToken: cancellationToken);
-				if (photoMeta != null)
-				{
-					// If metadata exists, proceed to get the photo Content
-					var stream = await client.Me.Photo.Content.GetAsync(cancellationToken: cancellationToken);
-					var bitmapImage = ConvertToImage(stream);
-					image = bitmapImage;
-				}
-				else
-				{
-					image = GetDefaultProfileImage();
-				}
-			}
-			catch (Microsoft.Graph.Models.ODataErrors.ODataError oex) // when (ex is Microsoft.Fast.Profile.Core.Exception.ImageNotFoundException)
-			{
-				if (oex.Error.Code == "ImageNotFound")
-					image = GetDefaultProfileImage();
-			}
-			catch (Exception ex)
-			{
-				var s = ex.ToString();
-			}
-			return image;
 		}
 
 		public ImageSource GetDefaultProfileImage()
@@ -512,20 +527,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return new DrawingImage(drawingGroup);
 		}
 
-		public async Task<BitmapImage> GetProfileImage(string accessToken, CancellationToken cancellationToken = default)
-		{
-			using (var httpClient = new HttpClient())
-			{
-				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-				var response = await httpClient.GetAsync("https://graph.microsoft.com/v1.0/me/photo/$value", cancellationToken);
-				if (!response.IsSuccessStatusCode)
-					return null;
-				var stream = await response.Content.ReadAsStreamAsync();
-				var image = ConvertToImage(stream);
-				return image;
-			}
-		}
-
 		static BitmapImage ConvertToImage(System.IO.Stream stream)
 		{
 			var bitmapImage = new BitmapImage();
@@ -539,8 +540,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
-		public async Task<Dictionary<string, string>> GetAzureSubscriptions(TokenCredential credential, CancellationToken cancellationToken = default)
+		public async Task<Dictionary<string, string>> GetAzureSubscriptions(CancellationToken cancellationToken = default)
 		{
+			var scopes = new[] { MicrosoftAzureManagementScope };
+			var credential = await GetTokenCredential(scopes, cancellationToken: cancellationToken);
+
 			// Initialize the ArmClient
 			var armClient = new ArmClient(credential);
 			// Dictionary to store subscription names and IDs
@@ -611,10 +615,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region Key Vault
 
-		public async Task<KeyVaultSecret> GetSecretFromKeyVault(
-			string keyVaultName, string secretName, TokenCredential credential,
-			CancellationToken cancellationToken = default)
+		public async Task<KeyVaultSecret> GetSecretFromKeyVault(string keyVaultName, string secretName, CancellationToken cancellationToken = default)
 		{
+			var scopes = new[] { MicrosoftAzureVaultScope };
+			var credential = await GetTokenCredential(scopes, cancellationToken: cancellationToken);
 			// Azure Key Vault URI
 			string kvUri = $"https://{keyVaultName}.vault.azure.net/";
 			// Create a new secret client
@@ -636,8 +640,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			cancellationTokenSources,
 			async (cancellationToken) =>
 			{
-				var credential = await GetTokenCredential(interactive: true);
-				var secret = await GetSecretFromKeyVault(item.VaultName, item.VaultItemName, credential);
+				var secret = await GetSecretFromKeyVault(item.VaultName, item.VaultItemName);
 				JocysCom.ClassLibrary.Controls.ControlsHelper.AppInvoke(() =>
 				{
 					item.Value = secret?.Value;

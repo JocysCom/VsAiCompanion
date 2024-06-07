@@ -373,7 +373,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// If can't read file then....
 				var fh = new Plugins.Core.FileHelper();
 				var result = fh.ReadFileAsPlainText(filePath);
-				var content = result?.Result;
+				var content = result?.Data;
 				if (string.IsNullOrWhiteSpace(content))
 					return true;
 			}

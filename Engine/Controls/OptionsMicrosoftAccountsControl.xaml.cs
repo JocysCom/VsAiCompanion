@@ -3,9 +3,7 @@ using Azure.Identity;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Security;
 using Microsoft.Identity.Client;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -36,34 +34,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void SignInButton_Click(object sender, RoutedEventArgs e)
 		{
-			LogPanel.Clear();
-			await MicrosoftAccountManager.Current.SignIn();
-			await MicrosoftAccountManager.Current.RefreshProfileImage();
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				LogPanel.Clear();
+				var scopes = new string[] { MicrosoftAccountManager.MicrosoftGraphScope };
+				await MicrosoftAccountManager.Current.SignIn(scopes, cancellationToken);
+				await MicrosoftAccountManager.Current.RefreshProfileImage(cancellationToken);
+			});
 		}
 
 		private async void SignOutButton_Click(object sender, RoutedEventArgs e)
 		{
-			var success = await MicrosoftAccountManager.Current.SignOut();
-			LogPanel.Add(
-				success
-				? "User signed out successfully.\r\n"
-				: "No user is currently signed in.\r\n"
-				);
-			await MicrosoftAccountManager.Current.RefreshProfileImage();
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				var success = await MicrosoftAccountManager.Current.SignOut();
+				LogPanel.Add(
+					success
+					? "User signed out successfully.\r\n"
+					: "No user is currently signed in.\r\n"
+					);
+				await MicrosoftAccountManager.Current.RefreshProfileImage(cancellationToken);
+			});
 		}
 
-		private async void This_Loaded(object sender, RoutedEventArgs e)
-		{
-			// Allows to run mehod once when control is created.
-			if (ControlsHelper.AllowLoad(this))
-			{
-				var userType = await MicrosoftAccountManager.Current.GetUserType();
-				if (userType.HasFlag(UserType.EntraID))
-				{
-					await MicrosoftAccountManager.Current.RefreshProfileImage();
-				}
-			}
-		}
 		private void StopButton_Click(object sender, RoutedEventArgs e)
 		{
 			var items = cancellationTokenSources.ToArray();
@@ -73,6 +66,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void InspectTokenButton_Click(object sender, RoutedEventArgs e)
 		{
+			MainTabControl.SelectedItem = LogTabPage;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 
@@ -126,6 +120,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void TestButton_Click(object sender, RoutedEventArgs e)
 		{
+			MainTabControl.SelectedItem = LogTabPage;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				var uri = new Uri(TestTextBox.Text);
@@ -148,6 +143,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ListAccountsButton_Click(object sender, RoutedEventArgs e)
 		{
+			MainTabControl.SelectedItem = LogTabPage;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				var accounts = await MicrosoftAccountManager.Current.Pca.GetAccountsAsync();
@@ -164,11 +160,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ListSubscriptionsButton_Click(object sender, RoutedEventArgs e)
 		{
+			MainTabControl.SelectedItem = LogTabPage;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				LogPanel.Add("Retrieved Subscriptions:");
-				var credential = await MicrosoftAccountManager.Current.GetTokenCredential(interactive: true, cancellationToken);
-				var items = await MicrosoftAccountManager.Current.GetAzureSubscriptions(credential, cancellationToken);
+				var items = await MicrosoftAccountManager.Current.GetAzureSubscriptions(cancellationToken);
 				foreach (var item in items)
 					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
 			});
@@ -178,7 +174,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			try
 			{
-				var result = await MicrosoftAccountManager.Current.Pca.AcquireTokenInteractive(new[] { MicrosoftAccountManager.MicrosoftAzureScope }).ExecuteAsync();
+				var result = await MicrosoftAccountManager.Current.Pca.AcquireTokenInteractive(new[] { MicrosoftAccountManager.MicrosoftAzureManagementScope }).ExecuteAsync();
 				return result.AccessToken;
 			}
 			catch (MsalException ex)
@@ -188,36 +184,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-
-		public async Task<Dictionary<string, string>> GetAzureSubscriptionsAsync(string accessToken)
-		{
-			var subscriptions = new Dictionary<string, string>();
-			using (var httpClient = new HttpClient())
-			{
-				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-				var response = await httpClient.GetAsync("https://management.azure.com/subscriptions?api-version=2020-01-01");
-				if (response.IsSuccessStatusCode)
-				{
-					var jsonResponse = await response.Content.ReadAsStringAsync();
-					var responseObject = JObject.Parse(jsonResponse);
-					var subscriptionArray = responseObject["value"] as JArray;
-					foreach (var subscription in subscriptionArray)
-					{
-						var subscriptionId = subscription["subscriptionId"].ToString();
-						var subscriptionName = subscription["displayName"].ToString();
-						subscriptions.Add(subscriptionId, subscriptionName);
-					}
-				}
-				else
-				{
-					Console.WriteLine($"Error retrieving subscriptions: {response.ReasonPhrase}");
-				}
-			}
-			return subscriptions;
-		}
-
 		private async void UserInfoButton_Click(object sender, RoutedEventArgs e)
 		{
+			MainTabControl.SelectedItem = LogTabPage;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				var user = await MicrosoftAccountManager.Current.GetMicrosoftUser(cancellationToken);
@@ -249,9 +218,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// </summary>
 		async Task ExecuteMethod(Func<CancellationToken, Task> action)
 		{
+
 			LogPanel.Clear();
 			var source = new CancellationTokenSource();
-			source.CancelAfter(TimeSpan.FromSeconds(30));
+			source.CancelAfter(TimeSpan.FromSeconds(600));
 			cancellationTokenSources.Add(source);
 			Global.MainControl.InfoPanel.AddTask(source);
 			try
