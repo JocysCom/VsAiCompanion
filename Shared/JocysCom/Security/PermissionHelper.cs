@@ -56,9 +56,25 @@ namespace JocysCom.ClassLibrary.Security
 		/// </summary>
 		/// <param name="contextType">Specify local machine or domain context.</param>
 		/// <returns></returns>
-		public static GroupPrincipal[] GetAllGroups(ContextType contextType)
+		public static GroupPrincipal[] GetAllGroups(ContextType contextType, string server = null, string container = null)
 		{
-			var context = new PrincipalContext(contextType);
+			PrincipalContext context;
+			if (contextType == ContextType.ApplicationDirectory)
+			{
+				server = server ?? Environment.GetEnvironmentVariable("LOGONSERVER")?.Trim('\\');
+				container = container ?? ""; // "OU=Users and Groups";
+				var userDnsDomain = Environment.GetEnvironmentVariable("USERDNSDOMAIN");
+				var groups = new List<string>();
+				var dcParts = string.Join(",", userDnsDomain.Split('.').Select(part => $"DC={part}"));
+				if (!string.IsNullOrEmpty(container))
+					container += ",";
+				container += dcParts;
+				context = new PrincipalContext(contextType, server, dcParts);
+			}
+			else
+			{
+				context = new PrincipalContext(contextType);
+			}
 			var gp = new GroupPrincipal(context, "*");
 			var ps = new PrincipalSearcher(gp);
 			return ps.FindAll().Cast<GroupPrincipal>()

@@ -57,6 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static Dictionary<RiskLevel, bool> GetDomainRiskGroups()
 		{
 			var allGroups = JocysCom.ClassLibrary.Security.PermissionHelper.GetAllGroups(ContextType.Domain);
+			//var names = string.Join("\r\n", allGroups.Select(x => x.Name).ToArray());
 			var dic = GetLevels();
 			var levels = dic.Keys.ToArray();
 			foreach (var level in levels)
