@@ -71,7 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			get => _Tokens = _Tokens ?? new List<KeyValue>();
 			set => SetProperty(ref _Tokens, value);
 		}
-		public List<KeyValue> _Tokens;
+		List<KeyValue> _Tokens;
 
 		/// <summary>ID token.</summary>
 		[XmlIgnore, JsonIgnore]

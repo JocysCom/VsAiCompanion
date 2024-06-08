@@ -619,6 +619,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 					userProfiles.RemoveAt(0);
 				if (userProfiles.Count == 0)
 					userProfiles.Add(new UserProfile());
+				// Cleanup duplicates.
+				var tokens = userProfiles.First().Tokens;
+				var keys = tokens.Select(x => x.Key).Distinct().ToArray();
+				foreach (var key in keys)
+				{
+					var dupes = tokens.Where(x => x.Key == key).Skip(1);
+					foreach (var dupe in dupes)
+						tokens.Remove(dupe);
+				}
 			}
 		}
 

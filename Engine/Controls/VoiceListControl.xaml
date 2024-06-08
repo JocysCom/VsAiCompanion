@@ -6,9 +6,9 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 	x:Name="This"
-	Loaded="This_Loaded"
 	d:DesignHeight="140"
 	d:DesignWidth="320"
+	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.OpacityMask>
 		<VisualBrush>
