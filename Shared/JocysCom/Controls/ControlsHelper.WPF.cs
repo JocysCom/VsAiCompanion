@@ -930,14 +930,25 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		public static void EnsureTabItemSelected(FrameworkElement control)
+		/// <summary>
+		/// Checks if the specified control within its parent TabControls is selected.
+		/// </summary>
+		/// <param name="control">The control to check for selection.</param>
+		/// <returns>True if the TabItem is selected, otherwise false.</returns>
+		/// <summary>
+		/// Checks if the specified control within its parent TabControls is selected.
+		/// </summary>
+		/// <param name="control">The control to check for selection.</param>
+		/// <returns>True if the TabItem is selected, otherwise false.</returns>
+		public static bool IsTabItemSelected(FrameworkElement control)
 		{
 			var parent = control.Parent as FrameworkElement;
 			while (parent != null)
 			{
 				if (parent is TabItem tabItem)
 				{
-					tabItem.IsSelected = true;
+					if (!tabItem.IsSelected)
+						return false;
 				}
 				else if (parent is TabControl tabControl)
 				{
@@ -945,7 +956,41 @@ namespace JocysCom.ClassLibrary.Controls
 					{
 						if (item.Content == control)
 						{
-							item.IsSelected = true;
+							if (!item.IsSelected)
+								return false;
+							break;
+						}
+					}
+				}
+				parent = parent.Parent as FrameworkElement;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Ensures that the specified control is selected within its parent TabControls.
+		/// </summary>
+		/// <param name="control">The control to be selected.</param>
+		public static void EnsureTabItemSelected(FrameworkElement control)
+		{
+			if (IsTabItemSelected(control))
+				return;
+			var parent = control.Parent as FrameworkElement;
+			while (parent != null)
+			{
+				if (parent is TabItem tabItem)
+				{
+					if (!tabItem.IsSelected)
+						tabItem.IsSelected = true;
+				}
+				else if (parent is TabControl tabControl)
+				{
+					foreach (TabItem item in tabControl.Items)
+					{
+						if (item.Content == control)
+						{
+							if (!item.IsSelected)
+								item.IsSelected = true;
 							break;
 						}
 					}

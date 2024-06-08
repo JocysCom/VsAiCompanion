@@ -364,6 +364,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				if (PanelSettings.Focus)
 					RestoreFocus();
+				UpdateAvatarControl();
 			}
 		}
 
@@ -396,7 +397,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					}
 					break;
 				case nameof(TemplateItem.ShowAvatar):
-					ChatPanel.AvatarPanelBorder.Visibility = _Item.ShowAvatar ? Visibility.Visible : Visibility.Collapsed;
+					UpdateAvatarControl();
 					break;
 				case nameof(TemplateItem.EmbeddingGroupName):
 					_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
@@ -473,25 +474,23 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		public AvatarControl AvatarPanel;
+		public void UpdateAvatarControl()
+		{
+			var avatarHolder = ChatPanel.AvatarPanelBorder;
+			var show = Item?.ShowAvatar == true;
+			avatarHolder.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+			// If must show avatar and border is visible, move avatar panel into it.
+			if (show && ControlsHelper.IsTabItemSelected(avatarHolder))
+			{
+				if (avatarHolder.Child != Global.AvatarPanel)
+					avatarHolder.Child = Global.AvatarPanel;
+			}
+		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-
-			if (DataType == ItemType.Task)
-			{
-				var avatarPanel = new AvatarControl();
-				avatarPanel.VerticalAlignment = VerticalAlignment.Top;
-				ChatPanel.AvatarPanelBorder.Child = avatarPanel;
-				AvatarPanel = avatarPanel;
-			}
-			else
-			{
-				ChatPanel.AvatarPanelBorder.Visibility = Visibility.Collapsed;
-			}
-
 			var head = "Caring for Your Sensitive Data";
 			var body = "As you share files for AI processing, please remember not to include confidential, proprietary, or sensitive information.";
 			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentEnumComboBox, head, body, MessageBoxImage.Warning);
@@ -530,6 +529,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			AppHelper.AddHelp(SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton);
 			RestoreFocus();
+			UpdateAvatarControl();
 		}
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)

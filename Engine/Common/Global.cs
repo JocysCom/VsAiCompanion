@@ -701,8 +701,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static OptionsAvatarControl AvatarOptionsPanel
 			=> MainControl?.OptionsPanel?.AvatarOptionsPanel;
 
-		public static AvatarControl AvatarPanel
-			=> MainControl?.TasksPanel?.TemplateItemPanel.AvatarPanel;
+		public static AvatarControl AvatarPanel { get; } = new AvatarControl()
+		{
+			VerticalAlignment = VerticalAlignment.Top
+		};
 
 		public static bool IsVsExtension { get; set; }
 		public static Version VsVersion { get; set; }
