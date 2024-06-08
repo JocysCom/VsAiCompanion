@@ -768,67 +768,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private Border avatarBorder;
-		private Window avatarWindow;
-
-		private void AvatarPanel_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			MoveToWindowToggle();
-		}
-
-		public bool IsPanelInWindow
-			=> Parent is Window avatarWindow;
-
-		public void MoveToWindowToggle()
-		{
-			if (Parent is Border parentBorder)
-			{
-				avatarBorder = parentBorder;
-				parentBorder.Child = null;
-				avatarWindow = new Window
-				{
-					Title = "Avatar",
-					Height = 640,
-					Width = 360,
-					Background = Brushes.Black,
-					HorizontalContentAlignment = HorizontalAlignment.Center,
-					VerticalContentAlignment = VerticalAlignment.Center,
-					Content = this,
-				};
-				Global.AppSettings.AiAvatar.PropertyChanged += AiAvatar_PropertyChanged;
-				UpdateAlwaysOnTop();
-				avatarWindow.Closed += AvatarWindow_Closed;
-				AvatarPanelRectangle.Visibility = Visibility.Collapsed;
-				avatarWindow.Show();
-			}
-			else if (Parent is Window avatarWindow)
-			{
-				Global.AppSettings.AiAvatar.PropertyChanged -= AiAvatar_PropertyChanged;
-				avatarWindow.Closed -= AvatarWindow_Closed;
-				avatarWindow.Close();
-				avatarWindow.Content = null;
-				avatarBorder.Child = this;
-				AvatarPanelRectangle.Visibility = Visibility.Visible;
-			}
-		}
-
-		public void UpdateAlwaysOnTop()
-		{
-			if (avatarWindow != null)
-				avatarWindow.Topmost = Global.AppSettings.AiAvatar.AlwaysOnTop;
-		}
-
-		private void AiAvatar_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(AvatarItem.AlwaysOnTop))
-				UpdateAlwaysOnTop();
-		}
-
-		private void AvatarWindow_Closed(object sender, EventArgs e)
-		{
-			MoveToWindowToggle();
-		}
-
 		private void CreateVisemePathDictionary()
 		{
 			visemePathDictionary = new Dictionary<int, Path>

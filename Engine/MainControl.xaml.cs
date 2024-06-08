@@ -41,9 +41,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			UpdatesTabItem.Visibility = !Global.IsVsExtension
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			Application.Current.MainWindow.Closing += MainWindow_Closing;
+			AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 			if (InitHelper.IsDebug)
 			{
-				AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
@@ -57,6 +58,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			InfoPanel.BusyCount.MouseDown += BusyCount_MouseDown;
 		}
 
+		private void MainWindow_Closing(object sender, CancelEventArgs e)
+		{
+			Global.IsMainWindowClosing = true;
+		}
+
 		private void CurrentDomain_ProcessExit(object sender, EventArgs e)
 		{
 			Global.IsAppExiting = true;
@@ -64,7 +70,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private void BusyCount_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			Global.AvatarPanel?.MoveToWindowToggle();
+			Global.MoveToWindowToggle();
 		}
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -140,9 +146,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					TemplatesPanel.TemplateItemPanel.ChatPanel.Visibility = Visibility.Visible;
 				}
 			}
+			Global.RaiseOnTabControlSelectionChanged(sender, e);
 		}
-
-
 
 		#region Exceptions
 

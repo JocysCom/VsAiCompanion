@@ -165,6 +165,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void OptionsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			Global.RaiseOnTabControlSelectionChanged(sender, e);
+		}
 	}
 
 }

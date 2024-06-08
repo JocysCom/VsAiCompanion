@@ -292,11 +292,7 @@
 							</StackPanel>
 						</Viewbox>
 
-						<Grid
-							Name="AvatarPanelRectangle"
-							Background="Transparent"
-							IsHitTestVisible="True"
-							MouseDown="AvatarPanel_MouseDown" />
+						<Grid Name="AvatarPanelRectangle" Background="Transparent" IsHitTestVisible="True" />
 					</Grid>
 				</Viewbox>
 

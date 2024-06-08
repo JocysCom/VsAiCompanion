@@ -203,6 +203,11 @@ namespace JocysCom.VS.AiCompanion
 			_ = UpdateTrayMenu();
 		}
 
+		private void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
 		private void Global_OnMainControlLoaded(object sender, EventArgs e)
 		{
 			CloseSplashScreen();

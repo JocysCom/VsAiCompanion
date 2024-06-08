@@ -27,6 +27,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.VoicesUpdated += Global_VoicesUpdated;
 			UpdateAiServices();
 			UpdateVoiceLocales();
+			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged; ;
+		}
+
+		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			Global.UpdateAvatarControl(AvatarPanelBorder, true);
 		}
 
 		private void Tasks_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)

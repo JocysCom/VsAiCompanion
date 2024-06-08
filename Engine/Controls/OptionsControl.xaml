@@ -50,12 +50,13 @@
 			</StackPanel>
 		</Button>
 		<TabControl
-			x:Name="AiServicesTabControl"
+			x:Name="OptionsTabControl"
 			Grid.Row="1"
 			Grid.ColumnSpan="3"
 			Margin="4"
 			VerticalAlignment="Stretch"
-			x:FieldModifier="public">
+			x:FieldModifier="public"
+			SelectionChanged="OptionsTabControl_SelectionChanged">
 			<TabItem x:Name="MainTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

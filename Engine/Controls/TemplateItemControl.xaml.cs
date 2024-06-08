@@ -73,6 +73,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 			AttachmentsButton.Visibility = debugVisibility;
+			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
+		}
+
+		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			UpdateAvatarControl();
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -210,7 +216,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				// Add avatar instructions if avatar is visible.
 				string extraInstructions = null;
-				if (Global.AvatarPanel?.IsPanelInWindow == true)
+				// If avatar is visible.
+				if (ControlsHelper.IsTabItemSelected(Global.AvatarPanel))
 					extraInstructions = Global.AppSettings.AiAvatar.Instructions;
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: extraInstructions);
 				RestoreFocus();
@@ -476,15 +483,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void UpdateAvatarControl()
 		{
-			var avatarHolder = ChatPanel.AvatarPanelBorder;
-			var show = Item?.ShowAvatar == true;
-			avatarHolder.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-			// If must show avatar and border is visible, move avatar panel into it.
-			if (show && ControlsHelper.IsTabItemSelected(avatarHolder))
-			{
-				if (avatarHolder.Child != Global.AvatarPanel)
-					avatarHolder.Child = Global.AvatarPanel;
-			}
+			Global.UpdateAvatarControl(ChatPanel.AvatarPanelBorder, Item?.ShowAvatar == true);
 		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)

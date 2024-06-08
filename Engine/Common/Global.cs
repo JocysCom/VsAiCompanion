@@ -15,6 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -260,6 +262,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static event EventHandler OnAiModelsUpdated;
 		public static event EventHandler OnListsUpdated;
 		public static event EventHandler OnEmbeddingsUpdated;
+		public static event SelectionChangedEventHandler OnTabControlSelectionChanged;
 
 		public static void RaiseOnMainControlLoaded()
 			=> OnMainControlLoaded?.Invoke(null, EventArgs.Empty);
@@ -296,6 +299,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void RaiseOnEmbeddingsUpdated()
 			=> _ = Helper._Delay(OnEmbeddingsUpdated, null, new[] { null, EventArgs.Empty });
+
+		public static void RaiseOnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			OnTabControlSelectionChanged?.Invoke(sender, e);
+		}
 
 		#endregion
 
@@ -337,6 +345,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static bool IsSettignsLoaded;
 
 		public static bool IsAppExiting;
+
+		public static bool IsMainWindowClosing;
 
 		public static void LoadSettings()
 		{
@@ -697,19 +707,130 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		public static MainControl MainControl;
-
-		public static OptionsAvatarControl AvatarOptionsPanel
-			=> MainControl?.OptionsPanel?.AvatarOptionsPanel;
-
-		public static AvatarControl AvatarPanel { get; } = new AvatarControl()
-		{
-			VerticalAlignment = VerticalAlignment.Top
-		};
-
 		public static bool IsVsExtension { get; set; }
 		public static Version VsVersion { get; set; }
 		public static bool ShowExtensionVersionMessageOnError;
 
+		#region Avatar Panel
+
+		public static OptionsAvatarControl AvatarOptionsPanel
+			=> MainControl?.OptionsPanel?.AvatarOptionsPanel;
+
+		public static AvatarControl AvatarPanel
+		{
+			get
+			{
+				if (_AvatarPanel == null)
+				{
+					_AvatarPanel = new AvatarControl();
+					_AvatarPanel.VerticalAlignment = VerticalAlignment.Top;
+				}
+				return _AvatarPanel;
+			}
+		}
+		static AvatarControl _AvatarPanel;
+
+		public static Window AvatarWindow
+		{
+			get
+			{
+				if (_AvatarWindow == null)
+				{
+					var window = new Window
+					{
+						Title = "Avatar",
+						Height = 640,
+						Width = 360,
+						Background = Brushes.Black,
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						VerticalContentAlignment = VerticalAlignment.Center,
+					};
+					window.Closing += (s, e) =>
+					{
+						if (!IsMainWindowClosing)
+						{
+							e.Cancel = true;
+							MoveToWindowToggle();
+						}
+					};
+					AppSettings.AiAvatar.PropertyChanged += AiAvatar_PropertyChanged;
+					_AvatarWindow = window;
+					UpdateAlwaysOnTop();
+				}
+				return _AvatarWindow;
+			}
+		}
+
+		static Window _AvatarWindow;
+
+		public static Border AvatarBorder { get; set; }
+
+		public static void UpdateAvatarControl(Border avatarBorder, bool show)
+		{
+			// Store last avatar border.
+			AvatarBorder = avatarBorder;
+			var ap = AvatarPanel;
+			var avatarWindow = VisualTreeHelper.GetParent(ap) as Window;
+			// If avatar in separate window then return.
+			if (avatarWindow != null)
+				return;
+			avatarBorder.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+			// If must show avatar and border is visible, move avatar panel into it.
+			if (show && ControlsHelper.IsTabItemSelected(avatarBorder))
+			{
+				// Remove AvatarPanel from its current parent, if any.
+				var parent = VisualTreeHelper.GetParent(ap);
+				if (parent is ContentPresenter window)
+					window.Content = null;
+				if (parent is Border border)
+					border.Child = null;
+				// Set AvatarPanel as the child of avatarHolder.
+				if (avatarBorder.Child != ap)
+					avatarBorder.Child = ap;
+			}
+		}
+
+		public static void MoveToWindowToggle()
+		{
+			var parent = VisualTreeHelper.GetParent(AvatarPanel);
+			var ap = AvatarPanel;
+			// If avatar in Window already...
+			if (parent is ContentPresenter window)
+			{
+				// Close and remove from window.
+				AvatarWindow.Hide();
+				AvatarWindow.Content = null;
+				AvatarBorder.Child = ap;
+				AvatarBorder.Visibility = Visibility.Visible;
+			}
+			else if (parent is Border border)
+			{
+				AvatarBorder.Visibility = Visibility.Collapsed;
+				border.Child = null;
+				AvatarWindow.Content = ap;
+				AvatarWindow.Show();
+			}
+		}
+
+		private static void AvatarPanel_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			MoveToWindowToggle();
+		}
+
+		public static void UpdateAlwaysOnTop()
+		{
+			if (AvatarWindow != null)
+				AvatarWindow.Topmost = AppSettings.AiAvatar.AlwaysOnTop;
+		}
+
+
+		private static void AiAvatar_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AvatarItem.AlwaysOnTop))
+				UpdateAlwaysOnTop();
+		}
+
+		#endregion
 
 	}
 }
