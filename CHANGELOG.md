@@ -1,6 +1,9 @@
-2024-06-04 v1.10.42
+2024-07-08 v1.11.6
 
-- Fix: This app stops itself from being dragged into negative X desktop coordinates.
+- Fix: App stoping itself from being dragged into negative X desktop coordinates.
+- Fix: Reduce memory usage by 30%.
+- New: Add centralized API key management support with Azure Key Vault.
+- Update: Add an optional AI avatar to the Tasks form.
 
 2024-05-22 v1.10.41
 
