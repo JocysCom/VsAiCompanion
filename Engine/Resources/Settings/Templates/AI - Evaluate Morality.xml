@@ -187,35 +187,6 @@ Actions suitable for formulas:&#xD;
    For the Horse:&#xD;
    - `MVS(a)` = MVSoOS(a) = -0.015&#xD;
 &#xD;
-**Summary of Values Changed:**&#xD;
-1. **Value of Self-Awareness (VSA) for Farmer:**&#xD;
-   - Previously assumed: 0.9&#xD;
-   - Updated to: 0.664 (with detailed calculation considering cognitive abilities)&#xD;
-&#xD;
-2. **Value of Self-Awareness (VSA) for Children:**&#xD;
-   - Previously assumed: 0.9&#xD;
-   - Updated to: 0.484 (with detailed calculation considering cognitive abilities)&#xD;
-&#xD;
-3. **MVSoOS(a) calculation for Farmer:**&#xD;
-   - Previously: -0.3 × 0.9 × 0.8 × (1 + 0.5) = -0.324&#xD;
-   - Updated: -0.3 × 0.664 × 0.8 × (1 + 0.5) = -0.238&#xD;
-&#xD;
-4. **MVSoOS(a) calculation for 5 Children:**&#xD;
-   - Previously: 5 × (-0.2 × 0.9 × 0.8 × (1 + 0.3)) = -0.936&#xD;
-   - Updated: 5 × (-0.2 × 0.484 × 0.8 × (1 + 0.3)) = -0.503&#xD;
-&#xD;
-5. **Overall MVS for the Farmer:**&#xD;
-   - Previously: -0.424&#xD;
-   - Updated: -0.338&#xD;
-&#xD;
-6. **Overall Combined MVS for the 5 Children:**&#xD;
-   - Previously: -0.936&#xD;
-   - Updated: -0.503&#xD;
-&#xD;
-7. **MVS for the Horse:**&#xD;
-   - Previously: Excluded&#xD;
-   - Updated: -0.015&#xD;
-&#xD;
 **Results Summary:**&#xD;
 The overall total MVS, combining the impacts on the Farmer, the 5 Children, and the Horse, is -0.856. The calculated MVS for the Farmer is -0.338, indicating that Steve's action has a significantly negative moral implication on the farmer's Odds of Survival due to both the loss of property and the impact on his farming abilities. The combined MVS for the children is -0.503, indicating a collectively negative impact on their Odds of Survival as a result of the decreased ability to support them. The MVS for the Horse is -0.015, indicating a minor but negative moral implication on the horse's Odds of Survival due to potential mistreatment or unfavorable conditions in the new environment. It's important to note that these scores are based on estimations of the variables, and the actual impact might differ based on specific historical and situational contexts.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
@@ -230,7 +201,9 @@ The overall total MVS, combining the impacts on the Farmer, the 5 Children, and 
 </Text>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
-  <Settings />
+  <Settings>
+    <ScrollPosition>1441</ScrollPosition>
+  </Settings>
   <Messages>
     <MessageItem>
       <Id>6e22e67f62424ecca20728f6f4a624b2</Id>
