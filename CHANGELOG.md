@@ -1,6 +1,6 @@
 2024-07-09 v1.11.6
 
-- Fix: App stoping itself from being dragged into negative X desktop coordinates.
+- Fix: App stopping itself from being dragged into negative X desktop coordinates.
 - Fix: Reduce memory usage by 30%.
 - Fix: Move app window within screen bounds if settings place it outside the screen.
 - New: Add centralized API key management support with Azure Key Vault.
