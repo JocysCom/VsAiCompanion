@@ -111,7 +111,7 @@
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>1</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>
@@ -161,8 +161,16 @@
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
+        <TaskSettings>
+          <ItemType>VaultItem</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
       </PanelSettingsList>
-      <UserProfiles />
+      <UserProfiles>
+        <UserProfile>
+          <Tokens />
+        </UserProfile>
+      </UserProfiles>
       <AiServices>
         <AiService>
           <Id>d5e071e1-d99d-45ff-890a-82823b75e1ec</Id>
@@ -218,7 +226,7 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFileAsPlainText</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFilesAsPlainText</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -404,7 +412,7 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImage</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImages</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

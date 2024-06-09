@@ -733,10 +733,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					_AvatarPanel = new AvatarControl();
 					_AvatarPanel.VerticalAlignment = VerticalAlignment.Top;
+					_AvatarPanel.MouseDoubleClick += _AvatarPanel_MouseDoubleClick;
 				}
 				return _AvatarPanel;
 			}
 		}
+
+		private static void _AvatarPanel_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var ap = AvatarPanel;
+			var avatarWindow = VisualTreeHelper.GetParent(ap) as Window;
+			// If avatar in window already, return.
+			if (avatarWindow != null)
+				return;
+			MoveToWindowToggle();
+		}
+
 		static AvatarControl _AvatarPanel;
 
 		public static Window AvatarWindow
