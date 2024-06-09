@@ -1,3 +1,8 @@
+2024-07-09 v1.11.8
+ 
+- Fix: When "Use Voice" was checked, the app didn't send avatar voice instructions.
+- Fix: Closing the Avatar window would freeze after switching to other tabs.
+
 2024-07-09 v1.11.6
 
 - Fix: App stopping itself from being dragged into negative X desktop coordinates.

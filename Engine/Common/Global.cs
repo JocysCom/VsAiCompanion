@@ -766,6 +766,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 						HorizontalContentAlignment = HorizontalAlignment.Center,
 						VerticalContentAlignment = VerticalAlignment.Center,
 					};
+					window.Content = new Border();
 					window.Closing += (s, e) =>
 					{
 						if (!IsMainWindowClosing)
@@ -784,52 +785,81 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		static Window _AvatarWindow;
 
+		static bool IsAvatarInWindow;
+
 		public static Border AvatarBorder { get; set; }
+
+		public static readonly object avatarLock = new object();
 
 		public static void UpdateAvatarControl(Border avatarBorder, bool show)
 		{
-			// Store last avatar border.
-			AvatarBorder = avatarBorder;
-			var ap = AvatarPanel;
-			var avatarWindow = VisualTreeHelper.GetParent(ap) as Window;
-			// If avatar in separate window then return.
-			if (avatarWindow != null)
-				return;
-			avatarBorder.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-			// If must show avatar and border is visible, move avatar panel into it.
-			if (show && ControlsHelper.IsTabItemSelected(avatarBorder))
+			lock (avatarLock)
 			{
-				// Remove AvatarPanel from its current parent, if any.
-				var parent = VisualTreeHelper.GetParent(ap);
-				if (parent is ContentPresenter window)
-					window.Content = null;
-				if (parent is Border border)
-					border.Child = null;
-				// Set AvatarPanel as the child of avatarHolder.
-				if (avatarBorder.Child != ap)
-					avatarBorder.Child = ap;
+				// Store last avatar border.
+				AvatarBorder = avatarBorder;
+				var ap = AvatarPanel;
+				if (IsAvatarInWindow)
+					return;
+				avatarBorder.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+				// If must show avatar and border is visible, move avatar panel into it.
+				if (show && ControlsHelper.IsTabItemSelected(avatarBorder))
+				{
+					RemoveAvatarFromParent(ap);
+					if (avatarBorder.Child != ap)
+						avatarBorder.Child = ap;
+				}
+			}
+		}
+
+		public static void RemoveAvatarFromParent(FrameworkElement element)
+		{
+			if (element == null)
+				return;
+			var lParent = LogicalTreeHelper.GetParent(element);
+			var vParent = VisualTreeHelper.GetParent(element);
+
+			if (vParent is ItemsControl items)
+				items.Items.Remove(element);
+			if (vParent is ContentPresenter window)
+				window.Content = null;
+			if (vParent is Decorator border)
+				border.Child = null;
+			// Remove visual and logical children.
+			var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+			if (vParent is FrameworkElement)
+			{
+				var methodInfo = vParent.GetType().GetMethod("RemoveVisualChild", flags);
+				methodInfo.Invoke(vParent, new object[] { element });
+			}
+			if (lParent is FrameworkElement)
+			{
+				var methodInfo = lParent.GetType().GetMethod("RemoveLogicalChild", flags);
+				methodInfo.Invoke(lParent, new object[] { element });
 			}
 		}
 
 		public static void MoveToWindowToggle()
 		{
-			var parent = VisualTreeHelper.GetParent(AvatarPanel);
-			var ap = AvatarPanel;
-			// If avatar in Window already...
-			if (parent is ContentPresenter window)
+			lock (avatarLock)
 			{
-				// Close and remove from window.
-				AvatarWindow.Hide();
-				AvatarWindow.Content = null;
-				AvatarBorder.Child = ap;
-				AvatarBorder.Visibility = Visibility.Visible;
-			}
-			else if (parent is Border border)
-			{
-				AvatarBorder.Visibility = Visibility.Collapsed;
-				border.Child = null;
-				AvatarWindow.Content = ap;
-				AvatarWindow.Show();
+				var ap = AvatarPanel;
+				RemoveAvatarFromParent(ap);
+				// If avatar in Window already...
+				if (IsAvatarInWindow)
+				{
+					IsAvatarInWindow = false;
+					// Close and remove from window.
+					AvatarWindow.Hide();
+					AvatarBorder.Child = ap;
+					AvatarBorder.Visibility = Visibility.Visible;
+				}
+				else
+				{
+					IsAvatarInWindow = true;
+					AvatarBorder.Visibility = Visibility.Collapsed;
+					(AvatarWindow.Content as Border).Child = ap;
+					AvatarWindow.Show();
+				}
 			}
 		}
 

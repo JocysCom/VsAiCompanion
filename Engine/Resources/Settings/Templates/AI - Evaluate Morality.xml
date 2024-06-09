@@ -200,9 +200,7 @@ The overall total MVS, combining the impacts on the Farmer, the 5 Children, and 
 </Text>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
-  <Settings>
-    <ScrollPosition>1441</ScrollPosition>
-  </Settings>
+  <Settings />
   <Messages>
     <MessageItem>
       <Id>6e22e67f62424ecca20728f6f4a624b2</Id>
@@ -614,6 +612,6 @@ Always use voice in addition to the text responses. Provide voice summaries for 
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
-  <ShowAvatar>true</ShowAvatar>
+  <UseMaximumContext>true</UseMaximumContext>
   <AttachmentsSelection />
 </TemplateItem>

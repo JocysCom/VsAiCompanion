@@ -216,8 +216,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				// Add avatar instructions if avatar is visible.
 				string extraInstructions = null;
-				// If avatar is visible.
-				if (ControlsHelper.IsTabItemSelected(Global.AvatarPanel))
+				// If use voice is checkd or if avatar is visible.
+				if (Item.UseAvatarVoice || ControlsHelper.IsTabItemSelected(Global.AvatarPanel))
 					extraInstructions = Global.AppSettings.AiAvatar.Instructions;
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: extraInstructions);
 				RestoreFocus();

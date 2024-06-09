@@ -220,6 +220,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>VaultItem</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
       </PanelSettingsList>
