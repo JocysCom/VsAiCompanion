@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -24,6 +25,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.MainControl = MainPanel;
 			var ai = new AssemblyInfo(typeof(MainControl).Assembly);
 			Title = ai.GetTitle(true, false, true, false, false);
+			SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+		}
+
+		private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+		{
+			// Adjust window position if it's outside the virtual screen bounds
+			Global.AppSettings.StartPosition.SavePosition(this);
+			Global.AppSettings.StartPosition.LoadPosition(this);
 		}
 
 		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)

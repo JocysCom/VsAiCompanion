@@ -9,6 +9,19 @@ using System.Windows.Media;
 
 namespace JocysCom.ClassLibrary.Controls
 {
+
+	/*
+	// Subscribe to the DisplaySettingsChanged event
+	SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
+	private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+	{
+		// Adjust window position if it's outside the virtual screen bounds
+		SavePosition(this);
+		LoadPosition(this);
+	}
+	*/
+
 	/// <summary>
 	/// Save and restore the position and state of a window. Supports multiple screens and DPI scaling.
 	/// If the window parts are outside of the visible working area, moves the window into the visible working area.
@@ -28,6 +41,11 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public void SavePosition(Window w)
 		{
+			// Get virtual scren
+			var sLeft = SystemParameters.VirtualScreenLeft;
+			var sTop = SystemParameters.VirtualScreenTop;
+			var sWidth = SystemParameters.VirtualScreenWidth;
+			var sHeight = SystemParameters.VirtualScreenHeight;
 			// Set windows state.
 			WindowState = w.WindowState;
 			// Set position.
@@ -56,14 +74,35 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (!IsEnabled)
 				return;
+
 			// Clamp the width and height to the specified minimum and maximum values of the form.
 			if (w.MinWidth > 0) Width = Math.Max(Width, w.MinWidth);
 			if (w.MinHeight > 0) Height = Math.Max(Height, w.MinHeight);
 			if (w.MaxWidth > 0) Width = Math.Min(Width, w.MaxWidth);
 			if (w.MaxHeight > 0) Height = Math.Min(Height, w.MaxHeight);
+
 			// Get window bounds.
 			var diuRectangle = new Rect(Left, Top, Width, Height);
 			var pixRectangle = ConvertToPixels(diuRectangle);
+
+			// Get virtual screen
+			var sLeft = SystemParameters.VirtualScreenLeft;
+			var sTop = SystemParameters.VirtualScreenTop;
+			var sWidth = SystemParameters.VirtualScreenWidth;
+			var sHeight = SystemParameters.VirtualScreenHeight;
+
+			// Move the window into the multi-monitor virtual screen area if it's outside of it.
+			if (pixRectangle.Left < sLeft)
+				pixRectangle.X = sLeft;
+			if (pixRectangle.Top < sTop)
+				pixRectangle.Y = sTop;
+			if (pixRectangle.Right > sLeft + sWidth)
+				pixRectangle.X = sLeft + sWidth - pixRectangle.Width;
+			if (pixRectangle.Bottom > sTop + sHeight)
+				pixRectangle.Y = sTop + sHeight - pixRectangle.Height;
+
+			// Move the window into screen working area (one that exclude Windows toolbar) if it's outside of it.
+			// Get screen bounds adjusted for the DPI scaling.
 			var adjustedScreenBounds = Screen.AllScreens.ToDictionary(x => x, x => GetAdjustedScreenBounds(x));
 			var adjusted = adjustedScreenBounds.FirstOrDefault(x => x.Value.Screen.IntersectsWith(pixRectangle));
 			var screen = adjusted.Value;
@@ -91,12 +130,14 @@ namespace JocysCom.ClassLibrary.Controls
 					pixRectangle = new Rect(newLeft, pixRectangle.Top, pixRectangle.Width, pixRectangle.Height);
 				}
 			}
+
 			// Restore position and state.
 			w.Left = pixRectangle.Left;
 			w.Top = pixRectangle.Top;
 			w.Width = pixRectangle.Width;
 			w.Height = pixRectangle.Height;
 			w.WindowState = overrideState ?? WindowState;
+
 			RaisePositionLoaded();
 		}
 
