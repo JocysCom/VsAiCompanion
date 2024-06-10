@@ -1,3 +1,9 @@
+2024-07-10 v1.11.12
+ 
+- Fix: Assistant's reply message has the same date and time as the user's prompt.
+- Fix: Lists not updating in comboboxes after renaming or moving items.
+- Fix: The app sends voice instructions when the avatar is invisible and "Use voice" is unchecked.
+
 2024-07-09 v1.11.8
  
 - Fix: When "Use Voice" was checked, the app didn't send avatar voice instructions.

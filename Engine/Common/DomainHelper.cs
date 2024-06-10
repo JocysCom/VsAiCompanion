@@ -56,8 +56,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		public static Dictionary<RiskLevel, bool> GetDomainRiskGroups()
 		{
-			var allGroups = JocysCom.ClassLibrary.Security.PermissionHelper.GetAllGroups(ContextType.Domain);
-			//var names = string.Join("\r\n", allGroups.Select(x => x.Name).ToArray());
+			var allGroups = JocysCom.ClassLibrary.Security.PermissionHelper.GetAllGroups(
+				ContextType.Domain, samAccountName: "AI_RiskLevel_*");
 			var dic = GetLevels();
 			var levels = dic.Keys.ToArray();
 			foreach (var level in levels)
@@ -84,24 +84,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				dic[level] = exists;
 			}
 			return dic;
-		}
-
-
-		/// <summary>
-		/// Checks if specified domain groups are available in the Active Directory.
-		/// </summary>
-		/// <param name="groupNames">An array of domain group names to check for existence.</param>
-		/// <returns>A dictionary where the key is the group name and the value indicates whether the group exists.</returns>
-		public static Dictionary<string, bool> AreDomainGroupsAvailable(string[] groupNames)
-		{
-			var allGroups = ClassLibrary.Security.PermissionHelper.GetAllGroups(ContextType.Domain);
-			var groupExistenceMap = new Dictionary<string, bool>();
-			foreach (var groupName in groupNames)
-			{
-				var exists = allGroups.Any(g => g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase));
-				groupExistenceMap[groupName] = exists;
-			}
-			return groupExistenceMap;
 		}
 
 		/// <summary>

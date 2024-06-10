@@ -1016,6 +1016,7 @@ EndFragment:{3:00000000}";
 		public static bool CollectionChanged(ListChangedEventArgs e, Action action, params string[] properties)
 		{
 			bool changed =
+				e.ListChangedType == ListChangedType.Reset ||
 				e.ListChangedType == ListChangedType.ItemDeleted ||
 				e.ListChangedType == ListChangedType.ItemAdded ||
 				e.ListChangedType == ListChangedType.ItemMoved;

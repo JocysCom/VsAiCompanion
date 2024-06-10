@@ -83,14 +83,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			var update = false;
-			if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor?.Name == nameof(MailAccount.Name))
-				update = true;
-			if (e.ListChangedType == ListChangedType.ItemAdded ||
-				e.ListChangedType == ListChangedType.ItemDeleted)
-				update = true;
-			if (update)
-				_ = Helper.Delay(UpdateListNames);
+			AppHelper.CollectionChanged(e, UpdateListNames, nameof(ListInfo.Path), nameof(ListInfo.Name));
 		}
 
 		private void Global_PromptingUpdated(object sender, EventArgs e)
@@ -217,7 +210,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Add avatar instructions if avatar is visible.
 				string extraInstructions = null;
 				// If use voice is checkd or if avatar is visible.
-				if (Item.UseAvatarVoice || ControlsHelper.IsTabItemSelected(Global.AvatarPanel))
+				if (Item.UseAvatarVoice || Global.IsAvatarInWindow || Item.ShowAvatar)
 					extraInstructions = Global.AppSettings.AiAvatar.Instructions;
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: extraInstructions);
 				RestoreFocus();
@@ -261,9 +254,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public Dictionary<string, string> PluginTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
 
-		public ObservableCollection<string> ContextListNames { get; set; } = new ObservableCollection<string>();
-		public ObservableCollection<string> ProfileListNames { get; set; } = new ObservableCollection<string>();
-		public ObservableCollection<string> RoleListNames { get; set; } = new ObservableCollection<string>();
+		public ObservableCollection<ListInfo> ContextListNames { get; set; } = new ObservableCollection<ListInfo>();
+		public ObservableCollection<ListInfo> ProfileListNames { get; set; } = new ObservableCollection<ListInfo>();
+		public ObservableCollection<ListInfo> RoleListNames { get; set; } = new ObservableCollection<ListInfo>();
 
 		private void UpdateListNames()
 		{
@@ -281,17 +274,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			OnPropertyChanged(nameof(RoleListNames));
 		}
 
-		private List<string> GetListNames(params string[] prefix)
+		private List<ListInfo> GetListNames(params string[] prefix)
 		{
 			var items = Global.Lists.Items
-				.Where(x => string.IsNullOrWhiteSpace(x.Path))
+				.Where(x => string.IsNullOrWhiteSpace(x.Path) || x.Path == Item?.Name)
 				.OrderBy(x => $"{x.Path}")
 				// Items with prefix on top.
 				.ThenBy(x => prefix.Any(p => x.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase)) ? 0 : 1)
 				.ThenBy(x => x.Name)
-				.Select(x => x.Name)
 				.ToList();
-			items.Insert(0, "");
+			items.Insert(0, new ListInfo());
 			return items;
 		}
 

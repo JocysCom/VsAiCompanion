@@ -52,11 +52,23 @@ namespace JocysCom.ClassLibrary.Security
 		#region Users and Groups
 
 		/// <summary>
-		/// Return all groups.
+		/// Returns all groups in the specified context.
 		/// </summary>
-		/// <param name="contextType">Specify local machine or domain context.</param>
-		/// <returns></returns>
-		public static GroupPrincipal[] GetAllGroups(ContextType contextType, string server = null, string container = null)
+		/// <param name="contextType">Specifies whether the context is for the local machine or a domain.</param>
+		/// <param name="server">The server to connect to. If null, defaults to the logon server for domain contexts.</param>
+		/// <param name="container">The container within the directory to search for groups. If null, defaults to an appropriate container based on the context.</param>
+		/// <param name="samAccountName">The SAM account name to use as a filter for group search. Defaults to "*", meaning all groups.</param>
+		/// <returns>An array of <see cref="GroupPrincipal"/> objects representing the groups found.</returns>
+		/// <remarks>
+		/// The method supports both local machine and domain contexts. For domain contexts, if the <paramref name="server"/> 
+		/// is not provided, it defaults to the logon server. The <paramref name="container"/> parameter allows specifying 
+		/// a particular organizational unit (OU) to search within. If not specified, it defaults to an appropriate container 
+		/// based on the user’s DNS domain.
+		/// </remarks>
+		public static GroupPrincipal[] GetAllGroups(
+			ContextType contextType,
+			string server = null, string container = null,
+			string samAccountName = "*")
 		{
 			PrincipalContext context;
 			if (contextType == ContextType.ApplicationDirectory)
@@ -75,7 +87,7 @@ namespace JocysCom.ClassLibrary.Security
 			{
 				context = new PrincipalContext(contextType);
 			}
-			var gp = new GroupPrincipal(context, "*");
+			var gp = new GroupPrincipal(context, samAccountName);
 			var ps = new PrincipalSearcher(gp);
 			return ps.FindAll().Cast<GroupPrincipal>()
 				.OrderBy(x => x.Name)

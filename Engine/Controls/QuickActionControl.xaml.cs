@@ -46,19 +46,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void SourceItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			_ = ControlsHelper.BeginInvoke(() =>
+			ControlsHelper.AppBeginInvoke(() =>
 			{
-				bool refreshGrid =
-					e.ListChangedType == ListChangedType.ItemDeleted ||
-					e.ListChangedType == ListChangedType.ItemAdded ||
-					e.ListChangedType == ListChangedType.ItemMoved;
-				if (e.ListChangedType == ListChangedType.ItemChanged)
-				{
-					if (e.PropertyDescriptor?.Name == nameof(ISettingsListFileItem.ListGroupNameSortKey))
-						refreshGrid = true;
-				}
-				if (refreshGrid)
-					_ = Helper.Delay(RefreshDataGrid);
+				AppHelper.CollectionChanged(e, RefreshDataGrid, nameof(ISettingsListFileItem.ListGroupNameSortKey));
 			});
 		}
 

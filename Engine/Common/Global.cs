@@ -785,7 +785,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		static Window _AvatarWindow;
 
-		static bool IsAvatarInWindow;
+		public static bool IsAvatarInWindow;
 
 		public static Border AvatarBorder { get; set; }
 

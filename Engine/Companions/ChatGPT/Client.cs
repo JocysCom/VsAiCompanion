@@ -635,6 +635,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				MessageDone?.Invoke(this, EventArgs.Empty);
 			}
 			assistantMessageItem.Body = answer;
+			assistantMessageItem.Date = DateTime.Now;
 			if (!messageItems.Contains(assistantMessageItem))
 				messageItems.Add(assistantMessageItem);
 			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Count > 0)

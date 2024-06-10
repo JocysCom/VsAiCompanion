@@ -27,11 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CurrentItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			if (e.ListChangedType == ListChangedType.Reset ||
-				e.ListChangedType == ListChangedType.ItemAdded ||
-				e.ListChangedType == ListChangedType.ItemDeleted
-			)
-				UpdateControlVisibility();
+			AppHelper.CollectionChanged(e, UpdateControlVisibility);
 		}
 
 		private void UpdateControlVisibility()
