@@ -102,10 +102,24 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			if (Releases?.Count > 0)
 			{
 				var asset = GetSelectedAsset();
+				var release = GetSelectedRelease();
 				// Get info about selected version.
 				if (asset != null)
 				{
+					var latestVersion = Version.Parse(ExtractVersionFromName(Releases[0].tag_name));
+					var selectedVersion = Version.Parse(ExtractVersionFromName(release.tag_name));
 					var totalDownloads = Releases.Sum(x => x.assets.Sum(a => a.download_count));
+					if (currentVersion.Revision == 0 && latestVersion.Revision == -1)
+						currentVersion = new Version(currentVersion.Major, currentVersion.Minor, currentVersion.Build);
+					if (currentVersion < latestVersion)
+					{
+						changesText += $"New updates found! Latest version: {latestVersion}\r\n";
+						changesText += $"\r\n";
+					}
+
+					changesText += $"Current  version: {currentVersion}\r\n";
+					changesText += $"\r\n";
+					changesText += $"Selected version: {selectedVersion}\r\n";
 					changesText += $"Download URL: {asset.browser_download_url}\r\n";
 					changesText += $"File: {asset.name} ({JocysCom.ClassLibrary.IO.FileFinder.BytesToString(asset.size)})\r\n";
 					changesText += $"Modified: {DateTime.Parse(asset.updated_at)}\r\n";
