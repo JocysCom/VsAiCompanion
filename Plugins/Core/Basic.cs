@@ -1,5 +1,9 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
+﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -22,6 +26,22 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public static string AutoContinue(string reserved)
 		{
 			return "Please continue.";
+		}
+
+		/// <summary>
+		/// Get the current system information: Current Date, OS Version, Architecture, Locale and Time Zone.
+		/// </summary>
+		[RiskLevel(RiskLevel.None)]
+		public static List<KeyValue> GetCurrentSystemInfo()
+		{
+			var list = new List<KeyValue>() {
+				new KeyValue("Current Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
+				new KeyValue("OS Version", Environment.OSVersion.VersionString),
+				new KeyValue("OS Architecture", Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit"),
+				new KeyValue("Locale", CultureInfo.CurrentCulture.Name),
+				new KeyValue("Time Zone", TimeZoneInfo.Local.DisplayName),
+			};
+			return list;
 		}
 
 		/// <summary>

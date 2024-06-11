@@ -52,6 +52,11 @@
             <param name="reserved">Reserved. Send empty string as a value.</param>
             <exception cref="T:System.Exception">Error message explaining why execution failed.</exception>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetCurrentSystemInfo">
+            <summary>
+            Get the current system information: Current Date, OS Version, Architecture, Locale and Time Zone.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess(System.String,System.String,System.String)">
             <summary>
             Execute a process on user computer. Use `System.Diagnostics.ProcessStartInfo`
