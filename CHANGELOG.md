@@ -1,8 +1,9 @@
 2024-07-11 v1.11.16
 
 - Fix: The app crashes if there are no video input devices.
-- New: Error panel developer option.
-- New: Option to Log HTTP Messages.
+- New: Developer option for the error panel.
+- New: Option to log HTTP messages.
+- New: AI function to get the current date, OS version, architecture, locale, and time zone.
 
 2024-07-10 v1.11.12
  
