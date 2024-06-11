@@ -23,12 +23,11 @@
 			<Canvas>
 				<Viewbox
 					Name="CameraAnimationViewbox"
-					Width="1090"
-					Height="1938"
+					Width="1100"
+					Height="1956"
 					Margin="-10,-10,0,0"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
-
 					<Grid>
 						<Image Width="1080" Height="1920" Source="/JocysCom.VS.AiCompanion.Engine;component/Resources/Images/AvatarBackground.jpg" />
 						<Canvas Name="AuraCanvas" RenderOptions.BitmapScalingMode="LowQuality" />
