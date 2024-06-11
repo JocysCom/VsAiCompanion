@@ -19,7 +19,7 @@ namespace Hompus.VideoInputDevices
 		public SystemDeviceEnumerator()
 		{
 			var comType = Type.GetTypeFromCLSID(new Guid("62BE5D10-60EB-11D0-BD3B-00A0C911CE86"));
-			this._systemDeviceEnumerator = (ICreateDevEnum)Activator.CreateInstance(comType);
+			_systemDeviceEnumerator = (ICreateDevEnum)Activator.CreateInstance(comType);
 		}
 
 		/// <summary>
@@ -29,32 +29,23 @@ namespace Hompus.VideoInputDevices
 		public IReadOnlyDictionary<int, string> ListVideoInputDevice()
 		{
 			var videoInputDeviceClass = new Guid("{860BB310-5D01-11D0-BD3B-00A0C911CE86}");
-
-			var hresult = this._systemDeviceEnumerator.CreateClassEnumerator(ref videoInputDeviceClass, out var enumMoniker, 0);
-			if (hresult != 0)
-			{
-				throw new ApplicationException("No devices of the category");
-			}
-
-			var moniker = new IMoniker[1];
 			var list = new Dictionary<int, string>();
-
+			var hresult = _systemDeviceEnumerator.CreateClassEnumerator(ref videoInputDeviceClass, out var enumMoniker, 0);
+			// If no devices of the category
+			if (hresult != 0)
+				return list;
+			var moniker = new IMoniker[1];
 			while (true)
 			{
 				hresult = enumMoniker.Next(1, moniker, IntPtr.Zero);
-				if ((hresult != 0) || (moniker[0] == null))
-				{
+				if (hresult != 0 || moniker[0] == null)
 					break;
-				}
-
 				var device = new VideoInputDevice(moniker[0]);
 				list.Add(list.Count, device.Name);
-
 				// Release COM object
 				Marshal.ReleaseComObject(moniker[0]);
 				moniker[0] = null;
 			}
-
 			return list;
 		}
 
@@ -64,19 +55,17 @@ namespace Hompus.VideoInputDevices
 		/// <param name="disposing"><c>false</c> if invoked by the finalizer because the object is being garbage collected; otherwise, <c>true</c></param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!this.disposed)
+			if (disposed)
+				return;
+			if (disposing)
 			{
-				if (disposing)
+				if (!(_systemDeviceEnumerator is null))
 				{
-					if (!(this._systemDeviceEnumerator is null))
-					{
-						Marshal.ReleaseComObject(this._systemDeviceEnumerator);
-						this._systemDeviceEnumerator = null;
-					}
+					Marshal.ReleaseComObject(_systemDeviceEnumerator);
+					_systemDeviceEnumerator = null;
 				}
-
-				this.disposed = true;
 			}
+			disposed = true;
 		}
 
 		/// <summary>
@@ -84,7 +73,7 @@ namespace Hompus.VideoInputDevices
 		/// </summary>
 		public void Dispose()
 		{
-			this.Dispose(disposing: true);
+			Dispose(disposing: true);
 			GC.SuppressFinalize(this);
 		}
 	}

@@ -241,6 +241,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool EnableShowFormInfo { get => _EnableShowFormInfo; set => SetProperty(ref _EnableShowFormInfo, value); }
 		bool _EnableShowFormInfo;
 
+		[DefaultValue(false)]
+		public bool ShowErrorsPanel { get => _ShowErrorsPanel; set => SetProperty(ref _ShowErrorsPanel, value); }
+		bool _ShowErrorsPanel;
+
+		[DefaultValue(false)]
+		public bool LogHttp { get => _LogHttp; set => SetProperty(ref _LogHttp, value); }
+		bool _LogHttp;
+
 		#endregion
 
 		/// <summary>

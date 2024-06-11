@@ -49,7 +49,6 @@
 	<sys:String x:Key="main_Company_Product">Company Product</sys:String>
 	<sys:String x:Key="main_Context_Options">Context</sys:String>
 	<sys:String x:Key="main_Copy">Copy</sys:String>
-	<sys:String x:Key="main_Save_Chat">Save the chat as an HTML file.</sys:String>
 	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
 	<sys:String x:Key="main_Copy_Id_File_Name">Copy: Id, File Name</sys:String>
 	<sys:String x:Key="main_Copy_with_Headers">Copy with Headers</sys:String>
@@ -116,6 +115,7 @@
 	<sys:String x:Key="main_Lists_Feature_Description">Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists.</sys:String>
 	<sys:String x:Key="main_Locale">Locale</sys:String>
 	<sys:String x:Key="main_Log">Log</sys:String>
+	<sys:String x:Key="main_LogHttp">Log HTTP Messages</sys:String>
 	<sys:String x:Key="main_Microsoft_Account">Microsoft Account</sys:String>
 	<sys:String x:Key="main_MaiAccounts_Feature_Description">AI Mailbox for Communication</sys:String>
 	<sys:String x:Key="main_Mail">Mail</sys:String>
@@ -164,6 +164,7 @@
 	<sys:String x:Key="main_Reset_UI_Settings_ToolTip">Use to capture screenshots of a similar size.</sys:String>
 	<sys:String x:Key="main_Response_Streaming">Response Streaming</sys:String>
 	<sys:String x:Key="main_Response_Timeout">Response Timeout</sys:String>
+	<sys:String x:Key="main_Save_Chat">Save the chat as an HTML file.</sys:String>
 	<sys:String x:Key="main_ScrollToBottom_Name">Scroll To Bottom.</sys:String>
 	<sys:String x:Key="main_ScrollToBottom_Help">Scroll the chat window to the bottom.</sys:String>
 	<sys:String x:Key="main_Search">Search</sys:String>
@@ -184,6 +185,7 @@
 	<sys:String x:Key="main_Service">Service</sys:String>
 	<sys:String x:Key="main_Settings_Folder">Settings Folder</sys:String>
 	<sys:String x:Key="main_Show_Documents_Attached_Warning">Show Documents Attached Warning</sys:String>
+	<sys:String x:Key="main_Show_ErrorsPanel">Show Errors Panel</sys:String>
 	<sys:String x:Key="main_Show_Icon_in_Toolbar">Show Icon in Toolbar</sys:String>
 	<sys:String x:Key="main_Show_Instructions">Show Instructions</sys:String>
 	<sys:String x:Key="main_Show_Prompting">Show Prompting</sys:String>

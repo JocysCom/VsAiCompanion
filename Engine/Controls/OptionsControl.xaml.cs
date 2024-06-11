@@ -31,6 +31,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				: Visibility.Collapsed;
 			MultimediaGroupBox.Visibility = debugVisibility;
 			DeveloperGroupBox.Visibility = debugVisibility;
+			EnableShowFormInfoCheckBox.Visibility = debugVisibility;
 		}
 
 		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

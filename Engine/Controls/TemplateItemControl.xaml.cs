@@ -132,7 +132,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				ChatPanel.EditMessageId = id;
 				ChatPanel.FocusDataTextBox();
-				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, message.Body);
+				var voiceInstructions = GetVoiceInstructions();
+				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, message.Body, extraInstructions: voiceInstructions);
 			}
 			else if (action == MessageAction.Edit)
 			{
@@ -207,14 +208,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (_Item != null)
 			{
-				// Add avatar instructions if avatar is visible.
-				string extraInstructions = null;
-				// If use voice is checkd or if avatar is visible.
-				if (Item.UseAvatarVoice || Global.IsAvatarInWindow || Item.ShowAvatar)
-					extraInstructions = Global.AppSettings.AiAvatar.Instructions;
-				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: extraInstructions);
+				var voiceInstructions = GetVoiceInstructions();
+				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: voiceInstructions);
 				RestoreFocus();
 			}
+		}
+
+		string GetVoiceInstructions()
+		{
+			// If use voice is checked or if avatar is visible.
+			if (Item.UseAvatarVoice || Global.IsAvatarInWindow || Item.ShowAvatar)
+				return Global.AppSettings.AiAvatar.Instructions;
+			return null;
 		}
 
 		private void ChatPanel_OnStop(object sender, EventArgs e)
@@ -357,7 +362,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_Item.AutoSend = false;
 					ControlsHelper.AppBeginInvoke(() =>
 					{
-						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit);
+						var voiceInstructions = GetVoiceInstructions();
+						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: voiceInstructions);
 					});
 				}
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);

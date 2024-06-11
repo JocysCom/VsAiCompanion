@@ -96,7 +96,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Company_Product => FindResource(nameof(main_Company_Product));
         public static string main_Context_Options => FindResource(nameof(main_Context_Options));
         public static string main_Copy => FindResource(nameof(main_Copy));
-        public static string main_Save_Chat => FindResource(nameof(main_Save_Chat));
         public static string main_Copy_Chat => FindResource(nameof(main_Copy_Chat));
         public static string main_Copy_Id_File_Name => FindResource(nameof(main_Copy_Id_File_Name));
         public static string main_Copy_with_Headers => FindResource(nameof(main_Copy_with_Headers));
@@ -160,6 +159,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Lists_Feature_Description => FindResource(nameof(main_Lists_Feature_Description));
         public static string main_Locale => FindResource(nameof(main_Locale));
         public static string main_Log => FindResource(nameof(main_Log));
+        public static string main_LogHttp => FindResource(nameof(main_LogHttp));
         public static string main_Microsoft_Account => FindResource(nameof(main_Microsoft_Account));
         public static string main_MaiAccounts_Feature_Description => FindResource(nameof(main_MaiAccounts_Feature_Description));
         public static string main_Mail => FindResource(nameof(main_Mail));
@@ -208,6 +208,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_UI_Settings_ToolTip => FindResource(nameof(main_Reset_UI_Settings_ToolTip));
         public static string main_Response_Streaming => FindResource(nameof(main_Response_Streaming));
         public static string main_Response_Timeout => FindResource(nameof(main_Response_Timeout));
+        public static string main_Save_Chat => FindResource(nameof(main_Save_Chat));
         public static string main_ScrollToBottom_Name => FindResource(nameof(main_ScrollToBottom_Name));
         public static string main_ScrollToBottom_Help => FindResource(nameof(main_ScrollToBottom_Help));
         public static string main_Search => FindResource(nameof(main_Search));
@@ -228,6 +229,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Service => FindResource(nameof(main_Service));
         public static string main_Settings_Folder => FindResource(nameof(main_Settings_Folder));
         public static string main_Show_Documents_Attached_Warning => FindResource(nameof(main_Show_Documents_Attached_Warning));
+        public static string main_Show_ErrorsPanel => FindResource(nameof(main_Show_ErrorsPanel));
         public static string main_Show_Icon_in_Toolbar => FindResource(nameof(main_Show_Icon_in_Toolbar));
         public static string main_Show_Instructions => FindResource(nameof(main_Show_Instructions));
         public static string main_Show_Prompting => FindResource(nameof(main_Show_Prompting));

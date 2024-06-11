@@ -168,6 +168,16 @@
 										Margin="0"
 										Content="{StaticResource main_Enable_FormInfo}"
 										IsChecked="{Binding EnableShowFormInfo, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<CheckBox
+										Name="ShowErrorsPanelCheckBox"
+										Margin="0"
+										Content="{StaticResource main_Show_ErrorsPanel}"
+										IsChecked="{Binding ShowErrorsPanel, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									<CheckBox
+										Name="LogHttpRequestsCheckBox"
+										Margin="0"
+										Content="{StaticResource main_LogHttp}"
+										IsChecked="{Binding LogHttp, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								</WrapPanel>
 							</GroupBox>
 						</WrapPanel>

@@ -37,7 +37,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				: Visibility.Collapsed;
 			// Temporary: Hide "Assistants" feature for release users.
 			AssistantsTabItem.Visibility = debugVisibility;
-			ErrorsTabItem.Visibility = debugVisibility;
 			UpdatesTabItem.Visibility = !Global.IsVsExtension
 				? Visibility.Visible
 				: Visibility.Collapsed;
@@ -54,6 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
+			ErrorsTabItem.Visibility = Global.AppSettings.ShowErrorsPanel ? Visibility.Visible : Visibility.Collapsed;
 			TutorialHelper.SetupTutorialHelper(this);
 			InfoPanel.BusyCount.MouseDown += BusyCount_MouseDown;
 		}
@@ -77,6 +77,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (e.PropertyName == nameof(AppData.EnableShowFormInfo))
 				InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
+			if (e.PropertyName == nameof(AppData.ShowErrorsPanel))
+				ErrorsTabItem.Visibility = Global.AppSettings.ShowErrorsPanel ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 

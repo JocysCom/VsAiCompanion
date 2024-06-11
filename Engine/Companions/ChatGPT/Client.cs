@@ -1,8 +1,10 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
 using Azure.Core;
+using Azure.Core.Pipeline;
 using Azure.Identity;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Web.Services;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
@@ -39,9 +41,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		private readonly AiService Service;
 
+		/// <summary>
+		/// Can be used to log response and reply.
+		/// </summary>
+		public HttpClientSpy Spy => _Spy;
+		HttpClientSpy _Spy;
+
 		public async Task<HttpClient> GetClient(CancellationToken cancellationToken = default)
 		{
-			var client = new HttpClient();
+			_Spy = new HttpClientSpy();
+			var client = new HttpClient(_Spy);
 			client.BaseAddress = new Uri(Service.BaseUrl);
 			var apiSecretKey = await Security.MicrosoftAccountManager.Current.CheckAndGet(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiSecretKey);
@@ -287,6 +296,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					// TODO: Allow HTTP localhost connections.
 					// Bearer token authentication is not permitted for non TLS protected (https) endpoints.
 				}
+
+
+				// Create HttpClient with HttpClientSpy handler
+				var spyHandler = new HttpClientSpy(new HttpClientHandler());
+				// Create the HttpClient to use HttpClientSpy
+				var httpClient = new HttpClient(spyHandler)
+				{
+					BaseAddress = endpoint
+				};
+				// Register the handler in the HttpPipeline (hypothetical approach)
+				var transport = new HttpClientTransport(httpClient);
+				//var pipeline = new HttpPipeline(transport);
+
+				options.Transport = transport;
 				client = new OpenAIClient(endpoint, credential, options);
 				var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 				prop.SetValue(client, false);

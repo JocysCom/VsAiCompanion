@@ -165,6 +165,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static string PluginsSearchPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, nameof(Plugins), nameof(Plugins.Core.Search));
 
+		public static string LogsPath
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, "Logs");
+
 		public static string GetPath(AssistantItem item, params string[] args)
 		{
 			var itemPath = new string[] { AssistantsPath, item.Name };
@@ -440,7 +443,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AppData.Version = 2;
 				SettingsSourceManager.ResetTemplates();
 			}
+			// Enable logging.
+			AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+			LogHelper.LogHttp = AppSettings.LogHttp;
+			// Mark settings as loaded.
 			IsSettignsLoaded = true;
+		}
+
+		private static void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(Engine.AppData.LogHttp))
+				LogHelper.LogHttp = AppSettings.LogHttp;
 		}
 
 		private static void AiServices_ListChanged(object sender, ListChangedEventArgs e)

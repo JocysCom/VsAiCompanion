@@ -1,3 +1,8 @@
+2024-07-11 v1.11.14
+
+- Fix: The app crashes if there are no video input devices.
+- New: Error panel developer option.
+
 2024-07-10 v1.11.12
  
 - Fix: Assistant's reply message has the same date and time as the user's prompt.
