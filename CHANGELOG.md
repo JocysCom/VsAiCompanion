@@ -1,3 +1,7 @@
+2024-06-11 v1.11.21
+
+- Fix: Developer options are not visible.
+
 2024-06-11 v1.11.20
 
 - Fix: The app crashes if there are no video input devices.
