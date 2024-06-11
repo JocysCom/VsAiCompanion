@@ -1,4 +1,4 @@
-2024-07-11 v1.11.20
+2024-06-11 v1.11.20
 
 - Fix: The app crashes if there are no video input devices.
 - Fix: Crash on start in Visual Studio 2022 17.10.2.
@@ -7,18 +7,18 @@
 - New: Option to log HTTP messages.
 - New: AI function to get the current date, OS version, architecture, locale, and time zone.
 
-2024-07-10 v1.11.12
+2024-06-10 v1.11.12
  
 - Fix: Assistant's reply message has the same date and time as the user's prompt.
 - Fix: Lists not updating in comboboxes after renaming or moving items.
 - Fix: The app sends voice instructions when the avatar is invisible and "Use voice" is unchecked.
 
-2024-07-09 v1.11.8
+2024-06-09 v1.11.8
  
 - Fix: When "Use Voice" was checked, the app didn't send avatar voice instructions.
 - Fix: Closing the Avatar window would freeze after switching to other tabs.
 
-2024-07-09 v1.11.6
+2024-06-09 v1.11.6
 
 - Fix: App stopping itself from being dragged into negative X desktop coordinates.
 - Fix: Reduce memory usage by 30%.
