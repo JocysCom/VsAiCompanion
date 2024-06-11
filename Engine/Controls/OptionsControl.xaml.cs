@@ -30,7 +30,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			MultimediaGroupBox.Visibility = debugVisibility;
-			DeveloperGroupBox.Visibility = debugVisibility;
 			EnableShowFormInfoCheckBox.Visibility = debugVisibility;
 		}
 
