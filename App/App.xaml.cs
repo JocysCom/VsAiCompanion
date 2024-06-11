@@ -23,6 +23,8 @@ namespace JocysCom.VS.AiCompanion
 
 		public App()
 		{
+			var assembly = Assembly.GetExecutingAssembly();
+			var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
 			try
 			{
 				// ------------------------------------------------
@@ -51,7 +53,7 @@ namespace JocysCom.VS.AiCompanion
 			catch (Exception ex)
 			{
 				var message = ExceptionToText(ex);
-				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+				var result = MessageBox.Show(message, $"{product} - Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
 				throw;
 			}
 		}

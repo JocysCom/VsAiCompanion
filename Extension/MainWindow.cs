@@ -33,14 +33,16 @@ namespace JocysCom.VS.AiCompanion.Extension
 		/// </summary>
 		public MainWindow() : base(null)
 		{
+			var assembly = Assembly.GetExecutingAssembly();
+			var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
 			try
 			{
+				// Set assembly info manually because in Visual Studio it crashes when determining automatically.
+				JocysCom.ClassLibrary.Configuration.AssemblyInfo.Entry = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(assembly);
 				// Subscribe to the AssemblyResolve event. This event is triggered when .NET runtime fails to find an assembly,
 				// giving you an opportunity to provide the assembly using custom logic.
 				AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 				// Set caption.
-				var assembly = Assembly.GetExecutingAssembly();
-				var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
 				Caption = product;
 				// This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
 				// we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
@@ -81,7 +83,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			catch (Exception ex)
 			{
 				var message = ExceptionToText(ex);
-				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+				var result = MessageBox.Show(message, $"{product} - Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
 				throw;
 			}
 		}

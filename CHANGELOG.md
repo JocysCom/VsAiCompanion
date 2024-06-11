@@ -1,6 +1,8 @@
-2024-07-11 v1.11.16
+2024-07-11 v1.11.20
 
 - Fix: The app crashes if there are no video input devices.
+- Fix: Crash on start in Visual Studio 2022 17.10.2.
+- New: Crash message when crashing in Visual Studio.
 - New: Developer option for the error panel.
 - New: Option to log HTTP messages.
 - New: AI function to get the current date, OS version, architecture, locale, and time zone.
