@@ -30,7 +30,11 @@
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
-		<local:SettingsListFileControl x:Name="ListPanel" x:FieldModifier="public" Visibility="{Binding ListPanelVisibility, ElementName=This}" />
+		<local:SettingsListFileControl
+			x:Name="ListPanel"
+			HorizontalAlignment="Stretch"
+			x:FieldModifier="public"
+			Visibility="{Binding ListPanelVisibility, ElementName=This}" />
 		<GridSplitter
 			x:Name="MainGridSplitter"
 			Grid.Column="1"
