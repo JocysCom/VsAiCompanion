@@ -1,9 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ResourceDictionary
-	x:Class="JocysCom.VS.AiCompanion.Resources.Icons_Default"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	x:ClassModifier="public">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"

@@ -34,7 +34,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			lock (LogHttpLock)
 			{
-				var filename = Path.Combine(Global.LogsPath, "HttpClientLog.svclog");
+				// Make sure that Visual Studio and standalone app is not loggin to the same file.
+				int processId = Process.GetCurrentProcess().Id;
+				var filename = Path.Combine(Global.LogsPath, $"HttpClientLog_P{processId}.svclog");
 				var sourceName = typeof(JocysCom.ClassLibrary.Web.Services.HttpClientSpy).FullName;
 				logListener = new RollingXmlWriterTraceListener(filename);
 				// Accept messages from `HttpClientSpy` only.

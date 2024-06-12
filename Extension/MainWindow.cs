@@ -49,8 +49,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 			catch (Exception ex)
 			{
 				var message = ExceptionToText(ex);
-				//var result = MessageBox.Show(message, $"{product} - Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-				Content = new System.Windows.Controls.TextBlock { Text = message };
+				_SplashScreenPanel.LoadingPanel.Visibility = System.Windows.Visibility.Collapsed;
+				_SplashScreenPanel.ErrorsTextBox.Text = message;
 			}
 		}
 
@@ -64,19 +64,16 @@ namespace JocysCom.VS.AiCompanion.Extension
 				await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 				try
 				{
-					await LoadMainControlAsync();
+					await ThreadHelper.JoinableTaskFactory.RunAsync(VsTaskRunContext.UIThreadBackgroundPriority, LoadMainControlAsync);
 					// Ensure that the content switch happens on the main thread.
-					await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-					_SplashScreenPanel.MainTextBox.Text = Global.MainControl == null
-						? "MainControl is null"
-						: "MainControl is instantiated";
 					_SplashScreenPanel.MainBorder.Child = Global.MainControl;
 				}
 				catch (Exception ex)
 				{
 					var message = ExceptionToText(ex);
-					_SplashScreenPanel.MainTextBox.Text = message;
+					_SplashScreenPanel.ErrorsTextBox.Text = message;
 				}
+				_SplashScreenPanel.LoadingPanel.Visibility = System.Windows.Visibility.Collapsed;
 			});
 		}
 
