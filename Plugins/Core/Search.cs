@@ -28,8 +28,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		public const string LitedbExt = ".litedb";
 
-#if DEBUG
-
 		//public static Dictionary<string, string> GetIndexList() => new Dictionary<string, string>();
 
 		/// <summary>
@@ -37,7 +35,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="indexName">Index name.</param>
 		/// <param name="folderPath">Folder path.</param>
+#if DEBUG
 		[RiskLevel(RiskLevel.Low)]
+#endif
 		public static bool IndexFolder(string indexName, string folderPath)
 		{
 			var di = new DirectoryInfo(_databasePath);
@@ -76,7 +76,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="indexName">Index name.</param>
 		/// <param name="searchString">Search string.</param>
+#if DEBUG
 		[RiskLevel(RiskLevel.Low)]
+#endif
 		public static List<string> SearchIndex(string indexName, string searchString)
 		{
 			var di = new DirectoryInfo(_databasePath);
@@ -98,8 +100,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return new List<string>(results.Select(x => x.FullName));
 			}
 		}
-
-#endif
 
 		/// <summary>
 		/// Searches the Windows Index for files matching the specified criteria. This method allows for extensive search capabilities, including text content, file metadata, and more.

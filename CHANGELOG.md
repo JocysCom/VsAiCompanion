@@ -1,3 +1,8 @@
+2024-06-12 v1.11.23
+
+- Fix: App crashes when trying to log into the same file.
+- Update: Improve the loading process in Visual Studio.
+
 2024-06-11 v1.11.21
 
 - Fix: Developer options are not visible.

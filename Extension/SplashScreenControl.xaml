@@ -5,18 +5,69 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Extension"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
 	d:DesignHeight="300"
 	d:DesignWidth="400"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	Loaded="This_Loaded"
 	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Resources/Icon_AiCompanion.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+			<!--  Storyboard for the text animation  -->
+			<Storyboard x:Key="LoadingDotsStoryboard" RepeatBehavior="Forever">
+				<ObjectAnimationUsingKeyFrames Storyboard.TargetName="LoadingDotsTextBlock" Storyboard.TargetProperty="(TextBlock.Text)">
+					<DiscreteObjectKeyFrame KeyTime="0:0:0.0" Value="   " />
+					<DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value=".  " />
+					<DiscreteObjectKeyFrame KeyTime="0:0:1.0" Value=".. " />
+					<DiscreteObjectKeyFrame KeyTime="0:0:1.5" Value="..." />
+					<DiscreteObjectKeyFrame KeyTime="0:0:2.0" Value="..." />
+				</ObjectAnimationUsingKeyFrames>
+			</Storyboard>
+		</ResourceDictionary>
+	</UserControl.Resources>
 	<Grid>
-		<TextBlock
-			x:Name="MainTextBox"
-			HorizontalAlignment="Center"
-			VerticalAlignment="Center"
+		<StackPanel
+			x:Name="LoadingPanel"
+			Width="256"
+			Height="256"
 			x:FieldModifier="public"
-			Opacity="0.5"
-			Text="Loading..." />
+			Orientation="Vertical">
+			<Grid>
+				<ContentControl Content="{StaticResource Icon_AiCompanion}" />
+				<StackPanel
+					Height="24"
+					Margin="0,44,0,0"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Top"
+					Orientation="Horizontal">
+					<TextBlock
+						x:Name="LoadingTextBlock"
+						VerticalAlignment="Center"
+						FontSize="12"
+						FontWeight="SemiBold"
+						Foreground="White"
+						Opacity="0.5"
+						Text="AI Companion • Loading" />
+					<TextBlock
+						x:Name="LoadingDotsTextBlock"
+						MinWidth="10"
+						VerticalAlignment="Center"
+						FontSize="12"
+						FontWeight="SemiBold"
+						Foreground="White"
+						Opacity="0.5"
+						Text="..." />
+				</StackPanel>
+			</Grid>
+			<TextBlock
+				x:Name="ErrorsTextBox"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				x:FieldModifier="public" />
+		</StackPanel>
 		<Border x:Name="MainBorder" x:FieldModifier="public" />
 	</Grid>
 </UserControl>
