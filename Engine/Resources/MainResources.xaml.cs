@@ -109,6 +109,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Create_an_Assistant_Task_from_Model => FindResource(nameof(main_Create_an_Assistant_Task_from_Model));
         public static string main_Created => FindResource(nameof(main_Created));
         public static string main_Creativity => FindResource(nameof(main_Creativity));
+        public static string main_Tasks_Main_Creativity_Slider => FindResource(nameof(main_Tasks_Main_Creativity_Slider));
         public static string main_Data => FindResource(nameof(main_Data));
         public static string main_Data_Folder => FindResource(nameof(main_Data_Folder));
         public static string main_Database => FindResource(nameof(main_Database));

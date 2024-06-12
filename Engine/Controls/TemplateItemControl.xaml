@@ -201,6 +201,8 @@
 									<Slider
 										Name="CreativitySlider"
 										Width="145"
+										AutomationProperties.HelpText="{StaticResource main_Tasks_Main_Creativity_Slider}"
+										AutomationProperties.Name="Creativity Slider"
 										IsSnapToTickEnabled="True"
 										Maximum="2"
 										Minimum="0"
@@ -854,7 +856,7 @@
 				<CheckBox Name="ShowPromptingCheckBox" Content="Prompting" IsChecked="{Binding ShowPrompting}" />
 				<CheckBox Name="ShowAvatar" Content="Avatar" IsChecked="{Binding ShowAvatar}" />
 				<CheckBox Name="UseAvatarVoiceCheckBox" Content="Use Voice" IsChecked="{Binding UseAvatarVoice}" />
-				<CheckBox Name="SendChatHistoryCheckBox" Content="Send Chat History" IsChecked="{Binding SendChatHistory}" />
+				<CheckBox Name="SendChatHistoryCheckBox" Content="Send History" IsChecked="{Binding SendChatHistory}" />
 				<CheckBox
 					Name="IsSpellCheckEnabledCheckBox"
 					AutomationProperties.HelpText="{StaticResource main_Enable_spell_check_for_the_chat_textbox}"

@@ -62,6 +62,7 @@
 	<sys:String x:Key="main_Create_an_Assistant_Task_from_Model">Create an Assistant Task from Model</sys:String>
 	<sys:String x:Key="main_Created">Created</sys:String>
 	<sys:String x:Key="main_Creativity">Creativity</sys:String>
+	<sys:String x:Key="main_Tasks_Main_Creativity_Slider">WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.</sys:String>
 	<sys:String x:Key="main_Data">Data</sys:String>
 	<sys:String x:Key="main_Data_Folder">Data Folder</sys:String>
 	<sys:String x:Key="main_Database">Database</sys:String>
@@ -195,7 +196,7 @@
 	<sys:String x:Key="main_Spell_Check">Spell Check</sys:String>
 	<sys:String x:Key="main_Standalone_Program">Standalone Program</sys:String>
 	<sys:String x:Key="main_Start_with_Windows">Start with Windows</sys:String>
-	<sys:String x:Key="main_Start_Voice_Typing">Start and stop Microsoft Voice Typing.</sys:String>
+	<sys:String x:Key="main_Start_Voice_Typing">Start and stop Microsoft Voice Typing. Microsoft Voice Typing is a speech recognition feature that converts spoken words into text.</sys:String>
 	<sys:String x:Key="main_Stop">Stop</sys:String>
 	<sys:String x:Key="main_SignIn">Sign In</sys:String>
 	<sys:String x:Key="main_SignOut">Sign Out</sys:String>

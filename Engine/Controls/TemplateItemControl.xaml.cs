@@ -505,8 +505,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				IsSpellCheckEnabledCheckBox,
 				IsPreviewCheckBox
 			);
-			AppHelper.AddHelp(CreativitySlider, "WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.");
+			//AppHelper.AddHelp(CreativitySlider, "WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.");
+			AppHelper.AddHelp(ShowAvatar, "Show AI Avatar window. When AI avatar is visible, app sends instruction message to use voice specified in Options > AI Avatar > Instructions text-box.");
+			AppHelper.AddHelp(UseAvatarVoiceCheckBox, "Sends instruction message to use voice specified in Options > AI Avatar > Instructions text-box.");
 			AppHelper.AddHelp(ShowInstructionsCheckBox, "Show instructions that will be included at the start of every message.");
+			AppHelper.AddHelp(SendChatHistoryCheckBox, "Sending chat history with a message ensures continuity and context in the conversation, leading to more accurate, relevant, and personalized responses.");
 			AppHelper.AddHelp(AutoSendCheckBox, "Automatically send Task for processing to AI when Task is created from the Template.");
 			AppHelper.AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
 			AppHelper.AddHelp(AutoFormatMessageCheckBox, "Use AI to automatically format your message using markdown.");
@@ -524,7 +527,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
-			AppHelper.AddHelp(SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton);
+			AppHelper.AddHelp(SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton, CreativitySlider);
 			RestoreFocus();
 			UpdateAvatarControl();
 		}
