@@ -817,37 +817,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// If must show avatar and border is visible, move avatar panel into it.
 				if (show && ControlsHelper.IsTabItemSelected(avatarBorder))
 				{
-					RemoveAvatarFromParent(ap);
+					ControlsHelper.RemoveFromParent(ap);
 					if (avatarBorder.Child != ap)
 						avatarBorder.Child = ap;
 				}
-			}
-		}
-
-		public static void RemoveAvatarFromParent(FrameworkElement element)
-		{
-			if (element == null)
-				return;
-			var lParent = LogicalTreeHelper.GetParent(element);
-			var vParent = VisualTreeHelper.GetParent(element);
-
-			if (vParent is ItemsControl items)
-				items.Items.Remove(element);
-			if (vParent is ContentPresenter window)
-				window.Content = null;
-			if (vParent is Decorator border)
-				border.Child = null;
-			// Remove visual and logical children.
-			var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-			if (vParent is FrameworkElement)
-			{
-				var methodInfo = vParent.GetType().GetMethod("RemoveVisualChild", flags);
-				methodInfo.Invoke(vParent, new object[] { element });
-			}
-			if (lParent is FrameworkElement)
-			{
-				var methodInfo = lParent.GetType().GetMethod("RemoveLogicalChild", flags);
-				methodInfo.Invoke(lParent, new object[] { element });
 			}
 		}
 
@@ -856,7 +829,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			lock (avatarLock)
 			{
 				var ap = AvatarPanel;
-				RemoveAvatarFromParent(ap);
+				ControlsHelper.RemoveFromParent(ap);
 				// If avatar in Window already...
 				if (IsAvatarInWindow)
 				{

@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using Microsoft.VisualStudio.Shell;
@@ -8,7 +9,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Windows;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
@@ -39,58 +40,85 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 				// Set assembly info manually because in Visual Studio it crashes when determining automatically.
 				JocysCom.ClassLibrary.Configuration.AssemblyInfo.Entry = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(assembly);
-				// Subscribe to the AssemblyResolve event. This event is triggered when .NET runtime fails to find an assembly,
-				// giving you an opportunity to provide the assembly using custom logic.
-				AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 				// Set caption.
 				Caption = product;
-				// This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
-				// we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
-				// the object returned by the Content property.
-				ControlsHelper.InitInvokeContext();
-				Global.LoadSettings();
-				// Get or Set multiple documents.
-				var solutionHelper = new SolutionHelper();
-				Global._SolutionHelper = solutionHelper;
-				Global.SwitchToVisualStudioThreadAsync = solutionHelper.SwitchToMainThreadAsync;
-
-				VisualStudio.Current = Global._SolutionHelper;
-				Global.IsVsExtension = true;
-				;
-				var vsContext = Global._SolutionHelper.GetEnvironmentContext();
-				if (vsContext.ContainsKey("DTE Version"))
-				{
-					var versionString = vsContext["DTE Version"].Deserialize<string>();
-					Version version;
-					if (Version.TryParse(versionString, out version))
-					{
-						Global.VsVersion = version;
-						Global.ShowExtensionVersionMessageOnError = version < new Version(17, 9);
-					}
-				}
-				Global.GetClipboard = AppHelper.GetClipboard;
-				Global.SetClipboard = AppHelper.SetClipboard;
-				Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;
-				//Global.GetEnvironmentProperties = SolutionHelper.GetEnvironmentProperties;
-				//Global.GetReservedProperties = SolutionHelper.GetReservedProperties;
-				//Global.GetOtherProperties = SolutionHelper.GetOtherProperties;
-				// Create controls.
-				var control = new Engine.MainControl();
-				control.Unloaded += Control_Unloaded;
-				Global.MainControl = control;
-				Content = control;
+				_SplashScreenPanel = new SplashScreenControl();
+				_SplashScreenPanel.Loaded += Splash_Loaded;
+				Content = _SplashScreenPanel;
 			}
 			catch (Exception ex)
 			{
 				var message = ExceptionToText(ex);
-				var result = MessageBox.Show(message, $"{product} - Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-				throw;
+				//var result = MessageBox.Show(message, $"{product} - Exception!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+				Content = new System.Windows.Controls.TextBlock { Text = message };
 			}
 		}
 
-		private void Control_Unloaded(object sender, RoutedEventArgs e)
+		SplashScreenControl _SplashScreenPanel;
+
+		private void Splash_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			//Global.SaveSettings();
+			_SplashScreenPanel.Loaded -= Splash_Loaded;
+			_ = Helper.Delay(async () =>
+			{
+				await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+				try
+				{
+					await LoadMainControlAsync();
+					// Ensure that the content switch happens on the main thread.
+					await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+					_SplashScreenPanel.MainTextBox.Text = Global.MainControl == null
+						? "MainControl is null"
+						: "MainControl is instantiated";
+					_SplashScreenPanel.MainBorder.Child = Global.MainControl;
+				}
+				catch (Exception ex)
+				{
+					var message = ExceptionToText(ex);
+					_SplashScreenPanel.MainTextBox.Text = message;
+				}
+			});
+		}
+
+		public async Task LoadMainControlAsync()
+		{
+			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+			// Subscribe to the AssemblyResolve event. This event is triggered when .NET runtime fails to find an assembly,
+			// giving you an opportunity to provide the assembly using custom logic.
+			AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+			// This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
+			// we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
+			// the object returned by the Content property.
+			ControlsHelper.InitInvokeContext();
+			Global.LoadSettings();
+			// Get or Set multiple documents.
+			var solutionHelper = new SolutionHelper();
+			Global._SolutionHelper = solutionHelper;
+			Global.SwitchToVisualStudioThreadAsync = solutionHelper.SwitchToMainThreadAsync;
+
+			VisualStudio.Current = Global._SolutionHelper;
+			Global.IsVsExtension = true;
+			;
+			var vsContext = Global._SolutionHelper.GetEnvironmentContext();
+			if (vsContext.ContainsKey("DTE Version"))
+			{
+				var versionString = vsContext["DTE Version"].Deserialize<string>();
+				Version version;
+				if (Version.TryParse(versionString, out version))
+				{
+					Global.VsVersion = version;
+					Global.ShowExtensionVersionMessageOnError = version < new Version(17, 9);
+				}
+			}
+			Global.GetClipboard = AppHelper.GetClipboard;
+			Global.SetClipboard = AppHelper.SetClipboard;
+			Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;
+			//Global.GetEnvironmentProperties = SolutionHelper.GetEnvironmentProperties;
+			//Global.GetReservedProperties = SolutionHelper.GetReservedProperties;
+			//Global.GetOtherProperties = SolutionHelper.GetOtherProperties;
+			// Create controls.
+			var control = new Engine.MainControl();
+			Global.MainControl = control;
 		}
 
 		/// <summary>

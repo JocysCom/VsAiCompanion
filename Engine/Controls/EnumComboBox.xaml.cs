@@ -129,9 +129,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var box = (EnumComboBox)d;
 			var value = (Enum)box.GetValue(SelectedValueProperty);
-			var items = (ObservableCollection<CheckBoxViewModel>)box.ItemsSource;
+			var items = ((ObservableCollection<CheckBoxViewModel>)box.ItemsSource)?.ToArray();
+			if (items == null)
+				return;
 			foreach (var item in items)
 			{
+				if (item == null)
+					continue;
 				var isChecked = !IsDefault(item.Value) && value.HasFlag(item.Value);
 				if (item.IsChecked != isChecked)
 					item.IsChecked = isChecked;
