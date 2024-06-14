@@ -42,10 +42,10 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore Engine/JocysCom.VS.AiCompanion.Engine.csproj /p:EnableWindowsTargeting=true
+      run: dotnet restore -p:EnableWindowsTargeting=true Engine/JocysCom.VS.AiCompanion.Engine.csproj
 
     - name: Build the project
-      run: dotnet build --no-restore Engine/JocysCom.VS.AiCompanion.Engine.csproj /p:EnableWindowsTargeting=true
+      run: dotnet build -p:EnableWindowsTargeting=true --no-restore Engine/JocysCom.VS.AiCompanion.Engine.csproj
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
