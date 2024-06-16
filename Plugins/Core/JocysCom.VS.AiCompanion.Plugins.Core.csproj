@@ -17,8 +17,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.11.23</AssemblyVersion>
-		<FileVersion>1.11.23</FileVersion>
+		<AssemblyVersion>1.11.25</AssemblyVersion>
+		<FileVersion>1.11.25</FileVersion>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
 		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>

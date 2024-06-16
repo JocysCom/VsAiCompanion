@@ -9,7 +9,7 @@
 	<sys:String x:Key="main__3_Remote_Files">3. Remote Files</sys:String>
 	<sys:String x:Key="main__4_Tuning_Jobs">4. Tuning Jobs</sys:String>
 	<sys:String x:Key="main__5_Models">5. Models</sys:String>
-	<sys:String x:Key="main_AI_reason_for_action">Reason given by AI for this action:</sys:String>
+	<sys:String x:Key="main_AI_reason_for_action">Reason given by AI for this action</sys:String>
 	<sys:String x:Key="main_Account">Account</sys:String>
 	<sys:String x:Key="main_ActivationDate">Activation Date</sys:String>
 	<sys:String x:Key="main_ExpirationDate">Expiration Date</sys:String>
