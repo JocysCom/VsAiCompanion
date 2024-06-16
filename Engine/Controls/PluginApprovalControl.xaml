@@ -50,6 +50,18 @@
 						</Button>
 					</StackPanel>
 				</Grid>
+				<Border
+					x:Name="ReasonBorder"
+					Margin="4,0,4,0"
+					x:FieldModifier="public"
+					BorderBrush="{StaticResource BackgroundDark}"
+					BorderThickness="0,0,0,1">
+					<StackPanel Margin="5" Orientation="Horizontal">
+						<TextBlock x:Name="ReasonForInvocationLabel" Opacity="0.5" Text="{StaticResource main_AI_reason_for_action}" />
+						<TextBlock MinWidth="5" Opacity="0.5" Text=":" />
+						<TextBlock x:Name="ReasonForInvocationTextBox" Text="{Binding ApprovalItem.ReasonForInvocation, ElementName=This}" />
+					</StackPanel>
+				</Border>
 				<local:PluginItemControl x:Name="PluginItemPanel" Margin="0,0,0,-1" DataContext="{Binding ApprovalItem.Plugin, ElementName=This}" />
 				<Border
 					x:Name="SeparatorBorder"

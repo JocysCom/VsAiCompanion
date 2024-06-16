@@ -12,6 +12,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool? IsApproved { get => _IsApproved; set => SetProperty(ref _IsApproved, value); }
 		bool? _IsApproved;
 
+		public string ReasonForInvocation { get => _ReasonForInvocation; set => SetProperty(ref _ReasonForInvocation, value); }
+		string _ReasonForInvocation;
+
 		public string SecondaryAiEvaluation { get => _SecondaryAiEvaluation; set => SetProperty(ref _SecondaryAiEvaluation, value); }
 		string _SecondaryAiEvaluation;
 

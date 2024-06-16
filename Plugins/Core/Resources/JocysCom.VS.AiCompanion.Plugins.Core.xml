@@ -184,6 +184,31 @@
             </summary>
             <param name="path">The path of the file to be read.</param>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.FunctionInvocationContext">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FunctionInvocationContext.MethodForContext(System.String)">
+            <summary>
+            Context and rationale provided by the AI when invoking a function.
+            </summary>
+            <param name="reasonForInvocation">
+            A detailed explanation of the purpose or context behind calling this function. 
+            This should be a concise justification, up to 3 sentences,
+            describing why this function call is necessary in the given situation.
+            </param>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.FunctionInvocationContext.ContextMethodInfo">
+            <summary>
+            Get method info
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.FunctionInvocationContext.ContextParameterInfos">
+            <summary>
+            Get parameter info
+            </summary>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.HtmlHelper">
             <summary>
             HTML Helper.

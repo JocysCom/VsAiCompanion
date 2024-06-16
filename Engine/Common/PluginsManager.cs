@@ -166,6 +166,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				pfci.function = function;
 				// Select values submitted for param.
 				var parameters = function.parameters.additional_properties;
+				var contextParamName = FunctionInvocationContext.ContextParameterInfos[0].Name;
+				if (parameters.Keys.Contains(contextParamName))
+				{
+					var contextValue = parameters[contextParamName];
+					pfci.ReasonForInvocation = contextValue.ToString() ?? "";
+				}
 				for (int p = 0; p < plugin.Params.Count; p++)
 				{
 					var param = plugin.Params[p];
@@ -370,6 +376,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 					continue;
 				// Serialize the parameters object to a JSON string then create a BinaryData instance.
 				var functionParameters = ConvertToToolItem(null, mi);
+				// Add extra parameter that will make AI to supply rationale when invoking a function.
+				var contextMi = FunctionInvocationContext.ContextMethodInfo;
+				var contextPis = FunctionInvocationContext.ContextParameterInfos;
+				foreach (var contextPi in contextPis)
+				{
+					var list = functionParameters.required.ToList();
+					list.Insert(0, contextPi.Name);
+					functionParameters.required = list.ToArray();
+					var contextItem = ConvertToToolItem(null, contextMi, contextPi);
+					functionParameters.properties.Add(contextPi.Name, contextItem);
+				}
+				// Continue.
 				var serializedParameters = Client.Serialize(functionParameters);
 				var binaryParamaters = BinaryData.FromString(serializedParameters);
 				var summary = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
@@ -464,6 +482,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				foreach (var property in properties)
 				{
 					var item = ConvertToToolItem(property.PropertyType);
+					item.description = XmlDocHelper.GetSummaryText(property, FormatText.RemoveIdentAndTrimSpaces);
 					oProperties.Add(property.Name, item);
 				}
 				o.properties = oProperties;
@@ -602,6 +621,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var summaryText = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
 				var requiredParams = new List<string>();
 				var props = new Dictionary<string, object>();
+				// Add extra parameter that will make AI to supply rationale when invoking a function.
+				var contextMi = FunctionInvocationContext.ContextMethodInfo;
+				var contextPis = FunctionInvocationContext.ContextParameterInfos;
+				foreach (var contextPi in contextPis)
+				{
+					requiredParams.Add(contextPi.Name);
+					props[contextPi.Name] = ConvertToToolItem(null, contextMi, contextPi);
+				}
+				// Add actual method properties.
 				foreach (var pi in mi.GetParameters())
 				{
 					if (!pi.IsOptional)

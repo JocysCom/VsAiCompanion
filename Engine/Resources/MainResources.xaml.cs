@@ -56,6 +56,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main__3_Remote_Files => FindResource(nameof(main__3_Remote_Files));
         public static string main__4_Tuning_Jobs => FindResource(nameof(main__4_Tuning_Jobs));
         public static string main__5_Models => FindResource(nameof(main__5_Models));
+        public static string main_AI_reason_for_action => FindResource(nameof(main_AI_reason_for_action));
         public static string main_Account => FindResource(nameof(main_Account));
         public static string main_ActivationDate => FindResource(nameof(main_ActivationDate));
         public static string main_ExpirationDate => FindResource(nameof(main_ExpirationDate));

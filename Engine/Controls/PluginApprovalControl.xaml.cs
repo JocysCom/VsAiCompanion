@@ -22,7 +22,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ApprovalColor = Resources["BackgroundDark"] as Brush;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			PluginItemPanel.MethodCheckBox.IsEnabled = false;
+			//PluginItemPanel.MethodCheckBox.IsEnabled = false;
+			PluginItemPanel.MethodCheckBox.Visibility = Visibility.Collapsed;
+			PluginItemPanel.MethodStackPanel.Visibility = Visibility.Visible;
 		}
 
 		BindingList<PluginApprovalItem> emptyData = new BindingList<PluginApprovalItem>();

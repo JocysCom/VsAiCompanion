@@ -1,3 +1,7 @@
+2024-06-16 v1.11.24
+
+- New: The tool will ask the AI to provide a reason for making function calls.
+
 2024-06-12 v1.11.23
 
 - Fix: App crashes when trying to log into the same file.
