@@ -512,7 +512,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
-			AppHelper.AddHelp(IsSystemInstructionsCheckBox, UseMaximumContextCheckBox, IsFavoriteCheckBox, MessageBoxOperationComboBox,AutoRemoveCheckBox, ShowInstructionsCheckBox, ShowPromptingCheckBox, ShowAvatar, UseAvatarVoiceCheckBox, SendChatHistoryCheckBox, IsSpellCheckEnabledCheckBox, ClearMessagesButton, ScrollToBottomMessagesButton, AutoSendCheckBox, SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton, CreativitySlider, AutoGenerateTitleCheckBox, AutoFormatMessageCheckBox);
+			AppHelper.AddHelp(IsPinnedCheckBox, IsSystemInstructionsCheckBox, UseMaximumContextCheckBox, IsFavoriteCheckBox, MessageBoxOperationComboBox,AutoRemoveCheckBox, ShowInstructionsCheckBox, ShowPromptingCheckBox, ShowAvatar, UseAvatarVoiceCheckBox, SendChatHistoryCheckBox, IsSpellCheckEnabledCheckBox, ClearMessagesButton, ScrollToBottomMessagesButton, AutoSendCheckBox, SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton, CreativitySlider, AutoGenerateTitleCheckBox, AutoFormatMessageCheckBox);
 			RestoreFocus();
 			UpdateAvatarControl();
 		}
