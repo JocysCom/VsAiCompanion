@@ -43,9 +43,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				new KeyValue("OS Architecture", Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit"),
 				new KeyValue("Locale", CultureInfo.CurrentCulture.Name),
 				new KeyValue("Time Zone", TimeZoneInfo.Local.DisplayName),
-				//new KeyValue("GPS Altitude", $"{pos.altitude}"),
-				//new KeyValue("GPS Latitude", $"{pos.latitude}"),
-				//new KeyValue("GPS Longitude", $"{pos.longitude}"),
+				new KeyValue("GPS Altitude", $"{pos.altitude}"),
+				new KeyValue("GPS Latitude", $"{pos.latitude}"),
+				new KeyValue("GPS Longitude", $"{pos.longitude}"),
 			};
 			return list;
 		}
