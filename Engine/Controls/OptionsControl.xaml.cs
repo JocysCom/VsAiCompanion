@@ -70,7 +70,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.MainResources.main_Enable_spell_check_for_the_chat_textbox);
+			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.MainResources.main_Enable_Spell_Check_Help);
 			if (ControlsHelper.AllowLoad(this))
 			{
 				UpdateVideoInputDevices();

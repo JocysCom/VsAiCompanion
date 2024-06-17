@@ -501,22 +501,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
 			}
-			AppHelper.AddHelp(
-				IsSpellCheckEnabledCheckBox,
-				IsPreviewCheckBox
-			);
-			//AppHelper.AddHelp(CreativitySlider, "WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.");
-			AppHelper.AddHelp(ShowAvatar, "Show AI Avatar window. When AI avatar is visible, app sends instruction message to use voice specified in Options > AI Avatar > Instructions text-box.");
-			AppHelper.AddHelp(UseAvatarVoiceCheckBox, "Sends instruction message to use voice specified in Options > AI Avatar > Instructions text-box.");
-			AppHelper.AddHelp(ShowInstructionsCheckBox, "Show instructions that will be included at the start of every message.");
-			AppHelper.AddHelp(SendChatHistoryCheckBox, "Sending chat history with a message ensures continuity and context in the conversation, leading to more accurate, relevant, and personalized responses.");
-			AppHelper.AddHelp(AutoSendCheckBox, "Automatically send Task for processing to AI when Task is created from the Template.");
+			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, IsPreviewCheckBox);
 			AppHelper.AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
-			AppHelper.AddHelp(AutoFormatMessageCheckBox, "Use AI to automatically format your message using markdown.");
 			AppHelper.AddHelp(UseMaximumContextCheckBox, "If disabled, the user's message is limited to half of the available tokens. The other half of the tokens is reserved for the AI's response.");
-			AppHelper.AddHelp(AutoGenerateTitleCheckBox, "Use AI to automatically generate a Task title once.");
-			AppHelper.AddHelp(ShowPromptingCheckBox, "Guide and shape the AI's output in your desired style. You can select a 'Prompt' category such as Tone, Format, Context, Role, or Instruction," +
-				" and then choose an option within that category to define how the AI should approach the content creation.");
 			AppHelper.AddHelp(IsSystemInstructionsCheckBox, "If checked, instructions will be sent as a system message. Otherwise, they will be added to the user's message. This feature is supported by OpenAI GPT models. System messages have priority over user messages.");
 			var codeButtons = ControlsHelper.GetAll<Button>(CodeButtonsPanel);
 			foreach (var codeButton in codeButtons)
@@ -527,7 +514,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
-			AppHelper.AddHelp(SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton, CreativitySlider);
+			AppHelper.AddHelp(ShowInstructionsCheckBox, ShowPromptingCheckBox, ShowAvatar, UseAvatarVoiceCheckBox, SendChatHistoryCheckBox, IsSpellCheckEnabledCheckBox, ClearMessagesButton, ScrollToBottomMessagesButton, AutoSendCheckBox, SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton, CreativitySlider, AutoGenerateTitleCheckBox, AutoFormatMessageCheckBox);
 			RestoreFocus();
 			UpdateAvatarControl();
 		}

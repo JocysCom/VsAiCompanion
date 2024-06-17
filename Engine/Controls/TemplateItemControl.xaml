@@ -249,9 +249,24 @@
 								Orientation="Horizontal"
 								Visibility="{Binding BarPanelVisibility, ElementName=This}">
 								<StackPanel VerticalAlignment="Top">
-									<CheckBox Name="AutoSendCheckBox" Content="Send on Create" IsChecked="{Binding AutoSend}" />
-									<CheckBox Name="AutoGenerateTitleCheckBox" Content="Generate Title" IsChecked="{Binding AutoGenerateTitle}" />
-									<CheckBox Name="AutoFormatMessageCheckBox" Margin="0" IsChecked="{Binding AutoFormatMessage}">
+									<CheckBox
+										Name="AutoSendCheckBox"
+										AutomationProperties.HelpText="{StaticResource main_Send_Task_on_Create_Help}"
+										AutomationProperties.Name="{StaticResource main_Send_Task_on_Create_Name}"
+										Content="{StaticResource main_Send_Task_on_Create_Name}"
+										IsChecked="{Binding AutoSend}" />
+									<CheckBox
+										Name="AutoGenerateTitleCheckBox"
+										AutomationProperties.HelpText="{StaticResource main_Auto_Generate_Title_Help}"
+										AutomationProperties.Name="{StaticResource main_Auto_Generate_Title_Name}"
+										Content="{StaticResource main_Auto_Generate_Title_Name}"
+										IsChecked="{Binding AutoGenerateTitle}" />
+									<CheckBox
+										Name="AutoFormatMessageCheckBox"
+										Margin="0"
+										AutomationProperties.HelpText="{StaticResource main_Auto_Format_Message_Help}"
+										AutomationProperties.Name="{StaticResource main_Auto_Format_Message_Name}"
+										IsChecked="{Binding AutoFormatMessage}">
 										<TextBlock VerticalAlignment="Center">
 											<Run Text="Auto" />
 											<Hyperlink NavigateUri="https://www.markdownguide.org/cheat-sheet/" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">Markdown</Hyperlink>
@@ -852,17 +867,42 @@
 					Click="MicrophoneButton_Click">
 					<ContentControl Content="{StaticResource Icon_microphone2}" Focusable="False" />
 				</Button>
-				<CheckBox Name="ShowInstructionsCheckBox" Content="Instructions" IsChecked="{Binding ShowInstructions}" />
-				<CheckBox Name="ShowPromptingCheckBox" Content="Prompting" IsChecked="{Binding ShowPrompting}" />
-				<CheckBox Name="ShowAvatar" Content="Avatar" IsChecked="{Binding ShowAvatar}" />
-				<CheckBox Name="UseAvatarVoiceCheckBox" Content="Use Voice" IsChecked="{Binding UseAvatarVoice}" />
-				<CheckBox Name="SendChatHistoryCheckBox" Content="Send History" IsChecked="{Binding SendChatHistory}" />
+				<CheckBox
+					Name="ShowInstructionsCheckBox"
+					AutomationProperties.HelpText="{StaticResource main_Show_Instructions_TextBox_Help}"
+					AutomationProperties.Name="{StaticResource main_Show_Instructions_TextBox_Name}"
+					Content="{StaticResource main_Show_Instructions_TextBox_Name}"
+					IsChecked="{Binding ShowInstructions}" />
+				<CheckBox
+					Name="ShowPromptingCheckBox"
+					AutomationProperties.HelpText="{StaticResource main_Show_Prompting_Toolbar_Help}"
+					AutomationProperties.Name="{StaticResource main_Show_Prompting_Toolbar_Name}"
+					Content="{StaticResource main_Show_Prompting_Toolbar_Name}"
+					IsChecked="{Binding ShowPrompting}" />
+				<CheckBox
+					Name="ShowAvatar"
+					AutomationProperties.HelpText="{StaticResource main_Show_AI_Avatar_Windwow_Help}"
+					AutomationProperties.Name="{StaticResource main_Show_AI_Avatar_Windwow_Name}"
+					Content="{StaticResource main_Show_AI_Avatar_Windwow_Name}"
+					IsChecked="{Binding ShowAvatar}" />
+				<CheckBox
+					Name="UseAvatarVoiceCheckBox"
+					AutomationProperties.HelpText="{StaticResource main_Use_AI_Avatar_Voice_Help}"
+					AutomationProperties.Name="{StaticResource main_Use_AI_Avatar_Voice_Name}"
+					Content="{StaticResource main_Use_AI_Avatar_Voice_Name}"
+					IsChecked="{Binding UseAvatarVoice}" />
+				<CheckBox
+					Name="SendChatHistoryCheckBox"
+					AutomationProperties.HelpText="{StaticResource main_Send_Chat_History_Help}"
+					AutomationProperties.Name="{StaticResource main_Send_Chat_History_Name}"
+					Content="{StaticResource main_Send_Chat_History_Name}"
+					IsChecked="{Binding SendChatHistory}" />
 				<CheckBox
 					Name="IsSpellCheckEnabledCheckBox"
-					AutomationProperties.HelpText="{StaticResource main_Enable_spell_check_for_the_chat_textbox}"
-					AutomationProperties.Name="{StaticResource main_Spell_Check}"
+					AutomationProperties.HelpText="{StaticResource main_Enable_Spell_Check_Help}"
+					AutomationProperties.Name="{StaticResource main_Enable_Spell_Check_Name}"
 					Checked="IsSpellCheckEnabledCheckBox_Checked"
-					Content="{StaticResource main_Spell_Check}"
+					Content="{StaticResource main_Enable_Spell_Check_Name}"
 					IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 					Unchecked="IsSpellCheckEnabledCheckBox_Unchecked" />
 			</StackPanel>
