@@ -238,6 +238,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Auto_Generate_Title_Help => FindResource(nameof(main_Auto_Generate_Title_Help));
         public static string main_Auto_Format_Message_Name => FindResource(nameof(main_Auto_Format_Message_Name));
         public static string main_Auto_Format_Message_Help => FindResource(nameof(main_Auto_Format_Message_Help));
+        public static string main_Remove_Task_on_Complete_Name => FindResource(nameof(main_Remove_Task_on_Complete_Name));
+        public static string main_Remove_Task_on_Complete_Help => FindResource(nameof(main_Remove_Task_on_Complete_Help));
+        public static string main_Send_Message_Action_Name => FindResource(nameof(main_Send_Message_Action_Name));
+        public static string main_Send_Message_Action_Help => FindResource(nameof(main_Send_Message_Action_Help));
+        public static string main_Show_Template_Icon_in_Toolbar_Name => FindResource(nameof(main_Show_Template_Icon_in_Toolbar_Name));
+        public static string main_Show_Template_Icon_in_Toolbar_Help => FindResource(nameof(main_Show_Template_Icon_in_Toolbar_Help));
+        public static string main_Use_Maximum_Context_Name => FindResource(nameof(main_Use_Maximum_Context_Name));
+        public static string main_Use_Maximum_Context_Help => FindResource(nameof(main_Use_Maximum_Context_Help));
+        public static string main_Use_System_Message_Name => FindResource(nameof(main_Use_System_Message_Name));
+        public static string main_Use_System_Message_Help => FindResource(nameof(main_Use_System_Message_Help));
         public static string main_Send_on_Create => FindResource(nameof(main_Send_on_Create));
         public static string main_Sending_Message => FindResource(nameof(main_Sending_Message));
         public static string main_Server_Host => FindResource(nameof(main_Server_Host));

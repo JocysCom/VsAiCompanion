@@ -196,6 +196,16 @@
 	<sys:String x:Key="main_Auto_Generate_Title_Help">Use AI to automatically generate a Task title once.</sys:String>
 	<sys:String x:Key="main_Auto_Format_Message_Name">Markdown</sys:String>
 	<sys:String x:Key="main_Auto_Format_Message_Help">Use AI to automatically format your message using markdown.</sys:String>
+	<sys:String x:Key="main_Remove_Task_on_Complete_Name">Remove on Complete</sys:String>
+	<sys:String x:Key="main_Remove_Task_on_Complete_Help">Remove Task from 'Tasks' tab on complete.</sys:String>
+	<sys:String x:Key="main_Send_Message_Action_Name">Send Message Action</sys:String>
+	<sys:String x:Key="main_Send_Message_Action_Help">Do nothing, clear, or reset text in 'Message' text-box after sending the message.</sys:String>
+	<sys:String x:Key="main_Show_Template_Icon_in_Toolbar_Name">Show Icon in Toolbar</sys:String>
+	<sys:String x:Key="main_Show_Template_Icon_in_Toolbar_Help">Display the template button in the toolbar for quick task creation.</sys:String>
+	<sys:String x:Key="main_Use_Maximum_Context_Name">Use Maximum Context</sys:String>
+	<sys:String x:Key="main_Use_Maximum_Context_Help">If disabled, the user's message is limited to half of the available tokens. The other half of the tokens is reserved for the AI's response.</sys:String>
+	<sys:String x:Key="main_Use_System_Message_Name">Use System Messages</sys:String>
+	<sys:String x:Key="main_Use_System_Message_Help">If checked, instructions will be sent as a system message. Otherwise, they will be added to the user's message. This feature is supported by OpenAI GPT models. System messages have priority over user messages.</sys:String>
 
 	<sys:String x:Key="main_Send_on_Create">Send on Create</sys:String>
 	<sys:String x:Key="main_Sending_Message">Sending Message</sys:String>

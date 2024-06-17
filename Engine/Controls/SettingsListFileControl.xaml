@@ -44,7 +44,7 @@
 			</CollectionViewSource>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Name="TemplateListGrid" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+	<Grid Name="TemplateListGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />

@@ -221,7 +221,9 @@
 							<CheckBox
 								Name="IsFavoriteCheckBox"
 								Margin="5,0,0,0"
-								Content="Show Icon in Toolbar"
+								AutomationProperties.HelpText="{StaticResource main_Show_Template_Icon_in_Toolbar_Help}"
+								AutomationProperties.Name="{StaticResource main_Show_Template_Icon_in_Toolbar_Name}"
+								Content="{StaticResource main_Show_Template_Icon_in_Toolbar_Name}"
 								IsChecked="{Binding IsFavorite}"
 								Visibility="{Binding TemplateItemVisibility, ElementName=This}" />
 						</StackPanel>
@@ -278,13 +280,17 @@
 										Name="AutoRemoveCheckBox"
 										Margin="0,0,0,3"
 										VerticalAlignment="Bottom"
-										Content="Remove on Complete"
+										AutomationProperties.HelpText="{StaticResource main_Remove_Task_on_Complete_Help}"
+										AutomationProperties.Name="{StaticResource main_Remove_Task_on_Complete_Name}"
+										Content="{StaticResource main_Remove_Task_on_Complete_Name}"
 										IsChecked="{Binding AutoRemove}" />
 									<ComboBox
 										Name="MessageBoxOperationComboBox"
 										Width="138"
 										Margin="3,0,0,0"
 										VerticalAlignment="Top"
+										AutomationProperties.HelpText="{StaticResource main_Send_Message_Action_Help}"
+										AutomationProperties.Name="{StaticResource main_Send_Message_Action_Name}"
 										DisplayMemberPath="Value"
 										ItemsSource="{Binding MessageBoxOperations, ElementName=This}"
 										SelectedValue="{Binding MessageBoxOperation}"
@@ -320,12 +326,16 @@
 									<CheckBox
 										Name="IsSystemInstructionsCheckBox"
 										Margin="0"
-										Content="Use System Messages"
+										AutomationProperties.HelpText="{StaticResource main_Use_System_Message_Help}"
+										AutomationProperties.Name="{StaticResource main_Use_System_Message_Name}"
+										Content="{StaticResource main_Use_System_Message_Name}"
 										IsChecked="{Binding IsSystemInstructions}" />
 									<CheckBox
 										Name="UseMaximumContextCheckBox"
 										Margin="0"
-										Content="Use Maximum Context"
+										AutomationProperties.HelpText="{StaticResource main_Use_Maximum_Context_Help}"
+										AutomationProperties.Name="{StaticResource main_Use_Maximum_Context_Name}"
+										Content="{StaticResource main_Use_Maximum_Context_Name}"
 										IsChecked="{Binding UseMaximumContext}" />
 								</StackPanel>
 							</StackPanel>

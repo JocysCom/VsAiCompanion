@@ -502,9 +502,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
 			}
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, IsPreviewCheckBox);
-			AppHelper.AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
-			AppHelper.AddHelp(UseMaximumContextCheckBox, "If disabled, the user's message is limited to half of the available tokens. The other half of the tokens is reserved for the AI's response.");
-			AppHelper.AddHelp(IsSystemInstructionsCheckBox, "If checked, instructions will be sent as a system message. Otherwise, they will be added to the user's message. This feature is supported by OpenAI GPT models. System messages have priority over user messages.");
+			//AppHelper.AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
 			var codeButtons = ControlsHelper.GetAll<Button>(CodeButtonsPanel);
 			foreach (var codeButton in codeButtons)
 			{
@@ -514,7 +512,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
 				);
 			}
-			AppHelper.AddHelp(ShowInstructionsCheckBox, ShowPromptingCheckBox, ShowAvatar, UseAvatarVoiceCheckBox, SendChatHistoryCheckBox, IsSpellCheckEnabledCheckBox, ClearMessagesButton, ScrollToBottomMessagesButton, AutoSendCheckBox, SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton, CreativitySlider, AutoGenerateTitleCheckBox, AutoFormatMessageCheckBox);
+			AppHelper.AddHelp(IsSystemInstructionsCheckBox, UseMaximumContextCheckBox, IsFavoriteCheckBox, MessageBoxOperationComboBox,AutoRemoveCheckBox, ShowInstructionsCheckBox, ShowPromptingCheckBox, ShowAvatar, UseAvatarVoiceCheckBox, SendChatHistoryCheckBox, IsSpellCheckEnabledCheckBox, ClearMessagesButton, ScrollToBottomMessagesButton, AutoSendCheckBox, SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton, CreativitySlider, AutoGenerateTitleCheckBox, AutoFormatMessageCheckBox);
 			RestoreFocus();
 			UpdateAvatarControl();
 		}
