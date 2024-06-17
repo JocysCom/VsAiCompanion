@@ -87,7 +87,6 @@
 	<sys:String x:Key="main_Enable_All">Enable All</sys:String>
 	<sys:String x:Key="main_Enable_Low_Risk">Enable Low Risk</sys:String>
 	<sys:String x:Key="main_Enable_Medium_Risk">Enable Medium Risk</sys:String>
-	<sys:String x:Key="main_Enable_spell_check_for_the_chat_textbox">Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</sys:String>
 	<sys:String x:Key="main_Enabled">Enabled</sys:String>
 	<sys:String x:Key="main_Environment">Environment</sys:String>
 	<sys:String x:Key="main_Exclude_Patterns">Exclude Patterns</sys:String>
@@ -177,7 +176,39 @@
 	<sys:String x:Key="main_Select_AI_Model">Please select AI Model.</sys:String>
 	<sys:String x:Key="main_Select_AI_Service_from_Menu">Please select AI Service from the dropdown menu.</sys:String>
 	<sys:String x:Key="main_Send_as_System_Messages">Send as System Messages</sys:String>
-	<sys:String x:Key="main_Send_Chat_History">Send Chat History</sys:String>
+	<!--  Tasks Tab / Templates Tab  -->
+	<sys:String x:Key="main_Show_Instructions_TextBox_Name">Instructions</sys:String>
+	<sys:String x:Key="main_Show_Instructions_TextBox_Help">Show instructions text-box. Instructions will be included at the start of every message.</sys:String>
+	<sys:String x:Key="main_Show_Prompting_Toolbar_Name">Prompting</sys:String>
+	<sys:String x:Key="main_Show_Prompting_Toolbar_Help">Show 'Prompting' toolbar. Guide and shape the AI's output in your desired style. You can select a 'Prompt' category such as Tone, Format, Context, Role, or Instruction, and then choose an option within that category to define how the AI should approach the content creation.</sys:String>
+	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Name">Avatar</sys:String>
+	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Help">Show 'AI Avatar' window. When AI avatar is visible, app sends instruction message to use voice specified in 'Options' tab → 'AI Avatar' tab → 'Instructions' text-box.</sys:String>
+	<sys:String x:Key="main_Use_AI_Avatar_Voice_Name">Use Voice</sys:String>
+	<sys:String x:Key="main_Use_AI_Avatar_Voice_Help">AI responds with voices in addition to the text responses specified in 'Options' tab → 'AI Avatar' tab and 'AI Services' tab.</sys:String>
+	<sys:String x:Key="main_Send_Chat_History_Name">Send History</sys:String>
+	<sys:String x:Key="main_Send_Chat_History_Help">Sending chat history with a message ensures continuity and context in the conversation, leading to more accurate, relevant, and personalized responses.</sys:String>
+	<sys:String x:Key="main_Enable_Spell_Check_Name">Spell Check</sys:String>
+	<sys:String x:Key="main_Enable_Spell_Check_Help">Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</sys:String>
+	<!--  Tasks tab / Templates tab → Main tab  -->
+	<sys:String x:Key="main_Send_Task_on_Create_Name">Send on Create</sys:String>
+	<sys:String x:Key="main_Send_Task_on_Create_Help">Automatically send Task for processing to AI when Task is created from the Template.</sys:String>
+	<sys:String x:Key="main_Auto_Generate_Title_Name">Generate Title</sys:String>
+	<sys:String x:Key="main_Auto_Generate_Title_Help">Use AI to automatically generate a Task title once.</sys:String>
+	<sys:String x:Key="main_Auto_Format_Message_Name">Markdown</sys:String>
+	<sys:String x:Key="main_Auto_Format_Message_Help">Use AI to automatically format your message using markdown.</sys:String>
+	<sys:String x:Key="main_Remove_Task_on_Complete_Name">Remove on Complete</sys:String>
+	<sys:String x:Key="main_Remove_Task_on_Complete_Help">Remove Task from 'Tasks' tab on complete.</sys:String>
+	<sys:String x:Key="main_Send_Message_Action_Name">Send Message Action</sys:String>
+	<sys:String x:Key="main_Send_Message_Action_Help">Do nothing, clear, or reset text in 'Message' text-box after sending the message.</sys:String>
+	<sys:String x:Key="main_Show_Template_Icon_in_Toolbar_Name">Show Icon in Toolbar</sys:String>
+	<sys:String x:Key="main_Show_Template_Icon_in_Toolbar_Help">Display the template button in the toolbar for quick task creation.</sys:String>
+	<sys:String x:Key="main_Use_Maximum_Context_Name">Use Maximum Context</sys:String>
+	<sys:String x:Key="main_Use_Maximum_Context_Help">If disabled, the user's message is limited to half of the available tokens. The other half of the tokens is reserved for the AI's response.</sys:String>
+	<sys:String x:Key="main_Use_System_Message_Name">Use System Messages</sys:String>
+	<sys:String x:Key="main_Use_System_Message_Help">If checked, instructions will be sent as a system message. Otherwise, they will be added to the user's message. This feature is supported by OpenAI GPT models. System messages have priority over user messages.</sys:String>
+	<sys:String x:Key="main_Pinned_Template_Task_Name">Pinned</sys:String>
+	<sys:String x:Key="main_Pinned_Template_Task_Help">Template/Task will be pinned at the beginning of Template/Task list. Template button will be pinned at the beginning of Template toolbar.</sys:String>
+
 	<sys:String x:Key="main_Send_on_Create">Send on Create</sys:String>
 	<sys:String x:Key="main_Sending_Message">Sending Message</sys:String>
 	<sys:String x:Key="main_Server_Host">Server Host</sys:String>
@@ -194,7 +225,6 @@
 	<sys:String x:Key="main_Show_Sensitive_Data_Warning">Show Sensitive Data Warning</sys:String>
 	<sys:String x:Key="main_SMTP_Host">SMTP Host</sys:String>
 	<sys:String x:Key="main_Source">Source</sys:String>
-	<sys:String x:Key="main_Spell_Check">Spell Check</sys:String>
 	<sys:String x:Key="main_Standalone_Program">Standalone Program</sys:String>
 	<sys:String x:Key="main_Start_with_Windows">Start with Windows</sys:String>
 	<sys:String x:Key="main_Start_Voice_Typing">Start and stop Microsoft Voice Typing. Microsoft Voice Typing is a speech recognition feature that converts spoken words into text.</sys:String>

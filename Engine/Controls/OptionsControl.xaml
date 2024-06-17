@@ -156,7 +156,9 @@
 									<CheckBox
 										Name="IsSpellCheckEnabledCheckBox"
 										Margin="0"
-										Content="{StaticResource main_Spell_Check}"
+										AutomationProperties.HelpText="{StaticResource main_Enable_Spell_Check_Help}"
+										AutomationProperties.Name="{StaticResource main_Enable_Spell_Check_Name}"
+										Content="{StaticResource main_Enable_Spell_Check_Name}"
 										IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 								</WrapPanel>
 							</GroupBox>
