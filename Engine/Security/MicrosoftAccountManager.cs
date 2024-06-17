@@ -117,14 +117,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			}
 		}
 
-		public IPublicClientApplication Pca { get; } = PublicClientApplicationBuilder
-			.Create(Global.AppSettings?.ClientAppId)
-			.WithAuthority(CommonAuthority)
-			//.WithAuthority(AzureCloudInstance.AzurePublic, AadAuthorityAudience.None)
-			//.WithAuthority(AzureCloudInstance.AzurePublic, Global.AppSettings?.TenantId)
-			.WithRedirectUri("http://localhost")
-			.WithDefaultRedirectUri()
-			.Build();
+		public IPublicClientApplication Pca
+		{
+			get
+			{
+				if (_Pca == null)
+				{
+					var tenantId = Global.AppSettings?.AppTenantId;
+					var builder = PublicClientApplicationBuilder
+						.Create(Global.AppSettings?.AppClientId);
+					builder = string.IsNullOrEmpty(tenantId)
+						? builder.WithAuthority(CommonAuthority)
+						: builder.WithAuthority(AzureCloudInstance.AzurePublic, tenantId);
+					builder = builder
+						.WithRedirectUri("http://localhost")
+						.WithDefaultRedirectUri();
+					_Pca = builder.Build();
+				}
+				return _Pca;
+			}
+		}
+		IPublicClientApplication _Pca;
 
 		/// <summary>
 		/// Store token cache in the app settings.

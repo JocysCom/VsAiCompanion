@@ -3,7 +3,10 @@
 --------------------------------------------------------------------------------------
 */
 
-ALTER DATABASE Embeddings SET TRUSTWORTHY ON;
+DECLARE @sql NVARCHAR(MAX);
+SET @sql = 'ALTER DATABASE [' + DB_NAME() + '] SET TRUSTWORTHY ON;';
+EXEC sp_executesql @sql;
+
 GO
 
 sp_configure 'show advanced options', 1

@@ -54,7 +54,7 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetCurrentSystemInfo">
             <summary>
-            Get the current system information: Current Date, OS Version, Architecture, Locale and Time Zone.
+            Get the current system information: Current Date, OS Version, Architecture, Locale, Time Zone and GPS Geo Location.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess(System.String,System.String,System.String)">
@@ -207,6 +207,16 @@
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.FunctionInvocationContext.ContextParameterInfos">
             <summary>
             Get parameter info
+            </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.GpsLocation">
+            <summary>
+            GPS Location.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.GpsLocation.GetCurrentLocation">
+            <summary>
+            Get current GPS location.
             </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.HtmlHelper">

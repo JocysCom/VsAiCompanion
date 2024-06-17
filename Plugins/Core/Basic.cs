@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -29,17 +30,22 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Get the current system information: Current Date, OS Version, Architecture, Locale and Time Zone.
+		/// Get the current system information: Current Date, OS Version, Architecture, Locale, Time Zone and GPS Geo Location.
 		/// </summary>
 		[RiskLevel(RiskLevel.None)]
-		public static List<KeyValue> GetCurrentSystemInfo()
+		public async static Task<List<KeyValue>> GetCurrentSystemInfo()
 		{
+			var pos = await GpsLocation.GetCurrentLocation();
+
 			var list = new List<KeyValue>() {
 				new KeyValue("Current Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
 				new KeyValue("OS Version", Environment.OSVersion.VersionString),
 				new KeyValue("OS Architecture", Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit"),
 				new KeyValue("Locale", CultureInfo.CurrentCulture.Name),
 				new KeyValue("Time Zone", TimeZoneInfo.Local.DisplayName),
+				//new KeyValue("GPS Altitude", $"{pos.altitude}"),
+				//new KeyValue("GPS Latitude", $"{pos.latitude}"),
+				//new KeyValue("GPS Longitude", $"{pos.longitude}"),
 			};
 			return list;
 		}

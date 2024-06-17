@@ -31,8 +31,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Azure: Home / App registrations: Jocys.com AI Companion
 		/// </summary>
 		[DefaultValue("6786bf7e-0379-43e9-8ab6-c10326af0123")]
-		public string ClientAppId { get => _ClientAppId; set => SetProperty(ref _ClientAppId, value); }
-		private string _ClientAppId;
+		public string AppClientId { get => _AppClientId; set => SetProperty(ref _AppClientId, value); }
+		private string _AppClientId;
+
+		/// <summary>
+		/// Azure: Home / App registrations: Jocys.com AI Companion
+		/// </summary>
+		[DefaultValue(null)]
+		public string AppTenantId { get => _AppTenantId; set => SetProperty(ref _AppTenantId, value); }
+		private string _AppTenantId;
 
 		/// <summary>
 		/// Tenand ID of Microsoft Entra ID (formerly known as Azure Active Directory)

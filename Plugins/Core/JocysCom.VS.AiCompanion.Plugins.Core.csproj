@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -59,8 +59,14 @@
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.Net.Http" />
 		<PackageReference Include="System.Text.Json" Version="8.0.1" />
+		<Reference Include="System.Device" />
 	</ItemGroup>
 
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+	
+
+	</ItemGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 	</ItemGroup>
@@ -68,6 +74,7 @@
 	<ItemGroup>
 		<Folder Include="VideoInputDevices\" />
 	</ItemGroup>
+
 
 	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
 		<!-- Execute once for multiple builds -->
