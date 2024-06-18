@@ -24,10 +24,8 @@
 		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
 		<Platforms>AnyCPU</Platforms>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-		<!-- Set the target platform to Windows 10 -->
-		<TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-
+		<!-- Set the target platform to Windows -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
