@@ -26,6 +26,8 @@
 		<PlatformTarget>x64</PlatformTarget>
 		<Platforms>AnyCPU</Platforms>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
+		<!-- Set the target platform to Windows -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">

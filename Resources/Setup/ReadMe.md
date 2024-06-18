@@ -68,6 +68,16 @@ Import-Module -Name Az
 Get-InstalledModule -Name Az
 ```
 
+## Install SQL Server Command Line Tool
+
+```PowerShell
+# Check if the SQL Server module is installed
+Get-Module -Name SqlServer -ListAvailable
+
+# Install SQL Server module
+Install-Module -Name SqlServer -Force
+```
+
 ## Install Terraform
 
 1. Download the latest Terraform binary from the official website: [Terraform Downloads](https://www.terraform.io/downloads.html)

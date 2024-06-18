@@ -23,6 +23,8 @@
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<Platforms>AnyCPU</Platforms>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+		<!-- Set the target platform to Windows -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
