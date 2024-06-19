@@ -61,7 +61,7 @@
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.Net.Http" />
-		<PackageReference Include="System.Text.Json" Version="8.0.1" />
+		<PackageReference Include="System.Text.Json" Version="8.0.3" />
 		<Reference Include="System.Device" />
 	</ItemGroup>
 
