@@ -1,145 +1,210 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-	<sys:String x:Key="main_TasksTab_Help">Current AI tasks.</sys:String>
-	<sys:String x:Key="main_Region">Location / Region</sys:String>
-	<sys:String x:Key="main_ServiceType">ServiceType</sys:String>
+
+	<!--  [Tasks] / [Templates] tab  -->
 	<sys:String x:Key="main_TasksTab_Name">Tasks</sys:String>
+	<sys:String x:Key="main_TasksTab_Help">Current AI tasks.</sys:String>
+	<sys:String x:Key="main_Show_Instructions_TextBox_Name">Instructions</sys:String>
+	<sys:String x:Key="main_Show_Instructions_TextBox_Help">Show instructions text-box. Instructions will be included at the start of every message.</sys:String>
+	<sys:String x:Key="main_Show_Prompting_Toolbar_Name">Prompting</sys:String>
+	<sys:String x:Key="main_Show_Prompting_Toolbar_Help">Show 'Prompting' toolbar. Guide and shape the AI's output in your desired style. You can select a 'Prompt' category such as Tone, Format, Context, Role, or Instruction, and then choose an option within that category to define how the AI should approach the content creation.</sys:String>
+	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Name">Avatar</sys:String>
+	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Help">Show 'AI Avatar' window. When AI avatar is visible, app sends instruction message to use voice specified in 'Options' tab → 'AI Avatar' tab → 'Instructions' text-box.</sys:String>
+	<sys:String x:Key="main_Use_AI_Avatar_Voice_Name">Use Voice</sys:String>
+	<sys:String x:Key="main_Use_AI_Avatar_Voice_Help">AI responds with voices in addition to the text responses specified in 'Options' tab → 'AI Avatar' tab and 'AI Services' tab.</sys:String>
+	<sys:String x:Key="main_Send_Chat_History_Name">Send History</sys:String>
+	<sys:String x:Key="main_Send_Chat_History_Help">Sending chat history with a message ensures continuity and context in the conversation, leading to more accurate, relevant, and personalized responses.</sys:String>
+	<sys:String x:Key="main_Enable_Spell_Check_Name">Spell Check</sys:String>
+	<sys:String x:Key="main_Enable_Spell_Check_Help">Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</sys:String>
+	<sys:String x:Key="main_AI_reason_for_action">Reason given by AI for this action</sys:String>
+	<sys:String x:Key="main_Approval_Template">Approval Template</sys:String>
+	<sys:String x:Key="main_Approval_Type">Approval</sys:String>
+	<sys:String x:Key="main_Attachments">Attachments</sys:String>
+	<sys:String x:Key="main_Copy">Copy</sys:String>
+	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
+	<sys:String x:Key="main_Copy_Id_File_Name">Copy: Id, File Name</sys:String>
+	<sys:String x:Key="main_Copy_with_Headers">Copy with Headers</sys:String>
+	<sys:String x:Key="main_ClearMessages_Name">Clear Messages</sys:String>
+	<sys:String x:Key="main_ClearMessages_Help">Clear all chat messages.</sys:String>
+	<sys:String x:Key="main_Creativity">Creativity</sys:String>
+	<sys:String x:Key="main_Tasks_Main_Creativity_Slider">WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.</sys:String>
+
+	<!--  [Tasks] / [Templates] tab → [Main] tab  -->
+	<sys:String x:Key="main_Send_Task_on_Create_Name">Send on Create</sys:String>
+	<sys:String x:Key="main_Send_Task_on_Create_Help">Automatically send Task for processing to AI when Task is created from the Template.</sys:String>
+	<sys:String x:Key="main_Automation">Automation</sys:String>
+	<sys:String x:Key="main_Auto_Generate_Title">Auto-Generate Title</sys:String>
+	<sys:String x:Key="main_Auto_Generate_Title_Name">Generate Title</sys:String>
+	<sys:String x:Key="main_Auto_Generate_Title_Help">Use AI to automatically generate a Task title once.</sys:String>
+	<sys:String x:Key="main_Auto_Format_Message_Name">Markdown</sys:String>
+	<sys:String x:Key="main_Auto_Format_Message_Help">Use AI to automatically format your message using markdown.</sys:String>
+	<sys:String x:Key="main_Remove_Task_on_Complete_Name">Remove on Complete</sys:String>
+	<sys:String x:Key="main_Remove_Task_on_Complete_Help">Remove Task from 'Tasks' tab on complete.</sys:String>
+	<sys:String x:Key="main_Send_Message_Action_Name">Send Message Action</sys:String>
+	<sys:String x:Key="main_Send_Message_Action_Help">Do nothing, clear, or reset text in 'Message' text-box after sending the message.</sys:String>
+	<sys:String x:Key="main_Show_Template_Icon_in_Toolbar_Name">Show Icon in Toolbar</sys:String>
+	<sys:String x:Key="main_Show_Template_Icon_in_Toolbar_Help">Display the template button in the toolbar for quick task creation.</sys:String>
+	<sys:String x:Key="main_Use_Maximum_Context_Name">Use Maximum Context</sys:String>
+	<sys:String x:Key="main_Use_Maximum_Context_Help">If disabled, the user's message is limited to half of the available tokens. The other half of the tokens is reserved for the AI's response.</sys:String>
+	<sys:String x:Key="main_Use_System_Message_Name">Use System Messages</sys:String>
+	<sys:String x:Key="main_Use_System_Message_Help">If checked, instructions will be sent as a system message. Otherwise, they will be added to the user's message. This feature is supported by OpenAI GPT models. System messages have priority over user messages.</sys:String>
+	<sys:String x:Key="main_Pinned_Template_Task_Name">Pinned</sys:String>
+	<sys:String x:Key="main_Pinned_Template_Task_Help">Template/Task will be pinned at the beginning of Template/Task list. Template button will be pinned at the beginning of Template toolbar.</sys:String>
+	<sys:String x:Key="main_Auto_Markdown">Auto Markdown</sys:String>
+	<sys:String x:Key="main_Call_function_request_denied">The request to call the function was denied!</sys:String>
+
+	<!--  [Fine-Tuning] tab  -->
 	<sys:String x:Key="main__1_Assistants">1. Assistants</sys:String>
 	<sys:String x:Key="main__1_Source_Files">1. Source Files</sys:String>
 	<sys:String x:Key="main__2_Tuning_Files">2. Tuning Files</sys:String>
 	<sys:String x:Key="main__3_Remote_Files">3. Remote Files</sys:String>
 	<sys:String x:Key="main__4_Tuning_Jobs">4. Tuning Jobs</sys:String>
 	<sys:String x:Key="main__5_Models">5. Models</sys:String>
-	<sys:String x:Key="main_AI_reason_for_action">Reason given by AI for this action</sys:String>
-	<sys:String x:Key="main_Account">Account</sys:String>
-	<sys:String x:Key="main_ActivationDate">Activation Date</sys:String>
-	<sys:String x:Key="main_ExpirationDate">Expiration Date</sys:String>
-	<sys:String x:Key="main_Add">Add...</sys:String>
-	<sys:String x:Key="main_Add_New">Add New</sys:String>
-	<sys:String x:Key="main_AI_Models">AI Models</sys:String>
-	<sys:String x:Key="main_AI_Avatar">AI Avatar</sys:String>
-	<sys:String x:Key="main_AI_Services">AI Services</sys:String>
-	<sys:String x:Key="main_Allow_Only_One_Copy">Allow Only One Copy</sys:String>
-	<sys:String x:Key="main_Allowed_Recipients">Allowed Recipients (Outgoing Email)</sys:String>
-	<sys:String x:Key="main_Allowed_Senders">Allowed Senders (Incomming Email)</sys:String>
-	<sys:String x:Key="main_API_Base_URL">API Base URL / Endpoint</sys:String>
-	<sys:String x:Key="main_API_Key">API Key</sys:String>
-	<sys:String x:Key="main_API_Organization_ID">API Organization ID</sys:String>
-	<sys:String x:Key="main_App_Always_on_Top">App Always on Top</sys:String>
-	<sys:String x:Key="main_Always_on_Top">Always on Top</sys:String>
-	<sys:String x:Key="main_AvatarPanel_Help">An AI Avatar for interaction with the user, featuring GPT-4 self-portrait drawn with DALL-E. It utilizes Microsoft Neural Voices for realistic speech output, along with visemes and blend shapes to animate facial expressions. The AI models are capable of expressing emotions through the use of Speech Synthesis Markup Language (SSML).</sys:String>
-	<sys:String x:Key="main_Approval_Template">Approval Template</sys:String>
-	<sys:String x:Key="main_Approval_Type">Approval</sys:String>
-	<sys:String x:Key="main_Attachments">Attachments</sys:String>
-	<sys:String x:Key="main_Auto_Generate_Title">Auto-Generate Title</sys:String>
-	<sys:String x:Key="main_Auto_Markdown">Auto Markdown</sys:String>
-	<sys:String x:Key="main_Automation">Automation</sys:String>
-	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>
-	<sys:String x:Key="main_AvatarItem_Message">Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</sys:String>
-	<sys:String x:Key="main_AvatarItem_Instructions">Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</sys:String>
-	<sys:String x:Key="main_Bar_Always_on_Top">Bar Always on Top</sys:String>
-	<sys:String x:Key="main_Browse">Browse...</sys:String>
 	<sys:String x:Key="main_Bytes">Bytes</sys:String>
-	<sys:String x:Key="main_Cache_audio_data">Use cached audio data</sys:String>
-	<sys:String x:Key="main_Call_function_request_denied">The request to call the function was denied!</sys:String>
 	<sys:String x:Key="main_Cancel">Cancel</sys:String>
 	<sys:String x:Key="main_Cancel_Job">Cancel Job</sys:String>
-	<sys:String x:Key="main_Changes">Changes</sys:String>
-	<sys:String x:Key="main_Chat">Chat</sys:String>
-	<sys:String x:Key="main_Chat_Instructions">Chat_Instructions</sys:String>
-	<sys:String x:Key="main_Comment">Comment</sys:String>
-	<sys:String x:Key="main_Company_Product">Company Product</sys:String>
-	<sys:String x:Key="main_Context_Options">Context</sys:String>
-	<sys:String x:Key="main_Copy">Copy</sys:String>
-	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
-	<sys:String x:Key="main_Copy_Id_File_Name">Copy: Id, File Name</sys:String>
-	<sys:String x:Key="main_Copy_with_Headers">Copy with Headers</sys:String>
-	<sys:String x:Key="main_Clear">Clear</sys:String>
-	<sys:String x:Key="main_ClearVaultItem_Name">Clear Vault Item Button</sys:String>
-	<sys:String x:Key="main_ClearVaultItem_Help">Clear Vault Item data</sys:String>
-	<sys:String x:Key="main_ClearMessages_Name">Clear Messages</sys:String>
-	<sys:String x:Key="main_ClearMessages_Help">Clear all chat messages.</sys:String>
-	<sys:String x:Key="main_Create">Create</sys:String>
-	<sys:String x:Key="main_Create_a_Job_and_Model_from_File">Create a Job and Model from File</sys:String>
-	<sys:String x:Key="main_Create_an_Assistant_Task_from_Model">Create an Assistant Task from Model</sys:String>
-	<sys:String x:Key="main_Created">Created</sys:String>
-	<sys:String x:Key="main_Creativity">Creativity</sys:String>
-	<sys:String x:Key="main_Tasks_Main_Creativity_Slider">WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.</sys:String>
-	<sys:String x:Key="main_Data">Data</sys:String>
-	<sys:String x:Key="main_Data_Folder">Data Folder</sys:String>
-	<sys:String x:Key="main_Database">Database</sys:String>
-	<sys:String x:Key="main_Date">Date</sys:String>
-	<sys:String x:Key="main_Default_AI_Model">Default AI Model</sys:String>
-	<sys:String x:Key="main_Delete">Delete</sys:String>
-	<sys:String x:Key="main_Description">Description</sys:String>
 	<sys:String x:Key="main_Details">Details</sys:String>
-	<sys:String x:Key="main_Developer">Developer</sys:String>
-	<sys:String x:Key="main_Disable_All">Disable All</sys:String>
-	<sys:String x:Key="main_Document">Document</sys:String>
-	<sys:String x:Key="main_Edit">Edit</sys:String>
-	<sys:String x:Key="main_Email_Address">Email Address</sys:String>
-	<sys:String x:Key="main_Email_Name">Email Name</sys:String>
-	<sys:String x:Key="main_Embedding_Default_Instructions">
-		"Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile.
-		Use only the contents from these documents to answer questions."
-	</sys:String>
-	<sys:String x:Key="main_Embeddings_Feature_Description">Embeddings allow to search for content based on its meaning. AI can utilize embeddings to find relevant information and files.</sys:String>
-	<sys:String x:Key="main_Enable_FormInfo">Enable Form Info (CTRL+SHIFT+RMB)</sys:String>
-	<sys:String x:Key="main_Enable_All">Enable All</sys:String>
-	<sys:String x:Key="main_Enable_Low_Risk">Enable Low Risk</sys:String>
-	<sys:String x:Key="main_Enable_Medium_Risk">Enable Medium Risk</sys:String>
-	<sys:String x:Key="main_Enabled">Enabled</sys:String>
-	<sys:String x:Key="main_Environment">Environment</sys:String>
-	<sys:String x:Key="main_Exclude_Patterns">Exclude Patterns</sys:String>
-	<sys:String x:Key="main_FavoriteVoicesTabItem_Text">Favorite Voices</sys:String>
-	<sys:String x:Key="main_FavoriteVoicesTabItem_Help">Check your favorite voices to be used by the AI for different regions or languages.</sys:String>
 	<sys:String x:Key="main_File_Name">File Name</sys:String>
-	<sys:String x:Key="main_Files">Files</sys:String>
-	<sys:String x:Key="main_Format_Code">Format Code</sys:String>
-	<sys:String x:Key="main_Gender">Gender</sys:String>
-	<sys:String x:Key="main_GitHub_Project">GitHub Project</sys:String>
-	<sys:String x:Key="main_Global_Instructions">Global Instructions</sys:String>
-	<sys:String x:Key="main_Help">Help</sys:String>
-	<sys:String x:Key="main_IconExperience_License">IconExperience License</sys:String>
-	<sys:String x:Key="main_Id">Id</sys:String>
-	<sys:String x:Key="main_IMAP_Host">IMAP Host</sys:String>
+	<sys:String x:Key="main_Owner">Owner</sys:String>
+
+	<!--  [Embeddings] tab  -->
+	<sys:String x:Key="main_Database">Database</sys:String>
+	<sys:String x:Key="main_Embedding_Default_Instructions">"Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile. Use only the contents from these documents to answer questions."</sys:String>
+	<sys:String x:Key="main_Embeddings_Feature_Description">Embeddings allow to search for content based on its meaning. AI can utilize embeddings to find relevant information and files.</sys:String>
+	<sys:String x:Key="main_Exclude_Patterns">Exclude Patterns</sys:String>
 	<sys:String x:Key="main_Include_Patterns">Include Patterns</sys:String>
-	<sys:String x:Key="main_Instructions">Instructions</sys:String>
-	<sys:String x:Key="main_Is_Azure_OpenAI">Is Azure OpenAI</sys:String>
-	<sys:String x:Key="main_Is_Default_AI_Service">Is Default AI Service</sys:String>
-	<sys:String x:Key="main_Jocys_com_Label">Jocys.com</sys:String>
+
+	<!--  [Lists] tab  -->
+	<sys:String x:Key="main_Comment">Comment</sys:String>
 	<sys:String x:Key="main_Key">Key</sys:String>
-	<sys:String x:Key="main_License">License</sys:String>
 	<sys:String x:Key="main_List_Description">Description of the list for user information purposes only</sys:String>
 	<sys:String x:Key="main_List_Instructions">AI instructions that will be sent with this list.</sys:String>
 	<sys:String x:Key="main_List_IsEnabled">Allow to send this list to AI.</sys:String>
 	<sys:String x:Key="main_List_IsReadOnly">Prevent AI from modifying this list.</sys:String>
 	<sys:String x:Key="main_Lists_Feature_Description">Lists allow you to personalize interactions and ensure more relevant, context-aware responses, which greatly improves the user experience. AI can also manage different types of lists, such as task lists, to-do lists, progress tracking, and completion lists.</sys:String>
-	<sys:String x:Key="main_Locale">Locale</sys:String>
-	<sys:String x:Key="main_Log">Log</sys:String>
+
+	<!--  [Plugins] tab  -->
+	<sys:String x:Key="main_Disable_All">Disable All</sys:String>
+	<sys:String x:Key="main_Enable_All">Enable All</sys:String>
+	<sys:String x:Key="main_Enable_Low_Risk">Enable Low Risk</sys:String>
+	<sys:String x:Key="main_Enable_Medium_Risk">Enable Medium Risk</sys:String>
+
+	<!--  [Options] tab → [Main] tab  -->
+	<sys:String x:Key="main_Allow_Only_One_Copy">Allow Only One Copy</sys:String>
+	<sys:String x:Key="main_App_Always_on_Top">App Always on Top</sys:String>
+	<sys:String x:Key="main_Bar_Always_on_Top">Bar Always on Top</sys:String>
+	<sys:String x:Key="main_Developer">Developer</sys:String>
+	<sys:String x:Key="main_Enable_FormInfo">Enable Form Info (CTRL+SHIFT+RMB)</sys:String>
 	<sys:String x:Key="main_LogHttp">Log HTTP Messages</sys:String>
+	<sys:String x:Key="main_Minimize_on_Close">Minimize on Close</sys:String>
+	<sys:String x:Key="main_Minimize_to_Tray">Minimize to Tray</sys:String>
+	<sys:String x:Key="main_Other">Other</sys:String>
+
+	<!--  [Options] tab → [Microsoft Account] tab → [Azure Key Vault Items] tab  -->
 	<sys:String x:Key="main_Microsoft_Account">Microsoft Account</sys:String>
+	<sys:String x:Key="main_ActivationDate">Activation Date</sys:String>
+	<sys:String x:Key="main_ExpirationDate">Expiration Date</sys:String>
+	<sys:String x:Key="main_ClearVaultItem_Name">Clear Vault Item Button</sys:String>
+	<sys:String x:Key="main_ClearVaultItem_Help">Clear Vault Item data</sys:String>
+
+	<!--  [Options] tab → [AI Services] tab  -->
+	<sys:String x:Key="main_AI_Services">AI Services</sys:String>
+	<sys:String x:Key="main_Region">Location / Region</sys:String>
+	<sys:String x:Key="main_ServiceType">ServiceType</sys:String>
+	<sys:String x:Key="main_API_Base_URL">API Base URL / Endpoint</sys:String>
+	<sys:String x:Key="main_API_Key">API Key</sys:String>
+	<sys:String x:Key="main_API_Organization_ID">API Organization ID</sys:String>
+	<sys:String x:Key="main_Default_AI_Model">Default AI Model</sys:String>
+	<sys:String x:Key="main_Is_Azure_OpenAI">Is Azure OpenAI</sys:String>
+	<sys:String x:Key="main_Is_Default_AI_Service">Is Default AI Service</sys:String>
+	<sys:String x:Key="main_Model_Filter">Model Filter</sys:String>
+
+	<!--  [Options] tab → [AI Models] tab  -->
+	<sys:String x:Key="main_AI_Models">AI Models</sys:String>
+	<sys:String x:Key="main_Max_Input_Tokens">Max Input Tokens</sys:String>
+	<sys:String x:Key="main_Model">Model</sys:String>
+
+	<!--  [Options] tab → [Mail Accounts] tab  -->
+	<sys:String x:Key="main_Allowed_Recipients">Allowed Recipients (Outgoing Email)</sys:String>
+	<sys:String x:Key="main_Allowed_Senders">Allowed Senders (Incomming Email)</sys:String>
+	<sys:String x:Key="main_Email_Address">Email Address</sys:String>
+	<sys:String x:Key="main_Email_Name">Email Name</sys:String>
+	<sys:String x:Key="main_IMAP_Host">IMAP Host</sys:String>
 	<sys:String x:Key="main_MaiAccounts_Feature_Description">AI Mailbox for Communication</sys:String>
 	<sys:String x:Key="main_Mail">Mail</sys:String>
 	<sys:String x:Key="main_Mail_Accounts">Mail Accounts</sys:String>
-	<sys:String x:Key="main_Main">Main</sys:String>
+	<sys:String x:Key="main_Password">Password</sys:String>
+
+	<!--  [Options] tab → [Context] tab  -->
+	<sys:String x:Key="main_Chat">Chat</sys:String>
+	<sys:String x:Key="main_Chat_Instructions">Chat_Instructions</sys:String>
+	<sys:String x:Key="main_Context_Options">Context</sys:String>
+	<sys:String x:Key="main_Files">Files</sys:String>
+	<sys:String x:Key="main_Global_Instructions">Global Instructions</sys:String>
+
+	<!--  [Options] tab → [AI Avatar] tab  -->
+	<sys:String x:Key="main_AI_Avatar">AI Avatar</sys:String>
+	<sys:String x:Key="main_AvatarPanel_Help">An AI Avatar for interaction with the user, featuring GPT-4 self-portrait drawn with DALL-E. It utilizes Microsoft Neural Voices for realistic speech output, along with visemes and blend shapes to animate facial expressions. The AI models are capable of expressing emotions through the use of Speech Synthesis Markup Language (SSML).</sys:String>
+	<sys:String x:Key="main_Always_on_Top">Always on Top</sys:String>
+	<sys:String x:Key="main_AvatarItem_Message">Thank you for the opportunity to introduce myself through speech. If there's anything specific you would like to know or need help with, feel free to ask!</sys:String>
+	<sys:String x:Key="main_AvatarItem_Instructions">Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</sys:String>
+	<sys:String x:Key="main_Cache_audio_data">Use cached audio data</sys:String>
+	<sys:String x:Key="main_FavoriteVoicesTabItem_Text">Favorite Voices</sys:String>
+	<sys:String x:Key="main_FavoriteVoicesTabItem_Help">Check your favorite voices to be used by the AI for different regions or languages.</sys:String>
+	<sys:String x:Key="main_Gender">Gender</sys:String>
+	<sys:String x:Key="main_Locale">Locale</sys:String>
+	<sys:String x:Key="main_Play">Play</sys:String>
+
+	<!--  [Options] tab → [Reset Settings] tab  -->
+
+	<!--  [About] tab  -->
+	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>
+	<sys:String x:Key="main_Changes">Changes</sys:String>
+	<sys:String x:Key="main_Company_Product">Company Product</sys:String>
+	<sys:String x:Key="main_GitHub_Project">GitHub Project</sys:String>
+	<sys:String x:Key="main_IconExperience_License">IconExperience License</sys:String>
+	<sys:String x:Key="main_Jocys_com_Label">Jocys.com</sys:String>
+	<sys:String x:Key="main_License">License</sys:String>
 	<sys:String x:Key="main_Market_Place">Market Place</sys:String>
-	<sys:String x:Key="main_Max_Input_Tokens">Max Input Tokens</sys:String>
-	<sys:String x:Key="main_Maximum_Risk_Level">Max Risk Level</sys:String>
+
+	<!--  Multiple tabs  -->
+	<sys:String x:Key="main_Add">Add...</sys:String>
+	<sys:String x:Key="main_Add_New">Add New</sys:String>
+	<sys:String x:Key="main_Browse">Browse...</sys:String>
+	<sys:String x:Key="main_Clear">Clear</sys:String>
+	<sys:String x:Key="main_Create">Create</sys:String>
+	<sys:String x:Key="main_Created">Created</sys:String>
+	<sys:String x:Key="main_Data">Data</sys:String>
+	<sys:String x:Key="main_Data_Folder">Data Folder</sys:String>
+	<sys:String x:Key="main_Delete">Delete</sys:String>
+	<sys:String x:Key="main_Description">Description</sys:String>
+	<sys:String x:Key="main_Edit">Edit</sys:String>
+	<sys:String x:Key="main_Enabled">Enabled</sys:String>
+	<sys:String x:Key="main_Help">Help</sys:String>
+	<sys:String x:Key="main_Id">Id</sys:String>
+	<sys:String x:Key="main_Instructions">Instructions</sys:String>
+	<sys:String x:Key="main_Log">Log</sys:String>
+	<sys:String x:Key="main_Main">Main</sys:String>
 	<sys:String x:Key="main_Message">Message</sys:String>
-	<sys:String x:Key="main_Minimize_on_Close">Minimize on Close</sys:String>
-	<sys:String x:Key="main_Minimize_to_Tray">Minimize to Tray</sys:String>
-	<sys:String x:Key="main_Model">Model</sys:String>
-	<sys:String x:Key="main_Model_Filter">Model Filter</sys:String>
 	<sys:String x:Key="main_ModelRefreshButton_ToolTip">Click to refresh models. Use CTRL+Click to set manually.</sys:String>
 	<sys:String x:Key="main_Multimedia">Multimedia</sys:String>
 	<sys:String x:Key="main_Name">Name</sys:String>
 	<sys:String x:Key="main_Object">Object</sys:String>
 	<sys:String x:Key="main_Open">Open...</sys:String>
 	<sys:String x:Key="main_Open_File">Open File</sys:String>
-	<sys:String x:Key="main_Other">Other</sys:String>
-	<sys:String x:Key="main_Owner">Owner</sys:String>
-	<sys:String x:Key="main_Password">Password</sys:String>
-	<sys:String x:Key="main_Play">Play</sys:String>
+
+	<!--  ???  -->
+	<sys:String x:Key="main_Account">Account</sys:String>
+	<sys:String x:Key="main_Date">Date</sys:String>
+	<sys:String x:Key="main_Document">Document</sys:String>
+	<sys:String x:Key="main_Environment">Environment</sys:String>
+	<sys:String x:Key="main_Format_Code">Format Code</sys:String>
+	<sys:String x:Key="main_Maximum_Risk_Level">Max Risk Level</sys:String>
+
+	<!--  N/A  -->
+	<sys:String x:Key="main_Create_a_Job_and_Model_from_File">Create a Job and Model from File</sys:String>
+	<sys:String x:Key="main_Create_an_Assistant_Task_from_Model">Create an Assistant Task from Model</sys:String>
+
+
 	<sys:String x:Key="main_Paste">Paste</sys:String>
 	<sys:String x:Key="main_Path">Path</sys:String>
 	<sys:String x:Key="main_Personalize_the_chat">Personalize the chat by providing personalized context. You can create and edit context lists on the [Lists] tab.</sys:String>
@@ -176,39 +241,6 @@
 	<sys:String x:Key="main_Select_AI_Model">Please select AI Model.</sys:String>
 	<sys:String x:Key="main_Select_AI_Service_from_Menu">Please select AI Service from the dropdown menu.</sys:String>
 	<sys:String x:Key="main_Send_as_System_Messages">Send as System Messages</sys:String>
-	<!--  Tasks Tab / Templates Tab  -->
-	<sys:String x:Key="main_Show_Instructions_TextBox_Name">Instructions</sys:String>
-	<sys:String x:Key="main_Show_Instructions_TextBox_Help">Show instructions text-box. Instructions will be included at the start of every message.</sys:String>
-	<sys:String x:Key="main_Show_Prompting_Toolbar_Name">Prompting</sys:String>
-	<sys:String x:Key="main_Show_Prompting_Toolbar_Help">Show 'Prompting' toolbar. Guide and shape the AI's output in your desired style. You can select a 'Prompt' category such as Tone, Format, Context, Role, or Instruction, and then choose an option within that category to define how the AI should approach the content creation.</sys:String>
-	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Name">Avatar</sys:String>
-	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Help">Show 'AI Avatar' window. When AI avatar is visible, app sends instruction message to use voice specified in 'Options' tab → 'AI Avatar' tab → 'Instructions' text-box.</sys:String>
-	<sys:String x:Key="main_Use_AI_Avatar_Voice_Name">Use Voice</sys:String>
-	<sys:String x:Key="main_Use_AI_Avatar_Voice_Help">AI responds with voices in addition to the text responses specified in 'Options' tab → 'AI Avatar' tab and 'AI Services' tab.</sys:String>
-	<sys:String x:Key="main_Send_Chat_History_Name">Send History</sys:String>
-	<sys:String x:Key="main_Send_Chat_History_Help">Sending chat history with a message ensures continuity and context in the conversation, leading to more accurate, relevant, and personalized responses.</sys:String>
-	<sys:String x:Key="main_Enable_Spell_Check_Name">Spell Check</sys:String>
-	<sys:String x:Key="main_Enable_Spell_Check_Help">Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</sys:String>
-	<!--  Tasks tab / Templates tab → Main tab  -->
-	<sys:String x:Key="main_Send_Task_on_Create_Name">Send on Create</sys:String>
-	<sys:String x:Key="main_Send_Task_on_Create_Help">Automatically send Task for processing to AI when Task is created from the Template.</sys:String>
-	<sys:String x:Key="main_Auto_Generate_Title_Name">Generate Title</sys:String>
-	<sys:String x:Key="main_Auto_Generate_Title_Help">Use AI to automatically generate a Task title once.</sys:String>
-	<sys:String x:Key="main_Auto_Format_Message_Name">Markdown</sys:String>
-	<sys:String x:Key="main_Auto_Format_Message_Help">Use AI to automatically format your message using markdown.</sys:String>
-	<sys:String x:Key="main_Remove_Task_on_Complete_Name">Remove on Complete</sys:String>
-	<sys:String x:Key="main_Remove_Task_on_Complete_Help">Remove Task from 'Tasks' tab on complete.</sys:String>
-	<sys:String x:Key="main_Send_Message_Action_Name">Send Message Action</sys:String>
-	<sys:String x:Key="main_Send_Message_Action_Help">Do nothing, clear, or reset text in 'Message' text-box after sending the message.</sys:String>
-	<sys:String x:Key="main_Show_Template_Icon_in_Toolbar_Name">Show Icon in Toolbar</sys:String>
-	<sys:String x:Key="main_Show_Template_Icon_in_Toolbar_Help">Display the template button in the toolbar for quick task creation.</sys:String>
-	<sys:String x:Key="main_Use_Maximum_Context_Name">Use Maximum Context</sys:String>
-	<sys:String x:Key="main_Use_Maximum_Context_Help">If disabled, the user's message is limited to half of the available tokens. The other half of the tokens is reserved for the AI's response.</sys:String>
-	<sys:String x:Key="main_Use_System_Message_Name">Use System Messages</sys:String>
-	<sys:String x:Key="main_Use_System_Message_Help">If checked, instructions will be sent as a system message. Otherwise, they will be added to the user's message. This feature is supported by OpenAI GPT models. System messages have priority over user messages.</sys:String>
-	<sys:String x:Key="main_Pinned_Template_Task_Name">Pinned</sys:String>
-	<sys:String x:Key="main_Pinned_Template_Task_Help">Template/Task will be pinned at the beginning of Template/Task list. Template button will be pinned at the beginning of Template toolbar.</sys:String>
-
 	<sys:String x:Key="main_Send_on_Create">Send on Create</sys:String>
 	<sys:String x:Key="main_Sending_Message">Sending Message</sys:String>
 	<sys:String x:Key="main_Server_Host">Server Host</sys:String>
