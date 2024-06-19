@@ -19,8 +19,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public Func<string, string[], Task<OperationResult<string>>> VideoToText { get; set; }
 
 		/// <summary>
-		/// Analyzes image files or URLs as per given instructions with an AI model. Can analyse image files on user computer.
-		/// This function is specifically designed for analyzing visual content such as pictures and photographs.
+		/// Analyzes visual content such as pictures and photographs per given instructions with an AI model. Don't use this function with text files.
 		/// </summary>
 		/// <param name="instructions">Guidelines for AI to follow during image analysis.</param>
 		/// <param name="pathsOrUrls">Paths to local files or URLs to images for analysis.</param>

@@ -290,21 +290,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
 				var vectors = results[0];
 				Log += "Searching on database...";
-				if (SqlInitHelper.IsPortable(item.Target))
+				var useClr = false;
+				var isPortable = SqlInitHelper.IsPortable(item.Target);
+				if (!isPortable)
 				{
-					var ids = await SqlInitHelper.GetSimilarFileEmbeddings(connectionString, item.EmbeddingGroupName, groupFlag, vectors, item.Take);
-					FileParts = db.FileParts
-						.Where(x => ids.Contains(x.Id))
-						.ToList()
-						.OrderBy(x => ids.IndexOf(x.Id))
-						.ToList();
+					var connection = SqlInitHelper.NewConnection(connectionString);
+					await connection.OpenAsync();
+					useClr = !SqlInitHelper.IsAzureSQL(connection);
+					connection.Close();
 				}
-				else
+				if (useClr)
 				{
 					FileParts = await db.sp_getSimilarFileParts(
 						item.EmbeddingGroupName, (long)groupFlag,
 						vectors, skip, take, cancellationToken
 					);
+				}
+				else
+				{
+					var ids = await SqlInitHelper.GetSimilarFileEmbeddings(isPortable, connectionString, item.EmbeddingGroupName, groupFlag, vectors, item.Take);
+					FileParts = db.FileParts
+						.Where(x => ids.Contains(x.Id))
+						.ToList()
+						.OrderBy(x => ids.IndexOf(x.Id))
+						.ToList();
 				}
 				var fileIds = FileParts.Select(x => x.FileId).Distinct().ToArray();
 				Files = db.Files.Where(x => fileIds.Contains(x.Id)).ToList();

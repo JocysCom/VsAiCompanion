@@ -1,0 +1,25 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- script: |
+    $modules = @('Az', 'SqlServer')
+    foreach ($module in $modules) {
+        if (-not (Get-Module -Name $module -ListAvailable)) {
+            Install-Module -Name $module -Force -Scope CurrentUser
+        }
+        else {
+            Update-Module -Name $module
+        }
+    }
+  displayName: 'Install PowerShell Modules'
+  pwsh: true
+
+- script: |
+    terraform init
+    terraform apply -auto-approve
+  displayName: 'Run Terraform'
+  pwsh: true
