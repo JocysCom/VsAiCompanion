@@ -48,7 +48,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<PackageReference Include="EntityFramework" Version="6.4.4" />
+		<PackageReference Include="EntityFramework" Version="6.5.1" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
 		<PackageReference Include="System.Data.SQLite.EF6" Version="1.0.118" />
 	</ItemGroup>

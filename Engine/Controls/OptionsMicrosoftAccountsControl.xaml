@@ -6,6 +6,7 @@
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
 	d:DesignHeight="600"
 	d:DesignWidth="800"
@@ -40,17 +41,30 @@
 					Text="{StaticResource main_Vaults_Feature_Description}"
 					TextWrapping="Wrap" />
 			</Border>
-			<GroupBox Grid.Column="0" Margin="3,5,0,3" Header="{StaticResource main_Microsoft_Account}">
-				<StackPanel Margin="3" Orientation="Horizontal">
-					<Button Name="SignInButton" HorizontalAlignment="Stretch" Click="SignInButton_Click">
+			<GroupBox Grid.Column="0" Margin="5" Header="{StaticResource main_Microsoft_Account}">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Button
+						Name="SignInButton"
+						Grid.Row="0"
+						HorizontalAlignment="Stretch"
+						Click="SignInButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_user_blue}" Focusable="False" />
 							<Label MinWidth="52" Content="{StaticResource main_SignIn}" />
 						</StackPanel>
 					</Button>
-
 					<Button
 						Name="SignOutButton"
+						Grid.Row="1"
 						HorizontalAlignment="Stretch"
 						Click="SignOutButton_Click"
 						IsEnabled="{Binding UserIsSigned, ElementName=This}">
@@ -59,7 +73,25 @@
 							<Label MinWidth="52" Content="{StaticResource main_SignOut}" />
 						</StackPanel>
 					</Button>
-				</StackPanel>
+					<Label Grid.Row="0" Grid.Column="1" Content="Application (client) ID" />
+					<TextBox
+						Grid.Row="0"
+						Grid.Column="2"
+						MinWidth="256"
+						IsReadOnly="True"
+						SpellCheck.IsEnabled="True"
+						Text="{Binding AppClientId, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<Label Grid.Row="1" Grid.Column="1" Content="Directory (tenant) ID" />
+					<TextBox
+						Grid.Row="1"
+						Grid.Column="2"
+						MinWidth="256"
+						IsReadOnly="True"
+						SpellCheck.IsEnabled="True"
+						Text="{Binding AppTenantId, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				</Grid>
+
+
 			</GroupBox>
 			<!--  New GroupBox for Azure Key Vault inputs  -->
 			<GroupBox
@@ -107,17 +139,11 @@
 			</GroupBox>
 
 		</StackPanel>
-
-
-
-
-
-
 		<GroupBox
 			x:Name="TestGroupBox"
 			Grid.Row="1"
 			Grid.ColumnSpan="2"
-			Margin="3,0,3,0"
+			Margin="5"
 			HorizontalAlignment="Stretch"
 			Header="{StaticResource main_Test}">
 			<Grid>

@@ -13,6 +13,7 @@ using JocysCom.VS.AiCompanion.DataClient.Common;
 
 
 
+
 #if NETFRAMEWORK
 using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Data.Entity;
@@ -74,17 +75,21 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			// Empty file will be created at this point if not exists.
 			connection.Open();
 			var success = true;
+			var addCLR = !isPortable && !IsAzureSQL(connection);
 			if (!isPortable)
 			{
 				success &= CreateSchema("Embedding", connection);
-				success &= CreateAssembly("DataFunctions", connection);
-				success &= CreateFunction("CosineSimilarity", connection);
+				if (addCLR)
+				{
+					success &= CreateAssembly("DataFunctions", connection);
+					success &= CreateFunction("CosineSimilarity", connection);
+				}
 			}
 			success &= CreateTable(nameof(File), connection);
 			success &= CreateTable(nameof(FilePart), connection);
 			success &= CreateTable(nameof(Embeddings.Embedding.Group), connection);
 			success &= RunScript("Update_1", connection, isPortable);
-			if (!isPortable)
+			if (addCLR)
 			{
 				success &= CreateProcedure("sp_getMostSimilarFiles", connection);
 				success &= CreateProcedure("sp_getSimilarFileParts", connection);
@@ -92,6 +97,21 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			}
 			connection.Close();
 			return success;
+		}
+
+		/// <summary>
+		/// Return true if Azure SQL and don't support CLR.
+		/// Managed SQL instances support CLR.
+		/// </summary>
+		/// <returns></returns>
+		public static bool IsAzureSQL(DbConnection connection)
+		{
+			// 1 = Desktop, 2 = Standard, 3 = Enterprise, 4 = Express, 5 = SQL Azure
+			var commandText = $"SELECT SERVERPROPERTY('EngineEdition')";
+			var command = NewCommand(commandText, connection);
+			var result = command.ExecuteScalar();
+			var isAzureSQL = result?.ToString() == "5";
+			return isAzureSQL;
 		}
 
 		public static bool CreateTable(string name, DbConnection connection)
@@ -365,18 +385,22 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		}
 
 		public static async Task<List<long>> GetSimilarFileEmbeddings(
+		bool isPortable,
 		string connectionString,
 		string groupName,
 		EmbeddingGroupFlag groupFlag,
 		float[] promptVectors, int take)
 		{
-			var commandText = $@"
+			var filePartTable = isPortable ? "FilePart" : "[Embedding].[FilePart]";
+			var fileTable = isPortable ? "File" : "[Embedding].[File]";
+			var commandText =
+				$@"
         SELECT
             fp.Id,
             fp.FileId,
             fp.Embedding
-        FROM FilePart AS fp
-        JOIN File AS f ON f.Id = fp.FileId
+        FROM {filePartTable} AS fp
+        JOIN {fileTable} AS f ON f.Id = fp.FileId
         WHERE (@GroupName = '' OR @GroupName = f.GroupName)
         AND (@GroupFlag = 0 OR (@GroupFlag & fp.GroupFlag) > 0)
         AND fp.IsEnabled = 1
