@@ -1090,16 +1090,26 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					SparkCanvas.Children.Add(grid);
 
 					// Create Grid moving along the path animation.
-					var animationPath = new MatrixAnimationUsingPath
+					if (canvas == SparksBrownCanvas)
 					{
-						RepeatBehavior = RepeatBehavior.Forever,
-						BeginTime = startRandom,
-						Duration = TimeSpan.FromMilliseconds(duration),
-						PathGeometry = PathGeometry.CreateFromGeometry(path.Data),
+						var pathNumbers = ExtractNumbersFromPathData(path.Data);
+						Canvas.SetLeft(grid, pathNumbers[0]);
+						Canvas.SetTop(grid, pathNumbers[1]);
+					}
+					else
+					{
+						// Create Grid moving along the path animation.
+						var animationPath = new MatrixAnimationUsingPath
+						{
+							RepeatBehavior = RepeatBehavior.Forever,
+							BeginTime = startRandom,
+							Duration = TimeSpan.FromMilliseconds(duration),
+							PathGeometry = PathGeometry.CreateFromGeometry(path.Data),
+						};
+						Storyboard.SetTarget(animationPath, grid);
+						Storyboard.SetTargetProperty(animationPath, new PropertyPath("(UIElement.RenderTransform).(MatrixTransform.Matrix)"));
+						storyboardBackground.Children.Add(animationPath);
 					};
-					Storyboard.SetTarget(animationPath, grid);
-					Storyboard.SetTargetProperty(animationPath, new PropertyPath("(UIElement.RenderTransform).(MatrixTransform.Matrix)"));
-					storyboardBackground.Children.Add(animationPath);
 
 					// Create Image.
 					var image = new Image
