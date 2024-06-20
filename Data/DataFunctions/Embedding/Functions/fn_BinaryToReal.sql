@@ -21,21 +21,15 @@ BEGIN
 	SELECT  @r1 as r1, @r2 AS r2, @r3 as r3
 	*/
 
-    DECLARE @Int32 INT = CAST(@value AS INT)
-	
-    -- Reverse byte order (C# little-endian).
+	-- Reverse byte order (C# little-endian).
 	IF @littleEndian = 1
-	BEGIN
-		SET @Int32 = 
-			 (((@Int32 & 0x7F000000) / 0x1000000)
-			+ ((@Int32 & 0x00FF0000) / 0x100)
-			+ ((@Int32 & 0x0000FF00) * 0x100)
-			+ ((@Int32 & 0x0000007F) * 0x1000000))
-			-- Restore first bit of first and last byte.
-			+ (0x80000000 * ((@Int32 & 0x80) / 0x80))
-			+ (0x80 * ((@Int32 & 0x80000000) / 0x80000000))	
-		SET @value = CAST(@Int32 AS BINARY(4))
-	END
+		SET @value  = 
+		SUBSTRING(@value, 4, 1) +
+		SUBSTRING(@value, 3, 1) +
+		SUBSTRING(@value, 2, 1) +
+		SUBSTRING(@value, 1, 1)
+
+    DECLARE @Int32 INT = CAST(@value AS INT)
 
     -- IEEE 754 Single Precision binary to float
     -- Layout:

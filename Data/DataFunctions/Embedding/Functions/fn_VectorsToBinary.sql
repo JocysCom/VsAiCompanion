@@ -32,7 +32,10 @@ BEGIN
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        SET @result = @result + Embedding.fn_RealToBinary(@value, 1)
+
+		SELECT @result = @result + fn.[Value]
+		FROM Embedding.fn_RealToBinary(@value, 1) AS fn;
+
         FETCH NEXT FROM vector_cursor INTO @value
     END
 

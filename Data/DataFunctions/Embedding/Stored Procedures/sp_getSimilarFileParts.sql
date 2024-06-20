@@ -12,7 +12,7 @@ BEGIN
     (
         SELECT
             fp.*,
-            RowNum = ROW_NUMBER() OVER (ORDER BY [Embedding].fn_CosineSimilarity(@vectors, fp.[Embedding]) DESC)
+            RowNum = ROW_NUMBER() OVER (ORDER BY [Embedding].CosineSimilarity(@vectors, fp.[Embedding]) DESC)
         FROM
             [FilePart] AS fp WITH (NOLOCK)
         INNER JOIN

@@ -103,7 +103,6 @@
     <Build Include="Embedding\Tables\File.sql" />
     <None Include="Deployment\DataFunctions.sql" />
     <Build Include="Embedding\Tables\Group.sql" />
-    <Build Include="Embedding\Functions\fn_RealToBinary.sql" />
     <Build Include="Embedding\Functions\fn_FloatToBinary.sql" />
     <Build Include="Embedding\Functions\fn_BinaryToReal.sql" />
     <Build Include="Embedding\Functions\fn_BinaryToFloat.sql" />
@@ -112,6 +111,7 @@
     <Build Include="Embedding\Functions\fn_BinaryToVectors.sql" />
     <Build Include="Embedding\User Defined Types\RealTable.sql" />
     <Build Include="Embedding\Functions\fn_CosineSimilarity.sql" />
+    <Build Include="Embedding\Functions\fn_RealToBinary.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Deployment\Script.PreDeployment.sql" />

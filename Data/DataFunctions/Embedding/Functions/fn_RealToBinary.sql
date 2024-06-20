@@ -1,18 +1,20 @@
 ﻿CREATE FUNCTION [Embedding].[fn_RealToBinary]
 (
     @value REAL,
-	@littleEndian BIT -- 0 - SQL Server big-endian byte order, 1 - reverse byte order (C# little-endian).
+    @littleEndian BIT  -- 0 - SQL Server big-endian byte order, 1 - reverse byte order (C# little-endian).
 )
-RETURNS VARBINARY(4)
+RETURNS TABLE
 AS
-BEGIN
+RETURN
+(
 
 	/*
-	DECLARE
-		@b1 binary(4) = [Embedding].[fn_RealToBinary](1.23, 1),
-		@b2 binary(4) = [Embedding].[fn_RealToBinary](4.56, 1),
-		@b3 binary(4) = [Embedding].[fn_RealToBinary](7.89, 1)
-	 SELECT  @b1 as b1, @b2 AS b2, @b3 as b3
+	DECLARE @b1 binary(4), @b2 binary(4), @b3 binary(4)
+
+	SELECT @b1 = BinaryValue FROM [Embedding].[fn_RealToBinary](1.23, 1) AS fn1;
+	SELECT @b2 = BinaryValue FROM [Embedding].[fn_RealToBinary](4.56, 1) AS fn2;
+	SELECT @b3 = BinaryValue FROM [Embedding].[fn_RealToBinary](7.89, 1) AS fn3;
+	SELECT  @b1 as b1, @b2 AS b2, @b3 as b3
 
 	DECLARE
 		@r1 real = [Embedding].[fn_BinaryToReal](@b1, 1),
@@ -21,20 +23,17 @@ BEGIN
 	SELECT  @r1 as r1, @r2 AS r2, @r3 as r3
 	*/
 
-    IF @littleEndian = 0
-	    RETURN CAST(@value AS BINARY(4))
-
-    DECLARE	@Int32 INT = CAST(CAST(@value AS BINARY(4)) AS INT)
-	
-	SET @Int32 = 
-		 (((@Int32 & 0x7F000000) / 0x1000000)
-		+ ((@Int32 & 0x00FF0000) / 0x100)
-		+ ((@Int32 & 0x0000FF00) * 0x100)
-		+ ((@Int32 & 0x0000007F) * 0x1000000))
-		-- Restore first bit of first and last byte.
-		+ (0x80000000 * ((@Int32 & 0x80) / 0x80))
-		+ (0x80 * ((@Int32 & 0x80000000) / 0x80000000))
-	
-	RETURN CAST(@Int32 AS BINARY(4))
-
-END
+    SELECT
+        CASE
+            WHEN @littleEndian = 1 THEN
+                -- Reverse byte order (C# little-endian).
+                CAST(
+                    SUBSTRING(CAST(@value AS BINARY(4)), 4, 1) + 
+                    SUBSTRING(CAST(@value AS BINARY(4)), 3, 1) + 
+                    SUBSTRING(CAST(@value AS BINARY(4)), 2, 1) + 
+                    SUBSTRING(CAST(@value AS BINARY(4)), 1, 1) AS BINARY(4)
+                )
+            ELSE
+                CAST(@value AS BINARY(4))
+        END AS [Value]
+);
