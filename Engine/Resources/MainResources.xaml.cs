@@ -55,8 +55,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ClearMessages_Name => FindResource(nameof(main_ClearMessages_Name));
         public static string main_Copy => FindResource(nameof(main_Copy));
         public static string main_Copy_Chat => FindResource(nameof(main_Copy_Chat));
-        public static string main_Copy_Id_File_Name => FindResource(nameof(main_Copy_Id_File_Name));
-        public static string main_Copy_with_Headers => FindResource(nameof(main_Copy_with_Headers));
         public static string main_Creativity => FindResource(nameof(main_Creativity));
         public static string main_Enable_Spell_Check_Help => FindResource(nameof(main_Enable_Spell_Check_Help));
         public static string main_Enable_Spell_Check_Name => FindResource(nameof(main_Enable_Spell_Check_Name));
@@ -122,6 +120,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Bytes => FindResource(nameof(main_Bytes));
         public static string main_Cancel => FindResource(nameof(main_Cancel));
         public static string main_Cancel_Job => FindResource(nameof(main_Cancel_Job));
+        public static string main_Copy_Id_File_Name => FindResource(nameof(main_Copy_Id_File_Name));
+        public static string main_Copy_with_Headers => FindResource(nameof(main_Copy_with_Headers));
         public static string main_Details => FindResource(nameof(main_Details));
         public static string main_File_Name => FindResource(nameof(main_File_Name));
         public static string main_Owner => FindResource(nameof(main_Owner));

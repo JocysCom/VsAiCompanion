@@ -11,8 +11,6 @@
 	<sys:String x:Key="main_ClearMessages_Name">Clear Messages</sys:String>
 	<sys:String x:Key="main_Copy">Copy</sys:String>
 	<sys:String x:Key="main_Copy_Chat">Copy the chat to the clipboard.</sys:String>
-	<sys:String x:Key="main_Copy_Id_File_Name">Copy: Id, File Name</sys:String>
-	<sys:String x:Key="main_Copy_with_Headers">Copy with Headers</sys:String>
 	<sys:String x:Key="main_Creativity">Creativity</sys:String>
 	<sys:String x:Key="main_Enable_Spell_Check_Help">Enable spell check for the chat textbox and certain option text boxes. IMPORTANT: Can slow down the app.</sys:String>
 	<sys:String x:Key="main_Enable_Spell_Check_Name">Spell Check</sys:String>
@@ -84,6 +82,8 @@
 	<sys:String x:Key="main_Bytes">Bytes</sys:String>
 	<sys:String x:Key="main_Cancel">Cancel</sys:String>
 	<sys:String x:Key="main_Cancel_Job">Cancel Job</sys:String>
+	<sys:String x:Key="main_Copy_Id_File_Name">Copy: Id, File Name</sys:String>
+	<sys:String x:Key="main_Copy_with_Headers">Copy with Headers</sys:String>
 	<sys:String x:Key="main_Details">Details</sys:String>
 	<sys:String x:Key="main_File_Name">File Name</sys:String>
 	<sys:String x:Key="main_Owner">Owner</sys:String>
@@ -91,6 +91,7 @@
 	<sys:String x:Key="main_System_Message">System Message</sys:String>
 	<sys:String x:Key="main_Upload">Upload</sys:String>
 	<sys:String x:Key="main_Validate">Validate</sys:String>
+
 
 	<!--  Embeddings  -->
 	<sys:String x:Key="main_Database">Database</sys:String>
