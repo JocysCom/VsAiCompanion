@@ -31,7 +31,7 @@ BEGIN
     WHILE @index <= DATALENGTH(@binary)
     BEGIN
         INSERT INTO @vectors ([Value])
-        VALUES (Embedding.fn_BinaryToReal(SUBSTRING(@binary, @index, 4)))
+        VALUES (Embedding.fn_BinaryToReal(SUBSTRING(@binary, @index, 4), 1))
         SET @index = @index + 4
     END
 

@@ -89,6 +89,10 @@
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\Group.sql" Link="Deployment\Setup\MSSQL\Group.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Deployment\CosineSimilarity.sql" Link="Deployment\Setup\MSSQL\CosineSimilarity.sql" />
+		<None Include="..\DataFunctions\Embedding\Functions\fn_BinaryToReal.sql" Link="Deployment\Setup\MSSQL\fn_BinaryToReal.sql" />
+		<None Include="..\DataFunctions\Embedding\Functions\fn_BinaryToVectors.sql" Link="Deployment\Setup\MSSQL\fn_BinaryToVectors.sql" />
+		<None Include="..\DataFunctions\Embedding\Functions\fn_CosineSimilarity.sql" Link="Deployment\Setup\MSSQL\fn_CosineSimilarity.sql" />
+		<None Include="..\DataFunctions\Embedding\User Defined Types\RealTable.sql" Link="Deployment\Setup\MSSQL\RealTable.sql" />
 		<None Include="MainModel.cs" />
 		<None Include="MainModel.tt.cs" />
 	</ItemGroup>

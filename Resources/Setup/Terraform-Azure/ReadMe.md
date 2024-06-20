@@ -1,4 +1,4 @@
-### Terraform Files
+## Terraform Files
 
 - **main.tf**: Defines the required providers and versions, configuration of Microsoft Azure Resource Manager and Active Directory providers, and sets up necessary data sources to get client configurations and resource group information.
 - **main.yml**: Contains Azure pipeline configuration for automating the installation of PowerShell modules and running Terraform commands.
@@ -12,18 +12,18 @@
 - **variables.tf**: Defines Terraform variables for resource naming conventions and API keys.
 - **variables.env.tfvars**: Specifies actual values for Terraform variables, including organization, environment, API keys, and resource group name.
 
-### Installation Instructions
+## Install Terraform
 
-#### Pre-requisites:
+### Pre-requisites:
 1. **PowerShell 7 (x64)** - Ensure you have PowerShell 7 installed on your system.
 2. **Azure CLI** - Azure CLI must be installed and configured on your machine.
 
-#### Step 1: Open PowerShell 7 as Administrator
+### Step 1: Open PowerShell 7 as Administrator
 1. Press `WIN + S` to open Windows Search.
 2. Type `pwsh`.
 3. Right-click on the `PowerShell 7 (x64)` app item and select `Run as Administrator`.
 
-#### Step 2: Install Required PowerShell Modules
+### Step 2: Install Required PowerShell Modules
 1. **Install or update `Az` module**:
     ```powershell
     Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
@@ -35,7 +35,7 @@
     Install-Module -Name SqlServer -Force
     ```
 
-#### Step 3: Install Terraform
+### Step 3: Install Terraform
 1. **Download Terraform**:
     - Download the latest Terraform binary from [Terraform Downloads](https://www.terraform.io/downloads.html).
 2. **Extract and add to PATH**:
@@ -49,19 +49,50 @@
     terraform --version
     ```
 
-#### Step 4: Clone the Repository
+### Step 4: Clone the Repository
 ```powershell
 git clone https://github.com/JocysCom/VsAiCompanion.git
 cd VsAiCompanion\Resources\Setup\Terraform-Azure
 ```
 
-#### Step 5: Authenticate with Azure
-1. **Login to Azure via CLI**:
-    ```powershell
-    az login
-    ```
+## Authenticate with Azure
 
-#### Step 6: Initialize and Apply Terraform Configuration
+**Login to Azure via CLI**:
+```powershell
+az login
+```
+
+## Create a Service Principal
+
+A service principal is the identity Azure DevOps uses with a [Service Connection](https://learn.microsoft.com/en-us/azure/DevOps/pipelines/library/service-endpoints?view=azure-DevOps&tabs=yaml) to create and manage resources during deployments to Azure Cloud.
+
+To create a new service principal named `sp-<org>-<project>-<env>-001` using the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/), run:
+
+```PowerShell
+az ad sp create-for-rbac --name sp-contoso-aicomp-dev-001
+```
+
+You'll get an output similar to this:
+
+```PowerShell
+The output includes credentials that you must protect. Be sure that you do not include these credentials in your code or check the credentials into your source control. For more information, see https://aka.ms/azadsp-cli
+{
+  "appId": "7677ecaf-c7ce-4c2b-8784-83be7c0b8989",
+  "displayName": "sp-contoso-aicomp-dev-001",
+  "password": "<password_that_you_must_protect>",
+  "tenant": "c44788e7-1174-4930-a98f-5993c08cc7c4"
+}
+```
+
+### Service Principal Permissions
+
+Service principals need certain permissions to manage their resource groups. Azure domain administrators must manually add your new service principal to the `Azure Service Principals` group.
+
+
+### Initialize and Apply Terraform Configuration
+
+
+### Step 1: Initialize and Apply Terraform Configuration
 1. **Initialize Terraform**:
     ```powershell
     terraform init
@@ -71,7 +102,7 @@ cd VsAiCompanion\Resources\Setup\Terraform-Azure
     terraform apply -var-file="variables.dev.tfvars"
     ```
 
-#### Step 7: Create `variables.prod.tfvars` File
+### Step 2: Create `variables.prod.tfvars` File
 - Create a `variables.prod.tfvars` file by copying and modifying the example provided in `variables.env.tfvars`. Replace placeholders with actual values.
     ```hcl
     org = "contoso"
@@ -81,9 +112,9 @@ cd VsAiCompanion\Resources\Setup\Terraform-Azure
     rg_name = "contoso-openai-sandbox-prod-uks-001"
     ```
 
-### Aditional Help
+## Aditional Help
 
-#### Common Terraform Commands
+### Common Terraform Commands
 1. **Format Terraform Configuration**:
     ```powershell
     terraform fmt
@@ -105,7 +136,7 @@ cd VsAiCompanion\Resources\Setup\Terraform-Azure
     az account show --query tenantId --output tsv
     ```
 
-#### AI Prompt Template
+### AI Prompt Template
 
 ```text
 Extract and analyze the plain text content from the following files:
@@ -126,7 +157,7 @@ Notes:
 <user prompt>
 ```
 
-#### Azure Best Naming Practices
+### Azure Best Naming Practices
 
 https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
 https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations
@@ -135,7 +166,7 @@ https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-bes
 
 https://learn.microsoft.com/en-us/azure/developer/terraform/configure-vs-code-extension-for-terraform?source=recommendations&tabs=azure-powershell
 
-#### Azure Terraform Visual Studio Extensions
+### Azure Terraform Visual Studio Extensions
 
 Basic language support for Terraform files
 

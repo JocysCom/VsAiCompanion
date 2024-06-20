@@ -32,7 +32,7 @@ BEGIN
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        SET @result = @result + Embedding.fn_RealToBinary(@value)
+        SET @result = @result + Embedding.fn_RealToBinary(@value, 1)
         FETCH NEXT FROM vector_cursor INTO @value
     END
 
