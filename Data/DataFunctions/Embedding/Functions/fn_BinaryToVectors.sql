@@ -4,6 +4,7 @@
 )
 RETURNS @vectors TABLE
 (
+	Id INT PRIMARY KEY IDENTITY(1,1),
     [Value] REAL
 )
 AS

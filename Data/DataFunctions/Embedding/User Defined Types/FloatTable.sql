@@ -1,3 +1,3 @@
 ﻿CREATE TYPE [Embedding].[FloatTable] AS TABLE (
-    [Value] FLOAT (53) NULL);
+    [Value] FLOAT (53) NOT NULL);
 
