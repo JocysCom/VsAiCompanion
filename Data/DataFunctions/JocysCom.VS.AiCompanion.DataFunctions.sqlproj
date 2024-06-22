@@ -66,8 +66,6 @@
     <Folder Include="Compare" />
     <Folder Include="Embedding\Stored Procedures" />
     <Folder Include="Scripts" />
-    <Folder Include="Embedding\Functions\" />
-    <Folder Include="Embedding\User Defined Types\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Deployment\DataFunctions_Install.sql" />
@@ -82,8 +80,6 @@
     <None Include="Deployment\CosineSimilarity.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\RegexBase.cs" />
-    <Compile Include="Common\StringBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\EmbeddingBase.cs" />
     <Compile Include="Common\EmbeddingsBase.Methods.cs" />
@@ -96,28 +92,24 @@
     <None Include="Compare\DatabaseToProject.scmp" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Embedding\Stored Procedures\sp_getSimilarFiles.sql" />
-    <Build Include="Embedding\Stored Procedures\sp_getMostSimilarFiles.sql" />
     <Build Include="Embedding\Stored Procedures\sp_getSimilarFileParts.sql" />
     <Build Include="Embedding\Tables\FilePart.sql" />
     <Build Include="Embedding\Tables\File.sql" />
     <None Include="Deployment\DataFunctions.sql" />
     <Build Include="Embedding\Tables\Group.sql" />
-    <Build Include="Embedding\Functions\fn_FloatToBinary.sql" />
-    <Build Include="Embedding\Functions\fn_BinaryToReal.sql" />
-    <Build Include="Embedding\Functions\fn_BinaryToFloat.sql" />
-    <Build Include="Embedding\User Defined Types\FloatTable.sql" />
-    <Build Include="Embedding\Functions\fn_VectorsToBinary.sql" />
-    <Build Include="Embedding\Functions\fn_BinaryToVectors.sql" />
-    <Build Include="Embedding\User Defined Types\RealTable.sql" />
-    <Build Include="Embedding\Functions\fn_RealToBinary.sql" />
-    <Build Include="Embedding\Functions\fn_CosineSimilarity.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Deployment\Script.PreDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Deployment\Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\140\SqlSchemas\master.dacpac">
+      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\140\SqlSchemas\master.dacpac</HintPath>
+      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
+      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
+    </ArtifactReference>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>:: Sign first

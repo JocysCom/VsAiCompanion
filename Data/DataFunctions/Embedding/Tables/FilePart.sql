@@ -29,8 +29,8 @@ CREATE NONCLUSTERED INDEX [IX_FilePart_HashType_Hash]
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_FilePart_GroupFlag_FileId_Index_IsEnabled]
-    ON [Embedding].[FilePart]([GroupFlag] ASC, [FileId] ASC, [Index] ASC, [IsEnabled] ASC);
+CREATE NONCLUSTERED INDEX [IX_FilePart_GroupName_GroupFlag_FileId_Index_IsEnabled]
+    ON [Embedding].[FilePart]([GroupName] ASC, [GroupFlag] ASC, [FileId] ASC, [Index] ASC, [IsEnabled] ASC);
 
 
 GO

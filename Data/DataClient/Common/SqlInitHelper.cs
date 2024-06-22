@@ -81,8 +81,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				success &= CreateSchema("Embedding", connection);
 				if (addCLR)
 				{
-					success &= CreateAssembly("DataFunctions", connection);
-					success &= CreateFunction("CosineSimilarity", connection);
+					//success &= CreateAssembly("DataFunctions", connection);
+					//success &= CreateFunction("CosineSimilarity", connection);
 				}
 			}
 			success &= CreateTable(nameof(File), connection);
@@ -91,9 +91,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			success &= RunScript("Update_1", connection, isPortable);
 			if (addCLR)
 			{
-				success &= CreateProcedure("sp_getMostSimilarFiles", connection);
+				//success &= CreateProcedure("sp_getMostSimilarFiles", connection);
 				success &= CreateProcedure("sp_getSimilarFileParts", connection);
-				success &= CreateProcedure("sp_getSimilarFiles", connection);
+				//success &= CreateProcedure("sp_getSimilarFiles", connection);
 			}
 			connection.Close();
 			return success;

@@ -78,21 +78,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="..\DataFunctions\Deployment\DataFunctions.sql" Link="Deployment\Setup\MSSQL\DataFunctions.sql" />
-		<EmbeddedResource Include="..\DataFunctions\Deployment\Script.PostDeployment.sql" Link="Deployment\Setup\MSSQL\Script.PostDeployment.sql" />
-		<EmbeddedResource Include="..\DataFunctions\Deployment\Script.PreDeployment.sql" Link="Deployment\Setup\MSSQL\Script.PreDeployment.sql" />
-		<EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getMostSimilarFiles.sql" Link="Deployment\Setup\MSSQL\sp_getMostSimilarFiles.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getSimilarFileParts.sql" Link="Deployment\Setup\MSSQL\sp_getSimilarFileParts.sql" />
-		<EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getSimilarFiles.sql" Link="Deployment\Setup\MSSQL\sp_getSimilarFiles.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\Setup\MSSQL\File.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\FilePart.sql" Link="Deployment\Setup\MSSQL\FilePart.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\Group.sql" Link="Deployment\Setup\MSSQL\Group.sql" />
 		<EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
-		<EmbeddedResource Include="..\DataFunctions\Deployment\CosineSimilarity.sql" Link="Deployment\Setup\MSSQL\CosineSimilarity.sql" />
-		<None Include="..\DataFunctions\Embedding\Functions\fn_BinaryToReal.sql" Link="Deployment\Setup\MSSQL\fn_BinaryToReal.sql" />
-		<None Include="..\DataFunctions\Embedding\Functions\fn_BinaryToVectors.sql" Link="Deployment\Setup\MSSQL\fn_BinaryToVectors.sql" />
-		<None Include="..\DataFunctions\Embedding\Functions\fn_CosineSimilarity.sql" Link="Deployment\Setup\MSSQL\fn_CosineSimilarity.sql" />
-		<None Include="..\DataFunctions\Embedding\User Defined Types\RealTable.sql" Link="Deployment\Setup\MSSQL\RealTable.sql" />
 		<None Include="MainModel.cs" />
 		<None Include="MainModel.tt.cs" />
 	</ItemGroup>

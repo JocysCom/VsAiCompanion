@@ -22,6 +22,6 @@
 
 CREATE INDEX IX_FilePart_HashType_Hash ON [FilePart]([HashType], [Hash]);
 
-CREATE INDEX IX_FilePart_GroupFlag_FileId_Index_IsEnabled ON [FilePart]([GroupName], [GroupFlag], [FileId], [Index], [IsEnabled]);
+CREATE INDEX IX_FilePart_GroupName_GroupFlag_FileId_Index_IsEnabled ON [FilePart]([GroupName], [GroupFlag], [FileId], [Index], [IsEnabled]);
 
 CREATE INDEX IX_FilePart_Filed_Index ON [FilePart]([FileId], [Index]);
