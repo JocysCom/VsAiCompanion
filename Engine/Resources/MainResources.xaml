@@ -25,7 +25,7 @@
 	<sys:String x:Key="main_Search_the_list">Search the list</sys:String>
 	<sys:String x:Key="main_Send_Chat_History_Help">Sending chat history with a message ensures continuity and context in the conversation, leading to more accurate, relevant, and personalized responses.</sys:String>
 	<sys:String x:Key="main_Send_Chat_History_Name">Send History</sys:String>
-	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Help">Show 'AI Avatar' window. When AI avatar is visible, app sends instruction message to use voice specified in 'Options' tab → 'AI Avatar' tab → 'Instructions' text-box.</sys:String>
+	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Help">Show 'AI Avatar' window. When AI avatar is visible, app sends instruction message to use voice specified in 'Options' tab → 'AI Avatar' tab → 'Instructions' text-box. Double-clicking on the AI Avatar opens it in a separate window.</sys:String>
 	<sys:String x:Key="main_Show_AI_Avatar_Windwow_Name">Avatar</sys:String>
 	<sys:String x:Key="main_Show_Instructions">Show Instructions</sys:String>
 	<sys:String x:Key="main_Show_Instructions_TextBox_Help">Show instructions text-box. Instructions will be included at the start of every message.</sys:String>
