@@ -7,10 +7,10 @@ resource "azurerm_mssql_server" "sqlsrv" {
   version             = "12.0"
   # Azure AD Administrator for the SQL Server. Use current user.
   azuread_administrator {
-    login_username              = data.azuread_user.admin_user.user_principal_name
-    object_id                   = data.azuread_user.admin_user.object_id
-    #login_username              = data.azuread_group.g5.display_name
-    #object_id                   = data.azuread_group.g5.object_id
+    login_username = data.azuread_user.admin_user.user_principal_name
+    object_id      = data.azuread_user.admin_user.object_id
+    #login_username              = azuread_group.g5.display_name
+    #object_id                   = azuread_group.g5.object_id
     azuread_authentication_only = true
   }
   identity {
@@ -22,15 +22,15 @@ resource "azurerm_mssql_server" "sqlsrv" {
 
 resource "azurerm_role_assignment" "sqlsrv_admin" {
   role_definition_name = "Contributor"
-  principal_id         = data.azuread_group.g5.id
+  principal_id         = azuread_group.g5.id
   scope                = azurerm_mssql_server.sqlsrv.id
 }
 
 resource "azurerm_mssql_firewall_rule" "sqlsrv_firewall_rule" {
   name             = "fw-${var.org}-${var.app}-sqlsrv-allow-${var.env}"
   server_id        = azurerm_mssql_server.sqlsrv.id
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "0.0.0.0"
+  start_ip_address = data.external.external_ip.result.ip
+  end_ip_address   = data.external.external_ip.result.ip
 }
 
 # Assign SQL Server roles inside SQL Server by using SQL script.

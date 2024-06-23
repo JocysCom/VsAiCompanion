@@ -12,44 +12,86 @@
 - **variables.tf**: Defines Terraform variables for resource naming conventions and API keys.
 - **variables.env.tfvars**: Specifies actual values for Terraform variables, including organization, environment, API keys, and resource group name.
 
-## Install Terraform
+## Pre-requisites:
+1. **PowerShell 7 (x64)** - Automation command-line shell and an associated scripting language.
+2. **az (Azure CLI)** - Command-line tool for managing Azure resources.
+3. **`Az` PowerShell Module** - Manage and interact with Azure cloud services directly from PowerShell. This module replaces the older AzureRM module.
+4. **`SqlServer` PowerShell Module** - Manage and interact with SQL Servers directly from PowerShell.
 
-### Pre-requisites:
-1. **PowerShell 7 (x64)** - Ensure you have PowerShell 7 installed on your system.
-2. **Azure CLI** - Azure CLI must be installed and configured on your machine.
+### Install PowerShell 7 (x64)
 
-### Step 1: Open PowerShell 7 as Administrator
+1. Visit the https://github.com/PowerShell/PowerShell/releases
+2. Find the latest stable release and download the `PowerShell-<version>-win-x64.msi` file.
+3. Run the downloaded `.msi` file.
+4. Follow the installer prompts.
+
+### Open PowerShell 7 as Administrator
+
 1. Press `WIN + S` to open Windows Search.
 2. Type `pwsh`.
 3. Right-click on the `PowerShell 7 (x64)` app item and select `Run as Administrator`.
 
-### Step 2: Install Required PowerShell Modules
-1. **Install or update `Az` module**:
-    ```powershell
-    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
-    Install-Module -Name Az -AllowClobber -Scope AllUsers -Force
-    Import-Module -Name Az
-    ```
-2. **Install SQL Server module**:
-    ```powershell
-    Install-Module -Name SqlServer -Force
-    ```
+Go to the Downloads folder:
+```powershell
+cd Downloads
+```
 
-### Step 3: Install Terraform
+## Install Azure CLI (az)
+
+Allow modules to be installed without prompting for confirmation.
+
+```powershell
+Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+```
+
+### Install Azure CLI (az)
+
+```PowerShell
+Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi
+Start-Process msiexec.exe -ArgumentList '/I AzureCLI.msi /quiet' -Wait
+Remove-Item .\AzureCLI.msi
+```
+
+### Install Terraform
+
 1. **Download Terraform**:
-    - Download the latest Terraform binary from [Terraform Downloads](https://www.terraform.io/downloads.html).
+    - Visit the https://www.terraform.io/downloads.html
+    - Find the latest Windows AMD64 release and download the `terraform_<version>_darwin_amd64.zip` file.
 2. **Extract and add to PATH**:
-    - Extract the binary and move it to a directory included in your system's PATH (e.g., `C:\terraform`).
-    - Optionally, add this path to your system's PATH environment variable:
+    - Extract the binary and move it to a directory included in your system's PATH (e.g., `C:\Program Files\Terraform`).
+   - Optionally, add this path to your system's PATH environment variable:
     ```powershell
-    $env:Path += ";C:\terraform"
+    # Current session:
+    $env:Path += ";C:\Program Files\Terraform"
+    # System-wide:
+    [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine) + ";C:\Program Files\Terraform", [EnvironmentVariableTarget]::Machine)
     ```
 3. **Verify Terraform installation**:
     ```powershell
     terraform --version
     ```
 
-### Step 4: Clone the Repository
+### Reopen PowerShell
+- Close the administrative session of PowerShell and reopen PowerShell 7 as a normal user.
+- Go to the Downloads folder:
+	```powershell
+	cd Downloads
+	```
+
+### Install Required `Az` PowerShell Module
+
+**Install Az PowerShell module**:
+
+```powershell
+Install-Module -Name Az -AllowClobber -Scope AllUsers -Force
+```
+
+**Install SQL Server PowerShell module**:
+```powershell
+Install-Module -Name SqlServer -Force
+```
+
+### Clone the Repository
 ```powershell
 git clone https://github.com/JocysCom/VsAiCompanion.git
 cd VsAiCompanion\Resources\Setup\Terraform-Azure
@@ -57,7 +99,12 @@ cd VsAiCompanion\Resources\Setup\Terraform-Azure
 
 ## Authenticate with Azure
 
-**Login to Azure via CLI**:
+**Import Azure Module**:
+```powershell
+Import-Module -Name Az
+```
+
+**Login to Azure**:
 ```powershell
 az login
 ```
@@ -92,49 +139,49 @@ Service principals need certain permissions to manage their resource groups. Azu
 ### Initialize and Apply Terraform Configuration
 
 
-### Step 1: Initialize and Apply Terraform Configuration
+### Initialize and Apply Terraform Configuration
 1. **Initialize Terraform**:
     ```powershell
     terraform init
     ```
-2. **Plan and Apply Configuration**:
-    ```powershell
-    terraform apply -var-file="variables.dev.tfvars"
-    ```
 
-### Step 2: Create `variables.prod.tfvars` File
-- Create a `variables.prod.tfvars` file by copying and modifying the example provided in `variables.env.tfvars`. Replace placeholders with actual values.
+### Create `variables.dev.tfvars` File
+- Create a `variables.dev.tfvars` file by copying and modifying the example provided in `variables.env.tfvars`. Replace placeholders with actual values.
     ```hcl
     org = "contoso"
     env = "prod"
     kvs_openai_value = "<your_openai_api_key>"
     kvs_speech_value = "<your_speech_service_api_key>"
-    rg_name = "contoso-openai-sandbox-prod-uks-001"
+    rg_name = "rg-contoso-aicomp-dev-westus-001"
     ```
 
-## Aditional Help
+**Format Terraform Configuration**:
+```powershell
+terraform fmt
+```
 
-### Common Terraform Commands
-1. **Format Terraform Configuration**:
-    ```powershell
-    terraform fmt
-    ```
-2. **Create an Execution Plan**:
-    ```powershell
-    terraform plan -var-file="variables.dev.tfvars"
-    ```
-3. **Refresh State Without Making Changes**:
-    ```powershell
-    terraform apply -refresh-only -var-file="variables.dev.tfvars"
-    ```
-4. **Apply Configuration for Different Environments**:
-    ```powershell
-    terraform apply -var-file="variables.prod.tfvars"
-    ```
-5. **Output Tenant ID of your Azure account as plain text**:
-    ```powershell
-    az account show --query tenantId --output tsv
-    ```
+**Refresh State Without Making Changes**:
+```powershell
+terraform apply -refresh-only -var-file="variables.dev.tfvars"
+```
+
+**Create an Execution Plan**:
+```powershell
+terraform plan -var-file="variables.dev.tfvars"
+```
+
+**Apply Configuration for Different Environments**:
+```powershell
+terraform apply -var-file="variables.dev.tfvars"
+```
+
+
+### Other Terraform Commands
+
+**Output Tenant ID of your Azure account as plain text**:
+```powershell
+az account show --query tenantId --output tsv
+```
 
 ### AI Prompt Template
 

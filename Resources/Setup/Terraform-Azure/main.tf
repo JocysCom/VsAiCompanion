@@ -47,3 +47,8 @@ data "external" "user_principal_name" {
 data "azuread_user" "admin_user" {
   user_principal_name = data.external.user_principal_name.result.userPrincipalName
 }
+
+# External IP Address.
+data "external" "external_ip" {
+  program = ["pwsh", "-Command", "Invoke-RestMethod -Uri http://ifconfig.me/ip | % { @{ip = $_} | ConvertTo-Json -Compress }"]
+}

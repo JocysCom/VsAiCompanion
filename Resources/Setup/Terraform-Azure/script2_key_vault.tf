@@ -13,25 +13,25 @@ resource "azurerm_key_vault" "kv" {
 resource "azurerm_role_assignment" "key_vault_reader_low" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
-  principal_id         = data.azuread_group.g2.id
+  principal_id         = azuread_group.g2.id
 }
 
 resource "azurerm_role_assignment" "key_vault_reader_medium" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
-  principal_id         = data.azuread_group.g3.id
+  principal_id         = azuread_group.g3.id
 }
 
 resource "azurerm_role_assignment" "key_vault_reader_high" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
-  principal_id         = data.azuread_group.g4.id
+  principal_id         = azuread_group.g4.id
 }
 
 resource "azurerm_role_assignment" "key_vault_reader_critical" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
-  principal_id         = data.azuread_group.g5.id
+  principal_id         = azuread_group.g5.id
 }
 
 # Assign additional roles to AI_RiskLevel_Critical group
@@ -39,31 +39,31 @@ resource "azurerm_role_assignment" "key_vault_reader_critical" {
 resource "azurerm_role_assignment" "key_vault_contributor_critical" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Contributor"
-  principal_id         = data.azuread_group.g5.id
+  principal_id         = azuread_group.g5.id
 }
 
 resource "azurerm_role_assignment" "key_vault_administrator_critical" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Administrator"
-  principal_id         = data.azuread_group.g5.id
+  principal_id         = azuread_group.g5.id
 }
 
 resource "azurerm_role_assignment" "key_vault_crypto_officer_critical" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Crypto Officer"
-  principal_id         = data.azuread_group.g5.id
+  principal_id         = azuread_group.g5.id
 }
 
 resource "azurerm_role_assignment" "key_vault_certificates_officer_critical" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Certificates Officer"
-  principal_id         = data.azuread_group.g5.id
+  principal_id         = azuread_group.g5.id
 }
 
 resource "azurerm_role_assignment" "key_vault_secrets_officer_critical" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = data.azuread_group.g5.id
+  principal_id         = azuread_group.g5.id
 }
 
 # Add Access Policy for the Client Configuration used by Terraform
@@ -79,7 +79,7 @@ resource "azurerm_key_vault_access_policy" "key_vault_access_policy_terraform" {
 resource "azurerm_key_vault_access_policy" "key_vault_access_policy_read_secrets" {
   key_vault_id = azurerm_key_vault.kv.id
   tenant_id    = data.azurerm_client_config.client_config.tenant_id
-  object_id    = data.azuread_group.g5.object_id
+  object_id    = azuread_group.g5.object_id
   secret_permissions = [
     "Get", "List"
   ]

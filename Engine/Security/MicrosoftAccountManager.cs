@@ -285,6 +285,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var jsonToken = handler.ReadToken(result.IdToken) as JwtSecurityToken;
 			var claims = jsonToken?.Claims;
 			profile.Name = claims?.FirstOrDefault(c => c.Type == "name")?.Value;
+			// Extract AzureAD/EntraID Directory Tenant ID from the claims.
+			profile.TenantId = claims.FirstOrDefault(c => c.Type == "tid")?.Value;
+			Global.AppSettings.AppTenantId = profile.TenantId;
 		}
 
 		/// <summary>
@@ -480,6 +483,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			try
 			{
 				var token = await credential.GetTokenAsync(context, cancellationToken);
+				//if (token.ExpiresOn <= DateTimeOffset.UtcNow)
+				//{
+				//	// Refresh the token
+				//	var result = await SignIn(scopes, cancellationToken);
+				//	if (result.Success)
+				//		token = await credential.GetTokenAsync(context, cancellationToken);
+				//}
 				return token;
 			}
 			catch (Exception)

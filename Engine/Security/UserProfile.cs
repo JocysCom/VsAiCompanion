@@ -33,6 +33,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private string _AccountId;
 
+		/// <summary>
+		/// Property of AzureAD/EntraID user.
+		/// </summary>
+		[DefaultValue(null)]
+		public string TenantId { get => _TenantId; set => SetProperty(ref _TenantId, value); }
+		private string _TenantId;
+
 		[DefaultValue(null)]
 		public string Email { get => _Email; set => SetProperty(ref _Email, value); }
 		private string _Email;

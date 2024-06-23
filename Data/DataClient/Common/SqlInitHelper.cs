@@ -11,9 +11,6 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 
-
-
-
 #if NETFRAMEWORK
 using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Data.Entity;

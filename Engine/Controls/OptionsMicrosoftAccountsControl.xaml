@@ -79,7 +79,7 @@
 						Grid.Column="2"
 						MinWidth="256"
 						IsReadOnly="True"
-						SpellCheck.IsEnabled="True"
+						SpellCheck.IsEnabled="False"
 						Text="{Binding AppClientId, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<Label Grid.Row="1" Grid.Column="1" Content="Directory (tenant) ID" />
 					<TextBox
@@ -87,7 +87,7 @@
 						Grid.Column="2"
 						MinWidth="256"
 						IsReadOnly="True"
-						SpellCheck.IsEnabled="True"
+						SpellCheck.IsEnabled="False"
 						Text="{Binding AppTenantId, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</Grid>
 
