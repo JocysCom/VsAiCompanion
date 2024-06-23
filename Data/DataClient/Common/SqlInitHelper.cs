@@ -10,6 +10,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
+using System.Threading;
+
+
+
 
 #if NETFRAMEWORK
 using System.Data.Entity.Infrastructure.DependencyResolution;
@@ -264,10 +268,27 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return new SQLiteConnection(connectionString);
 #else
 			if (!isPortable)
-				return new Microsoft.Data.SqlClient.SqlConnection(connectionString);
+			{
+				var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
+				//connection.AccessTokenCallback = GetAccessTokenAsync;
+				return connection;
+			}
+
 			return new SqliteConnection(connectionString);
 #endif
 		}
+
+
+#if NETFRAMEWORK
+#else
+		public static Func<Task<Azure.Core.AccessToken>> GetAccessToken;
+
+		private static async Task<SqlAuthenticationToken> GetAccessTokenAsync(SqlAuthenticationParameters parameters, CancellationToken cancellationToken)
+		{
+			var token = await GetAccessToken();
+			return new SqlAuthenticationToken(token.Token, token.ExpiresOn);
+		}
+#endif
 
 		public static DbConnectionStringBuilder NewConnectionStringBuilder(string connectionString)
 		{

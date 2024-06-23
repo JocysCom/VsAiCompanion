@@ -3,6 +3,7 @@ using Azure.Identity;
 using Azure.ResourceManager;
 using Azure.Security.KeyVault.Secrets;
 using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Converters;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
@@ -81,6 +82,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		public const string MicrosoftGraphScope = "https://graph.microsoft.com/.default";
 		public const string MicrosoftAzureManagementScope = "https://management.azure.com/.default";
 		public const string MicrosoftAzureVaultScope = "https://vault.azure.net/.default";
+		public const string MicrosoftDatabaseScopes = "https://database.windows.net//.default";
 		// Fully qualified URI for "User.Read";
 		// Permissions to sign in the user and read the user's profile.
 		public const string MicrosoftGraphUserReadScope = "https://graph.microsoft.com/User.Read";
@@ -133,6 +135,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 						.WithRedirectUri("http://localhost")
 						.WithDefaultRedirectUri();
 					_Pca = builder.Build();
+#if NETFRAMEWORK
+#else
+					SqlInitHelper.GetAccessToken = GetAccessToken;
+#endif
 				}
 				return _Pca;
 			}
@@ -321,6 +327,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				return null;
 			return new AccessTokenCredential(result.Data.AccessToken);
 		}
+
+#if NETFRAMEWORK
+#else
+		private static async Task<AccessToken> GetAccessToken()
+		{
+			// Define the scope required for Azure SQL Database
+			var scopes = new string[] { "https://database.windows.net//.default" };
+			try
+			{
+				// Get the token using existing methods
+				var token = await Current.GetAccessToken(scopes, interactive: false);
+				// Return the SqlAuthenticationToken
+				return token;
+			}
+			catch (Exception ex)
+			{
+				// Handle exceptions
+				Console.WriteLine($"Error acquiring access token: {ex.Message}");
+				return default;
+			}
+		}
+#endif
+
 
 		/// <summary>
 		/// Get the credentials signed into the current app. Get refreshed token if it is expired.
