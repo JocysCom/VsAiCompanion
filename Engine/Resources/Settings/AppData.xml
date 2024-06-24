@@ -27,10 +27,10 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>240</Left>
-        <Top>30</Top>
-        <Width>486.5</Width>
-        <Height>407.75</Height>
+        <Left>420</Left>
+        <Top>120</Top>
+        <Width>916</Width>
+        <Height>939</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -97,14 +97,12 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <GridSplitterPosition>0.24526315789473685</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat (GPT-3.5)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <GridSplitterPosition>0.2557894736842105</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -151,76 +149,67 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Attachment</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.25684210526315787</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat (GPT-4)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Template</ItemType>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>FineTuning</ItemType>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Assistant</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Embeddings</ItemType>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Lists</ItemType>
           <ListSelection>
             <string>API - Demo</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>AiService</ItemType>
           <ListSelection>
             <string>Open AI</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>AiModel</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>MailAccount</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Voice</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>VaultItem</ItemType>
           <ListSelection />
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Attachment</ItemType>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
       </PanelSettingsList>
@@ -457,6 +446,10 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetCurrentSystemInfo</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess</Id>
