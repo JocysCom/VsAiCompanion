@@ -1,32 +1,33 @@
 # Jocys.com VS AI Companion
-This is a free, open-source project for people who have an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci...) subscription or/and run Open AI on their local machine ([GPT4All](https://gpt4all.io/)), on-premises, or on Azure Cloud.
-
-The AI Companion is a tool that answers questions, analyzes project files, and works alongside, streamlining development and boosting productivity. Application allows easy creation of custom, fine-tuned AI models as chatbots or virtual employees. subscription. It's like a Swiss Army Knife of AI for developers. AI Companion can run as a standalone portable application or as a Visual Studio extension. Extension version can also be installed via Visual Studio Extension Manager.
+This is a free, open-source project for people who have an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci...) subscription or/and run Open AI on their local machine ([GPT4All](https://gpt4all.io/)), on-premises, or on Azure Cloud. AI Companion answers questions, analyzes project files, and works alongside, streamlining development and boosting productivity. Application allows easy creation of custom, fine-tuned AI models as chatbots or virtual employees. AI Companion can run as a standalone portable application or as a Visual Studio extension. Extension version can be installed and updated via Visual Studio Extension Manager.
 
 ### Why Use Tools Utilizing API Instead of Web Chat GPT?
 
-- Data submitted via the API is not used to train or improve its models, unless customers explicitly decide to share their data.
+- Data submitted via the API isn't used for model training unless users choose to share it.
 - API provides access to more recent and smarter AI models.
+- Extensive customization and configuration.
 
-### DOWNLOAD  v1.11.25 (2024-06-25)
-Digitally Signed Standalone/Portable Application
+### DOWNLOAD -  v1.11.25 (2024-06-25)  
 
-[Download - JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.11.25/JocysCom.VS.AiCompanion.App.zip)
+[JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.11.25/JocysCom.VS.AiCompanion.App.zip) - digitally signed standalone/portable application.
 
-Visual Studio Extension
+[AI Companion as Visual Studio Extension on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion") - can be installed via Visual Studio Extension Manager.
 
-<a href="https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion">Download - VS AI Companion from Visual Studio Marketplace</a> or install via Visual Studio Extension Manager.
+### Requirements
 
-### Where to get API Organization ID and API Key?
-https://platform.openai.com/account/org-settings
+[Microsoft .NET 8.0](https://dotnet.microsoft.com/download/dotnet) (included in Windows 11 by default) for app to work on Windows 8/10.
 
-### How can I access GPT-4?
+[OpenAI account (API Key)](https://platform.openai.com/account/) for ChatGPT models to work in AI Companion app:  
+AI Companion app ► Options ► AI Services ► Open AI ► enter API Key.
+
+[Microsoft Azure account (API Key)](https://github.com/JocysCom/VsAiCompanion/wiki/Feature-%E2%80%90-AI-Avatar) for ChatGPT to answer with voice and mouth animation:  
+AI Companion app ► Options ► AI Services ► Speech Service ► enter API Key.
+
+For AI Companion Visual Studio extension version only: Visual Studio 2022 17.9+  
+App extension version can be installed and updated via Visual Studio Extension Manager.
+
+### How can I access unlimited GPT-4 models?
 https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
-
-### System Requirements
-- Microsoft .NET 8.0
-  https://dotnet.microsoft.com/download/dotnet
-- For VS Extension: Visual Studio 2022 17.9+ (update through Visual Studio Installer)
 
 ### Why was this extension created?
 Existing tools like GitHub CoPilot have limitations when it comes to interacting with AI. I wanted to create an app that could handle common tasks with more in-depth AI guidance and information. This tool does not replace GitHub CoPilot, but rather offers new features. My goal was to create a tool that would assist AI in responding to inquiries about an entire project or in revamping a Visual Studio solution using a different framework. Right now, you have the ability to request a project rewrite, as the extension can send an entire project or solution. However, there are some necessary updates that need to be made in order to save the outcomes.
