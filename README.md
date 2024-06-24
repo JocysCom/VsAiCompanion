@@ -36,7 +36,7 @@ Existing tools like GitHub CoPilot have limitations when it comes to interacting
 [Token Limits](help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them) - depending on the [model](platform.openai.com/docs/models) used, requests can use up to 128,000 tokens shared between prompt and completion. Some models can have different limits on input and output. 
 You can ask questions about an entire solution or project using the "Code - Smart Search" template. However, the size of the solution or project is limited by the maximum amount of tokens the AI can process. People who have access to the GPT-4 API can upload projects or solutions for AI analysis, up to sizes of 384KB (128K tokens, about 3 bytes per token). These limitations could potentially be removed if AI is hosted on-premises.
 
-[Rate Limits](platform.openai.com/docs/guides/rate-limits/usage-tiers) - restrictions that OpenAI API imposes on the number of times a user or client can access its services within a specified period of time.
+[Rate Limits](platform.openai.com/docs/guides/rate-limits) - restrictions that OpenAI API imposes on the number of times a user or client can access its services within a specified period of time.
 
 ### How it works
 This application (or extension) allows you to create advanced prompt templates and include data from various sources such as the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, Exception with relevant code files, or Chat History. You can execute this template with just one button press, and the data will be sent to your preferred AI model for results at https://api.openai.com.
