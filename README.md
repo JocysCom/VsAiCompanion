@@ -33,10 +33,10 @@ https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
 Existing tools like GitHub CoPilot have limitations when it comes to interacting with AI. I wanted to create an app that could handle common tasks with more in-depth AI guidance and information. This tool does not replace GitHub CoPilot, but rather offers new features. My goal was to create a tool that would assist AI in responding to inquiries about an entire project or in revamping a Visual Studio solution using a different framework. Right now, you have the ability to request a project rewrite, as the extension can send an entire project or solution. However, there are some necessary updates that need to be made in order to save the outcomes.
 
 ### Limitations
+[Token Limits](help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them) - depending on the [model](platform.openai.com/docs/models) used, requests can use up to 128,000 tokens shared between prompt and completion. Some models can have different limits on input and output. 
 You can ask questions about an entire solution or project using the "Code - Smart Search" template. However, the size of the solution or project is limited by the maximum amount of tokens the AI can process. People who have access to the GPT-4 API can upload projects or solutions for AI analysis, up to sizes of 384KB (128K tokens, about 3 bytes per token). These limitations could potentially be removed if AI is hosted on-premises.
 
-### Rate Limits
-Rate limits are restrictions that OpenAI API imposes on the number of times a user or client can access its services within a specified period of time: https://platform.openai.com/docs/guides/rate-limits/usage-tiers
+[Rate Limits](platform.openai.com/docs/guides/rate-limits/usage-tiers) - restrictions that OpenAI API imposes on the number of times a user or client can access its services within a specified period of time.
 
 ### How it works
 This application (or extension) allows you to create advanced prompt templates and include data from various sources such as the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, Exception with relevant code files, or Chat History. You can execute this template with just one button press, and the data will be sent to your preferred AI model for results at https://api.openai.com.
