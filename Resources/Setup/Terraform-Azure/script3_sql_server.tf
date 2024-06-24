@@ -7,8 +7,10 @@ resource "azurerm_mssql_server" "sqlsrv" {
   version             = "12.0"
   # Azure AD Administrator for the SQL Server. Use current user.
   azuread_administrator {
-    login_username = data.azuread_user.admin_user.user_principal_name
-    object_id      = data.azuread_user.admin_user.object_id
+    login_username = data.azuread_service_principal.sp_admin.display_name
+    object_id      = data.azuread_service_principal.sp_admin.object_id
+    #login_username = data.azuread_user.admin_user.user_principal_name
+    #object_id      = data.azuread_user.admin_user.object_id
     #login_username              = azuread_group.g5.display_name
     #object_id                   = azuread_group.g5.object_id
     azuread_authentication_only = true
@@ -22,7 +24,8 @@ resource "azurerm_mssql_server" "sqlsrv" {
 
 resource "azurerm_role_assignment" "sqlsrv_admin" {
   role_definition_name = "Contributor"
-  principal_id         = azuread_group.g5.id
+  #principal_id         = azuread_group.g5.id
+  principal_id         = data.azuread_service_principal.sp_admin.id
   scope                = azurerm_mssql_server.sqlsrv.id
 }
 

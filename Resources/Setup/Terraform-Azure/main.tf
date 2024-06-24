@@ -13,17 +13,42 @@ terraform {
       version = ">= 2.51.0"
     }
   }
+  backend "azurerm" {}
+}
+
+# Configure the Microsoft Azure Active Directory provider
+provider "azuread" {
+  # Optionally: configure authentication details
 }
 
 # Configure the Microsoft Azure Resource Manager provider
 provider "azurerm" {
   features {}
   # Optionally: configure authentication details
+  subscription_id = var.ARM_SUBSCRIPTION_ID
+  client_id       = var.ARM_CLIENT_ID
+  client_secret   = var.ARM_CLIENT_SECRET
+  tenant_id       = var.ARM_TENANT_ID
 }
 
-# Configure the Microsoft Azure Active Directory provider
-provider "azuread" {
-  # Optionally: configure authentication details
+variable "ARM_SUBSCRIPTION_ID" {
+  description = "Subscription ID"
+  type        = string
+}
+
+variable "ARM_CLIENT_ID" {
+  description = "Service Principal Client ID"
+  type        = string
+}
+
+variable "ARM_CLIENT_SECRET" {
+  description = "Service Principal Client Secret"
+  type        = string
+}
+
+variable "ARM_TENANT_ID" {
+  description = "Tenant ID"
+  type        = string
 }
 
 # Retrieve Azure Client Configuration including the Tenant ID
@@ -43,12 +68,17 @@ data "external" "user_principal_name" {
   ]
 }
 
-# Azure AD user data source
-data "azuread_user" "admin_user" {
-  user_principal_name = data.external.user_principal_name.result.userPrincipalName
-}
-
 # External IP Address.
 data "external" "external_ip" {
   program = ["pwsh", "-Command", "Invoke-RestMethod -Uri http://ifconfig.me/ip | % { @{ip = $_} | ConvertTo-Json -Compress }"]
+}
+
+# Azure AD user data source
+#data "azuread_user" "admin_user" {
+#  user_principal_name = data.external.user_principal_name.result.userPrincipalName
+#}
+
+# Directly reference the service principal information
+data "azuread_service_principal" "sp_admin" {
+  client_id = var.ARM_CLIENT_ID
 }

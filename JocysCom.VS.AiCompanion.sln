@@ -48,8 +48,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform-Azure", "Terraform-Azure", "{B006DEFD-9B24-4F37-889A-8EC4D812B996}"
 	ProjectSection(SolutionItems) = preProject
 		Resources\Setup\Terraform-Azure\.gitignore = Resources\Setup\Terraform-Azure\.gitignore
+		Resources\Setup\Terraform-Azure\azure-pipelines.yml = Resources\Setup\Terraform-Azure\azure-pipelines.yml
+		Resources\Setup\Terraform-Azure\backend.env.tfvars = Resources\Setup\Terraform-Azure\backend.env.tfvars
 		Resources\Setup\Terraform-Azure\main.tf = Resources\Setup\Terraform-Azure\main.tf
-		Resources\Setup\Terraform-Azure\main.yml = Resources\Setup\Terraform-Azure\main.yml
 		Resources\Setup\Terraform-Azure\ReadMe.md = Resources\Setup\Terraform-Azure\ReadMe.md
 		Resources\Setup\Terraform-Azure\script1_groups.tf = Resources\Setup\Terraform-Azure\script1_groups.tf
 		Resources\Setup\Terraform-Azure\script2_key_vault.tf = Resources\Setup\Terraform-Azure\script2_key_vault.tf
@@ -57,6 +58,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform-Azure", "Terrafor
 		Resources\Setup\Terraform-Azure\script3_sql_server_roles.sql = Resources\Setup\Terraform-Azure\script3_sql_server_roles.sql
 		Resources\Setup\Terraform-Azure\script4_sql_database.tf = Resources\Setup\Terraform-Azure\script4_sql_database.tf
 		Resources\Setup\Terraform-Azure\script4_sql_database_roles.sql = Resources\Setup\Terraform-Azure\script4_sql_database_roles.sql
+		Resources\Setup\Terraform-Azure\SetupEnvironment.dev.ps1 = Resources\Setup\Terraform-Azure\SetupEnvironment.dev.ps1
 		Resources\Setup\Terraform-Azure\variables.env.tfvars = Resources\Setup\Terraform-Azure\variables.env.tfvars
 		Resources\Setup\Terraform-Azure\variables.tf = Resources\Setup\Terraform-Azure\variables.tf
 	EndProjectSection
@@ -238,11 +240,7 @@ Global
 		SolutionGuid = {FBFF2296-DB1F-4D4F-B14D-BE266743B9AE}
 	EndGlobalSection
 EndGlobal
-lSection
-	GlobalSection(NestedProjects) = preSolution
-		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
-		{6D58A35D-FA37-4761-AE81-F1DD89829E1E} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
-		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99} = {843D4334-2E79-470C-A481-E02CF34E242E}
+-FAC5B95D3C99} = {843D4334-2E79-470C-A481-E02CF34E242E}
 		{FF25816B-107F-4816-8C36-34804F25DD0D} = {843D4334-2E79-470C-A481-E02CF34E242E}
 		{1830B055-DFB2-427C-9F27-2A0178A65DA2} = {B0DB9388-57E1-4AC8-982F-356EA5BBBAD0}
 		{D930C7F4-0EC8-42F0-AD5C-CB74D5E22026} = {B0DB9388-57E1-4AC8-982F-356EA5BBBAD0}

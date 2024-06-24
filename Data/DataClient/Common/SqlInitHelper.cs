@@ -90,12 +90,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			success &= CreateTable(nameof(FilePart), connection);
 			success &= CreateTable(nameof(Embeddings.Embedding.Group), connection);
 			success &= RunScript("Update_1", connection, isPortable);
-			if (addCLR)
-			{
-				//success &= CreateProcedure("sp_getMostSimilarFiles", connection);
-				success &= CreateProcedure("sp_getSimilarFileParts", connection);
-				//success &= CreateProcedure("sp_getSimilarFiles", connection);
-			}
+			//success &= CreateProcedure("sp_getMostSimilarFiles", connection);
+			success &= CreateProcedure("sp_getSimilarFileParts", connection);
+			//success &= CreateProcedure("sp_getSimilarFiles", connection);
 			connection.Close();
 			return success;
 		}

@@ -9,4 +9,5 @@ env = "dev"
 kvs_openai_value = "<your_openai_api_key>"
 kvs_speech_value = "<your_speech_service_api_key>"
 
-rg_name = "contoso-openai-sandbox-dev-uks-001"
+rg_name              = "rg-contoso-aicomp-dev-uswest-001"
+storage_account_name = "staicompdevuswest001"

@@ -4,6 +4,12 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+variables:
+  ARM_CLIENT_ID: '$(armClientId)'
+  ARM_CLIENT_SECRET: '$(armClientSecret)'
+  ARM_TENANT_ID: '$(armTenantId)'
+  ARM_SUBSCRIPTION_ID: '$(armSubscriptionId)'
+
 steps:
 - script: |
     $modules = @('Az', 'SqlServer')
@@ -22,4 +28,9 @@ steps:
     terraform init
     terraform apply -auto-approve
   displayName: 'Run Terraform'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
   pwsh: true

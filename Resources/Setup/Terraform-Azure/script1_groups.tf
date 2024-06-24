@@ -4,23 +4,22 @@
 # grp-ai-risk-level-high
 # grp-ai-risk-level-critical
 
-resource "azuread_group" "g2" {
+data "azuread_group" "g2" {
   display_name     = "AI_RiskLevel_Low"
   security_enabled = true
 }
 
-resource "azuread_group" "g3" {
+data "azuread_group" "g3" {
   display_name     = "AI_RiskLevel_Medium"
   security_enabled = true
 }
 
-resource "azuread_group" "g4" {
+data "azuread_group" "g4" {
   display_name     = "AI_RiskLevel_High"
   security_enabled = true
 }
 
-resource "azuread_group" "g5" {
+data "azuread_group" "g5" {
   display_name     = "AI_RiskLevel_Critical"
   security_enabled = true
 }
-

@@ -142,7 +142,7 @@ Service principals need certain permissions to manage their resource groups. Azu
 ### Initialize and Apply Terraform Configuration
 1. **Initialize Terraform**:
     ```powershell
-    terraform init
+    terraform init -upgrade -backend-config="backend.dev.conf"
     ```
 
 ### Create `variables.dev.tfvars` File
@@ -162,7 +162,7 @@ terraform fmt
 
 **Refresh State Without Making Changes**:
 ```powershell
-terraform apply -refresh-only -var-file="variables.dev.tfvars"
+terraform apply -refresh-only -backend-config="backend.dev.conf" -var-file="variables.dev.tfvars"
 ```
 
 **Create an Execution Plan**:
