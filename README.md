@@ -85,6 +85,10 @@ Task and template settings are saved in separate files for easy exchange and sha
 
 <img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_SettingFiles.png"  width="600" height="153">
 
+Tasks:
+
+<img alt="Tasks" src="Documents/Images/JocysComVsAiCompanion_Tasks.png" width="600" height="600">
+
 Various Templates:
 
 <img alt="Templates" src="Documents/Images/JocysComVsAiCompanion_Templates.png" width="600" height="600">
