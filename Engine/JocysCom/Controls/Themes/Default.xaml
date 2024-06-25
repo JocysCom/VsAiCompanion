@@ -16,9 +16,6 @@
 	<SolidColorBrush x:Key="BackgroundDarkSelected" Color="#c2e7ff" />
 	<SolidColorBrush x:Key="BackgroundWarning" Color="#ffe0e0" />
 	<SolidColorBrush x:Key="BackgroundHelp" Color="#ffffe1" />
-
-
-
 	<SolidColorBrush x:Key="BorderDark" Color="#cccccc" />
 	<!--<SolidColorBrush x:Key="BorderDarkSelected" Color="#a4d8fa" />-->
 
@@ -988,9 +985,9 @@
 	</Style>
 
 	<Style x:Key="ImageCell_Default" TargetType="Image">
-		<Setter Property="Margin" Value="3,0,16,0" />
-		<Setter Property="Width" Value="21" />
-		<Setter Property="Height" Value="21" />
+		<Setter Property="Margin" Value="3,0,3,0" />
+		<Setter Property="Width" Value="16" />
+		<Setter Property="Height" Value="16" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
 	</Style>
@@ -1095,13 +1092,17 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="Expander">
 					<StackPanel>
-						<ToggleButton Name="HeaderSite" IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource ToggleButton_Default}">
+						<ToggleButton
+							Name="HeaderSite"
+							Height="24"
+							IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+							Style="{StaticResource ToggleButton_Default}">
 							<DockPanel>
 								<Path
 									Name="ExpandIndicator"
 									Width="16"
 									Height="16"
-									Margin="3,5,3,5"
+									Margin="3,0,3,0"
 									VerticalAlignment="Center"
 									Data="M 6,2 L 12,8 L 6,14"
 									Opacity="0.2"
@@ -1166,6 +1167,7 @@
 	<!--  DataGrid  -->
 	<Style x:Key="DataGrid_Default" TargetType="DataGrid">
 		<Setter Property="Background" Value="{StaticResource BackgroundWhite}" />
+		<Setter Property="ClipToBounds" Value="True" />
 		<Setter Property="BorderThickness" Value="0" />
 		<Setter Property="CanUserAddRows" Value="False" />
 		<Setter Property="CanUserDeleteRows" Value="False" />

@@ -230,6 +230,7 @@
 			Name="AvatarPanelBorder"
 			Grid.Row="1"
 			Grid.Column="1"
+			MaxWidth="250"
 			Margin="3,3,3,4"
 			Visibility="Collapsed">
 			<!--<controls:AvatarControl x:Name="AvatarPanel" VerticalAlignment="Top" />-->

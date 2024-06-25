@@ -8,18 +8,6 @@
 	d:DesignHeight="140"
 	d:DesignWidth="320"
 	mc:Ignorable="d">
-	<UserControl.OpacityMask>
-		<VisualBrush>
-			<VisualBrush.Visual>
-				<Border
-					Width="{Binding ActualWidth, ElementName=AiServiceListUserControl}"
-					Height="{Binding ActualHeight, ElementName=AiServiceListUserControl}"
-					Background="White"
-					CornerRadius="0,0,0,5"
-					SnapsToDevicePixels="True" />
-			</VisualBrush.Visual>
-		</VisualBrush>
-	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -29,7 +17,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Name="AiServiceListGrid" VerticalAlignment="Stretch">
+	<Grid Name="AiServiceListGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -73,16 +61,18 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
+		<Border
+			Name="OpacityMaskBorder"
+			Grid.Row="2"
+			Background="White"
+			CornerRadius="0,0,0,5" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
-			Height="Auto"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			Background="White"
-			BorderThickness="0"
 			CellEditEnding="MainDataGrid_CellEditEnding"
 			IsReadOnly="False"
 			Loaded="MainDataGrid_Loaded"
@@ -92,6 +82,9 @@
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
+			<DataGrid.OpacityMask>
+				<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+			</DataGrid.OpacityMask>
 			<DataGrid.Columns>
 				<DataGridTextColumn
 					x:Name="KeyColumn"
@@ -103,4 +96,5 @@
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>
+
 </UserControl>

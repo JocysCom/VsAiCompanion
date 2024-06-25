@@ -12,18 +12,6 @@
 	d:DesignWidth="480"
 	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
-	<UserControl.OpacityMask>
-		<VisualBrush>
-			<VisualBrush.Visual>
-				<Border
-					Width="{Binding ActualWidth, ElementName=This}"
-					Height="{Binding ActualHeight, ElementName=This}"
-					Background="White"
-					CornerRadius="0,0,0,5"
-					SnapsToDevicePixels="True" />
-			</VisualBrush.Visual>
-		</VisualBrush>
-	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -44,7 +32,7 @@
 			</CollectionViewSource>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Name="TemplateListGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+	<Grid Name="TemplateListGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -195,6 +183,11 @@
 				</TextBlock>
 			</Grid>
 		</Border>
+		<Border
+			Name="OpacityMaskBorder"
+			Grid.Row="2"
+			Background="White"
+			CornerRadius="0,0,0,5" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
@@ -218,6 +211,9 @@
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended"
 			Sorting="MainDataGrid_Sorting">
+			<DataGrid.OpacityMask>
+				<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+			</DataGrid.OpacityMask>
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 				<Style x:Key="TextBlockCellMargin3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
@@ -244,12 +240,6 @@
 															<Setter Property="Margin" Value="3,0,6,0" />
 														</Style>
 													</Grid.Resources>
-													<!--<ContentControl
-														Width="16"
-														Height="16"
-														Content="{StaticResource Icon_FolderOpen}"
-														DockPanel.Dock="Left"
-														Focusable="False" />-->
 													<TextBlock Text="{Binding Path=Name}" />
 													<TextBlock HorizontalAlignment="Right" Text="{Binding ItemCount}" />
 												</Grid>
@@ -271,15 +261,13 @@
 					<DataGridTemplateColumn.CellStyle>
 						<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
 							<Setter Property="Focusable" Value="false" />
+							<Setter Property="Width" Value="22" />
 						</Style>
 					</DataGridTemplateColumn.CellStyle>
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Image
+								<Image
 								x:Name="IconImage"
-								Width="16"
-								Height="16"
-								Margin="3,0,3,0"
 								Source="{Binding Icon}"
 								Style="{StaticResource ImageCell_Default}" />
 						</DataTemplate>

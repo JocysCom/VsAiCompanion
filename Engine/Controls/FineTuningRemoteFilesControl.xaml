@@ -11,18 +11,6 @@
 	d:DesignWidth="480"
 	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
-	<UserControl.OpacityMask>
-		<VisualBrush>
-			<VisualBrush.Visual>
-				<Border
-					Width="{Binding ActualWidth, ElementName=This}"
-					Height="{Binding ActualHeight, ElementName=This}"
-					Background="White"
-					CornerRadius="0,0,0,5"
-					SnapsToDevicePixels="True" />
-			</VisualBrush.Visual>
-		</VisualBrush>
-	</UserControl.OpacityMask>
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -33,7 +21,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Name="MainGrid" VerticalAlignment="Stretch">
+	<Grid Name="MainGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -114,6 +102,11 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
+		<Border
+			Name="OpacityMaskBorder"
+			Grid.Row="2"
+			Background="White"
+			CornerRadius="0,0,0,5" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
@@ -122,7 +115,6 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			ClipToBounds="True"
 			IsReadOnly="True"
 			Loaded="MainDataGrid_Loaded"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
@@ -131,6 +123,9 @@
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionChanged="MainDataGrid_SelectionChanged"
 			SelectionMode="Extended">
+			<DataGrid.OpacityMask>
+				<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+			</DataGrid.OpacityMask>
 			<DataGrid.ContextMenu>
 				<ContextMenu>
 					<MenuItem Click="MainDataGrid_ContextMenu_Copy" Header="{StaticResource main_Copy}" />

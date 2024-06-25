@@ -163,7 +163,6 @@
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
 			CanUserAddRows="True"
-			ClipToBounds="True"
 			Loaded="MainDataGrid_Loaded"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
@@ -194,9 +193,9 @@
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="{StaticResource main_Comment}" />
 			</DataGrid.Columns>
-			<DataGrid.CellStyle>
+			<!--<DataGrid.CellStyle>
 				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell" />
-			</DataGrid.CellStyle>
+			</DataGrid.CellStyle>-->
 		</DataGrid>
 	</Grid>
 </UserControl>
