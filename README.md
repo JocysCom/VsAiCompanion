@@ -11,7 +11,7 @@ This is a free, open-source project for people who have an [OpenAI API](https://
 
 [JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.11.25/JocysCom.VS.AiCompanion.App.zip) - digitally signed standalone/portable application.
 
-[AI Companion as Visual Studio Extension on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion") - can be installed via Visual Studio Extension Manager.
+[AI Companion as Visual Studio Extension on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion") - installation via Visual Studio Extension Manager.
 
 ### Requirements
 
@@ -20,14 +20,13 @@ This is a free, open-source project for people who have an [OpenAI API](https://
 [OpenAI account (API Key)](https://platform.openai.com/account/) for ChatGPT models to work in AI Companion app:  
 AI Companion app ► Options ► AI Services ► Open AI ► enter API Key.
 
+[OpenAI account (Tier 1)](https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4-gpt-4-turbo-and-gpt-4o#h_f472fd7cbc) to access GPT-4 models.
+
 [Microsoft Azure account (API Key)](https://github.com/JocysCom/VsAiCompanion/wiki/Feature-%E2%80%90-AI-Avatar) for ChatGPT to answer with voice and mouth animation:  
 AI Companion app ► Options ► AI Services ► Speech Service ► enter API Key.
 
-For AI Companion Visual Studio extension version only: Visual Studio 2022 17.9+  
+**For AI Companion Visual Studio extension version only:** Visual Studio 2022 17.9+  
 App extension version can be installed and updated via Visual Studio Extension Manager.
-
-### How can I access unlimited GPT-4 models?
-https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
 
 ### Why was this extension created?
 Existing tools like GitHub CoPilot have limitations when it comes to interacting with AI. I wanted to create an app that could handle common tasks with more in-depth AI guidance and information. This tool does not replace GitHub CoPilot, but rather offers new features. My goal was to create a tool that would assist AI in responding to inquiries about an entire project or in revamping a Visual Studio solution using a different framework. Right now, you have the ability to request a project rewrite, as the extension can send an entire project or solution. However, there are some necessary updates that need to be made in order to save the outcomes.
