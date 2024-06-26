@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+	    <SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$(MSBuildProjectDirectory)\..\</SolutionDir>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<!--
 		<DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
