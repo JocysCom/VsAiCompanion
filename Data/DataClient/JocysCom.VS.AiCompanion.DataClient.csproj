@@ -14,8 +14,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.11.25</AssemblyVersion>
-		<FileVersion>1.11.25</FileVersion>
+		<AssemblyVersion>1.11.26</AssemblyVersion>
+		<FileVersion>1.11.26</FileVersion>
 		<Platforms>AnyCPU</Platforms>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->

@@ -5,6 +5,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F0E1BECF-FB30-4986-96D3-77ECCD2C78F7}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.github\workflows\codeql.yml = .github\workflows\codeql.yml
 		.gitignore = .gitignore
 		CHANGELOG.md = CHANGELOG.md
 		Cleanup_Solution.ps1 = Cleanup_Solution.ps1
@@ -58,12 +59,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform-Azure", "Terrafor
 		Resources\Setup\Terraform-Azure\script3_sql_server_roles.sql = Resources\Setup\Terraform-Azure\script3_sql_server_roles.sql
 		Resources\Setup\Terraform-Azure\script4_sql_database.tf = Resources\Setup\Terraform-Azure\script4_sql_database.tf
 		Resources\Setup\Terraform-Azure\script4_sql_database_roles.sql = Resources\Setup\Terraform-Azure\script4_sql_database_roles.sql
-		Resources\Setup\Terraform-Azure\SetupEnvironment.dev.ps1 = Resources\Setup\Terraform-Azure\SetupEnvironment.dev.ps1
+		Resources\Setup\Terraform-Azure\setup_environment.ps1 = Resources\Setup\Terraform-Azure\setup_environment.ps1
+		Resources\Setup\Terraform-Azure\setup_service_principal.ps1 = Resources\Setup\Terraform-Azure\setup_service_principal.ps1
 		Resources\Setup\Terraform-Azure\variables.env.tfvars = Resources\Setup\Terraform-Azure\variables.env.tfvars
 		Resources\Setup\Terraform-Azure\variables.tf = Resources\Setup\Terraform-Azure\variables.tf
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{7621D168-651D-48DB-9354-8516A6C68351}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\ZipFiles.ps1 = Resources\ZipFiles.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -240,10 +245,7 @@ Global
 		SolutionGuid = {FBFF2296-DB1F-4D4F-B14D-BE266743B9AE}
 	EndGlobalSection
 EndGlobal
--FAC5B95D3C99} = {843D4334-2E79-470C-A481-E02CF34E242E}
-		{FF25816B-107F-4816-8C36-34804F25DD0D} = {843D4334-2E79-470C-A481-E02CF34E242E}
-		{1830B055-DFB2-427C-9F27-2A0178A65DA2} = {B0DB9388-57E1-4AC8-982F-356EA5BBBAD0}
-		{D930C7F4-0EC8-42F0-AD5C-CB74D5E22026} = {B0DB9388-57E1-4AC8-982F-356EA5BBBAD0}
+BBAD0}
 		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

@@ -3,7 +3,6 @@ using Azure.Identity;
 using Azure.ResourceManager;
 using Azure.Security.KeyVault.Secrets;
 using JocysCom.ClassLibrary;
-using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Converters;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
@@ -18,6 +17,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
+#if NETFRAMEWORK
+#else
+using JocysCom.VS.AiCompanion.DataClient;
+#endif
 
 namespace JocysCom.VS.AiCompanion.Engine.Security
 {
@@ -79,10 +83,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		*/
 
 		// Preconfigured set of permissions. Usually formatted as https://{resource}/{permission}:
+
+		// note the // as it's needed for v1 endpoints
+		public const string MicrosoftDatabaseScopes = "https://database.windows.net//.default";
 		public const string MicrosoftGraphScope = "https://graph.microsoft.com/.default";
 		public const string MicrosoftAzureManagementScope = "https://management.azure.com/.default";
 		public const string MicrosoftAzureVaultScope = "https://vault.azure.net/.default";
-		public const string MicrosoftDatabaseScopes = "https://database.windows.net//.default";
+		public const string MicrosoftAzureSqlScope = "https://sql.azuresynapse-dogfood.net/user_impersonation";
 		// Fully qualified URI for "User.Read";
 		// Permissions to sign in the user and read the user's profile.
 		public const string MicrosoftGraphUserReadScope = "https://graph.microsoft.com/User.Read";
@@ -326,6 +333,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (!result.Success || result.Data == null)
 				return null;
 			return new AccessTokenCredential(result.Data.AccessToken);
+		}
+
+		public async Task RefreshDatabaseToken()
+		{
+			var scopes = new string[] { MicrosoftAzureSqlScope };
+			var result = await Current.SignIn(scopes); // Auto-interactive sign-in
+			if (!result.Success)
+			{
+				throw new InvalidOperationException("Failed to refresh the token.");
+			}
 		}
 
 #if NETFRAMEWORK

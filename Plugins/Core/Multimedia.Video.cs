@@ -19,10 +19,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public Func<string, string[], Task<OperationResult<string>>> VideoToText { get; set; }
 
 		/// <summary>
-		/// Analyzes visual content such as pictures and photographs per given instructions with an AI model. Don't use this function with text files.
+		/// Analyzes visual content like pictures and photos based on the given instructions with an AI model. Don't use this function for text files.
 		/// </summary>
 		/// <param name="instructions">Guidelines for AI to follow during image analysis.</param>
-		/// <param name="pathsOrUrls">Paths to local files or URLs to images for analysis.</param>
+		/// <param name="pathsOrUrls">Paths to local files or URLs to images for analysis. Supported image file types: .jpg, .png, .gif, .bmp, .tiff</param>
 		/// <returns>Analysis results.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		public async Task<OperationResult<string>> AnalyseImages(
@@ -38,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// This function is designed to allow AI assistants to visually analyze real-time data,
 		/// such as identifying objects held by a user. Returns the file path of the captured image.
 		/// </summary>
-		/// <returns>Path to the JPG file containing the captured image.</returns>
+		/// <returns>Path to the file containing the captured image.</returns>
 		/// <exception cref="Exception">Thrown when the image capture fails.</exception>
 		//[RiskLevel(RiskLevel.Low)] // Disable until better library found.
 		public async Task<OperationResult<string>> CaptureCameraImage()

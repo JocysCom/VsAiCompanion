@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace JocysCom.VS.AiCompanion.Engine.Controls
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 {
 	/// <summary>
 	/// Interaction logic for AiModelListControl.xaml

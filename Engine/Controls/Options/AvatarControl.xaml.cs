@@ -11,14 +11,14 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace JocysCom.VS.AiCompanion.Engine.Controls
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 {
 	/// <summary>
 	/// Interaction logic for OptionsAvatarControl.xaml
 	/// </summary>
-	public partial class OptionsAvatarControl : UserControl
+	public partial class AvatarControl : UserControl
 	{
-		public OptionsAvatarControl()
+		public AvatarControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))

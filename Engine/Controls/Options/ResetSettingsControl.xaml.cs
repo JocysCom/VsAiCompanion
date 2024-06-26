@@ -5,14 +5,14 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace JocysCom.VS.AiCompanion.Engine.Controls
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 {
 	/// <summary>
 	/// Interaction logic for VaultItemControl.xaml
 	/// </summary>
-	public partial class OptionsResetSettingsControl : UserControl, INotifyPropertyChanged
+	public partial class ResetSettingsControl : UserControl, INotifyPropertyChanged
 	{
-		public OptionsResetSettingsControl()
+		public ResetSettingsControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))

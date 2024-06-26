@@ -204,6 +204,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						break;
 					case ItemType.MailAccount:
 					case ItemType.VaultItem:
+					case ItemType.AiService:
 						SetGrouping(nameof(SettingsListFileItem.ListGroupPath));
 						columns.Remove(IconColumn);
 						break;
@@ -325,6 +326,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				item = AppHelper.GetNewMailAccount();
 			if (DataType == ItemType.VaultItem)
 				item = AppHelper.GetNewVaultItem();
+			if (DataType == ItemType.AiService)
+				item = AppHelper.GetNewAiService();
 			if (item != null)
 				InsertItem(item);
 		}

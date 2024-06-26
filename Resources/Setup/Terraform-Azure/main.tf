@@ -2,18 +2,26 @@
 # To upgrade providers: terraform init -upgrade
 terraform {
   required_providers {
-    # https://registry.terraform.io/providers/hashicorp/azurerm/latest
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 3.107.0"
-    }
     # https://registry.terraform.io/providers/hashicorp/azuread/latest
     azuread = {
       source  = "hashicorp/azuread"
       version = ">= 2.51.0"
     }
+    # https://registry.terraform.io/providers/hashicorp/azurerm/latest
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.107.0"
+    }
   }
-  backend "azurerm" {}
+  backend "azurerm" {
+    # passed via `-backend-config=`"backend.env.tfvars"` in the `init` command.
+    #resource_group_name  = "..."
+    #storage_account_name = "..."
+    #container_name       = "..."
+    #key                  = "..."
+    # passed passed via `ARM_ACCESS_KEY` environment variable.
+    #access_key           = "..."
+  }
 }
 
 # Configure the Microsoft Azure Active Directory provider
@@ -60,13 +68,13 @@ data "azurerm_resource_group" "rg" {
 }
 
 # External data source to run the PowerShell command
-data "external" "user_principal_name" {
-  program = [
-    "PowerShell",
-    "-Command",
-    "(az ad signed-in-user show --query userPrincipalName -o tsv) | % { @{userPrincipalName = $_} | ConvertTo-Json -Compress }"
-  ]
-}
+#data "external" "user_principal_name" {
+#  program = [
+#    "PowerShell",
+#    "-Command",
+#    "(az ad signed-in-user show --query userPrincipalName -o tsv) | % { @{userPrincipalName = $_} | ConvertTo-Json -Compress }"
+#  ]
+#}
 
 # External IP Address.
 data "external" "external_ip" {

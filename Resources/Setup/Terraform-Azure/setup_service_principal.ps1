@@ -1,4 +1,4 @@
-# SetupEnvironment.dev.ps1
+# Setup Azure service principal
 
 # Function to retrieve service principal details
 function Get-ServicePrincipalDetails {
@@ -68,8 +68,12 @@ $env:TF_VAR_ARM_CLIENT_SECRET = $password
 $env:TF_VAR_ARM_TENANT_ID = $tenantId
 $env:TF_VAR_ARM_SUBSCRIPTION_ID = (az account show --query 'id' -o tsv)
 
+$env:ARM_CLIENT_ID = $sp.appId
+$env:ARM_CLIENT_SECRET = $password
+$env:ARM_TENANT_ID = $tenantId
+$env:ARM_SUBSCRIPTION_ID = (az account show --query 'id' -o tsv)
+
 Write-Output "Environment variables set successfully."
 Write-Output "TF_VAR_ARM_CLIENT_ID: $($env:TF_VAR_ARM_CLIENT_ID)"
 Write-Output "TF_VAR_ARM_TENANT_ID: $($env:TF_VAR_ARM_TENANT_ID)"
 Write-Output "TF_VAR_ARM_SUBSCRIPTION_ID: $($env:TF_VAR_ARM_SUBSCRIPTION_ID)"
-pause

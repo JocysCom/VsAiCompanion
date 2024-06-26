@@ -17,14 +17,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace JocysCom.VS.AiCompanion.Engine.Controls
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 {
 	/// <summary>
-	/// Interaction logic for OptionsMicrosoftAccountsControl.xaml
+	/// Interaction logic for MicrosoftAccountsControl.xaml
 	/// </summary>
-	public partial class OptionsMicrosoftAccountsControl : UserControl, INotifyPropertyChanged
+	public partial class MicrosoftAccountsControl : UserControl, INotifyPropertyChanged
 	{
-		public OptionsMicrosoftAccountsControl()
+		public MicrosoftAccountsControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))

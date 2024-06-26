@@ -1,3 +1,10 @@
+2024-06-26 v1.11.26
+
+- Fix: List not expanding.
+- Fix: Improved support for Azure SQL Server Databases.
+- Update: SQL now uses native SQL script AI search instead of C# Assembly.
+- Update: UI, Templates and AI Avatar updated.
+
 2024-06-16 v1.11.25
 
 - New: The tool will ask the AI to provide a reason for making function calls.

@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.AiModelListControl"
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Options.AiModelListControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,9 +13,9 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
-				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
-				<ResourceDictionary Source="../Resources/MainResources.xaml" />
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<!--  Collection View Source with Grouping  -->
 			<CollectionViewSource x:Key="GroupedData" Source="{Binding FilteredList, ElementName=This}" />

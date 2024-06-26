@@ -12,6 +12,73 @@
 - **variables.tf**: Defines Terraform variables for resource naming conventions and API keys.
 - **variables.env.tfvars**: Specifies actual values for Terraform variables, including organization, environment, API keys, and resource group name.
 
+### Register Jocys.com AI Companion Application
+
+You can register 'Jocys.com AI Companion Application' on your own domain, which will give you more granular control over access.
+
+- Go to the **Azure Portal**.
+- Navigate to **Azure Active Directory**.
+- Click on **App registrations**.
+- Click **[New registration]** button.
+- Enter a name for the application (e.g., 'Jocys.com AI Companion').
+- Select the appropriate **Supported account types** (typically 'Accounts in this organizational directory only').
+- Enter a **Redirect URI** if required (usually needed for web apps).
+- Click **[Register]** button.
+
+### Register Jocys.com AI Companion Application
+
+You can register 'Jocys.com AI Companion Application' on your own domain, which will give you more granular control over access.
+
+- Go to the **Azure Portal**.
+- Navigate to **Azure Active Directory**.
+- Click on **App registrations**.
+- Click **[New registration]** button.
+- Enter a name for the application (e.g., 'Jocys.com AI Companion').
+- Select the appropriate **Supported account types** (typically 'Accounts in this organizational directory only').
+- Enter a **Redirect URI** if required (usually needed for web apps).
+- Click **[Register]** button.
+
+### Add API Permissions to Application
+
+To enable access to the optional cloud resources that could be used by the application, you must grant the necessary permissions to access Microsoft Account (`https://graph.microsoft.com/.default`), Key Vaults (`https://vault.azure.net/.default`), and Azure SQL Database (`https://database.windows.net/.default`).
+
+- Go to the **Azure Portal**.
+- Navigate to **Azure Active Directory** > **App registrations**.
+- Select your application ('Jocys.com AI Companion').
+- Go to the **API permissions** section tab.
+
+#### Add Ability to Login with Microsoft Account
+
+- Click on **[Add a permission]** button.
+- Select **Microsoft Graph**.
+- Choose **Delegated permissions**.
+- Search for and select **User.Read**.
+- Click **[Add permissions]** button.
+- If you have administrative privileges, click **[Grant admin consent for [Your Tenant]]** button.  
+  If you do not have administrative privileges, request an admin to grant consent or ask for the necessary permissions.
+
+#### Add Ability to Access Secret Values from Key Vault (API Keys)
+
+- Click on **[Add a permission]** button.
+- Select **APIs my organization uses**.
+- Search for and select **Azure Key Vault**.
+- Choose **Delegated permissions**.
+- Search for and select **user_impersonation**.
+- Click **[Add permissions]** button.
+- If you have administrative privileges, click **[Grant admin consent for [Your Tenant]]** button.  
+  If you do not have administrative privileges, request an admin to grant consent or ask for the necessary permissions.
+
+#### Add Ability to Access Azure SQL Database
+
+- Click on **[Add a permission]** button.
+- Select **APIs my organization uses**.
+- Search for and select **Azure SQL Database**.
+- Choose **Delegated permissions**.
+- Search for and select **user_impersonation**.
+- Click **[Add permissions]** button.
+- If you have administrative privileges, click **[Grant admin consent for [Your Tenant]]** button.  
+  If you do not have administrative privileges, request an admin to grant consent or ask for the necessary permissions.
+
 ## Pre-requisites:
 1. **PowerShell 7 (x64)** - Automation command-line shell and an associated scripting language.
 2. **az (Azure CLI)** - Command-line tool for managing Azure resources.
@@ -36,7 +103,7 @@ Go to the Downloads folder:
 cd Downloads
 ```
 
-## Install Azure CLI (az)
+### Install Azure CLI (az)
 
 Allow modules to be installed without prompting for confirmation.
 
@@ -44,7 +111,7 @@ Allow modules to be installed without prompting for confirmation.
 Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
 ```
 
-### Install Azure CLI (az)
+Install Azure CLI (az)
 
 ```PowerShell
 Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi
@@ -135,6 +202,33 @@ The output includes credentials that you must protect. Be sure that you do not i
 
 Service principals need certain permissions to manage their resource groups. Azure domain administrators must manually add your new service principal to the `Azure Service Principals` group.
 
+#### Assign "Directory.Read.All" Role to a Service Principal
+
+Your service principal must have the "Directory.Read.All" permission in order to read "AI_RiskLevel_`*" groups.
+Your service principal must have the "Directory.Write.All" permission in order to create "AI_RiskLevel_`*" groups.
+
+1. **Open Azure/Entra Portal**:
+   - Go to [Azure Portal](https://portal.azure.com/) and sign in.
+
+2. **Navigate to Azure Active Directory**:
+   - In the left-hand navigation pane, select **Azure Active Directory**.
+
+3. **Find Your Service Principal**:
+   - Select **App registrations**.
+   - Search for and select your service principal (e.g., `sp-contoso-aicomp-[dev|test|prod]-001`).
+
+4. **Add API Permissions**:
+   - In the service principal's menu, select **API permissions**.
+   - Click on **Add a permission**.
+   - Choose **Microsoft Graph**.
+
+5. **Select Application Permissions**:
+   - Under **Application permissions**, search for **Directory.Read.All**.
+   - Check the box next to **Directory.Read.All** and click **Add permissions**.
+
+6. **Grant Admin Consent**:
+   - After adding the permissions, click on **Grant admin consent for <Your Organization>**.
+   - Confirm the action by clicking **Yes**.
 
 ### Initialize and Apply Terraform Configuration
 
@@ -142,7 +236,7 @@ Service principals need certain permissions to manage their resource groups. Azu
 ### Initialize and Apply Terraform Configuration
 1. **Initialize Terraform**:
     ```powershell
-    terraform init -upgrade -backend-config="backend.dev.conf"
+    terraform init -upgrade -backend-config="backend.dev.tfvars"
     ```
 
 ### Create `variables.dev.tfvars` File
@@ -162,7 +256,7 @@ terraform fmt
 
 **Refresh State Without Making Changes**:
 ```powershell
-terraform apply -refresh-only -backend-config="backend.dev.conf" -var-file="variables.dev.tfvars"
+terraform apply -refresh-only -var-file="variables.dev.tfvars"
 ```
 
 **Create an Execution Plan**:
@@ -181,6 +275,22 @@ terraform apply -var-file="variables.dev.tfvars"
 **Output Tenant ID of your Azure account as plain text**:
 ```powershell
 az account show --query tenantId --output tsv
+```
+
+
+**Switching to a New Environment**:
+```powershell
+# Login to Azure and set the azure subscription
+az login
+
+# Reconfigure Terraform with the new backend configuration
+terraform init -reconfigure -backend-config="backend.prod.tfvars"
+
+# Refresh the state without making any changes using the new environment variables
+terraform apply -refresh-only -var-file="variables.prod.tfvars"
+
+# Create an execution plan for the new environment
+terraform plan -var-file="variables.prod.tfvars"
 ```
 
 ### AI Prompt Template

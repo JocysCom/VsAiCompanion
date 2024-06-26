@@ -22,6 +22,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.OnAiModelsUpdated += Global_AiModelsUpdated;
 		}
 
+
+		[Category("Main"), DefaultValue(ItemType.None)]
+		public ItemType DataType
+		{
+			get => _DataType;
+			set
+			{
+				_DataType = value;
+				if (ControlsHelper.IsDesignMode(this))
+					return;
+			}
+		}
+		private ItemType _DataType;
+
+
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public AiService Item
 		{

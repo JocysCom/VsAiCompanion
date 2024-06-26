@@ -4,13 +4,13 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controlsOptions="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Options"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
 	d:DesignHeight="400"
 	d:DesignWidth="800"
-	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -64,167 +64,6 @@
 						<Label Content="{StaticResource main_Main}" />
 					</StackPanel>
 				</TabItem.Header>
-				<ScrollViewer>
-					<StackPanel Orientation="Vertical">
-						<WrapPanel Grid.Row="4">
-							<GroupBox Margin="3,0,0,3" Header="{StaticResource main_Standalone_Program}">
-								<WrapPanel Orientation="Vertical">
-									<CheckBox Name="AppAlwaysOnTopCheckBox" Content="{StaticResource main_App_Always_on_Top}" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<CheckBox
-										Name="BarAlwaysOnTopCheckBox"
-										Content="{StaticResource main_Bar_Always_on_Top}"
-										IsChecked="{Binding BarAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-										Visibility="Collapsed" />
-									<CheckBox Name="MinimizeToTrayBox" Content="{StaticResource main_Minimize_to_Tray}" IsChecked="{Binding MinimizeToTray, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<CheckBox Name="MinimizeOnCloseTrayBox" Content="{StaticResource main_Minimize_on_Close}" IsChecked="{Binding MinimizeOnClose, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<CheckBox Name="AllowOnlyOneCopyBox" Content="{StaticResource main_Allow_Only_One_Copy}" IsChecked="{Binding AllowOnlyOneCopy, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<StackPanel Orientation="Horizontal">
-										<CheckBox
-											Name="StartWithWindowsBox"
-											VerticalAlignment="Center"
-											Content="{StaticResource main_Start_with_Windows}"
-											IsChecked="{Binding StartWithWindows, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-										<ComboBox
-											Name="StartWithWindowsStateBox"
-											MinWidth="75"
-											HorizontalAlignment="Left"
-											SelectedValue="{Binding StartWithWindowsState, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									</StackPanel>
-								</WrapPanel>
-							</GroupBox>
-							<GroupBox Margin="3,0,0,3" Header="{StaticResource main_Sending_Message}">
-								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-									<CheckBox
-										Name="ShowDocumentsAttachedWarningCheckBox"
-										Margin="0"
-										Content="{StaticResource main_Show_Documents_Attached_Warning}"
-										IsChecked="{Binding ShowDocumentsAttachedWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<CheckBox Name="ShowSensitiveDataWarningCheckBox" Content="{StaticResource main_Show_Sensitive_Data_Warning}" IsChecked="{Binding ShowSensitiveDataWarning, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<CheckBox Name="UseEnterToSendMessageCheckBox" Content="{StaticResource main_Use_Enter_to_send_the_message}" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								</WrapPanel>
-							</GroupBox>
-							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Security}">
-								<Grid>
-									<Grid.RowDefinitions>
-										<RowDefinition Height="Auto" />
-										<RowDefinition Height="Auto" />
-									</Grid.RowDefinitions>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="Auto" />
-										<ColumnDefinition Width="Auto" />
-									</Grid.ColumnDefinitions>
-									<Label VerticalAlignment="Center" Content="App max risk level" />
-									<ComboBox
-										Name="MaximumRiskLevelComboBox"
-										Grid.Column="1"
-										HorizontalAlignment="Right"
-										DisplayMemberPath="Value"
-										ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
-										SelectedValue="{Binding MaxRiskLevel, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-										SelectedValuePath="Key" />
-									<Label x:Name="DomainMaxRiskLevelNameLabel" Grid.Row="1" Content="Domain max risk level:" />
-									<StackPanel
-										Grid.Row="1"
-										Grid.Column="1"
-										HorizontalAlignment="Right"
-										Orientation="Horizontal">
-										<Label x:Name="DomainMaxRiskLevelValueLabel" Content="..." />
-										<Button Name="DomainMaxRiskLevelRefreshButton" Margin="3,0,3,0" Click="DomainMaxRiskLevelRefreshButton_Click">
-											<StackPanel>
-												<ContentControl Content="{StaticResource Icon_Refresh}" />
-											</StackPanel>
-										</Button>
-									</StackPanel>
-								</Grid>
-							</GroupBox>
-
-							<GroupBox x:Name="MultimediaGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Multimedia}">
-								<StackPanel Orientation="Horizontal">
-									<Label VerticalAlignment="Center" Content="Camera" />
-									<ComboBox Name="CameraComboBox" ItemsSource="{Binding VideoInputDevices, ElementName=This}" SelectedValue="{Binding VideoInputDevice, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<Button Name="VideoInputDevicesRefreshButton" Margin="3,0,3,0" Click="VideoInputDevicesRefreshButton_Click">
-										<StackPanel>
-											<ContentControl Content="{StaticResource Icon_Refresh}" />
-										</StackPanel>
-									</Button>
-								</StackPanel>
-							</GroupBox>
-
-
-							<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Other}">
-								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-									<CheckBox
-										Name="IsSpellCheckEnabledCheckBox"
-										Margin="0"
-										AutomationProperties.HelpText="{StaticResource main_Enable_Spell_Check_Help}"
-										AutomationProperties.Name="{StaticResource main_Enable_Spell_Check_Name}"
-										Content="{StaticResource main_Enable_Spell_Check_Name}"
-										IsChecked="{Binding IsSpellCheckEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								</WrapPanel>
-							</GroupBox>
-
-							<GroupBox x:Name="DeveloperGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Developer}">
-								<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
-									<CheckBox
-										Name="EnableShowFormInfoCheckBox"
-										Margin="0"
-										Content="{StaticResource main_Enable_FormInfo}"
-										IsChecked="{Binding EnableShowFormInfo, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<CheckBox
-										Name="ShowErrorsPanelCheckBox"
-										Margin="0"
-										Content="{StaticResource main_Show_ErrorsPanel}"
-										IsChecked="{Binding ShowErrorsPanel, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-									<CheckBox
-										Name="LogHttpRequestsCheckBox"
-										Margin="0"
-										Content="{StaticResource main_LogHttp}"
-										IsChecked="{Binding LogHttp, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								</WrapPanel>
-							</GroupBox>
-						</WrapPanel>
-						<GroupBox x:Name="EnterpriseOptionsGroupBox" Grid.Row="2" Margin="3,0,3,0">
-							<GroupBox.Header>
-								<CheckBox
-									Name="UseMacrosCheckBox"
-									Margin="-4"
-									Content="Enterprise Options"
-									IsChecked="{Binding IsEnterprise, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-							</GroupBox.Header>
-							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto" />
-								</Grid.RowDefinitions>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-								<Label VerticalAlignment="Center" Content="Configuration URL" />
-								<TextBox
-									Grid.Row="0"
-									Grid.Column="1"
-									SpellCheck.IsEnabled="True"
-									Text="{Binding ConfigurationUrl, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<StackPanel Grid.Column="2" Orientation="Horizontal">
-									<Button Name="BrowseSettingsButton" Click="BrowseSettingsButton_Click">
-										<StackPanel Focusable="False">
-											<ContentControl Content="{StaticResource Icon_magnifying_glass}" Focusable="False" />
-											<Label Content="Browse..." />
-										</StackPanel>
-									</Button>
-									<Button Name="ApplySettingsButton" MinWidth="75" Click="ApplySettingsButton_Click">
-										<StackPanel Focusable="False">
-											<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
-											<Label Content="Apply" />
-										</StackPanel>
-									</Button>
-								</StackPanel>
-							</Grid>
-						</GroupBox>
-
-					</StackPanel>
-				</ScrollViewer>
 			</TabItem>
 
 			<TabItem x:Name="AccountSettingsTabItem" x:FieldModifier="public">
@@ -234,7 +73,7 @@
 						<Label Content="{StaticResource main_Microsoft_Account}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:OptionsMicrosoftAccountsControl x:Name="AuthPanel" />
+				<controlsOptions:MicrosoftAccountsControl x:Name="AuthPanel" />
 			</TabItem>
 
 			<TabItem x:Name="AiServicesTabItem" x:FieldModifier="public">
@@ -244,7 +83,7 @@
 						<Label Content="{StaticResource main_AI_Services}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:AiServiceControl x:Name="AiServicesPanel" x:FieldModifier="public" />
+				<controls:SettingsControl x:Name="AiServicesPanel" x:FieldModifier="public" DataType="AiService" />
 			</TabItem>
 
 			<TabItem x:Name="AiModelsTabItem" x:FieldModifier="public">
@@ -254,7 +93,7 @@
 						<Label Content="{StaticResource main_AI_Models}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:AiModelListControl x:Name="AiModelListPanel" x:FieldModifier="public" />
+				<controlsOptions:AiModelListControl x:Name="AiModelListPanel" x:FieldModifier="public" />
 			</TabItem>
 
 			<TabItem x:Name="MailAccountsTabItem" x:FieldModifier="public">
@@ -274,94 +113,7 @@
 						<Label Content="{StaticResource main_Context_Options}" />
 					</StackPanel>
 				</TabItem.Header>
-				<ScrollViewer>
-					<StackPanel>
-						<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="{StaticResource main_Global_Instructions}">
-							<TextBox
-								Name="GlobalInstructionsTextBox"
-								Grid.Row="2"
-								Grid.Column="1"
-								Grid.ColumnSpan="3"
-								HorizontalAlignment="Stretch"
-								VerticalAlignment="Stretch"
-								VerticalContentAlignment="Top"
-								AcceptsReturn="True"
-								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-								ScrollViewer.VerticalScrollBarVisibility="Auto"
-								SpellCheck.IsEnabled="True"
-								Text="{Binding GlobalInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-								TextWrapping="Wrap" />
-						</GroupBox>
-						<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="{StaticResource main_Title_for_Attached_Context}">
-							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
-								</Grid.RowDefinitions>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-									<ColumnDefinition Width="*" />
-								</Grid.ColumnDefinitions>
-								<Label
-									Grid.Row="0"
-									Grid.Column="0"
-									VerticalAlignment="Center"
-									Content="{StaticResource main_Data}" />
-								<TextBox
-									Name="ContextDataTitleTextBox"
-									Grid.Row="0"
-									Grid.Column="1"
-									SpellCheck.IsEnabled="True"
-									Text="{Binding ContextDataTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<Label
-									Grid.Row="0"
-									Grid.Column="2"
-									VerticalAlignment="Center"
-									Content="{StaticResource main_Files}" />
-								<TextBox
-									Name="ContextFileTitleTextBox"
-									Grid.Row="0"
-									Grid.Column="3"
-									SpellCheck.IsEnabled="True"
-									Text="{Binding ContextFileTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<Label
-									Grid.Row="1"
-									Grid.Column="0"
-									VerticalAlignment="Center"
-									Content="{StaticResource main_Chat}" />
-								<TextBox
-									Name="ContextChatTitleTextBox"
-									Grid.Row="1"
-									Grid.Column="1"
-									SpellCheck.IsEnabled="True"
-									Text="{Binding ContextChatTitle, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-								<Label
-									Grid.Row="2"
-									Grid.Column="0"
-									VerticalAlignment="Center"
-									Content="{StaticResource main_Chat_Instructions}" />
-								<TextBox
-									Name="ContextChatInstructionsTextBox"
-									Grid.Row="2"
-									Grid.Column="1"
-									Grid.ColumnSpan="3"
-									HorizontalAlignment="Stretch"
-									VerticalAlignment="Stretch"
-									VerticalContentAlignment="Top"
-									AcceptsReturn="True"
-									ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-									ScrollViewer.VerticalScrollBarVisibility="Auto"
-									SpellCheck.IsEnabled="True"
-									Text="{Binding ContextChatInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-									TextWrapping="Wrap" />
-							</Grid>
-						</GroupBox>
-					</StackPanel>
-				</ScrollViewer>
+				<controlsOptions:ContextControl />
 			</TabItem>
 
 			<TabItem x:Name="AvatarSettingsTabItem" x:FieldModifier="public">
@@ -371,7 +123,7 @@
 						<Label Content="{StaticResource main_AI_Avatar}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:OptionsAvatarControl x:Name="AvatarOptionsPanel" />
+				<controlsOptions:AvatarControl x:Name="AvatarOptionsPanel" />
 			</TabItem>
 
 			<TabItem x:Name="ResetSettingsTabItem" x:FieldModifier="public">
@@ -381,7 +133,7 @@
 						<Label Content="{StaticResource main_Reset_Settings}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:OptionsResetSettingsControl x:Name="OptionsResetSettingsPanel" />
+				<controlsOptions:ResetSettingsControl x:Name="OptionsResetSettingsPanel" />
 			</TabItem>
 		</TabControl>
 	</Grid>

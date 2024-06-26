@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary.Configuration;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class AiService : NotifyPropertyChanged
+	public class AiService : SettingsListFileItem
 	{
 
 		public AiService()
@@ -25,10 +25,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[Key]
 		public Guid Id { get => _Id; set => SetProperty(ref _Id, value); }
 		Guid _Id;
-
-		/// <summary>Name.</summary>
-		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
-		string _Name;
 
 		/// <summary>Used by default.</summary>
 		[DefaultValue(false)]

@@ -10,18 +10,14 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
-using System.Threading;
-
-
 
 
 #if NETFRAMEWORK
-using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Data.Entity;
 using System.Data.SQLite;
-using System.Data.SQLite.EF6;
 using System.Data.SqlClient;
 #else
+using System.Threading;
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +54,24 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public const string SqliteExt = ".sqlite";
 		public static string[] PortableExt = new string[] { ".sqlite", ".sqlite3", ".db", ".db3", ".s3db", ".sl3" };
 
+		#region Microsoft Azure/Entra Support
+
+		/// <summary>
+		/// This function will be called, when the authentication process fails because the access token needs re-authentication.
+		/// </summary>
+		public static Func<Task> RefreshDatabaseToken;
+
+		/// <summary>
+		/// Determines if the exception was caused by an expired token.
+		/// </summary>
+		private static bool IsTokenExpired(SqlException ex)
+		{
+			// Identify if the exception is due to an expired token; implement your custom check.
+			return ex.Message.Contains("token expired") || ex.Message.Contains("re-authentication");
+		}
+
+		#endregion
+
 		public static bool IsPortable(string connectionStringOrPath)
 			=> PortableExt.Any(x => connectionStringOrPath?.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0);
 
@@ -74,7 +88,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 #endif
 			var connection = NewConnection(connectionString);
 			// Empty file will be created at this point if not exists.
-			connection.Open();
+			OpenConenctionWithTokenRefresh(connection);
 			var success = true;
 			var addCLR = !isPortable && !IsAzureSQL(connection);
 			if (!isPortable)
@@ -95,6 +109,28 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			//success &= CreateProcedure("sp_getSimilarFiles", connection);
 			connection.Close();
 			return success;
+		}
+
+
+		private static void OpenConenctionWithTokenRefresh(DbConnection connection)
+		{
+			try
+			{
+				connection.Open();
+			}
+			catch (SqlException ex) when (IsTokenExpired(ex))
+			{
+				var refreshToken = RefreshDatabaseToken;
+				if (refreshToken == null)
+					throw;
+				// Refresh the token
+				RefreshDatabaseToken();
+				connection.Open();
+			}
+			catch
+			{
+				throw;
+			}
 		}
 
 		/// <summary>

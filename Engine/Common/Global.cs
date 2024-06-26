@@ -120,6 +120,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Embeddings: return Embeddings.Items;
 				case ItemType.MailAccount: return AppSettings.MailAccounts;
 				case ItemType.VaultItem: return AppSettings.VaultItems;
+				case ItemType.AiService: return AppSettings.AiServices;
 				default: return null;
 			}
 		}
@@ -355,6 +356,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			// Make sure DbContext supports SQL Server and SQLite
 			SqlInitHelper.AddDbProviderFactories();
+			// Allow SQL to refresh database access tokens by using method on `MicrosoftAccountManager` class.
+			SqlInitHelper.RefreshDatabaseToken = MicrosoftAccountManager.Current.RefreshDatabaseToken;
 			// Set a converter to convert SVG to images for the user interface.
 			SettingsListFileItem.ConvertToImage = Converters.SvgHelper.LoadSvgFromString;
 			ResetSettings = false;
@@ -735,7 +738,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Avatar Panel
 
-		public static OptionsAvatarControl AvatarOptionsPanel
+		public static Controls.Options.AvatarControl AvatarOptionsPanel
 			=> MainControl?.OptionsPanel?.AvatarOptionsPanel;
 
 		public static AvatarControl AvatarPanel

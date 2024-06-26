@@ -13,8 +13,7 @@ resource "azurerm_mssql_database" "db" {
 resource "null_resource" "assign_sql_database_roles" {
   provisioner "local-exec" {
     command     = <<-EOT
-    $tokenResponse = az account get-access-token --resource https://database.windows.net/ --output json
-    $token = ($tokenResponse | ConvertFrom-Json).accessToken
+    $token = $env:ARM_DATABASE_ACCESS_TOKEN
     $serverName = "${azurerm_mssql_server.sqlsrv.fully_qualified_domain_name}"
     $databaseName = "${azurerm_mssql_database.db.name}"
     $sqlCommandText = Get-Content "script4_sql_database_roles.sql" -Raw
@@ -28,3 +27,5 @@ resource "null_resource" "assign_sql_database_roles" {
     null_resource.assign_sql_server_roles
   ]
 }
+#$tokenResponse = az account get-access-token --resource https://database.windows.net/ --output json
+#$token = ($tokenResponse | ConvertFrom-Json).accessToken

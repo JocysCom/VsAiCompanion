@@ -95,7 +95,7 @@
 
 	<!--  Embeddings  -->
 	<sys:String x:Key="main_Database">Database</sys:String>
-	<sys:String x:Key="main_Embedding_Default_Instructions">"Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile. Use only the contents from these documents to answer questions."</sys:String>
+	<sys:String x:Key="main_Embedding_Default_Instructions">Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile. Use only the contents from these documents to answer questions.</sys:String>
 	<sys:String x:Key="main_Embeddings_Feature_Description">Embeddings allow to search for content based on its meaning. AI can utilize embeddings to find relevant information and files.</sys:String>
 	<sys:String x:Key="main_Exclude_Patterns">Exclude Patterns</sys:String>
 	<sys:String x:Key="main_Include_Patterns">Include Patterns</sys:String>
