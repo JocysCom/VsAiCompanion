@@ -11,7 +11,7 @@ This is a free, open-source project for people who have an [OpenAI API](https://
 
 [JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.11.25/JocysCom.VS.AiCompanion.App.zip) - digitally signed standalone/portable application.
 
-[AI Companion as Visual Studio Extension on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion") - installation via Visual Studio Extension Manager.
+[AI Companion as Visual Studio Extension on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion) - installation via Visual Studio Extension Manager.
 
 ### Requirements
 
