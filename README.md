@@ -20,7 +20,7 @@ This is a free, open-source project for people who have an [OpenAI API](https://
 [OpenAI account (API Key)](https://platform.openai.com/account/) for ChatGPT models to work in AI Companion app:  
 AI Companion app ► Options ► AI Services ► Open AI ► enter API Key.
 
-[OpenAI account (Usage Tier 1)](https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4-gpt-4-turbo-and-gpt-4o#h_f472fd7cbc) to access GPT-4 models.
+[OpenAI account (Usage Tier 1)](https://platform.openai.com/docs/guides/rate-limits/usage-tiers?context=tier-one) to access GPT-4 models.
 
 [Microsoft Azure account (API Key)](https://github.com/JocysCom/VsAiCompanion/wiki/Feature-%E2%80%90-AI-Avatar) for ChatGPT to answer with voice and mouth animation:  
 AI Companion app ► Options ► AI Services ► Speech Service ► enter API Key.
