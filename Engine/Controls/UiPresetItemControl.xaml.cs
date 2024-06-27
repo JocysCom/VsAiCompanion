@@ -137,7 +137,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			});
 		}
 
-		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void Edit()
 		{
 			if (MainDataGrid.SelectedItem != null)
 			{
@@ -145,6 +145,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				MainDataGrid.Focus();
 				MainDataGrid.BeginEdit();
 			}
+		}
+
+		private void EditButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			Edit();
+		}
+
+		private void MainDataGrid_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			Edit();
 		}
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

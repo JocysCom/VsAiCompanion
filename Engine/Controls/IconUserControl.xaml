@@ -6,9 +6,9 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:media="using:Windows.UI.Xaml.Media.Imaging"
+	x:Name="This"
 	d:DesignHeight="128"
 	d:DesignWidth="128"
-	x:Name="This"
 	Loaded="This_Loaded"
 	MouseDoubleClick="UserControl_MouseDoubleClick"
 	mc:Ignorable="d">

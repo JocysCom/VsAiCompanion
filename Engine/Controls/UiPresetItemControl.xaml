@@ -99,7 +99,6 @@
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
 			CanUserAddRows="True"
-			Loaded="MainDataGrid_Loaded"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
 			ScrollViewer.CanContentScroll="True"
