@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<!-- This property group ensures that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
 	<PropertyGroup>
-	    <SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$(MSBuildProjectDirectory)\..\</SolutionDir>
+		<!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
+		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\'))</SolutionDir>
 	</PropertyGroup>
 
 	<PropertyGroup>
