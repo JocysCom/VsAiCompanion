@@ -118,3 +118,38 @@ resource "azurerm_key_vault_secret" "kvs_speech" {
     azurerm_key_vault_access_policy.key_vault_access_policy_read_secrets
   ]
 }
+
+# Enable Logging for Azure Key Vault
+
+resource "azurerm_log_analytics_workspace" "kv_logging_workspace" {
+  name                = "kv-logging-${var.org}-${var.app}-${var.env}"
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  sku                 = "PerGB2018"
+}
+
+resource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_logging" {
+  name                       = "kv-diagnostic-logging-${var.org}-${var.app}-${var.env}"
+  target_resource_id         = azurerm_key_vault.kv.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.kv_logging_workspace.id
+
+  log {
+    category = "AuditEvent"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+      days    = 0
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+      days    = 0
+    }
+  }
+}

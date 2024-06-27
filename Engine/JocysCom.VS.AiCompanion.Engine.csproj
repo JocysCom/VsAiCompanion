@@ -82,20 +82,15 @@
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
 		<Reference Include="System.DirectoryServices" />
 		<Reference Include="System.DirectoryServices.AccountManagement" />
-		<Reference Include="Microsoft.Data.ConnectionUI">
-			<HintPath>..\Resources\Microsoft.Data.Connection\net48\Microsoft.Data.ConnectionUI.dll</HintPath>
-		</Reference>
-		<Reference Include="Microsoft.Data.ConnectionUI.Dialog">
-			<HintPath>..\Resources\Microsoft.Data.Connection\net48\Microsoft.Data.ConnectionUI.Dialog.dll</HintPath>
-		</Reference>
 		<PackageReference Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+	<ItemGroup>
+		<ProjectReference Include="..\Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj" />
+		<ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
 		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI.Dialog\Microsoft.Data.ConnectionUI.Dialog.csproj" />
 		<ProjectReference Include="..\Resources\Microsoft\Data\ConnectionUI\Microsoft.Data.ConnectionUI.csproj" />
 	</ItemGroup>
-
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
 		<PackageReference Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
@@ -279,11 +274,6 @@
 
 	<ItemGroup>
 		<None Include="JocysCom\MakeLinks.ps1.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj" />
-		<ProjectReference Include="..\Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
