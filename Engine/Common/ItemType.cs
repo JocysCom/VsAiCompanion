@@ -15,5 +15,6 @@
 		Voice = 10,
 		Attachment = 11,
 		VaultItem = 12,
+		UiPreset = 13,
 	}
 }

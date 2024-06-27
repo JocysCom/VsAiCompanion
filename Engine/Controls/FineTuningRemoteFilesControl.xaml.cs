@@ -130,12 +130,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			if (MustRefresh && IsVisible)
 				await Refresh();
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
 
 		public void TryRefresh()

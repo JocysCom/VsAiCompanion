@@ -102,7 +102,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.RaiseOnMainControlLoaded();
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TemplatesPanel;
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksPanel;
-				AppHelper.AddHelp(TasksLabel);
+				AppHelper.InitHelp(this);
 				try
 				{
 					await Security.MicrosoftAccountManager.Current.RefreshProfileImage();

@@ -166,6 +166,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Standalone_Program => FindResource(nameof(main_Standalone_Program));
         public static string main_Start_with_Windows => FindResource(nameof(main_Start_with_Windows));
         public static string main_Use_Enter_to_send_the_message => FindResource(nameof(main_Use_Enter_to_send_the_message));
+        public static string main_Release_Configuration_Name => FindResource(nameof(main_Release_Configuration_Name));
+        public static string main_Release_Configuration_Help => FindResource(nameof(main_Release_Configuration_Help));
+        public static string main_LockEnterpriseOptions_Name => FindResource(nameof(main_LockEnterpriseOptions_Name));
+        public static string main_LockEnterpriseOptions_Help => FindResource(nameof(main_LockEnterpriseOptions_Help));
+        public static string main_UI_Presets => FindResource(nameof(main_UI_Presets));
         public static string main_ActivationDate => FindResource(nameof(main_ActivationDate));
         public static string main_ClearVaultItem_Help => FindResource(nameof(main_ClearVaultItem_Help));
         public static string main_ClearVaultItem_Name => FindResource(nameof(main_ClearVaultItem_Name));
@@ -300,6 +305,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Selection => FindResource(nameof(main_Selection));
         public static string main_Show_Icon_in_Toolbar => FindResource(nameof(main_Show_Icon_in_Toolbar));
         public static string main_Target => FindResource(nameof(main_Target));
+        public static string main_State => FindResource(nameof(main_State));
         public static string main_Test_Authentication => FindResource(nameof(main_Test_Authentication));
         public static string main_TextBox_Drop_Files_Instructions => FindResource(nameof(main_TextBox_Drop_Files_Instructions));
         public static string main_Use_Macros => FindResource(nameof(main_Use_Macros));

@@ -191,17 +191,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						buttons.Add(CreateNewTaskButton);
 						break;
 					case ItemType.FineTuning:
-						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
-						break;
 					case ItemType.Assistant:
+					case ItemType.Embeddings:
+					case ItemType.UiPreset:
 						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
 						break;
 					case ItemType.Lists:
-						SetGrouping(nameof(SettingsListFileItem.ListGroupPath));
-						break;
-					case ItemType.Embeddings:
-						SetGrouping(nameof(SettingsListFileItem.ListGroupName));
-						break;
 					case ItemType.MailAccount:
 					case ItemType.VaultItem:
 					case ItemType.AiService:
@@ -293,12 +288,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			GenerateTitleButton.IsEnabled = isSelected;
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			Global.MainControl.InfoPanel.Tasks.ListChanged -= Tasks_ListChanged;
 			Global.MainControl.InfoPanel.Tasks.ListChanged += Tasks_ListChanged;
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -320,6 +319,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				item = AppHelper.GetNewAssistantItem();
 			if (DataType == ItemType.Lists)
 				item = AppHelper.GetNewListsItem();
+			if (DataType == ItemType.UiPreset)
+				item = AppHelper.GetNewUiPresetItem();
 			if (DataType == ItemType.Embeddings)
 				item = AppHelper.GetNewEmbeddingsItem();
 			if (DataType == ItemType.MailAccount)

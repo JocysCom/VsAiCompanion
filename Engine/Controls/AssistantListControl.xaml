@@ -7,7 +7,7 @@
 	x:Name="This"
 	d:DesignHeight="270"
 	d:DesignWidth="480"
-	Loaded="UserControl_Loaded"
+	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>

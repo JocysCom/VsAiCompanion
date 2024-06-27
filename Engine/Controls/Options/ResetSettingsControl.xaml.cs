@@ -146,7 +146,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AppHelper.AddHelp(ResetUIButton, Engine.Resources.MainResources.main_Reset_UI_Settings_ToolTip);
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
 
 		#region ■ INotifyPropertyChanged

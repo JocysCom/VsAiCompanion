@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using JocysCom.ClassLibrary.Controls;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,5 +14,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			InitializeComponent();
 		}
 
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
 	}
 }

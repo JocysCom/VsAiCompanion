@@ -9,6 +9,7 @@
 	xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 	x:Name="This"
 	d:DesignWidth="100"
+	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -46,6 +47,8 @@
 						<Button
 							Margin="0"
 							HorizontalAlignment="Left"
+							AutomationProperties.HelpText="{Binding TextInstructions}"
+							AutomationProperties.Name="{Binding Name}"
 							Background="Transparent"
 							Click="Button_Click"
 							Style="{StaticResource Button_Default}"

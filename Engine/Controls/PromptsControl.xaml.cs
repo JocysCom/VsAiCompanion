@@ -122,6 +122,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 			AppHelper.AddHelp(PromptNameComboBox, "Prompting category", "Select a prompting category that describes the way you want the AI to respond.");
 			AppHelper.AddHelp(PromptOptionComboBox, "Prompting style", "Choose a specific style within the selected category to guide the AI's output.");
 			AppHelper.AddHelp(AddPromptButton, "Add prompt", "Add a prompt to the user's message.");

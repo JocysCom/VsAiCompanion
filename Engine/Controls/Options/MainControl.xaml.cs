@@ -61,6 +61,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			if (ControlsHelper.AllowLoad(this))
 			{
 				UpdateVideoInputDevices();
+				AppHelper.InitHelp(this);
 			}
 		}
 
@@ -88,8 +89,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			path = JocysCom.ClassLibrary.Configuration.AssemblyInfo.ParameterizePath(path, true);
 			Global.AppSettings.ConfigurationUrl = path;
 		}
-
-
 
 		public Dictionary<RiskLevel, string> MaxRiskLevels
 		=> ClassLibrary.Runtime.Attributes.GetDictionary(

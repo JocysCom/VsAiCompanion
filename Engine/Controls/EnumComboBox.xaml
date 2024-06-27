@@ -9,7 +9,7 @@
 	IsReadOnly="True"
 	IsSynchronizedWithCurrentItem="True"
 	IsTextSearchEnabled="False"
-	Loaded="ComboBox_Loaded"
+	Loaded="This_Loaded"
 	SelectionChanged="ComboBox_SelectionChanged"
 	StaysOpenOnEdit="True"
 	mc:Ignorable="d">

@@ -121,6 +121,7 @@
 							Name="ResetUIButton"
 							HorizontalAlignment="Left"
 							HorizontalContentAlignment="Left"
+							AutomationProperties.HelpText="{StaticResource main_Reset_UI_Settings_ToolTip}"
 							Click="ResetUIButton_Click">
 							<StackPanel Focusable="False">
 								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />

@@ -212,6 +212,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var list = PanelSettings.ListSelection;
 			ControlsHelper.SetSelection(MainDataGrid, nameof(AiModel.Name), list, PanelSettings.ListSelectedIndex);
 		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
 	}
 
 	#endregion

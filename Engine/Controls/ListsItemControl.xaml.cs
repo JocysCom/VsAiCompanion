@@ -19,7 +19,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			InitializeComponent();
 			UpdateButtons();
-			Global.Tasks.Items.ListChanged += Items_ListChanged; ;
+			Global.Tasks.Items.ListChanged += Items_ListChanged;
 			RefreshPaths();
 		}
 
@@ -112,10 +112,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		private void MainDataGrid_Loaded(object sender, System.Windows.RoutedEventArgs e)
-		{
-		}
-
 		public ObservableCollection<string> Paths { get; set; } = new ObservableCollection<string>();
 
 		public void RefreshPaths()
@@ -133,6 +129,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			JocysCom.ClassLibrary.Collections.CollectionsHelper.Synchronize(listPaths, paths);
 		}
 
+		#region MainDataGrid
+
 		private void MainDataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			var isEditMode = AppHelper.IsGridInEditMode((DataGrid)sender);
@@ -149,11 +147,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			if (!isEditMode && e.Key == Key.Delete)
 				Delete();
-		}
-
-		private void MainDataGrid_PreviewMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-
 		}
 
 		private void AddButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -189,60 +182,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
+			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
 		}
 
-		private void UpdateOnSelectionChanged()
-		{
-			//// If item selected then...
-			//if (MainDataGrid.SelectedIndex >= 0)
-			//{
-			//	// Remember selection.
-			//	PanelSettings.ListSelection = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(ISettingsListFileItem.Name));
-			//	PanelSettings.ListSelectedIndex = MainDataGrid.SelectedIndex;
-			//}
-			//else
-			//{
-			//	// Try to restore selection.
-			//	ControlsHelper.SetSelection(
-			//		MainDataGrid, nameof(ISettingsListFileItem.Name),
-			//		PanelSettings.ListSelection, PanelSettings.ListSelectedIndex
-			//	);
-			//}
-			UpdateButtons();
-		}
-
+		#endregion
 
 		void UpdateButtons()
 		{
-			//var selecetedItems = MainDataGrid.SelectedItems.AsQueryable();
 			var isSelected = MainDataGrid.SelectedItems.Count > 0;
 			EditButton.IsEnabled = isSelected;
 			DeleteButton.IsEnabled = isSelected;
 		}
 
-		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			// Fast workaround
 			//MainDataGrid.ItemsSource = _Item?.Items;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 			AppHelper.AddHelp(IsEnabledCheckBox, IsEnabledCheckBox.Content as string, Engine.Resources.MainResources.main_List_IsEnabled);
 			AppHelper.AddHelp(IsReadOnlyCheckBox, IsReadOnlyCheckBox.Content as string, Engine.Resources.MainResources.main_List_IsReadOnly);
 			AppHelper.AddHelp(InstructionsLabel, Engine.Resources.MainResources.main_Instructions, Engine.Resources.MainResources.main_List_Instructions);
 			AppHelper.AddHelp(InstructionsTextBox, Engine.Resources.MainResources.main_Instructions, Engine.Resources.MainResources.main_List_Instructions);
 			AppHelper.AddHelp(DescriptionLabel, Engine.Resources.MainResources.main_Description, Engine.Resources.MainResources.main_List_Description);
 			AppHelper.AddHelp(DescriptionTextBox, Engine.Resources.MainResources.main_Description, Engine.Resources.MainResources.main_List_Description);
-		}
-
-		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
-		{
-			// Fast workaround
-			//MainDataGrid.ItemsSource = null;
-
 		}
 
 	}

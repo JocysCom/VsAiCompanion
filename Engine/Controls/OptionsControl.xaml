@@ -11,6 +11,7 @@
 	x:Name="This"
 	d:DesignHeight="400"
 	d:DesignWidth="800"
+	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -64,16 +65,17 @@
 						<Label Content="{StaticResource main_Main}" />
 					</StackPanel>
 				</TabItem.Header>
+				<controlsOptions:MainControl x:Name="MainPanel" />
 			</TabItem>
 
-			<TabItem x:Name="AccountSettingsTabItem" x:FieldModifier="public">
+			<TabItem x:Name="MicrosoftAccountsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_microsoft_logo}" />
 						<Label Content="{StaticResource main_Microsoft_Account}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controlsOptions:MicrosoftAccountsControl x:Name="AuthPanel" />
+				<controlsOptions:MicrosoftAccountsControl x:Name="MicrosoftAccountsPanel" />
 			</TabItem>
 
 			<TabItem x:Name="AiServicesTabItem" x:FieldModifier="public">
@@ -124,6 +126,16 @@
 					</StackPanel>
 				</TabItem.Header>
 				<controlsOptions:AvatarControl x:Name="AvatarOptionsPanel" />
+			</TabItem>
+
+			<TabItem x:Name="UiPresetsTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_window_split_hor}" />
+						<Label Content="{StaticResource main_UI_Presets}" />
+					</StackPanel>
+				</TabItem.Header>
+				<controls:SettingsControl x:Name="UiPresetsPanel" x:FieldModifier="public" DataType="UiPreset" />
 			</TabItem>
 
 			<TabItem x:Name="ResetSettingsTabItem" x:FieldModifier="public">

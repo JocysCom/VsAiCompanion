@@ -103,6 +103,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.Attachment);
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
 
 		private async Task Remove()

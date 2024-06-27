@@ -488,31 +488,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var head = "Caring for Your Sensitive Data";
-			var body = "As you share files for AI processing, please remember not to include confidential, proprietary, or sensitive information.";
-			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentEnumComboBox, head, body, MessageBoxImage.Warning);
-			Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentIcon, head, body, MessageBoxImage.Warning);
-			Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeLabel, head, body, MessageBoxImage.Warning);
-			if (!Global.IsVsExtension)
+			if (ControlsHelper.AllowLoad(this))
 			{
-				Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(SelectionComboBox, UseMacrosCheckBox.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(AutomationVsLabel, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
-				Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
+				var head = "Caring for Your Sensitive Data";
+				var body = "As you share files for AI processing, please remember not to include confidential, proprietary, or sensitive information.";
+				Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentEnumComboBox, head, body, MessageBoxImage.Warning);
+				Global.MainControl.InfoPanel.HelpProvider.Add(AttachmentIcon, head, body, MessageBoxImage.Warning);
+				Global.MainControl.InfoPanel.HelpProvider.Add(ContextTypeLabel, head, body, MessageBoxImage.Warning);
+				if (!Global.IsVsExtension)
+				{
+					Global.MainControl.InfoPanel.HelpProvider.Add(FileComboBox, UseMacrosCheckBox.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
+					Global.MainControl.InfoPanel.HelpProvider.Add(SelectionComboBox, UseMacrosCheckBox.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
+					Global.MainControl.InfoPanel.HelpProvider.Add(AutomationVsLabel, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
+					Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
+					Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
+				}
+				var codeButtons = ControlsHelper.GetAll<Button>(CodeButtonsPanel);
+				foreach (var codeButton in codeButtons)
+				{
+					var languageDisplayName = codeButton.ToolTip;
+					codeButton.ToolTip = $"Paste {languageDisplayName} code block";
+					AppHelper.AddHelp(codeButton,
+						$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
+					);
+				}
+				AppHelper.InitHelp(this);
 			}
-			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, IsPreviewCheckBox);
-			//AppHelper.AddHelp(IsFavoriteCheckBox, "Display the template button in the toolbar for quick task creation.");
-			var codeButtons = ControlsHelper.GetAll<Button>(CodeButtonsPanel);
-			foreach (var codeButton in codeButtons)
-			{
-				var languageDisplayName = codeButton.ToolTip;
-				codeButton.ToolTip = $"Paste {languageDisplayName} code block";
-				AppHelper.AddHelp(codeButton,
-					$"Wrap selection into `{languageDisplayName}` code block. Hold CTRL to paste from your clipboard as an `{languageDisplayName}` code block."
-				);
-			}
-			AppHelper.AddHelp(IsPinnedCheckBox, IsSystemInstructionsCheckBox, UseMaximumContextCheckBox, IsFavoriteCheckBox, MessageBoxOperationComboBox,AutoRemoveCheckBox, ShowInstructionsCheckBox, ShowPromptingCheckBox, ShowAvatar, UseAvatarVoiceCheckBox, SendChatHistoryCheckBox, IsSpellCheckEnabledCheckBox, ClearMessagesButton, ScrollToBottomMessagesButton, AutoSendCheckBox, SaveAsButton, CopyButton, ScreenshotButton, MicrophoneButton, AttachmentsButton, CreativitySlider, AutoGenerateTitleCheckBox, AutoFormatMessageCheckBox);
 			RestoreFocus();
 			UpdateAvatarControl();
 		}

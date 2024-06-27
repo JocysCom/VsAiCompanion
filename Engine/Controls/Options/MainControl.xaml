@@ -122,6 +122,23 @@
 					</WrapPanel>
 				</GroupBox>
 
+				<GroupBox
+					x:Name="ReleaseOptionsGroupBox"
+					Margin="3,0,3,3"
+					AutomationProperties.HelpText="{StaticResource main_Release_Configuration_Help}"
+					AutomationProperties.Name="{StaticResource main_Release_Configuration_Name}"
+					Header="{StaticResource main_Release_Configuration_Name}">
+					<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
+						<CheckBox
+							Name="LockEnterpriseOptionsCheckBox"
+							Margin="0"
+							AutomationProperties.HelpText="{StaticResource main_LockEnterpriseOptions_Help}"
+							AutomationProperties.Name="{StaticResource main_LockEnterpriseOptions_Name}"
+							Content="{StaticResource main_LockEnterpriseOptions_Name}"
+							IsChecked="{Binding LockEnterpriseOptions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</WrapPanel>
+				</GroupBox>
+
 				<GroupBox x:Name="DeveloperGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Developer}">
 					<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 						<CheckBox

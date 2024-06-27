@@ -52,10 +52,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public bool IsConnected;
 		public bool SendPublicKey;
 
-		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
 
 		const string SendingMessage = nameof(SendingMessage);

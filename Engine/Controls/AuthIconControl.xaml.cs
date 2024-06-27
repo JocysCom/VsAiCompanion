@@ -63,6 +63,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				Item = MicrosoftAccountManager.Current.GetProfile();
 				AdjustEllipse();
+				AppHelper.InitHelp(this);
 			}
 		}
 
@@ -105,7 +106,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void This_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			ControlsHelper.EnsureTabItemSelected(Global.MainControl.OptionsPanel.AuthPanel);
+			ControlsHelper.EnsureTabItemSelected(Global.MainControl.OptionsPanel.MicrosoftAccountsPanel);
 		}
 	}
 }

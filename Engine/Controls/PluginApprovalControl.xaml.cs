@@ -123,6 +123,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ApprovalItem.IsApproved = false;
 			ApprovalItem.Semaphore.Release();
 		}
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
 
 		#region ■ INotifyPropertyChanged
 
@@ -131,8 +138,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-		#endregion
 
+		#endregion
 
 	}
 }

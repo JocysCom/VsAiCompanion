@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -22,7 +21,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.OpenPath(e.Uri.AbsoluteUri);
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -34,6 +33,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			LicenseTabPage.Header = string.Format("{0} {1} License", ai.Product, ai.Version.ToString(2));
 			IconExperienceTextBox.Text = ClassLibrary.Helper.FindResource<string>("IconExperience.License.txt", ai.Assembly);
 			AxialisIconSetTextBox.Text = ClassLibrary.Helper.FindResource<string>("AxialisIconSet.Licenses.txt", ai.Assembly);
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
 	}
 }

@@ -6,6 +6,7 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
+	Loaded="This_Loaded"
 	Visibility="{Binding SowApprovalPanel, ElementName=This}"
 	mc:Ignorable="d">
 	<UserControl.Resources>

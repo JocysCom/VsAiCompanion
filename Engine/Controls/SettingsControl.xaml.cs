@@ -56,6 +56,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				ListsItemPanel.Item = (ListInfo)item;
 			}
+			else if (DataType == ItemType.UiPreset)
+			{
+				UiPresetItemPanel.Item = (UiPresetItem)item;
+			}
 			else if (DataType == ItemType.Embeddings)
 			{
 				EmbeddingItemPanel.Item = (EmbeddingsItem)item;
@@ -104,6 +108,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		FineTuningItemControl FineTuningItemPanel;
 		AssistantItemControl AssistantItemPanel;
 		ListsItemControl ListsItemPanel;
+		UiPresetItemControl UiPresetItemPanel;
 		EmbeddingsItemControl EmbeddingItemPanel;
 		MailAccountItemControl MailAccountItemPanel;
 		VaultItemControl VaultItemPanel;
@@ -167,6 +172,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						control.DataType = value;
 						control.Visibility = Visibility.Collapsed;
 						ListsItemPanel = control;
+						ItemPanel = control;
+					}
+				}
+				else if (value == ItemType.UiPreset)
+				{
+					if (UiPresetItemPanel == null)
+					{
+						var control = new UiPresetItemControl();
+						Grid.SetColumn(control, 2);
+						MainGrid.Children.Add(control);
+						control.DataType = value;
+						control.Visibility = Visibility.Collapsed;
+						UiPresetItemPanel = control;
 						ItemPanel = control;
 					}
 				}
@@ -370,6 +388,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				RenderOptions.SetBitmapScalingMode(wb, _BitmapScalingMode);
 				TextOptions.SetTextRenderingMode(wb, _TextRenderingMode);
 				_VisualBrush.Visual = _Visual;
+			}
+		}
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
 			}
 		}
 

@@ -308,6 +308,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			{
 				var profile = MicrosoftAccountManager.Current.GetProfile();
 				profile.PropertyChanged += Profile_PropertyChanged;
+				AppHelper.InitHelp(this);
 			}
 		}
 

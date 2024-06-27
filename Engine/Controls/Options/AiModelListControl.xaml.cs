@@ -210,6 +210,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.AiModel);
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
 	}
 

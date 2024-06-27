@@ -156,6 +156,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;

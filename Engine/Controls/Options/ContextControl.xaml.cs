@@ -38,5 +38,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			SpellCheck.SetIsEnabled(ContextChatTitleTextBox, isEnabled);
 		}
 
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
 	}
 }

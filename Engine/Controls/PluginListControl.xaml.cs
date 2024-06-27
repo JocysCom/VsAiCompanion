@@ -146,5 +146,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
 	}
 }

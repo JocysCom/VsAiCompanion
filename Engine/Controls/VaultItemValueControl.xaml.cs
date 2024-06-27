@@ -146,6 +146,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ValuePasswordBox.PasswordChanged += ValuePasswordBox_PasswordChanged;
 				var profile = MicrosoftAccountManager.Current.GetProfile();
 				profile.PropertyChanged += Profile_PropertyChanged;
+				AppHelper.InitHelp(this);
 			}
 		}
 

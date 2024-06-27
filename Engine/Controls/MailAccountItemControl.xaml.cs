@@ -133,6 +133,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			await client.TestAccount(false);
 			client.Account = null;
 		}
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
 
 		#region ■ INotifyPropertyChanged
 

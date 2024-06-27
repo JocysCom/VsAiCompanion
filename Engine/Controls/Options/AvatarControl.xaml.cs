@@ -297,6 +297,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			if (ControlsHelper.AllowLoad(this))
 			{
 				Global.MainControl.InfoPanel.Tasks.ListChanged += Tasks_ListChanged;
+				AppHelper.InitHelp(this);
 			}
 		}
 

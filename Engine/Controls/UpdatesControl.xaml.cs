@@ -73,5 +73,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.MainControl.InfoPanel.RemoveTask(e);
 		}
 
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
 	}
 }

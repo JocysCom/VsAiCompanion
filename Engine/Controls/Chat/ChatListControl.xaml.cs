@@ -116,7 +116,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -126,6 +126,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				WebBrowser.Navigating += WebBrowser_Navigating;
 				WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
 				WebBrowser.Navigate($"http://localhost/{contentsFile}");
+				AppHelper.InitHelp(this);
 			}
 		}
 

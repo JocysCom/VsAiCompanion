@@ -17,11 +17,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Basic3DShapeExample();
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			InitRotation();
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
-
 
 		#region Rotating
 
@@ -162,7 +165,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			myViewport3D.Children.Add(myModelVisual3D);
 
 			// Apply the viewport to the page so it will be rendered.
-			this.Content = myViewport3D;
+			Content = myViewport3D;
 		}
 
 	}

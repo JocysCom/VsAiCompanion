@@ -84,7 +84,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (ControlsHelper.AllowLoad(this)) { AudioCollection.CollectionChanged += AudioCollection_CollectionChanged; }
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AudioCollection.CollectionChanged += AudioCollection_CollectionChanged;
+				AppHelper.InitHelp(this);
+			}
 		}
 
 		// Audio collection.

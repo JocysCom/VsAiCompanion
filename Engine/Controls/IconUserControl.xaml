@@ -8,6 +8,8 @@
 	xmlns:media="using:Windows.UI.Xaml.Media.Imaging"
 	d:DesignHeight="128"
 	d:DesignWidth="128"
+	x:Name="This"
+	Loaded="This_Loaded"
 	MouseDoubleClick="UserControl_MouseDoubleClick"
 	mc:Ignorable="d">
 	<UserControl.Resources>

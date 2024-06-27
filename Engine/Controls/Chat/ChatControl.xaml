@@ -9,7 +9,7 @@
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	Loaded="UserControl_Loaded"
+	Loaded="This_Loaded"
 	SizeChanged="This_SizeChanged"
 	mc:Ignorable="d">
 	<UserControl.Resources>

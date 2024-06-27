@@ -534,6 +534,20 @@ EndFragment:{3:00000000}";
 			return item;
 		}
 
+		public static UiPresetItem GetNewUiPresetItem()
+		{
+			var item = new UiPresetItem();
+			item.Created = DateTime.Now;
+			item.Modified = item.Created;
+			item.Name = $"List {DateTime.Now:yyyyMMdd_HHmmss}";
+			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
+			var contents = Helper.FindResource<string>(
+				Resources.Icons.Icons_Default.Icon_list.Replace("Icon_", "") + ".svg",
+				typeof(AppHelper).Assembly);
+			item.SetIcon(contents);
+			return item;
+		}
+
 		public static void SetIconToDefault(ListInfo item)
 		{
 			// Set default icon. Make sure "control_panel.svg" Build Action is Embedded resource.
@@ -632,7 +646,18 @@ EndFragment:{3:00000000}";
 			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Tag as string, help);
 		}
 
-		public static void AddHelp(params UIElement[] elements)
+		public static void AddHelp(ContentControl control, string help)
+		{
+			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
+		}
+
+		public static void InitHelp(DependencyObject root)
+		{
+			var elements = GetDirectElementsWithAutomationProperties(root);
+			AddHelp(elements);
+		}
+
+		private static void AddHelp(params UIElement[] elements)
 		{
 			foreach (var element in elements)
 			{
@@ -642,9 +667,52 @@ EndFragment:{3:00000000}";
 			}
 		}
 
-		public static void AddHelp(ContentControl control, string help)
+
+		/// <summary>
+		/// Get all child controls. Excludes controls that are sourced from external XAML resource dictionaries.
+		/// </summary>
+		/// <param name="root">The root control.</param>
+		/// <returns>A list of all child controls.</returns>
+		private static FrameworkElement[] GetDirectElementsWithAutomationProperties(DependencyObject root)
 		{
-			Global.MainControl.InfoPanel.HelpProvider.Add(control, control.Content as string, help);
+			if (root == null)
+				throw new ArgumentNullException(nameof(root));
+			var elements = new List<FrameworkElement>();
+			GetAllInternal(root, elements);
+			var elementsWithAutomation = elements
+				.Where(x =>
+					!string.IsNullOrEmpty(AutomationProperties.GetHelpText(x)) ||
+					!string.IsNullOrEmpty(AutomationProperties.GetName(x)))
+				.ToArray();
+			return elementsWithAutomation;
+		}
+
+		private static void GetAllInternal(DependencyObject parent, List<FrameworkElement> elements)
+		{
+			if (parent == null)
+				return;
+			// Process logical children to support elements even if they're not loaded or visible
+			var visualChildren = LogicalTreeHelper
+				.GetChildren(parent)
+				.OfType<FrameworkElement>()
+				.ToArray();
+			// Process visual children to support elements that are part of the visual tree
+			var logicalChildren = Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(parent))
+				.Select(x => VisualTreeHelper.GetChild(parent, x))
+				.OfType<FrameworkElement>()
+				.ToArray();
+			var children = visualChildren.Union(logicalChildren).ToArray();
+			foreach (var child in children)
+			{
+				// Avoid duplicating elements that are already processed in logical tree.
+				if (elements.Contains(child))
+					continue;
+				// Skip if element is part of external resource dictionaries.
+				if (child.Resources.MergedDictionaries.OfType<ResourceDictionary>().Any(rd => rd.Source != null))
+					continue;
+				elements.Add(child);
+				GetAllInternal(child, elements);
+			}
 		}
 
 		#region Encrypt and Decrypt

@@ -643,8 +643,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			PanelSettings = Global.AppSettings.GetTaskSettings(ItemType.Embeddings);
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 			_IsLoaded = true;
-
 		}
 
 		private void This_Unloaded(object sender, RoutedEventArgs e)

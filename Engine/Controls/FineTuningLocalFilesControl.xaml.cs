@@ -174,12 +174,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			if (MustRefresh && IsVisible)
 				Refresh();
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
 		}
 
 		#region IBindData

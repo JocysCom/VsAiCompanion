@@ -157,11 +157,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateSelectedValue();
 		}
 
-		private void ComboBox_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.AllowLoad(this))
+			{
 				UpdateListMonitoring();
-
+				AppHelper.InitHelp(this);
+			}
 		}
 	}
 }

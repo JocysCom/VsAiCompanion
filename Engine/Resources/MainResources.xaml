@@ -139,6 +139,11 @@
 	<sys:String x:Key="main_Standalone_Program">Standalone Program</sys:String>
 	<sys:String x:Key="main_Start_with_Windows">Start with Windows</sys:String>
 	<sys:String x:Key="main_Use_Enter_to_send_the_message">Use [Enter] to send the message</sys:String>
+	<sys:String x:Key="main_Release_Configuration_Name">Release Configuration</sys:String>
+	<sys:String x:Key="main_Release_Configuration_Help">Options that are only applied when the application runs in release mode.</sys:String>
+	<sys:String x:Key="main_LockEnterpriseOptions_Name">Lock Enterprise Options</sys:String>
+	<sys:String x:Key="main_LockEnterpriseOptions_Help">Make enterprise options read-only.</sys:String>
+	<sys:String x:Key="main_UI_Presets">UI Presets</sys:String>
 
 	<!--  Options → Microsoft Account → Azure Key Vault Items  -->
 	<sys:String x:Key="main_ActivationDate">Activation Date</sys:String>
@@ -293,6 +298,7 @@
 	<sys:String x:Key="main_Selection">Selection</sys:String>
 	<sys:String x:Key="main_Show_Icon_in_Toolbar">Show Icon in Toolbar</sys:String>
 	<sys:String x:Key="main_Target">Target</sys:String>
+	<sys:String x:Key="main_State">State</sys:String>
 	<sys:String x:Key="main_Test_Authentication">Test Authentication</sys:String>
 	<sys:String x:Key="main_TextBox_Drop_Files_Instructions">Extract and analyze the plain text content from the following files:</sys:String>
 	<sys:String x:Key="main_Use_Macros">Use Macros</sys:String>

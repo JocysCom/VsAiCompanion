@@ -47,5 +47,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public SortableBindingList<PluginCategory> CurrentItems { get; set; }
 
+		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowLoad(this))
+			{
+				AppHelper.InitHelp(this);
+			}
+		}
 	}
 }

@@ -69,6 +69,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+
+		public const string UiPresetsName = nameof(UiPresets);
+
+		public static SettingsData<UiPresetItem> UiPresets =
+			new SettingsData<UiPresetItem>($"{UiPresetsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+			{
+				UseSeparateFiles = true,
+			};
+
 		public const string EmbeddingsName = nameof(Embeddings);
 
 		public static SettingsData<EmbeddingsItem> Embeddings =
@@ -121,6 +130,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.MailAccount: return AppSettings.MailAccounts;
 				case ItemType.VaultItem: return AppSettings.VaultItems;
 				case ItemType.AiService: return AppSettings.AiServices;
+				case ItemType.UiPreset: return UiPresets.Items;
 				default: return null;
 			}
 		}
@@ -135,6 +145,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.Assistant: return Assistants;
 				case ItemType.Lists: return Lists;
 				case ItemType.Embeddings: return Embeddings;
+				case ItemType.UiPreset: return UiPresets;
 				default: return null;
 			}
 		}
@@ -326,6 +337,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Tasks.Save();
 			FineTunings.Save();
 			Assistants.Save();
+			UiPresets.Save();
 		}
 
 		/// <summary>
@@ -409,6 +421,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Lists.Load();
 			if (Lists.IsSavePending)
 				Lists.Save();
+			// Load UI Presets.
+			UiPresets.OnValidateData += UiPresets_OnValidateData;
+			UiPresets.Load();
+			if (UiPresets.IsSavePending)
+				UiPresets.Save();
 			// Load Embeddings.
 			Embeddings.OnValidateData += Embeddings_OnValidateData;
 			Embeddings.Load();
@@ -560,6 +577,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Lists.SortList(e.Items);
 					Lists.IsSavePending = true;
 				}
+			}
+		}
+
+		private static void UiPresets_OnValidateData(object sender, SettingsData<UiPresetItem>.SettingsDataEventArgs e)
+		{
+			if (e.Items.Count == 0)
+			{
+				//SettingsSourceManager.ResetLists();
+				// Data is reset, no need to handle it.
+				//e.Handled = true;
+			}
+			else
+			{
+				// Check for missing templates only.
+				//var itemsAdded = SettingsSourceManager.CheckRequiredItems(e.Items);
+				//if (itemsAdded > 0)
+				//{
+				//	// Reorder and save.
+				//	Lists.SortList(e.Items);
+				//	Lists.IsSavePending = true;
+				//}
 			}
 		}
 
