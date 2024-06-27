@@ -791,6 +791,11 @@ namespace Microsoft.Data.ConnectionUI
 				}
 			}
 
+			public string GetPassword()
+			{
+				return Password;
+			}
+
 			public bool SavePassword
 			{
 				get
@@ -847,14 +852,14 @@ namespace Microsoft.Data.ConnectionUI
 					string str = connectionString + "Data Source='" + ServerName.Replace("'", "''") + "';";
 					if (UserInstance)
 						str += "User Instance=true;";
-					connectionString = !UseWindowsAuthentication ? str + "User ID='" + UserName.Replace("'", "''") + "';" + "Password='" + Password.Replace("'", "''") + "';" : str + "Integrated Security=" + _properties["Integrated Security"].ToString() + ";";
+					connectionString = !UseWindowsAuthentication ? str + "User ID='" + UserName.Replace("'", "''") + "';" + "Password='" + GetPassword().Replace("'", "''") + "';" : str + "Integrated Security=" + _properties["Integrated Security"].ToString() + ";";
 					if (_properties is SqlConnectionProperties)
 						connectionString += "Pooling=False;";
 				}
 				if (_properties is OdbcConnectionProperties)
 				{
 					string str = connectionString + "DRIVER={SQL Server};" + "SERVER={" + ServerName.Replace("}", "}}") + "};";
-					connectionString = !UseWindowsAuthentication ? str + "UID={" + UserName.Replace("}", "}}") + "};" + "PWD={" + Password.Replace("}", "}}") + "};" : str + "Trusted_Connection=Yes;";
+					connectionString = !UseWindowsAuthentication ? str + "UID={" + UserName.Replace("}", "}}") + "};" + "PWD={" + GetPassword().Replace("}", "}}") + "};" : str + "Trusted_Connection=Yes;";
 				}
 				if (_properties is SqlConnectionProperties)
 					basicConnection = (IDbConnection)new SqlConnection(connectionString);

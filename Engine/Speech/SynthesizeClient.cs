@@ -209,7 +209,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 
 		public async Task<MemoryStream> GetMemoryStreamWithHeader(AudioDataStream source)
 		{
-			var tempWavFilePath = Path.GetTempFileName() + ".wav";
+			var tempWavFilePath = Path.GetRandomFileName() + ".wav";
 			// Save to a temporary WAV file first
 			await source.SaveToWaveFileAsync(tempWavFilePath);
 			var ms = new MemoryStream();
