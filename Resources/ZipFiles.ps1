@@ -25,24 +25,18 @@ if (!(Test-Path -Path $sourceDir)) {
 
 Add-Type -Assembly "System.IO.Compression.FileSystem"
 
-function Get-FileChecksums {
+function Get-FileChecksum {
     param (
-        [string] $directory,
-        [string] $searchPattern = "*"
+        [string] $filePath
     )
-
-    $checksums = @{}
-
-    Get-ChildItem -Path $directory -Recurse -File -Filter $searchPattern |
-    ForEach-Object {
+    $checksum = $null
+    if (Test-Path -Path $filePath -PathType Leaf) {
         $hashAlgorithm = [System.Security.Cryptography.SHA256]::Create()
         try {
-            $stream = [System.IO.File]::OpenRead($_.FullName)
+            $stream = [System.IO.File]::OpenRead($filePath)
             $hashBytes = $hashAlgorithm.ComputeHash($stream)
             $stream.Close()
-
             $checksum = -join ($hashBytes | ForEach-Object { $_.ToString("x2") })
-            $checksums[$_.FullName.Replace($directory, "").TrimStart("\")] = $checksum
         }
         finally {
             $hashAlgorithm.Dispose()
@@ -50,8 +44,25 @@ function Get-FileChecksums {
                 $stream.Dispose()
             }
         }
+    } else {
+        Write-Host "File does not exist: $filePath"
     }
+    return $checksum
+}
 
+function Get-FileChecksums {
+    param (
+        [string] $directory,
+        [string] $searchPattern = "*"
+    )
+    $checksums = @{}
+    Get-ChildItem -Path $directory -Recurse -File -Filter $searchPattern |
+    ForEach-Object {
+        $checksum = Get-FileChecksum -filePath $_.FullName
+        if ($checksum) {
+            $checksums[$_.FullName.Replace($directory, "").TrimStart("\")] = $checksum
+        }
+    }
     return $checksums
 }
 

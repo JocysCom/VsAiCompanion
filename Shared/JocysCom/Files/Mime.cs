@@ -129,7 +129,7 @@ namespace JocysCom.ClassLibrary.Files
 			}
 			// Check if the data is encoded in base64
 			if (typeAndEncoding.EndsWith(";base64", StringComparison.OrdinalIgnoreCase))
-				data = Convert.FromBase64String(base64Data);
+				data = System.Convert.FromBase64String(base64Data);
 			else
 				// Handling data not encoded in base64 (Not covered as the initial method only handles base64)
 				return false;
