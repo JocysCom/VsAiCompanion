@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
-		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\'))</SolutionDir>
+		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\'))</SolutionDir>
 	</PropertyGroup>
 
 	<PropertyGroup>
