@@ -3,6 +3,9 @@
 *.backup
 *.tmp
 *.hcl
+backend.dev.tfvars
+backend.prod.tfvars
+backend.test.tfvars
 variables.dev.tfvars
 variables.prod.tfvars
 variables.test.tfvars
