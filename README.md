@@ -45,7 +45,7 @@ OpenAI will not use the data submitted by customers via the OpenAI API to train 
 
 ### Code Security Assurance
 
-AI Tool by utilizing a comprehensive suite of security scan tools to make sure that codebase is safeguarded and free from unresolved issues.
+To make sure that codebase is safeguarded and free from unresolved issues we are utilizing a comprehensive suite of security scan tools.
 
 [Dependabot Security](https://github.com/JocysCom/VsAiCompanion/security/dependabot): Detects vulnerabilities in dependencies.
 
