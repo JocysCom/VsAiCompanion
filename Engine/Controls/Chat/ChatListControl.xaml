@@ -21,6 +21,5 @@
 			Content="Loading. Please wait..."
 			Foreground="DarkGray" />
 		<WebBrowser x:Name="WebBrowser" Visibility="Hidden" />
-
 	</Grid>
 </UserControl>

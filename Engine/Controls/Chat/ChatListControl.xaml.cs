@@ -125,7 +125,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				WebBrowser.Navigating += WebBrowser_Navigating;
 				WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
-				WebBrowser.Navigate($"http://localhost/{contentsFile}");
+				WebBrowser.Navigate("about:blank");
 				AppHelper.InitHelp(this);
 			}
 		}
@@ -138,9 +138,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			if (e.Uri == null)
 				return;
-			var fileName = e.Uri.AbsolutePath;
+			var fileName = e.Uri?.AbsolutePath;
 			// Check if it's trying to navigate to one of our files.
-			if (fileName.EndsWith(contentsFile))
+			if (fileName == "blank")
 			{
 				// process contents only once.
 				lock (contentsLock)
@@ -163,7 +163,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				WebBrowser.NavigateToString(contents);
 				return;
 			}
-			ControlsHelper.OpenUrl(e.Uri.OriginalString);
+			if (!string.IsNullOrEmpty(e.Uri?.OriginalString))
+				ControlsHelper.OpenUrl(e.Uri.OriginalString);
 			// Supress all other navigation.
 			e.Cancel = true;
 		}
