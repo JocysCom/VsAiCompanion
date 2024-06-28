@@ -47,20 +47,20 @@ OpenAI will not use the data submitted by customers via the OpenAI API to train 
 
 AI Tool by utilizing a comprehensive suite of security scan tools to make sure that codebase is safeguarded and free from unresolved issues.
 
-**[Dependabot Security](https://github.com/JocysCom/VsAiCompanion/security/dependabot)**: Detects vulnerabilities in dependencies.
-  
-**[Code Scanning](https://github.com/JocysCom/VsAiCompanion/security/code-scanning)**: Identifies common vulnerabilities and coding errors.
-  - **PyCQA Bandit**: A security linter for Python code.
-  - **Microsoft BinSkim**: A tool for security-oriented binary analysis.
-  - **GitHub CodeQL**: A powerful semantic code analysis engine for discovering vulnerabilities.
-  - **ESLint**: A pluggable JavaScript/TypeScript linting utility.
-  - **SonarSource SonarCloud**: A cloud-based service for code quality and security scanning. [Report](https://sonarcloud.io/summary/new_code?id=JocysCom_VsAiCompanion)
-  - **Microsoft Antimalware**: A tool to scan and mitigate against malware threats.
-  - **Bridgecrew Checkov**: A static analysis tool for security policy compliance in infrastructure as code.
-  - **Azure TemplateAnalyzer**: Analyzes infrastructure as code templates.
-  - **Accurics Terrascan**: A static code analyzer for Terraform to detect compliance and security violations.
+[Dependabot Security](https://github.com/JocysCom/VsAiCompanion/security/dependabot): Detects vulnerabilities in dependencies.
 
-**[Secret Scanning](https://github.com/JocysCom/VsAiCompanion/security/secret-scanning)**: Detects secrets accidentally pushed to the repository.
+[Code Scanning](https://github.com/JocysCom/VsAiCompanion/security/code-scanning): Identifies common vulnerabilities and coding errors.
+  - PyCQA Bandit: A security linter for Python code.
+  - Microsoft BinSkim: A tool for security-oriented binary analysis.
+  - GitHub CodeQL: A powerful semantic code analysis engine for discovering vulnerabilities.
+  - ESLint: A pluggable JavaScript/TypeScript linting utility.
+  - SonarSource SonarCloud: A cloud-based service for code quality and security scanning. [Report](https://sonarcloud.io/summary/new_code?id=JocysCom_VsAiCompanion)
+  - Microsoft Antimalware: A tool to scan and mitigate against malware threats.
+  - Bridgecrew Checkov: A static analysis tool for security policy compliance in infrastructure as code.
+  - Azure TemplateAnalyzer: Analyzes infrastructure as code templates.
+  - Accurics Terrascan: A static code analyzer for Terraform to detect compliance and security violations.
+
+[Secret Scanning](https://github.com/JocysCom/VsAiCompanion/security/secret-scanning): Detects secrets accidentally pushed to the repository.
 
 ### Licensing
 
