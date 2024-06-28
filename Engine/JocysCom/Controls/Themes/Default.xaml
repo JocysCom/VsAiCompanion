@@ -620,33 +620,19 @@
 						</Grid.RowDefinitions>
 						<TabPanel x:Name="HeaderPanel" Panel.ZIndex="1" IsItemsHost="True" />
 						<Border
-							x:Name="TabControlBorder"
 							Grid.Row="1"
 							BorderBrush="{StaticResource BorderDark}"
 							BorderThickness="1"
-							CornerRadius="0,5,5,5"
-							SnapsToDevicePixels="True">
-							<!--
-								KeyboardNavigation.DirectionalNavigation="Contained"
-								KeyboardNavigation.TabIndex="2"
-								KeyboardNavigation.TabNavigation="Local"
-							-->
+							CornerRadius="0,5,5,5">
+							<Grid>
+								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundLight}" CornerRadius="0,5,5,5" />
+								<ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" ContentSource="SelectedContent">
+									<ContentPresenter.OpacityMask>
+										<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+									</ContentPresenter.OpacityMask>
+								</ContentPresenter>
+							</Grid>
 						</Border>
-						<Border
-							Name="OpacityMaskBorder"
-							Grid.Row="1"
-							Margin="1"
-							Background="{StaticResource BackgroundLight}"
-							CornerRadius="0,5,5,5" />
-						<ContentPresenter
-							Grid.Row="1"
-							Margin="1"
-							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-							ContentSource="SelectedContent">
-							<ContentPresenter.OpacityMask>
-								<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-							</ContentPresenter.OpacityMask>
-						</ContentPresenter>
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>
