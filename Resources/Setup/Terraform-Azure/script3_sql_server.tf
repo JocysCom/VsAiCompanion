@@ -25,14 +25,14 @@ resource "azurerm_mssql_server" "sqlsrv" {
 resource "azurerm_role_assignment" "sqlsrv_admin" {
   role_definition_name = "Contributor"
   #principal_id         = data.azuread_group.g5.id
-  principal_id         = data.azuread_service_principal.sp_admin.id
-  scope                = azurerm_mssql_server.sqlsrv.id
+  principal_id = data.azuread_service_principal.sp_admin.id
+  scope        = azurerm_mssql_server.sqlsrv.id
 }
 
 # Assign the Directory Readers role to the Managed Identity of the SQL Server
 resource "azurerm_role_assignment" "sqlsrv_directory_reader" {
   role_definition_name = "Reader"
-  principal_id         = azurerm_mssql_server.sqlsrv.identity[0].principal_id  
+  principal_id         = azurerm_mssql_server.sqlsrv.identity[0].principal_id
   scope                = azurerm_mssql_server.sqlsrv.id
 }
 

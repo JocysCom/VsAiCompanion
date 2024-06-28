@@ -88,9 +88,9 @@ resource "azurerm_key_vault_access_policy" "key_vault_access_policy_read_secrets
 # Define Key Vault Secrets using the simplified variable names
 
 resource "azurerm_key_vault_secret" "kvs_openai" {
-  name         = "openai-api-key"
-  value        = var.kvs_openai_value
-  key_vault_id = azurerm_key_vault.kv.id
+  name            = "openai-api-key"
+  value           = var.kvs_openai_value
+  key_vault_id    = azurerm_key_vault.kv.id
   expiration_date = timeadd(timestamp(), "43800h") # 5 years in hours
   depends_on = [
     azurerm_role_assignment.key_vault_contributor_critical,
@@ -105,9 +105,9 @@ resource "azurerm_key_vault_secret" "kvs_openai" {
 }
 
 resource "azurerm_key_vault_secret" "kvs_speech" {
-  name         = "ms-speech-service-api-key"
-  value        = var.kvs_speech_value
-  key_vault_id = azurerm_key_vault.kv.id
+  name            = "ms-speech-service-api-key"
+  value           = var.kvs_speech_value
+  key_vault_id    = azurerm_key_vault.kv.id
   expiration_date = timeadd(timestamp(), "43800h") # 5 years in hours
   depends_on = [
     azurerm_role_assignment.key_vault_contributor_critical,
