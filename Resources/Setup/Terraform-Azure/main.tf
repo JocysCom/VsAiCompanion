@@ -67,6 +67,12 @@ data "azurerm_resource_group" "rg" {
   name = var.rg_name
 }
 
+# Azure Storage Account to store Terraform state files
+data "azurerm_storage_account" "storage_account" {
+  name                = var.storage_account_name
+  resource_group_name = data.azurerm_resource_group.rg.name
+}
+
 # External data source to run the PowerShell command
 #data "external" "user_principal_name" {
 #  program = [

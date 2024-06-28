@@ -70,5 +70,21 @@ resource "null_resource" "assign_sql_server_roles" {
   ]
 }
 
+# SQL Server Auditing Policy
+# Required to PASS Tool: checkov, Rule ID: CKV_AZURE_24, 
+# Description: Ensure that 'Auditing' Retention is 'greater than 90 days' for SQL servers
+resource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" {
+  server_name         = azurerm_mssql_server.sqlsrv.name
+  resource_group_name = data.azurerm_resource_group.rg.name
+
+  state                = "Enabled"
+  email_account_admins = true
+  retention_days       = 90
+
+  # Define where to send audit logs
+  storage_account_access_key = data.azurerm_storage_account.storage_account.primary_access_key
+  storage_endpoint           = data.azurerm_storage_account.storage_account.primary_blob_endpoint
+}
+
 #$tokenResponse = az account get-access-token --resource https://database.windows.net/ --output json
 #$token = ($tokenResponse | ConvertFrom-Json).accessToken

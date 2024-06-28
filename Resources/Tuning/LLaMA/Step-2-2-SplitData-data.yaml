@@ -46,3 +46,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Message'
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-API-Key
+      in: header
+security:
+  - api_key: []

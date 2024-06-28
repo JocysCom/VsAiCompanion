@@ -39,11 +39,11 @@ variable "kvs_speech_value" {
 variable "rg_name" {
   description = "The value for the default resource group name"
   type        = string
-  default     = "contoso-rg-dev-openai-uswest-001"
+  default     = "<contoso-rg-dev-openai-uswest-001>"
 }
 
 variable "storage_account_name" {
   description = "The name of the Azure Storage Account for storing TF state"
   type        = string
-  default     = "staicompdevuswest001"
+  default     = "<staicompdevuswest001>"
 }
