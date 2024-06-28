@@ -235,6 +235,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Voice => FindResource(nameof(main_Voice));
         public static string main_Voice_Type => FindResource(nameof(main_Voice_Type));
         public static string main_Voices => FindResource(nameof(main_Voices));
+        public static string main_Feature_UiPresets => FindResource(nameof(main_Feature_UiPresets));
         public static string main_Reset_Application_Settings => FindResource(nameof(main_Reset_Application_Settings));
         public static string main_Reset_Embeddings => FindResource(nameof(main_Reset_Embeddings));
         public static string main_Reset_Lists => FindResource(nameof(main_Reset_Lists));

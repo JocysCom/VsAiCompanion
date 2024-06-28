@@ -11,6 +11,7 @@
 		<Platforms>AnyCPU</Platforms>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
 		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\'))</SolutionDir>
+		<ProjectDir Condition="'$(ProjectDir)' == '' Or '$(ProjectDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\.\'))</ProjectDir>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -30,6 +31,7 @@
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<PlatformTarget>x64</PlatformTarget>
 		<Platforms>AnyCPU</Platforms>
+		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
 		<!-- Set the target platform to Windows -->
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
@@ -326,8 +328,8 @@
 		<Message Text="Running PreOuterPreBuild target" Importance="high" />
 		<!-- Execute once for multiple builds -->
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if(-not (Test-Path -Path '$(ProjectDir)Resources')) { New-Item -ItemType Directory -Force -Path '$(ProjectDir)Resources' }&quot;" />
-		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;(Get-Date).ToString('o') | Out-File -Force '$(ProjectDir)Resources\BuildDate.txt'&quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Resources\GenerateResourceClassesFromXaml.ps1&quot;" />
+		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CreateBuildDateFile.ps1&quot; &quot;$(ProjectDir)Resources\BuildDate.txt&quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Documents&quot; &quot;$(ProjectDir)Resources\Documents.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings&quot; &quot;$(ProjectDir)Resources\Settings.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />
 		<Exec Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\ZipFiles.ps1&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName&quot; &quot;$(ProjectDir)Resources\Settings.CompanyName.zip&quot; -LogPrefix &quot;$(TargetFramework): &quot;" />

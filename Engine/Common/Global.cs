@@ -10,6 +10,7 @@ using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -116,6 +117,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		public static ObservableCollection<string> VisibilityPaths { get; set; } = new ObservableCollection<string>();
 
 		public static IBindingList GetSettingItems(ItemType type)
 		{
