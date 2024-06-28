@@ -21,7 +21,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
+	<Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
@@ -42,7 +42,7 @@
 			<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 		</Button>
 		<Border Grid.ColumnSpan="2" Margin="32,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
-			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Lists_Feature_Description}" />
+			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Feature_UiPresets}" />
 		</Border>
 		<Border
 			Grid.Row="2"
@@ -107,20 +107,10 @@
 			SelectionChanged="MainDataGrid_SelectionChanged"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
-				<DataGridTextColumn
-					x:Name="PathColumn"
-					Binding="{Binding Path}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{StaticResource main_Path}" />
-				<DataGridTextColumn
-					x:Name="StateColumn"
-					Width="Auto"
-					Binding="{Binding State}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="{StaticResource main_State}" />
+				<DataGridComboBoxColumn x:Name="PathColumn" Header="{StaticResource main_Path}" SelectedItemBinding="{Binding Path}" />
+				<DataGridComboBoxColumn x:Name="StateColumn" Header="{StaticResource main_State}" SelectedItemBinding="{Binding State}" />
 			</DataGrid.Columns>
 		</DataGrid>
+
 	</Grid>
 </UserControl>

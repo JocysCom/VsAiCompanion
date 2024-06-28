@@ -53,6 +53,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return current;
 		}
 
+
+
+
+
 	}
 
 

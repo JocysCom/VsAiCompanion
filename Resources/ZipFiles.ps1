@@ -60,7 +60,8 @@ function Get-FileChecksums {
     ForEach-Object {
         $checksum = Get-FileChecksum -filePath $_.FullName
         if ($checksum) {
-            $checksums[$_.FullName.Replace($directory, "").TrimStart("\")] = $checksum
+			[string]$key = $_.FullName.Replace($directory, "").TrimStart("\")
+			$checksums[$key] = $checksum
         }
     }
     return $checksums
@@ -80,8 +81,14 @@ function CheckAndZipFiles {
 
     $checksumsChanged = $false
     foreach ($key in $sourceChecksums.Keys) {
-        if (-not $destChecksums.ContainsKey($key) -or $sourceChecksums[$key] -ne $destChecksums[$key]) {
-            $checksumsChanged = $true
+        if (-not $destChecksums.ContainsKey($key)) {
+            Write-Host "New File: $key"
+			$checksumsChanged = $true
+            break
+        }
+		if ($sourceChecksums[$key] -ne $destChecksums[$key]) {
+            Write-Host "File Changed: $key"
+			$checksumsChanged = $true
             break
         }
     }

@@ -70,5 +70,31 @@ resource "null_resource" "assign_sql_server_roles" {
   ]
 }
 
+# Set local variable for admin emails using the service principal's information
+locals {
+  admin_emails = [data.azuread_service_principal.sp_admin.display_name]
+}
+
+# SQL Server Auditing Policy
+# Required to PASS Tool: checkov, Rule ID: CKV_AZURE_24, 
+# Description: Ensure that 'Auditing' Retention is 'greater than 90 days' for SQL servers
+resource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" {
+  server_name         = azurerm_mssql_server.sqlsrv.name
+  resource_group_name = data.azurerm_resource_group.rg.name
+
+  state                = "Enabled"
+  email_account_admins = true
+
+  # Rule ID: CKV_AZURE_24 - Ensure that 'Auditing' Retention is 'greater than 90 days' for SQL servers
+  retention_days = 120
+
+  # Rule ID: CKV_AZURE_26 - Ensure that 'Send Alerts To' is enabled for MSSQL servers
+  email_addresses = local.admin_emails
+
+  # Define where to send audit logs
+  storage_account_access_key = data.azurerm_storage_account.storage_account.primary_access_key
+  storage_endpoint           = data.azurerm_storage_account.storage_account.primary_blob_endpoint
+}
+
 #$tokenResponse = az account get-access-token --resource https://database.windows.net/ --output json
 #$token = ($tokenResponse | ConvertFrom-Json).accessToken

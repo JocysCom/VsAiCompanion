@@ -43,6 +43,9 @@ This application (or extension) allows you to create advanced prompt templates a
 ### Data Safety Concerns
 OpenAI will not use the data submitted by customers via the OpenAI API to train or improve its models, unless customers explicitly decide to share their data for this purpose. Customers have the option to opt-in to share data. Please note that this data policy does not apply to OpenAI's Non-API consumer services like ChatGPT or DALL·E. More information can be found at: https://openai.com/policies/api-data-usage-policies."
 
+### Code Security Assurance
+
+To ensure our codebase is secure and free from unresolved issues, we utilize a comprehensive suite of security <a href="https://github.com/JocysCom/VsAiCompanion/security">scan tools</a>. `Dependabot` detects vulnerabilities in dependencies. `Code Scanning` identifies common vulnerabilities and coding errors with tools such as PyCQA Bandit, Microsoft BinSkim, GitHub CodeQL, ESLint, SonarSource SonarCloud, Microsoft Antimalware, Bridgecrew Checkov, Azure TemplateAnalyzer, and Accurics Terrascan. Additionally, `Secret Scanning` detects any secrets accidentally pushed to the repository.
 ### Licensing
 
 The source code is licensed under MPL-2.0 (Mozilla Public License 2.0), permitting corporations to integrate and enhance this application with proprietary code, without the requirement to disclose their modifications. Specifically, this license facilitates the use of the application for purposes such as enabling AI to access corporate resources or to automate task creation for AI, while still keeping any proprietary additions private.

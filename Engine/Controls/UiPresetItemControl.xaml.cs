@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,9 +17,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public UiPresetItemControl()
 		{
 			InitializeComponent();
+			PathColumn.ItemsSource = AllPaths;
+			StateColumn.ItemsSource = AllStates;
 			Global.UiPresets.Items.ListChanged += Items_ListChanged;
 			UpdateButtons();
 		}
+
+		/// <summary>
+		/// Contains all items for `PathColumn`
+		/// </summary>
+		public ObservableCollection<string> AllPaths => Global.VisibilityPaths;
+
+		/// <summary>
+		/// Contains all items for `StateColumn`
+		/// </summary>
+		public ObservableCollection<VisibilityState> AllStates { get; } =
+			new ObservableCollection<VisibilityState>((VisibilityState[])System.Enum.GetValues(typeof(VisibilityState)));
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
@@ -74,11 +88,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (value != null)
 				{
 					_Item.PropertyChanged += _Item_PropertyChanged;
-					//ControlsHelper.SetItemsSource(MainDataGrid, null);
+					ControlsHelper.SetItemsSource(MainDataGrid, null);
 				}
 				//IconPanel.BindData(value);
 				//DataContext = value;
-				//ControlsHelper.SetItemsSource(MainDataGrid, value?.Items);
+				ControlsHelper.SetItemsSource(MainDataGrid, value?.Items);
 			}
 		}
 		UiPresetItem _Item;
@@ -116,7 +130,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AddButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			var item = new VisibilityItem();
+			Item.Items.Add(item);
 		}
 
 		private void DeleteButton_Click(object sender, System.Windows.RoutedEventArgs e)

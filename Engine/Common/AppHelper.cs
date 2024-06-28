@@ -655,6 +655,11 @@ EndFragment:{3:00000000}";
 		{
 			var elements = GetDirectElementsWithAutomationProperties(root);
 			AddHelp(elements);
+			var namedElements = GetDirectElementsWithNameProperty(root);
+			var paths = Global.VisibilityPaths.ToArray();
+			paths = paths.Union(namedElements.Keys).ToArray();
+			Array.Sort(paths);
+			CollectionsHelper.Synchronize(paths, Global.VisibilityPaths);
 		}
 
 		private static void AddHelp(params UIElement[] elements)
@@ -667,6 +672,41 @@ EndFragment:{3:00000000}";
 			}
 		}
 
+		/// <summary>
+		/// Get all child controls with x:Name or Name property set.
+		/// Excludes controls that are sourced from external XAML resource dictionaries.
+		/// </summary>
+		/// <param name="root">The root control.</param>
+		private static Dictionary<string, FrameworkElement> GetDirectElementsWithNameProperty(DependencyObject root)
+		{
+			if (root == null)
+				throw new ArgumentNullException(nameof(root));
+			var elements = new List<FrameworkElement>();
+			GetAllInternal(root, elements);
+			var namedElements = elements
+				.Where(x => !string.IsNullOrEmpty(x.Name))
+				.ToArray();
+			var dic = new Dictionary<string, FrameworkElement>();
+			foreach (var ne in namedElements)
+			{
+				var nodes = new List<string>();
+				FrameworkElement parent = ne;
+				do
+				{
+					var add =
+						!string.IsNullOrEmpty(parent.Name) &&
+						(parent == ne || parent is UserControl) && parent != Global.MainControl;
+					if (add)
+						nodes.Insert(0, parent.Name);
+					parent = ControlsHelper.GetParent<FrameworkElement>(parent);
+				} while (parent != null);
+				var path = string.Join(".", nodes);
+				if (!dic.ContainsKey(path))
+					dic.Add(path, ne);
+			}
+			return dic;
+
+		}
 
 		/// <summary>
 		/// Get all child controls. Excludes controls that are sourced from external XAML resource dictionaries.
@@ -687,7 +727,7 @@ EndFragment:{3:00000000}";
 			return elementsWithAutomation;
 		}
 
-		private static void GetAllInternal(DependencyObject parent, List<FrameworkElement> elements)
+		public static void GetAllInternal(DependencyObject parent, List<FrameworkElement> elements)
 		{
 			if (parent == null)
 				return;
