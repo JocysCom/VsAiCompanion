@@ -189,6 +189,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void ResetLists(ZipStorer zip = null)
 			=> ResetItems(zip, Global.Lists, Global.ListsName);
 
+		public static void ResetUiPresets(ZipStorer zip = null)
+			=> ResetItems(zip, Global.UiPresets, Global.UiPresetsName);
+
 		/// <summary>Reset Lists</summary>
 		public static void ResetEmbeddings(ZipStorer zip = null)
 		{

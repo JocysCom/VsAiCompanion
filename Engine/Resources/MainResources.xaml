@@ -236,6 +236,7 @@
 	<sys:String x:Key="main_Reset_UI_Settings">Reset UI Settings</sys:String>
 	<sys:String x:Key="main_Reset_UI_Settings_ToolTip">Use to capture screenshots of a similar size.</sys:String>
 	<sys:String x:Key="main_Reset_to_Default">Reset to Default</sys:String>
+	<sys:String x:Key="main_Reset_UI_Presets">Reset UI Presets</sys:String>
 
 	<!--  About  -->
 	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>

@@ -592,9 +592,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (e.Items.Count == 0)
 			{
-				//SettingsSourceManager.ResetLists();
+				SettingsSourceManager.ResetUiPresets();
 				// Data is reset, no need to handle it.
-				//e.Handled = true;
+				e.Handled = true;
 			}
 			else
 			{

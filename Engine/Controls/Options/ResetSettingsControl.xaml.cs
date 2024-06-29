@@ -130,7 +130,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			if (!AppHelper.AllowReset("Embeddings"))
 				return;
 			SettingsSourceManager.ResetEmbeddings();
+		}
 
+		private void ResetUiPresetsButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AppHelper.AllowReset("UI Presets"))
+				return;
+			SettingsSourceManager.ResetUiPresets();
 		}
 
 		private void ResetServicesButton_Click(object sender, RoutedEventArgs e)

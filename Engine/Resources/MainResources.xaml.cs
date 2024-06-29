@@ -247,6 +247,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_UI_Settings => FindResource(nameof(main_Reset_UI_Settings));
         public static string main_Reset_UI_Settings_ToolTip => FindResource(nameof(main_Reset_UI_Settings_ToolTip));
         public static string main_Reset_to_Default => FindResource(nameof(main_Reset_to_Default));
+        public static string main_Reset_UI_Presets => FindResource(nameof(main_Reset_UI_Presets));
         public static string main_Axialis_Icon_Set_Licenses => FindResource(nameof(main_Axialis_Icon_Set_Licenses));
         public static string main_Changes => FindResource(nameof(main_Changes));
         public static string main_Company_Product => FindResource(nameof(main_Company_Product));

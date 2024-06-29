@@ -13,5 +13,7 @@ JVCUhcSoaetyD1d86Viu70M6x4A5jhOgxwBMnUziKsTDtJzCL6qVda7gA+C/q/GOxcxpCv+Gnu+r&#xD
 iz+y7EqprQMAAA==</IconData>
   <Created>2024-06-27T16:38:54.0672772+01:00</Created>
   <Modified>2024-06-27T16:38:54.0672772+01:00</Modified>
-  <Items />
+  <Items>
+    <VisibilityItem Path="TeamsTabItem" IsVisible="false" />
+  </Items>
 </UiPresetItem>

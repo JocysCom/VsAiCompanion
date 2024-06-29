@@ -90,6 +90,17 @@
 						</StackPanel>
 					</Button>
 
+					<Button
+						Name="ResetUiPresetsButton"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Left"
+						Click="ResetUiPresetsButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="{StaticResource main_Reset_UI_Presets}" />
+						</StackPanel>
+					</Button>
+
 
 				</StackPanel>
 			</GroupBox>
