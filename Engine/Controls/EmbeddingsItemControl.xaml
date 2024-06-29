@@ -366,20 +366,7 @@
 						<Label Content="{StaticResource main_Help}" />
 					</StackPanel>
 				</TabItem.Header>
-				<RichTextBox x:Name="HelpRichTextBox">
-					<RichTextBox.OpacityMask>
-						<VisualBrush>
-							<VisualBrush.Visual>
-								<Border
-									Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-									Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-									Background="White"
-									CornerRadius="0,5,5,5"
-									SnapsToDevicePixels="True" />
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</RichTextBox.OpacityMask>
-				</RichTextBox>
+				<RichTextBox x:Name="HelpRichTextBox"/>
 			</TabItem>
 			<TabItem Name="IncludePatternsTabPage">
 				<TabItem.Header>

@@ -122,7 +122,7 @@
 
 	<!--  RichTextBox  -->
 	<Style x:Key="RichTextBox_Default" TargetType="RichTextBox">
-		<Setter Property="Padding" Value="3,6,3,6" />
+		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="IsDocumentEnabled" Value="True" />
 		<Setter Property="IsReadOnly" Value="True" />
 		<Setter Property="BorderThickness" Value="0" />
@@ -625,12 +625,11 @@
 							BorderThickness="1"
 							CornerRadius="0,5,5,5">
 							<Grid>
+								<Grid.OpacityMask>
+									<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+								</Grid.OpacityMask>
 								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundLight}" CornerRadius="0,5,5,5" />
-								<ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" ContentSource="SelectedContent">
-									<ContentPresenter.OpacityMask>
-										<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-									</ContentPresenter.OpacityMask>
-								</ContentPresenter>
+								<ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" ClipToBounds="True" ContentSource="SelectedContent" />
 							</Grid>
 						</Border>
 					</Grid>
@@ -1527,11 +1526,11 @@
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+								<Grid.OpacityMask>
+									<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+								</Grid.OpacityMask>
 								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
-								<ScrollViewer Margin="0">
-									<ScrollViewer.OpacityMask>
-										<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-									</ScrollViewer.OpacityMask>
+								<ScrollViewer Margin="0" ClipToBounds="True">
 									<VirtualizingStackPanel IsItemsHost="True" />
 								</ScrollViewer>
 							</Grid>
@@ -1592,11 +1591,11 @@
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+								<Grid.OpacityMask>
+									<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+								</Grid.OpacityMask>
 								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
-								<ScrollViewer Margin="0">
-									<ScrollViewer.OpacityMask>
-										<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-									</ScrollViewer.OpacityMask>
+								<ScrollViewer Margin="0" ClipToBounds="True">
 									<VirtualizingStackPanel IsItemsHost="True" />
 								</ScrollViewer>
 							</Grid>
@@ -1657,11 +1656,11 @@
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+								<Grid.OpacityMask>
+									<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+								</Grid.OpacityMask>
 								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
-								<ScrollViewer Margin="0">
-									<ScrollViewer.OpacityMask>
-										<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-									</ScrollViewer.OpacityMask>
+								<ScrollViewer Margin="0" ClipToBounds="True">
 									<VirtualizingStackPanel IsItemsHost="True" />
 								</ScrollViewer>
 							</Grid>

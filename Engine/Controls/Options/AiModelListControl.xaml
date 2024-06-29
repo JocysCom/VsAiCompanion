@@ -66,11 +66,6 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-		<Border
-			Name="OpacityMaskBorder"
-			Grid.Row="2"
-			Background="White"
-			CornerRadius="0,0,0,5" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
@@ -92,9 +87,6 @@
 			ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
-			<DataGrid.OpacityMask>
-				<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-			</DataGrid.OpacityMask>
 			<DataGrid.Columns>
 				<DataGridTextColumn
 					x:Name="AiServiceNameColumn"

@@ -183,11 +183,6 @@
 				</TextBlock>
 			</Grid>
 		</Border>
-		<Border
-			Name="OpacityMaskBorder"
-			Grid.Row="2"
-			Background="White"
-			CornerRadius="0,0,0,5" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
@@ -211,9 +206,6 @@
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended"
 			Sorting="MainDataGrid_Sorting">
-			<DataGrid.OpacityMask>
-				<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-			</DataGrid.OpacityMask>
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 				<Style x:Key="TextBlockCellMargin3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">

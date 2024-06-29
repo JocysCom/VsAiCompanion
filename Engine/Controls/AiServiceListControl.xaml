@@ -5,9 +5,9 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Name="This"
-	Loaded="UserControl_Loaded"
 	d:DesignHeight="140"
 	d:DesignWidth="320"
+	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -62,11 +62,6 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-		<Border
-			Name="OpacityMaskBorder"
-			Grid.Row="2"
-			Background="White"
-			CornerRadius="0,0,0,5" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
@@ -83,9 +78,6 @@
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionMode="Extended">
-			<DataGrid.OpacityMask>
-				<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-			</DataGrid.OpacityMask>
 			<DataGrid.Columns>
 				<DataGridTextColumn
 					x:Name="KeyColumn"

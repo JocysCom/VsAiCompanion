@@ -102,11 +102,6 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-		<Border
-			Name="OpacityMaskBorder"
-			Grid.Row="2"
-			Background="White"
-			CornerRadius="0,0,0,5" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="2"
@@ -123,9 +118,6 @@
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionChanged="MainDataGrid_SelectionChanged"
 			SelectionMode="Extended">
-			<DataGrid.OpacityMask>
-				<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-			</DataGrid.OpacityMask>
 			<DataGrid.ContextMenu>
 				<ContextMenu>
 					<MenuItem Click="MainDataGrid_ContextMenu_Copy" Header="{StaticResource main_Copy}" />
