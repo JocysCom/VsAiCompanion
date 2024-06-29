@@ -143,7 +143,11 @@
 					ElementStyle="{StaticResource CheckBoxCell_Default}"
 					Header="Enable"
 					IsThreeState="False" />
-				<DataGridComboBoxColumn x:Name="PathColumn" Header="{StaticResource main_Path}" SelectedItemBinding="{Binding Path}" />
+				<DataGridComboBoxColumn
+					x:Name="PathColumn"
+					Width="*"
+					Header="{StaticResource main_Path}"
+					SelectedItemBinding="{Binding Path}" />
 			</DataGrid.Columns>
 		</DataGrid>
 

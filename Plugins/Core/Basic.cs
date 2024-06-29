@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Collections;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,17 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public static string AutoContinue(string reserved)
 		{
 			return "Please continue.";
+		}
+
+		/// <summary>
+		/// Wait for a specified amount of time.
+		/// </summary>
+		/// <param name="millisecondsDelay">The number of milliseconds to wait. -1 to wait indefinitely.</param>
+		[RiskLevel(RiskLevel.None)]
+		public static async Task<OperationResult<bool>> Wait(int millisecondsDelay)
+		{
+			await Task.Delay(millisecondsDelay);
+			return new OperationResult<bool>(true);
 		}
 
 		/// <summary>

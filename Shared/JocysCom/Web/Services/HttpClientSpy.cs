@@ -33,6 +33,9 @@ namespace JocysCom.ClassLibrary.Web.Services
 			RequestCollection = await WebHelper.ToCollection(Request).ConfigureAwait(continueOnCapturedContext);
 			try
 			{
+				// Check for cancellation before sending HttpRequest
+				if (cancellationToken.IsCancellationRequested)
+					throw new TaskCanceledException();
 				Response = await base.SendAsync(request, cancellationToken).ConfigureAwait(continueOnCapturedContext);
 				// Convert to collection now before it is disposed.
 				ResponseCollection = await WebHelper.ToCollection(Response, request.GetHashCode()).ConfigureAwait(continueOnCapturedContext);

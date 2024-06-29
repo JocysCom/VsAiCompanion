@@ -52,6 +52,12 @@
             <param name="reserved">Reserved. Send empty string as a value.</param>
             <exception cref="T:System.Exception">Error message explaining why execution failed.</exception>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.Wait(System.Int32)">
+            <summary>
+            Wait for a specified amount of time.
+            </summary>
+            <param name="millisecondsDelay">The number of milliseconds to wait. -1 to wait indefinitely.</param>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetCurrentSystemInfo">
             <summary>
             Get the current system information: Current Date, OS Version, Architecture, Locale, Time Zone and GPS Geo Location.
