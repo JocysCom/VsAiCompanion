@@ -48,8 +48,27 @@
 			Height="48"
 			VerticalAlignment="Stretch"
 			Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" />
-
-		<controls:QuickActionControl x:Name="QuickActionPanel" Grid.Row="1" />
+		<Grid Grid.Row="1" Grid.ColumnSpan="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<controls:QuickActionControl x:Name="QuickActionPanel" />
+			<StackPanel Grid.Column="1" Orientation="Horizontal">
+				<Label
+					Padding="6,3,0,3"
+					VerticalAlignment="Center"
+					Content="{StaticResource main_UI}"
+					Opacity="0.4" />
+				<ComboBox
+					Name="UiPresetComboBox"
+					HorizontalAlignment="Stretch"
+					DisplayMemberPath="Name"
+					ItemsSource="{Binding Items, Source={x:Static root:Global.UiPresets}}"
+					SelectedValue="{Binding UiPresetName, Source={x:Static root:Global.AppSettings}}"
+					SelectedValuePath="Name" />
+			</StackPanel>
+		</Grid>
 		<TabControl
 			x:Name="MainTabControl"
 			Grid.Row="2"
@@ -80,6 +99,7 @@
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="TemplatesPanel" DataType="Template" />
 			</TabItem>
+
 			<TabItem x:Name="FineTuningTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -89,14 +109,15 @@
 				</TabItem.Header>
 				<controls:SettingsControl x:Name="FineTuningPanel" x:FieldModifier="public" DataType="FineTuning" />
 			</TabItem>
-			<TabItem x:Name="AssistantsTabItem" x:FieldModifier="public">
+
+			<TabItem x:Name="TeamsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_user_group}" />
 						<Label Content="Teams" />
 					</StackPanel>
 				</TabItem.Header>
-				<controls:SettingsControl x:Name="AssistantsPanel" x:FieldModifier="public" DataType="Assistant" />
+				<controls:SettingsControl x:Name="TeamsPanel" x:FieldModifier="public" DataType="Assistant" />
 			</TabItem>
 
 			<TabItem x:Name="EmbeddingTabItem" x:FieldModifier="public">

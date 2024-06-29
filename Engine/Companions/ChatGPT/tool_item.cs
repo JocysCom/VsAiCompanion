@@ -1,21 +1,21 @@
-﻿using CsvHelper.Configuration.Attributes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
 	public class tool_item : base_item
 	{
-		[Default(null)]
+		[DefaultValue(null)]
 		public string name { get; set; }
-		[Default(null)]
+		[DefaultValue(null)]
 		public string type { get; set; }
-		[Default(null)]
+		[DefaultValue(null)]
 		public string description { get; set; }
-		[Default(null)]
+		[DefaultValue(null)]
 		public string[] @enum { get; set; }
-		[Default(null)]
+		[DefaultValue(null)]
 		public tool_item items { get; set; }
-		[Default(null)]
+		[DefaultValue(null)]
 		public Dictionary<string, tool_item> properties { get; set; }
 		public tool_item parameters { get; set; }
 		public string[] required { get; set; }

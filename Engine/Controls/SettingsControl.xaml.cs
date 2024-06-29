@@ -128,12 +128,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (TemplateItemPanel == null)
 					{
 						var control = new TemplateItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						TemplateItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.FineTuning)
@@ -141,12 +138,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (FineTuningItemPanel == null)
 					{
 						var control = new FineTuningItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						FineTuningItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.Assistant)
@@ -154,12 +148,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (AssistantItemPanel == null)
 					{
 						var control = new AssistantItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						AssistantItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.Lists)
@@ -167,12 +158,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (ListsItemPanel == null)
 					{
 						var control = new ListsItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						ListsItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.UiPreset)
@@ -180,12 +168,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (UiPresetItemPanel == null)
 					{
 						var control = new UiPresetItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						UiPresetItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.Embeddings)
@@ -193,12 +178,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (EmbeddingItemPanel == null)
 					{
 						var control = new EmbeddingsItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						EmbeddingItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.MailAccount)
@@ -206,12 +188,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (MailAccountItemPanel == null)
 					{
 						var control = new MailAccountItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						MailAccountItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.VaultItem)
@@ -219,12 +198,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (VaultItemPanel == null)
 					{
 						var control = new VaultItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						VaultItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else if (value == ItemType.AiService)
@@ -232,12 +208,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (VaultItemPanel == null)
 					{
 						var control = new AiServiceItemControl();
-						Grid.SetColumn(control, 2);
-						MainGrid.Children.Add(control);
+						ConfigureControl(control, value);
 						control.DataType = value;
-						control.Visibility = Visibility.Collapsed;
 						AiServiceItemPanel = control;
-						ItemPanel = control;
 					}
 				}
 				else
@@ -256,6 +229,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 		private ItemType _DataType;
+
+		void ConfigureControl(UserControl control, ItemType itemType)
+		{
+			Grid.SetColumn(control, 2);
+			MainGrid.Children.Add(control);
+			control.Visibility = Visibility.Collapsed;
+			control.Name = $"{itemType}Panel";
+			ItemPanel = control;
+		}
 
 		TaskSettings PanelSettings { get; set; } = new TaskSettings();
 

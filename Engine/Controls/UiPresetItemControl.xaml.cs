@@ -18,7 +18,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			InitializeComponent();
 			PathColumn.ItemsSource = AllPaths;
-			StateColumn.ItemsSource = AllStates;
 			Global.UiPresets.Items.ListChanged += Items_ListChanged;
 			UpdateButtons();
 		}
@@ -28,11 +27,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// </summary>
 		public ObservableCollection<string> AllPaths => Global.VisibilityPaths;
 
-		/// <summary>
-		/// Contains all items for `StateColumn`
-		/// </summary>
-		public ObservableCollection<VisibilityState> AllStates { get; } =
-			new ObservableCollection<VisibilityState>((VisibilityState[])System.Enum.GetValues(typeof(VisibilityState)));
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
@@ -141,7 +135,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Delete()
 		{
-			var items = MainDataGrid.SelectedItems.Cast<VisibilityItem>().ToList();
+			var items = MainDataGrid.SelectedItems.OfType<VisibilityItem>().ToList();
 			if (!AppHelper.AllowAction(AllowAction.Delete, items.Select(x => x.Path).ToArray()))
 				return;
 			// Use begin invoke or grid update will deadlock on same thread.
@@ -156,7 +150,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (MainDataGrid.SelectedItem != null)
 			{
-				MainDataGrid.CurrentCell = new DataGridCellInfo(MainDataGrid.SelectedItem, StateColumn);
+				MainDataGrid.CurrentCell = new DataGridCellInfo(MainDataGrid.SelectedItem, PathColumn);
 				MainDataGrid.Focus();
 				MainDataGrid.BeginEdit();
 			}
@@ -197,6 +191,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		private void ApplyButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			// Apply new prest to controls.
+			UiPresetsManager.ApplyUiPreset(Global.AppSettings.UiPresetName, UiPresetsManager.AllUiElements.Keys.ToArray());
+		}
 	}
 
 }

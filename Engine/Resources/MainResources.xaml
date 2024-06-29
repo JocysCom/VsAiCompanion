@@ -223,7 +223,7 @@
 
 	<!--  Options → UI Presets  -->
 	<sys:String x:Key="main_Feature_UiPresets">Allows users to quickly switch between predefined templates such as "Simple," "Advanced," and "Release," customizing the visibility and accessibility of various UI elements. This enables a tailored user experience by hiding or locking specific aspects of the interface based on the chosen preset.</sys:String>
-	
+
 	<!--  Options → Reset Settings  -->
 	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings (Resets API Keys)</sys:String>
 	<sys:String x:Key="main_Reset_Embeddings">Reset Embeddings</sys:String>
@@ -283,6 +283,9 @@
 	<sys:String x:Key="main_Value">Value</sys:String>
 
 	<!--  ***  -->
+	<sys:String x:Key="main_Apply">Apply</sys:String>
+	<sys:String x:Key="main_UI">UI</sys:String>
+	<sys:String x:Key="main_UI_Preset">UI Preset</sys:String>
 	<sys:String x:Key="main_Account">Account</sys:String>
 	<sys:String x:Key="main_Create_a_Job_and_Model_from_File">Create a Job and Model from File</sys:String>
 	<sys:String x:Key="main_Date">Date</sys:String>

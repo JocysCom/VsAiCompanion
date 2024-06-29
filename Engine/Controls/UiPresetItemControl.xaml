@@ -50,44 +50,64 @@
 			Margin="0,0,0,0"
 			BorderBrush="{StaticResource BorderDark}"
 			BorderThickness="0,1,0,1">
-			<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
-				<Button
-					Name="AddButton"
-					Margin="0,0,3,3"
-					x:FieldModifier="public"
-					Background="Transparent"
-					Click="AddButton_Click"
-					ToolTip="{StaticResource main_Add_New}">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
-						<Label x:Name="AddButtonLabel" Content="{StaticResource main_Add_New}" Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="EditButton"
-					Margin="0,0,3,3"
-					x:FieldModifier="public"
-					Background="Transparent"
-					Click="EditButton_Click"
-					ToolTip="{StaticResource main_Edit}">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
-						<Label x:Name="EditButtonLabel" Content="{StaticResource main_Edit}" Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="DeleteButton"
-					Margin="0,0,3,3"
-					x:FieldModifier="public"
-					Background="Transparent"
-					Click="DeleteButton_Click"
-					ToolTip="{StaticResource main_Delete}">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
-						<Label x:Name="DeleteButtonLabel" Content="{StaticResource main_Delete}" Visibility="Collapsed" />
-					</StackPanel>
-				</Button>
-			</StackPanel>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
+					<Button
+						Name="AddButton"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="AddButton_Click"
+						ToolTip="{StaticResource main_Add_New}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
+							<Label x:Name="AddButtonLabel" Content="{StaticResource main_Add_New}" Visibility="Collapsed" />
+						</StackPanel>
+					</Button>
+					<Button
+						Name="EditButton"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="EditButton_Click"
+						ToolTip="{StaticResource main_Edit}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+							<Label x:Name="EditButtonLabel" Content="{StaticResource main_Edit}" Visibility="Collapsed" />
+						</StackPanel>
+					</Button>
+					<Button
+						Name="DeleteButton"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="DeleteButton_Click"
+						ToolTip="{StaticResource main_Delete}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
+							<Label x:Name="DeleteButtonLabel" Content="{StaticResource main_Delete}" Visibility="Collapsed" />
+						</StackPanel>
+					</Button>
+				</StackPanel>
+				<StackPanel Margin="3,3,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+					<Button
+						Name="ApplyButton"
+						Margin="0,0,3,3"
+						x:FieldModifier="public"
+						Background="Transparent"
+						Click="ApplyButton_Click"
+						ToolTip="{StaticResource main_Apply}">
+						<StackPanel>
+							<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+							<Label x:Name="ApplyButtonLabel" Content="{StaticResource main_Apply}" />
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Grid>
 		</Border>
 		<DataGrid
 			x:Name="MainDataGrid"
@@ -98,7 +118,7 @@
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
-			CanUserAddRows="True"
+			CanUserAddRows="False"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
 			ScrollViewer.CanContentScroll="True"
@@ -107,8 +127,23 @@
 			SelectionChanged="MainDataGrid_SelectionChanged"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
+				<DataGridCheckBoxColumn
+					x:Name="IsVisibleColumn"
+					Width="Auto"
+					Binding="{Binding IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					CanUserSort="False"
+					ElementStyle="{StaticResource CheckBoxCell_Default}"
+					Header="Show"
+					IsThreeState="False" />
+				<DataGridCheckBoxColumn
+					x:Name="IsEnabledColumn"
+					Width="Auto"
+					Binding="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					CanUserSort="False"
+					ElementStyle="{StaticResource CheckBoxCell_Default}"
+					Header="Enable"
+					IsThreeState="False" />
 				<DataGridComboBoxColumn x:Name="PathColumn" Header="{StaticResource main_Path}" SelectedItemBinding="{Binding Path}" />
-				<DataGridComboBoxColumn x:Name="StateColumn" Header="{StaticResource main_State}" SelectedItemBinding="{Binding State}" />
 			</DataGrid.Columns>
 		</DataGrid>
 

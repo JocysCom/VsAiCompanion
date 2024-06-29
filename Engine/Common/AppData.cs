@@ -189,6 +189,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(null), XmlElement(ElementName = nameof(AzureTokenCache))]
 		public string _AzureTokenCacheEncrypted { get; set; }
 
+		#region IO Presets
+
+		/// <summary>UI Preset</summary>
+		[DefaultValue("Simple")]
+		public string UiPresetName { get => _UiPresetName; set => SetProperty(ref _UiPresetName, value); }
+		private string _UiPresetName;
+
+		#endregion
+
 		#region  Spell Check
 
 		/// <summary>Allow only one standalone copy.</summary>

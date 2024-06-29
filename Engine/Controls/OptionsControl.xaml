@@ -115,7 +115,7 @@
 						<Label Content="{StaticResource main_Context_Options}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controlsOptions:ContextControl />
+				<controlsOptions:ContextControl x:Name="ContextPanel" />
 			</TabItem>
 
 			<TabItem x:Name="AvatarSettingsTabItem" x:FieldModifier="public">

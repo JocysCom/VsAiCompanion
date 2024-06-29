@@ -22,6 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+
 			ScriptingHandler = new ScriptingHandler();
 			ScriptingHandler.OnMessageAction += _ScriptingHandler_OnMessageAction;
 		}
@@ -127,6 +128,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
 				WebBrowser.Navigate("about:blank");
 				AppHelper.InitHelp(this);
+				// Remove loading label from the UI presets list.
+				var path = UiPresetsManager.GetControlPath(LoadingLabel);
+				UiPresetsManager.AllUiElements.Remove(path);
 			}
 		}
 

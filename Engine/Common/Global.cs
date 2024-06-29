@@ -472,10 +472,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			IsSettignsLoaded = true;
 		}
 
+
 		private static void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(Engine.AppData.LogHttp))
 				LogHelper.LogHttp = AppSettings.LogHttp;
+			if (e.PropertyName == nameof(Engine.AppData.UiPresetName))
+			{
+				// Apply new prest to controls.
+				UiPresetsManager.ApplyUiPreset(AppSettings.UiPresetName, UiPresetsManager.AllUiElements.Keys.ToArray());
+			}
 		}
 
 		private static void AiServices_ListChanged(object sender, ListChangedEventArgs e)
