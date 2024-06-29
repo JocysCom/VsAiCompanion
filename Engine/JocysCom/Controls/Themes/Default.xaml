@@ -1531,7 +1531,8 @@
 								</Grid.OpacityMask>
 								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
 								<ScrollViewer Margin="0" ClipToBounds="True">
-									<VirtualizingStackPanel IsItemsHost="True" />
+									<ItemsPresenter />
+									<!--<VirtualizingStackPanel IsItemsHost="True" />-->
 								</ScrollViewer>
 							</Grid>
 						</Popup>
@@ -1596,7 +1597,8 @@
 								</Grid.OpacityMask>
 								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
 								<ScrollViewer Margin="0" ClipToBounds="True">
-									<VirtualizingStackPanel IsItemsHost="True" />
+									<ItemsPresenter />
+									<!--<VirtualizingStackPanel IsItemsHost="True" />-->
 								</ScrollViewer>
 							</Grid>
 						</Popup>
@@ -1661,7 +1663,8 @@
 								</Grid.OpacityMask>
 								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
 								<ScrollViewer Margin="0" ClipToBounds="True">
-									<VirtualizingStackPanel IsItemsHost="True" />
+									<ItemsPresenter />
+									<!--<VirtualizingStackPanel IsItemsHost="True" />-->
 								</ScrollViewer>
 							</Grid>
 						</Popup>
