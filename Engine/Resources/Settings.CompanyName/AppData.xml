@@ -41,66 +41,13 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <GridSplitterPosition>0.24</GridSplitterPosition>
-          <ListSelection>
-            <string>AI - Chat (GPT-3.5)</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <GridSplitterPosition>0.26</GridSplitterPosition>
-          <ListSelection>
-            <string>AI - Chat</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>API - Demo</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>Speech Services</string>
-          </ListSelection>
-          <ListSelectedIndex>1</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
           <ItemType>Attachment</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
+          <GridSplitterPosition>0.22842105263157894</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat (GPT-3.5)</string>
           </ListSelection>
@@ -108,6 +55,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
+          <GridSplitterPosition>0.24421052631578946</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -115,6 +63,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>
+          <GridSplitterPosition>0.2031578947368421</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
@@ -127,6 +76,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Embeddings</ItemType>
+          <GridSplitterPosition>0.21894736842105264</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
@@ -134,6 +84,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
+          <GridSplitterPosition>0.26526315789473687</GridSplitterPosition>
           <ListSelection>
             <string>API - Demo</string>
           </ListSelection>
@@ -166,6 +117,13 @@
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
+        <TaskSettings>
+          <ItemType>UiPreset</ItemType>
+          <ListSelection>
+            <string>Advanced</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
       </PanelSettingsList>
       <UserProfiles>
         <UserProfile>
@@ -174,17 +132,21 @@
       </UserProfiles>
       <AiServices>
         <AiService>
-          <Id>d5e071e1-d99d-45ff-890a-82823b75e1ec</Id>
           <Name>Company Name AI</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>d5e071e1-d99d-45ff-890a-82823b75e1ec</Id>
           <IsDefault>true</IsDefault>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <DefaultAiModel>gpt-4</DefaultAiModel>
           <BaseUrl>https://companyname.api.cognitive.microsoft.com/v1/</BaseUrl>
         </AiService>
         <AiService>
+          <Name>Speech Services</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>Azure</ServiceType>
           <Id>3ab0e927-091c-40e6-b32b-bdf04bc2e88b</Id>
-          <Name>Speech Services</Name>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <BaseUrl>https://westus.api.cognitive.microsoft.com/</BaseUrl>
           <Region>westus</Region>
@@ -218,6 +180,14 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.Wait</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetCurrentSystemInfo</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess</Id>

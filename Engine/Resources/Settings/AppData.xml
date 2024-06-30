@@ -28,7 +28,7 @@
       </PandocUpdateSettings>
       <StartPosition>
         <Left>210</Left>
-        <Top>0</Top>
+        <Top>30</Top>
         <Width>456.5</Width>
         <Height>437.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -41,236 +41,85 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ListSelection>
-            <string>AI - Chat (GPT-3.5)</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>AI - Chat</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
+          <ItemType>Attachment</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>API - Demo</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>Open AI</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
+          <ItemType>AiModel</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>Voice</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>AI - Chat (GPT-3.5)</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>AI - Chat</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>API - Demo</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>Speech Service</string>
-          </ListSelection>
-          <ListSelectedIndex>5</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
+          <ItemType>Task</ItemType>
+          <GridSplitterPosition>0.22359550561797753</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat (GPT-4)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>Template</ItemType>
+          <GridSplitterPosition>0.23146067415730337</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>FineTuning</ItemType>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>Assistant</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>Embeddings</ItemType>
+          <GridSplitterPosition>0.21685393258426966</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>Lists</ItemType>
           <ListSelection>
             <string>API - Demo</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ListSelection>
-            <string>Open AI</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
+          <ItemType>VaultItem</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>AI - Chat (GPT-4)</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>AI - Chat</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelection>
-            <string>API - Demo</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
+          <ItemType>AiService</ItemType>
           <ListSelection>
             <string>Azure Open AI</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>MailAccount</ItemType>
+          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>UiPreset</ItemType>
           <ListSelection>
             <string>Advanced</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ItemType>Attachment</ItemType>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
       </PanelSettingsList>

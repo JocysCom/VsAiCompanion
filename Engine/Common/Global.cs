@@ -707,6 +707,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 						tokens.Remove(dupe);
 				}
 			}
+			// Fix panel settings.
+			var panelSettings = e.Items.FirstOrDefault()?.PanelSettingsList;
+			if (userProfiles != null)
+			{
+				var types = (ItemType[])Enum.GetValues(typeof(ItemType));
+				var uniqeItems = types.SelectMany(x => panelSettings.Where(s => s.ItemType == x).Take(1)).ToArray();
+				var itemsToRemove = panelSettings.Except(uniqeItems).ToArray();
+				foreach (var item in itemsToRemove)
+					panelSettings.Remove(item);
+			}
 		}
 
 		private static bool FixTempalteItems(IList<TemplateItem> items)
