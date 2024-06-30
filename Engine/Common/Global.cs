@@ -159,6 +159,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 			form.ShowDialog(message);
 		}
 
+		#region Keyboard Hook to handle CTRL+C
+
+		public static void StartKeyboardHook()
+		{
+			if (KeyboardHook == null)
+			{
+				KeyboardHook = new JocysCom.ClassLibrary.Processes.KeyboardHook();
+				KeyboardHook.Start(true); // Start global hook
+			}
+		}
+
+		public static JocysCom.ClassLibrary.Processes.KeyboardHook KeyboardHook;
+
+		#endregion
+
+
 		public static void InsertItem(ISettingsListFileItem item, ItemType type)
 		{
 			if (type != ItemType.Task && type != ItemType.Template)

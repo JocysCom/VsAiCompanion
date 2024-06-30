@@ -1,9 +1,10 @@
-2024-06-26 v1.11.26
+2024-06-26 v1.12.6
 
 - Fix: List not expanding.
 - Fix: Improved support for Azure SQL Server Databases.
 - Fix: Unable to stop message requests.
 - Fix: Embedding search group filter not working correctly.
+- Fix: Allow CTRL+C copy in web browser from Visual Studio extension.
 - Update: SQL now uses native SQL script AI search instead of C# Assembly.
 - Update: UI, Templates and AI Avatar updated.
 - New: Create UI presets, like "Simple" or "Advanced".

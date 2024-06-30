@@ -4,6 +4,7 @@ using System.Text.Json;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 {
+
 	/// <summary>
 	/// Provides functionalities for interacting with Documents and solutions in Visual Studio,
 	/// handling errors, and formatting code.
