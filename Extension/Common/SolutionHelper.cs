@@ -3,12 +3,14 @@ using EnvDTE80;
 using JocysCom.VS.AiCompanion.Engine;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -1119,6 +1121,16 @@ namespace JocysCom.VS.AiCompanion.Extension
 				docItem.ContentData = data;
 			}
 			return docItem;
+		}
+
+		public void InvokeOleCommand(IntPtr hwnd, uint commandId)
+		{
+			ThreadHelper.ThrowIfNotOnUIThread();
+			IntPtr ptr = Marshal.AllocCoTaskMem(IntPtr.Size);
+			Marshal.WriteIntPtr(ptr, IntPtr.Zero);
+			var cmdTarget = (IOleCommandTarget)Marshal.GetTypedObjectForIUnknown(hwnd, typeof(IOleCommandTarget));
+			cmdTarget.Exec(Guid.Empty, commandId, 0, IntPtr.Zero, ptr);
+			Marshal.Release(ptr);
 		}
 
 		#endregion

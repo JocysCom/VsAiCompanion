@@ -159,6 +159,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 			form.ShowDialog(message);
 		}
 
+		#region Keyboard Hook to handle CTRL+C
+
+		public static void StartKeyboardHook()
+		{
+			if (KeyboardHook == null)
+			{
+				KeyboardHook = new JocysCom.ClassLibrary.Processes.KeyboardHook();
+				KeyboardHook.Start(true); // Start global hook
+			}
+		}
+
+		public static JocysCom.ClassLibrary.Processes.KeyboardHook KeyboardHook;
+
+		#endregion
+
+
 		public static void InsertItem(ISettingsListFileItem item, ItemType type)
 		{
 			if (type != ItemType.Task && type != ItemType.Template)
@@ -690,6 +706,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 					foreach (var dupe in dupes)
 						tokens.Remove(dupe);
 				}
+			}
+			// Fix panel settings.
+			var panelSettings = e.Items.FirstOrDefault()?.PanelSettingsList;
+			if (userProfiles != null)
+			{
+				var types = (ItemType[])Enum.GetValues(typeof(ItemType));
+				var uniqeItems = types.SelectMany(x => panelSettings.Where(s => s.ItemType == x).Take(1)).ToArray();
+				var itemsToRemove = panelSettings.Except(uniqeItems).ToArray();
+				foreach (var item in itemsToRemove)
+					panelSettings.Remove(item);
 			}
 		}
 

@@ -4,11 +4,13 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
@@ -22,7 +24,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-
 			ScriptingHandler = new ScriptingHandler();
 			ScriptingHandler.OnMessageAction += _ScriptingHandler_OnMessageAction;
 		}
@@ -216,6 +217,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				// If messages set but messages are not loaded yet.
 				if (IsResetMessgesPending)
 					ControlsHelper.AppBeginInvoke(ResetWebMessages);
+				if (Global.IsVsExtension)
+				{
+					Global.KeyboardHook.KeyDown += KeyboardHook_KeyDown;
+				}
 			});
 		}
 
@@ -268,20 +273,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#endregion
 
-		/*
-		public void AddMessage(string user, string body, MessageType type = MessageType.Information)
-		{
-			var message = new MessageItem()
-			{
-				Id = Guid.NewGuid().ToString("N"),
-				Body = body,
-				User = user,
-				Type = type,
-			};
-			Messages.Add(message);
-		}
-		*/
-
 		#region HTML
 
 		public string InvokeScript(string script)
@@ -315,8 +306,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			//if (WebBrowser.IsFocused)
-			//{
 			var isCtrlDown = Keyboard.Modifiers == ModifierKeys.Control;
 			if (isCtrlDown && e.Key == Key.C)
 			{
@@ -327,8 +316,69 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 					e.Handled = true;
 				}
 			}
-			//}
+		}
+
+		private void KeyboardHook_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+			// Check if CTRL+C is pressed
+			if (Keyboard.Modifiers != ModifierKeys.Control || e.KeyCode != System.Windows.Forms.Keys.C)
+				return;
+			IntPtr foregroundWindow = NativeMethods.GetForegroundWindow();
+			if (foregroundWindow == IntPtr.Zero)
+				return;
+			uint processId;
+			NativeMethods.GetWindowThreadProcessId(foregroundWindow, out processId);
+			// Assuming that the current process ID is required
+			uint currentProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+			if (processId != currentProcessId)
+				return;
+			var thisWindow = new System.Windows.Interop.WindowInteropHelper(Window.GetWindow(this)).Handle;
+			if (foregroundWindow != thisWindow)
+				return;
+			// Assuming the WebBrowser control is hosted in the WPF window, you need to get its native handle.
+			var window = Window.GetWindow(this);
+			var helper = new System.Windows.Interop.WindowInteropHelper(window);
+			var webBrowserHandle = WebBrowser.Handle;
+			if (webBrowserHandle == IntPtr.Zero)
+				return;
+			var focusedControl = NativeMethods.GetFocus();
+			if (!IsAncestor(webBrowserHandle, focusedControl))
+				return;
+			// Works with the browswer warning about access to clipboard.
+			InvokeScript("Copy();");
+			e.Handled = true;
+		}
+
+		// Helper method to determine if webBrowserHandle is ancestor of focusedControl
+		private bool IsAncestor(IntPtr ancestorHandle, IntPtr childHandle)
+		{
+			if (childHandle == IntPtr.Zero)
+				return false;
+			IntPtr parent = childHandle;
+			while (parent != IntPtr.Zero)
+			{
+				if (parent == ancestorHandle)
+					return true;
+				parent = NativeMethods.GetParent(parent);
+			}
+			return false;
+		}
+
+		class NativeMethods
+		{
+			[DllImport("user32.dll", SetLastError = true)]
+			internal static extern IntPtr GetForegroundWindow();
+
+			[DllImport("user32.dll", SetLastError = true)]
+			internal static extern IntPtr GetFocus();
+
+			[DllImport("user32.dll", SetLastError = true)]
+			internal static extern IntPtr GetParent(IntPtr hWnd);
+
+			[DllImport("user32.dll", SetLastError = true)]
+			internal static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
 		}
+
 	}
 }

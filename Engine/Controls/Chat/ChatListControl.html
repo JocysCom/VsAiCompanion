@@ -599,6 +599,17 @@
 				document.execCommand("Copy", false, null);
 		}
 
+		function GetSelectedTextAndHtml() {
+			var selectedObj = window.getSelection();
+			var selectedText = selectedObj.toString();
+			var range = selectedObj.getRangeAt(0);
+			var fragment = range.cloneContents();
+			var div = document.createElement('div');
+			div.appendChild(fragment);
+			var selectedHtml = div.innerHTML;
+			return { text: selectedText, html: selectedHtml };
+		}
+
 		function isElementFocused() {
 			return document.activeElement && document.activeElement !== document.body;
 		}

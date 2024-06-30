@@ -17,5 +17,14 @@ iz+y7EqprQMAAA==</IconData>
     <VisibilityItem Path="TeamsTabItem" IsVisible="false" />
     <VisibilityItem Path="FineTuningTabItem" IsVisible="false" />
     <VisibilityItem Path="EmbeddingTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.UiPresetsTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.ContextPanel.AttachedContextGroupBox" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.MicrosoftAccountsTabItem" IsVisible="false" />
+    <VisibilityItem Path="AuthIconPanel" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.EmbeddingsTabItem" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.MailTabItem" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.MultimediaTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.MailAccountsTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.EnterpriseOptionsGroupBox" IsVisible="false" />
   </Items>
 </UiPresetItem>

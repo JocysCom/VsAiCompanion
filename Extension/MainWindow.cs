@@ -95,7 +95,8 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 			VisualStudio.Current = Global._SolutionHelper;
 			Global.IsVsExtension = true;
-			;
+			Global.StartKeyboardHook();
+
 			var vsContext = Global._SolutionHelper.GetEnvironmentContext();
 			if (vsContext.ContainsKey("DTE Version"))
 			{
