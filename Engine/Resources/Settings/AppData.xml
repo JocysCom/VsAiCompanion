@@ -27,10 +27,10 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>420</Left>
-        <Top>120</Top>
-        <Width>916</Width>
-        <Height>939</Height>
+        <Left>210</Left>
+        <Top>0</Top>
+        <Width>456.5</Width>
+        <Height>437.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -209,6 +209,67 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ListSelection />
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>AI - Chat (GPT-4)</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>AI - Chat</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>API - Demo</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>Azure Open AI</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelection>
+            <string>Advanced</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
           <ItemType>Attachment</ItemType>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
@@ -220,18 +281,22 @@
       </UserProfiles>
       <AiServices>
         <AiService>
+          <Name>Open AI</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
-          <Name>Open AI</Name>
           <IsDefault>true</IsDefault>
           <DefaultAiModel>gpt-4o</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
           <ModelFilter>gpt|text-davinci-[0-9+]|embedding</ModelFilter>
         </AiService>
         <AiService>
+          <Name>GPT4All (Local Machine)</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>831ee2de-6274-0abb-35af-1e0251a3666e</Id>
-          <Name>GPT4All (Local Machine)</Name>
           <ResponseStreaming>false</ResponseStreaming>
           <DefaultAiModel>GPT4All Falcon</DefaultAiModel>
           <AiModels />
@@ -239,9 +304,11 @@
           <ModelFilter />
         </AiService>
         <AiService>
+          <Name>LM Studio (Local Machine)</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>d4fbbee4-71ca-e6cb-2f04-2d5afbeb09fa</Id>
-          <Name>LM Studio (Local Machine)</Name>
           <ResponseStreaming>false</ResponseStreaming>
           <DefaultAiModel>Mistral</DefaultAiModel>
           <AiModels />
@@ -249,9 +316,11 @@
           <ModelFilter />
         </AiService>
         <AiService>
+          <Name>Open AI (On-Premises)</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>7638dcd2-f637-12a5-89e2-c4834bfa367c</Id>
-          <Name>Open AI (On-Premises)</Name>
           <ResponseStreaming>false</ResponseStreaming>
           <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
           <AiModels />
@@ -259,9 +328,11 @@
           <ModelFilter />
         </AiService>
         <AiService>
+          <Name>Azure Open AI</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>OpenAI</ServiceType>
           <Id>1ba94e57-3827-3636-5ba1-227d5e4c56ea</Id>
-          <Name>Azure Open AI</Name>
           <ResponseStreaming>false</ResponseStreaming>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
@@ -270,9 +341,11 @@
           <ModelFilter />
         </AiService>
         <AiService>
+          <Name>Speech Service</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
           <ServiceType>Azure</ServiceType>
           <Id>cd558aa2-7583-4760-9816-0582fd88ad1f</Id>
-          <Name>Speech Service</Name>
           <IsAzureOpenAI>true</IsAzureOpenAI>
           <BaseUrl>https://westus.api.cognitive.microsoft.com/</BaseUrl>
           <Region>westus</Region>
@@ -446,6 +519,10 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.Wait</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
