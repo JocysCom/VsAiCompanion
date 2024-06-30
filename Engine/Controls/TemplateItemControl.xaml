@@ -590,7 +590,7 @@
 						<ComboBox
 							Name="EmbeddingNameComboBox"
 							MinWidth="128"
-							Margin="0,3,0,3"
+							Margin="0,3,3,3"
 							VerticalAlignment="Top"
 							ItemsSource="{Binding EmbeddingNames, ElementName=This}"
 							SelectedValue="{Binding EmbeddingName}" />
