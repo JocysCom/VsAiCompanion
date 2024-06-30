@@ -861,26 +861,21 @@
 	<!--  TextBlock - Cell  -->
 	<Style x:Key="TextBlockCell" BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock">
 		<Setter Property="Padding" Value="0" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="Margin" Value="3,0,16,0" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
 	<Style x:Key="TextBlockLeftCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
-		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="TextAlignment" Value="Left" />
-		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
 	<Style x:Key="TextBlockRightCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
-		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="TextAlignment" Value="Right" />
-		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
 	<Style x:Key="TextBlockCenterCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
-		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="TextAlignment" Value="Center" />
-		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
 	<!--  CheckBox Template  -->
