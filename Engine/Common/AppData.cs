@@ -188,7 +188,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#region IO Presets
 
 		/// <summary>UI Preset</summary>
-		[DefaultValue("Simple")]
+		[DefaultValue("Advanced")]
 		public string UiPresetName { get => _UiPresetName; set => SetProperty(ref _UiPresetName, value); }
 		private string _UiPresetName;
 
