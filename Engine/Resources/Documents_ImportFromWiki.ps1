@@ -10,7 +10,7 @@ function Convert-MarkdownToRtf {
 
         [string]$OutputFolderPath = "Documents",
 
-        [string]$PandocPath = "c:\Users\EJocys\AppData\Roaming\Jocys.com\VS AI Companion\Tools\pandoc.exe"
+        [string]$PandocPath = "$($env:APPDATA)\Jocys.com\VS AI Companion\Tools\pandoc.exe"
     )
 
     # Ensure the output folder exists
