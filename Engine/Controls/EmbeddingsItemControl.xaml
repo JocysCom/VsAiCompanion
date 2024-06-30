@@ -128,7 +128,7 @@
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
-				<TextBox Name="SourcePatternTextBox" MinWidth="64" Text="{Binding SourcePattern}" />
+				<TextBox Name="SourcePatternTextBox" MinWidth="64" Text="{Binding SourcePattern, UpdateSourceTrigger=PropertyChanged}" />
 				<CheckBox x:Name="UseGitIgnoreCheckbox" Content="Use .gitignore" IsChecked="{Binding UseGitIgnore, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>
 
@@ -199,7 +199,7 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
-				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName}" />
+				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName, UpdateSourceTrigger=PropertyChanged}" />
 				<Label x:Name="EmbeddingGroupFlagLabel" Margin="3,0,0,0" Content="Sub-Group Name · Flag" />
 				<Grid>
 					<TextBox
