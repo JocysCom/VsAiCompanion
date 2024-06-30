@@ -43,7 +43,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				//commandEvents.BeforeExecute += CommandEvents_BeforeExecute;
 				//commandEvents.AfterExecute += CommandEvents_AfterExecute;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 			}
 		}
