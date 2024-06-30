@@ -14,11 +14,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static Dictionary<string, VisibilityItem> AllUiElements = new Dictionary<string, VisibilityItem>();
 
-		public static void InitControl(DependencyObject root)
+		public static void InitControl(FrameworkElement root, bool includeTop = false)
 		{
 			lock (AllUiElements)
 			{
-				var namedElements = GetDirectElementsWithNameProperty(root);
+				var namedElements = GetDirectElementsWithNameProperty(root, includeTop);
 				var newPaths = namedElements.Keys.Except(AllUiElements.Keys).ToArray();
 				// Add new elements to dictionary.
 				foreach (var newPath in newPaths)
@@ -77,12 +77,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Excludes controls that are sourced from external XAML resource dictionaries.
 		/// </summary>
 		/// <param name="root">The root control.</param>
-		private static Dictionary<string, FrameworkElement> GetDirectElementsWithNameProperty(DependencyObject root)
+		private static Dictionary<string, FrameworkElement> GetDirectElementsWithNameProperty(FrameworkElement root, bool includeTop = false)
 		{
 			if (root == null)
 				throw new ArgumentNullException(nameof(root));
 			var elements = new List<FrameworkElement>();
 			AppHelper.GetAllInternal(root, elements);
+			if (includeTop)
+				elements.Insert(0, root);
 			var namedElements = elements
 				.Where(x => !string.IsNullOrEmpty(x.Name))
 				.ToArray();
@@ -112,6 +114,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			} while (parent != null);
 			var path = string.Join(".", nodes);
 			return path;
+		}
+
+		/// <summary>
+		/// Remove controls from the UI presets list.
+		/// </summary>
+		public static void RemoveControls(params FrameworkElement[] controls)
+		{
+			foreach (var control in controls)
+			{
+				if (control == null)
+					continue;
+				var path = GetControlPath(control);
+				if (AllUiElements.ContainsKey(path))
+					AllUiElements.Remove(path);
+			}
 		}
 
 		private object FindControl(FrameworkElement root, string path)

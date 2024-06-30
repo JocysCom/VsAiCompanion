@@ -57,6 +57,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = Global.Templates.Items.Cast<ISettingsListFileItem>().OrderBy(x => x.ListGroupNameSortKey).ToList();
 			CollectionsHelper.Synchronize(items, FilteredList);
 			AppHelper.InitHelp(this);
+			UiPresetsManager.InitControl(this, true);
 		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)
@@ -64,6 +65,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.AllowLoad(this))
 			{
 				AppHelper.InitHelp(this);
+				UiPresetsManager.InitControl(this, true);
 			}
 		}
 	}

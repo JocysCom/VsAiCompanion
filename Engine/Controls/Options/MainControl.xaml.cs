@@ -62,6 +62,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			{
 				UpdateVideoInputDevices();
 				AppHelper.InitHelp(this);
+				UiPresetsManager.InitControl(this, true);
 			}
 		}
 

@@ -64,10 +64,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsEnterprise { get => _IsEnterprise; set => SetProperty(ref _IsEnterprise, value); }
 		private bool _IsEnterprise;
 
-		[DefaultValue(false)]
-		public bool LockEnterpriseOptions { get => _LockEnterpriseOptions; set => SetProperty(ref _LockEnterpriseOptions, value); }
-		private bool _LockEnterpriseOptions;
-
 		[DefaultValue("https://github.com/JocysCom/VsAiCompanion/raw/main/Engine/Resources/Settings.CompanyName.zip")]
 		public string ConfigurationUrl { get => _ConfigurationUrl; set => SetProperty(ref _ConfigurationUrl, value); }
 		private string _ConfigurationUrl;
@@ -192,7 +188,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#region IO Presets
 
 		/// <summary>UI Preset</summary>
-		[DefaultValue("Simple")]
+		[DefaultValue("Advanced")]
 		public string UiPresetName { get => _UiPresetName; set => SetProperty(ref _UiPresetName, value); }
 		private string _UiPresetName;
 

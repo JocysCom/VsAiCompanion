@@ -128,9 +128,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
 				WebBrowser.Navigate("about:blank");
 				AppHelper.InitHelp(this);
-				// Remove loading label from the UI presets list.
-				var path = UiPresetsManager.GetControlPath(LoadingLabel);
-				UiPresetsManager.AllUiElements.Remove(path);
+				UiPresetsManager.InitControl(this, true);
+				// Remove control frm the UI presets list.
+				UiPresetsManager.RemoveControls(LoadingLabel);
 			}
 		}
 

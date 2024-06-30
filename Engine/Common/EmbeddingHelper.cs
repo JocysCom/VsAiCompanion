@@ -223,7 +223,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var embeddingItem = Global.Embeddings.Items.FirstOrDefault(x => x.Name == Item.EmbeddingName);
 				if (embeddingItem == null)
 					return new OperationResult<string>($"Embedding '{Item.EmbeddingName}' settings not found!");
-				var result = await SearchEmbeddingsToSystemMessage(embeddingItem, Item.EmbeddingGroupFlag, message, skip, take);
+				var result = await SearchEmbeddingsToSystemMessage(embeddingItem,
+					Item.EmbeddingGroupName, Item.EmbeddingGroupFlag,
+					message, skip, take);
 				return new OperationResult<string>(result);
 			}
 			catch (Exception ex)
@@ -232,9 +234,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item, EmbeddingGroupFlag groupFlag, string message, int skip, int take)
+		public async Task<string> SearchEmbeddingsToSystemMessage(EmbeddingsItem item,
+			string groupName,
+			EmbeddingGroupFlag groupFlag, string message, int skip, int take)
 		{
-			await SearchEmbeddings(item, groupFlag, message, skip, take);
+			await SearchEmbeddings(item,
+				groupName, groupFlag,
+				message, skip, take);
 			var systemMessage = "";
 			if (FileParts == null || FileParts.Count == 0)
 				return systemMessage;
@@ -266,7 +272,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 		public async Task SearchEmbeddings(
-			EmbeddingsItem item, EmbeddingGroupFlag groupFlag,
+			EmbeddingsItem item,
+			string groupName,
+			EmbeddingGroupFlag groupFlag,
 			string message,
 			int skip, int take,
 			CancellationToken cancellationToken = default)
@@ -302,13 +310,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (useClr)
 				{
 					FileParts = await db.sp_getSimilarFileParts(
-						item.EmbeddingGroupName, (long)groupFlag,
+						groupName, (long)groupFlag,
 						vectors, skip, take, cancellationToken
 					);
 				}
 				else
 				{
-					var ids = await SqlInitHelper.GetSimilarFileEmbeddings(isPortable, connectionString, item.EmbeddingGroupName, groupFlag, vectors, item.Take);
+					var ids = await SqlInitHelper.GetSimilarFileEmbeddings(isPortable, connectionString, groupName, groupFlag, vectors, item.Take);
 					FileParts = db.FileParts
 						.Where(x => ids.Contains(x.Id))
 						.ToList()

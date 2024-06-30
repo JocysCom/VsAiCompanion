@@ -652,11 +652,10 @@ EndFragment:{3:00000000}";
 		}
 
 
-		public static void InitHelp(DependencyObject root)
+		public static void InitHelp(FrameworkElement root)
 		{
 			var elements = GetDirectElementsWithAutomationProperties(root);
 			AddHelp(elements);
-			UiPresetsManager.InitControl(root);
 		}
 
 		private static void AddHelp(params UIElement[] elements)

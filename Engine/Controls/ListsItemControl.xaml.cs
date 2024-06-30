@@ -215,6 +215,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.AllowLoad(this))
 			{
 				AppHelper.InitHelp(this);
+				UiPresetsManager.InitControl(this);
 			}
 			AppHelper.AddHelp(IsEnabledCheckBox, IsEnabledCheckBox.Content as string, Engine.Resources.MainResources.main_List_IsEnabled);
 			AppHelper.AddHelp(IsReadOnlyCheckBox, IsReadOnlyCheckBox.Content as string, Engine.Resources.MainResources.main_List_IsReadOnly);

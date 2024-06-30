@@ -396,11 +396,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				// Experimental.
 				// AI must decide what to search for, not to use by the last user message.
-				var embeddingName = item.EmbeddingName;
-				var embeddingGroupName = item.EmbeddingGroupName;
-				var embeddingGroupFlag = item.EmbeddingGroupFlag;
 				var embeddingItem = Global.Embeddings.Items
-					.FirstOrDefault(x => x.Name == embeddingName);
+					.FirstOrDefault(x => x.Name == item.EmbeddingName);
 				if (embeddingItem != null)
 				{
 					var eh = new EmbeddingHelper();
@@ -425,7 +422,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						}
 						if (!string.IsNullOrEmpty(embeddingText))
 						{
-							var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem, embeddingGroupFlag, embeddingText, embeddingItem.Skip, embeddingItem.Take);
+							var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem,
+								item.EmbeddingGroupName, item.EmbeddingGroupFlag,
+								embeddingText, embeddingItem.Skip, embeddingItem.Take);
 							if (!string.IsNullOrEmpty(systemMessage))
 								lastSystemMessage.content += "\r\n\r\n" + systemMessage;
 						}
@@ -504,14 +503,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							case message_role.user:
 								if (contentItems != null)
 									messages.Add(new ChatRequestUserMessage(contentItems));
-								else
+								else if (!string.IsNullOrEmpty(stringContent))
 									messages.Add(new ChatRequestUserMessage(stringContent));
 								break;
 							case message_role.assistant:
-								messages.Add(new ChatRequestAssistantMessage(stringContent));
+								if (!string.IsNullOrEmpty(stringContent))
+									messages.Add(new ChatRequestAssistantMessage(stringContent));
 								break;
 							case message_role.system:
-								messages.Add(new ChatRequestSystemMessage(stringContent));
+								if (!string.IsNullOrEmpty(stringContent))
+									messages.Add(new ChatRequestSystemMessage(stringContent));
 								break;
 						}
 					}
