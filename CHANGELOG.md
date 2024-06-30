@@ -1,3 +1,7 @@
+2024-06-30 v1.12.7
+
+- Update: Version changed for VS Marketplace.
+
 2024-06-30 v1.12.6
 
 - Fix: List not expanding.
