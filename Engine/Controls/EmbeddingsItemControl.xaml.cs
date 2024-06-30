@@ -241,7 +241,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			MainTabControl.SelectedItem = LogTabPage;
 			LogPanel.Clear();
 			var eh = new EmbeddingHelper();
-			var systemMessage = await eh.SearchEmbeddingsToSystemMessage(Item, Item.EmbeddingGroupFlag, Item.Message, Item.Skip, Item.Take);
+			var systemMessage = await eh.SearchEmbeddingsToSystemMessage(Item,
+				Item.EmbeddingGroupName, Item.EmbeddingGroupFlag,
+				Item.Message, Item.Skip, Item.Take);
 			if (eh.FileParts == null)
 			{
 				LogPanel.Add("\r\nSearch returned no results.");
@@ -646,6 +648,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.AllowLoad(this))
 			{
 				AppHelper.InitHelp(this);
+				UiPresetsManager.InitControl(this);
 			}
 			_IsLoaded = true;
 		}

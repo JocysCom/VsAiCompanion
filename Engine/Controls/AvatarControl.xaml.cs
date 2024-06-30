@@ -88,6 +88,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AudioCollection.CollectionChanged += AudioCollection_CollectionChanged;
 				AppHelper.InitHelp(this);
+				UiPresetsManager.InitControl(this, true);
 			}
 		}
 

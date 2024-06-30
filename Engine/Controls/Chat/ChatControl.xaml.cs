@@ -59,6 +59,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (ControlsHelper.AllowLoad(this))
 			{
 				AppHelper.InitHelp(this);
+				UiPresetsManager.InitControl(this, true);
 			}
 		}
 

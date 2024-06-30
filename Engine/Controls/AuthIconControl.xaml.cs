@@ -64,6 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Item = MicrosoftAccountManager.Current.GetProfile();
 				AdjustEllipse();
 				AppHelper.InitHelp(this);
+				UiPresetsManager.InitControl(this, true);
 			}
 		}
 

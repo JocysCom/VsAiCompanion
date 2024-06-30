@@ -215,10 +215,10 @@
 							<CheckBox
 								Name="IsPinnedCheckBox"
 								Margin="5,0,0,0"
-								IsChecked="{Binding IsPinned}"
 								AutomationProperties.HelpText="{StaticResource main_Pinned_Template_Task_Help}"
 								AutomationProperties.Name="{StaticResource main_Pinned_Template_Task_Name}"
-								Content="{StaticResource main_Pinned_Template_Task_Name}"/>
+								Content="{StaticResource main_Pinned_Template_Task_Name}"
+								IsChecked="{Binding IsPinned}" />
 							<CheckBox
 								Name="IsFavoriteCheckBox"
 								Margin="5,0,0,0"
@@ -596,7 +596,7 @@
 							SelectedValue="{Binding EmbeddingName}" />
 						<Label x:Name="EmbeddingsLabel" Margin="3" Content="Group Name" />
 
-						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName}" />
+						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName, UpdateSourceTrigger=PropertyChanged}" />
 						<Label
 							x:Name="EmbeddingGroupFlagLabel"
 							Grid.Row="3"
