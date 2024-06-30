@@ -57,24 +57,29 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
+
 			<controls:IconUserControl
 				x:Name="IconPanel"
-				Grid.RowSpan="5"
+				Grid.RowSpan="3"
 				Width="64"
 				Height="64"
 				VerticalAlignment="Top" />
+
+			<!--  Service  -->
 			<Label Grid.Column="1" VerticalAlignment="Center" Content="{StaticResource main_Service}" />
 			<StackPanel
 				Grid.Column="2"
-				Grid.ColumnSpan="5"
+				Grid.ColumnSpan="2"
 				Margin="0,3,0,0"
 				Orientation="Horizontal">
 				<controls:AiModelBoxControl x:Name="AiModelBoxPanel" Grid.Row="0" />
@@ -84,68 +89,60 @@
 					IsChecked="{Binding AutoUpdate, UpdateSourceTrigger=PropertyChanged}"
 					Visibility="Collapsed" />
 			</StackPanel>
+
 			<!--  Source: Folder  -->
 			<Label
 				Grid.Row="1"
 				Grid.Column="1"
 				VerticalAlignment="Center"
-				Content="{StaticResource main_Source}" />
+				Content="{StaticResource main_Source_Folder}" />
 			<TextBox
 				Name="DataFolderTextBox"
 				Grid.Row="1"
 				Grid.Column="2"
-				Grid.ColumnSpan="2"
 				Margin="3,0,3,0"
 				Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}" />
-			<StackPanel
-				Grid.Row="1"
-				Grid.Column="4"
-				HorizontalAlignment="Right"
-				Orientation="Horizontal">
-
-				<Button
-					Name="BrowseButton"
-					MinWidth="75"
-					HorizontalAlignment="Center"
-					Click="BrowseSourceButton_Click">
+			<StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal">
+				<Button Name="BrowseButton" MinWidth="78" Click="BrowseSourceButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
 						<Label Content="{StaticResource main_Browse}" />
 					</StackPanel>
 				</Button>
-
-				<Button
-					Name="OpenButton"
-					MinWidth="75"
-					HorizontalAlignment="Center"
-					Click="OpenButton_Click">
+				<Button Name="OpenButton" MinWidth="78" Click="OpenButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_FolderOpen}" Focusable="False" />
 						<Label Content="{StaticResource main_Open}" />
 					</StackPanel>
 				</Button>
-
-
 			</StackPanel>
 
-			<!--  Source Options  -->
-			<StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal">
-				<Label x:Name="SourcePatternLabel" MinWidth="48" Content="Pattern" />
+			<!--  Source: File Name Pattern  -->
+			<Label
+				x:Name="SourcePatternLabel"
+				Grid.Row="2"
+				Grid.Column="1"
+				Content="File Name Pattern" />
+			<StackPanel
+				Grid.Row="2"
+				Grid.Column="2"
+				Grid.ColumnSpan="2"
+				Orientation="Horizontal">
 				<TextBox Name="SourcePatternTextBox" MinWidth="64" Text="{Binding SourcePattern}" />
 				<CheckBox x:Name="UseGitIgnoreCheckbox" Content="Use .gitignore" IsChecked="{Binding UseGitIgnore, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>
-			<!--  Target: Connection String  -->
-			<Label
-				Grid.Row="3"
-				Grid.Column="1"
-				VerticalAlignment="Center"
-				Content="{StaticResource main_Database}" />
 
-			<Grid
+			<!--  3. Separator  -->
+			<Border
 				Grid.Row="3"
-				Grid.Column="2"
-				Grid.ColumnSpan="2"
-				Margin="3,0,3,0">
+				Grid.ColumnSpan="4"
+				Height="1"
+				Margin="0,3,0,3"
+				Background="{StaticResource BorderDark}" />
+
+			<!--  4. Target: Connection String  -->
+			<Label Grid.Row="4" Content="{StaticResource main_Target_Database}" />
+			<Grid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
@@ -166,78 +163,44 @@
 				</StackPanel>
 			</Grid>
 
-			<StackPanel
-				Grid.Row="3"
-				Grid.Column="4"
-				HorizontalAlignment="Right"
-				Orientation="Horizontal">
-
-				<Button Name="BrowseTargetButton" MinWidth="75" Click="BrowseTargetButton_Click">
+			<StackPanel Grid.Row="4" Grid.Column="3" Orientation="Horizontal">
+				<Button Name="BrowseTargetButton" MinWidth="78" Click="BrowseTargetButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_folder_open_doc}" Focusable="False" />
 						<Label Content="{StaticResource main_Browse}" />
 					</StackPanel>
 				</Button>
-				<Button Name="EditButton" MinWidth="75" Click="EditButton_Click">
+				<Button Name="EditButton" MinWidth="78" Click="EditButton_Click">
 					<StackPanel>
 						<ContentControl Content="{StaticResource Icon_database}" Focusable="False" />
 						<Label Content="{StaticResource main_Edit}" />
 					</StackPanel>
 				</Button>
 			</StackPanel>
-
-			<StackPanel
-				Grid.Row="4"
-				Grid.Column="4"
-				HorizontalAlignment="Right"
-				Orientation="Horizontal">
-				<Button Name="ImportButton" MinWidth="75" Click="ImportButton_Click">
+			<!--  5. Import and Export  -->
+			<StackPanel Grid.Row="5" Grid.Column="3" Orientation="Horizontal">
+				<Button Name="ImportButton" MinWidth="78" Click="ImportButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
 						<Label Content="Import..." />
 					</StackPanel>
 				</Button>
-				<Button Name="ExportButton" MinWidth="75" Click="ExportButton_Click">
+				<Button Name="ExportButton" MinWidth="78" Click="ExportButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_Export}" Focusable="False" />
 						<Label Content="Export..." />
 					</StackPanel>
 				</Button>
 			</StackPanel>
+			<!--  5. Data Group  -->
+			<Label x:Name="EmbeddingsLabel" Grid.Row="5" Content="Data Group Name" />
 			<StackPanel
 				Grid.Row="5"
-				Grid.Column="0"
-				Grid.ColumnSpan="5"
-				HorizontalAlignment="Right"
+				Grid.Column="1"
+				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
-				<Button Name="TargetTestButton" MinWidth="75" Click="TargetTestButton_Click">
-					<StackPanel Focusable="False">
-						<ContentControl Content="{StaticResource Icon_checkbox_checked}" Focusable="False" />
-						<Label Content="Test..." />
-					</StackPanel>
-				</Button>
-				<Button Name="ScanStartButton" MinWidth="75" Click="ScanStartButton_Click">
-					<StackPanel Focusable="False">
-						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
-						<Label Content="Process" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="ScanStopButton"
-					MinWidth="75"
-					Click="ScanStopButton_Click"
-					IsEnabled="False">
-					<StackPanel Focusable="False">
-						<ContentControl Content="{StaticResource Icon_Stop}" Focusable="False" />
-						<Label Content="Stop" />
-					</StackPanel>
-				</Button>
-			</StackPanel>
-			<StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
-				<Label x:Name="EmbeddingsLabel" MinWidth="48" Content="Group" />
-
 				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName}" />
-				<Label x:Name="EmbeddingGroupFlagLabel" Margin="3,0,0,0" Content="Flag" />
+				<Label x:Name="EmbeddingGroupFlagLabel" Margin="3,0,0,0" Content="Sub-Group Name · Flag" />
 				<Grid>
 					<TextBox
 						x:Name="EmbeddingGroupFlagNameTextBox"
@@ -247,14 +210,12 @@
 					<ComboBox
 						Name="EmbeddingGroupComboBox"
 						MinWidth="64"
-						HorizontalAlignment="Stretch"
 						DisplayMemberPath="Value"
 						ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
 						SelectedValue="{Binding EmbeddingGroupFlag}"
 						SelectedValuePath="Key" />
 				</Grid>
-
-				<StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
+				<StackPanel Orientation="Horizontal">
 					<Button Name="EditEditButton" Click="EditEditButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
@@ -271,20 +232,57 @@
 						</StackPanel>
 					</Button>
 				</StackPanel>
-
-
 			</StackPanel>
-			<!--  System Instructions  -->
-			<Label
-				x:Name="InstructionsLabel"
+			<!--  6. Separator  -->
+			<Border
 				Grid.Row="6"
-				Grid.Column="0"
-				Content="{StaticResource main_Instructions}" />
+				Grid.ColumnSpan="4"
+				Height="1"
+				Margin="0,3,0,3"
+				Background="{StaticResource BorderDark}" />
+			<!--  7. Test  -->
+			<StackPanel
+				Grid.Row="7"
+				Grid.ColumnSpan="4"
+				HorizontalAlignment="Right"
+				Orientation="Horizontal">
+				<Button Name="TargetTestButton" MinWidth="78" Click="TargetTestButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_checkbox_checked}" Focusable="False" />
+						<Label Content="Test..." />
+					</StackPanel>
+				</Button>
+				<Button Name="ScanStartButton" MinWidth="78" Click="ScanStartButton_Click">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Play}" Focusable="False" />
+						<Label Content="Process" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="ScanStopButton"
+					MinWidth="78"
+					Click="ScanStopButton_Click"
+					IsEnabled="False">
+					<StackPanel Focusable="False">
+						<ContentControl Content="{StaticResource Icon_Stop}" Focusable="False" />
+						<Label Content="Stop" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+			<!--  8. Separator  -->
+			<Border
+				Grid.Row="8"
+				Grid.ColumnSpan="4"
+				Height="1"
+				Margin="0,3,0,3"
+				Background="{StaticResource BorderDark}" />
+			<!--  9. System Instructions  -->
+			<Label x:Name="InstructionsLabel" Grid.Row="9" Content="{StaticResource main_Instructions}" />
 			<TextBox
 				Name="InstructionsTextBox"
-				Grid.Row="6"
+				Grid.Row="9"
 				Grid.Column="1"
-				Grid.ColumnSpan="4"
+				Grid.ColumnSpan="3"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
 				VerticalContentAlignment="Top"
@@ -294,36 +292,13 @@
 				SpellCheck.IsEnabled="True"
 				Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap" />
-			<!--  Search options  -->
-			<StackPanel
-				Grid.Row="8"
-				Grid.Column="1"
-				Grid.ColumnSpan="3"
-				Margin="0,0,0,0"
-				Orientation="Horizontal">
-				<Label x:Name="SkipLabel" MinWidth="48" Content="Skip" />
-				<JcControls:NumericUpDown x:Name="SkipUpdown" Maximum="9223372036854775807" Value="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" />
-				<Label x:Name="TakeLabel" Content="Take" />
-				<JcControls:NumericUpDown x:Name="TakeUpdown" Maximum="9223372036854775807" Value="{Binding Take, UpdateSourceTrigger=PropertyChanged}" />
-				<Label x:Name="MaxTokensLabel" Content="Max Tokens" />
-				<JcControls:NumericUpDown
-					x:Name="MaxTokensUpdown"
-					LargeChange="1024"
-					Maximum="9223372036854775807"
-					SmallChange="128"
-					Value="{Binding MaxTokens, UpdateSourceTrigger=PropertyChanged}" />
-			</StackPanel>
-			<!--  Test message  -->
-			<Label
-				Grid.Row="7"
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				Content="{StaticResource main_Message}" />
+			<!--  10. Message  -->
+			<Label Grid.Row="10" VerticalAlignment="Center" Content="{StaticResource main_Message}" />
 			<TextBox
 				Name="MessageTextBox"
-				Grid.Row="7"
+				Grid.Row="10"
 				Grid.Column="1"
-				Grid.ColumnSpan="4"
+				Grid.ColumnSpan="3"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
 				VerticalContentAlignment="Top"
@@ -333,11 +308,29 @@
 				SpellCheck.IsEnabled="True"
 				Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap" />
+			<!--  11. Search options  -->
+			<Label x:Name="MaxTokensLabel" Grid.Row="11" Content="Max Tokens" />
+			<StackPanel
+				Grid.Row="11"
+				Grid.Column="1"
+				Grid.ColumnSpan="3"
+				Orientation="Horizontal">
+				<JcControls:NumericUpDown
+					x:Name="MaxTokensUpdown"
+					LargeChange="1024"
+					Maximum="9223372036854775807"
+					SmallChange="128"
+					Value="{Binding MaxTokens, UpdateSourceTrigger=PropertyChanged}" />
+				<Label x:Name="SkipLabel" Content="Skip Records" />
+				<JcControls:NumericUpDown x:Name="SkipUpdown" Maximum="9223372036854775807" Value="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" />
+				<Label x:Name="TakeLabel" Content="Take Records" />
+				<JcControls:NumericUpDown x:Name="TakeUpdown" Maximum="9223372036854775807" Value="{Binding Take, UpdateSourceTrigger=PropertyChanged}" />
+			</StackPanel>
 			<Button
 				Name="SendSettingsButton"
-				Grid.Row="8"
-				Grid.Column="4"
-				MinWidth="75"
+				Grid.Row="11"
+				Grid.Column="3"
+				MinWidth="78"
 				HorizontalAlignment="Right"
 				Click="SearchButton_Click">
 				<StackPanel Focusable="False">
@@ -347,11 +340,7 @@
 			</Button>
 		</Grid>
 		<!--  Row 2  -->
-		<Border
-			Grid.Row="2"
-			Grid.Column="0"
-			VerticalAlignment="Stretch"
-			Background="{StaticResource BackgroundLight}" />
+		<Border Grid.Row="2" VerticalAlignment="Stretch" Background="{StaticResource BackgroundLight}" />
 		<!--  Row 3  -->
 		<TabControl
 			x:Name="MainTabControl"
@@ -366,7 +355,7 @@
 						<Label Content="{StaticResource main_Help}" />
 					</StackPanel>
 				</TabItem.Header>
-				<RichTextBox x:Name="HelpRichTextBox"/>
+				<RichTextBox x:Name="HelpRichTextBox" />
 			</TabItem>
 			<TabItem Name="IncludePatternsTabPage">
 				<TabItem.Header>

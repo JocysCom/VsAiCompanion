@@ -100,6 +100,8 @@
 	<sys:String x:Key="main_Exclude_Patterns">Exclude Patterns</sys:String>
 	<sys:String x:Key="main_Include_Patterns">Include Patterns</sys:String>
 	<sys:String x:Key="main_Source">Source</sys:String>
+	<sys:String x:Key="main_Source_Folder">Source Folder</sys:String>
+	<sys:String x:Key="main_Target_Database">Target Database</sys:String>
 
 	<!--  Lists  -->
 	<sys:String x:Key="main_Comment">Comment</sys:String>

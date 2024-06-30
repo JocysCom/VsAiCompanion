@@ -135,6 +135,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Exclude_Patterns => FindResource(nameof(main_Exclude_Patterns));
         public static string main_Include_Patterns => FindResource(nameof(main_Include_Patterns));
         public static string main_Source => FindResource(nameof(main_Source));
+        public static string main_Source_Folder => FindResource(nameof(main_Source_Folder));
+        public static string main_Target_Database => FindResource(nameof(main_Target_Database));
         public static string main_Comment => FindResource(nameof(main_Comment));
         public static string main_Key => FindResource(nameof(main_Key));
         public static string main_List_Description => FindResource(nameof(main_List_Description));
