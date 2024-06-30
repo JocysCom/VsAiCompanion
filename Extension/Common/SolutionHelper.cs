@@ -23,31 +23,6 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		FileHelper fileHelper = new FileHelper();
 
-		public SolutionHelper()
-		{
-			InitEvents();
-		}
-
-		public void InitEvents()
-		{
-			try
-			{
-				//ThreadHelper.ThrowIfNotOnUIThread();
-				//// Get an instance of DTE
-				//var dte = GetCurrentService();
-				//var events = dte.Events;
-				//// Command GUID for Edit.Copy
-				//const string EditCommandGUID = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
-				//const int EditCopyCommandID = 15;
-				//var commandEvents = events.CommandEvents[EditCommandGUID, EditCopyCommandID];
-				//commandEvents.BeforeExecute += CommandEvents_BeforeExecute;
-				//commandEvents.AfterExecute += CommandEvents_AfterExecute;
-			}
-			catch (Exception)
-			{
-			}
-		}
-
 		/// <summary>
 		/// Switch to Visual Studio Thread.
 		/// </summary>

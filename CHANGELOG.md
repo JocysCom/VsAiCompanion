@@ -1,4 +1,4 @@
-2024-06-26 v1.12.6
+2024-06-30 v1.12.6
 
 - Fix: List not expanding.
 - Fix: Improved support for Azure SQL Server Databases.
