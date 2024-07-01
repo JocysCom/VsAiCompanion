@@ -866,7 +866,11 @@
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
-	<Style x:Key="TextBlockCell3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+	<Style x:Key="TextBlockCellM3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+		<Setter Property="Margin" Value="3,0,3,0" />
+	</Style>
+
+	<Style x:Key="TextBlockCellM3W500" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
 		<Setter Property="Margin" Value="3,0,3,0" />
 		<Setter Property="MinWidth" Value="500" />
 	</Style>

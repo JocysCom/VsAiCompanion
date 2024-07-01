@@ -302,14 +302,14 @@
 					x:Name="StatusTextColumn"
 					Binding="{Binding StatusText}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell3}"
+					ElementStyle="{StaticResource TextBlockCellM3}"
 					Header="{StaticResource main_Status}" />
 				<!--  TextColumn problem with width  -->
 				<DataGridTextColumn
 					x:Name="NameColumn"
 					Binding="{Binding Name}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell3}"
+					ElementStyle="{StaticResource TextBlockCellM3W500}"
 					Header="{StaticResource main_Name}" />
 			</DataGrid.Columns>
 		</DataGrid>
