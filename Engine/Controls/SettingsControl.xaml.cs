@@ -378,6 +378,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
+				UiPresetsManager.RemoveControls(ListPanel);
 			}
 		}
 
