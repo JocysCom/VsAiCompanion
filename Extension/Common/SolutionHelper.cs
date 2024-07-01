@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Extension
@@ -26,9 +27,9 @@ namespace JocysCom.VS.AiCompanion.Extension
 		/// <summary>
 		/// Switch to Visual Studio Thread.
 		/// </summary>
-		public async Task SwitchToMainThreadAsync()
+		public async Task SwitchToMainThreadAsync(CancellationToken cancellationToken)
 		{
-			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 		}
 
 		public static DTE2 GetCurrentService()

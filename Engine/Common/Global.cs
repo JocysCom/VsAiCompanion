@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,7 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 	{
 
 		public static ISolutionHelper _SolutionHelper;
-		public static Func<Task> SwitchToVisualStudioThreadAsync = () => { return null; };
+		public static Func<CancellationToken, Task> SwitchToVisualStudioThreadAsync = (CancellationToken cancellationToken) => { return null; };
 
 		// Get or Set multiple documents.
 		public static Action<List<DocItem>> SetSolution = (x) => { };
