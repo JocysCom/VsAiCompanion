@@ -1,4 +1,4 @@
-2024-07-01 v1.12.8
+2024-07-01 v1.12.10
 
 - Fix: Unable to hide or show some UI elements.
 - New: Allow overriding the head and body message in the top info panel.
