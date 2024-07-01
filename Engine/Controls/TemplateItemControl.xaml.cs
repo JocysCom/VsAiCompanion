@@ -515,7 +515,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this);
 				// Remove control, which visibility is controlled by the code.
-				UiPresetsManager.RemoveControls(this);
+				UiPresetsManager.RemoveControls(this, MainTabControl);
 			}
 			RestoreFocus();
 			UpdateAvatarControl();

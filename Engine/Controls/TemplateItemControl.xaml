@@ -179,9 +179,9 @@
 							Width="64"
 							Height="64"
 							VerticalAlignment="Top"
-							Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+							 />
 						<StackPanel Orientation="Vertical">
-							<GroupBox Margin="0,0,0,3" VerticalAlignment="Top" Visibility="{Binding BarPanelVisibility, ElementName=This}">
+							<GroupBox Margin="0,0,0,3" VerticalAlignment="Top" >
 								<GroupBox.Header>
 									<StackPanel Orientation="Horizontal">
 										<Label
@@ -189,7 +189,7 @@
 											Margin="0"
 											Padding="0"
 											Content="Creativity - "
-											Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+											 />
 										<Label
 											Margin="0"
 											Padding="0"
@@ -233,7 +233,7 @@
 							Grid.Column="1"
 							Margin="3,0,0,3"
 							VerticalAlignment="Stretch"
-							Visibility="{Binding BarPanelVisibility, ElementName=This}">
+							>
 							<GroupBox.Header>
 								<StackPanel Orientation="Horizontal">
 									<Label
@@ -242,7 +242,7 @@
 										Padding="0"
 										VerticalAlignment="Center"
 										Content="Automation"
-										Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+										 />
 								</StackPanel>
 							</GroupBox.Header>
 							<StackPanel
@@ -250,7 +250,7 @@
 								Grid.Column="2"
 								Grid.ColumnSpan="2"
 								Orientation="Horizontal"
-								Visibility="{Binding BarPanelVisibility, ElementName=This}">
+								>
 								<StackPanel VerticalAlignment="Top">
 									<CheckBox
 										Name="AutoSendCheckBox"
@@ -305,7 +305,7 @@
 							Grid.Column="1"
 							Margin="3,0,3,3"
 							VerticalAlignment="Stretch"
-							Visibility="{Binding BarPanelVisibility, ElementName=This}">
+							>
 							<GroupBox.Header>
 								<StackPanel Orientation="Horizontal">
 									<Label
@@ -314,7 +314,7 @@
 										Padding="0"
 										VerticalAlignment="Center"
 										Content="Instructions"
-										Visibility="{Binding BarPanelVisibility, ElementName=This}" />
+										 />
 								</StackPanel>
 							</GroupBox.Header>
 							<StackPanel
@@ -322,7 +322,7 @@
 								Grid.Column="2"
 								Grid.ColumnSpan="2"
 								Orientation="Horizontal"
-								Visibility="{Binding BarPanelVisibility, ElementName=This}">
+								>
 								<StackPanel VerticalAlignment="Top">
 									<CheckBox
 										Name="IsSystemInstructionsCheckBox"
