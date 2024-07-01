@@ -60,6 +60,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
+				UiPresetsManager.RemoveControls(AvatarPanelBorder, DataInstructionsPanel);
 			}
 		}
 

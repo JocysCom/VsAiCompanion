@@ -1,6 +1,6 @@
-2024-06-30 v1.12.7
+2024-07-01 v1.12.8
 
-- Update: Version changed for VS Marketplace.
+- Fix: Unable to hide or show some UI elements.
 
 2024-06-30 v1.12.6
 
