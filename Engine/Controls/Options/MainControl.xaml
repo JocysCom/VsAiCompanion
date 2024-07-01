@@ -153,6 +153,8 @@
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
@@ -179,6 +181,24 @@
 							</StackPanel>
 						</Button>
 					</StackPanel>
+
+
+					<Label Grid.Row="1" VerticalAlignment="Center" Content="Override Info Head" />
+					<TextBox
+						Grid.Row="1"
+						Grid.Column="1"
+						Grid.ColumnSpan="2"
+						SpellCheck.IsEnabled="True"
+						Text="{Binding OverrideInfoDefaultHead, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+					<Label Grid.Row="2" VerticalAlignment="Center" Content="Override Info Body" />
+					<TextBox
+						Grid.Row="2"
+						Grid.Column="1"
+						Grid.ColumnSpan="2"
+						SpellCheck.IsEnabled="True"
+						Text="{Binding OverrideInfoDefaultBody, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
 				</Grid>
 			</GroupBox>
 

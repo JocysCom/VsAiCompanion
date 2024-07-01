@@ -346,5 +346,11 @@
 			<PackagePath>lib\$(TargetFramework)\;content;contentFiles\any\any;build\$(TargetFramework)\</PackagePath>
 		</None>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Resources\DataTemplates.xaml">
+	    <Generator></Generator>
+	  </Page>
+	</ItemGroup>
 	
 </Project>

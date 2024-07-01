@@ -150,8 +150,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
+				var item = (PluginCategory)DataContext;
+				Name = $"{item.Name}Panel";
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
+				//UiPresetsManager.AddControls(this);
 			}
 		}
 	}

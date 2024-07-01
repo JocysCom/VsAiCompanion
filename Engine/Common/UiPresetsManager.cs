@@ -24,14 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				foreach (var newPath in newPaths)
 				{
 					var element = namedElements[newPath];
-					var item = new VisibilityItem
-					{
-						Path = newPath,
-						// store default values.
-						Element = element,
-						IsVisible = element.Visibility == Visibility.Visible,
-						IsEnabled = element.IsEnabled,
-					};
+					var item = GetVisibilityItem(newPath, element);
 					AllUiElements.Add(newPath, item);
 				}
 				// Create sorted lit of new paths.
@@ -44,6 +37,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 					ApplyUiPreset(Global.AppSettings.UiPresetName, newPaths);
 				}
 			}
+		}
+
+		private static VisibilityItem GetVisibilityItem(string path, FrameworkElement element)
+		{
+			var item = new VisibilityItem
+			{
+				Path = path,
+				// store default values.
+				Element = element,
+				IsVisible = element.Visibility == Visibility.Visible,
+				IsEnabled = element.IsEnabled,
+			};
+			return item;
 		}
 
 		public static void ApplyUiPreset(string presetName, string[] paths)
@@ -128,6 +134,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var path = GetControlPath(control);
 				if (AllUiElements.ContainsKey(path))
 					AllUiElements.Remove(path);
+			}
+		}
+
+		public static void AddControls(params FrameworkElement[] controls)
+		{
+			foreach (var control in controls)
+			{
+				if (control == null)
+					continue;
+				var path = GetControlPath(control);
+				var item = GetVisibilityItem(path, control);
+				if (!AllUiElements.ContainsKey(path))
+					AllUiElements.Add(path, item);
 			}
 		}
 

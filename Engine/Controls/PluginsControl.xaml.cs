@@ -55,5 +55,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				UiPresetsManager.InitControl(this, true);
 			}
 		}
+
 	}
 }

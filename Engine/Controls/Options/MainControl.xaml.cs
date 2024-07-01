@@ -1,4 +1,5 @@
 ﻿using Hompus.VideoInputDevices;
+using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
@@ -35,13 +36,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		}
 
 
-		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private async void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			switch (e.PropertyName)
 			{
 				case nameof(AppData.AllowOnlyOneCopy):
 					// Make sure that AllowOnlyOneCopy setting applies immediatelly.
 					Global.AppData.Save();
+					break;
+				case nameof(AppData.OverrideInfoDefaultHead):
+				case nameof(AppData.OverrideInfoDefaultBody):
+					await Helper.Delay(Global.MainControl.UpdateInfoPanelDefaults);
 					break;
 				default:
 					break;

@@ -1186,6 +1186,9 @@ EndFragment:{3:00000000}";
 			return type.Name;
 		}
 
+		public static string GetNullIfWhiteSpace(string s) =>
+			 string.IsNullOrWhiteSpace(s) ? null : s;
+
 		#endregion
 
 	}

@@ -56,6 +56,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool BarAlwaysOnTop { get => _BarAlwaysOnTop; set => SetProperty(ref _BarAlwaysOnTop, value); }
 		private bool _BarAlwaysOnTop;
 
+
 		[DefaultValue(RiskLevel.Critical)]
 		public RiskLevel MaxRiskLevel { get => _MaxRiskLevel; set => SetProperty(ref _MaxRiskLevel, value); }
 		RiskLevel _MaxRiskLevel;
@@ -184,6 +185,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[DefaultValue(null), XmlElement(ElementName = nameof(AzureTokenCache))]
 		public string _AzureTokenCacheEncrypted { get; set; }
+
+		#region Product
+
+		[DefaultValue(null)]
+		public string OverrideInfoDefaultHead { get => _OverrideInfoDefaultHead; set => SetProperty(ref _OverrideInfoDefaultHead, value); }
+		private string _OverrideInfoDefaultHead;
+
+		[DefaultValue(null)]
+		public string OverrideInfoDefaultBody { get => _OverrideInfoDefaultBody; set => SetProperty(ref _OverrideInfoDefaultBody, value); }
+		private string _OverrideInfoDefaultBody;
+
+		#endregion
+
 
 		#region IO Presets
 

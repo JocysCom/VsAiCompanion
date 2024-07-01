@@ -28,10 +28,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Override AppUserData property in replacements.
 			AssemblyInfo.Entry.AppUserData = Global.AppData.XmlFile.Directory.FullName;
 			SeverityConverter = new SeverityToImageConverter();
-			var ai = new AssemblyInfo(typeof(MainControl).Assembly);
-			InfoPanel.DefaultHead = ai.GetTitle(true, false, true, false, false);
-			InfoPanel.DefaultBody = ai.Description;
-			InfoPanel.Reset();
+			UpdateInfoPanelDefaults();
 			var debugVisibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
@@ -56,6 +53,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			ErrorsTabItem.Visibility = Global.AppSettings.ShowErrorsPanel ? Visibility.Visible : Visibility.Collapsed;
 			TutorialHelper.SetupTutorialHelper(this);
 			InfoPanel.BusyCount.MouseDown += BusyCount_MouseDown;
+		}
+
+		public void UpdateInfoPanelDefaults()
+		{
+			var ai = new AssemblyInfo(typeof(MainControl).Assembly);
+			InfoPanel.DefaultHead = AppHelper.GetNullIfWhiteSpace(Global.AppSettings.OverrideInfoDefaultHead) ?? ai.GetTitle(true, false, true, false, false);
+			InfoPanel.DefaultBody = AppHelper.GetNullIfWhiteSpace(Global.AppSettings.OverrideInfoDefaultBody) ?? ai.Description;
+			InfoPanel.Reset();
 		}
 
 		private void MainWindow_Closing(object sender, CancelEventArgs e)
