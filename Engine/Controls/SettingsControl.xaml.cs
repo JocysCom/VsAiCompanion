@@ -330,7 +330,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
 			if (shiftDown)
 				return;
-			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?.WebBrowser;
+			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?._WebBrowser;
 			if (wb != null)
 			{
 				var bodiesSize = TemplateItemPanel?.Item?.Messages.Sum(x => x.Body?.Length ?? 0);
@@ -363,7 +363,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MainGridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
 		{
-			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?.WebBrowser;
+			var wb = TemplateItemPanel?.ChatPanel?.MessagesPanel?._WebBrowser;
 			if (wb != null)
 			{
 				wb.Visibility = Visibility.Visible;

@@ -118,21 +118,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 		}
 
-		private void This_Loaded(object sender, RoutedEventArgs e)
+		public WebBrowser _WebBrowser;
+
+		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			// Allow to load once.
 			if (ControlsHelper.AllowLoad(this))
 			{
-				WebBrowser.Navigating += WebBrowser_Navigating;
-				WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
-				WebBrowser.Navigate("about:blank");
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
 				// Remove control frm the UI presets list.
-				UiPresetsManager.RemoveControls(LoadingLabel, WebBrowser);
+				UiPresetsManager.RemoveControls(LoadingLabel);
+				await Helper.Delay(InitWebBrowser);
 			}
+		}
+
+		void InitWebBrowser()
+		{
+			_WebBrowser = new WebBrowser();
+			_WebBrowser.Name = "WebBrowser";
+			_WebBrowser.Navigating += WebBrowser_Navigating;
+			_WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
+			_WebBrowser.Navigate("about:blank");
+			Grid.SetRow(_WebBrowser, 0);
 		}
 
 		public static string contentsFile = "ChatListControl.html";
@@ -165,7 +175,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 						LoadResource(ref contents, "prism.js");
 					}
 				}
-				WebBrowser.NavigateToString(contents);
+				_WebBrowser.NavigateToString(contents);
 				return;
 			}
 			if (!string.IsNullOrEmpty(e.Uri?.OriginalString))
@@ -209,7 +219,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private void WebBrowser_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
 		{
-			WebBrowser.ObjectForScripting = ScriptingHandler;
+			_WebBrowser.ObjectForScripting = ScriptingHandler;
 			// Add BeginInvoke to allow the JavaScript syntax highlighter to initialize after loading.
 			ControlsHelper.AppBeginInvoke(() =>
 			{
@@ -238,7 +248,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (action == MessageAction.Loaded)
 			{
 				LoadingLabel.Visibility = Visibility.Collapsed;
-				WebBrowser.Visibility = Visibility.Visible;
+				_WebBrowser.Visibility = Visibility.Visible;
 				WebBrowserDataLoaded?.Invoke(this, EventArgs.Empty);
 				return;
 			}
@@ -281,7 +291,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return null;
 			try
 			{
-				return (string)WebBrowser.InvokeScript("eval", new object[] { script });
+				return (string)_WebBrowser.InvokeScript("eval", new object[] { script });
 			}
 			catch (Exception ex)
 			{
@@ -309,7 +319,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var isCtrlDown = Keyboard.Modifiers == ModifierKeys.Control;
 			if (isCtrlDown && e.Key == Key.C)
 			{
-				bool isFocused = (bool)WebBrowser.InvokeScript("isElementFocused");
+				bool isFocused = (bool)_WebBrowser.InvokeScript("isElementFocused");
 				if (isFocused)
 				{
 					InvokeScript("Copy();");
@@ -338,7 +348,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			// Assuming the WebBrowser control is hosted in the WPF window, you need to get its native handle.
 			var window = Window.GetWindow(this);
 			var helper = new System.Windows.Interop.WindowInteropHelper(window);
-			var webBrowserHandle = WebBrowser.Handle;
+			var webBrowserHandle = _WebBrowser.Handle;
 			if (webBrowserHandle == IntPtr.Zero)
 				return;
 			var focusedControl = NativeMethods.GetFocus();
