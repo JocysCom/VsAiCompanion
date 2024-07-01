@@ -38,11 +38,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel
-			Grid.Row="0"
-			Margin="3,3,0,0"
-			HorizontalAlignment="Left"
-			Orientation="Horizontal">
+		<StackPanel Margin="3,3,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
 			<Button
 				Name="AddButton"
 				Margin="0,0,3,3"
@@ -80,11 +76,7 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
-		<StackPanel
-			Grid.Row="0"
-			Margin="3,3,0,0"
-			HorizontalAlignment="Right"
-			Orientation="Horizontal">
+		<StackPanel Margin="3,3,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
 			<Button
 				Name="CreateNewTaskButton"
 				Margin="0,0,3,3"
@@ -208,9 +200,6 @@
 			Sorting="MainDataGrid_Sorting">
 			<DataGrid.Resources>
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
-				<Style x:Key="TextBlockCellMargin3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
-					<Setter Property="Margin" Value="3,0,3,0" />
-				</Style>
 			</DataGrid.Resources>
 			<!--  GroupStyle for collapsible panels  -->
 			<DataGrid.GroupStyle>
@@ -313,14 +302,14 @@
 					x:Name="StatusTextColumn"
 					Binding="{Binding StatusText}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCellMargin3}"
+					ElementStyle="{StaticResource TextBlockCell3}"
 					Header="{StaticResource main_Status}" />
 				<!--  TextColumn problem with width  -->
 				<DataGridTextColumn
 					x:Name="NameColumn"
 					Binding="{Binding Name}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCellMargin3}"
+					ElementStyle="{StaticResource TextBlockCell3}"
 					Header="{StaticResource main_Name}" />
 			</DataGrid.Columns>
 		</DataGrid>
