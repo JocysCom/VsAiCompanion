@@ -42,6 +42,7 @@ if (-not $mutexCreated) {
 }
 try {
     # Main script logic goes here...
+    Start-Sleep -Seconds 1
 	Main
 }
 finally {
