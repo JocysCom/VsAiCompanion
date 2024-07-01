@@ -195,22 +195,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			}
 			object methodResult = null;
-			if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
-			{
-				await Global.MainControl.Dispatcher.Invoke(async () =>
-				{
-					await Global.SwitchToVisualStudioThreadAsync();
-					methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams);
-				});
-			}
-			else if (classInstance is Search search)
+			var switchToVSThread = methodInfo.DeclaringType.Name == nameof(VisualStudio);
+			if (classInstance is Search search)
 			{
 				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
 					var eh = new EmbeddingHelper();
 					eh.Item = item;
 					search.SearchEmbeddingsCallback = eh.SearchEmbeddingsToSystemMessage;
-					methodResult = await InvokeMethod(methodInfo, search, invokeParams);
+					methodResult = await InvokeMethod(methodInfo, search, invokeParams, switchToVSThread, cancellationTokenSource.Token);
 					search.SearchEmbeddingsCallback = null;
 				});
 			}
@@ -224,7 +217,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.VideoToText = ai.VideoToText;
 					mm.AISpeakCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
 					//mm.CaptureCameraImageCallback = CameraHelper.CaptureCameraImage;
-					methodResult = await InvokeMethod(methodInfo, mm, invokeParams);
+					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, switchToVSThread, cancellationTokenSource.Token);
 					mm.CaptureCameraImageCallback = null;
 					mm.VideoToText = null;
 					mm.AISpeakCallback = null;
@@ -237,7 +230,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					item.UpdateMailClientAccount();
 					mail.SendCallback = item.AiMailClient.Send;
-					methodResult = await InvokeMethod(methodInfo, mail, invokeParams);
+					methodResult = await InvokeMethod(methodInfo, mail, invokeParams, switchToVSThread, cancellationTokenSource.Token);
 					mail.SendCallback = null;
 				});
 			}
@@ -248,7 +241,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				lists.FilterPath = item.Name;
 				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
-					methodResult = await InvokeMethod(methodInfo, lists, invokeParams);
+					methodResult = await InvokeMethod(methodInfo, lists, invokeParams, switchToVSThread, cancellationTokenSource.Token);
 					// Fix lists with no icons.
 					var noIconLists = Global.Lists.Items.Where(x => x.IconData == null).ToList();
 					foreach (var noIconList in noIconLists)
@@ -257,7 +250,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			else
 			{
-				methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams);
+				methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, switchToVSThread, cancellationTokenSource.Token);
 			}
 			var result = (methodResult is string s)
 				? s
@@ -265,19 +258,49 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return result;
 		}
 
-		public static async Task<object> InvokeMethod(System.Reflection.MethodInfo methodInfo, object classInstance, object[] invokeParams)
+		public interface ICancelableTask
+		{
+			void Cancel();
+		}
+
+
+		public static async Task<object> InvokeMethod(
+	System.Reflection.MethodInfo methodInfo, object classInstance, object[] invokeParams,
+	bool switchToVsThread = false, CancellationToken cancellationToken = default)
 		{
 			// Check if the method is asynchronous (either returning Task or Task<T>)
 			bool isAsyncMethod = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
 			// Check if the method is void or Task (for async method)
 			bool isVoidMethod = methodInfo.ReturnType == typeof(void) || methodInfo.ReturnType == typeof(Task);
+
 			if (isAsyncMethod)
 			{
+				if (switchToVsThread)
+					await Global.SwitchToVisualStudioThreadAsync(cancellationToken).ConfigureAwait(false);
+
+				// Invoke the method
 				var task = (Task)methodInfo.Invoke(classInstance, invokeParams);
+
+				// Register a callback on the cancellation token to cancel the task if requested
+				if (cancellationToken != CancellationToken.None)
+				{
+					cancellationToken.Register(() =>
+					{
+						if (task is ICancelableTask cancelableTask)
+						{
+							cancelableTask.Cancel();
+						}
+					});
+				}
+
 				await task.ConfigureAwait(false); // Ensure you await the task
-												  // Handle async methods that return a value (Task<T>)
+
+				// Handle async methods that return a value (Task<T>)
 				if (!isVoidMethod) // It means it's Task<T>
 				{
+					if (cancellationToken.IsCancellationRequested)
+						throw new OperationCanceledException(cancellationToken);
+
 					// Extract the result from Task<T>
 					var resultProperty = task.GetType().GetProperty("Result");
 					return resultProperty.GetValue(task);
@@ -288,10 +311,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// For synchronous methods, directly invoke and return the result (or null if void)
 				if (!isVoidMethod) // Has return value
 				{
+					if (cancellationToken.IsCancellationRequested)
+						throw new OperationCanceledException(cancellationToken);
+
+					if (switchToVsThread)
+						await Global.SwitchToVisualStudioThreadAsync(cancellationToken).ConfigureAwait(false);
+
 					return methodInfo.Invoke(classInstance, invokeParams);
 				}
 			}
+
 			// Return null if it's a void method (synchronous or asynchronous)
+			if (cancellationToken.IsCancellationRequested)
+				throw new OperationCanceledException(cancellationToken);
+
 			return null;
 		}
 
