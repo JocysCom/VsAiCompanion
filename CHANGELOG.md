@@ -1,7 +1,8 @@
-2024-07-02 v1.12.11
+2024-07-02 v1.12.13
 
 - Fix: Error when AI calls the function inside Visual Studio.
 - Fix: Some UI elements are not in the list of UI Preset choices.
+- New: Allow overriding default settings with the `<ExeBaseName>.Settings.zip` file.
 
 2024-07-01 v1.12.10
 

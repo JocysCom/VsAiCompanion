@@ -397,17 +397,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 			data.Remove(itemsToRemove);
 		}
 
-		public static bool ForceEnterprise()
-		{
-			var settingsFile = $"{AssemblyInfo.Entry.ModuleBasePath}.zip";
-			return false;
-		}
-
 		public static ZipStorer GetSettingsZip()
 		{
 			ZipStorer zip = null;
-			if (Global.AppSettings.IsEnterprise)
+			// Check if settings zip file with the same name as the executable exists.
+			var settingsFile = $"{AssemblyInfo.Entry.ModuleBasePath}.Settings.zip";
+			if (File.Exists(settingsFile))
 			{
+				// Use external file.
+				zip = ZipStorer.Open(settingsFile, FileAccess.Read);
+			}
+			else if (Global.AppSettings.IsEnterprise)
+			{
+				// Use external URL or local file specified by the user.
 				var path = JocysCom.ClassLibrary.Configuration.AssemblyInfo.ExpandPath(Global.AppSettings.ConfigurationUrl);
 				var isUrl = Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile;
 				if (isUrl)
@@ -417,6 +419,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			else
 			{
+				// Use embedded resource.
 				zip = AppHelper.GetZip("Resources.Settings.zip", typeof(Global).Assembly);
 			}
 			if (zip == null)
