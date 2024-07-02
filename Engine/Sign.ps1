@@ -42,8 +42,9 @@ if (-not $mutexCreated) {
 }
 try {
     # Main script logic goes here...
-    Start-Sleep -Seconds 1
+    Start-Sleep -Seconds 2
 	Main
+    Start-Sleep -Seconds 2
 }
 finally {
     # Release the mutex so that other instances can proceed.
