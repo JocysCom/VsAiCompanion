@@ -139,10 +139,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			_WebBrowser = new WebBrowser();
 			_WebBrowser.Name = "WebBrowser";
+			_WebBrowser.Visibility = Visibility.Collapsed;
 			_WebBrowser.Navigating += WebBrowser_Navigating;
 			_WebBrowser.LoadCompleted += WebBrowser_LoadCompleted;
 			_WebBrowser.Navigate("about:blank");
-			Grid.SetRow(_WebBrowser, 0);
+			MainGrid.Children.Add(_WebBrowser);
 		}
 
 		public static string contentsFile = "ChatListControl.html";
