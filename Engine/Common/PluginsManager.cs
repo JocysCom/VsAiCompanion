@@ -195,15 +195,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			}
 			object methodResult = null;
-			var switchToVSThread = methodInfo.DeclaringType.Name == nameof(VisualStudio);
-			if (classInstance is Search search)
+			if (methodInfo.DeclaringType.Name == nameof(VisualStudio))
+			{
+				await Global.MainControl.Dispatcher.Invoke(async () =>
+				{
+					await Global.SwitchToVisualStudioThreadAsync(cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, cancellationTokenSource.Token);
+				});
+			}
+			else if (classInstance is Search search)
 			{
 				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
 					var eh = new EmbeddingHelper();
 					eh.Item = item;
 					search.SearchEmbeddingsCallback = eh.SearchEmbeddingsToSystemMessage;
-					methodResult = await InvokeMethod(methodInfo, search, invokeParams, switchToVSThread, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, search, invokeParams, cancellationTokenSource.Token);
 					search.SearchEmbeddingsCallback = null;
 				});
 			}
@@ -217,7 +224,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.VideoToText = ai.VideoToText;
 					mm.AISpeakCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
 					//mm.CaptureCameraImageCallback = CameraHelper.CaptureCameraImage;
-					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, switchToVSThread, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, cancellationTokenSource.Token);
 					mm.CaptureCameraImageCallback = null;
 					mm.VideoToText = null;
 					mm.AISpeakCallback = null;
@@ -230,7 +237,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					item.UpdateMailClientAccount();
 					mail.SendCallback = item.AiMailClient.Send;
-					methodResult = await InvokeMethod(methodInfo, mail, invokeParams, switchToVSThread, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, mail, invokeParams, cancellationTokenSource.Token);
 					mail.SendCallback = null;
 				});
 			}
@@ -241,7 +248,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				lists.FilterPath = item.Name;
 				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
-					methodResult = await InvokeMethod(methodInfo, lists, invokeParams, switchToVSThread, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, lists, invokeParams, cancellationTokenSource.Token);
 					// Fix lists with no icons.
 					var noIconLists = Global.Lists.Items.Where(x => x.IconData == null).ToList();
 					foreach (var noIconList in noIconLists)
@@ -250,7 +257,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			else
 			{
-				methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, switchToVSThread, cancellationTokenSource.Token);
+				methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, cancellationTokenSource.Token);
 			}
 			var result = (methodResult is string s)
 				? s
@@ -265,8 +272,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 
 		public static async Task<object> InvokeMethod(
-	System.Reflection.MethodInfo methodInfo, object classInstance, object[] invokeParams,
-	bool switchToVsThread = false, CancellationToken cancellationToken = default)
+			System.Reflection.MethodInfo methodInfo, object classInstance, object[] invokeParams,
+			CancellationToken cancellationToken = default)
 		{
 			// Check if the method is asynchronous (either returning Task or Task<T>)
 			bool isAsyncMethod = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
@@ -275,9 +282,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 			if (isAsyncMethod)
 			{
-				if (switchToVsThread)
-					await Global.SwitchToVisualStudioThreadAsync(cancellationToken).ConfigureAwait(false);
-
 				// Invoke the method
 				var task = (Task)methodInfo.Invoke(classInstance, invokeParams);
 
@@ -313,9 +317,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					if (cancellationToken.IsCancellationRequested)
 						throw new OperationCanceledException(cancellationToken);
-
-					if (switchToVsThread)
-						await Global.SwitchToVisualStudioThreadAsync(cancellationToken).ConfigureAwait(false);
 
 					return methodInfo.Invoke(classInstance, invokeParams);
 				}

@@ -1,3 +1,7 @@
+2024-07-02 v1.12.11
+
+- Fix: Error when AI calls the function inside Visual Studio.
+
 2024-07-01 v1.12.10
 
 - Fix: Unable to hide or show some UI elements.

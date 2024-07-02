@@ -136,7 +136,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				if (item == null)
 					continue;
-				var isChecked = !IsDefault(item.Value) && value.HasFlag(item.Value);
+				var isChecked = !IsDefault(item.Value) && (value?.HasFlag(item.Value) ?? false);
 				if (item.IsChecked != isChecked)
 					item.IsChecked = isChecked;
 			}
