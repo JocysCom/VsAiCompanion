@@ -214,14 +214,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 				.ToArray();
 			foreach (var entry in entries)
 			{
-				var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
 				var path = Path.Combine(Global.AppData.XmlFile.Directory.FullName, entry.FilenameInZip);
-				var fi = new FileInfo(path);
-				if (!fi.Directory.Exists)
-					fi.Directory.Create();
-				if (File.Exists(path))
-					File.Delete(path);
-				System.IO.File.WriteAllBytes(path, bytes);
+				bool isDirectory = entry.FilenameInZip.EndsWith("/");
+				if (isDirectory)
+				{
+					var di = new DirectoryInfo(path);
+					if (!di.Exists)
+						di.Create();
+				}
+				else
+				{
+					var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
+					var fi = new FileInfo(path);
+					if (!fi.Directory.Exists)
+						fi.Directory.Create();
+					if (File.Exists(path))
+						File.Delete(path);
+					File.WriteAllBytes(path, bytes);
+				}
 			}
 		}
 
