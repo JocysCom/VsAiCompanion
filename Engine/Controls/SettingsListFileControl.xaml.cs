@@ -298,6 +298,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
+
 			}
 		}
 
@@ -504,6 +505,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		/// </summary>
 		private void MainDataGrid_Loaded(object sender, RoutedEventArgs e)
 		{
+			NameColumn.MinWidth = double.NaN;
 			NameColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
 
 			if (ControlsHelper.IsDesignMode(this))

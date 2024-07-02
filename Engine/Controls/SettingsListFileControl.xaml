@@ -307,6 +307,7 @@
 				<!--  TextColumn problem with width  -->
 				<DataGridTextColumn
 					x:Name="NameColumn"
+					MinWidth="500"
 					Binding="{Binding Name}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCellM3W500}"
