@@ -1,7 +1,11 @@
 # Jocys.com VS AI Companion
 
-| ![alt Tasks](Documents/Images/JocysComVsAiCompanion_Tasks.png) | AI Companion is a tool that answers questions, analyzes project files, and enhances productivity. It simplifies the creation of custom, fine-tuned AI models that can function as chatbots or virtual employees. AI Companion can run as a standalone portable application or as a Visual Studio extension if installed via the Visual Studio Extension Manager. It's a free, open-source project for people with an [OpenAI API](https://platform.openai.com/) (GPT-3/4, Davinci) subscription or those running OpenAI on their local machine ([GPT4All](https://gpt4all.io/)), on-premises, or on Azure Cloud. |
-| - | :- |
+<table>
+  <tr>
+    <td width="200"><img alt="Tasks" src="Documents/Images/JocysComVsAiCompanion_Tasks.png"></td>
+    <td>AI Companion is a tool that answers questions, analyzes project files, and enhances productivity. It simplifies the creation of custom, fine-tuned AI models that can function as chatbots or virtual employees. AI Companion can run as a standalone portable application or as a Visual Studio extension if installed via the Visual Studio Extension Manager. It's a free, open-source project for people with an <a href="https://platform.openai.com">OpenAI API</a> (GPT-3/4, Davinci) subscription or those running OpenAI on their local machine (<a href="https://gpt4all.io">GPT4All</a>), on-premises, or on Azure Cloud.</td>
+  </tr>
+</table>
 
 ### Why Use Tools Utilizing API Instead of Web Chat GPT?
 
@@ -40,19 +44,19 @@ You can ask questions about an entire solution or project using the "Code - Smar
 [Rate Limits](platform.openai.com/docs/guides/rate-limits) - restrictions that OpenAI API imposes on the number of times a user or client can access its services within a specified period of time.
 
 ### How it works
-This application (or extension) allows you to create advanced prompt templates and include data from various sources such as the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, Exception with relevant code files, or Chat History. You can execute this template with just one button press, and the data will be sent to your preferred AI model for results at https://api.openai.com.
+This application (or extension) allows you to create advanced prompt templates and include data from various sources such as the Clipboard, Selection, Active Document, Selected Documents, Active Project, Selected Project, Solution, Selected Error, Exception with relevant code files, or Chat History. You can execute this template with just one button press, and the data will be sent to your preferred AI model for results at [api.openai.com](https://api.openai.com).
 
 ### Data Safety Concerns
-OpenAI will not use the data submitted by customers via the OpenAI API to train or improve its models, unless customers explicitly decide to share their data for this purpose. Customers have the option to opt-in to share data. Please note that this data policy does not apply to OpenAI's Non-API consumer services like ChatGPT or DALL·E. More information can be found at: https://openai.com/policies/api-data-usage-policies."
+OpenAI will not use the data submitted by customers via the OpenAI API to train or improve its models, unless customers explicitly decide to share their data for this purpose. Customers have the option to opt-in to share data. Please note that this data policy does not apply to OpenAI's Non-API consumer services like ChatGPT or DALL·E. More information can be found at [openai.com/policies/api-data-usage-policies](https://openai.com/policies/api-data-usage-policies).
 
 ### Code Security Assurance
 
-To ensure our codebase is secure and free from unresolved issues, we utilize a comprehensive suite of security <a href="https://github.com/JocysCom/VsAiCompanion/security">scan tools</a>. `Dependabot` detects vulnerabilities in dependencies. `Code Scanning` identifies common vulnerabilities and coding errors with tools such as PyCQA Bandit, Microsoft BinSkim, GitHub CodeQL, ESLint, SonarSource SonarCloud, Microsoft Antimalware, Bridgecrew Checkov, Azure TemplateAnalyzer, and Accurics Terrascan. Additionally, `Secret Scanning` detects any secrets accidentally pushed to the repository.
+To ensure our codebase is secure and free from unresolved issues, we utilize a comprehensive suite of security [scan tools](https://github.com/JocysCom/VsAiCompanion/security). `Dependabot` detects vulnerabilities in dependencies. `Code Scanning` identifies common vulnerabilities and coding errors with tools such as PyCQA Bandit, Microsoft BinSkim, GitHub CodeQL, ESLint, SonarSource SonarCloud, Microsoft Antimalware, Bridgecrew Checkov, Azure TemplateAnalyzer, and Accurics Terrascan. Additionally, `Secret Scanning` detects any secrets accidentally pushed to the repository.
 ### Licensing
 
 The source code is licensed under MPL-2.0 (Mozilla Public License 2.0), permitting corporations to integrate and enhance this application with proprietary code, without the requirement to disclose their modifications. Specifically, this license facilitates the use of the application for purposes such as enabling AI to access corporate resources or to automate task creation for AI, while still keeping any proprietary additions private.
 
-This tool acts as an intermediary, facilitating data exchange between the user and the AI. Consequently, the licensing of this tool itself does not directly impact the rights to the code or content generated by the AI. Instead, the generated content is subject to the license of the AI model used (e.g., GPT-3/4, Davinci...). Typically, the initiator of the AI-generated code process is granted copyright. Both OpenAI and Microsoft offer a legal safeguard, known as a "Copyright Commitment," to protect customers who face lawsuits for copyright infringement related to content generated by the companies' AI systems.
+This tool acts as an intermediary, facilitating data exchange between the user and the AI. Consequently, the licensing of this tool itself does not directly impact the rights to the code or content generated by the AI. Instead, the generated content is subject to the license of the AI model used (e.g., GPT-3/4, Davinci). Typically, the initiator of the AI-generated code process is granted copyright. Both OpenAI and Microsoft offer a legal safeguard, known as a "Copyright Commitment," to protect customers who face lawsuits for copyright infringement related to content generated by the companies' AI systems.
 
 ### Wiki
 - [Home - Rethinking AI Integration](https://github.com/JocysCom/VsAiCompanion/wiki)
