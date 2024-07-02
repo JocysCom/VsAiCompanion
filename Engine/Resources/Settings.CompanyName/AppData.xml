@@ -27,8 +27,8 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>257</Left>
-        <Top>67</Top>
+        <Left>182</Left>
+        <Top>47.5</Top>
         <Width>486.5</Width>
         <Height>407.75</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -130,6 +130,8 @@
           <Tokens />
         </UserProfile>
       </UserProfiles>
+      <OverrideInfoDefaultHead>AI Companion for CyberNet Solutions</OverrideInfoDefaultHead>
+      <OverrideInfoDefaultBody>Your expert consultant that analyzes your project files and collaborates with you to optimize efficiency, streamline processes, and elevate your overall productivity.</OverrideInfoDefaultBody>
       <AiServices>
         <AiService>
           <Name>Company Name AI</Name>
