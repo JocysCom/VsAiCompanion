@@ -134,8 +134,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5644A15643C477AA90CFCDBB349F550"
             {
-            "SourcePath" = "8:..\\Documents\\Files\\JocysCom.VS.AiCompanion.App.zip"
-            "TargetName" = "8:JocysCom.VS.AiCompanion.App.zip"
+            "SourcePath" = "8:..\\Documents\\Files\\JocysCom.VS.AiCompanion.App.Settings.zip"
+            "TargetName" = "8:JocysCom.VS.AiCompanion.App.Settings.zip"
             "Tag" = "8:"
             "Folder" = "8:_112CB7875A044A408E77302D84754286"
             "Condition" = "8:"

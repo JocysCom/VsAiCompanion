@@ -1,4 +1,4 @@
-2024-07-02 v1.12.13
+2024-07-02 v1.12.15
 
 - Fix: Error when AI calls the function inside Visual Studio.
 - Fix: Some UI elements are not in the list of UI Preset choices.
