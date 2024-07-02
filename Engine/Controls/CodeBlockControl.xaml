@@ -1,0 +1,123 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.CodeBlockControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<BooleanToVisibilityConverter x:Key="_BooleanToVisibilityConverter" />
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Border
+		Grid.Row="4"
+		Grid.Column="0"
+		Grid.ColumnSpan="3"
+		BorderBrush="{StaticResource BorderDark}"
+		BorderThickness="0,0,1,0"
+		Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
+		<StackPanel x:Name="CodeButtonsPanel" Margin="5,3,5,3" Orientation="Horizontal">
+			<ComboBox Name="MarkdownLanguageNameComboBox" Margin="3,3,0,3" SelectedValue="{Binding MarkdownLanguageName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<Button
+				x:Name="CustomButton"
+				Margin="3,3,0,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="Custom"
+				ToolTip="Custom">
+				<ContentControl Content="{StaticResource Icon_code_custom}" Focusable="False" />
+			</Button>
+			<Button
+				x:Name="SqlButton"
+				Margin="3,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="SQL"
+				ToolTip="SQL">
+				<ContentControl Content="{StaticResource Icon_code_sql}" Focusable="False" />
+			</Button>
+			<Button
+				x:Name="XmlButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="XML"
+				ToolTip="XML">
+				<ContentControl Content="{StaticResource Icon_code_xml}" Focusable="False" />
+			</Button>
+			<Button
+				x:Name="CsButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="CSharp"
+				ToolTip="C#">
+				<ContentControl Content="{StaticResource Icon_code_csharp}" Focusable="False" />
+			</Button>
+			<Button
+				x:Name="PsButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="PowerShell"
+				ToolTip="PowerShell">
+				<ContentControl Content="{StaticResource Icon_code_powershell}" Focusable="False" />
+			</Button>
+			<Button
+				x:Name="TsButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="TypeScript"
+				ToolTip="TypeScript">
+				<ContentControl Content="{StaticResource Icon_code_typescript}" Focusable="False" />
+			</Button>
+			<Button
+				x:Name="JsButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="JavaScript"
+				ToolTip="JavaScript">
+				<ContentControl Content="{StaticResource Icon_code_javascript}" Focusable="False" />
+			</Button>
+			<Button
+				x:Name="LogButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="Log"
+				ToolTip="Log">
+				<ContentControl Content="{StaticResource Icon_code_log}" Focusable="False" />
+			</Button>
+			<Button
+				x:Name="TxtButton"
+				Margin="0,3,3,3"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Center"
+				Click="CodeButton_Click"
+				Tag="Text"
+				ToolTip="Text">
+				<ContentControl Content="{StaticResource Icon_code_text}" Focusable="False" />
+			</Button>
+		</StackPanel>
+	</Border>
+</UserControl>

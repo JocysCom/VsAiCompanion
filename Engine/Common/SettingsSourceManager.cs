@@ -397,6 +397,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			data.Remove(itemsToRemove);
 		}
 
+		public static bool ForceEnterprise()
+		{
+			var settingsFile = $"{AssemblyInfo.Entry.ModuleBasePath}.zip";
+			return false;
+		}
+
 		public static ZipStorer GetSettingsZip()
 		{
 			ZipStorer zip = null;
