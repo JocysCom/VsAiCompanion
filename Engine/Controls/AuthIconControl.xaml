@@ -22,7 +22,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
+	<Grid MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
 		<Grid
 			x:Name="ContentPanel"
 			Margin="6"
@@ -74,5 +74,33 @@
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
 			x:FieldModifier="public" />
+		<Grid x:Name="ButtonsGrid">
+			<Button
+				Name="SignInButton"
+				Height="26"
+				Margin="0"
+				Padding="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Center"
+				Click="SignInButton_Click"
+				Opacity="0.9">
+				<StackPanel>
+					<Label Margin="0" Padding="0" Content="{StaticResource main_SignIn}" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="SignOutButton"
+				Height="26"
+				Margin="0"
+				Padding="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Center"
+				Click="SignOuButton_Click"
+				Opacity="0.9">
+				<StackPanel>
+					<Label Margin="0" Padding="0" Content="{StaticResource main_SignOut}" />
+				</StackPanel>
+			</Button>
+		</Grid>
 	</Grid>
 </UserControl>

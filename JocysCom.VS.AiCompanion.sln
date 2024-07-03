@@ -67,6 +67,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform-Azure", "Terrafor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{7621D168-651D-48DB-9354-8516A6C68351}"
 	ProjectSection(SolutionItems) = preProject
+		Resources\Setup\MSI_Setup_Commands.md = Resources\Setup\MSI_Setup_Commands.md
 		Resources\ZipFiles.ps1 = Resources\ZipFiles.ps1
 	EndProjectSection
 EndProject
@@ -289,8 +290,7 @@ Global
 		SolutionGuid = {FBFF2296-DB1F-4D4F-B14D-BE266743B9AE}
 	EndGlobalSection
 EndGlobal
-Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|arm64.ActiveCfg = Release|Any CPU
+ = Release|Any CPU
 		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|arm64.Build.0 = Release|Any CPU
 		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|x64.ActiveCfg = Release|Any CPU
 		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|x64.Build.0 = Release|Any CPU

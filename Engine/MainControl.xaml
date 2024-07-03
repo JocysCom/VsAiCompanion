@@ -76,6 +76,7 @@
 			Margin="4"
 			x:FieldModifier="public"
 			SelectionChanged="MainTabControl_SelectionChanged">
+
 			<TabItem x:Name="TasksTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -149,6 +150,7 @@
 				</TabItem.Header>
 				<controls:PluginsControl x:Name="PluginsPanel" />
 			</TabItem>
+
 			<TabItem x:Name="OptionsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -168,7 +170,8 @@
 				</TabItem.Header>
 				<controls:UpdatesControl x:Name="UpdatesPanel" />
 			</TabItem>
-			<TabItem>
+
+			<TabItem x:Name="AboutTabItem">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_Question}" />
@@ -177,6 +180,7 @@
 				</TabItem.Header>
 				<controls:AboutControl x:Name="AboutPanel" />
 			</TabItem>
+
 			<TabItem x:Name="ErrorsTabItem">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

@@ -36,16 +36,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		private async void SignInButton_Click(object sender, RoutedEventArgs e)
 		{
-			await ExecuteMethod(async (CancellationToken cancellationToken) =>
-			{
-				LogPanel.Clear();
-				var scopes = new string[] { MicrosoftAccountManager.MicrosoftGraphScope };
-				await MicrosoftAccountManager.Current.SignIn(scopes, cancellationToken);
-				await MicrosoftAccountManager.Current.RefreshProfileImage(cancellationToken);
-			});
+			await SignOut();
+			await SignIn();
 		}
 
-		private async void SignOutButton_Click(object sender, RoutedEventArgs e)
+		public async Task SignOut()
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
@@ -57,6 +52,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 					);
 				await MicrosoftAccountManager.Current.RefreshProfileImage(cancellationToken);
 			});
+		}
+		public async Task SignIn()
+		{
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				LogPanel.Clear();
+				var scopes = new string[] { MicrosoftAccountManager.MicrosoftGraphScope };
+				await MicrosoftAccountManager.Current.SignIn(scopes, cancellationToken);
+				await MicrosoftAccountManager.Current.RefreshProfileImage(cancellationToken);
+			});
+		}
+
+		private async void SignOutButton_Click(object sender, RoutedEventArgs e)
+		{
+			await SignOut();
 		}
 
 		public void InspectToken(string accessToken)

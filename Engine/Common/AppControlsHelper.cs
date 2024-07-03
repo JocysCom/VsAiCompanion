@@ -39,35 +39,40 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
 			{
-				var textBox = sender as TextBox;
+				var textBox = (TextBox)sender;
 				// Get the dropped files
 				var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-				// Initialize the text to insert
-				StringBuilder sb = new StringBuilder();
-				// Ensure instructions are added only once and not present in the current line
-				var instructionsExist = textBox.Text.Contains(Resources.MainResources.main_TextBox_Drop_Files_Instructions);
-				var currentLine = GetLineFromCaret(textBox);
-				// Determine if instructions should be added
-				if (!instructionsExist && !currentLine.TrimStart().StartsWith("-"))
-					sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
-				// Append file paths
-				foreach (string file in files)
-					sb.AppendLine($"- {file}");
-				// Insert or append the text to the TextBox
-				var startIndex = textBox.CaretIndex;
-				if (!IsCaretAtLineStart(textBox))
-				{
-					var insertionIndex = textBox.Text.IndexOf(Environment.NewLine, textBox.CaretIndex);
-					startIndex = insertionIndex != -1
-						? insertionIndex + Environment.NewLine.Length
-						: textBox.Text.Length;
-				}
-				textBox.Text = textBox.Text.Insert(startIndex, sb.ToString());
-				// Update cursor position
-				textBox.CaretIndex += sb.Length;
+				DropFiles(textBox, files);
 				// Mark the event as handled
 				e.Handled = true;
 			}
+		}
+
+		public static void DropFiles(TextBox textBox, string[] files)
+		{
+			// Initialize the text to insert
+			StringBuilder sb = new StringBuilder();
+			// Ensure instructions are added only once and not present in the current line
+			var instructionsExist = textBox.Text.Contains(Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+			var currentLine = GetLineFromCaret(textBox);
+			// Determine if instructions should be added
+			if (!instructionsExist && !currentLine.TrimStart().StartsWith("-"))
+				sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+			// Append file paths
+			foreach (string file in files)
+				sb.AppendLine($"- {file}");
+			// Insert or append the text to the TextBox
+			var startIndex = textBox.CaretIndex;
+			if (!IsCaretAtLineStart(textBox))
+			{
+				var insertionIndex = textBox.Text.IndexOf(Environment.NewLine, textBox.CaretIndex);
+				startIndex = insertionIndex != -1
+					? insertionIndex + Environment.NewLine.Length
+					: textBox.Text.Length;
+			}
+			textBox.Text = textBox.Text.Insert(startIndex, sb.ToString());
+			// Update cursor position
+			textBox.CaretIndex += sb.Length;
 		}
 
 		private static bool IsCaretAtLineStart(TextBox textBox)

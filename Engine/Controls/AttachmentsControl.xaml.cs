@@ -132,7 +132,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		System.Windows.Forms.OpenFileDialog _OpenFileDialog;
 
-		public void AddFile()
+		public string[] GetFiles()
 		{
 			if (_OpenFileDialog == null)
 			{
@@ -147,14 +147,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			dialog.Title = "Attach file(s)";
 			var result = dialog.ShowDialog();
 			if (result != System.Windows.Forms.DialogResult.OK)
-				return;
-			foreach (var fileName in dialog.FileNames)
+				return null;
+			return dialog.FileNames;
+		}
+
+		public void AddFile()
+		{
+			var files = GetFiles();
+			foreach (var file in files)
 			{
 				var item = new MessageAttachments();
-				item.Title = System.IO.Path.GetFileName(fileName);
+				item.Title = System.IO.Path.GetFileName(file);
 				// For Model Processing
 				//item.Type = Plugins.Core.VsFunctions.ContextType.ChatHistory
-				item.Location = new Uri(fileName).AbsoluteUri;
+				item.Location = new Uri(file).AbsoluteUri;
 				CurrentItems.Add(item);
 			}
 		}

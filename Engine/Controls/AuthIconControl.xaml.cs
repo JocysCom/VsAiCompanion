@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -18,6 +19,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			UpdateImage();
+			ButtonsGrid.Visibility = Visibility.Collapsed;
+			UpdateButtons();
 		}
 
 		public UserProfile Item
@@ -61,6 +64,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
+				var profile = MicrosoftAccountManager.Current.GetProfile();
+				profile.PropertyChanged += Profile_PropertyChanged;
 				Item = MicrosoftAccountManager.Current.GetProfile();
 				AdjustEllipse();
 				AppHelper.InitHelp(this);
@@ -108,6 +113,46 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void This_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			ControlsHelper.EnsureTabItemSelected(Global.MainControl.OptionsPanel.MicrosoftAccountsPanel);
+		}
+
+		private void SignButton_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void Profile_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(UserProfile.IsSigned))
+				UpdateButtons();
+		}
+
+		public void UpdateButtons()
+		{
+			var profile = MicrosoftAccountManager.Current.GetProfile();
+			SignInButton.Visibility = profile.IsSigned
+				? Visibility.Collapsed : Visibility.Visible;
+			SignOutButton.Visibility = !profile.IsSigned
+				? Visibility.Collapsed : Visibility.Visible;
+		}
+
+		private void Grid_MouseEnter(object sender, MouseEventArgs e)
+		{
+			ButtonsGrid.Visibility = Visibility.Visible;
+		}
+
+		private void Grid_MouseLeave(object sender, MouseEventArgs e)
+		{
+			ButtonsGrid.Visibility = Visibility.Collapsed;
+		}
+
+		private async void SignInButton_Click(object sender, RoutedEventArgs e)
+		{
+			await Global.MainControl.OptionsPanel.MicrosoftAccountsPanel.SignIn();
+		}
+
+		private async void SignOuButton_Click(object sender, RoutedEventArgs e)
+		{
+			await Global.MainControl.OptionsPanel.MicrosoftAccountsPanel.SignOut();
 		}
 	}
 }

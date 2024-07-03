@@ -59,6 +59,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					case ".pdf":
 						content = ReadPdfFile(path);
 						break;
+					// Reading known text file.
+					case ".txt":
+					case ".log":
+					case ".csv":
+					case ".ini":
+						content = ReadTextFile(path);
+						break;
 					default:
 						if (!DocItem.IsBinary(path, 1024))
 						{

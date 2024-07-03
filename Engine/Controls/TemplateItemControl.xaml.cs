@@ -71,7 +71,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateAudioToTextComboBox.Visibility = debugVisibility;
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
-			AttachmentsButton.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
 		}
 
@@ -719,7 +718,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void AttachmentsButton_Click(object sender, RoutedEventArgs e)
 		{
-			ChatPanel.AttachmentsPanel.AddFile();
+			//ChatPanel.AttachmentsPanel.AddFile();
+			var files = ChatPanel.AttachmentsPanel.GetFiles();
+			if (files == null || !files.Any())
+				return;
+			var textBox = GetFocused();
+			AppControlsHelper.DropFiles(textBox, files);
 		}
 
 		private async void ScreenshotButton_Click(object sender, RoutedEventArgs e)

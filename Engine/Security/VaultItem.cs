@@ -76,7 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		UpdateTimeSettings _UpdateTimeSettings;
 
 		/// <summary>Serializes property only with non-default values.</summary>
-		public bool ShouldSerializeUpdateTimeSettings() => JocysCom.ClassLibrary.Runtime.RuntimeHelper.EqualProperties(UpdateTimeSettings, new UpdateTimeSettings());
+		public bool ShouldSerializeUpdateTimeSettings() => !JocysCom.ClassLibrary.Runtime.RuntimeHelper.EqualProperties(UpdateTimeSettings, new UpdateTimeSettings());
 
 		/// <summary>
 		/// Returns true if the key is not active, has expired, or needs to be checked for an updated value.

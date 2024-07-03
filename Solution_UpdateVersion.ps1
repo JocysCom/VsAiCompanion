@@ -72,6 +72,9 @@ function GetConfig
 	if ($extension -eq ".appmanifest" -or $extension -eq ".vsixmanifest"){ # Package.appxmanifest (UWP) or source.extension.vsixmanifest (VSIX)
 		$c.VNames = @( "(?<p><Identity[^>]*Version="")(?<v>[^""]*)(?<s>"")" )
 	}
+	if ($extension -eq ".vdproj"){ # Microsoft Visual Studio Installer Projects 2022 (MSI)
+		$c.VNames = @( "(?<p>""ProductVersion"" = ""8:)(?<v>[^""]*)(?<s>"")")
+	}
 	return $c;
 }
 # ----------------------------------------------------------------------------
@@ -236,6 +239,7 @@ function GetConfigurationFiles
 	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
 	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Extension\source.extension.vsixmanifest")
+	$items += (GetConfig "Setup\JocysCom.VS.AiCompanion.Setup.vdproj")
 	return $items
 }
 # ----------------------------------------------------------------------------

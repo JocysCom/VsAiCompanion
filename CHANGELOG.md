@@ -1,3 +1,8 @@
+2024-07-03 v1.12.19
+
+- Fix: Key vault settings not being saved when updated. 
+- New: File attachment button in Tasks and Templates chat panel.
+
 2024-07-03 v1.12.17
 
 - Fix: Pressing CTRL+C can crash the Visual Studio Extension.
