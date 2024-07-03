@@ -288,7 +288,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			GenerateTitleButton.IsEnabled = isSelected;
 		}
 
-		private void This_Loaded(object sender, RoutedEventArgs e)
+		private async void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -298,7 +298,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
+				if (Global.IsVsExtension)
+				{
+					//MainDataGrid.Visibility = Visibility.Collapsed;
+					//await Helper.Delay(MainDataGrid.InvalidateVisual);
+					//await Helper.Delay(FixColumnWidth);
+				}
 			}
+		}
+
+		DataGridLength NameColumnWidth { get; set; } = new DataGridLength(400, DataGridLengthUnitType.Pixel);
+
+		private void FixColumnWidth()
+		{
+			//NameColumnWidth = new DataGridLength(1, DataGridLengthUnitType.Star);
+			//MainDataGrid.Visibility = Visibility.Visible;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)

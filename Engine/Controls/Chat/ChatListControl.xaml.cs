@@ -343,7 +343,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			uint currentProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
 			if (processId != currentProcessId)
 				return;
-			var thisWindow = new System.Windows.Interop.WindowInteropHelper(Window.GetWindow(this)).Handle;
+			var win = Window.GetWindow(this);
+			if (win == null)
+				return;
+			var thisWindow = new System.Windows.Interop.WindowInteropHelper(win).Handle;
 			if (foregroundWindow != thisWindow)
 				return;
 			// Assuming the WebBrowser control is hosted in the WPF window, you need to get its native handle.

@@ -1,3 +1,7 @@
+2024-07-03 v1.12.17
+
+- Fix: Pressing CTRL+C can crash the Visual Studio Extension.
+
 2024-07-02 v1.12.15
 
 - Fix: Error when AI calls the function inside Visual Studio.

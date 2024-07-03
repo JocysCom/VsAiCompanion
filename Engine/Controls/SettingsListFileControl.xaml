@@ -298,12 +298,12 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 				<!--  Text  -->
-				<DataGridTextColumn
+				<!--<DataGridTextColumn
 					x:Name="StatusTextColumn"
 					Binding="{Binding StatusText}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCellM3}"
-					Header="{StaticResource main_Status}" />
+					Header="{StaticResource main_Status}" />-->
 				<!--  TextColumn problem with width  -->
 				<DataGridTextColumn
 					x:Name="NameColumn"
