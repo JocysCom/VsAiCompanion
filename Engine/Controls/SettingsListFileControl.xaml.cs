@@ -307,8 +307,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		DataGridLength NameColumnWidth { get; set; } = new DataGridLength(400, DataGridLengthUnitType.Pixel);
-
 		private void FixColumnWidth()
 		{
 			//NameColumnWidth = new DataGridLength(1, DataGridLengthUnitType.Star);
