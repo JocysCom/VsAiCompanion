@@ -288,7 +288,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			GenerateTitleButton.IsEnabled = isSelected;
 		}
 
-		private async void This_Loaded(object sender, RoutedEventArgs e)
+		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
