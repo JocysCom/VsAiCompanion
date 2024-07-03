@@ -1,7 +1,7 @@
 # Create SQL Server
 
 resource "azurerm_mssql_server" "sqlsrv" {
-  name                = "sqlsrv-${var.org}-${var.app}-${var.env}"
+  name                = "sql-${var.org}-${var.app}-${var.env}"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   version             = "12.0"
