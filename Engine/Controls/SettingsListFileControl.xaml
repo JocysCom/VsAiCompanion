@@ -306,8 +306,9 @@
 					Header="{StaticResource main_Status}" />-->
 				<!--  TextColumn problem with width  -->
 				<DataGridTextColumn
-					Width="Auto"
 					x:Name="NameColumn"
+					Width="Auto"
+					x:FieldModifier="public"
 					Binding="{Binding Name}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCellM3W500}"

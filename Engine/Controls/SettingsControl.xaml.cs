@@ -128,6 +128,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (TemplateItemPanel == null)
 					{
 						var control = new TemplateItemControl();
+						// Workaroud with web browser control and non-expanding grid cells.
+						ListPanel.NameColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Auto);
+						control.ChatPanel.MessagesPanel.WebBrowserDataLoaded += (sender, e) =>
+						{
+							ListPanel.NameColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+							ListPanel.MainDataGrid.UpdateLayout();
+						};
+						// Workaroud End.
 						ConfigureControl(control, value);
 						control.DataType = value;
 						TemplateItemPanel = control;
@@ -228,6 +236,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				OnPropertyChanged(nameof(ListPanelVisibility));
 			}
 		}
+
+		private void MessagesPanel_WebBrowserDataLoaded(object sender, System.EventArgs e)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		private ItemType _DataType;
 
 		void ConfigureControl(UserControl control, ItemType itemType)

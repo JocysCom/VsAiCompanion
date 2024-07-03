@@ -298,19 +298,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
-				if (Global.IsVsExtension)
-				{
-					//MainDataGrid.Visibility = Visibility.Collapsed;
-					//await Helper.Delay(MainDataGrid.InvalidateVisual);
-					//await Helper.Delay(FixColumnWidth);
-				}
 			}
-		}
-
-		private void FixColumnWidth()
-		{
-			//NameColumnWidth = new DataGridLength(1, DataGridLengthUnitType.Star);
-			//MainDataGrid.Visibility = Visibility.Visible;
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -517,11 +505,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void MainDataGrid_Loaded(object sender, RoutedEventArgs e)
 		{
 			NameColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
-
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			// Allow to run once.
-			if (ControlsHelper.AllowLoad(this))
+			if (ControlsHelper.AllowLoad(MainDataGrid))
 			{
 				var list = PanelSettings.ListSelection;
 				if (list?.Count > 0)
