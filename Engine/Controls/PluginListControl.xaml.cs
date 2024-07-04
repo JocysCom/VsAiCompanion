@@ -24,18 +24,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			Global.AppSettings.Plugins.ListChanged += Plugins_ListChanged;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
+			var profile = Security.MicrosoftResourceManager.Current.GetProfile();
+			profile.PropertyChanged += profile_PropertyChanged;
 		}
+
 
 		public ObservableCollection<PluginItem> CurrentItems { get; set; } = new ObservableCollection<PluginItem>();
 
-		private void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private async void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(AppData.MaxRiskLevel))
+			if (e.PropertyName == nameof(AppData.MaxRiskLevel) ||
+				e.PropertyName == nameof(AppData.MaxRiskLevelWhenSignedOut)
+				)
 			{
 				var view = (ICollectionView)MainItemsControl.ItemsSource;
-				view.Refresh();
+				await Helper.Delay(view.Refresh);
 			}
 		}
+
+		private async void profile_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(UserProfile.IsSignedIn))
+			{
+				var view = (ICollectionView)MainItemsControl.ItemsSource;
+				await Helper.Delay(view.Refresh);
+			}
+		}
+
 		private async void Plugins_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
 			await Helper.Delay(UpdateOnListChanged, AppHelper.NavigateDelayMs);

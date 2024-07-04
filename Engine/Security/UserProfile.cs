@@ -16,6 +16,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
+
 		[DefaultValue(null)]
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		private string _Name;
@@ -29,7 +30,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string AccountId
 		{
 			get => _AccountId;
-			set { SetProperty(ref _AccountId, value); OnPropertyChanged(nameof(IsSigned)); }
+			set { SetProperty(ref _AccountId, value); OnPropertyChanged(nameof(IsSignedIn)); }
 		}
 		private string _AccountId;
 
@@ -47,30 +48,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(ApiServiceType.Azure)]
 		public ApiServiceType ServiceType { get => _ServiceType; set => SetProperty(ref _ServiceType, value); }
 		private ApiServiceType _ServiceType;
-
-		public string GetToken(params string[] scopes)
-		{
-			var key = string.Join(" ", scopes);
-			var token = Tokens.FirstOrDefault(x => x.Key == key);
-			var decryptedValue = AppHelper.UserDecrypt(token?.Value);
-			return decryptedValue;
-		}
-
-		public bool IsSigned => !string.IsNullOrEmpty(AccountId);
-
-		public string SetToken(string value, params string[] scopes)
-		{
-			var key = string.Join(" ", scopes);
-			var token = Tokens.FirstOrDefault(x => x.Key == key);
-			if (token == null)
-			{
-				token = new KeyValue { Key = key };
-				Tokens.Add(token);
-			}
-			var encryptedValue = AppHelper.UserEncrypt(value);
-			token.Value = encryptedValue;
-			return value;
-		}
 
 		/// <summary>Access tokens.</summary>
 		public List<KeyValue> Tokens
@@ -91,10 +68,51 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(null), XmlElement(ElementName = nameof(IdToken))]
 		public string _IdTokenEncrypted { get; set; }
 
+		#region Token Methods
+
+		/// <summary>
+		/// Get a decrypted token from the stored tokens list by specifying the scope.
+		/// </summary>
+		public string GetToken(params string[] scopes)
+		{
+			var key = string.Join(" ", scopes);
+			var token = Tokens.FirstOrDefault(x => x.Key == key);
+			var decryptedValue = AppHelper.UserDecrypt(token?.Value);
+			return decryptedValue;
+		}
+
+		/// <summary>
+		/// Save a encrypted token to the stored tokens list by the scope.
+		/// </summary>
+		public string SetToken(string value, params string[] scopes)
+		{
+			var key = string.Join(" ", scopes);
+			var token = Tokens.FirstOrDefault(x => x.Key == key);
+			if (token == null)
+			{
+				token = new KeyValue { Key = key };
+				Tokens.Add(token);
+			}
+			var encryptedValue = AppHelper.UserEncrypt(value);
+			token.Value = encryptedValue;
+			return value;
+		}
+
+		#endregion
+
+		#region Non-Serialized Propertied
+
+		[XmlIgnore, JsonIgnore]
+		public bool IsSignedIn => !string.IsNullOrEmpty(AccountId);
+
 
 		[DefaultValue(null), XmlIgnore, JsonIgnore]
 		public ImageSource Image { get => _Image; set => SetProperty(ref _Image, value); }
 		private ImageSource _Image;
+
+		#endregion
+
+		#region Methods
 
 		public void Clear()
 		{
@@ -109,6 +127,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			return string.IsNullOrEmpty(Username);
 		}
+
+		#endregion
 
 	}
 

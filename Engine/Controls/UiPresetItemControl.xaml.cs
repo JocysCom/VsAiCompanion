@@ -86,7 +86,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				//IconPanel.BindData(value);
 				//DataContext = value;
-				ControlsHelper.SetItemsSource(MainDataGrid, value?.Items);
+				var items = value?.Items; //.OrderBy(x=>x.Path).ToArray();
+				ControlsHelper.SetItemsSource(MainDataGrid, items);
 			}
 		}
 		UiPresetItem _Item;

@@ -11,6 +11,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		/// <summary>
 		/// Read plain text content from files and documents. Supported document formats include: .docx, .xlsx, .xls, .pdf.
+		/// Supports reading multiple files at once.
 		/// </summary>
 		/// <param name="paths">List of files to read from.</param>
 		[RiskLevel(RiskLevel.Medium)]

@@ -5,7 +5,7 @@ using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Security.Principal;
 
-namespace JocysCom.VS.AiCompanion.Engine
+namespace JocysCom.VS.AiCompanion.Engine.Security
 {
 	/// <summary>
 	/// Allows restrict AI risk level opitons with domain groups.

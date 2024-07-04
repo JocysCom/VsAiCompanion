@@ -57,11 +57,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		#region Microsoft Azure/Entra Support
 
 		/// <summary>
-		/// This function will be called, when the authentication process fails because the access token needs re-authentication.
-		/// </summary>
-		public static Func<Task> RefreshDatabaseToken;
-
-		/// <summary>
 		/// Determines if the exception was caused by an expired token.
 		/// </summary>
 		private static bool IsTokenExpired(SqlException ex)
@@ -88,7 +83,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 #endif
 			var connection = NewConnection(connectionString);
 			// Empty file will be created at this point if not exists.
-			OpenConenctionWithTokenRefresh(connection);
+			connection.Open();
 			var success = true;
 			var addCLR = !isPortable && !IsAzureSQL(connection);
 			if (!isPortable)
@@ -114,27 +109,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return success;
 		}
 
-
-		private static void OpenConenctionWithTokenRefresh(DbConnection connection)
-		{
-			try
-			{
-				connection.Open();
-			}
-			catch (SqlException ex) when (IsTokenExpired(ex))
-			{
-				var refreshToken = RefreshDatabaseToken;
-				if (refreshToken == null)
-					throw;
-				// Refresh the token
-				RefreshDatabaseToken();
-				connection.Open();
-			}
-			catch
-			{
-				throw;
-			}
-		}
 
 		/// <summary>
 		/// Return true if Azure SQL and don't support CLR.
@@ -306,7 +280,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			if (!isPortable)
 			{
 				var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
-				//connection.AccessTokenCallback = GetAccessTokenAsync;
+				connection.AccessTokenCallback = GetAccessTokenAsync;
 				return connection;
 			}
 
@@ -317,11 +291,11 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 #if NETFRAMEWORK
 #else
-		public static Func<Task<Azure.Core.AccessToken>> GetAccessToken;
+		public static Func<Task<Azure.Core.AccessToken>> GetAzureSqlAccessToken;
 
 		private static async Task<SqlAuthenticationToken> GetAccessTokenAsync(SqlAuthenticationParameters parameters, CancellationToken cancellationToken)
 		{
-			var token = await GetAccessToken();
+			var token = await GetAzureSqlAccessToken();
 			return new SqlAuthenticationToken(token.Token, token.ExpiresOn);
 		}
 #endif

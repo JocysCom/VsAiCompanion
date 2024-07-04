@@ -26,7 +26,8 @@
 	<ScrollViewer>
 		<StackPanel Orientation="Vertical">
 			<WrapPanel Grid.Row="4">
-				<GroupBox Margin="3,0,0,3" Header="{StaticResource main_Standalone_Program}">
+
+				<GroupBox x:Name="ProgramGroupBox" Margin="3,0,0,3" Header="{StaticResource main_Standalone_Program}">
 					<WrapPanel Orientation="Vertical">
 						<CheckBox Name="AppAlwaysOnTopCheckBox" Content="{StaticResource main_App_Always_on_Top}" IsChecked="{Binding AppAlwaysOnTop, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						<CheckBox
@@ -51,7 +52,8 @@
 						</StackPanel>
 					</WrapPanel>
 				</GroupBox>
-				<GroupBox Margin="3,0,0,3" Header="{StaticResource main_Sending_Message}">
+
+				<GroupBox x:Name="SendingMessageGroupBox" Margin="3,0,0,3" Header="{StaticResource main_Sending_Message}">
 					<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 						<CheckBox
 							Name="ShowDocumentsAttachedWarningCheckBox"
@@ -62,9 +64,11 @@
 						<CheckBox Name="UseEnterToSendMessageCheckBox" Content="{StaticResource main_Use_Enter_to_send_the_message}" IsChecked="{Binding UseEnterToSendMessage, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					</WrapPanel>
 				</GroupBox>
-				<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Security}">
+
+				<GroupBox x:Name="SecurityGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Security}">
 					<Grid>
 						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
@@ -72,7 +76,7 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<Label VerticalAlignment="Center" Content="App max risk level" />
+						<Label VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevel}" />
 						<ComboBox
 							Name="MaximumRiskLevelComboBox"
 							Grid.Column="1"
@@ -81,19 +85,31 @@
 							ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
 							SelectedValue="{Binding MaxRiskLevel, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							SelectedValuePath="Key" />
-						<Label x:Name="DomainMaxRiskLevelNameLabel" Grid.Row="1" Content="Domain max risk level:" />
-						<StackPanel
-							Grid.Row="1"
-							Grid.Column="1"
-							HorizontalAlignment="Right"
-							Orientation="Horizontal">
-							<Label x:Name="DomainMaxRiskLevelValueLabel" Content="..." />
-							<Button Name="DomainMaxRiskLevelRefreshButton" Margin="3,0,3,0" Click="DomainMaxRiskLevelRefreshButton_Click">
-								<StackPanel>
-									<ContentControl Content="{StaticResource Icon_Refresh}" />
-								</StackPanel>
-							</Button>
-						</StackPanel>
+						<DockPanel x:Name="SecurityOption0" Grid.Row="1">
+							<Label x:Name="MaxRiskLevelWhenSignedOutLabel" VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevelWhenSignedOut}" />
+						</DockPanel>
+						<DockPanel x:Name="SecurityOption1" Grid.Row="1" Grid.Column="1">
+							<ComboBox
+								Name="MaxRiskLevelWhenSignedOutComboBox"
+								HorizontalAlignment="Right"
+								DisplayMemberPath="Value"
+								ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
+								SelectedValue="{Binding MaxRiskLevelWhenSignedOut, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								SelectedValuePath="Key" />
+						</DockPanel>
+						<DockPanel x:Name="SecurityOption2" Grid.Row="2">
+							<Label x:Name="DomainMaxRiskLevelNameLabel" Content="{StaticResource main_DomainMaxRiskLevel}" />
+						</DockPanel>
+						<DockPanel x:Name="SecurityOption3" Grid.Row="2" Grid.Column="1">
+							<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+								<Label x:Name="DomainMaxRiskLevelValueLabel" Content="..." />
+								<Button Name="DomainMaxRiskLevelRefreshButton" Margin="3,0,3,0" Click="DomainMaxRiskLevelRefreshButton_Click">
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_Refresh}" />
+									</StackPanel>
+								</Button>
+							</StackPanel>
+						</DockPanel>
 					</Grid>
 				</GroupBox>
 
@@ -110,7 +126,7 @@
 				</GroupBox>
 
 
-				<GroupBox Margin="3,0,3,3" Header="{StaticResource main_Other}">
+				<GroupBox x:Name="OtherGroupBox" Margin="3,0,3,3" Header="{StaticResource main_Other}">
 					<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 						<CheckBox
 							Name="IsSpellCheckEnabledCheckBox"

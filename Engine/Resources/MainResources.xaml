@@ -146,6 +146,10 @@
 	<sys:String x:Key="main_LockEnterpriseOptions_Name">Lock Enterprise Options</sys:String>
 	<sys:String x:Key="main_LockEnterpriseOptions_Help">Make enterprise options read-only.</sys:String>
 	<sys:String x:Key="main_UI_Presets">UI Presets</sys:String>
+	<sys:String x:Key="main_MaxRiskLevel">App max risk level</sys:String>
+	<sys:String x:Key="main_MaxRiskLevelWhenSignedOut">Max risk level when signed out</sys:String>
+	<sys:String x:Key="main_DomainMaxRiskLevel">Domain max risk level</sys:String>
+
 
 	<!--  Options → Microsoft Account → Azure Key Vault Items  -->
 	<sys:String x:Key="main_ActivationDate">Activation Date</sys:String>

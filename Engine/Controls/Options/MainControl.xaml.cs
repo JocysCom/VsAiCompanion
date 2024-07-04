@@ -65,7 +65,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			{
 				UpdateVideoInputDevices();
 				AppHelper.InitHelp(this);
-				UiPresetsManager.InitControl(this, true);
+				var exclude = new FrameworkElement[] {
+					SecurityOption0, SecurityOption1, SecurityOption2, SecurityOption3
+				};
+				UiPresetsManager.InitControl(this, true, exclude);
 			}
 		}
 
@@ -106,12 +109,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			var visibility = isDomainUser
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			DomainMaxRiskLevelRefreshButton.Visibility = visibility;
-			DomainMaxRiskLevelNameLabel.Visibility = visibility;
-			DomainMaxRiskLevelValueLabel.Visibility = visibility;
+			SecurityOption0.Visibility = visibility;
+			SecurityOption1.Visibility = visibility;
+			SecurityOption2.Visibility = visibility;
+			SecurityOption3.Visibility = visibility;
 			_ = Task.Run(() =>
 			{
-				var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel(cache);
+				var domainMaxRiskLevel = Security.DomainHelper.GetDomainUserMaxRiskLevel(cache);
 				var level = domainMaxRiskLevel?.ToString() ?? "N/A";
 				ControlsHelper.AppInvoke(() =>
 				{

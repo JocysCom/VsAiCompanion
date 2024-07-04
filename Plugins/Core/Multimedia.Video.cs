@@ -19,7 +19,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public Func<string, string[], Task<OperationResult<string>>> VideoToText { get; set; }
 
 		/// <summary>
-		/// Analyzes visual content like pictures and photos based on the given instructions with an AI model. Don't use this function for text files.
+		/// Analyzes visual content (pictures/photos) based on given instructions using an AI model.
+		/// Supported file types: .jpg, .png, .gif, .bmp, .tiff
+		/// Do not use for analyzing plain text files.
 		/// </summary>
 		/// <param name="instructions">Guidelines for AI to follow during image analysis.</param>
 		/// <param name="pathsOrUrls">Paths to local files or URLs to images for analysis. Supported image file types: .jpg, .png, .gif, .bmp, .tiff</param>

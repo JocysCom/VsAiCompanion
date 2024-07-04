@@ -41,7 +41,11 @@
 					Text="{StaticResource main_Vaults_Feature_Description}"
 					TextWrapping="Wrap" />
 			</Border>
-			<GroupBox Grid.Column="0" Margin="5" Header="{StaticResource main_Microsoft_Account}">
+			<GroupBox
+				x:Name="MicrosoftAccountGroupBox"
+				Grid.Column="0"
+				Margin="5"
+				Header="{StaticResource main_Microsoft_Account}">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
@@ -95,7 +99,7 @@
 			</GroupBox>
 			<!--  New GroupBox for Azure Key Vault inputs  -->
 			<GroupBox
-				x:Name="KeyVaultSettings"
+				x:Name="AzureKeyVaultSettings"
 				Grid.Column="1"
 				Margin="5"
 				Header="Azure Key Vault Settings">

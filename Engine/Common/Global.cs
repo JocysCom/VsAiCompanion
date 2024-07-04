@@ -259,7 +259,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var isOpenAi = baseUrl.Contains(".openai.com");
 			if (isMicrosoft || isOpenAi)
 			{
-				var apiSecretKey = await MicrosoftAccountManager.Current.CheckAndGet(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
+				var apiSecretKey = await MicrosoftResourceManager.Current.GetKeyVaultSecretValue(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
 				if (string.IsNullOrEmpty(apiSecretKey))
 					itemsRequired.Add("API Key");
 				//if (isOpenAi && string.IsNullOrEmpty(item.ApiOrganizationId))
@@ -387,8 +387,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			// Make sure DbContext supports SQL Server and SQLite
 			SqlInitHelper.AddDbProviderFactories();
-			// Allow SQL to refresh database access tokens by using method on `MicrosoftAccountManager` class.
-			SqlInitHelper.RefreshDatabaseToken = MicrosoftAccountManager.Current.RefreshDatabaseToken;
 			// Set a converter to convert SVG to images for the user interface.
 			SettingsListFileItem.ConvertToImage = Converters.SvgHelper.LoadSvgFromString;
 			ResetSettings = false;

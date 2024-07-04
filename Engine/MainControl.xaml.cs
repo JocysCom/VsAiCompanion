@@ -112,7 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UiPresetsManager.InitControl(InfoPanel);
 				try
 				{
-					await Security.MicrosoftAccountManager.Current.RefreshProfileImage();
+					await Security.MicrosoftResourceManager.Current.RefreshProfileImage();
 				}
 				catch (Exception ex)
 				{

@@ -19,7 +19,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (ControlsHelper.AllowLoad(this))
 			{
 				AppHelper.InitHelp(this);
-				UiPresetsManager.InitControl(this, true);
+				//UiPresetsManager.InitControl(this, true);
+				UiPresetsManager.AddControls(this);
 			}
 		}
 	}

@@ -14,15 +14,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			_token = token ?? throw new ArgumentNullException(nameof(token));
 		}
 
+		private AccessToken _GetAccessToken()
+			=> new AccessToken(_token, DateTimeOffset.MaxValue);
+
 		public override AccessToken GetToken(TokenRequestContext requestContext, CancellationToken cancellationToken)
-		{
-			return new AccessToken(_token, DateTimeOffset.MaxValue);
-		}
+			=> _GetAccessToken();
 
 		public override ValueTask<AccessToken> GetTokenAsync(TokenRequestContext requestContext, CancellationToken cancellationToken)
-		{
-			// Ensure you check if the required scopes are present in requestContext.Scopes
-			return new ValueTask<AccessToken>(new AccessToken(_token, DateTimeOffset.MaxValue));
-		}
+			=> new ValueTask<AccessToken>(_GetAccessToken());
 	}
 }

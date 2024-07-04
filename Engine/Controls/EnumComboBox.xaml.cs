@@ -163,7 +163,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				UpdateListMonitoring();
 				AppHelper.InitHelp(this);
-				UiPresetsManager.InitControl(this, true);
+				//UiPresetsManager.InitControl(this, true);
+				UiPresetsManager.AddControls(this);
 			}
 		}
 	}

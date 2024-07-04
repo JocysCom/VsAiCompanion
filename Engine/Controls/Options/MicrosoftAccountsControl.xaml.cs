@@ -30,7 +30,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var debugVisibility = InitHelper.IsDebug ? Visibility.Visible : Visibility.Collapsed;
-			KeyVaultSettings.Visibility = debugVisibility;
+			AzureKeyVaultSettings.Visibility = debugVisibility;
 			TestGroupBox.Visibility = debugVisibility;
 		}
 
@@ -44,13 +44,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var success = await MicrosoftAccountManager.Current.SignOut();
+				var success = await MicrosoftResourceManager.Current.SignOut();
 				LogPanel.Add(
 					success
 					? "User signed out successfully.\r\n"
 					: "No user is currently signed in.\r\n"
 					);
-				await MicrosoftAccountManager.Current.RefreshProfileImage(cancellationToken);
+				await MicrosoftResourceManager.Current.RefreshProfileImage(cancellationToken);
 			});
 		}
 		public async Task SignIn()
@@ -58,9 +58,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				LogPanel.Clear();
-				var scopes = new string[] { MicrosoftAccountManager.MicrosoftGraphScope };
-				await MicrosoftAccountManager.Current.SignIn(scopes, cancellationToken);
-				await MicrosoftAccountManager.Current.RefreshProfileImage(cancellationToken);
+				var scopes = new string[] { TokenHandler.MicrosoftGraphScope };
+				await MicrosoftResourceManager.Current.SignIn(scopes, cancellationToken);
+				await MicrosoftResourceManager.Current.RefreshProfileImage(cancellationToken);
 			});
 		}
 
@@ -107,11 +107,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 				var uri = new Uri(TestTextBox.Text);
 				var scope1 = $"{uri.Scheme}://{uri.Host}/.default";
 				var scopes = new[] { scope1 };
-				var token = await MicrosoftAccountManager.Current.GetAccessToken(scopes, interactive: true, cancellationToken);
+				var token = await TokenHandler.GetAccessToken(scopes, interactive: true, cancellationToken);
 				var accessToken = token.Token;
 				// Inspect the token
 				InspectToken(accessToken);
-				var contents = await MicrosoftAccountManager.Current.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken, cancellationToken);
+				var contents = await MicrosoftResourceManager.Current.MakeAuthenticatedApiCall(TestTextBox.Text, accessToken, cancellationToken);
 				LogPanel.Add($"{contents}\r\n");
 			}, true);
 		}
@@ -125,7 +125,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 			try
 			{
-				var result = await MicrosoftAccountManager.Current.Pca.AcquireTokenInteractive(new[] { MicrosoftAccountManager.MicrosoftAzureManagementScope }).ExecuteAsync();
+				var result = await TokenHandler.Pca.AcquireTokenInteractive(new[] { TokenHandler.MicrosoftAzureManagementScope }).ExecuteAsync();
 				return result.AccessToken;
 			}
 			catch (MsalException ex)
@@ -142,7 +142,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			MainTabControl.SelectedItem = LogTabPage;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var accounts = await MicrosoftAccountManager.Current.Pca.GetAccountsAsync();
+				var accounts = await TokenHandler.Pca.GetAccountsAsync();
 				LogPanel.Add($"Cached Accounts [{accounts.Count()}]:\r\n");
 				foreach (var account in accounts)
 				{
@@ -160,13 +160,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				await Task.Delay(0);
-				var scope = new[] { MicrosoftAccountManager.MicrosoftGraphScope };
-				var token = await MicrosoftAccountManager.Current.GetAccessToken(scope, interactive: true, cancellationToken);
+				var scope = new[] { TokenHandler.MicrosoftGraphScope };
+				var token = await TokenHandler.GetAccessToken(scope, interactive: true, cancellationToken);
 				var accessToken = token.Token;
 				LogPanel.Add($"Access Token:\r\n");
 				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
 				InspectToken(accessToken);
-				var idToken = MicrosoftAccountManager.Current.GetProfile().IdToken;
+				var idToken = MicrosoftResourceManager.Current.GetProfile().IdToken;
 				if (!string.IsNullOrEmpty(idToken))
 				{
 					LogPanel.Add($"ID Token:\r\n");
@@ -180,7 +180,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			MainTabControl.SelectedItem = LogTabPage;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				var user = await MicrosoftAccountManager.Current.GetMicrosoftUser(cancellationToken);
+				var user = await MicrosoftResourceManager.Current.GetMicrosoftUser(cancellationToken);
 				LogAsJson(user);
 			}, true);
 		}
@@ -191,7 +191,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				LogPanel.Add("Retrieved Subscriptions:");
-				var items = await MicrosoftAccountManager.Current.GetAzureSubscriptions(cancellationToken);
+				var items = await MicrosoftResourceManager.Current.GetAzureSubscriptions(cancellationToken);
 				foreach (var item in items)
 					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");
 			}, true);
@@ -233,8 +233,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 
 			LogPanel.Clear();
-			var profile = MicrosoftAccountManager.Current.GetProfile();
-			if (requiresSignIn && !profile.IsSigned)
+			var profile = MicrosoftResourceManager.Current.GetProfile();
+			if (requiresSignIn && !profile.IsSignedIn)
 			{
 				LogPanel.Add($"Please sign in first.\r\n");
 				return;
@@ -316,7 +316,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var profile = MicrosoftAccountManager.Current.GetProfile();
+				var profile = MicrosoftResourceManager.Current.GetProfile();
 				profile.PropertyChanged += Profile_PropertyChanged;
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
@@ -325,12 +325,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		private void Profile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(UserProfile.IsSigned))
+			if (e.PropertyName == nameof(UserProfile.IsSignedIn))
 				OnPropertyChanged(nameof(UserIsSigned));
 
 		}
 
-		public bool UserIsSigned => MicrosoftAccountManager.Current.GetProfile().IsSigned;
+		public bool UserIsSigned => MicrosoftResourceManager.Current.GetProfile().IsSignedIn;
 
 		#region ■ INotifyPropertyChanged
 

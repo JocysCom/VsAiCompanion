@@ -61,6 +61,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public RiskLevel MaxRiskLevel { get => _MaxRiskLevel; set => SetProperty(ref _MaxRiskLevel, value); }
 		RiskLevel _MaxRiskLevel;
 
+		[DefaultValue(RiskLevel.Critical)]
+		public RiskLevel MaxRiskLevelWhenSignedOut { get => _MaxRiskLevelWhenSignedOut; set => SetProperty(ref _MaxRiskLevelWhenSignedOut, value); }
+		RiskLevel _MaxRiskLevelWhenSignedOut;
+
 		[DefaultValue(false)]
 		public bool IsEnterprise { get => _IsEnterprise; set => SetProperty(ref _IsEnterprise, value); }
 		private bool _IsEnterprise;

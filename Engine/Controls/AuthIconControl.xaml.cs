@@ -64,12 +64,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var profile = MicrosoftAccountManager.Current.GetProfile();
+				var profile = MicrosoftResourceManager.Current.GetProfile();
 				profile.PropertyChanged += Profile_PropertyChanged;
-				Item = MicrosoftAccountManager.Current.GetProfile();
+				Item = MicrosoftResourceManager.Current.GetProfile();
 				AdjustEllipse();
 				AppHelper.InitHelp(this);
-				UiPresetsManager.InitControl(this, true);
+				UiPresetsManager.AddControls(this);
+				//UiPresetsManager.InitControl(this, true);
 			}
 		}
 
@@ -122,16 +123,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Profile_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(UserProfile.IsSigned))
+			if (e.PropertyName == nameof(UserProfile.IsSignedIn))
 				UpdateButtons();
 		}
 
 		public void UpdateButtons()
 		{
-			var profile = MicrosoftAccountManager.Current.GetProfile();
-			SignInButton.Visibility = profile.IsSigned
+			var profile = MicrosoftResourceManager.Current.GetProfile();
+			SignInButton.Visibility = profile.IsSignedIn
 				? Visibility.Collapsed : Visibility.Visible;
-			SignOutButton.Visibility = !profile.IsSigned
+			SignOutButton.Visibility = !profile.IsSignedIn
 				? Visibility.Collapsed : Visibility.Visible;
 		}
 

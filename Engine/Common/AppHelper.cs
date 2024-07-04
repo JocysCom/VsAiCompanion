@@ -796,6 +796,12 @@ EndFragment:{3:00000000}";
 		{
 			// Use max risk level set by all.
 			var maxRiskLevel = Global.AppSettings.MaxRiskLevel;
+			var userIsSigned = MicrosoftResourceManager.Current.GetProfile().IsSignedIn;
+			if (!userIsSigned)
+				maxRiskLevel = (RiskLevel)Math.Min(
+					(int)maxRiskLevel,
+					(int)Global.AppSettings.MaxRiskLevelWhenSignedOut);
+
 			var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel();
 			// If domain max risk level exsits and it is more restrictive then use it.
 			if (domainMaxRiskLevel.HasValue && domainMaxRiskLevel.Value < maxRiskLevel)

@@ -14,12 +14,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static Dictionary<string, VisibilityItem> AllUiElements = new Dictionary<string, VisibilityItem>();
 
-		public static void InitControl(FrameworkElement root, bool includeTop = false)
+		public static void InitControl(
+			FrameworkElement root, bool includeTop = false,
+				FrameworkElement[] excludeElements = null
+			)
 		{
 			lock (AllUiElements)
 			{
 				var namedElements = GetDirectElementsWithNameProperty(root, includeTop);
 				var newPaths = namedElements.Keys.Except(AllUiElements.Keys).ToArray();
+				if (excludeElements != null)
+				{
+					var excludePaths = excludeElements.Select(x => GetControlPath(x));
+					newPaths = namedElements.Keys.Except(excludePaths).ToArray();
+				}
 				// Add new elements to dictionary.
 				foreach (var newPath in newPaths)
 				{

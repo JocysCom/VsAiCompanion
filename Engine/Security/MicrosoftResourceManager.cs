@@ -1,5 +1,4 @@
 ﻿using Azure.Core;
-using Azure.Identity;
 using Azure.ResourceManager;
 using Azure.Security.KeyVault.Secrets;
 using JocysCom.ClassLibrary;
@@ -17,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 
 #if NETFRAMEWORK
 #else
@@ -43,148 +43,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 	/// This class aims to simplify the integration with Microsoft identity services, providing a seamless 
 	/// authentication experience in your .NET desktop application.
 	/// </summary>
-	public class MicrosoftAccountManager
+	public class MicrosoftResourceManager
 	{
 
-		/*
-
-		SECURITY:
-
-			Credential - An object used to prove the identity of a user or service.
-						 It can contain a username and password, tokens, certificates, or other authentication information.
-			Scope      - A string that specifies a particular resource and set of permissions requested for that resource.
-						 Scopes are supplied with credentials when requesting an access token.
-			Token      - A digital object created after a user or service successfully authenticates.
-						 Tokens require credentials and scopes to be created.
-			Account    - An object representing the authenticated user's identity.
-
-		TOKEN TYPES:
-
-			- Access Token - Sent instead of credentials to authorize access to resources on behalf of the user.
-			- ID Token - Contains identity information about the user. They should NOT be sent to an API.
-
-		An Access Token must contain:
-
-			- Expiry Date: The date and time after which the token is no longer valid.
-			- Scope: The list of resources or operations that the token grants access to.
-			- Permissions: The specific actions that the token holder is allowed to perform on the resources.
-			- Digital Signature: A cryptographic signature that can be used to verify the token's integrity and authenticity, proving that it was issued by the genuine provider.
-
-		USER/SERVICE 
-		│
-		│    AUTHENTICATION SERVER: Verifies Credentials
-		├──► Credentials (e.g., username & password, token, certificate) + Optional Scopes
-		│◄── Tokens (Access Token, ID Token)
-		│
-		│    RESOURCE SERVER/SERVICE: Verifies Token (Using Digital Signature)
-		├──► Access Token
-		│◄── Resource
-
-		*/
-
-		// Preconfigured set of permissions. Usually formatted as https://{resource}/{permission}:
-
-		// note the // as it's needed for v1 endpoints
-		public const string MicrosoftDatabaseScopes = "https://database.windows.net//.default";
-		public const string MicrosoftGraphScope = "https://graph.microsoft.com/.default";
-		public const string MicrosoftAzureManagementScope = "https://management.azure.com/.default";
-		public const string MicrosoftAzureVaultScope = "https://vault.azure.net/.default";
-		public const string MicrosoftAzureSqlScope = "https://sql.azuresynapse-dogfood.net/user_impersonation";
-		// Fully qualified URI for "User.Read";
-		// Permissions to sign in the user and read the user's profile.
-		public const string MicrosoftGraphUserReadScope = "https://graph.microsoft.com/User.Read";
-
-		private const string CommonAuthority = "https://login.microsoftonline.com/common";
-		private const string OrganizationsAuthority = "https://login.microsoftonline.com/organizations";
-		private const string ConsumersAuthority = "https://login.microsoftonline.com/consumers";
-		private const string TenantAuthority = "https://login.microsoftonline.com/{0}";
-
-		// Using DefaultAzureCredential
-		//
-		// The DefaultAzureCredential includes a chain of nine different credential types,
-		// and it will attempt to authenticate using each of these in turn, stopping when one succeeds.
-		// These credentials include:
-		// 1.EnvironmentCredential
-		// 2.ManagedIdentityCredential
-		// 3.SharedTokenCacheCredential
-		// 4.VisualStudioCredential
-		// 5.VisualStudioCodeCredential
-		// 6.AzureCliCredential
-		// 7.InteractiveBrowserCredential
-		// 8.AzurePowerShellCredential
-		// 9.InteractiveBrowserCredential
-
-
 		static readonly object _currentLock = new object();
-		static MicrosoftAccountManager _Current;
-		public static MicrosoftAccountManager Current
+		static MicrosoftResourceManager _Current;
+		public static MicrosoftResourceManager Current
 		{
 			get
 			{
 				lock (_currentLock)
-					return _Current = _Current ?? new MicrosoftAccountManager();
+					return _Current = _Current ?? new MicrosoftResourceManager();
 			}
-		}
-
-		public IPublicClientApplication Pca
-		{
-			get
-			{
-				if (_Pca == null)
-				{
-					var tenantId = Global.AppSettings?.AppTenantId;
-					var builder = PublicClientApplicationBuilder
-						.Create(Global.AppSettings?.AppClientId);
-					builder = string.IsNullOrEmpty(tenantId)
-						? builder.WithAuthority(CommonAuthority)
-						: builder.WithAuthority(AzureCloudInstance.AzurePublic, tenantId);
-					builder = builder
-						.WithRedirectUri("http://localhost")
-						.WithDefaultRedirectUri();
-					_Pca = builder.Build();
-#if NETFRAMEWORK
-#else
-					SqlInitHelper.GetAccessToken = GetAccessToken;
-#endif
-				}
-				return _Pca;
-			}
-		}
-		IPublicClientApplication _Pca;
-
-		/// <summary>
-		/// Store token cache in the app settings.
-		/// </summary>
-		/// <param name="tokenCache"></param>
-		public void EnableTokenCache(ITokenCache tokenCache)
-		{
-			tokenCache.SetBeforeAccess(BeforeAccessNotification);
-			tokenCache.SetAfterAccess(AfterAccessNotification);
-		}
-
-		private void BeforeAccessNotification(TokenCacheNotificationArgs args)
-		{
-			args.TokenCache.DeserializeMsalV3(Global.AppSettings.AzureTokenCache);
-		}
-
-		private void AfterAccessNotification(TokenCacheNotificationArgs args)
-		{
-			// if the access operation resulted in a cache update
-			if (args.HasStateChanged)
-				Global.AppSettings.AzureTokenCache = args.TokenCache.SerializeMsalV3();
-		}
-
-		/// <summary>
-		/// Determine if it is a Microsoft account by checking if the access token has a specific tenant ID for Microsoft accounts.
-		/// </summary>
-		public async Task<bool> IsMicrosoftAccount()
-		{
-			var profile = GetProfile();
-			// If access token is empty then application must use
-			// user 
-			var accessToken = profile.IdToken ?? profile.GetToken(MicrosoftGraphScope);
-			TokenCredential credential = await GetTokenCredential();
-			return IsConsumerAccount(accessToken).GetValueOrDefault();
 		}
 
 
@@ -197,10 +67,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (JocysCom.ClassLibrary.Security.PermissionHelper.IsDomainUser())
 				userType |= UserType.WindowsDomain;
 
-			var scopes = new[] { MicrosoftGraphScope };
+			var scopes = new[] { TokenHandler.MicrosoftGraphScope };
 
 			var s = DateTime.UtcNow;
-			var token = await GetAccessToken(scopes, interactive: false);
+			var token = await TokenHandler.GetAccessToken(scopes, interactive: false);
 			var d = DateTime.UtcNow.Subtract(s);
 
 			var isMicrosoftUser = token.Token != null;
@@ -244,7 +114,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		public async Task RefreshProfileImage(CancellationToken cancellationToken = default)
 		{
 			var profile = GetProfile();
-			var accessToken = profile.GetToken(MicrosoftGraphScope);
+			var accessToken = profile.GetToken(TokenHandler.MicrosoftGraphScope);
 			// If user is not signed, return.
 			if (string.IsNullOrEmpty(accessToken))
 				return;
@@ -303,115 +173,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			Global.AppSettings.AppTenantId = profile.TenantId;
 		}
 
-		/// <summary>
-		/// // By default return credentials that user used to sign in. 
-		/// </summary>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
-		public async Task<TokenCredential> GetTokenCredential(
-			bool interactive = false,
-			CancellationToken cancellationToken = default)
-		{
-			// Please not that access to azure could be denied to consumer accounts from business domain environment.
-			var credentials = await GetAppTokenCredential(cancellationToken);
-			if (credentials != null)
-				return credentials;
-			return await GetWinTokenCredentials(interactive);
-		}
-
-		public async Task<TokenCredential> GetTokenCredential(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
-		{
-			var profile = GetProfile();
-			var cachedToken = profile.GetToken(scopes);
-			if (!string.IsNullOrEmpty(cachedToken))
-			{
-				// Use cached token
-				return new AccessTokenCredential(cachedToken);
-			}
-			// Get new token from SignIn if no valid token is found
-			var result = await SignIn(scopes, cancellationToken);
-			if (!result.Success || result.Data == null)
-				return null;
-			return new AccessTokenCredential(result.Data.AccessToken);
-		}
-
-		public async Task RefreshDatabaseToken()
-		{
-			var scopes = new string[] { MicrosoftAzureSqlScope };
-			var result = await Current.SignIn(scopes); // Auto-interactive sign-in
-			if (!result.Success)
-			{
-				throw new InvalidOperationException("Failed to refresh the token.");
-			}
-		}
-
-#if NETFRAMEWORK
-#else
-		private static async Task<AccessToken> GetAccessToken()
-		{
-			// Define the scope required for Azure SQL Database
-			var scopes = new string[] { "https://database.windows.net//.default" };
-			try
-			{
-				// Get the token using existing methods
-				var token = await Current.GetAccessToken(scopes, interactive: false);
-				// Return the SqlAuthenticationToken
-				return token;
-			}
-			catch (Exception ex)
-			{
-				// Handle exceptions
-				Console.WriteLine($"Error acquiring access token: {ex.Message}");
-				return default;
-			}
-		}
-#endif
-
-
-		/// <summary>
-		/// Get the credentials signed into the current app. Get refreshed token if it is expired.
-		/// </summary>
-
-		public async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
-		{
-			var accessToken = GetProfile().GetToken(MicrosoftGraphScope);
-			if (string.IsNullOrEmpty(accessToken))
-				return null;
-			// Ensure the token has the required scopes
-			var scopes = new string[] { MicrosoftGraphScope };
-			var tokenCredential = new AccessTokenCredential(accessToken);
-			var tokenRequestContext = new TokenRequestContext(scopes);
-			var token = tokenCredential.GetToken(tokenRequestContext, cancellationToken);
-			var isExired = token.ExpiresOn < DateTimeOffset.UtcNow;
-			if (isExired)
-			{
-				// Re-acquire the token with the required scopes
-				var result = await SignIn(scopes, cancellationToken);
-				if (!result.Success)
-					return null;
-			}
-			var credential = new AccessTokenCredential(accessToken);
-			return credential;
-		}
-
-		/// <summary>
-		/// Get windows credentials the app is running with.
-		/// </summary>
-		public async Task<TokenCredential> GetWinTokenCredentials(bool interactive = false)
-		{
-			await Task.Delay(0);
-			var options = new DefaultAzureCredentialOptions();
-			options.ExcludeInteractiveBrowserCredential = !interactive;
-			// Default credentials of the Azure environment in which application is running.
-			// Credentials currently used to log into Windows.
-			var credential = new DefaultAzureCredential(options);
-			return credential;
-		}
 
 		#endregion
 
+
 		#region SignIn and SignOut
 
+		/// <summary>
+		/// Acquire access token silently or interactive.
+		/// </summary>
 		public async Task<OperationResult<AuthenticationResult>> SignIn(
 			string[] scopes, CancellationToken cancellationToken = default)
 		{
@@ -445,15 +215,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 					Applciaiton This data will be stored on the local PC.
 
 				*/
-				var account = await GetCurrentAccount();
-				if (account == null)
+				// Load saved user profile
+				var profile = GetProfile();
+				if (string.IsNullOrEmpty(profile.AccountId))
 				{
 					requiresUI = true;
 				}
 				else
 				{
-					// Get result that includes access tokens that grant the application the rights to fetch user information.
-					result = await Pca.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
+					// Returns all the available accounts in the user token cache for the application.
+					var accounts = await TokenHandler.Pca.GetAccountsAsync();
+					// Find the account with the saved UserId
+					var account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == profile.AccountId);
+					if (account == null)
+					{
+						requiresUI = true;
+					}
+					else
+					{
+						// Get result that includes access tokens that grant the application the rights to fetch user information.
+						result = await TokenHandler.Pca.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
+					}
 				}
 			}
 			catch (MsalUiRequiredException ex)
@@ -462,7 +244,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				{
 					try
 					{
-						var builder = Pca.AcquireTokenInteractive(scopes);
+						var builder = TokenHandler.Pca.AcquireTokenInteractive(scopes);
 						if (!string.IsNullOrEmpty(ex.Claims))
 							builder = builder.WithClaims(ex.Claims);
 						result = await builder.ExecuteAsync(cancellationToken);
@@ -489,7 +271,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 					// No token in the cache, attempt to acquire a token using Windows Integrated Authentication
 					//var builder = Pca.AcquireTokenByIntegratedWindowsAuth(scopes);
 					// Multi-factor authentication (MFA) is a multi-step account login process that requires users to enter more information than just a password. 
-					var builder = Pca.AcquireTokenInteractive(scopes);
+					var builder = TokenHandler.Pca.AcquireTokenInteractive(scopes);
 					result = await builder.ExecuteAsync(cancellationToken);
 				}
 				catch (Exception ex)
@@ -503,11 +285,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<bool> SignOut()
 		{
-			var account = await GetCurrentAccount();
-			if (account != null)
-				await Pca.RemoveAsync(account);
 			var profile = GetProfile();
 			profile.Clear();
+			var accounts = await TokenHandler.Pca.GetAccountsAsync();
+			foreach (var account in accounts)
+				await TokenHandler.Pca.RemoveAsync(account);
 			return true;
 		}
 
@@ -515,57 +297,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region Authentication
 
-		/// <summary>
-		/// Get access token.
-		/// </summary>
-		/// <param name="scopes">Set of permissions.</param>
-		public async Task<AccessToken> GetAccessToken(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
-		{
-			// Define credentials that will be used to access resources.
-			var credential = await GetTokenCredential(interactive, cancellationToken);
-			// Add wanted permissions
-			var context = new TokenRequestContext(scopes);
-			// Get access token.
-			try
-			{
-				var token = await credential.GetTokenAsync(context, cancellationToken);
-				//if (token.ExpiresOn <= DateTimeOffset.UtcNow)
-				//{
-				//	// Refresh the token
-				//	var result = await SignIn(scopes, cancellationToken);
-				//	if (result.Success)
-				//		token = await credential.GetTokenAsync(context, cancellationToken);
-				//}
-				return token;
-			}
-			catch (Exception)
-			{
-			}
-			return default;
-		}
-
-		/// <summary>
-		/// Load this once when app starts.
-		/// </summary>
-		/// <returns></returns>
-		public async Task<IAccount> GetCurrentAccount()
-		{
-			EnableTokenCache(Pca.UserTokenCache);
-			// Load saved user profile
-			var profile = GetProfile();
-			if (string.IsNullOrEmpty(profile.AccountId))
-				return null;
-			// Returns all the available accounts in the user token cache for the application.
-			var accounts = await Pca.GetAccountsAsync();
-			// Attempt to find the account with the saved UserId
-			var account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == profile.AccountId);
-			return account;
-		}
-
 		public async Task<Microsoft.Graph.Models.User> GetMicrosoftUser(CancellationToken cancellationToken = default)
 		{
 			var profile = GetProfile();
-			var accessToken = profile.GetToken(MicrosoftGraphScope);
+			var accessToken = profile.GetToken(TokenHandler.MicrosoftGraphScope);
 			// If user is not signed, return.
 			if (string.IsNullOrEmpty(accessToken))
 				return null;
@@ -609,10 +344,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
+		#region Microsoft Resources
+
+
+		/// <summary>
+		/// Determine if it is a Microsoft account by checking if the access token has a specific tenant ID for Microsoft accounts.
+		/// </summary>
+		public async Task<bool> IsMicrosoftAccount()
+		{
+			var profile = GetProfile();
+			// If access token is empty then application must use user.
+			var accessToken = profile.IdToken ?? profile.GetToken(TokenHandler.MicrosoftGraphScope);
+			TokenCredential credential = await TokenHandler.GetTokenCredential();
+			return IsConsumerAccount(accessToken).GetValueOrDefault();
+		}
+
+		public bool? IsConsumerAccount(string accessToken, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrEmpty(accessToken))
+				return null;
+			var handler = new JwtSecurityTokenHandler();
+			var jsonToken = handler.ReadToken(accessToken) as JwtSecurityToken;
+			var tid = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == "tid")?.Value;
+			return tid == "9188040d-6c67-4c5b-b112-36a304b66dad";
+		}
+
 		public async Task<Dictionary<string, string>> GetAzureSubscriptions(CancellationToken cancellationToken = default)
 		{
-			var scopes = new[] { MicrosoftAzureManagementScope };
-			var credential = await GetTokenCredential(scopes, cancellationToken: cancellationToken);
+			var scopes = new[] { TokenHandler.MicrosoftAzureManagementScope };
+			var credential = await TokenHandler.GetTokenCredential(scopes, cancellationToken: cancellationToken);
 
 			// Initialize the ArmClient
 			var armClient = new ArmClient(credential);
@@ -639,8 +399,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return subscriptionsDict;
 		}
 
-		#region API Calls
-
 		public async Task<string> MakeAuthenticatedApiCall(
 			string url, string accessToken,
 			CancellationToken cancellationToken = default)
@@ -660,7 +418,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			// Define the scope required to access the target resource
 			// This is a common example, you should replace it with the correct scope for your resource
 			var scopes = new string[] { $"{url}/.default" };
-			var token = await GetAccessToken(scopes, interactive: true, cancellationToken);
+			var token = await TokenHandler.GetAccessToken(scopes, interactive: true, cancellationToken);
 			// Set up HttpClient with the acquired token
 			using (var httpClient = new HttpClient())
 			{
@@ -682,12 +440,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
-		#region Key Vault
+		#region Key Vaults
 
 		public async Task<KeyVaultSecret> GetSecretFromKeyVault(string keyVaultName, string secretName, CancellationToken cancellationToken = default)
 		{
-			var scopes = new[] { MicrosoftAzureVaultScope };
-			var credential = await GetTokenCredential(scopes, cancellationToken: cancellationToken);
+			var scopes = new[] { TokenHandler.MicrosoftAzureVaultScope };
+			var credential = await TokenHandler.GetTokenCredential(scopes, cancellationToken: cancellationToken);
 			// Azure Key Vault URI
 			string kvUri = $"https://{keyVaultName}.vault.azure.net/";
 			// Create a new secret client
@@ -697,7 +455,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return secret;
 		}
 
-		public async Task<VaultItem> RefreshVaultItem(Guid? id,
+		public async Task<VaultItem> RefreshItemFromKeyVaultSecret(Guid? id,
 			ObservableCollection<CancellationTokenSource> cancellationTokenSources = default)
 		{
 			if (id == null || id == Guid.Empty)
@@ -721,7 +479,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return item;
 		}
 
-		public async Task<string> CheckAndGet(Guid? vaultItemId, string defaultSecret,
+		public async Task<string> GetKeyVaultSecretValue(Guid? vaultItemId, string defaultSecret,
 			ObservableCollection<CancellationTokenSource> cancellationTokenSources = default)
 		{
 			if (vaultItemId == null)
@@ -731,21 +489,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				return null;
 			var update = item.ShouldCheckForUpdates();
 			if (update)
-				await RefreshVaultItem(item.Id, cancellationTokenSources);
+				await RefreshItemFromKeyVaultSecret(item.Id, cancellationTokenSources);
 			return item.Value;
 		}
 
 		#endregion
-
-		public bool? IsConsumerAccount(string accessToken, CancellationToken cancellationToken = default)
-		{
-			if (string.IsNullOrEmpty(accessToken))
-				return null;
-			var handler = new JwtSecurityTokenHandler();
-			var jsonToken = handler.ReadToken(accessToken) as JwtSecurityToken;
-			var tid = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == "tid")?.Value;
-			return tid == "9188040d-6c67-4c5b-b112-36a304b66dad";
-		}
 
 	}
 }

@@ -1,3 +1,7 @@
+2024-07-04 v1.12.20
+
+- New: Option "Max risk level when signed out" when the app is in the company domain.
+
 2024-07-03 v1.12.19
 
 - Fix: Key vault settings not being saved when updated. 

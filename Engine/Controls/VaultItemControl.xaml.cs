@@ -93,7 +93,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsOnCooldown(sender))
 				return;
-			_ = await MicrosoftAccountManager.Current.RefreshVaultItem(Item.Id, cancellationTokenSources);
+			_ = await MicrosoftResourceManager.Current.RefreshItemFromKeyVaultSecret(Item.Id, cancellationTokenSources);
 		}
 
 		private void CopyButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -112,7 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var profile = MicrosoftAccountManager.Current.GetProfile();
+				var profile = MicrosoftResourceManager.Current.GetProfile();
 				profile.PropertyChanged += Profile_PropertyChanged;
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this);
@@ -121,11 +121,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Profile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(UserProfile.IsSigned))
+			if (e.PropertyName == nameof(UserProfile.IsSignedIn))
 				OnPropertyChanged(nameof(UserIsSigned));
 		}
 
-		public bool UserIsSigned => MicrosoftAccountManager.Current.GetProfile().IsSigned;
+		public bool UserIsSigned => MicrosoftResourceManager.Current.GetProfile().IsSignedIn;
 
 
 		#region ■ INotifyPropertyChanged

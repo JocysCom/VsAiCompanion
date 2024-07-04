@@ -40,12 +40,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.IsOnCooldown(sender))
 				return;
-			_ = await MicrosoftAccountManager.Current.RefreshVaultItem(Item?.Id);
+			_ = await MicrosoftResourceManager.Current.RefreshItemFromKeyVaultSecret(Item?.Id);
 		}
 
 		private async void AzureVaultValueRefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			var credential = await Security.MicrosoftAccountManager.Current.GetTokenCredential();
+			var credential = await TokenHandler.GetTokenCredential();
 			if (credential == null)
 				return;
 		}
@@ -144,7 +144,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				VaultItems2 = Global.AppSettings.VaultItems;
 				OnPropertyChanged(nameof(VaultItems2));
 				ValuePasswordBox.PasswordChanged += ValuePasswordBox_PasswordChanged;
-				var profile = MicrosoftAccountManager.Current.GetProfile();
+				var profile = MicrosoftResourceManager.Current.GetProfile();
 				profile.PropertyChanged += Profile_PropertyChanged;
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
@@ -153,11 +153,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Profile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(UserProfile.IsSigned))
+			if (e.PropertyName == nameof(UserProfile.IsSignedIn))
 				OnPropertyChanged(nameof(UserIsSigned));
 		}
 
-		public bool UserIsSigned => MicrosoftAccountManager.Current.GetProfile().IsSigned;
+		public bool UserIsSigned => MicrosoftResourceManager.Current.GetProfile().IsSignedIn;
 
 		#region ■ INotifyPropertyChanged
 
