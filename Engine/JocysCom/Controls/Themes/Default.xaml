@@ -618,7 +618,7 @@
 							<RowDefinition Height="*" />
 						</Grid.RowDefinitions>
 						<TabPanel x:Name="HeaderPanel" Panel.ZIndex="1" IsItemsHost="True" />
-						<!--  Only Border is set SnapsToDevicePixels="True" (without affecting the content of the Border).  -->
+						<!--  Only the Border is set to SnapsToDevicePixels="True" (without affecting the contents of the Border), to avoid visual artifacts.  -->
 						<Border
 							Grid.Row="1"
 							BorderBrush="{StaticResource BorderDark}"
