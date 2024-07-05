@@ -1,26 +1,18 @@
 # Ask for the environment abbreviation
 $env = Read-Host -Prompt "Enter the name of the environment (dev, test, prod, ...)"
 
-function GetConfig {
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$FilePath
-    )
-    $config = @{}
-    $fileContent = Get-Content $FilePath
-    $fileContent | ForEach-Object {
-        if ($_ -match '(\w+)\s*=\s*"(.+?)"') {
-            $config[$matches[1]] = $matches[2]
-            Write-Host "$($matches[1]) = $($matches[2])"
-        }
-    }
-    return $config
-}
-
 # Read and parse the backend file
-$backendConfig = GetConfig "backend.${env}.tfvars"
+$backendConfigFilePath = "backend.${env}.tfvars"
+$backendConfig = @{}
+Get-Content $backendConfigFilePath | ForEach-Object {
+    if ($_ -match '(\w+)\s*=\s*\"(.+?)\"') {
+        $backendConfig[$matches[1]] = $matches[2]
+    }
+}
 $resourceGroupName = $backendConfig["resource_group_name"]
 $storageAccountName = $backendConfig["storage_account_name"]
+Write-Host "resource_group_name = $resourceGroupName"
+Write-Host "storage_account_name = $storageAccountName"
 
 # Logout from Azure to ensure a clean login
 az logout

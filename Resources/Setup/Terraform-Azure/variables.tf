@@ -11,7 +11,7 @@ variable "org" {
 variable "app" {
   description = "The Application"
   type        = string
-  default     = "aicomp"
+  default     = "product"
 }
 
 variable "env" {

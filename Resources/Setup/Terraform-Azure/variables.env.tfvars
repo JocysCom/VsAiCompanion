@@ -4,6 +4,7 @@
 # terraform apply -refresh-only -var-file="variables.env.tfvars"
 
 org = "contoso"
+app = "product"
 env = "dev"
 
 kvs_openai_value = "<your_openai_api_key>"

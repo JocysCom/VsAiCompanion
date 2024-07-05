@@ -68,6 +68,7 @@ $env:TF_VAR_ARM_CLIENT_SECRET = $password
 $env:TF_VAR_ARM_TENANT_ID = $tenantId
 $env:TF_VAR_ARM_SUBSCRIPTION_ID = (az account show --query 'id' -o tsv)
 
+$env:ARM_CLIENT_NAME = $spName
 $env:ARM_CLIENT_ID = $sp.appId
 $env:ARM_CLIENT_SECRET = $password
 $env:ARM_TENANT_ID = $tenantId
