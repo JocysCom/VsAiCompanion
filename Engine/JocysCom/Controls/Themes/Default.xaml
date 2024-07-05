@@ -607,7 +607,6 @@
 	<!--  TabControl  -->
 	<!--  This style is making control to fail garbage collection (leak memory)  -->
 	<Style x:Key="TabControl_Default" TargetType="TabControl">
-		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="VerticalContentAlignment" Value="Stretch" />
 		<Setter Property="Template">
@@ -619,19 +618,20 @@
 							<RowDefinition Height="*" />
 						</Grid.RowDefinitions>
 						<TabPanel x:Name="HeaderPanel" Panel.ZIndex="1" IsItemsHost="True" />
+						<!--  Only the Border is set to SnapsToDevicePixels="True" (without affecting the contents of the Border), to avoid visual artifacts.  -->
 						<Border
 							Grid.Row="1"
 							BorderBrush="{StaticResource BorderDark}"
 							BorderThickness="1"
-							CornerRadius="0,5,5,5">
-							<Grid>
-								<Grid.OpacityMask>
-									<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
-								</Grid.OpacityMask>
-								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundLight}" CornerRadius="0,5,5,5" />
-								<ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" ClipToBounds="True" ContentSource="SelectedContent" />
-							</Grid>
-						</Border>
+							CornerRadius="0,5,5,5"
+							SnapsToDevicePixels="True" />
+						<Grid Grid.Row="1" Margin="1">
+							<Grid.OpacityMask>
+								<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+							</Grid.OpacityMask>
+							<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundLight}" CornerRadius="0,5,5,5" />
+							<ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" ClipToBounds="True" ContentSource="SelectedContent" />
+						</Grid>
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>
@@ -982,8 +982,11 @@
 	</Style>
 
 	<Style x:Key="ContentControlCell_Default" BasedOn="{StaticResource ContentControl_Default}" TargetType="ContentControl">
-		<Setter Property="Margin" Value="3,0,16,0" />
+		<Setter Property="Margin" Value="3,0,3,0" />
+		<Setter Property="Width" Value="16" />
+		<Setter Property="Height" Value="16" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalAlignment" Value="Left" />
 	</Style>
 
 	<Style x:Key="CheckBoxCell_Default" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
