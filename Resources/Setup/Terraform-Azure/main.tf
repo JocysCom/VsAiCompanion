@@ -27,6 +27,10 @@ terraform {
 # Configure the Microsoft Azure Active Directory provider
 provider "azuread" {
   # Optionally: configure authentication details
+  subscription_id = var.ARM_SUBSCRIPTION_ID
+  tenant_id       = var.ARM_TENANT_ID
+  client_id       = var.ARM_CLIENT_ID
+  client_secret   = var.ARM_CLIENT_SECRET
 }
 
 # Configure the Microsoft Azure Resource Manager provider
@@ -34,9 +38,14 @@ provider "azurerm" {
   features {}
   # Optionally: configure authentication details
   subscription_id = var.ARM_SUBSCRIPTION_ID
+  tenant_id       = var.ARM_TENANT_ID
   client_id       = var.ARM_CLIENT_ID
   client_secret   = var.ARM_CLIENT_SECRET
-  tenant_id       = var.ARM_TENANT_ID
+}
+
+variable "ARM_TENANT_ID" {
+  description = "Directory (Tenant) ID"
+  type        = string
 }
 
 variable "ARM_SUBSCRIPTION_ID" {
@@ -50,12 +59,7 @@ variable "ARM_CLIENT_ID" {
 }
 
 variable "ARM_CLIENT_SECRET" {
-  description = "Service Principal Client Secret"
-  type        = string
-}
-
-variable "ARM_TENANT_ID" {
-  description = "Tenant ID"
+  description = "Service Principal Client Secret (Password)"
   type        = string
 }
 
@@ -64,7 +68,7 @@ data "azurerm_client_config" "client_config" {}
 
 # Retrieve Azure Resource Group data by name
 data "azurerm_resource_group" "rg" {
-  name = var.rg_name
+  name = var.resource_group_name
 }
 
 # Azure Storage Account to store Terraform state files

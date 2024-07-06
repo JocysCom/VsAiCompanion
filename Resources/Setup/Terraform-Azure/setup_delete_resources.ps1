@@ -1,6 +1,10 @@
 # Ask for the environment abbreviation
 $env = Read-Host -Prompt "Enter the name of the environment (dev, test, prod, ...)"
 
+#--------------------------------------------------------------
+# Load configuration data.
+#--------------------------------------------------------------
+
 function GetConfig {
     param (
         [Parameter(Mandatory=$true)]

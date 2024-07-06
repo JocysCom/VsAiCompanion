@@ -50,7 +50,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform-Azure", "Terrafor
 	ProjectSection(SolutionItems) = preProject
 		Resources\Setup\Terraform-Azure\.gitignore = Resources\Setup\Terraform-Azure\.gitignore
 		Resources\Setup\Terraform-Azure\azure-pipelines.yml = Resources\Setup\Terraform-Azure\azure-pipelines.yml
-		Resources\Setup\Terraform-Azure\backend.env.tfvars = Resources\Setup\Terraform-Azure\backend.env.tfvars
+		Resources\Setup\Terraform-Azure\backend.dev.tfvars = Resources\Setup\Terraform-Azure\backend.dev.tfvars
+		Resources\Setup\Terraform-Azure\backend.prod.tfvars = Resources\Setup\Terraform-Azure\backend.prod.tfvars
 		Resources\Setup\Terraform-Azure\main.tf = Resources\Setup\Terraform-Azure\main.tf
 		Resources\Setup\Terraform-Azure\ReadMe.md = Resources\Setup\Terraform-Azure\ReadMe.md
 		Resources\Setup\Terraform-Azure\script1_groups.tf = Resources\Setup\Terraform-Azure\script1_groups.tf
@@ -59,9 +60,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform-Azure", "Terrafor
 		Resources\Setup\Terraform-Azure\script3_sql_server_roles.sql = Resources\Setup\Terraform-Azure\script3_sql_server_roles.sql
 		Resources\Setup\Terraform-Azure\script4_sql_database.tf = Resources\Setup\Terraform-Azure\script4_sql_database.tf
 		Resources\Setup\Terraform-Azure\script4_sql_database_roles.sql = Resources\Setup\Terraform-Azure\script4_sql_database_roles.sql
-		Resources\Setup\Terraform-Azure\setup_environment.ps1 = Resources\Setup\Terraform-Azure\setup_environment.ps1
-		Resources\Setup\Terraform-Azure\setup_service_principal.ps1 = Resources\Setup\Terraform-Azure\setup_service_principal.ps1
-		Resources\Setup\Terraform-Azure\variables.env.tfvars = Resources\Setup\Terraform-Azure\variables.env.tfvars
+		Resources\Setup\Terraform-Azure\setup.ps1 = Resources\Setup\Terraform-Azure\setup.ps1
+		Resources\Setup\Terraform-Azure\setup_delete_resources.ps1 = Resources\Setup\Terraform-Azure\setup_delete_resources.ps1
+		Resources\Setup\Terraform-Azure\variables.dev.tfvars = Resources\Setup\Terraform-Azure\variables.dev.tfvars
+		Resources\Setup\Terraform-Azure\variables.prod.tfvars = Resources\Setup\Terraform-Azure\variables.prod.tfvars
 		Resources\Setup\Terraform-Azure\variables.tf = Resources\Setup\Terraform-Azure\variables.tf
 	EndProjectSection
 EndProject
@@ -290,10 +292,7 @@ Global
 		SolutionGuid = {FBFF2296-DB1F-4D4F-B14D-BE266743B9AE}
 	EndGlobalSection
 EndGlobal
- = Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|arm64.Build.0 = Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|x64.ActiveCfg = Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|x64.Build.0 = Release|Any CPU
+7898-4C22-BDAC-9E3A1B85EF25}.Release|x64.Build.0 = Release|Any CPU
 		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|x86.ActiveCfg = Release|Any CPU
 		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
