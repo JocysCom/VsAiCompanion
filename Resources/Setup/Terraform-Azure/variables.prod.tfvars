@@ -18,7 +18,3 @@ tenant_id = "e9207a28-f9d4-40a1-bb20-41ea135f3960"
 location             = "westus"
 resource_group_name  = "rg-jocyscom-aicomp-prod-westus-001"
 storage_account_name = "staicompprodwestus001"
-
-# Backend configuration.
-container_name = "tfstate"
-key            = "terraform.tfstate"

@@ -24,6 +24,9 @@ function GetConfig {
     return $config
 }
 
+$backendConfig = GetConfig "backend.${env}.tfvars"
+$containerName = $backendConfig["container_name"]
+
 $variablesConfig = GetConfig "variables.${env}.tfvars"
 $org = $variablesConfig["org"]
 $app = $variablesConfig["app"]
@@ -189,14 +192,16 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
     Write-Host "Creating storage account '$storageAccountName'..."
     az storage account create --name $storageAccountName --resource-group $resourceGroupName --location $location --sku Standard_LRS --subscription $armSubscriptionId
 
-    Start-Sleep -Seconds 20
-
-}
+    Write-Host "Creating storage container '$storageAccountName'..."
+    az storage container create --name $containerName --account-name $storageAccountName
 
     Write-Host "Assigning 'Storage Account Key Operator Service Role' to the service principal for the storage account '$storageAccountName'..."
     $storageAccountScope = "/subscriptions/$armSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storageAccountName"
     #az role assignment create --assignee $armClientId --role "Storage Account Key Operator Service Role" --scope $storageAccountScope
 
+    Start-Sleep -Seconds 20
+
+}
 
 #--------------------------------------------------------------
 # Setup service principal
