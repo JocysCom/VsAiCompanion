@@ -197,8 +197,9 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
     $storageAccountScope = "/subscriptions/$armSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storageAccountName"
     #az role assignment create --assignee $armClientId --role "Storage Account Key Operator Service Role" --scope $storageAccountScope
 
+
 #--------------------------------------------------------------
-# Begin Terraform Setup
+# Setup service principal
 #--------------------------------------------------------------
 
 $armClientSecretSecure = Read-Host -Prompt "Enter password for service principal '$armClientName'" -AsSecureString
@@ -211,18 +212,15 @@ az logout
 az login --service-principal -u $armClientId -p $armClientSecret --tenant $armTenantId
 az account set --subscription $armSubscriptionId
 
-#--------------------------------------------------------------
 # Init environment.
-#--------------------------------------------------------------
 
-$userInput = Read-Host -Prompt "Do you want to initialize Terraform? [y/N]"
-# Check the user's answer, ignoring case
-if ($userInput.Trim().ToUpper() -eq "Y") {
-    terraform init -backend-config="backend.${env}.tfvars" -var-file="variables.${env}.tfvars"
-}
+Write-Host "Get Azure resource management access key."
+$env:ARM_ACCESS_KEY = (az storage account keys list --resource-group $resourceGroupName --account-name $storageAccountName --query '[0].value' -o tsv)
+Write-Host "ARM_ACCESS_KEY = $env:ARM_ACCESS_KEY"
 
-$kvs_openai_value = Read-Host -Prompt "Enter OpenAI API Key"
-$vs_speech_value = Read-Host -Prompt "Enter Microsoft Speech Service API Key"
+Write-Host "Get Azure resource management database access token."
+$env:ARM_DATABASE_ACCESS_TOKEN = (az account get-access-token --resource https://database.windows.net/ --output json | ConvertFrom-Json).accessToken
+Write-Host "ARM_DATABASE_ACCESS_TOKEN = $env:ARM_DATABASE_ACCESS_TOKEN"
 
 # Set environment variables. Use `TF_VAR_` prefix to make recognized by Terraform.
 $env:TF_VAR_ARM_TENANT_ID = $armTenantId
@@ -239,22 +237,23 @@ Write-Output "TF_VAR_ARM_TENANT_ID: $($env:TF_VAR_ARM_TENANT_ID)"
 Write-Output "TF_VAR_ARM_SUBSCRIPTION_ID: $($env:TF_VAR_ARM_SUBSCRIPTION_ID)"
 Write-Output "TF_VAR_ARM_CLIENT_ID: $($env:TF_VAR_ARM_CLIENT_ID)"
 
+
 #--------------------------------------------------------------
-# Setup service principal
+# Begin Terraform Setup (requries normal user login)
 #--------------------------------------------------------------
-
-pause
-
-Write-Host "Get Azure resource management access key."
-$env:ARM_ACCESS_KEY = (az storage account keys list --resource-group $resourceGroupName --account-name $storageAccountName --query '[0].value' -o tsv)
-Write-Host "ARM_ACCESS_KEY = $env:ARM_ACCESS_KEY"
-
-Write-Host "Get Azure resource management database access token."
-$env:ARM_DATABASE_ACCESS_TOKEN = (az account get-access-token --resource https://database.windows.net/ --output json | ConvertFrom-Json).accessToken
-Write-Host "ARM_DATABASE_ACCESS_TOKEN = $env:ARM_DATABASE_ACCESS_TOKEN"
 
 # Logout from Azure to ensure a clean login
 az logout
+az login
+
+$userInput = Read-Host -Prompt "Do you want to initialize Terraform? [y/N]"
+# Check the user's answer, ignoring case
+if ($userInput.Trim().ToUpper() -eq "Y") {
+    terraform init -backend-config="backend.${env}.tfvars" -var-file="variables.${env}.tfvars"
+}
+
+$kvs_openai_value = Read-Host -Prompt "Enter OpenAI API Key"
+$vs_speech_value = Read-Host -Prompt "Enter Microsoft Speech Service API Key"
 
 # Run terraform init with the correct backend config and reconfigure
 terraform init -reconfigure -backend-config="backend.${env}.tfvars"
