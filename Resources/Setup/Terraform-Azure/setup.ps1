@@ -24,19 +24,18 @@ function GetConfig {
     return $config
 }
 
-$backendConfig = GetConfig "backend.${env}.tfvars"
-$containerName = $backendConfig["container_name"]
+$backend = GetConfig "backend.${env}.tfvars"
+$armTenantId = $backend["tenant_id"]
+$armSubscriptionId = $backend["subscription_id"]
+$resourceGroupName = $backend["resource_group_name"]
+$storageAccountName = $backend["storage_account_name"]
+$containerName = $backend["container_name"]
 
-$variablesConfig = GetConfig "variables.${env}.tfvars"
-$org = $variablesConfig["org"]
-$app = $variablesConfig["app"]
-$env = $variablesConfig["env"]
-
-$location = $variablesConfig["location"]
-$resourceGroupName = $variablesConfig["resource_group_name"]
-$storageAccountName = $variablesConfig["storage_account_name"]
-$armSubscriptionId = $variablesConfig["subscription_id"]
-$armTenantId = $variablesConfig["tenant_id"]
+$variables = GetConfig "variables.${env}.tfvars"
+$org = $variables["org"]
+$app = $variables["app"]
+$env = $variables["env"]
+$location = $variables["location"]
 
 $sqlServerName = "sqlsrv-${org}-${app}-${env}"
 $sqlDatabaseName = "sqldb-${org}-${app}-${env}"
