@@ -25,7 +25,7 @@ function GetConfig {
 }
 
 $backend = GetConfig "backend.${env}.tfvars"
-$armTenantId = $backend["tenant_id"]
+$spTenantId = $backend["tenant_id"]
 $armSubscriptionId = $backend["subscription_id"]
 $resourceGroupName = $backend["resource_group_name"]
 $storageAccountName = $backend["storage_account_name"]
@@ -43,10 +43,10 @@ $logAnalyticsWorkspaceName = "kv-logging-${org}-${app}-${env}"
 $keyVaultName = "kv-${org}-${app}-${env}"
 
 # Service Principal Name (user/application). It is a client that will is owner of resource group.
-$armClientName = "sp-${org}-${app}-${env}-001"
+$spName = "sp-${org}-${app}-${env}-001"
 
 #--------------------------------------------------------------
-# Create Azure Service Principal Applicaton (User)
+# Set active subscription
 #--------------------------------------------------------------
 
 # By verifying the subscription and explicitly setting it as active before performing any operations,
@@ -66,15 +66,43 @@ Write-Host "Setting active subscription '$armSubscriptionId'..."
 az account set --subscription $armSubscriptionId
 
 #--------------------------------------------------------------
-# Create Azure Service Principal Applicaton (User)
+# Create `Azure Service Principals` group
 #--------------------------------------------------------------
 
-$servicePrincipalExists = az ad sp list --display-name $armClientName --query "[0]" | Out-String
-if ($servicePrincipalExists -eq $null) {
-    $userInput = Read-Host -Prompt "Do you want to create service principal '$armClientName'? [y/N]"
-}else{
+$spGroupName = "Azure Service Principals"
+$spGroupMail = "AzureServicePrincipals"
+
+$spGroup = az ad group list --display-name $spGroupName --query "[0]" | ConvertFrom-Json
+$userInput = ""
+if ($spGroup -eq $null) {
+    $userInput = Read-Host -Prompt "Do you want to create group '$spGroupName'? [y/N]"
+}
+
+# Check the user's answer, ignoring case
+if ($userInput.Trim().ToUpper() -eq "Y") {
+    Write-Host "Creating group '$spGroupName'."
+    az ad group create --display-name $spGroupName --mail-nickname $spGroupMail
+    # Get details.
+    $sp = az ad sp list --display-name $spName --query '[0]' | ConvertFrom-Json
+    $spGroup = az ad group list --display-name $spGroupName --query "[0]" | ConvertFrom-Json
+}
+
+$spGroupId = $spGroup.id
+Write-Host "Group '$spGroupName':"
+Write-Host "  Id: $spGroupId"
+
+# Assigns Directory Reader role to the root scope
+#$roleDR = "Directory Readers"
+#az role assignment create --assignee-object-id $spGroupId --role $roleDR  --scope "/"
+
+#--------------------------------------------------------------
+# Create Azure Service Principal applicaton
+#--------------------------------------------------------------
+
+$sp = az ad sp list --display-name $spName --query '[0]' | ConvertFrom-Json
     $userInput = ""
-    Write-Host "Service principal $armClientName' found."
+if ($sp -eq $null) {
+    $userInput = Read-Host -Prompt "Do you want to create service principal '$spName'? [y/N]"
 }
 
 # Check the user's answer, ignoring case
@@ -84,67 +112,113 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
     #az config set core.only_show_errors=true
     # or: Control Panel > Region > Administrative > Change system local -> Check the 'Beta: Use Unicode UTF-8 for worldwide language support' option
 
-    az ad sp create-for-rbac --name $armClientName
+    az ad sp create-for-rbac --name $spName
 
     Write "IMPORTANT: Safely store inforamtion above. Press any key to continue."
     pause
 
-    $scopeName = "Microsoft Graph"
-    $permissionName = "Directory.Read.All"
-
-    # Get the service principal details.
-    $sp = az ad sp list --display-name $armClientName --query '[0]' | Out-String | ConvertFrom-Json
-    $armClientId = $sp.appId
-
-    Write-Host "Retrieve the $scopeName API's service principal"
-    $graphApiSp = az ad sp list --display-name $scopeName --query '[0]' | Out-String | ConvertFrom-Json
-    $graphApiAppId = $graphApiSp.appId # "00000003-0000-0000-c000-000000000000"
-
-    Write-Host "'$scopeName' application Id: '$armClientName'"
-
-    Write-Host "Retrieve the '$permissionName' permission Id for  $scopeName"
-    $delegatedPermissions = az ad sp show --id $graphApiAppId --query "oauth2PermissionScopes" | Out-String | ConvertFrom-Json
-    $directoryReadAllPermission = $delegatedPermissions | Where-Object { $_.value -eq $permissionName }
-
-    Write-Host "'$permissionName' permission Id: $($directoryReadAllPermission.id)"
-
-    Write-Host "Assign '$permissionName' permission to the service principal"
-    az ad app permission add --id $armClientId --api $graphApiAppId --api-permissions "$($directoryReadAllPermission.id)=Scope"
-
-    Start-Sleep -Seconds 4
-
-    Write-Host "Grant admin consent for the added permissions for the service principal"
-    az ad app permission grant --id $armClientId --api $graphApiAppId --scope "https://graph.microsoft.com/.default"
-
-    Start-Sleep -Seconds 4
-
-    Write-Host "Admin consent granting"
-    az ad app permission admin-consent --id $armClientId
-
-    Write-Output "Service principal is granted '$permissionName' permission."
-
+    # Get details.
+    $sp = az ad sp list --display-name $spName --query '[0]' | ConvertFrom-Json
 }
 
+# Service Priciple application Id.
+$spId = $sp.id
+$spAppId = $sp.appId
+$spTenantId = $sp.appOwnerOrganizationId
+
+Write-Host "Service principal '$spName':"
+Write-Host "  Id: $spId"
+Write-Host "  App Id: $spAppId"
+
 #--------------------------------------------------------------
-# Get Azure service principal details.
+# Configure Service Principal application permissions
 #--------------------------------------------------------------
 
-# Get the service principal details.
-$sp = az ad sp list --display-name $armClientName --query '[0]' | ConvertFrom-Json
-# Service Priciple application Id.
-$armClientId = $sp.appId
-$armTenantId = $sp.appOwnerOrganizationId
+function GetAppId {
+	param ([Parameter(Mandatory=$true)][string]$apiName)
+    Write-Host "API '$apiName':"
+    $apiSp = az ad sp list --display-name $apiName --query '[0]' | ConvertFrom-Json
+    $apiAppId = $apiSp.appId
+    Write-Host "  App Id: $apiAppId"
+    return $apiAppId
+}
+
+function GetDelegatedPermissionId {
+	param (
+        [Parameter(Mandatory=$true)][string]$apiName,
+        [Parameter(Mandatory=$true)][string]$apiAppId,
+        [Parameter(Mandatory=$true)][string]$permissionName
+    )
+    Write-Host "Permission '$permissionName' of '$apiName':"
+    $delegatedPermissions = az ad sp show --id $apiAppId --query "oauth2PermissionScopes" | ConvertFrom-Json
+    $permission = $delegatedPermissions | Where-Object { $_.value -eq $permissionName }
+    $permissionId = $permission.id
+    Write-Host "  Id: $permissionId"
+    return $permissionId
+}
+
+# Assign and grant permission to the service principal
+function AssignAndGrantPermission {
+	param (
+        [Parameter(Mandatory=$true)][string]$appId,
+        [Parameter(Mandatory=$true)][string]$apiAppId,
+        [Parameter(Mandatory=$true)][string]$apiPermissionId,
+        [Parameter(Mandatory=$true)][string]$apiPermissionName
+    )
+    # First, list existing permissions
+    $existingPermissions = az ad app permission list --id $appId | ConvertFrom-Json
+    # Check if the permission already exists
+    $permissionExists = $existingPermissions | Where-Object { $_.resourceAppId -eq $apiAppId -and $_.resourceAccess.id -eq $apiPermissionId }
+    if ($permissionExists) {
+        Write-Host "Permission '$apiPermissionName' already exists. No need to add."
+        return
+    }
+    Write-Host "Add '$apiPermissionName' permission to the service principal"
+    $null = az ad app permission add --id $appId --api $apiAppId --api-permissions "$apiPermissionId=Scope"
+    Start-Sleep -Seconds 4
+    Write-Host "  Grant permissions admin consent for the service principal"
+    $null = az ad app permission grant --id $appId --api $apiAppId --scope $apiPermissionName
+    Start-Sleep -Seconds 4
+    Write-Host "  Grant permission admin consent for entire application"
+    $null = az ad app permission admin-consent --id $appId
+}
+
+# https://graph.microsoft.com/
+$mgApiName = "Microsoft Graph"
+$mgApiAppId = GetAppId $mgApiName # 00000003-0000-0000-c000-000000000000
+$mgPermissionName = "Directory.Read.All" # 06da0dbc-49e2-44d2-8312-53f166ab848a
+$mgPermissionId = GetDelegatedPermissionId $mgApiName $mgApiAppId $mgPermissionName
+AssignAndGrantPermission $spAppId $mgApiAppId $mgPermissionId $mgPermissionName
+
+# https://graph.windows.net/
+$adApiName = "Azure Active Directory Graph"
+#$adApiAppId = GetAppId $adApiName # 00000002-0000-0000-c000-000000000000
+$adApiAppId = "00000002-0000-0000-c000-000000000000"
+$adPermissionName = "Directory.Read.All" # 5778995a-e1bf-45b8-affa-663a9f3f4d04
+$adPermissionId = GetDelegatedPermissionId $adApiName $adApiAppId $adPermissionName
+AssignAndGrantPermission $spAppId $adApiAppId $adPermissionId $adPermissionName
+
+#--------------------------------------------------------------
+# Assign Service Principal application to the group.
+#--------------------------------------------------------------
+
+# Check if the service principal is already a member of the group
+$memberCheck = az ad group member check --group $spGroupId --member-id $spId --query "value"
+if ($memberCheck -eq $false) {
+    Write-Host "Adding service principal '$spName' to group '$spGroupName'."
+    az ad group member add --group $spGroupId --member-id $spId
+} else {
+    Write-Host "Service principal '$spName' is already a member of the group '$spGroupName'."
+}
 
 #--------------------------------------------------------------
 # Create resource group.
 #--------------------------------------------------------------
 
 $resourceGroupExists = az group exists --name $resourceGroupName --subscription $armSubscriptionId
+$userInput = ""
 if ($resourceGroupExists -ne $true) {
     $userInput = Read-Host -Prompt "Do you want to create resource group? '$resourceGroupName'? [y/N]"
-}else{
-    $userInput = ""
-    Write-Host "Resource group $resourceGroupName' found."
 }
 
 # Check the user's answer, ignoring case
@@ -160,7 +234,7 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
     $resourceGroupId = $resourceGroup.id
 
     Write-Host "Assign '$spResourceRole' role for the resource group '$resourceGroupName' to the service principal"
-    az role assignment create --assignee $armClientId --role $spResourceRole --scope $resourceGroupId
+    az role assignment create --assignee $spAppId --role $spResourceRole --scope $resourceGroupId
 }
 
 #--------------------------------------------------------------
@@ -168,11 +242,9 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
 #--------------------------------------------------------------
 
 $storageAccountExists = az storage account list --resource-group $resourceGroupName --query "[?name=='$storageAccountName'] | length(@)" --subscription $armSubscriptionId
+$userInput = ""
 if ($storageAccountExists -eq 0) {
     $userInput = Read-Host -Prompt "Do you want to create storage account? '$storageAccountName'? [y/N]"
-}else{
-    $userInput = ""
-    Write-Host "Storage account '$storageAccountName' found."
 }
 
 # Check the user's answer, ignoring case
@@ -196,7 +268,7 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
 
     Write-Host "Assigning 'Storage Account Key Operator Service Role' to the service principal for the storage account '$storageAccountName'..."
     $storageAccountScope = "/subscriptions/$armSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storageAccountName"
-    #az role assignment create --assignee $armClientId --role "Storage Account Key Operator Service Role" --scope $storageAccountScope
+    #az role assignment create --assignee $spAppId --role "Storage Account Key Operator Service Role" --scope $storageAccountScope
 
     Start-Sleep -Seconds 20
 
@@ -206,15 +278,18 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
 # Setup service principal
 #--------------------------------------------------------------
 
-$armClientSecretSecure = Read-Host -Prompt "Enter password for service principal '$armClientName'" -AsSecureString
+$armClientSecretSecure = Read-Host -Prompt "Enter password for service principal '$spName'" -AsSecureString
 $armClientSecret = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($armClientSecretSecure))
 
 # Logout from Azure to ensure a clean login.
 az logout
 
 # Login to Azure with principal that will have owner permissions on azure resource where everything will be created.
-az login --service-principal -u $armClientId -p $armClientSecret --tenant $armTenantId
+az login --service-principal -u $spAppId -p $armClientSecret --tenant $spTenantId
 az account set --subscription $armSubscriptionId
+
+# Check if can access groups. Requires "Directory Readers" role assingned on Service Principal or group tha service principal is member of.
+az ad group list --filter "displayName eq 'AI_RiskLevel_Low'" --verbose
 
 # Init environment.
 
@@ -227,20 +302,19 @@ $env:ARM_DATABASE_ACCESS_TOKEN = (az account get-access-token --resource https:/
 Write-Host "ARM_DATABASE_ACCESS_TOKEN = $env:ARM_DATABASE_ACCESS_TOKEN"
 
 # Set environment variables. Use `TF_VAR_` prefix to make recognized by Terraform.
-$env:TF_VAR_ARM_TENANT_ID = $armTenantId
+$env:TF_VAR_ARM_TENANT_ID = $spTenantId
 $env:TF_VAR_ARM_SUBSCRIPTION_ID = $armSubscriptionId
-$env:TF_VAR_ARM_CLIENT_ID = $armClientId
+$env:TF_VAR_ARM_CLIENT_ID = $spAppId
 $env:TF_VAR_ARM_CLIENT_SECRET = $armClientSecret 
 
-$env:ARM_TENANT_ID = $armTenantId
+$env:ARM_TENANT_ID = $spTenantId
 $env:ARM_SUBSCRIPTION_ID = $armSubscriptionId
-$env:ARM_CLIENT_ID = $armClientId
+$env:ARM_CLIENT_ID = $spAppId
 $env:ARM_CLIENT_SECRET = $armClientSecret 
 
 Write-Output "TF_VAR_ARM_TENANT_ID: $($env:TF_VAR_ARM_TENANT_ID)"
 Write-Output "TF_VAR_ARM_SUBSCRIPTION_ID: $($env:TF_VAR_ARM_SUBSCRIPTION_ID)"
 Write-Output "TF_VAR_ARM_CLIENT_ID: $($env:TF_VAR_ARM_CLIENT_ID)"
-
 
 #--------------------------------------------------------------
 # Begin Terraform Setup (requries normal user login)
@@ -249,6 +323,10 @@ Write-Output "TF_VAR_ARM_CLIENT_ID: $($env:TF_VAR_ARM_CLIENT_ID)"
 # Logout from Azure to ensure a clean login
 az logout
 az login
+
+# Register providers
+#az provider register --namespace Microsoft.Security
+#az provider register --namespace Microsoft.Logic
 
 $userInput = Read-Host -Prompt "Do you want to initialize Terraform? [y/N]"
 # Check the user's answer, ignoring case

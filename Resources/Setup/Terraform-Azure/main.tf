@@ -35,6 +35,7 @@ provider "azuread" {
 # Configure the Microsoft Azure Resource Manager provider
 provider "azurerm" {
   features {}
+  skip_provider_registration = true
   # Optionally: configure authentication details
   subscription_id = var.ARM_SUBSCRIPTION_ID
   tenant_id       = var.ARM_TENANT_ID
