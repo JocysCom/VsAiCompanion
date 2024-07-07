@@ -195,6 +195,7 @@ $adApiName = "Azure Active Directory Graph"
 #$adApiAppId = GetAppId $adApiName # 00000002-0000-0000-c000-000000000000
 $adApiAppId = "00000002-0000-0000-c000-000000000000"
 $adPermissionName = "Directory.Read.All" # 5778995a-e1bf-45b8-affa-663a9f3f4d04
+#$adPermissionName = "Directory.ReadWrite.All" # 5778995a-e1bf-45b8-affa-663a9f3f4d04
 $adPermissionId = GetDelegatedPermissionId $adApiName $adApiAppId $adPermissionName
 AssignAndGrantPermission $spAppId $adApiAppId $adPermissionId $adPermissionName
 
@@ -238,6 +239,34 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
 }
 
 #--------------------------------------------------------------
+# Register providers
+#--------------------------------------------------------------
+
+function RegisterProvider {
+    param (
+       [Parameter(Mandatory=$true)][string]$providerName
+    )
+    Write-Host "Checking if '$providerName' resource provider is registered..."
+    $resourceProviderState = az provider show --namespace $providerName --subscription $armSubscriptionId --query "registrationState" --output tsv
+    if ($resourceProviderState -ne "Registered") {
+        Write-Host "Registering '$providerName' resource provider..."
+        az provider register --namespace $providerName --subscription $armSubscriptionId
+        # wait 20 second for resource to register
+        Write-Host "Please wait 20 seconds..."
+        Start-Sleep -Seconds 20
+    }
+}
+
+RegisterProvider "Microsoft.Storage"
+RegisterProvider "Microsoft.KeyVault"
+RegisterProvider "Microsoft.Sql"
+RegisterProvider "Microsoft.Resources"
+
+# azurerm_log_analytics_workspace.kv_logging_workspace
+RegisterProvider "Microsoft.Insights"
+RegisterProvider "Microsoft.OperationalInsights"
+
+#--------------------------------------------------------------
 # Create storage account
 #--------------------------------------------------------------
 
@@ -250,16 +279,6 @@ if ($storageAccountExists -eq 0) {
 # Check the user's answer, ignoring case
 if ($userInput.Trim().ToUpper() -eq "Y") {
 
-    Write-Host "Checking if Microsoft.Storage resource provider is registered..."
-    $resourceProviderState = az provider show --namespace Microsoft.Storage --subscription $armSubscriptionId --query "registrationState" --output tsv
-    if ($resourceProviderState -ne "Registered") {
-        Write-Host "Registering Microsoft.Storage resource provider..."
-        az provider register --namespace Microsoft.Storage --subscription $armSubscriptionId
-        # wait 20 second for resource to register
-        Write-Host "Please wait 20 seconds..."
-        Start-Sleep -Seconds 20
-    }
-    
     Write-Host "Creating storage account '$storageAccountName'..."
     az storage account create --name $storageAccountName --resource-group $resourceGroupName --location $location --sku Standard_LRS --subscription $armSubscriptionId
 

@@ -20,6 +20,17 @@ resource "azurerm_mssql_server" "sqlsrv" {
   }
 }
 
+
+resource "azuread_directory_role" "directory_readers" {
+  display_name = "Directory Readers"
+}
+
+resource "azuread_directory_role_assignment" "sql_directory_reader" {
+  role_id      = azuread_directory_role.directory_readers.template_id
+  principal_object_id = azurerm_mssql_server.sqlsrv.identity[0].principal_id
+}
+
+
 # Role Assignments. Requires "User Access Administrator" role on target resource
 
 resource "azurerm_role_assignment" "sqlsrv_admin" {
@@ -30,12 +41,11 @@ resource "azurerm_role_assignment" "sqlsrv_admin" {
 }
 
 # Assign the Directory Readers role to the Managed Identity of the SQL Server
-resource "azurerm_role_assignment" "sqlsrv_directory_reader" {
-  role_definition_name = "Reader"
-  principal_id         = azurerm_mssql_server.sqlsrv.identity[0].principal_id
-  scope                = azurerm_mssql_server.sqlsrv.id
-}
-
+#resource "azurerm_role_assignment" "sqlsrv_directory_reader" {
+#  role_definition_name = "Directory Readers"
+#  principal_id         = azurerm_mssql_server.sqlsrv.identity[0].principal_id
+#  scope                = azurerm_mssql_server.sqlsrv.id
+#}
 
 resource "azurerm_mssql_firewall_rule" "sqlsrv_firewall_rule" {
   name             = "fw-${var.org}-${var.app}-sqlsrv-allow-${var.env}"
@@ -66,7 +76,8 @@ resource "null_resource" "assign_sql_server_roles" {
   }
   depends_on = [
     azurerm_mssql_server.sqlsrv,
-    azurerm_role_assignment.sqlsrv_directory_reader
+    #azurerm_role_assignment.sqlsrv_directory_reader
+    azuread_directory_role_assignment.sql_directory_reader
   ]
 }
 
@@ -89,7 +100,7 @@ resource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" {
   retention_days = 120
 
   # Rule ID: CKV_AZURE_26 - Ensure that 'Send Alerts To' is enabled for MSSQL servers
-  email_addresses = local.admin_emails
+  email_addresses = [ "user@localhost.lan" ]
 
   # Define where to send audit logs
   storage_account_access_key = data.azurerm_storage_account.storage_account.primary_access_key
