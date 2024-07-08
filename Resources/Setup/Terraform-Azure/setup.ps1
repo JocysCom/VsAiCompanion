@@ -325,6 +325,21 @@ $adPermissionId = GetDelegatedPermissionId $adApiName $adApiAppId $adPermissionN
 AssignAndGrantPermission $spAppId $adApiAppId $adPermissionId $adPermissionName
 
 #--------------------------------------------------------------
+# SQL Managed Identity
+#--------------------------------------------------------------
+
+# retrieve the user-assigned managed identity of an Azure SQL Database logical server:
+#$sqlUserIdentity = az sql server show --resource-group $resourceGroupName --name $sqlServerName --query identity.userAssignedIdentities
+# retrieve the system-assigned managed identity of an Azure SQL Database logical server:
+#Write-Host "SQL Managed Identity:"
+#$sqlSystemIdentity = az sql server show --resource-group $resourceGroupName --name $sqlServerName --query identity | ConvertFrom-Json
+#$sqlSystemIdentityId = $sqlSystemIdentity.principalId
+#Write-Host "principalId: $sqlSystemIdentityId"
+
+#AssignAndGrantPermission $sqlSystemIdentityId $mgApiAppId $mgPermissionId $mgPermissionName
+
+
+#--------------------------------------------------------------
 # Assign Service Principal application to the group.
 #--------------------------------------------------------------
 
@@ -365,15 +380,20 @@ function CreateRoleAssignment {
 	if ($roleAssignmentId -eq $null) {
 		Write-Host "Assign '$roleDefinitionName' role for the resource group '$resourceGroupName' to the service principal"
 		az role assignment create --assignee $principalName --role $roleDefinitionName --scope $scope
+	}else{
+		Write-Host "Role '$roleDefinitionName' already assigned to the service principal"
 	}
 }
 
 #Write-Host "Get '$resourceGroupName' resource group Id"
-#$resourceGroup = az group show --name $resourceGroupName --subscription $armSubscriptionId | Out-String | ConvertFrom-Json
-#$resourceGroupId = $resourceGroup.id
+$resourceGroup = az group show --name $resourceGroupName --subscription $armSubscriptionId | Out-String | ConvertFrom-Json
+$resourceGroupId = $resourceGroup.id
 
-#CreateRoleAssignment $resourceGroupId  $spAppId "Owner"
-#CreateRoleAssignment $resourceGroupId  $spAppId "User Access Administrator"
+CreateRoleAssignment $resourceGroupId  $spAppId "Owner"
+CreateRoleAssignment $resourceGroupId  $spAppId "User Access Administrator"
+CreateRoleAssignment $resourceGroupId  $spAppId "Role Based Access Control Administrator"
+#CreateRoleAssignment $resourceGroupId  $spAppId "App Administrator"
+CreateRoleAssignment $resourceGroupId  $spAppId "Reader"
 
 #Write-Host "Assign '$spResourceRole' role for the resource group '$resourceGroupName' to the service principal"
 #az role assignment create --assignee $spAppId --role $spResourceRole --scope $resourceGroupId

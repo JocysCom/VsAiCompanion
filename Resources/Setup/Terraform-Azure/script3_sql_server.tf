@@ -1,5 +1,11 @@
-# Create SQL Server
+# Create primary identity that SQL Server will use to identify.
+resource "azurerm_user_assigned_identity" "sql_identity" {
+  name                = "identity-${var.org}-${var.app}-${var.env}-sql"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+}
 
+# Create SQL Server
 resource "azurerm_mssql_server" "sqlsrv" {
   name                = "sql-${var.org}-${var.app}-${var.env}"
   resource_group_name = data.azurerm_resource_group.rg.name
@@ -16,10 +22,60 @@ resource "azurerm_mssql_server" "sqlsrv" {
     azuread_authentication_only = true
   }
   identity {
-    type = "SystemAssigned"
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.sql_identity.id
+    ]
   }
+  primary_user_assigned_identity_id = azurerm_user_assigned_identity.sql_identity.id
 }
 
+# Allow SQL Server identity to Access Entra information.
+
+# Obtain Well-Known Application IDs for Microsoft Graph
+data "azuread_application_published_app_ids" "well_known" {}
+
+# Get the Microsoft Graph Service Principal
+data "azuread_service_principal" "msgraph" {
+  client_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
+}
+
+# Create Service Principal for Managed Identity
+data "azuread_service_principal" "sql_identity_sp" {
+  client_id = azurerm_user_assigned_identity.sql_identity.client_id
+}
+
+#https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/app_role_assignment
+
+# User.Read.All: Allows access to Microsoft Entra user information.
+resource "azuread_app_role_assignment" "sql_identity_user_reader" {
+  app_role_id         = data.azuread_service_principal.msgraph.app_role_ids["User.Read.All"]
+  principal_object_id = data.azuread_service_principal.sql_identity_sp.object_id
+  resource_object_id  = data.azuread_service_principal.msgraph.object_id
+}
+
+# GroupMember.Read.All: Allows access to Microsoft Entra group information.
+resource "azuread_app_role_assignment" "sql_identity_group_reader" {
+  app_role_id         = data.azuread_service_principal.msgraph.app_role_ids["GroupMember.Read.All"]
+  principal_object_id = data.azuread_service_principal.sql_identity_sp.object_id
+  resource_object_id  = data.azuread_service_principal.msgraph.object_id
+}
+
+# Application.Read.ALL: Allows access to Microsoft Entra service principal (application) information.
+resource "azuread_app_role_assignment" "sql_identity_app_reader" {
+  app_role_id         = data.azuread_service_principal.msgraph.app_role_ids["Application.Read.All"]
+  principal_object_id = data.azuread_service_principal.sql_identity_sp.object_id
+  resource_object_id  = data.azuread_service_principal.msgraph.object_id
+}
+
+# Output the Managed Identity details
+output "managed_identity_client_id" {
+  value = azurerm_user_assigned_identity.sql_identity.client_id
+}
+
+output "managed_identity_principal_id" {
+  value = azurerm_user_assigned_identity.sql_identity.principal_id
+}
 
 #resource "azuread_directory_role" "directory_readers" {
 #  display_name = "Directory Readers"
