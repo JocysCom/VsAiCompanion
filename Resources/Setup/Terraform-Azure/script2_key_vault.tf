@@ -10,12 +10,14 @@ resource "azurerm_key_vault" "kv" {
   # Disable public network access
   # Required to PASS Tool: checkov, Rule ID: CKV_AZURE_189
   # Description: Ensure that Azure Key Vault disables public network access
- # network_acls {
- #   default_action             = "Deny"
- #   bypass                     = "AzureServices"
- #   ip_rules                   = ["10.0.0.0/8", "192.168.0.0/16"] # "172.16.0.0/12"
- #   virtual_network_subnet_ids = []
-#  }
+  network_acls {
+    default_action             = "Deny"
+    bypass                     = "AzureServices"
+    ip_rules                   = [
+      data.external.external_ip.result.ip
+    ]
+    virtual_network_subnet_ids = []
+  }
 }
 
 # Assign Key Vault Reader role to AI_RiskLevel groups

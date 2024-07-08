@@ -21,15 +21,23 @@ resource "azurerm_mssql_server" "sqlsrv" {
 }
 
 
-resource "azuread_directory_role" "directory_readers" {
-  display_name = "Directory Readers"
-}
+#resource "azuread_directory_role" "directory_readers" {
+#  display_name = "Directory Readers"
+#}
 
-resource "azuread_directory_role_assignment" "sql_directory_reader" {
-  role_id      = azuread_directory_role.directory_readers.template_id
-  principal_object_id = azurerm_mssql_server.sqlsrv.identity[0].principal_id
-}
+#resource "azuread_directory_role_assignment" "sql_directory_reader" {
+#  role_id      = azuread_directory_role.directory_readers.template_id
+#  principal_object_id = azurerm_mssql_server.sqlsrv.identity[0].principal_id
+#}
 
+
+# Assign the Directory Readers role to the Managed Identity of the SQL Server
+# Reader - View all resources, but does not allow you to make any changes.
+resource "azurerm_role_assignment" "sqlsrv_directory_reader" {
+  role_definition_name = "Reader"
+  principal_id         = azurerm_mssql_server.sqlsrv.identity[0].principal_id
+  scope                = azurerm_mssql_server.sqlsrv.id
+}
 
 # Role Assignments. Requires "User Access Administrator" role on target resource
 
@@ -40,12 +48,6 @@ resource "azurerm_role_assignment" "sqlsrv_admin" {
   scope        = azurerm_mssql_server.sqlsrv.id
 }
 
-# Assign the Directory Readers role to the Managed Identity of the SQL Server
-#resource "azurerm_role_assignment" "sqlsrv_directory_reader" {
-#  role_definition_name = "Directory Readers"
-#  principal_id         = azurerm_mssql_server.sqlsrv.identity[0].principal_id
-#  scope                = azurerm_mssql_server.sqlsrv.id
-#}
 
 resource "azurerm_mssql_firewall_rule" "sqlsrv_firewall_rule" {
   name             = "fw-${var.org}-${var.app}-sqlsrv-allow-${var.env}"
@@ -76,8 +78,8 @@ resource "null_resource" "assign_sql_server_roles" {
   }
   depends_on = [
     azurerm_mssql_server.sqlsrv,
-    #azurerm_role_assignment.sqlsrv_directory_reader
-    azuread_directory_role_assignment.sql_directory_reader
+    azurerm_role_assignment.sqlsrv_directory_reader
+    #azuread_directory_role_assignment.sql_directory_reader
   ]
 }
 

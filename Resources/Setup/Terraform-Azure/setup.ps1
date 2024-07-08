@@ -4,6 +4,29 @@ az login
 # Ask for the environment abbreviation
 $env = Read-Host -Prompt "Enter the name of the environment (dev, test, prod, ...)"
 
+# Check if the backend file exists
+if (-Not (Test-Path -Path "backend.${env}.tfvars")) {
+    Write-Error "File 'backend.${env}.tfvars' does not exist. Exiting script."
+    exit 1  # Exit with a non-zero status code to indicate an error
+}
+
+#--------------------------------------------------------------
+# Install Required modules.
+#--------------------------------------------------------------
+
+function Ensure-AzModule {
+	# Install Required `Az` PowerShell Module
+	if (-not (Get-Module -ListAvailable -Name Az)) {
+		Write-Output "Az module not found. Installing..."
+		Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force
+	}
+	# Import Required `Az` PowerShell Module
+	if (-not (Get-Module -Name Az)) {
+		Write-Output "Loading `Az` module into the current PowerShell session..."
+		Import-Module Az
+	}
+}
+
 #--------------------------------------------------------------
 # Load configuration data.
 #--------------------------------------------------------------
@@ -37,10 +60,11 @@ $app = $variables["app"]
 $env = $variables["env"]
 $location = $variables["location"]
 
-$sqlServerName = "sqlsrv-${org}-${app}-${env}"
+$sqlServerName = "sql-${org}-${app}-${env}"
 $sqlDatabaseName = "sqldb-${org}-${app}-${env}"
 $logAnalyticsWorkspaceName = "kv-logging-${org}-${app}-${env}"
 $keyVaultName = "kv-${org}-${app}-${env}"
+$kvDiagnosticLogging = "kv-diagnostic-logging-${org}-${app}-${env}" 
 
 # Service Principal Name (user/application). It is a client that will is owner of resource group.
 $spName = "sp-${org}-${app}-${env}-001"
@@ -66,13 +90,118 @@ Write-Host "Setting active subscription '$armSubscriptionId'..."
 az account set --subscription $armSubscriptionId
 
 #--------------------------------------------------------------
+# Import existing resources
+#--------------------------------------------------------------
+
+# Function to check if a resource is managed by Terraform
+function IsResourceManagedByTerraform {
+    param (
+        [string] $resourceType,
+        [string] $resourceName
+    )
+    # List all resources in the Terraform state
+    $stateList = terraform state list
+    # Check if the specified resource is in the state list
+    foreach ($resource in $stateList) {
+        if ($resource -eq "$resourceType.$resourceName") {
+			Write-Host "Resource '$resourceType.$resourceName' already managed by terraform." 
+            return $true
+        }
+    }
+    return $false
+}
+
+
+function ImportResource {
+	param (
+        [string] $resourceType,
+        [string] $resourceName,
+		[string] $scope
+    )
+	if (IsResourceManagedByTerraform $resourceType $resourceName) {
+		return
+	}
+	$userInput = Read-Host -Prompt "Do you want to import '$resourceType.$resourceName'? [y/N]"
+	if ($userInput.Trim().ToUpper() -eq "Y") {
+		terraform import  -var-file="variables.${env}.tfvars" "$resourceType.$resourceName" $scope
+	}
+}
+
+function ImportRoleResource {
+	param (
+        [string] $resourceType,
+        [string] $resourceName,
+		[string] $scope,
+		[string] $principalName,
+		[string] $roleDefinitionName
+    )
+	if (IsResourceManagedByTerraform $resourceType $resourceName){
+		return
+	}
+	# Get the existing role assignment information
+	$roleAssignmentId = & az role assignment list --scope $scope --query "[?principalName=='$principalName' && roleDefinitionName=='$roleDefinitionName'] | [0].id" | ConvertFrom-Json
+	if ($roleAssignmentId -ne $null) {
+		ImportResource $resourceType $resourceName $roleAssignmentId
+	}
+}
+
+
+$userInput = Read-Host -Prompt "Do you want to import resources? [y/N]"
+# Check the user's answer, ignoring case
+if ($userInput.Trim().ToUpper() -eq "Y") {
+	$rgPath = "/subscriptions/$armSubscriptionId/resourceGroups/$resourceGroupName"
+
+	$keyVaultPath = "$rgPath/providers/Microsoft.KeyVault/vaults/$keyVaultName"
+	$sqlPath = "$rgPath/providers/Microsoft.Sql/servers/$sqlServerName"
+	$storagePath = "$rgPath/providers/Microsoft.Storage/storageAccounts/$storageAccountName"
+
+	# SQL
+
+	ImportResource "azurerm_mssql_server" "sqlsrv" $sqlPath
+    ImportResource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" "$sqlPath/securityAlertPolicies/default"
+
+	$resourceId = az sql server audit-policy show --resource-group $resourceGroupName --name $sqlServerName --query "id"
+	if ($roleAssignmentId -ne "") {
+		ImportResource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" $resourceId
+	}
+
+	# Key Vault
+	
+	ImportResource "azurerm_key_vault"    "kv"     $keyVaultPath
+	
+	ImportRoleResource "azurerm_role_assignment" "key_vault_reader_low"      $keyVaultPath "AI_RiskLevel_Low"      "Key Vault Reader"
+	ImportRoleResource "azurerm_role_assignment" "key_vault_reader_medium"   $keyVaultPath "AI_RiskLevel_Medium"   "Key Vault Reader"
+	ImportRoleResource "azurerm_role_assignment" "key_vault_reader_high"     $keyVaultPath "AI_RiskLevel_High"     "Key Vault Reader"
+	
+	ImportRoleResource "azurerm_role_assignment" "key_vault_reader_critical"               $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Reader"
+	ImportRoleResource "azurerm_role_assignment" "key_vault_contributor_critical"          $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Contributor"
+	ImportRoleResource "azurerm_role_assignment" "key_vault_administrator_critical"        $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Administrator"
+
+	ImportRoleResource "azurerm_role_assignment" "key_vault_crypto_officer_critical"       $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Crypto Officer"
+	ImportRoleResource "azurerm_role_assignment" "key_vault_certificates_officer_critical" $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Certificates Officer"
+	ImportRoleResource "azurerm_role_assignment" "key_vault_secrets_officer_critical"      $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Secrets Officer"
+
+	ImportResource "azurerm_key_vault_secret" "kvs_openai" "$keyVaultPath/secrets/openai-api-key"
+    ImportResource "azurerm_key_vault_secret" "kvs_speech" "$keyVaultPath/secrets/ms-speech-service-api-key"
+
+	ImportResource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_logging" "$keyVaultPath|$kvDiagnosticLogging"
+
+	# Storage 
+
+	ImportResource "azurerm_storage_management_policy" "storage_management" "$storagePath/managementPolicies/default"
+
+
+	pause
+}
+
+#--------------------------------------------------------------
 # Create `Azure Service Principals` group
 #--------------------------------------------------------------
 
 $spGroupName = "Azure Service Principals"
 $spGroupMail = "AzureServicePrincipals"
 
-$spGroup = az ad group list --display-name $spGroupName --query "[0]" | ConvertFrom-Json
+$spGroup = az ad group list --display-name $spGroupName --query "[0]" | Out-String | ConvertFrom-Json
 $userInput = ""
 if ($spGroup -eq $null) {
     $userInput = Read-Host -Prompt "Do you want to create group '$spGroupName'? [y/N]"
@@ -83,8 +212,8 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
     Write-Host "Creating group '$spGroupName'."
     az ad group create --display-name $spGroupName --mail-nickname $spGroupMail
     # Get details.
-    $sp = az ad sp list --display-name $spName --query '[0]' | ConvertFrom-Json
-    $spGroup = az ad group list --display-name $spGroupName --query "[0]" | ConvertFrom-Json
+    $sp = az ad sp list --display-name $spName --query '[0]' | Out-String | ConvertFrom-Json
+    $spGroup = az ad group list --display-name $spGroupName --query "[0]" | Out-String | ConvertFrom-Json
 }
 
 $spGroupId = $spGroup.id
@@ -99,7 +228,7 @@ Write-Host "  Id: $spGroupId"
 # Create Azure Service Principal applicaton
 #--------------------------------------------------------------
 
-$sp = az ad sp list --display-name $spName --query '[0]' | ConvertFrom-Json
+$sp = az ad sp list --display-name $spName --query '[0]' | Out-String | ConvertFrom-Json
     $userInput = ""
 if ($sp -eq $null) {
     $userInput = Read-Host -Prompt "Do you want to create service principal '$spName'? [y/N]"
@@ -107,18 +236,14 @@ if ($sp -eq $null) {
 
 # Check the user's answer, ignoring case
 if ($userInput.Trim().ToUpper() -eq "Y") {
-    
     # WARNING: Unable to encode the output with cp1252 encoding. Unsupported characters are discarded.
     #az config set core.only_show_errors=true
     # or: Control Panel > Region > Administrative > Change system local -> Check the 'Beta: Use Unicode UTF-8 for worldwide language support' option
-
     az ad sp create-for-rbac --name $spName
-
     Write "IMPORTANT: Safely store inforamtion above. Press any key to continue."
     pause
-
     # Get details.
-    $sp = az ad sp list --display-name $spName --query '[0]' | ConvertFrom-Json
+    $sp = az ad sp list --display-name $spName --query '[0]' | Out-String | ConvertFrom-Json
 }
 
 # Service Priciple application Id.
@@ -137,7 +262,7 @@ Write-Host "  App Id: $spAppId"
 function GetAppId {
 	param ([Parameter(Mandatory=$true)][string]$apiName)
     Write-Host "API '$apiName':"
-    $apiSp = az ad sp list --display-name $apiName --query '[0]' | ConvertFrom-Json
+    $apiSp = az ad sp list --display-name $apiName --query '[0]'  | Out-String | ConvertFrom-Json
     $apiAppId = $apiSp.appId
     Write-Host "  App Id: $apiAppId"
     return $apiAppId
@@ -150,7 +275,7 @@ function GetDelegatedPermissionId {
         [Parameter(Mandatory=$true)][string]$permissionName
     )
     Write-Host "Permission '$permissionName' of '$apiName':"
-    $delegatedPermissions = az ad sp show --id $apiAppId --query "oauth2PermissionScopes" | ConvertFrom-Json
+    $delegatedPermissions = az ad sp show --id $apiAppId --query "oauth2PermissionScopes"  | Out-String | ConvertFrom-Json
     $permission = $delegatedPermissions | Where-Object { $_.value -eq $permissionName }
     $permissionId = $permission.id
     Write-Host "  Id: $permissionId"
@@ -166,7 +291,7 @@ function AssignAndGrantPermission {
         [Parameter(Mandatory=$true)][string]$apiPermissionName
     )
     # First, list existing permissions
-    $existingPermissions = az ad app permission list --id $appId | ConvertFrom-Json
+    $existingPermissions = az ad app permission list --id $appId | Out-String | ConvertFrom-Json
     # Check if the permission already exists
     $permissionExists = $existingPermissions | Where-Object { $_.resourceAppId -eq $apiAppId -and $_.resourceAccess.id -eq $apiPermissionId }
     if ($permissionExists) {
@@ -225,18 +350,33 @@ if ($resourceGroupExists -ne $true) {
 # Check the user's answer, ignoring case
 if ($userInput.Trim().ToUpper() -eq "Y") {
 
-    $spResourceRole = "Owner"
-
     Write-Host "Create resource group '$resourceGroupName'"
     az group create --name $resourceGroupName --location $location --subscription $armSubscriptionId
-
-    Write-Host "Get '$resourceGroupName' resource group Id"
-    $resourceGroup = az group show --name $resourceGroupName --subscription $armSubscriptionId | ConvertFrom-Json
-    $resourceGroupId = $resourceGroup.id
-
-    Write-Host "Assign '$spResourceRole' role for the resource group '$resourceGroupName' to the service principal"
-    az role assignment create --assignee $spAppId --role $spResourceRole --scope $resourceGroupId
 }
+
+function CreateRoleAssignment {
+	param (
+		[string] $scope,
+		[string] $principalName,
+		[string] $roleDefinitionName
+	)
+	# Get the existing role assignment information
+	$roleAssignmentId = az role assignment list --scope $scope --query "[?principalName=='$principalName' && roleDefinitionName=='$roleDefinitionName'] | [0].id" | ConvertFrom-Json
+	if ($roleAssignmentId -eq $null) {
+		Write-Host "Assign '$roleDefinitionName' role for the resource group '$resourceGroupName' to the service principal"
+		az role assignment create --assignee $principalName --role $roleDefinitionName --scope $scope
+	}
+}
+
+#Write-Host "Get '$resourceGroupName' resource group Id"
+#$resourceGroup = az group show --name $resourceGroupName --subscription $armSubscriptionId | Out-String | ConvertFrom-Json
+#$resourceGroupId = $resourceGroup.id
+
+#CreateRoleAssignment $resourceGroupId  $spAppId "Owner"
+#CreateRoleAssignment $resourceGroupId  $spAppId "User Access Administrator"
+
+#Write-Host "Assign '$spResourceRole' role for the resource group '$resourceGroupName' to the service principal"
+#az role assignment create --assignee $spAppId --role $spResourceRole --scope $resourceGroupId
 
 #--------------------------------------------------------------
 # Register providers
@@ -303,9 +443,84 @@ $armClientSecret = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.I
 # Logout from Azure to ensure a clean login.
 az logout
 
-# Login to Azure with principal that will have owner permissions on azure resource where everything will be created.
-az login --service-principal -u $spAppId -p $armClientSecret --tenant $spTenantId
-az account set --subscription $armSubscriptionId
+
+#--------------------------------------------------------------
+# Delete Resources
+#--------------------------------------------------------------
+
+
+function SignInAsPrincipalUsingAzCli {
+	# Login to Azure with principal that will have owner permissions on azure resoure where everything will be created.
+	az login --service-principal -u $spAppId -p $armClientSecret --tenant $spTenantId
+	Write-Host "Select Azure CLI Subscription: $armSubscriptionId"
+	az account set --subscription $armSubscriptionId
+}
+
+function SignInAsPrincipalUsingAzPowerShell {
+	# Login to Azure with service principal using Az module
+	$securePassword = ConvertTo-SecureString $armClientSecret -AsPlainText -Force
+	$creds = New-Object System.Management.Automation.PSCredential ($spAppId, $securePassword)
+	Connect-AzAccount -ServicePrincipal -Tenant $spTenantId -Credential $creds
+	Write-Host "Select Az Subscription: $armSubscriptionId"
+	Select-AzSubscription -Subscription $armSubscriptionId
+}
+
+
+function SignOut {
+	# Logout from Azure CLI
+	az logout
+	# Logout from Azure
+	Disconnect-AzAccount
+}
+
+
+function DeleteResources {
+	$lockName = "ResourceLock"
+	$lockLevel = "CanNotDelete"
+	try {
+		Write-Host "Removing lock: $lockName from resource group: $resourceGroupName"
+		Remove-AzResourceLock -LockName $lockName -ResourceGroupName $resourceGroupName -Force
+	} catch {
+		Write-Host "Lock does not exist or could not be removed. Continuing..."
+	}
+	Start-Sleep -Seconds 4
+	Write-Host "Deleting SQL database: $sqlDatabaseName"
+	az sql db delete --resource-group $resourceGroupName --server $sqlServerName --name $sqlDatabaseName --yes
+	Start-Sleep -Seconds 2
+	Write-Host "Deleting SQL server: $sqlServerName"
+	az sql server delete --resource-group $resourceGroupName --name $sqlServerName --yes
+	Start-Sleep -Seconds 2
+	Write-Host "Deleting Log Analytics workspace: $logAnalyticsWorkspaceName"
+	az monitor log-analytics workspace delete --resource-group $resourceGroupName --workspace-name $logAnalyticsWorkspaceName --yes
+	Start-Sleep -Seconds 2
+	#Write-Host "Deleting Key Vault: $keyVaultName"
+	#az keyvault delete --subscription $armSubscriptionId -g $resourceGroupName -n $keyVaultName
+	#az keyvault recover --subscription $armSubscriptionId -n $keyVaultName
+	Start-Sleep -Seconds 2
+	#$servicePrincipalObjectId = az ad sp show --id $armClientId --query "id" -o tsv
+	#$servicePrincipalName = az ad sp show --id $armClientId --query "appDisplayName" -o tsv
+	#$servicePrincipalObjectId
+	#$servicePrincipalName
+	# Unfortunatelly but service principal can't purge key vault.
+	#Write-Host "purging Key Vault: $keyVaultName"
+	#az keyvault purge --subscription $armSubscriptionId -n $keyVaultName --location "uksouth"
+	Start-Sleep -Seconds 2
+	# Recreate the lock on the resource group
+	New-AzResourceLock -LockName $lockName -ResourceGroupName $resourceGroupName -LockLevel $lockLevel -Force
+}
+
+$userInput = Read-Host -Prompt "Do you want to delete resources in '$resourceGroupName'? [y/N]"
+# Check the user's answer, ignoring case
+if ($userInput.Trim().ToUpper() -eq "Y") {
+	Ensure-AzModule
+	SignInAsPrincipalUsingAzCli
+	SignInAsPrincipalUsingAzPowerShell
+	DeleteResources
+	SignOut 
+	return
+}
+
+SignInAsPrincipalUsingAzCli
 
 # Check if can access groups. Requires "Directory Readers" role assingned on Service Principal or group tha service principal is member of.
 az ad group list --filter "displayName eq 'AI_RiskLevel_Low'" --verbose
@@ -317,7 +532,7 @@ $env:ARM_ACCESS_KEY = (az storage account keys list --resource-group $resourceGr
 Write-Host "ARM_ACCESS_KEY = $env:ARM_ACCESS_KEY"
 
 Write-Host "Get Azure resource management database access token."
-$env:ARM_DATABASE_ACCESS_TOKEN = (az account get-access-token --resource https://database.windows.net/ --output json | ConvertFrom-Json).accessToken
+$env:ARM_DATABASE_ACCESS_TOKEN = (az account get-access-token --resource https://database.windows.net/ --output json | Out-String | ConvertFrom-Json).accessToken
 Write-Host "ARM_DATABASE_ACCESS_TOKEN = $env:ARM_DATABASE_ACCESS_TOKEN"
 
 # Set environment variables. Use `TF_VAR_` prefix to make recognized by Terraform.
@@ -335,6 +550,19 @@ Write-Output "TF_VAR_ARM_TENANT_ID: $($env:TF_VAR_ARM_TENANT_ID)"
 Write-Output "TF_VAR_ARM_SUBSCRIPTION_ID: $($env:TF_VAR_ARM_SUBSCRIPTION_ID)"
 Write-Output "TF_VAR_ARM_CLIENT_ID: $($env:TF_VAR_ARM_CLIENT_ID)"
 
+
+
+Write-Host "Get '$resourceGroupName' resource group Id"
+$resourceGroup = az group show --name $resourceGroupName --subscription $armSubscriptionId | Out-String | ConvertFrom-Json
+$resourceGroupId = $resourceGroup.id
+
+CreateRoleAssignment $resourceGroupId  $spAppId "Owner"
+CreateRoleAssignment $resourceGroupId  $spAppId "User Access Administrator"
+
+#Write-Host "Assign '$spResourceRole' role for the resource group '$resourceGroupName' to the service principal"
+#az role assignment create --assignee $spAppId --role $spResourceRole --scope $resourceGroupId
+
+
 #--------------------------------------------------------------
 # Begin Terraform Setup (requries normal user login)
 #--------------------------------------------------------------
@@ -342,10 +570,6 @@ Write-Output "TF_VAR_ARM_CLIENT_ID: $($env:TF_VAR_ARM_CLIENT_ID)"
 # Logout from Azure to ensure a clean login
 az logout
 az login
-
-# Register providers
-#az provider register --namespace Microsoft.Security
-#az provider register --namespace Microsoft.Logic
 
 $userInput = Read-Host -Prompt "Do you want to initialize Terraform? [y/N]"
 # Check the user's answer, ignoring case
@@ -364,3 +588,6 @@ terraform apply -refresh-only -var-file="variables.${env}.tfvars"
 
 # Plan the changes for the new environment
 terraform plan -var-file="variables.${env}.tfvars"
+
+# Apply the changes for the new environment
+#terraform apply -var-file="variables.${env}.tfvars"

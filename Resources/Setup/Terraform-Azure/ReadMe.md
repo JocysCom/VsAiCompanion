@@ -92,6 +92,11 @@ To enable access to the optional cloud resources that could be used by the appli
 3. Run the downloaded `.msi` file.
 4. Follow the installer prompts.
 
+```PowerShell
+# Update PowerShell
+winget install --id Microsoft.Powershell --source winget
+```
+
 ### Open PowerShell 7 as Administrator
 
 1. Press `WIN + S` to open Windows Search.

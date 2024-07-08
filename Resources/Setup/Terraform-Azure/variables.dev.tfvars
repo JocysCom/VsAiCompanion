@@ -1,7 +1,7 @@
 # This file will contain the actual values for your variables and should not be checked into source control.
 
 # To refresh the state without making any changes:
-# terraform apply -refresh-only -var-file="variables.env.tfvars"
+# terraform apply -refresh-only -var-file="variables.dev.tfvars"
 
 # Company
 org = "jocyscom"
