@@ -280,7 +280,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			if (!isPortable)
 			{
 				var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
-				connection.AccessTokenCallback = GetAccessTokenAsync;
+				var isMicrosoftCloud = connectionString.Contains("database.windows.net", StringComparison.OrdinalIgnoreCase);
+				if (isMicrosoftCloud)
+					connection.AccessTokenCallback = GetAccessTokenAsync;
 				return connection;
 			}
 

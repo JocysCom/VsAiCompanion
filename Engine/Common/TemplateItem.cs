@@ -279,6 +279,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string PromptOption { get => _PromptOption; set => SetProperty(ref _PromptOption, value); }
 		string _PromptOption;
 
+		[DefaultValue("Prompts")]
+		public string ListPromptName { get => _ListPromptName; set => SetProperty(ref _ListPromptName, value); }
+		string _ListPromptName;
+
+		[DefaultValue("Info Known")]
+		public string ListPromptOption { get => _ListPromptOption; set => SetProperty(ref _ListPromptOption, value); }
+		string _ListPromptOption;
+
 		#endregion
 
 		#region Embeddings

@@ -62,6 +62,7 @@ $location = $variables["location"]
 
 $sqlServerName = "sql-${org}-${app}-${env}"
 $sqlDatabaseName = "sqldb-${org}-${app}-${env}"
+$sqlIdentity = "identity-${org}-${app}-${env}-sql"
 $logAnalyticsWorkspaceName = "kv-logging-${org}-${app}-${env}"
 $keyVaultName = "kv-${org}-${app}-${env}"
 $kvDiagnosticLogging = "kv-diagnostic-logging-${org}-${app}-${env}" 
@@ -116,14 +117,14 @@ function ImportResource {
 	param (
         [string] $resourceType,
         [string] $resourceName,
-		[string] $scope
+		[string] $resourceId
     )
 	if (IsResourceManagedByTerraform $resourceType $resourceName) {
 		return
 	}
 	$userInput = Read-Host -Prompt "Do you want to import '$resourceType.$resourceName'? [y/N]"
 	if ($userInput.Trim().ToUpper() -eq "Y") {
-		terraform import  -var-file="variables.${env}.tfvars" "$resourceType.$resourceName" $scope
+		terraform import  -var-file="variables.${env}.tfvars" "$resourceType.$resourceName" $resourceId
 	}
 }
 
@@ -139,12 +140,41 @@ function ImportRoleResource {
 		return
 	}
 	# Get the existing role assignment information
-	$roleAssignmentId = & az role assignment list --scope $scope --query "[?principalName=='$principalName' && roleDefinitionName=='$roleDefinitionName'] | [0].id" | ConvertFrom-Json
-	if ($roleAssignmentId -ne $null) {
+	$resourceId = & az role assignment list --scope $scope --query "[?principalName=='$principalName' && roleDefinitionName=='$roleDefinitionName'] | [0].id" | ConvertFrom-Json
+	if ($resourceId -ne $null) {
 		ImportResource $resourceType $resourceName $roleAssignmentId
 	}
 }
 
+function ImportIdentity {
+	param (
+        [string] $resourceType,
+        [string] $resourceName,
+		[string] $identityName
+    )
+	if (IsResourceManagedByTerraform $resourceType $resourceName){
+		return
+	}
+	$resourceId = az identity show --resource-group $resourceGroupName --name $identityName --query "id" -o tsv
+	if ($roleAssignmentId -ne $null) {
+		ImportResource $resourceType $resourceName $resourceId
+	}
+}
+
+function ImportServicePrincipal {
+	param (
+        [string] $resourceType,
+        [string] $resourceName,
+		[string] $displayname
+    )
+	if (IsResourceManagedByTerraform $resourceType $resourceName){
+		return
+	}
+	$resourceId = az ad sp list --display-name $displayname --query "[0].id" -o tsv
+	if ($resourceId -ne $null) {
+		ImportResource $resourceType $resourceName $resourceId
+	}
+}
 
 $userInput = Read-Host -Prompt "Do you want to import resources? [y/N]"
 # Check the user's answer, ignoring case
@@ -154,42 +184,34 @@ if ($userInput.Trim().ToUpper() -eq "Y") {
 	$keyVaultPath = "$rgPath/providers/Microsoft.KeyVault/vaults/$keyVaultName"
 	$sqlPath = "$rgPath/providers/Microsoft.Sql/servers/$sqlServerName"
 	$storagePath = "$rgPath/providers/Microsoft.Storage/storageAccounts/$storageAccountName"
+	#$identitiesPath = "$rgPath/providers/Microsoft.ManagedIdentity/userAssignedIdentities"
 
 	# SQL
 
 	ImportResource "azurerm_mssql_server" "sqlsrv" $sqlPath
     ImportResource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" "$sqlPath/securityAlertPolicies/default"
-
-	$resourceId = az sql server audit-policy show --resource-group $resourceGroupName --name $sqlServerName --query "id"
-	if ($roleAssignmentId -ne "") {
-		ImportResource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" $resourceId
-	}
+	ImportServicePrincipal "azuread_service_principal" "sql_identity_sp" $sqlIdentity
+	ImportIdentity "azurerm_user_assigned_identity" "sql_identity" $sqlIdentity
 
 	# Key Vault
 	
 	ImportResource "azurerm_key_vault"    "kv"     $keyVaultPath
-	
 	ImportRoleResource "azurerm_role_assignment" "key_vault_reader_low"      $keyVaultPath "AI_RiskLevel_Low"      "Key Vault Reader"
 	ImportRoleResource "azurerm_role_assignment" "key_vault_reader_medium"   $keyVaultPath "AI_RiskLevel_Medium"   "Key Vault Reader"
 	ImportRoleResource "azurerm_role_assignment" "key_vault_reader_high"     $keyVaultPath "AI_RiskLevel_High"     "Key Vault Reader"
-	
 	ImportRoleResource "azurerm_role_assignment" "key_vault_reader_critical"               $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Reader"
 	ImportRoleResource "azurerm_role_assignment" "key_vault_contributor_critical"          $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Contributor"
 	ImportRoleResource "azurerm_role_assignment" "key_vault_administrator_critical"        $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Administrator"
-
 	ImportRoleResource "azurerm_role_assignment" "key_vault_crypto_officer_critical"       $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Crypto Officer"
 	ImportRoleResource "azurerm_role_assignment" "key_vault_certificates_officer_critical" $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Certificates Officer"
 	ImportRoleResource "azurerm_role_assignment" "key_vault_secrets_officer_critical"      $keyVaultPath "AI_RiskLevel_Critical" "Key Vault Secrets Officer"
-
 	ImportResource "azurerm_key_vault_secret" "kvs_openai" "$keyVaultPath/secrets/openai-api-key"
     ImportResource "azurerm_key_vault_secret" "kvs_speech" "$keyVaultPath/secrets/ms-speech-service-api-key"
-
 	ImportResource "azurerm_monitor_diagnostic_setting" "kv_diagnostic_logging" "$keyVaultPath|$kvDiagnosticLogging"
 
 	# Storage 
 
 	ImportResource "azurerm_storage_management_policy" "storage_management" "$storagePath/managementPolicies/default"
-
 
 	pause
 }
@@ -391,9 +413,9 @@ $resourceGroupId = $resourceGroup.id
 
 CreateRoleAssignment $resourceGroupId  $spAppId "Owner"
 CreateRoleAssignment $resourceGroupId  $spAppId "User Access Administrator"
-CreateRoleAssignment $resourceGroupId  $spAppId "Role Based Access Control Administrator"
+#CreateRoleAssignment $resourceGroupId  $spAppId "Role Based Access Control Administrator"
 #CreateRoleAssignment $resourceGroupId  $spAppId "App Administrator"
-CreateRoleAssignment $resourceGroupId  $spAppId "Reader"
+#CreateRoleAssignment $resourceGroupId  $spAppId "Reader"
 
 #Write-Host "Assign '$spResourceRole' role for the resource group '$resourceGroupName' to the service principal"
 #az role assignment create --assignee $spAppId --role $spResourceRole --scope $resourceGroupId
@@ -509,6 +531,14 @@ function DeleteResources {
 	Start-Sleep -Seconds 2
 	Write-Host "Deleting SQL server: $sqlServerName"
 	az sql server delete --resource-group $resourceGroupName --name $sqlServerName --yes
+	Start-Sleep -Seconds 2
+	Write-Host "Deleting Service Principal of SQL Identity: $sqlIdentity"
+	$sqlSpId = az ad sp list --display-name $sqlIdentity --query "[0].id" -o tsv
+	if ($sqlSpId -ne $null) {
+		az ad sp delete --id $sp
+	}
+	Write-Host "Deleting SQL Identity : $sqlIdentity"
+	az identity delete --resource-group $resourceGroupName --name $sqlIdentity
 	Start-Sleep -Seconds 2
 	Write-Host "Deleting Log Analytics workspace: $logAnalyticsWorkspaceName"
 	az monitor log-analytics workspace delete --resource-group $resourceGroupName --workspace-name $logAnalyticsWorkspaceName --yes

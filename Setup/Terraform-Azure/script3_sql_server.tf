@@ -30,6 +30,18 @@ resource "azurerm_mssql_server" "sqlsrv" {
   primary_user_assigned_identity_id = azurerm_user_assigned_identity.sql_identity.id
 }
 
+#-------------------------------------------------------------
+
+# Create an Azure Role Assignment (RBAC) for the SQL managed identity with the role "Reader" on the SQL Server. 
+# Reader - View all resources, but does not allow you to make any changes.
+resource "azurerm_role_assignment" "sql_identity_reader" {
+  scope                = azurerm_mssql_server.sqlsrv.id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_user_assigned_identity.sql_identity.principal_id
+}
+
+#-------------------------------------------------------------
+
 # Allow SQL Server identity to Access Entra information.
 
 # Obtain Well-Known Application IDs for Microsoft Graph
@@ -41,7 +53,7 @@ data "azuread_service_principal" "msgraph" {
 }
 
 # Create Service Principal for Managed Identity
-data "azuread_service_principal" "sql_identity_sp" {
+resource "azuread_service_principal" "sql_identity_sp" {
   client_id = azurerm_user_assigned_identity.sql_identity.client_id
 }
 
@@ -50,21 +62,21 @@ data "azuread_service_principal" "sql_identity_sp" {
 # User.Read.All: Allows access to Microsoft Entra user information.
 resource "azuread_app_role_assignment" "sql_identity_user_reader" {
   app_role_id         = data.azuread_service_principal.msgraph.app_role_ids["User.Read.All"]
-  principal_object_id = data.azuread_service_principal.sql_identity_sp.object_id
+  principal_object_id = azuread_service_principal.sql_identity_sp.object_id
   resource_object_id  = data.azuread_service_principal.msgraph.object_id
 }
 
 # GroupMember.Read.All: Allows access to Microsoft Entra group information.
 resource "azuread_app_role_assignment" "sql_identity_group_reader" {
   app_role_id         = data.azuread_service_principal.msgraph.app_role_ids["GroupMember.Read.All"]
-  principal_object_id = data.azuread_service_principal.sql_identity_sp.object_id
+  principal_object_id = azuread_service_principal.sql_identity_sp.object_id
   resource_object_id  = data.azuread_service_principal.msgraph.object_id
 }
 
 # Application.Read.ALL: Allows access to Microsoft Entra service principal (application) information.
 resource "azuread_app_role_assignment" "sql_identity_app_reader" {
   app_role_id         = data.azuread_service_principal.msgraph.app_role_ids["Application.Read.All"]
-  principal_object_id = data.azuread_service_principal.sql_identity_sp.object_id
+  principal_object_id = azuread_service_principal.sql_identity_sp.object_id
   resource_object_id  = data.azuread_service_principal.msgraph.object_id
 }
 
@@ -86,14 +98,6 @@ output "managed_identity_principal_id" {
 #  principal_object_id = azurerm_mssql_server.sqlsrv.identity[0].principal_id
 #}
 
-
-# Assign the Directory Readers role to the Managed Identity of the SQL Server
-# Reader - View all resources, but does not allow you to make any changes.
-resource "azurerm_role_assignment" "sqlsrv_directory_reader" {
-  role_definition_name = "Reader"
-  principal_id         = azurerm_mssql_server.sqlsrv.identity[0].principal_id
-  scope                = azurerm_mssql_server.sqlsrv.id
-}
 
 # Role Assignments. Requires "User Access Administrator" role on target resource
 
@@ -122,6 +126,36 @@ resource "azurerm_mssql_firewall_rule" "sqlsrv_firewall_rule_all" {
 
 # Assign SQL Server roles inside SQL Server by using SQL script.
 
+resource "null_resource" "assign_sql_server_roles0" {
+  provisioner "local-exec" {
+    command     = <<-EOT
+    $token = (az account get-access-token --resource https://database.windows.net/ --query accessToken -o tsv)
+    $conn = New-Object System.Data.SqlClient.SqlConnection
+    $conn.ConnectionString = "Server=${azurerm_mssql_server.sqlsrv.fully_qualified_domain_name}; Database=master;"
+    $conn.AccessToken = $token
+    $sqlIdentity = "${azurerm_user_assigned_identity.sql_identity.name}"
+
+
+    $query = @"
+    CREATE USER [$sqlIdentity] FROM EXTERNAL PROVIDER;
+    ALTER ROLE [db_datareader] ADD MEMBER [$sqlIdentity];
+    ALTER ROLE [db_datawriter] ADD MEMBER [$sqlIdentity];
+    GRANT CONNECT TO [$sqlIdentity];
+    "@
+
+    $cmd = New-Object System.Data.SqlClient.SqlCommand($query, $conn)
+    $conn.Open()
+    $cmd.ExecuteNonQuery()
+    $conn.Close()
+    EOT
+    interpreter = ["PowerShell", "-Command"]
+  }
+  depends_on = [
+    azurerm_mssql_server.sqlsrv,
+  ]
+}
+
+
 resource "null_resource" "assign_sql_server_roles" {
   provisioner "local-exec" {
     command     = <<-EOT
@@ -134,7 +168,7 @@ resource "null_resource" "assign_sql_server_roles" {
   }
   depends_on = [
     azurerm_mssql_server.sqlsrv,
-    azurerm_role_assignment.sqlsrv_directory_reader
+    #azurerm_role_assignment.sqlsrv_directory_reader
     #azuread_directory_role_assignment.sql_directory_reader
   ]
 }
@@ -158,7 +192,7 @@ resource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" {
   retention_days = 120
 
   # Rule ID: CKV_AZURE_26 - Ensure that 'Send Alerts To' is enabled for MSSQL servers
-  email_addresses = [ "user@localhost.lan" ]
+  email_addresses = ["user@localhost.lan"]
 
   # Define where to send audit logs
   storage_account_access_key = data.azurerm_storage_account.storage_account.primary_access_key

@@ -47,12 +47,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.OnSaveSettings += Global_OnSaveSettings;
 			ChatPanel.UseEnterToSendMessage = Global.AppSettings.UseEnterToSendMessage;
 			PromptsPanel.AddPromptButton.Click += PromptsPanel_AddPromptButton_Click;
+			ListsPromptsPanel.AddPromptButton.Click += ListsPromptsPanel_AddPromptButton_Click;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			UpdateSpellCheck();
 			var checkBoxes = ControlsHelper.GetAll<CheckBox>(this);
 			AppHelper.EnableKeepFocusOnMouseClick(checkBoxes);
 			// Lists Dropdowns.
-			Global.Lists.Items.ListChanged += Items_ListChanged;
+			Global.Lists.Items.ListChanged += Global_Lists_Items_Items_ListChanged;
 			UpdateListNames();
 			// Embeddings dropdown.
 			Global.Embeddings.Items.ListChanged += Embeddings_Items_ListChanged;
@@ -79,7 +80,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			UpdateAvatarControl();
 		}
 
-		private void Items_ListChanged(object sender, ListChangedEventArgs e)
+		private void Global_Lists_Items_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			AppHelper.CollectionChanged(e, UpdateListNames, nameof(ListInfo.Path), nameof(ListInfo.Name));
 		}
@@ -87,6 +88,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void Global_PromptingUpdated(object sender, EventArgs e)
 		{
 			PromptsPanel.BindData(_Item);
+			ListsPromptsPanel.BindData(_Item);
 		}
 
 		private void PromptsPanel_AddPromptButton_Click(object sender, RoutedEventArgs e)
@@ -94,9 +96,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var promptItem = Global.PromptItems.Items.FirstOrDefault(x => x.Name == _Item?.PromptName);
 			if (promptItem == null)
 				return;
-			var box = GetFocused();
 			var promptString = string.Format(promptItem.Pattern, _Item?.PromptOption);
+			var box = GetFocused();
 			AppHelper.InsertText(box, promptString, false, true);
+		}
+
+		private void ListsPromptsPanel_AddPromptButton_Click(object sender, RoutedEventArgs e)
+		{
+			var promptItem = Global.Lists.Items.FirstOrDefault(x => x.Name == _Item?.ListPromptName);
+			if (promptItem == null)
+				return;
+			var promptOption = promptItem.Items.FirstOrDefault(x => x.Key == _Item?.ListPromptOption);
+			if (promptOption == null)
+				return;
+			var box = GetFocused();
+			AppHelper.InsertText(box, promptOption.Value, false, true);
 		}
 
 		bool WebBrowserDataLoaded;
@@ -264,30 +278,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void UpdateListNames()
 		{
 			// Update ContextListNames
-			var names = GetListNames("Context", "Company", "Department");
+			var names = AppHelper.GetListNames(Item?.Name, "Context", "Company", "Department");
 			CollectionsHelper.Synchronize(names, ContextListNames);
 			OnPropertyChanged(nameof(ContextListNames));
 			// Update ProfileListNames
-			names = GetListNames("Profile", "Persona");
+			names = AppHelper.GetListNames(Item?.Name, "Profile", "Persona");
 			CollectionsHelper.Synchronize(names, ProfileListNames);
 			OnPropertyChanged(nameof(ProfileListNames));
 			// Update RoleListNames
-			names = GetListNames("Role");
+			names = AppHelper.GetListNames(Item?.Name, "Role");
 			CollectionsHelper.Synchronize(names, RoleListNames);
 			OnPropertyChanged(nameof(RoleListNames));
-		}
-
-		private List<ListInfo> GetListNames(params string[] prefix)
-		{
-			var items = Global.Lists.Items
-				.Where(x => string.IsNullOrWhiteSpace(x.Path) || x.Path == Item?.Name)
-				.OrderBy(x => $"{x.Path}")
-				// Items with prefix on top.
-				.ThenBy(x => prefix.Any(p => x.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase)) ? 0 : 1)
-				.ThenBy(x => x.Name)
-				.ToList();
-			items.Insert(0, new ListInfo());
-			return items;
 		}
 
 		public ObservableCollection<EnumComboBox.CheckBoxViewModel> AttachContexts
@@ -349,6 +350,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 				IconPanel.BindData(_Item);
 				PromptsPanel.BindData(_Item);
+				ListsPromptsPanel.BindData(_Item);
 				ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
 				ChatPanel.IsBusy = _Item.IsBusy;
 				ChatPanel.UpdateMessageEdit();

@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.PromptsControl"
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.ListsPromptsControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -21,13 +21,18 @@
 		<StackPanel Orientation="Horizontal">
 			<ComboBox
 				Name="PromptNameComboBox"
-				Margin="3,3,6,3"
-				ItemsSource="{Binding PromptNames, ElementName=This}"
-				SelectedValue="{Binding PromptName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-			<Label VerticalAlignment="Center" Content="{StaticResource main_Prompting}" Opacity="0.4" />
-			<Label Name="PatternStartLabel" VerticalAlignment="Center" />
-			<ComboBox Name="PromptOptionComboBox" ItemsSource="{Binding PromptOptions, ElementName=This}" SelectedValue="{Binding PromptOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-			<Label Name="PatternEndLabel" VerticalAlignment="Center" />
+				HorizontalAlignment="Stretch"
+				DisplayMemberPath="Name"
+				ItemsSource="{Binding PromptLists, ElementName=This}"
+				SelectedValue="{Binding ListPromptName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				SelectedValuePath="Name" />
+			<Label VerticalAlignment="Center" Content="List" Opacity="0.4" />
+			<ComboBox
+				Name="PromptOptionComboBox"
+				DisplayMemberPath="Key"
+				ItemsSource="{Binding PromptOptions, ElementName=This}"
+				SelectedValue="{Binding ListPromptOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				SelectedValuePath="Key" />
 			<Button
 				Name="AddPromptButton"
 				HorizontalAlignment="Right"

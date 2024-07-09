@@ -3,7 +3,7 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:Chat="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Chat"
-	xmlns:Controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -61,7 +61,7 @@
 						<ContentControl Content="{StaticResource Icon_navigate_left2}" />
 					</Button>
 					<StackPanel Grid.Column="1" Orientation="Horizontal">
-						<Controls:AiModelBoxControl x:Name="AiModelBoxPanel" />
+						<controls:AiModelBoxControl x:Name="AiModelBoxPanel" />
 						<CheckBox
 							Name="IsPreviewCheckBox"
 							VerticalAlignment="Center"
@@ -173,7 +173,7 @@
 						</StackPanel>
 					</TabItem.Header>
 					<WrapPanel>
-						<Controls:IconUserControl
+						<controls:IconUserControl
 							x:Name="IconPanel"
 							Grid.Row="1"
 							Width="64"
@@ -371,7 +371,7 @@
 											Content="Attachments" />
 									</StackPanel>
 								</GroupBox.Header>
-								<Controls:EnumComboBox
+								<controls:EnumComboBox
 									x:Name="AttachmentEnumComboBox"
 									Width="170"
 									VerticalAlignment="Center"
@@ -596,7 +596,7 @@
 							Margin="3"
 							Content="Group Flags" />
 
-						<Controls:EnumComboBox
+						<controls:EnumComboBox
 							x:Name="EmbeddingGroupFlagComboBox"
 							MinWidth="64"
 							VerticalAlignment="Center"
@@ -717,7 +717,7 @@
 			</TabControl>
 			<!--  Row 2  -->
 			<!--  Row 3  -->
-			<Controls:PluginApprovalControl
+			<controls:PluginApprovalControl
 				x:Name="PluginApprovalPanel"
 				Grid.Row="3"
 				Grid.ColumnSpan="4"
@@ -739,12 +739,17 @@
 				BorderBrush="{StaticResource BorderDark}"
 				BorderThickness="0,0,0,1"
 				Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
-				<StackPanel Orientation="Horizontal">
-					<Controls:CodeBlockControl x:Name="CodeBlockPanel" />
+				<WrapPanel Orientation="Horizontal">
+					<controls:CodeBlockControl x:Name="CodeBlockPanel" />
+					<Border BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,1,0">
+						<StackPanel Margin="5,3,5,3" Orientation="Horizontal">
+							<controls:PromptsControl x:Name="PromptsPanel" />
+						</StackPanel>
+					</Border>
 					<StackPanel Margin="5,3,5,3" Orientation="Horizontal">
-						<Controls:PromptsControl x:Name="PromptsPanel" />
+						<controls:ListsPromptsControl x:Name="ListsPromptsPanel" />
 					</StackPanel>
-				</StackPanel>
+				</WrapPanel>
 			</Border>
 			<!--  Row 6  -->
 			<!--  Row 7  -->

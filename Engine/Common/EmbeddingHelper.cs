@@ -23,6 +23,8 @@ using System.Collections.ObjectModel;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using System.Windows.Threading;
+
 
 #if NETFRAMEWORK
 using System.Data.SQLite;
@@ -385,17 +387,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void ApplyDatabase(string groupName, ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> property)
 		{
-			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
-			var flags = GetFlags(ei);
-			var items = property.ToArray();
-			foreach (var item in items)
+			// Run the time-consuming operations asynchronously
+			Task.Run(() =>
 			{
-				var flagName = flags.FirstOrDefault(x => x.Flag == (long)item.Key)?.FlagName ?? "";
-				var description = Attributes.GetDescription(item.Key);
-				if (!string.IsNullOrEmpty(flagName))
-					description += ": " + flagName;
-				item.Value = description;
-			}
+				var ei = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
+				if (ei == null)
+					return;
+				var flags = GetFlags(ei);
+				// Update the UI thread
+				Dispatcher.CurrentDispatcher.Invoke(() =>
+				{
+					var items = property.ToArray();
+					foreach (var item in items)
+					{
+						var flagName = flags.FirstOrDefault(x => x.Flag == (long)item.Key)?.FlagName ?? string.Empty;
+						var description = Attributes.GetDescription(item.Key);
+						if (!string.IsNullOrEmpty(flagName))
+						{
+							description += ": " + flagName;
+						}
+
+						item.Value = description;
+					}
+				});
+			});
 		}
 
 		public static void ApplyDatabase(string groupName, ObservableCollection<EnumComboBox.CheckBoxViewModel> property)

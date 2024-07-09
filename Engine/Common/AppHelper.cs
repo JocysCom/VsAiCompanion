@@ -716,6 +716,23 @@ EndFragment:{3:00000000}";
 			}
 		}
 
+		#region Get Data
+
+		public static List<ListInfo> GetListNames(string path, params string[] prefix)
+		{
+			var items = Global.Lists.Items
+				.Where(x => string.IsNullOrWhiteSpace(x.Path) || x.Path == path)
+				.OrderBy(x => $"{x.Path}")
+				// Items with prefix on top.
+				.ThenBy(x => prefix.Any(p => x.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase)) ? 0 : 1)
+				.ThenBy(x => x.Name)
+				.ToList();
+			items.Insert(0, new ListInfo());
+			return items;
+		}
+
+		#endregion
+
 		#region Encrypt and Decrypt
 
 		/// <summary>

@@ -27,7 +27,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (Equals(item, Item))
 				return;
-			PromptOptionComboBox.SelectionChanged -= PromptOptionComboBox_SelectionChanged;
 			PromptNameComboBox.SelectionChanged -= PromptNameComboBox_SelectionChanged;
 			DataContext = null;
 			FixPromptName(item);
@@ -37,7 +36,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Item = item;
 			DataContext = item;
 			PromptNameComboBox.SelectionChanged += PromptNameComboBox_SelectionChanged;
-			PromptOptionComboBox.SelectionChanged += PromptOptionComboBox_SelectionChanged;
 		}
 
 		void FixPromptName(TemplateItem item)
@@ -52,7 +50,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				.FirstOrDefault(x => x.Name == item.PromptName)?
 				.Options.OrderBy(x => x).ToList();
 			// If item is not in the list then...
-			if (!options.Contains(item.PromptOption))
+			if (options != null && options.Contains(item.PromptOption))
 				// Set default value.
 				item.PromptOption = options.FirstOrDefault();
 		}
@@ -83,7 +81,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var options = Global.PromptItems.Items
 				.FirstOrDefault(x => x.Name == promptName)?
-				.Options.OrderBy(x => x).ToList();
+				.Options.OrderBy(x => x).ToList() ?? new System.Collections.Generic.List<string>();
 			CollectionsHelper.Synchronize(options, PromptOptions);
 		}
 
@@ -96,17 +94,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			FixPromptOption(Item);
 		}
 
-		private void PromptOptionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-		}
-
 		public BindingList<string> PromptNames { get; set; }
 
 		public BindingList<string> PromptOptions { get; set; }
-		private void AddPromptButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-
-		}
 
 		#region ■ INotifyPropertyChanged
 
