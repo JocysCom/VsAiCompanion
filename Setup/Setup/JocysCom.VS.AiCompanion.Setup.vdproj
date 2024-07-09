@@ -351,6 +351,20 @@
             "Icon" = "8:_2C1BA1CAFA7B4AAB994E3D6E0F69A4D0"
             "Feature" = "8:"
             }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E8E375496A9C4CDE8C44395701D91175"
+            {
+            "Name" = "8:AI Companion"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:32512"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_2C1BA1CAFA7B4AAB994E3D6E0F69A4D0"
+            "Folder" = "8:_5F1FE5001FE54D268185845156B7699A"
+            "WorkingFolder" = "8:_112CB7875A044A408E77302D84754286"
+            "Icon" = "8:_2C1BA1CAFA7B4AAB994E3D6E0F69A4D0"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {

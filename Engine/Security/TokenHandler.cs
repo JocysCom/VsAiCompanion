@@ -57,6 +57,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		// Note the // as it's needed for v1 endpoints
 		public const string MicrosoftDatabaseScopes = "https://database.windows.net//.default";
+		public const string DirectoryReadAllScope = "Directory.Read.All";
+		public const string UserReadScope = "User.Read";
+		public const string GroupReadAllScope = "Group.Read.All";
+		public const string GroupMemberReadAllScope = "GroupMember.Read.All";
+
+
 
 		public const string MicrosoftGraphScope = "https://graph.microsoft.com/.default";
 		public const string MicrosoftAzureManagementScope = "https://management.azure.com/.default";
@@ -201,6 +207,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 				return credentials;
 			return await GetWinTokenCredentials(interactive);
 		}
+
+		// Other existing methods
+
+		public static async Task<TokenCredential> GetTokenCredentialWithScopes(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
+		{
+			var profile = MicrosoftResourceManager.Current.GetProfile();
+			var token = profile.GetToken(scopes);
+
+			if (!string.IsNullOrEmpty(token))
+			{
+				// Use cached token if available
+				return new AccessTokenCredential(token);
+			}
+
+			// Get new token from SignIn if no valid token is found
+			var result = await MicrosoftResourceManager.Current.SignIn(scopes, cancellationToken);
+			if (!result.Success || result.Data == null)
+			{
+				return null;
+			}
+
+			return new AccessTokenCredential(result.Data.AccessToken);
+		}
+
 
 		public static async Task<TokenCredential> GetTokenCredential(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
 		{

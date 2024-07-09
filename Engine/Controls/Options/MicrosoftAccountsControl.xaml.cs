@@ -59,8 +59,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			{
 				LogPanel.Clear();
 				var scopes = new string[] { TokenHandler.MicrosoftGraphScope };
-				await MicrosoftResourceManager.Current.SignIn(scopes, cancellationToken);
-				await MicrosoftResourceManager.Current.RefreshProfileImage(cancellationToken);
+				var result = await MicrosoftResourceManager.Current.SignIn(scopes, cancellationToken);
+				if (result.Success)
+				{
+					await MicrosoftResourceManager.Current.RefreshProfileImage(cancellationToken);
+					var groups = await MicrosoftResourceManager.Current.GetUserAzureGroups(cancellationToken);
+				}
 			});
 		}
 

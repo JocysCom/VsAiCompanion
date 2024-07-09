@@ -180,7 +180,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static string[] GetRequiredLists()
 		{
 			return new string[] {
-				"API - Demo",
+				"API - Demo", "Prompts"
 			};
 		}
 

@@ -1,6 +1,7 @@
-2024-07-04 v1.12.20
+2024-07-09 v1.12.21
 
 - New: Option "Max risk level when signed out" when the app is in the company domain.
+- New: Use lists as a data source for prompts.
 
 2024-07-03 v1.12.19
 

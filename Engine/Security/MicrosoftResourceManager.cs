@@ -495,5 +495,76 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#endregion
 
+		#region Microsoft Graph
+
+		/// <summary>
+		/// Retrieve Azure groups the user is a member of (direct or indirect).
+		/// </summary>
+		public async Task<List<string>> GetUserAzureGroups(CancellationToken cancellationToken = default)
+		{
+			var groups = new List<string>();
+
+			// Get the access token and initialize the GraphServiceClient
+			var scopes = new[] { TokenHandler.GroupMemberReadAllScope, TokenHandler.UserReadScope }; // Ensure we are using valid scope
+
+			var credential = await TokenHandler.GetTokenCredentialWithScopes(scopes, cancellationToken: cancellationToken);
+
+			if (credential == null)
+			{
+				return groups;
+			}
+
+			var client = new GraphServiceClient(credential);
+
+			try
+			{
+				// Create request body for the GetMemberGroups call
+				var body = new Microsoft.Graph.Me.GetMemberGroups.GetMemberGroupsPostRequestBody
+				{
+					SecurityEnabledOnly = false
+				};
+
+				// Retrieve the user's group memberships from the Microsoft Graph API
+				var userGroupsResponse = await client.Me
+					.GetMemberGroups
+					.PostAsGetMemberGroupsPostResponseAsync(body, cancellationToken: cancellationToken)
+					.ConfigureAwait(false);
+
+				var groupIds = userGroupsResponse.Value;
+				if (groupIds?.Any() == true)
+				{
+					// Retrieve group details
+					foreach (var groupId in groupIds)
+					{
+						try
+						{
+							var group = await client.Groups[groupId]
+								.GetAsync(cancellationToken: cancellationToken)
+								.ConfigureAwait(false);
+
+							if (group != null)
+								groups.Add(group.DisplayName);
+						}
+						catch (ServiceException ex)
+						{
+							System.Diagnostics.Debug.WriteLine($"Graph API error when retrieving group details for group {groupId}: {ex.Message}");
+						}
+					}
+				}
+			}
+			catch (ServiceException ex)
+			{
+				// Handle any Graph API specific errors here
+				System.Diagnostics.Debug.WriteLine($"Graph API error: {ex.Message}");
+			}
+
+			return groups;
+		}
+
+
+
+
+		#endregion
+
 	}
 }
