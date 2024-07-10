@@ -17,7 +17,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: windows-latest  # Use Windows runner
+    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
