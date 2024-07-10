@@ -30,6 +30,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -1044,6 +1045,25 @@ EndFragment:{3:00000000}";
 				// Set the cursor after the inserted text
 				box.CaretIndex = cursorPosition + s.Length;
 			}
+		}
+
+		/// <summary>
+		/// Use this function to make sure that the text pasted by the user doesn't have invalid characters that could crash XML serialization.
+		/// </summary>
+		public static string ReplaceInvalidXmlChars(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return text;
+			var sb = new StringBuilder();
+			foreach (var ch in text)
+			{
+				if (XmlConvert.IsXmlChar(ch))
+					sb.Append(ch);
+				else
+					// Replace invalid character with its hexadecimal representation
+					sb.AppendFormat("&#x{0:X};", (int)ch);
+			}
+			return sb.ToString();
 		}
 
 		#endregion

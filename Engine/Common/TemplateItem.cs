@@ -37,7 +37,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		/// <summary>Instructions that will be included at the start of every message.</summary>
 		[DefaultValue("")]
-		public string TextInstructions { get => _TextInstructions; set => SetProperty(ref _TextInstructions, value); }
+		public string TextInstructions
+		{
+			get => _TextInstructions;
+			set => SetProperty(ref _TextInstructions, AppHelper.ReplaceInvalidXmlChars(value));
+		}
 		string _TextInstructions;
 
 		/// <summary>Show Instructions</summary>
@@ -51,7 +55,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		bool _IsSystemInstructions;
 
 		[DefaultValue("")]
-		public string Text { get => _Text ?? ""; set => SetProperty(ref _Text, value); }
+		public string Text
+		{
+			get => _Text ?? "";
+			set => SetProperty(ref _Text, AppHelper.ReplaceInvalidXmlChars(value));
+		}
 		string _Text;
 
 

@@ -1,10 +1,11 @@
-2024-07-10 v1.12.25
+2024-07-10 v1.12.26
 
 - New: Option "Max risk level when signed out" when the app is in the company domain.
 - New: Use lists as a data source for prompts.
 - New: Option to enable Microsoft account. Default: disabled.
 - New: Option to specify the number of task items in the tray bar.
 - Fix: Update maximum risk level limit when user signs in (corporate option).
+- Fix: Prevent crash when the user pastes an invalid XML character into the chat.
 
 2024-07-03 v1.12.19
 
