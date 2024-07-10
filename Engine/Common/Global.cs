@@ -47,8 +47,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static AssemblyInfo Info { get; } = new AssemblyInfo(typeof(Global).Assembly);
 
-		public static AppData AppSettings =>
-			AppData.Items.FirstOrDefault();
+		public static AppData AppSettings
+			=> AppData.Items.FirstOrDefault();
+
+		/// <summary>
+		/// Get user profile with the access token.
+		/// </summary>
+		public static UserProfile UserProfile
+			=> AppSettings.UserProfiles.First();
 
 		public static SettingsData<AppData> AppData =
 			new SettingsData<AppData>(null, true, null, System.Reflection.Assembly.GetExecutingAssembly());

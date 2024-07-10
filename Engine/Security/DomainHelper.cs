@@ -32,16 +32,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 					// If risk groups found then...
 					var domainRiskGroups = GetDomainRiskGroups();
 					if (domainRiskGroups.Values.Any(x => x))
+					{
+						var user = WindowsIdentity.GetCurrent().User;
+						var allGroups = GetUserGroupMemberships(user);
 						// Get user maximum risk level.
-						_UserMaxRiskLevel = GetUserRiskGroups()
+						_UserMaxRiskLevel = GetUserRiskGroups(allGroups)
 							.Where(x => x.Value).Max(x => x.Key);
+					}
 				}
 				RiskLevelAcquired = true;
 			}
 			return _UserMaxRiskLevel;
 		}
 
-		private static Dictionary<RiskLevel, bool> GetLevels()
+		public static Dictionary<RiskLevel, bool> GetLevels()
 		{
 			var dic = ((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new RiskLevel[] { RiskLevel.Unknown })
 				.ToDictionary(x => x, x => false);
@@ -70,17 +74,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		}
 
 		/// <summary>
-		/// Get risk groups available on domain.
+		/// Get risk groups of the user.
 		/// </summary>
-		public static Dictionary<RiskLevel, bool> GetUserRiskGroups()
+		public static Dictionary<RiskLevel, bool> GetUserRiskGroups(IList<string> groups)
 		{
-			var user = WindowsIdentity.GetCurrent().User;
-			var allGroups = GetUserGroupMemberships(user);
 			var dic = GetLevels();
 			foreach (var level in dic.Keys)
 			{
 				var groupName = GetGroupName(level);
-				var exists = allGroups.Any(g => g.Equals(groupName, StringComparison.OrdinalIgnoreCase));
+				var exists = groups.Any(g => g.Equals(groupName, StringComparison.OrdinalIgnoreCase));
 				dic[level] = exists;
 			}
 			return dic;

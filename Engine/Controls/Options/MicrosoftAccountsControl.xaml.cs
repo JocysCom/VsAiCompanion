@@ -63,7 +63,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 				if (result.Success)
 				{
 					await MicrosoftResourceManager.Current.RefreshProfileImage(cancellationToken);
-					var groups = await MicrosoftResourceManager.Current.GetUserAzureGroups(cancellationToken);
+					var userGroups = await MicrosoftResourceManager.Current.GetUserAzureGroups(cancellationToken);
+					var profile = MicrosoftResourceManager.Current.GetProfile();
+					profile.UserGroups = userGroups;
 				}
 			});
 		}
