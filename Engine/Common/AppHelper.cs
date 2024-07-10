@@ -55,6 +55,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return mv;
 		}
 
+		public static string GetTempPath()
+		{
+			var path = Path.Combine(Global.AppData.XmlFile.Directory.FullName, "Temp");
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+			return path;
+		}
+
+
 		public static List<PropertyItem> GetReplaceMacrosSelection()
 		{
 			var keys = JocysCom.ClassLibrary.Text.Helper.GetReplaceMacros<DocItem>(true, nameof(MacroValues.Selection));

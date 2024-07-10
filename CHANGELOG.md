@@ -1,4 +1,4 @@
-2024-07-10 v1.12.26
+2024-07-10 v1.12.27
 
 - New: Option "Max risk level when signed out" when the app is in the company domain.
 - New: Use lists as a data source for prompts.
@@ -6,6 +6,7 @@
 - New: Option to specify the number of task items in the tray bar.
 - Fix: Update maximum risk level limit when user signs in (corporate option).
 - Fix: Prevent crash when the user pastes an invalid XML character into the chat.
+- Fix: Rename the `AnalyseImage` function to `AnalysePicture` to make its purpose clearer to the AI.
 
 2024-07-03 v1.12.19
 

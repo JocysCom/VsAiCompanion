@@ -538,12 +538,13 @@ namespace System.IO.Compression
 			var fullList = _zip.ReadCentralDir();
 
 			//In order to delete we need to create a copy of the zip file excluding the selected items
-			var tempZipName = Path.GetRandomFileName();
-			var tempEntryName = Path.GetRandomFileName();
+			var tempFolderPath = Path.GetTempPath();
+			var tempZipName = Path.Combine(tempFolderPath, Path.GetRandomFileName());
+			var tempEntryName = Path.Combine(tempFolderPath, Path.GetRandomFileName());
 
 			try
 			{
-				var tempZip = ZipStorer.Create(tempZipName, string.Empty);
+				var tempZip = Create(tempZipName, string.Empty);
 
 				foreach (ZipFileEntry zfe in fullList)
 				{
@@ -561,7 +562,7 @@ namespace System.IO.Compression
 				File.Delete(_zip.FileName);
 				File.Move(tempZipName, _zip.FileName);
 
-				_zip = ZipStorer.Open(_zip.FileName, _zip.Access);
+				_zip = Open(_zip.FileName, _zip.Access);
 			}
 			catch
 			{

@@ -27,7 +27,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="pathsOrUrls">Paths to local files or URLs to images for analysis. Supported image file types: .jpg, .png, .gif, .bmp, .tiff</param>
 		/// <returns>Analysis results.</returns>
 		[RiskLevel(RiskLevel.Low)]
-		public async Task<OperationResult<string>> AnalyseImages(
+		public async Task<OperationResult<string>> AnalysePicture(
 			string instructions,
 			string[] pathsOrUrls
 			)
