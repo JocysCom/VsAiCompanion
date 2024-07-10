@@ -38,5 +38,6 @@ Data for processing:</TextInstructions>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
+  <ShowPrompting>true</ShowPrompting>
   <AttachmentsSelection />
 </TemplateItem>

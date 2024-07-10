@@ -73,6 +73,5 @@ Text to process:&#xD;
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
   <PromptName>Audience</PromptName>
-  <PromptOption>artists</PromptOption>
   <AttachmentsSelection />
 </TemplateItem>

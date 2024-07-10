@@ -87,6 +87,7 @@ John Smith</Body>
   <Context0ListName>Context - CyberNet Solutions</Context0ListName>
   <Context2ListName>Profile - Technical Support</Context2ListName>
   <Context3ListName>Persona - John Smith</Context3ListName>
+  <ShowPrompting>true</ShowPrompting>
   <UseEmbeddings>true</UseEmbeddings>
   <EmbeddingName>CyberNet Solutions Portable</EmbeddingName>
   <AttachmentsSelection />

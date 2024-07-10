@@ -89,5 +89,6 @@ qLhXX030847/d8gXn/0b7zGB4esiAAA=</IconData>
   <Context3ListName>Role - AI Programmer</Context3ListName>
   <Context4ListName>Profile - User</Context4ListName>
   <Context5ListName>Role - .NET Developer</Context5ListName>
+  <ShowPrompting>true</ShowPrompting>
   <AttachmentsSelection />
 </TemplateItem>

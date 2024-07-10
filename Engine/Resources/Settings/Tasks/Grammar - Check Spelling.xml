@@ -56,5 +56,6 @@ Text to process:&#xD;
   <IsPreview>false</IsPreview>
   <IsFavorite>false</IsFavorite>
   <UseMaximumContext>true</UseMaximumContext>
+  <ShowPrompting>true</ShowPrompting>
   <AttachmentsSelection />
 </TemplateItem>

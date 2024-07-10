@@ -29,6 +29,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			PromptNameComboBox.SelectionChanged -= PromptNameComboBox_SelectionChanged;
 			DataContext = null;
+			Item = null;
+			// Prepare for binding.
 			FixPromptName(item);
 			FixPromptOption(item);
 			SetPattern(item.PromptName);
@@ -50,7 +52,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				.FirstOrDefault(x => x.Name == item.PromptName)?
 				.Options.OrderBy(x => x).ToList();
 			// If item is not in the list then...
-			if (options != null && options.Contains(item.PromptOption))
+			if (options != null && !options.Contains(item.PromptOption))
 				// Set default value.
 				item.PromptOption = options.FirstOrDefault();
 		}

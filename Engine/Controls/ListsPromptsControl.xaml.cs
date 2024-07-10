@@ -34,10 +34,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			PromptNameComboBox.SelectionChanged -= PromptNameComboBox_SelectionChanged;
 			DataContext = null;
+			Item = null;
 			FixPromptName(item);
-			var li = Global.Lists.Items.FirstOrDefault(x => x.Name == item.PromptName);
-			PromptOptions = li?.Items;
-			OnPropertyChanged(nameof(PromptOptions));
+			SetOptions(item.ListPromptName);
+			FixPromptOption(item);
 			Item = item;
 			DataContext = item;
 			PromptNameComboBox.SelectionChanged += PromptNameComboBox_SelectionChanged;
@@ -45,19 +45,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void FixPromptName(TemplateItem item)
 		{
-			if (!PromptNames.Contains(item.PromptName))
-				item.PromptName = PromptNames.FirstOrDefault();
+			if (!PromptLists.Any(x => x.Name == item.ListPromptName))
+				item.ListPromptName = PromptLists?.FirstOrDefault()?.Name;
+		}
+
+		void SetOptions(string name)
+		{
+			var li = Global.Lists.Items.FirstOrDefault(x => x.Name == name);
+			PromptOptions = li?.Items ?? new BindingList<ListItem>();
+			OnPropertyChanged(nameof(PromptOptions));
+		}
+
+		void FixPromptOption(TemplateItem item)
+		{
+			if (!PromptOptions.Any(x => x.Key == item.ListPromptOption))
+				item.ListPromptOption = PromptOptions?.FirstOrDefault()?.Key;
 		}
 
 		private void PromptNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			// Set options.
 			var li = e.AddedItems.Cast<ListInfo>().FirstOrDefault();
 			PromptOptions = li?.Items;
 			OnPropertyChanged(nameof(PromptOptions));
 		}
-
-		public BindingList<string> PromptNames { get; } = new BindingList<string>();
 
 		public BindingList<ListItem> PromptOptions { get; set; } = new BindingList<ListItem>();
 
