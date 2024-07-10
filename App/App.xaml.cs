@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine;
 using System;
@@ -83,7 +85,7 @@ namespace JocysCom.VS.AiCompanion
 			//System.Console.WriteLine(s);
 		}
 
-		private async void Items_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
+		private async void Global_Tasks_Items_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
 			var updateTrayMenu =
 				e.ListChangedType == System.ComponentModel.ListChangedType.ItemAdded ||
@@ -91,9 +93,15 @@ namespace JocysCom.VS.AiCompanion
 				(e.ListChangedType == System.ComponentModel.ListChangedType.ItemChanged &&
 				e.PropertyDescriptor?.Name == nameof(TemplateItem.Icon));
 			if (updateTrayMenu)
-				await UpdateTrayMenu();
+				await Helper.Delay(UpdateTrayMenu);
 		}
 		private CancellationTokenSource cts = new CancellationTokenSource();
+
+		private async void Global_AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(AppData.MaxTaskItemsInTray))
+				await Helper.Delay(UpdateTrayMenu);
+		}
 
 		public async Task UpdateTrayMenu()
 		{
@@ -124,7 +132,12 @@ namespace JocysCom.VS.AiCompanion
 					items.Insert(0, separator);
 				}
 				// Reverse order to make sure that insert is done in alphabetically.
-				foreach (var task in Global.Tasks.Items.Reverse())
+				var tasks = Global.Tasks.Items
+					.OrderByDescending(x => x.Modified)
+					.Take(Global.AppSettings.MaxTaskItemsInTray)
+					.OrderByDescending(x => x.Name)
+					.ToArray();
+				foreach (var task in tasks)
 				{
 					var menuItem = new System.Windows.Forms.ToolStripMenuItem();
 					menuItem.Text = task.Name;
@@ -201,13 +214,9 @@ namespace JocysCom.VS.AiCompanion
 			MainWindow = window;
 			Global.OnMainControlLoaded += Global_OnMainControlLoaded;
 			TrayManager.ProcessGetCommandLineArgs();
-			Global.Tasks.Items.ListChanged += Items_ListChanged;
+			Global.Tasks.Items.ListChanged += Global_Tasks_Items_ListChanged;
+			Global.AppSettings.PropertyChanged += Global_AppSettings_PropertyChanged;
 			_ = UpdateTrayMenu();
-		}
-
-		private void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)
-		{
-			throw new NotImplementedException();
 		}
 
 		private void Global_OnMainControlLoaded(object sender, EventArgs e)
@@ -285,10 +294,28 @@ namespace JocysCom.VS.AiCompanion
 
 		#region Allow To Run Check
 
+		private static string GetHashString(string s)
+		{
+			using (var algorithm = System.Security.Cryptography.SHA256.Create())
+			{
+				var bytes = System.Text.Encoding.UTF8.GetBytes(s);
+				var hash = algorithm.ComputeHash(bytes);
+				var hashString = string.Join("", hash.Select(x => x.ToString("X2")));
+				return hashString;
+			}
+		}
+
 		private bool GetAllowToRun()
 		{
-			// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
-			StartHelper.Initialize(typeof(App).Assembly.GetName().Name);
+			var modulepath = AssemblyInfo.Entry.ModuleBasePath;
+			// Make sure name won't allow access same settings from multiple apps.
+			var name = Directory.Exists(modulepath)
+				// Application will use settings in same folder.
+				? GetHashString(AssemblyInfo.Entry.ModuleBasePath)
+				// Application use roaming settings.
+				// Set unique id for broadcast to "JocysCom.VS.AiCompanion.App".
+				: typeof(App).Assembly.GetName().Name;
+			StartHelper.Initialize(name);
 			// Check if another copy of application is already running.
 			// Also execute commands if any.
 			return StartHelper.AllowToRun(allowOnlyOneCopy);

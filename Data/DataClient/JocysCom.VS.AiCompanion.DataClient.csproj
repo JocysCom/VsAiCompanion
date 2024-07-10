@@ -14,8 +14,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.12.19</AssemblyVersion>
-		<FileVersion>1.12.19</FileVersion>
+		<AssemblyVersion>1.12.25</AssemblyVersion>
+		<FileVersion>1.12.25</FileVersion>
 		<Platforms>AnyCPU</Platforms>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
@@ -52,7 +52,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
-		<PackageReference Include="LiteDB" Version="5.0.20" />
+		<PackageReference Include="LiteDB" Version="5.0.21" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

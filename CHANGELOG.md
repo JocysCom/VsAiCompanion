@@ -1,7 +1,10 @@
-2024-07-09 v1.12.21
+2024-07-10 v1.12.25
 
 - New: Option "Max risk level when signed out" when the app is in the company domain.
 - New: Use lists as a data source for prompts.
+- New: Option to enable Microsoft account. Default: disabled.
+- New: Option to specify the number of task items in the tray bar.
+- Fix: Update maximum risk level limit when user signs in (corporate option).
 
 2024-07-03 v1.12.19
 

@@ -27,6 +27,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
+		#region Microsoft Account
+
 		/// <summary>
 		/// Azure: Home / App registrations: Jocys.com AI Companion
 		/// </summary>
@@ -42,6 +44,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(null)]
 		public string AppTenantId { get => _AppTenantId; set => SetProperty(ref _AppTenantId, value); }
 		private string _AppTenantId;
+
+		/// <summary>
+		/// Enable support for microsoft account.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool EnableMicrosoftAccount { get => _EnableMicrosoftAccount; set => SetProperty(ref _EnableMicrosoftAccount, value); }
+		private bool _EnableMicrosoftAccount;
+
+
+		#endregion
 
 		[DefaultValue(false)]
 		public bool AppAlwaysOnTop { get => _AppAlwaysOnTop; set => SetProperty(ref _AppAlwaysOnTop, value); }
@@ -377,6 +389,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			"XML,XQuery,Xeora,Xojo," +
 			"YAML,Yang,ZigetLua";
 
+
+		[DefaultValue(20)]
+		public int MaxTaskItemsInTray { get => _MaxTaskItemsInTray; set => SetProperty(ref _MaxTaskItemsInTray, value); }
+		int _MaxTaskItemsInTray;
 
 		#region ■ ITrayManagerSettings
 

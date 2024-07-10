@@ -813,18 +813,55 @@ EndFragment:{3:00000000}";
 		{
 			// Use max risk level set by all.
 			var maxRiskLevel = Global.AppSettings.MaxRiskLevel;
-			var userIsSigned = MicrosoftResourceManager.Current.GetProfile().IsSignedIn;
-			if (!userIsSigned)
+			var profile = Global.UserProfile;
+			if (profile.IsSignedIn && profile.UserGroups != null)
+			{
+				var userMaxRiskLevel = GetMaxRiskLevelByGroups(profile.UserGroups);
+				if (userMaxRiskLevel == RiskLevel.Unknown)
+					userMaxRiskLevel = Global.AppSettings.MaxRiskLevelWhenSignedOut;
+				maxRiskLevel = (RiskLevel)Math.Min(
+					(int)maxRiskLevel,
+					(int)userMaxRiskLevel);
+			}
+			else
+			{
 				maxRiskLevel = (RiskLevel)Math.Min(
 					(int)maxRiskLevel,
 					(int)Global.AppSettings.MaxRiskLevelWhenSignedOut);
-
+			}
 			var domainMaxRiskLevel = DomainHelper.GetDomainUserMaxRiskLevel();
 			// If domain max risk level exsits and it is more restrictive then use it.
 			if (domainMaxRiskLevel.HasValue && domainMaxRiskLevel.Value < maxRiskLevel)
 				maxRiskLevel = domainMaxRiskLevel.Value;
 			return maxRiskLevel;
 		}
+
+
+		/// <summary>
+		/// Get risk groups of the user.
+		/// </summary>
+		public static RiskLevel GetMaxRiskLevelByGroups(IList<string> groups)
+		{
+			var dic = GetLevels();
+			foreach (var level in dic.Keys)
+			{
+				var groupName = GetGroupName(level);
+				var exists = groups.Any(g => g.Equals(groupName, StringComparison.OrdinalIgnoreCase));
+				dic[level] = exists;
+			}
+			// Get user maximum risk level.
+			var maxRiskLevel = dic.Where(x => x.Value).Max(x => x.Key);
+			return maxRiskLevel;
+		}
+		public static Dictionary<RiskLevel, bool> GetLevels()
+		{
+			var dic = ((RiskLevel[])Enum.GetValues(typeof(RiskLevel))).Except(new RiskLevel[] { RiskLevel.Unknown })
+				.ToDictionary(x => x, x => false);
+			return dic;
+		}
+
+		public static string GetGroupName(RiskLevel level)
+			=> $"AI_{nameof(RiskLevel)}_{level}";
 
 		#endregion
 

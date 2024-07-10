@@ -112,8 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var profile = MicrosoftResourceManager.Current.GetProfile();
-				profile.PropertyChanged += Profile_PropertyChanged;
+				Global.UserProfile.PropertyChanged += Profile_PropertyChanged;
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this);
 			}
@@ -125,7 +124,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				OnPropertyChanged(nameof(UserIsSigned));
 		}
 
-		public bool UserIsSigned => MicrosoftResourceManager.Current.GetProfile().IsSignedIn;
+		public bool UserIsSigned => Global.UserProfile.IsSignedIn;
 
 
 		#region ■ INotifyPropertyChanged

@@ -193,7 +193,7 @@
 						</StackPanel>
 					</Button>
 					<Label Content="Azure" Opacity="0.5" />
-					<Button Name="ubscriptionsButton" Click="SubscriptionsButton_Click" IsEnabled="{Binding UserIsSigned, ElementName=This}">
+					<Button Name="SubscriptionsButton" Click="SubscriptionsButton_Click" IsEnabled="{Binding UserIsSigned, ElementName=This}">
 						<StackPanel Focusable="False">
 							<Label Content="Subscriptions" />
 						</StackPanel>
@@ -215,7 +215,7 @@
 			Grid.ColumnSpan="2"
 			Margin="4"
 			x:FieldModifier="public">
-			<TabItem Name="VaultItemsTabPage">
+			<TabItem Name="VaultItemsTabItem">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_safe}" />

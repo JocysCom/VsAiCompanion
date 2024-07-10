@@ -50,9 +50,12 @@
 								HorizontalAlignment="Left"
 								SelectedValue="{Binding StartWithWindowsState, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<Label x:Name="TakeLabel" Content="Max Tray Tasks" />
+							<JcControls:NumericUpDown x:Name="MaxTaskItemsInTrayUpdown" Maximum="9223372036854775807" Value="{Binding MaxTaskItemsInTray, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						</StackPanel>
 					</WrapPanel>
 				</GroupBox>
-
 				<GroupBox x:Name="SendingMessageGroupBox" Margin="3,0,0,3" Header="{StaticResource main_Sending_Message}">
 					<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 						<CheckBox
@@ -71,24 +74,33 @@
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
-						<Label VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevel}" />
+						<CheckBox
+							Name="EnableMicrosoftAccountCheckBox"
+							Grid.Row="0"
+							Grid.ColumnSpan="2"
+							Margin="0"
+							Content="{StaticResource main_Enable_Microsoft_Account}"
+							IsChecked="{Binding EnableMicrosoftAccount, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						<Label Grid.Row="1" VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevel}" />
 						<ComboBox
 							Name="MaximumRiskLevelComboBox"
+							Grid.Row="1"
 							Grid.Column="1"
 							HorizontalAlignment="Right"
 							DisplayMemberPath="Value"
 							ItemsSource="{Binding MaxRiskLevels, ElementName=This}"
 							SelectedValue="{Binding MaxRiskLevel, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							SelectedValuePath="Key" />
-						<DockPanel x:Name="SecurityOption0" Grid.Row="1">
+						<DockPanel x:Name="SecurityOption0" Grid.Row="2">
 							<Label x:Name="MaxRiskLevelWhenSignedOutLabel" VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevelWhenSignedOut}" />
 						</DockPanel>
-						<DockPanel x:Name="SecurityOption1" Grid.Row="1" Grid.Column="1">
+						<DockPanel x:Name="SecurityOption1" Grid.Row="2" Grid.Column="1">
 							<ComboBox
 								Name="MaxRiskLevelWhenSignedOutComboBox"
 								HorizontalAlignment="Right"
@@ -97,10 +109,10 @@
 								SelectedValue="{Binding MaxRiskLevelWhenSignedOut, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 								SelectedValuePath="Key" />
 						</DockPanel>
-						<DockPanel x:Name="SecurityOption2" Grid.Row="2">
+						<DockPanel x:Name="SecurityOption2" Grid.Row="3">
 							<Label x:Name="DomainMaxRiskLevelNameLabel" Content="{StaticResource main_DomainMaxRiskLevel}" />
 						</DockPanel>
-						<DockPanel x:Name="SecurityOption3" Grid.Row="2" Grid.Column="1">
+						<DockPanel x:Name="SecurityOption3" Grid.Row="3" Grid.Column="1">
 							<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
 								<Label x:Name="DomainMaxRiskLevelValueLabel" Content="..." />
 								<Button Name="DomainMaxRiskLevelRefreshButton" Margin="3,0,3,0" Click="DomainMaxRiskLevelRefreshButton_Click">

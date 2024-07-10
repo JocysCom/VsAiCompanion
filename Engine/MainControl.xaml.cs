@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Configuration;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
@@ -47,7 +48,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			// Subscribe to the application-wide Activated and Deactivated events
 			Application.Current.Deactivated += Current_Deactivated;
-
+			UpdateMicrosoftControls();
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 			ErrorsTabItem.Visibility = Global.AppSettings.ShowErrorsPanel ? Visibility.Visible : Visibility.Collapsed;
@@ -78,12 +79,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.MoveToWindowToggle();
 		}
 
-		private void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		private async void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(AppData.EnableShowFormInfo))
 				InfoForm.MonitorEnabled = Global.AppSettings.EnableShowFormInfo;
 			if (e.PropertyName == nameof(AppData.ShowErrorsPanel))
 				ErrorsTabItem.Visibility = Global.AppSettings.ShowErrorsPanel ? Visibility.Visible : Visibility.Collapsed;
+			if (e.PropertyName == nameof(AppData.EnableMicrosoftAccount))
+				await Helper.Delay(UpdateMicrosoftControls);
+		}
+
+		void UpdateMicrosoftControls()
+		{
+			AuthIconPanel.Visibility = Global.AppSettings.EnableMicrosoftAccount
+			? Visibility.Visible
+			: Visibility.Collapsed;
 		}
 
 
@@ -108,7 +118,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TemplatesPanel;
 				Global.MainControl.MainTabControl.SelectedItem = Global.MainControl.TasksPanel;
 				AppHelper.InitHelp(this);
-				UiPresetsManager.InitControl(this, true);
+				UiPresetsManager.InitControl(this, true, new FrameworkElement[] { AuthIconPanel });
 				UiPresetsManager.InitControl(InfoPanel);
 				try
 				{

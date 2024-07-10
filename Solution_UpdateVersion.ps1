@@ -239,7 +239,7 @@ function GetConfigurationFiles
 	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
 	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Extension\source.extension.vsixmanifest")
-	$items += (GetConfig "Setup\JocysCom.VS.AiCompanion.Setup.vdproj")
+	$items += (GetConfig "Setup\Setup\JocysCom.VS.AiCompanion.Setup.vdproj")
 	return $items
 }
 # ----------------------------------------------------------------------------

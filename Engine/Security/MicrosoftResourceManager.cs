@@ -113,7 +113,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task RefreshProfileImage(CancellationToken cancellationToken = default)
 		{
-			var profile = GetProfile();
+			var profile = Global.UserProfile;
 			var accessToken = profile.GetToken(TokenHandler.MicrosoftGraphScope);
 			// If user is not signed, return.
 			if (string.IsNullOrEmpty(accessToken))
@@ -216,7 +216,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 				*/
 				// Load saved user profile
-				var profile = GetProfile();
+				var profile = Global.UserProfile;
 				if (string.IsNullOrEmpty(profile.AccountId))
 				{
 					requiresUI = true;
@@ -285,8 +285,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<bool> SignOut()
 		{
-			var profile = GetProfile();
-			profile.Clear();
+			Global.UserProfile.Clear();
 			var accounts = await TokenHandler.Pca.GetAccountsAsync();
 			foreach (var account in accounts)
 				await TokenHandler.Pca.RemoveAsync(account);
@@ -299,8 +298,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<Microsoft.Graph.Models.User> GetMicrosoftUser(CancellationToken cancellationToken = default)
 		{
-			var profile = GetProfile();
-			var accessToken = profile.GetToken(TokenHandler.MicrosoftGraphScope);
+			var accessToken = Global.UserProfile.GetToken(TokenHandler.MicrosoftGraphScope);
 			// If user is not signed, return.
 			if (string.IsNullOrEmpty(accessToken))
 				return null;
@@ -352,7 +350,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// </summary>
 		public async Task<bool> IsMicrosoftAccount()
 		{
-			var profile = GetProfile();
+			var profile = Global.UserProfile;
 			// If access token is empty then application must use user.
 			var accessToken = profile.IdToken ?? profile.GetToken(TokenHandler.MicrosoftGraphScope);
 			TokenCredential credential = await TokenHandler.GetTokenCredential();

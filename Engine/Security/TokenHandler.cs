@@ -1,9 +1,9 @@
-﻿using Microsoft.Identity.Client;
-using Azure.Core;
+﻿using Azure.Core;
 using Azure.Identity;
-using System.Threading.Tasks;
-using System.Threading;
+using Microsoft.Identity.Client;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 
@@ -172,7 +172,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public static async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
 		{
-			var accessToken = MicrosoftResourceManager.Current.GetProfile().GetToken(MicrosoftGraphScope);
+			var accessToken = Global.UserProfile.GetToken(MicrosoftGraphScope);
 			if (string.IsNullOrEmpty(accessToken))
 				return null;
 			// Ensure the token has the required scopes
@@ -212,8 +212,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public static async Task<TokenCredential> GetTokenCredentialWithScopes(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
 		{
-			var profile = MicrosoftResourceManager.Current.GetProfile();
-			var token = profile.GetToken(scopes);
+			var token = Global.UserProfile.GetToken(scopes);
 
 			if (!string.IsNullOrEmpty(token))
 			{
@@ -234,8 +233,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public static async Task<TokenCredential> GetTokenCredential(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
 		{
-			var profile = MicrosoftResourceManager.Current.GetProfile();
-			var cachedToken = profile.GetToken(scopes);
+			var cachedToken = Global.UserProfile.GetToken(scopes);
 			if (!string.IsNullOrEmpty(cachedToken))
 			{
 				// Use cached token

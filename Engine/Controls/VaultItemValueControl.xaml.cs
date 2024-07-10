@@ -144,8 +144,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				VaultItems2 = Global.AppSettings.VaultItems;
 				OnPropertyChanged(nameof(VaultItems2));
 				ValuePasswordBox.PasswordChanged += ValuePasswordBox_PasswordChanged;
-				var profile = MicrosoftResourceManager.Current.GetProfile();
-				profile.PropertyChanged += Profile_PropertyChanged;
+				Global.UserProfile.PropertyChanged += Profile_PropertyChanged;
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
 			}
@@ -157,7 +156,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				OnPropertyChanged(nameof(UserIsSigned));
 		}
 
-		public bool UserIsSigned => MicrosoftResourceManager.Current.GetProfile().IsSignedIn;
+		public bool UserIsSigned => Global.UserProfile.IsSignedIn;
 
 		#region ■ INotifyPropertyChanged
 

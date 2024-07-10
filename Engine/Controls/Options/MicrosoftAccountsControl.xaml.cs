@@ -64,8 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 				{
 					await MicrosoftResourceManager.Current.RefreshProfileImage(cancellationToken);
 					var userGroups = await MicrosoftResourceManager.Current.GetUserAzureGroups(cancellationToken);
-					var profile = MicrosoftResourceManager.Current.GetProfile();
-					profile.UserGroups = userGroups;
+					Global.UserProfile.UserGroups = userGroups;
 				}
 			});
 		}
@@ -172,7 +171,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 				LogPanel.Add($"Access Token:\r\n");
 				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
 				InspectToken(accessToken);
-				var idToken = MicrosoftResourceManager.Current.GetProfile().IdToken;
+				var idToken = Global.UserProfile.IdToken;
 				if (!string.IsNullOrEmpty(idToken))
 				{
 					LogPanel.Add($"ID Token:\r\n");
@@ -239,8 +238,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 
 			LogPanel.Clear();
-			var profile = MicrosoftResourceManager.Current.GetProfile();
-			if (requiresSignIn && !profile.IsSignedIn)
+			if (requiresSignIn && !Global.UserProfile.IsSignedIn)
 			{
 				LogPanel.Add($"Please sign in first.\r\n");
 				return;
@@ -322,8 +320,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var profile = MicrosoftResourceManager.Current.GetProfile();
-				profile.PropertyChanged += Profile_PropertyChanged;
+				Global.UserProfile.PropertyChanged += Profile_PropertyChanged;
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true);
 			}
@@ -336,7 +333,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		}
 
-		public bool UserIsSigned => MicrosoftResourceManager.Current.GetProfile().IsSignedIn;
+		public bool UserIsSigned => Global.UserProfile.IsSignedIn;
 
 		#region ■ INotifyPropertyChanged
 

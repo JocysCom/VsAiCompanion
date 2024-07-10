@@ -24,8 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			Global.AppSettings.Plugins.ListChanged += Plugins_ListChanged;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
-			var profile = Security.MicrosoftResourceManager.Current.GetProfile();
-			profile.PropertyChanged += profile_PropertyChanged;
+			Global.UserProfile.PropertyChanged += profile_PropertyChanged;
 		}
 
 

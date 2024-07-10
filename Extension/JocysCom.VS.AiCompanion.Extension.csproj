@@ -116,7 +116,7 @@
       <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>8.0.3</Version>
+      <Version>8.0.4</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Extensions">
       <Version>4.5.4</Version>

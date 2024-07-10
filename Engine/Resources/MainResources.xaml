@@ -40,6 +40,7 @@
 	<sys:String x:Key="main_TasksTab_Name">Tasks</sys:String>
 	<sys:String x:Key="main_Use_AI_Avatar_Voice_Help">AI responds with voices in addition to the text responses specified in 'Options' tab → 'AI Avatar' tab and 'AI Services' tab.</sys:String>
 	<sys:String x:Key="main_Use_AI_Avatar_Voice_Name">Use Voice</sys:String>
+	<sys:String x:Key="main_Enable_Microsoft_Account">Enable Microsoft Account</sys:String>
 
 	<!--  Tasks / Templates → Main  -->
 	<sys:String x:Key="main_Auto_Generate_Title">Auto-Generate Title</sys:String>

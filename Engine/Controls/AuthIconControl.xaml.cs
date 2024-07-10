@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Controls;
-using JocysCom.VS.AiCompanion.Engine.Security;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -64,12 +63,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var profile = MicrosoftResourceManager.Current.GetProfile();
-				profile.PropertyChanged += Profile_PropertyChanged;
-				Item = MicrosoftResourceManager.Current.GetProfile();
+				Global.UserProfile.PropertyChanged += Profile_PropertyChanged;
+				Item = Global.UserProfile;
 				AdjustEllipse();
 				AppHelper.InitHelp(this);
-				UiPresetsManager.AddControls(this);
+				// Hide/Show is controlled by app settings.
+				//UiPresetsManager.AddControls(this);
 				//UiPresetsManager.InitControl(this, true);
 			}
 		}
@@ -129,7 +128,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void UpdateButtons()
 		{
-			var profile = MicrosoftResourceManager.Current.GetProfile();
+			var profile = Global.UserProfile;
 			SignInButton.Visibility = profile.IsSignedIn
 				? Visibility.Collapsed : Visibility.Visible;
 			SignOutButton.Visibility = !profile.IsSignedIn
