@@ -1,5 +1,4 @@
-﻿using Azure.AI.OpenAI;
-using DocumentFormat.OpenXml;
+﻿using DocumentFormat.OpenXml;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
@@ -7,6 +6,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using OpenAI.Chat;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -393,11 +393,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		/// <param name="item">Template item with settings.</param>
 		/// <param name="options">Chat completion options</param>
-		public static void ProvideTools(TemplateItem item, ChatCompletionsOptions options)
+		public static void ProvideTools(TemplateItem item, ChatCompletionOptions options)
 		{
 			if (!item.PluginsEnabled)
 				return;
-			var ToolDefinitions = new List<ChatCompletionsFunctionToolDefinition>();
+			var ToolDefinitions = new List<ChatTool>();
 			foreach (var kv in PluginFunctions)
 			{
 				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
@@ -435,18 +435,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 				//if (!string.IsNullOrEmpty(example))
 				//	lines.Add("Example:\r\n" + example);
 				// Create and add function definition.
-				var function = new FunctionDefinition();
-				function.Name = mi.Name;
-				function.Description = string.Join("\r\n\r\n", lines);
-				function.Parameters = binaryParamaters;
-				var tool = new ChatCompletionsFunctionToolDefinition(function);
+				var tool = ChatTool.CreateFunctionTool(
+					mi.Name,
+					string.Join("\r\n\r\n", lines),
+					binaryParamaters
+				);
 				ToolDefinitions.Add(tool);
 			}
 			if (ToolDefinitions.Any())
 			{
 				foreach (var tool in ToolDefinitions)
 					options.Tools.Add(tool);
-				options.ToolChoice = ChatCompletionsToolChoice.Auto;
+				// Need to use reflection to set the Temperature property
+				// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
+				var value = ChatToolChoice.Auto;
+				typeof(ChatCompletionOptions)
+					.GetProperty(nameof(ChatCompletionOptions.ToolChoice), BindingFlags.Public | BindingFlags.Instance)
+						?.SetValue(options, value, null);
 			}
 		}
 
