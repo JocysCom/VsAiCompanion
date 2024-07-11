@@ -3,7 +3,7 @@
 <table>
   <tr>
     <td width="200"><img alt="Tasks" src="Documents/Images/JocysComVsAiCompanion_Tasks.png"></td>
-    <td>AI Companion is a tool that answers questions, analyzes project files, and enhances productivity. It simplifies the creation of custom, fine-tuned AI models that can function as chatbots or virtual employees. AI Companion can run as a standalone portable application or as a Visual Studio extension if installed via the Visual Studio Extension Manager. It's a free, open-source project for people with an <a href="https://platform.openai.com">OpenAI API</a> (GPT-3/4, Davinci) subscription or those running OpenAI on their local machine (<a href="https://gpt4all.io">GPT4All</a>), on-premises, or on Azure Cloud.</td>
+    <td>AI Companion is a tool that answers questions, analyzes project files, and enhances productivity. It simplifies the creation of custom, fine-tuned AI models that can function as chatbots or virtual employees. AI Companion can run as a standalone portable application or as a Visual Studio extension. Extension version can also be installed and updated via Visual Studio Extension Manager. It's a free, open-source project for people with an <a href="https://platform.openai.com">OpenAI API</a> (GPT-3/4, Davinci) subscription or those running OpenAI on their local machine (<a href="https://gpt4all.io">GPT4All</a>), on-premises, or on Azure Cloud.</td>
   </tr>
 </table>
 
