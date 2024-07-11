@@ -1,7 +1,9 @@
-2024-07-11 v1.12.19
+2024-07-11 v1.12.32
 
+- Fix: AI is not using speech if the avatar control is not focused.
 - Update: Send personalized context data as a system message.
 - Update: Allow sending more context/list items.
+- Update: Upgraded OpenAI client to v2.0.
 
 2024-07-10 v1.12.27
 

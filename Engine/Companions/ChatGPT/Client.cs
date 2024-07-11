@@ -304,8 +304,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				var options = new OpenAIClientOptions();
 				options.Transport = transport;
 				client = new OpenAIClient(credential, options);
-				var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-				prop.SetValue(client, false);
+				//var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+				//prop.SetValue(client, false);
 			}
 			return client;
 		}
@@ -433,48 +433,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var messages = messagesToSend
 						.Select(x => new UserChatMessage(x.content as string))
 						.ToList();
-					// If Azure service or HTTPS.
-					if (Service.IsAzureOpenAI || secure)
+					var request = new text_completion_request
 					{
-						var client = await GetAiClient();
-						var chatClient = client.GetChatClient(modelName);
-						var completionsOptions = GetChatCompletionOptions((float)creativity);
-						if (Service.ResponseStreaming)
-						{
-							var result = chatClient.CompleteChatStreamingAsync(
-								messages, completionsOptions, cancellationTokenSource.Token);
-							var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
-							while (await choicesEnumerator.MoveNextAsync())
-							{
-								//Concatenate the new part of the response with the existing response
-								foreach (var updatePart in choicesEnumerator.Current.ContentUpdate)
-									answer += updatePart.Text;
-							}
-						}
-						else
-						{
-							var result = await chatClient.CompleteChatAsync(
-								messages, completionsOptions, cancellationTokenSource.Token);
-							answer = ChatCompletionToString(result.Value);
-						}
-					}
-					// Could be local non-secure HTTP connection.
-					else
-					{
-						var request = new text_completion_request
-						{
-							model = modelName,
-							prompt = ClientHelper.JoinMessageParts(messagesToSend.Select(x => x.content as string).ToArray()),
-							temperature = (float)creativity,
-							stream = Service.ResponseStreaming,
-							max_tokens = maxInputTokens,
+						model = modelName,
+						prompt = ClientHelper.JoinMessageParts(messagesToSend.Select(x => x.content as string).ToArray()),
+						temperature = (float)creativity,
+						stream = Service.ResponseStreaming,
+						max_tokens = maxInputTokens,
 
-						};
-						var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
-						foreach (var dataItem in data)
-							foreach (var chatChoice in dataItem.choices)
-								answer += chatChoice.text;
-					}
+					};
+					var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
+					foreach (var dataItem in data)
+						foreach (var chatChoice in dataItem.choices)
+							answer += chatChoice.text;
 				}
 				// If Chat Completion mode.
 				else
@@ -525,7 +496,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							while (await choicesEnumerator.MoveNextAsync())
 							{
 								var choice = choicesEnumerator.Current;
-								answer += choice.ContentUpdate;
+								if (choice.ContentUpdate != null)
+								{
+									foreach (var cu in choice.ContentUpdate)
+										answer += cu.Text;
+								}
 								if (choice.ToolCallUpdates != null)
 								{
 									foreach (var sf in choice.ToolCallUpdates)

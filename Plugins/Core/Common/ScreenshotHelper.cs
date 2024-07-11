@@ -46,13 +46,15 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					var screen = Screen.AllScreens.ElementAtOrDefault(screenId.Value);
 					if (screen == null)
 						return new OperationResult<string>(new ArgumentException("Invalid screenId."));
-					CaptureAndSave(screen.Bounds, fullPath, format);
+					if (!CaptureAndSave(screen.Bounds, fullPath, format))
+						return new OperationResult<string>(new ArgumentException("Invalid capture."));
 				}
 				else
 				{
 					// Capture all screens by creating a bitmap spanning all screens
 					Rectangle totalSize = Screen.AllScreens.Aggregate(Rectangle.Empty, (current, s) => Rectangle.Union(current, s.Bounds));
-					CaptureAndSave(totalSize, fullPath, format);
+					if (!CaptureAndSave(totalSize, fullPath, format))
+						return new OperationResult<string>(new ArgumentException("Invalid capture."));
 				}
 				return new OperationResult<string>(fullPath);
 			}
@@ -80,7 +82,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return new OperationResult<string>(new ArgumentException($"No window found with the title: {name}"));
 			GetWindowRect(windowHandle, out Rectangle windowRect);
 			string fullPath = PrepareFilePath(imageFolder, format);
-			CaptureAndSave(windowRect, fullPath, format);
+			if (!CaptureAndSave(windowRect, fullPath, format))
+				return new OperationResult<string>(new ArgumentException("Invalid capture."));
 			return new OperationResult<string>(fullPath);
 		}
 
@@ -98,7 +101,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return await CaptureUserDefinedRegion(imageFolder, format);
 			format = format ?? ImageFormat.Png;
 			string fullPath = PrepareFilePath(imageFolder, format);
-			CaptureAndSave(region.Value, fullPath, format);
+			if (!CaptureAndSave(region.Value, fullPath, format))
+				return new OperationResult<string>(new ArgumentException("Invalid capture."));
 			return new OperationResult<string>(fullPath);
 		}
 
@@ -364,8 +368,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return fullPath;
 		}
 
-		private static void CaptureAndSave(Rectangle bounds, string filePath, ImageFormat format)
+		private static bool CaptureAndSave(Rectangle bounds, string filePath, ImageFormat format)
 		{
+			if (bounds.Width == 0 || bounds.Height == 0)
+				return false;
 			using (System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(bounds.Width, bounds.Height))
 			{
 				using (Graphics g = Graphics.FromImage(bitmap))
@@ -393,6 +399,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					fi.Directory.Create();
 				bitmap.Save(filePath, format);
 			}
+			return true;
 		}
 
 		#endregion
