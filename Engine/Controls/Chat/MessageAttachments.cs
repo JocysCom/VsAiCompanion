@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.ComponentModel;
 using System.Text.Json;
@@ -7,10 +8,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
 	public class MessageAttachments : NotifyPropertyChanged
 	{
-		public MessageAttachments() { }
+		public MessageAttachments()
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+		}
 
 		public MessageAttachments(ContextType attachmentType, string language, string data)
 		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
 			Type = attachmentType;
 			Data = $"```{language}\r\n{data}\r\n```";
@@ -19,6 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public MessageAttachments(ContextType attachmentType, object dataToJson)
 		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
 			Type = attachmentType;
 			var options = new JsonSerializerOptions();
@@ -58,6 +64,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// <summary>Optional context data: cliboard, selection or Files.</summary>
 		public string Data { get => _Data; set => SetProperty(ref _Data, value); }
 		string _Data;
+
+		[DefaultValue(message_role.user)]
+		public message_role MessageRole { get => _MessageRole; set => SetProperty(ref _MessageRole, value); }
+		message_role _MessageRole;
 
 	}
 }

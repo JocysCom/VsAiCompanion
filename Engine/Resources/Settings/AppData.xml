@@ -29,8 +29,8 @@
       <StartPosition>
         <Left>210</Left>
         <Top>30</Top>
-        <Width>456.5</Width>
-        <Height>437.75</Height>
+        <Width>931</Width>
+        <Height>704</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -57,15 +57,15 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.22359550561797753</GridSplitterPosition>
+          <GridSplitterPosition>0.23204419889502761</GridSplitterPosition>
           <ListSelection>
-            <string>AI - Chat (GPT-4)</string>
+            <string>Grammar - Detail - Casual</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>6</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.23146067415730337</GridSplitterPosition>
+          <GridSplitterPosition>0.23093922651933702</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -73,6 +73,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>
+          <GridSplitterPosition>0.3005524861878453</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
@@ -93,6 +94,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
+          <GridSplitterPosition>0.2983425414364641</GridSplitterPosition>
           <ListSelection>
             <string>API - Demo</string>
           </ListSelection>
@@ -572,7 +574,7 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImages</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePicture</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

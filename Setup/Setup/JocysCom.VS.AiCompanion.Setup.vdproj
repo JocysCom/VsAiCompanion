@@ -227,8 +227,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:VS AI Companion"
-        "ProductCode" = "8:{B586C179-C45D-4876-BF94-103E3D527FD6}"
-        "PackageCode" = "8:{1024A810-178A-438C-B064-3780A8DFE3E8}"
+        "ProductCode" = "8:{3FD784DE-FD41-451D-A990-12B29BDCD66D}"
+        "PackageCode" = "8:{070D00C9-7716-480A-989C-D8F1B3BFA0A6}"
         "UpgradeCode" = "8:{8EAC34EB-107A-44B2-B4AF-067C6A4DBF80}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

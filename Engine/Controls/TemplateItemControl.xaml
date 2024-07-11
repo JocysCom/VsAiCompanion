@@ -499,69 +499,75 @@
 							<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Personalize_the_chat}" />
 						</Border>
 						<WrapPanel Orientation="Horizontal">
-							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
-								<GroupBox.Header>
-									<Label x:Name="ContextSystemLabel" Padding="0" Content="System and Application" />
-								</GroupBox.Header>
-								<StackPanel Orientation="Vertical">
-									<ComboBox
-										Name="Context0TemplateComboBox"
-										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Name"
-										ItemsSource="{Binding ContextListNames, ElementName=This}"
-										SelectedValue="{Binding Context0ListName}"
-										SelectedValuePath="Name" />
-									<ComboBox
-										Name="Context1TemplateComboBox"
-										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Name"
-										ItemsSource="{Binding ContextListNames, ElementName=This}"
-										SelectedValue="{Binding Context1ListName}"
-										SelectedValuePath="Name" />
-								</StackPanel>
-							</GroupBox>
-							<GroupBox Margin="3,0,0,3" VerticalAlignment="Stretch">
-								<GroupBox.Header>
-									<Label x:Name="ContextAssistantLabel" Padding="0" Content="Assistant - Profile and Role" />
-								</GroupBox.Header>
-								<StackPanel Orientation="Vertical">
-									<ComboBox
-										Name="Context2TemplateComboBox"
-										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Name"
-										ItemsSource="{Binding ProfileListNames, ElementName=This}"
-										SelectedValue="{Binding Context2ListName}"
-										SelectedValuePath="Name" />
-									<ComboBox
-										Name="Context3TemplateComboBox"
-										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Name"
-										ItemsSource="{Binding RoleListNames, ElementName=This}"
-										SelectedValue="{Binding Context3ListName}"
-										SelectedValuePath="Name" />
-								</StackPanel>
-							</GroupBox>
-							<GroupBox Margin="3,0,3,3" VerticalAlignment="Stretch">
-								<GroupBox.Header>
-									<Label x:Name="ContextUserLabel" Padding="0" Content="User - Profile and Role" />
-								</GroupBox.Header>
-								<StackPanel Orientation="Vertical">
-									<ComboBox
-										Name="Context4TemplateComboBox"
-										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Name"
-										ItemsSource="{Binding ProfileListNames, ElementName=This}"
-										SelectedValue="{Binding Context4ListName}"
-										SelectedValuePath="Name" />
-									<ComboBox
-										Name="Context5TemplateComboBox"
-										HorizontalAlignment="Stretch"
-										DisplayMemberPath="Name"
-										ItemsSource="{Binding RoleListNames, ElementName=This}"
-										SelectedValue="{Binding Context5ListName}"
-										SelectedValuePath="Name" />
-								</StackPanel>
-							</GroupBox>
+							<StackPanel MinWidth="128" Orientation="Vertical">
+								<ComboBox
+									Name="Context0TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding ContextListNames, ElementName=This}"
+									SelectedValue="{Binding Context0ListName}"
+									SelectedValuePath="Name" />
+								<ComboBox
+									Name="Context1TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding ContextListNames, ElementName=This}"
+									SelectedValue="{Binding Context1ListName}"
+									SelectedValuePath="Name" />
+								<ComboBox
+									Name="Context2TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding ProfileListNames, ElementName=This}"
+									SelectedValue="{Binding Context2ListName}"
+									SelectedValuePath="Name" />
+							</StackPanel>
+							<StackPanel MinWidth="128" Orientation="Vertical">
+								<ComboBox
+									Name="Context3TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding RoleListNames, ElementName=This}"
+									SelectedValue="{Binding Context3ListName}"
+									SelectedValuePath="Name" />
+								<ComboBox
+									Name="Context4TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding ProfileListNames, ElementName=This}"
+									SelectedValue="{Binding Context4ListName}"
+									SelectedValuePath="Name" />
+								<ComboBox
+									Name="Context5TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding RoleListNames, ElementName=This}"
+									SelectedValue="{Binding Context5ListName}"
+									SelectedValuePath="Name" />
+							</StackPanel>
+							<StackPanel MinWidth="128" Orientation="Vertical">
+								<ComboBox
+									Name="Context6TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding ProfileListNames, ElementName=This}"
+									SelectedValue="{Binding Context6ListName}"
+									SelectedValuePath="Name" />
+								<ComboBox
+									Name="Context7TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding RoleListNames, ElementName=This}"
+									SelectedValue="{Binding Context7ListName}"
+									SelectedValuePath="Name" />
+								<ComboBox
+									Name="Context8TemplateComboBox"
+									HorizontalAlignment="Stretch"
+									DisplayMemberPath="Name"
+									ItemsSource="{Binding RoleListNames, ElementName=This}"
+									SelectedValue="{Binding Context8ListName}"
+									SelectedValuePath="Name" />
+							</StackPanel>
 						</WrapPanel>
 					</StackPanel>
 				</TabItem>
