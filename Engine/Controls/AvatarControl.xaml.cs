@@ -49,6 +49,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			SetLipsMeshGeometry3D();
 			SetLipsMeshGeometry3DUsingPathData(MPath_0.Data);
 			pathNow = MPath_0;
+			AudioCollection.CollectionChanged += AudioCollection_CollectionChanged;
 		}
 
 		int LipAnimationFrames = 6; // Min 1.
@@ -86,7 +87,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (ControlsHelper.AllowLoad(this))
 			{
-				AudioCollection.CollectionChanged += AudioCollection_CollectionChanged;
 				AppHelper.InitHelp(this);
 				//UiPresetsManager.InitControl(this, true);
 				UiPresetsManager.AddControls(this);

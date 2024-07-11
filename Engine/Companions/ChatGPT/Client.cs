@@ -1,13 +1,14 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
-using Azure.Core;
-using Azure.Core.Pipeline;
 using Azure.Identity;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Web.Services;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using OpenAI;
+using OpenAI.Chat;
 using System;
+using System.ClientModel.Primitives;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -15,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -278,26 +280,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// https://learn.microsoft.com/en-us/dotnet/api/overview/azure/ai.openai-readme?view=azure-dotnet-preview
 			// https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/openai/Azure.AI.OpenAI/src
 			var endpoint = new Uri(Service.BaseUrl);
-			var options = new OpenAIClientOptions();
 			OpenAIClient client;
 			var apiSecretKey = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
 			if (Service.IsAzureOpenAI)
 			{
 				client = string.IsNullOrEmpty(apiSecretKey)
-					? new OpenAIClient(endpoint, new DefaultAzureCredential())
-					: new OpenAIClient(endpoint, new AzureKeyCredential(apiSecretKey));
+					? new AzureOpenAIClient(endpoint, new DefaultAzureCredential())
+					: new AzureOpenAIClient(endpoint, new AzureKeyCredential(apiSecretKey));
 			}
 			else
 			{
-				var accessToken = new AccessToken(apiSecretKey, DateTimeOffset.Now.AddDays(180));
-				var credential = DelegatedTokenCredential.Create((x, y) => accessToken);
-				if (string.IsNullOrEmpty(apiSecretKey))
-				{
-					// TODO: Allow HTTP localhost connections.
-					// Bearer token authentication is not permitted for non TLS protected (https) endpoints.
-				}
-
-
+				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
 				// Create HttpClient with HttpClientSpy handler
 				var spyHandler = new HttpClientSpy(new HttpClientHandler());
 				// Create the HttpClient to use HttpClientSpy
@@ -306,13 +299,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					BaseAddress = endpoint
 				};
 				// Register the handler in the HttpPipeline (hypothetical approach)
-				var transport = new HttpClientTransport(httpClient);
+				var transport = new HttpClientPipelineTransport(httpClient);
 				//var pipeline = new HttpPipeline(transport);
-
+				var options = new OpenAIClientOptions();
 				options.Transport = transport;
-				client = new OpenAIClient(endpoint, credential, options);
-				var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-				prop.SetValue(client, false);
+				client = new OpenAIClient(credential, options);
+				//var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+				//prop.SetValue(client, false);
 			}
 			return client;
 		}
@@ -342,14 +335,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			Dictionary<int, float[]> results = null;
 			try
 			{
-				var options = new EmbeddingsOptions(modelName, input);
-				var response = await client.GetEmbeddingsAsync(options, linkedTokenSource.Token);
+				var embeddingClient = client.GetEmbeddingClient(modelName);
+				var response = await embeddingClient.GenerateEmbeddingsAsync(input, cancellationToken: linkedTokenSource.Token);
 				if (response != null)
 				{
-					var promptTokens = response.Value.Usage.PromptTokens;
+					var inputTokens = response.Value.Usage.InputTokens;
 					var totalTokens = response.Value.Usage.TotalTokens;
-					results = response.Value.Data
-						.ToDictionary(x => x.Index, x => x.Embedding.ToArray());
+					results = response.Value
+						.ToDictionary(x => x.Index, x => x.Vector.ToArray());
 				}
 			}
 			catch (Exception)
@@ -437,82 +430,48 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Text Completion mode.
 				if (IsTextCompletionMode(modelName))
 				{
-					var prompts = messagesToSend.Select(x => x.content as string).ToArray();
-					// If Azure service or HTTPS.
-					if (Service.IsAzureOpenAI || secure)
+					var messages = messagesToSend
+						.Select(x => new UserChatMessage(x.content as string))
+						.ToList();
+					var request = new text_completion_request
 					{
-						var client = await GetAiClient();
-						var completionsOptions = new CompletionsOptions(modelName, prompts);
-						completionsOptions.Temperature = (float)creativity;
-						if (Service.ResponseStreaming)
-						{
-							var response = await client.GetCompletionsStreamingAsync(completionsOptions, cancellationTokenSource.Token);
-							using (var streamingChatCompletions = response)
-							{
-								var iae = streamingChatCompletions.EnumerateValues();
-								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
-								while (await choicesEnumerator.MoveNextAsync())
-								{
-									var completions = choicesEnumerator.Current;
-									foreach (var choice in completions.Choices)
-										answer += choice.Text;
-								}
-							}
-						}
-						else
-						{
-							var response = await client.GetCompletionsAsync(completionsOptions, cancellationTokenSource.Token);
-							foreach (var choice in response.Value.Choices)
-							{
-								answer += choice.Text;
-								// Pick first first answer.
-								break;
-							}
-						}
-					}
-					// Could be local non-secure HTTP connection.
-					else
-					{
-						var request = new text_completion_request
-						{
-							model = modelName,
-							prompt = ClientHelper.JoinMessageParts(prompts),
-							temperature = (float)creativity,
-							stream = Service.ResponseStreaming,
-							max_tokens = maxInputTokens,
+						model = modelName,
+						prompt = ClientHelper.JoinMessageParts(messagesToSend.Select(x => x.content as string).ToArray()),
+						temperature = (float)creativity,
+						stream = Service.ResponseStreaming,
+						max_tokens = maxInputTokens,
 
-						};
-						var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
-						foreach (var dataItem in data)
-							foreach (var chatChoice in dataItem.choices)
-								answer += chatChoice.text;
-					}
+					};
+					var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
+					foreach (var dataItem in data)
+						foreach (var chatChoice in dataItem.choices)
+							answer += chatChoice.text;
 				}
 				// If Chat Completion mode.
 				else
 				{
-					var messages = new List<ChatRequestMessage>();
+					var messages = new List<ChatMessage>();
 					foreach (var messageToSend in messagesToSend)
 					{
 						var stringContent = messageToSend.content as string;
-						ChatMessageContentItem[] contentItems = null;
+						ChatMessageContentPart[] contentItems = null;
 						if (messageToSend.content is content_item[] citems)
 							contentItems = citems.Select(x => ConvertToChatMessageContentItem(x)).ToArray();
 						switch (messageToSend.role)
 						{
 							case message_role.user:
 								if (contentItems != null)
-									messages.Add(new ChatRequestUserMessage(contentItems));
+									messages.Add(new UserChatMessage(contentItems));
 								else if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new ChatRequestUserMessage(stringContent));
+									messages.Add(new UserChatMessage(stringContent));
 								break;
 							case message_role.assistant:
 								if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new ChatRequestAssistantMessage(stringContent));
+									messages.Add(new AssistantChatMessage(stringContent));
 								break;
 							case message_role.system:
 								if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new ChatRequestSystemMessage(stringContent));
+									messages.Add(new SystemChatMessage(stringContent));
 								break;
 						}
 					}
@@ -520,69 +479,71 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
-						var chatCompletionsOptions = new ChatCompletionsOptions(modelName, messages);
+						var completionsOptions = GetChatCompletionOptions((float)creativity);
 						ControlsHelper.AppInvoke(() =>
 						{
 							if (item.PluginsEnabled)
-								PluginsManager.ProvideTools(item, chatCompletionsOptions);
+								PluginsManager.ProvideTools(item, completionsOptions);
 						});
-						chatCompletionsOptions.Temperature = (float)creativity;
 						if (Service.ResponseStreaming)
 						{
 							var client = await GetAiClient();
-							var response = await client.GetChatCompletionsStreamingAsync(chatCompletionsOptions, cancellationTokenSource.Token);
-							using (var streamingChatCompletions = response)
+							var chatClient = client.GetChatClient(modelName);
+
+							var result = chatClient.CompleteChatStreamingAsync(
+							messages, completionsOptions, cancellationTokenSource.Token);
+							var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
+							while (await choicesEnumerator.MoveNextAsync())
 							{
-								var iae = streamingChatCompletions.EnumerateValues();
-								var choicesEnumerator = iae.GetAsyncEnumerator(cancellationTokenSource.Token);
-								while (await choicesEnumerator.MoveNextAsync())
+								var choice = choicesEnumerator.Current;
+								if (choice.ContentUpdate != null)
 								{
-									var choice = choicesEnumerator.Current;
-									answer += choice.ContentUpdate;
-									if (choice.ToolCallUpdate != null)
+									foreach (var cu in choice.ContentUpdate)
+										answer += cu.Text;
+								}
+								if (choice.ToolCallUpdates != null)
+								{
+									foreach (var sf in choice.ToolCallUpdates)
 									{
-										if (choice.ToolCallUpdate is StreamingFunctionToolCallUpdate sf)
+										if (!string.IsNullOrEmpty(sf.Id))
 										{
-											if (!string.IsNullOrEmpty(sf.Id))
-											{
-												if (!string.IsNullOrEmpty(toolArgumentsUpdate))
-													toolArgumentsUpdate += "\r\n},\r\n";
-												toolArgumentsUpdate += $"{{\r\n";
-												toolArgumentsUpdate += $"\t\"id\": \"{sf.Id}\",\r\n";
-												toolArgumentsUpdate += $"\t\"name\": \"{sf.Name}\",\r\n";
-												toolArgumentsUpdate += $"\t\"parameters\": ";
-											}
-											toolArgumentsUpdate += sf.ArgumentsUpdate;
+											if (!string.IsNullOrEmpty(toolArgumentsUpdate))
+												toolArgumentsUpdate += "\r\n},\r\n";
+											toolArgumentsUpdate += $"{{\r\n";
+											toolArgumentsUpdate += $"\t\"id\": \"{sf.Id}\",\r\n";
+											toolArgumentsUpdate += $"\t\"name\": \"{sf.FunctionName}\",\r\n";
+											toolArgumentsUpdate += $"\t\"parameters\": ";
 										}
+										toolArgumentsUpdate += sf.FunctionArgumentsUpdate;
 									}
 								}
-								if (!string.IsNullOrEmpty(toolArgumentsUpdate))
+							}
+							if (!string.IsNullOrEmpty(toolArgumentsUpdate))
+							{
+								var json = "[\r\n" + toolArgumentsUpdate + "\r\n}\r\n]";
+								var functions = Deserialize<chat_completion_function[]>(json);
+								// Create message attachment first.
+								var attachment = new MessageAttachments(ContextType.None, "JSON", json);
+								attachment.Title = "AI Function Call";
+								attachment.IsAlwaysIncluded = true;
+								assistantMessageItem.Attachments.Add(attachment);
+								assistantMessageItem.IsAutomated = true;
+								messageItems.Add(assistantMessageItem);
+								ControlsHelper.AppInvoke(() =>
 								{
-									var json = "[\r\n" + toolArgumentsUpdate + "\r\n}\r\n]";
-									var functions = Deserialize<chat_completion_function[]>(json);
-									// Create message attachment first.
-									var attachment = new MessageAttachments(ContextType.None, "JSON", json);
-									attachment.Title = "AI Function Call";
-									attachment.IsAlwaysIncluded = true;
-									assistantMessageItem.Attachments.Add(attachment);
-									assistantMessageItem.IsAutomated = true;
-									messageItems.Add(assistantMessageItem);
-									ControlsHelper.AppInvoke(() =>
+									item.Messages.Add(assistantMessageItem);
+									item.Modified = DateTime.Now;
+								});
+								// Process function calls.
+								if (item.PluginsEnabled)
+								{
+									foreach (var function in functions)
 									{
-										item.Messages.Add(assistantMessageItem);
-										item.Modified = DateTime.Now;
-									});
-									// Process function calls.
-									if (item.PluginsEnabled)
-									{
-										foreach (var function in functions)
-										{
-											var functionResultContent = await PluginsManager.ProcessPluginFunction(item, function, cancellationTokenSource);
-											var fnAttachment = new MessageAttachments(ContextType.None, "text", functionResultContent);
-											fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
-											fnAttachment.IsAlwaysIncluded = true;
-											functionResults.Add(fnAttachment);
-										}
+										var functionResultContent = await PluginsManager.ProcessPluginFunction(item, function, cancellationTokenSource);
+										var fnAttachment = new MessageAttachments(ContextType.None, "text", functionResultContent);
+										fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
+										fnAttachment.IsAlwaysIncluded = true;
+										functionResults.Add(fnAttachment);
 									}
 								}
 							}
@@ -591,13 +552,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						else
 						{
 							var client = await GetAiClient();
-							var response = await client.GetChatCompletionsAsync(chatCompletionsOptions, cancellationTokenSource.Token);
-							foreach (ChatChoice chatChoice in response.Value.Choices)
-							{
-								answer += chatChoice.Message.Content;
-								// Pick first first answer.
-								break;
-							}
+							var chatClient = client.GetChatClient(modelName);
+							var result = await chatClient.CompleteChatAsync(
+								messages, completionsOptions, cancellationTokenSource.Token);
+							answer = ChatCompletionToString(result.Value);
 						}
 					}
 					else
@@ -613,12 +571,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						foreach (var message in messages)
 						{
 							chat_completion_message msg = null;
-							if (message is ChatRequestUserMessage userMessage)
-								msg = new chat_completion_message { role = message_role.user, content = userMessage.Content, name = userMessage.Name };
-							else if (message is ChatRequestAssistantMessage assistantMessage)
-								msg = new chat_completion_message { role = message_role.assistant, content = assistantMessage.Content, name = assistantMessage.Name };
-							else if (message is ChatRequestSystemMessage systemMessage)
-								msg = new chat_completion_message { role = message_role.system, content = systemMessage.Content, name = systemMessage.Name };
+							if (message is UserChatMessage userMessage)
+								msg = new chat_completion_message { role = message_role.user, content = userMessage.Content, name = userMessage.ParticipantName };
+							else if (message is AssistantChatMessage assistantMessage)
+								msg = new chat_completion_message { role = message_role.assistant, content = assistantMessage.Content, name = assistantMessage.ParticipantName };
+							else if (message is SystemChatMessage systemMessage)
+								msg = new chat_completion_message { role = message_role.system, content = systemMessage.Content, name = systemMessage.ParticipantName };
 							if (msg != null)
 								request.messages.Add(msg);
 
@@ -676,6 +634,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return messageItems;
 		}
 
+		public static string ChatCompletionToString(ChatCompletion completion)
+		{
+			switch (completion.FinishReason)
+			{
+				case ChatFinishReason.Stop:
+					return completion.ToString();
+				case ChatFinishReason.Length:
+					return "Incomplete model output due to MaxTokens parameter or token limit exceeded.";
+				case ChatFinishReason.ContentFilter:
+					return "Omitted content due to a content filter flag.";
+				default:
+					return completion.FinishReason.ToString();
+			}
+		}
+
+		public static ChatCompletionOptions GetChatCompletionOptions(float creativity)
+		{
+			var options = new ChatCompletionOptions();
+			// Need to use reflection to set the Temperature property
+			// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
+			typeof(ChatCompletionOptions)
+				.GetProperty(nameof(ChatCompletionOptions.Temperature), BindingFlags.Public | BindingFlags.Instance)
+					?.SetValue(options, creativity, null);
+			return options;
+		}
+
+
 		public static bool IsTextCompletionMode(string modelName)
 		{
 			return modelName.Contains("davinci") || modelName.Contains("instruct");
@@ -726,28 +711,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		#region Convert to Name Value Collection
 
-		public ChatMessageContentItem ConvertToChatMessageContentItem(object o)
+		public ChatMessageContentPart ConvertToChatMessageContentItem(object o)
 		{
 			if (!(o is content_item item))
 				return null;
 			switch (item.type)
 			{
 				case cotent_item_type.text:
-					return new ChatMessageTextContentItem(item.text);
+					return ChatMessageContentPart.CreateTextMessageContentPart(item.text);
 				case cotent_item_type.image_url:
 					// The Microsoft Uri has a size limit of x0FFF0.
 					// At the moment the ChatMessageImageUrl does not support attaching base64 images larger than that.
-					var detail = (ChatMessageImageDetailLevel)item.image_url.detail.ToString();
-					ChatMessageImageContentItem ci = null;
+					var detail = (ImageChatMessageContentPartDetail)item.image_url.detail.ToString();
+					ChatMessageContentPart ci = null;
 					if (ClassLibrary.Files.Mime.TryParseDataUri(item.image_url.url, out string mimeType, out byte[] data))
 					{
 						var bytes = BinaryData.FromBytes(data);
-						ci = new ChatMessageImageContentItem(bytes, mimeType, detail);
+						ci = ChatMessageContentPart.CreateImageMessageContentPart(bytes, mimeType, detail);
 					}
 					else
 					{
 						var imageUri = new System.Uri(item.image_url.url);
-						ci = new ChatMessageImageContentItem(imageUri, detail);
+						ci = ChatMessageContentPart.CreateImageMessageContentPart(imageUri, detail);
 					}
 					return ci;
 				default:

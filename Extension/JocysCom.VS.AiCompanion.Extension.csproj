@@ -93,9 +93,6 @@
     <VSIXSourceItem Include="$(OutputPath)\System.Linq.Async.dll" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.AI.OpenAI">
-      <Version>1.0.0-beta.17</Version>
-    </PackageReference>
     <PackageReference Include="Azure.Identity">
       <Version>1.12.0</Version>
     </PackageReference>
