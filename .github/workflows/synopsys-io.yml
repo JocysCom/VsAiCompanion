@@ -17,7 +17,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Updated to use Windows runner
     permissions:
       actions: read
       contents: read
@@ -37,26 +37,24 @@ jobs:
         additionalWorkflowArgs: --polaris.url=${{secrets.POLARIS_SERVER_URL}} --polaris.token=${{secrets.POLARIS_ACCESS_TOKEN}}
         stage: "IO"
 
-    # Please note that the ID in previous step was set to prescription
-    # in order for this logic to work also make sure that POLARIS_ACCESS_TOKEN
-    # is defined in settings
+    # Static Analysis with Polaris
     - name: Static Analysis with Polaris
       if: ${{steps.prescription.outputs.sastScan == 'true' }}
       run: |
-          export POLARIS_SERVER_URL=${{ secrets.POLARIS_SERVER_URL}}
-          export POLARIS_ACCESS_TOKEN=${{ secrets.POLARIS_ACCESS_TOKEN}}
-          wget -q ${{ secrets.POLARIS_SERVER_URL}}/api/tools/polaris_cli-linux64.zip
-          unzip -j polaris_cli-linux64.zip -d /tmp
-          /tmp/polaris analyze -w
+          $env:POLARIS_SERVER_URL="${{ secrets.POLARIS_SERVER_URL}}"
+          $env:POLARIS_ACCESS_TOKEN="${{ secrets.POLARIS_ACCESS_TOKEN}}"
+          Invoke-WebRequest -Uri ${{ secrets.POLARIS_SERVER_URL}}/api/tools/polaris_cli-win64.zip -OutFile polaris_cli-win64.zip
+          Expand-Archive -Path polaris_cli-win64.zip -DestinationPath C:\temp
+          C:\temp\polaris\bin\polaris.exe analyze -w
 
-    # Please note that the ID in previous step was set to prescription
-    # in order for this logic to work
+    # Software Composition Analysis with Black Duck
     - name: Software Composition Analysis with Black Duck
       if: ${{steps.prescription.outputs.scaScan == 'true' }}
       uses: blackducksoftware/github-action@9ea442b34409737f64743781e9adc71fd8e17d38
       with:
          args: '--blackduck.url="${{ secrets.BLACKDUCK_URL}}" --blackduck.api.token="${{ secrets.BLACKDUCK_TOKEN}}" --detect.tools="SIGNATURE_SCAN,DETECTOR"'
 
+    # Synopsys Intelligent Security Scan
     - name: Synopsys Intelligent Security Scan
       if: ${{ steps.prescription.outputs.sastScan == 'true' || steps.prescription.outputs.scaScan == 'true' }}
       uses: synopsys-sig/intelligent-security-scan@48eedfcd42bc342a294dc495ac452797b2d9ff08
@@ -69,9 +67,9 @@ jobs:
                 --blackduck.project.name={{PROJECT_NAME}}:{{PROJECT_VERSION}} --blackduck.url=${{secrets.BLACKDUCK_URL}} --blackduck.api.token=${{secrets.BLACKDUCK_TOKEN}}
         stage: "WORKFLOW"
 
+    # Upload SARIF file
     - name: Upload SARIF file
       if: ${{steps.prescription.outputs.sastScan == 'true' }}
       uses: github/codeql-action/upload-sarif@v2
       with:
-        # Path to SARIF file relative to the root of the repository
         sarif_file: workflowengine-results.sarif.json

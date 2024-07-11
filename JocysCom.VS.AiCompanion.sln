@@ -55,11 +55,35 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Data.ConnectionUI.Dialog", "Resources\Microsoft\Data\ConnectionUI.Dialog\Microsoft.Data.ConnectionUI.Dialog.csproj", "{85254873-5E7B-459C-A640-1B21A558A50A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Setup", "Setup", "{AA2CB73E-8BCC-4A26-9D05-69F56AE4B443}"
-	ProjectSection(SolutionItems) = preProject
-		Setup\ReadMe.md = Setup\ReadMe.md
-	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "JocysCom.VS.AiCompanion.Setup", "Setup\Setup\JocysCom.VS.AiCompanion.Setup.vdproj", "{78378B7D-5A0D-4F96-8B68-2FBB74138579}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform-Azure", "Terraform-Azure", "{1FC3178C-567F-4889-B885-EADC68503DEE}"
+	ProjectSection(SolutionItems) = preProject
+		Setup\Terraform-Azure\.gitignore = Setup\Terraform-Azure\.gitignore
+		Setup\Terraform-Azure\azure-pipelines.yml = Setup\Terraform-Azure\azure-pipelines.yml
+		Setup\Terraform-Azure\backend.dev.tfvars = Setup\Terraform-Azure\backend.dev.tfvars
+		Setup\Terraform-Azure\backend.prod.tfvars = Setup\Terraform-Azure\backend.prod.tfvars
+		Setup\Terraform-Azure\main.tf = Setup\Terraform-Azure\main.tf
+		Setup\Terraform-Azure\ReadMe.md = Setup\Terraform-Azure\ReadMe.md
+		Setup\Terraform-Azure\script1_groups.tf = Setup\Terraform-Azure\script1_groups.tf
+		Setup\Terraform-Azure\script2_key_vault.tf = Setup\Terraform-Azure\script2_key_vault.tf
+		Setup\Terraform-Azure\script3_sql_server.tf = Setup\Terraform-Azure\script3_sql_server.tf
+		Setup\Terraform-Azure\script3_sql_server_roles.sql = Setup\Terraform-Azure\script3_sql_server_roles.sql
+		Setup\Terraform-Azure\script4_sql_database.tf = Setup\Terraform-Azure\script4_sql_database.tf
+		Setup\Terraform-Azure\script4_sql_database_roles.sql = Setup\Terraform-Azure\script4_sql_database_roles.sql
+		Setup\Terraform-Azure\setup.ps1 = Setup\Terraform-Azure\setup.ps1
+		Setup\Terraform-Azure\variables.dev.tfvars = Setup\Terraform-Azure\variables.dev.tfvars
+		Setup\Terraform-Azure\variables.prod.tfvars = Setup\Terraform-Azure\variables.prod.tfvars
+		Setup\Terraform-Azure\variables.tf = Setup\Terraform-Azure\variables.tf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Workflows", "GitHub Workflows", "{1DC873DE-26E0-44B1-9E68-D4DF11F44BAD}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\codeql.yml = .github\workflows\codeql.yml
+		.github\workflows\defender-for-devops.yml = .github\workflows\defender-for-devops.yml
+		.github\workflows\synopsys-io.yml = .github\workflows\synopsys-io.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -260,6 +284,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{1DC873DE-26E0-44B1-9E68-D4DF11F44BAD} = {7621D168-651D-48DB-9354-8516A6C68351}
+		{1FC3178C-567F-4889-B885-EADC68503DEE} = {AA2CB73E-8BCC-4A26-9D05-69F56AE4B443}
 		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
 		{6D58A35D-FA37-4761-AE81-F1DD89829E1E} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
 		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99} = {843D4334-2E79-470C-A481-E02CF34E242E}
@@ -273,40 +299,7 @@ Global
 		SolutionGuid = {FBFF2296-DB1F-4D4F-B14D-BE266743B9AE}
 	EndGlobalSection
 EndGlobal
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{319C14E9-8A44-4AFA-8DD6-E4024CEA7BC9} = {AA2CB73E-8BCC-4A26-9D05-69F56AE4B443}
-		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
-		{6D58A35D-FA37-4761-AE81-F1DD89829E1E} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
-		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99} = {843D4334-2E79-470C-A481-E02CF34E242E}
-		{78378B7D-5A0D-4F96-8B68-2FBB74138579} = {AA2CB73E-8BCC-4A26-9D05-69F56AE4B443}
-		{85254873-5E7B-459C-A640-1B21A558A50A} = {7621D168-651D-48DB-9354-8516A6C68351}
-		{EFC61168-23CF-467B-A440-C6376ADAA5FA} = {7621D168-651D-48DB-9354-8516A6C68351}
-		{FF25816B-107F-4816-8C36-34804F25DD0D} = {843D4334-2E79-470C-A481-E02CF34E242E}
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FBFF2296-DB1F-4D4F-B14D-BE266743B9AE}
-	EndGlobalSection
-EndGlobal
-Cfg = Debug|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Debug|arm64.Build.0 = Debug|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Debug|x64.Build.0 = Debug|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|arm64.ActiveCfg = Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|arm64.Build.0 = Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|x64.ActiveCfg = Release|Any CPU
-		{34A43A67-7898-4C22-BDAC-9E3A1B85EF25}.Release|x64.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{319C14E9-8A44-4AFA-8DD6-E4024CEA7BC9} = {7621D168-651D-48DB-9354-8516A6C68351}
-		{32369DE1-526F-4D11-BE1F-0E292A3E6C1D} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
-		{3DB19EE5-48B8-4D16-A4E0-B8C1767F2BDD} = {7621D168-651D-48DB-9354-8516A6C68351}
+= {7621D168-651D-48DB-9354-8516A6C68351}
 		{6D58A35D-FA37-4761-AE81-F1DD89829E1E} = {E20C1D7F-175E-4E8B-817F-DFB67955357E}
 		{3C54106B-2D93-45BD-99EA-FAC5B95D3C99} = {843D4334-2E79-470C-A481-E02CF34E242E}
 		{85254873-5E7B-459C-A640-1B21A558A50A} = {7621D168-651D-48DB-9354-8516A6C68351}
