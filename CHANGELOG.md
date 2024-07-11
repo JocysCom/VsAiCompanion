@@ -1,3 +1,8 @@
+2024-07-11 v1.12.19
+
+- Update: Send personalized context data as a system message.
+- Update: Allow sending more context/list items.
+
 2024-07-10 v1.12.27
 
 - New: Option "Max risk level when signed out" when the app is in the company domain.

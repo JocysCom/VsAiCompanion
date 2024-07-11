@@ -1,4 +1,5 @@
 ﻿using JocysCom.VS.AiCompanion.DataClient.Common;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
@@ -228,6 +229,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 		[DefaultValue(null)]
 		public string Context5ListName { get => _Context5ListName; set => SetProperty(ref _Context5ListName, value); }
 		string _Context5ListName;
+
+		[DefaultValue(null)]
+		public string Context6ListName { get => _Context6ListName; set => SetProperty(ref _Context6ListName, value); }
+		string _Context6ListName;
+
+		[DefaultValue(null)]
+		public string Context7ListName { get => _Context7ListName; set => SetProperty(ref _Context7ListName, value); }
+		string _Context7ListName;
+
+		[DefaultValue(null)]
+		public string Context8ListName { get => _Context8ListName; set => SetProperty(ref _Context8ListName, value); }
+		string _Context8ListName;
+
+		[DefaultValue(message_role.system)]
+		public message_role ContextListRole { get => _ContextListRole; set => SetProperty(ref _ContextListRole, value); }
+		message_role _ContextListRole;
 
 		[XmlIgnore, JsonIgnore]
 		public BindingList<PluginApprovalItem> PluginFunctionCalls { get; set; } = new BindingList<PluginApprovalItem>();

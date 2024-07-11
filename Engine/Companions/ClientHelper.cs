@@ -47,34 +47,62 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 		public static List<chat_completion_message> ConvertMessageItemToChatMessage(bool isSystemInstructions, MessageItem message, bool? includeAttachments = null)
 		{
 			var completionMessages = new List<chat_completion_message>();
-			var body = message.Body;
+			var messageContent = message.Body;
+			MessageAttachments[] systemAttachments;
+			MessageAttachments[] userAttachments;
+			// If system instructions supported then...
+			if (isSystemInstructions)
+			{
+				systemAttachments = message.Attachments.Where(x => x.MessageRole == message_role.system).ToArray();
+				userAttachments = message.Attachments.Where(x => x.MessageRole == message_role.user).ToArray();
+			}
+			else
+			{
+				systemAttachments = Array.Empty<MessageAttachments>();
+				userAttachments = message.Attachments.ToArray();
+			}
+			var bodyAttachments = Array.Empty<MessageAttachments>();
+			var instructionAttachments = Array.Empty<MessageAttachments>();
 			if (message.Type == MessageType.In || message.Type == MessageType.Out)
 			{
-				var attachments = Array.Empty<MessageAttachments>();
+				// If all attachments must be included.
 				if (includeAttachments == true)
-					attachments = message.Attachments.ToArray();
+					bodyAttachments = userAttachments;
 				if (includeAttachments == null)
-					attachments = message.Attachments.Where(x => x.IsAlwaysIncluded).ToArray();
-				if (attachments.Length > 0)
-					body = JoinMessageParts(body, ConvertAttachmentsToString(attachments));
+					bodyAttachments = userAttachments.Where(x => x.IsAlwaysIncluded).ToArray();
+
+				// If all attachments must be included.
+				if (includeAttachments == true)
+					instructionAttachments = systemAttachments;
+				if (includeAttachments == null)
+					instructionAttachments = systemAttachments.Where(x => x.IsAlwaysIncluded).ToArray();
+
+				if (bodyAttachments.Any())
+					messageContent = JoinMessageParts(messageContent, ConvertAttachmentsToString(bodyAttachments));
 			}
 			if (message.Type == MessageType.In)
 			{
 				// Add AI assitant message.
-				completionMessages.Add(new chat_completion_message(message_role.assistant, body));
+				completionMessages.Add(new chat_completion_message(message_role.assistant, messageContent));
 				return completionMessages;
 			}
 			if (message.Type == MessageType.Out)
 			{
-
-				// Add system message.
-				if (isSystemInstructions && !string.IsNullOrEmpty(message.BodyInstructions))
-					completionMessages.Add(new chat_completion_message(message_role.system, message.BodyInstructions));
+				var systemContent = message.BodyInstructions ?? "";
+				if (instructionAttachments.Any())
+					systemContent = JoinMessageParts(systemContent, ConvertAttachmentsToString(systemAttachments));
+				if (isSystemInstructions)
+				{
+					// Add system message.
+					if (!string.IsNullOrWhiteSpace(systemContent))
+						completionMessages.Add(new chat_completion_message(message_role.system, systemContent));
+				}
+				else
+				{
+					messageContent = JoinMessageParts(systemContent, messageContent);
+				}
 				// Add user message.
-				var userContent = isSystemInstructions
-					? body
-					: JoinMessageParts(message.BodyInstructions, body);
-				completionMessages.Add(new chat_completion_message(message_role.user, userContent));
+				completionMessages.Add(new chat_completion_message(message_role.user, messageContent));
 			}
 			return completionMessages;
 		}
@@ -153,6 +181,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					item.Context3ListName,
 					item.Context4ListName,
 					item.Context5ListName,
+					item.Context6ListName,
+					item.Context7ListName,
+					item.Context8ListName,
 				};
 				// Get all enabled non-empty lists.
 				var listInfos = Global.Lists.Items
@@ -179,6 +210,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						Instructions = li.Instructions,
 						Type = ContextType.None,
 						Data = data,
+						MessageRole = item.ContextListRole,
 					};
 					m.Attachments.Add(listAttachment);
 				}
