@@ -634,6 +634,75 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return messageItems;
 		}
 
+		/*
+		public static async Task<string> CompleteChat(
+			string modelName,
+			TemplateItem item,
+			List<chat_completion_message> messagesToSend,
+			CancellationToken cancellationToken = default
+		)
+		{
+			string answer = "";
+			var request = new chat_completion_request
+			{
+				model = modelName,
+				temperature = (float)creativity,
+				stream = Service.ResponseStreaming,
+				max_tokens = maxInputTokens,
+			};
+			request.messages = new List<chat_completion_message>();
+			foreach (var message in messagesToSend)
+			{
+				chat_completion_message msg = null;
+				if (message is UserChatMessage userMessage)
+					msg = new chat_completion_message
+					{
+						role = message_role.user,
+						content = userMessage.Content,
+						name = userMessage.ParticipantName
+					};
+				else if (message is AssistantChatMessage assistantMessage)
+					msg = new chat_completion_message
+					{
+						role = message_role.assistant,
+						content = assistantMessage.Content,
+						name = assistantMessage.ParticipantName
+					};
+				else if (message is SystemChatMessage systemMessage)
+					msg = new chat_completion_message
+					{
+						role = message_role.system,
+						content = systemMessage.Content,
+						name = systemMessage.ParticipantName
+					};
+				if (msg != null)
+					request.messages.Add(msg);
+
+			}
+			ControlsHelper.AppInvoke(() =>
+			{
+				if (item.PluginsEnabled)
+					PluginsManager.ProvideTools(item, request);
+			});
+			var data = await GetAsync<chat_completion_response>(
+				chatCompletionsPath, request, null,
+				Service.ResponseStreaming, cancellationToken);
+			foreach (var dataItem in data)
+				foreach (var chatChoice in dataItem.choices)
+				{
+					var responseMessage = chatChoice.message;
+					answer += (responseMessage ?? chatChoice.delta).content;
+					ControlsHelper.AppInvoke(() =>
+					{
+						// Check if the model wanted to call a function
+						if (item.PluginsEnabled)
+							PluginsManager.ProcessPlugins(item, responseMessage);
+					});
+				}
+			return answer;
+		}
+		*/
+
 		public static string ChatCompletionToString(ChatCompletion completion)
 		{
 			switch (completion.FinishReason)
