@@ -123,6 +123,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var results = await client.GetEmbedding(modelName, input, cancellationToken);
 			if (cancellationToken.IsCancellationRequested)
 				return ProgressStatus.Canceled;
+			if (results == null)
+				return ProgressStatus.Exception;
 			var now = DateTime.Now;
 			foreach (var key in results.Keys)
 			{
@@ -385,12 +387,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 
-		public static void ApplyDatabase(string groupName, ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> property)
+		public static void ApplyDatabase(string embeddingName, ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> property)
 		{
 			// Run the time-consuming operations asynchronously
 			Task.Run(() =>
 			{
-				var ei = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
+				var ei = Global.Embeddings.Items.FirstOrDefault(x => x.Name == embeddingName);
 				if (ei == null)
 					return;
 				var flags = GetFlags(ei);
@@ -413,9 +415,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			});
 		}
 
-		public static void ApplyDatabase(string groupName, ObservableCollection<EnumComboBox.CheckBoxViewModel> property)
+		public static void ApplyDatabase(string embeddingName, ObservableCollection<EnumComboBox.CheckBoxViewModel> property)
 		{
-			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.EmbeddingGroupName == groupName);
+			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.Name == embeddingName);
 			var flags = GetFlags(ei);
 			var items = property.ToArray();
 			foreach (var item in items)

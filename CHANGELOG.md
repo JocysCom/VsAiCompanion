@@ -1,3 +1,8 @@
+2024-07-15 v1.12.34
+
+- Fix: Crash when importing files into embedding database.
+- Fix: Embedding subgroup names displayed from a different database.
+
 2024-07-11 v1.12.32
 
 - Fix: AI is not using speech if the avatar control is not focused.

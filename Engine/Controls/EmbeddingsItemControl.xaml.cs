@@ -503,7 +503,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_EmbeddingGroupFlags = dic;
 				}
 				if (Item?.IsEnabled == true)
-					EmbeddingHelper.ApplyDatabase(Item?.EmbeddingGroupName, _EmbeddingGroupFlags);
+					EmbeddingHelper.ApplyDatabase(Item?.Name, _EmbeddingGroupFlags);
 				return _EmbeddingGroupFlags;
 			}
 			set => _EmbeddingGroupFlags = value;

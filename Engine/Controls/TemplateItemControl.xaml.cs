@@ -661,7 +661,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				if (_EmbeddingGroupFlags == null)
 					_EmbeddingGroupFlags = EnumComboBox.GetItemSource<EmbeddingGroupFlag>();
-				EmbeddingHelper.ApplyDatabase(Item?.UseEmbeddings == true ? Item?.EmbeddingGroupName : null, _EmbeddingGroupFlags);
+				EmbeddingHelper.ApplyDatabase(Item?.UseEmbeddings == true ? Item?.EmbeddingName : null, _EmbeddingGroupFlags);
 				return _EmbeddingGroupFlags;
 			}
 			set => _EmbeddingGroupFlags = value;

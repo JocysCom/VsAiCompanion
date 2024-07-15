@@ -97,6 +97,20 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_D3D88C1C61DB415DA9B89CFBFFF29502"
+            {
+            "Name" = "8:JocysCom.VS.AiCompanion.App.exe"
+            "Condition" = "8:Installed AND NOT REMOVE=\"ALL\""
+            "Object" = "8:_2C1BA1CAFA7B4AAB994E3D6E0F69A4D0"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:/exit"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_427CEB6A_9691_44D1_9766_3C015536040A"
+            "InstallerClass" = "11:FALSE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -227,15 +241,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:VS AI Companion"
-        "ProductCode" = "8:{3FD784DE-FD41-451D-A990-12B29BDCD66D}"
-        "PackageCode" = "8:{070D00C9-7716-480A-989C-D8F1B3BFA0A6}"
+        "ProductCode" = "8:{3E91A6E5-6574-4DAC-9435-E707E083928F}"
+        "PackageCode" = "8:{005E4E62-1E13-4228-ABEC-7C094D7FBBC0}"
         "UpgradeCode" = "8:{8EAC34EB-107A-44B2-B4AF-067C6A4DBF80}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.12.32"
+        "ProductVersion" = "8:1.12.34"
         "Manufacturer" = "8:Jocys.com"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
