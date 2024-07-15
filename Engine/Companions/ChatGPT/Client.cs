@@ -450,35 +450,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// If Chat Completion mode.
 				else
 				{
-					var messages = new List<ChatMessage>();
-					foreach (var messageToSend in messagesToSend)
-					{
-						var stringContent = messageToSend.content as string;
-						ChatMessageContentPart[] contentItems = null;
-						if (messageToSend.content is content_item[] citems)
-							contentItems = citems.Select(x => ConvertToChatMessageContentItem(x)).ToArray();
-						switch (messageToSend.role)
-						{
-							case message_role.user:
-								if (contentItems != null)
-									messages.Add(new UserChatMessage(contentItems));
-								else if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new UserChatMessage(stringContent));
-								break;
-							case message_role.assistant:
-								if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new AssistantChatMessage(stringContent));
-								break;
-							case message_role.system:
-								if (!string.IsNullOrEmpty(stringContent))
-									messages.Add(new SystemChatMessage(stringContent));
-								break;
-						}
-					}
-
 					// If Azure service or HTTPS.
 					if (Service.IsAzureOpenAI || secure)
 					{
+						var messages = new List<ChatMessage>();
+						foreach (var messageToSend in messagesToSend)
+						{
+							var stringContent = messageToSend.content as string;
+							ChatMessageContentPart[] contentItems = null;
+							if (messageToSend.content is content_item[] citems)
+								contentItems = citems.Select(x => ConvertToChatMessageContentItem(x)).ToArray();
+							switch (messageToSend.role)
+							{
+								case message_role.user:
+									if (contentItems != null)
+										messages.Add(new UserChatMessage(contentItems));
+									else if (!string.IsNullOrEmpty(stringContent))
+										messages.Add(new UserChatMessage(stringContent));
+									break;
+								case message_role.assistant:
+									if (!string.IsNullOrEmpty(stringContent))
+										messages.Add(new AssistantChatMessage(stringContent));
+									break;
+								case message_role.system:
+									if (!string.IsNullOrEmpty(stringContent))
+										messages.Add(new SystemChatMessage(stringContent));
+									break;
+							}
+						}
+
 						var completionsOptions = GetChatCompletionOptions((float)creativity);
 						ControlsHelper.AppInvoke(() =>
 						{
@@ -568,19 +568,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							max_tokens = maxInputTokens,
 						};
 						request.messages = new List<chat_completion_message>();
-						foreach (var message in messages)
-						{
-							chat_completion_message msg = null;
-							if (message is UserChatMessage userMessage)
-								msg = new chat_completion_message { role = message_role.user, content = userMessage.Content, name = userMessage.ParticipantName };
-							else if (message is AssistantChatMessage assistantMessage)
-								msg = new chat_completion_message { role = message_role.assistant, content = assistantMessage.Content, name = assistantMessage.ParticipantName };
-							else if (message is SystemChatMessage systemMessage)
-								msg = new chat_completion_message { role = message_role.system, content = systemMessage.Content, name = systemMessage.ParticipantName };
-							if (msg != null)
-								request.messages.Add(msg);
-
-						}
+						request.messages.AddRange(messagesToSend);
 						ControlsHelper.AppInvoke(() =>
 						{
 							if (item.PluginsEnabled)
@@ -633,75 +621,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 			return messageItems;
 		}
-
-		/*
-		public static async Task<string> CompleteChat(
-			string modelName,
-			TemplateItem item,
-			List<chat_completion_message> messagesToSend,
-			CancellationToken cancellationToken = default
-		)
-		{
-			string answer = "";
-			var request = new chat_completion_request
-			{
-				model = modelName,
-				temperature = (float)creativity,
-				stream = Service.ResponseStreaming,
-				max_tokens = maxInputTokens,
-			};
-			request.messages = new List<chat_completion_message>();
-			foreach (var message in messagesToSend)
-			{
-				chat_completion_message msg = null;
-				if (message is UserChatMessage userMessage)
-					msg = new chat_completion_message
-					{
-						role = message_role.user,
-						content = userMessage.Content,
-						name = userMessage.ParticipantName
-					};
-				else if (message is AssistantChatMessage assistantMessage)
-					msg = new chat_completion_message
-					{
-						role = message_role.assistant,
-						content = assistantMessage.Content,
-						name = assistantMessage.ParticipantName
-					};
-				else if (message is SystemChatMessage systemMessage)
-					msg = new chat_completion_message
-					{
-						role = message_role.system,
-						content = systemMessage.Content,
-						name = systemMessage.ParticipantName
-					};
-				if (msg != null)
-					request.messages.Add(msg);
-
-			}
-			ControlsHelper.AppInvoke(() =>
-			{
-				if (item.PluginsEnabled)
-					PluginsManager.ProvideTools(item, request);
-			});
-			var data = await GetAsync<chat_completion_response>(
-				chatCompletionsPath, request, null,
-				Service.ResponseStreaming, cancellationToken);
-			foreach (var dataItem in data)
-				foreach (var chatChoice in dataItem.choices)
-				{
-					var responseMessage = chatChoice.message;
-					answer += (responseMessage ?? chatChoice.delta).content;
-					ControlsHelper.AppInvoke(() =>
-					{
-						// Check if the model wanted to call a function
-						if (item.PluginsEnabled)
-							PluginsManager.ProcessPlugins(item, responseMessage);
-					});
-				}
-			return answer;
-		}
-		*/
 
 		public static string ChatCompletionToString(ChatCompletion completion)
 		{
