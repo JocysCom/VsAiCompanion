@@ -97,20 +97,6 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_D3D88C1C61DB415DA9B89CFBFFF29502"
-            {
-            "Name" = "8:JocysCom.VS.AiCompanion.App.exe"
-            "Condition" = "8:Installed AND NOT REMOVE=\"ALL\""
-            "Object" = "8:_2C1BA1CAFA7B4AAB994E3D6E0F69A4D0"
-            "FileType" = "3:2"
-            "InstallAction" = "3:1"
-            "Arguments" = "8:/exit"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_427CEB6A_9691_44D1_9766_3C015536040A"
-            "InstallerClass" = "11:FALSE"
-            "CustomActionData" = "8:"
-            }
         }
         "DefaultFeature"
         {
