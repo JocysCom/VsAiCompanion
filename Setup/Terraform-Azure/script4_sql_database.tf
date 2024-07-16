@@ -24,7 +24,8 @@ resource "null_resource" "assign_sql_database_roles" {
   depends_on = [
     azurerm_mssql_server.sqlsrv,
     azurerm_mssql_database.db,
-    null_resource.assign_sql_server_roles
+    null_resource.assign_sql_server_roles0,
+    null_resource.assign_sql_server_roles1
   ]
 }
 #$tokenResponse = az account get-access-token --resource https://database.windows.net/ --output json

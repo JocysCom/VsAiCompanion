@@ -14,7 +14,8 @@ resource "azurerm_key_vault" "kv" {
     default_action = "Deny"
     bypass         = "AzureServices"
     ip_rules = [
-      data.external.external_ip.result.ip
+      "0.0.0.0/0"  # Allow all IP addresses
+     #data.external.external_ip.result.ip,
     ]
     virtual_network_subnet_ids = []
   }
@@ -22,9 +23,24 @@ resource "azurerm_key_vault" "kv" {
 
 # Assign Key Vault Reader role to AI_RiskLevel groups
 
+
+# Key Vault Reader
+#   Read metadata of key vaults and its certificates, keys, and secrets.
+#   Cannot read sensitive values such as secret contents or key material.
+# Key Vault * Officer
+#  Perform any action on the * of a key vault, except manage permissions.
+# Key Vault * User
+#  Read * contents / values.
+
 resource "azurerm_role_assignment" "key_vault_reader_low" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
+  principal_id         = data.azuread_group.g2.id
+}
+
+resource "azurerm_role_assignment" "key_vault_user_low" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
   principal_id         = data.azuread_group.g2.id
 }
 
@@ -34,9 +50,21 @@ resource "azurerm_role_assignment" "key_vault_reader_medium" {
   principal_id         = data.azuread_group.g3.id
 }
 
+resource "azurerm_role_assignment" "key_vault_user_medium" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = data.azuread_group.g3.id
+}
+
 resource "azurerm_role_assignment" "key_vault_reader_high" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
+  principal_id         = data.azuread_group.g4.id
+}
+
+resource "azurerm_role_assignment" "key_vault_user_high" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
   principal_id         = data.azuread_group.g4.id
 }
 
@@ -101,7 +129,7 @@ resource "azurerm_key_vault_access_policy" "key_vault_access_policy_read_secrets
 
 resource "azurerm_key_vault_secret" "kvs_openai" {
   name            = "openai-api-key"
-  value           = var.kvs_openai_value
+  value           = var.KVS_OPENAI_VALUE
   key_vault_id    = azurerm_key_vault.kv.id
   expiration_date = timeadd(timestamp(), "43800h") # 5 years in hours
   depends_on = [
@@ -118,7 +146,7 @@ resource "azurerm_key_vault_secret" "kvs_openai" {
 
 resource "azurerm_key_vault_secret" "kvs_speech" {
   name            = "ms-speech-service-api-key"
-  value           = var.kvs_speech_value
+  value           = var.KVS_SPEECH_VALUE
   key_vault_id    = azurerm_key_vault.kv.id
   expiration_date = timeadd(timestamp(), "43800h") # 5 years in hours
   depends_on = [
