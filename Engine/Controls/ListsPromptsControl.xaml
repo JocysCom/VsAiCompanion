@@ -21,23 +21,22 @@
 		<StackPanel Orientation="Horizontal">
 			<ComboBox
 				Name="PromptNameComboBox"
-				HorizontalAlignment="Stretch"
 				DisplayMemberPath="Name"
 				ItemsSource="{Binding PromptLists, ElementName=This}"
 				SelectedValue="{Binding ListPromptName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				SelectedValuePath="Name" />
-			<Label VerticalAlignment="Center" Content="List" Opacity="0.4" />
+			<Label
+				VerticalAlignment="Center"
+				Content="List"
+				Opacity="0.4" />
 			<ComboBox
+				Margin="3,3,0,3"
 				Name="PromptOptionComboBox"
 				DisplayMemberPath="Key"
 				ItemsSource="{Binding PromptOptions, ElementName=This}"
 				SelectedValue="{Binding ListPromptOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				SelectedValuePath="Key" />
-			<Button
-				Name="AddPromptButton"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Top"
-				x:FieldModifier="public">
+			<Button Name="AddPromptButton" x:FieldModifier="public">
 				<ContentControl Content="{StaticResource Icon_Add}" Focusable="False" />
 			</Button>
 		</StackPanel>

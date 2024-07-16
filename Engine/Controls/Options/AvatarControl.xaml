@@ -52,7 +52,7 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<!--  Row 0  -->
-			<Label VerticalAlignment="Center" Content="{StaticResource main_Service}" />
+			<Label Margin="6,0,0,0" Content="{StaticResource main_Service}" />
 			<StackPanel Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal">
 				<ComboBox
 					Name="AiServicesComboBox"
@@ -63,7 +63,7 @@
 					SelectedValue="{Binding AiServiceId}"
 					SelectedValuePath="Id"
 					SelectionChanged="AiServicesComboBox_SelectionChanged" />
-				<Label VerticalAlignment="Center" Content="{StaticResource main_Voice}" />
+				<Label Content="{StaticResource main_Voice}" />
 				<ComboBox
 					Name="VoiceLanguageComboBox"
 					MinWidth="64"
@@ -122,7 +122,7 @@
 
 			</StackPanel>
 			<!--  Row 2  -->
-			<Label Grid.Row="2" VerticalAlignment="Center" Content="{StaticResource main_Instructions}" />
+			<Label Grid.Row="2" Margin="6,0,0,0" Content="{StaticResource main_Instructions}" />
 			<TextBox
 				Name="InstructionsTextBox"
 				Grid.Row="2"
@@ -138,7 +138,7 @@
 				Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap" />
 			<!--  Row 3  -->
-			<Label Grid.Row="3" VerticalAlignment="Center" Content="{StaticResource main_Message}" />
+			<Label Grid.Row="3" Margin="6,0,0,0" Content="{StaticResource main_Message}" />
 			<TextBox
 				Name="MessageTextBox"
 				Grid.Row="3"
@@ -198,7 +198,7 @@
 							<Label Content="{StaticResource main_Help}" />
 						</StackPanel>
 					</TabItem.Header>
-					<RichTextBox x:Name="HelpRichTextBox"/>
+					<RichTextBox x:Name="HelpRichTextBox" />
 				</TabItem>
 				<TabItem Name="LogTabPage">
 					<TabItem.Header>

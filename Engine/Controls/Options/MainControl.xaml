@@ -8,7 +8,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
-	d:DesignHeight="400"
+	d:DesignHeight="500"
 	d:DesignWidth="800"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
@@ -51,7 +51,7 @@
 								SelectedValue="{Binding StartWithWindowsState, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<Label x:Name="TakeLabel" Content="Max Tray Tasks" />
+							<Label x:Name="TakeLabel" Content="Max Tray Tasks" Margin="4,0,0,0" />
 							<JcControls:NumericUpDown x:Name="MaxTaskItemsInTrayUpdown" Maximum="9223372036854775807" Value="{Binding MaxTaskItemsInTray, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						</StackPanel>
 					</WrapPanel>
@@ -87,7 +87,7 @@
 							Margin="0"
 							Content="{StaticResource main_Enable_Microsoft_Account}"
 							IsChecked="{Binding EnableMicrosoftAccount, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Row="1" VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevel}" />
+						<Label Grid.Row="1" VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevel}" Margin="4,0,0,0" />
 						<ComboBox
 							Name="MaximumRiskLevelComboBox"
 							Grid.Row="1"
@@ -98,7 +98,7 @@
 							SelectedValue="{Binding MaxRiskLevel, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							SelectedValuePath="Key" />
 						<DockPanel x:Name="SecurityOption0" Grid.Row="2">
-							<Label x:Name="MaxRiskLevelWhenSignedOutLabel" VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevelWhenSignedOut}" />
+							<Label x:Name="MaxRiskLevelWhenSignedOutLabel" VerticalAlignment="Center" Content="{StaticResource main_MaxRiskLevelWhenSignedOut}" Margin="4,0,0,0" />
 						</DockPanel>
 						<DockPanel x:Name="SecurityOption1" Grid.Row="2" Grid.Column="1">
 							<ComboBox
@@ -110,7 +110,7 @@
 								SelectedValuePath="Key" />
 						</DockPanel>
 						<DockPanel x:Name="SecurityOption2" Grid.Row="3">
-							<Label x:Name="DomainMaxRiskLevelNameLabel" Content="{StaticResource main_DomainMaxRiskLevel}" />
+							<Label x:Name="DomainMaxRiskLevelNameLabel" Content="{StaticResource main_DomainMaxRiskLevel}" Margin="4,0,0,0" />
 						</DockPanel>
 						<DockPanel x:Name="SecurityOption3" Grid.Row="3" Grid.Column="1">
 							<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">

@@ -19,7 +19,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Margin="0,3,3,3">
+	<Grid Margin="6,3,3,3">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -36,10 +36,9 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<Label Grid.Row="0" VerticalAlignment="Center" Content="{StaticResource main_ServiceType}" />
+		<Label VerticalAlignment="Center" Content="{StaticResource main_ServiceType}" />
 		<ComboBox
 			Name="ServiceTypeComboBox"
-			Grid.Row="0"
 			Grid.Column="1"
 			ItemsSource="{Binding ServiceTypes, ElementName=This}"
 			SelectedValue="{Binding ServiceType}" />

@@ -21,18 +21,15 @@
 	</UserControl.Resources>
 	<Border
 		Grid.Row="4"
-		Grid.Column="0"
 		Grid.ColumnSpan="3"
 		BorderBrush="{StaticResource BorderDark}"
 		BorderThickness="0,0,1,0"
 		Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
-		<StackPanel x:Name="CodeButtonsPanel" Margin="5,3,5,3" Orientation="Horizontal">
+		<StackPanel x:Name="CodeButtonsPanel" Orientation="Horizontal">
 			<ComboBox Name="MarkdownLanguageNameComboBox" Margin="3,3,0,3" SelectedValue="{Binding MarkdownLanguageName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			<Button
 				x:Name="CustomButton"
 				Margin="3,3,0,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
 				Click="CodeButton_Click"
 				Tag="Custom"
 				ToolTip="Custom">
@@ -40,9 +37,7 @@
 			</Button>
 			<Button
 				x:Name="SqlButton"
-				Margin="3,3,3,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
+				Margin="3,3,0,3"
 				Click="CodeButton_Click"
 				Tag="SQL"
 				ToolTip="SQL">
@@ -50,9 +45,7 @@
 			</Button>
 			<Button
 				x:Name="XmlButton"
-				Margin="0,3,3,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
+				Margin="3,3,0,3"
 				Click="CodeButton_Click"
 				Tag="XML"
 				ToolTip="XML">
@@ -60,9 +53,7 @@
 			</Button>
 			<Button
 				x:Name="CsButton"
-				Margin="0,3,3,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
+				Margin="3,3,0,3"
 				Click="CodeButton_Click"
 				Tag="CSharp"
 				ToolTip="C#">
@@ -70,9 +61,7 @@
 			</Button>
 			<Button
 				x:Name="PsButton"
-				Margin="0,3,3,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
+				Margin="3,3,0,3"
 				Click="CodeButton_Click"
 				Tag="PowerShell"
 				ToolTip="PowerShell">
@@ -80,9 +69,7 @@
 			</Button>
 			<Button
 				x:Name="TsButton"
-				Margin="0,3,3,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
+				Margin="3,3,0,3"
 				Click="CodeButton_Click"
 				Tag="TypeScript"
 				ToolTip="TypeScript">
@@ -90,9 +77,7 @@
 			</Button>
 			<Button
 				x:Name="JsButton"
-				Margin="0,3,3,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
+				Margin="3,3,0,3"
 				Click="CodeButton_Click"
 				Tag="JavaScript"
 				ToolTip="JavaScript">
@@ -100,9 +85,7 @@
 			</Button>
 			<Button
 				x:Name="LogButton"
-				Margin="0,3,3,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
+				Margin="3,3,0,3"
 				Click="CodeButton_Click"
 				Tag="Log"
 				ToolTip="Log">
@@ -110,9 +93,6 @@
 			</Button>
 			<Button
 				x:Name="TxtButton"
-				Margin="0,3,3,3"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Center"
 				Click="CodeButton_Click"
 				Tag="Text"
 				ToolTip="Text">
