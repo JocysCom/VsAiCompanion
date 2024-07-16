@@ -1,3 +1,7 @@
+2024-07-16 v1.12.35
+
+- Fix: Error when sending a message.
+
 2024-07-15 v1.12.34
 
 - Fix: Crash when importing files into embedding database.

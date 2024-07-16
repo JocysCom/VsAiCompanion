@@ -853,7 +853,8 @@ EndFragment:{3:00000000}";
 		public static RiskLevel GetMaxRiskLevelByGroups(IList<string> groups)
 		{
 			var dic = GetLevels();
-			foreach (var level in dic.Keys)
+			var keys = dic.Keys.ToArray();
+			foreach (var level in keys)
 			{
 				var groupName = GetGroupName(level);
 				var exists = groups.Any(g => g.Equals(groupName, StringComparison.OrdinalIgnoreCase));
