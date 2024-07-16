@@ -124,55 +124,6 @@ resource "azurerm_mssql_firewall_rule" "sqlsrv_firewall_rule_all" {
   end_ip_address   = "255.255.255.255"
 }
 
-# Assign SQL Server roles inside SQL Server by using SQL script.
-
-resource "null_resource" "assign_sql_server_roles0" {
-  provisioner "local-exec" {
-    command     = <<-EOT
-    $token = (az account get-access-token --resource https://database.windows.net/ --query accessToken -o tsv)
-    $conn = New-Object System.Data.SqlClient.SqlConnection
-    $conn.ConnectionString = "Server=${azurerm_mssql_server.sqlsrv.fully_qualified_domain_name}; Database=master;"
-    $conn.AccessToken = $token
-    $sqlIdentity = "${azurerm_user_assigned_identity.sql_identity.name}"
-
-
-    $query = @"
-    CREATE USER [$sqlIdentity] FROM EXTERNAL PROVIDER;
-    ALTER ROLE [db_datareader] ADD MEMBER [$sqlIdentity];
-    ALTER ROLE [db_datawriter] ADD MEMBER [$sqlIdentity];
-    GRANT CONNECT TO [$sqlIdentity];
-    "@
-
-    $cmd = New-Object System.Data.SqlClient.SqlCommand($query, $conn)
-    $conn.Open()
-    $cmd.ExecuteNonQuery()
-    $conn.Close()
-    EOT
-    interpreter = ["PowerShell", "-Command"]
-  }
-  depends_on = [
-    azurerm_mssql_server.sqlsrv,
-  ]
-}
-
-
-resource "null_resource" "assign_sql_server_roles" {
-  provisioner "local-exec" {
-    command     = <<-EOT
-    $token = $env:ARM_DATABASE_ACCESS_TOKEN
-    $serverName = "${azurerm_mssql_server.sqlsrv.fully_qualified_domain_name}"
-    $sqlCommandText = Get-Content "script3_sql_server_roles.sql" -Raw
-    Invoke-Sqlcmd -ServerInstance $serverName -Database 'master' -AccessToken $token -Query $sqlCommandText
-    EOT
-    interpreter = ["PowerShell", "-Command"]
-  }
-  depends_on = [
-    azurerm_mssql_server.sqlsrv,
-    #azurerm_role_assignment.sqlsrv_directory_reader
-    #azuread_directory_role_assignment.sql_directory_reader
-  ]
-}
-
 # Set local variable for admin emails using the service principal's information
 locals {
   admin_emails = [data.azuread_service_principal.sp_admin.display_name]
@@ -201,3 +152,62 @@ resource "azurerm_mssql_server_security_alert_policy" "sqlsrv_audit_policy" {
 
 #$tokenResponse = az account get-access-token --resource https://database.windows.net/ --output json
 #$token = ($tokenResponse | ConvertFrom-Json).accessToken
+
+  # Assign SQL Server roles inside SQL Server by using SQL script.
+
+resource "null_resource" "assign_sql_server_roles0" {
+  provisioner "local-exec" {
+    command     = <<-EOT
+    $token = (az account get-access-token --resource https://database.windows.net/ --query accessToken -o tsv)
+    $conn = New-Object System.Data.SqlClient.SqlConnection
+    $conn.ConnectionString = "Server=${azurerm_mssql_server.sqlsrv.fully_qualified_domain_name}; Database=master;"
+    $conn.AccessToken = $token
+    $sqlIdentity = "${azurerm_user_assigned_identity.sql_identity.name}"
+
+
+    $query = @"
+    CREATE USER [$sqlIdentity] FROM EXTERNAL PROVIDER;
+    ALTER ROLE [db_datareader] ADD MEMBER [$sqlIdentity];
+    ALTER ROLE [db_datawriter] ADD MEMBER [$sqlIdentity];
+    GRANT CONNECT TO [$sqlIdentity];
+    "@
+
+    $cmd = New-Object System.Data.SqlClient.SqlCommand($query, $conn)
+    $conn.Open()
+    $cmd.ExecuteNonQuery()
+    $conn.Close()
+    EOT
+    interpreter = ["PowerShell", "-Command"]
+  }
+  depends_on = [
+    azurerm_mssql_server.sqlsrv,
+    azurerm_mssql_server_security_alert_policy.sqlsrv_audit_policy,
+    azurerm_mssql_firewall_rule.sqlsrv_firewall_rule,
+    azurerm_mssql_firewall_rule.sqlsrv_firewall_rule_all,
+    azuread_app_role_assignment.sql_identity_user_reader,
+    azuread_app_role_assignment.sql_identity_group_reader,
+    azuread_app_role_assignment.sql_identity_app_reader
+  ]
+}
+
+
+resource "null_resource" "assign_sql_server_roles1" {
+  provisioner "local-exec" {
+    command     = <<-EOT
+    $token = $env:ARM_DATABASE_ACCESS_TOKEN
+    $serverName = "${azurerm_mssql_server.sqlsrv.fully_qualified_domain_name}"
+    $sqlCommandText = Get-Content "script3_sql_server_roles.sql" -Raw
+    Invoke-Sqlcmd -ServerInstance $serverName -Database 'master' -AccessToken $token -Query $sqlCommandText
+    EOT
+    interpreter = ["PowerShell", "-Command"]
+  }
+  depends_on = [
+    azurerm_mssql_server.sqlsrv,
+    azurerm_mssql_server_security_alert_policy.sqlsrv_audit_policy,
+    azurerm_mssql_firewall_rule.sqlsrv_firewall_rule,
+    azurerm_mssql_firewall_rule.sqlsrv_firewall_rule_all,
+    azuread_app_role_assignment.sql_identity_user_reader,
+    azuread_app_role_assignment.sql_identity_group_reader,
+    azuread_app_role_assignment.sql_identity_app_reader
+  ]
+}

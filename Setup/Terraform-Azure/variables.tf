@@ -20,22 +20,6 @@ variable "env" {
   default     = "env"
 }
 
-# API Keys
-
-variable "kvs_openai_value" {
-  description = "The value for the OpenAI API Key secret"
-  type        = string
-  sensitive   = true
-  default     = "<Your-OpenAI-API-Key>"
-}
-
-variable "kvs_speech_value" {
-  description = "The value for the Speech Service API Key secret"
-  type        = string
-  sensitive   = true
-  default     = "<Your-Speech-Service-API-Key>"
-}
-
 variable "location" {
   description = "Location of all resources"
   type        = string
