@@ -76,7 +76,7 @@
 				VerticalAlignment="Top" />
 
 			<!--  Service  -->
-			<Label Grid.Column="1" VerticalAlignment="Center" Content="{StaticResource main_Service}" />
+			<Label Grid.Column="1" VerticalAlignment="Center" Content="{StaticResource main_Service}" Margin="3,0,0,0"  />
 			<StackPanel
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
@@ -91,7 +91,7 @@
 			</StackPanel>
 
 			<!--  Source: Folder  -->
-			<Label
+			<Label  Margin="3,0,0,0"
 				Grid.Row="1"
 				Grid.Column="1"
 				VerticalAlignment="Center"
@@ -119,7 +119,7 @@
 
 			<!--  Source: File Name Pattern  -->
 			<Label
-				x:Name="SourcePatternLabel"
+				x:Name="SourcePatternLabel"  Margin="3,0,0,0"
 				Grid.Row="2"
 				Grid.Column="1"
 				Content="File Name Pattern" />
@@ -141,7 +141,7 @@
 				Background="{StaticResource BorderDark}" />
 
 			<!--  4. Target: Connection String  -->
-			<Label Grid.Row="4" Content="{StaticResource main_Target_Database}" />
+			<Label Grid.Row="4" Margin="6,0,0,0" Content="{StaticResource main_Target_Database}" />
 			<Grid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
@@ -193,7 +193,11 @@
 				</Button>
 			</StackPanel>
 			<!--  5. Data Group  -->
-			<Label x:Name="EmbeddingsLabel" Grid.Row="5" Content="Data Group Name" />
+			<Label
+				x:Name="EmbeddingsLabel"
+				Grid.Row="5"
+				Margin="6,0,0,0"
+				Content="Data Group Name" />
 			<StackPanel
 				Grid.Row="5"
 				Grid.Column="1"
@@ -277,7 +281,11 @@
 				Margin="0,3,0,3"
 				Background="{StaticResource BorderDark}" />
 			<!--  9. System Instructions  -->
-			<Label x:Name="InstructionsLabel" Grid.Row="9" Content="{StaticResource main_Instructions}" />
+			<Label
+				x:Name="InstructionsLabel"
+				Grid.Row="9"
+				Margin="6,0,0,0"
+				Content="{StaticResource main_Instructions}" />
 			<TextBox
 				Name="InstructionsTextBox"
 				Grid.Row="9"
@@ -293,7 +301,7 @@
 				Text="{Binding Instructions, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap" />
 			<!--  10. Message  -->
-			<Label Grid.Row="10" VerticalAlignment="Center" Content="{StaticResource main_Message}" />
+			<Label Grid.Row="10" Margin="6,0,0,0" Content="{StaticResource main_Message}" />
 			<TextBox
 				Name="MessageTextBox"
 				Grid.Row="10"
@@ -309,7 +317,11 @@
 				Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
 				TextWrapping="Wrap" />
 			<!--  11. Search options  -->
-			<Label x:Name="MaxTokensLabel" Grid.Row="11" Content="Max Tokens" />
+			<Label
+				x:Name="MaxTokensLabel"
+				Grid.Row="11"
+				Margin="6,0,0,0"
+				Content="Max Tokens" />
 			<StackPanel
 				Grid.Row="11"
 				Grid.Column="1"

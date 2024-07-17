@@ -33,7 +33,7 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<Label Margin="0,6,0,0" VerticalAlignment="Center" Content="{StaticResource main_Settings_Folder}" />
+		<Label Margin="6,6,0,0" VerticalAlignment="Center" Content="{StaticResource main_Settings_Folder}" />
 		<TextBox
 			Name="SettingsFolderTextBox"
 			Grid.Column="1"
