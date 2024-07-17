@@ -410,7 +410,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		public async Task<KeyVaultSecret> GetSecretFromKeyVault(string keyVaultName, string secretName, CancellationToken cancellationToken = default)
 		{
 			var scopes = new[] { TokenHandler.MicrosoftAzureVaultScope };
-			var credential = await TokenHandler.GetTokenCredential(scopes, cancellationToken: cancellationToken);
+			var accessToken = await TokenHandler.RefreshToken(scopes, true, cancellationToken);
+			var credential = new AccessTokenCredential(accessToken);
 			// Azure Key Vault URI
 			string kvUri = $"https://{keyVaultName}.vault.azure.net/";
 			// Create a new secret client

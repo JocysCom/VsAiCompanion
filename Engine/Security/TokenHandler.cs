@@ -209,21 +209,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return jwt;
 		}
 
-		public static async Task<TokenCredential> GetTokenCredential(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
-		{
-			var cachedToken = Global.UserProfile.GetToken(scopes);
-			if (!string.IsNullOrEmpty(cachedToken))
-			{
-				// Use cached token
-				return new AccessTokenCredential(cachedToken);
-			}
-			// Get new token from SignIn if no valid token is found
-			var result = await MicrosoftResourceManager.Current.SignIn(scopes, true, cancellationToken);
-			if (!result.Success || result.Data == null)
-				return null;
-			return new AccessTokenCredential(result.Data.AccessToken);
-		}
-
 		#region SQL Token
 
 #if NETFRAMEWORK
