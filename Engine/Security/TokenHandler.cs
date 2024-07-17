@@ -184,23 +184,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		}
 
 		/// <summary>
-		/// // By default return credentials that user used to sign in. 
-		/// </summary>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
-		public static async Task<TokenCredential> GetTokenCredential(
-			bool interactive = false,
-			CancellationToken cancellationToken = default)
-		{
-			// Please note that access to azure could be denied to consumer accounts from business domain environment.
-			var scopes = new string[] { MicrosoftGraphScope };
-			var accessToken = await RefreshToken(scopes, interactive, cancellationToken);
-			return string.IsNullOrEmpty(accessToken)
-				? await GetWinTokenCredentials(interactive)
-				: new AccessTokenCredential(accessToken);
-		}
-
-		/// <summary>
 		/// Get access token.
 		/// </summary>
 		/// <param name="scopes">Set of permissions.</param>
