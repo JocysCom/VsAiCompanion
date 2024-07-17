@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Azure.ResourceManager;
+﻿using Azure.ResourceManager;
 using Azure.Security.KeyVault.Secrets;
 using JocysCom.ClassLibrary;
 using JocysCom.VS.AiCompanion.Engine.Converters;
@@ -108,8 +107,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var profile = Global.AppSettings.UserProfiles.First();
 			return profile;
 		}
-
-
 
 		public async Task RefreshProfileImage(CancellationToken cancellationToken = default)
 		{
@@ -322,12 +319,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// <summary>
 		/// Determine if it is a Microsoft account by checking if the access token has a specific tenant ID for Microsoft accounts.
 		/// </summary>
-		public async Task<bool> IsMicrosoftAccount()
+		public bool IsMicrosoftAccount()
 		{
 			var profile = Global.UserProfile;
 			// If access token is empty then application must use user.
 			var accessToken = profile.IdToken ?? profile.GetToken(TokenHandler.MicrosoftGraphScope);
-			TokenCredential credential = await TokenHandler.GetTokenCredential();
 			return IsConsumerAccount(accessToken).GetValueOrDefault();
 		}
 

@@ -293,11 +293,11 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			}
 		}
 
-		public static Func<Task<Azure.Core.AccessToken>> GetAzureSqlAccessToken;
+		public static Func<CancellationToken, Task<Azure.Core.AccessToken>> GetAzureSqlAccessToken;
 
 		private static async Task<SqlAuthenticationToken> GetAccessTokenAsync(SqlAuthenticationParameters parameters, CancellationToken cancellationToken)
 		{
-			var token = await GetAzureSqlAccessToken();
+			var token = await GetAzureSqlAccessToken(cancellationToken);
 			return new SqlAuthenticationToken(token.Token, token.ExpiresOn);
 		}
 

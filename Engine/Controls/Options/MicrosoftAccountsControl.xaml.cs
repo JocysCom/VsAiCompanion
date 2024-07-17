@@ -166,11 +166,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
 				await Task.Delay(0);
-				var scope = new[] { TokenHandler.MicrosoftGraphScope };
-				var token = await TokenHandler.GetAccessToken(scope, interactive: true, cancellationToken);
-				var accessToken = token.Token;
+				var scopes = new string[] { TokenHandler.MicrosoftGraphScope };
+				var accessToken = await TokenHandler.RefreshToken(scopes, false, cancellationToken);
+				if (string.IsNullOrEmpty(accessToken))
+					return;
 				LogPanel.Add($"Access Token:\r\n");
-				LogPanel.Add($"  Expiry Date: {token.ExpiresOn}\r\n");
 				InspectToken(accessToken);
 				var idToken = Global.UserProfile.IdToken;
 				if (!string.IsNullOrEmpty(idToken))

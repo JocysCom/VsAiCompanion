@@ -207,7 +207,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		public static async Task<AccessToken> GetAccessToken(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
 		{
 			// Define credentials that will be used to access resources.
-			var credential = await GetTokenCredential(interactive, cancellationToken);
+			var accessToken = await RefreshToken(scopes, false, cancellationToken);
+			var credential = new AccessTokenCredential(accessToken);
 			// Add wanted permissions
 			var context = new TokenRequestContext(scopes);
 			// Get access token.
@@ -280,11 +281,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 #if NETFRAMEWORK
 #else
-		public static async Task<AccessToken> GetAzureSqlAccessToken()
+		public static async Task<AccessToken> GetAzureSqlAccessToken(CancellationToken cancellationToken)
 		{
 			// Define the scope required for Azure SQL Database
 			var scopes = new string[] { MicrosoftAzureSqlScope };
-			var token = await GetAccessToken(scopes, interactive: false);
+			var token = await GetAccessToken(scopes, interactive: false, cancellationToken);
 			return token;
 		}
 #endif
