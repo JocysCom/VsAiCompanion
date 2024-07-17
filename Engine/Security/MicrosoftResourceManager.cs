@@ -99,15 +99,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region User Profile
 
-		/// <summary>
-		/// Get user profile with the access token.
-		/// </summary>
-		public UserProfile GetProfile()
-		{
-			var profile = Global.AppSettings.UserProfiles.First();
-			return profile;
-		}
-
 		public async Task RefreshProfileImage(CancellationToken cancellationToken = default)
 		{
 			var scopes = new string[] { TokenHandler.MicrosoftGraphScope };
@@ -147,7 +138,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		private void SaveUserProfile(AuthenticationResult result, string[] scopes)
 		{
 			var account = result.Account;
-			var profile = GetProfile();
+			var profile = Global.UserProfile;
 
 			// Store access token for specific scope.
 			profile.SetToken(result.AccessToken, scopes);
