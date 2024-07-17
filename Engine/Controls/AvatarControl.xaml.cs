@@ -2,7 +2,6 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Text;
 using JocysCom.VS.AiCompanion.Engine.Speech;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -140,15 +139,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var viseme0 = AudioData.Viseme[0].VisemeId + AudioData.Viseme[1].VisemeId + AudioData.Viseme[2].VisemeId;
 			if (mediaPlayer.NaturalDuration.HasTimeSpan)
 			{
-				if (AudioData.Viseme.IsNullOrEmpty() || viseme0 == 0)
+				if (viseme0 == 0)
 				{
-					if (AudioData.Boundaries.IsNullOrEmpty())
+					if (AudioData.Boundaries?.Any() == true)
 					{
-						CreateLipAnimationFromTextString(AudioData, mediaPlayer.NaturalDuration.TimeSpan);
+						CreateLipAnimationFromWordBoundaries(AudioData);
 					}
 					else
 					{
-						CreateLipAnimationFromWordBoundaries(AudioData);
+						CreateLipAnimationFromTextString(AudioData, mediaPlayer.NaturalDuration.TimeSpan);
 					}
 				}
 				else

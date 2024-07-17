@@ -4,9 +4,6 @@ using Microsoft.Identity.Client;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
-
-
 #if NETFRAMEWORK
 #else
 using JocysCom.VS.AiCompanion.DataClient;
@@ -169,28 +166,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		/// <summary>
 		/// Get the credentials signed into the current app. Get refreshed token if it is expired.
 		/// </summary>
-
 		public static async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
 		{
 			var accessToken = Global.UserProfile.GetToken(MicrosoftGraphScope);
 			if (string.IsNullOrEmpty(accessToken))
 				return null;
+
 			// Ensure the token has the required scopes
 			var scopes = new string[] { MicrosoftGraphScope };
 			var tokenCredential = new AccessTokenCredential(accessToken);
+
+			// Check if the token is expired
 			var tokenRequestContext = new TokenRequestContext(scopes);
 			var token = tokenCredential.GetToken(tokenRequestContext, cancellationToken);
-			var isExired = token.ExpiresOn < DateTimeOffset.UtcNow;
-			if (isExired)
+			if (token.ExpiresOn < DateTimeOffset.UtcNow)
 			{
 				// Re-acquire the token with the required scopes
-				var result = await MicrosoftResourceManager.Current.SignIn(scopes, cancellationToken);
+				var result = await MicrosoftResourceManager.Current.SignIn(scopes, true, cancellationToken);
 				if (!result.Success)
 					return null;
+
+				// Update the access token
+				accessToken = result.Data.AccessToken;
+				return new AccessTokenCredential(accessToken);
 			}
-			var credential = new AccessTokenCredential(accessToken);
-			return credential;
+
+			return tokenCredential;
 		}
+
 
 		/// <summary>
 		/// // By default return credentials that user used to sign in. 
@@ -201,51 +204,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			bool interactive = false,
 			CancellationToken cancellationToken = default)
 		{
-			// Please not that access to azure could be denied to consumer accounts from business domain environment.
+			// Please note that access to azure could be denied to consumer accounts from business domain environment.
 			var credentials = await GetAppTokenCredential(cancellationToken);
 			if (credentials != null)
 				return credentials;
 			return await GetWinTokenCredentials(interactive);
 		}
-
-		// Other existing methods
-
-		public static async Task<TokenCredential> GetTokenCredentialWithScopes(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
-		{
-			var token = Global.UserProfile.GetToken(scopes);
-
-			if (!string.IsNullOrEmpty(token))
-			{
-				// Use cached token if available
-				return new AccessTokenCredential(token);
-			}
-
-			// Get new token from SignIn if no valid token is found
-			var result = await MicrosoftResourceManager.Current.SignIn(scopes, cancellationToken);
-			if (!result.Success || result.Data == null)
-			{
-				return null;
-			}
-
-			return new AccessTokenCredential(result.Data.AccessToken);
-		}
-
-
-		public static async Task<TokenCredential> GetTokenCredential(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
-		{
-			var cachedToken = Global.UserProfile.GetToken(scopes);
-			if (!string.IsNullOrEmpty(cachedToken))
-			{
-				// Use cached token
-				return new AccessTokenCredential(cachedToken);
-			}
-			// Get new token from SignIn if no valid token is found
-			var result = await MicrosoftResourceManager.Current.SignIn(scopes, cancellationToken);
-			if (!result.Success || result.Data == null)
-				return null;
-			return new AccessTokenCredential(result.Data.AccessToken);
-		}
-
 
 		/// <summary>
 		/// Get access token.
@@ -267,6 +231,60 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			{
 			}
 			return default;
+		}
+
+		public static Microsoft.IdentityModel.JsonWebTokens.JsonWebToken GetJwtToken(string token)
+		{
+			var jwt = new Microsoft.IdentityModel.JsonWebTokens.JsonWebToken(token);
+			return jwt;
+		}
+
+		public static async Task<TokenCredential> GetTokenCredential(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
+		{
+			var cachedToken = Global.UserProfile.GetToken(scopes);
+			if (!string.IsNullOrEmpty(cachedToken))
+			{
+				// Use cached token
+				return new AccessTokenCredential(cachedToken);
+			}
+			// Get new token from SignIn if no valid token is found
+			var result = await MicrosoftResourceManager.Current.SignIn(scopes, true, cancellationToken);
+			if (!result.Success || result.Data == null)
+				return null;
+			return new AccessTokenCredential(result.Data.AccessToken);
+		}
+
+		public static async Task<TokenCredential> GetTokenCredentialWithScopes(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
+		{
+			var token = Global.UserProfile.GetToken(scopes);
+			if (!string.IsNullOrEmpty(token))
+			{
+				var accessTokenCredential = new AccessTokenCredential(token);
+				var tokenContext = new TokenRequestContext(scopes);
+
+				// Check if token is expired, refresh if necessary
+				if (accessTokenCredential.GetToken(tokenContext, cancellationToken).ExpiresOn < DateTimeOffset.UtcNow)
+				{
+					// Try to silently login which will result in token refresh.
+					var authResult = await MicrosoftResourceManager.Current.SignIn(scopes, false, cancellationToken);
+					if (!authResult.Success || authResult.Data == null)
+						return null;
+					var refreshedToken = Global.UserProfile.GetToken(scopes);
+					if (refreshedToken == null)
+						return null;
+					return new AccessTokenCredential(refreshedToken);
+				}
+				return accessTokenCredential;
+			}
+
+			// Get new token from SignIn if no valid token is found
+			var result = await MicrosoftResourceManager.Current.SignIn(scopes, true, cancellationToken);
+			if (!result.Success || result.Data == null)
+			{
+				return null;
+			}
+			return new AccessTokenCredential(result.Data.AccessToken);
+
 		}
 
 		#region SQL Token

@@ -10,14 +10,15 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
+using System.Threading;
+
 
 
 #if NETFRAMEWORK
 using System.Data.Entity;
 using System.Data.SQLite;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 #else
-using System.Threading;
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -272,27 +273,26 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static DbConnection NewConnection(string connectionString)
 		{
 			var isPortable = IsPortable(connectionString);
-#if NETFRAMEWORK
-			if (!isPortable)
-				return new System.Data.SqlClient.SqlConnection(connectionString);
-			return new SQLiteConnection(connectionString);
-#else
 			if (!isPortable)
 			{
+				//return new System.Data.SqlClient.SqlConnection(connectionString);
 				var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
-				var isMicrosoftCloud = connectionString.Contains("database.windows.net", StringComparison.OrdinalIgnoreCase);
-				if (isMicrosoftCloud)
+				var isMicrosoftCloud = connectionString.IndexOf("database.windows.net", StringComparison.OrdinalIgnoreCase) > -1;
+				var activeDirectory = connectionString.IndexOf("Active Directory Default", StringComparison.OrdinalIgnoreCase) > -1;
+				if (isMicrosoftCloud && !activeDirectory)
 					connection.AccessTokenCallback = GetAccessTokenAsync;
 				return connection;
 			}
-
-			return new SqliteConnection(connectionString);
+			else
+			{
+#if NETFRAMEWORK
+				return new SQLiteConnection(connectionString);
+#else
+				return new SqliteConnection(connectionString);
 #endif
+			}
 		}
 
-
-#if NETFRAMEWORK
-#else
 		public static Func<Task<Azure.Core.AccessToken>> GetAzureSqlAccessToken;
 
 		private static async Task<SqlAuthenticationToken> GetAccessTokenAsync(SqlAuthenticationParameters parameters, CancellationToken cancellationToken)
@@ -300,7 +300,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			var token = await GetAzureSqlAccessToken();
 			return new SqlAuthenticationToken(token.Token, token.ExpiresOn);
 		}
-#endif
 
 		public static DbConnectionStringBuilder NewConnectionStringBuilder(string connectionString)
 		{
@@ -574,7 +573,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			//AddDbProviderFactory(System.Data.SQLite.EF6.SQLiteProviderFactory.Instance);
 			// Register the Entity Framework provider for SQLite (EF6).
 			AddEntityFrameworkProviders();
-
 #else
 			// Workaround fix for System.Runtime.ExceptionServices.FirstChanceException
 			// The specified invariant name 'System.Data.SqlClient' wasn't found in the list of registered .NET Data Providers.
@@ -606,6 +604,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			System.Data.Entity.DbConfiguration.Loaded += (sender, args) =>
 			{
 				args.AddDependencyResolver(new SqlLiteEF6Resolver(), true);
+				//args.AddDependencyResolver(new SystemSqlEF6Resolver(), true);
 				args.AddDependencyResolver(new MsSqlEF6Resolver(), true);
 			};
 		}
@@ -649,7 +648,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		}
 
-		public class MsSqlEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
+		public class SystemSqlEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
 		{
 			System.Data.SqlClient.SqlClientFactory instance
 				=> System.Data.SqlClient.SqlClientFactory.Instance;
@@ -685,6 +684,41 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		}
 
+		public class MsSqlEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
+		{
+			Microsoft.Data.SqlClient.SqlClientFactory instance
+				=> Microsoft.Data.SqlClient.SqlClientFactory.Instance;
+
+			// "System.Data.SQLite.EF6"
+			string invariantName
+				=> instance.GetType().Namespace;
+
+			/// <inheritdoc />
+			public object GetService(Type type, object key)
+			{
+				if (type == typeof(System.Data.Entity.Infrastructure.IProviderInvariantName))
+				{
+					if (key is Microsoft.Data.SqlClient.SqlClientFactory)
+						return new ProviderInvariantName(invariantName);
+				}
+				else if (type == typeof(System.Data.Common.DbProviderFactory))
+				{
+					if (invariantName.Equals(key))
+						return instance;
+				}
+				else if (type == typeof(System.Data.Entity.Core.Common.DbProviderServices))
+				{
+					if (invariantName.Equals(key))
+						return System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+				}
+				return null;
+			}
+
+			/// <inheritdoc />
+			public IEnumerable<object> GetServices(Type type, object key)
+				=> new object[] { GetService(type, key) }.Where(o => o != null);
+
+		}
 
 		class ProviderInvariantName : System.Data.Entity.Infrastructure.IProviderInvariantName
 		{

@@ -1,3 +1,8 @@
+2024-07-17 v1.12.36
+
+- Fix: Resolve access token issues with Microsoft Azure.
+- Update: The extension now uses the Microsoft SQL client.
+
 2024-07-16 v1.12.35
 
 - Fix: Error when sending a message.

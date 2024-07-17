@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -658,31 +659,112 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_IsLoaded = false;
 		}
 
-		private void TargetTestButton_Click(object sender, RoutedEventArgs e)
+		private async void TargetTestButton_Click(object sender, RoutedEventArgs e)
 		{
-			LogPanel.Clear();
-			LogPanel.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Testing database... ");
-			var target = AssemblyInfo.ExpandPath(Item.Target);
-			var connectionString = SqlInitHelper.IsPortable(target)
-						? SqlInitHelper.PathToConnectionString(target)
-						: target;
-			MainTabControl.SelectedItem = LogTabPage;
-			var success = false;
-			try
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				success = SqlInitHelper.InitSqlDatabase(connectionString);
-			}
-			catch (Exception ex)
+				LogPanel.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Testing database... ");
+				var target = AssemblyInfo.ExpandPath(Item.Target);
+				var connectionString = SqlInitHelper.IsPortable(target)
+							? SqlInitHelper.PathToConnectionString(target)
+							: target;
+				ControlsHelper.AppInvoke(() =>
+				{
+					MainTabControl.SelectedItem = LogTabPage;
+				});
+				var success = false;
+				try
+				{
+					success = SqlInitHelper.InitSqlDatabase(connectionString);
+				}
+				catch (Exception ex)
+				{
+					LogPanel.Clear();
+					LogPanel.Add(ex.ToString());
+					LogPanel.Add("\r\n");
+				}
+				var statusText = success
+					? "PASSED"
+					: "FAILED";
+				LogPanel.Add(statusText);
+			});
+		}
+
+		/*
+		// Run the time-consuming operations asynchronously
+		Task.Run(() =>
+			{
+				var ei = Global.Embeddings.Items.FirstOrDefault(x => x.Name == embeddingName);
+				if (ei == null)
+					return;
+				var flags = GetFlags(ei);
+		// Update the UI thread
+		Dispatcher.CurrentDispatcher.Invoke(() =>
+				{
+					var items = property.ToArray();
+					foreach (var item in items)
+					{
+						var flagName = flags.FirstOrDefault(x => x.Flag == (long)item.Key)?.FlagName ?? string.Empty;
+		var description = Attributes.GetDescription(item.Key);
+						if (!string.IsNullOrEmpty(flagName))
+						{
+							description += ": " + flagName;
+						}
+
+	item.Value = description;
+					}
+				});
+			});
+
+		*/
+
+		#region Execute Method
+
+		/// <summary>
+		/// Stores cancellation tokens created on this control that can be stopped with the [Stop] button.
+		/// </summary>
+		ObservableCollection<CancellationTokenSource> cancellationTokenSources = new ObservableCollection<CancellationTokenSource>();
+
+		/// <summary>
+		/// Helps run cancellable methods of this form and logs results to the log panel.
+		/// </summary>
+		async Task ExecuteMethod(Func<CancellationToken, Task> action)
+		{
+			// Run the time-consuming operations asynchronously
+			await Task.Run(async () =>
 			{
 				LogPanel.Clear();
-				LogPanel.Add(ex.ToString());
-				LogPanel.Add("\r\n");
-			}
-			var statusText = success
-				? "PASSED"
-				: "FAILED";
-			LogPanel.Add(statusText);
+				var source = new CancellationTokenSource();
+				source.CancelAfter(TimeSpan.FromSeconds(600));
+				ControlsHelper.AppInvoke(() =>
+				{
+					cancellationTokenSources.Add(source);
+					Global.MainControl.InfoPanel.AddTask(source);
+				});
+				try
+				{
+					await action.Invoke(source.Token);
+				}
+				catch (Exception ex)
+				{
+					LogPanel.Add(ex.ToString());
+					ControlsHelper.AppInvoke(() =>
+					{
+						Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+					});
+				}
+				finally
+				{
+					ControlsHelper.AppInvoke(() =>
+					{
+						cancellationTokenSources.Remove(source);
+						Global.MainControl.InfoPanel.RemoveTask(source);
+					});
+				}
+			});
 		}
+
+		#endregion
 
 		#region ■ INotifyPropertyChanged
 

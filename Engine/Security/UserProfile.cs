@@ -110,7 +110,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public ImageSource Image { get => _Image; set => SetProperty(ref _Image, value); }
 		private ImageSource _Image;
 
-		[DefaultValue(null), XmlIgnore, JsonIgnore]
+		[DefaultValue(null)]
 		public List<string> UserGroups { get => _UserGroups; set => SetProperty(ref _UserGroups, value); }
 		private List<string> _UserGroups;
 

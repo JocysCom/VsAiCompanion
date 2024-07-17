@@ -43,7 +43,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void profile_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(UserProfile.IsSignedIn))
+			if (
+				e.PropertyName == nameof(UserProfile.IsSignedIn) ||
+				e.PropertyName == nameof(UserProfile.UserGroups))
 			{
 				var view = (ICollectionView)MainItemsControl.ItemsSource;
 				await Helper.Delay(view.Refresh);

@@ -59,12 +59,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			{
 				LogPanel.Clear();
 				var scopes = new string[] { TokenHandler.MicrosoftGraphScope };
-				var result = await MicrosoftResourceManager.Current.SignIn(scopes, cancellationToken);
+				var result = await MicrosoftResourceManager.Current.SignIn(scopes, true, cancellationToken);
 				if (result.Success)
 				{
 					await MicrosoftResourceManager.Current.RefreshProfileImage(cancellationToken);
 					var userGroups = await MicrosoftResourceManager.Current.GetUserAzureGroups(cancellationToken);
-					Global.UserProfile.UserGroups = userGroups;
+					var aiRiskGroupNames = AppHelper.GetGroupNames();
+					Global.UserProfile.UserGroups = userGroups.Where(x => aiRiskGroupNames.Contains(x)).ToList();
 				}
 			});
 		}
@@ -227,43 +228,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		}
 
 		/// <summary>
-		/// Stores cancellation tokens created on this control that can be stopped with the [Stop] button.
-		/// </summary>
-		ObservableCollection<CancellationTokenSource> cancellationTokenSources = new ObservableCollection<CancellationTokenSource>();
-
-		/// <summary>
-		/// Helps run cancellable methods of this form and logs results to the log panel.
-		/// </summary>
-		async Task ExecuteMethod(Func<CancellationToken, Task> action, bool requiresSignIn = false)
-		{
-
-			LogPanel.Clear();
-			if (requiresSignIn && !Global.UserProfile.IsSignedIn)
-			{
-				LogPanel.Add($"Please sign in first.\r\n");
-				return;
-			}
-			var source = new CancellationTokenSource();
-			source.CancelAfter(TimeSpan.FromSeconds(600));
-			cancellationTokenSources.Add(source);
-			Global.MainControl.InfoPanel.AddTask(source);
-			try
-			{
-				await action.Invoke(source.Token);
-			}
-			catch (Exception ex)
-			{
-				LogPanel.Add(ex.ToString());
-				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
-			}
-			finally
-			{
-				cancellationTokenSources.Remove(source);
-				Global.MainControl.InfoPanel.RemoveTask(source);
-			}
-		}
-
-		/// <summary>
 		/// Get the content of a web page using DefaultAzureCredential.
 		/// </summary>
 		private async Task<string> GetWebPageContentsWithDefaultAzureCredential(string url, string scope, string accessToken, CancellationToken cancellationToken = default)
@@ -334,6 +298,47 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		}
 
 		public bool UserIsSigned => Global.UserProfile.IsSignedIn;
+
+		#region Execute Method
+
+		/// <summary>
+		/// Stores cancellation tokens created on this control that can be stopped with the [Stop] button.
+		/// </summary>
+		ObservableCollection<CancellationTokenSource> cancellationTokenSources = new ObservableCollection<CancellationTokenSource>();
+
+		/// <summary>
+		/// Helps run cancellable methods of this form and logs results to the log panel.
+		/// </summary>
+		async Task ExecuteMethod(Func<CancellationToken, Task> action, bool requiresSignIn = false)
+		{
+
+			LogPanel.Clear();
+			if (requiresSignIn && !Global.UserProfile.IsSignedIn)
+			{
+				LogPanel.Add($"Please sign in first.\r\n");
+				return;
+			}
+			var source = new CancellationTokenSource();
+			source.CancelAfter(TimeSpan.FromSeconds(600));
+			cancellationTokenSources.Add(source);
+			Global.MainControl.InfoPanel.AddTask(source);
+			try
+			{
+				await action.Invoke(source.Token);
+			}
+			catch (Exception ex)
+			{
+				LogPanel.Add(ex.ToString());
+				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
+			}
+			finally
+			{
+				cancellationTokenSources.Remove(source);
+				Global.MainControl.InfoPanel.RemoveTask(source);
+			}
+		}
+
+		#endregion
 
 		#region ■ INotifyPropertyChanged
 

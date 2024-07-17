@@ -861,7 +861,10 @@ EndFragment:{3:00000000}";
 				dic[level] = exists;
 			}
 			// Get user maximum risk level.
-			var maxRiskLevel = dic.Where(x => x.Value).Max(x => x.Key);
+			var maxRiskLevel = dic
+				.Where(x => x.Value)
+				.OrderByDescending(x => x.Key)?
+				.FirstOrDefault().Key ?? RiskLevel.None;
 			return maxRiskLevel;
 		}
 		public static Dictionary<RiskLevel, bool> GetLevels()
@@ -873,6 +876,9 @@ EndFragment:{3:00000000}";
 
 		public static string GetGroupName(RiskLevel level)
 			=> $"AI_{nameof(RiskLevel)}_{level}";
+
+		public static string[] GetGroupNames()
+			=> GetLevels().Keys.Select(x => GetGroupName(x)).ToArray();
 
 		#endregion
 

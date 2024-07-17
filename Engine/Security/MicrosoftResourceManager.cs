@@ -67,14 +67,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (JocysCom.ClassLibrary.Security.PermissionHelper.IsDomainUser())
 				userType |= UserType.WindowsDomain;
 
-			var scopes = new[] { TokenHandler.MicrosoftGraphScope };
-
 			var s = DateTime.UtcNow;
-			var token = await TokenHandler.GetAccessToken(scopes, interactive: false);
+			var token = await TokenHandler.GetAccessToken(new[] { TokenHandler.MicrosoftGraphScope }, interactive: false);
 			var d = DateTime.UtcNow.Subtract(s);
 
-			var isMicrosoftUser = token.Token != null;
-			if (!isMicrosoftUser)
+			// If cloud token is null then user is Microsoft Windows user.
+			if (token.Token == null)
 				return userType;
 			JwtSecurityToken securityToken = null;
 			try
@@ -119,6 +117,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (string.IsNullOrEmpty(accessToken))
 				return;
 
+			var jwt = TokenHandler.GetJwtToken(accessToken);
+			var isExpired = jwt.ValidTo < DateTime.UtcNow;
+			if (isExpired)
+			{
+				// Try to silently login which will result in token refresh.
+				var result = await SignIn(new string[] { TokenHandler.MicrosoftGraphScope }, false, cancellationToken);
+				if (!result.Success || result.Data == null)
+					return;
+				accessToken = profile.GetToken(TokenHandler.MicrosoftGraphScope);
+			}
+
 			var credential = new AccessTokenCredential(accessToken);
 			var client = new GraphServiceClient(credential);
 			ImageSource image = null;
@@ -126,15 +135,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			{
 				var user = await client.Me.GetAsync(cancellationToken: cancellationToken);
 				var photoMeta = await client.Me.Photo.GetAsync(cancellationToken: cancellationToken);
-				if (photoMeta != null)
+				if (photoMeta == null)
+				{
+					image = GetDefaultProfileImage();
+				}
+				else
 				{
 					var stream = await client.Me.Photo.Content.GetAsync(cancellationToken: cancellationToken);
 					var bitmapImage = ConvertToImage(stream);
 					image = bitmapImage;
-				}
-				else
-				{
-					image = GetDefaultProfileImage();
 				}
 			}
 			catch (Microsoft.Graph.Models.ODataErrors.ODataError oex)
@@ -179,109 +188,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		#region SignIn and SignOut
 
-		/// <summary>
-		/// Acquire access token silently or interactive.
-		/// </summary>
-		public async Task<OperationResult<AuthenticationResult>> SignIn(
-			string[] scopes, CancellationToken cancellationToken = default)
-		{
-			AuthenticationResult result = null;
-			var requiresUI = false;
-			try
-			{
-				// The application requests User.Read permission,
-				// which allows it to sign in the user and read their basic profile information.
+		// The application requests User.Read permission,
+		// which allows it to sign in the user and read their basic profile information.
 
-				/*
+		/*
 
-				When trying to sign-in for the first time into `user.name@company.com` Azure account user will see
-				"Approval Required" dialog if appliction has not been certified or previously approved within the "Company.com" organization's Azure AD.
-				"Company.com" administrator must approve these permissions for the application:
-					- Sign in and read the user profile:
-					  This allows the app to sign in users and read their basic profile information.
-					- Maintain access to data the user has given it access to:
-				      This allows the app to retain access to the granted resources
-					  without needing further explicit user consent repeatedly.
+		When trying to sign-in for the first time into `user.name@company.com` Azure account user will see
+		"Approval Required" dialog if appliction has not been certified or previously approved within the "Company.com" organization's Azure AD.
+		"Company.com" administrator must approve these permissions for the application:
+			- Sign in and read the user profile:
+			  This allows the app to sign in users and read their basic profile information.
+			- Maintain access to data the user has given it access to:
+			  This allows the app to retain access to the granted resources
+			  without needing further explicit user consent repeatedly.
 
-				Who Needs to Approve?
-				IT or Domain Administrator of `company.com` domain.
+		Who Needs to Approve?
+		IT or Domain Administrator of `company.com` domain.
 
-				AI Companion asks for `User.Read` permission that typically grants the application the ability to:
+		AI Companion asks for `User.Read` permission that typically grants the application the ability to:
 
-					- Access the user’s basic profile info.
-					- Access the user’s email address.
-					- Access the user’s display name.
+			- Access the user’s basic profile info.
+			- Access the user’s email address.
+			- Access the user’s display name.
 
-					Applciaiton This data will be stored on the local PC.
+			Applciaiton This data will be stored on the local PC.
 
-				*/
-				// Load saved user profile
-				var profile = Global.UserProfile;
-				if (string.IsNullOrEmpty(profile.AccountId))
-				{
-					requiresUI = true;
-				}
-				else
-				{
-					// Returns all the available accounts in the user token cache for the application.
-					var accounts = await TokenHandler.Pca.GetAccountsAsync();
-					// Find the account with the saved UserId
-					var account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == profile.AccountId);
-					if (account == null)
-					{
-						requiresUI = true;
-					}
-					else
-					{
-						// Get result that includes access tokens that grant the application the rights to fetch user information.
-						result = await TokenHandler.Pca.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
-					}
-				}
-			}
-			catch (MsalUiRequiredException ex)
-			{
-				if (!string.IsNullOrEmpty(ex.Claims))
-				{
-					try
-					{
-						var builder = TokenHandler.Pca.AcquireTokenInteractive(scopes);
-						if (!string.IsNullOrEmpty(ex.Claims))
-							builder = builder.WithClaims(ex.Claims);
-						result = await builder.ExecuteAsync(cancellationToken);
-					}
-					catch (Exception innerEx)
-					{
-						return new OperationResult<AuthenticationResult>(innerEx);
-					}
-				}
-				else
-				{
-					requiresUI = true;
-				}
+		*/
 
-			}
-			catch (Exception ex)
-			{
-				return new OperationResult<AuthenticationResult>(ex);
-			}
-			if (requiresUI)
-			{
-				try
-				{
-					// No token in the cache, attempt to acquire a token using Windows Integrated Authentication
-					//var builder = Pca.AcquireTokenByIntegratedWindowsAuth(scopes);
-					// Multi-factor authentication (MFA) is a multi-step account login process that requires users to enter more information than just a password. 
-					var builder = TokenHandler.Pca.AcquireTokenInteractive(scopes);
-					result = await builder.ExecuteAsync(cancellationToken);
-				}
-				catch (Exception ex)
-				{
-					return new OperationResult<AuthenticationResult>(ex);
-				}
-			}
-			SaveUserProfile(result, scopes);
-			return new OperationResult<AuthenticationResult>(result);
-		}
 
 		public async Task<bool> SignOut()
 		{
@@ -290,6 +223,59 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			foreach (var account in accounts)
 				await TokenHandler.Pca.RemoveAsync(account);
 			return true;
+		}
+
+
+		/// <summary>
+		/// Acquire access token silently or interactive.
+		/// </summary>
+		public async Task<OperationResult<AuthenticationResult>> SignIn(
+			string[] scopes,
+			bool interactive = false,
+			CancellationToken cancellationToken = default)
+		{
+			AuthenticationResult result = null;
+			string claims = null;
+			try
+			{
+				// Returns all the available accounts in the user token cache for the application.
+				var accounts = await TokenHandler.Pca.GetAccountsAsync();
+				var account = accounts.FirstOrDefault(a => a.HomeAccountId.Identifier == Global.UserProfile.AccountId);
+				// If last saved account was not found then...
+				if (account != null)
+					// Get result that includes access tokens that grant the application the rights to fetch user information.
+					result = await TokenHandler.Pca.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
+			}
+			catch (MsalUiRequiredException ex)
+			{
+				claims = ex.Claims;
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<AuthenticationResult>(ex);
+			}
+			// If failed to retrieve token silently and iteractive retrieval is disbled then...
+			if (result == null && !interactive)
+				return new OperationResult<AuthenticationResult>(result);
+			// If failed to retrieve token silently then...
+			if (result == null)
+			{
+				try
+				{
+					// Try to acquire token interactive.
+					var builder = TokenHandler.Pca.AcquireTokenInteractive(scopes);
+					if (!string.IsNullOrEmpty(claims))
+						builder = builder.WithClaims(claims);
+					result = await builder.ExecuteAsync(cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					return new OperationResult<AuthenticationResult>(ex);
+				}
+			}
+			SaveUserProfile(result, scopes);
+			Global.UserProfile.SetToken(result.AccessToken, scopes);
+			return new OperationResult<AuthenticationResult>(result);
 		}
 
 		#endregion
@@ -303,7 +289,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (string.IsNullOrEmpty(accessToken))
 				return null;
 
-			var credential = new AccessTokenCredential(accessToken);
+			var credential = await TokenHandler.GetTokenCredential(new[] { TokenHandler.MicrosoftGraphScope }, cancellationToken: cancellationToken);
 			var client = new GraphServiceClient(credential);
 			var ui = await client.Me.GetAsync(cancellationToken: cancellationToken);
 			return ui;
@@ -376,6 +362,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			var armClient = new ArmClient(credential);
 			// Dictionary to store subscription names and IDs
 			var subscriptionsDict = new Dictionary<string, string>();
+
 			// Fetch the list of subscriptions and use the synchronous foreach loop with manual async handling
 			var enumerator = armClient.GetSubscriptions().GetAllAsync(cancellationToken).GetAsyncEnumerator(cancellationToken);
 			try
