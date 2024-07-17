@@ -471,9 +471,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 			// Get the access token and initialize the GraphServiceClient
 			var scopes = new[] { TokenHandler.GroupMemberReadAllScope, TokenHandler.UserReadScope }; // Ensure we are using valid scope
-
-			var credential = await TokenHandler.GetTokenCredentialWithScopes(scopes, cancellationToken: cancellationToken);
-
+			var accessToken = await TokenHandler.RefreshToken(scopes, true, cancellationToken);
+			var credential = new AccessTokenCredential(accessToken);
 			if (credential == null)
 			{
 				return groups;

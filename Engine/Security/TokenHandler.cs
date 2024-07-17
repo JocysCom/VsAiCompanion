@@ -167,12 +167,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 		{
 			var profile = Global.UserProfile;
 			var accessToken = profile.GetToken(scopes);
-			// If user is not signed, return.
-			if (string.IsNullOrEmpty(accessToken))
-				return null;
-			var jwt = GetJwtToken(accessToken);
-			var isExpired = jwt.ValidTo < DateTime.UtcNow;
-			if (isExpired)
+			// If user is not signed, or token expired.
+			var refreshToken = string.IsNullOrEmpty(accessToken) || GetJwtToken(accessToken).ValidTo < DateTime.UtcNow;
+			if (refreshToken)
 			{
 				// Try to silently login which will result in token refresh.
 				var result = await MicrosoftResourceManager.Current.SignIn(scopes, interactive, cancellationToken);
@@ -225,39 +222,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			if (!result.Success || result.Data == null)
 				return null;
 			return new AccessTokenCredential(result.Data.AccessToken);
-		}
-
-		public static async Task<TokenCredential> GetTokenCredentialWithScopes(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
-		{
-			var token = Global.UserProfile.GetToken(scopes);
-			if (!string.IsNullOrEmpty(token))
-			{
-				var accessTokenCredential = new AccessTokenCredential(token);
-				var tokenContext = new TokenRequestContext(scopes);
-
-				// Check if token is expired, refresh if necessary
-				if (accessTokenCredential.GetToken(tokenContext, cancellationToken).ExpiresOn < DateTimeOffset.UtcNow)
-				{
-					// Try to silently login which will result in token refresh.
-					var authResult = await MicrosoftResourceManager.Current.SignIn(scopes, false, cancellationToken);
-					if (!authResult.Success || authResult.Data == null)
-						return null;
-					var refreshedToken = Global.UserProfile.GetToken(scopes);
-					if (refreshedToken == null)
-						return null;
-					return new AccessTokenCredential(refreshedToken);
-				}
-				return accessTokenCredential;
-			}
-
-			// Get new token from SignIn if no valid token is found
-			var result = await MicrosoftResourceManager.Current.SignIn(scopes, true, cancellationToken);
-			if (!result.Success || result.Data == null)
-			{
-				return null;
-			}
-			return new AccessTokenCredential(result.Data.AccessToken);
-
 		}
 
 		#region SQL Token
