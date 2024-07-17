@@ -663,6 +663,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
+				await Task.Delay(0);
 				LogPanel.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Testing database... ");
 				var target = AssemblyInfo.ExpandPath(Item.Target);
 				var connectionString = SqlInitHelper.IsPortable(target)

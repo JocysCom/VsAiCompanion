@@ -163,37 +163,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return credential;
 		}
 
-		/// <summary>
-		/// Get the credentials signed into the current app. Get refreshed token if it is expired.
-		/// </summary>
-		public static async Task<TokenCredential> GetAppTokenCredential(CancellationToken cancellationToken = default)
+		public static async Task<string> RefreshToken(string[] scopes, bool interactive = false, CancellationToken cancellationToken = default)
 		{
-			var accessToken = Global.UserProfile.GetToken(MicrosoftGraphScope);
+			var profile = Global.UserProfile;
+			var accessToken = profile.GetToken(scopes);
+			// If user is not signed, return.
 			if (string.IsNullOrEmpty(accessToken))
 				return null;
-
-			// Ensure the token has the required scopes
-			var scopes = new string[] { MicrosoftGraphScope };
-			var tokenCredential = new AccessTokenCredential(accessToken);
-
-			// Check if the token is expired
-			var tokenRequestContext = new TokenRequestContext(scopes);
-			var token = tokenCredential.GetToken(tokenRequestContext, cancellationToken);
-			if (token.ExpiresOn < DateTimeOffset.UtcNow)
+			var jwt = GetJwtToken(accessToken);
+			var isExpired = jwt.ValidTo < DateTime.UtcNow;
+			if (isExpired)
 			{
-				// Re-acquire the token with the required scopes
-				var result = await MicrosoftResourceManager.Current.SignIn(scopes, true, cancellationToken);
-				if (!result.Success)
+				// Try to silently login which will result in token refresh.
+				var result = await MicrosoftResourceManager.Current.SignIn(scopes, interactive, cancellationToken);
+				if (!result.Success || result.Data == null)
 					return null;
-
-				// Update the access token
-				accessToken = result.Data.AccessToken;
-				return new AccessTokenCredential(accessToken);
+				accessToken = profile.GetToken(scopes);
 			}
-
-			return tokenCredential;
+			return accessToken;
 		}
-
 
 		/// <summary>
 		/// // By default return credentials that user used to sign in. 
@@ -205,10 +193,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			CancellationToken cancellationToken = default)
 		{
 			// Please note that access to azure could be denied to consumer accounts from business domain environment.
-			var credentials = await GetAppTokenCredential(cancellationToken);
-			if (credentials != null)
-				return credentials;
-			return await GetWinTokenCredentials(interactive);
+			var scopes = new string[] { MicrosoftGraphScope };
+			var accessToken = await RefreshToken(scopes, interactive, cancellationToken);
+			return string.IsNullOrEmpty(accessToken)
+				? await GetWinTokenCredentials(interactive)
+				: new AccessTokenCredential(accessToken);
 		}
 
 		/// <summary>

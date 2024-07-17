@@ -196,7 +196,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			MainTabControl.SelectedItem = LogTabPage;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
-				LogPanel.Add("Retrieved Subscriptions:");
+				LogPanel.Add("Retrieved Subscriptions:\r\n");
 				var items = await MicrosoftResourceManager.Current.GetAzureSubscriptions(cancellationToken);
 				foreach (var item in items)
 					LogPanel.Add($"Subscription: {item.Key} - {item.Value}\r\n");

@@ -43,13 +43,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_ = await MicrosoftResourceManager.Current.RefreshItemFromKeyVaultSecret(Item?.Id);
 		}
 
-		private async void AzureVaultValueRefreshButton_Click(object sender, RoutedEventArgs e)
-		{
-			var credential = await TokenHandler.GetTokenCredential();
-			if (credential == null)
-				return;
-		}
-
 		public VaultItem Item
 		{
 			get => _Item;

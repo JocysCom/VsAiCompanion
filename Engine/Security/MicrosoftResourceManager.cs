@@ -109,25 +109,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			return profile;
 		}
 
+
+
 		public async Task RefreshProfileImage(CancellationToken cancellationToken = default)
 		{
-			var profile = Global.UserProfile;
-			var accessToken = profile.GetToken(TokenHandler.MicrosoftGraphScope);
-			// If user is not signed, return.
+			var scopes = new string[] { TokenHandler.MicrosoftGraphScope };
+			var accessToken = await TokenHandler.RefreshToken(scopes, false, cancellationToken);
 			if (string.IsNullOrEmpty(accessToken))
 				return;
-
-			var jwt = TokenHandler.GetJwtToken(accessToken);
-			var isExpired = jwt.ValidTo < DateTime.UtcNow;
-			if (isExpired)
-			{
-				// Try to silently login which will result in token refresh.
-				var result = await SignIn(new string[] { TokenHandler.MicrosoftGraphScope }, false, cancellationToken);
-				if (!result.Success || result.Data == null)
-					return;
-				accessToken = profile.GetToken(TokenHandler.MicrosoftGraphScope);
-			}
-
 			var credential = new AccessTokenCredential(accessToken);
 			var client = new GraphServiceClient(credential);
 			ImageSource image = null;
@@ -155,7 +144,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 			{
 				var s = ex.ToString();
 			}
-			profile.Image = image;
+			Global.UserProfile.Image = image;
 		}
 
 		private void SaveUserProfile(AuthenticationResult result, string[] scopes)
@@ -284,12 +273,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<Microsoft.Graph.Models.User> GetMicrosoftUser(CancellationToken cancellationToken = default)
 		{
-			var accessToken = Global.UserProfile.GetToken(TokenHandler.MicrosoftGraphScope);
-			// If user is not signed, return.
+			var scopes = new string[] { TokenHandler.MicrosoftGraphScope };
+			var accessToken = await TokenHandler.RefreshToken(scopes, false, cancellationToken);
 			if (string.IsNullOrEmpty(accessToken))
 				return null;
-
-			var credential = await TokenHandler.GetTokenCredential(new[] { TokenHandler.MicrosoftGraphScope }, cancellationToken: cancellationToken);
+			var credential = new AccessTokenCredential(accessToken);
 			var client = new GraphServiceClient(credential);
 			var ui = await client.Me.GetAsync(cancellationToken: cancellationToken);
 			return ui;
@@ -355,13 +343,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Security
 
 		public async Task<Dictionary<string, string>> GetAzureSubscriptions(CancellationToken cancellationToken = default)
 		{
+			// Dictionary to store subscription names and IDs
+			var subscriptionsDict = new Dictionary<string, string>();
+
+
 			var scopes = new[] { TokenHandler.MicrosoftAzureManagementScope };
-			var credential = await TokenHandler.GetTokenCredential(scopes, cancellationToken: cancellationToken);
+			var accessToken = await TokenHandler.RefreshToken(scopes, false, cancellationToken);
+			if (string.IsNullOrEmpty(accessToken))
+				return subscriptionsDict;
+			var credential = new AccessTokenCredential(accessToken);
 
 			// Initialize the ArmClient
 			var armClient = new ArmClient(credential);
-			// Dictionary to store subscription names and IDs
-			var subscriptionsDict = new Dictionary<string, string>();
 
 			// Fetch the list of subscriptions and use the synchronous foreach loop with manual async handling
 			var enumerator = armClient.GetSubscriptions().GetAllAsync(cancellationToken).GetAsyncEnumerator(cancellationToken);
