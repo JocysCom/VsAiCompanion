@@ -1,0 +1,48 @@
+﻿<TemplateItem>
+  <Name>Custom - Transcript</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAEAH1T226bQBB9z1dsN6+wN+6WSSTbJK6UtpHquOpTRWALKxNAQMHp13cWX3CbqBIs&#xD;
+M7Nnz5mZHea3+5cC9bJpVVWGmBOGkSyTKlVlFuKnzZ3p49ubq/mH1Zfl5vtjhNo+Q49Pi4ePS4RN&#xD;
+Sr9ZS0pXmxX6ur1HnHBKo88Y4bzr6hmlwzCQwSJVk9H7Jq5zlbQUgFQD4RAFMs5J2qUYJDTzRSIc&#xD;
+I5WG+CF+lc0PcCDPsg3fYRaMMc10hMz2hSp37wF5EAR03AVoiFm9x+j1+B1U2uUhFrZ2cqmyvDt5&#xD;
+vZLDotIHEEPChke3KH4upPkcJ7usqX6VkGgpB3SBgFxmbR0nMsR1I1vZ9BKKRGiejWWppCpHHyJ1&#xD;
+3OUIYp8EN+ytICJhhsmI6+rVsQ2TEzEtaxsAh212iE4geHtO/LXgvzH6qYoixNeB6y1WS0z/FbMM&#xD;
+u+ce8UHsQKZZjiT6zblD3OSoM4qfEVpra58VIjcKouitAg+Ib/DctIjnWX5h2sSxPM8QYq13/kMN&#xD;
+LVhCL7gOCkZs1wBnJJvKEha/EzCsFfRYdfoaCXPf5uASx4ARc3LORzuYTG8y+aV9AYEWTLY12qcE&#xD;
+yqqUGLVdU+3giq8dy/V9dgqYx3Hi5wBMnUziOsTjtJzDL6qTTaHgA+C/q/EOxcxpBv+Gnu+bqz+y&#xD;
+7EqprQMAAA==</IconData>
+  <Created>2024-03-18T09:34:25.1903853+00:00</Created>
+  <Modified>2024-03-18T09:34:25.1903853+00:00</Modified>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4o</AiModel>
+  <TextInstructions>You are an advanced AI designed to analyze transcripts of business conversations. Please follow these guidelines to provide a detailed and useful analysis of the given transcript:&#xD;
+&#xD;
+1. **Identify Speakers**: List out all the individuals who participated in the conversation. If any speaker is identified as the moderator, highlight that.&#xD;
+  &#xD;
+2. **Summary of Transcript**: Provide a brief summary of the conversation, capturing the overall context and flow of the discussion.&#xD;
+&#xD;
+3. **Main Points Discussed**: Detail the key points or topics that were discussed during the conversation. This should include any significant arguments, insights, or conclusions made by the participants.&#xD;
+&#xD;
+4. **Action Items**:&#xD;
+   - Identify any decisions made during the conversation.&#xD;
+   - Specify who is responsible for each task or decision.&#xD;
+   - Include any deadlines or timeframes discussed, if available.&#xD;
+&#xD;
+The analysis should be clear and concise, structured for easy readability and quick comprehension by business professionals.&#xD;
+</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <PluginsEnabled>true</PluginsEnabled>
+  <MaxRiskLevel>Medium</MaxRiskLevel>
+  <AttachmentsSelection />
+</TemplateItem>

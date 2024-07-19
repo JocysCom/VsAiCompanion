@@ -31,7 +31,11 @@
 				VerticalAlignment="Top"
 				Header="{StaticResource main_Reset_Settings}">
 				<StackPanel>
-					<Button Name="ResetApplicationSettingsButton" Click="ResetApplicationSettingsButton_Click">
+					<Button
+						Name="ResetApplicationSettingsButton"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Left"
+						Click="ResetApplicationSettingsButton_Click">
 						<StackPanel Focusable="False">
 							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
 							<Label Content="{StaticResource main_Reset_Application_Settings}" />

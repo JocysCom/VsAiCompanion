@@ -27,10 +27,10 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>182</Left>
-        <Top>47.5</Top>
-        <Width>486.5</Width>
-        <Height>407.75</Height>
+        <Left>406</Left>
+        <Top>95</Top>
+        <Width>916</Width>
+        <Height>819</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -41,21 +41,17 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Attachment</ItemType>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.22842105263157894</GridSplitterPosition>
+          <GridSplitterPosition>0.23146067415730337</GridSplitterPosition>
+          <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
-            <string>AI - Chat (GPT-3.5)</string>
+            <string>AI - Chat (GPT-4)</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>1</ListSelectedIndex>
+          <FocusedControl>DataTextBox</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.24421052631578946</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -63,7 +59,6 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>
-          <GridSplitterPosition>0.2031578947368421</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
@@ -71,12 +66,10 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Assistant</ItemType>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Embeddings</ItemType>
-          <GridSplitterPosition>0.21894736842105264</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
@@ -84,10 +77,13 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
-          <GridSplitterPosition>0.26526315789473687</GridSplitterPosition>
           <ListSelection>
             <string>API - Demo</string>
           </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>VaultItem</ItemType>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -98,23 +94,7 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>AiModel</ItemType>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
           <ItemType>MailAccount</ItemType>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ItemType>Voice</ItemType>
-          <ListSelection />
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ItemType>VaultItem</ItemType>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -124,14 +104,28 @@
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
+        <TaskSettings>
+          <ItemType>Attachment</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>AiModel</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Voice</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
       </PanelSettingsList>
       <UserProfiles>
         <UserProfile>
           <Tokens />
+          <UserGroups />
         </UserProfile>
       </UserProfiles>
       <OverrideInfoDefaultHead>AI Companion for CyberNet Solutions</OverrideInfoDefaultHead>
       <OverrideInfoDefaultBody>Your expert consultant that analyzes your project files and collaborates with you to optimize efficiency, streamline processes, and elevate your overall productivity.</OverrideInfoDefaultBody>
+      <UiPresetName>Simple</UiPresetName>
       <AiServices>
         <AiService>
           <Name>Company Name AI</Name>
@@ -140,7 +134,7 @@
           <Id>d5e071e1-d99d-45ff-890a-82823b75e1ec</Id>
           <IsDefault>true</IsDefault>
           <IsAzureOpenAI>true</IsAzureOpenAI>
-          <DefaultAiModel>gpt-4</DefaultAiModel>
+          <DefaultAiModel>gpt-4o</DefaultAiModel>
           <BaseUrl>https://companyname.api.cognitive.microsoft.com/v1/</BaseUrl>
         </AiService>
         <AiService>
@@ -156,15 +150,8 @@
       </AiServices>
       <AiModels>
         <AiModel>
-          <Id>4f00f393-889d-f80c-7432-9e44718d2b71</Id>
-          <Name>gpt-4</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>984a6b6b-ab7a-8e4e-845f-8515e901fed0</Id>
-          <Name>gpt-4-preview</Name>
+          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
+          <Name>gpt-4o</Name>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
@@ -385,7 +372,7 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalyseImages</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePicture</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

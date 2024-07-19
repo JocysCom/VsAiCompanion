@@ -85,6 +85,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Use_AI_Avatar_Voice_Help => FindResource(nameof(main_Use_AI_Avatar_Voice_Help));
         public static string main_Use_AI_Avatar_Voice_Name => FindResource(nameof(main_Use_AI_Avatar_Voice_Name));
         public static string main_Enable_Microsoft_Account => FindResource(nameof(main_Enable_Microsoft_Account));
+        public static string main_Require_To_Sign_In => FindResource(nameof(main_Require_To_Sign_In));
+        public static string main_Require_To_Sign_In_Message => FindResource(nameof(main_Require_To_Sign_In_Message));
         public static string main_Auto_Generate_Title => FindResource(nameof(main_Auto_Generate_Title));
         public static string main_Auto_Generate_Title_Help => FindResource(nameof(main_Auto_Generate_Title_Help));
         public static string main_Auto_Generate_Title_Name => FindResource(nameof(main_Auto_Generate_Title_Name));

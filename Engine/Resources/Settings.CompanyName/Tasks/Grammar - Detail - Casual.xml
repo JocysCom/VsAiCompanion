@@ -32,7 +32,7 @@ MYaK6IVrJN4GOfnwoSnacOnRtAyaSUX3aShQSSqehkhcCFF+DNF8dn31Zk7/03T1Dx+FsbWjEgAA</Ic
   <Created>2024-02-25T14:43:48.5479724+00:00</Created>
   <Modified>2024-02-25T14:43:48.5479724+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>Grammar - Detail - Casual</TemplateName>
   <TextInstructions>Please proofread the following text, checking for spelling and grammar errors. The text may consist of complete sentences, phrases, or standalone titles. Additionally, rewrite any sentences that could be clearer by using more common words to enhance understanding. Make sure the sentences are logically ordered, and consider simplifying or shortening sentences to improve clarity.&#xD;
 &#xD;

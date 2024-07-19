@@ -19,12 +19,27 @@ iz+y7EqprQMAAA==</IconData>
     <VisibilityItem Path="EmbeddingTabItem" IsVisible="false" />
     <VisibilityItem Path="OptionsPanel.UiPresetsTabItem" IsVisible="false" />
     <VisibilityItem Path="OptionsPanel.ContextPanel.AttachedContextGroupBox" IsVisible="false" />
-    <VisibilityItem Path="OptionsPanel.MicrosoftAccountsTabItem" IsVisible="false" />
-    <VisibilityItem Path="AuthIconPanel" IsVisible="false" />
-    <VisibilityItem Path="TasksPanel.TaskPanel.EmbeddingsTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.SecurityGroupBox" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.EmbeddingsTabItem" />
     <VisibilityItem Path="TasksPanel.TaskPanel.MailTabItem" IsVisible="false" />
     <VisibilityItem Path="TasksPanel.TaskPanel.MultimediaTabItem" IsVisible="false" />
     <VisibilityItem Path="OptionsPanel.MailAccountsTabItem" IsVisible="false" />
     <VisibilityItem Path="OptionsPanel.MainPanel.EnterpriseOptionsGroupBox" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.DeveloperGroupBox" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.VisualStudioTabItem" IsVisible="false" />
+    <VisibilityItem Path="TemplatesPanel.TemplatePanel.VisualStudioTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.AiModelsTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.AiServicesTabItem" IsVisible="false" />
+    <VisibilityItem Path="UpdatesPanel.PandocTabItem" IsVisible="false" />
+    <VisibilityItem Path="PluginsTabItem" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.CodeBlockPanel.CsButton" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.CodeBlockPanel.JsButton" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.CodeBlockPanel.SqlButton" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.CodeBlockPanel.XmlButton" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.CodeBlockPanel.PsButton" IsVisible="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.CodeBlockPanel.TsButton" IsVisible="false" />
+    <VisibilityItem Path="UpdatesTabItem" IsVisible="false" />
+    <VisibilityItem Path="AboutTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.MicrosoftAccountsPanel.MainTabControl" IsVisible="false" />
   </Items>
 </UiPresetItem>

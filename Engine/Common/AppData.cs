@@ -27,7 +27,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 		}
 
-		#region Microsoft Account
+		#region Microsoft Account (Enterprise settings)
 
 		/// <summary>
 		/// Azure: Home / App registrations: Jocys.com AI Companion
@@ -52,6 +52,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool EnableMicrosoftAccount { get => _EnableMicrosoftAccount; set => SetProperty(ref _EnableMicrosoftAccount, value); }
 		private bool _EnableMicrosoftAccount;
 
+		/// <summary>
+		/// Require to sign in when microsoft account is enabled.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool RequireToSignIn { get => _RequireToSignIn; set => SetProperty(ref _RequireToSignIn, value); }
+		private bool _RequireToSignIn;
 
 		#endregion
 

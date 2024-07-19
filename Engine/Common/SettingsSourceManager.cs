@@ -21,7 +21,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var zip = GetSettingsZip();
 				// Load data from a single XML file.
-				var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
+				var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData.DeserializeData);
 				// Load data from multiple XML files.
 				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
 				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
@@ -84,12 +84,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Does not reset AiServices and AiModels.
 		/// </summary>
-		public static void ResetAppSettings()
+		public static void ResetAppSettings(ZipStorer zip = null)
 		{
-			var settings = Global.AppSettings;
-			// Reset all app settings except list of services and list of models.
-			var exclude = new string[] { nameof(settings.AiServices), nameof(settings.AiModels) };
-			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(settings, false, exclude);
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			if (zip == null)
+				return;
+			var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData.DeserializeData);
+			if (zipAppData == null)
+				return;
+			var zipAppSettings = zipAppData.Items[0];
+			// Reset all app settings except of services, list of models and other reference types.
+			JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyProperties(zipAppSettings, Global.AppSettings, true);
+			// Close zip.
+			if (closeZip)
+				zip.Close();
 		}
 
 
@@ -102,7 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (zip == null)
 				return;
 			// Update Prompts.
-			var zipItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems);
+			var zipItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems.DeserializeData);
 			// Don't reset if zip contains no data.
 			if (zipItems == null)
 				return;
@@ -124,7 +134,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (zip == null)
 				return;
 			// Update Prompts.
-			var zipItems = GetDataFromZip(zip, Global.Voices.XmlFile.Name, Global.Voices);
+			var zipItems = GetDataFromZip(zip, Global.Voices.XmlFile.Name, Global.Voices.DeserializeData);
 			// Don't reset if zip contains no data.
 			if (zipItems == null)
 				return;
@@ -150,7 +160,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (zip == null)
 				return;
 			// ---
-			var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
+			var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData.DeserializeData);
 			var zipServices = zipAppData.Items[0].AiServices;
 			var zipModels = zipAppData.Items[0].AiModels;
 			// Remove Services and Models
@@ -382,7 +392,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return list;
 		}
 
-		public static SettingsData<T> GetDataFromZip<T>(ZipStorer zip, string name, SettingsData<T> data)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="zip"></param>
+		/// <param name="name"></param>
+		/// <param name="data">Use to deserialize data</param>
+		/// <returns></returns>
+		public static SettingsData<T> GetDataFromZip<T>(ZipStorer zip, string name,
+			Func<byte[], bool, SettingsData<T>> deserializeData)
 		{
 			var list = new List<T>();
 			var entry = zip.ReadCentralDir()
@@ -391,7 +410,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
 			if (bytes == null)
 				return null;
-			var item = data.DeserializeData(bytes, false);
+			var item = deserializeData(bytes, false);
 			return item;
 		}
 

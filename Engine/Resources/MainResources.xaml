@@ -41,6 +41,8 @@
 	<sys:String x:Key="main_Use_AI_Avatar_Voice_Help">AI responds with voices in addition to the text responses specified in 'Options' tab → 'AI Avatar' tab and 'AI Services' tab.</sys:String>
 	<sys:String x:Key="main_Use_AI_Avatar_Voice_Name">Use Voice</sys:String>
 	<sys:String x:Key="main_Enable_Microsoft_Account">Enable Microsoft Account</sys:String>
+	<sys:String x:Key="main_Require_To_Sign_In">Require to sign in</sys:String>
+	<sys:String x:Key="main_Require_To_Sign_In_Message">Please sign in to your Microsoft account.</sys:String>
 
 	<!--  Tasks / Templates → Main  -->
 	<sys:String x:Key="main_Auto_Generate_Title">Auto-Generate Title</sys:String>
@@ -232,7 +234,7 @@
 	<sys:String x:Key="main_Feature_UiPresets">Allows users to quickly switch between predefined templates such as "Simple," "Advanced," and "Release," customizing the visibility and accessibility of various UI elements. This enables a tailored user experience by hiding or locking specific aspects of the interface based on the chosen preset.</sys:String>
 
 	<!--  Options → Reset Settings  -->
-	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings (Resets API Keys)</sys:String>
+	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings</sys:String>
 	<sys:String x:Key="main_Reset_Embeddings">Reset Embeddings</sys:String>
 	<sys:String x:Key="main_Reset_Lists">Reset Lists</sys:String>
 	<sys:String x:Key="main_Reset_Prompting_Settings">Reset Prompting Settings</sys:String>

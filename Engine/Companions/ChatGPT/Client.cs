@@ -26,7 +26,7 @@ using System.Web;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	public class Client
+	public partial class Client
 	{
 		public Client(AiService service)
 		{

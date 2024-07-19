@@ -15,5 +15,10 @@ iz+y7EqprQMAAA==</IconData>
   <Modified>2024-06-27T16:38:54.0672772+01:00</Modified>
   <Items>
     <VisibilityItem Path="TeamsTabItem" IsVisible="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.EnterpriseOptionsGroupBox" IsEnabled="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.EnableMicrosoftAccountCheckBox" IsEnabled="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.MaxRiskLevelWhenSignedOutComboBox" IsEnabled="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.MaxRiskLevelWhenSignedOutLabel" IsEnabled="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.RequireToSignInCheckBox" IsEnabled="false" />
   </Items>
 </UiPresetItem>

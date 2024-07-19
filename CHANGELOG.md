@@ -1,6 +1,7 @@
-2024-07-17 v1.12.36
+2024-07-18 v1.12.41
 
 - Fix: Resolve access token issues with Microsoft Azure.
+- New: Add a "Require to Sign In" option for the Microsoft account.
 - Update: The extension now uses the Microsoft SQL client.
 
 2024-07-16 v1.12.35

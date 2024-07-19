@@ -27,10 +27,10 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>210</Left>
-        <Top>30</Top>
-        <Width>931</Width>
-        <Height>704</Height>
+        <Left>657</Left>
+        <Top>95</Top>
+        <Width>916</Width>
+        <Height>819</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -46,6 +46,20 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
+          <ItemType>FineTuning</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Embeddings</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
           <ItemType>AiModel</ItemType>
           <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
@@ -57,25 +71,16 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.23204419889502761</GridSplitterPosition>
+          <GridSplitterPosition>0.2292134831460674</GridSplitterPosition>
           <ListSelection>
-            <string>Grammar - Detail - Casual</string>
-          </ListSelection>
-          <ListSelectedIndex>6</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.23093922651933702</GridSplitterPosition>
-          <ListSelection>
-            <string>AI - Chat</string>
+            <string>AI - Chat (GPT-4)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>FineTuning</ItemType>
-          <GridSplitterPosition>0.3005524861878453</GridSplitterPosition>
+          <ItemType>Template</ItemType>
           <ListSelection>
-            <string>CyberNet Solutions</string>
+            <string>AI - Chat</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
@@ -85,16 +90,7 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Embeddings</ItemType>
-          <GridSplitterPosition>0.21685393258426966</GridSplitterPosition>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
           <ItemType>Lists</ItemType>
-          <GridSplitterPosition>0.2983425414364641</GridSplitterPosition>
           <ListSelection>
             <string>API - Demo</string>
           </ListSelection>
@@ -128,6 +124,7 @@
       <UserProfiles>
         <UserProfile>
           <Tokens />
+          <UserGroups />
         </UserProfile>
       </UserProfiles>
       <AiServices>
@@ -186,7 +183,7 @@
           <Id>1ba94e57-3827-3636-5ba1-227d5e4c56ea</Id>
           <ResponseStreaming>false</ResponseStreaming>
           <IsAzureOpenAI>true</IsAzureOpenAI>
-          <DefaultAiModel>gpt-3.5-turbo-16k</DefaultAiModel>
+          <DefaultAiModel>gpt-4o</DefaultAiModel>
           <AiModels />
           <BaseUrl>https://api.cognitive.microsoft.com/v1/</BaseUrl>
           <ModelFilter />
@@ -363,6 +360,34 @@
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
+          <Name>gpt-4o</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
+          <Name>gpt-3.5-turbo-16k</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>16384</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
+          <Name>text-embedding-ada-002</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>deb68876-db43-8381-373f-d3e1fa68c567</Id>
+          <Name />
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
         </AiModel>
       </AiModels>
       <MailAccounts />

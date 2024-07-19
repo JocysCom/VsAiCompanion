@@ -17,7 +17,7 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <Created>2024-02-25T14:43:42.7598109+00:00</Created>
   <Modified>2024-02-25T14:43:42.7598109+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-  <AiModel>gpt-4</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>

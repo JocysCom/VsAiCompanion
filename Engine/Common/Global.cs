@@ -232,15 +232,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (am == null)
 				return false;
-			return ValidateServiceAndModel(am.AiService, am.AiModel);
-		}
-
-		public static bool ValidateServiceAndModel(AiService service, string model)
-		{
 			var messages = new List<string>();
-			if (service == null)
+			if (am.AiService == null)
 				messages.Add(Resources.MainResources.main_Select_AI_Service);
-			if (string.IsNullOrEmpty(model))
+			if (string.IsNullOrEmpty(am.AiModel))
 				messages.Add(Resources.MainResources.main_Select_AI_Model);
 			if (messages.Any())
 				SetWithTimeout(MessageBoxImage.Warning, string.Join(" ", messages));
@@ -250,6 +245,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static async Task<bool> IsGoodSettings(AiService service, bool redirectToSettings = false)
 		{
 			var itemsRequired = new List<string>();
+			if (AppSettings.EnableMicrosoftAccount && AppSettings.RequireToSignIn && !UserProfile.IsSignedIn)
+			{
+				MainControl.OptionsTabItem.IsSelected = true;
+				MainControl.OptionsPanel.MicrosoftAccountsTabItem.IsSelected = true;
+				MainControl.OptionsPanel.MicrosoftAccountsPanel.SignInButton.Focus();
+				var message = Resources.MainResources.main_Require_To_Sign_In_Message;
+				SetWithTimeout(MessageBoxImage.Warning, message);
+				return false;
+			}
 			if (service == null)
 			{
 				SetWithTimeout(MessageBoxImage.Warning, Resources.MainResources.main_Select_AI_Service_from_Menu);
@@ -415,7 +419,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var zip = SettingsSourceManager.GetSettingsZip();
 					if (zip != null)
 					{
-						var zipAppData = SettingsSourceManager.GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData);
+						var zipAppData = SettingsSourceManager.GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData.DeserializeData);
 						var zipServices = zipAppData.Items[0].AiServices;
 						var azureService = zipServices.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
 						if (azureService != null)

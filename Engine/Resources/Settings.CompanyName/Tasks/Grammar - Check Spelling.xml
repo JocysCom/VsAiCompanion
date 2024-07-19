@@ -26,7 +26,7 @@ ozxJQFFCtDwLAHieSZwg89TJTDIyk0Ktilp48xhNTaRoyA7wgyz0+FjGh8x/NrgeX9z8w4sgfj/5&#xD
   <Created>2024-02-25T14:43:47.616589+00:00</Created>
   <Modified>2024-02-25T14:43:47.616589+00:00</Modified>
   <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-  <AiModel>gpt-3.5-turbo-16k</AiModel>
+  <AiModel>gpt-4o</AiModel>
   <TemplateName>Grammar - Check Spelling</TemplateName>
   <TextInstructions>Please proofread the following text, focusing only on correcting spelling and grammar errors. Maintain the original sentence structure and meaning as much as possible, making only minimal changes necessary for correctness.&#xD;
 &#xD;
