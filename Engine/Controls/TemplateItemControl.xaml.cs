@@ -731,12 +731,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void ScreenshotButton_Click(object sender, RoutedEventArgs e)
 		{
 			var path = System.IO.Path.Combine(AppHelper.GetTempPath(), "Screenshots");
+			var isCtrlDown =
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);
+			if (isCtrlDown && !Global.IsVsExtension)
+				Global.TrayManager.MinimizeToTray(false, Global.AppSettings.MinimizeToTray);
 			var captureResult = await ScreenshotHelper.CaptureRegion(null, path, System.Drawing.Imaging.ImageFormat.Jpeg);
 			if (captureResult.Success)
 			{
 				var box = GetFocused();
 				AppHelper.InsertText(box, $"Please analyse screenshot\r\n{captureResult.Data}", true, false);
 			}
+			if (isCtrlDown && !Global.IsVsExtension)
+				Global.TrayManager.RestoreFromTray(true, false);
 		}
 
 

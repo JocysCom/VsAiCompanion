@@ -50,6 +50,7 @@ namespace JocysCom.VS.AiCompanion
 				System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
 				// Create tray manager first (initialize new default window).
 				TrayManager = new TrayManager();
+				Global.TrayManager = TrayManager;
 				TrayManager.OnExitClick += TrayManager_OnExitClick;
 			}
 			catch (Exception ex)

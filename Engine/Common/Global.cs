@@ -47,6 +47,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static AssemblyInfo Info { get; } = new AssemblyInfo(typeof(Global).Assembly);
 
+		public static TrayManager TrayManager { get; set; }
+
 		public static AppData AppSettings
 			=> AppData.Items.FirstOrDefault();
 

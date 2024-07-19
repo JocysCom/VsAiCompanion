@@ -61,14 +61,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				message.content = content.ToArray();
 				messages.Add(message);
 				var client = new Companions.ChatGPT.Client(rItem.AiService);
-				var maxInputTokens = Client.GetMaxInputTokens(rItem);
 				// Send body and context data. Make sure it runs on NON-UI thread.
 				var response = await Task.Run(async () => await client.QueryAI(
-					rItem.AiModel,
-					messages,
-					rItem.Creativity,
 					rItem,
-					maxInputTokens,
+					messages,
 					null
 				)).ConfigureAwait(true);
 				var body = response.FirstOrDefault()?.Body;

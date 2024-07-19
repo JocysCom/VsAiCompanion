@@ -128,11 +128,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void UpdateButtons()
 		{
-			var profile = Global.UserProfile;
-			SignInButton.Visibility = profile.IsSignedIn
-				? Visibility.Collapsed : Visibility.Visible;
-			SignOutButton.Visibility = !profile.IsSignedIn
-				? Visibility.Collapsed : Visibility.Visible;
+			ControlsHelper.AppInvoke(() =>
+			{
+				var profile = Global.UserProfile;
+				SignInButton.Visibility = profile.IsSignedIn
+					? Visibility.Collapsed : Visibility.Visible;
+				SignOutButton.Visibility = !profile.IsSignedIn
+					? Visibility.Collapsed : Visibility.Visible;
+			});
 		}
 
 		private void Grid_MouseEnter(object sender, MouseEventArgs e)

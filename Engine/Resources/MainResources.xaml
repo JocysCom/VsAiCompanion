@@ -34,7 +34,7 @@
 	<sys:String x:Key="main_Show_Prompting_Toolbar_Help">Show 'Prompting' toolbar. Guide and shape the AI's output in your desired style. You can select a 'Prompt' category such as Tone, Format, Context, Role, or Instruction, and then choose an option within that category to define how the AI should approach the content creation.</sys:String>
 	<sys:String x:Key="main_Show_Prompting_Toolbar_Name">Prompting</sys:String>
 	<sys:String x:Key="main_Start_Voice_Typing">Start and stop Microsoft Voice Typing. Microsoft Voice Typing is a speech recognition feature that converts spoken words into text.</sys:String>
-	<sys:String x:Key="main_Take_screenhots">Take screenshots from a region of your monitor workspace.</sys:String>
+	<sys:String x:Key="main_Take_screenhots">Take screenshots from a region of your monitor workspace. Hold the CTRL button to minimise this app before taking the screenshot, and restore it when done.</sys:String>
 	<sys:String x:Key="main_Tasks_Main_Creativity_Slider">WARNING: Setting AI 'Creativity' to 'Very Creative' may result in an error response.</sys:String>
 	<sys:String x:Key="main_TasksTab_Help">Current AI tasks.</sys:String>
 	<sys:String x:Key="main_TasksTab_Name">Tasks</sys:String>

@@ -363,34 +363,37 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// </summary>
 		/// <param name="item">Item that will be affected: Used for insert/remove HttpClients.</param>
 		public async Task<List<MessageItem>> QueryAI(
-			string modelName,
+			TemplateItem serviceItem,
 			List<chat_completion_message> messagesToSend,
-			double creativity,
-			TemplateItem item,
-			int maxInputTokens,
 			string embeddingText
 		)
 		{
+			// Service item.
+			var service = serviceItem.AiService;
+			var modelName = serviceItem.AiModel;
+			var creativity = serviceItem.Creativity;
+			var maxInputTokens = GetMaxInputTokens(serviceItem);
+			// Other settings.
 			var messageItems = new List<MessageItem>();
 			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			var answer = "";
 			var functionResults = new List<MessageAttachments>();
 			var toolArgumentsUpdate = "";
 			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(Service.ResponseTimeout));
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(service.ResponseTimeout));
 			var id = Guid.NewGuid();
 			ControlsHelper.AppInvoke(() =>
 			{
-				item.CancellationTokenSources.Add(cancellationTokenSource);
+				serviceItem.CancellationTokenSources.Add(cancellationTokenSource);
 				Global.MainControl.InfoPanel.AddTask(id);
 				Global.AvatarPanel?.PlayMessageSentAnimation();
 			});
-			if (item.UseEmbeddings)
+			if (serviceItem.UseEmbeddings)
 			{
 				// Experimental.
 				// AI must decide what to search for, not to use by the last user message.
 				var embeddingItem = Global.Embeddings.Items
-					.FirstOrDefault(x => x.Name == item.EmbeddingName);
+					.FirstOrDefault(x => x.Name == serviceItem.EmbeddingName);
 				if (embeddingItem != null)
 				{
 					var eh = new EmbeddingHelper();
@@ -416,7 +419,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						if (!string.IsNullOrEmpty(embeddingText))
 						{
 							var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem,
-								item.EmbeddingGroupName, item.EmbeddingGroupFlag,
+								serviceItem.EmbeddingGroupName, serviceItem.EmbeddingGroupFlag,
 								embeddingText, embeddingItem.Skip, embeddingItem.Take);
 							if (!string.IsNullOrEmpty(systemMessage))
 								lastSystemMessage.content += "\r\n\r\n" + systemMessage;
@@ -424,7 +427,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					}
 				}
 			}
-			var secure = new Uri(Service.BaseUrl).Scheme == Uri.UriSchemeHttps;
+			var secure = new Uri(service.BaseUrl).Scheme == Uri.UriSchemeHttps;
 			try
 			{
 				// If Text Completion mode.
@@ -438,11 +441,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						model = modelName,
 						prompt = ClientHelper.JoinMessageParts(messagesToSend.Select(x => x.content as string).ToArray()),
 						temperature = (float)creativity,
-						stream = Service.ResponseStreaming,
+						stream = service.ResponseStreaming,
 						max_tokens = maxInputTokens,
 
 					};
-					var data = await GetAsync<text_completion_response>(completionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
+					var data = await GetAsync<text_completion_response>(completionsPath, request, null, service.ResponseStreaming, cancellationTokenSource.Token);
 					foreach (var dataItem in data)
 						foreach (var chatChoice in dataItem.choices)
 							answer += chatChoice.text;
@@ -451,7 +454,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				else
 				{
 					// If Azure service or HTTPS.
-					if (Service.IsAzureOpenAI || secure)
+					if (service.IsAzureOpenAI || secure)
 					{
 						var messages = new List<ChatMessage>();
 						foreach (var messageToSend in messagesToSend)
@@ -482,10 +485,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var completionsOptions = GetChatCompletionOptions((float)creativity);
 						ControlsHelper.AppInvoke(() =>
 						{
-							if (item.PluginsEnabled)
-								PluginsManager.ProvideTools(item, completionsOptions);
+							if (serviceItem.PluginsEnabled)
+								PluginsManager.ProvideTools(serviceItem, completionsOptions);
 						});
-						if (Service.ResponseStreaming)
+						if (service.ResponseStreaming)
 						{
 							var client = await GetAiClient();
 							var chatClient = client.GetChatClient(modelName);
@@ -531,15 +534,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								messageItems.Add(assistantMessageItem);
 								ControlsHelper.AppInvoke(() =>
 								{
-									item.Messages.Add(assistantMessageItem);
-									item.Modified = DateTime.Now;
+									serviceItem.Messages.Add(assistantMessageItem);
+									serviceItem.Modified = DateTime.Now;
 								});
 								// Process function calls.
-								if (item.PluginsEnabled)
+								if (serviceItem.PluginsEnabled)
 								{
 									foreach (var function in functions)
 									{
-										var functionResultContent = await PluginsManager.ProcessPluginFunction(item, function, cancellationTokenSource);
+										var functionResultContent = await PluginsManager.ProcessPluginFunction(serviceItem, function, cancellationTokenSource);
 										var fnAttachment = new MessageAttachments(ContextType.None, "text", functionResultContent);
 										fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
 										fnAttachment.IsAlwaysIncluded = true;
@@ -564,17 +567,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						{
 							model = modelName,
 							temperature = (float)creativity,
-							stream = Service.ResponseStreaming,
+							stream = service.ResponseStreaming,
 							max_tokens = maxInputTokens,
 						};
 						request.messages = new List<chat_completion_message>();
 						request.messages.AddRange(messagesToSend);
 						ControlsHelper.AppInvoke(() =>
 						{
-							if (item.PluginsEnabled)
-								PluginsManager.ProvideTools(item, request);
+							if (serviceItem.PluginsEnabled)
+								PluginsManager.ProvideTools(serviceItem, request);
 						});
-						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, Service.ResponseStreaming, cancellationTokenSource.Token);
+						var data = await GetAsync<chat_completion_response>(chatCompletionsPath, request, null, service.ResponseStreaming, cancellationTokenSource.Token);
 						foreach (var dataItem in data)
 							foreach (var chatChoice in dataItem.choices)
 							{
@@ -583,8 +586,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								ControlsHelper.AppInvoke(() =>
 								{
 									// Check if the model wanted to call a function
-									if (item.PluginsEnabled)
-										PluginsManager.ProcessPlugins(item, responseMessage);
+									if (serviceItem.PluginsEnabled)
+										PluginsManager.ProcessPlugins(serviceItem, responseMessage);
 								});
 							}
 					}
@@ -599,7 +602,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				ControlsHelper.AppInvoke(() =>
 				{
 					Global.MainControl.InfoPanel.RemoveTask(id);
-					item.CancellationTokenSources.Remove(cancellationTokenSource);
+					serviceItem.CancellationTokenSources.Remove(cancellationTokenSource);
 					Global.AvatarPanel?.PlayMessageReceivedAnimation();
 				});
 				MessageDone?.Invoke(this, EventArgs.Empty);
