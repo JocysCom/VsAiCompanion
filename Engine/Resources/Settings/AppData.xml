@@ -31,18 +31,16 @@
         <Top>95</Top>
         <Width>916</Width>
         <Height>819</Height>
-        <ScreenName>\\.\DISPLAY2</ScreenName>
+        <ScreenName>\\.\DISPLAY6</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
       <PanelSettingsList>
         <TaskSettings>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Attachment</ItemType>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -54,6 +52,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Embeddings</ItemType>
+          <GridSplitterPosition>0.21460674157303372</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
@@ -61,17 +60,16 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
           <GridSplitterPosition>0.2292134831460674</GridSplitterPosition>
+          <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4)</string>
           </ListSelection>
@@ -79,6 +77,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
+          <GridSplitterPosition>0.23146067415730337</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -86,7 +85,6 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Assistant</ItemType>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -98,19 +96,17 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>VaultItem</ItemType>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiService</ItemType>
           <ListSelection>
-            <string>Azure Open AI</string>
+            <string>Open AI</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>3</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -135,7 +131,8 @@
           <ServiceType>OpenAI</ServiceType>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
           <IsDefault>true</IsDefault>
-          <DefaultAiModel>gpt-4o</DefaultAiModel>
+          <ApiSecretKey />
+          <DefaultAiModel>gpt-3.5-turbo</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
           <ModelFilter>gpt|text-davinci-[0-9+]|embedding</ModelFilter>
         </AiService>
@@ -201,6 +198,27 @@
       </AiServices>
       <AiModels>
         <AiModel>
+          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
+          <Name>gpt-4o</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
+          <Name>gpt-3.5-turbo-16k</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>16384</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
+          <Name>text-embedding-ada-002</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
           <Id>99d65d61-0850-2a8b-716d-794cacd0adc5</Id>
           <Name>gpt-3.5-turbo</Name>
           <AllowFineTuning>false</AllowFineTuning>
@@ -231,13 +249,6 @@
         <AiModel>
           <Id>4a24de48-2695-11fc-6be0-f472935a26ea</Id>
           <Name>gpt-3.5-turbo-1106</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>16384</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
-          <Name>gpt-3.5-turbo-16k</Name>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>16384</MaxInputTokens>
@@ -327,15 +338,22 @@
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
-          <Name>gpt-4o</Name>
+          <Id>0e7a059b-bd14-6ae6-ab4f-788e5484044c</Id>
+          <Name>gpt-4o-2024-05-13</Name>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>0e7a059b-bd14-6ae6-ab4f-788e5484044c</Id>
-          <Name>gpt-4o-2024-05-13</Name>
+          <Id>4f26c324-0217-a649-3e7a-3ce4f42dae6c</Id>
+          <Name>gpt-4o-mini</Name>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Id>2ac2a514-14f1-4598-4d10-d2553945db5a</Id>
+          <Name>gpt-4o-mini-2024-07-18</Name>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
@@ -353,41 +371,6 @@
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
-          <Name>text-embedding-ada-002</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
-          <Name>gpt-4o</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
-          <MaxInputTokens>128000</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
-          <Name>gpt-3.5-turbo-16k</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
-          <MaxInputTokens>16384</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
-          <Name>text-embedding-ada-002</Name>
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
-          <MaxInputTokens>8192</MaxInputTokens>
-        </AiModel>
-        <AiModel>
-          <Id>deb68876-db43-8381-373f-d3e1fa68c567</Id>
-          <Name />
-          <AllowFineTuning>false</AllowFineTuning>
-          <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
         </AiModel>
       </AiModels>
       <MailAccounts />

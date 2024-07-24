@@ -31,13 +31,12 @@
         <Top>95</Top>
         <Width>916</Width>
         <Height>819</Height>
-        <ScreenName>\\.\DISPLAY2</ScreenName>
+        <ScreenName>\\.\DISPLAY6</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
       <PanelSettingsList>
         <TaskSettings>
-          <ListSelection />
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>

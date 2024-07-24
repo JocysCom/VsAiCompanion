@@ -419,6 +419,7 @@ EndFragment:{3:00000000}";
 						aiModel.MaxInputTokens = Client.GetMaxInputTokens(aiModel.Name);
 					Global.AppSettings.AiModels.Add(aiModel);
 				}
+				Global.AppSettings.CleanupAiModels();
 				// This will inform all forms that models changed.
 				Global.RaiseOnAiModelsUpdated();
 			}

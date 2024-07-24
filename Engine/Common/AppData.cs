@@ -303,8 +303,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public void CleanupAiModels()
 		{
 			var serviceIds = AiServices.Select(x => x.Id).ToArray();
+			// Fix: Remove with empty name
+			var modelsToRemove = Global.AppSettings.AiModels.Where(x => string.IsNullOrWhiteSpace(x.Name)).ToArray();
+			foreach (var model in modelsToRemove)
+				AiModels.Remove(model);
 			// Remove models without services.
-			var modelsToRemove = AiModels.Where(x => !serviceIds.Contains(x.AiServiceId)).ToArray();
+			modelsToRemove = AiModels.Where(x => !serviceIds.Contains(x.AiServiceId)).ToArray();
 			foreach (var model in modelsToRemove)
 				AiModels.Remove(model);
 			// Remove duplicates
