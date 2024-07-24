@@ -29,9 +29,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.61.3" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="2.20.0" />
-		<PackageReference Include="Microsoft.Identity.Web.UI" Version="2.20.0" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.62.0" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="3.0.1" />
+		<PackageReference Include="Microsoft.Identity.Web.UI" Version="3.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 	</ItemGroup>
 
