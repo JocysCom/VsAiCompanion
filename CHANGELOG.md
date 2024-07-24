@@ -1,9 +1,10 @@
-2024-07-19 v1.12.42
+2024-07-24 v1.12.45
 
 - Fix: Resolve access token issues with Microsoft Azure.
 - New: Add a "Require to Sign In" option for the Microsoft account.
 - New: Hold the CTRL button to minimise app before taking the screenshot.
 - Update: The extension now uses the Microsoft SQL client.
+- Update: Update packages and templates.
 
 2024-07-16 v1.12.35
 
