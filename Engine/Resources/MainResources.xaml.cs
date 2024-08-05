@@ -153,6 +153,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Enable_All => FindResource(nameof(main_Enable_All));
         public static string main_Enable_Low_Risk => FindResource(nameof(main_Enable_Low_Risk));
         public static string main_Enable_Medium_Risk => FindResource(nameof(main_Enable_Medium_Risk));
+        public static string main_Enable_High_Risk => FindResource(nameof(main_Enable_High_Risk));
         public static string main_Settings_Folder => FindResource(nameof(main_Settings_Folder));
         public static string main_Allow_Only_One_Copy => FindResource(nameof(main_Allow_Only_One_Copy));
         public static string main_App_Always_on_Top => FindResource(nameof(main_App_Always_on_Top));
@@ -251,6 +252,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_ServicesAndModels => FindResource(nameof(main_Reset_ServicesAndModels));
         public static string main_Reset_Settings => FindResource(nameof(main_Reset_Settings));
         public static string main_Reset_Templates => FindResource(nameof(main_Reset_Templates));
+        public static string main_Reset_Tasks => FindResource(nameof(main_Reset_Tasks));
         public static string main_Reset_UI => FindResource(nameof(main_Reset_UI));
         public static string main_Reset_UI_Settings => FindResource(nameof(main_Reset_UI_Settings));
         public static string main_Reset_UI_Settings_ToolTip => FindResource(nameof(main_Reset_UI_Settings_ToolTip));

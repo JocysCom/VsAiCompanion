@@ -38,6 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += MessagesPanel_ScriptingHandler_OnMessageAction;
 			ChatPanel.DataTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
 			ChatPanel.DataInstructionsTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
+			ChatPanel.DataInstructionsTextBox.TextChanged += ChatPanel_DataInstructionsTextBox_TextChanged;
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -73,6 +74,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
+		}
+
+		private void ChatPanel_DataInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			UpdateShowInstructionsCheckBox();
+		}
+
+		void UpdateShowInstructionsCheckBox()
+		{
+			var isEmpty = string.IsNullOrWhiteSpace(ChatPanel.DataInstructionsTextBox.Text);
+			var fontWeight = isEmpty ? FontWeights.Normal : FontWeights.SemiBold;
+			if (ShowInstructionsCheckBox.FontWeight != fontWeight)
+			{
+				ShowInstructionsCheckBox.FontWeight = fontWeight;
+			}
 		}
 
 		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -369,6 +385,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				if (PanelSettings.Focus)
 					RestoreFocus();
+				UpdateShowInstructionsCheckBox();
 				UpdateAvatarControl();
 			}
 		}

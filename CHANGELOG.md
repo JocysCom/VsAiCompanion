@@ -1,3 +1,7 @@
+2024-08-05 v1.12.46
+
+- New: Make Instructions checkbox bold when instructions are not empty.
+
 2024-07-24 v1.12.45
 
 - Fix: Resolve access token issues with Microsoft Azure.

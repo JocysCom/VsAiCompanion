@@ -20,14 +20,11 @@
 	<Grid>
 		<StackPanel Orientation="Horizontal">
 			<ComboBox Name="PromptNameComboBox" ItemsSource="{Binding PromptNames, ElementName=This}" SelectedValue="{Binding PromptName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-			<Label
-				Margin="0,0,3,0"
-				Content="{StaticResource main_Prompting}"
-				Opacity="0.4" />
+			<Label Margin="0,0,3,0" Content="{StaticResource main_Prompting}" Opacity="0.4" />
 			<Label Name="PatternStartLabel" Background="Transparent" />
 			<ComboBox
-				Margin="0,3,0,3"
 				Name="PromptOptionComboBox"
+				Margin="0,3,0,3"
 				ItemsSource="{Binding PromptOptions, ElementName=This}"
 				SelectedValue="{Binding PromptOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			<Label Name="PatternEndLabel" />

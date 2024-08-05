@@ -51,7 +51,16 @@
 							<Label Content="{StaticResource main_Reset_ServicesAndModels}" />
 						</StackPanel>
 					</Button>
-
+					<Button
+						Name="ResetTasksButton"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Left"
+						Click="ResetTasksButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="{StaticResource main_Reset_Tasks}" />
+						</StackPanel>
+					</Button>
 					<Button
 						Name="ResetTemplatesButton"
 						HorizontalAlignment="Stretch"

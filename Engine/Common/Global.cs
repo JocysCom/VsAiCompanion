@@ -58,8 +58,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static UserProfile UserProfile
 			=> AppSettings.UserProfiles.First();
 
+		public const string AppDataName = nameof(AppData);
+
+
 		public static SettingsData<AppData> AppData =
-			new SettingsData<AppData>(null, true, null, System.Reflection.Assembly.GetExecutingAssembly());
+			new SettingsData<AppData>($"{AppDataName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
 		public const string PromptItemsName = nameof(PromptItems);
 
@@ -421,8 +424,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var zip = SettingsSourceManager.GetSettingsZip();
 					if (zip != null)
 					{
-						var zipAppData = SettingsSourceManager.GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData.DeserializeData);
-						var zipServices = zipAppData.Items[0].AiServices;
+						var zipAppDataItems = SettingsSourceManager.GetItemsFromZip(zip, AppDataName, AppData);
+						var zipServices = zipAppDataItems[0].AiServices;
 						var azureService = zipServices.FirstOrDefault(x => x.ServiceType == ApiServiceType.Azure);
 						if (azureService != null)
 						{

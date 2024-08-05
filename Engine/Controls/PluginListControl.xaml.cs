@@ -116,13 +116,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		private void EnableAllButton_Click(object sender, RoutedEventArgs e)
-		{
-			var methods = GetAllMetods();
-			foreach (var method in methods)
-				method.IsEnabled = true;
-		}
-
 		private void DisableAllButton_Click(object sender, RoutedEventArgs e)
 		{
 			var methods = GetAllMetods();
@@ -138,18 +131,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		private void EnableLowRiskButton_Click(object sender, RoutedEventArgs e)
-		{
-			var methods = GetAllMetods();
-			foreach (var method in methods)
-				if (method.RiskLevel >= RiskLevel.None && method.RiskLevel <= RiskLevel.Low)
-					method.IsEnabled = true;
-		}
+			=> EnableUpTo(RiskLevel.Low);
 
 		private void EnableMediumRiskButton_Click(object sender, RoutedEventArgs e)
+			=> EnableUpTo(RiskLevel.Medium);
+
+		private void EnableHighRiskButton_Click(object sender, RoutedEventArgs e)
+			=> EnableUpTo(RiskLevel.High);
+
+		private void EnableAllButton_Click(object sender, RoutedEventArgs e)
+			=> EnableUpTo(RiskLevel.Critical);
+
+		void EnableUpTo(RiskLevel maxRiskLevel)
 		{
 			var methods = GetAllMetods();
 			foreach (var method in methods)
-				if (method.RiskLevel >= RiskLevel.None && method.RiskLevel <= RiskLevel.Medium)
+				if (method.RiskLevel >= RiskLevel.None && method.RiskLevel <= maxRiskLevel)
 					method.IsEnabled = true;
 		}
 
@@ -173,5 +170,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				//UiPresetsManager.AddControls(this);
 			}
 		}
+
 	}
 }

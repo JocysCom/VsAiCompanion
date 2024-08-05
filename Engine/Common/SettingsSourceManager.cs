@@ -21,21 +21,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var zip = GetSettingsZip();
 				// Load data from a single XML file.
-				var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData.DeserializeData);
+				var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
 				// Load data from multiple XML files.
 				var zipTasks = GetItemsFromZip(zip, Global.TasksName, Global.Tasks);
 				var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
 				var zipLists = GetItemsFromZip(zip, Global.ListsName, Global.Lists);
 				var zipEmbeddings = GetItemsFromZip(zip, Global.EmbeddingsName, Global.Embeddings);
-				var zipAppSettings = zipAppData.Items[0];
-				Global.Templates.PreventWriteToNewerFiles = false;
-				Global.Tasks.PreventWriteToNewerFiles = false;
-				Global.Lists.PreventWriteToNewerFiles = false;
-				Global.AppData.PreventWriteToNewerFiles = false;
-				RemoveToReplace(Global.Tasks, zipTasks);
-				RemoveToReplace(Global.Templates, zipTemplates);
-				RemoveToReplace(Global.Lists, zipLists);
-				RemoveToReplace(Global.Embeddings, zipEmbeddings);
+				var zipAppSettings = zipAppDataItems[0];
+				PreventWriteToNewerFiles(false);
+				RemoveToReplace(Global.Tasks, zipTasks, x => x.Name);
+				RemoveToReplace(Global.Templates, zipTemplates, x => x.Name);
+				RemoveToReplace(Global.Lists, zipLists, x => x.Name);
+				RemoveToReplace(Global.Embeddings, zipEmbeddings, x => x.Name);
 				ResetServicesAndModels();
 				ResetPrompts(zip);
 				ResetVoices(zip);
@@ -56,11 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				// Save settings.
 				Global.SaveSettings();
-				Global.Lists.PreventWriteToNewerFiles = true;
-				Global.Embeddings.PreventWriteToNewerFiles = true;
-				Global.Templates.PreventWriteToNewerFiles = true;
-				Global.Tasks.PreventWriteToNewerFiles = true;
-				Global.AppData.PreventWriteToNewerFiles = true;
+				PreventWriteToNewerFiles(true);
 				Global.RaiseOnAiServicesUpdated();
 				Global.RaiseOnAiModelsUpdated();
 				Global.RaiseOnTasksUpdated();
@@ -71,6 +64,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				Global.ShowError("ResetSettings() error: " + ex.Message);
 			}
+		}
+
+		/// <summary>
+		/// Allow overwriting newer files when saving current settings to the disk.
+		/// </summary>
+		static void PreventWriteToNewerFiles(bool enabled)
+		{
+			// Separate files.
+			Global.Assistants.PreventWriteToNewerFiles = enabled;
+			Global.Embeddings.PreventWriteToNewerFiles = enabled;
+			Global.FineTunings.PreventWriteToNewerFiles = enabled;
+			Global.Lists.PreventWriteToNewerFiles = enabled;
+			Global.Tasks.PreventWriteToNewerFiles = enabled;
+			Global.Templates.PreventWriteToNewerFiles = enabled;
+			Global.UiPresets.PreventWriteToNewerFiles = enabled;
+			// Single file.
+			Global.AppData.PreventWriteToNewerFiles = enabled;
+			Global.PromptItems.PreventWriteToNewerFiles = enabled;
+			Global.Voices.PreventWriteToNewerFiles = enabled;
 		}
 
 		public static Guid OpenAiServiceId
@@ -91,10 +103,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				zip = GetSettingsZip();
 			if (zip == null)
 				return;
-			var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData.DeserializeData);
-			if (zipAppData == null)
+			var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
+			if (zipAppDataItems == null)
 				return;
-			var zipAppSettings = zipAppData.Items[0];
+			var zipAppSettings = zipAppDataItems[0];
 			// Reset all app settings except of services, list of models and other reference types.
 			JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyProperties(zipAppSettings, Global.AppSettings, true);
 			// Close zip.
@@ -102,50 +114,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				zip.Close();
 		}
 
-
 		/// <summary>Reset Prompts</summary>
 		public static void ResetPrompts(ZipStorer zip = null)
-		{
-			bool closeZip;
-			if (closeZip = zip == null)
-				zip = GetSettingsZip();
-			if (zip == null)
-				return;
-			// Update Prompts.
-			var zipItems = GetDataFromZip(zip, Global.PromptItems.XmlFile.Name, Global.PromptItems.DeserializeData);
-			// Don't reset if zip contains no data.
-			if (zipItems == null)
-				return;
-			var zipNames = zipItems.Items.Select(t => t.Name.ToLower()).ToList();
-			var itemsToRemove = Global.PromptItems.Items.Where(x => zipNames.Contains(x.Name.ToLower())).ToArray();
-			Global.PromptItems.Remove(itemsToRemove);
-			Global.PromptItems.Add(zipItems.Items.ToArray());
-			// Close zip.
-			if (closeZip)
-				zip.Close();
-		}
+			=> ResetItems(zip, Global.PromptItems, Global.PromptItemsName, x => x.Name);
 
 		/// <summary>Reset Voices</summary>
 		public static void ResetVoices(ZipStorer zip = null)
-		{
-			bool closeZip;
-			if (closeZip = zip == null)
-				zip = GetSettingsZip();
-			if (zip == null)
-				return;
-			// Update Prompts.
-			var zipItems = GetDataFromZip(zip, Global.Voices.XmlFile.Name, Global.Voices.DeserializeData);
-			// Don't reset if zip contains no data.
-			if (zipItems == null)
-				return;
-			var zipNames = zipItems.Items.Select(t => t.Name.ToLower()).ToList();
-			var itemsToRemove = Global.Voices.Items.Where(x => zipNames.Contains(x.Name.ToLower())).ToArray();
-			Global.Voices.Remove(itemsToRemove);
-			Global.Voices.Add(zipItems.Items.ToArray());
-			// Close zip.
-			if (closeZip)
-				zip.Close();
-		}
+			=> ResetItems(zip, Global.Voices, Global.VociesName, x => x.Name);
 
 		#endregion
 
@@ -160,9 +135,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (zip == null)
 				return;
 			// ---
-			var zipAppData = GetDataFromZip(zip, Global.AppData.XmlFile.Name, Global.AppData.DeserializeData);
-			var zipServices = zipAppData.Items[0].AiServices;
-			var zipModels = zipAppData.Items[0].AiModels;
+			var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
+			var zipServices = zipAppDataItems[0].AiServices;
+			var zipModels = zipAppDataItems[0].AiModels;
 			// Remove Services and Models
 			var zipServiceNames = zipServices.Select(t => t.Name.ToLower()).ToList();
 			var servicesToRemove = Global.AppSettings.AiServices.Where(x => zipServiceNames.Contains(x.Name.ToLower())).ToArray();
@@ -190,17 +165,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static string[] GetRequiredLists()
 		{
 			return new string[] {
-				"API - Demo", "Prompts"
+				"Prompts"
 			};
 		}
 
 
 		/// <summary>Reset Lists</summary>
 		public static void ResetLists(ZipStorer zip = null)
-			=> ResetItems(zip, Global.Lists, Global.ListsName);
+			=> ResetItems(zip, Global.Lists, Global.ListsName, x => x.Name);
 
 		public static void ResetUiPresets(ZipStorer zip = null)
-			=> ResetItems(zip, Global.UiPresets, Global.UiPresetsName);
+			=> ResetItems(zip, Global.UiPresets, Global.UiPresetsName, x => x.Name);
 
 		/// <summary>Reset Lists</summary>
 		public static void ResetEmbeddings(ZipStorer zip = null)
@@ -210,13 +185,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 				zip = GetSettingsZip();
 			if (zip == null)
 				return;
-			ResetItems(zip, Global.Embeddings, Global.EmbeddingsName);
+			ResetItems(zip, Global.Embeddings, Global.EmbeddingsName, x => x.Name);
 			ResetOtherItems(zip, Global.Embeddings, Global.EmbeddingsName);
 			// Close zip.
 			if (closeZip)
 				zip.Close();
 		}
 
+		/// <summary>
+		/// Reset non-XML items.
+		/// </summary>
 		private static void ResetOtherItems<T>(ZipStorer zip, SettingsData<T> data, string name) where T : SettingsFileItem
 		{
 			var entries = zip.ReadCentralDir()
@@ -245,7 +223,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		private static void ResetItems<T>(ZipStorer zip, SettingsData<T> data, string name) where T : SettingsFileItem
+		/// <summary>
+		/// Reset XML items.
+		/// </summary>
+		private static void ResetItems<T>(ZipStorer zip, SettingsData<T> data, string name, Func<T, string> propertySelector)
 		{
 			bool closeZip;
 			if (closeZip = zip == null)
@@ -254,7 +235,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return;
 			// Update Lists
 			var zipItems = GetItemsFromZip(zip, name, data);
-			RemoveToReplace(data, zipItems);
+			RemoveToReplace(data, zipItems, propertySelector);
 			data.Add(zipItems.ToArray());
 			// Close zip.
 			if (closeZip)
@@ -338,6 +319,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return missing.Length;
 		}
 
+		public static void ResetTasks(ZipStorer zip = null)
+		{
+		}
+
 		public static void ResetTemplates(ZipStorer zip = null)
 		{
 			bool closeZip;
@@ -358,11 +343,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Global.ShowError(error);
 			}
 			data.PreventWriteToNewerFiles = false;
-			foreach (var item in zipTemplates)
-			{
-				data.Items.Add(item);
-			}
-			// Templates.Load();
+			data.Add(zipTemplates.ToArray());
 			data.Save();
 			data.PreventWriteToNewerFiles = true;
 			// ---
@@ -370,11 +351,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 				zip.Close();
 		}
 
-		public static List<T> GetItemsFromZip<T>(ZipStorer zip, string name, SettingsData<T> data, params string[] names)
+		/// <summary>
+		/// Get items from the zip. entry pattern: filenameInZipStartsWith*.xml
+		/// </summary>
+		public static List<T> GetItemsFromZip<T>(ZipStorer zip, string filenameInZipStartsWith, SettingsData<T> data, params string[] names)
 		{
 			var list = new List<T>();
 			var entries = zip.ReadCentralDir()
-				.Where(x => x.FilenameInZip.StartsWith(name) && x.FilenameInZip.EndsWith(".xml"))
+				.Where(x => x.FilenameInZip.StartsWith(filenameInZipStartsWith) && x.FilenameInZip.EndsWith(".xml"))
 				.ToArray();
 			foreach (var entry in entries)
 			{
@@ -386,43 +370,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 						continue;
 				}
 				var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
-				var item = data.DeserializeItem(bytes, false);
-				list.Add(item);
+				if (data.UseSeparateFiles)
+				{
+					var itemFile = data.DeserializeItem(bytes, false);
+					list.Add(itemFile);
+				}
+				else
+				{
+					var dataFile = data.DeserializeData(bytes, false);
+					list.AddRange(dataFile.Items);
+				}
 			}
 			return list;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="zip"></param>
-		/// <param name="name"></param>
-		/// <param name="data">Use to deserialize data</param>
-		/// <returns></returns>
-		public static SettingsData<T> GetDataFromZip<T>(ZipStorer zip, string name,
-			Func<byte[], bool, SettingsData<T>> deserializeData)
-		{
-			var list = new List<T>();
-			var entry = zip.ReadCentralDir()
-				.Where(x => x.FilenameInZip.StartsWith(name))
-				.FirstOrDefault();
-			var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
-			if (bytes == null)
-				return null;
-			var item = deserializeData(bytes, false);
-			return item;
 		}
 
 		#endregion
 
 		#region General Methods
 
-		private static void RemoveToReplace<T>(SettingsData<T> data, IList<T> items) where T : SettingsFileItem
+		private static void RemoveToReplace<T>(SettingsData<T> data, IList<T> items, Func<T, string> propertySelector)
 		{
 			// Remove lists which will be replaced.
-			var names = items.Select(t => t.Name.ToLower()).ToList();
-			var itemsToRemove = data.Items.Where(x => names.Contains(x.Name.ToLower())).ToArray();
+			var names = items.Select(t => propertySelector(t).ToLower()).ToList();
+			var itemsToRemove = data.Items.Where(x => names.Contains(propertySelector(x).ToLower())).ToArray();
 			data.Remove(itemsToRemove);
 		}
 

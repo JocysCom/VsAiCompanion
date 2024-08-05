@@ -25,13 +25,10 @@
 				ItemsSource="{Binding PromptLists, ElementName=This}"
 				SelectedValue="{Binding ListPromptName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				SelectedValuePath="Name" />
-			<Label
-				VerticalAlignment="Center"
-				Content="List"
-				Opacity="0.4" />
+			<Label VerticalAlignment="Center" Content="List" Opacity="0.4" />
 			<ComboBox
-				Margin="3,3,0,3"
 				Name="PromptOptionComboBox"
+				Margin="3,3,0,3"
 				DisplayMemberPath="Key"
 				ItemsSource="{Binding PromptOptions, ElementName=This}"
 				SelectedValue="{Binding ListPromptOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

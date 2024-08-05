@@ -29,9 +29,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			SettingsSourceManager.ResetAppSettings();
 		}
 
+		private void ResetTasksButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!AppHelper.AllowReset("Tasks"))
+				return;
+			SettingsSourceManager.ResetTasks();
+		}
+
 		private void ResetTemplatesButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (!AppHelper.AllowReset("Task Tempaltes"))
+			if (!AppHelper.AllowReset("Tempaltes"))
 				return;
 			SettingsSourceManager.ResetTemplates();
 		}
@@ -40,7 +47,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 			if (!AppHelper.AllowReset("Prompting Templates"))
 				return;
-			Global.PromptItems.ResetToDefault();
+			SettingsSourceManager.ResetPrompts();
 			Global.PromptItems.Save();
 			Global.TriggerPromptingUpdated();
 		}

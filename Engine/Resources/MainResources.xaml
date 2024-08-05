@@ -122,6 +122,7 @@
 	<sys:String x:Key="main_Enable_All">Enable All</sys:String>
 	<sys:String x:Key="main_Enable_Low_Risk">Enable Low Risk</sys:String>
 	<sys:String x:Key="main_Enable_Medium_Risk">Enable Medium Risk</sys:String>
+	<sys:String x:Key="main_Enable_High_Risk">Enable High Risk</sys:String>
 
 	<!--  Options  -->
 	<sys:String x:Key="main_Settings_Folder">Settings Folder</sys:String>
@@ -237,10 +238,11 @@
 	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings</sys:String>
 	<sys:String x:Key="main_Reset_Embeddings">Reset Embeddings</sys:String>
 	<sys:String x:Key="main_Reset_Lists">Reset Lists</sys:String>
-	<sys:String x:Key="main_Reset_Prompting_Settings">Reset Prompting Settings</sys:String>
+	<sys:String x:Key="main_Reset_Prompting_Settings">Reset Prompting</sys:String>
 	<sys:String x:Key="main_Reset_ServicesAndModels">Reset Services and Models (Resets API Keys)</sys:String>
 	<sys:String x:Key="main_Reset_Settings">Reset Settings</sys:String>
 	<sys:String x:Key="main_Reset_Templates">Reset Templates</sys:String>
+	<sys:String x:Key="main_Reset_Tasks">Reset Tasks</sys:String>
 	<sys:String x:Key="main_Reset_UI">Reset_UI</sys:String>
 	<sys:String x:Key="main_Reset_UI_Settings">Reset UI Settings</sys:String>
 	<sys:String x:Key="main_Reset_UI_Settings_ToolTip">Use to capture screenshots of a similar size.</sys:String>
