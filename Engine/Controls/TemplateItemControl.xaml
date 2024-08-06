@@ -807,6 +807,7 @@
 					IsChecked="{Binding UseAvatarVoice}" />
 				<CheckBox
 					Name="SendChatHistoryCheckBox"
+					Unchecked="SendChatHistoryCheckBox_Unchecked"
 					AutomationProperties.HelpText="{StaticResource main_Send_Chat_History_Help}"
 					AutomationProperties.Name="{StaticResource main_Send_Chat_History_Name}"
 					Content="{StaticResource main_Send_Chat_History_Name}"

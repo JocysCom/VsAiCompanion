@@ -8,8 +8,9 @@
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	x:Name="This"
-	d:DesignHeight="300"
+	d:DesignHeight="400"
 	d:DesignWidth="800"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
@@ -32,6 +33,18 @@
 				Header="{StaticResource main_Reset_Settings}">
 				<StackPanel>
 					<Button
+						Name="ResetAllSettingsButton"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Left"
+						Click="ResetAllSettingsButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="{StaticResource main_Reset_All_Settings}" />
+						</StackPanel>
+					</Button>
+
+
+					<Button
 						Name="ResetApplicationSettingsButton"
 						HorizontalAlignment="Stretch"
 						HorizontalContentAlignment="Left"
@@ -51,69 +64,172 @@
 							<Label Content="{StaticResource main_Reset_ServicesAndModels}" />
 						</StackPanel>
 					</Button>
-					<Button
-						Name="ResetTasksButton"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Left"
-						Click="ResetTasksButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="{StaticResource main_Reset_Tasks}" />
-						</StackPanel>
-					</Button>
-					<Button
-						Name="ResetTemplatesButton"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Left"
-						Click="ResetTemplatesButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="{StaticResource main_Reset_Templates}" />
-						</StackPanel>
-					</Button>
-					<Button
-						Name="ResetPromptingButton"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Left"
-						Click="ResetPromptingButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="{StaticResource main_Reset_Prompting_Settings}" />
-						</StackPanel>
-					</Button>
-					<Button
-						Name="ResetListsButton"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Left"
-						Click="ResetListsButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="{StaticResource main_Reset_Lists}" />
-						</StackPanel>
-					</Button>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Button
+							Name="ResetTasksButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							Click="ResetTasksButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Reset_Tasks}" />
+							</StackPanel>
+						</Button>
+						<CheckBox
+							x:Name="ResetTasksMirrorCheckBox"
+							Grid.Column="1"
+							AutomationProperties.HelpText="{StaticResource main_Reset_MirrorSettings_Help}"
+							AutomationProperties.Name="{StaticResource main_Reset_MirrorSettings_Name}"
+							Content="{StaticResource main_Mirror}"
+							IsChecked="{Binding ResetTasksMirror, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</Grid>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Button
+							Name="ResetTemplatesButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							Click="ResetTemplatesButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Reset_Templates}" />
+							</StackPanel>
+						</Button>
+						<CheckBox
+							x:Name="ResetTemplatesMirrorCheckBox"
+							Grid.Column="1"
+							AutomationProperties.HelpText="{StaticResource main_Reset_MirrorSettings_Help}"
+							AutomationProperties.Name="{StaticResource main_Reset_MirrorSettings_Name}"
+							Content="{StaticResource main_Mirror}"
+							IsChecked="{Binding ResetTemplatesMirror, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</Grid>
 
-					<Button
-						Name="ResetEmbeddingsButton"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Left"
-						Click="ResetEmbeddingsButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="{StaticResource main_Reset_Embeddings}" />
-						</StackPanel>
-					</Button>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Button
+							Name="ResetPromptsButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							Click="ResetPromptsButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Reset_Prompts}" />
+							</StackPanel>
+						</Button>
+						<CheckBox
+							x:Name="ResetPromptsMirrorCheckBox"
+							Grid.Column="1"
+							AutomationProperties.HelpText="{StaticResource main_Reset_MirrorSettings_Help}"
+							AutomationProperties.Name="{StaticResource main_Reset_MirrorSettings_Name}"
+							Content="{StaticResource main_Mirror}"
+							IsChecked="{Binding ResetPromptsMirror, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</Grid>
 
-					<Button
-						Name="ResetUiPresetsButton"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Left"
-						Click="ResetUiPresetsButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-							<Label Content="{StaticResource main_Reset_UI_Presets}" />
-						</StackPanel>
-					</Button>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Button
+							Name="ResetVoicesButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							Click="ResetVoicesButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Reset_Voices}" />
+							</StackPanel>
+						</Button>
+						<CheckBox
+							x:Name="ResetVoicesMirrorCheckBox"
+							Grid.Column="1"
+							AutomationProperties.HelpText="{StaticResource main_Reset_MirrorSettings_Help}"
+							AutomationProperties.Name="{StaticResource main_Reset_MirrorSettings_Name}"
+							Content="{StaticResource main_Mirror}"
+							IsChecked="{Binding ResetVoicesMirror, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</Grid>
 
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Button
+							Name="ResetEmbeddingsButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							Click="ResetEmbeddingsButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Reset_Embeddings}" />
+							</StackPanel>
+						</Button>
+						<CheckBox
+							x:Name="ResetEmbeddingsMirrorCheckBox"
+							Grid.Column="1"
+							AutomationProperties.HelpText="{StaticResource main_Reset_MirrorSettings_Help}"
+							AutomationProperties.Name="{StaticResource main_Reset_MirrorSettings_Name}"
+							Content="{StaticResource main_Mirror}"
+							IsChecked="{Binding ResetEmbeddingsMirror, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</Grid>
+
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Button
+							Name="ResetListsButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							Click="ResetListsButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Reset_Lists}" />
+							</StackPanel>
+						</Button>
+						<CheckBox
+							x:Name="ResetListsMirrorCheckBox"
+							Grid.Column="1"
+							AutomationProperties.HelpText="{StaticResource main_Reset_MirrorSettings_Help}"
+							AutomationProperties.Name="{StaticResource main_Reset_MirrorSettings_Name}"
+							Content="{StaticResource main_Mirror}"
+							IsChecked="{Binding ResetListsMirror, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</Grid>
+
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Button
+							Name="ResetUiPresetsButton"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							Click="ResetUiPresetsButton_Click">
+							<StackPanel Focusable="False">
+								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+								<Label Content="{StaticResource main_Reset_UI_Presets}" />
+							</StackPanel>
+						</Button>
+						<CheckBox
+							x:Name="ResetUiPresetsMirrorCheckBox"
+							Grid.Column="1"
+							AutomationProperties.HelpText="{StaticResource main_Reset_MirrorSettings_Help}"
+							AutomationProperties.Name="{StaticResource main_Reset_MirrorSettings_Name}"
+							Content="{StaticResource main_Mirror}"
+							IsChecked="{Binding ResetUiPresetsMirror, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</Grid>
 
 				</StackPanel>
 			</GroupBox>
@@ -131,40 +247,26 @@
 							LargeChange="120"
 							Maximum="100000"
 							SmallChange="60"
-							Value="900" />
+							Value="{Binding ResetWindowWidth, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						<Label Content="H" />
 						<JcControls:NumericUpDown
 							x:Name="WindowHeightUpDown"
 							LargeChange="120"
 							Maximum="100000"
 							SmallChange="60"
-							Value="900" />
+							Value="{Binding ResetWindowHeight, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<Button
-							Name="ResetUIButton"
-							HorizontalAlignment="Left"
-							HorizontalContentAlignment="Left"
-							AutomationProperties.HelpText="{StaticResource main_Reset_UI_Settings_ToolTip}"
-							Click="ResetUIButton_Click">
-							<StackPanel Focusable="False">
-								<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
-								<Label Content="{StaticResource main_Reset_UI_Settings}" />
-							</StackPanel>
-						</Button>
-						<Button
-							Name="AdjustUIButton"
-							HorizontalAlignment="Left"
-							HorizontalContentAlignment="Left"
-							Click="AdjustUIButton_Click">
-							<StackPanel Focusable="False">
-								<ContentControl Content="{StaticResource Icon_screen}" Focusable="False" />
-								<Label Content="Adjust" />
-							</StackPanel>
-						</Button>
-					</StackPanel>
-
-
+					<Button
+						Name="ResetUIButton"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Left"
+						AutomationProperties.HelpText="{StaticResource main_Reset_UI_Settings_ToolTip}"
+						Click="ResetUIButton_Click">
+						<StackPanel Focusable="False">
+							<ContentControl Content="{StaticResource Icon_Reset}" Focusable="False" />
+							<Label Content="{StaticResource main_Reset_UI_Settings}" />
+						</StackPanel>
+					</Button>
 				</StackPanel>
 			</GroupBox>
 		</WrapPanel>

@@ -28,7 +28,9 @@ namespace JocysCom.ClassLibrary.Controls
 			// Make sure it contains handle.
 			var awHelper = new WindowInteropHelper(appWindow);
 			awHelper.EnsureHandle();
-			Application.Current.MainWindow = appWindow;
+			var curr = Application.Current;
+			if (curr != null)
+				curr.MainWindow = appWindow;
 			// Now you can start the main window.
 		}
 

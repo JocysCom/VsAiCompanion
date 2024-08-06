@@ -64,15 +64,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static SettingsData<AppData> AppData =
 			new SettingsData<AppData>($"{AppDataName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
-		public const string PromptItemsName = nameof(PromptItems);
+		public const string PromptsName = nameof(Prompts);
 
-		public static SettingsData<PromptItem> PromptItems =
-			new SettingsData<PromptItem>($"{PromptItemsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
+		public static SettingsData<PromptItem> Prompts =
+			new SettingsData<PromptItem>($"{PromptsName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
-		public const string VociesName = nameof(Voices);
+		public const string VoicesName = nameof(Voices);
 
 		public static SettingsData<VoiceItem> Voices =
-			new SettingsData<VoiceItem>($"{VociesName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
+			new SettingsData<VoiceItem>($"{VoicesName}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly());
 
 		public const string ListsName = nameof(Lists);
 
@@ -364,7 +364,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			RaiseOnSaveSettings();
 			AppData.Save();
 			Voices.Save();
-			PromptItems.Save();
+			Prompts.Save();
 			Lists.Save();
 			Embeddings.Save();
 			Templates.Save();
@@ -414,7 +414,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			AppSettings.AiServices.ListChanged += AiServices_ListChanged;
 			if (ResetSettings)
-				SettingsSourceManager.ResetSettings();
+				SettingsSourceManager.ResetAllSettings();
 			else
 			{
 				// If Azure "Speech Service" not found then...
@@ -444,10 +444,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (Voices.IsSavePending)
 				Voices.Save();
 			// Load Prompt items.
-			PromptItems.OnValidateData += PromptItems_OnValidateData;
-			PromptItems.Load();
-			if (PromptItems.IsSavePending)
-				PromptItems.Save();
+			Prompts.OnValidateData += PromptItems_OnValidateData;
+			Prompts.Load();
+			if (Prompts.IsSavePending)
+				Prompts.Save();
 			// Load Lists.
 			Lists.OnValidateData += Lists_OnValidateData;
 			Lists.Load();

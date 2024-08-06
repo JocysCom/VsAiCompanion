@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
@@ -13,7 +14,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public static class SettingsSourceManager
 	{
 
-		public static void ResetSettings(bool confirm = false)
+		public static void ResetAllSettings(bool confirm = false)
 		{
 			if (confirm && !AppHelper.AllowReset("All Settings", "Please note that this will reset all services, models, templates and tasks!"))
 				return;
@@ -81,7 +82,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			Global.UiPresets.PreventWriteToNewerFiles = enabled;
 			// Single file.
 			Global.AppData.PreventWriteToNewerFiles = enabled;
-			Global.PromptItems.PreventWriteToNewerFiles = enabled;
+			Global.Prompts.PreventWriteToNewerFiles = enabled;
 			Global.Voices.PreventWriteToNewerFiles = enabled;
 		}
 
@@ -114,13 +115,33 @@ namespace JocysCom.VS.AiCompanion.Engine
 				zip.Close();
 		}
 
+		/// <summary>Reset Tasks</summary>
+		public static void ResetTasks(ZipStorer zip = null)
+			=> ResetItems(zip, Global.Tasks, Global.AppSettings.ResetTasksMirror, Global.TasksName, x => x.Name);
+
+		/// <summary>Reset Templates</summary>
+		public static void ResetTemplates(ZipStorer zip = null)
+			=> ResetItems(zip, Global.Templates, Global.AppSettings.ResetTemplatesMirror, Global.TemplatesName, x => x.Name);
+
 		/// <summary>Reset Prompts</summary>
 		public static void ResetPrompts(ZipStorer zip = null)
-			=> ResetItems(zip, Global.PromptItems, Global.PromptItemsName, x => x.Name);
+			=> ResetItems(zip, Global.Prompts, Global.AppSettings.ResetPromptsMirror, Global.PromptsName, x => x.Name);
 
 		/// <summary>Reset Voices</summary>
 		public static void ResetVoices(ZipStorer zip = null)
-			=> ResetItems(zip, Global.Voices, Global.VociesName, x => x.Name);
+			=> ResetItems(zip, Global.Voices, Global.AppSettings.ResetVoicesMirror, Global.VoicesName, x => x.Name);
+
+		/// <summary>Reset Embeddings</summary>
+		public static void ResetEmbeddings(ZipStorer zip = null)
+			=> ResetItems(zip, Global.Embeddings, Global.AppSettings.ResetEmbeddingsMirror, Global.EmbeddingsName, x => x.Name);
+
+		/// <summary>Reset Lists</summary>
+		public static void ResetLists(ZipStorer zip = null)
+			=> ResetItems(zip, Global.Lists, Global.AppSettings.ResetListsMirror, Global.ListsName, x => x.Name);
+
+		/// <summary>Reset UI Presets</summary>
+		public static void ResetUiPresets(ZipStorer zip = null)
+			=> ResetItems(zip, Global.UiPresets, Global.AppSettings.ResetUiPresetsMirror, Global.UiPresetsName, x => x.Name);
 
 		#endregion
 
@@ -169,64 +190,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			};
 		}
 
-
-		/// <summary>Reset Lists</summary>
-		public static void ResetLists(ZipStorer zip = null)
-			=> ResetItems(zip, Global.Lists, Global.ListsName, x => x.Name);
-
-		public static void ResetUiPresets(ZipStorer zip = null)
-			=> ResetItems(zip, Global.UiPresets, Global.UiPresetsName, x => x.Name);
-
-		/// <summary>Reset Lists</summary>
-		public static void ResetEmbeddings(ZipStorer zip = null)
-		{
-			bool closeZip;
-			if (closeZip = zip == null)
-				zip = GetSettingsZip();
-			if (zip == null)
-				return;
-			ResetItems(zip, Global.Embeddings, Global.EmbeddingsName, x => x.Name);
-			ResetOtherItems(zip, Global.Embeddings, Global.EmbeddingsName);
-			// Close zip.
-			if (closeZip)
-				zip.Close();
-		}
-
-		/// <summary>
-		/// Reset non-XML items.
-		/// </summary>
-		private static void ResetOtherItems<T>(ZipStorer zip, SettingsData<T> data, string name) where T : SettingsFileItem
-		{
-			var entries = zip.ReadCentralDir()
-				.Where(x => x.FilenameInZip.StartsWith(name) && !x.FilenameInZip.EndsWith(".xml"))
-				.ToArray();
-			foreach (var entry in entries)
-			{
-				var path = Path.Combine(Global.AppData.XmlFile.Directory.FullName, entry.FilenameInZip);
-				bool isDirectory = entry.FilenameInZip.EndsWith("/");
-				if (isDirectory)
-				{
-					var di = new DirectoryInfo(path);
-					if (!di.Exists)
-						di.Create();
-				}
-				else
-				{
-					var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
-					var fi = new FileInfo(path);
-					if (!fi.Directory.Exists)
-						fi.Directory.Create();
-					if (File.Exists(path))
-						File.Delete(path);
-					File.WriteAllBytes(path, bytes);
-				}
-			}
-		}
-
 		/// <summary>
 		/// Reset XML items.
 		/// </summary>
-		private static void ResetItems<T>(ZipStorer zip, SettingsData<T> data, string name, Func<T, string> propertySelector)
+		private static void ResetItems<T>(ZipStorer zip, SettingsData<T> data, bool mirror, string name, Func<T, string> propertySelector)
 		{
 			bool closeZip;
 			if (closeZip = zip == null)
@@ -235,8 +202,52 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return;
 			// Update Lists
 			var zipItems = GetItemsFromZip(zip, name, data);
-			RemoveToReplace(data, zipItems, propertySelector);
+			if (data.UseSeparateFiles)
+			{
+				var items = data.Items.ToArray();
+				foreach (var item in items)
+				{
+					var error = data.DeleteItem(item as ISettingsFileItem);
+					if (!string.IsNullOrEmpty(error))
+						Global.ShowError(error);
+				}
+			}
+			else
+			{
+				RemoveToReplace(data, zipItems, propertySelector);
+			}
+			data.PreventWriteToNewerFiles = false;
 			data.Add(zipItems.ToArray());
+			data.Save();
+			data.PreventWriteToNewerFiles = true;
+			// Extract other relevant non XML items from the zip.
+			if (data.UseSeparateFiles)
+			{
+				var entries = zip.ReadCentralDir()
+				.Where(x => x.FilenameInZip.StartsWith(name) && !x.FilenameInZip.EndsWith(".xml"))
+				.ToArray();
+				foreach (var entry in entries)
+				{
+					var path = Path.Combine(Global.AppData.XmlFile.Directory.FullName, entry.FilenameInZip);
+					bool isDirectory = entry.FilenameInZip.EndsWith("/");
+					if (isDirectory)
+					{
+						var di = new DirectoryInfo(path);
+						if (!di.Exists)
+							di.Create();
+					}
+					else
+					{
+						var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
+						var fi = new FileInfo(path);
+						if (!fi.Directory.Exists)
+							fi.Directory.Create();
+						if (File.Exists(path))
+							File.Delete(path);
+						File.WriteAllBytes(path, bytes);
+					}
+				}
+			}
 			// Close zip.
 			if (closeZip)
 				zip.Close();
@@ -319,38 +330,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return missing.Length;
 		}
 
-		public static void ResetTasks(ZipStorer zip = null)
-		{
-		}
-
-		public static void ResetTemplates(ZipStorer zip = null)
-		{
-			bool closeZip;
-			if (closeZip = zip == null)
-				zip = GetSettingsZip();
-			if (zip == null)
-				return;
-			// ---
-			var data = Global.Templates;
-			var zipTemplates = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates);
-			if (zipTemplates.Count == 0)
-				return;
-			var items = data.Items.ToArray();
-			foreach (var item in items)
-			{
-				var error = data.DeleteItem(item);
-				if (!string.IsNullOrEmpty(error))
-					Global.ShowError(error);
-			}
-			data.PreventWriteToNewerFiles = false;
-			data.Add(zipTemplates.ToArray());
-			data.Save();
-			data.PreventWriteToNewerFiles = true;
-			// ---
-			if (closeZip)
-				zip.Close();
-		}
-
 		/// <summary>
 		/// Get items from the zip. entry pattern: filenameInZipStartsWith*.xml
 		/// </summary>
@@ -384,6 +363,66 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return list;
 		}
 
+		public static void ResetUI()
+		{
+			var w = AdjustForScreenshot(Global.AppSettings.ResetWindowWidth);
+			var h = AdjustForScreenshot(Global.AppSettings.ResetWindowHeight);
+			if (Global.AppSettings.ResetWindowWidth != w)
+				Global.AppSettings.ResetWindowWidth = w;
+			if (Global.AppSettings.ResetWindowHeight != h)
+				Global.AppSettings.ResetWindowHeight = h;
+			var items = Global.AppSettings.PanelSettingsList.ToArray();
+			foreach (var item in items)
+				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item);
+			var ps = Global.AppSettings.StartPosition;
+			if (!Global.IsVsExtension)
+			{
+				var window = ControlsHelper.GetParent<System.Windows.Window>(Global.MainControl);
+				//var pixRect = PositionSettings.GetPixelsBoundaryRectangle(this);
+				//var pixRectWin = PositionSettings.GetPixelsBoundaryRectangle(window);
+				var width = Math.Max(w, window.MinWidth);
+				var height = Math.Max(h, window.MinHeight);
+				var content = (System.Windows.FrameworkElement)window.Content;
+				// Get space taken by the window borders.
+				var wSpace = window.ActualWidth - content.ActualWidth;
+				var hSpace = window.ActualHeight - content.ActualHeight;
+				//var tPad = pixRect.Top - pixRectWin.Top;
+				//var lPad = pixRect.Left - pixRectWin.Left;
+				//var padPoint = new Point(tPad, lPad);
+				var size = new System.Windows.Size(width + wSpace, height + hSpace);
+				var point = new System.Windows.Point(window.Left, window.Top);
+				var newSize = PositionSettings.ConvertToDiu(size);
+				var newPoint = PositionSettings.ConvertToDiu(point);
+				//var newPadPoint = PositionSettings.ConvertToDiu(padPoint);
+				ps.Left = (int)(newPoint.X / 2 / 3 / 5) * 2 * 3 * 5;
+				ps.Top = (int)(newPoint.Y / 2 / 3 / 5) * 2 * 3 * 5;
+				ps.Width = newSize.Width;
+				ps.Height = newSize.Height;
+				ps.LoadPosition(window);
+			}
+		}
+
+
+		/// <summary>
+		/// Adjusts the provided dimension to the nearest perfect size for screenshots, 
+		/// meeting the criteria of divisibility by 2, 3, 4, and 10.
+		/// </summary>
+		/// <param name="value">The original size of the screenshot dimension 
+		/// (width or height) to be adjusted.</param>
+		/// <returns>The adjusted size, meeting the criteria of being a multiple of 2, 3, 4, and 10 
+		/// for optimal resizing quality.</returns>
+		private static int AdjustForScreenshot(int value)
+		{
+			// The LCM of 2, 3, 4, and 10 to ensure scaling and quality criteria
+			const int perfectDivisor = 60;
+			// If the value already meets the perfect criteria then return.
+			if (value % perfectDivisor == 0)
+				return value;
+			// Calculate the nearest higher multiple of 60
+			int adjustedValue = ((value / perfectDivisor) + 1) * perfectDivisor;
+			return adjustedValue;
+		}
+
 		#endregion
 
 		#region General Methods
@@ -401,6 +440,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			ZipStorer zip = null;
 			// Check if settings zip file with the same name as the executable exists.
 			var settingsFile = $"{AssemblyInfo.Entry.ModuleBasePath}.Settings.zip";
+			// ------------------------------------------------
+			// Parse command line arguments and override default settings file location.
+			var args = Environment.GetCommandLineArgs();
+			var ic = new JocysCom.ClassLibrary.Configuration.Arguments(args);
+			if (ic.ContainsKey("SettingsFile"))
+			{
+				var argValue = ic["SettingsFile"];
+				if (!string.IsNullOrEmpty(argValue))
+				{
+					if (File.Exists(argValue))
+						settingsFile = argValue;
+				}
+			}
+			// ------------------------------------------------
+			// Load zip file.
 			if (File.Exists(settingsFile))
 			{
 				// Use external file.

@@ -53,7 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		private void ApplySettingsButton_Click(object sender, RoutedEventArgs e)
 		{
-			SettingsSourceManager.ResetSettings(true);
+			SettingsSourceManager.ResetAllSettings(true);
 		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)

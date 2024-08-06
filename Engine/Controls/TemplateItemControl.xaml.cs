@@ -109,7 +109,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void PromptsPanel_AddPromptButton_Click(object sender, RoutedEventArgs e)
 		{
-			var promptItem = Global.PromptItems.Items.FirstOrDefault(x => x.Name == _Item?.PromptName);
+			var promptItem = Global.Prompts.Items.FirstOrDefault(x => x.Name == _Item?.PromptName);
 			if (promptItem == null)
 				return;
 			var promptString = string.Format(promptItem.Pattern, _Item?.PromptOption);
@@ -775,6 +775,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Finally, release the 'Windows' key.
 			KeyboardHelper.SendUp(Key.LWin);
 
+		}
+
+		private void SendChatHistoryCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		{
+			var box = sender as CheckBox;
+			if (Item.PluginsEnabled)
+			{
+				// Set IsChecked back to true
+				box.IsChecked = true;
+				Global.MainControl.InfoPanel.SetWithTimeout(MessageBoxImage.Error, Engine.Resources.MainResources.main_Plugins_require_chat_history);
+			}
 		}
 
 		#region Copy and Save

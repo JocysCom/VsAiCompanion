@@ -27,11 +27,11 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>657</Left>
-        <Top>95</Top>
+        <Left>503</Left>
+        <Top>84</Top>
         <Width>916</Width>
         <Height>819</Height>
-        <ScreenName>\\.\DISPLAY6</ScreenName>
+        <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>

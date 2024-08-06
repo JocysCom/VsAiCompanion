@@ -43,6 +43,7 @@
 	<sys:String x:Key="main_Enable_Microsoft_Account">Enable Microsoft Account</sys:String>
 	<sys:String x:Key="main_Require_To_Sign_In">Require to sign in</sys:String>
 	<sys:String x:Key="main_Require_To_Sign_In_Message">Please sign in to your Microsoft account.</sys:String>
+	<sys:String x:Key="main_Plugins_require_chat_history">Plugins/functions require chat history. Uncheck the use of plugins/functions first.</sys:String>
 
 	<!--  Tasks / Templates → Main  -->
 	<sys:String x:Key="main_Auto_Generate_Title">Auto-Generate Title</sys:String>
@@ -235,10 +236,12 @@
 	<sys:String x:Key="main_Feature_UiPresets">Allows users to quickly switch between predefined templates such as "Simple," "Advanced," and "Release," customizing the visibility and accessibility of various UI elements. This enables a tailored user experience by hiding or locking specific aspects of the interface based on the chosen preset.</sys:String>
 
 	<!--  Options → Reset Settings  -->
+	<sys:String x:Key="main_Reset_All_Settings">Reset All Settings</sys:String>
 	<sys:String x:Key="main_Reset_Application_Settings">Reset Application Settings</sys:String>
 	<sys:String x:Key="main_Reset_Embeddings">Reset Embeddings</sys:String>
 	<sys:String x:Key="main_Reset_Lists">Reset Lists</sys:String>
-	<sys:String x:Key="main_Reset_Prompting_Settings">Reset Prompting</sys:String>
+	<sys:String x:Key="main_Reset_Prompts">Reset Prompts</sys:String>
+	<sys:String x:Key="main_Reset_Voices">Reset Voices</sys:String>
 	<sys:String x:Key="main_Reset_ServicesAndModels">Reset Services and Models (Resets API Keys)</sys:String>
 	<sys:String x:Key="main_Reset_Settings">Reset Settings</sys:String>
 	<sys:String x:Key="main_Reset_Templates">Reset Templates</sys:String>
@@ -248,6 +251,9 @@
 	<sys:String x:Key="main_Reset_UI_Settings_ToolTip">Use to capture screenshots of a similar size.</sys:String>
 	<sys:String x:Key="main_Reset_to_Default">Reset to Default</sys:String>
 	<sys:String x:Key="main_Reset_UI_Presets">Reset UI Presets</sys:String>
+	<sys:String x:Key="main_Reset_MirrorSettings_Text">Delete items not in original settings</sys:String>
+	<sys:String x:Key="main_Reset_MirrorSettings_Help">Delete items that aren't present in the original/default settings when resetting the settings.</sys:String>
+	<sys:String x:Key="main_Reset_MirrorSettings_Name">Mirror Settings</sys:String>
 
 	<!--  About  -->
 	<sys:String x:Key="main_Axialis_Icon_Set_Licenses">Axialis Icon Set Licenses</sys:String>
@@ -296,6 +302,7 @@
 
 	<!--  ***  -->
 	<sys:String x:Key="main_Apply">Apply</sys:String>
+	<sys:String x:Key="main_Mirror">Mirror</sys:String>
 	<sys:String x:Key="main_UI">UI</sys:String>
 	<sys:String x:Key="main_UI_Preset">UI Preset</sys:String>
 	<sys:String x:Key="main_Account">Account</sys:String>

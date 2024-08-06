@@ -230,6 +230,46 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Reset Settings
+
+		[DefaultValue(1020)]
+		public int ResetWindowWidth { get => _ResetSizeWidth; set => SetProperty(ref _ResetSizeWidth, value); }
+		private int _ResetSizeWidth;
+
+		[DefaultValue(780)]
+		public int ResetWindowHeight { get => _ResetSizeHeight; set => SetProperty(ref _ResetSizeHeight, value); }
+		private int _ResetSizeHeight;
+
+		[DefaultValue(false)]
+		public bool ResetTasksMirror { get => _ResetTasksMirror; set => SetProperty(ref _ResetTasksMirror, value); }
+		private bool _ResetTasksMirror;
+
+		[DefaultValue(true)]
+		public bool ResetTemplatesMirror { get => _ResetTemplatesMirror; set => SetProperty(ref _ResetTemplatesMirror, value); }
+		private bool _ResetTemplatesMirror;
+
+		[DefaultValue(true)]
+		public bool ResetPromptsMirror { get => _ResetPromptsMirror; set => SetProperty(ref _ResetPromptsMirror, value); }
+		private bool _ResetPromptsMirror;
+
+		[DefaultValue(true)]
+		public bool ResetVoicesMirror { get => _ResetVoicesMirror; set => SetProperty(ref _ResetVoicesMirror, value); }
+		private bool _ResetVoicesMirror;
+
+		[DefaultValue(true)]
+		public bool ResetListsMirror { get => _ResetListsMirror; set => SetProperty(ref _ResetListsMirror, value); }
+		private bool _ResetListsMirror;
+
+		[DefaultValue(true)]
+		public bool ResetEmbeddingsMirror { get => _ResetEmbeddingsMirror; set => SetProperty(ref _ResetEmbeddingsMirror, value); }
+		private bool _ResetEmbeddingsMirror;
+
+		[DefaultValue(true)]
+		public bool ResetUiPresetsMirror { get => _ResetUiPresetsMirror; set => SetProperty(ref _ResetUiPresetsMirror, value); }
+		private bool _ResetUiPresetsMirror;
+
+		#endregion
+
 		#region  Spell Check
 
 		/// <summary>Allow only one standalone copy.</summary>

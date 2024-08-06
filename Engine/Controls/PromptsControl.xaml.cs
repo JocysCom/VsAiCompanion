@@ -15,7 +15,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	{
 		public PromptsControl()
 		{
-			var names = Global.PromptItems.Items.Select(x => x.Name).OrderBy(x => x).ToList();
+			var names = Global.Prompts.Items.Select(x => x.Name).OrderBy(x => x).ToList();
 			PromptNames = new BindingList<string>(names);
 			PromptOptions = new BindingList<string>();
 			InitializeComponent();
@@ -48,7 +48,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void FixPromptOption(TemplateItem item)
 		{
-			var options = Global.PromptItems.Items
+			var options = Global.Prompts.Items
 				.FirstOrDefault(x => x.Name == item.PromptName)?
 				.Options.OrderBy(x => x).ToList();
 			// If item is not in the list then...
@@ -59,8 +59,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void SetPattern(string promptName)
 		{
-			var prompt = Global.PromptItems.Items.FirstOrDefault(x => x.Name == promptName)
-				?? Global.PromptItems.Items.FirstOrDefault();
+			var prompt = Global.Prompts.Items.FirstOrDefault(x => x.Name == promptName)
+				?? Global.Prompts.Items.FirstOrDefault();
 			if (prompt == null)
 			{
 				PatternStartLabel.Content = "";
@@ -81,7 +81,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void SetOptions(string promptName)
 		{
-			var options = Global.PromptItems.Items
+			var options = Global.Prompts.Items
 				.FirstOrDefault(x => x.Name == promptName)?
 				.Options.OrderBy(x => x).ToList() ?? new System.Collections.Generic.List<string>();
 			CollectionsHelper.Synchronize(options, PromptOptions);

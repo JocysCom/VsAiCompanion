@@ -1,6 +1,10 @@
-2024-08-05 v1.12.46
+2024-08-06 v1.12.52
 
 - New: Make Instructions checkbox bold when instructions are not empty.
+- New: command line argument /SettingsPath="<settings_folder_path>".
+- New: command line argument /SettingsFile="<settings_zip_file>".
+- Update: Allow copying and pasting multiple items.
+- Update: Allow pasting copied items as XML files.
 
 2024-07-24 v1.12.45
 

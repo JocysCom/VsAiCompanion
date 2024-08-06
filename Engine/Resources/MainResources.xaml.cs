@@ -87,6 +87,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Enable_Microsoft_Account => FindResource(nameof(main_Enable_Microsoft_Account));
         public static string main_Require_To_Sign_In => FindResource(nameof(main_Require_To_Sign_In));
         public static string main_Require_To_Sign_In_Message => FindResource(nameof(main_Require_To_Sign_In_Message));
+        public static string main_Plugins_require_chat_history => FindResource(nameof(main_Plugins_require_chat_history));
         public static string main_Auto_Generate_Title => FindResource(nameof(main_Auto_Generate_Title));
         public static string main_Auto_Generate_Title_Help => FindResource(nameof(main_Auto_Generate_Title_Help));
         public static string main_Auto_Generate_Title_Name => FindResource(nameof(main_Auto_Generate_Title_Name));
@@ -245,10 +246,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Voice_Type => FindResource(nameof(main_Voice_Type));
         public static string main_Voices => FindResource(nameof(main_Voices));
         public static string main_Feature_UiPresets => FindResource(nameof(main_Feature_UiPresets));
+        public static string main_Reset_All_Settings => FindResource(nameof(main_Reset_All_Settings));
         public static string main_Reset_Application_Settings => FindResource(nameof(main_Reset_Application_Settings));
         public static string main_Reset_Embeddings => FindResource(nameof(main_Reset_Embeddings));
         public static string main_Reset_Lists => FindResource(nameof(main_Reset_Lists));
-        public static string main_Reset_Prompting_Settings => FindResource(nameof(main_Reset_Prompting_Settings));
+        public static string main_Reset_Prompts => FindResource(nameof(main_Reset_Prompts));
+        public static string main_Reset_Voices => FindResource(nameof(main_Reset_Voices));
         public static string main_Reset_ServicesAndModels => FindResource(nameof(main_Reset_ServicesAndModels));
         public static string main_Reset_Settings => FindResource(nameof(main_Reset_Settings));
         public static string main_Reset_Templates => FindResource(nameof(main_Reset_Templates));
@@ -258,6 +261,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Reset_UI_Settings_ToolTip => FindResource(nameof(main_Reset_UI_Settings_ToolTip));
         public static string main_Reset_to_Default => FindResource(nameof(main_Reset_to_Default));
         public static string main_Reset_UI_Presets => FindResource(nameof(main_Reset_UI_Presets));
+        public static string main_Reset_MirrorSettings_Text => FindResource(nameof(main_Reset_MirrorSettings_Text));
+        public static string main_Reset_MirrorSettings_Help => FindResource(nameof(main_Reset_MirrorSettings_Help));
+        public static string main_Reset_MirrorSettings_Name => FindResource(nameof(main_Reset_MirrorSettings_Name));
         public static string main_Axialis_Icon_Set_Licenses => FindResource(nameof(main_Axialis_Icon_Set_Licenses));
         public static string main_Changes => FindResource(nameof(main_Changes));
         public static string main_Company_Product => FindResource(nameof(main_Company_Product));
@@ -300,6 +306,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Title_for_Attached_Context => FindResource(nameof(main_Title_for_Attached_Context));
         public static string main_Value => FindResource(nameof(main_Value));
         public static string main_Apply => FindResource(nameof(main_Apply));
+        public static string main_Mirror => FindResource(nameof(main_Mirror));
         public static string main_UI => FindResource(nameof(main_UI));
         public static string main_UI_Preset => FindResource(nameof(main_UI_Preset));
         public static string main_Account => FindResource(nameof(main_Account));
