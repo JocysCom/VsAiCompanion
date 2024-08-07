@@ -155,6 +155,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				zip = GetSettingsZip();
 			if (zip == null)
 				return;
+
 			// ---
 			var zipAppDataItems = GetItemsFromZip(zip, Global.AppDataName, Global.AppData);
 			var zipServices = zipAppDataItems[0].AiServices;
@@ -177,6 +178,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// ---
 			if (closeZip)
 				zip.Close();
+
+			Global.MainControl.TasksPanel.TemplateItemPanel.RebindItemOnLoad = true;
+			Global.MainControl.TemplatesPanel.TemplateItemPanel.RebindItemOnLoad = true;
 		}
 
 		#endregion
@@ -202,10 +206,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return;
 			// Update Lists
 			var zipItems = GetItemsFromZip(zip, name, data);
+			// Get lowercase names of default items.
+			var names = zipItems.Select(x => propertySelector(x).ToLower()).ToArray();
+			// If mirror then all existng items will be removed and replaces with zip items.
+			var itemsToRemove = data.Items.Where(x => mirror || names.Contains(propertySelector(x).ToLower())).ToArray();
 			if (data.UseSeparateFiles)
 			{
-				var items = data.Items.ToArray();
-				foreach (var item in items)
+				foreach (var item in itemsToRemove)
 				{
 					var error = data.DeleteItem(item as ISettingsFileItem);
 					if (!string.IsNullOrEmpty(error))
@@ -214,7 +221,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			else
 			{
-				RemoveToReplace(data, zipItems, propertySelector);
+				data.Remove(itemsToRemove);
 			}
 			data.PreventWriteToNewerFiles = false;
 			data.Add(zipItems.ToArray());

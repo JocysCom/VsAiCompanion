@@ -96,8 +96,6 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		}
 		public static bool ProcessAdminCommands(string[] args)
 		{
-
-			// Requires System.Configuration.Installl reference.
 			var ic = new JocysCom.ClassLibrary.Configuration.Arguments(args);
 			// ------------------------------------------------
 			if (ic.ContainsKey(nameof(ReplaceFiles)))

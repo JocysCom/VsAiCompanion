@@ -107,7 +107,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public TemplateItemControl TemplateItemPanel;
 		FineTuningItemControl FineTuningItemPanel;
 		AssistantItemControl AssistantItemPanel;
-		ListsItemControl ListsItemPanel;
+		public ListsItemControl ListsItemPanel;
 		UiPresetItemControl UiPresetItemPanel;
 		EmbeddingsItemControl EmbeddingItemPanel;
 		MailAccountItemControl MailAccountItemPanel;

@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Processes;
 using JocysCom.VS.AiCompanion.DataClient.Common;
@@ -387,6 +388,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					RestoreFocus();
 				UpdateShowInstructionsCheckBox();
 				UpdateAvatarControl();
+				UpdateListEditButtons();
 			}
 		}
 
@@ -423,6 +425,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					break;
 				case nameof(TemplateItem.EmbeddingGroupName):
 					_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+					break;
+				case nameof(TemplateItem.Context0ListName):
+				case nameof(TemplateItem.Context1ListName):
+				case nameof(TemplateItem.Context2ListName):
+				case nameof(TemplateItem.Context3ListName):
+				case nameof(TemplateItem.Context4ListName):
+				case nameof(TemplateItem.Context5ListName):
+				case nameof(TemplateItem.Context6ListName):
+				case nameof(TemplateItem.Context7ListName):
+				case nameof(TemplateItem.Context8ListName):
+					UpdateListEditButtons();
 					break;
 				default:
 					break;
@@ -522,13 +535,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				CodeBlockPanel.GetFocused = GetFocused;
 				AppHelper.InitHelp(this);
-				UiPresetsManager.InitControl(this);
 				// Remove control, which visibility is controlled by the code.
-				UiPresetsManager.RemoveControls(this, MainTabControl);
+				var excludeElements = new FrameworkElement[] {
+					this, MainTabControl,
+					Context0EditButton,
+					Context1EditButton,
+					Context2EditButton,
+					Context3EditButton,
+					Context4EditButton,
+					Context5EditButton,
+					Context6EditButton,
+					Context7EditButton,
+					Context8EditButton
+ 				};
+				UiPresetsManager.InitControl(this, excludeElements: excludeElements);
 			}
 			RestoreFocus();
 			UpdateAvatarControl();
+			// Workaround after resetting settings.
+			if (RebindItemOnLoad)
+			{
+				RebindItemOnLoad = false;
+				var item = Item;
+				Item = null;
+				if (item != null)
+					_ = Helper.Delay(() => Item = item);
+			}
 		}
+
+		public bool RebindItemOnLoad = false;
 
 		private void ClearMessagesButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -848,6 +883,59 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var html = GetPageHtml();
 			AppHelper.SetClipboardHtml(html);
+		}
+
+		#endregion
+
+		#region Open List
+
+		private void Context0EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context0ListName);
+		private void Context1EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context1ListName);
+		private void Context2EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context2ListName);
+		private void Context3EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context3ListName);
+		private void Context4EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context4ListName);
+		private void Context5EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context5ListName);
+		private void Context6EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context6ListName);
+		private void Context7EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context7ListName);
+		private void Context8EditButton_Click(object sender, RoutedEventArgs e) => OpenListItem(Item.Context8ListName);
+
+		void OpenListItem(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+				return;
+			var grid = Global.MainControl.ListsPanel.ListPanel.MainDataGrid;
+			ControlsHelper.EnsureTabItemSelected(grid);
+			var list = new List<string>() { name };
+			ControlsHelper.SetSelection(grid, nameof(ISettingsListFileItem.Name), list, 0);
+			_ = Helper.Delay(() =>
+			{
+				Global.MainControl.ListsPanel.ListsItemPanel?.InstructionsTextBox.Focus();
+			});
+		}
+
+		void UpdateListEditButtons()
+		{
+			var dic = new Dictionary<Button, string>()
+			{
+				{ Context0EditButton, Item?.Context0ListName },
+				{ Context1EditButton, Item?.Context1ListName },
+				{ Context2EditButton, Item?.Context2ListName },
+				{ Context3EditButton, Item?.Context3ListName },
+				{ Context4EditButton, Item?.Context4ListName },
+				{ Context5EditButton, Item?.Context5ListName },
+				{ Context6EditButton, Item?.Context6ListName },
+				{ Context7EditButton, Item?.Context7ListName },
+				{ Context8EditButton, Item?.Context8ListName }
+			};
+			foreach (var button in dic.Keys.ToArray())
+			{
+				var enabled = !string.IsNullOrEmpty(dic[button]);
+				ControlsHelper.SetEnabled(button, enabled);
+
+				var visibility = enabled ? Visibility.Visible : Visibility.Hidden;
+				if (button.Visibility != visibility)
+					button.Visibility = visibility;
+			}
 		}
 
 		#endregion
