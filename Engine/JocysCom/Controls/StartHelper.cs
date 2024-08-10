@@ -69,8 +69,12 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <returns>True - other instances exists; False - other instances doesn't exist.</returns>
 		public static bool BroadcastMessage(int wParam)
 		{
+			// To ensure that the mutex operates at a global level, and not just at the user level, we add the "Global\\" prefix.
+			// This allows the mutex to work across different user sessions, including elevated permissions.
+			// Without this prefix, the mutex would only be visible to the current user, causing issues when the application is run with different users or permissions.
+			var globalUid = "Global\\" + uid;
 			// Check for previous instance of this app.
-			_Mutex = new System.Threading.Mutex(false, uid);
+			_Mutex = new System.Threading.Mutex(false, globalUid);
 			// Register the windows message
 			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out var error);
 			var firsInstance = _Mutex.WaitOne(1, true);
