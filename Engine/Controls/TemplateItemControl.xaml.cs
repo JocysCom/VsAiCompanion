@@ -360,6 +360,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				DataContext = _Item;
 				_Item.PropertyChanged += _item_PropertyChanged;
 				AiModelBoxPanel.Item = _Item;
+				ToolsPanel.Item = _Item;
 				OnPropertyChanged(nameof(CreativityName));
 				// New item is bound. Make sure that custom AiModel only for the new item is available to select.
 				AppHelper.UpdateModelCodes(_Item.AiService, AiModelBoxPanel.AiModels, _Item?.AiModel);

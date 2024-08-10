@@ -1,0 +1,53 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Template.ToolsUserControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Template"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
+	x:Name="This"
+	d:DesignHeight="250"
+	d:DesignWidth="400"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<ScrollViewer DataContext="{Binding Item, ElementName=This}">
+		<StackPanel>
+			<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="Tool Choice">
+				<StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<CheckBox Name="ToolChoiceRequiredCheckBox" Content="Tool Choice Required" IsChecked="{Binding ToolChoiceRequired, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						<TextBlock Margin="0,5,0,0" Text="{Binding ToolChoiceRequiredNamesString, ElementName=This}" />
+					</StackPanel>
+					<ListBox
+						Name="ToolChoiceRequiredNamesListBox"
+						Height="200"
+						ItemsSource="{Binding ListBoxData, ElementName=This}"
+						ScrollViewer.IsDeferredScrollingEnabled="True"
+						SelectionMode="Single"
+						VirtualizingStackPanel.IsVirtualizing="True"
+						VirtualizingStackPanel.VirtualizationMode="Standard">
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<VirtualizingStackPanel />
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<CheckBox Content="{Binding Key}" IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</StackPanel>
+			</GroupBox>
+		</StackPanel>
+	</ScrollViewer>
+</UserControl>

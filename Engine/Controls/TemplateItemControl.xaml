@@ -8,6 +8,7 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
+	xmlns:templateItemControls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Template"
 	x:Name="This"
 	d:Height="450"
 	d:Width="900"
@@ -773,6 +774,16 @@
 							Style="{StaticResource ComboBox_Dynamic}"
 							Text="None" />
 					</WrapPanel>
+				</TabItem>
+
+				<TabItem x:Name="ToolsTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_pieces}" />
+							<Label Content="{StaticResource main_Tools}" />
+						</StackPanel>
+					</TabItem.Header>
+					<templateItemControls:ToolsUserControl x:Name="ToolsPanel" />
 				</TabItem>
 
 				<TabItem x:Name="MultimediaTabItem" x:FieldModifier="public">

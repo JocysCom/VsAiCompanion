@@ -444,11 +444,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			if (ToolDefinitions.Any())
 			{
-				foreach (var tool in ToolDefinitions)
-					options.Tools.Add(tool);
 				// Need to use reflection to set the Temperature property
 				// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
 				var value = ChatToolChoice.Auto;
+				// Make sure that last message is not automated reply or it will go into the infinite loop.
+				if (item.ToolChoiceRequired && !(item.Messages.Last()?.IsAutomated == true))
+				{
+					value = ChatToolChoice.Required;
+					var requiredFunctions = ToolDefinitions.Where(x => item.ToolChoiceRequiredNames.Contains(x.FunctionName)).ToList();
+					foreach (var tool in requiredFunctions)
+						options.Tools.Add(tool);
+				}
+				// If no required tools are added, then...
+				if (!options.Tools.Any())
+				{
+					// Add all functions for execution.
+					foreach (var tool in ToolDefinitions)
+						options.Tools.Add(tool);
+				}
 				typeof(ChatCompletionOptions)
 					.GetProperty(nameof(ChatCompletionOptions.ToolChoice), BindingFlags.Public | BindingFlags.Instance)
 						?.SetValue(options, value, null);
@@ -701,10 +714,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			if (CompletionTools.Any())
 			{
-				// No need to lock here as we are only reading from CompletionTools
-				foreach (var tool in CompletionTools)
-					request.tools.Add(tool);
-				request.tool_choice = tool_choice.auto;
+				var value = tool_choice.auto;
+				// Make sure that last message is not automated reply or it will go into the infinite loop.
+				if (item.ToolChoiceRequired && !(item.Messages.Last()?.IsAutomated == true))
+				{
+					value = tool_choice.required;
+					var requiredFunctions = CompletionTools.Where(x => item.ToolChoiceRequiredNames.Contains(x.function.name)).ToList();
+					foreach (var tool in requiredFunctions)
+						request.tools.Add(tool);
+				}
+				// If no required tools are added, then...
+				if (!request.tools.Any())
+				{
+					// Add all functions for execution.
+					foreach (var tool in CompletionTools)
+						request.tools.Add(tool);
+				}
+				request.tool_choice = value;
 			}
 		}
 

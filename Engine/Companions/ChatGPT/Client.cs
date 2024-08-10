@@ -486,7 +486,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						ControlsHelper.AppInvoke(() =>
 						{
 							if (serviceItem.PluginsEnabled)
+							{
 								PluginsManager.ProvideTools(serviceItem, completionsOptions);
+							}
 						});
 						if (service.ResponseStreaming)
 						{

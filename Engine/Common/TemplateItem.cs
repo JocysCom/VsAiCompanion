@@ -194,6 +194,24 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		bool _PluginsEnabled;
 
+
+		/// <summary>Specifies whether a tool function must be called by the client.</summary>
+		[DefaultValue(false)]
+		public bool ToolChoiceRequired { get => _ToolChoiceRequired; set => SetProperty(ref _ToolChoiceRequired, value); }
+		bool _ToolChoiceRequired;
+
+		/// <summary>Specifies the names of the required tool functions the client must call.</summary>
+		[DefaultValue(null)]
+		public List<string> ToolChoiceRequiredNames
+		{
+			get => _ToolChoiceRequiredNames = _ToolChoiceRequiredNames ?? new List<string>();
+			set => SetProperty(ref _ToolChoiceRequiredNames, value);
+		}
+		List<string> _ToolChoiceRequiredNames;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeToolChoiceRequiredNames() => _ToolChoiceRequiredNames?.Count > 0;
+
 		[DefaultValue(RiskLevel.Low)]
 		public RiskLevel MaxRiskLevel { get => _MaxRiskLevel; set => SetProperty(ref _MaxRiskLevel, value); }
 		RiskLevel _MaxRiskLevel;

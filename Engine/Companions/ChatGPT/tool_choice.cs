@@ -4,5 +4,6 @@
 	{
 		none = 0,
 		auto = 1,
+		required = 2,
 	}
 }

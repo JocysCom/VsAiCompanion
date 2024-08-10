@@ -145,7 +145,7 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Content="{StaticResource Icon_pieces}" />
-						<Label Content="Plugins" />
+						<Label Content="{StaticResource main_Plugins}" />
 					</StackPanel>
 				</TabItem.Header>
 				<controls:PluginsControl x:Name="PluginsPanel" />

@@ -302,6 +302,8 @@
 
 	<!--  ***  -->
 	<sys:String x:Key="main_Apply">Apply</sys:String>
+	<sys:String x:Key="main_Plugins">Plugins</sys:String>
+	<sys:String x:Key="main_Tools">Tools</sys:String>
 	<sys:String x:Key="main_Mirror">Mirror</sys:String>
 	<sys:String x:Key="main_UI">UI</sys:String>
 	<sys:String x:Key="main_UI_Preset">UI Preset</sys:String>
