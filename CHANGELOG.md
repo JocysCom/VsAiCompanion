@@ -1,6 +1,7 @@
-2024-08-09 v1.12.53
+2024-08-10 v1.12.55
 
 - Fix: Sometimes the tray notification icon wasn't removed after exiting the app.
+- New: Option to require the AI model to use a tool function.
 
 2024-08-07 v1.12.52
 

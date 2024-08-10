@@ -679,7 +679,6 @@ EndFragment:{3:00000000}";
 			}
 		}
 
-
 		/// <summary>
 		/// Get all child controls. Excludes controls that are sourced from external XAML resource dictionaries.
 		/// </summary>

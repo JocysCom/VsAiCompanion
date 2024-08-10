@@ -24,17 +24,24 @@
 			<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="Tool Choice">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<CheckBox Name="ToolChoiceRequiredCheckBox" Content="Tool Choice Required" IsChecked="{Binding ToolChoiceRequired, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						<CheckBox
+							Name="ToolChoiceRequiredCheckBox"
+							AutomationProperties.HelpText="{StaticResource main_ToolChoiceRequired_Help}"
+							AutomationProperties.Name="{StaticResource main_ToolChoiceRequired_Name}"
+							Content="Tool Choice Required"
+							IsChecked="{Binding ToolChoiceRequired, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 						<TextBlock Margin="0,5,0,0" Text="{Binding ToolChoiceRequiredNamesString, ElementName=This}" />
 					</StackPanel>
 					<ListBox
 						Name="ToolChoiceRequiredNamesListBox"
-						Height="200"
+						Width="360"
+						MinHeight="100"
+						MaxHeight="200"
+						HorizontalAlignment="Left"
+						AutomationProperties.HelpText="{StaticResource main_ToolChoiceRequiredNames_Help}"
+						AutomationProperties.Name="{StaticResource main_ToolChoiceRequiredNames_Name}"
 						ItemsSource="{Binding ListBoxData, ElementName=This}"
-						ScrollViewer.IsDeferredScrollingEnabled="True"
-						SelectionMode="Single"
-						VirtualizingStackPanel.IsVirtualizing="True"
-						VirtualizingStackPanel.VirtualizationMode="Standard">
+						SelectionMode="Single">
 						<ListBox.ItemsPanel>
 							<ItemsPanelTemplate>
 								<VirtualizingStackPanel />

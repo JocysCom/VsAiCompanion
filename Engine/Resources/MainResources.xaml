@@ -44,6 +44,10 @@
 	<sys:String x:Key="main_Require_To_Sign_In">Require to sign in</sys:String>
 	<sys:String x:Key="main_Require_To_Sign_In_Message">Please sign in to your Microsoft account.</sys:String>
 	<sys:String x:Key="main_Plugins_require_chat_history">Plugins/functions require chat history. Uncheck the use of plugins/functions first.</sys:String>
+	<sys:String x:Key="main_ToolChoiceRequired_Name">Tool Choice Required</sys:String>
+	<sys:String x:Key="main_ToolChoiceRequired_Help">Specifies whether a tool function must be called by the AI model.</sys:String>
+	<sys:String x:Key="main_ToolChoiceRequiredNames_Name">Tool Choice Required Name</sys:String>
+	<sys:String x:Key="main_ToolChoiceRequiredNames_Help">Specifies the name of the required tool function the AI model must call.</sys:String>
 
 	<!--  Tasks / Templates → Main  -->
 	<sys:String x:Key="main_Auto_Generate_Title">Auto-Generate Title</sys:String>

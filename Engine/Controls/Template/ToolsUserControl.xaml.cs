@@ -36,6 +36,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 
 		private void CheckItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			var item = (KeyValue<string, bool>)sender;
+			if (item.Value)
+			{
+				var itemsToUncheck = ListBoxData.Where(x => x.Value && x != item).ToList();
+				foreach (var itemToUncheck in itemsToUncheck)
+				{
+					itemToUncheck.PropertyChanged -= CheckItem_PropertyChanged;
+					itemToUncheck.Value = false;
+					itemToUncheck.PropertyChanged += CheckItem_PropertyChanged;
+				}
+			}
 			Item.ToolChoiceRequiredNames = ListBoxData.Where(x => x.Value).Select(x => x.Key).ToList();
 			OnPropertyChanged(nameof(ToolChoiceRequiredNamesString));
 		}
@@ -49,15 +60,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 		{
 			if (!ListBoxData.Any())
 			{
-				var checkItems = PluginsManager.PluginFunctions.Select(x => new KeyValue<string, bool>()
-				{
-					Key = x.Key,
-				}).ToList();
+				var checkItems = PluginsManager.PluginFunctions
+					.Select(x => new KeyValue<string, bool>() { Key = x.Key, })
+					.OrderBy(x => x.Key)
+					.ToList();
 				foreach (var checkItem in checkItems)
 				{
 					checkItem.PropertyChanged += CheckItem_PropertyChanged;
 					ListBoxData.Add(checkItem);
-
 				}
 			}
 			foreach (var checkItem in ListBoxData)
@@ -71,7 +81,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 				}
 			}
 			var checkedItem = ListBoxData.Where(x => x.Value).FirstOrDefault();
-			ToolChoiceRequiredNamesListBox.SelectedItem = checkedItem;
 			if (checkedItem != null)
 				ToolChoiceRequiredNamesListBox.ScrollIntoView(checkedItem);
 		}

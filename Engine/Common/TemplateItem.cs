@@ -195,12 +195,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		bool _PluginsEnabled;
 
 
-		/// <summary>Specifies whether a tool function must be called by the client.</summary>
+		/// <summary>Specifies whether a tool function must be called by the AI model.</summary>
 		[DefaultValue(false)]
 		public bool ToolChoiceRequired { get => _ToolChoiceRequired; set => SetProperty(ref _ToolChoiceRequired, value); }
 		bool _ToolChoiceRequired;
 
-		/// <summary>Specifies the names of the required tool functions the client must call.</summary>
+		/// <summary>Specifies the names of the required tool functions the AI model must call.</summary>
 		[DefaultValue(null)]
 		public List<string> ToolChoiceRequiredNames
 		{
