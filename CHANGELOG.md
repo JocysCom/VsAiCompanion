@@ -1,3 +1,7 @@
+2024-08-09 v1.12.53
+
+- Fix: Sometimes the tray notification icon wasn't removed after exiting the app.
+
 2024-08-07 v1.12.52
 
 - New: Make Instructions checkbox bold when instructions are not empty.

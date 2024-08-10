@@ -240,6 +240,8 @@ function GetConfigurationFiles
 	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Extension\source.extension.vsixmanifest")
 	$items += (GetConfig "Setup\Setup\JocysCom.VS.AiCompanion.Setup.vdproj")
+	$items += (GetConfig "Setup\CustomActions\JocysCom.VS.AiCompanion.Setup.CustomActions.csproj")
+	$items += (GetConfig "Setup\CustomActions\Properties\AssemblyInfo.cs")
 	return $items
 }
 # ----------------------------------------------------------------------------

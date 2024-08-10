@@ -179,8 +179,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (closeZip)
 				zip.Close();
 
-			Global.MainControl.TasksPanel.TemplateItemPanel.RebindItemOnLoad = true;
-			Global.MainControl.TemplatesPanel.TemplateItemPanel.RebindItemOnLoad = true;
+			var panel = Global.MainControl?.TasksPanel?.TemplateItemPanel;
+			if (panel != null)
+				panel.RebindItemOnLoad = true;
+			panel = Global.MainControl?.TemplatesPanel?.TemplateItemPanel;
+			if (panel != null)
+				panel.RebindItemOnLoad = true;
 		}
 
 		#endregion

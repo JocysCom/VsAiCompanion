@@ -167,16 +167,22 @@ namespace JocysCom.VS.AiCompanion
 
 		private void StartHelper_OnClose(object sender, EventArgs e)
 		{
-			Shutdown();
+			ShutDownWithOptionalSaveAndTrayDispose(true);
 		}
 
 		private bool allowToRun;
 
 		private void TrayManager_OnExitClick(object sender, EventArgs e)
 		{
+			ShutDownWithOptionalSaveAndTrayDispose(true);
+		}
+
+		void ShutDownWithOptionalSaveAndTrayDispose(bool saveSettings)
+		{
+			if (saveSettings)
+				Global.SaveSettings();
 			// Remove tray icon first.
-			Global.SaveSettings();
-			TrayManager.Dispose();
+			TrayManager?.Dispose();
 			Shutdown();
 		}
 
@@ -267,7 +273,7 @@ namespace JocysCom.VS.AiCompanion
 		{
 			if (!allowToRun)
 			{
-				Shutdown();
+				ShutDownWithOptionalSaveAndTrayDispose(false);
 				return;
 			}
 			base.OnStartup(e);
@@ -289,7 +295,7 @@ namespace JocysCom.VS.AiCompanion
 				var message = ExceptionToText(ex);
 				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OKCancel, MessageBoxImage.Error, MessageBoxResult.OK);
 				if (result == MessageBoxResult.Cancel)
-					Shutdown();
+					ShutDownWithOptionalSaveAndTrayDispose(false);
 			}
 		}
 
