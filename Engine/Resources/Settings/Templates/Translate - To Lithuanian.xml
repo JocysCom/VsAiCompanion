@@ -1,0 +1,44 @@
+﻿<TemplateItem>
+  <Name>Translate - To Lithuanian</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACs1W247bNhB9z1cQyksCkBJvui2sfeii2OYhDdAgHyDLlK2GlgyKu7b36ztDyYa9&#xD;
+2KQwggI1IJE8nMs5MxThxfi8Js/Gjd3QV5GIRfSOwO+wtf1YRRvvd3dJst/v472KB7dOJOc8AZ8L&#xD;
+s7uD7frvbxmLsiyTsBuRfbfymypKhYzIxnTrjZ8Xz53Z/zYcqogTTgDBJ7oP4Re+89bce1f3o629&#xD;
+IV0z9ItkQieLlRmbVwakdcOW+I0hn2D1+2FnXGf6xsQNwI/sYbDWNB70xuRh2B0dciHLI/n058OX&#xD;
+v76Sx+3yD/IBVXR9M7gR3T7GiyRkOiVtx2kaliDQ1O7R1SvI48lBQCGziBzn8SCrSAkRQzGyFODr&#xD;
+5Xp2+9Z3Hir+NBr3dVc35kv/bTQR6VZV1Ax2cEzMRTmnHf2wI0PbjgZKySOCaxZsq+h92zaciyj5&#xD;
+mY945bPipeL80meRXGv7uWhdTKIV15PqAMBYpqC2KG5RK29Ui7/b1JrMLNtfUCvyU49xEuRmPNZa&#xD;
+zz3WZXaDXnWTXtUueXtjd4UsjTG/0N2cxygNp1l+UlzEPM8nwVLruLxBsv7PW7yqjTDlv0vGj/v0&#xD;
+RS/WpO2sraJ+6IEuzpl7siYAL8YNmMMN383JYlqx+X4TZwATNfWuipZP3l+hfw8d3LXbzht3xsPK&#xD;
+djBADH6GV/W4qZ2rj1V0hV1UqR16z9p629njmTRC+/mSvYDG7uVM25uDZ3XfbLBSJyVH1LntDmxp&#xD;
+Tb9i22Fl7kg/uG1tL5q12NV+Q6CPn3VBRWZlmlHeiDxOKSdKUqHjFEclLaew2XCKm4ThBqCETZts&#xD;
+cmSzJ6LBZJoFbza5BxMS3AHH2DC8zIfpyT0bNXUKjpuzH97PF+bHq86fSUtRQhwIbFkRMlsmUhh1&#xD;
+YRmcZwRKxDG3zTgui5NDVlL+Qj4LnVPJAbXpHEGWlBXlJSX5BiX5I0ocCpn/Lyop3qCtfkBbKayk&#xD;
+5hCyYUpTGbhlAQzZhYA7g6Y5EBSQCKrc4AtYSJKLqcZIhwMNXTZMBl6yCMyhohnYEJbCbplbAexh&#xD;
+37IUrThq0hxQTAHaT3HhCUHgDXPkwpSygSkTChiUVEDKnCpOJKypziCoQBEhKMRkeqqmoCojTMI+&#xD;
+zUO4FOrPgVOjMCl6kyyjCvkGnKbYC0UV1gP4QyKWz7UOdKDPLAUqcIbkdKpyeDfhQEIagqxpqonG&#xD;
++OjZCPCQsCIK9RYEk9EQ9LJreA+87po+d22RrO/fLfBv2/0/rnAjkPAJAAA=</IconData>
+  <Created>2024-02-25T21:17:33.1586759+00:00</Created>
+  <Modified>2024-02-25T21:17:33.1586759+00:00</Modified>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4o</AiModel>
+  <TextInstructions>Identify the language used in the text. If it is not Lithuanian, translate it to Lithuanian. If it is Lithuanian, correct any grammar issues. Wrap the response text in a markdown code block labeled text:&#xD;
+&#xD;
+```text
+{response text}
+```&#xD;
+</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
+  <AttachmentsSelection />
+</TemplateItem>
