@@ -1,7 +1,9 @@
 2024-08-10 v1.12.55
 
 - Fix: Sometimes the tray notification icon wasn't removed after exiting the app.
-- New: Option to require the AI model to use a tool function.
+- Fix: Crash when retrieving a list.
+- New: Option to require the AI model to use a tool function. Requires `gpt-4o` 2024-08-06+.
+- Update: Updated `Prompts` list.
 
 2024-08-07 v1.12.52
 

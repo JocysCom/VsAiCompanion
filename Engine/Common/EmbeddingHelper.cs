@@ -24,8 +24,7 @@ using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System.Windows.Threading;
-
-
+using System.Text.RegularExpressions;
 #if NETFRAMEWORK
 using System.Data.SQLite;
 #else
@@ -40,20 +39,57 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public TemplateItem Item { get; set; }
 
 		public static async Task<ProgressStatus> UpdateEmbedding(
+			EmbeddingsItem ei,
 			EmbeddingsContext db,
 			string fileName,
 			System.Security.Cryptography.SHA256 algorithm,
-			AiService service, string modelName,
-			string embeddingGroupName, EmbeddingGroupFlag embeddingGroupFlag,
 			CancellationToken cancellationToken = default
 		)
 		{
+			var service = ei.AiService;
+			var modelName = ei.AiModel;
+
 			var fi = new FileInfo(fileName);
+
+			var source = AssemblyInfo.ExpandPath(ei.Source);
+			(var embeddingGroupName, var embeddingGroupFlagName) = GetGroupAndFlagNames(source, fi.FullName);
+			if (ei.OverrideGroupName)
+				embeddingGroupName = ei.EmbeddingGroupName;
+
+			var embeddingGroupFlag = ei.EmbeddingGroupFlag;
+			if (!ei.OverrideGroupFlag)
+			{
+				var groups = GetFlags(ei, embeddingGroupName);
+				var group = groups.FirstOrDefault(x => x.Name == embeddingGroupName && x.FlagName == embeddingGroupFlagName);
+				// Group flag not found.
+				if (group == null)
+				{
+					var allFlags = (EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag));
+					var freeFlag = allFlags
+						.Except(groups.Select(x => (EmbeddingGroupFlag)x.Flag))
+						.Except(new[] { EmbeddingGroupFlag.None })
+						.First();
+					var item = new Embeddings.Embedding.Group();
+					item.Timestamp = DateTime.UtcNow.Ticks;
+					item.Name = embeddingGroupName;
+					item.Flag = (long)freeFlag;
+					item.FlagName = embeddingGroupFlagName;
+					db.Groups.Add(item);
+					db.SaveChanges();
+					embeddingGroupFlag = freeFlag;
+				}
+				else
+				{
+					embeddingGroupFlag = (EmbeddingGroupFlag)group.Flag;
+				}
+			}
+
 			var file = db.Files.FirstOrDefault(x =>
 				// Select item by index.
 				x.GroupName == embeddingGroupName &&
 				x.GroupFlag == (int)embeddingGroupFlag &&
 				x.Url == fi.FullName);
+
 			var fileHash = HashHelper.GetHashFromFile(algorithm, fileName);
 			var fileHashDb = EmbeddingBase.GetHashByName(file?.Hash, file?.HashType);
 			// If file found but different.
@@ -395,7 +431,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var ei = Global.Embeddings.Items.FirstOrDefault(x => x.Name == embeddingName);
 				if (ei == null)
 					return;
-				var flags = GetFlags(ei);
+				var flags = GetFlags(ei, ei?.EmbeddingGroupName);
 				// Update the UI thread
 				Dispatcher.CurrentDispatcher.Invoke(() =>
 				{
@@ -418,7 +454,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static void ApplyDatabase(string embeddingName, ObservableCollection<EnumComboBox.CheckBoxViewModel> property)
 		{
 			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.Name == embeddingName);
-			var flags = GetFlags(ei);
+			var flags = GetFlags(ei, ei?.EmbeddingGroupName);
 			var items = property.ToArray();
 			foreach (var item in items)
 			{
@@ -430,7 +466,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		private static Embeddings.Embedding.Group[] GetFlags(EmbeddingsItem ei)
+		private static Embeddings.Embedding.Group[] GetFlags(EmbeddingsItem ei, string groupName)
 		{
 			if (ei?.IsEnabled != true || string.IsNullOrWhiteSpace(ei?.Target))
 				return Array.Empty<Embeddings.Embedding.Group>();
@@ -441,7 +477,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					? SqlInitHelper.PathToConnectionString(target)
 					: target;
 				var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
-				var items = db.Groups.Where(x => x.Name == ei.EmbeddingGroupName).ToArray();
+				var items = db.Groups.Where(x => x.Name == groupName).ToArray();
 				return items;
 			}
 			catch (Exception)
@@ -450,6 +486,32 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
+		public static (string groupName, string flagName) GetGroupAndFlagNames(string rootPath, string filePath)
+		{
+			// Fix relative folder path.
+			rootPath = rootPath.TrimEnd('\\') + "\\";
+			// Get the directory name of the root path
+			var rootDirectoryName = new DirectoryInfo(rootPath).Name;
+			// Determine the group name based on the root path
+			var groupName = string.IsNullOrEmpty(rootDirectoryName) || rootDirectoryName == rootPath.TrimEnd('\\')
+				? "."
+				: rootDirectoryName;
+			// Get the relative path from the root path
+			var relativePath = JocysCom.ClassLibrary.IO.PathHelper.GetRelativePath(rootPath, filePath);
+			// Regular expression to match flag name in the relative path
+			var regex = new Regex(@"^(?<flag>[^\\]+)?.*");
+			var match = regex.Match(relativePath);
+			if (match.Success)
+			{
+				// If the flag group is not available, return "."
+				var flagName = match.Groups["flag"].Success ? match.Groups["flag"].Value : ".";
+				return (groupName, flagName);
+			}
+			else
+			{
+				throw new InvalidOperationException("The provided file path does not match the expected format.");
+			}
+		}
 
 	}
 }

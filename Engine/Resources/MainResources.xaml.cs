@@ -145,6 +145,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Source => FindResource(nameof(main_Source));
         public static string main_Source_Folder => FindResource(nameof(main_Source_Folder));
         public static string main_Target_Database => FindResource(nameof(main_Target_Database));
+        public static string main_OverrideGroupName_Name => FindResource(nameof(main_OverrideGroupName_Name));
+        public static string main_OverrideGroupName_Help => FindResource(nameof(main_OverrideGroupName_Help));
+        public static string main_OverrideGroupFlag_Name => FindResource(nameof(main_OverrideGroupFlag_Name));
+        public static string main_OverrideGroupFlag_Help => FindResource(nameof(main_OverrideGroupFlag_Help));
         public static string main_Comment => FindResource(nameof(main_Comment));
         public static string main_Key => FindResource(nameof(main_Key));
         public static string main_List_Description => FindResource(nameof(main_List_Description));

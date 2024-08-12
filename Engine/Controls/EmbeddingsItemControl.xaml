@@ -76,7 +76,11 @@
 				VerticalAlignment="Top" />
 
 			<!--  Service  -->
-			<Label Grid.Column="1" VerticalAlignment="Center" Content="{StaticResource main_Service}" Margin="3,0,0,0"  />
+			<Label
+				Grid.Column="1"
+				Margin="3,0,0,0"
+				VerticalAlignment="Center"
+				Content="{StaticResource main_Service}" />
 			<StackPanel
 				Grid.Column="2"
 				Grid.ColumnSpan="2"
@@ -91,9 +95,10 @@
 			</StackPanel>
 
 			<!--  Source: Folder  -->
-			<Label  Margin="3,0,0,0"
+			<Label
 				Grid.Row="1"
 				Grid.Column="1"
+				Margin="3,0,0,0"
 				VerticalAlignment="Center"
 				Content="{StaticResource main_Source_Folder}" />
 			<TextBox
@@ -119,9 +124,10 @@
 
 			<!--  Source: File Name Pattern  -->
 			<Label
-				x:Name="SourcePatternLabel"  Margin="3,0,0,0"
+				x:Name="SourcePatternLabel"
 				Grid.Row="2"
 				Grid.Column="1"
+				Margin="3,0,0,0"
 				Content="File Name Pattern" />
 			<StackPanel
 				Grid.Row="2"
@@ -179,13 +185,21 @@
 			</StackPanel>
 			<!--  5. Import and Export  -->
 			<StackPanel Grid.Row="5" Grid.Column="3" Orientation="Horizontal">
-				<Button Name="ImportButton" MinWidth="78" Click="ImportButton_Click">
+				<Button
+					Name="ImportButton"
+					MinWidth="78"
+					VerticalAlignment="Bottom"
+					Click="ImportButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_Import}" Focusable="False" />
 						<Label Content="Import..." />
 					</StackPanel>
 				</Button>
-				<Button Name="ExportButton" MinWidth="78" Click="ExportButton_Click">
+				<Button
+					Name="ExportButton"
+					MinWidth="78"
+					VerticalAlignment="Bottom"
+					Click="ExportButton_Click">
 					<StackPanel Focusable="False">
 						<ContentControl Content="{StaticResource Icon_Export}" Focusable="False" />
 						<Label Content="Export..." />
@@ -203,39 +217,74 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
-				<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName, UpdateSourceTrigger=PropertyChanged}" />
-				<Label x:Name="EmbeddingGroupFlagLabel" Margin="3,0,0,0" Content="Sub-Group Name · Flag" />
-				<Grid>
-					<TextBox
-						x:Name="EmbeddingGroupFlagNameTextBox"
-						MinWidth="64"
-						PreviewKeyDown="EmbeddingGroupFlagNameTextBox_PreviewKeyDown"
-						Text="{Binding EmbeddingGroupFlagName, UpdateSourceTrigger=PropertyChanged}" />
-					<ComboBox
-						Name="EmbeddingGroupComboBox"
-						MinWidth="64"
-						DisplayMemberPath="Value"
-						ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
-						SelectedValue="{Binding EmbeddingGroupFlag}"
-						SelectedValuePath="Key" />
-				</Grid>
-				<StackPanel Orientation="Horizontal">
-					<Button Name="EditEditButton" Click="EditEditButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+				<GroupBox x:Name="EnterpriseOptionsGroupBox" Margin="3,0,3,0">
+					<GroupBox.Header>
+						<CheckBox
+							x:Name="OverrideGroupNameCheckbox"
+							Margin="-4"
+							AutomationProperties.HelpText="{StaticResource main_OverrideGroupName_Help}"
+							AutomationProperties.Name="{StaticResource main_OverrideGroupName_Name}"
+							Content="{StaticResource main_OverrideGroupName_Name}"
+							IsChecked="{Binding OverrideGroupName, UpdateSourceTrigger=PropertyChanged}" />
+					</GroupBox.Header>
+					<StackPanel>
+						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName, UpdateSourceTrigger=PropertyChanged}" />
+						<!--<ComboBox
+									Name="EmbeddingGroupNameComboBox"
+									MinWidth="64"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
+									SelectedValue="{Binding EmbeddingGroupFlag}"
+									SelectedValuePath="Key" />-->
+					</StackPanel>
+				</GroupBox>
+
+				<GroupBox x:Name="OverrideGroupFlagGroupBox" Margin="3,0,3,0">
+					<GroupBox.Header>
+						<CheckBox
+							x:Name="OverrideGroupFlagCheckbox"
+							Margin="-4"
+							AutomationProperties.HelpText="{StaticResource main_OverrideGroupFlag_Help}"
+							AutomationProperties.Name="{StaticResource main_OverrideGroupFlag_Name}"
+							Content="{StaticResource main_OverrideGroupFlag_Name}"
+							IsChecked="{Binding OverrideGroupFlag, UpdateSourceTrigger=PropertyChanged}" />
+					</GroupBox.Header>
+					<StackPanel Orientation="Horizontal">
+						<StackPanel Orientation="Horizontal">
+							<Grid>
+								<TextBox
+									x:Name="EmbeddingGroupFlagNameTextBox"
+									MinWidth="64"
+									PreviewKeyDown="EmbeddingGroupFlagNameTextBox_PreviewKeyDown"
+									Text="{Binding EmbeddingGroupFlagName, UpdateSourceTrigger=PropertyChanged}" />
+								<ComboBox
+									Name="EmbeddingGroupFlagComboBox"
+									MinWidth="64"
+									DisplayMemberPath="Value"
+									ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
+									SelectedValue="{Binding EmbeddingGroupFlag}"
+									SelectedValuePath="Key" />
+							</Grid>
 						</StackPanel>
-					</Button>
-					<Button Name="EditApplyButton" Click="EditApplyButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+						<StackPanel Orientation="Horizontal">
+							<Button Name="EditEditButton" Click="EditEditButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+								</StackPanel>
+							</Button>
+							<Button Name="EditApplyButton" Click="EditApplyButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+								</StackPanel>
+							</Button>
+							<Button Name="EditCancelButton" Click="EditCancelButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+								</StackPanel>
+							</Button>
 						</StackPanel>
-					</Button>
-					<Button Name="EditCancelButton" Click="EditCancelButton_Click">
-						<StackPanel Focusable="False">
-							<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
-						</StackPanel>
-					</Button>
-				</StackPanel>
+					</StackPanel>
+				</GroupBox>
 			</StackPanel>
 			<!--  6. Separator  -->
 			<Border

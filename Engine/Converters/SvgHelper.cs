@@ -44,6 +44,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Converters
 
 		public static DrawingImage LoadSvgFromString(string svgContent)
 		{
+			if (svgContent == null)
+				return null;
 			var hash = GetHashString(svgContent);
 			return _defaultValuesCache.GetOrAdd(hash, t => _LoadSvgFromString(svgContent));
 		}

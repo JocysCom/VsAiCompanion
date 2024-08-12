@@ -120,6 +120,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				IconPanel.BindData(value);
 				LogPanel.Clear();
+				UpdateGroupName();
 				OnPropertyChanged(nameof(Item));
 			}
 		}
@@ -132,6 +133,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 			if (e.PropertyName == nameof(EmbeddingsItem.Target))
 				MaskConnectionString();
+			if (e.PropertyName == nameof(EmbeddingsItem.Source))
+				UpdateGroupName();
+			if (e.PropertyName == nameof(EmbeddingsItem.OverrideGroupName))
+				UpdateGroupName();
+		}
+
+		void UpdateGroupName()
+		{
+			if (!Item.OverrideGroupName)
+			{
+				var source = AssemblyInfo.ExpandPath(Item.Source);
+				(var groupName, var flag) = EmbeddingHelper.GetGroupAndFlagNames(source, source);
+				Item.EmbeddingGroupName = groupName;
+			}
 		}
 
 		public void EmbeddingGroupFlags_OnPropertyChanged()
@@ -416,11 +431,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				var fi = (FileInfo)e.SubData;
 				var processingState = await EmbeddingHelper.UpdateEmbedding(
+					Item,
 					db, fi.FullName, algorithm,
-					Item.AiService, Item.AiModel,
-					Item.EmbeddingGroupName, Item.EmbeddingGroupFlag,
 					fp.Cancellation.Token
-					);
+				);
 				return processingState;
 			}
 			catch (Exception ex)
@@ -511,20 +525,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 		ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> _EmbeddingGroupFlags;
 
+		#region Edit Group Name
+
+		#endregion
+
 
 		#region Edit Group Flag
 
 		void GroupFlagNameEditMode(bool editMode)
 		{
-			Panel.SetZIndex(EmbeddingGroupComboBox, editMode ? 0 : 1);
+			Panel.SetZIndex(EmbeddingGroupFlagComboBox, editMode ? 0 : 1);
 			Panel.SetZIndex(EmbeddingGroupFlagNameTextBox, editMode ? 1 : 0);
-			EditEditButton.Visibility = editMode
-				? Visibility.Collapsed
-				: Visibility.Visible;
+			EditEditButton.Visibility = !editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			EditApplyButton.Visibility = editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			EditCancelButton.Visibility = editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			EmbeddingGroupFlagNameTextBox.Visibility = editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			EmbeddingGroupFlagComboBox.Visibility = !editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
 		}

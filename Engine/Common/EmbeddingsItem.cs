@@ -55,6 +55,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string Instructions { get => _Instructions; set => SetProperty(ref _Instructions, string.IsNullOrWhiteSpace(value) ? "" : value); }
 		string _Instructions;
 
+		/// <summary>
+		/// Specify group name manually and override.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool OverrideGroupName { get => _OverrideGroupName; set => SetProperty(ref _OverrideGroupName, value); }
+		bool _OverrideGroupName;
+
+		/// <summary>
+		/// Specify group flag manually and override.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool OverrideGroupFlag { get => _OverrideGroupFlag; set => SetProperty(ref _OverrideGroupFlag, value); }
+		bool _OverrideGroupFlag;
+
 		[DefaultValue("")]
 		public string EmbeddingGroupName { get => _EmbeddingGroupName; set => SetProperty(ref _EmbeddingGroupName, value); }
 		string _EmbeddingGroupName;

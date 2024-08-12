@@ -100,7 +100,6 @@
 	<sys:String x:Key="main_Upload">Upload</sys:String>
 	<sys:String x:Key="main_Validate">Validate</sys:String>
 
-
 	<!--  Embeddings  -->
 	<sys:String x:Key="main_Database">Database</sys:String>
 	<sys:String x:Key="main_Embedding_Default_Instructions">Analyse the information provided below and use it to enhance the relevance of responses to users. Use information pertinent to your designated role and profile. Use only the contents from these documents to answer questions.</sys:String>
@@ -110,6 +109,10 @@
 	<sys:String x:Key="main_Source">Source</sys:String>
 	<sys:String x:Key="main_Source_Folder">Source Folder</sys:String>
 	<sys:String x:Key="main_Target_Database">Target Database</sys:String>
+	<sys:String x:Key="main_OverrideGroupName_Name">Override Group Name</sys:String>
+	<sys:String x:Key="main_OverrideGroupName_Help">Override Group Name - Don't automatically set the group name from the data folder when importing data.</sys:String>
+	<sys:String x:Key="main_OverrideGroupFlag_Name">Override Flag (sub-Group)</sys:String>
+	<sys:String x:Key="main_OverrideGroupFlag_Help">Override Flag (sub-Group) - Don't automatically set the group flag from the data folder when importing data.</sys:String>
 
 	<!--  Lists  -->
 	<sys:String x:Key="main_Comment">Comment</sys:String>
