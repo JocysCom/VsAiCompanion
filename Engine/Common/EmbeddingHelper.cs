@@ -25,6 +25,7 @@ using JocysCom.VS.AiCompanion.Engine.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
+
 #if NETFRAMEWORK
 using System.Data.SQLite;
 #else
@@ -422,8 +423,23 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-
-		public static void ApplyDatabase(string embeddingName, ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> property)
+		public static void UpdateGroupNamesFromDatabase(string embeddingName, ObservableCollection<string> property)
+		{
+			// Run the time-consuming operations asynchronously
+			Task.Run(() =>
+			{
+				var ei = Global.Embeddings.Items.FirstOrDefault(x => x.Name == embeddingName);
+				if (ei == null)
+					return;
+				var names = GetGroupNames(ei);
+				// Update property on the UI thread.
+				Dispatcher.CurrentDispatcher.Invoke(() =>
+				{
+					CollectionsHelper.Synchronize(names, property);
+				});
+			});
+		}
+		public static void UpdateGroupFlagsFromDatabase(string embeddingName, ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> property)
 		{
 			// Run the time-consuming operations asynchronously
 			Task.Run(() =>
@@ -451,7 +467,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			});
 		}
 
-		public static void ApplyDatabase(string embeddingName, ObservableCollection<EnumComboBox.CheckBoxViewModel> property)
+		public static void UpdateGroupFlagsFromDatabase(string embeddingName, ObservableCollection<EnumComboBox.CheckBoxViewModel> property)
 		{
 			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.Name == embeddingName);
 			var flags = GetFlags(ei, ei?.EmbeddingGroupName);
@@ -465,6 +481,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 				item.Description = description;
 			}
 		}
+
+		private static string[] GetGroupNames(EmbeddingsItem ei)
+		{
+			if (ei?.IsEnabled != true || string.IsNullOrWhiteSpace(ei?.Target))
+				return Array.Empty<string>();
+			try
+			{
+				var target = AssemblyInfo.ExpandPath(ei.Target);
+				var connectionString = SqlInitHelper.IsPortable(target)
+					? SqlInitHelper.PathToConnectionString(target)
+					: target;
+				var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
+				var items = db.Files.Select(x => x.GroupName).Distinct().ToArray();
+				return items;
+			}
+			catch (Exception)
+			{
+				return Array.Empty<string>();
+			}
+		}
+
 
 		private static Embeddings.Embedding.Group[] GetFlags(EmbeddingsItem ei, string groupName)
 		{

@@ -3,7 +3,6 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
-	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -227,15 +226,40 @@
 							Content="{StaticResource main_OverrideGroupName_Name}"
 							IsChecked="{Binding OverrideGroupName, UpdateSourceTrigger=PropertyChanged}" />
 					</GroupBox.Header>
-					<StackPanel>
-						<TextBox Name="EmbeddingGroupNameTextBox" MinWidth="64" Text="{Binding EmbeddingGroupName, UpdateSourceTrigger=PropertyChanged}" />
-						<!--<ComboBox
-									Name="EmbeddingGroupNameComboBox"
+					<StackPanel Orientation="Horizontal">
+						<StackPanel Orientation="Horizontal">
+							<Grid>
+								<TextBox
+									x:Name="GroupNameTextBox"
+									MinWidth="64"
+									PreviewKeyDown="GroupNameTextBox_PreviewKeyDown"
+									Text="{Binding EmbeddingGroupName, UpdateSourceTrigger=PropertyChanged}" />
+								<ComboBox
+									Name="GroupNameComboBox"
 									MinWidth="64"
 									DisplayMemberPath="Value"
-									ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
-									SelectedValue="{Binding EmbeddingGroupFlag}"
-									SelectedValuePath="Key" />-->
+									ItemsSource="{Binding EmbeddingGroupNames, ElementName=This}"
+									SelectedValue="{Binding EmbeddingGroupName}"
+									SelectedValuePath="Key" />
+							</Grid>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<Button Name="GroupNameEditButton" Click="GroupNameEditButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+								</StackPanel>
+							</Button>
+							<Button Name="GroupNameApplyButton" Click="GroupNameApplyButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+								</StackPanel>
+							</Button>
+							<Button Name="GroupNameCancelButton" Click="GroupNameCancelButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
 					</StackPanel>
 				</GroupBox>
 
@@ -253,12 +277,12 @@
 						<StackPanel Orientation="Horizontal">
 							<Grid>
 								<TextBox
-									x:Name="EmbeddingGroupFlagNameTextBox"
+									x:Name="GroupFlagNameTextBox"
 									MinWidth="64"
-									PreviewKeyDown="EmbeddingGroupFlagNameTextBox_PreviewKeyDown"
+									PreviewKeyDown="GroupFlagNameTextBox_PreviewKeyDown"
 									Text="{Binding EmbeddingGroupFlagName, UpdateSourceTrigger=PropertyChanged}" />
 								<ComboBox
-									Name="EmbeddingGroupFlagComboBox"
+									Name="GroupFlagComboBox"
 									MinWidth="64"
 									DisplayMemberPath="Value"
 									ItemsSource="{Binding EmbeddingGroupFlags, ElementName=This}"
@@ -267,17 +291,17 @@
 							</Grid>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<Button Name="EditEditButton" Click="EditEditButton_Click">
+							<Button Name="GroupFlagEditButton" Click="GroupFlagEditButton_Click">
 								<StackPanel Focusable="False">
 									<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
 								</StackPanel>
 							</Button>
-							<Button Name="EditApplyButton" Click="EditApplyButton_Click">
+							<Button Name="GroupFlagApplyButton" Click="GroupFlagApplyButton_Click">
 								<StackPanel Focusable="False">
 									<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
 								</StackPanel>
 							</Button>
-							<Button Name="EditCancelButton" Click="EditCancelButton_Click">
+							<Button Name="GroupFlagCancelButton" Click="GroupFlagCancelButton_Click">
 								<StackPanel Focusable="False">
 									<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
 								</StackPanel>

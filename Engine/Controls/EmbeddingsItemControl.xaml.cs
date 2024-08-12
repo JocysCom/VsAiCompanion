@@ -110,9 +110,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				AiModelBoxPanel.Item = null;
 				_Item = value;
 				GroupFlagNameEditMode(false);
+				GroupNameEditMode(false);
 				TargetEditMode(false);
 				MaskConnectionString();
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+				_ = Helper.Delay(EmbeddingGroupNames_OnPropertyChanged);
 				AiModelBoxPanel.Item = value;
 				if (value != null)
 				{
@@ -147,12 +149,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				(var groupName, var flag) = EmbeddingHelper.GetGroupAndFlagNames(source, source);
 				Item.EmbeddingGroupName = groupName;
 			}
-		}
-
-		public void EmbeddingGroupFlags_OnPropertyChanged()
-		{
-			if (_IsLoaded)
-				OnPropertyChanged(nameof(EmbeddingGroupFlags));
 		}
 
 		System.Windows.Forms.FolderBrowserDialog _FolderBrowser = new System.Windows.Forms.FolderBrowserDialog();
@@ -505,71 +501,180 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			=> ClassLibrary.Runtime.Attributes.GetDictionary(
 			(EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag)));
 
-		public ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> EmbeddingGroupFlags
+		#region Edit Group Name
+
+		void GroupNameEditMode(bool editMode)
+		{
+			if (editMode)
+				GroupNameTextBox.Text = Item.EmbeddingGroupName;
+			Panel.SetZIndex(GroupNameComboBox, editMode ? 0 : 1);
+			Panel.SetZIndex(GroupNameTextBox, editMode ? 1 : 0);
+			GroupNameEditButton.Visibility = !editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			GroupNameApplyButton.Visibility = editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			GroupNameCancelButton.Visibility = editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			GroupNameTextBox.Visibility = editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			GroupNameComboBox.Visibility = !editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+		}
+
+		private void GroupNameEditButton_Click(object sender, RoutedEventArgs e)
+		{
+			GroupNameEditMode(true);
+		}
+
+		private void GroupNameApplyButton_Click(object sender, RoutedEventArgs e)
+		{
+			GroupNameApplyChanges();
+		}
+
+		private void GroupNameCancelButton_Click(object sender, RoutedEventArgs e)
+		{
+			GroupNameEditMode(false);
+		}
+
+		private void GroupNameTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			if (e.Key == System.Windows.Input.Key.Enter)
+			{
+				e.Handled = true;
+				GroupNameApplyChanges();
+			}
+			if (e.Key == System.Windows.Input.Key.Escape)
+			{
+				GroupNameEditMode(false);
+			}
+		}
+
+		void GroupNameApplyChanges()
+		{
+			LogPanel.Clear();
+			try
+			{
+				var target = AssemblyInfo.ExpandPath(Item.Target);
+				var connectionString = SqlInitHelper.IsPortable(target)
+					? SqlInitHelper.PathToConnectionString(target)
+					: target;
+				db = SqlInitHelper.NewEmbeddingsContext(connectionString);
+				// Rename group items.
+				var groups = db.Groups.Where(x => x.Name == Item.EmbeddingGroupName).ToArray();
+				foreach (var group in groups)
+					group.Name = Item.EmbeddingGroupName;
+				db.SaveChanges();
+				// Rename file groups.
+				var files = db.Files.Where(x => x.GroupName == Item.EmbeddingGroupName).ToArray();
+				foreach (var file in files)
+					file.GroupName = Item.EmbeddingGroupName;
+				db.SaveChanges();
+				// Rename file part groups.
+				var fileParts = db.FileParts.Where(x => x.GroupName == Item.EmbeddingGroupName).ToArray();
+				foreach (var filePart in fileParts)
+					filePart.GroupName = Item.EmbeddingGroupName;
+				db.SaveChanges();
+			}
+			catch (Exception ex)
+			{
+				LogPanel.Clear();
+				LogPanel.Add(ex.ToString());
+			}
+			GroupNameEditMode(false);
+			_ = Helper.Delay(EmbeddingGroupNames_OnPropertyChanged);
+		}
+
+		public void EmbeddingGroupNames_OnPropertyChanged()
+		{
+			if (_IsLoaded)
+				OnPropertyChanged(nameof(EmbeddingGroupNames));
+		}
+
+		public ObservableCollection<string> EmbeddingGroupNames
 		{
 			get
 			{
-				if (_EmbeddingGroupFlags == null)
+				if (_EmbeddingGroupNames == null)
 				{
-					var values = (EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag));
-					var dic = new ObservableCollection<KeyValue<EmbeddingGroupFlag, string>>();
-					foreach (var value in values)
-						dic.Add(new KeyValue<EmbeddingGroupFlag, string>(value, Attributes.GetDescription(value)));
-					_EmbeddingGroupFlags = dic;
+					var oc = new ObservableCollection<string>();
+					if (!string.IsNullOrEmpty(Item?.EmbeddingGroupName))
+						oc.Add(Item.EmbeddingGroupName);
+					_EmbeddingGroupNames = oc;
 				}
 				if (Item?.IsEnabled == true)
-					EmbeddingHelper.ApplyDatabase(Item?.Name, _EmbeddingGroupFlags);
-				return _EmbeddingGroupFlags;
+					EmbeddingHelper.UpdateGroupNamesFromDatabase(Item?.Name, _EmbeddingGroupNames);
+				return _EmbeddingGroupNames;
 			}
-			set => _EmbeddingGroupFlags = value;
+			set => _EmbeddingGroupNames = value;
 		}
-		ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> _EmbeddingGroupFlags;
+		ObservableCollection<string> _EmbeddingGroupNames;
 
-		#region Edit Group Name
 
 		#endregion
-
 
 		#region Edit Group Flag
 
 		void GroupFlagNameEditMode(bool editMode)
 		{
-			Panel.SetZIndex(EmbeddingGroupFlagComboBox, editMode ? 0 : 1);
-			Panel.SetZIndex(EmbeddingGroupFlagNameTextBox, editMode ? 1 : 0);
-			EditEditButton.Visibility = !editMode
+			Panel.SetZIndex(GroupFlagComboBox, editMode ? 0 : 1);
+			Panel.SetZIndex(GroupFlagNameTextBox, editMode ? 1 : 0);
+			GroupFlagEditButton.Visibility = !editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			EditApplyButton.Visibility = editMode
+			GroupFlagApplyButton.Visibility = editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			EditCancelButton.Visibility = editMode
+			GroupFlagCancelButton.Visibility = editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			EmbeddingGroupFlagNameTextBox.Visibility = editMode
+			GroupFlagNameTextBox.Visibility = editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
-			EmbeddingGroupFlagComboBox.Visibility = !editMode
+			GroupFlagComboBox.Visibility = !editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
 		}
 
-		private void EditEditButton_Click(object sender, RoutedEventArgs e)
+		private void GroupFlagEditButton_Click(object sender, RoutedEventArgs e)
 		{
 			var parts = EmbeddingGroupFlags.First(x => x.Key == Item.EmbeddingGroupFlag)?.Value.Split(':');
 			if (parts?.Count() > 1)
-				EmbeddingGroupFlagNameTextBox.Text = parts[1].Trim();
+				GroupFlagNameTextBox.Text = parts[1].Trim();
 			else
-				EmbeddingGroupFlagNameTextBox.Clear();
+				GroupFlagNameTextBox.Clear();
 			GroupFlagNameEditMode(true);
 		}
 
-		private void EditApplyButton_Click(object sender, RoutedEventArgs e)
+		private void GroupFlagApplyButton_Click(object sender, RoutedEventArgs e)
 		{
 
-			ApplyEditChanges();
+			GroupFlagApplyChanges();
 		}
 
-		void ApplyEditChanges()
+		private void GroupFlagCancelButton_Click(object sender, RoutedEventArgs e)
+		{
+			GroupFlagNameEditMode(false);
+		}
+
+		private void GroupFlagNameTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			if (e.Key == System.Windows.Input.Key.Enter)
+			{
+				e.Handled = true;
+				GroupFlagApplyChanges();
+			}
+			if (e.Key == System.Windows.Input.Key.Escape)
+			{
+				GroupFlagNameEditMode(false);
+			}
+		}
+
+		void GroupFlagApplyChanges()
 		{
 			LogPanel.Clear();
 			try
@@ -605,27 +710,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 		}
 
-
-		private void EditCancelButton_Click(object sender, RoutedEventArgs e)
+		public void EmbeddingGroupFlags_OnPropertyChanged()
 		{
-			GroupFlagNameEditMode(false);
+			if (_IsLoaded)
+				OnPropertyChanged(nameof(EmbeddingGroupFlags));
 		}
 
+		public ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> EmbeddingGroupFlags
+		{
+			get
+			{
+				if (_EmbeddingGroupFlags == null)
+				{
+					var values = (EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag));
+					var dic = new ObservableCollection<KeyValue<EmbeddingGroupFlag, string>>();
+					foreach (var value in values)
+						dic.Add(new KeyValue<EmbeddingGroupFlag, string>(value, Attributes.GetDescription(value)));
+					_EmbeddingGroupFlags = dic;
+				}
+				if (Item?.IsEnabled == true)
+					EmbeddingHelper.UpdateGroupFlagsFromDatabase(Item?.Name, _EmbeddingGroupFlags);
+				return _EmbeddingGroupFlags;
+			}
+			set => _EmbeddingGroupFlags = value;
+		}
+		ObservableCollection<KeyValue<EmbeddingGroupFlag, string>> _EmbeddingGroupFlags;
 
 		#endregion
-
-		private void EmbeddingGroupFlagNameTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-			if (e.Key == System.Windows.Input.Key.Enter)
-			{
-				e.Handled = true;
-				ApplyEditChanges();
-			}
-			if (e.Key == System.Windows.Input.Key.Escape)
-			{
-				GroupFlagNameEditMode(false);
-			}
-		}
 
 		#region Target Connection
 
