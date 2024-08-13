@@ -533,8 +533,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void GroupNameDeleteButton_Click(object sender, RoutedEventArgs e)
 		{
 			var groupName = GroupNameComboBox.SelectedValue as string;
-			var items = new string[] { groupName };
-			if (!AppHelper.AllowAction(AllowAction.Delete, items.ToArray()))
+			var items = new string[] { $"{groupName} embedding files" };
+			if (!AppHelper.AllowAction(AllowAction.Delete, items))
 				return;
 			await ExecuteMethod(async (CancellationToken cancellationToken) =>
 			{
@@ -689,8 +689,45 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			GroupFlagNameEditMode(true);
 		}
 
-		private void GroupFlagDeleteButton_Click(object sender, RoutedEventArgs e)
+		private async void GroupFlagDeleteButton_Click(object sender, RoutedEventArgs e)
 		{
+			var groupName = GroupNameComboBox.SelectedValue as string;
+			var groupFlag = GroupFlagComboBox.SelectedValue as EmbeddingGroupFlag?;
+			var groupFlagDescription = Attributes.GetDescription(groupFlag);
+			if (groupFlag == null)
+				return;
+			var items = new string[] { $"{groupName}\\{groupFlagDescription} embedding files" };
+			if (!AppHelper.AllowAction(AllowAction.Delete, items))
+				return;
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				await Task.Delay(0);
+				LogPanel.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Deleting From database... ");
+				var isPortable = SqlInitHelper.IsPortable(Item.Target);
+				var target = AssemblyInfo.ExpandPath(Item.Target);
+				var connectionString = isPortable
+					? SqlInitHelper.PathToConnectionString(target)
+					: target;
+				ControlsHelper.AppInvoke(() =>
+				{
+					MainTabControl.SelectedItem = LogTabPage;
+				});
+				var rowsAffected = 0;
+				try
+				{
+					db = SqlInitHelper.NewEmbeddingsContext(connectionString);
+					rowsAffected = await SqlInitHelper.DeleteByState(db, groupName, groupFlag);
+				}
+				catch (Exception ex)
+				{
+					LogPanel.Clear();
+					LogPanel.Add(ex.ToString());
+					LogPanel.Add("\r\n");
+				}
+				LogPanel.Add($"{rowsAffected} row(s) affected\r\n");
+				UpdateGroupNamesFromDatabase();
+				EmbeddingHelper.UpdateGroupFlagsFromDatabase(Item?.Name, _EmbeddingGroupFlags);
+			});
 		}
 
 		private void GroupFlagApplyButton_Click(object sender, RoutedEventArgs e)
