@@ -29,7 +29,8 @@ AI Companion app ► Options ► AI Services ► Open AI ► enter API Key.
 [OpenAI account (Usage Tier 1)](https://platform.openai.com/docs/guides/rate-limits/usage-tiers?context=tier-one) to access GPT-4 models.
 
 [Microsoft Azure account (API Key)](https://github.com/JocysCom/VsAiCompanion/wiki/Feature-%E2%80%90-AI-Avatar) for ChatGPT to answer with voice and mouth animation:  
-AI Companion app ► Options ► AI Services ► Speech Service ► enter API Key.
+AI Companion app ► Options ► AI Services ► Speech Service ► enter API Key.  
+AI Companion app ► Tasks ► Main ► Instructions ► [unchecked] Use System Messages.
 
 **For AI Companion Visual Studio extension version only:** Visual Studio 2022 17.9+  
 App extension version can be installed and updated via Visual Studio Extension Manager.
