@@ -11,7 +11,6 @@ using JocysCom.VS.AiCompanion.DataClient.Common;
 using LiteDB;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -143,12 +142,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateGroupName()
 		{
-			if (!Item.OverrideGroupName)
-			{
-				var source = AssemblyInfo.ExpandPath(Item.Source);
-				(var groupName, var flag) = EmbeddingHelper.GetGroupAndFlagNames(source, source);
-				Item.EmbeddingGroupName = groupName;
-			}
+			//if (!Item.OverrideGroupName)
+			//{
+			//	var source = AssemblyInfo.ExpandPath(Item.Source);
+			//	(var groupName, var flag) = EmbeddingHelper.GetGroupAndFlagNames(source, source);
+			//	Item.EmbeddingGroupName = groupName;
+			//}
 		}
 
 		System.Windows.Forms.FolderBrowserDialog _FolderBrowser = new System.Windows.Forms.FolderBrowserDialog();
@@ -497,9 +496,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#endregion
 
-		public Dictionary<EmbeddingGroupFlag, string> EmbeddingGroups
-			=> ClassLibrary.Runtime.Attributes.GetDictionary(
-			(EmbeddingGroupFlag[])Enum.GetValues(typeof(EmbeddingGroupFlag)));
 
 		#region Edit Group Name
 
@@ -510,6 +506,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Panel.SetZIndex(GroupNameComboBox, editMode ? 0 : 1);
 			Panel.SetZIndex(GroupNameTextBox, editMode ? 1 : 0);
 			GroupNameEditButton.Visibility = !editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			GroupNameDeleteButton.Visibility = !editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			GroupNameApplyButton.Visibility = editMode
@@ -529,6 +528,43 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void GroupNameEditButton_Click(object sender, RoutedEventArgs e)
 		{
 			GroupNameEditMode(true);
+		}
+
+		private async void GroupNameDeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			var groupName = GroupNameComboBox.SelectedValue as string;
+			var items = new string[] { groupName };
+			if (!AppHelper.AllowAction(AllowAction.Delete, items.ToArray()))
+				return;
+			await ExecuteMethod(async (CancellationToken cancellationToken) =>
+			{
+				await Task.Delay(0);
+				LogPanel.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Deleting From database... ");
+				var isPortable = SqlInitHelper.IsPortable(Item.Target);
+				var target = AssemblyInfo.ExpandPath(Item.Target);
+				var connectionString = isPortable
+					? SqlInitHelper.PathToConnectionString(target)
+					: target;
+				ControlsHelper.AppInvoke(() =>
+				{
+					MainTabControl.SelectedItem = LogTabPage;
+				});
+				var rowsAffected = 0;
+				try
+				{
+					db = SqlInitHelper.NewEmbeddingsContext(connectionString);
+					rowsAffected = await SqlInitHelper.DeleteByState(db, groupName);
+				}
+				catch (Exception ex)
+				{
+					LogPanel.Clear();
+					LogPanel.Add(ex.ToString());
+					LogPanel.Add("\r\n");
+				}
+				LogPanel.Add($"{rowsAffected} row(s) affected\r\n");
+				UpdateGroupNamesFromDatabase();
+				EmbeddingHelper.UpdateGroupFlagsFromDatabase(Item?.Name, _EmbeddingGroupFlags);
+			});
 		}
 
 		private void GroupNameApplyButton_Click(object sender, RoutedEventArgs e)
@@ -607,7 +643,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_EmbeddingGroupNames = oc;
 				}
 				if (Item?.IsEnabled == true)
-					EmbeddingHelper.UpdateGroupNamesFromDatabase(Item?.Name, _EmbeddingGroupNames);
+					UpdateGroupNamesFromDatabase();
 				return _EmbeddingGroupNames;
 			}
 			set => _EmbeddingGroupNames = value;
@@ -624,6 +660,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Panel.SetZIndex(GroupFlagComboBox, editMode ? 0 : 1);
 			Panel.SetZIndex(GroupFlagNameTextBox, editMode ? 1 : 0);
 			GroupFlagEditButton.Visibility = !editMode
+				? Visibility.Visible
+				: Visibility.Collapsed;
+			GroupFlagDeleteButton.Visibility = !editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			GroupFlagApplyButton.Visibility = editMode
@@ -650,6 +689,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			GroupFlagNameEditMode(true);
 		}
 
+		private void GroupFlagDeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+		}
+
 		private void GroupFlagApplyButton_Click(object sender, RoutedEventArgs e)
 		{
 
@@ -672,6 +715,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				GroupFlagNameEditMode(false);
 			}
+		}
+
+		void UpdateGroupNamesFromDatabase()
+		{
+			EmbeddingHelper.UpdateGroupNamesFromDatabase(
+				Item?.Name, _EmbeddingGroupNames,
+				"", Item?.EmbeddingGroupName ?? "");
 		}
 
 		void GroupFlagApplyChanges()
@@ -823,13 +873,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var statusText = success
 					? "PASSED"
 					: "FAILED";
-				LogPanel.Add(statusText);
-
+				LogPanel.Add(statusText + "\r\n");
 				if (success)
 				{
+					LogPanel.Add("\r\n");
+					LogPanel.Add($"DATA INFO\r\n");
 					var dataInfo = await SqlInitHelper.SelectDataInfo(isPortable, connectionString);
-					//var csv = CsvHelper.ConvertToString(dataInfo);
-					var csv = dataInfo?.ToString();
+					var table = SqlHelper.ConvertToTable(dataInfo);
+					var csv = JocysCom.ClassLibrary.Files.CsvHelper.Write(table, true);
 					LogPanel.Add(csv);
 				}
 			});

@@ -25,7 +25,7 @@ using JocysCom.VS.AiCompanion.Engine.Controls;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
-
+using JocysCom.ClassLibrary.Controls;
 #if NETFRAMEWORK
 using System.Data.SQLite;
 #else
@@ -129,8 +129,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			await db.SaveChangesAsync();
 			// Process parts.
 			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
-			var parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens);
-			var input = parts.Select(x => x.Text);
+
+			FilePart[] parts = null;
+			List<byte[]> sourceFilePartHashes = null;
+			decimal tokenReduction = 0.80m;
+
+			// Fill with updated records.
+			var client = new Client(service);
+			Dictionary<int, float[]> results = null;
+			int maxRetries = 3;
+
 			// GetPart hashed from the database.
 			var targetFileParts = db.FileParts
 				.Where(x => x.FileId == file.Id)
@@ -139,29 +147,51 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var targetFilePartHashes = targetFileParts
 				.Select(x => EmbeddingBase.GetHashByName(x.Hash, x.HashType))
 				.ToList();
-			var sourceFilePartHashes = input
-				.Select(x => algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(x)))
-				.ToList();
-			// If all hashes match then...
-			if (targetFilePartHashes.Count == sourceFilePartHashes.Count &&
-				!targetFilePartHashes.Where((x, i) => !x.SequenceEqual(sourceFilePartHashes[i])).Any())
+
+			do
 			{
-				foreach (var targetFilePart in targetFileParts)
-					targetFilePart.State = (int)ProgressStatus.Completed;
-				await db.SaveChangesAsync();
-				return ProgressStatus.Skipped;
+
+				parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens, tokenReduction);
+				var input = parts.Select(x => x.Text);
+				sourceFilePartHashes = input
+					.Select(x => algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(x)))
+					.ToList();
+				// If all hashes match then...
+				if (targetFilePartHashes.Count == sourceFilePartHashes.Count &&
+					!targetFilePartHashes.Where((x, i) => !x.SequenceEqual(sourceFilePartHashes[i])).Any())
+				{
+					foreach (var targetFilePart in targetFileParts)
+						targetFilePart.State = (int)ProgressStatus.Completed;
+					await db.SaveChangesAsync();
+					return ProgressStatus.Skipped;
+				}
+
+				var opResults = await client.GetEmbedding(modelName, input, cancellationToken);
+				results = opResults.Data;
+				if (opResults?.Success == true || maxRetries-- <= 0 || cancellationToken.IsCancellationRequested)
+					break;
+				if (opResults.Errors.Any(x => (x ?? "").IndexOf("please reduce your prompt", StringComparison.OrdinalIgnoreCase) > -1))
+				{
+					tokenReduction -= 0.10m;
+				}
+				else if (opResults.Errors.Any(x => (x ?? "").IndexOf("exceeded call rate limit", StringComparison.OrdinalIgnoreCase) > -1))
+				{
+					// Wait 20 seconds.
+					await Task.Delay(20000, cancellationToken);
+				}
 			}
-			// Remove parts.
-			foreach (var targetFilePart in targetFileParts)
-				db.FileParts.Remove(targetFilePart);
-			await db.SaveChangesAsync();
-			// Fill with updated records.
-			var client = new Client(service);
-			var results = await client.GetEmbedding(modelName, input, cancellationToken);
+			while (true);
 			if (cancellationToken.IsCancellationRequested)
 				return ProgressStatus.Canceled;
 			if (results == null)
 				return ProgressStatus.Exception;
+
+			// Remove old parts.
+			foreach (var targetFilePart in targetFileParts)
+				db.FileParts.Remove(targetFilePart);
+			await db.SaveChangesAsync();
+
+
 			var now = DateTime.Now;
 			foreach (var key in results.Keys)
 			{
@@ -196,7 +226,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public List<Embeddings.Embedding.File> Files { get; set; }
 		public List<Embeddings.Embedding.FilePart> FileParts { get; set; }
 
-		public static FilePart[] GetParts(string path, int maxTokensPerChunk)
+		public static FilePart[] GetParts(string path, int maxTokensPerChunk, decimal tokenReduction = 0.80m)
 		{
 			var mlContext = new MLContext();
 			var fh = new FileHelper();
@@ -221,7 +251,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var tokens = new List<string>();
 			ClientHelper.GetTokens(content, out tokensCount, ref tokens);
 			// Chunk the tokens
-			var chunks = ChunkTokens(tokens.ToArray(), (int)(maxTokensPerChunk * 0.80));
+			var chunks = ChunkTokens(tokens.ToArray(), (int)(maxTokensPerChunk * tokenReduction));
 			return chunks.Select(x => new FilePart()
 			{
 				Text = string.Join("", x),
@@ -330,7 +360,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				var input = new List<string> { message };
 				var client = new Client(item.AiService);
-				var results = await client.GetEmbedding(item.AiModel, input);
+				// TRy to get embeddings.
+				Dictionary<int, float[]> results = null;
+				int maxRetries = 3;
+				do
+				{
+					var opResults = await client.GetEmbedding(item.AiModel, input);
+					results = opResults.Data;
+					if (opResults?.Success == true || maxRetries-- <= 0 || cancellationToken.IsCancellationRequested)
+						break;
+					Log += $"Errors: {string.Join("\r\n", opResults.Errors)}\r\n";
+					// Wait 20 seconds.
+					await Task.Delay(20000, cancellationToken);
+				}
+				while (true);
 				Log += " Done.\r\n";
 				var target = AssemblyInfo.ExpandPath(item.Target);
 				var connectionString = SqlInitHelper.IsPortable(target)
@@ -423,7 +466,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
-		public static void UpdateGroupNamesFromDatabase(string embeddingName, ObservableCollection<string> property)
+
+		public static void UpdateGroupNamesFromDatabase(string embeddingName,
+			ObservableCollection<string> property,
+			params string[] groupsToAdd
+			)
 		{
 			// Run the time-consuming operations asynchronously
 			Task.Run(() =>
@@ -432,8 +479,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (ei == null)
 					return;
 				var names = GetGroupNames(ei);
+				// Find items in listB that are not in listA
+				var itemsToAdd = groupsToAdd.Distinct().Except(names).ToArray();
+				names.AddRange(itemsToAdd);
+				names = names.OrderBy(x => x).ToList();
 				// Update property on the UI thread.
-				Dispatcher.CurrentDispatcher.Invoke(() =>
+				ControlsHelper.AppBeginInvoke(() =>
 				{
 					CollectionsHelper.Synchronize(names, property);
 				});
@@ -482,10 +533,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		private static string[] GetGroupNames(EmbeddingsItem ei)
+		private static List<string> GetGroupNames(EmbeddingsItem ei)
 		{
 			if (ei?.IsEnabled != true || string.IsNullOrWhiteSpace(ei?.Target))
-				return Array.Empty<string>();
+				return new List<string>();
 			try
 			{
 				var target = AssemblyInfo.ExpandPath(ei.Target);
@@ -493,15 +544,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 					? SqlInitHelper.PathToConnectionString(target)
 					: target;
 				var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
-				var items = db.Files.Select(x => x.GroupName).Distinct().ToArray();
+				var items = db.Files.Select(x => x.GroupName).Distinct().ToList();
 				return items;
 			}
 			catch (Exception)
 			{
-				return Array.Empty<string>();
+				return new List<string>();
 			}
 		}
-
 
 		private static Embeddings.Embedding.Group[] GetFlags(EmbeddingsItem ei, string groupName)
 		{

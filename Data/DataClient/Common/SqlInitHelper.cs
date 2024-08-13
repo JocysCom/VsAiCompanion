@@ -7,13 +7,9 @@ using Embeddings.Embedding;
 using System.Collections.Generic;
 using JocysCom.VS.AiCompanion.DataFunctions;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using System.Threading;
-
-
-
 #if NETFRAMEWORK
 using System.Data.Entity;
 using System.Data.SQLite;
@@ -188,7 +184,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			var sqlScript = ResourceHelper.FindResource($"Setup.{dbType}.{name}.sql").Trim();
 			string pattern = @"^\s*GO\s*$";
 			// Split the script using the Regex.Split function, considering the pattern.
-			string[] commandTexts = Regex.Split(sqlScript, pattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+			string[] commandTexts = System.Text.RegularExpressions.Regex.Split(sqlScript, pattern,
+				System.Text.RegularExpressions.RegexOptions.IgnoreCase |
+				System.Text.RegularExpressions.RegexOptions.Multiline);
 			for (int i = 0; i < commandTexts.Length; i++)
 			{
 				var commandText = commandTexts[i];
@@ -346,15 +344,20 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				connection.Open();
 			AddParameters(command, groupName, groupFlag, state);
 			var isPortable = IsPortable(connection.ConnectionString);
+
 			var schema = isPortable ? "" : "[Embedding].";
+			var filePartTable = $"{schema}[{nameof(FilePart)}]";
+			var fileTable = $"{schema}[{nameof(File)}]";
+			var groupTable = $"{schema}[{nameof(Group)}]";
+
 			command.CommandText = $@"
-                UPDATE {schema}[FilePart]
+                UPDATE {filePartTable}
 				SET [State] = @State
                 WHERE [GroupName] = @GroupName
                 AND [GroupFlag] = @GroupFlag";
 			var rowsAffected = await command.ExecuteNonQueryAsync();
 			command.CommandText = $@"
-                UPDATE {schema}[File]
+                UPDATE {fileTable}
 				SET [State] = @State
                 WHERE [GroupName] = @GroupName
                 AND [GroupFlag] = @GroupFlag";
@@ -365,8 +368,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static async Task<int> DeleteByState(
 			EmbeddingsContext db,
 			string groupName,
-			EmbeddingGroupFlag groupFlag,
-			int state
+			EmbeddingGroupFlag? groupFlag = null,
+			int? state = null
 		)
 		{
 #if NETFRAMEWORK
@@ -380,18 +383,27 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			AddParameters(command, groupName, groupFlag, state);
 			var isPortable = IsPortable(connection.ConnectionString);
 			var schema = isPortable ? "" : "[Embedding].";
-			command.CommandText = $@"
-                DELETE FROM {schema}[FilePart]
-                WHERE [GroupName] = @GroupName
-                AND [GroupFlag] = @GroupFlag
-				AND [State] = @State";
+			var filePartTable = $"{schema}[{nameof(FilePart)}]";
+			var fileTable = $"{schema}[{nameof(File)}]";
+			var groupTable = $"{schema}[{nameof(Group)}]";
+			var commandText = "";
+			// Delete file parts.
+			commandText = $"DELETE FROM {filePartTable}\r\nWHERE [GroupName] = @GroupName\r\n";
+			if (groupFlag != null)
+				commandText += $"AND [GroupFlag] = @GroupFlag)\r\n";
+			if (state != null)
+				commandText += $"AND [State] = @State\r\n";
+			command.CommandText = commandText;
 			var rowsAffected = await command.ExecuteNonQueryAsync();
-			command.CommandText = $@"
-                DELETE FROM {schema}[File]
-                WHERE [GroupName] = @GroupName
-                AND [GroupFlag] = @GroupFlag
-				AND [State] = @State";
+			// Delete files.
+			commandText = $"DELETE FROM {fileTable}\r\nWHERE [GroupName] = @GroupName\r\n";
+			if (groupFlag != null)
+				commandText += $"AND [GroupFlag] = @GroupFlag)\r\n";
+			if (state != null)
+				commandText += $"AND [State] = @State\r\n";
+			command.CommandText = commandText;
 			rowsAffected += await command.ExecuteNonQueryAsync();
+			// Return affected rows.
 			return rowsAffected;
 		}
 
@@ -406,10 +418,10 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return parameter;
 		}
 
-		private static void AddParameters(DbCommand command, string groupName, EmbeddingGroupFlag groupFlag, int? state = null)
+		private static void AddParameters(DbCommand command, string groupName, EmbeddingGroupFlag? groupFlag = null, int? state = null)
 		{
 			AddParameter(command, "@GroupName", groupName);
-			AddParameter(command, "@GroupFlag", (int)groupFlag);
+			AddParameter(command, "@GroupFlag", (int?)groupFlag);
 			AddParameter(command, "@State", state);
 		}
 
@@ -420,8 +432,11 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		EmbeddingGroupFlag groupFlag,
 		float[] promptVectors, int take)
 		{
-			var filePartTable = isPortable ? "FilePart" : "[Embedding].[FilePart]";
-			var fileTable = isPortable ? "File" : "[Embedding].[File]";
+			var schema = isPortable ? "" : "[Embedding].";
+			var filePartTable = $"{schema}[{nameof(FilePart)}]";
+			var fileTable = $"{schema}[{nameof(File)}]";
+			var groupTable = $"{schema}[{nameof(Group)}]";
+
 			var commandText =
 				$@"
         SELECT
@@ -473,16 +488,22 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		bool isPortable,
 		string connectionString)
 		{
-			var filePartTable = isPortable ? "FilePart" : "[Embedding].[FilePart]";
-			var fileTable = isPortable ? "File" : "[Embedding].[File]";
+			var schema = isPortable ? "" : "[Embedding].";
+			var filePartTable = $"{schema}[{nameof(FilePart)}]";
+			var fileTable = $"{schema}[{nameof(File)}]";
+			var groupTable = $"{schema}[{nameof(Group)}]";
+
 			var commandText =
 				$@"
 			SELECT
 				fp.GroupName,
 				fp.GroupFlag,
+				g.FlagName,
 				Count(*) AS Count
 			FROM {filePartTable} AS fp
-			GROUP BY fp.GroupName, fp.GroupFlag
+			LEFT JOIN {groupTable} AS g ON g.Name = fp.GroupName AND g.Flag = fp.GroupFlag
+			GROUP BY fp.GroupName, fp.GroupFlag, g.FlagName
+			ORDER BY fp.GroupName, fp.GroupFlag, g.FlagName
 			";
 			var connection = NewConnection(connectionString);
 			var command = NewCommand(commandText, connection);
@@ -491,12 +512,13 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			var items = new List<DataInfo>();
 			while (await reader.ReadAsync())
 			{
-				var item = new DataInfo
-				{
-					GroupName = reader.GetString(reader.GetOrdinal("GroupName")),
-					GroupFlag = reader.GetInt64(reader.GetOrdinal("GroupFlag")),
-					Count = reader.GetInt64(reader.GetOrdinal("Count")),
-				};
+				var item = new DataInfo();
+				item.GroupName = reader.GetString(reader.GetOrdinal("GroupName"));
+				item.GroupFlag = reader.GetInt64(reader.GetOrdinal("GroupFlag"));
+				var flagNameOrdinal = reader.GetOrdinal("FlagName");
+				if (!reader.IsDBNull(flagNameOrdinal))
+					item.GroupFlagName = reader.GetString(flagNameOrdinal);
+				item.Count = reader.GetInt32(reader.GetOrdinal("Count"));
 				items.Add(item);
 			}
 			connection.Close();

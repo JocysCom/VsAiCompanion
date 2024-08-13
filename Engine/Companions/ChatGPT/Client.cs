@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
 using Azure.Identity;
+using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Web.Services;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
@@ -316,7 +317,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <param name="modelName"></param>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public async Task<Dictionary<int, float[]>> GetEmbedding(
+		public async Task<OperationResult<Dictionary<int, float[]>>> GetEmbedding(
 			string modelName,
 			IEnumerable<string> input,
 			CancellationToken cancellationToken = default
@@ -345,8 +346,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						.ToDictionary(x => x.Index, x => x.Vector.ToArray());
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				return new OperationResult<Dictionary<int, float[]>>(ex);
 			}
 			finally
 			{
@@ -355,7 +357,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					Global.MainControl.InfoPanel.RemoveTask(id);
 				});
 			}
-			return results;
+			return new OperationResult<Dictionary<int, float[]>>(results);
 		}
 
 		/// <summary>

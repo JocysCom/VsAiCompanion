@@ -2,6 +2,7 @@
 
 - Fix: Sometimes the tray notification icon wasn't removed after exiting the app.
 - Fix: Crash when retrieving a list.
+- Fix: The app removes models with the same name in different services.
 - New: Option to require the AI model to use a tool function. Requires `gpt-4o` 2024-08-06+.
 - Update: Updated `Prompts` list.
 

@@ -237,16 +237,19 @@
 								<ComboBox
 									Name="GroupNameComboBox"
 									MinWidth="64"
-									DisplayMemberPath="Value"
 									ItemsSource="{Binding EmbeddingGroupNames, ElementName=This}"
-									SelectedValue="{Binding EmbeddingGroupName}"
-									SelectedValuePath="Key" />
+									SelectedValue="{Binding EmbeddingGroupName}" />
 							</Grid>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
 							<Button Name="GroupNameEditButton" Click="GroupNameEditButton_Click">
 								<StackPanel Focusable="False">
 									<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+								</StackPanel>
+							</Button>
+							<Button Name="GroupNameDeleteButton" Click="GroupNameDeleteButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
 								</StackPanel>
 							</Button>
 							<Button Name="GroupNameApplyButton" Click="GroupNameApplyButton_Click">
@@ -294,6 +297,11 @@
 							<Button Name="GroupFlagEditButton" Click="GroupFlagEditButton_Click">
 								<StackPanel Focusable="False">
 									<ContentControl Content="{StaticResource Icon_Edit}" Focusable="False" />
+								</StackPanel>
+							</Button>
+							<Button Name="GroupFlagDeleteButton" Click="GroupFlagDeleteButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_Delete}" Focusable="False" />
 								</StackPanel>
 							</Button>
 							<Button Name="GroupFlagApplyButton" Click="GroupFlagApplyButton_Click">

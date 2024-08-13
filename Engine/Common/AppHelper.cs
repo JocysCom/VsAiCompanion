@@ -396,7 +396,8 @@ EndFragment:{3:00000000}";
 				Regex filterRx = null;
 				try
 				{
-					filterRx = new Regex(aiService.ModelFilter);
+					if (!string.IsNullOrEmpty(aiService.ModelFilter))
+						filterRx = new Regex(aiService.ModelFilter);
 				}
 				catch { }
 				if (filterRx != null)

@@ -13,7 +13,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public AiModel() { }
 		public AiModel(string name, Guid aiServiceId)
 		{
-			Id = AppHelper.GetGuid(GetType().Name, name);
+			Id = AppHelper.GetGuid(GetType().Name, AiServiceId, name);
 			Name = name;
 			AiServiceId = aiServiceId;
 		}

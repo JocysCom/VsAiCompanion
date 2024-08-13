@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 // Requires "System.Data.SqlClient" NuGet Package on .NET Core/Standard
 using System.Data.SqlClient;
@@ -676,7 +678,8 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		public static DataTable ConvertToTable<T>(IEnumerable<T> list, params string[] columns)
 		{
-			if (list is null) return null;
+			if (list is null)
+				return null;
 			var table = new DataTable();
 			var props = typeof(T).GetProperties().Where(x => x.CanRead).ToArray();
 			if (columns.Any())
@@ -695,6 +698,78 @@ namespace JocysCom.ClassLibrary.Data
 				table.Rows.Add(values);
 			}
 			return table;
+		}
+
+		/// <summary>
+		/// Convert IEnumerable properties of the object to DataTable.
+		/// </summary>
+		public static DataTable ConvertToTable<T>(T obj, params string[] propertyNames)
+		{
+			if (obj == null)
+				return null;
+
+			var table = new DataTable();
+			var typeInfo = typeof(T);
+
+			// Get all properties of the specified type T.
+			var properties = typeInfo.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+			// Filter properties to be included.
+			var propertiesToInclude = properties
+				.Where(p => typeof(IEnumerable).IsAssignableFrom(p.PropertyType) && p.PropertyType != typeof(string))
+				.Where(p => propertyNames.Length == 0 || propertyNames.Contains(p.Name))
+				.ToList();
+
+			// Populate DataTable columns
+			foreach (var property in propertiesToInclude)
+			{
+				// Determine the type of elements in the IEnumerable
+				var elementType = GetElementType(property.PropertyType);
+				var descriptionAttribute = property.GetCustomAttribute<DescriptionAttribute>();
+				var columnName = descriptionAttribute?.Description ?? property.Name;
+				table.Columns.Add(columnName, elementType ?? typeof(object));
+			}
+
+			// Determine maximum row count based on the largest list
+			int maxRowCount = propertiesToInclude
+				.Select(p => (IEnumerable)p.GetValue(obj))
+				.Where(l => l != null)
+				.Select(l => l.Cast<object>().Count())
+				.DefaultIfEmpty(0)
+				.Max();
+
+			// Populate DataTable with property values
+			for (int rowIndex = 0; rowIndex < maxRowCount; rowIndex++)
+			{
+				var row = table.NewRow();
+				foreach (var property in propertiesToInclude)
+				{
+					var values = (IEnumerable)property.GetValue(obj);
+					if (values != null)
+					{
+						var valueList = values.Cast<object>().ToList();
+						row[property.Name] = rowIndex < valueList.Count ? valueList[rowIndex] : DBNull.Value;
+					}
+					else
+					{
+						row[property.Name] = DBNull.Value;
+					}
+				}
+				table.Rows.Add(row);
+			}
+			return table;
+		}
+
+		/// <summary>
+		/// Helper method to determine the element type of an IEnumerable property.
+		/// </summary>
+		private static Type GetElementType(Type enumerableType)
+		{
+			if (enumerableType.IsGenericType && enumerableType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+				return enumerableType.GetGenericArguments()[0];
+			var iEnumerableInterface = enumerableType.GetInterfaces()
+				.FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+			return iEnumerableInterface?.GetGenericArguments()[0];
 		}
 
 		#endregion
