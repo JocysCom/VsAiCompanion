@@ -800,8 +800,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				await Task.Delay(0);
 				LogPanel.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Testing database... ");
+				var isPortable = SqlInitHelper.IsPortable(Item.Target);
 				var target = AssemblyInfo.ExpandPath(Item.Target);
-				var connectionString = SqlInitHelper.IsPortable(target)
+				var connectionString = isPortable
 							? SqlInitHelper.PathToConnectionString(target)
 							: target;
 				ControlsHelper.AppInvoke(() =>
@@ -823,6 +824,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					? "PASSED"
 					: "FAILED";
 				LogPanel.Add(statusText);
+
+				if (success)
+				{
+					var dataInfo = await SqlInitHelper.SelectDataInfo(isPortable, connectionString);
+					//var csv = CsvHelper.ConvertToString(dataInfo);
+					var csv = dataInfo?.ToString();
+					LogPanel.Add(csv);
+				}
 			});
 		}
 

@@ -469,6 +469,40 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return ids;
 		}
 
+		public static async Task<List<DataInfo>> SelectDataInfo(
+		bool isPortable,
+		string connectionString)
+		{
+			var filePartTable = isPortable ? "FilePart" : "[Embedding].[FilePart]";
+			var fileTable = isPortable ? "File" : "[Embedding].[File]";
+			var commandText =
+				$@"
+			SELECT
+				fp.GroupName,
+				fp.GroupFlag,
+				Count(*) AS Count
+			FROM {filePartTable} AS fp
+			GROUP BY fp.GroupName, fp.GroupFlag
+			";
+			var connection = NewConnection(connectionString);
+			var command = NewCommand(commandText, connection);
+			await connection.OpenAsync();
+			var reader = await command.ExecuteReaderAsync();
+			var items = new List<DataInfo>();
+			while (await reader.ReadAsync())
+			{
+				var item = new DataInfo
+				{
+					GroupName = reader.GetString(reader.GetOrdinal("GroupName")),
+					GroupFlag = reader.GetInt64(reader.GetOrdinal("GroupFlag")),
+					Count = reader.GetInt64(reader.GetOrdinal("Count")),
+				};
+				items.Add(item);
+			}
+			connection.Close();
+			return items;
+		}
+
 		private static FilePart ReadFilePartFromReader(DbDataReader reader)
 		{
 			var filePart = new FilePart
