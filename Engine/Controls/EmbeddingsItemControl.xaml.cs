@@ -114,6 +114,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				MaskConnectionString();
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				_ = Helper.Delay(EmbeddingGroupNames_OnPropertyChanged);
+				// Make sure that embedding selection could be initially made.
+				if (!EmbeddingGroupNames.Contains(value?.EmbeddingGroupName))
+					EmbeddingGroupNames.Add(value?.EmbeddingGroupName);
 				AiModelBoxPanel.Item = value;
 				if (value != null)
 				{
@@ -523,6 +526,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			GroupNameComboBox.Visibility = !editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			GroupNameTextBox.Focus();
+			GroupNameTextBox.SelectAll();
 		}
 
 		private void GroupNameEditButton_Click(object sender, RoutedEventArgs e)
@@ -593,28 +598,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		void GroupNameApplyChanges()
 		{
 			LogPanel.Clear();
+			((UIElement)OverrideGroupNameGroupBox.Content).IsEnabled = false;
 			try
 			{
+				var oldName = Item.EmbeddingGroupName;
+				var newName = GroupNameTextBox.Text;
 				var target = AssemblyInfo.ExpandPath(Item.Target);
 				var connectionString = SqlInitHelper.IsPortable(target)
 					? SqlInitHelper.PathToConnectionString(target)
 					: target;
 				db = SqlInitHelper.NewEmbeddingsContext(connectionString);
-				// Rename group items.
-				var groups = db.Groups.Where(x => x.Name == Item.EmbeddingGroupName).ToArray();
+				// Update group name of groups.
+				var groups = db.Groups.Where(x => x.Name == oldName).ToArray();
 				foreach (var group in groups)
-					group.Name = Item.EmbeddingGroupName;
+					group.Name = newName;
 				db.SaveChanges();
-				// Rename file groups.
-				var files = db.Files.Where(x => x.GroupName == Item.EmbeddingGroupName).ToArray();
+				// Update group name of files.
+				var files = db.Files.Where(x => x.GroupName == oldName).ToArray();
 				foreach (var file in files)
-					file.GroupName = Item.EmbeddingGroupName;
+					file.GroupName = newName;
 				db.SaveChanges();
-				// Rename file part groups.
-				var fileParts = db.FileParts.Where(x => x.GroupName == Item.EmbeddingGroupName).ToArray();
+				// Update group name of file parts.
+				var fileParts = db.FileParts.Where(x => x.GroupName == oldName).ToArray();
 				foreach (var filePart in fileParts)
-					filePart.GroupName = Item.EmbeddingGroupName;
+					filePart.GroupName = newName;
 				db.SaveChanges();
+				// Make sure new value is in the list and select new value.
+				EmbeddingGroupNames.Add(newName);
+				Item.EmbeddingGroupName = newName;
+				EmbeddingGroupNames.Remove(oldName);
 			}
 			catch (Exception ex)
 			{
@@ -622,7 +634,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogPanel.Add(ex.ToString());
 			}
 			GroupNameEditMode(false);
-			_ = Helper.Delay(EmbeddingGroupNames_OnPropertyChanged);
+			((UIElement)OverrideGroupNameGroupBox.Content).IsEnabled = true;
 		}
 
 		public void EmbeddingGroupNames_OnPropertyChanged()
@@ -677,6 +689,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			GroupFlagComboBox.Visibility = !editMode
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			GroupFlagNameTextBox.Focus();
+			GroupFlagNameTextBox.SelectAll();
 		}
 
 		private void GroupFlagEditButton_Click(object sender, RoutedEventArgs e)
@@ -758,6 +772,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			EmbeddingHelper.UpdateGroupNamesFromDatabase(
 				Item?.Name, _EmbeddingGroupNames,
+				// Add required names to list.
 				"", Item?.EmbeddingGroupName ?? "");
 		}
 

@@ -216,10 +216,10 @@
 				Grid.Column="1"
 				Grid.ColumnSpan="2"
 				Orientation="Horizontal">
-				<GroupBox x:Name="EnterpriseOptionsGroupBox" Margin="3,0,3,0">
+				<GroupBox x:Name="OverrideGroupNameGroupBox" Margin="3,0,3,0">
 					<GroupBox.Header>
 						<CheckBox
-							x:Name="OverrideGroupNameCheckbox"
+							x:Name="OverrideGroupNameCheckBox"
 							Margin="-4"
 							AutomationProperties.HelpText="{StaticResource main_OverrideGroupName_Help}"
 							AutomationProperties.Name="{StaticResource main_OverrideGroupName_Name}"
@@ -229,11 +229,7 @@
 					<StackPanel Orientation="Horizontal">
 						<StackPanel Orientation="Horizontal">
 							<Grid>
-								<TextBox
-									x:Name="GroupNameTextBox"
-									MinWidth="64"
-									PreviewKeyDown="GroupNameTextBox_PreviewKeyDown"
-									Text="{Binding EmbeddingGroupName, UpdateSourceTrigger=PropertyChanged}" />
+								<TextBox x:Name="GroupNameTextBox" MinWidth="64" PreviewKeyDown="GroupNameTextBox_PreviewKeyDown" />
 								<ComboBox
 									Name="GroupNameComboBox"
 									MinWidth="64"
