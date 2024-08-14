@@ -703,7 +703,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// <summary>
 		/// Convert IEnumerable properties of the object to DataTable.
 		/// </summary>
-		public static DataTable ConvertToTable<T>(T obj, params string[] propertyNames)
+		public static DataTable ConvertObjectToTable<T>(T obj, params string[] propertyNames)
 		{
 			if (obj == null)
 				return null;
