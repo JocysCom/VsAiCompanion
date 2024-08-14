@@ -55,6 +55,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Data.ConnectionUI.Dialog", "Resources\Microsoft\Data\ConnectionUI.Dialog\Microsoft.Data.ConnectionUI.Dialog.csproj", "{85254873-5E7B-459C-A640-1B21A558A50A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Setup", "Setup", "{AA2CB73E-8BCC-4A26-9D05-69F56AE4B443}"
+	ProjectSection(SolutionItems) = preProject
+		Setup\ReadMe.md = Setup\ReadMe.md
+		Setup\VersionCheck_VS_AI_Companion.ps1 = Setup\VersionCheck_VS_AI_Companion.ps1
+	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "JocysCom.VS.AiCompanion.Setup", "Setup\Setup\JocysCom.VS.AiCompanion.Setup.vdproj", "{78378B7D-5A0D-4F96-8B68-2FBB74138579}"
 EndProject
@@ -85,7 +89,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Workflows", "GitHub 
 		.github\workflows\synopsys-io.yml = .github\workflows\synopsys-io.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JocysCom.VS.AiCompanion.Setup.CustomActions", "Setup\CustomActions\JocysCom.VS.AiCompanion.Setup.CustomActions.csproj", "{5AB7E80B-9BF8-42D0-836F-5D1524C5D117}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JocysCom.VS.AiCompanion.Setup.CustomActions", "Setup\CustomActions\JocysCom.VS.AiCompanion.Setup.CustomActions.csproj", "{5AB7E80B-9BF8-42D0-836F-5D1524C5D117}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

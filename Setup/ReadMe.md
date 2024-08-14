@@ -38,3 +38,58 @@ To ensure that the Visual Studio Installer properly handles upgrades by uninstal
 
 ### 5. Remove Previous Versions
 - **Set to True**: The `RemovePreviousVersions` property should be set to `True` to ensure the installer removes the older version before installing the new one.
+
+
+## MSI Setup and Commands
+
+Platform: 64-bit
+Company Name: Jocys.com
+Product Name: VS AI Companion
+Upgrade Code: {8EAC34EB-107A-44B2-B4AF-067C6A4DBF80}
+
+Product Code: {C280041B-D36E-45FC-B558-3E9B5238A10D} // 1.12.41
+Product Code: {4995F371-C24D-49B4-8010-4E452987468F} // 1.12.52
+Product Code: {96091D58-A78F-4D54-908E-0ED1163A443A} // 1.12.53
+
+Application Path: %LOCALAPPDATA%\Jocys.com\VS AI Companion\JocysCom.VS.AiCompanion.App.exe
+
+### PowerShell Commands
+
+Returns True if VS AI Companion is installed (Use Product Code / Identifying Number):
+
+	Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{96091D58-A78F-4D54-908E-0ED1163A443A}"
+
+Get the information about VS AI Companion installed:
+
+	(Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object { $_.DisplayName -eq "VS AI Companion" })
+
+### Commands Require elevated properties.
+
+Install:
+
+	msiexec /i "JocysCom.VS.AiCompanion.Setup.msi" /quiet
+	
+Uninstall (Use Product Code / Identifying Number):
+
+	msiexec /x "{96091D58-A78F-4D54-908E-0ED1163A443A}" /quiet
+	
+Uninstall all instances of VS AI Companion with Command Prompt:
+
+	wmic product where name="VS AI Companion" call uninstall /nointeractive
+
+Uninstall all instances of VS AI Companion with PowerShell:
+
+	Get-WmiObject -Class Win32_Product -Filter "Name='VS AI Companion'" | ForEach-Object { $_.Uninstall() }
+
+List installed instances of VS AI Companion with Command Prompt:
+
+	wmic product where "name='VS AI Companion'" get Name,Version,InstallDate,IdentifyingNumber
+
+List installed instances of VS AI Companion with PowerShell
+
+	Get-WmiObject -Class Win32_Product -Filter "Name='VS AI Companion'" | Select-Object -Property Name, Version
+
+### MSI Properties
+
+MSI Properties can be viewed with LessMSI: [Table View] tab, Table: "Property".
+https://github.com/activescott/lessmsi
