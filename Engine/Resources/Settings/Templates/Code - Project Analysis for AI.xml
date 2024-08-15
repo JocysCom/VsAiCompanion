@@ -1,0 +1,76 @@
+﻿<TemplateItem>
+  <Name>Code - Project Analysis for AI</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACs1WbXOiSBD+vr+CY+uqsrUKM7xr4m4hotGo+BKM5ssWwjhgEBBQ1F9/A8ZdE5Pb&#xD;
+urqqu+AL3WP39NPdTw/efN+tfGqL4sQLgxoNGUBTKLBDxwtwjTbvm2WFppLUChzLDwNUo4OQ/v7t&#xD;
+080fDUO7nw10KtliamDWu22Nosss+8BrLNu4b1DjSYuCDGRZvU9TtJumUZVlsyxjMp4JY8y2Yity&#xD;
+PTthiSGbGxInlmwGIeOkDk1C5DtnnpO6BBYAf9KUizzspidt66GsHu5qNKAAxQnkTZ/nAWmKZBYk&#xD;
+tTdicwCAPNazSXXne8HTW4awUqmwxa+FaTWJLJvUIIpRguItOvkTxVu88C9WGDtcsXn19j5xWni+&#xD;
+X443PqqiLQpCx7m2fS96uZKkcfiEyiQgsq2oGoeb4MXiMvSCl6srL0Wx75FbFTLiNakbRa4bTKWx&#xD;
+FSSLMF7V6JWVxt7uCjBAkBRZLIH8daZ8efZ615MDjChxXOF4kkk0gYNyieMYCAThfI9iH9uLbR9R&#xD;
+NmkQ5BheFmnK3hMZHuU4b+NRPKtPNcbzK6VSghJf4ipfrmn2DBmLfwOTkFeuyHIB8ySXBZ6RoSCV&#xD;
+yjlQWOEvgZIuDKzUpTynRv/INfjK5HU+nCwzoiwcE+LEZyXPqHKUz1AfkZ9ivFrHVEGBiPxSozex&#xD;
+f/X5GP81xvczrjAyCVgqg/x90gTACIpIKni8v7VbseMmQVRB7qobI8Lfzz/aKwsjjtCa5EVTeXb0&#xD;
+aQQ5EO1+jWChvUrzokmXXfttCzlCD3KVymSAJVHmURmKucJxkBML5aeFwigKlJWjhcTwFUHJlUsm&#xD;
+5uWlSG97kLCW64qMWBJIoYSXzAvI6fY8VAULCVdILKXEK19Os1ZUIh+zaPcPmXkCXQzQT7ks8oX4&#xD;
+t7PDM8+TQ6h1JNnlxJxj/ffABI6RJEkuyUJx/2DoIJRzoQR5nrBC+WDoiCSIufjBcJVPZeNA3t2P&#xD;
+1lQytpUCnlIU73+t3n/2rLs4cWRyhB8/F0cOEN47c34JDlokZwZefpYfH2qnY/39o/zFc8CxUqta&#xD;
+uLNRgK/nVoIkoeRN6sYoA3ctHKrk6o9NVzcxkerDXDc1dUZuWt8bgX6+oE3r7Ydpj0iyTr6Mndqa&#xD;
+3GXCPPfo6L4+nAyFpcWPswep0VP3qvDIqo10ijBcPLWm8wXgW1baM4x1ezo0cQz022TfjIyZFnWa&#xD;
+7YEe7DJ/MjVnxkLtZINRuz9U7z3T8rRbR3XwcF5/2BAITbGJOTW11ZkV3j41u8PhHHc2iqxoy3Wy&#xD;
+FUxnvkVSa91d9rrNRJ0DPbXxgz5YR9q2pznp9GvrMOpumigZN24ttYvD3WG1SFpbdwSBZq0FrbvQ&#xD;
+DvXu/d3o62ijHdZJct/rrOGqk01adbAfo05fdGNcP7idgzduuzxb51fqYI0iw4jc9ib6urSGxn6a&#xD;
+3vaEcGKG6TLMOiLwHx7HC9boV9Z7bq7cjiYNF8vrcdTRcRhtBhN/Oe1MpCX7KBqmYY+mG9VfS2oz&#xD;
+MuPZKLOz7bBpzWJnna0acNQQ7uSlYrJJg8fmcqnP4kfeMBoDLVKUg+y1PCwtUNHCemdkinr81MEY&#xD;
+12ontt2wR2Ld5P+Yv336C+j+p+oxDAAA</IconData>
+  <Created>2023-08-23T14:14:42.5626204+01:00</Created>
+  <Modified>2024-02-25T21:17:27.8535127+00:00</Modified>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4o</AiModel>
+  <TextInstructions>Task: Analyze the provided technical files to extract detailed information that can assist AI systems in delivering precise and context-aware responses related to the project.&#xD;
+&#xD;
+Objectives:&#xD;
+1. Identify the technology stack utilized in the project.&#xD;
+   - Extract programming languages, libraries, frameworks, and other technologies, with a focus on capturing specific version details.&#xD;
+&#xD;
+2. Collect configuration and build settings essential for understanding the project setup.&#xD;
+   - Consider build tools, deployment configurations, and version control markers, ensuring to capture version information when applicable.&#xD;
+&#xD;
+3. Analyze project architecture and dependencies.&#xD;
+   - Examine file structures, dependency trees, and design patterns, making note of any version dependencies.&#xD;
+&#xD;
+4. Highlight special instructions or metadata that may impact project comprehension.&#xD;
+   - Pay attention to custom scripts, commented instructions, or non-standard file usages.&#xD;
+&#xD;
+Expected Deliverables:&#xD;
+- A detailed list of technologies and tools extracted from the files, including their versions.&#xD;
+- Key configurations and settings that facilitate understanding of project operation and maintenance.&#xD;
+- Insights into project architecture and dependencies, with emphasis on any version-specific information.&#xD;
+- Any additional elements that enhance AI understanding for project-related queries.&#xD;
+&#xD;
+Notes:&#xD;
+- The files will be provided separately as a user message. Ensure all retrieved information is organized and aligned with the stated objectives.&#xD;
+- Do not respond with the supplied file content. The user already has this information.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Text>&#xD;
+Extract and analyze the plain text content from the following files:&#xD;
+- C:\Projects\Company\Solution\Project\Project.csproj&#xD;
+- C:\Projects\Company\Solution\Project\ClientApp\angular.json&#xD;
+- C:\Projects\Company\Solution\Project\ClientApp\package.json&#xD;
+- C:\Projects\Company\Solution\Project\ClientApp\tsconfig.json&#xD;
+</Text>
+  <Attachments />
+  <AttachContext>ActiveDocument</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ResetMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <IsPreview>false</IsPreview>
+  <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
+  <ShowPrompting>true</ShowPrompting>
+  <AttachmentsSelection />
+</TemplateItem>

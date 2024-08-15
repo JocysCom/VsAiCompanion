@@ -16,6 +16,10 @@ namespace JocysCom.ClassLibrary.Configuration
 		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 
+		[DefaultValue(null)]
+		public bool IsReadOnly { get => _IsReadOnly; set => SetProperty(ref _IsReadOnly, value); }
+		bool _IsReadOnly;
+
 		[XmlIgnore, JsonIgnore]
 		string ISettingsFileItem.BaseName { get => Name; set => Name = value; }
 

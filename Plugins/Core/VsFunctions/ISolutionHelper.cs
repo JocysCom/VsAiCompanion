@@ -272,5 +272,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		[RiskLevel(RiskLevel.High)]
 		string GetOutputContent(string type);
 
+		/// <summary>
+		/// Get properties of the solution and the startup project. For example `SolutionDir`.
+		/// </summary>
+		/// <returns>Properties of the solution and the startup project.</returns>
+		[RiskLevel(RiskLevel.High)]
+		List<KeyValuePair<string, string>> GetProperties();
+
 	}
 }

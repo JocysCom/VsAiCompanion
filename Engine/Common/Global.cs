@@ -108,6 +108,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 				UseSeparateFiles = true,
 			};
 
+		/// <summary>
+		/// Templates available when app loads in Visual Studio.
+		/// </summary>
+		public static SettingsData<TemplateItem> VsTemplates
+		{
+			get
+			{
+				if (!IsVsExtension)
+					return null;
+				// Load but do not save.
+				var allProperties = _SolutionHelper.GetProperties();
+				var solutionDir = allProperties.FirstOrDefault(p => p.Key == "SolutionDir").Value;
+				var path = System.IO.Path.Combine(solutionDir, ".config\\aicomp\\Templates");
+				var data = new SettingsData<TemplateItem>($"{path}.xml", true, null, System.Reflection.Assembly.GetExecutingAssembly())
+				{
+					UseSeparateFiles = true,
+				};
+				return data;
+			}
+		}
+
 		public const string TasksName = nameof(Tasks);
 
 		public static SettingsData<TemplateItem> Tasks =

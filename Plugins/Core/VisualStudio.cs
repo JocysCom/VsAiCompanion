@@ -15,6 +15,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public static ISolutionHelper Current;
 
 		/// <inheritdoc />
+		public List<KeyValuePair<string, string>> GetProperties()
+			=> Current.GetProperties();
+
+		/// <inheritdoc />
 		public DocItem GetSolution(bool includeContents)
 			=> Current.GetSolution(includeContents);
 

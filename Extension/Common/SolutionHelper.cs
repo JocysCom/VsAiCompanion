@@ -133,6 +133,15 @@ namespace JocysCom.VS.AiCompanion.Extension
 			return project;
 		}
 
+		public List<KeyValuePair<string, string>> GetProperties()
+		{
+			var properties = GetAllProperties();
+			var list = new List<KeyValuePair<string, string>>();
+			foreach (var prop in properties)
+				list.Add(new KeyValuePair<string, string>(prop.Name, prop.EvaluatedValue));
+			return list;
+		}
+
 		public static List<Microsoft.Build.Evaluation.ProjectProperty> GetAllProperties()
 		{
 			ThreadHelper.ThrowIfNotOnUIThread();

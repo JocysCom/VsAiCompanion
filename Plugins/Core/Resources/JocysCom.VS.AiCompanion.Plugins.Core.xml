@@ -1463,6 +1463,12 @@
             <param name="type">The type of the output pane (e.g., "Build" or "Debug").</param>
             <returns>The content of the specified output window pane.</returns>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetProperties">
+            <summary>
+            Get properties of the solution and the startup project. For example `SolutionDir`.
+            </summary>
+            <returns>Properties of the solution and the startup project.</returns>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat.DiffHelper">
             <summary>
             Diff helper.
@@ -1674,6 +1680,9 @@
             <summary>
             Current Visual Solution helper.
             </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetProperties">
+            <inheritdoc />
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution(System.Boolean)">
             <inheritdoc />
