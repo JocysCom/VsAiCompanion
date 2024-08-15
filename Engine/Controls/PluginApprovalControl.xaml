@@ -33,7 +33,7 @@
 						<Label Content=" " FontWeight="Bold" />
 					</StackPanel>
 					<StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-						<Label Content="Do you want to execute function submitted by AI?" FontWeight="Bold" />
+						<Label Padding="5,0,5,0" Content="Do you want to execute function submitted by AI?" FontWeight="Bold" />
 						<Label Content="{Binding FunctionId, ElementName=This}" FontWeight="Bold" />
 					</StackPanel>
 					<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">

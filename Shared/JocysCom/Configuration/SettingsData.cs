@@ -260,7 +260,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					for (int i = 0; i < items.Length; i++)
 					{
 						var fileItem = (ISettingsFileItem)items[i];
-						if (fileItem.IsReadOnly)
+						if (fileItem.IsReadOnlyFile)
 							continue;
 						var fileFullName = GetFileItemFullName(path, fileItem);
 						var fiItem = new FileInfo(fileFullName);

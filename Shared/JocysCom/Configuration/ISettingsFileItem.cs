@@ -39,7 +39,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// Indicate that item should not be saved into a separate file.
 		/// </summary>
 		[XmlIgnore, DefaultValue(false)]
-		bool IsReadOnly { get; set; }
+		bool IsReadOnlyFile { get; set; }
 
 		/* Example:
  
