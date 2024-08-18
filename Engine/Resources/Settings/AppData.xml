@@ -27,10 +27,10 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>503</Left>
-        <Top>84</Top>
-        <Width>974</Width>
-        <Height>819</Height>
+        <Left>390</Left>
+        <Top>90</Top>
+        <Width>913</Width>
+        <Height>815.5</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -40,36 +40,15 @@
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
-          <ItemType>Attachment</ItemType>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ItemType>FineTuning</ItemType>
-          <ListSelection>
-            <string>CyberNet Solutions</string>
-          </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
           <ItemType>Embeddings</ItemType>
-          <GridSplitterPosition>0.22362869198312235</GridSplitterPosition>
+          <GridSplitterPosition>0.23370786516853934</GridSplitterPosition>
           <ListSelection>
-            <string>CyberNet Solutions - Portable</string>
+            <string>CyberNet Solutions - Localhost</string>
           </ListSelection>
-          <ListSelectedIndex>1</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ItemType>AiModel</ItemType>
-          <ListSelectedIndex>0</ListSelectedIndex>
-        </TaskSettings>
-        <TaskSettings>
-          <ItemType>Voice</ItemType>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.2292134831460674</GridSplitterPosition>
-          <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4)</string>
           </ListSelection>
@@ -77,9 +56,15 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.23146067415730337</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
+          </ListSelection>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>FineTuning</ItemType>
+          <ListSelection>
+            <string>CyberNet Solutions</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
@@ -101,9 +86,9 @@
         <TaskSettings>
           <ItemType>AiService</ItemType>
           <ListSelection>
-            <string>Open AI</string>
+            <string>Azure Open AI</string>
           </ListSelection>
-          <ListSelectedIndex>3</ListSelectedIndex>
+          <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
@@ -116,6 +101,18 @@
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
+        <TaskSettings>
+          <ItemType>Attachment</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>AiModel</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
+        <TaskSettings>
+          <ItemType>Voice</ItemType>
+          <ListSelectedIndex>0</ListSelectedIndex>
+        </TaskSettings>
       </PanelSettingsList>
       <UserProfiles>
         <UserProfile>
@@ -123,6 +120,7 @@
           <UserGroups />
         </UserProfile>
       </UserProfiles>
+      <ResetWindowWidth>900</ResetWindowWidth>
       <AiServices>
         <AiService>
           <Name>Open AI</Name>

@@ -138,6 +138,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Upload => FindResource(nameof(main_Upload));
         public static string main_Validate => FindResource(nameof(main_Validate));
         public static string main_Database => FindResource(nameof(main_Database));
+        public static string main_Data_Group => FindResource(nameof(main_Data_Group));
         public static string main_Embedding_Default_Instructions => FindResource(nameof(main_Embedding_Default_Instructions));
         public static string main_Embeddings_Feature_Description => FindResource(nameof(main_Embeddings_Feature_Description));
         public static string main_Exclude_Patterns => FindResource(nameof(main_Exclude_Patterns));

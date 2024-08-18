@@ -146,7 +146,7 @@
 				Background="{StaticResource BorderDark}" />
 
 			<!--  4. Target: Connection String  -->
-			<Label Grid.Row="4" Margin="6,0,0,0" Content="{StaticResource main_Target_Database}" />
+			<Label Grid.Row="4" Margin="6,0,0,0" Content="{StaticResource main_Database}" />
 			<Grid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
@@ -210,7 +210,7 @@
 				x:Name="EmbeddingsLabel"
 				Grid.Row="5"
 				Margin="6,0,0,0"
-				Content="Data Group Name" />
+				Content="{StaticResource main_Data_Group}" />
 			<StackPanel
 				Grid.Row="5"
 				Grid.Column="1"

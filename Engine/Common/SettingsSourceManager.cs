@@ -384,7 +384,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.AppSettings.ResetWindowHeight = h;
 			var items = Global.AppSettings.PanelSettingsList.ToArray();
 			foreach (var item in items)
-				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item);
+				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item, false, new string[] { nameof(TaskSettings.ItemType) });
 			var ps = Global.AppSettings.StartPosition;
 			if (!Global.IsVsExtension)
 			{
