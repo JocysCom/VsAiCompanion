@@ -50,11 +50,15 @@ namespace JocysCom.ClassLibrary.Controls
 			WindowState = w.WindowState;
 			// Set position.
 			var pixRectangle = new Rect(w.Left, w.Top, w.Width, w.Height);
-			var diuRectangle = ConvertToDiu(pixRectangle);
-			Left = diuRectangle.Left;
-			Top = diuRectangle.Top;
-			Width = diuRectangle.Width;
-			Height = diuRectangle.Height;
+			Left = pixRectangle.Left;
+			Top = pixRectangle.Top;
+			Width = pixRectangle.Width;
+			Height = pixRectangle.Height;
+			//var diuRectangle = ConvertToDiu(pixRectangle);
+			//Left = diuRectangle.Left;
+			//Top = diuRectangle.Top;
+			//Width = diuRectangle.Width;
+			//Height = diuRectangle.Height;
 			// Set screen name.
 			var adjustedScreenBounds = Screen.AllScreens.ToDictionary(x => x, x => GetAdjustedScreenBounds(x));
 			ScreenName = (adjustedScreenBounds.FirstOrDefault(x => x.Value.Screen.IntersectsWith(pixRectangle)).Key ?? Screen.PrimaryScreen).DeviceName;
@@ -82,8 +86,9 @@ namespace JocysCom.ClassLibrary.Controls
 			if (w.MaxHeight > 0) Height = Math.Min(Height, w.MaxHeight);
 
 			// Get window bounds.
-			var diuRectangle = new Rect(Left, Top, Width, Height);
-			var pixRectangle = ConvertToPixels(diuRectangle);
+			var pixRectangle = new Rect(Left, Top, Width, Height);
+			//var diuRectangle = new Rect(Left, Top, Width, Height);
+			//var pixRectangle = ConvertToPixels(diuRectangle);
 
 			// Get virtual screen
 			var sLeft = SystemParameters.VirtualScreenLeft;

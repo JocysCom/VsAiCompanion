@@ -402,13 +402,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 				//var padPoint = new Point(tPad, lPad);
 				var size = new System.Windows.Size(width + wSpace, height + hSpace);
 				var point = new System.Windows.Point(window.Left, window.Top);
-				var newSize = PositionSettings.ConvertToDiu(size);
-				var newPoint = PositionSettings.ConvertToDiu(point);
+				//var newSize = PositionSettings.ConvertToDiu(size);
+				//var newPoint = PositionSettings.ConvertToDiu(point);
 				//var newPadPoint = PositionSettings.ConvertToDiu(padPoint);
-				ps.Left = (int)(newPoint.X / 2 / 3 / 5) * 2 * 3 * 5;
-				ps.Top = (int)(newPoint.Y / 2 / 3 / 5) * 2 * 3 * 5;
-				ps.Width = newSize.Width;
-				ps.Height = newSize.Height;
+				ps.Left = (int)(point.X / 2 / 3 / 5) * 2 * 3 * 5;
+				ps.Top = (int)(point.Y / 2 / 3 / 5) * 2 * 3 * 5;
+				ps.Width = size.Width;
+				ps.Height = size.Height;
 				ps.LoadPosition(window);
 			}
 		}
