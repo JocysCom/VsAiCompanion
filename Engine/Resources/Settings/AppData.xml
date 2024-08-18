@@ -27,8 +27,8 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>390</Left>
-        <Top>90</Top>
+        <Left>166</Left>
+        <Top>73</Top>
         <Width>913</Width>
         <Height>815.5</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -41,21 +41,24 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Embeddings</ItemType>
-          <GridSplitterPosition>0.23370786516853934</GridSplitterPosition>
+          <GridSplitterPosition>0.22247191011235956</GridSplitterPosition>
           <ListSelection>
-            <string>CyberNet Solutions - Localhost</string>
+            <string>CyberNet Solutions - Portable</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>1</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
+          <GridSplitterPosition>0.2303370786516854</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat (GPT-4)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
+          <FocusedControl>DataTextBox</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
+          <GridSplitterPosition>0.2303370786516854</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -63,6 +66,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>
+          <GridSplitterPosition>0.1898876404494382</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
@@ -86,9 +90,9 @@
         <TaskSettings>
           <ItemType>AiService</ItemType>
           <ListSelection>
-            <string>Azure Open AI</string>
+            <string>Open AI</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>3</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
@@ -400,9 +404,11 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileText</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileBytes</Id>
         </PluginItem>
         <PluginItem>
@@ -414,18 +420,23 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareContentsAndReturnChanges</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyFile</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyContents</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyTextFile</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFile</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFileLines</Id>
         </PluginItem>
         <PluginItem>
@@ -433,12 +444,15 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContents</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContentsAuthenticated</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.DownloadContent</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.DownloadContentAuthenticated</Id>
         </PluginItem>
         <PluginItem>
@@ -446,6 +460,7 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.CallApi</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.CallApiAuthenticated</Id>
         </PluginItem>
         <PluginItem>
@@ -565,7 +580,6 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.SetDescription</Id>
         </PluginItem>
         <PluginItem>
-          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchWindowsIndex</Id>
         </PluginItem>
         <PluginItem>

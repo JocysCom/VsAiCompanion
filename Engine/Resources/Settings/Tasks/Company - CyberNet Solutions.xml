@@ -26,8 +26,7 @@ rSbYhMVMGYBsypJMJSDEdAKXDGaqAGaK30zhmyl6MwVvJtjNFLqZIjdT4OYS90m7sEO7vLiM59Hq&#xD
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
-  <TextInstructions>Generate a response according to the given persona and sign off at the end.</TextInstructions>
-  <ShowInstructions>false</ShowInstructions>
+  <TextInstructions>Utilize embedding search to locate relevant data and enhance the response.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
@@ -89,6 +88,6 @@ John Smith</Body>
   <Context3ListName>Persona - John Smith</Context3ListName>
   <ShowPrompting>true</ShowPrompting>
   <UseEmbeddings>true</UseEmbeddings>
-  <EmbeddingName>CyberNet Solutions Portable</EmbeddingName>
+  <EmbeddingName>CyberNet Solutions - Portable</EmbeddingName>
   <AttachmentsSelection />
 </TemplateItem>

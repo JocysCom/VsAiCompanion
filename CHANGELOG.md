@@ -5,6 +5,7 @@
 - Fix: The app removes models with the same name in different services.
 - Fix: The saving and loading of size and position on monitors with different scaling percentages.
 - New: Option to require the AI model to use a tool function. Requires `gpt-4o` 2024-08-06+.
+- Update: Embedding processing groups and sub-groups data from the folder structure by default.
 - Update: Updated `Prompts` list.
 
 2024-08-07 v1.12.52

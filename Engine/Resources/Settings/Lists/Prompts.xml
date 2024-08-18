@@ -31,5 +31,9 @@ iz+y7EqprQMAAA==</IconData>
       <Value>Be creative/make any assumptions you need.</Value>
       <Comment>Encourages creativity by allowing the AI to relax some practical constraints.</Comment>
     </ListItem>
+    <ListItem>
+      <Key>Embedding</Key>
+      <Value>Utilize embedding search to locate relevant data and enhance the response.</Value>
+    </ListItem>
   </Items>
 </ListInfo>
