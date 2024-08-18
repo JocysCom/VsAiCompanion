@@ -27,11 +27,11 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>406</Left>
-        <Top>95</Top>
-        <Width>916</Width>
+        <Left>451</Left>
+        <Top>89</Top>
+        <Width>1010</Width>
         <Height>819</Height>
-        <ScreenName>\\.\DISPLAY6</ScreenName>
+        <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
       </StartPosition>
@@ -41,7 +41,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.23146067415730337</GridSplitterPosition>
+          <GridSplitterPosition>0.23170731707317074</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4)</string>
@@ -51,6 +51,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
+          <GridSplitterPosition>0.2997967479674797</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -69,10 +70,11 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Embeddings</ItemType>
+          <GridSplitterPosition>0.27134146341463417</GridSplitterPosition>
           <ListSelection>
-            <string>CyberNet Solutions</string>
+            <string>CyberNet Solutions - Portable</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>1</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
@@ -87,6 +89,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiService</ItemType>
+          <GridSplitterPosition>0.2997946611909651</GridSplitterPosition>
           <ListSelection>
             <string>Company Name AI</string>
           </ListSelection>
@@ -192,7 +195,10 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileText</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileBytes</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -239,6 +245,9 @@
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Mail.Send</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetProperties</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

@@ -96,12 +96,20 @@
             </summary>
             <param name="paths">The list of files to read from.</param>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile(System.String,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileText(System.String,System.String)">
             <summary>
             Write file text content on user computer.
             </summary>
             <param name="path">The file to write to.</param>
-            <param name="contents">The string to write to the file.</param>
+            <param name="text">The string to write to the file.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileBytes(System.String,System.String)">
+            <summary>
+            Write file byte content on user computer.
+            </summary>
+            <param name="path">The file to write to.</param>
+            <param name="base64">The bytes represented as base64 to write to the file.</param>
             <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges(System.String,System.String)">

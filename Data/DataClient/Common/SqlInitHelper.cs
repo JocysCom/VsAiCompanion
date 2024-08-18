@@ -390,7 +390,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			// Delete file parts.
 			commandText = $"DELETE FROM {filePartTable}\r\nWHERE [GroupName] = @GroupName\r\n";
 			if (groupFlag != null)
-				commandText += $"AND [GroupFlag] = @GroupFlag)\r\n";
+				commandText += $"AND [GroupFlag] = @GroupFlag\r\n";
 			if (state != null)
 				commandText += $"AND [State] = @State\r\n";
 			command.CommandText = commandText;
@@ -398,7 +398,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			// Delete files.
 			commandText = $"DELETE FROM {fileTable}\r\nWHERE [GroupName] = @GroupName\r\n";
 			if (groupFlag != null)
-				commandText += $"AND [GroupFlag] = @GroupFlag)\r\n";
+				commandText += $"AND [GroupFlag] = @GroupFlag\r\n";
 			if (state != null)
 				commandText += $"AND [State] = @State\r\n";
 			command.CommandText = commandText;

@@ -29,7 +29,7 @@
       <StartPosition>
         <Left>503</Left>
         <Top>84</Top>
-        <Width>916</Width>
+        <Width>974</Width>
         <Height>819</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
@@ -52,11 +52,11 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Embeddings</ItemType>
-          <GridSplitterPosition>0.21460674157303372</GridSplitterPosition>
+          <GridSplitterPosition>0.22362869198312235</GridSplitterPosition>
           <ListSelection>
-            <string>CyberNet Solutions</string>
+            <string>CyberNet Solutions - Portable</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>1</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
@@ -402,7 +402,10 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles</Id>
         </PluginItem>
         <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFile</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileText</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileBytes</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -450,6 +453,9 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Mail.Send</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetProperties</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

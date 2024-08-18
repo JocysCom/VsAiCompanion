@@ -2,6 +2,7 @@
 using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System.Collections.Generic;
+using System.IO;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -47,13 +48,47 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Write file text content on user computer.
 		/// </summary>
 		/// <param name="path">The file to write to.</param>
-		/// <param name="contents">The string to write to the file.</param>
+		/// <param name="text">The string to write to the file.</param>
 		/// <returns>True if the operation was successful.</returns>
 		[RiskLevel(RiskLevel.High)]
-		public static bool WriteFile(string path, string contents)
+		public static OperationResult<bool> WriteFileText(string path, string text)
 		{
-			System.IO.File.WriteAllText(path, contents);
-			return true;
+			try
+			{
+				var fi = new FileInfo(path);
+				if (!fi.Directory.Exists)
+					fi.Directory.Create();
+				System.IO.File.WriteAllText(path, text);
+				return new OperationResult<bool>(true);
+			}
+			catch (System.Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Write file byte content on user computer.
+		/// </summary>
+		/// <param name="path">The file to write to.</param>
+		/// <param name="base64">The bytes represented as base64 to write to the file.</param>
+		/// <returns>True if the operation was successful.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public static OperationResult<bool> WriteFileBytes(string path, string base64)
+		{
+			try
+			{
+				var bytes = System.Convert.FromBase64String(base64);
+				var fi = new FileInfo(path);
+				if (!fi.Directory.Exists)
+					fi.Directory.Create();
+				System.IO.File.WriteAllBytes(path, bytes);
+				return new OperationResult<bool>(true);
+			}
+			catch (System.Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
 		}
 
 		#endregion
