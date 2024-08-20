@@ -112,6 +112,14 @@
             <param name="base64">The bytes represented as base64 to write to the file.</param>
             <returns>True if the operation was successful.</returns>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertToPDF(System.String,System.String)">
+            <summary>
+            Convert file to PDF.
+            </summary>
+            <param name="inputFilePath">Source file.</param>
+            <param name="outputFilePath">Target PDF File.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges(System.String,System.String)">
             <inheritdoc/>
         </member>

@@ -1,7 +1,9 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using Microsoft.Win32;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
@@ -88,6 +90,69 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			catch (System.Exception ex)
 			{
 				return new OperationResult<bool>(ex);
+			}
+		}
+
+		#endregion
+
+		#region Convert to PDF and Image
+
+
+		/// <summary>
+		/// Convert file to PDF.
+		/// </summary>
+		/// <param name="inputFilePath">Source file.</param>
+		/// <param name="outputFilePath">Target PDF File.</param>
+		/// <returns>True if the operation was successful.</returns>
+		//[RiskLevel(RiskLevel.High)]
+		public static OperationResult<bool> ConvertToPDF(string inputFilePath, string outputFilePath)
+		{
+			try
+			{
+				// Register the printer's output file path via the registry
+				SetDefaultPrinterOutput(outputFilePath);
+
+				// Create a new process to print the document
+				ProcessStartInfo processInfo = new ProcessStartInfo()
+				{
+					Verb = "print",
+					FileName = inputFilePath,
+					CreateNoWindow = true,
+					WindowStyle = ProcessWindowStyle.Hidden,
+					// Specify the printer: Microsoft Print to PDF
+					Arguments = "\"Microsoft Print to PDF\""
+				};
+
+				Process process = new Process()
+				{
+					StartInfo = processInfo
+				};
+				process.Start();
+				process.WaitForExit();
+
+				return new OperationResult<bool>(true);
+			}
+			catch (System.Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		private static void SetDefaultPrinterOutput(string outputFilePath)
+		{
+			// Define the registry path for the printer
+			string registryPath = @"Software\Microsoft\Windows NT\CurrentVersion\Print\Printers\Microsoft Print to PDF\PrinterDriverData";
+
+			// Try to open the registry key
+			using (RegistryKey key = Registry.CurrentUser.CreateSubKey(registryPath, true))
+			{
+				if (key == null)
+				{
+					throw new System.Exception($"Registry path not found or inaccessible: {registryPath}");
+				}
+
+				// Set the default output file
+				key.SetValue("OutputFile", outputFilePath, RegistryValueKind.String);
 			}
 		}
 

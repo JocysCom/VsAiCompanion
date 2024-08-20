@@ -6,6 +6,10 @@
     This script checks the current installed version of an application via its executable file and Windows registry, then compares it to a required version.
     It outputs whether an update is required or if the application is up-to-date. It also checks crash rates and controls the installation rate based on predefined limits.
     https://learn.microsoft.com/en-us/mem/intune/apps/intune-management-extension
+
+    IMPORTANT:
+    The app will be detected when the script both returns a 0 value exit code and writes a string value to STDOUT.
+
 #>
 
 # Replace this with the actual info you aim to install (the version in the MSI)
@@ -131,6 +135,7 @@ if ($logEnabled) {
 
 
 # Handle version determination and update prevention logic.
+# Return exit code and write a string value to STDOUT.
 if (-not ($currentVersion)) {
     Write-Output "Application not found. Installation required"
     exit 1

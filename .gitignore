@@ -406,3 +406,4 @@ FodyWeavers.xsd
 
 /Plugins/LinkReader/.config
 /Plugins/PowerShellExecutor/.config
+/Tools/pandoc.exe

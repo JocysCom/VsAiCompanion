@@ -92,7 +92,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
 			{
 				HelpInit = true;
-				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature ‐ Embeddings.rtf");
+				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature - Embeddings.rtf");
 				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
 			}
 		}

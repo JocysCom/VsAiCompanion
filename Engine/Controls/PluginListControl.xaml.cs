@@ -60,7 +60,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public IList<PluginItem> GetAllMetods()
 		{
 			var methods = Global.AppSettings.Plugins
-				.Where(x => x.Mi.DeclaringType.FullName == ClassFullName)
+				.Where(x => x.Mi?.DeclaringType.FullName == ClassFullName)
 				.ToList();
 			return methods;
 		}

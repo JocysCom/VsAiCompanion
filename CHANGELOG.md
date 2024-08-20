@@ -1,3 +1,7 @@
+2024-08-19 v1.12.65
+
+- Fix: Help documents embedded in the app.
+
 2024-08-18 v1.12.64
 
 - Fix: Sometimes the tray notification icon wasn't removed after exiting the app.

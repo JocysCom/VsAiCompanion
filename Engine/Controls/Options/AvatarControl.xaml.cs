@@ -287,7 +287,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
 			{
 				HelpInit = true;
-				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature ‐ AI Avatar.rtf");
+				var bytes = AppHelper.ExtractFile("Documents.zip", "Feature - AI Avatar.rtf");
 				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
 			}
 		}
