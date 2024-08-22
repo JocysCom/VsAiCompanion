@@ -790,8 +790,8 @@ EndFragment:{3:00000000}";
 				return null;
 			try
 			{
-				var user = "AppContext";
-				return JocysCom.ClassLibrary.Security.Encryption.Decrypt(data, user);
+				var salt = "AppContext";
+				return JocysCom.ClassLibrary.Security.Encryption.Decrypt(data, salt);
 			}
 			catch (Exception ex)
 			{

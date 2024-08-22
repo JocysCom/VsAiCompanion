@@ -15,24 +15,24 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves solution document.
 		/// </summary>
-		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
 		/// <returns>Soulution document.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		DocItem GetSolution(bool includeContents);
 
 		/// <summary>
-		/// Retrieves projects of the solution.
+		/// Retrieves all projects or a specific project in the solution.
 		/// </summary>
-		/// <param name="fileFullName">If specified, then only the specified project document will be retrieved.</param>
-		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
-		/// <returns>Project documents.</returns>
+		/// <param name="fileFullName">Specify to get a specific project; leave empty for all projects.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
+		/// <returns>A list of project documents.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetSolutionProjects(string fileFullName, bool includeContents);
 
 		/// <summary>
 		/// Retrieves all Documents throughout the entire solution.
 		/// </summary>
-		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
 		/// <returns>A collection of all Documents within the solution.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetAllSolutionDocuments(bool includeContents);
@@ -40,7 +40,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves all Documents within the project of the currently active Document.
 		/// </summary>
-		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
 		/// <returns>A collection of Documents from the same project as the active Document.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetDocumentsOfProjectOfCurrentDocument(bool includeContents);
@@ -48,7 +48,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves all Documents within the project of a Document selected by the user.
 		/// </summary>
-		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
 		/// <returns>A collection of Documents from the project of the selected Document.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetDocumentsOfProjectOfSelectedDocument(bool includeContents);
@@ -56,7 +56,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves all Documents currently selected in the Solution Explorer.
 		/// </summary>
-		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
 		/// <returns>A collection of Documents selected in the Solution Explorer.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetDocumentsSelectedInExplorer(bool includeContents);
@@ -64,7 +64,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves all Documents that are currently open in the editor.
 		/// </summary>
-		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
 		/// <returns>A collection of open Documents.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		IList<DocItem> GetOpenDocuments(bool includeContents);
@@ -74,7 +74,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>
 		/// Retrieves the Document currently open and active in the editor.
 		/// </summary>
-		/// <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
 		/// <returns>The active Document.</returns>
 		[RiskLevel(RiskLevel.Low)]
 		DocItem GetCurrentDocument(bool includeContents);

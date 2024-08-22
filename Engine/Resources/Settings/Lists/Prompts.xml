@@ -34,6 +34,12 @@ iz+y7EqprQMAAA==</IconData>
     <ListItem>
       <Key>Embedding</Key>
       <Value>Utilize embedding search to locate relevant data and enhance the response.</Value>
+      <Comment>Improve the quality and relevance of the response.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Efficient Expression</Key>
+      <Value>Minimize repetition. Keep the word-to-idea ratio low.</Value>
+      <Comment>Avoid redundancy and maintain a high word-to-idea ratio.</Comment>
     </ListItem>
   </Items>
 </ListInfo>

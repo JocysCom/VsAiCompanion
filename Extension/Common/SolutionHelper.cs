@@ -1071,10 +1071,12 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 				FullName = fileFullName,
 				Name = o.Name,
+				ProjectName = o.ContainingProject?.Name,
 				Kind = o.Kind,
 				Language = o.ContainingProject.CodeModel.Language,
 				IsSaved = o.Saved,
 			};
+			docItem.LoadFileInfo();
 			if (includeContents)
 				LoadData(new List<DocItem> { docItem });
 			return docItem;
@@ -1101,6 +1103,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 				if (projectItem != null)
 				{
 					docItem.Kind = projectItem.Kind;
+					docItem.ProjectName = projectItem.ContainingProject?.Name;
 					// Attempt to access language via CodeModel
 					var codeModel = projectItem.FileCodeModel;
 					if (codeModel != null)
@@ -1111,6 +1114,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			{
 				// Failed to retrieve ProjectItem or its properties
 			}
+			docItem.LoadFileInfo();
 			if (includeContents)
 				LoadData(new List<DocItem> { docItem });
 			return docItem;

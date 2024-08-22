@@ -12,14 +12,34 @@ sDvuER/EjmSaZSTRb8Yd4iajziB+QmitrX1SiNwoiKL3CjwgvsEz0yKeZ/m5aRPH8jxDiLXe+Q81&#xD
 tGAJveA6KBixXQOcgWwqS1j8RsCwltBj1eprJMx9n4NLHANGzMk4H+xgMr3JhD5M9hkEWjDZ1mC/&#xD;
 JVCUhcSoaetyD1d86Viu70M6x4A5jhOgxwBMnUziKsTDtJzCL6qVda7gA+C/q/GOxcxpCv+Gnu+r&#xD;
 iz+y7EqprQMAAA==</IconData>
-  <Created>2024-07-09T20:24:52.3226069+01:00</Created>
-  <Modified>2024-07-09T20:24:52.3226069+01:00</Modified>
-  <Description>Contains user prompts. Not used by AI.</Description>
-  <IsReadOnly>true</IsReadOnly>
+  <Created>2024-07-09T14:38:55.40805+01:00</Created>
+  <Modified>2024-07-09T14:38:55.40805+01:00</Modified>
+  <Description>Used to store user prompts.</Description>
   <Items>
     <ListItem>
       <Key>Info Known</Key>
-      <Value>Note: Exclude submitted content from your response. The user already knows this information.</Value>
+      <Value>Do not respond with the supplied file content. The user already has this information.</Value>
+      <Comment>Prevent repeating information to allow for a more thorough and new response.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Step by Step</Key>
+      <Value>Show your work/provide sources/go step-by-step.</Value>
+      <Comment>Encourages detailed responses by requiring the AI to show its reasoning and sources.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Assumptions</Key>
+      <Value>Be creative/make any assumptions you need.</Value>
+      <Comment>Encourages creativity by allowing the AI to relax some practical constraints.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Embedding</Key>
+      <Value>Utilize embedding search to locate relevant data and enhance the response.</Value>
+      <Comment>Improve the quality and relevance of the response.</Comment>
+    </ListItem>
+    <ListItem>
+      <Key>Efficient Expression</Key>
+      <Value>Minimize repetition. Keep the word-to-idea ratio low.</Value>
+      <Comment>Avoid redundancy and maintain a high word-to-idea ratio.</Comment>
     </ListItem>
   </Items>
 </ListInfo>

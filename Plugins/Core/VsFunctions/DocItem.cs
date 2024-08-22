@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -44,6 +45,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		public string FullName { get; set; }
 
 		/// <summary>
+		/// Parent project name of the document.
+		/// </summary>
+		public string ProjectName { get; set; }
+
+		/// <summary>
 		/// If physical file then...
 		/// https://github.com/MicrosoftDocs/visualstudio-docs/blob/main/docs/extensibility/ide-guids.md
 		/// </summary>
@@ -79,14 +85,17 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// </summary>
 		public string Kind { get; set; }
 
-		/// <summary>Content size.</summary>
+		/// <summary>File content size.</summary>
 		[DefaultValue(null)]
 		public long? Size { get; set; }
 
-		/// <summary>Content size.</summary>
+		/// <summary>File last write time (UTC).</summary>
 		[DefaultValue(null)]
-		public DateTime? LastWrite { get; set; }
+		public DateTime? LastWriteTime { get; set; }
 
+		/// <summary>File creation time (UTC).</summary>
+		[DefaultValue(null)]
+		public DateTime? CreationTime { get; set; }
 
 		/// <summary>
 		/// Hint for AI.
@@ -209,6 +218,35 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 			ContentData = Convert.ToBase64String(data, Base64FormattingOptions.InsertLineBreaks);
 			ContentHint = "Base64EncodedBinary"; // Explicitly states the encoding method for binary data
 			return data.Length;
+		}
+
+		/// <summary>
+		/// Load file metadata.
+		/// </summary>
+		public bool LoadFileInfo()
+		{
+			var s = FullName;
+			if (string.IsNullOrEmpty(s))
+				return false;
+			var invalid = s.ToCharArray().Intersect(System.IO.Path.GetInvalidPathChars());
+			if (invalid.Any())
+				return false;
+			try
+			{
+				var fi = new FileInfo(s);
+				if (!fi.Exists)
+					return false;
+				FullName = fi.FullName;
+				Name = fi.Name;
+				Size = fi.Length;
+				LastWriteTime = fi.LastWriteTimeUtc;
+				CreationTime = fi.CreationTimeUtc;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+			return true;
 		}
 
 		/// <summary>

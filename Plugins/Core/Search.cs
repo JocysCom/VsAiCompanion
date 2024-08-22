@@ -60,10 +60,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					var doc = new DocItem()
 					{
 						FullName = fileInfo.FullName,
-						Name = fileInfo.Name,
-						Size = fileInfo.Length,
-						LastWrite = fileInfo.LastWriteTimeUtc,
 					};
+					doc.LoadFileInfo();
 					doc.LoadData();
 					filesCollection.Upsert(doc);
 				}

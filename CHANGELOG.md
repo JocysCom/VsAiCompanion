@@ -1,6 +1,7 @@
-2024-08-19 v1.12.65
+2024-08-22 v1.12.68
 
 - Fix: Help documents embedded in the app.
+- Update: Enhance AI tool functions in Visual Studio.
 
 2024-08-18 v1.12.64
 

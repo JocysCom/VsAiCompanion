@@ -1077,6 +1077,11 @@
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.FullName">
             <summary>Full path to the document.</summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ProjectName">
+            <summary>
+            Parent project name of the document.
+            </summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.IsFile">
             <summary>
             If physical file then...
@@ -1113,10 +1118,13 @@
             </summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.Size">
-            <summary>Content size.</summary>
+            <summary>File content size.</summary>
         </member>
-        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LastWrite">
-            <summary>Content size.</summary>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LastWriteTime">
+            <summary>File last write time (UTC).</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.CreationTime">
+            <summary>File creation time (UTC).</summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ContentHint">
             <summary>
@@ -1165,6 +1173,11 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LoadData(System.Byte[])">
             <summary>
             Load content into `Data` property.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.LoadFileInfo">
+            <summary>
+            Load file metadata.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.GetDataBinary">
@@ -1261,57 +1274,57 @@
             <summary>
             Retrieves solution document.
             </summary>
-            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
             <returns>Soulution document.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetSolutionProjects(System.String,System.Boolean)">
             <summary>
-            Retrieves projects of the solution.
+            Retrieves all projects or a specific project in the solution.
             </summary>
-            <param name="fileFullName">If specified, then only the specified project document will be retrieved.</param>
-            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
-            <returns>Project documents.</returns>
+            <param name="fileFullName">Specify to get a specific project; leave empty for all projects.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
+            <returns>A list of project documents.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetAllSolutionDocuments(System.Boolean)">
             <summary>
             Retrieves all Documents throughout the entire solution.
             </summary>
-            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
             <returns>A collection of all Documents within the solution.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsOfProjectOfCurrentDocument(System.Boolean)">
             <summary>
             Retrieves all Documents within the project of the currently active Document.
             </summary>
-            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
             <returns>A collection of Documents from the same project as the active Document.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsOfProjectOfSelectedDocument(System.Boolean)">
             <summary>
             Retrieves all Documents within the project of a Document selected by the user.
             </summary>
-            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
             <returns>A collection of Documents from the project of the selected Document.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetDocumentsSelectedInExplorer(System.Boolean)">
             <summary>
             Retrieves all Documents currently selected in the Solution Explorer.
             </summary>
-            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
             <returns>A collection of Documents selected in the Solution Explorer.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetOpenDocuments(System.Boolean)">
             <summary>
             Retrieves all Documents that are currently open in the editor.
             </summary>
-            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
             <returns>A collection of open Documents.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.GetCurrentDocument(System.Boolean)">
             <summary>
             Retrieves the Document currently open and active in the editor.
             </summary>
-            <param name="includeContents">`true` to include contents, `false` to get information only.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time, project name); `false` for metadata only.</param>
             <returns>The active Document.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper.OpenDocument(System.String)">
