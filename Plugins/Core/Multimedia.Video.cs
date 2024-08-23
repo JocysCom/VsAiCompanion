@@ -22,12 +22,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Analyzes visual content (pictures/photos) based on given instructions using an AI model.
 		/// Supported file types: .jpg, .png, .gif, .bmp, .tiff
 		/// Do not use for analyzing plain text files.
+		/// Send all the pictures at once if they belong to one document.
 		/// </summary>
 		/// <param name="instructions">Guidelines for AI to follow during image analysis.</param>
 		/// <param name="pathsOrUrls">Paths to local files or URLs to images for analysis. Supported image file types: .jpg, .png, .gif, .bmp, .tiff</param>
 		/// <returns>Analysis results.</returns>
 		[RiskLevel(RiskLevel.Low)]
-		public async Task<OperationResult<string>> AnalysePicture(
+		public async Task<OperationResult<string>> AnalysePictures(
 			string instructions,
 			string[] pathsOrUrls
 			)

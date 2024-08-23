@@ -138,6 +138,16 @@
 				<controls:SettingsControl x:Name="UiPresetsPanel" x:FieldModifier="public" DataType="UiPreset" />
 			</TabItem>
 
+			<TabItem x:Name="UdpServerTabItem" x:FieldModifier="public">
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_settings}" />
+						<Label Content="UDP Server" />
+					</StackPanel>
+				</TabItem.Header>
+				<controlsOptions:UdpServerControl x:Name="UdpServerPanel" x:FieldModifier="public" />
+			</TabItem>
+
 			<TabItem x:Name="ResetSettingsTabItem" x:FieldModifier="public">
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">

@@ -1,6 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core.Server
 {
@@ -32,6 +36,51 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.Server
 			_serverEndpoint = new IPEndPoint(
 				serverAddress ?? UdpHelper.DefaultIPAddress,
 				serverPort ?? UdpHelper.DefaultStartPort);
+		}
+
+		/// <summary>
+		/// Scan for servers and return port/title by calling special function.
+		/// </summary>
+		/// <returns></returns>
+		public Dictionary<ushort, string> ScanServers()
+		{
+			// Dictionary to hold port and server info.
+			var servers = new ConcurrentDictionary<ushort, string>();
+			// Get the default start and end ports for scanning.
+			var startPort = UdpHelper.DefaultStartPort;
+			var endPort = UdpHelper.DefaultEndPort;
+			// Generate the list of ports to scan.
+			var ports = Enumerable.Range(startPort, endPort - startPort + 1).Select(port => (ushort)port).ToList();
+			// Use Parallel.ForEach to scan ports concurrently.
+			Parallel.ForEach(ports, port =>
+			{
+				// Create an endpoint for the current port.
+				var endPoint = new IPEndPoint(UdpHelper.DefaultIPAddress, port);
+				// Prepare the UDP client to send a request.
+				using (var udpClient = new UdpClient())
+				{
+					try
+					{
+						// Serialize the request to get the process info.
+						var requestData = UdpHelper.Serialize(new object[] { nameof(UdpHelper.GetProcessInfo) });
+						// Send the request to the server.
+						udpClient.Send(requestData, requestData.Length, endPoint);
+						// Set a 1 second timeout for receiving the response.
+						udpClient.Client.ReceiveTimeout = 1000;
+						// Try to receive the response from the server.
+						var responseData = udpClient.Receive(ref endPoint);
+						// Deserialize the response to get the server info.
+						var serverInfo = UdpHelper.Deserialize<string>(responseData);
+						// Add the port and server info to the dictionary.
+						servers.TryAdd(port, serverInfo);
+					}
+					catch (Exception)
+					{
+						// Ignore any exceptions (e.g., timeout, no response) for this port.
+					}
+				}
+			});
+			return servers.ToDictionary(kv => kv.Key, kv => kv.Value);
 		}
 
 		/// <summary>
