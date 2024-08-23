@@ -19,42 +19,43 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<ScrollViewer DataContext="{Binding Item, ElementName=This}">
-		<StackPanel>
-			<GroupBox Grid.Row="3" Margin="3,0,3,0" Header="Tool Choice">
-				<StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<CheckBox
-							Name="ToolChoiceRequiredCheckBox"
-							AutomationProperties.HelpText="{StaticResource main_ToolChoiceRequired_Help}"
-							AutomationProperties.Name="{StaticResource main_ToolChoiceRequired_Name}"
-							Content="Tool Choice Required"
-							IsChecked="{Binding ToolChoiceRequired, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-						<TextBlock Margin="0,5,0,0" Text="{Binding ToolChoiceRequiredNamesString, ElementName=This}" />
-					</StackPanel>
-					<ListBox
-						Name="ToolChoiceRequiredNamesListBox"
-						Width="360"
-						MinHeight="100"
-						MaxHeight="200"
-						HorizontalAlignment="Left"
-						AutomationProperties.HelpText="{StaticResource main_ToolChoiceRequiredNames_Help}"
-						AutomationProperties.Name="{StaticResource main_ToolChoiceRequiredNames_Name}"
-						ItemsSource="{Binding ListBoxData, ElementName=This}"
-						SelectionMode="Single">
-						<ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<VirtualizingStackPanel />
-							</ItemsPanelTemplate>
-						</ListBox.ItemsPanel>
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<CheckBox Content="{Binding Key}" IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+	<StackPanel DataContext="{Binding Item, ElementName=This}">
+		<GroupBox
+			Grid.Row="3"
+			Margin="3,0,3,3"
+			HorizontalAlignment="Left"
+			Header="Tool Choice">
+			<StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox
+						Name="ToolChoiceRequiredCheckBox"
+						AutomationProperties.HelpText="{StaticResource main_ToolChoiceRequired_Help}"
+						AutomationProperties.Name="{StaticResource main_ToolChoiceRequired_Name}"
+						Content="Tool Choice Required"
+						IsChecked="{Binding ToolChoiceRequired, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					<TextBlock Margin="0,5,0,0" Text="{Binding ToolChoiceRequiredNamesString, ElementName=This}" />
 				</StackPanel>
-			</GroupBox>
-		</StackPanel>
-	</ScrollViewer>
+				<ListBox
+					Name="ToolChoiceRequiredNamesListBox"
+					MinWidth="100"
+					MinHeight="100"
+					MaxHeight="200"
+					AutomationProperties.HelpText="{StaticResource main_ToolChoiceRequiredNames_Help}"
+					AutomationProperties.Name="{StaticResource main_ToolChoiceRequiredNames_Name}"
+					ItemsSource="{Binding ListBoxData, ElementName=This}"
+					SelectionMode="Single">
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<VirtualizingStackPanel />
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<CheckBox Content="{Binding Key}" IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
+		</GroupBox>
+	</StackPanel>
 </UserControl>

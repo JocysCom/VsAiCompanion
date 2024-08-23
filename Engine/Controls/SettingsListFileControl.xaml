@@ -247,7 +247,11 @@
 					</DataGridTemplateColumn.CellStyle>
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Image HorizontalAlignment="Center" x:Name="IconImage" Source="{Binding Icon}" Style="{StaticResource ImageCell_Default}" />
+							<Image
+								x:Name="IconImage"
+								HorizontalAlignment="Center"
+								Source="{Binding Icon}"
+								Style="{StaticResource ImageCell_Default}" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
