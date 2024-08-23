@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -59,6 +60,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.Server
 				if (!portArray.Contains(i))
 					return i;
 			return 0;
+		}
+
+
+		/// <summary>
+		/// Returns the title of the current process.
+		/// </summary>
+		/// <returns>Title of the current process.</returns>
+		public static string GetProcessInfo()
+		{
+			return Process.GetCurrentProcess().MainWindowTitle;
 		}
 
 		/// <summary>

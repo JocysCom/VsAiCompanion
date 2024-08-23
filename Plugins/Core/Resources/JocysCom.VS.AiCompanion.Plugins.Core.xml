@@ -120,6 +120,14 @@
             <param name="outputFilePath">Target PDF File.</param>
             <returns>True if the operation was successful.</returns>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertPdfToImage(System.String,System.String)">
+            <summary>
+            Convert PDF to Image.
+            </summary>
+            <param name="pdfFilePath">Source PDF file.</param>
+            <param name="outputFolder">Target folder for JPG Files.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges(System.String,System.String)">
             <inheritdoc/>
         </member>
@@ -849,11 +857,12 @@
             Will be used by plugins manager and called by AI.
             </summary>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePicture(System.String,System.String[])">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePictures(System.String,System.String[])">
             <summary>
             Analyzes visual content (pictures/photos) based on given instructions using an AI model.
             Supported file types: .jpg, .png, .gif, .bmp, .tiff
             Do not use for analyzing plain text files.
+            Send all the pictures at once if they belong to one document.
             </summary>
             <param name="instructions">Guidelines for AI to follow during image analysis.</param>
             <param name="pathsOrUrls">Paths to local files or URLs to images for analysis. Supported image file types: .jpg, .png, .gif, .bmp, .tiff</param>
@@ -953,6 +962,150 @@
             <param name="message">Search query.</param>
             <param name="skip">Number of records to skip. Recommended: 0</param>
             <param name="take">Number of records to take. Recommended: 4</param>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpClient`1">
+            <summary>
+            UdpClient facilitates invoking remote methods via UDP on a server instantiated with <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">Type defining the methods accessible on the server.</typeparam>
+            <example>
+            Usage:
+            <code>
+            var UdpClient = new UdpClient&lt;YourClassType&gt;(IPAddress.Loopback, 12002);
+            var result = UdpClient.CallMethod&lt;string&gt;("YourMethodName", "param1", 123, true);
+            Console.WriteLine(result);
+            </code>
+            </example>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpClient`1.#ctor(System.Net.IPAddress,System.Nullable{System.UInt16})">
+            <summary>
+            Initializes an instance of UdpClient to connect and invoke methods on a server.
+            </summary>
+            <param name="serverAddress">Server's IP address.</param>
+            <param name="serverPort">Port number on which the server is listening.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpClient`1.ScanServers">
+            <summary>
+            Scan for servers and return port/title by calling special function.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpClient`1.CallMethod``1(System.String,System.Object[])">
+            <summary>
+            Invokes a specific method on the server and retrieves the result.
+            </summary>
+            <typeparam name="TResult">Expected return type of the method.</typeparam>
+            <param name="methodName">Name of the method to invoke.</param>
+            <param name="parameters">Parameters for the method call.</param>
+            <returns>Result from the method invocation.</returns>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper">
+            <summary>
+            UDP Helper.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.DefaultStartPort">
+            <summary>
+            Defaul range start server port.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.DefaultEndPort">
+            <summary>
+            Defaul range end server port.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.DefaultIPAddress">
+            <summary>
+            Defaul IP Address. Loopback IP limits communication to local machine.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.FindFreePort(System.UInt16,System.UInt16)">
+            <summary>
+            Find first free port. IANA Port categories:
+                    0 –  1023 – System or Well Known ports.
+                 1024 – 49151 – User or Registered ports.
+                49152 - 65535 – Dynamic (Private) or Ephemeral Ports.
+            </summary>
+            <returns>Free port number if found; otherwise 0.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.GetProcessInfo">
+            <summary>
+            Returns the title of the current process.
+            </summary>
+            <returns>Title of the current process.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.Serialize(System.Object)">
+            <summary>
+            Serialize request.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.Deserialize``1(System.Byte[])">
+            <summary>
+            Deserialize response.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.EnableEncryption">
+            <summary>
+            Enable encrytion. Encryptuon limits communication to the same user only.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.CryptoSalt">
+            <summary>
+            Default salt for encryption and decryption.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.UserEncrypt(System.Byte[])">
+            <summary>
+            Encrypt data. The protected data is associated with the current user.
+            Only threads running under the current user context can unprotect the data.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpHelper.UserDecrypt(System.Byte[])">
+            <summary>
+            Decrypt data. The protected data is associated with the current user.
+            Only threads running under the current user context can unprotect the data.
+            </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpServer`1">
+            <summary>
+            UdpServer establishes a simple UDP-based RPC server for invoking methods defined in the specified type <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">Class type with methods to expose via the server.</typeparam>
+            <example>
+            Usage:
+            <code>
+            var UdpServer = new UdpServer&lt;YourClassType&gt;();
+            UdpServer.StartServer(IPAddress.Loopback, 12002);
+            UdpServer.StopServer();
+            </code>
+            </example>
+        </member>
+        <member name="E:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpServer`1.MessageReceived">
+            <summary>
+            Count messages.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpServer`1.IsRunning">
+            <summary>
+            Server status.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpServer`1.StartServer(System.Net.IPAddress,System.Nullable{System.Int32})">
+            <summary>
+            Starts the server to listen for incoming UDP requests on the given address and port.
+            </summary>
+            <param name="address">IP Address to bind the server.</param>
+            <param name="port">Port number to listen on.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpServer`1.StopServer">
+            <summary>
+            Stops the server from listening for incoming requests.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Server.UdpServer`1.Listen">
+            <summary>
+            Listens for incoming UDP requests and processes them by invoking corresponding methods.
+            </summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.TtsMonitor.VoiceGender">
             <summary>

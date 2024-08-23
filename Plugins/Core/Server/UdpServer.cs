@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -25,6 +24,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.Server
 		private IPEndPoint _endPoint;
 		private bool _isRunning;
 		private T _instance = new T();
+
+		/// <summary>
+		/// Count messages.
+		/// </summary>
+		public event EventHandler MessageReceived;
+
+		/// <summary>
+		/// Server status.
+		/// </summary>
+		public bool IsRunning => _isRunning;
 
 		/// <summary>
 		/// Starts the server to listen for incoming UDP requests on the given address and port.
@@ -63,6 +72,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.Server
 				try
 				{
 					var result = await _udpClient.ReceiveAsync();
+					MessageReceived.Invoke(this, EventArgs.Empty);
 					var data = result.Buffer;
 					var request = UdpHelper.Deserialize<object[]>(data);
 					var methodName = request[0] as string;
@@ -70,9 +80,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.Server
 					var method = typeof(T).GetMethod(methodName);
 					if (method == null)
 					{
-						if (methodName == nameof(GetProcessInfo))
+						if (methodName == nameof(UdpHelper.GetProcessInfo))
 						{
-							var response = GetProcessInfo();
+							var response = UdpHelper.GetProcessInfo();
 							var responseData = UdpHelper.Serialize(response);
 							await _udpClient.SendAsync(responseData, responseData.Length, result.RemoteEndPoint);
 						}
@@ -93,15 +103,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.Server
 					Console.WriteLine($"Error: {ex.Message}");
 				}
 			}
-		}
-
-		/// <summary>
-		/// Returns the title of the current process.
-		/// </summary>
-		/// <returns>Title of the current process.</returns>
-		public static string GetProcessInfo()
-		{
-			return Process.GetCurrentProcess().MainWindowTitle;
 		}
 
 	}

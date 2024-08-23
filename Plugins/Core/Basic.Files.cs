@@ -2,9 +2,12 @@
 using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using Microsoft.Win32;
+using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -155,6 +158,89 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				key.SetValue("OutputFile", outputFilePath, RegistryValueKind.String);
 			}
 		}
+
+		/// <summary>
+		/// Convert PDF to Image.
+		/// </summary>
+		/// <param name="pdfFilePath">Source PDF file.</param>
+		/// <param name="outputFolder">Target folder for JPG Files.</param>
+		/// <returns>True if the operation was successful.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public static OperationResult<List<string>> ConvertPdfToImage(string pdfFilePath, string outputFolder)
+		{
+			var pdfImageFiles = new List<string>();
+			try
+			{
+				var pdfFi = new FileInfo(pdfFilePath);
+				var pdf = File.ReadAllBytes(pdfFilePath);
+				var pageImages = PDFtoImage.Conversion.ToImages(pdf);
+				var totalPageCount = pageImages.Count();
+				var maxImageCount = 25d;
+				var maxSize = (int)Math.Ceiling(totalPageCount / maxImageCount);
+				var pageImageGroups = new List<List<SKBitmap>>();
+
+				for (int i = 0; i < totalPageCount; i += maxSize)
+				{
+					var pageImageGroup = pageImages.Skip(i).Take(maxSize).ToList();
+					pageImageGroups.Add(pageImageGroup);
+				}
+
+				if (!Directory.Exists(outputFolder))
+					Directory.CreateDirectory(outputFolder);
+
+				var count = 0;
+				var pdfImageName = string.Empty;
+				foreach (var pageImageGroup in pageImageGroups)
+				{
+					pdfImageName = Path.Combine(outputFolder, $"{pdfFi.Name}.Part_{count}.jpg");
+					var totalHeight = pageImageGroup.Sum(image => image.Height);
+					var width = pageImageGroup.Max(image => image.Width);
+					var stitchedImage = new SKBitmap(width, totalHeight);
+					var canvas = new SKCanvas(stitchedImage);
+					var currentHeight = 0;
+
+					foreach (var pageImage in pageImageGroup)
+					{
+						canvas.DrawBitmap(pageImage, 0, currentHeight);
+						currentHeight += pageImage.Height;
+					}
+
+					using (var stitchedFileStream = new FileStream(pdfImageName, FileMode.Create, FileAccess.Write))
+					{
+						stitchedImage.Encode(stitchedFileStream, SKEncodedImageFormat.Jpeg, 100);
+					}
+
+					pdfImageFiles.Add(pdfImageName);
+					count++;
+					Console.WriteLine();
+				}
+				var result = new OperationResult<List<string>>(pdfImageFiles);
+				result.StatusText = $"Saved image to {pdfImageName}";
+				return result;
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<List<string>>(ex);
+			}
+		}
+
+		///// <summary>
+		///// Analyzes visual content (pictures/photos) based on given instructions using an AI model.
+		///// Supported file types: .jpg, .png, .gif, .bmp, .tiff
+		///// Do not use for analyzing plain text files.
+		///// Send all the pictures at once if they belong to one document.
+		///// </summary>
+		///// <param name="instructions">Guidelines for AI to follow during image analysis.</param>
+		///// <param name="pathsOrUrls">Paths to local files or URLs to images for analysis. Supported image file types: .jpg, .png, .gif, .bmp, .tiff</param>
+		///// <returns>Analysis results.</returns>
+		//[RiskLevel(RiskLevel.Low)]
+		//public async Task<OperationResult<string>> AnalysePdfDocument(
+		//	string instructions,
+		//	string[] pdfFilePath
+		//	)
+		//{
+		//	return await VideoToText(instructions, pathsOrUrls);
+		//}
 
 		#endregion
 
