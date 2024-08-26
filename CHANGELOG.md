@@ -1,6 +1,8 @@
 2024-08-26 v1.12.72
 
 - Fix: Help documents embedded in the app.
+- Fix: Display function calls as YAML; otherwise, the AI stops making direct function calls.
+- Fix: Unable to stop message requests.
 - Update: Enhance AI tool functions in Visual Studio.
 - New: AI tool function to convert PDF to images. 
 - New: AI tool function to convert PDF to structured JSON.

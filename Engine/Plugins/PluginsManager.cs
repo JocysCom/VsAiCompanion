@@ -131,10 +131,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		/// <param name="item">User settings.</param>
 		/// <param name="function">function as JSON</param>
-		public static async Task<string> ProcessPluginFunction(TemplateItem item, chat_completion_function function, CancellationTokenSource cancellationTokenSource)
+		public static async Task<(string, string)?> ProcessPluginFunction(TemplateItem item, chat_completion_function function, CancellationTokenSource cancellationTokenSource)
 		{
 			if (!item.PluginsEnabled)
-				return null;
+				return (null, null);
 			var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 			if (!AllowPluginFunction(function.name, maxRiskLevel))
 				return null;
@@ -146,7 +146,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return null;
 			}
 			if (item.PluginApprovalProcess == ToolCallApprovalProcess.DenyAll)
-				return Resources.MainResources.main_Call_function_request_denied;
+				return ("text", Resources.MainResources.main_Call_function_request_denied);
 			object classInstance = null;
 			// If the method is not static, create an instance of the class.
 			if (!methodInfo.IsStatic)
@@ -191,7 +191,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 							: $"Request Denial Comments: {pfci.ApprovalReason}"
 						,
 						Resources.MainResources.main_Call_function_request_denied);
-					return messageToAI;
+					return ("text", messageToAI);
 				}
 			}
 			object methodResult = null;
@@ -261,8 +261,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, cancellationTokenSource.Token);
 			}
 			var result = (methodResult is string s)
-				? s
-				: Client.Serialize(methodResult);
+				? ("text", s)
+				: ("text", Client.Serialize(methodResult));
 			return result;
 		}
 
@@ -280,53 +280,59 @@ namespace JocysCom.VS.AiCompanion.Engine
 			bool isAsyncMethod = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
 			// Check if the method is void or Task (for async method)
 			bool isVoidMethod = methodInfo.ReturnType == typeof(void) || methodInfo.ReturnType == typeof(Task);
-
 			if (isAsyncMethod)
 			{
+				var supportsCancellation = methodInfo.GetParameters()
+					 .Any(param => param.ParameterType == typeof(CancellationToken));
+
 				// Invoke the method
 				var task = (Task)methodInfo.Invoke(classInstance, invokeParams);
-
 				// Register a callback on the cancellation token to cancel the task if requested
-				if (cancellationToken != CancellationToken.None)
+				cancellationToken.Register(() =>
 				{
-					cancellationToken.Register(() =>
-					{
-						if (task is ICancelableTask cancelableTask)
-						{
-							cancelableTask.Cancel();
-						}
-					});
+					if (task is ICancelableTask cancelableTask)
+						cancelableTask.Cancel();
+				});
+				if (supportsCancellation)
+				{
+					// Ensure you await the task
+					await task.ConfigureAwait(false);
 				}
-
-				await task.ConfigureAwait(false); // Ensure you await the task
-
+				else
+				{
+					// Handle the task if it doesn't support cancellation
+					var completedTask = await Task.WhenAny(task, Task.Delay(Timeout.Infinite, cancellationToken));
+					if (completedTask == task)
+						await task.ConfigureAwait(false);
+					else
+						throw new OperationCanceledException(cancellationToken);
+				}
 				// Handle async methods that return a value (Task<T>)
-				if (!isVoidMethod) // It means it's Task<T>
+				var isTaskReturnType = methodInfo.ReturnType.IsGenericType &&
+					typeof(Task).IsAssignableFrom(methodInfo.ReturnType.GetGenericTypeDefinition());
+				if (isTaskReturnType)
 				{
 					if (cancellationToken.IsCancellationRequested)
 						throw new OperationCanceledException(cancellationToken);
-
 					// Extract the result from Task<T>
-					var resultProperty = task.GetType().GetProperty("Result");
+					var resultProperty = task.GetType().GetProperty(nameof(Task<object>.Result));
 					return resultProperty.GetValue(task);
 				}
 			}
 			else
 			{
 				// For synchronous methods, directly invoke and return the result (or null if void)
-				if (!isVoidMethod) // Has return value
+				// Invoke the method and handle potential cancellation
+				return await Task.Run(() =>
 				{
 					if (cancellationToken.IsCancellationRequested)
 						throw new OperationCanceledException(cancellationToken);
-
 					return methodInfo.Invoke(classInstance, invokeParams);
-				}
+				}, cancellationToken);
 			}
-
 			// Return null if it's a void method (synchronous or asynchronous)
 			if (cancellationToken.IsCancellationRequested)
 				throw new OperationCanceledException(cancellationToken);
-
 			return null;
 		}
 

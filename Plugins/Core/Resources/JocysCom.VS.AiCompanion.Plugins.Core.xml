@@ -112,23 +112,6 @@
             <param name="base64">The bytes represented as base64 to write to the file.</param>
             <returns>True if the operation was successful.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertToPDF(System.String,System.String)">
-            <summary>
-            Convert file to PDF.
-            </summary>
-            <param name="inputFilePath">Source file.</param>
-            <param name="outputFilePath">Target PDF File.</param>
-            <returns>True if the operation was successful.</returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertPdfToImage(System.String,System.String,System.Int32[])">
-            <summary>
-            Convert PDF to Image.
-            </summary>
-            <param name="pdfFilePath">Source PDF file.</param>
-            <param name="outputFolder">Target folder for JPG Files.</param>
-            <param name="pages">Optional. The zero-based index array of page numbers to convert. If null or empty, all pages are converted.</param>
-            <returns>True if the operation was successful.</returns>
-        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges(System.String,System.String)">
             <inheritdoc/>
         </member>
@@ -895,6 +878,23 @@
             <param name="format">Image format for the captured image. If not provided, it defaults to PNG.</param>
             <returns>Operation result containing the path to the captured image.</returns>
             <exception cref="T:System.ArgumentException">Thrown if invalid parameters are supplied.</exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertToPDF(System.String,System.String)">
+            <summary>
+            Convert file to PDF.
+            </summary>
+            <param name="inputFilePath">Source file.</param>
+            <param name="outputFilePath">Target PDF File.</param>
+            <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertPdfToImage(System.String,System.String,System.Int32[])">
+            <summary>
+            Convert PDF to Image.
+            </summary>
+            <param name="pdfFilePath">Source PDF file.</param>
+            <param name="outputFolder">Target folder for JPG Files.</param>
+            <param name="pages">Optional. The zero-based index array of page numbers to convert. If null or empty, all pages are converted.</param>
+            <returns>True if the operation was successful.</returns>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GetStructuredImageAnalysisInstructions">
             <summary>

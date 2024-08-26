@@ -24,6 +24,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using YamlDotNet.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -529,9 +530,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							{
 								var json = "[\r\n" + toolArgumentsUpdate + "\r\n}\r\n]";
 								var functions = Deserialize<chat_completion_function[]>(json);
+								// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
+								// Otherwise, it starts outputting JSON instead of calling functions.
+								var serializer = new SerializerBuilder().Build();
+								var yaml = serializer.Serialize(functions.Select(f => new
+								{
+									f.id,
+									f.name,
+									parameters = PluginsManager.PluginFunctions.TryGetValue(f.name, out var methodInfo)
+										? PluginsManager.ConvertFromToolItem(methodInfo, f) : null
+								}));
 								// Create message attachment first.
-								var attachment = new MessageAttachments(ContextType.None, "JSON", json);
-								attachment.Title = "AI Function Call";
+								var attachment = new MessageAttachments(ContextType.None, "YAML", yaml);
+								attachment.Title = "AI Function";
 								attachment.IsAlwaysIncluded = true;
 								assistantMessageItem.Attachments.Add(attachment);
 								assistantMessageItem.IsAutomated = true;
@@ -546,8 +557,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								{
 									foreach (var function in functions)
 									{
-										var functionResultContent = await PluginsManager.ProcessPluginFunction(serviceItem, function, cancellationTokenSource);
-										var fnAttachment = new MessageAttachments(ContextType.None, "text", functionResultContent);
+										var content = await PluginsManager.ProcessPluginFunction(serviceItem, function, cancellationTokenSource);
+										var fnAttachment = new MessageAttachments(ContextType.None, content.Value.Item1, content.Value.Item2);
 										fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
 										fnAttachment.IsAlwaysIncluded = true;
 										functionResults.Add(fnAttachment);

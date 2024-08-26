@@ -20,6 +20,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			DataContext = this;
+			ScanTimer = new DispatcherTimer();
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 		}
 

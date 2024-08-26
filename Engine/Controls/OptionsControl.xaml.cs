@@ -13,6 +13,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			UdpServerPanel.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			SettingsFolderTextBox.Text = Global.AppData.XmlFile.Directory.FullName;
 			UpdateMicrosoftControls();
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;

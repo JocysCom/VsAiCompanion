@@ -303,7 +303,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _GlobalInstructions;
 
 		/// <summary>Instructions that will be use to analyse images as structured JSON.</summary>
-		[DefaultValue("You are an AI assistant that extracts data from documents and returns them as structured JSON objects. Do not return as a code block.")]
+		[DefaultValue(
+@"You are an AI assistant that extracts data from documents and returns them as structured JSON objects.
+Ensure that all attribute names are consistently formatted in snake_case.
+Maintain uniform terminology and capitalization for all extracted values.
+Provide detailed and clear structures without ambiguity.
+Do not return as a code block.")]
 		public string StructuredImageAnalysisInstructions { get => _StructuredImageAnalysisInstructions; set => SetProperty(ref _StructuredImageAnalysisInstructions, value); }
 		string _StructuredImageAnalysisInstructions;
 
