@@ -200,7 +200,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
 					await Global.SwitchToVisualStudioThreadAsync(cancellationTokenSource.Token);
-					methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, true, cancellationTokenSource.Token);
 				});
 			}
 			else if (classInstance is Search search)
@@ -210,7 +210,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var eh = new EmbeddingHelper();
 					eh.Item = item;
 					search.SearchEmbeddingsCallback = eh.SearchEmbeddingsToSystemMessage;
-					methodResult = await InvokeMethod(methodInfo, search, invokeParams, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, search, invokeParams, true, cancellationTokenSource.Token);
 					search.SearchEmbeddingsCallback = null;
 				});
 			}
@@ -225,7 +225,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.GetStructuredImageAnalysisInstructions = () => Global.AppSettings.StructuredImageAnalysisInstructions;
 					mm.AISpeakCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
 					//mm.CaptureCameraImageCallback = CameraHelper.CaptureCameraImage;
-					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, true, cancellationTokenSource.Token);
 					mm.CaptureCameraImageCallback = null;
 					mm.VideoToText = null;
 					mm.AISpeakCallback = null;
@@ -238,7 +238,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					item.UpdateMailClientAccount();
 					mail.SendCallback = item.AiMailClient.Send;
-					methodResult = await InvokeMethod(methodInfo, mail, invokeParams, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, mail, invokeParams, true, cancellationTokenSource.Token);
 					mail.SendCallback = null;
 				});
 			}
@@ -249,7 +249,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				lists.FilterPath = item.Name;
 				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
-					methodResult = await InvokeMethod(methodInfo, lists, invokeParams, cancellationTokenSource.Token);
+					methodResult = await InvokeMethod(methodInfo, lists, invokeParams, true, cancellationTokenSource.Token);
 					// Fix lists with no icons.
 					var noIconLists = Global.Lists.Items.Where(x => x.IconData == null).ToList();
 					foreach (var noIconList in noIconLists)
@@ -258,7 +258,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			else
 			{
-				methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, cancellationTokenSource.Token);
+				methodResult = await InvokeMethod(methodInfo, classInstance, invokeParams, false, cancellationTokenSource.Token);
 			}
 			var result = (methodResult is string s)
 				? ("text", s)
@@ -274,6 +274,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static async Task<object> InvokeMethod(
 			System.Reflection.MethodInfo methodInfo, object classInstance, object[] invokeParams,
+			bool invokeOnUIThread = false,
 			CancellationToken cancellationToken = default)
 		{
 			// Check if the method is asynchronous (either returning Task or Task<T>)
@@ -284,7 +285,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var supportsCancellation = methodInfo.GetParameters()
 					 .Any(param => param.ParameterType == typeof(CancellationToken));
-
 				// Invoke the method
 				var task = (Task)methodInfo.Invoke(classInstance, invokeParams);
 				// Register a callback on the cancellation token to cancel the task if requested
@@ -327,7 +327,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					if (cancellationToken.IsCancellationRequested)
 						throw new OperationCanceledException(cancellationToken);
-					return methodInfo.Invoke(classInstance, invokeParams);
+					if (!invokeOnUIThread)
+						return methodInfo.Invoke(classInstance, invokeParams);
+					object result = null;
+					Global.MainControl.Dispatcher.Invoke(() =>
+					{
+						result = methodInfo.Invoke(classInstance, invokeParams);
+					});
+					return result;
+
 				}, cancellationToken);
 			}
 			// Return null if it's a void method (synchronous or asynchronous)
