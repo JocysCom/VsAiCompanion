@@ -27,8 +27,8 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>166</Left>
-        <Top>73</Top>
+        <Left>460</Left>
+        <Top>119</Top>
         <Width>913</Width>
         <Height>815.5</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -125,6 +125,7 @@
         </UserProfile>
       </UserProfiles>
       <ResetWindowWidth>900</ResetWindowWidth>
+      <StructuredImageAnalysisInstructions>You are an AI assistant that extracts data from documents and returns them as structured JSON objects. Do not return as a code block.</StructuredImageAnalysisInstructions>
       <AiServices>
         <AiService>
           <Name>Open AI</Name>
@@ -412,6 +413,9 @@
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileBytes</Id>
         </PluginItem>
         <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertPdfToImage</Id>
+        </PluginItem>
+        <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges</Id>
         </PluginItem>
@@ -600,11 +604,15 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePicture</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePictures</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertPdfToStructuredJson</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

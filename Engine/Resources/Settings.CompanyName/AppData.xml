@@ -41,7 +41,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.23170731707317074</GridSplitterPosition>
+          <GridSplitterPosition>0.2315096251266464</GridSplitterPosition>
           <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4)</string>
@@ -127,7 +127,7 @@
       </UserProfiles>
       <OverrideInfoDefaultHead>AI Companion for CyberNet Solutions</OverrideInfoDefaultHead>
       <OverrideInfoDefaultBody>Your expert consultant that analyzes your project files and collaborates with you to optimize efficiency, streamline processes, and elevate your overall productivity.</OverrideInfoDefaultBody>
-      <UiPresetName>Simple</UiPresetName>
+      <StructuredImageAnalysisInstructions>You are an AI assistant that extracts data from documents and returns them as structured JSON objects. Do not return as a code block.</StructuredImageAnalysisInstructions>
       <AiServices>
         <AiService>
           <Name>Company Name AI</Name>
@@ -199,6 +199,9 @@
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileBytes</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertPdfToImage</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -380,11 +383,15 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePicture</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePictures</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertPdfToStructuredJson</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>

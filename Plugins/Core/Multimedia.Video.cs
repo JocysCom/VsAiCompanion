@@ -1,7 +1,13 @@
 ﻿using JocysCom.ClassLibrary;
+using Microsoft.Win32;
+using SkiaSharp;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
@@ -99,5 +105,177 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return await ScreenshotHelper.CaptureUserDefinedRegion(imageFolder, format);
 			}
 		}
+
+		#region Convert to PDF and Image
+
+
+		/// <summary>
+		/// Convert file to PDF.
+		/// </summary>
+		/// <param name="inputFilePath">Source file.</param>
+		/// <param name="outputFilePath">Target PDF File.</param>
+		/// <returns>True if the operation was successful.</returns>
+		//[RiskLevel(RiskLevel.High)]
+		public static OperationResult<bool> ConvertToPDF(string inputFilePath, string outputFilePath)
+		{
+			try
+			{
+				// Register the printer's output file path via the registry
+				SetDefaultPrinterOutput(outputFilePath);
+
+				// Create a new process to print the document
+				ProcessStartInfo processInfo = new ProcessStartInfo()
+				{
+					Verb = "print",
+					FileName = inputFilePath,
+					CreateNoWindow = true,
+					WindowStyle = ProcessWindowStyle.Hidden,
+					// Specify the printer: Microsoft Print to PDF
+					Arguments = "\"Microsoft Print to PDF\""
+				};
+
+				Process process = new Process()
+				{
+					StartInfo = processInfo
+				};
+				process.Start();
+				process.WaitForExit();
+
+				return new OperationResult<bool>(true);
+			}
+			catch (System.Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		private static void SetDefaultPrinterOutput(string outputFilePath)
+		{
+			// Define the registry path for the printer
+			string registryPath = @"Software\Microsoft\Windows NT\CurrentVersion\Print\Printers\Microsoft Print to PDF\PrinterDriverData";
+
+			// Try to open the registry key
+			using (RegistryKey key = Registry.CurrentUser.CreateSubKey(registryPath, true))
+			{
+				if (key == null)
+				{
+					throw new System.Exception($"Registry path not found or inaccessible: {registryPath}");
+				}
+
+				// Set the default output file
+				key.SetValue("OutputFile", outputFilePath, RegistryValueKind.String);
+			}
+		}
+
+		/// <summary>
+		/// Convert PDF to Image.
+		/// </summary>
+		/// <param name="pdfFilePath">Source PDF file.</param>
+		/// <param name="outputFolder">Target folder for JPG Files.</param>
+		/// <param name="pages">Optional. The zero-based index array of page numbers to convert. If null or empty, all pages are converted.</param>
+		/// <returns>True if the operation was successful.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public static OperationResult<List<string>> ConvertPdfToImage(
+			string pdfFilePath, string outputFolder,
+			int[] pages = null
+		)
+		{
+			var pdfImageFiles = new List<string>();
+			try
+			{
+				var pdfFi = new FileInfo(pdfFilePath);
+				var pdf = File.ReadAllBytes(pdfFilePath);
+				var pageImages = pages is null
+					? PDFtoImage.Conversion.ToImages(pdf)
+					: PDFtoImage.Conversion.ToImages(pdf, pages.AsEnumerable());
+				var totalPageCount = pageImages.Count();
+				var maxImageCount = 25d;
+				var maxSize = (int)Math.Ceiling(totalPageCount / maxImageCount);
+				var pageImageGroups = new List<List<SKBitmap>>();
+
+				for (int i = 0; i < totalPageCount; i += maxSize)
+				{
+					var pageImageGroup = pageImages.Skip(i).Take(maxSize).ToList();
+					pageImageGroups.Add(pageImageGroup);
+				}
+
+				if (!Directory.Exists(outputFolder))
+					Directory.CreateDirectory(outputFolder);
+
+				var count = 0;
+				var pdfImageName = string.Empty;
+				foreach (var pageImageGroup in pageImageGroups)
+				{
+					pdfImageName = Path.Combine(outputFolder, $"{pdfFi.Name}.Part_{count}.jpg");
+					var totalHeight = pageImageGroup.Sum(image => image.Height);
+					var width = pageImageGroup.Max(image => image.Width);
+					var stitchedImage = new SKBitmap(width, totalHeight);
+					var canvas = new SKCanvas(stitchedImage);
+					var currentHeight = 0;
+
+					foreach (var pageImage in pageImageGroup)
+					{
+						canvas.DrawBitmap(pageImage, 0, currentHeight);
+						currentHeight += pageImage.Height;
+					}
+
+					using (var stitchedFileStream = new FileStream(pdfImageName, FileMode.Create, FileAccess.Write))
+					{
+						stitchedImage.Encode(stitchedFileStream, SKEncodedImageFormat.Jpeg, 100);
+					}
+
+					pdfImageFiles.Add(pdfImageName);
+					count++;
+					Console.WriteLine();
+				}
+				var result = new OperationResult<List<string>>(pdfImageFiles);
+				result.StatusText = $"Saved image to {pdfImageName}";
+				return result;
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<List<string>>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Will be used by plugins manager.
+		/// </summary>
+		public Func<string> GetStructuredImageAnalysisInstructions { get; set; }
+
+		/// <summary>
+		/// Converts a PDF file to structured JSON format, with an option to specify a page range.
+		/// </summary>
+		/// <param name="pdfFilePath">The path to the source PDF file.</param>
+		/// <param name="pages">Optional. The zero-based index array of page numbers to convert. If null or empty, all pages are converted.</param>
+		/// <returns>An OperationResult containing a list of structured JSON strings.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public async Task<OperationResult<string>> ConvertPdfToStructuredJson(string pdfFilePath, int[] pages = null)
+		{
+			try
+			{
+				var fi = new FileInfo(pdfFilePath);
+				var tempName = $"{fi.Name}_{System.IO.Path.GetRandomFileName()}";
+				var tempPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "AICOMP", tempName);
+				var tempDi = new DirectoryInfo(tempPath);
+				if (!tempDi.Exists)
+					tempDi.Create();
+				var convertResult = ConvertPdfToImage(pdfFilePath, tempDi.FullName, pages);
+				if (!convertResult.Success)
+					return convertResult.ToResult<string>(null);
+				var instructions = GetStructuredImageAnalysisInstructions();
+				var analyseResult = await AnalysePictures(instructions, convertResult.Data.ToArray());
+				// Cleanup
+				tempDi.Delete(true);
+				return analyseResult;
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<string>(ex);
+			}
+		}
+
+		#endregion
+
 	}
 }

@@ -1,7 +1,9 @@
-2024-08-22 v1.12.68
+2024-08-26 v1.12.72
 
 - Fix: Help documents embedded in the app.
 - Update: Enhance AI tool functions in Visual Studio.
+- New: AI tool function to convert PDF to images. 
+- New: AI tool function to convert PDF to structured JSON.
 
 2024-08-18 v1.12.64
 

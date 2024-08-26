@@ -302,6 +302,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string GlobalInstructions { get => _GlobalInstructions; set => SetProperty(ref _GlobalInstructions, value); }
 		string _GlobalInstructions;
 
+		/// <summary>Instructions that will be use to analyse images as structured JSON.</summary>
+		[DefaultValue("You are an AI assistant that extracts data from documents and returns them as structured JSON objects. Do not return as a code block.")]
+		public string StructuredImageAnalysisInstructions { get => _StructuredImageAnalysisInstructions; set => SetProperty(ref _StructuredImageAnalysisInstructions, value); }
+		string _StructuredImageAnalysisInstructions;
+
 		[DefaultValue("Error for Processing")]
 		public string ContextErrorTitle { get => _ContextErrorTitle; set => SetProperty(ref _ContextErrorTitle, value); }
 		private string _ContextErrorTitle;

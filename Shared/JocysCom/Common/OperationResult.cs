@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace JocysCom.ClassLibrary
 {
@@ -20,7 +21,7 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Constructor for success scenarios, setting result and OK status.
 		/// </summary>
-		/// <param name="data">Result value of the operation.</param>
+		/// <param name="data">Result data value of the operation.</param>
 		public OperationResult(T data) : this()
 		{
 			StatusCode = 0;
@@ -57,18 +58,32 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Constructor for handling both successful and failed operations with customizable parameters.
 		/// </summary>
-		/// <param name="result">Result value of the operation.</param>
+		/// <param name="data">Result data value of the operation.</param>
 		/// <param name="statusCode">Status code representing operation outcome.</param>
 		/// <param name="statusText">Descriptive text providing additional details.</param>
 		/// <param name="errors">Collection of exceptions related to operation failure.</param>
-		public OperationResult(T result, int statusCode, string statusText, IEnumerable<Exception> errors) : this()
+		public OperationResult(T data, int statusCode, string statusText, IEnumerable<Exception> errors) : this()
 		{
-			Data = result;
+			Data = data;
 			StatusCode = statusCode;
 			StatusText = statusText ?? statusCode.ToString();
 			Errors = new List<string>();
 			foreach (var error in errors)
 				Errors.Add(error.ToString());
+		}
+
+		/// <summary>
+		/// Convert result to other type.
+		/// </summary>
+		/// <param name="result">Result data value of the operation.</param>
+		public OperationResult<T2> ToResult<T2>(T2 data)
+		{
+			var newResult = new OperationResult<T2>();
+			newResult.Data = data;
+			newResult.StatusCode = StatusCode;
+			newResult.StatusText = StatusText;
+			newResult.Errors = Errors?.ToList();
+			return newResult;
 		}
 
 		/// <summary>
@@ -97,7 +112,7 @@ namespace JocysCom.ClassLibrary
 		public List<string> Errors { get; private set; }
 
 		/// <summary>
-		/// Result value of the operation.
+		/// Result data value of the operation.
 		/// </summary>
 		public T Data { get; set; }
 
