@@ -2,8 +2,6 @@
 using JocysCom.ClassLibrary;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using NPOI.HSSF.UserModel;
-//using NPOI.HWPF;
-//using NPOI.HWPF.Extractor;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
@@ -12,7 +10,6 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
-using UglyToad.PdfPig;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -217,7 +214,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		private string ReadPdfFile(string path)
 		{
-			using (var doc = PdfDocument.Open(path))
+			using (var doc = UglyToad.PdfPig.PdfDocument.Open(path))
 			{
 				var text = new System.Text.StringBuilder();
 				foreach (var page in doc.GetPages())

@@ -161,7 +161,7 @@ function Compress-ZipFileUsingShell {
         $path = $file.FullName
         $zipPackage.CopyHere($path)
         
-        $maxRetries = 4
+        $maxRetries = 6
         $retryCount = 0
         Do {
             Start-Sleep -Seconds 2

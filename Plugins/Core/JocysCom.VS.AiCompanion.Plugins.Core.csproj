@@ -28,6 +28,7 @@
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
 		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+		<PlatformTarget>x64</PlatformTarget>
 		<Platforms>AnyCPU</Platforms>
 		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 		<!-- Set the target platform to Windows -->
@@ -35,19 +36,19 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
-	  <DebugType>embedded</DebugType>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -57,7 +58,7 @@
 		<PackageReference Include="LiteDB" Version="5.0.21" />
 		<PackageReference Include="NPOI" Version="2.7.1" />
 		<PackageReference Include="PdfPig" Version="0.1.8" />
-		<PackageReference Include="PDFtoImage" Version="4.1.0" />
+		<PackageReference Include="PDFtoImage" Version="4.1.0"  />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
 		<PackageReference Include="System.Data.OleDb" Version="8.0.0" />
 		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
@@ -77,7 +78,7 @@
 		<!--<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.1" />-->
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 	</ItemGroup>

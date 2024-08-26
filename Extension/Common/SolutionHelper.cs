@@ -135,6 +135,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		public List<KeyValuePair<string, string>> GetProperties()
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var properties = GetAllProperties();
 			var list = new List<KeyValuePair<string, string>>();
 			foreach (var prop in properties)
