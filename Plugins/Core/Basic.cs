@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
+using Tiktoken;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -15,6 +16,63 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public partial class Basic : IFileHelper, IDiffHelper
 	{
+
+		#region AI Tokens
+
+		/// <summary>
+		/// Counts tokens. Does not take into account special tokens.
+		/// </summary>
+		/// <param name="text">Input text.</param>
+		/// <param name="modelName">Open AI model name. Default: "gpt-4o".</param>
+		[RiskLevel(RiskLevel.None)]
+		public static OperationResult<int> CountTokens(string text, string modelName = null)
+		{
+			var model = string.IsNullOrEmpty(modelName)
+				? "gpt-4o"
+				: modelName;
+			var encoder = ModelToEncoder.TryFor(model);
+			if (encoder == null)
+			{
+				var encoding = ModelToEncoding.TryFor(model);
+				if (encoding != null)
+					encoder = new Encoder(encoding);
+			}
+			if (encoder == null)
+				return new OperationResult<int>(new Exception("Encoder or model name not found"));
+			//var tokens = encoder.Encode("hello world"); // [15339, 1917]
+			//var text = encoder.Decode(tokens); // hello world
+			//var stringTokens = encoder.Explore(text); // ["hello", " world"]
+			var tokensCount = encoder.CountTokens(text); // 2
+			return new OperationResult<int>(tokensCount);
+		}
+
+
+		/// <summary>
+		/// Counts the tokens in the specified files, excluding special tokens. 
+		/// Returns an array of token counts, where each count position corresponds to the file's position in the `paths` array.
+		/// </summary>
+		/// <param name="paths">List of file paths to read from.</param>
+		/// <param name="modelName">OpenAI model name (default: "gpt-4o").</param>
+		[RiskLevel(RiskLevel.Medium)]
+		public static OperationResult<int[]> CountFileTokens(string[] paths, string modelName = null)
+		{
+			var counts = new int[paths.Length];
+			for (int i = 0; i < paths.Length; i++)
+			{
+				try
+				{
+					var text = System.IO.File.ReadAllText(paths[i]);
+					counts[i] = CountTokens(text, modelName).Data;
+				}
+				catch (Exception ex)
+				{
+					return new OperationResult<int[]>(ex);
+				}
+			}
+			return new OperationResult<int[]>(counts);
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Use when you can't provide an answer in one response and need to split the answer.

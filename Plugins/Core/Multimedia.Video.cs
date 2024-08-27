@@ -185,7 +185,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			{
 				var pdfFi = new FileInfo(pdfFilePath);
 				var pdf = File.ReadAllBytes(pdfFilePath);
-				var pageImages = pages is null
+				var pageImages = pages is null || !pages.Any()
 					? PDFtoImage.Conversion.ToImages(pdf)
 					: PDFtoImage.Conversion.ToImages(pdf, pages.AsEnumerable());
 				var totalPageCount = pageImages.Count();

@@ -23,8 +23,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.12.72</AssemblyVersion>
-		<FileVersion>1.12.72</FileVersion>
+		<AssemblyVersion>1.12.73</AssemblyVersion>
+		<FileVersion>1.12.73</FileVersion>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
 		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
@@ -58,10 +58,11 @@
 		<PackageReference Include="LiteDB" Version="5.0.21" />
 		<PackageReference Include="NPOI" Version="2.7.1" />
 		<PackageReference Include="PdfPig" Version="0.1.8" />
-		<PackageReference Include="PDFtoImage" Version="4.1.0"  />
+		<PackageReference Include="PDFtoImage" Version="4.1.0" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
 		<PackageReference Include="System.Data.OleDb" Version="8.0.0" />
 		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+		<PackageReference Include="Tiktoken" Version="2.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
