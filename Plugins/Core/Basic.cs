@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
-using Tiktoken;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -20,6 +19,36 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		#region AI Tokens
 
 		/// <summary>
+		/// Get tokens.
+		/// </summary>
+		/// <param name="text">Input text.</param>
+		/// <param name="count">Token count.</param>
+		/// <param name="tokens">Token words.</param>
+		/// <param name="modelName">Optiona. Model name. Default: "gpt-4o".</param>
+		/// <exception cref="Exception"></exception>
+		public static void GetTokens(string text, out int count, ref List<string> tokens, string modelName = null)
+		{
+			var model = string.IsNullOrEmpty(modelName)
+				? "gpt-4o"
+				: modelName;
+			var encoder = Tiktoken.ModelToEncoder.TryFor(model);
+			if (encoder == null)
+			{
+				var encoding = Tiktoken.ModelToEncoding.TryFor(model);
+				if (encoding != null)
+					encoder = new Tiktoken.Encoder(encoding);
+			}
+			if (encoder == null)
+				throw new Exception($"Model name {modelName} not found!");
+			count = encoder.CountTokens(text);
+			if (tokens != null)
+				// "hello world" => ["hello", " world"]
+				tokens.AddRange(encoder.Explore(text));
+			//var tokens = encoder.Encode("hello world"); // [15339, 1917]
+			//var text = encoder.Decode(tokens); // hello world
+		}
+
+		/// <summary>
 		/// Counts tokens. Does not take into account special tokens.
 		/// </summary>
 		/// <param name="text">Input text.</param>
@@ -27,25 +56,18 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.None)]
 		public static OperationResult<int> CountTokens(string text, string modelName = null)
 		{
-			var model = string.IsNullOrEmpty(modelName)
-				? "gpt-4o"
-				: modelName;
-			var encoder = ModelToEncoder.TryFor(model);
-			if (encoder == null)
+			int count;
+			List<string> tokens = null;
+			try
 			{
-				var encoding = ModelToEncoding.TryFor(model);
-				if (encoding != null)
-					encoder = new Encoder(encoding);
+				GetTokens(text, out count, ref tokens, modelName);
+				return new OperationResult<int>(count);
 			}
-			if (encoder == null)
-				return new OperationResult<int>(new Exception("Encoder or model name not found"));
-			//var tokens = encoder.Encode("hello world"); // [15339, 1917]
-			//var text = encoder.Decode(tokens); // hello world
-			//var stringTokens = encoder.Explore(text); // ["hello", " world"]
-			var tokensCount = encoder.CountTokens(text); // 2
-			return new OperationResult<int>(tokensCount);
+			catch (Exception ex)
+			{
+				return new OperationResult<int>(ex);
+			}
 		}
-
 
 		/// <summary>
 		/// Counts the tokens in the specified files, excluding special tokens. 

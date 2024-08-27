@@ -619,49 +619,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var json = JsonSerializer.Serialize(item, options);
 			int count;
 			List<string> tokens = null;
-			GetTokens(json, out count, ref tokens);
+			Plugins.Core.Basic.GetTokens(json, out count, ref tokens);
 			return count;
-		}
-
-
-		public static void GetTokens(string text, out int count, ref List<string> tokens)
-		{
-			count = 0;
-			// Can be `\r\n`, `\r` or `\n`.
-			var newLine = FileHelper.GetNewLineType(text).ToArray();
-			char? prevChar;
-			char? currChar = null;
-			var currentToken = "";
-			for (int i = 0; i < text.Length; i++)
-			{
-				prevChar = currChar;
-				currChar = text[i];
-				if (i == 0)
-				{
-					currentToken += currChar;
-					continue;
-				}
-				// If letter type changed.
-				var flush = true;
-				if (char.IsLetterOrDigit(prevChar.Value) && char.IsLetterOrDigit(currChar.Value))
-					flush = false;
-				else if (prevChar == currChar)
-					flush = false;
-				else if (newLine.Length == 2 && currChar == newLine[1])
-					flush = false;
-				if (flush)
-				{
-					tokens?.Add(currentToken);
-					count++;
-					currentToken = "";
-				}
-				currentToken += currChar;
-			}
-			if (currentToken.Length > 0)
-			{
-				tokens?.Add(currentToken);
-				count++;
-			}
 		}
 
 	}

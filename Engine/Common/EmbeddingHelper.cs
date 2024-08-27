@@ -22,7 +22,6 @@ using JocysCom.ClassLibrary.Runtime;
 using System.Collections.ObjectModel;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.VS.AiCompanion.Engine.Controls;
-using JocysCom.VS.AiCompanion.Engine.Companions;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary.Controls;
@@ -249,7 +248,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			//var tokens = mlContext.Data.CreateEnumerable<TokenizedTextData>(transformedData, reuseRowObject: false).First().Tokens;
 			int tokensCount;
 			var tokens = new List<string>();
-			ClientHelper.GetTokens(content, out tokensCount, ref tokens);
+			Plugins.Core.Basic.GetTokens(content, out tokensCount, ref tokens);
 			// Chunk the tokens
 			var chunks = ChunkTokens(tokens.ToArray(), (int)(maxTokensPerChunk * tokenReduction));
 			return chunks.Select(x => new FilePart()

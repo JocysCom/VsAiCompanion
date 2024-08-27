@@ -42,6 +42,16 @@
             Basic functions that allow AI to create and modify files.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetTokens(System.String,System.Int32@,System.Collections.Generic.List{System.String}@,System.String)">
+            <summary>
+            Get tokens.
+            </summary>
+            <param name="text">Input text.</param>
+            <param name="count">Token count.</param>
+            <param name="tokens">Token words.</param>
+            <param name="modelName">Optiona. Model name. Default: "gpt-4o".</param>
+            <exception cref="T:System.Exception"></exception>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.CountTokens(System.String,System.String)">
             <summary>
             Counts tokens. Does not take into account special tokens.
