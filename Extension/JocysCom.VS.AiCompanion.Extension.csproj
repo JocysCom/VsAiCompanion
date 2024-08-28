@@ -162,6 +162,19 @@
     <PostBuildEvent>::PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Resources\AddFilesToZip.ps1" -sourceFolder $(TargetDir) -targetZipFile $(TargetDir)$(TargetName).vsix -ConfigurationName $(ConfigurationName)
 </PostBuildEvent>
   </PropertyGroup>
+  
+
+	<Target Name="RemoveFolders" AfterTargets="Build">
+		<!-- List of unwanted files or directories -->
+		<Message Text="Removing unwanted runtime folders..." Importance="high" />
+		<RemoveDir Directories="$(TargetDir)arm" />
+		<RemoveDir Directories="$(TargetDir)arm64" />
+		<RemoveDir Directories="$(TargetDir)musl-arm64" />
+		<RemoveDir Directories="$(TargetDir)musl-x64" />
+		<RemoveDir Directories="$(TargetDir)musl-x86" />
+		<RemoveDir Directories="$(TargetDir)x86" />
+	</Target>
+  
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

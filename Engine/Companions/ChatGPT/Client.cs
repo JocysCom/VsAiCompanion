@@ -381,7 +381,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
 			var answer = "";
 			var functionResults = new List<MessageAttachments>();
-			var toolArgumentsUpdate = "";
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(service.ResponseTimeout));
 			var id = Guid.NewGuid();
@@ -501,6 +500,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							var result = chatClient.CompleteChatStreamingAsync(
 							messages, completionsOptions, cancellationTokenSource.Token);
 							var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
+
+							var toolCallIdsByIndex = new Dictionary<int, string>();
+							var functionNamesByIndex = new Dictionary<int, string>();
+							var functionArgumentBuildersByIndex = new Dictionary<int, StringBuilder>();
+
+							var functions = new List<chat_completion_function>();
+
 							while (await choicesEnumerator.MoveNextAsync())
 							{
 								var choice = choicesEnumerator.Current;
@@ -511,25 +517,50 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								}
 								if (choice.ToolCallUpdates != null)
 								{
-									foreach (var sf in choice.ToolCallUpdates)
+									foreach (StreamingChatToolCallUpdate update in choice.ToolCallUpdates)
 									{
-										if (!string.IsNullOrEmpty(sf.Id))
+										if (!string.IsNullOrEmpty(update.Id))
+											toolCallIdsByIndex[update.Index] = update.Id;
+										if (!string.IsNullOrEmpty(update.FunctionName))
+											functionNamesByIndex[update.Index] = update.FunctionName;
+										if (!string.IsNullOrEmpty(update.FunctionArgumentsUpdate))
 										{
-											if (!string.IsNullOrEmpty(toolArgumentsUpdate))
-												toolArgumentsUpdate += "\r\n},\r\n";
-											toolArgumentsUpdate += $"{{\r\n";
-											toolArgumentsUpdate += $"\t\"id\": \"{sf.Id}\",\r\n";
-											toolArgumentsUpdate += $"\t\"name\": \"{sf.FunctionName}\",\r\n";
-											toolArgumentsUpdate += $"\t\"parameters\": ";
+											StringBuilder argumentsBuilder
+												= functionArgumentBuildersByIndex.TryGetValue(update.Index, out StringBuilder existingBuilder)
+													? existingBuilder
+													: new StringBuilder();
+											argumentsBuilder.Append(update.FunctionArgumentsUpdate);
+											functionArgumentBuildersByIndex[update.Index] = argumentsBuilder;
 										}
-										toolArgumentsUpdate += sf.FunctionArgumentsUpdate;
 									}
 								}
 							}
-							if (!string.IsNullOrEmpty(toolArgumentsUpdate))
+
+							var toolCalls = new List<ChatToolCall>();
+							foreach (KeyValuePair<int, string> indexToIdPair in toolCallIdsByIndex)
 							{
-								var json = "[\r\n" + toolArgumentsUpdate + "\r\n}\r\n]";
-								var functions = Deserialize<chat_completion_function[]>(json);
+								var toolCall = ChatToolCall.CreateFunctionToolCall(
+									indexToIdPair.Value,
+									functionNamesByIndex[indexToIdPair.Key],
+									functionArgumentBuildersByIndex[indexToIdPair.Key].ToString());
+								toolCalls.Add(toolCall);
+
+								var json = JsonSerializer.Serialize(toolCall);
+
+								var parameters = new base_item();
+								if (!string.IsNullOrEmpty(toolCall.FunctionArguments))
+									parameters = JsonSerializer.Deserialize<base_item>(toolCall.FunctionArguments);
+
+								var function = new chat_completion_function()
+								{
+									id = toolCall.Id,
+									name = toolCall.FunctionName,
+									parameters = parameters,
+								};
+								functions.Add(function);
+							}
+							if (functions.Any())
+							{
 								// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
 								// Otherwise, it starts outputting JSON instead of calling functions.
 								var serializer = new SerializerBuilder().Build();
@@ -541,12 +572,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 										? PluginsManager.ConvertFromToolItem(methodInfo, f) : null
 								}));
 								// Create message attachment first.
-								var attachment = new MessageAttachments(ContextType.None, "YAML", yaml);
-								attachment.Title = "AI Function";
-								attachment.IsAlwaysIncluded = true;
-								assistantMessageItem.Attachments.Add(attachment);
+								var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);
+								fnCallAttachment.Title = "AI Function Call";
+								// Don't send it back to AI or it will confuse it and it will start outputing YAML instead of calling functions.
+								fnCallAttachment.IsAlwaysIncluded = false;
+								assistantMessageItem.Attachments.Add(fnCallAttachment);
 								assistantMessageItem.IsAutomated = true;
 								messageItems.Add(assistantMessageItem);
+								// Add call to user message so that AI will see what functions it called.
+								var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
+								fnCallAttachmentUser.Title = "AI Function Call";
+								fnCallAttachmentUser.IsAlwaysIncluded = true;
+								functionResults.Add(fnCallAttachmentUser);
 								ControlsHelper.AppInvoke(() =>
 								{
 									serviceItem.Messages.Add(assistantMessageItem);
@@ -558,10 +595,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									foreach (var function in functions)
 									{
 										var content = await PluginsManager.ProcessPluginFunction(serviceItem, function, cancellationTokenSource);
-										var fnAttachment = new MessageAttachments(ContextType.None, content.Value.Item1, content.Value.Item2);
-										fnAttachment.Title = "AI Function Results (Id:" + function.id + ")";
-										fnAttachment.IsAlwaysIncluded = true;
-										functionResults.Add(fnAttachment);
+										var fnResultAttachment = new MessageAttachments(ContextType.None, content.Value.Item1, content.Value.Item2);
+										fnResultAttachment.Title = "AI Function Results (Id:" + function.id + ")";
+										fnResultAttachment.IsAlwaysIncluded = true;
+										functionResults.Add(fnResultAttachment);
 									}
 								}
 							}

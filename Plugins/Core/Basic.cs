@@ -76,15 +76,19 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="paths">List of file paths to read from.</param>
 		/// <param name="modelName">OpenAI model name (default: "gpt-4o").</param>
 		[RiskLevel(RiskLevel.Medium)]
-		public static OperationResult<int[]> CountFileTokens(string[] paths, string modelName = null)
+		public OperationResult<int[]> CountFileTokens(string[] paths, string modelName = null)
 		{
 			var counts = new int[paths.Length];
 			for (int i = 0; i < paths.Length; i++)
 			{
 				try
 				{
-					var text = System.IO.File.ReadAllText(paths[i]);
-					counts[i] = CountTokens(text, modelName).Data;
+
+					var result = fileHelper.ReadFileAsPlainText(paths[i]);
+					if (!result.Success)
+						result.ToResult<int[]>(null);
+					//var text = System.IO.File.ReadAllText(paths[i]);
+					counts[i] = CountTokens(result.Data, modelName).Data;
 				}
 				catch (Exception ex)
 				{

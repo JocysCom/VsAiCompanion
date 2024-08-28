@@ -52,6 +52,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="bblanchon.PDFium.macOS" Version="128.0.6569" ExcludeAssets="All" />
+		<PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="2.88.8" ExcludeAssets="All" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.8" GeneratePathProperty="true" ExcludeAssets="All" />
+		<PackageReference Include="bblanchon.PDFium.Linux" Version="128.0.6569" ExcludeAssets="All" />
+		<PackageReference Include="bblanchon.PDFium.Win32" Version="128.0.6569" GeneratePathProperty="true" ExcludeAssets="All" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" ExcludeAssets="All" />
 		<PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.1.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.64" />
@@ -63,6 +69,22 @@
 		<PackageReference Include="System.Data.OleDb" Version="8.0.0" />
 		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
 		<PackageReference Include="Tiktoken" Version="2.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Reference the native DLLs and specify the destination within the project -->
+		<None Include="$(PkgSkiaSharp_NativeAssets_Win32)\runtimes\win-x64\native\*.dll">
+			<Link>x64\%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Reference the native DLLs and specify the destination within the project -->
+		<None Include="$(Pkgbblanchon_pdfium_win32)\runtimes\win-x64\native\*.dll">
+			<Link>x64\%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -84,22 +106,17 @@
 		<ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="VideoInputDevices\" />
-	</ItemGroup>
-
 	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
 		<!-- Execute once for multiple builds -->
 
 	</Target>
 	<!-- Copy the documentation file to the final output directory if content is different -->
 	<Target Name="CopyDocumentationFile" AfterTargets="Build">
+		<Message Importance="high" Text="Updating the Documentation File: $(PkgSkiaSharp_NativeAssets_Win32)" />
+		
+
 		<!--<Message Importance="high" Text="Updating the Documentation File: $(DocumentationFile)" />-->
 		<Exec Condition="'$(DocumentationFile)'!=''" Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CopyChanged.ps1&quot; -sourceFile &quot;$(ProjectDir)\$(DocumentationFile)&quot; -destinationFile &quot;$(ProjectDir)Resources\$(AssemblyName).xml&quot;" />
-	</Target>
-
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Condition="'$(Configuration)'=='Release'" Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Sign.ps1&quot; &quot;$(TargetPath)&quot;" />
 	</Target>
 
 </Project>
