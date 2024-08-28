@@ -384,6 +384,14 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
       <Plugins>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CountTokens</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CountFileTokens</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue</Id>
         </PluginItem>
         <PluginItem>
@@ -395,9 +403,11 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.GetCurrentSystemInfo</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.StartProcess</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.RunPowerShellScript</Id>
         </PluginItem>
         <PluginItem>
@@ -473,6 +483,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Mail.Send</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetProperties</Id>
         </PluginItem>
         <PluginItem>
@@ -564,12 +575,15 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ModifySelection</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.BuildSolutionProject</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent</Id>
         </PluginItem>
         <PluginItem>
@@ -612,6 +626,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage</Id>
         </PluginItem>
         <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertPdfToImage</Id>
         </PluginItem>
         <PluginItem>
