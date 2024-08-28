@@ -20,21 +20,21 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<StackPanel DataContext="{Binding Item, ElementName=This}">
-		<GroupBox
-			Grid.Row="3"
-			Margin="3,0,3,3"
-			HorizontalAlignment="Left"
-			Header="Tool Choice">
-			<StackPanel>
-				<StackPanel Orientation="Horizontal">
+		<GroupBox Grid.Row="3" Margin="3,0,3,3" HorizontalAlignment="Left">
+			<GroupBox.Header>
+				<StackPanel Margin="-4" Orientation="Horizontal">
 					<CheckBox
 						Name="ToolChoiceRequiredCheckBox"
 						AutomationProperties.HelpText="{StaticResource main_ToolChoiceRequired_Help}"
 						AutomationProperties.Name="{StaticResource main_ToolChoiceRequired_Name}"
-						Content="Tool Choice Required"
+						Content="{StaticResource main_ToolChoiceRequired_Name}"
 						IsChecked="{Binding ToolChoiceRequired, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<TextBlock Margin="0,5,0,0" Text="{Binding ToolChoiceRequiredNamesString, ElementName=This}" />
 				</StackPanel>
+
+
+			</GroupBox.Header>
+			<StackPanel>
 				<ListBox
 					Name="ToolChoiceRequiredNamesListBox"
 					MinWidth="100"
