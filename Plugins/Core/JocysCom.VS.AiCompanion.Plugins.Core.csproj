@@ -23,8 +23,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.12.72</AssemblyVersion>
-		<FileVersion>1.12.72</FileVersion>
+		<AssemblyVersion>1.12.76</AssemblyVersion>
+		<FileVersion>1.12.76</FileVersion>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
 		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
@@ -52,12 +52,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="bblanchon.PDFium.macOS" Version="128.0.6569" ExcludeAssets="All" />
-		<PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="2.88.8" ExcludeAssets="All" />
+		<PackageReference Include="bblanchon.PDFium.macOS" Version="128.0.6569" ExcludeAssets="All" PrivateAssets="All" />
+		<PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="2.88.8" ExcludeAssets="All" PrivateAssets="All" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.8" GeneratePathProperty="true" ExcludeAssets="All" />
-		<PackageReference Include="bblanchon.PDFium.Linux" Version="128.0.6569" ExcludeAssets="All" />
+		<PackageReference Include="bblanchon.PDFium.Linux" Version="128.0.6569" ExcludeAssets="All" PrivateAssets="All" />
 		<PackageReference Include="bblanchon.PDFium.Win32" Version="128.0.6569" GeneratePathProperty="true" ExcludeAssets="All" />
-		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" ExcludeAssets="All" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" ExcludeAssets="All" PrivateAssets="All" />
 		<PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.1.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.64" />
@@ -113,7 +113,7 @@
 	<!-- Copy the documentation file to the final output directory if content is different -->
 	<Target Name="CopyDocumentationFile" AfterTargets="Build">
 		<Message Importance="high" Text="Updating the Documentation File: $(PkgSkiaSharp_NativeAssets_Win32)" />
-		
+
 
 		<!--<Message Importance="high" Text="Updating the Documentation File: $(DocumentationFile)" />-->
 		<Exec Condition="'$(DocumentationFile)'!=''" Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CopyChanged.ps1&quot; -sourceFile &quot;$(ProjectDir)\$(DocumentationFile)&quot; -destinationFile &quot;$(ProjectDir)Resources\$(AssemblyName).xml&quot;" />

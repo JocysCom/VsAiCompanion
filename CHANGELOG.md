@@ -1,3 +1,9 @@
+2024-08-28 v1.12.76
+
+- Fix: The AI stops making direct function calls.
+- Fix: Reduced the extension installer by removing Linux and macOS files.
+- New: Added an AI tool function to count content and file tokens.
+
 2024-08-26 v1.12.72
 
 - Fix: Help documents embedded in the app.
