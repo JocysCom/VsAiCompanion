@@ -65,9 +65,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return client;
 		}
 
-		public static JsonSerializerOptions GetJsonOptions()
+		public static JsonSerializerOptions GetJsonOptions(bool writeIndented = false)
 		{
 			var o = new JsonSerializerOptions();
+			o.WriteIndented = writeIndented;
 			o.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
 			o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 			o.Converters.Add(new UnixTimestampConverter());
@@ -89,8 +90,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		public static T Deserialize<T>(string json)
 			=> JsonSerializer.Deserialize<T>(json, JsonOptions);
 
-		public static string Serialize(object o)
-			=> JsonSerializer.Serialize(o, JsonOptions);
+		public static string Serialize(object o, bool writeIndented = false)
+			=> writeIndented
+			? JsonSerializer.Serialize(o, GetJsonOptions(writeIndented))
+			: JsonSerializer.Serialize(o, JsonOptions);
 
 		public async Task<file> UploadFileAsync(string filePath, string purpose, CancellationToken cancellationToken = default)
 		{

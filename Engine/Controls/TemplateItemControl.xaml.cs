@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
+using HtmlAgilityPack;
 using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Configuration;
@@ -19,6 +20,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
@@ -833,10 +835,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var dialog = ExportSaveFileDialog;
 			dialog.DefaultExt = "*.html";
 			dialog.FileName = $"{Item.Name}.html";
-			dialog.Filter = "Webpage, single file (*.html)|*.html|All files (*.*)|*.*";
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
 			dialog.Title = "Export HTML File";
+			dialog.Filter = "Webpage, single file (*.html)|*.html";
+			//DialogHelper.AddFilter(dialog, ".pdf");
+			DialogHelper.AddFilter(dialog);
 			var result = dialog.ShowDialog();
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
@@ -844,8 +848,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var html = GetPageHtml();
 			if (string.IsNullOrEmpty(html))
 				return;
-			var bytes = System.Text.Encoding.UTF8.GetBytes(html);
-			JocysCom.ClassLibrary.Configuration.SettingsHelper.WriteIfDifferent(dialog.FileName, bytes);
+			var ext = System.IO.Path.GetExtension(dialog.FileName).ToLower();
+			switch (ext)
+			{
+				case ".pdf":
+					var pdf = PdfGenerator.GeneratePdf(html, PdfSharp.PageSize.A4);
+					pdf.Save(dialog.FileName);
+					break;
+				default:
+					var bytes = System.Text.Encoding.UTF8.GetBytes(html);
+					JocysCom.ClassLibrary.Configuration.SettingsHelper.WriteIfDifferent(dialog.FileName, bytes);
+					break;
+			}
 		}
 
 		public string GetPageHtml()

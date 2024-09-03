@@ -99,6 +99,32 @@
 				</Button>
 			</StackPanel>
 		</Border>
+		<Border
+			Grid.Row="0"
+			Grid.ColumnSpan="2"
+			HorizontalAlignment="Right"
+			BorderBrush="{StaticResource BorderDark}"
+			BorderThickness="0,0,0,1">
+			<StackPanel Orientation="Horizontal">
+				<Button
+					Name="CopyButton"
+					Margin="0,3,3,3"
+					AutomationProperties.HelpText="{StaticResource main_Copy_Chat}"
+					AutomationProperties.Name="Copy Button"
+					Click="CopyButton_Click">
+					<ContentControl Content="{StaticResource Icon_copy}" Focusable="False" />
+				</Button>
+				<Button
+					Name="SaveAsButton"
+					Margin="0,3,3,3"
+					AutomationProperties.HelpText="{StaticResource main_Save_Chat}"
+					AutomationProperties.Name="Save As Button"
+					Click="SaveAsButton_Click">
+					<ContentControl Content="{StaticResource Icon_Save}" Focusable="False" />
+				</Button>
+			</StackPanel>
+		</Border>
+
 
 		<Border Grid.Row="1" Style="{StaticResource BorderDescriptionNormal}">
 			<TextBlock Name="ClassDescriptionLabel" Text="{Binding ClassDescription, ElementName=This}" />

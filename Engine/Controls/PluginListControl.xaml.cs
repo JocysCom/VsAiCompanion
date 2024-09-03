@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Xml;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -171,5 +172,39 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		#region Copy and Save
+
+		System.Windows.Forms.SaveFileDialog ExportSaveFileDialog { get; } = new System.Windows.Forms.SaveFileDialog();
+
+		private void CopyButton_Click(object sender, RoutedEventArgs e)
+		{
+			var completionTools = PluginsManager.GetCompletionTools(RiskLevel.Critical);
+			var text = Client.Serialize(completionTools, true);
+			AppHelper.SetClipboard(text);
+		}
+
+		private void SaveAsButton_Click(object sender, RoutedEventArgs e)
+		{
+			var dialog = ExportSaveFileDialog;
+			dialog.DefaultExt = "*.json";
+			dialog.FileName = $"{JocysCom.ClassLibrary.Configuration.AssemblyInfo.Entry.Product} Completion Tools.json".Replace(" ", "_");
+			dialog.FilterIndex = 1;
+			dialog.RestoreDirectory = true;
+			dialog.Title = "Save As Tool Function File";
+			DialogHelper.AddFilter(dialog, ".json");
+			DialogHelper.AddFilter(dialog);
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			// Cast the document to an JSON Document
+			var completionTools = PluginsManager.GetCompletionTools(RiskLevel.Critical);
+			var text = Client.Serialize(completionTools, true);
+			if (string.IsNullOrEmpty(text))
+				return;
+			var bytes = System.Text.Encoding.UTF8.GetBytes(text);
+			JocysCom.ClassLibrary.Configuration.SettingsHelper.WriteIfDifferent(dialog.FileName, bytes);
+		}
+
+		#endregion
 	}
 }

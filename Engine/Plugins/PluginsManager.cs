@@ -669,19 +669,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Classic API
 
-		/// <summary>
-		/// Add completion tools to chat completion message request for OpenAI GPT.
-		/// </summary>
-		/// <param name="item">Template item with settings.</param>
-		/// <param name="request">Chat completion request</param>
-		public static void ProvideTools(TemplateItem item, chat_completion_request request)
+		public static List<chat_completion_tool> GetCompletionTools(RiskLevel maxRiskLevel)
 		{
-			if (!item.PluginsEnabled)
-				return;
-			var CompletionTools = new List<chat_completion_tool>();
+			var completionTools = new List<chat_completion_tool>();
 			foreach (var kv in PluginFunctions)
 			{
-				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 				if (!AllowPluginFunction(kv.Key, maxRiskLevel))
 					continue;
 				var mi = kv.Value;
@@ -711,7 +703,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					{
 						additional_properties = new Dictionary<string, JsonElement>
 						{
-							["parameters"] = JsonDocument.Parse(JsonSerializer.Serialize(new
+							["parameters"] = JsonDocument.Parse(Client.Serialize(new
+							chat_completion_function_parameter
 							{
 								type = "object",
 								properties = props,
@@ -725,16 +718,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 					type = chat_completion_tool_type.function,
 					function = function,
 				};
-				CompletionTools.Add(tool);
+				completionTools.Add(tool);
 			}
-			if (CompletionTools.Any())
+			return completionTools;
+		}
+
+		/// <summary>
+		/// Add completion tools to chat completion message request for OpenAI GPT.
+		/// </summary>
+		/// <param name="item">Template item with settings.</param>
+		/// <param name="request">Chat completion request</param>
+		public static void ProvideTools(TemplateItem item, chat_completion_request request)
+		{
+			if (!item.PluginsEnabled)
+				return;
+			var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
+			var completionTools = GetCompletionTools(maxRiskLevel);
+			if (completionTools.Any())
 			{
 				var value = tool_choice.auto;
 				// Make sure that last message is not automated reply or it will go into the infinite loop.
 				if (item.ToolChoiceRequired && !(item.Messages.Last()?.IsAutomated == true))
 				{
 					value = tool_choice.required;
-					var requiredFunctions = CompletionTools.Where(x => item.ToolChoiceRequiredNames.Contains(x.function.name)).ToList();
+					var requiredFunctions = completionTools.Where(x => item.ToolChoiceRequiredNames.Contains(x.function.name)).ToList();
 					foreach (var tool in requiredFunctions)
 						request.tools.Add(tool);
 				}
@@ -742,7 +749,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!request.tools.Any())
 				{
 					// Add all functions for execution.
-					foreach (var tool in CompletionTools)
+					foreach (var tool in completionTools)
 						request.tools.Add(tool);
 				}
 				request.tool_choice = value;
