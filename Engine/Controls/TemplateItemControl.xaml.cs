@@ -7,6 +7,7 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Processes;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using JocysCom.VS.AiCompanion.Engine.Companions;
+using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
@@ -240,7 +241,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (_Item != null)
 			{
 				var voiceInstructions = GetVoiceInstructions();
-				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: voiceInstructions);
+				var isCtrlDown =
+					System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
+					System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);
+				var isAltDown =
+					System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) ||
+					System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt);
+				message_role? addMessageAsRole = null;
+				if (isCtrlDown)
+					addMessageAsRole = message_role.user;
+				if (isAltDown)
+					addMessageAsRole = message_role.assistant;
+				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit,
+					extraInstructions: voiceInstructions,
+					addMessageAsRole: addMessageAsRole);
 				RestoreFocus();
 			}
 		}

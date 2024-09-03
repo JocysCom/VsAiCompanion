@@ -1,3 +1,7 @@
+2024-09-03 v1.12.80
+
+- New: [Send] button: Hold CTRL to add as a user message, ALT for an assistant message.
+
 2024-08-28 v1.12.76
 
 - Fix: The AI stops making direct function calls.

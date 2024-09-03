@@ -126,8 +126,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public void UpdateMessageEdit()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
-			SendButton.ToolTip = isEdit ? "Update Message" : "Send Message";
-			StopButton.ToolTip = isEdit ? "Cancel Editing" : "AnimationAndMediaStop Request";
+			SendButton.ToolTip = isEdit ? "Update message" : "Send message. Hold CTRL to add a user message and ALT to add an assistant message.";
+			StopButton.ToolTip = isEdit ? "Cancel editing" : "AnimationAndMediaStop Request";
 			SendButton.IsEnabled = !IsBusy && AllowToSend();
 			StopButton.IsEnabled = isEdit || IsBusy;
 			var sendOp = SendButton.IsEnabled ? 1.0 : 0.2;
@@ -145,8 +145,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 					AttachmentsPanel.CurrentItems = message.Attachments;
 				}
 			}
-
-
 		}
 
 		void UpdateControlButtons()

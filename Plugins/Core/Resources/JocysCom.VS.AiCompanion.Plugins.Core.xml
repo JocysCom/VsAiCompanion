@@ -710,15 +710,16 @@
             <param name="pattern">The regex pattern to filter by list name. If null, all lists are returned.</param>
             <returns>Filtered lists.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.LoadListFromCsv(System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.LoadListFromCsv(System.String,System.String,System.String,System.String,System.String,System.String)">
             <summary>
             Load items into existing list from the CSV file.
             </summary>
             <param name="listName">Name of the list</param>
             <param name="path">Path to the CSV file</param>
             <param name="keyColumn">Use csv column for the Key property.</param>
-            <param name="valueColumn">Use csv column for the Value property.</param>
-            <param name="commentColumn">Use csv column for the Comment property.</param>
+            <param name="statusColumn">Optional. Use csv column for the Status property.</param>
+            <param name="valueColumn">Optional. Use csv column for the Value property.</param>
+            <param name="commentColumn">Optional. Use csv column for the Comment property.</param>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
         <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Lists.FilterPath">
