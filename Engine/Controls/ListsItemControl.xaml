@@ -163,11 +163,11 @@
 			AutoGenerateColumns="False"
 			CanUserAddRows="True"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
+			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
 			ScrollViewer.CanContentScroll="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionChanged="MainDataGrid_SelectionChanged"
-			PreviewMouseDoubleClick="MainDataGrid_PreviewMouseDoubleClick"
 			SelectionMode="Extended">
 			<DataGrid.Columns>
 				<DataGridTextColumn
@@ -176,6 +176,11 @@
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="{StaticResource main_Key}" />
+				<DataGridComboBoxColumn
+					x:Name="StatusColumn"
+					Width="Auto"
+					Header="{StaticResource main_Status}"
+					SelectedItemBinding="{Binding Status}" />
 				<DataGridTextColumn
 					x:Name="ValueColumn"
 					Width="Auto"

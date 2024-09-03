@@ -426,9 +426,14 @@
             The unique identifier or name for the list item.
             </summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Status">
+            <summary>
+            Optional. List item progress status.
+            </summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Value">
             <summary>
-            The value associated with the key.
+            Optional. The value associated with the key.
             </summary>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Comment">
@@ -760,17 +765,28 @@
             <param name="listName">Name of the list</param>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem(System.String,System.String,System.String,System.String,System.Nullable{System.Int32})">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.UpdateListItem(System.String,System.String,System.String,System.Nullable{JocysCom.ClassLibrary.ProgressStatus},System.String,System.Nullable{System.Int32})">
             <summary>
             Sets or adds an item to a list.
             </summary>
             <param name="listName">Name of the list</param>
             <param name="key">Item key.</param>
+            <param name="status">Item progress status.</param>
             <param name="value">Item value.</param>
             <param name="comment">Item comment.</param>
             <param name="index">Optional. The zero-based index at which item should be inserted.</param>
             <returns>True if the item is set or added successfully.</returns>
             <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.SetListItemStatus(System.String,System.String,System.Nullable{JocysCom.ClassLibrary.ProgressStatus})">
+            <summary>
+            Sets list item progress status.
+            </summary>
+            <param name="listName">Name of the list</param>
+            <param name="key">Item key.</param>
+            <param name="status">Item progress status.</param>
+            <returns>True if the item is set or added successfully.</returns>
+            <returns>0 operation successfull, -1 list not found, -2 list is readonly, -4 item not found.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItem(System.String,System.String)">
             <summary>

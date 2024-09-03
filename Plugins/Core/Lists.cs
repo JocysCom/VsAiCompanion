@@ -1,5 +1,7 @@
-﻿using JocysCom.ClassLibrary.Collections;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Runtime;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -120,14 +122,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="listName">Name of the list</param>
 		/// <param name="path">Path to the CSV file</param>
 		/// <param name="keyColumn">Use csv column for the Key property.</param>
-		/// <param name="valueColumn">Use csv column for the Value property.</param>
-		/// <param name="commentColumn">Use csv column for the Comment property.</param>
+		/// <param name="statusColumn">Optional. Use csv column for the Status property.</param>
+		/// <param name="valueColumn">Optional. Use csv column for the Value property.</param>
+		/// <param name="commentColumn">Optional. Use csv column for the Comment property.</param>
 		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.Medium)]
 		public int LoadListFromCsv(
 			string listName,
 			string path,
-			string keyColumn = null, string valueColumn = null, string commentColumn = null)
+			string keyColumn = null, string statusColumn = null,
+			string valueColumn = null, string commentColumn = null)
 		{
 			var li = GetFilteredListInfo(listName);
 			// List don't exists
@@ -139,11 +143,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			foreach (DataRow row in table.Rows)
 			{
 				var item = new ListItem();
-				if (string.IsNullOrWhiteSpace(keyColumn))
+				if (!string.IsNullOrWhiteSpace(keyColumn))
 					item.Key = (string)row[keyColumn];
-				if (string.IsNullOrWhiteSpace(valueColumn))
+				ProgressStatus status;
+				if (!string.IsNullOrWhiteSpace(statusColumn) && Enum.TryParse((string)row[statusColumn], out status))
+					item.Status = status;
+				if (!string.IsNullOrWhiteSpace(valueColumn))
 					item.Value = (string)row[valueColumn];
-				if (string.IsNullOrWhiteSpace(commentColumn))
+				if (!string.IsNullOrWhiteSpace(commentColumn))
 					item.Comment = (string)row[commentColumn];
 				li.Items.Add(item);
 			}
@@ -270,13 +277,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="listName">Name of the list</param>
 		/// <param name="key">Item key.</param>
+		/// <param name="status">Item progress status.</param>
 		/// <param name="value">Item value.</param>
 		/// <param name="comment">Item comment.</param>
 		/// <param name="index">Optional. The zero-based index at which item should be inserted.</param>
 		/// <returns>True if the item is set or added successfully.</returns>
 		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly.</returns>
 		[RiskLevel(RiskLevel.None)]
-		public int UpdateListItem(string listName, string key, string value, string comment = "", int? index = null)
+		public int UpdateListItem(string listName, string key, string value, ProgressStatus? status = null, string comment = "", int? index = null)
 		{
 			var li = GetFilteredListInfo(listName);
 			if (li == null)
@@ -289,6 +297,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				item = new ListItem
 				{
 					Key = key,
+					Status = status,
 					Value = value,
 					Comment = comment,
 				};
@@ -301,7 +310,30 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			{
 				item.Value = value;
 				item.Comment = comment;
+				item.Status = status;
 			}
+			return 0;
+		}
+
+		/// <summary>
+		/// Sets list item progress status.
+		/// </summary>
+		/// <param name="listName">Name of the list</param>
+		/// <param name="key">Item key.</param>
+		/// <param name="status">Item progress status.</param>
+		/// <returns>True if the item is set or added successfully.</returns>
+		/// <returns>0 operation successfull, -1 list not found, -2 list is readonly, -4 item not found.</returns>
+		public int SetListItemStatus(string listName, string key, ProgressStatus? status = null)
+		{
+			var li = GetFilteredListInfo(listName);
+			if (li == null)
+				return -1;
+			if (li.IsReadOnly)
+				return -2;
+			var item = li.Items.FirstOrDefault(i => i.Key == key);
+			if (item == null)
+				return -4;
+			item.Status = status;
 			return 0;
 		}
 

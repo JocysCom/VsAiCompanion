@@ -1,8 +1,11 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -18,6 +21,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public ListsItemControl()
 		{
 			InitializeComponent();
+			var statuses = new List<ProgressStatus?>() { null };
+			var values = Enum.GetValues(typeof(ProgressStatus)).Cast<ProgressStatus>().Select(x => (ProgressStatus?)x);
+			statuses.AddRange(values);
+			StatusColumn.ItemsSource = statuses;
 			UpdateButtons();
 			Global.Tasks.Items.ListChanged += Items_ListChanged;
 			RefreshPaths();

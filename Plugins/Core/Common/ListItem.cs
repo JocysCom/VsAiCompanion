@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.ComponentModel;
+using System.ComponentModel;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -17,8 +19,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		string _Key;
 
 		/// <summary>
-		/// The value associated with the key.
+		/// Optional. List item progress status.
 		/// </summary>
+		[DefaultValue(null)]
+		public ProgressStatus? Status { get => _Status; set => SetProperty(ref _Status, value); }
+		ProgressStatus? _Status;
+
+		/// <summary>
+		/// Optional. The value associated with the key.
+		/// </summary>
+		[DefaultValue(null)]
 		public string Value { get => _Value; set => SetProperty(ref _Value, value); }
 		string _Value;
 
@@ -27,6 +37,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// such as task status (e.g., complete, pending) or extra details for settings and environment variables.
 		/// It encourages to infer potential statuses or metadata that could enhance data handling or task management strategies creatively.
 		/// </summary>
+		[DefaultValue(null)]
 		public string Comment { get => _Comment; set => SetProperty(ref _Comment, value); }
 		string _Comment;
 	}
