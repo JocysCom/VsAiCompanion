@@ -1,6 +1,9 @@
-2024-09-03 v1.12.80
+2024-09-05 v1.12.82
 
 - New: [Send] button: Hold CTRL to add as a user message, ALT for an assistant message.
+- New: Added an AI tool function to get PDF metadata.
+- New: Save or copy all tool functions as JSON for AI self-improvement.
+- New: Added an item status property to lists.
 
 2024-08-28 v1.12.76
 

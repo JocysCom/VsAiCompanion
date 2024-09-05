@@ -115,11 +115,12 @@
             </summary>
             <param name="paths">List of files to read from.</param>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles(System.String[])">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFiles(System.String[],System.Boolean)">
             <summary>
             Read information and contents of files.
             </summary>
             <param name="paths">The list of files to read from.</param>
+            <param name="includeContents">`true` to include full content and metadata (size, last write, creation time); `false` for metadata only.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.WriteFileText(System.String,System.String)">
             <summary>
@@ -928,6 +929,13 @@
             <param name="inputFilePath">Source file.</param>
             <param name="outputFilePath">Target PDF File.</param>
             <returns>True if the operation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GetPdfMetadata(System.String[])">
+            <summary>
+            Counts the pages in the specified PDF files and reads metadata.
+            Returns an array a list of metadata key-value pairs, where each count position corresponds to the file's position in the `paths` array.
+            </summary>
+            <param name="paths">List of file paths to read from.</param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertPdfToImage(System.String,System.String,System.Int32[])">
             <summary>

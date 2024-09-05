@@ -1,6 +1,5 @@
 ﻿using DocumentFormat.OpenXml;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
@@ -12,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,6 +51,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 						AddMethods(typeof(Lists));
 #if DEBUG
 						AddMethods(typeof(Automation));
+						LoadPluginFunctions(Global.PluginsPath);
 #endif
 					}
 					return _PluginFunctions;
@@ -69,10 +70,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var methods = type.GetMethods(bindingFlags);
 			foreach (var mi in methods)
 			{
-				var rla = Attributes.FindCustomAttribute<RiskLevelAttribute>(mi);
-				if (rla == null || rla.Level <= RiskLevel.Unknown)
+				var attribute = mi.GetCustomAttributes().FirstOrDefault(x => x.GetType().Name == nameof(RiskLevelAttribute));
+				if (attribute is null)
 					continue;
-				_PluginFunctions.Add(mi.Name, mi);
+				// Get level from attribute using reflection to access Level property
+				var levelProperty = attribute.GetType().GetProperty(nameof(RiskLevelAttribute.Level));
+				if (levelProperty != null)
+				{
+					var levelValue = (RiskLevel)levelProperty.GetValue(attribute);
+					if (levelValue > RiskLevel.Unknown)
+						_PluginFunctions.Add(mi.Name, mi);
+				}
 			}
 		}
 
@@ -80,32 +88,105 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Load Microsoft.NET.Sdk.Web libraries and include all public API methods from classes tagged with the[ApiController] attribute.
 		/// </summary>
 		/// <param name="path">Path to the folder with DLLs.</param>
-		public static void LoadPluginFunctions(string path)
+		public static void LoadPluginFunctions(string pluginsDirectory)
 		{
-			var dllFiles = Directory.GetFiles(path, "*.dll");
-			foreach (var dllFile in dllFiles)
+#if NETFRAMEWORK
+#else
+			var loadContext = new AssemblyLoadContext("PluginContext", true);
+			//AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+			loadContext.Resolving += (context, name) =>
 			{
-				Assembly assembly;
-				try
-				{
-					assembly = Assembly.LoadFrom(dllFile);
-				}
-				catch (Exception ex)
-				{
-					// Handle or log exceptions such as bad format, file not found, etc.
-					Console.WriteLine($"Could not load assembly {dllFile}: {ex.Message}");
-					continue;
-				}
-				// Assuming you only want classes directly tagged with [ApiController]
-				// Adjust BindingFlags if you need to search for non-public types etc.
-				var controllerTypes = assembly.GetTypes();
-				//.Where(type => type.GetCustomAttributes<Controller>().Any());
+				var assemblyFile = $"{new AssemblyName(name.Name).Name}.dll";
+				var assemblyPath = Path.Combine(pluginsDirectory, assemblyFile);
+				if (File.Exists(assemblyPath))
+					return context.LoadFromAssemblyPath(assemblyPath);
 
-				foreach (var type in controllerTypes)
+				// Attempt to load the assembly from globally known paths or cache directories
+				string[] possiblePaths = new string[]
 				{
-					AddMethods(type);
+					Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyFile),
+					Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+					 @"dotnet\shared\Microsoft.AspNetCore.App\" + assemblyFile)
+					// Add more standard paths if known
+				};
+				foreach (var path in possiblePaths)
+				{
+					if (File.Exists(path))
+						return Assembly.LoadFrom(path);
+				}
+				return null;
+			};
+#endif
+			// Load all DLLs within the Plugins directory
+			var assemblies = new List<Assembly>();
+			foreach (var directory in Directory.GetDirectories(pluginsDirectory))
+			{
+				foreach (var dll in Directory.GetFiles(directory, "*.dll"))
+				{
+					try
+					{
+#if NETFRAMEWORK
+						var assembly = Assembly.LoadFrom(dll);
+#else
+						var assembly = loadContext.LoadFromAssemblyPath(dll);
+#endif
+						assemblies.Add(assembly);
+					}
+					catch (Exception ex)
+					{
+						// Handle or log exceptions such as bad format, file not found, etc.
+						Console.WriteLine($"Could not load assembly {dll}: {ex.Message}");
+						continue;
+					}
 				}
 			}
+			// Create a configuration
+			//var configuration = new ContainerConfiguration().WithAssemblies(assemblies);
+			foreach (var assembly in assemblies)
+			{
+				// Discover methods marked with a custom attribute using reflection
+				var types = assembly.GetTypes();
+				foreach (var type in types)
+				{
+					try
+					{
+						AddMethods(type);
+					}
+					catch (Exception ex)
+					{
+						// Handle or log exceptions such as bad format, file not found, etc.
+						Console.WriteLine($"Could not load type {ex.Message}");
+						continue;
+					}
+				}
+			}
+
+		}
+
+		private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			// Strip version and public key token as needed to simplify matches
+			string assemblyFullName = args.Name.Split(',')[0] + ".dll";
+
+			// Attempt to load the assembly from globally known paths or cache directories
+			string[] possiblePaths = new string[]
+			{
+				Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyFullName),
+				Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+				 @"dotnet\shared\Microsoft.AspNetCore.App\" + assemblyFullName)
+				// Add more standard paths if known
+			};
+
+			foreach (var path in possiblePaths)
+			{
+				if (File.Exists(path))
+				{
+					return Assembly.LoadFrom(path);
+				}
+			}
+
+			// Let the runtime attempt default methods if specific paths fail
+			return null;
 		}
 
 		public static bool AllowPluginFunction(string functionName, RiskLevel maxRiskLevel)

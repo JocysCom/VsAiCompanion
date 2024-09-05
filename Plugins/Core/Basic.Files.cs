@@ -31,14 +31,17 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Read information and contents of files.
 		/// </summary>
 		/// <param name="paths">The list of files to read from.</param>
+		/// <param name="includeContents">`true` to include full content and metadata (size, last write, creation time); `false` for metadata only.</param>
 		[RiskLevel(RiskLevel.Medium)]
-		public static List<DocItem> ReadFiles(string[] paths)
+		public static List<DocItem> ReadFiles(string[] paths, bool includeContents)
 		{
 			var list = new List<DocItem>();
 			foreach (var path in paths)
 			{
 				var di = new DocItem(null, path);
-				di.LoadData();
+				di.LoadFileInfo();
+				if (includeContents)
+					di.LoadData();
 				list.Add(di);
 			}
 			return list;

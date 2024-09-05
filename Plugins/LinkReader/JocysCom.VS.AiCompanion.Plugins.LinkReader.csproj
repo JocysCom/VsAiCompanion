@@ -17,6 +17,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Include="..\Core\Common\RiskLevel.cs" Link="Resources\RiskLevel.cs" />
+	  <Compile Include="..\Core\Common\RiskLevelAttribute.cs" Link="Resources\RiskLevelAttribute.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 
 		<Content Include=".well-known\ai-plugin.json" />
 	</ItemGroup>

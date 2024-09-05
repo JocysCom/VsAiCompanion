@@ -36,5 +36,45 @@
         <member name="M:JocysCom.VS.AiCompanion.Plugins.LinkReader.Program.CreateWebHostBuilder(System.String[])">
             <summary>Create web host builder</summary>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel">
+            <summary>
+            Defines the access and execution levels for AI within applications,
+            ranging from no permissions to full user-equivalent permissions.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Unknown">
+            <summary>Unknown.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.None">
+            <summary>None: Read Internal. AI can only read data within the application.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Low">
+            <summary>Low: Write Internal. AI can write or modify data within the application.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Medium">
+            <summary>Medium: Read External. AI can read external data sources outside the application.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.High">
+            <summary>High: Write External. AI can modify external data sources outside the application.</summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel.Critical">
+            <summary>Critical: Full Access. AI has full access, equivalent to a user, including running applications and scripts.</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute">
+            <summary>
+            Specifies the risk level of a method or a class.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute.Level">
+            <summary>
+            Gets the risk level assigned to the method or class.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute.#ctor(JocysCom.VS.AiCompanion.Plugins.Core.RiskLevel)">
+            <summary>
+            Initializes a new instance of the <see cref="T:JocysCom.VS.AiCompanion.Plugins.Core.RiskLevelAttribute"/> class with a specified risk level.
+            </summary>
+            <param name="level">The risk level to be assigned.</param>
+        </member>
     </members>
 </doc>

@@ -231,6 +231,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static string LogsPath
 			=> Path.Combine(AppData.XmlFile.Directory.FullName, "Logs");
 
+		public static string PluginsPath
+			=> Path.Combine(AppData.XmlFile.Directory.FullName, "Plugins");
+
 		public static string GetPath(AssistantItem item, params string[] args)
 		{
 			var itemPath = new string[] { AssistantsPath, item.Name };

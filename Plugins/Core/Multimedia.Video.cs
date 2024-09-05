@@ -1,5 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using Microsoft.Win32;
+using PdfSharp.Pdf.IO;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -165,6 +167,42 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				// Set the default output file
 				key.SetValue("OutputFile", outputFilePath, RegistryValueKind.String);
 			}
+		}
+
+		/// <summary>
+		/// Counts the pages in the specified PDF files and reads metadata.
+		/// Returns an array a list of metadata key-value pairs, where each count position corresponds to the file's position in the `paths` array.
+		/// </summary>
+		/// <param name="paths">List of file paths to read from.</param>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<List<KeyValue>[]> GetPdfMetadata(string[] paths)
+		{
+			var metadataList = new List<KeyValue>[paths.Length];
+
+			for (int i = 0; i < paths.Length; i++)
+			{
+				try
+				{
+					var doc = PdfReader.Open(paths[i]);
+					var metadata = new List<KeyValue>()
+					{
+						new KeyValue("PageCount", doc.PageCount.ToString()),
+						new KeyValue("Title", doc.Info.Title ?? "N/A"),
+						new KeyValue("Author", doc.Info.Author ?? "N/A"),
+						new KeyValue("Subject", doc.Info.Subject ?? "N/A"),
+						new KeyValue("Keywords", doc.Info.Keywords ?? "N/A"),
+						new KeyValue("CreationDate", doc.Info.CreationDate.ToString("O") ?? "N/A"),
+						new KeyValue("ModificationDate", doc.Info.ModificationDate.ToString("O") ?? "N/A")
+					};
+					metadataList[i] = metadata;
+					doc.Close();
+				}
+				catch (Exception ex)
+				{
+					return new OperationResult<List<KeyValue>[]>(ex);
+				}
+			}
+			return new OperationResult<List<KeyValue>[]>(metadataList);
 		}
 
 		/// <summary>

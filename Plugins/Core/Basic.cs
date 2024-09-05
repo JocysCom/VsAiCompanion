@@ -134,7 +134,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			var pos = await GpsLocation.GetCurrentLocation();
 
 			var list = new List<KeyValue>() {
-				new KeyValue("Current Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
+				new KeyValue("Current Date", DateTime.Now.ToString("O")),
 				new KeyValue("OS Version", Environment.OSVersion.VersionString),
 				new KeyValue("OS Architecture", Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit"),
 				new KeyValue("Locale", CultureInfo.CurrentCulture.Name),

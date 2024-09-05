@@ -1,3 +1,4 @@
+using JocysCom.VS.AiCompanion.Plugins.Core;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net.Http;
@@ -22,6 +23,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.LinkReader.Controllers
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		[HttpPost]
 		[Route("execute")]
+		[RiskLevel(RiskLevel.Medium)]
 		public async Task<ActionResult<string>> ReadLink(string url)
 		{
 			if (string.IsNullOrWhiteSpace(url))
