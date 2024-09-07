@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Windows.Controls;
 using System.Xml.Serialization;
@@ -29,29 +30,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var rla = Attributes.FindCustomAttribute<RiskLevelAttribute>(mi);
 			if (rla != null)
 				RiskLevel = rla.Level;
-			// Set icon.
-			var iconName = Resources.Icons.Icons_Default.Icon_piece_grey;
-			switch (RiskLevel)
-			{
-				case RiskLevel.None:
-					iconName = Resources.Icons.Icons_Default.Icon_piece_blue;
-					break;
-				case RiskLevel.Low:
-					iconName = Resources.Icons.Icons_Default.Icon_piece_green;
-					break;
-				case RiskLevel.Medium:
-					iconName = Resources.Icons.Icons_Default.Icon_piece_yellow;
-					break;
-				case RiskLevel.High:
-					iconName = Resources.Icons.Icons_Default.Icon_piece_orange;
-					break;
-				case RiskLevel.Critical:
-					iconName = Resources.Icons.Icons_Default.Icon_piece_red;
-					break;
-				default:
-					break;
-			}
-			Icon = Resources.Icons.Icons_Default.Current[iconName] as Viewbox;
+			SetIconBasedOnRiskLevel();
 			Id = (ClassFullName + "." + mi.Name).Trim('.');
 			var summary = XmlDocHelper.GetSummaryText(mi, FormatText.ReduceAndTrimSpaces);
 			var returns = XmlDocHelper.GetReturnText(mi, FormatText.ReduceAndTrimSpaces);
@@ -79,6 +58,58 @@ namespace JocysCom.VS.AiCompanion.Engine
 				pp.Index = index++;
 				Params.Add(pp);
 			}
+		}
+
+		public PluginItem(OpenApiDocument doc, OpenApiOperation op)
+		{
+			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+			Name = op.Tags.FirstOrDefault()?.Name;
+			Id = (doc.Info.Title + "." + Name).Trim('.');
+			Description = op.Summary ?? op.Description;
+			if (Params == null)
+				Params = new BindingList<PluginParam>();
+			var index = 0;
+			foreach (var parameter in op.Parameters)
+			{
+				var pp = new PluginParam();
+				pp.Name = parameter.Name;
+				pp.IsOptional = parameter.Required != true; // Not required implies optional
+				pp.Description = parameter.Description;
+				pp.Type = parameter.Schema.Type;
+				pp.Index = index++;
+				Params.Add(pp);
+			}
+			// Set the risk level based on a custom logic if available, default might be unknown
+			//RiskLevel = DetermineRiskLevel(op);
+			SetIconBasedOnRiskLevel();
+			ApiOperation = op;
+		}
+
+		private void SetIconBasedOnRiskLevel()
+		{
+			// Set icon.
+			var iconName = Resources.Icons.Icons_Default.Icon_piece_grey;
+			switch (RiskLevel)
+			{
+				case RiskLevel.None:
+					iconName = Resources.Icons.Icons_Default.Icon_piece_blue;
+					break;
+				case RiskLevel.Low:
+					iconName = Resources.Icons.Icons_Default.Icon_piece_green;
+					break;
+				case RiskLevel.Medium:
+					iconName = Resources.Icons.Icons_Default.Icon_piece_yellow;
+					break;
+				case RiskLevel.High:
+					iconName = Resources.Icons.Icons_Default.Icon_piece_orange;
+					break;
+				case RiskLevel.Critical:
+					iconName = Resources.Icons.Icons_Default.Icon_piece_red;
+					break;
+				default:
+					break;
+			}
+			Icon = Resources.Icons.Icons_Default.Current[iconName] as Viewbox;
 		}
 
 		/// <summary>Enable Plugin</summary>

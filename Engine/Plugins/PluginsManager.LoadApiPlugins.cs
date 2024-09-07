@@ -76,6 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			};
 			process.Start();
+			Task.Delay(4000).Wait();
 			servers.Add(port, process);
 			return port;
 		}
@@ -144,13 +145,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var list = new List<PluginItem>();
 			foreach (var path in openApiDocument.Paths)
 			{
-				var item = new PluginItem();
 				string pathUrl = path.Key;
 				var operations = path.Value.Operations;
 				foreach (var operation in operations)
 				{
-					item.Name = operation.Value.OperationId;
-					item.ApiOperation = operation.Value;
+					var item = new PluginItem(openApiDocument, operation.Value);
 					string methodType = operation.Key.ToString();
 					string operationId = operation.Value.OperationId;
 					string description = operation.Value.Summary ?? operation.Value.Description;
