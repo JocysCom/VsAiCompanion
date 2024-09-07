@@ -571,8 +571,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								{
 									f.id,
 									f.name,
-									parameters = PluginsManager.PluginFunctions.TryGetValue(f.name, out var methodInfo)
-										? PluginsManager.ConvertFromToolItem(methodInfo, f) : null
+									parameters = PluginsManager.ConvertFromToolItem(PluginsManager.PluginFunctions.FirstOrDefault(x => x.Name == f.name)?.Mi, f)
 								}));
 								// Create message attachment first.
 								var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);

@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Plugins.Core;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -97,9 +98,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public Viewbox Icon { get => _Icon; set => SetProperty(ref _Icon, value); }
 		Viewbox _Icon;
 
+		#region Method Info
+
 		[XmlIgnore, JsonIgnore]
 		public System.Reflection.MethodInfo Mi { get => _Mi; set => SetProperty(ref _Mi, value); }
 		System.Reflection.MethodInfo _Mi;
+
+		#endregion
+
+		#region API Operation
+
+		[XmlIgnore, JsonIgnore]
+		public OpenApiOperation ApiOperation { get => _ApiOperation; set => SetProperty(ref _ApiOperation, value); }
+		OpenApiOperation _ApiOperation;
+
+		#endregion
 
 		[XmlIgnore, JsonIgnore]
 		public BindingList<PluginParam> Params { get => _Params; set => SetProperty(ref _Params, value); }

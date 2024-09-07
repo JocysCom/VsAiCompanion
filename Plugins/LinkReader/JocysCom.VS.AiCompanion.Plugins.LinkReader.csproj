@@ -23,7 +23,9 @@
 
 	<ItemGroup>
 
-		<Content Include=".well-known\ai-plugin.json" />
+		<Content Include=".well-known\ai-plugin.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>

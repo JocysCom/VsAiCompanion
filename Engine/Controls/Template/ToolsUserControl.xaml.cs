@@ -61,7 +61,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 			if (!ListBoxData.Any())
 			{
 				var checkItems = PluginsManager.PluginFunctions
-					.Select(x => new KeyValue<string, bool>() { Key = x.Key, })
+					.Select(x => new KeyValue<string, bool>() { Key = x.Name, })
 					.OrderBy(x => x.Key)
 					.ToList();
 				foreach (var checkItem in checkItems)

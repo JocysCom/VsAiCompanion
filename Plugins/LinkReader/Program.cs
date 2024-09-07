@@ -29,18 +29,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.LinkReader
 				.Configure(app =>
 				{
 					// Configure the HTTP request pipeline.
+					app.UseSwagger();
 					if (app.ApplicationServices.GetService<IWebHostEnvironment>().IsDevelopment())
 					{
-						app.UseSwagger();
 						app.UseSwaggerUI();
 					}
-
 					app.UseHttpsRedirection();
-
 					app.UseRouting(); // UseRouting is required to use UseEndpoints
-
 					app.UseAuthorization();
-
 					app.UseEndpoints(endpoints =>
 					{
 						endpoints.MapControllers();

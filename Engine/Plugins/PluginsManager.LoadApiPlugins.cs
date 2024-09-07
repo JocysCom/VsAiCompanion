@@ -1,4 +1,7 @@
-﻿using JocysCom.VS.AiCompanion.Plugins.Core.Server;
+﻿using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Plugins.Core.Server;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Readers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +20,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Load Microsoft.NET.Sdk.Web libraries and include all public API methods from classes tagged with the[ApiController] attribute.
 		/// </summary>
 		/// <param name="path">Path to the folder with DLLs.</param>
-		public static void API_LoadPlugins(string pluginsDirectory)
+		public static async void API_LoadPlugins(string pluginsDirectory)
 		{
 
 			// Load all EXE servers in the Plugins directory
@@ -30,14 +33,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!File.Exists(aiPluginPath))
 					continue;
 				// Read "ai-plugin.json" file.
-				// ...
+				var json = System.IO.File.ReadAllText(aiPluginPath);
+				var aiPlugin = Client.Deserialize<ai_plugin>(json);
 				// Check for web server exe file.
-				var exeFI = pluginDi.GetFileSystemInfos(".exe").FirstOrDefault();
+				var exeFI = pluginDi.GetFileSystemInfos("*.exe").FirstOrDefault();
+				int port = 0;
 				if (exeFI != null)
 				{
 					try
 					{
-						API_StartServer(exeFI.FullName);
+						port = API_StartServer(exeFI.FullName);
 					}
 					catch (Exception ex)
 					{
@@ -45,14 +50,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 						continue;
 					}
 				}
-				// Get OpenAI specificaton file. 
+				// Get OpenAI specificaton file.
+				var client = new HttpClient();
+				var openApiSpecPath = $"http://localhost:{port}{aiPlugin.api.url}";
+				var openApiSpec = await client.GetStringAsync(openApiSpecPath);
+				var doc = LoadOpenApiSpec(openApiSpec);
+				var pluginItems = ExtractPluginItems(doc);
+				API_StopServer(exeFI.FullName);
 			}
-
 		}
 
 		public static Dictionary<int, Process> servers = new Dictionary<int, Process>();
 
-		public static void API_StartServer(string executablePath)
+		public static int API_StartServer(string executablePath)
 		{
 			var port = UdpHelper.FindFreePort();
 			var process = new Process
@@ -62,11 +72,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 					FileName = executablePath,
 					Arguments = $"--urls=http://localhost:{port}",
 					UseShellExecute = false,
-					CreateNoWindow = true
+					//CreateNoWindow = true
 				}
 			};
 			process.Start();
 			servers.Add(port, process);
+			return port;
 		}
 
 		public static void API_StopServer(string executablePath)
@@ -113,6 +124,51 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var result = await response.Content.ReadAsStringAsync();
 			Console.WriteLine($"Response: {result}");
 		}
+
+
+		#region OpenAPI
+
+		public static OpenApiDocument LoadOpenApiSpec(string openApiSpec)
+		{
+			var openApiStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(openApiSpec));
+			var openApiDocument = new OpenApiStreamReader().Read(openApiStream, out var diagnostic);
+			if (diagnostic.Errors.Any())
+			{
+				throw new InvalidOperationException("Failed to parse OpenAPI specification.");
+			}
+			return openApiDocument;
+		}
+
+		public static List<PluginItem> ExtractPluginItems(OpenApiDocument openApiDocument)
+		{
+			var list = new List<PluginItem>();
+			foreach (var path in openApiDocument.Paths)
+			{
+				var item = new PluginItem();
+				string pathUrl = path.Key;
+				var operations = path.Value.Operations;
+				foreach (var operation in operations)
+				{
+					item.Name = operation.Value.OperationId;
+					item.ApiOperation = operation.Value;
+					string methodType = operation.Key.ToString();
+					string operationId = operation.Value.OperationId;
+					string description = operation.Value.Summary ?? operation.Value.Description;
+					Console.WriteLine($"Path: {pathUrl}, Method: {methodType}");
+					Console.WriteLine($"Operation ID: {operationId}");
+					Console.WriteLine($"Description: {description}");
+					// Extract parameters
+					foreach (var parameter in operation.Value.Parameters)
+					{
+						Console.WriteLine($"Parameter: {parameter.Name}, Type: {parameter.Schema?.Type}, Description: {parameter.Description}");
+					}
+					list.Add(item);
+				}
+			}
+			return list;
+		}
+
+		#endregion
 
 	}
 }

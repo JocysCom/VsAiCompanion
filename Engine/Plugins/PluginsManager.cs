@@ -29,14 +29,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// Store method names with method info.
 		/// </summary>
-		public static Dictionary<string, System.Reflection.MethodInfo> PluginFunctions
+		public static List<PluginItem> PluginFunctions
 		{
 			get
 			{
 				lock (PluginFunctionsLock)
 				{
 					if (_PluginFunctions == null)
-						_PluginFunctions = new Dictionary<string, System.Reflection.MethodInfo>();
+						_PluginFunctions = new List<PluginItem>();
 					if (_PluginFunctions.Count == 0)
 					{
 						AddMethods(typeof(Basic));
@@ -50,14 +50,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 						AddMethods(typeof(Lists));
 #if DEBUG
 						AddMethods(typeof(Automation));
-						LoadPluginFunctions(Global.PluginsPath);
+						API_LoadPlugins(Global.PluginsPath);
 #endif
 					}
 					return _PluginFunctions;
 				}
 			}
 		}
-		static Dictionary<string, System.Reflection.MethodInfo> _PluginFunctions;
+		static List<PluginItem> _PluginFunctions;
 		static object PluginFunctionsLock = new object();
 
 		/// <summary>
@@ -78,7 +78,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					var levelValue = (RiskLevel)levelProperty.GetValue(attribute);
 					if (levelValue > RiskLevel.Unknown)
-						_PluginFunctions.Add(mi.Name, mi);
+						_PluginFunctions.Add(new PluginItem(mi));
 				}
 			}
 		}
@@ -139,8 +139,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 			if (!AllowPluginFunction(function.name, maxRiskLevel))
 				return null;
-			System.Reflection.MethodInfo methodInfo;
-			if (!PluginFunctions.TryGetValue(function.name, out methodInfo))
+			var methodInfo = PluginFunctions.FirstOrDefault(x => x.Name == function.name)?.Mi;
+			if (methodInfo is null)
 			{
 				// Handle the case where the methodInfo is not found for the given functionName
 				MessageBox.Show($"The function '{function.name}' was not found.", "Execution Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -414,13 +414,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (!item.PluginsEnabled)
 				return;
 			var ToolDefinitions = new List<ChatTool>();
-			foreach (var kv in PluginFunctions)
+			foreach (var pluginItem in PluginFunctions)
 			{
 				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
-				if (!AllowPluginFunction(kv.Key, maxRiskLevel))
+				if (!AllowPluginFunction(pluginItem.Name, maxRiskLevel))
 					continue;
 				// Get Method Info
-				var mi = kv.Value;
+				var mi = pluginItem.Mi;
 				// If this is not a Visual Studio extension but a plugin for Visual Studio, then skip.
 				if (!Global.IsVsExtension && mi.DeclaringType.Name == nameof(VisualStudio))
 					continue;
@@ -595,6 +595,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <returns>C# function arguments.</returns>
 		public static object[] ConvertFromToolItem(System.Reflection.MethodInfo methodInfo, chat_completion_function function)
 		{
+			if (methodInfo is null)
+				return null;
 			var methodParams = methodInfo.GetParameters();
 			var invokeParams = new object[methodParams.Length];
 			for (int i = 0; i < methodParams.Length; i++)
@@ -673,11 +675,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static List<chat_completion_tool> GetCompletionTools(RiskLevel maxRiskLevel)
 		{
 			var completionTools = new List<chat_completion_tool>();
-			foreach (var kv in PluginFunctions)
+			foreach (var pluginItem in PluginFunctions)
 			{
-				if (!AllowPluginFunction(kv.Key, maxRiskLevel))
+				if (!AllowPluginFunction(pluginItem.Name, maxRiskLevel))
 					continue;
-				var mi = kv.Value;
+				var mi = pluginItem.Mi;
 				var summaryText = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
 				var requiredParams = new List<string>();
 				var props = new Dictionary<string, object>();

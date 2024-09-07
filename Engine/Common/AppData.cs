@@ -481,7 +481,7 @@ Do not return as a code block.")]
 			var list = new SortableBindingList<PluginItem>();
 			foreach (var plugin in PluginsManager.PluginFunctions)
 			{
-				var item = new PluginItem(plugin.Value);
+				var item = new PluginItem(plugin.Mi);
 				var oldItem = old?.FirstOrDefault(x => x.Id == item.Id);
 				// Only the enable property can be modified by the user at the moment.
 				if (oldItem == null)
