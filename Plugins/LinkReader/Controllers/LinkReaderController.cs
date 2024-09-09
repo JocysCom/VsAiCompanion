@@ -22,7 +22,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.LinkReader.Controllers
 		/// <returns>The output of request.</returns>
 		/// <exception cref="System.Exception">Error message explaining why the request failed.</exception>
 		[HttpPost]
-		[Route("execute")]
+		[Route(nameof(ReadLink))]
 		[RiskLevel(RiskLevel.Medium)]
 		public async Task<ActionResult<string>> ReadLink(string url)
 		{

@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -16,12 +18,93 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public partial class PluginsManager
 	{
 
+		class NativeMethods
+		{
+			// P/Invoke declarations
+			[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+			public static extern IntPtr CreateJobObject(IntPtr lpJobAttributes, string lpName);
+
+			[DllImport("kernel32.dll")]
+			public static extern bool SetInformationJobObject(IntPtr hJob, int JobObjectInfoClass, IntPtr lpJobObjectInfo, uint cbJobObjectInfoLength);
+
+			[DllImport("kernel32.dll")]
+			public static extern bool AssignProcessToJobObject(IntPtr hJob, IntPtr hProcess);
+
+			[DllImport("kernel32.dll", SetLastError = true)]
+			public static extern bool CloseHandle(IntPtr hObject);
+
+			[StructLayout(LayoutKind.Sequential)]
+			public struct JOBOBJECT_BASIC_LIMIT_INFORMATION
+			{
+				public long PerProcessUserTimeLimit;
+				public long PerJobUserTimeLimit;
+				public uint LimitFlags;
+				public IntPtr MinimumWorkingSetSize;
+				public IntPtr MaximumWorkingSetSize;
+				public uint ActiveProcessLimit;
+				public ulong Affinity;
+				public uint PriorityClass;
+				public uint SchedulingClass;
+			}
+
+			[StructLayout(LayoutKind.Sequential)]
+			public struct IO_COUNTERS
+			{
+				public ulong ReadOperationCount;
+				public ulong WriteOperationCount;
+				public ulong OtherOperationCount;
+				public ulong ReadTransferCount;
+				public ulong WriteTransferCount;
+				public ulong OtherTransferCount;
+			}
+
+			[StructLayout(LayoutKind.Sequential)]
+			public struct JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+			{
+				public JOBOBJECT_BASIC_LIMIT_INFORMATION BasicLimitInformation;
+				public IO_COUNTERS IoInfo;
+				public IntPtr ProcessMemoryLimit;
+				public IntPtr JobMemoryLimit;
+				public IntPtr PeakProcessMemoryUsed;
+				public IntPtr PeakJobMemoryUsed;
+			}
+
+			public const uint JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000;
+			public const int JobObjectExtendedLimitInformation = 9;
+
+			public static IntPtr GetJobHandle()
+			{
+				// Create a job object
+				var jobHandle = CreateJobObject(IntPtr.Zero, null);
+				// Set job object limits to terminate processes when the parent process exits
+				var info = new JOBOBJECT_EXTENDED_LIMIT_INFORMATION();
+				info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+				int length = Marshal.SizeOf(typeof(JOBOBJECT_EXTENDED_LIMIT_INFORMATION));
+				IntPtr infoPtr = Marshal.AllocHGlobal(length);
+				Marshal.StructureToPtr(info, infoPtr, false);
+				SetInformationJobObject(jobHandle, JobObjectExtendedLimitInformation, infoPtr, (uint)length);
+				Marshal.FreeHGlobal(infoPtr);
+				return jobHandle;
+			}
+
+		}
+
+		/// <summary>
+		/// Handle to the job object that groups the processes of the web servers.
+		/// </summary>
+		private static IntPtr jobHandle;
+
 		/// <summary>
 		/// Load Microsoft.NET.Sdk.Web libraries and include all public API methods from classes tagged with the[ApiController] attribute.
 		/// </summary>
 		/// <param name="path">Path to the folder with DLLs.</param>
 		public static async void API_LoadPlugins(string pluginsDirectory)
 		{
+
+			// Create a job object
+			jobHandle = NativeMethods.GetJobHandle();
+			// Ensure the job object is closed on application exit
+			AppDomain.CurrentDomain.ProcessExit += (s, e) => NativeMethods.CloseHandle(jobHandle);
 
 			// Load all EXE servers in the Plugins directory
 			var assemblies = new List<Assembly>();
@@ -37,62 +120,114 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var aiPlugin = Client.Deserialize<ai_plugin>(json);
 				// Check for web server exe file.
 				var exeFI = pluginDi.GetFileSystemInfos("*.exe").FirstOrDefault();
-				int port = 0;
-				if (exeFI != null)
+				Uri openApiSpecUri = null;
+				try
 				{
-					try
+					if (exeFI is null)
 					{
-						port = API_StartServer(exeFI.FullName);
+						openApiSpecUri = new Uri(aiPlugin.api.url);
 					}
-					catch (Exception ex)
+					else
 					{
-						System.Diagnostics.Debug.WriteLine(ex.ToString());
-						continue;
+						var kv = await API_StartServer(exeFI.FullName);
+						var uri = Uri.IsWellFormedUriString(aiPlugin.api.url, UriKind.Absolute)
+							? aiPlugin.api.url
+							: $"{kv.uri}{aiPlugin.api.url.TrimStart('/')}";
+						var ub = new UriBuilder(uri);
+						ub.Host = kv.uri.Host;
+						ub.Port = kv.uri.Port;
+						openApiSpecUri = ub.Uri;
+						servers.Add(ub.Uri, kv.process);
 					}
 				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine(ex.ToString());
+				}
+
+				if (openApiSpecUri is null)
+					continue;
 				// Get OpenAI specificaton file.
 				var client = new HttpClient();
-				var openApiSpecPath = $"http://localhost:{port}{aiPlugin.api.url}";
-				var openApiSpec = await client.GetStringAsync(openApiSpecPath);
+				var openApiSpec = await client.GetStringAsync(openApiSpecUri.ToString());
 				var doc = LoadOpenApiSpec(openApiSpec);
 				var pluginItems = ExtractPluginItems(doc);
-				API_StopServer(exeFI.FullName);
+				//API_StopServer(exeFI.FullName);
 			}
 		}
 
-		public static Dictionary<int, Process> servers = new Dictionary<int, Process>();
+		public static Dictionary<Uri, Process> servers = new Dictionary<Uri, Process>();
 
-		public static int API_StartServer(string executablePath)
+		private static async Task<Exception> WaitForServerToStartAsync(Uri uri, int timeoutMilliseconds = 30000)
+		{
+			var httpClient = new HttpClient();
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(timeoutMilliseconds);
+			while (true)
+			{
+				try
+				{
+					var response = await httpClient.GetAsync(uri, cancellationTokenSource.Token);
+					//if (response.IsSuccessStatusCode)
+					if (response != null)
+						break;
+				}
+				catch (TaskCanceledException tcex)
+				{
+					return tcex;
+				}
+				catch (Exception ex)
+				{
+					return ex;
+				}
+				await Task.Delay(500, cancellationTokenSource.Token);
+			}
+			httpClient.Dispose();
+			return null;
+		}
+
+		public async static Task<(Uri uri, Process process)> API_StartServer(string executablePath)
 		{
 			var port = UdpHelper.FindFreePort();
+			var uri = new Uri($"http://localhost:{port}");
 			var process = new Process
 			{
 				StartInfo = new ProcessStartInfo
 				{
 					FileName = executablePath,
-					Arguments = $"--urls=http://localhost:{port}",
+					Arguments = $"--urls={uri}",
 					UseShellExecute = false,
 					//CreateNoWindow = true
-				}
+				},
+				EnableRaisingEvents = true // Enable raising events for the process
 			};
+			process.Exited += Process_Exited;
 			process.Start();
-			Task.Delay(4000).Wait();
-			servers.Add(port, process);
-			return port;
+			// Assign the process to the job object.
+			// This will make sure that the process is killed when the parent process is killed.
+			NativeMethods.AssignProcessToJobObject(jobHandle, process.Handle);
+			// Wait for the server to start responding
+			await WaitForServerToStartAsync(uri);
+			return (uri, process);
 		}
 
 		public static void API_StopServer(string executablePath)
 		{
-			servers.FirstOrDefault(x => x.Value.StartInfo.FileName == executablePath).Value?.Kill();
+			var serverEntry = servers.FirstOrDefault(x => x.Value.StartInfo.FileName == executablePath);
+			if (serverEntry.Value != null && !serverEntry.Value.HasExited)
+			{
+				serverEntry.Value.Kill();
+				servers.Remove(serverEntry.Key); // Remove from dictionary once killed
+			}
+		}
+
+		private static void Process_Exited(object sender, EventArgs e)
+		{
+			var process = (Process)sender;
+			Console.WriteLine($"Process {process.Id} has exited.");
 		}
 
 		private HttpClient _client = new HttpClient();
-
-		public async Task<string> API_GetSpecification(int port)
-		{
-			var response = await _client.GetStringAsync($"http://localhost:{port}/swagger/v1/swagger.json");
-			return response;
-		}
 
 		/// <summary>
 		/// Add all methods of the type.
