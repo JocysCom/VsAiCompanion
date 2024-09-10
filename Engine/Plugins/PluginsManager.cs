@@ -26,36 +26,35 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Manage Functions
 
+		private static readonly SemaphoreSlim _pluginFunctionsSemaphore = new SemaphoreSlim(1, 1);
+
 		/// <summary>
 		/// Store method names with method info.
 		/// </summary>
-		public static List<PluginItem> PluginFunctions
+		public static List<PluginItem> GetPluginFunctions()
 		{
-			get
+			_pluginFunctionsSemaphore.Wait();
+			if (_PluginFunctions == null)
+				_PluginFunctions = new List<PluginItem>();
+			if (_PluginFunctions.Count == 0)
 			{
-				lock (PluginFunctionsLock)
-				{
-					if (_PluginFunctions == null)
-						_PluginFunctions = new List<PluginItem>();
-					if (_PluginFunctions.Count == 0)
-					{
-						AddMethods(typeof(Basic));
-						AddMethods(typeof(Web));
-						AddMethods(typeof(Mail));
-						AddMethods(typeof(VisualStudio));
-						AddMethods(typeof(Database));
-						Search._databasePath = Global.PluginsSearchPath;
-						AddMethods(typeof(Search));
-						AddMethods(typeof(Multimedia));
-						AddMethods(typeof(Lists));
+				AddMethods(typeof(Basic));
+				AddMethods(typeof(Web));
+				AddMethods(typeof(Mail));
+				AddMethods(typeof(VisualStudio));
+				AddMethods(typeof(Database));
+				Search._databasePath = Global.PluginsSearchPath;
+				AddMethods(typeof(Search));
+				AddMethods(typeof(Multimedia));
+				AddMethods(typeof(Lists));
 #if DEBUG
-						AddMethods(typeof(Automation));
-						API_LoadPlugins(Global.PluginsPath);
+				AddMethods(typeof(Automation));
+				JocysCom.ClassLibrary.Helper.RunSynchronously(async () =>
+					await API_LoadPlugins(Global.PluginsPath));
 #endif
-					}
-					return _PluginFunctions;
-				}
 			}
+			_pluginFunctionsSemaphore.Release();
+			return _PluginFunctions;
 		}
 		static List<PluginItem> _PluginFunctions;
 		static object PluginFunctionsLock = new object();
@@ -122,7 +121,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (currentPlugin.RiskLevel > maxRiskLevel)
 				return false;
 			// Deny if this is not a Visual Studio extension but a plugin for Visual Studio.
-			if (!Global.IsVsExtension && currentPlugin.Mi.DeclaringType.Name == nameof(VisualStudio))
+			if (!Global.IsVsExtension && currentPlugin.Class == nameof(VisualStudio))
 				return false;
 			return true;
 		}
@@ -139,7 +138,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 			if (!AllowPluginFunction(function.name, maxRiskLevel))
 				return null;
-			var methodInfo = PluginFunctions.FirstOrDefault(x => x.Name == function.name)?.Mi;
+			var methodInfo = GetPluginFunctions().FirstOrDefault(x => x.Name == function.name)?.Mi;
 			if (methodInfo is null)
 			{
 				// Handle the case where the methodInfo is not found for the given functionName
@@ -414,7 +413,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (!item.PluginsEnabled)
 				return;
 			var ToolDefinitions = new List<ChatTool>();
-			foreach (var pluginItem in PluginFunctions)
+			foreach (var pluginItem in GetPluginFunctions())
 			{
 				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 				if (!AllowPluginFunction(pluginItem.Name, maxRiskLevel))
@@ -675,7 +674,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static List<chat_completion_tool> GetCompletionTools(RiskLevel maxRiskLevel)
 		{
 			var completionTools = new List<chat_completion_tool>();
-			foreach (var pluginItem in PluginFunctions)
+			foreach (var pluginItem in GetPluginFunctions())
 			{
 				if (!AllowPluginFunction(pluginItem.Name, maxRiskLevel))
 					continue;

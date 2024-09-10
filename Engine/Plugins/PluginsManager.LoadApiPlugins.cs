@@ -98,7 +98,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// Load Microsoft.NET.Sdk.Web libraries and include all public API methods from classes tagged with the[ApiController] attribute.
 		/// </summary>
 		/// <param name="path">Path to the folder with DLLs.</param>
-		public static async void API_LoadPlugins(string pluginsDirectory)
+		public static async Task API_LoadPlugins(string pluginsDirectory)
 		{
 
 			// Create a job object
@@ -152,6 +152,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var openApiSpec = await client.GetStringAsync(openApiSpecUri.ToString());
 				var doc = LoadOpenApiSpec(openApiSpec);
 				var pluginItems = ExtractPluginItems(doc);
+				_PluginFunctions.AddRange(pluginItems);
 				//API_StopServer(exeFI.FullName);
 			}
 		}
@@ -197,6 +198,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					FileName = executablePath,
 					Arguments = $"--urls={uri}",
 					UseShellExecute = false,
+					WindowStyle = ProcessWindowStyle.Minimized,
 					//CreateNoWindow = true
 				},
 				EnableRaisingEvents = true // Enable raising events for the process

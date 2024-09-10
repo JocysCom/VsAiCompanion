@@ -1,5 +1,4 @@
 ﻿using JocysCom.VS.AiCompanion.Plugins.Core;
-using System;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
@@ -7,31 +6,28 @@ namespace JocysCom.VS.AiCompanion.Engine
 	{
 		public PluginCategory() { }
 
-		public PluginCategory(Type methodInfoDeclaringType)
+		public PluginCategory(string name)
 		{
-			Id = methodInfoDeclaringType.FullName;
-			Name = methodInfoDeclaringType.Name;
+			Name = name;
 			var iconName = Resources.Icons.Icons_Default.Icon_radar;
-			if (Name.ToLower().Contains(nameof(Web).ToLower()))
+			if (name.ToLower().Contains(nameof(Web).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_internet;
-			if (Name.ToLower().Contains(nameof(VisualStudio).ToLower()))
+			if (name.ToLower().Contains(nameof(VisualStudio).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_Visual_Studio;
-			if (Name.ToLower().Contains(nameof(Database).ToLower()))
+			if (name.ToLower().Contains(nameof(Database).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_database;
-			if (Name.ToLower().Contains(nameof(Lists).ToLower()))
+			if (name.ToLower().Contains(nameof(Lists).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_todo_list;
-			if (Name.ToLower().Contains(nameof(Search).ToLower()))
+			if (name.ToLower().Contains(nameof(Search).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_magnifying_glass;
-			if (Name.ToLower().Contains(nameof(Automation).ToLower()))
+			if (name.ToLower().Contains(nameof(Automation).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_elements_tree;
-			if (Name.ToLower().Contains(nameof(Multimedia).ToLower()))
+			if (name.ToLower().Contains(nameof(Multimedia).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_movie_comment;
-			if (Name.ToLower().Contains(nameof(Mail).ToLower()))
+			if (name.ToLower().Contains(nameof(Mail).ToLower()))
 				iconName = Resources.Icons.Icons_Default.Icon_mail;
 			Icon = Engine.Resources.Icons.Icons_Default.Current[iconName];
 		}
-
-		public string Id { get; set; }
 		public string Name { get; set; }
 		public object Icon { get; }
 

@@ -64,7 +64,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			Name = op.Tags.FirstOrDefault()?.Name;
-			Id = (doc.Info.Title + "." + Name).Trim('.');
+			RiskLevel = RiskLevel.Medium;
+			Class = doc.Info.Title;
+			ClassFullName = doc.Info.Title;
+			Id = (ClassFullName + "." + Name).Trim('.');
 			Description = op.Summary ?? op.Description;
 			if (Params == null)
 				Params = new BindingList<PluginParam>();
@@ -109,7 +112,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				default:
 					break;
 			}
-			Icon = Resources.Icons.Icons_Default.Current[iconName] as Viewbox;
+			_IconName = iconName;
 		}
 
 		/// <summary>Enable Plugin</summary>
@@ -126,8 +129,12 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _Id;
 
 		[XmlIgnore, JsonIgnore]
-		public Viewbox Icon { get => _Icon; set => SetProperty(ref _Icon, value); }
+		public Viewbox Icon
+		{
+			get => _Icon = _Icon ?? Resources.Icons.Icons_Default.Current[_IconName] as Viewbox;
+		}
 		Viewbox _Icon;
+		string _IconName;
 
 		#region Method Info
 

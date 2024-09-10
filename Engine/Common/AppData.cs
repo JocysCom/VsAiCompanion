@@ -479,22 +479,21 @@ Do not return as a code block.")]
 		public static SortableBindingList<PluginItem> RefreshPlugins(IList<PluginItem> old)
 		{
 			var list = new SortableBindingList<PluginItem>();
-			foreach (var plugin in PluginsManager.PluginFunctions)
+			foreach (var plugin in PluginsManager.GetPluginFunctions())
 			{
-				var item = new PluginItem(plugin.Mi);
-				var oldItem = old?.FirstOrDefault(x => x.Id == item.Id);
+				var oldItem = old?.FirstOrDefault(x => x.Id == plugin.Id);
 				// Only the enable property can be modified by the user at the moment.
 				if (oldItem == null)
 				{
 					// Enable up to medium-risk level plugins by default.
 					// The default plugin risk level on the task is low.
-					item.IsEnabled = item.RiskLevel >= RiskLevel.None && item.RiskLevel <= RiskLevel.Medium;
+					plugin.IsEnabled = plugin.RiskLevel >= RiskLevel.None && plugin.RiskLevel <= RiskLevel.Medium;
 				}
 				else
 				{
-					item.IsEnabled = oldItem.IsEnabled;
+					plugin.IsEnabled = oldItem.IsEnabled;
 				}
-				list.Add(item);
+				list.Add(plugin);
 			}
 			return list;
 		}

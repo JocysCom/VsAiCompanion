@@ -61,7 +61,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public IList<PluginItem> GetAllMetods()
 		{
 			var methods = Global.AppSettings.Plugins
-				.Where(x => x.Mi?.DeclaringType.FullName == ClassFullName)
+				.Where(x => x.Class == CategoryName)
 				.ToList();
 			return methods;
 		}
@@ -76,8 +76,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var first = methods.FirstOrDefault();
 			if (first != null)
 			{
-				var summary = XmlDocHelper.GetSummaryText(first.Mi.DeclaringType, FormatText.RemoveIdentAndTrimSpaces);
-				ClassDescription = summary;
+				ClassDescription = first.Mi is null
+					? ""
+					: XmlDocHelper.GetSummaryText(first.Mi.DeclaringType, FormatText.RemoveIdentAndTrimSpaces);
 				OnPropertyChanged(nameof(ClassDescription));
 			}
 			ClassLibrary.Collections.CollectionsHelper.Synchronize(methods, CurrentItems, new PluginItemComparer());
@@ -93,15 +94,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Properties
 
-		public static readonly DependencyProperty ClassFullNameProperty =
-		DependencyProperty.Register(nameof(ClassFullName), typeof(string), typeof(PluginListControl),
+		public static readonly DependencyProperty CategoryNameProperty =
+		DependencyProperty.Register(nameof(CategoryName), typeof(string), typeof(PluginListControl),
 		new FrameworkPropertyMetadata((string)"", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnClassFullNameChanged));
 
 		[DefaultValue(typeof(string), "")]
-		public string ClassFullName
+		public string CategoryName
 		{
-			get => (string)GetValue(ClassFullNameProperty);
-			set => SetValue(ClassFullNameProperty, value);
+			get => (string)GetValue(CategoryNameProperty);
+			set => SetValue(CategoryNameProperty, value);
 		}
 
 		#endregion

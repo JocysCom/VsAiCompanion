@@ -32,7 +32,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void UpdateOnListChanged()
 		{
 			var categories = Global.AppSettings.Plugins
-				.Select(x => x.Mi.DeclaringType)
+				.Select(x => x.Class)
 				.Distinct()
 				.Select(x => new PluginCategory(x))
 				.ToList();
@@ -41,7 +41,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		class PluginCategoryComparer : IEqualityComparer<PluginCategory>
 		{
-			public bool Equals(PluginCategory x, PluginCategory y) => x.Id == y.Id;
+			public bool Equals(PluginCategory x, PluginCategory y) => x.Name == y.Name;
 			public int GetHashCode(PluginCategory obj) => throw new System.NotImplementedException();
 		}
 

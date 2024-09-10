@@ -49,7 +49,7 @@
 			<!--  Define the content of each tab  -->
 			<TabControl.ContentTemplate>
 				<DataTemplate>
-					<controls:PluginListControl ClassFullName="{Binding Id, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+					<controls:PluginListControl CategoryName="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 				</DataTemplate>
 			</TabControl.ContentTemplate>
 		</TabControl>
