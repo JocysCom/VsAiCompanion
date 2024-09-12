@@ -27,10 +27,10 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>451</Left>
-        <Top>89</Top>
-        <Width>1010</Width>
-        <Height>819</Height>
+        <Left>420</Left>
+        <Top>60</Top>
+        <Width>1033</Width>
+        <Height>815.5</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -41,17 +41,15 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.2315096251266464</GridSplitterPosition>
-          <IsBarPanelVisible>false</IsBarPanelVisible>
+          <GridSplitterPosition>0.2099009900990099</GridSplitterPosition>
           <ListSelection>
-            <string>AI - Chat (GPT-4)</string>
+            <string>AI - Chat (GPT-4o)</string>
           </ListSelection>
           <ListSelectedIndex>1</ListSelectedIndex>
-          <FocusedControl>DataTextBox</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.2997967479674797</GridSplitterPosition>
+          <GridSplitterPosition>0.22178217821782178</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
@@ -70,7 +68,6 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Embeddings</ItemType>
-          <GridSplitterPosition>0.27134146341463417</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions - Portable</string>
           </ListSelection>
@@ -89,7 +86,6 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiService</ItemType>
-          <GridSplitterPosition>0.2997946611909651</GridSplitterPosition>
           <ListSelection>
             <string>Company Name AI</string>
           </ListSelection>
@@ -127,6 +123,11 @@
       </UserProfiles>
       <OverrideInfoDefaultHead>AI Companion for CyberNet Solutions</OverrideInfoDefaultHead>
       <OverrideInfoDefaultBody>Your expert consultant that analyzes your project files and collaborates with you to optimize efficiency, streamline processes, and elevate your overall productivity.</OverrideInfoDefaultBody>
+      <StructuredImageAnalysisInstructions>You are an AI assistant that extracts data from documents and returns them as structured JSON objects.&#xD;
+Ensure that all attribute names are consistently formatted in snake_case.&#xD;
+Maintain uniform terminology and capitalization for all extracted values.&#xD;
+Provide detailed and clear structures without ambiguity.&#xD;
+Do not return as a code block.</StructuredImageAnalysisInstructions>
       <AiServices>
         <AiService>
           <Name>Company Name AI</Name>
@@ -151,22 +152,30 @@
       </AiServices>
       <AiModels>
         <AiModel>
-          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
+          <Id>690f057e-b740-f8f8-75f1-0673babbd0ee</Id>
           <Name>gpt-4o</Name>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
-          <Name>gpt-3.5-turbo-16k</Name>
+          <Id>bde102af-da0b-e883-2527-2358524ca6d1</Id>
+          <Name>gpt-4o-mini</Name>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
-          <MaxInputTokens>16384</MaxInputTokens>
+          <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
       </AiModels>
       <MailAccounts />
       <Plugins>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CountTokens</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CountFileTokens</Id>
+        </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.AutoContinue</Id>
@@ -201,29 +210,6 @@
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareContentsAndReturnChanges</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyFile</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyContents</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyTextFile</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFile</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFileLines</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContents</Id>
         </PluginItem>
         <PluginItem>
@@ -244,106 +230,6 @@
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Mail.Send</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetProperties</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolutionProjects</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfCurrentDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetErrors</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrors</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ModifyCurrentDocument</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection</Id>
-        </PluginItem>
-        <PluginItem>
-          <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ModifySelection</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.BuildSolutionProject</Id>
-        </PluginItem>
-        <PluginItem>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQuery</Id>
@@ -384,6 +270,10 @@
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GetPdfMetadata</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertPdfToImage</Id>

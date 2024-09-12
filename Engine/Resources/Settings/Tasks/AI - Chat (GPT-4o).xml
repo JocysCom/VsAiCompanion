@@ -1,5 +1,5 @@
 ﻿<TemplateItem>
-  <Name>AI - Chat (GPT-4)</Name>
+  <Name>AI - Chat (GPT-4o)</Name>
   <IconType>.svg</IconType>
   <IconData>H4sIAAAAAAAEAK2UWU/bQBDH3/spttvX9XrvAyUg4nBUghYJaNWnKjhubOE6UZwmwKfvrI9AUtT2&#xD;
 AcvSeHbn+M3faw+OHn6WaJ0t62JeDTGnDKOsSufTopoN8e3NaeTw0eG7wfvx5+Tm29UJqtczdHU7&#xD;
@@ -14,9 +14,10 @@ TB80lcaKXoVOBEcNZ1DOdHr+vwjcb2FdK4Ik28meRdBjn5wkfxEhjwQcD11GiirtCJe5pcLKNwdR&#xD
 I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD;
 4Gw4WS8Ani65gtm0hV3BPE+jjodti71au97F3THptsQe9R4WfL5K+a4x2eUALvaGSPU/SLoOPUrf&#xD;
 +vnlnjZX+zYH8Qz+yuHPevjuN9XRu/0nBgAA</IconData>
-  <Created>2024-02-25T14:43:42.7598109+00:00</Created>
-  <Modified>2024-02-25T14:43:42.7598109+00:00</Modified>
-  <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
+  <IsPinned>true</IsPinned>
+  <Created>2024-02-26T09:13:32.5890718+00:00</Created>
+  <Modified>2024-05-14T19:09:18.760005+01:00</Modified>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <ShowInstructions>false</ShowInstructions>
@@ -31,6 +32,7 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
   <IsPreview>false</IsPreview>
+  <IsFavorite>false</IsFavorite>
   <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
   <MaxRiskLevel>Medium</MaxRiskLevel>

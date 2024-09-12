@@ -432,6 +432,9 @@
             Optional. List item progress status.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.ShouldSerializeStatus">
+            <summary>XML serializer should serialize the Status property only if it is not null</summary>
+        </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ListItem.Value">
             <summary>
             Optional. The value associated with the key.

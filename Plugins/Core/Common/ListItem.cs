@@ -25,6 +25,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public ProgressStatus? Status { get => _Status; set => SetProperty(ref _Status, value); }
 		ProgressStatus? _Status;
 
+		/// <summary>XML serializer should serialize the Status property only if it is not null</summary>
+		public bool ShouldSerializeStatus() => Status != null;
+
 		/// <summary>
 		/// Optional. The value associated with the key.
 		/// </summary>
