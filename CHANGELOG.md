@@ -1,6 +1,7 @@
-2024-09-05 v1.12.84
+2024-09-13 v1.12.85
 
 - Fix: Morality formula and example in `AI - Evaluate Morality` template.
+- Fix: OpenAI `o1` model max input tokens.
 - New: [Send] button: Hold CTRL to add as a user message, ALT for an assistant message.
 - New: Added an AI tool function to get PDF metadata.
 - New: Save or copy all tool functions as JSON for AI self-improvement.
