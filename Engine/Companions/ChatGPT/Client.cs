@@ -383,8 +383,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// Other settings.
 			var messageItems = new List<MessageItem>();
 			var assistantMessageItem = new MessageItem(ClientHelper.AiName, "", MessageType.In);
-			var answer = "";
 			var functionResults = new List<MessageAttachments>();
+			var answer = "";
 			var cancellationTokenSource = new CancellationTokenSource();
 			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(service.ResponseTimeout));
 			var id = Guid.NewGuid();
@@ -496,11 +496,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								PluginsManager.ProvideTools(serviceItem, completionsOptions);
 							}
 						});
+						var client = await GetAiClient();
+						var chatClient = client.GetChatClient(modelName);
+						var toolCalls = new List<ChatToolCall>();
+						// If streaming  mode is enabled and AI model supports streaming then...
 						if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 						{
-							var client = await GetAiClient();
-							var chatClient = client.GetChatClient(modelName);
-
 							var result = chatClient.CompleteChatStreamingAsync(
 							messages, completionsOptions, cancellationTokenSource.Token);
 							var choicesEnumerator = result.GetAsyncEnumerator(cancellationTokenSource.Token);
@@ -508,8 +509,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							var toolCallIdsByIndex = new Dictionary<int, string>();
 							var functionNamesByIndex = new Dictionary<int, string>();
 							var functionArgumentBuildersByIndex = new Dictionary<int, StringBuilder>();
-
-							var functions = new List<chat_completion_function>();
 
 							while (await choicesEnumerator.MoveNextAsync())
 							{
@@ -539,8 +538,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									}
 								}
 							}
-
-							var toolCalls = new List<ChatToolCall>();
 							foreach (KeyValuePair<int, string> indexToIdPair in toolCallIdsByIndex)
 							{
 								var toolCall = ChatToolCall.CreateFunctionToolCall(
@@ -549,72 +546,39 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 									functionArgumentBuildersByIndex[indexToIdPair.Key].ToString());
 								toolCalls.Add(toolCall);
 
-								var json = JsonSerializer.Serialize(toolCall);
-
-								var parameters = new base_item();
-								if (!string.IsNullOrEmpty(toolCall.FunctionArguments))
-									parameters = JsonSerializer.Deserialize<base_item>(toolCall.FunctionArguments);
-
-								var function = new chat_completion_function()
-								{
-									id = toolCall.Id,
-									name = toolCall.FunctionName,
-									parameters = parameters,
-								};
-								functions.Add(function);
-							}
-							if (functions.Any())
-							{
-								// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
-								// Otherwise, it starts outputting JSON instead of calling functions.
-								var serializer = new SerializerBuilder().Build();
-								var yaml = serializer.Serialize(functions.Select(f => new
-								{
-									f.id,
-									f.name,
-									parameters = PluginsManager.ConvertFromToolItem(PluginsManager.GetPluginFunctions().FirstOrDefault(x => x.Name == f.name)?.Mi, f)
-								}));
-								// Create message attachment first.
-								var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);
-								fnCallAttachment.Title = "AI Function Call";
-								// Don't send it back to AI or it will confuse it and it will start outputing YAML instead of calling functions.
-								fnCallAttachment.IsAlwaysIncluded = false;
-								assistantMessageItem.Attachments.Add(fnCallAttachment);
-								assistantMessageItem.IsAutomated = true;
-								messageItems.Add(assistantMessageItem);
-								// Add call to user message so that AI will see what functions it called.
-								var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
-								fnCallAttachmentUser.Title = "AI Function Call";
-								fnCallAttachmentUser.IsAlwaysIncluded = true;
-								functionResults.Add(fnCallAttachmentUser);
-								ControlsHelper.AppInvoke(() =>
-								{
-									serviceItem.Messages.Add(assistantMessageItem);
-									serviceItem.Modified = DateTime.Now;
-								});
-								// Process function calls.
-								if (serviceItem.PluginsEnabled)
-								{
-									foreach (var function in functions)
-									{
-										var content = await PluginsManager.ProcessPluginFunction(serviceItem, function, cancellationTokenSource);
-										var fnResultAttachment = new MessageAttachments(ContextType.None, content.Value.Item1, content.Value.Item2);
-										fnResultAttachment.Title = "AI Function Results (Id:" + function.id + ")";
-										fnResultAttachment.IsAlwaysIncluded = true;
-										functionResults.Add(fnResultAttachment);
-									}
-								}
 							}
 						}
+						// Streaming is not supported.
 						// Could be local non-secure HTTP connection.
 						else
 						{
-							var client = await GetAiClient();
-							var chatClient = client.GetChatClient(modelName);
 							var result = await chatClient.CompleteChatAsync(
 								messages, completionsOptions, cancellationTokenSource.Token);
-							answer = ChatCompletionToString(result.Value);
+							var completion = result.Value;
+							switch (completion.FinishReason)
+							{
+								case ChatFinishReason.Stop:
+								case ChatFinishReason.ToolCalls:
+									answer = string.Join("\r\n", completion.Content);
+									break;
+								case ChatFinishReason.Length:
+									answer = "Incomplete model output due to MaxTokens parameter or token limit exceeded.";
+									break;
+								case ChatFinishReason.ContentFilter:
+									answer = "Omitted content due to a content filter flag.";
+									break;
+								default:
+									answer = result.ToString();
+									break;
+							}
+							if (completion.ToolCalls?.Any() == true)
+								toolCalls.AddRange(completion.ToolCalls);
 						}
+						// Process tool calls.
+						var functions = ConvertToolCallsTo(toolCalls);
+						await ProcessFunctions(serviceItem, functions,
+							functionResults, messageItems, assistantMessageItem,
+							cancellationTokenSource);
 					}
 					else
 					{
@@ -666,7 +630,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			assistantMessageItem.Date = DateTime.Now;
 			if (!messageItems.Contains(assistantMessageItem))
 				messageItems.Add(assistantMessageItem);
-			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Count > 0)
+			if (!cancellationTokenSource.IsCancellationRequested && functionResults.Any())
 			{
 				var userAutoReplyMessageItem = new MessageItem(ClientHelper.UserName, "", MessageType.Out);
 				foreach (var functionResult in functionResults)
@@ -680,21 +644,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return messageItems;
 		}
 
-		public static string ChatCompletionToString(ChatCompletion completion)
-		{
-			switch (completion.FinishReason)
-			{
-				case ChatFinishReason.Stop:
-					return completion.ToString();
-				case ChatFinishReason.Length:
-					return "Incomplete model output due to MaxTokens parameter or token limit exceeded.";
-				case ChatFinishReason.ContentFilter:
-					return "Omitted content due to a content filter flag.";
-				default:
-					return completion.FinishReason.ToString();
-			}
-		}
-
 		public static ChatCompletionOptions GetChatCompletionOptions(float creativity)
 		{
 			var options = new ChatCompletionOptions();
@@ -706,6 +655,80 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return options;
 		}
 
+		public static List<chat_completion_function> ConvertToolCallsTo(IReadOnlyList<ChatToolCall> toolCalls)
+		{
+			var functions = new List<chat_completion_function>();
+			if (toolCalls?.Any() != true)
+				return functions;
+			foreach (var toolCall in toolCalls)
+			{
+				var json = JsonSerializer.Serialize(toolCall);
+				var parameters = new base_item();
+				if (!string.IsNullOrEmpty(toolCall.FunctionArguments))
+					parameters = JsonSerializer.Deserialize<base_item>(toolCall.FunctionArguments);
+				var function = new chat_completion_function()
+				{
+					id = toolCall.Id,
+					name = toolCall.FunctionName,
+					parameters = parameters,
+				};
+				functions.Add(function);
+			}
+			return functions;
+		}
+
+		public static async Task ProcessFunctions(
+			TemplateItem item,
+			List<chat_completion_function> functions,
+			// Output parameters
+			List<MessageAttachments> functionResults,
+			List<MessageItem> messageItems,
+			MessageItem assistantMessageItem,
+			CancellationTokenSource cancellationTokenSource
+			)
+		{
+			if (functions.Any() != true)
+				return;
+			// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
+			// Otherwise, it starts outputting JSON instead of calling functions.
+			var serializer = new SerializerBuilder().Build();
+			var yaml = serializer.Serialize(functions.Select(f => new
+			{
+				f.id,
+				f.name,
+				parameters = PluginsManager.ConvertFromToolItem(PluginsManager.GetPluginFunctions().FirstOrDefault(x => x.Name == f.name)?.Mi, f)
+			}));
+			// Create message attachment first.
+			var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);
+			fnCallAttachment.Title = "AI Functions Call";
+			// Don't send it back to AI or it will confuse it and it will start outputing YAML instead of calling functions.
+			fnCallAttachment.IsAlwaysIncluded = false;
+			assistantMessageItem.Attachments.Add(fnCallAttachment);
+			assistantMessageItem.IsAutomated = true;
+			messageItems.Add(assistantMessageItem);
+			// Add call to user message so that AI will see what functions it called.
+			var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
+			fnCallAttachmentUser.Title = "AI Functions Call";
+			fnCallAttachmentUser.IsAlwaysIncluded = true;
+			functionResults.Add(fnCallAttachmentUser);
+			ControlsHelper.AppInvoke(() =>
+			{
+				item.Messages.Add(assistantMessageItem);
+				item.Modified = DateTime.Now;
+			});
+			// Process function calls.
+			if (item.PluginsEnabled)
+			{
+				foreach (var function in functions)
+				{
+					var content = await PluginsManager.ProcessPluginFunction(item, function, cancellationTokenSource);
+					var fnResultAttachment = new MessageAttachments(ContextType.None, content.Value.Item1, content.Value.Item2);
+					fnResultAttachment.Title = "AI Function Results (Id:" + function.id + ")";
+					fnResultAttachment.IsAlwaysIncluded = true;
+					functionResults.Add(fnResultAttachment);
+				}
+			}
+		}
 
 		public static bool IsTextCompletionMode(string modelName)
 		{
