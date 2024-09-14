@@ -377,6 +377,11 @@ Do not return as a code block.")]
 			modelsToRemove = AiModels.Except(modelsToKeep).ToArray();
 			foreach (var model in modelsToRemove)
 				AiModels.Remove(model);
+			// Fix path property (use for the list only).
+			var models = AiModels.ToArray();
+			foreach (var model in models)
+				if (model.Path != model.AiServiceName)
+					model.Path = model.AiServiceName;
 		}
 
 		/// <summary>AI Services</summary>
@@ -408,6 +413,10 @@ Do not return as a code block.")]
 		private volatile Lazy<SortableBindingList<MailAccount>> _MailAccounts =
 			new Lazy<SortableBindingList<MailAccount>>(() => new SortableBindingList<MailAccount>());
 
+
+		[DefaultValue(true)]
+		public bool EnableApiPlugins { get => _EnableExternalPlugins; set => SetProperty(ref _EnableExternalPlugins, value); }
+		private bool _EnableExternalPlugins;
 
 		/// <summary>Plugins</summary>
 		public SortableBindingList<PluginItem> Plugins

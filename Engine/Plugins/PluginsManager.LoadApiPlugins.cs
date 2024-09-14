@@ -100,7 +100,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <param name="path">Path to the folder with DLLs.</param>
 		public static async Task API_LoadPlugins(string pluginsDirectory)
 		{
-
 			// Create a job object
 			jobHandle = NativeMethods.GetJobHandle();
 			// Ensure the job object is closed on application exit

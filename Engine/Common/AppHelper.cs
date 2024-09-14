@@ -500,6 +500,13 @@ EndFragment:{3:00000000}";
 			return item;
 		}
 
+		public static AiModel GetNewAiModel()
+		{
+			var item = new AiModel();
+			item.Name = $"Model_{DateTime.Now:yyyyMMdd_HHmmss}";
+			return item;
+		}
+
 		public static FineTuningItem GetNewFineTuningItem()
 		{
 			var item = new FineTuningItem();

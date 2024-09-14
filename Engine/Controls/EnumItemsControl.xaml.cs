@@ -10,10 +10,9 @@ using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
 {
-	public partial class EnumComboBox : ComboBox
+	public partial class EnumItemsControl : ItemsControl
 	{
-
-		public EnumComboBox()
+		public EnumItemsControl()
 		{
 			InitializeComponent();
 		}
@@ -37,28 +36,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void UpdateSelectedValue()
 		{
 			var data = (ObservableCollection<CheckBoxViewModel>)ItemsSource;
-			UpdateTopDescription(data);
 			var top = data[0];
 			var value = data
 				.Where(x => x.IsChecked)
 				.Aggregate(0L, (current, item) => Convert.ToInt64(current) | Convert.ToInt64(item.Value));
 			var newValue = (Enum)Enum.ToObject(top.Value.GetType(), value);
-			if (!Equals(SelectedValue, newValue))
-				SelectedValue = newValue;
-		}
-
-		public void UpdateTopDescription(ObservableCollection<CheckBoxViewModel> data)
-		{
-			var top = data[0];
-			var choice = data.Skip(1);
-			var count = choice.Count(x => x.IsChecked);
-			var names = choice.Where(x => x.IsChecked).Select(x => x.Description).ToList();
-			if (count == 0)
-				top.Description = This.Text = "None";
-			else if (count == 1)
-				top.Description = This.Text = names.First();
-			else
-				top.Description = This.Text = $"{names.First()} + " + (count - 1).ToString();
 		}
 
 		public static ObservableCollection<CheckBoxViewModel> GetItemSource<T>() where T : Enum
@@ -94,19 +76,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			return attribute?.Order ?? int.MaxValue;
 		}
 
-		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (SelectedIndex != 0)
-				SelectedIndex = 0;
-		}
-
 		#region Binding
 
-		private static readonly new DependencyProperty SelectedValueProperty =
-			DependencyProperty.Register("SelectedValue", typeof(object), typeof(EnumComboBox),
+		private static readonly DependencyProperty SelectedValueProperty =
+			DependencyProperty.Register("SelectedValue", typeof(object), typeof(EnumItemsControl),
 		new FrameworkPropertyMetadata(default(object), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
 
-		public new object SelectedValue
+		public object SelectedValue
 		{
 			get => GetValue(SelectedValueProperty);
 			set => SetValue(SelectedValueProperty, value);
@@ -114,7 +90,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private static void OnSelectedValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			var box = (EnumComboBox)d;
+			var box = (EnumItemsControl)d;
 			var value = (Enum)box.GetValue(SelectedValueProperty);
 			var items = ((ObservableCollection<CheckBoxViewModel>)box.ItemsSource)?.ToArray();
 			if (items == null)
@@ -140,7 +116,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			data.CollectionChanged += Data_CollectionChanged;
 			foreach (INotifyPropertyChanged item in data)
 				item.PropertyChanged += Data_Item_PropertyChangedEventArgs;
-			SelectedIndex = 0;
 			UpdateSelectedValue();
 		}
 

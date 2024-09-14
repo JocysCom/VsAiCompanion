@@ -85,6 +85,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Use_AI_Avatar_Voice_Help => FindResource(nameof(main_Use_AI_Avatar_Voice_Help));
         public static string main_Use_AI_Avatar_Voice_Name => FindResource(nameof(main_Use_AI_Avatar_Voice_Name));
         public static string main_Enable_Microsoft_Account => FindResource(nameof(main_Enable_Microsoft_Account));
+        public static string main_Enable_API_Plugins => FindResource(nameof(main_Enable_API_Plugins));
         public static string main_Require_To_Sign_In => FindResource(nameof(main_Require_To_Sign_In));
         public static string main_Require_To_Sign_In_Message => FindResource(nameof(main_Require_To_Sign_In_Message));
         public static string main_Plugins_require_chat_history => FindResource(nameof(main_Plugins_require_chat_history));
@@ -215,6 +216,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_AI_Models => FindResource(nameof(main_AI_Models));
         public static string main_Max_Input_Tokens => FindResource(nameof(main_Max_Input_Tokens));
         public static string main_Model => FindResource(nameof(main_Model));
+        public static string main_Features_are_kown => FindResource(nameof(main_Features_are_kown));
         public static string main_Allowed_Recipients => FindResource(nameof(main_Allowed_Recipients));
         public static string main_Allowed_Senders => FindResource(nameof(main_Allowed_Senders));
         public static string main_Email_Address => FindResource(nameof(main_Email_Address));
@@ -320,6 +322,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Tools => FindResource(nameof(main_Tools));
         public static string main_Mirror => FindResource(nameof(main_Mirror));
         public static string main_UI => FindResource(nameof(main_UI));
+        public static string main_Features => FindResource(nameof(main_Features));
         public static string main_UI_Preset => FindResource(nameof(main_UI_Preset));
         public static string main_Account => FindResource(nameof(main_Account));
         public static string main_Create_a_Job_and_Model_from_File => FindResource(nameof(main_Create_a_Job_and_Model_from_File));

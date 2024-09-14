@@ -324,7 +324,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			OnPropertyChanged(nameof(RoleListNames));
 		}
 
-		public ObservableCollection<EnumComboBox.CheckBoxViewModel> AttachContexts
+		public ObservableCollection<CheckBoxViewModel> AttachContexts
 		{
 			get
 			{
@@ -334,7 +334,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			set => _AttachContexts = value;
 		}
-		ObservableCollection<EnumComboBox.CheckBoxViewModel> _AttachContexts;
+		ObservableCollection<CheckBoxViewModel> _AttachContexts;
 
 		public Dictionary<MessageBoxOperation, string> MessageBoxOperations
 		{
@@ -724,7 +724,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			OnPropertyChanged(nameof(EmbeddingNames));
 		}
 
-		public ObservableCollection<EnumComboBox.CheckBoxViewModel> EmbeddingGroupFlags
+		public ObservableCollection<CheckBoxViewModel> EmbeddingGroupFlags
 		{
 			get
 			{
@@ -735,7 +735,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			set => _EmbeddingGroupFlags = value;
 		}
-		ObservableCollection<EnumComboBox.CheckBoxViewModel> _EmbeddingGroupFlags;
+		ObservableCollection<CheckBoxViewModel> _EmbeddingGroupFlags;
 
 		private void Embeddings_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{

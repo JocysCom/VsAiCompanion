@@ -76,6 +76,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				AiServiceItemPanel.Item = (AiService)item;
 			}
+			else if (DataType == ItemType.AiModel)
+			{
+				AiModelItemPanel.Item = (AiModel)item;
+			}
 			ItemPanel.Visibility = currentItem == null
 				? Visibility.Collapsed
 				: Visibility.Visible;
@@ -113,6 +117,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		MailAccountItemControl MailAccountItemPanel;
 		VaultItemControl VaultItemPanel;
 		AiServiceItemControl AiServiceItemPanel;
+		AiModelItemControl AiModelItemPanel;
 
 		[Category("Main"), DefaultValue(ItemType.None)]
 		public ItemType DataType
@@ -219,6 +224,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						ConfigureControl(control, value);
 						control.DataType = value;
 						AiServiceItemPanel = control;
+					}
+				}
+				else if (value == ItemType.AiModel)
+				{
+					if (VaultItemPanel == null)
+					{
+						var control = new AiModelItemControl();
+						ConfigureControl(control, value);
+						control.DataType = value;
+						AiModelItemPanel = control;
 					}
 				}
 				else

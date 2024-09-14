@@ -266,7 +266,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Remove="Controls\AiServiceListControl.xaml.cs" />
 		<Compile Remove="JocysCom\MakeLinks.ps1.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Remove="Controls\AiServiceListControl.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -307,6 +312,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Controls\EnumItemsControl.xaml.cs">
+		  <SubType>Code</SubType>
+		</Compile>
 		<Compile Update="Controls\EnumComboBox.xaml.cs">
 			<SubType>Code</SubType>
 		</Compile>

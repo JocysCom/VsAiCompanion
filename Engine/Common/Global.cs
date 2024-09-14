@@ -165,6 +165,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				case ItemType.MailAccount: return AppSettings.MailAccounts;
 				case ItemType.VaultItem: return AppSettings.VaultItems;
 				case ItemType.AiService: return AppSettings.AiServices;
+				case ItemType.AiModel: return AppSettings.AiModels;
 				case ItemType.UiPreset: return UiPresets.Items;
 				default: return null;
 			}
@@ -436,6 +437,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				AppData.Save();
 			}
+			AppSettings.CleanupAiModels();
 			AppSettings.AiServices.ListChanged += AiServices_ListChanged;
 			if (ResetSettings)
 				SettingsSourceManager.ResetAllSettings();

@@ -517,7 +517,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			});
 		}
 
-		public static void UpdateGroupFlagsFromDatabase(string embeddingName, ObservableCollection<EnumComboBox.CheckBoxViewModel> property)
+		public static void UpdateGroupFlagsFromDatabase(string embeddingName, ObservableCollection<CheckBoxViewModel> property)
 		{
 			var ei = Global.Embeddings.Items.FirstOrDefault(x => x.Name == embeddingName);
 			var flags = GetFlags(ei, ei?.EmbeddingGroupName);

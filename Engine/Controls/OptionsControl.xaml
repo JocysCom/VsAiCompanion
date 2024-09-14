@@ -95,7 +95,7 @@
 						<Label Content="{StaticResource main_AI_Models}" />
 					</StackPanel>
 				</TabItem.Header>
-				<controlsOptions:AiModelListControl x:Name="AiModelListPanel" x:FieldModifier="public" />
+				<controls:SettingsControl x:Name="AiModelsPanel" x:FieldModifier="public" DataType="AiModel" />
 			</TabItem>
 
 			<TabItem x:Name="MailAccountsTabItem" x:FieldModifier="public">

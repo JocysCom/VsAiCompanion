@@ -41,6 +41,7 @@
 	<sys:String x:Key="main_Use_AI_Avatar_Voice_Help">AI responds with voices in addition to the text responses specified in 'Options' tab → 'AI Avatar' tab and 'AI Services' tab.</sys:String>
 	<sys:String x:Key="main_Use_AI_Avatar_Voice_Name">Use Voice</sys:String>
 	<sys:String x:Key="main_Enable_Microsoft_Account">Enable Microsoft Account</sys:String>
+	<sys:String x:Key="main_Enable_API_Plugins">Enable API Plugins</sys:String>
 	<sys:String x:Key="main_Require_To_Sign_In">Require to sign in</sys:String>
 	<sys:String x:Key="main_Require_To_Sign_In_Message">Please sign in to your Microsoft account.</sys:String>
 	<sys:String x:Key="main_Plugins_require_chat_history">Plugins/functions require chat history. Uncheck the use of plugins/functions first.</sys:String>
@@ -194,6 +195,7 @@
 	<sys:String x:Key="main_AI_Models">AI Models</sys:String>
 	<sys:String x:Key="main_Max_Input_Tokens">Max Input Tokens</sys:String>
 	<sys:String x:Key="main_Model">Model</sys:String>
+	<sys:String x:Key="main_Features_are_kown">Features are known</sys:String>
 
 	<!--  Options → Mail Accounts  -->
 	<sys:String x:Key="main_Allowed_Recipients">Allowed Recipients (Outgoing Email)</sys:String>
@@ -315,6 +317,7 @@
 	<sys:String x:Key="main_Tools">Tools</sys:String>
 	<sys:String x:Key="main_Mirror">Mirror</sys:String>
 	<sys:String x:Key="main_UI">UI</sys:String>
+	<sys:String x:Key="main_Features">Features</sys:String>
 	<sys:String x:Key="main_UI_Preset">UI Preset</sys:String>
 	<sys:String x:Key="main_Account">Account</sys:String>
 	<sys:String x:Key="main_Create_a_Job_and_Model_from_File">Create a Job and Model from File</sys:String>
