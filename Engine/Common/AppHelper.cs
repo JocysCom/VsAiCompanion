@@ -410,6 +410,7 @@ EndFragment:{3:00000000}";
 				foreach (var modelCode in modelCodes)
 				{
 					var aiModel = new AiModel(modelCode, aiService.Id);
+
 					if (models != null)
 					{
 						// Detect if AI model can be finetuned.
@@ -418,6 +419,7 @@ EndFragment:{3:00000000}";
 					}
 					if (aiModel.MaxInputTokens == 0)
 						aiModel.MaxInputTokens = Client.GetMaxInputTokens(aiModel.Name);
+					Client.SetModelFeatures(aiModel);
 					Global.AppSettings.AiModels.Add(aiModel);
 				}
 				Global.AppSettings.CleanupAiModels();

@@ -53,6 +53,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsFeaturesKnown { get => _IsFeaturesKnown; set => SetProperty(ref _IsFeaturesKnown, value); }
 		bool _IsFeaturesKnown;
 
+		public bool HasFeature(AiModelFeatures feature)
+			// Assume that feature is supported if it is not known.
+			// User option will be used.
+			=> !IsFeaturesKnown || Features.HasFlag(feature);
 
 	}
 }

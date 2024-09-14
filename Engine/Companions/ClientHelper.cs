@@ -342,7 +342,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				m = overrideMessage;
 			}
 			// Get current message with all attachments.
-			var chatLogMessages = ConvertMessageItemToChatMessage(item.IsSystemInstructions, m, includeAttachments: true);
+			var chatLogMessages = ConvertMessageItemToChatMessage(item.UseSystemInstructions, m, includeAttachments: true);
 			// Prepare list of messages to send.
 			if (item.AttachContext.HasFlag(ContextType.ChatHistory))
 			{
@@ -351,7 +351,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var historyMessages = item.Messages
 					// Exclude preview messages from the history.
 					.Where(x => !x.IsPreview)
-					.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, includeAttachments: null)).ToList();
+					.SelectMany(x => ConvertMessageItemToChatMessage(item.UseSystemInstructions, x, includeAttachments: null)).ToList();
 				var attachMessages = AppHelper.GetMessages(historyMessages, tokensLeftForChatHistory, ChatLogOptions);
 				chatLogMessages = attachMessages.Concat(chatLogMessages).ToList();
 				if (Client.IsTextCompletionMode(item.AiModel) && attachMessages.Count > 0)
@@ -507,7 +507,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var allmessages = item.Messages
 				// Exclude preview messages from the history.
 				//.Where(x => !x.IsPreview)
-				.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, false)).ToList();
+				.SelectMany(x => ConvertMessageItemToChatMessage(item.UseSystemInstructions, x, false)).ToList();
 			var messages = AppHelper.GetMessages(allmessages, availableTokens, ChatLogOptions);
 			// Crate a copy in order not to add to existing list.
 			try
@@ -551,7 +551,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			var allmessages = item.Messages
 				// Exclude preview messages from the history.
 				//.Where(x => !x.IsPreview)
-				.SelectMany(x => ConvertMessageItemToChatMessage(item.IsSystemInstructions, x, includeAttachments: null)).ToList();
+				.SelectMany(x => ConvertMessageItemToChatMessage(item.UseSystemInstructions, x, includeAttachments: null)).ToList();
 			var messages = AppHelper.GetMessages(allmessages, availableTokens, ChatLogOptions);
 			// Create a copy in order not to add to existing list.
 			try

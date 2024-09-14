@@ -55,6 +55,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public bool IsSystemInstructions { get => _IsSystemInstructions; set => SetProperty(ref _IsSystemInstructions, value); }
 		bool _IsSystemInstructions;
 
+		public bool UseSystemInstructions
+			=> IsSystemInstructions && _AiModelItem.HasFeature(AiModelFeatures.SystemMessages);
+
 		[DefaultValue("")]
 		public string Text
 		{

@@ -47,6 +47,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var items = Enum.GetValues(typeof(T))
 				.Cast<T>()
+				// Exclude `none` value.
+				.Where(x => !IsDefault(x))
 				.OrderBy(x => GetOrder(x))
 				.Select((e, i) => new CheckBoxViewModel
 				{

@@ -426,12 +426,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				case nameof(TemplateItem.IsSystemInstructions):
 					var text = _Item.TextInstructions.Trim();
 					var containsDataHeader = text.Contains(TextToProcess) || text.EndsWith(":");
-					if (_Item.IsSystemInstructions && text.Contains(TextToProcess))
+					if (_Item.UseSystemInstructions && text.Contains(TextToProcess))
 					{
 						var s = text.Replace(TextToProcess, "").TrimEnd();
 						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
 					}
-					else if (!_Item.IsSystemInstructions && !containsDataHeader && !string.IsNullOrEmpty(text))
+					else if (!_Item.UseSystemInstructions && !containsDataHeader && !string.IsNullOrEmpty(text))
 					{
 						var s = ClientHelper.JoinMessageParts(text, TextToProcess);
 						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);

@@ -17,7 +17,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		//[Description("Image Recognition")] ImageRecognition = 1 << 7,
 		//[Description("Audio Input")] AudioInput = 1 << 8,
 		//[Description("Audio Output")] AudioOutput = 1 << 9,
-		//[Description("Chat Support")] ChatSupport = 1 << 10,
+		[Description("Chat Support")] ChatSupport = 1 << 10,
 		//[Description("Code Generation")] CodeGeneration = 1 << 11,
 		//[Description("Long Context Support")] LongContext = 1 << 12,
 		//[Description("Multilingual Support")] Multilingual = 1 << 13,

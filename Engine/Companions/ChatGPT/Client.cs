@@ -377,6 +377,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			// Service item.
 			var service = serviceItem.AiService;
 			var modelName = serviceItem.AiModel;
+			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
 			var creativity = serviceItem.Creativity;
 			var maxInputTokens = GetMaxInputTokens(serviceItem);
 			// Other settings.
@@ -490,12 +491,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						var completionsOptions = GetChatCompletionOptions((float)creativity);
 						ControlsHelper.AppInvoke(() =>
 						{
-							if (serviceItem.PluginsEnabled)
+							if (serviceItem.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling))
 							{
 								PluginsManager.ProvideTools(serviceItem, completionsOptions);
 							}
 						});
-						if (service.ResponseStreaming)
+						if (service.ResponseStreaming && aiModel.HasFeature(AiModelFeatures.Streaming))
 						{
 							var client = await GetAiClient();
 							var chatClient = client.GetChatClient(modelName);
@@ -755,6 +756,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			if (modelName.Contains("code-cushman-001"))
 				return 2048;
 			return 2049; // Default for other models
+		}
+
+		public static void SetModelFeatures(AiModel item)
+		{
+			if (item.Name.StartsWith("o1"))
+			{
+				item.Features = AiModelFeatures.ChatSupport;
+				item.IsFeaturesKnown = true;
+				return;
+			}
 		}
 
 		#region Convert to Name Value Collection

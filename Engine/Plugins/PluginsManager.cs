@@ -422,44 +422,47 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
 				if (!AllowPluginFunction(pluginItem.Name, maxRiskLevel))
 					continue;
+				// If this is not a Visual Studio extension but a plugin for Visual Studio, then skip.
+				if (!Global.IsVsExtension && pluginItem.Class == nameof(VisualStudio))
+					continue;
 				// Get Method Info
 				var mi = pluginItem.Mi;
-				// If this is not a Visual Studio extension but a plugin for Visual Studio, then skip.
-				if (!Global.IsVsExtension && mi.DeclaringType.Name == nameof(VisualStudio))
-					continue;
-				// Serialize the parameters object to a JSON string then create a BinaryData instance.
-				var functionParameters = ConvertToToolItem(null, mi);
-				// Add extra parameter that will make AI to supply rationale when invoking a function.
-				var contextMi = FunctionInvocationContext.ContextMethodInfo;
-				var contextPis = FunctionInvocationContext.ContextParameterInfos;
-				foreach (var contextPi in contextPis)
+				if (mi != null)
 				{
-					var list = functionParameters.required.ToList();
-					list.Insert(0, contextPi.Name);
-					functionParameters.required = list.ToArray();
-					var contextItem = ConvertToToolItem(null, contextMi, contextPi);
-					functionParameters.properties.Add(contextPi.Name, contextItem);
+					// Serialize the parameters object to a JSON string then create a BinaryData instance.
+					var functionParameters = ConvertToToolItem(null, mi);
+					// Add extra parameter that will make AI to supply rationale when invoking a function.
+					var contextMi = FunctionInvocationContext.ContextMethodInfo;
+					var contextPis = FunctionInvocationContext.ContextParameterInfos;
+					foreach (var contextPi in contextPis)
+					{
+						var list = functionParameters.required.ToList();
+						list.Insert(0, contextPi.Name);
+						functionParameters.required = list.ToArray();
+						var contextItem = ConvertToToolItem(null, contextMi, contextPi);
+						functionParameters.properties.Add(contextPi.Name, contextItem);
+					}
+					// Continue.
+					var serializedParameters = Client.Serialize(functionParameters);
+					var binaryParamaters = BinaryData.FromString(serializedParameters);
+					var summary = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
+					var returns = XmlDocHelper.GetReturnText(mi, FormatText.RemoveIdentAndTrimSpaces);
+					//var example = XmlDocHelper.GetExampleText(mi, FormatText.RemoveIdentAndTrimSpaces);
+					var lines = new List<string>();
+					if (!string.IsNullOrEmpty(summary))
+						lines.Add(summary);
+					if (!string.IsNullOrEmpty(returns))
+						lines.Add("Returns:\r\n" + returns);
+					//if (!string.IsNullOrEmpty(example))
+					//	lines.Add("Example:\r\n" + example);
+					// Create and add function definition.
+					var tool = ChatTool.CreateFunctionTool(
+						pluginItem.Name,
+						string.Join("\r\n\r\n", lines),
+						binaryParamaters
+					);
+					ToolDefinitions.Add(tool);
 				}
-				// Continue.
-				var serializedParameters = Client.Serialize(functionParameters);
-				var binaryParamaters = BinaryData.FromString(serializedParameters);
-				var summary = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
-				var returns = XmlDocHelper.GetReturnText(mi, FormatText.RemoveIdentAndTrimSpaces);
-				//var example = XmlDocHelper.GetExampleText(mi, FormatText.RemoveIdentAndTrimSpaces);
-				var lines = new List<string>();
-				if (!string.IsNullOrEmpty(summary))
-					lines.Add(summary);
-				if (!string.IsNullOrEmpty(returns))
-					lines.Add("Returns:\r\n" + returns);
-				//if (!string.IsNullOrEmpty(example))
-				//	lines.Add("Example:\r\n" + example);
-				// Create and add function definition.
-				var tool = ChatTool.CreateFunctionTool(
-					mi.Name,
-					string.Join("\r\n\r\n", lines),
-					binaryParamaters
-				);
-				ToolDefinitions.Add(tool);
 			}
 			if (ToolDefinitions.Any())
 			{
