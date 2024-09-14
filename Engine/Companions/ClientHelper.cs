@@ -127,6 +127,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				Global.SetWithTimeout(MessageBoxImage.Warning, "Please select an AI model from the dropdown.");
 				return;
 			}
+			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == item.AiServiceId && x.Name == item.AiModel);
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
 			executeBeforeAddMessage?.Invoke();
@@ -285,6 +286,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 								m.Attachments.Add(exceptionAttachment);
 							}
 						}
+					}
+					if (item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling))
+					{
+						ControlsHelper.AppInvoke(() =>
+						{
+							var tools = PluginsManager.GetChatToolDefinitions(item);
+							var functionDefinitions = $"```json\r\n{Client.Serialize(tools)}\r\n```";
+							// Create function definitions attachment.
+							var fda = new MessageAttachments();
+							fda.Title = "";
+							fda.Instructions = Global.AppSettings.ContextFunctionRequestInstructions;
+							fda.Type = ContextType.None;
+							fda.Data = functionDefinitions;
+							fda.IsAlwaysIncluded = false;
+							m.Attachments.Add(fda);
+							// Create response definitions attachment.
+							var responseSchema = NJsonSchema.JsonSchema.FromType(typeof(chat_completion_message_tool_call[]));
+							var responseDefinition = $"```json\r\n{responseSchema.ToJson()}\r\n```";
+							var rda = new MessageAttachments();
+							rda.Title = "";
+							rda.Instructions = Global.AppSettings.ContextFunctionResponseInstructions;
+							rda.Type = ContextType.None;
+							rda.Data = responseDefinition;
+							rda.IsAlwaysIncluded = false;
+							m.Attachments.Add(rda);
+						});
 					}
 					// Attach files as message attachments at the end.
 					if (fileItems.Count > 0)

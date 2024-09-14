@@ -297,6 +297,31 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string ContextChatInstructions { get => _ContextChatInstructions; set => SetProperty(ref _ContextChatInstructions, value); }
 		private string _ContextChatInstructions;
 
+		public const string _ContextFunctionRequestInstructionsText = @"
+If you need to call a function, you can use one of the available functions listed below:
+";
+
+		public const string ContextFunctionResponseInstructionsText = @"
+To call a function, provide the function call as JSON, enclosed in triple backticks with ""JSON"" after the opening backticks, like this:
+```JSON
+{ your JSON here }
+```
+Do not mention the function call outside of the JSON code block.
+Do not include any extra text after the JSON code block.
+Here is the JSON schema for function calls:
+";
+
+
+		[DefaultValue(_ContextFunctionRequestInstructionsText)]
+		public string ContextFunctionRequestInstructions { get => _ContextFunctionRequestInstructions; set => SetProperty(ref _ContextFunctionRequestInstructions, value); }
+		private string _ContextFunctionRequestInstructions;
+
+
+		[DefaultValue(ContextFunctionResponseInstructionsText)]
+		public string ContextFunctionResponseInstructions { get => _ContextFunctionResponseInstructions; set => SetProperty(ref _ContextFunctionResponseInstructions, value); }
+		private string _ContextFunctionResponseInstructions;
+
+
 		/// <summary>Instructions that will be included at the start of every message.</summary>
 		[DefaultValue("")]
 		public string GlobalInstructions { get => _GlobalInstructions; set => SetProperty(ref _GlobalInstructions, value); }

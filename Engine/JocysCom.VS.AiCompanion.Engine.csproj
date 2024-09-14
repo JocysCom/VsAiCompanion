@@ -77,6 +77,7 @@
 		<PackageReference Include="Microsoft.OpenApi" Version="1.6.21" />
 		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.21" />
 		<PackageReference Include="NAudio" Version="2.2.1" />
+		<PackageReference Include="NJsonSchema" Version="11.0.2" />
 		<PackageReference Include="RtfPipe" Version="2.0.7677.4303" />
 		<PackageReference Include="SharpVectors" Version="1.8.4.2" />
 		<PackageReference Include="System.Collections.Immutable" Version="8.0.0" />

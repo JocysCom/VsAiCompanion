@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -407,16 +408,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Microsoft's Reinvention of the Wheel
 
-		/// <summary>
-		/// Add completion tools to chat completion message request for OpenAI GPT.
-		/// </summary>
-		/// <param name="item">Template item with settings.</param>
-		/// <param name="options">Chat completion options</param>
-		public static void ProvideTools(TemplateItem item, ChatCompletionOptions options)
+		public static List<ChatTool> GetChatToolDefinitions(TemplateItem item)
 		{
+			var tools = new List<ChatTool>();
 			if (!item.PluginsEnabled)
-				return;
-			var ToolDefinitions = new List<ChatTool>();
+				return tools;
 			foreach (var pluginItem in GetPluginFunctions())
 			{
 				var maxRiskLevel = (RiskLevel)Math.Min((int)item.MaxRiskLevel, (int)AppHelper.GetMaxRiskLevel());
@@ -461,10 +457,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 						string.Join("\r\n\r\n", lines),
 						binaryParamaters
 					);
-					ToolDefinitions.Add(tool);
+					tools.Add(tool);
 				}
 			}
-			if (ToolDefinitions.Any())
+			return tools;
+		}
+
+		/// <summary>
+		/// Add completion tools to chat completion message request for OpenAI GPT.
+		/// </summary>
+		/// <param name="item">Template item with settings.</param>
+		/// <param name="options">Chat completion options</param>
+		public static void ProvideTools(TemplateItem item, ChatCompletionOptions options, List<ChatTool> tools)
+		{
+			if (!item.PluginsEnabled)
+				return;
+			if (tools.Any())
 			{
 				// Need to use reflection to set the Temperature property
 				// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
@@ -473,7 +481,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (item.ToolChoiceRequired && !(item.Messages.Last()?.IsAutomated == true))
 				{
 					value = ChatToolChoice.Required;
-					var requiredFunctions = ToolDefinitions.Where(x => item.ToolChoiceRequiredNames.Contains(x.FunctionName)).ToList();
+					var requiredFunctions = tools.Where(x => item.ToolChoiceRequiredNames.Contains(x.FunctionName)).ToList();
 					foreach (var tool in requiredFunctions)
 						options.Tools.Add(tool);
 				}
@@ -481,7 +489,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!options.Tools.Any())
 				{
 					// Add all functions for execution.
-					foreach (var tool in ToolDefinitions)
+					foreach (var tool in tools)
 						options.Tools.Add(tool);
 				}
 				typeof(ChatCompletionOptions)
@@ -492,12 +500,77 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#endregion
 
+		#region Function calls inside assistant message
+
+		public static (string assistantMessage, string[] jsons) ProcessAssistantMessage(string assistantMessage)
+		{
+			// Pattern to find JSON blocks enclosed in triple backticks
+			var pattern = @"```(?:json)?\s*\n([\s\S]*?)\n```";
+			var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+			var matches = regex.Matches(assistantMessage);
+			var functionJsons = new List<string>();
+			foreach (Match match in matches)
+			{
+				var jsonText = match.Groups[1].Value.Trim();
+				// Parse the extracted JSON text
+				try
+				{
+					using (JsonDocument doc = JsonDocument.Parse(jsonText))
+					{
+						var rootElement = doc.RootElement;
+						// Check if the JSON object represents a function call
+						if (IsFunctionCallJson(rootElement))
+						{
+							// Add the JSON string to the list
+							functionJsons.Add(jsonText);
+							// Remove the matched JSON block from the assistant message
+							assistantMessage = assistantMessage.Replace(match.Value, "").Trim();
+						}
+					}
+				}
+				catch (JsonException)
+				{
+					// If JSON parsing fails, skip this block but leave it in the message
+					continue;
+				}
+			}
+			return (assistantMessage, functionJsons.ToArray());
+		}
+
+		private static bool IsFunctionCallJson(JsonElement jsonElement)
+		{
+			// Check for required properties: id, type, and function
+			if (jsonElement.TryGetProperty("id", out JsonElement idElement) &&
+				jsonElement.TryGetProperty("type", out JsonElement typeElement) &&
+				jsonElement.TryGetProperty("function", out JsonElement functionElement))
+			{
+				// Validate that id starts with "call_"
+				if (idElement.ValueKind == JsonValueKind.String &&
+					idElement.GetString().StartsWith("call_", StringComparison.Ordinal))
+				{
+					// Validate that type is "function"
+					if (typeElement.ValueKind == JsonValueKind.String &&
+						typeElement.GetString() == "function")
+					{
+						// Validate that function is an object
+						if (functionElement.ValueKind == JsonValueKind.Object)
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		#endregion
+
 		#region Function Converter
 
 		public static tool_item ConvertToToolItem(
-			Type type,
-			System.Reflection.MethodInfo mi = null, ParameterInfo miPi = null
-		)
+				Type type,
+				System.Reflection.MethodInfo mi = null, ParameterInfo miPi = null
+			)
 		{
 			var o = new tool_item();
 			string oDescription;
@@ -686,6 +759,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				if (!AllowPluginFunction(pluginItem.Name, maxRiskLevel))
 					continue;
 				var mi = pluginItem.Mi;
+				if (mi is null)
+					continue;
 				var summaryText = XmlDocHelper.GetSummaryText(mi, FormatText.RemoveIdentAndTrimSpaces);
 				var requiredParams = new List<string>();
 				var props = new Dictionary<string, object>();

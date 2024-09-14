@@ -493,7 +493,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						{
 							if (serviceItem.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling))
 							{
-								PluginsManager.ProvideTools(serviceItem, completionsOptions);
+								var tools = PluginsManager.GetChatToolDefinitions(serviceItem);
+								PluginsManager.ProvideTools(serviceItem, completionsOptions, tools);
 							}
 						});
 						var client = await GetAiClient();
