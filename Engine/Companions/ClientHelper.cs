@@ -128,6 +128,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				return;
 			}
 			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == item.AiServiceId && x.Name == item.AiModel);
+			if (aiModel == null)
+			{
+				Global.SetWithTimeout(MessageBoxImage.Warning, $"AI model '{item.AiModel}' not found. Please refresh AI models.");
+				return;
+			}
 			// Add the message item to the message list once all the content is added.
 			// Adding the message will trigger an event that serializes and adds this message to the Chat HTML page.
 			executeBeforeAddMessage?.Invoke();

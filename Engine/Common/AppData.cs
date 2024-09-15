@@ -436,7 +436,7 @@ Do not return as a code block.")]
 			new Lazy<SortableBindingList<MailAccount>>(() => new SortableBindingList<MailAccount>());
 
 
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		public bool EnableApiPlugins { get => _EnableExternalPlugins; set => SetProperty(ref _EnableExternalPlugins, value); }
 		private bool _EnableExternalPlugins;
 
