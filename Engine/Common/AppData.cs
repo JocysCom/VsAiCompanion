@@ -302,13 +302,14 @@ If you need to call a function, you can use one of the available functions liste
 ";
 
 		public const string ContextFunctionResponseInstructionsText = @"
-To call a function, provide the function call as JSON, enclosed in triple backticks with ""JSON"" after the opening backticks, like this:
+To call a function, Provide the function call as JSON that strictly adheres to the JSON schema for function calls, which is supplied below.
+Enclose the JSON code in triple backticks with ""JSON"" after the opening backticks, like this:
 ```JSON
 { your JSON here }
 ```
 Do not mention the function call outside of the JSON code block.
-Do not include any extra text after the JSON code block.
-Here is the JSON schema for function calls:
+Do not include any extra text before or after the JSON code block.
+Ensure the JSON conforms exactly to the provided schema below:
 ";
 
 

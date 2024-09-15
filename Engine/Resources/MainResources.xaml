@@ -226,6 +226,8 @@
 	<sys:String x:Key="main_Files">Files</sys:String>
 	<sys:String x:Key="main_Global_Instructions">Global Instructions</sys:String>
 	<sys:String x:Key="main_StructuredImageAnalysisInstructions">Structured image analysis instructions</sys:String>
+	<sys:String x:Key="main_ContextFunctionRequestInstructionsText">Tool Function Request (Definitions) Instructions</sys:String>
+	<sys:String x:Key="main_ContextFunctionResponseInstructionsText">Tool Function Response (Call) Instructions</sys:String>
 
 	<!--  Options → AI Avatar  -->
 	<sys:String x:Key="main_AI_Avatar">AI Avatar</sys:String>

@@ -287,30 +287,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 							}
 						}
 					}
-					if (item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling))
+					var addToolsToMessage = item.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
+					if (addToolsToMessage)
 					{
 						ControlsHelper.AppInvoke(() =>
 						{
 							var tools = PluginsManager.GetChatToolDefinitions(item);
-							var functionDefinitions = $"```json\r\n{Client.Serialize(tools)}\r\n```";
-							// Create function definitions attachment.
-							var fda = new MessageAttachments();
-							fda.Title = "";
-							fda.Instructions = Global.AppSettings.ContextFunctionRequestInstructions;
-							fda.Type = ContextType.None;
-							fda.Data = functionDefinitions;
-							fda.IsAlwaysIncluded = false;
-							m.Attachments.Add(fda);
-							// Create response definitions attachment.
-							var responseSchema = NJsonSchema.JsonSchema.FromType(typeof(chat_completion_message_tool_call[]));
-							var responseDefinition = $"```json\r\n{responseSchema.ToJson()}\r\n```";
-							var rda = new MessageAttachments();
-							rda.Title = "";
-							rda.Instructions = Global.AppSettings.ContextFunctionResponseInstructions;
-							rda.Type = ContextType.None;
-							rda.Data = responseDefinition;
-							rda.IsAlwaysIncluded = false;
-							m.Attachments.Add(rda);
+							PluginsManager.ProvideTools(tools, item, message: m);
 						});
 					}
 					// Attach files as message attachments at the end.

@@ -3,8 +3,11 @@ using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Xml;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
+using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using Namotion.Reflection;
+using NJsonSchema.Generation;
 using OpenAI.Chat;
 using System;
 using System.Collections.Generic;
@@ -468,33 +471,75 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// </summary>
 		/// <param name="item">Template item with settings.</param>
 		/// <param name="options">Chat completion options</param>
-		public static void ProvideTools(TemplateItem item, ChatCompletionOptions options, List<ChatTool> tools)
+		public static void ProvideTools(List<ChatTool> tools, TemplateItem item,
+			ChatCompletionOptions options = null, MessageItem message = null)
 		{
-			if (!item.PluginsEnabled)
+			if (tools.Count == 0)
 				return;
-			if (tools.Any())
+			// Need to use reflection to set the Temperature property
+			// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
+			var value = ChatToolChoice.Auto;
+			var toolsToProvide = new List<ChatTool>();
+			// Make sure that last message is not automated reply or it will go into the infinite loop.
+			if (item.Messages.LastOrDefault()?.IsAutomated == true)
+				return;
+			// If chat is configured to require a specific tool then...
+			if (item.ToolChoiceRequired)
 			{
-				// Need to use reflection to set the Temperature property
-				// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
-				var value = ChatToolChoice.Auto;
-				// Make sure that last message is not automated reply or it will go into the infinite loop.
-				if (item.ToolChoiceRequired && !(item.Messages.Last()?.IsAutomated == true))
-				{
-					value = ChatToolChoice.Required;
-					var requiredFunctions = tools.Where(x => item.ToolChoiceRequiredNames.Contains(x.FunctionName)).ToList();
-					foreach (var tool in requiredFunctions)
-						options.Tools.Add(tool);
-				}
-				// If no required tools are added, then...
-				if (!options.Tools.Any())
-				{
-					// Add all functions for execution.
-					foreach (var tool in tools)
-						options.Tools.Add(tool);
-				}
+				value = ChatToolChoice.Required;
+				var requiredFunctions = tools.Where(x => item.ToolChoiceRequiredNames.Contains(x.FunctionName)).ToList();
+				foreach (var tool in requiredFunctions)
+					toolsToProvide.Add(tool);
+			}
+			// If no required tools are added, then...
+			if (toolsToProvide.Count == 0)
+			{
+				// Add all functions as available.
+				foreach (var tool in tools)
+					toolsToProvide.Add(tool);
+			}
+			// If options supplied then..
+			if (options != null)
+			{
+				toolsToProvide.ForEach(x => options.Tools.Add(x));
 				typeof(ChatCompletionOptions)
 					.GetProperty(nameof(ChatCompletionOptions.ToolChoice), BindingFlags.Public | BindingFlags.Instance)
 						?.SetValue(options, value, null);
+			}
+			if (message != null)
+			{
+				var functions = Client.ConvertChatToolsTo(toolsToProvide);
+				var functionDefinitions = $"```json\r\n{Client.Serialize(functions)}\r\n```";
+				// Create function definitions attachment.
+				var fda = new MessageAttachments();
+				fda.Title = "Function Definitions";
+				fda.Instructions = Global.AppSettings.ContextFunctionRequestInstructions;
+				fda.Type = ContextType.None;
+				fda.Data = functionDefinitions;
+				fda.IsAlwaysIncluded = false;
+				message.Attachments.Add(fda);
+				// Create response definitions attachment.
+				var settings = new SystemTextJsonSchemaGeneratorSettings
+				{
+					SchemaType = NJsonSchema.SchemaType.OpenApi3,          // Use OpenAPI v3 schema
+					GenerateExamples = true,                               // Generate examples from XML comments
+					UseXmlDocumentation = true,                            // Include XML documentation
+					ResolveExternalXmlDocumentation = true,                // Resolve XML documentation from external assemblies
+					XmlDocumentationFormatting = XmlDocsFormattingMode.Markdown,  // Format XML docs as Markdown
+					AllowReferencesWithProperties = true,                  // Allow $ref with additional properties
+					FlattenInheritanceHierarchy = false,                   // Use allOf for inheritance
+					GenerateAbstractSchemas = true,                        // Include abstract schemas
+					AlwaysAllowAdditionalObjectProperties = false,         // Do not allow additional properties by default
+				};
+				var responseSchema = NJsonSchema.JsonSchema.FromType(typeof(IEnumerable<chat_completion_message_tool_call>), settings);
+				var responseDefinition = $"```json\r\n{responseSchema.ToJson()}\r\n```";
+				var rda = new MessageAttachments();
+				rda.Title = "Function Call Definition";
+				rda.Instructions = Global.AppSettings.ContextFunctionResponseInstructions;
+				rda.Type = ContextType.None;
+				rda.Data = responseDefinition;
+				rda.IsAlwaysIncluded = false;
+				message.Attachments.Add(rda);
 			}
 		}
 
@@ -502,13 +547,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Function calls inside assistant message
 
-		public static (string assistantMessage, string[] jsons) ProcessAssistantMessage(string assistantMessage)
+		public static (string assistantMessage, chat_completion_function[] calls) ProcessAssistantMessage(string assistantMessage)
 		{
 			// Pattern to find JSON blocks enclosed in triple backticks
 			var pattern = @"```(?:json)?\s*\n([\s\S]*?)\n```";
 			var regex = new Regex(pattern, RegexOptions.IgnoreCase);
 			var matches = regex.Matches(assistantMessage);
-			var functionJsons = new List<string>();
+			var functionCalls = new List<chat_completion_function>();
 			foreach (Match match in matches)
 			{
 				var jsonText = match.Groups[1].Value.Trim();
@@ -517,15 +562,39 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					using (JsonDocument doc = JsonDocument.Parse(jsonText))
 					{
+						// Root element can contain `chat_completion_function` or `chat_completion_function[]`.
 						var rootElement = doc.RootElement;
-						// Check if the JSON object represents a function call
-						if (IsFunctionCallJson(rootElement))
+						var items = new List<JsonElement>();
+						if (rootElement.ValueKind == JsonValueKind.Object)
 						{
-							// Add the JSON string to the list
-							functionJsons.Add(jsonText);
-							// Remove the matched JSON block from the assistant message
-							assistantMessage = assistantMessage.Replace(match.Value, "").Trim();
+							items.Add(rootElement);
 						}
+						else if (rootElement.ValueKind == JsonValueKind.Array)
+						{
+							var elements = rootElement.EnumerateArray().ToArray();
+							if (elements.Any(x => x.ValueKind != JsonValueKind.Object))
+							{
+								Console.WriteLine("Not all elements in the JSON array are of Object kind.");
+								continue;
+							}
+							items.AddRange(elements);
+						}
+						foreach (var item in items)
+						{
+							// Check if the JSON object represents a tool function call.
+							if (!IsFunctionCallJson(item))
+								continue;
+							var toolCall = Client.Deserialize<chat_completion_message_tool_call>(item.ToString());
+							var function = new chat_completion_function
+							{
+								id = toolCall.id,
+								name = toolCall.function.name,
+								parameters = toolCall.function.parameters,
+							};
+							functionCalls.Add(function);
+						}
+						// Remove the matched JSON block from the assistant message
+						assistantMessage = assistantMessage.Replace(match.Value, "").Trim();
 					}
 				}
 				catch (JsonException)
@@ -534,7 +603,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					continue;
 				}
 			}
-			return (assistantMessage, functionJsons.ToArray());
+			return (assistantMessage, functionCalls.ToArray());
 		}
 
 		private static bool IsFunctionCallJson(JsonElement jsonElement)

@@ -30,6 +30,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			var debugVisibility = InitHelper.IsDebug
 				? Visibility.Visible
 				: Visibility.Collapsed;
+			EnableApiPluginsCheckBox.Visibility = debugVisibility;
 			MultimediaGroupBox.Visibility = debugVisibility;
 			EnableShowFormInfoCheckBox.Visibility = debugVisibility;
 		}

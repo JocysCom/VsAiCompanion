@@ -302,21 +302,33 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var apiSecretKey = await MicrosoftResourceManager.Current.GetKeyVaultSecretValue(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
 				if (string.IsNullOrEmpty(apiSecretKey))
 					itemsRequired.Add("API Key");
-				//if (isOpenAi && string.IsNullOrEmpty(item.ApiOrganizationId))
-				//	itemsRequired.Add("API Organization ID");
 			}
 			if (redirectToSettings && itemsRequired.Count > 0)
-			{
-				var settings = AppSettings.GetTaskSettings(ItemType.AiService);
-				settings.ListSelection.Clear();
-				settings.ListSelection.Add(service.Name);
-				MainControl.OptionsTabItem.IsSelected = true;
-				MainControl.OptionsPanel.AiServicesTabItem.IsSelected = true;
-				var s = string.Join(" and ", itemsRequired);
-				var message = string.Format(Resources.MainResources.main_Provide_the, s);
-				SetWithTimeout(MessageBoxImage.Warning, message);
-			}
+				RedirectToAiService(service, itemsRequired);
 			return itemsRequired.Count == 0;
+		}
+
+		public static async Task<bool> IsGoodSpeechSettings(AiService service, bool redirectToSettings = false)
+		{
+			var itemsRequired = new List<string>();
+			var apiSecretKey = await MicrosoftResourceManager.Current.GetKeyVaultSecretValue(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
+			if (string.IsNullOrEmpty(apiSecretKey))
+				itemsRequired.Add("API Key");
+			if (redirectToSettings && itemsRequired.Count > 0)
+				RedirectToAiService(service, itemsRequired);
+			return itemsRequired.Count == 0;
+		}
+
+		private static void RedirectToAiService(AiService service, List<string> itemsRequired)
+		{
+			var settings = AppSettings.GetTaskSettings(ItemType.AiService);
+			settings.ListSelection.Clear();
+			settings.ListSelection.Add(service.Name);
+			MainControl.OptionsTabItem.IsSelected = true;
+			MainControl.OptionsPanel.AiServicesTabItem.IsSelected = true;
+			var s = string.Join(" and ", itemsRequired);
+			var message = string.Format(Resources.MainResources.main_Provide_the, s);
+			SetWithTimeout(MessageBoxImage.Warning, message);
 		}
 
 		#endregion

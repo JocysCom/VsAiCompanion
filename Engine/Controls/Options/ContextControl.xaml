@@ -115,6 +115,32 @@
 					Text="{Binding StructuredImageAnalysisInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					TextWrapping="Wrap" />
 			</GroupBox>
+			<GroupBox Margin="3,0,3,0" Header="{StaticResource main_ContextFunctionRequestInstructionsText}">
+				<TextBox
+					Name="ContextFunctionRequestInstructionsTextBox"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text="{Binding ContextFunctionRequestInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					TextWrapping="Wrap" />
+			</GroupBox>
+			<GroupBox Margin="3,0,3,0" Header="{StaticResource main_ContextFunctionResponseInstructionsText}">
+				<TextBox
+					Name="ContextFunctionResponseInstructionsTextBox"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text="{Binding ContextFunctionResponseInstructions, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					TextWrapping="Wrap" />
+			</GroupBox>
 		</StackPanel>
 	</ScrollViewer>
 </UserControl>

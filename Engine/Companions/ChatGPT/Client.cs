@@ -489,12 +489,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						}
 
 						var completionsOptions = GetChatCompletionOptions((float)creativity);
+						var addToolsToOptions = serviceItem.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling);
+						var addToolsToMessage = serviceItem.PluginsEnabled && !aiModel.HasFeature(AiModelFeatures.FunctionCalling);
 						ControlsHelper.AppInvoke(() =>
 						{
-							if (serviceItem.PluginsEnabled && aiModel.HasFeature(AiModelFeatures.FunctionCalling))
+							if (addToolsToOptions)
 							{
 								var tools = PluginsManager.GetChatToolDefinitions(serviceItem);
-								PluginsManager.ProvideTools(serviceItem, completionsOptions, tools);
+								PluginsManager.ProvideTools(tools, serviceItem, options: completionsOptions);
 							}
 						});
 						var client = await GetAiClient();
@@ -575,8 +577,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							if (completion.ToolCalls?.Any() == true)
 								toolCalls.AddRange(completion.ToolCalls);
 						}
-						// Process tool calls.
-						var functions = ConvertToolCallsTo(toolCalls);
+						List<chat_completion_function> functions = null;
+						if (addToolsToMessage)
+						{
+							// Get new answer message without function JSON and function calls.
+							var (assistantMessage, functionCalls) = PluginsManager.ProcessAssistantMessage(answer);
+							if (functionCalls.Any())
+							{
+								answer = assistantMessage;
+								functions = functionCalls.ToList();
+							}
+						}
+						if (addToolsToOptions)
+						{
+							functions = ConvertChatToolCallsTo(toolCalls);
+						}
+						// Get approval and process functions.
 						await ProcessFunctions(serviceItem, functions,
 							functionResults, messageItems, assistantMessageItem,
 							cancellationTokenSource);
@@ -656,7 +672,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			return options;
 		}
 
-		public static List<chat_completion_function> ConvertToolCallsTo(IReadOnlyList<ChatToolCall> toolCalls)
+
+		/// <summary>
+		/// Get function definitions that will be serialized and provided to the AI.
+		/// </summary>
+		public static List<chat_completion_function> ConvertChatToolsTo(IReadOnlyList<ChatTool> toolCalls)
+		{
+			var functions = new List<chat_completion_function>();
+			if (toolCalls?.Any() != true)
+				return functions;
+			foreach (var toolCall in toolCalls)
+			{
+				var json = JsonSerializer.Serialize(toolCall);
+				var parameters = new base_item();
+				if (toolCall.FunctionParameters != null)
+					parameters = JsonSerializer.Deserialize<base_item>(toolCall.FunctionParameters.ToString());
+				var function = new chat_completion_function()
+				{
+					name = toolCall.FunctionName,
+					description = toolCall.FunctionDescription,
+					parameters = parameters,
+				};
+				functions.Add(function);
+			}
+			return functions;
+		}
+
+		/// <summary>
+		/// Convert function calls returned by the assitant to completion functions.
+		/// </summary>
+		public static List<chat_completion_function> ConvertChatToolCallsTo(IReadOnlyList<ChatToolCall> toolCalls)
 		{
 			var functions = new List<chat_completion_function>();
 			if (toolCalls?.Any() != true)
@@ -688,7 +733,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			CancellationTokenSource cancellationTokenSource
 			)
 		{
-			if (functions.Any() != true)
+			if (functions?.Any() != true)
 				return;
 			// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
 			// Otherwise, it starts outputting JSON instead of calling functions.

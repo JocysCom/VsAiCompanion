@@ -142,6 +142,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 				LogPanel.Add("Service not found");
 				return null;
 			}
+			if (!await Global.IsGoodSpeechSettings(service, true))
+				return null;
 			// There is no neutral in azure. Use selected.
 			if (overrideGender == VoiceGender.Neutral)
 				overrideGender = Item.Gender;
