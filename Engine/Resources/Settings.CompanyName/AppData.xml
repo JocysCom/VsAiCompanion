@@ -43,9 +43,9 @@
           <ItemType>Task</ItemType>
           <GridSplitterPosition>0.2099009900990099</GridSplitterPosition>
           <ListSelection>
-            <string>AI - Chat (GPT-4o)</string>
+            <string>AI - Chat (GPT-4o-mini)</string>
           </ListSelection>
-          <ListSelectedIndex>1</ListSelectedIndex>
+          <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
@@ -108,6 +108,9 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
+          <ListSelection>
+            <string>gpt-4o</string>
+          </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
@@ -123,6 +126,14 @@
       </UserProfiles>
       <OverrideInfoDefaultHead>AI Companion for CyberNet Solutions</OverrideInfoDefaultHead>
       <OverrideInfoDefaultBody>Your expert consultant that analyzes your project files and collaborates with you to optimize efficiency, streamline processes, and elevate your overall productivity.</OverrideInfoDefaultBody>
+      <ContextFunctionResponseInstructions>To call a function, Provide the function call as JSON that strictly adheres to the JSON schema for function calls, which is supplied below.&#xD;
+Enclose the JSON code in triple backticks with "JSON" after the opening backticks, like this:&#xD;
+```JSON&#xD;
+{ your JSON here }&#xD;
+```&#xD;
+Do not mention the function call outside of the JSON code block.&#xD;
+Do not include any extra text before or after the JSON code block.&#xD;
+Ensure the JSON conforms exactly to the provided schema below:</ContextFunctionResponseInstructions>
       <StructuredImageAnalysisInstructions>You are an AI assistant that extracts data from documents and returns them as structured JSON objects.&#xD;
 Ensure that all attribute names are consistently formatted in snake_case.&#xD;
 Maintain uniform terminology and capitalization for all extracted values.&#xD;
@@ -152,15 +163,21 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
       </AiServices>
       <AiModels>
         <AiModel>
-          <Id>690f057e-b740-f8f8-75f1-0673babbd0ee</Id>
+          <Path>Company Name AI</Path>
           <Name>gpt-4o</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>690f057e-b740-f8f8-75f1-0673babbd0ee</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>bde102af-da0b-e883-2527-2358524ca6d1</Id>
+          <Path>Company Name AI</Path>
           <Name>gpt-4o-mini</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>bde102af-da0b-e883-2527-2358524ca6d1</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>d5e071e1-d99d-45ff-890a-82823b75e1ec</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>

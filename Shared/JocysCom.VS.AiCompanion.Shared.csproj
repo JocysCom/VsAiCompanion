@@ -16,8 +16,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.12.76</AssemblyVersion>
-		<FileVersion>1.12.76</FileVersion>
+		<AssemblyVersion>1.13.6</AssemblyVersion>
+		<FileVersion>1.13.6</FileVersion>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

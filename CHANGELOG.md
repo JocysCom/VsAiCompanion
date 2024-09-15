@@ -1,8 +1,9 @@
-2024-09-14 v1.12.85
+2024-09-15 v1.13.6
 
-- Fix: Morality formula and example in `AI - Evaluate Morality` template.
 - Fix: OpenAI `o1` model max input tokens.
 - Fix: AI Function tool calls when the response isn't streamed.
+- Fix: Morality formula and example in `AI - Evaluate Morality` template.
+- New: Now, AI models can call functions even if the API doesn’t natively support them.
 - New: [Send] button: Hold CTRL to add as a user message, ALT for an assistant message.
 - New: Added an AI tool function to get PDF metadata.
 - New: Save or copy all tool functions as JSON for AI self-improvement.

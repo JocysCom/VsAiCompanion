@@ -21,7 +21,6 @@ z/4FWrZIn9sMAAA=</IconData>
   <Created>2024-02-25T21:17:22.5405595+00:00</Created>
   <Modified>2024-02-25T21:17:22.5405595+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
-  <AiModel>gpt-4o</AiModel>
   <TextInstructions>Please analyze the following AI prompt text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised AI prompt text.&#xD;
 &#xD;
 Data for processing:</TextInstructions>

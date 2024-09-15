@@ -4,7 +4,7 @@
     <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <TargetFrameworkProfile />
-	<PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -99,12 +99,12 @@
       <Version>8.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Build">
-      <Version>17.8.3</Version>
+      <Version>17.9.5</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.8.37222" ExcludeAssets="runtime">
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.9.37000" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.8.2365">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.9.3184">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -162,19 +162,16 @@
     <PostBuildEvent>::PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Resources\AddFilesToZip.ps1" -sourceFolder $(TargetDir) -targetZipFile $(TargetDir)$(TargetName).vsix -ConfigurationName $(ConfigurationName)
 </PostBuildEvent>
   </PropertyGroup>
-  
-
-	<Target Name="RemoveFolders" AfterTargets="Build">
-		<!-- List of unwanted files or directories -->
-		<Message Text="Removing unwanted runtime folders..." Importance="high" />
-		<RemoveDir Directories="$(TargetDir)arm" />
-		<RemoveDir Directories="$(TargetDir)arm64" />
-		<RemoveDir Directories="$(TargetDir)musl-arm64" />
-		<RemoveDir Directories="$(TargetDir)musl-x64" />
-		<RemoveDir Directories="$(TargetDir)musl-x86" />
-		<RemoveDir Directories="$(TargetDir)x86" />
-	</Target>
-  
+  <Target Name="RemoveFolders" AfterTargets="Build">
+    <!-- List of unwanted files or directories -->
+    <Message Text="Removing unwanted runtime folders..." Importance="high" />
+    <RemoveDir Directories="$(TargetDir)arm" />
+    <RemoveDir Directories="$(TargetDir)arm64" />
+    <RemoveDir Directories="$(TargetDir)musl-arm64" />
+    <RemoveDir Directories="$(TargetDir)musl-x64" />
+    <RemoveDir Directories="$(TargetDir)musl-x86" />
+    <RemoveDir Directories="$(TargetDir)x86" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

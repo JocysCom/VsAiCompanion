@@ -80,9 +80,9 @@
           <ItemType>Lists</ItemType>
           <GridSplitterPosition>0.2495049504950495</GridSplitterPosition>
           <ListSelection>
-            <string>API - Demo</string>
+            <string>Prompts</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>16</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>VaultItem</ItemType>
@@ -112,7 +112,10 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiModel</ItemType>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelection>
+            <string>o1-mini</string>
+          </ListSelection>
+          <ListSelectedIndex>31</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Voice</ItemType>
@@ -125,6 +128,14 @@
           <UserGroups />
         </UserProfile>
       </UserProfiles>
+      <ContextFunctionResponseInstructions>To call a function, Provide the function call as JSON that strictly adheres to the JSON schema for function calls, which is supplied below.&#xD;
+Enclose the JSON code in triple backticks with "JSON" after the opening backticks, like this:&#xD;
+```JSON&#xD;
+{ your JSON here }&#xD;
+```&#xD;
+Do not mention the function call outside of the JSON code block.&#xD;
+Do not include any extra text before or after the JSON code block.&#xD;
+Ensure the JSON conforms exactly to the provided schema below:</ContextFunctionResponseInstructions>
       <StructuredImageAnalysisInstructions>You are an AI assistant that extracts data from documents and returns them as structured JSON objects.&#xD;
 Ensure that all attribute names are consistently formatted in snake_case.&#xD;
 Maintain uniform terminology and capitalization for all extracted values.&#xD;
@@ -139,9 +150,9 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>7b785f4c-6aef-1bb3-1f41-c3454068d906</Id>
           <IsDefault>true</IsDefault>
           <ApiSecretKey />
-          <DefaultAiModel>gpt-3.5-turbo</DefaultAiModel>
+          <DefaultAiModel>gpt-4o</DefaultAiModel>
           <BaseUrl>https://api.openai.com/v1/</BaseUrl>
-          <ModelFilter>gpt|text-davinci-[0-9+]|embedding</ModelFilter>
+          <ModelFilter />
         </AiService>
         <AiService>
           <Name>GPT4All (Local Machine)</Name>
@@ -205,179 +216,442 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
       </AiServices>
       <AiModels>
         <AiModel>
-          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
+          <Path>Azure Open AI</Path>
           <Name>gpt-4o</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>1911350d-3580-7f4f-73b8-e80561bf28e7</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
+          <Path>Azure Open AI</Path>
           <Name>gpt-3.5-turbo-16k</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>f0916ae8-d8a5-d45f-b3a3-9aa58e2262b2</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
           <MaxInputTokens>16384</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
+          <Path>Azure Open AI</Path>
           <Name>text-embedding-ada-002</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>96b64030-26ca-5533-3580-b0b63866879c</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>1ba94e57-3827-3636-5ba1-227d5e4c56ea</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>99d65d61-0850-2a8b-716d-794cacd0adc5</Id>
+          <Path>Open AI</Path>
+          <Name>babbage-002</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>b5691b0e-afaa-29c1-9cca-fe4e6f25d5d4</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>chatgpt-4o-latest</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>1d4bbc12-bea0-2348-bdb8-891c9d3e84d6</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>dall-e-2</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>9a1dc5bf-d075-b3d9-50a2-82951f6ccf50</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>dall-e-3</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>ab2af793-cba0-b803-b61f-2f06f623083a</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>davinci-002</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>e07a7171-1271-8e0a-0e7a-c70788eb00e9</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
           <Name>gpt-3.5-turbo</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>415b935a-6d9c-26ac-531c-0d447ecdc350</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>4096</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>be400a24-6e1e-76ae-51dc-51606130b4a7</Id>
+          <Path>Open AI</Path>
           <Name>gpt-3.5-turbo-0125</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>5a5b4ecc-4eb3-6ac3-92b6-adb2dcb9934e</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>4096</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>c890f3bd-89a7-961a-17b1-eeff0a4b3563</Id>
+          <Path>Open AI</Path>
           <Name>gpt-3.5-turbo-0301</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>98da0619-d7a5-abc1-d82b-eeebf0f2be49</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>4096</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>0e7bceb5-2637-5805-9c13-a7e06ed7104f</Id>
+          <Path>Open AI</Path>
           <Name>gpt-3.5-turbo-0613</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>47f0bfeb-4e2e-ea48-3a7b-76b0128a7bac</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>4096</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>4a24de48-2695-11fc-6be0-f472935a26ea</Id>
+          <Path>Open AI</Path>
           <Name>gpt-3.5-turbo-1106</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>2fab2db0-bda1-c499-addc-fcd07eebc899</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>16384</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>9a24cc72-9295-5613-cd99-710da3444340</Id>
+          <Path>Open AI</Path>
+          <Name>gpt-3.5-turbo-16k</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>e1f5baf6-7e9e-4d90-5ea1-7869a6084fb0</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>16384</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
           <Name>gpt-3.5-turbo-16k-0613</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>3e0fffb5-da08-a2d1-99a8-84aef61d8554</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>16384</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>c76eedd2-0c01-46e5-ee95-7cc6e874c857</Id>
+          <Path>Open AI</Path>
           <Name>gpt-3.5-turbo-instruct</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>73c47d5b-fe72-a1ec-5de9-dfc6455e509b</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>4096</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>99b6cad8-4a63-4f05-8e95-51d5380f858c</Id>
+          <Path>Open AI</Path>
           <Name>gpt-3.5-turbo-instruct-0914</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>46681970-256d-76e0-b49b-2f2070cc2dd8</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>4096</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>4f00f393-889d-f80c-7432-9e44718d2b71</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>b2f480a9-bcc4-033b-70a6-93d7121ed8f4</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>090ae0ea-d55a-8154-f902-93f62dfefdef</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4-0125-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>14bb0639-19bd-e253-0cb8-2073b781150b</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>f936b171-10ea-daeb-f3ba-6838c950bbc2</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4-0613</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>d5910bc4-af9c-5865-e7be-3869b558a6e0</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>f10f16c8-1139-a228-1c92-04e57df05860</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4-1106-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>fc90b907-e8c5-6604-0d1d-ae55c4c29fb0</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>a6597773-9d59-c7c7-7bce-36488b6fed21</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4-1106-vision-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>9b9f0dfc-6bad-070e-69b4-987d74b61ab3</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>ed65f488-25ab-140d-d945-f9f6e1bd965f</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4-turbo</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>818c5599-ae82-cf2c-81d6-3b05e55da76e</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>9608bdfd-ae20-122c-704f-d16f34196708</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4-turbo-2024-04-09</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>0a3761c1-ccec-ed16-d0b2-c1eec3a4fe63</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>8987a0dc-b537-7d1d-0331-f6f4e0069da6</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4-turbo-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>a92bd67d-5675-94b8-9adc-5a142b7bafe8</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>93f76239-808d-4181-c5b7-45ea064bf96d</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4-vision-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>87c20de8-7034-fd7f-07b9-0f493ee86c42</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>0e7a059b-bd14-6ae6-ab4f-788e5484044c</Id>
+          <Path>Open AI</Path>
+          <Name>gpt-4o</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>00595dcb-5306-a135-b649-66c757d58e83</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
           <Name>gpt-4o-2024-05-13</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>4f705c4f-3559-373d-0b8f-72c726fda5a1</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>4f26c324-0217-a649-3e7a-3ce4f42dae6c</Id>
+          <Path>Open AI</Path>
+          <Name>gpt-4o-2024-08-06</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>3fd5c419-9dfe-19b8-c379-f716a037db22</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
           <Name>gpt-4o-mini</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>a0072a56-494e-5f88-e563-a2b2b7715fe8</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>2ac2a514-14f1-4598-4d10-d2553945db5a</Id>
+          <Path>Open AI</Path>
           <Name>gpt-4o-mini-2024-07-18</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>b2a9240e-b519-d246-240e-448a5b8684e4</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>112d8d27-930b-701c-b1fb-e9015fabaf91</Id>
+          <Path>Open AI</Path>
+          <Name>o1-mini</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>6c940643-a26f-243e-ce37-b9b6f40aa434</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+          <Features>ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>o1-mini-2024-09-12</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>1ebfed71-94c3-b6f5-aafa-7ffb6203e16f</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+          <Features>ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>o1-preview</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>1f1873e4-404d-aa56-1418-afa5971bc2ba</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+          <Features>ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>o1-preview-2024-09-12</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>895157cb-b3f8-59f0-3b30-e87c79f6c792</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>128000</MaxInputTokens>
+          <Features>ChatSupport</Features>
+          <IsFeaturesKnown>true</IsFeaturesKnown>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
           <Name>text-embedding-3-large</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>7d50a327-86e9-b0a1-2d2e-df3be264045e</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
         </AiModel>
         <AiModel>
-          <Id>7da1e073-1f01-98bf-07d2-46b8cf19d1d0</Id>
+          <Path>Open AI</Path>
           <Name>text-embedding-3-small</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>cdd87d47-e754-5719-1214-86ee81d3fce4</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
           <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>text-embedding-ada-002</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>f6e2afd2-a0a0-b3f2-6be9-c5e9acda85d7</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>8192</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>tts-1</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>38225cc4-7e6c-1ffb-d681-0e90cdbbe701</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>tts-1-1106</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>94d899d2-3b40-8f4f-f39c-34699af72338</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>tts-1-hd</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>69d29bda-3f15-daeb-0689-f2b6f2fca4f7</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>tts-1-hd-1106</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>0a7f9be3-feaa-3f84-326f-19632c5051f8</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>Open AI</Path>
+          <Name>whisper-1</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>53eb1f52-5ad9-40ea-fe6b-a8960a583ee9</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
         </AiModel>
       </AiModels>
       <MailAccounts />
