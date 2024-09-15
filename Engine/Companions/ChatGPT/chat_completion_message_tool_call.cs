@@ -13,7 +13,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// The ID of the tool call. Must have format 'call_[randomid]'.
 		/// </summary>
 		[Required]
-		[RegularExpression(@"^call_[a-zA-Z0-9]{34}$", ErrorMessage = "ID must start with 'call_'")]
+		[RegularExpression(@"^call_[a-zA-Z0-9]{24}$", ErrorMessage = "ID must start with 'call_'")]
 		[Description("The ID of the tool call. Must have format 'call_<randomid>'. For example: 'call_W6C7NV3fSVomN4zgw1EBNlNI'")]
 		[JsonPropertyName("id")]
 		public string id { get; set; }

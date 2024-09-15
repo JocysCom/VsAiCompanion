@@ -76,7 +76,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var methods = type.GetMethods(bindingFlags);
 			foreach (var mi in methods)
 			{
-				var attribute = mi.GetCustomAttributes().FirstOrDefault(x => x.GetType().Name == nameof(RiskLevelAttribute));
+				var attribute = ClassLibrary.Runtime.Attributes.FindCustomAttribute<RiskLevelAttribute>(mi);
 				if (attribute is null)
 					continue;
 				// Get level from attribute using reflection to access Level property
