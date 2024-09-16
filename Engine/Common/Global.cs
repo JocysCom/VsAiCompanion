@@ -289,10 +289,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				SetWithTimeout(MessageBoxImage.Warning, Resources.MainResources.main_Select_AI_Service_from_Menu);
 				return false;
 			}
-			if (string.IsNullOrEmpty(service.BaseUrl))
-				itemsRequired.Add("Base URL");
 			if (string.IsNullOrEmpty(service.Name))
 				itemsRequired.Add("Service Name");
+			if (string.IsNullOrEmpty(service.BaseUrl))
+				itemsRequired.Add($"Base URL for the '{service.Name}' service\"");
 			// If OpenAI service then check for API Key and Organization ID.
 			var baseUrl = service.BaseUrl ?? "";
 			var isMicrosoft = baseUrl.Contains(".microsoft.com");
@@ -301,7 +301,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				var apiSecretKey = await MicrosoftResourceManager.Current.GetKeyVaultSecretValue(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
 				if (string.IsNullOrEmpty(apiSecretKey))
-					itemsRequired.Add("API Key");
+					itemsRequired.Add($"API Key for the '{service.Name}' service");
 			}
 			if (redirectToSettings && itemsRequired.Count > 0)
 				RedirectToAiService(service, itemsRequired);
@@ -313,7 +313,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var itemsRequired = new List<string>();
 			var apiSecretKey = await MicrosoftResourceManager.Current.GetKeyVaultSecretValue(service.ApiSecretKeyVaultItemId, service.ApiSecretKey);
 			if (string.IsNullOrEmpty(apiSecretKey))
-				itemsRequired.Add("API Key");
+				itemsRequired.Add($"API Key for the '{service.Name}' service");
 			if (redirectToSettings && itemsRequired.Count > 0)
 				RedirectToAiService(service, itemsRequired);
 			return itemsRequired.Count == 0;
