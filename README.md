@@ -13,9 +13,9 @@
 - API provides access to more recent and smarter AI models.
 - Extensive customization and configuration.
 
-### DOWNLOAD -  v1.12.76 (2024-08-28)  
+### DOWNLOAD -  v1.13.6 (2024-09-15)  
 
-[JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.12.76/JocysCom.VS.AiCompanion.App.zip) - digitally signed standalone/portable application.
+[JocysCom.VS.AiCompanion.App.zip](https://github.com/JocysCom/VsAiCompanion/releases/download/1.13.6/JocysCom.VS.AiCompanion.App.zip) - digitally signed standalone/portable application.
 
 [AI Companion as Visual Studio Extension on Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=JocysCom.JocysComVsAiCompanion) - install via Visual Studio Extension Manager.
 
