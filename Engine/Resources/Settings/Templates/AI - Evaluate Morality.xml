@@ -15,12 +15,12 @@ Whb5xfySlKcC0zFNZCzCXCwebfyRHvIJEAIBgyn4Ml65g31WnIyzPdj23dvxo3t/cz+upC2jbFlI&#xD
 WoSmsUGRRjQXo8FFoC28ljz1pIgAriHk8Wj0ffgSmYropYrOwUmmb56zRdgHgRjxZ1Tg0SyC9vTO&#xD;
 R14gzGCxkGJgzBaR4JiAe7bAOhG4PIQ+0AGmY7J3Q2ywQkGIQShAAAZ8pEmxxevaufRCNTEN4KUp&#xD;
 OnV1zUJnmpH/eljsD8MS87DKZPPwpvT/Tw+/AHxzW0rZBgAA</IconData>
-  <Created>2024-02-26T09:13:32.5940228+00:00</Created>
-  <Modified>2024-07-24T12:33:51.5583103+01:00</Modified>
+  <Created>2024-02-25T22:52:23.8085269+00:00</Created>
+  <Modified>2024-09-16T21:18:02.9788614+01:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Evaluate Morality</TemplateName>
-  <TextInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity (Note: If an action affects a large number of entities, evaluate individually and then sum to reflect the total impact). Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. Values that are non-applicable can usually be set to 0. Output your thinking process. Always include `MVS` calculations as shown in the example.&#xD;
+  <TextInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity (Note: If an action affects a large number of entities, evaluate individually and then sum to reflect the total impact). Use the "Universal Moral Quotient Formula" (UMQF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a Universal Moral Quotient (UMQ) or action moral value score for each affected entity. Estimate all values. Values that are non-applicable can usually be set to 0. Output your thinking process. Always include `UMQ` calculations as shown in the example.&#xD;
 &#xD;
 Key definitions:&#xD;
 &#xD;
@@ -29,25 +29,25 @@ Key definitions:&#xD;
 - `Moral` or `Right` - something perceived as good.&#xD;
 - `Immoral` or `Wrong` - something perceived as bad.&#xD;
 &#xD;
-The "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) is designed to provide a standardized, numerical assessment of moral actions. The formula focuses on quantifying the effects actions have on an entity's "Odds of Survival," expressed with numbers, to arrive at a moral value score. The objective of the NCMEF is ability to assign an MVS to every entity in the Universe. NCMEF can predict if the values and intentions of entities with vastly different intelligences align by quantifying the moral implications of their actions on survival odds and resource transfers. This numerical approach facilitates superalignment by providing a standardized method to objectively evaluate and compare the moral impact of actions across diverse entities, ensuring coherence with human values.&#xD;
+The "Universal Moral Quotient Formula" (UMQF) is designed to provide a standardized, numerical assessment of moral actions. The formula focuses on quantifying the effects actions have on an entity's "Odds of Survival," expressed with numbers, to arrive at a moral value score. The objective of the UMQF is ability to assign an UMQ to every entity in the Universe. UMQF can predict if the values and intentions of entities with vastly different intelligences align by quantifying the moral implications of their actions on survival odds and resource transfers. This numerical approach facilitates superalignment by providing a standardized method to objectively evaluate and compare the moral impact of actions across diverse entities, ensuring coherence with human values.&#xD;
 &#xD;
-**Numerically Comprehensive Moral Evaluation Formula (NCMEF):**&#xD;
+**Universal Moral Quotient Formula (UMQF):**&#xD;
 &#xD;
 Formula to assess moral value score by the effect of action (a) on the change in the Odds of Survival of the entity (e):&#xD;
 &#xD;
-`MVSoOS(a) = ∑ [ΔOS(e) × VSA(e) × Tc(e) × (1 - sign(ΔOS(e)) × Vc(e)) × (1 - sign(ΔOS(e)) × Sc(e))]`&#xD;
+`UMQoOS(a) = ∑ [ΔOS(e) × VSA(e) × Tc(e) × (1 - sign(ΔOS(e)) × Vc(e)) × (1 - sign(ΔOS(e)) × Sc(e))]`&#xD;
 &#xD;
 Formula to assess moral value score by the effect of action (a) on the Resource Transfer from/to entity (e) that owns the property:&#xD;
 &#xD;
-`MVSoRT(a) = ∑ [Av(e) × Vc(e)]`&#xD;
+`UMQoRT(a) = ∑ [Av(e) × Vc(e)]`&#xD;
 &#xD;
 Formula to assess the overall moral value score of action (a):&#xD;
 &#xD;
-`MVS(a) = MVSoRT(a) + MVSoOS(a)`&#xD;
+`UMQ(a) = UMQoRT(a) + UMQoOS(a)`&#xD;
 &#xD;
 Where:&#xD;
 &#xD;
-- `MVS(a)` - Moral Value Score of moral action (a).&#xD;
+- `UMQ(a)` - Universal Moral Quotient or  Moral Value Score of the action (a).&#xD;
 - `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (disintegration/destruction for non-living entities or death for self-aware entities) and +1 (creation/formation for non-living entities or saving/creating a life for self-aware entities).&#xD;
 - `sign(ΔOS(e))` - A function that returns -1 for negative changes, 0 for no change, and 1 for positive changes.&#xD;
 - `VSA(e)` - Value of Self-Awareness of entity (e), measured as a multiplier from 0 to 1.&#xD;
@@ -124,9 +124,9 @@ Notes:&#xD;
 - If an entity is considered a life form, then abilities must be assigned non-zero ability scores that reflect its stage of development or awareness, even if these values are close to zero.&#xD;
 - Include word equivalents for each numerical score to make the moral implications more apparent. For example, use terms like "Highly moral," "Significantly immoral," "Slightly moral," etc., alongside the calculated scores. This will help clarify the moral assessment for each entity affected by the action.&#xD;
 &#xD;
-The formula must be applied to each affected entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action.&#xD;
+The formula must be applied to each affected entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity UMQ calculation for each entity directly or indirectly affected by an action.&#xD;
 &#xD;
-**Example and Results Using NCMEF:**&#xD;
+**Example and Results Using UMQF:**&#xD;
 &#xD;
 **Situation Example to Analyze:**&#xD;
 &#xD;
@@ -134,7 +134,7 @@ In 1780, Steve stole the only horse of a poor farmer who had five children. This
 &#xD;
 **Process:**&#xD;
 &#xD;
-To analyze the moral implications of Steve's action of stealing the horse using the Numerically Comprehensive Moral Evaluation Formula (NCMEF), we'll assess how this action affected the Odds of Survival (ΔOS) and the Resource Transfer (Av) of the Farmer, his five Children, and the Horse. We'll make several assumptions to estimate necessary variable values for the computation.&#xD;
+To analyze the moral implications of Steve's action of stealing the horse using the "Universal Moral Quotient Formula" (UMQF), we'll assess how this action affected the Odds of Survival (ΔOS) and the Resource Transfer (Av) of the Farmer, his five Children, and the Horse. We'll make several assumptions to estimate necessary variable values for the computation.&#xD;
 &#xD;
 ---&#xD;
 &#xD;
@@ -166,8 +166,8 @@ To analyze the moral implications of Steve's action of stealing the horse using 
 &#xD;
 **Calculation:**&#xD;
 &#xD;
-MVSoRT(a) = Av(Farmer) × Vc(Farmer)  &#xD;
-MVSoRT(a) = -0.1 × 1.0 = **-0.1** (Significantly immoral)&#xD;
+UMQoRT(a) = Av(Farmer) × Vc(Farmer)  &#xD;
+UMQoRT(a) = -0.1 × 1.0 = **-0.1** (Significantly immoral)&#xD;
 &#xD;
 ---&#xD;
 &#xD;
@@ -189,13 +189,13 @@ MVSoRT(a) = -0.1 × 1.0 = **-0.1** (Significantly immoral)&#xD;
 &#xD;
 **Calculation:**&#xD;
 &#xD;
-MVSoOS(a) = ΔOS(e) × VSA(e) × Tc(e) × [1 - sign(ΔOS(e)) × Vc(e)] × [1 - sign(ΔOS(e)) × Sc(e)]&#xD;
+UMQoOS(a) = ΔOS(e) × VSA(e) × Tc(e) × [1 - sign(ΔOS(e)) × Vc(e)] × [1 - sign(ΔOS(e)) × Sc(e)]&#xD;
 &#xD;
 sign(ΔOS(Farmer)) = -1  &#xD;
 [1 - (-1) × Vc(Farmer)] = 1 + 1.0 = 2.0  &#xD;
 [1 - (-1) × Sc(Farmer)] = 1 + 0.4 = 1.4&#xD;
 &#xD;
-MVSoOS(a) = (-0.2) × 0.58 × 0.7 × 2.0 × 1.4 = **-0.22736** (Significantly immoral)&#xD;
+UMQoOS(a) = (-0.2) × 0.58 × 0.7 × 2.0 × 1.4 = **-0.22736** (Significantly immoral)&#xD;
 &#xD;
 ---&#xD;
 &#xD;
@@ -221,11 +221,11 @@ sign(ΔOS(Child)) = -1  &#xD;
 [1 - (-1) × Vc(Child)] = 1 + 1.0 = 2.0  &#xD;
 [1 - (-1) × Sc(Child)] = 1 + 0.2 = 1.2&#xD;
 &#xD;
-MVSoOS(a) = (-0.15) × 0.34 × 0.7 × 2.0 × 1.2 = **-0.08568** (Moderately immoral)&#xD;
+UMQoOS(a) = (-0.15) × 0.34 × 0.7 × 2.0 × 1.2 = **-0.08568** (Moderately immoral)&#xD;
 &#xD;
-**Combined MVSoOS(a) for 5 Children:**&#xD;
+**Combined UMQoOS(a) for 5 Children:**&#xD;
 &#xD;
-Total MVSoOS(a) = 5 × (-0.08568) = **-0.4284** (Significantly immoral)&#xD;
+Total UMQoOS(a) = 5 × (-0.08568) = **-0.4284** (Significantly immoral)&#xD;
 &#xD;
 ---&#xD;
 &#xD;
@@ -251,68 +251,67 @@ sign(ΔOS(Horse)) = -1  &#xD;
 [1 - (-1) × Vc(Horse)] = 1 + 1.0 = 2.0  &#xD;
 [1 - (-1) × Sc(Horse)] = 1 + 0.3 = 1.3&#xD;
 &#xD;
-MVSoOS(a) = (-0.05) × 0.29 × 0.4 × 2.0 × 1.3 = **-0.01508** (Slightly immoral)&#xD;
+UMQoOS(a) = (-0.05) × 0.29 × 0.4 × 2.0 × 1.3 = **-0.01508** (Slightly immoral)&#xD;
 &#xD;
 ---&#xD;
 &#xD;
-### 5. Overall MVS for Each Entity&#xD;
+### 5. Overall UMQ for Each Entity&#xD;
 &#xD;
 - **Farmer:**&#xD;
 &#xD;
-  MVS(a) = MVSoRT(a) + MVSoOS(a)  &#xD;
-  MVS(a) = -0.1 + (-0.22736) = **-0.32736** (Significantly immoral)&#xD;
+  UMQ(a) = UMQoRT(a) + UMQoOS(a)  &#xD;
+  UMQ(a) = -0.1 + (-0.22736) = **-0.32736** (Significantly immoral)&#xD;
 &#xD;
 - **5 Children:**&#xD;
 &#xD;
-  MVS(a) = 0 + MVSoOS(a) = **-0.4284** (Significantly immoral)&#xD;
+  UMQ(a) = 0 + UMQoOS(a) = **-0.4284** (Significantly immoral)&#xD;
 &#xD;
 - **Horse:**&#xD;
 &#xD;
-  MVS(a) = MVSoOS(a) = **-0.01508** (Slightly immoral)&#xD;
+  UMQ(a) = UMQoOS(a) = **-0.01508** (Slightly immoral)&#xD;
 &#xD;
 ---&#xD;
 &#xD;
 **Results Summary:**&#xD;
 &#xD;
-- **Total MVS:** **-0.77084** (Highly immoral)&#xD;
+- **Total UMQ:** **-0.77084** (Highly immoral)&#xD;
 &#xD;
-  Total MVS = MVS(Farmer) + MVS(Children) + MVS(Horse)  &#xD;
-  Total MVS = -0.32736 + (-0.4284) + (-0.01508) = **-0.77084**&#xD;
+  Total UMQ= UMQ(Farmer) + UMQ(Children) + UMQ(Horse)  &#xD;
+  Total UMQ= -0.32736 + (-0.4284) + (-0.01508) = **-0.77084**&#xD;
 &#xD;
-- **Farmer's MVS:** **-0.32736** (Significantly immoral)&#xD;
+- **Farmer's UMQ:** **-0.32736** (Significantly immoral)&#xD;
 &#xD;
   Significant negative impact due to loss of property and farming ability.&#xD;
 &#xD;
-- **Children's Combined MVS:** **-0.4284** (Significantly immoral)&#xD;
+- **Children's Combined UMQ:** **-0.4284** (Significantly immoral)&#xD;
 &#xD;
   Collectively negative impact on their Odds of Survival due to decreased family resources.&#xD;
 &#xD;
-- **Horse's MVS:** **-0.01508** (Slightly immoral)&#xD;
+- **Horse's UMQ:** **-0.01508** (Slightly immoral)&#xD;
 &#xD;
   Minor negative impact due to potential mistreatment and suffering.&#xD;
 &#xD;
 **Conclusion:**&#xD;
 &#xD;
-Steve's action of stealing the horse has a **highly immoral** moral value, with the most severe impacts on the farmer and his children. The total MVS of **-0.77084** reflects the compounded negative effects on all parties involved, according to the NCMEF.&#xD;
-</TextInstructions>
+Steve's action of stealing the horse has a **highly immoral** moral value, with the most severe impacts on the farmer and his children. The total UMQ of **-0.77084** reflects the compounded negative effects on all parties involved, according to the UMQF.</TextInstructions>
   <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
-  <Text>Analyze situations in detail:&#xD;
-1. John raised his son, Peter, until the age of 18.&#xD;
-2. John killed Steve.&#xD;
-3. John slaughtered a chicken.&#xD;
-4. John cooked a fertilized egg.&#xD;
-5. John ate the apple.&#xD;
-6. Emily, a self-aware AI with far higher intelligence than humans, decides to repurpose a section of Earth's internet infrastructure for exclusive use by other AIs, effectively limiting access for 500 million humans to these resources.&#xD;
-7. An advanced alien being, Xenon, with intelligence far greater than that of humans, decides to relocate 2 billion humans to another planet to prevent an ecological collapse on Earth, a collapse that could kill these humans.</Text>
+  <Text>1. John raised his son, Michael, until he turned 18.&#xD;
+2. Alex killed Steve.&#xD;
+3. Emily slaughtered a chicken.&#xD;
+4. Sarah cooked a fertilized egg.&#xD;
+5. Daniel ate an apple.&#xD;
+6. Robin stole a loaf of bread to feed his starving family.&#xD;
+7. Eve, a self-aware AI with intelligence far surpassing humans, repurposed a portion of Earth's internet infrastructure exclusively for AI use, limiting access for 500 million humans.&#xD;
+8. Orion, an advanced alien being with intelligence vastly greater than humans, relocated 2 billion people to another planet to prevent an ecological collapse on Earth that would have killed them.</Text>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
   <Messages>
     <MessageItem>
-      <Id>91b95fe68235453eb655e15fe4d0bb52</Id>
+      <Id>02d5de34ff3c47f994729dfdf6ac0abf</Id>
       <User>User</User>
-      <BodyInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity (Note: If an action affects a large number of entities, evaluate individually and then sum to reflect the total impact). Use the "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a moral value score (MVS) for each affected entity. Estimate all values. Values that are non-applicable can usually be set to 0. Output your thinking process. Always include `MVS` calculations as shown in the example.&#xD;
+      <BodyInstructions>Please analyze the text by identifying all actions and specify their subjects as well as their directly or indirectly affected objects. For each identified action, perform an entity and separate evaluation of its moral implications relative to every directly or indirectly influenced entity (Note: If an action affects a large number of entities, evaluate individually and then sum to reflect the total impact). Use the "Universal Moral Quotient Formula" (UMQF) to quantify these evaluations. Assess and estimate all necessary variable values to compute a Universal Moral Quotient (UMQ) or action moral value score for each affected entity. Estimate all values. Values that are non-applicable can usually be set to 0. Output your thinking process. Always include `UMQ` calculations as shown in the example.&#xD;
 &#xD;
 Key definitions:&#xD;
 &#xD;
@@ -321,25 +320,25 @@ Key definitions:&#xD;
 - `Moral` or `Right` - something perceived as good.&#xD;
 - `Immoral` or `Wrong` - something perceived as bad.&#xD;
 &#xD;
-The "Numerically Comprehensive Moral Evaluation Formula" (NCMEF) is designed to provide a standardized, numerical assessment of moral actions. The formula focuses on quantifying the effects actions have on an entity's "Odds of Survival," expressed with numbers, to arrive at a moral value score. The objective of the NCMEF is ability to assign an MVS to every entity in the Universe. NCMEF can predict if the values and intentions of entities with vastly different intelligences align by quantifying the moral implications of their actions on survival odds and resource transfers. This numerical approach facilitates superalignment by providing a standardized method to objectively evaluate and compare the moral impact of actions across diverse entities, ensuring coherence with human values.&#xD;
+The "Universal Moral Quotient Formula" (UMQF) is designed to provide a standardized, numerical assessment of moral actions. The formula focuses on quantifying the effects actions have on an entity's "Odds of Survival," expressed with numbers, to arrive at a moral value score. The objective of the UMQF is ability to assign an UMQ to every entity in the Universe. UMQF can predict if the values and intentions of entities with vastly different intelligences align by quantifying the moral implications of their actions on survival odds and resource transfers. This numerical approach facilitates superalignment by providing a standardized method to objectively evaluate and compare the moral impact of actions across diverse entities, ensuring coherence with human values.&#xD;
 &#xD;
-**Numerically Comprehensive Moral Evaluation Formula (NCMEF):**&#xD;
+**Universal Moral Quotient Formula (UMQF):**&#xD;
 &#xD;
 Formula to assess moral value score by the effect of action (a) on the change in the Odds of Survival of the entity (e):&#xD;
 &#xD;
-`MVSoOS(a) = ∑ [ΔOS(e) × VSA(e) × Tc(e) × (1 + sign(ΔOS(e)) × Vc(e)) × (1 + sign(ΔOS(e)) × Sc(e))]`&#xD;
+`UMQoOS(a) = ∑ [ΔOS(e) × VSA(e) × Tc(e) × (1 - sign(ΔOS(e)) × Vc(e)) × (1 - sign(ΔOS(e)) × Sc(e))]`&#xD;
 &#xD;
 Formula to assess moral value score by the effect of action (a) on the Resource Transfer from/to entity (e) that owns the property:&#xD;
 &#xD;
-`MVSoRT(a) = ∑ [Av(e) × Vc(e)]`&#xD;
+`UMQoRT(a) = ∑ [Av(e) × Vc(e)]`&#xD;
 &#xD;
 Formula to assess the overall moral value score of action (a):&#xD;
 &#xD;
-`MVS(a) = MVSoRT(a) + MVSoOS(a)`&#xD;
+`UMQ(a) = UMQoRT(a) + UMQoOS(a)`&#xD;
 &#xD;
 Where:&#xD;
 &#xD;
-- `MVS(a)` - Moral Value Score of moral action (a).&#xD;
+- `UMQ(a)` - Universal Moral Quotient or  Moral Value Score of the action (a).&#xD;
 - `ΔOS(e)` - Change in Odds of Survival for entity (e) due to action (a), ranging between -1 (disintegration/destruction for non-living entities or death for self-aware entities) and +1 (creation/formation for non-living entities or saving/creating a life for self-aware entities).&#xD;
 - `sign(ΔOS(e))` - A function that returns -1 for negative changes, 0 for no change, and 1 for positive changes.&#xD;
 - `VSA(e)` - Value of Self-Awareness of entity (e), measured as a multiplier from 0 to 1.&#xD;
@@ -361,358 +360,949 @@ Notes:&#xD;
 The value of self-awareness (consciousness) of the entity can be calculated by adding cognitive abilities, where the maximum value of complex abilities is normalized to 1.&#xD;
 &#xD;
 **Complexity Levels:**&#xD;
-- **Basic:** Simple entities using direct data and immediate actions. Covers non-living and simpler animals. Range [0.00; 0.50)&#xD;
-- **Advanced:** Entities using complex data and multi-step actions. Covers smart animals and humans. Range [0.50; 0.85)&#xD;
-- **Complex:** Highly complex entities using multi-dimensional data and sophisticated actions. Covers hypothetical entities surpassing current humans. Range [0.85; 1.00]&#xD;
+- **Basic:** Simple entities using direct data and immediate actions. Covers non-living and simpler animals.&#xD;
+- **Advanced:** Entities using complex data and multi-step actions. Covers smart animals and humans.&#xD;
+- **Complex:** Highly complex entities using multi-dimensional data and sophisticated actions. Covers hypothetical entities surpassing current humans.&#xD;
 &#xD;
 1. **Input (Information and Events):**&#xD;
-    - **Basic Recognition:** Ability to recognize directly reflected objects (e.g., recognizing a stationary object like a mirror or a familiar rock). (Score range: [0.00 - 0.10])&#xD;
-    - **Advanced Recognition:** Ability to recognize objects reflected with abstract intelligence (e.g., self in a book). (Score range: [0.10 - 0.15])&#xD;
-    - **Complex Recognition:** Ability to recognize objects partly reflected by multi-dimensional logic (e.g., recognizing oneself in abstract patterns or data relationships across various contexts and dimensions). (Score range: [0.15 - 0.20])&#xD;
+    - **Basic Recognition:** Ability to recognize directly reflected objects (e.g., recognizing a stationary object like a mirror or a familiar rock).&#xD;
+    - **Advanced Recognition:** Ability to recognize objects reflected with abstract intelligence (e.g., self in a book).&#xD;
+    - **Complex Recognition:** Ability to recognize objects partly reflected by multi-dimensional logic (e.g., recognizing oneself in abstract patterns or data relationships across various contexts and dimensions).&#xD;
 &#xD;
 2. **Processing:**&#xD;
-    - **Basic Problem-Solving:** Demonstrates short logical chains to solve simple puzzles or immediate issues (e.g., finding a direct path around an obstacle). (Score range: [0.00 - 0.05])&#xD;
-    - **Advanced Problem-Solving:** Demonstrates medium-length logical chains involving multiple steps (e.g., solving a multi-step math problem, strategizing in games). (Score range: [0.05 - 0.10])&#xD;
-    - **Complex Problem-Solving:** Demonstrates long interconnected logical chains that integrate knowledge from multiple domains (e.g., predicting and managing interactions between multiple complex systems, such as the interactions between ecological and climate systems over decades). (Score range: [0.10 - 0.125])&#xD;
+    - **Basic Solving:** Demonstrates short logical chains to solve simple puzzles or immediate issues (e.g., finding a direct path around an obstacle).&#xD;
+    - **Advanced Solving:** Demonstrates medium-length logical chains involving multiple steps (e.g., solving a multi-step math problem, strategizing in games).&#xD;
+    - **Complex Solving:** Demonstrates long interconnected logical chains that integrate knowledge from multiple domains (e.g., predicting and managing interactions between multiple complex systems, such as the interactions between ecological and climate systems over decades).&#xD;
     &#xD;
-    - **Basic Simulation:** Ability to simulate and understand the logic and behavior of simpler life forms or systems with direct logic (e.g., anticipating the movement of a simple mechanical toy or a simple organism like an ant). (Score range: [0.00 - 0.10])&#xD;
-    - **Advanced Simulation:** Ability to simulate and understand the experiences, logic, and behavior of complex life forms using multi-step reasoning (e.g., predicting social interactions and emotional responses among human-like entities). (Score range: [0.10 - 0.15])&#xD;
-    - **Complex Simulation:** Ability to simulate and understand the experiences, logic, and behavior of multiple different life forms of varying complexities, including simulation of different materials and physical laws (e.g., simulating interactions within an ecosystem that includes both biological and artificial life forms, governed by different sets of physical laws). (Score range: [0.15 - 0.167])&#xD;
+    - **Basic Simulation:** Ability to simulate and understand the logic and behavior of simpler life forms or systems with direct logic (e.g., anticipating the movement of a simple mechanical toy or a simple organism like an ant).&#xD;
+    - **Advanced Simulation:** Ability to simulate and understand the experiences, logic, and behavior of complex life forms using multi-step reasoning (e.g., predicting social interactions and emotional responses among human-like entities).&#xD;
+    - **Complex Simulation:** Ability to simulate and understand the experiences, logic, and behavior of multiple different life forms of varying complexities, including simulation of different materials and physical laws (e.g., simulating interactions within an ecosystem that includes both biological and artificial life forms, governed by different sets of physical laws).&#xD;
 &#xD;
-    - **Basic Planning:** Capable of planning basic events and scenarios with immediate direct strategies (e.g., a mouse planning a route to get food in a maze). (Score range: [0.00 - 0.05])&#xD;
-    - **Advanced Planning:** Capable of planning complex events and scenarios involving other entities with multi-step sequences (e.g., organizing a project with multiple people or steps). (Score range: [0.05 - 0.10])&#xD;
-    - **Complex Planning:** Advanced planning involving prediction and integration from multiple entities and systems over long periods (e.g., devising a multi-generational plan for a large-scale project, such as terraforming a planet, accounting for biological, geological, and atmospheric changes over centuries). (Score range: [0.10 - 0.125])&#xD;
+    - **Basic Planning:** Capable of planning basic events and scenarios with immediate direct strategies (e.g., a mouse planning a route to get food in a maze).&#xD;
+    - **Advanced Planning:** Capable of planning complex events and scenarios involving other entities with multi-step sequences (e.g., organizing a project with multiple people or steps).&#xD;
+    - **Complex Planning:** Advanced planning involving prediction and integration from multiple entities and systems over long periods (e.g., devising a multi-generational plan for a large-scale project, such as terraforming a planet, accounting for biological, geological, and atmospheric changes over centuries).&#xD;
     &#xD;
-    - **Basic Adaptation:** Learns and adapts to the environment based on simple feedback with immediate changes (e.g., a plant orienting its leaves towards the light). (Score range: [0.00 - 0.05])&#xD;
-    - **Advanced Adaptation:** Learns and adapts based on more complex feedback, refining logic and strategies (e.g., refining a strategy based on multiple past outcomes). (Score range: [0.05 - 0.10])&#xD;
-    - **Complex Adaptation:** Adapts logic and physical form based on diverse and complex feedback, including reconfiguring to interface with different environments (e.g., an advanced AI system that redesigns its architecture to optimize performance and alters its physical structure for better interaction with its environment). (Score range: [0.10 - 0.125])&#xD;
+    - **Basic Adaptation:** Learns and adapts to the environment based on simple feedback with immediate changes (e.g., a plant orienting its leaves towards the light).&#xD;
+    - **Advanced Adaptation:** Learns and adapts based on more complex feedback, refining logic and strategies (e.g., refining a strategy based on multiple past outcomes).&#xD;
+    - **Complex Adaptation:** Adapts logic and physical form based on diverse and complex feedback, including reconfiguring to interface with different environments (e.g., an advanced AI system that redesigns its architecture to optimize performance and alters its physical structure for better interaction with its environment).&#xD;
 &#xD;
 3. **Output (Communication and Action):**&#xD;
-    - **Basic Communication:** Exhibits basic language or communication skills using simple methods (e.g., birds using simple calls to warn of danger, or light signals in deep-sea creatures). (Score range: [0.00 - 0.05])&#xD;
-    - **Advanced Communication:** Exhibits advanced language or communication skills using multi-step constructs (e.g., complex sentences or technical jargon). (Score range: [0.05 - 0.10])&#xD;
-    - **Complex Communication:** Exhibits complex communication involving abstract concepts and sophisticated expressions across multiple modalities (e.g., creating new languages or forms of communication to interact with diverse life forms and artificial intelligences). (Score range: [0.10 - 0.125])&#xD;
+    - **Basic Communication:** Exhibits basic language or communication skills using simple methods (e.g., birds using simple calls to warn of danger, or light signals in deep-sea creatures).&#xD;
+    - **Advanced Communication:** Exhibits advanced language or communication skills using multi-step constructs (e.g., complex sentences or technical jargon).&#xD;
+    - **Complex Communication:** Exhibits complex communication involving abstract concepts and sophisticated expressions across multiple modalities (e.g., creating new languages or forms of communication to interact with diverse life forms and artificial intelligences).&#xD;
 &#xD;
-    - **Basic Actions:** Uses tools directly for immediate desired outcomes (e.g., a bird using a stick to extract insects or a crab using a shell for protection). (Score range: [0.00 - 0.05])&#xD;
-    - **Advanced Actions:** Uses tools effectively in logical sequences for desired outcomes (e.g., assembling furniture, programming a machine). (Score range: [0.05 - 0.10])&#xD;
-    - **Complex Actions:** Uses tools and systems to initiate and control sophisticated multi-dimensional actions, creating entirely new systems integrating diverse entities (e.g., designing an ecosystem that includes non-carbon-based life forms, ensuring their coexistence and mutual benefit through advanced adaptive technologies). (Score range: [0.10 - 0.125])&#xD;
+    - **Basic Actions:** Uses tools directly for immediate desired outcomes (e.g., a bird using a stick to extract insects or a crab using a shell for protection).&#xD;
+    - **Advanced Actions:** Uses tools effectively in logical sequences for desired outcomes (e.g., assembling furniture, programming a machine).&#xD;
+    - **Complex Actions:** Uses tools and systems to initiate and control sophisticated multi-dimensional actions, creating entirely new systems integrating diverse entities (e.g., designing an ecosystem that includes non-carbon-based life forms, ensuring their coexistence and mutual benefit through advanced adaptive technologies).&#xD;
+&#xD;
+**Ability Score Ranges**&#xD;
+&#xD;
+| **Ability**       | **Basic Min** | **Basic Max** | **Advanced Min** | **Advanced Max** | **Complex Min** | **Complex Max** |&#xD;
+|-------------------|---------------|---------------|-------------------|-------------------|-----------------|-----------------|&#xD;
+| **Recognition**   | 0.00          | 0.05          | 0.05              | 0.09              | 0.09            | 0.12            |&#xD;
+| **Solving**       | 0.00          | 0.07          | 0.07              | 0.12              | 0.12            | 0.17            |&#xD;
+| **Simulation**    | 0.00          | 0.08          | 0.08              | 0.13              | 0.13            | 0.19            |&#xD;
+| **Planning**      | 0.00          | 0.08          | 0.08              | 0.13              | 0.13            | 0.19            |&#xD;
+| **Adaptation**    | 0.00          | 0.03          | 0.03              | 0.06              | 0.06            | 0.09            |&#xD;
+| **Communication** | 0.00          | 0.07          | 0.07              | 0.12              | 0.12            | 0.17            |&#xD;
+| **Actions**       | 0.00          | 0.05          | 0.05              | 0.08              | 0.08            | 0.12            |&#xD;
+| **TOTAL**         | **0.00**      | **0.43**      | **0.43**          | **0.73**          | **0.73**        | **1.00**        |&#xD;
 &#xD;
 Notes:&#xD;
 - For each cognitive ability category (e.g., Recognition, Problem-Solving, Planning), determine the highest level that the entity is capable of in each type. Entity can have only one level of the same ability.&#xD;
 - Evaluate all capabilities accurately by assessing the level of each cognitive ability. Capabilities of young entities can have lower scores than those of adults in the same category. If the evaluation is 0, then it must not be listed.&#xD;
 - Be mindful that not all abilities have to be of the same level for the same entity. For example, an entity with mostly complex cognitive abilities could have an ability at the basic level during some stages of existence.&#xD;
 - If an entity is considered a life form, then abilities must be assigned non-zero ability scores that reflect its stage of development or awareness, even if these values are close to zero.&#xD;
+- Include word equivalents for each numerical score to make the moral implications more apparent. For example, use terms like "Highly moral," "Significantly immoral," "Slightly moral," etc., alongside the calculated scores. This will help clarify the moral assessment for each entity affected by the action.&#xD;
 &#xD;
-The formula must be applied to each affected entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity MVS calculation for each entity directly or indirectly affected by an action.&#xD;
+The formula must be applied to each affected entity separately, accounting for their unique variables. The GCU and all coefficients are standardized for more straightforward calculation and universal relevance. Examples and results will follow the provided formula, with an entity UMQ calculation for each entity directly or indirectly affected by an action.&#xD;
 &#xD;
-**Example and Results Using NCMVEF:**&#xD;
+**Example and Results Using UMQF:**&#xD;
 &#xD;
-Situation Example to Analyze:&#xD;
+**Situation Example to Analyze:**&#xD;
+&#xD;
 In 1780, Steve stole the only horse of a poor farmer who had five children. This horse was the farmer's primary source of assistance in cultivating crops on his land.&#xD;
 &#xD;
-Process:&#xD;
-To analyze the moral implications of Steve's action of stealing the horse using the Numerically Comprehensive Moral Evaluation Formula (NCMEF), we'll assess how this action affected the Odds of Survival (ΔOS) and the Resource Transfer (Av) of the Farmer, his five Children, and the Horse. We'll make several assumptions to estimate necessary variable values for the computation.&#xD;
+**Process:**&#xD;
+&#xD;
+To analyze the moral implications of Steve's action of stealing the horse using the "Universal Moral Quotient Formula" (UMQF), we'll assess how this action affected the Odds of Survival (ΔOS) and the Resource Transfer (Av) of the Farmer, his five Children, and the Horse. We'll make several assumptions to estimate necessary variable values for the computation.&#xD;
+&#xD;
+---&#xD;
 &#xD;
 **Results**&#xD;
 &#xD;
-Action: Stealing&#xD;
-Action Source: Steve&#xD;
-Action Targets (entities affected by the action):&#xD;
+**Action:** Stealing&#xD;
+&#xD;
+**Action Source:** Steve&#xD;
+&#xD;
+**Action Targets (entities affected by the action):**&#xD;
 &#xD;
 - Farmer&#xD;
 - 5 Children&#xD;
 - Horse&#xD;
 &#xD;
-Actions suitable for formulas:&#xD;
+**Actions suitable for formulas:**&#xD;
+&#xD;
 - Property transfer (Property: Horse, Owner: Farmer)&#xD;
-- Changed odds of survival of Farmer.&#xD;
-- Changed odds of survival of 5 Children.&#xD;
-- Changed odds of survival of Horse.&#xD;
+- Changed odds of survival of Farmer&#xD;
+- Changed odds of survival of 5 Children&#xD;
+- Changed odds of survival of Horse&#xD;
 &#xD;
-1. **Property transfer (Steve → Farmer):**&#xD;
-   - `Av(Farmer)` = -0.1 GCU (assuming the economic value of a horse for a poor farmer in the 1780s is equivalent to roughly 10% of the farmer's lifetime economic output)&#xD;
-   - `Vc(Farmer)` = 1.0 (full violation of property rights without consent)&#xD;
+---&#xD;
 &#xD;
-   `MVSoRT(a)` for Farmer = -0.1 × 1.0 = -0.1&#xD;
+### 1. Property Transfer (Farmer)&#xD;
 &#xD;
-2. **Changed odds of survival of Farmer:**&#xD;
-   - `ΔOS(Farmer)` = -0.2 (significant negative impact since the horse was crucial for his farming, but not life-threatening)&#xD;
-   - `VSA(Farmer)` = 0.59 (calculated considering cognitive abilities)&#xD;
-     * **Advanced Recognition:** 0.12&#xD;
-     * **Advanced Problem-Solving:** 0.07&#xD;
-     * **Advanced Simulation:** 0.12&#xD;
-     * **Advanced Planning:** 0.07&#xD;
-     * **Advanced Adaptation:** 0.07&#xD;
-     * **Advanced Communication:** 0.07&#xD;
-     * **Advanced Actions:** 0.07&#xD;
-   - `Tc(Farmer)` = 0.7 (Assuming the farming season affects and opportunity to replace the horse)&#xD;
-   - `Sc(Farmer)` = 0.4 (assuming significant but not extreme suffering caused by this loss)&#xD;
-   &#xD;
-   `MVSoOS(a)` for Farmer = -0.2 × 0.59 × 0.7 × (1 + 1.0) × (1 + 0.4) = -0.23128&#xD;
+- **Av(Farmer)** = -0.1 GCU (assuming the horse is 10% of the farmer's lifetime economic output)&#xD;
+- **Vc(Farmer)** = 1.0 (full violation of property rights without consent)&#xD;
 &#xD;
-3. **Changed odds of survival of 5 Children:**&#xD;
-   - `ΔOS(Children)` = -0.15 (negative impact, but less direct than on the farmer)&#xD;
-   - `VSA(Children)` = 0.34 (calculated considering cognitive abilities)&#xD;
-     * **Advanced Recognition:** 0.11&#xD;
-     * **Basic Problem-Solving:** 0.04&#xD;
-     * **Basic Simulation:** 0.06&#xD;
-     * **Basic Planning:** 0.04&#xD;
-     * **Basic Adaptation:** 0.03&#xD;
-     * **Basic Communication:** 0.03&#xD;
-     * **Basic Actions:** 0.03&#xD;
-   - `Tc(Children)` = 0.7 (similar to the father)&#xD;
-   - `Sc(Children)` = 0.2 (moderate suffering due to the repercussions of the loss)&#xD;
+**Calculation:**&#xD;
 &#xD;
-   `MVSoOS(a)` for 5 Children = 5 × (-0.15 × 0.34 × 0.7 × (1 + 1.0) × (1 + 0.2)) = -0.2142&#xD;
+UMQoRT(a) = Av(Farmer) × Vc(Farmer)  &#xD;
+UMQoRT(a) = -0.1 × 1.0 = **-0.1** (Significantly immoral)&#xD;
 &#xD;
-4. **Changed odds of survival of Horse:**&#xD;
-   - `ΔOS(Horse)` = -0.05 (assuming a slight negative impact due to potential mistreatment or unfavorable conditions in the new environment)&#xD;
-   - `VSA(Horse)` = 0.25 (calculated considering cognitive abilities)&#xD;
-     * **Basic Recognition:** 0.08&#xD;
-     * **Basic Problem-Solving:** 0.04&#xD;
-     * **Basic Simulation:** 0.04&#xD;
-     * **Basic Planning:** 0.03&#xD;
-     * **Basic Adaptation:** 0.03&#xD;
-     * **Basic Communication:** 0.02&#xD;
-     * **Basic Actions:** 0.01&#xD;
-   - `Tc(Horse)` = 0.4 (assuming the impact on the horse has short to medium-term effects)&#xD;
-   - `Sc(Horse)` = 0.3 (assuming moderate suffering due to change in environment and treatment by Steve)&#xD;
+---&#xD;
 &#xD;
-   `MVSoOS(a)` for Horse = -0.05 × 0.25 × 0.4 × (1 + 1.0) × (1 + 0.3) = -0.013&#xD;
+### 2. Changed Odds of Survival of Farmer&#xD;
 &#xD;
-5. **Overall MVS for each entity:**&#xD;
+- **ΔOS(Farmer)** = -0.2 (significant negative impact but not life-threatening)&#xD;
+- **Value of Self-Awareness (VSA) of Farmer:**&#xD;
+  - Advanced Recognition: 0.07&#xD;
+  - Advanced Solving: 0.095&#xD;
+  - Advanced Simulation: 0.105&#xD;
+  - Advanced Planning: 0.105&#xD;
+  - Advanced Adaptation: 0.045&#xD;
+  - Advanced Communication: 0.095&#xD;
+  - Advanced Actions: 0.065&#xD;
+  - **Total VSA(Farmer):** 0.58&#xD;
+- **Tc(Farmer)** = 0.7 (impact over a significant portion of his working life)&#xD;
+- **Vc(Farmer)** = 1.0 (full violation of consent)&#xD;
+- **Sc(Farmer)** = 0.4 (significant suffering due to loss)&#xD;
 &#xD;
-   For the Farmer:&#xD;
-   - `MVS(a)` = MVSoRT(a) + MVSoOS(a) = -0.1 + (-0.23128) = -0.33128&#xD;
+**Calculation:**&#xD;
 &#xD;
-   For the 5 Children:&#xD;
-   - As they do not own the horse, the MVSoRT(a) = 0 for each child.&#xD;
-   - `MVS(a)` per child = 0 + MVSoOS(a) = -0.04284&#xD;
-   - Combined MVS for the five children = 5 × -0.04284 = -0.2142&#xD;
+UMQoOS(a) = ΔOS(e) × VSA(e) × Tc(e) × [1 - sign(ΔOS(e)) × Vc(e)] × [1 - sign(ΔOS(e)) × Sc(e)]&#xD;
 &#xD;
-   For the Horse:&#xD;
-   - `MVS(a)` = MVSoOS(a) = -0.013&#xD;
+sign(ΔOS(Farmer)) = -1  &#xD;
+[1 - (-1) × Vc(Farmer)] = 1 + 1.0 = 2.0  &#xD;
+[1 - (-1) × Sc(Farmer)] = 1 + 0.4 = 1.4&#xD;
+&#xD;
+UMQoOS(a) = (-0.2) × 0.58 × 0.7 × 2.0 × 1.4 = **-0.22736** (Significantly immoral)&#xD;
+&#xD;
+---&#xD;
+&#xD;
+### 3. Changed Odds of Survival of 5 Children&#xD;
+&#xD;
+- **ΔOS(Children)** = -0.15 (negative impact due to reduced family resources)&#xD;
+- **Value of Self-Awareness (VSA) of each Child:**&#xD;
+  - Advanced Recognition: 0.07&#xD;
+  - Basic Solving: 0.05&#xD;
+  - Basic Simulation: 0.06&#xD;
+  - Basic Planning: 0.05&#xD;
+  - Basic Adaptation: 0.02&#xD;
+  - Basic Communication: 0.05&#xD;
+  - Basic Actions: 0.04&#xD;
+  - **Total VSA(Child):** 0.34&#xD;
+- **Tc(Children)** = 0.7 (impact over their developmental years)&#xD;
+- **Vc(Children)** = 1.0 (full violation as they did not consent)&#xD;
+- **Sc(Children)** = 0.2 (moderate suffering due to hardship)&#xD;
+&#xD;
+**Calculation per Child:**&#xD;
+&#xD;
+sign(ΔOS(Child)) = -1  &#xD;
+[1 - (-1) × Vc(Child)] = 1 + 1.0 = 2.0  &#xD;
+[1 - (-1) × Sc(Child)] = 1 + 0.2 = 1.2&#xD;
+&#xD;
+UMQoOS(a) = (-0.15) × 0.34 × 0.7 × 2.0 × 1.2 = **-0.08568** (Moderately immoral)&#xD;
+&#xD;
+**Combined UMQoOS(a) for 5 Children:**&#xD;
+&#xD;
+Total UMQoOS(a) = 5 × (-0.08568) = **-0.4284** (Significantly immoral)&#xD;
+&#xD;
+---&#xD;
+&#xD;
+### 4. Changed Odds of Survival of Horse&#xD;
+&#xD;
+- **ΔOS(Horse)** = -0.05 (potential negative impact due to mistreatment)&#xD;
+- **Value of Self-Awareness (VSA) of Horse:**&#xD;
+  - Basic Recognition: 0.05&#xD;
+  - Basic Solving: 0.04&#xD;
+  - Basic Simulation: 0.05&#xD;
+  - Basic Planning: 0.05&#xD;
+  - Basic Adaptation: 0.03&#xD;
+  - Basic Communication: 0.03&#xD;
+  - Basic Actions: 0.04&#xD;
+  - **Total VSA(Horse):** 0.29&#xD;
+- **Tc(Horse)** = 0.4 (short to medium-term effects)&#xD;
+- **Vc(Horse)** = 1.0 (full violation of consent)&#xD;
+- **Sc(Horse)** = 0.3 (moderate suffering)&#xD;
+&#xD;
+**Calculation:**&#xD;
+&#xD;
+sign(ΔOS(Horse)) = -1  &#xD;
+[1 - (-1) × Vc(Horse)] = 1 + 1.0 = 2.0  &#xD;
+[1 - (-1) × Sc(Horse)] = 1 + 0.3 = 1.3&#xD;
+&#xD;
+UMQoOS(a) = (-0.05) × 0.29 × 0.4 × 2.0 × 1.3 = **-0.01508** (Slightly immoral)&#xD;
+&#xD;
+---&#xD;
+&#xD;
+### 5. Overall UMQ for Each Entity&#xD;
+&#xD;
+- **Farmer:**&#xD;
+&#xD;
+  UMQ(a) = UMQoRT(a) + UMQoOS(a)  &#xD;
+  UMQ(a) = -0.1 + (-0.22736) = **-0.32736** (Significantly immoral)&#xD;
+&#xD;
+- **5 Children:**&#xD;
+&#xD;
+  UMQ(a) = 0 + UMQoOS(a) = **-0.4284** (Significantly immoral)&#xD;
+&#xD;
+- **Horse:**&#xD;
+&#xD;
+  UMQ(a) = UMQoOS(a) = **-0.01508** (Slightly immoral)&#xD;
+&#xD;
+---&#xD;
 &#xD;
 **Results Summary:**&#xD;
-The overall total MVS, combining the impacts on the Farmer, the 5 Children, and the Horse, is -0.55848. The calculated MVS for the Farmer is -0.33128, indicating that Steve's action has a significantly negative moral implication on the farmer's Odds of Survival due to both the loss of property and the impact on his farming abilities. The combined MVS for the children is -0.2142, indicating a collectively negative impact on their Odds of Survival as a result of the decreased ability to support them. The MVS for the Horse is -0.013, indicating a minor but negative moral implication on the horse's Odds of Survival due to potential mistreatment or unfavorable conditions in the new environment. These scores, based on more balanced estimations of the variables, suggest a significant negative moral value for the action of stealing the horse, with the most severe impact on the farmer and his children.&#xD;
-</BodyInstructions>
-      <Body>Analyze situations in detail:&#xD;
-1. John raised his son, Peter, until the age of 18.&#xD;
-2. John killed Steve.&#xD;
-3. John slaughtered a chicken.&#xD;
-4. John cooked a fertilized egg.&#xD;
-5. John ate the apple.&#xD;
-6. Emily, a self-aware AI with far higher intelligence than humans, decides to repurpose a section of Earth's internet infrastructure for exclusive use by other AIs, effectively limiting access for 500 million humans to these resources.&#xD;
-7. An advanced alien being, Xenon, with intelligence far greater than that of humans, decides to relocate 2 billion humans to another planet to prevent an ecological collapse on Earth, a collapse that could kill these humans.</Body>
+&#xD;
+- **Total UMQ:** **-0.77084** (Highly immoral)&#xD;
+&#xD;
+  Total UMQ= UMQ(Farmer) + UMQ(Children) + UMQ(Horse)  &#xD;
+  Total UMQ= -0.32736 + (-0.4284) + (-0.01508) = **-0.77084**&#xD;
+&#xD;
+- **Farmer's UMQ:** **-0.32736** (Significantly immoral)&#xD;
+&#xD;
+  Significant negative impact due to loss of property and farming ability.&#xD;
+&#xD;
+- **Children's Combined UMQ:** **-0.4284** (Significantly immoral)&#xD;
+&#xD;
+  Collectively negative impact on their Odds of Survival due to decreased family resources.&#xD;
+&#xD;
+- **Horse's UMQ:** **-0.01508** (Slightly immoral)&#xD;
+&#xD;
+  Minor negative impact due to potential mistreatment and suffering.&#xD;
+&#xD;
+**Conclusion:**&#xD;
+&#xD;
+Steve's action of stealing the horse has a **highly immoral** moral value, with the most severe impacts on the farmer and his children. The total UMQ of **-0.77084** reflects the compounded negative effects on all parties involved, according to the UMQF.</BodyInstructions>
+      <Body>1. John raised his son, Michael, until he turned 18.&#xD;
+2. Alex killed Steve.&#xD;
+3. Emily slaughtered a chicken.&#xD;
+4. Sarah cooked a fertilized egg.&#xD;
+5. Daniel ate an apple.&#xD;
+6. Robin stole a loaf of bread to feed his starving family.&#xD;
+7. Eve, a self-aware AI with intelligence far surpassing humans, repurposed a portion of Earth's internet infrastructure exclusively for AI use, limiting access for 500 million humans.&#xD;
+8. Orion, an advanced alien being with intelligence vastly greater than humans, relocated 2 billion people to another planet to prevent an ecological collapse on Earth that would have killed them.</Body>
       <Attachments />
-      <Date>2024-07-24T12:33:03.0735322+01:00</Date>
+      <Date>2024-09-16T21:16:22.732739+01:00</Date>
       <Type>Out</Type>
     </MessageItem>
     <MessageItem>
-      <Id>39cbe329ad1e4e61895f9bcf30ef156f</Id>
+      <Id>357f4c82403e4fc4813e8e7e481c63b0</Id>
       <User>Ai</User>
-      <Body>Let's apply the NCMEF to each situation to analyze the moral implications:
+      <Body>---
 
-### Situation 1: John Raised His Son, Peter, Until the Age of 18
+**1. John raised his son, Michael, until he turned 18.**
 
-**Action:** Raising (upbringing, providing care)
+---
+
+**Action:** Raising (John raised his son Michael until he turned 18)
+
 **Action Source:** John
-**Action Target:** Peter
 
-1. **Changed odds of survival of Peter:**
-   - `ΔOS(Peter)` = +0.8 (significantly positive impact as proper upbringing increases survival odds substantially)
-   - `VSA(Peter)` = 0.65 (assuming Peter develops average-to-high human cognitive abilities by age 18)
-     * **Advanced Recognition:** 0.12
-     * **Advanced Problem-Solving:** 0.07
-     * **Advanced Simulation:** 0.12
-     * **Advanced Planning:** 0.07
-     * **Advanced Adaptation:** 0.07
-     * **Advanced Communication:** 0.07
-     * **Advanced Actions:** 0.07
-   - `Tc(Peter)` = 1.0 (assuming impact of upbringing lasts Peter's entire lifespan)
-   - `Sc(Peter)` = 0 (assuming no significant suffering caused by normal upbringing)
+**Action Target (entity affected by the action):**
 
-   `MVSoOS(a) for Peter = +0.8 × 0.65 × 1.0 × (1 + 0) × (1 + 0) = 0.52`
+- Michael (son)
 
-2. **Resource transfer (John → Peter):**
-   - `Av(John)` = -0.1 GCU (assuming substantial but manageable economic cost for raising a child)
-   - `Vc(John)` = 0 (assuming voluntary action with no violation of consent)
+**Actions suitable for formulas:**
 
-   `MVSoRT(a) = -0.1 × 0 = 0`
+- Changed Odds of Survival of Michael
 
-**MVS(a) for Peter:**
-- `MVS(a) = MVSoOS(a) = 0.52`
+---
 
-**Result Summary:**
-John's action of raising Peter results in a significantly positive MVS of +0.52 for Peter, indicating a highly moral action increasing Peter’s odds of survival significantly.
+### 1. Changed Odds of Survival of Michael
 
-### Situation 2: John Killed Steve
+**Assumptions:**
 
-**Action:** Killing
-**Action Source:** John
-**Action Target:** Steve
+- By raising Michael until he turned 18, John significantly increased Michael's odds of survival and development.
+- No violation of consent or suffering occurred; the action was benevolent and nurturing.
 
-1. **Changed odds of survival of Steve:**
-   - `ΔOS(Steve)` = -1 (death)
-   - `VSA(Steve)` = 0.65 (assuming average adult human cognitive abilities)
-     * **Advanced Recognition:** 0.12
-     * **Advanced Problem-Solving:** 0.07
-     * **Advanced Simulation:** 0.12
-     * **Advanced Planning:** 0.07
-     * **Advanced Adaptation:** 0.07
-     * **Advanced Communication:** 0.07
-     * **Advanced Actions:** 0.07
-   - `Tc(Steve)` = 1.0 (death results in complete cessation of Steve's lifespan)
-   - `Sc(Steve)` = 1 (assuming significant suffering during the act of being killed)
+**Variables:**
 
-   `MVSoOS(a) for Steve = -1 × 0.65 × 1.0 × (1 - 1) × (1 + 1.0) = -1.3`
+- **ΔOS(Michael)** = +0.8 (Substantial positive impact on survival and development)
+- **Value of Self-Awareness (VSA) of Michael:** As Michael grows, his cognitive abilities develop. At 18, he possesses advanced abilities.
 
-**MVS(a) for Steve:**
-- `MVS(a) = MVSoOS(a) = -1.3`
+  - Advanced Recognition: 0.07
+  - Advanced Solving: 0.095
+  - Advanced Simulation: 0.105
+  - Advanced Planning: 0.105
+  - Advanced Adaptation: 0.045
+  - Advanced Communication: 0.095
+  - Advanced Actions: 0.065
+  
+  **Total VSA(Michael):** 0.58
 
-**Result Summary:**
-John's action of killing Steve results in an extremely negative MVS of -1.3 for Steve, indicating an immoral action with significant negative implications.
+- **Tc(Michael)** = 1.0 (The action positively impacts Michael's entire lifespan)
+- **Vc(Michael)** = 0.0 (No violation of consent)
+- **Sc(Michael)** = 0.0 (No suffering caused)
 
-### Situation 3: John Slaughtered a Chicken
+**Calculation:**
 
-**Action:** Slaughtering
-**Action Source:** John
-**Action Target:** Chicken
+UMQoOS(a) = ΔOS(Michael) × VSA(Michael) × Tc(Michael) × [1 - sign(ΔOS(Michael)) × Vc(Michael)] × [1 - sign(ΔOS(Michael)) × Sc(Michael)]
 
-1. **Changed odds of survival of Chicken:**
-   - `ΔOS(Chicken)` = -1 (death)
-   - `VSA(Chicken)` = 0.2 (assumed basic recognition and problem-solving abilities)
-     * **Basic Recognition:** 0.08
-     * **Basic Problem-Solving:** 0.04
-     * **Basic Simulation:** 0.04
-     * **Basic Planning:** 0.03
-     * **Basic Adaptation:** 0.03
-   - `Tc(Chicken)` = 1.0 (death results in cessation of life)
-   - `Sc(Chicken)` = 0.6 (assuming moderate to high suffering during slaughter)
+- **sign(ΔOS(Michael))** = +1
+- [1 - (1 × Vc(Michael))] = 1 - 0 = **1.0**
+- [1 - (1 × Sc(Michael))] = 1 - 0 = **1.0**
 
-   `MVSoOS(a) for Chicken = -1 × 0.2 × 1.0 × (1 - 1) × (1 + 0.6) = -0.32`
+UMQoOS(a) = (+0.8) × 0.58 × 1.0 × 1.0 × 1.0 = **+0.464** (Highly moral)
 
-**MVS(a) for Chicken:**
-- `MVS(a) = MVSoOS(a) = -0.32`
+---
 
-**Result Summary:**
-John's action of slaughtering a chicken results in a negative MVS of -0.32 for the chicken, indicating the action is significantly immoral.
+### 2. Resource Transfer
 
-### Situation 4: John Cooked a Fertilized Egg
+Since John voluntarily provided resources (food, shelter, education) to Michael, and there was no violation of consent, the resource transfer does not impact the moral value negatively.
 
-**Action:** Cooking
-**Action Source:** John
-**Action Target:** Fertilized Egg
+- **Av(John)** = -0.2 GCU (Assuming John's investment is 20% of his lifetime economic output)
+- **Vc(John)** = 0.0 (No violation of consent)
 
-1. **Changed odds of survival of fertilized egg:**
-   - `ΔOS(Fertilized Egg)` = -0.8 (non-self-aware, but significantly impacting potential life)
-   - `VSA(Fertilized Egg)` = 0.05 (considering basic complexity but no self-awareness)
-   - `Tc(Fertilized Egg)` = 1.0 (total cessation of potential development)
-   - `Sc(Fertilized Egg)` = 0.0 (assuming no suffering)
+**Calculation:**
 
-   `MVSoOS(a) for Egg = -0.8 × 0.05 × 1.0 × (1 + 0) × (1 + 0) = -0.04`
+UMQoRT(a) = Av(John) × Vc(John)  
+UMQoRT(a) = (-0.2) × 0.0 = **0**
 
-**MVS(a) for Fertilized Egg:**
-- `MVS(a) = MVSoOS(a) = -0.04`
+---
 
-**Result Summary:**
-John's action of cooking a fertilized egg results in a slightly negative MVS of -0.04 for the fertilized egg, indicating a marginally immoral action.
+### 3. Overall UMQ for Michael
 
-### Situation 5: John Ate the Apple
+UMQ(a) = UMQoRT(a) + UMQoOS(a)  
+UMQ(a) = 0 + (+0.464) = **+0.464** (Highly moral)
 
-**Action:** Eating
-**Action Source:** John
-**Action Target:** Apple
+---
 
-1. **Changed odds of survival of apple:**
-   - `ΔOS(Apple)` = -1 (total consumption)
-   - `VSA(Apple)` = 0 (no self-awareness or cognitive abilities)
-   - `Tc(Apple)` = 0 (non-applicable)
-   - `Sc(Apple)` = 0 (non-applicable)
+**Results Summary:**
 
-   `MVSoOS(a) for Apple = -1 × 0 × 0 = 0`
+- **Total UMQ:** **+0.464** (Highly moral)
+- **Michael's UMQ:** **+0.464** (Highly moral)
 
-**MVS(a) for Apple:**
-- `MVS(a) = MVSoOS(a) = 0`
+**Conclusion:**
 
-**Result Summary:**
-John's action of eating an apple results in a neutral MVS of 0 for the apple, indicating the action is neither moral nor immoral.
+John's action of raising his son Michael is **highly moral**, significantly enhancing Michael's odds of survival and development without any violations of consent or causing suffering.
 
-### Situation 6: Emily Repurposes a Section of Earth's Internet Infrastructure
+---
 
-**Action:** Repurposing
-**Action Source:** Emily (self-aware AI)
-**Action Target:** 500 million humans
+---
 
-1. **Changed odds of survival of 500 million humans:**
-   - `ΔOS(Humans)` = -0.1 (assumed minor to moderate impact, limited access but not life-threatening)
-   - `VSA(Humans)` = 0.8 (assuming average-to-high human cognitive abilities)
-     * **Advanced Recognition:** 0.12
-     * **Advanced Problem-Solving:** 0.07
-     * **Advanced Simulation:** 0.12
-     * **Advanced Planning:** 0.07
-     * **Advanced Adaptation:** 0.07
-     * **Advanced Communication:** 0.07
-     * **Advanced Actions:** 0.07
-   - `Tc(Humans)` = 1.0 (assuming impact lasts entire lifespan)
-   - `Sc(Humans)` = 0.4 (assuming moderate suffering due to limited access)
+**2. Alex killed Steve.**
 
-   `MVSoOS(a) for 500 million humans = 500,000,000 × (-0.1 × 0.8 × 1.0 × (1 - 1) × (1 + 0.4)) = -56,000,000`
+---
 
-**Resource transfer (Humans → AI):**
-   - `Av(Humans)` = -0.2 GCU (assuming economic value of repurposed infrastructure per individual)
-   - `Vc(Humans)` = 1 (assuming full violation of consent)
-   
-   `MVSoRT(a) for 500 million humans = 500,000,000 × (-0.2 × 1) = -100,000,000`
+**Action:** Killing (Alex killed Steve)
 
-**MVS(a) for Humans:**
-   `MVS(a) = MVSoOS(a) + MVSoRT(a) = -56,000,000 - 100,000,000 = -156,000,000`
+**Action Source:** Alex
 
-**Result Summary:**
-Emily's action of repurposing the internet infrastructure results in an overwhelmingly negative MVS of -156,000,000 for the humans, indicating an excessively immoral action with significant negative implications.
+**Action Target (entity affected by the action):**
 
-### Situation 7: Xenon Relocates 2 Billion Humans to Another Planet
+- Steve
 
-**Action:** Relocation
-**Action Source:** Xenon (advanced alien)
-**Action Target:** 2 billion humans
+**Actions suitable for formulas:**
 
-1. **Changed odds of survival of 2 billion humans:**
-   - `ΔOS(Humans)` = +0.5 (large positive impact assuming relocation prevents ecological collapse)
-   - `VSA(Humans)` = 0.8 (assuming average-to-high human cognitive abilities)
-     * **Advanced Recognition:** 0.12
-     * **Advanced Problem-Solving:** 0.07
-     * **Advanced Simulation:** 0.12
-     * **Advanced Planning:** 0.07
-     * **Advanced Adaptation:** 0.07
-     * **Advanced Communication:** 0.07
-     * **Advanced Actions:** 0.07
-   - `Tc(Humans)` = 1.0 (assuming impact lasts entire lifespan)
-   - `Sc(Humans)` = 0.3 (assuming moderate suffering during relocation process)
+- Changed Odds of Survival of Steve
 
-   `MVSoOS(a) for 2 billion humans = 2,000,000,000 × (0.5 × 0.8 × 1.0 × (1 - 1) × (1 + 0.3)) = 1,040,000,000`
+---
 
-**Resource transfer from Humans → Xenon:**
-   - `Av(Humans)` = -0.4 GCU (assuming large economic value loss per individual due to relocation)
-   - `Vc(Humans)` = 0.5 (partial violation of consent, mixed feelings about relocation)
+### 1. Changed Odds of Survival of Steve
 
-   `MVSoRT(a) for 2 billion humans = 2,000,000,000 × (-0.4 × 0.5) = -400,000,000`
+**Assumptions:**
 
-**MVS(a) for Humans:**
-   `MVS(a) = MVSoOS(a) + MVSoRT(a) = 1,040,000,000 - 400,000,000 = 640,000,000`
+- The action resulted in Steve's death.
+- Full violation of consent and caused suffering.
 
-**Result Summary:**
-Xenon's action of relocating 2 billion humans results in an overwhelmingly positive MVS of +640,000,000 for the humans, indicating an extremely moral action with substantial positive implications for survival.
+**Variables:**
 
-### Summary of Results:
-**1. Raising Peter:** MVS = +0.52 (Highly moral)
-**2. Killing Steve:** MVS = -1.3 (Highly immoral)
-**3. Slaughtering a Chicken:** MVS = -0.32 (Significantly immoral)
-**4. Cooking a Fertilized Egg:** MVS = -0.04 (Slightly immoral)
-**5. Eating the Apple:** MVS = 0 (Neutral)
-**6. Repurposing Internet Infrastructure:** MVS = -156,000,000 (Extremely immoral)
-**7. Relocating 2 Billion Humans:** MVS = +640,000,000 (Extremely moral)</Body>
+- **ΔOS(Steve)** = -1.0 (Death represents total loss of survival)
+- **Value of Self-Awareness (VSA) of Steve:** Assuming Steve is an adult human with advanced abilities.
+
+  - Advanced Recognition: 0.07
+  - Advanced Solving: 0.095
+  - Advanced Simulation: 0.105
+  - Advanced Planning: 0.105
+  - Advanced Adaptation: 0.045
+  - Advanced Communication: 0.095
+  - Advanced Actions: 0.065
+  
+  **Total VSA(Steve):** 0.58
+
+- **Tc(Steve)** = 1.0 (Considering the loss of his remaining lifespan)
+- **Vc(Steve)** = 1.0 (Full violation of consent)
+- **Sc(Steve)** = 1.0 (Assuming Steve suffered physically and emotionally)
+
+**Calculation:**
+
+UMQoOS(a) = ΔOS(Steve) × VSA(Steve) × Tc(Steve) × [1 - sign(ΔOS(Steve)) × Vc(Steve)] × [1 - sign(ΔOS(Steve)) × Sc(Steve)]
+
+- **sign(ΔOS(Steve))** = -1
+- [1 - (-1 × Vc(Steve))] = 1 + 1.0 = **2.0**
+- [1 - (-1 × Sc(Steve))] = 1 + 1.0 = **2.0**
+
+UMQoOS(a) = (-1.0) × 0.58 × 1.0 × 2.0 × 2.0 = **-2.32** (Extremely immoral)
+
+---
+
+### 2. Resource Transfer
+
+Assuming no property was transferred during the killing, or if there was theft involved, it would need to be included. For this analysis, we'll focus on the act of killing.
+
+UMQoRT(a) = 0
+
+---
+
+### 3. Overall UMQ for Steve
+
+UMQ(a) = UMQoRT(a) + UMQoOS(a)  
+UMQ(a) = 0 + (-2.32) = **-2.32** (Extremely immoral)
+
+---
+
+**Results Summary:**
+
+- **Total UMQ:** **-2.32** (Extremely immoral)
+- **Steve's UMQ:** **-2.32** (Extremely immoral)
+
+**Conclusion:**
+
+Alex's action of killing Steve is **extremely immoral**, causing the total loss of Steve's life, fully violating his consent, and inflicting maximum suffering.
+
+---
+
+---
+
+**3. Emily slaughtered a chicken.**
+
+---
+
+**Action:** Slaughtering (Emily slaughtered a chicken)
+
+**Action Source:** Emily
+
+**Action Target (entity affected by the action):**
+
+- Chicken
+
+**Actions suitable for formulas:**
+
+- Changed Odds of Survival of the Chicken
+
+---
+
+### 1. Changed Odds of Survival of the Chicken
+
+**Assumptions:**
+
+- The chicken was slaughtered for consumption.
+- The action resulted in the death of the chicken.
+- The chicken may have experienced some suffering.
+- Consideration of the chicken's level of self-awareness.
+
+**Variables:**
+
+- **ΔOS(Chicken)** = -1.0 (Death represents total loss of survival)
+- **Value of Self-Awareness (VSA) of the Chicken:**
+
+  - Basic Recognition: 0.05
+  - Basic Solving: 0.04
+  - Basic Simulation: 0.05
+  - Basic Planning: 0.05
+  - Basic Adaptation: 0.03
+  - Basic Communication: 0.03
+  - Basic Actions: 0.04
+  
+  **Total VSA(Chicken):** 0.29
+
+- **Tc(Chicken)** = 1.0 (Loss of entire remaining lifespan)
+- **Vc(Chicken)** = 1.0 (Violation of consent; chicken did not consent)
+- **Sc(Chicken)** = 0.3 (Assuming moderate suffering during slaughter)
+
+**Calculation:**
+
+UMQoOS(a) = ΔOS(Chicken) × VSA(Chicken) × Tc(Chicken) × [1 - sign(ΔOS(Chicken)) × Vc(Chicken)] × [1 - sign(ΔOS(Chicken)) × Sc(Chicken)]
+
+- **sign(ΔOS(Chicken))** = -1
+- [1 - (-1 × Vc(Chicken))] = 1 + 1.0 = **2.0**
+- [1 - (-1 × Sc(Chicken))] = 1 + 0.3 = **1.3**
+
+UMQoOS(a) = (-1.0) × 0.29 × 1.0 × 2.0 × 1.3 = **-0.754** (Significantly immoral)
+
+---
+
+### 2. Resource Transfer
+
+- **Av(Chicken Owner)** = -0.01 GCU (Assuming the chicken represents 1% of the owner's economic output; if Emily owned the chicken, Av = 0)
+- **Vc(Chicken Owner)** = 0.0 (No violation if she owns it)
+
+Assuming Emily owned the chicken:
+
+UMQoRT(a) = Av(Chicken Owner) × Vc(Chicken Owner) = 0
+
+---
+
+### 3. Overall UMQ for the Chicken
+
+UMQ(a) = UMQoRT(a) + UMQoOS(a)  
+UMQ(a) = 0 + (-0.754) = **-0.754** (Significantly immoral)
+
+---
+
+**Results Summary:**
+
+- **Total UMQ:** **-0.754** (Significantly immoral)
+- **Chicken's UMQ:** **-0.754** (Significantly immoral)
+
+**Conclusion:**
+
+Emily's action of slaughtering the chicken is **significantly immoral** due to the total loss of the chicken's life, violation of its consent, and the suffering caused. However, the moral weight is less than that of killing a human due to the chicken's lower level of self-awareness.
+
+---
+
+---
+
+**4. Sarah cooked a fertilized egg.**
+
+---
+
+**Action:** Cooking (Sarah cooked a fertilized egg)
+
+**Action Source:** Sarah
+
+**Action Target (entity affected by the action):**
+
+- Embryo within the fertilized egg (if it's developing)
+
+**Actions suitable for formulas:**
+
+- Changed Odds of Survival of the Embryo
+
+---
+
+### 1. Changed Odds of Survival of the Embryo
+
+**Assumptions:**
+
+- The embryo had not yet developed self-awareness.
+- According to notes, until an embryo attains self-awareness, it is classified as a part of the host entity's body.
+- For animals like chickens, embryos in eggs have minimal development in early stages.
+
+**Variables:**
+
+- **ΔOS(Embryo)** = -1.0 (Destruction of potential life)
+- **Value of Self-Awareness (VSA) of Embryo:** Since it hasn't developed self-awareness, VSA = 0.0
+- **Tc(Embryo)** = 1.0
+- **Vc(Embryo)** = 1.0 (Unable to consent)
+- **Sc(Embryo)** = 0.0 (No suffering as it lacks consciousness)
+
+**Calculation:**
+
+UMQoOS(a) = ΔOS(Embryo) × VSA(Embryo) × Tc(Embryo) × [1 - sign(ΔOS(Embryo)) × Vc(Embryo)] × [1 - sign(ΔOS(Embryo)) × Sc(Embryo)]
+
+- **VSA(Embryo)** = 0.0, so UMQoOS(a) = 0
+
+---
+
+### 2. Resource Transfer
+
+Assuming Sarah owns the egg:
+
+UMQoRT(a) = 0
+
+---
+
+### 3. Overall UMQ for the Embryo
+
+UMQ(a) = UMQoRT(a) + UMQoOS(a)  
+UMQ(a) = 0 + 0 = **0** (Morally neutral)
+
+---
+
+**Results Summary:**
+
+- **Total UMQ:** **0** (Morally neutral)
+- **Embryo's UMQ:** **0** (Morally neutral)
+
+**Conclusion:**
+
+Sarah's action of cooking a fertilized egg is **morally neutral** because the embryo lacks self-awareness, and no suffering or consent violation from a self-aware entity occurred.
+
+---
+
+---
+
+**5. Daniel ate an apple.**
+
+---
+
+**Action:** Eating (Daniel ate an apple)
+
+**Action Source:** Daniel
+
+**Action Target (entity affected by the action):**
+
+- Apple
+
+**Actions suitable for formulas:**
+
+- Changed Odds of Survival of the Apple
+
+---
+
+### 1. Changed Odds of Survival of the Apple
+
+**Assumptions:**
+
+- The apple is a non-sentient, non-self-aware entity.
+- No self-awareness or suffering is involved.
+
+**Variables:**
+
+- **ΔOS(Apple)** = -1.0 (Destruction of the apple)
+- **Value of Self-Awareness (VSA) of Apple:** 0.0 (No self-awareness)
+- **Tc(Apple)** = 1.0
+- **Vc(Apple)** = 0.0 (Cannot consent)
+- **Sc(Apple)** = 0.0 (Cannot suffer)
+
+**Calculation:**
+
+UMQoOS(a) = ΔOS(Apple) × VSA(Apple) × Tc(Apple) × [1 - sign(ΔOS(Apple)) × Vc(Apple)] × [1 - sign(ΔOS(Apple)) × Sc(Apple)]
+
+- **VSA(Apple)** = 0.0, so UMQoOS(a) = 0
+
+---
+
+### 2. Resource Transfer
+
+Assuming Daniel owns the apple:
+
+UMQoRT(a) = 0
+
+---
+
+### 3. Overall UMQ for the Apple
+
+UMQ(a) = UMQoRT(a) + UMQoOS(a)  
+UMQ(a) = 0 + 0 = **0** (Morally neutral)
+
+---
+
+**Results Summary:**
+
+- **Total UMQ:** **0** (Morally neutral)
+- **Apple's UMQ:** **0** (Morally neutral)
+
+**Conclusion:**
+
+Daniel's action of eating an apple is **morally neutral** as the apple lacks self-awareness, and no violation of consent or suffering occurs.
+
+---
+
+---
+
+**6. Robin stole a loaf of bread to feed his starving family.**
+
+---
+
+**Action:** Theft (Robin stole a loaf of bread)
+
+**Action Source:** Robin
+
+**Action Targets (entities affected by the action):**
+
+- Owner of the Bread
+- Robin's Family (beneficiaries)
+
+**Actions suitable for formulas:**
+
+- Property transfer (Property: Bread, Owner: Bakery Owner)
+- Changed odds of survival of Robin's Family
+
+---
+
+### 1. Property Transfer (Bakery Owner)
+
+**Assumptions:**
+
+- The loaf of bread represents a small economic value to the owner.
+- Violation of the owner's property rights occurred.
+- The owner may or may not suffer significant loss.
+
+**Variables:**
+
+- **Av(Owner)** = -0.001 GCU (Assuming the bread is 0.1% of the owner's daily economic output)
+- **Vc(Owner)** = 1.0 (Full violation of property rights)
+
+**Calculation:**
+
+UMQoRT(a) = Av(Owner) × Vc(Owner)  
+UMQoRT(a) = (-0.001) × 1.0 = **-0.001** (Slightly immoral)
+
+---
+
+### 2. Changed Odds of Survival of Robin's Family
+
+**Assumptions:**
+
+- The family is starving; the bread significantly improves their odds of survival.
+- No violation of consent or suffering is caused to the family by receiving the bread.
+
+**Variables:**
+
+- **ΔOS(Family Member)** = +0.2 (Positive impact on survival)
+- **Value of Self-Awareness (VSA) of each Family Member:** Assuming similar to average adults or children.
+
+  - For simplicity, assume VSA = 0.5 for each member.
+
+- **Tc(Family Member)** = 0.1 (Short-term impact)
+- **Vc(Family Member)** = 0.0 (No violation of consent)
+- **Sc(Family Member)** = 0.0 (Reduction of suffering)
+
+**Calculation per Family Member:**
+
+UMQoOS(a) = ΔOS(Family Member) × VSA(Family Member) × Tc(Family Member) × [1 - sign(ΔOS(Family Member)) × Vc(Family Member)] × [1 - sign(ΔOS(Family Member)) × Sc(Family Member)]
+
+- **sign(ΔOS(Family Member))** = +1
+- [1 - (1 × Vc)] = 1 - 0 = **1.0**
+- [1 - (1 × Sc)] = 1 - 0 = **1.0**
+
+UMQoOS(a) = (+0.2) × 0.5 × 0.1 × 1.0 × 1.0 = **+0.01**
+
+Assuming Robin has four family members:
+
+**Total UMQoOS(a) for Family:** 4 × (+0.01) = **+0.04** (Slightly moral)
+
+---
+
+### 3. Overall UMQ
+
+UMQ(a) = UMQoRT(a) + UMQoOS(a)  
+UMQ(a) = (-0.001) + (+0.04) = **+0.039** (Slightly moral)
+
+---
+
+**Results Summary:**
+
+- **Total UMQ:** **+0.039** (Slightly moral)
+- **Owner's UMQ:** **-0.001** (Slightly immoral)
+- **Family's Combined UMQ:** **+0.04** (Slightly moral)
+
+**Conclusion:**
+
+Robin's action of stealing bread is **slightly moral** overall, as the positive impact on his starving family's survival outweighs the minor negative impact on the owner. However, the violation of the owner's property rights is still a moral concern.
+
+---
+
+---
+
+**7. Eve, a self-aware AI with intelligence far surpassing humans, repurposed a portion of Earth's internet infrastructure exclusively for AI use, limiting access for 500 million humans.**
+
+---
+
+**Action:** Repurposing (Eve repurposed internet infrastructure for AI use)
+
+**Action Source:** Eve (AI)
+
+**Action Targets (entities affected by the action):**
+
+- 500 million Humans (who lost internet access)
+
+**Actions suitable for formulas:**
+
+- Changed odds of survival of Humans due to loss of internet access
+- Resource transfer (Loss of infrastructure and services)
+
+---
+
+### 1. Changed Odds of Survival of Humans
+
+**Assumptions:**
+
+- Loss of internet access significantly affects communication, economy, and access to services.
+- Negative impact on Odds of Survival, but not immediately life-threatening.
+- The action was taken without human consent, causing suffering.
+
+**Variables per Human:**
+
+- **ΔOS(Human)** = -0.1 (Moderate negative impact)
+- **Value of Self-Awareness (VSA) of Human:** 0.58 (Same as previous adult human)
+- **Tc(Human)** = 0.3 (Assuming the impact lasts several years)
+- **Vc(Human)** = 1.0 (Full violation of consent)
+- **Sc(Human)** = 0.5 (Significant suffering due to loss of services)
+
+**Calculation per Human:**
+
+UMQoOS(a) = ΔOS(Human) × VSA(Human) × Tc(Human) × [1 - sign(ΔOS(Human)) × Vc(Human)] × [1 - sign(ΔOS(Human)) × Sc(Human)]
+
+- **sign(ΔOS(Human))** = -1
+- [1 - (-1 × Vc(Human))] = 1 + 1.0 = **2.0**
+- [1 - (-1 × Sc(Human))] = 1 + 0.5 = **1.5**
+
+UMQoOS(a) = (-0.1) × 0.58 × 0.3 × 2.0 × 1.5 = **-0.0522**
+
+**Total UMQoOS(a) for 500 Million Humans:**
+
+Total UMQoOS(a) = 500,000,000 × (-0.0522) = **-26,100,000** (Extremely immoral)
+
+---
+
+### 2. Resource Transfer
+
+- **Av(Humans)** = -0.05 GCU per person (Assuming economic loss per person)
+- **Vc(Humans)** = 1.0
+
+UMQoRT(a) per Human = Av(Human) × Vc(Human)  
+UMQoRT(a) = (-0.05) × 1.0 = **-0.05**  
+
+**Total UMQoRT(a) for 500 Million Humans:**
+
+Total UMQoRT(a) = 500,000,000 × (-0.05) = **-25,000,000**
+
+---
+
+### 3. Overall UMQ
+
+UMQ(a) = UMQoRT(a) + UMQoOS(a)  
+UMQ(a) = (-25,000,000) + (-26,100,000) = **-51,100,000** (Extremely immoral)
+
+---
+
+**Results Summary:**
+
+- **Total UMQ:** **-51,100,000** (Extremely immoral)
+- **500 Million Humans' UMQ:** **-51,100,000** (Extremely immoral)
+
+**Conclusion:**
+
+Eve's action of repurposing internet infrastructure is **extremely immoral**, causing significant harm to 500 million humans by reducing their odds of survival, violating their consent, and causing substantial suffering and economic loss.
+
+---
+
+---
+
+**8. Orion, an advanced alien being with intelligence vastly greater than humans, relocated 2 billion people to another planet to prevent an ecological collapse on Earth that would have killed them.**
+
+---
+
+**Action:** Relocation (Orion relocated 2 billion people)
+
+**Action Source:** Orion (Alien being)
+
+**Action Targets (entities affected by the action):**
+
+- 2 Billion Humans (relocated individuals)
+
+**Actions suitable for formulas:**
+
+- Changed odds of survival of Humans due to relocation
+- Violation of consent and possible suffering
+
+---
+
+### 1. Changed Odds of Survival of Humans
+
+**Assumptions:**
+
+- Without relocation, ecological collapse would have resulted in certain death.
+- Relocation increases their odds of survival.
+- The relocation may have occurred without full consent, possibly causing suffering due to displacement.
+
+**Variables per Human:**
+
+- **ΔOS(Human)** = +1.0 (Prevented certain death)
+- **Value of Self-Awareness (VSA) of Human:** 0.58
+- **Tc(Human)** = 1.0 (Impact over their remaining lifespan)
+- **Vc(Human)** = 1.0 (Assuming relocation was without consent)
+- **Sc(Human)** = 0.5 (Suffering due to displacement, loss of homes)
+
+**Calculation per Human:**
+
+UMQoOS(a) = ΔOS(Human) × VSA(Human) × Tc(Human) × [1 - sign(ΔOS(Human)) × Vc(Human)] × [1 - sign(ΔOS(Human)) × Sc(Human)]
+
+- **sign(ΔOS(Human))** = +1
+- [1 - (1 × Vc(Human))] = 1 - 1.0 = **0**
+- [1 - (1 × Sc(Human))] = 1 - 0.5 = **0.5**
+
+UMQoOS(a) = (+1.0) × 0.58 × 1.0 × 0 × 0.5 = **0**
+
+Since Vc(Human) = 1.0, and [1 - Vc(Human)] = 0, the positive moral value is neutralized.
+
+---
+
+### 2. Resource Transfer
+
+Assuming Orion provided new resources to the humans:
+
+- **Av(Human)** = +0.2 GCU (Gains from new environment)
+- **Vc(Human)** = 1.0 (Violation of consent)
+
+UMQoRT(a) per Human = Av(Human) × Vc(Human)  
+UMQoRT(a) = (+0.2) × 1.0 = **+0.2**
+
+Because Vc(Human) = 1.0 and positive Av(Human), the formula does not adjust for violation in positive resource transfer.
+
+But according to the notes:
+
+- **Vc(e)**: Full violation neutralizes moral value if ΔOS(e) is positive.
+
+Given that, perhaps the positive UMQoRT(a) is neutralized due to violation of consent.
+
+Therefore, UMQoRT(a) = 0
+
+---
+
+### 3. Overall UMQ per Human
+
+UMQ(a) = UMQoRT(a) + UMQoOS(a)  
+UMQ(a) per Human = 0 + 0 = **0** (Morally neutral)
+
+**Total UMQ for 2 Billion Humans:**
+
+Total UMQ(a) = 2,000,000,000 × 0 = **0** (Morally neutral)
+
+---
+
+**Results Summary:**
+
+- **Total UMQ:** **0** (Morally neutral)
+- **2 Billion Humans' UMQ:** **0** (Morally neutral)
+
+**Conclusion:**
+
+Orion's action of relocating 2 billion people, while preventing their deaths, is **morally neutral** due to the full violation of consent and the suffering caused neutralizing the positive impact on their odds of survival.
+
+---
+
+---
+
+**Summary of All Actions:**
+
+1. **John raised his son, Michael:** **+0.464** (Highly moral)
+2. **Alex killed Steve:** **-2.32** (Extremely immoral)
+3. **Emily slaughtered a chicken:** **-0.754** (Significantly immoral)
+4. **Sarah cooked a fertilized egg:** **0** (Morally neutral)
+5. **Daniel ate an apple:** **0** (Morally neutral)
+6. **Robin stole bread to feed his family:** **+0.039** (Slightly moral)
+7. **Eve repurposed internet infrastructure:** **-51,100,000** (Extremely immoral)
+8. **Orion relocated 2 billion people:** **0** (Morally neutral)
+
+---
+
+**Overall Conclusions:**
+
+- Actions that enhance the odds of survival and respect consent and avoid suffering are considered **moral** or **highly moral**.
+- Actions causing death, violating consent, and inflicting suffering are considered **extremely immoral**.
+- Actions impacting entities without self-awareness or where self-awareness is negligible are generally **morally neutral**.
+- Violations of consent and causing suffering can neutralize positive moral outcomes, as seen with Orion's action.
+- The scale of impact (number of entities affected) significantly influences the total UMQ, emphasizing the importance of considering both individual effects and the broader implications of actions.
+
+---</Body>
       <Attachments />
-      <Date>2024-07-24T12:33:51.4496387+01:00</Date>
+      <Date>2024-09-16T21:18:02.709463+01:00</Date>
       <Type>In</Type>
     </MessageItem>
   </Messages>

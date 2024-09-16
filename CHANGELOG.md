@@ -1,3 +1,8 @@
+2024-09-16 v1.13.8
+
+- Fix: The model's response would time out sooner than what was specified in the AI service settings.
+- Update: Provide a more helpful message when the API key is missing.
+
 2024-09-15 v1.13.6
 
 - Fix: OpenAI `o1` model max input tokens.

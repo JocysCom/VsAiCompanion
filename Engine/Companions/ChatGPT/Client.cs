@@ -55,6 +55,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			_Spy = new HttpClientSpy();
 			var client = new HttpClient(_Spy);
+			client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			client.BaseAddress = new Uri(Service.BaseUrl);
 			var apiSecretKey = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiSecretKey);
@@ -301,12 +302,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				// Create the HttpClient to use HttpClientSpy
 				var httpClient = new HttpClient(spyHandler)
 				{
-					BaseAddress = endpoint
+					BaseAddress = endpoint,
+					Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),
 				};
 				// Register the handler in the HttpPipeline (hypothetical approach)
 				var transport = new HttpClientPipelineTransport(httpClient);
 				//var pipeline = new HttpPipeline(transport);
 				var options = new OpenAIClientOptions();
+				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 				options.Transport = transport;
 				client = new OpenAIClient(credential, options);
 				//var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);

@@ -27,8 +27,8 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>450</Left>
-        <Top>90</Top>
+        <Left>197</Left>
+        <Top>80</Top>
         <Width>1033</Width>
         <Height>815.5</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -702,6 +702,29 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareFilesAndReturnChanges</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.CompareContentsAndReturnChanges</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyFile</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyContents</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ModifyTextFile</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFile</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadTextFileLines</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Web.GetWebPageContents</Id>
         </PluginItem>
         <PluginItem>
@@ -727,6 +750,106 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Mail.Send</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetProperties</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolution</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSolutionProjects</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.EditFormatSelection</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.OpenDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SaveDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.CloseDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.UndoDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetAllSolutionDocuments</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetCurrentException</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfCurrentDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsOfProjectOfSelectedDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetDocumentsSelectedInExplorer</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOpenDocuments</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetErrors</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelectedErrors</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetSelection</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetCurrentDocumentContents</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ModifyCurrentDocument</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.SetSelection</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.ModifySelection</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetEnvironmentContext</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.BuildSolutionProject</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.VisualStudio.GetOutputContent</Id>
         </PluginItem>
         <PluginItem>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQuery</Id>
