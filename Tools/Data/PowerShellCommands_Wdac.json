@@ -1,0 +1,62 @@
+﻿[
+    {
+        "Module":  "Wdac",
+        "Name":  "Add-OdbcDsn",
+        "Synopsis":  "Adds an ODBC DSN."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Disable-OdbcPerfCounter",
+        "Synopsis":  "Disables connection pooling Performance Monitor counters."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Disable-WdacBidTrace",
+        "Synopsis":  "Disables BidTrace for Windows DAC."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Enable-OdbcPerfCounter",
+        "Synopsis":  "Enables connection pooling Performance Monitor counters."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Enable-WdacBidTrace",
+        "Synopsis":  "Enables BidTrace for troubleshooting Windows DAC."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Get-OdbcDriver",
+        "Synopsis":  "Gets installed ODBC drivers."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Get-OdbcDsn",
+        "Synopsis":  "Gets ODBC DSNs."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Get-OdbcPerfCounter",
+        "Synopsis":  "Gets connection pooling Performance Monitor counters."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Get-WdacBidTrace",
+        "Synopsis":  "Gets BidTrace settings."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Remove-OdbcDsn",
+        "Synopsis":  "Removes ODBC DSNs."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Set-OdbcDriver",
+        "Synopsis":  "Configures the properties for installed ODBC drivers."
+    },
+    {
+        "Module":  "Wdac",
+        "Name":  "Set-OdbcDsn",
+        "Synopsis":  "Configures properties for existing ODBC DSNs."
+    }
+]

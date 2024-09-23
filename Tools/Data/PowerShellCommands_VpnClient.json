@@ -1,0 +1,97 @@
+﻿[
+    {
+        "Module":  "VpnClient",
+        "Name":  "Add-VpnConnection",
+        "Synopsis":  "Adds a VPN connection to the Connection Manager phone book."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Add-VpnConnectionRoute",
+        "Synopsis":  "Adds a route to a VPN connection."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Add-VpnConnectionTriggerApplication",
+        "Synopsis":  "Adds applications that automatically trigger a VPN connection when launched."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Add-VpnConnectionTriggerDnsConfiguration",
+        "Synopsis":  "Adds a DNS suffix or name to VPN connection trigger properties."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Add-VpnConnectionTriggerTrustedNetwork",
+        "Synopsis":  "Adds DNS suffixes as trusted networks to the VPN profile."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Get-VpnConnection",
+        "Synopsis":  "Retrieves the specified VPN connection profile information."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Get-VpnConnectionTrigger",
+        "Synopsis":  "Gets trigger properties of a VPN connection."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "New-EapConfiguration",
+        "Synopsis":  "Generates an XML file with the specified EAP configuration."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "New-VpnServerAddress",
+        "Synopsis":  "Creates a VPN server address object."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Remove-VpnConnection",
+        "Synopsis":  "Removes specified VPN connection profiles."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Remove-VpnConnectionRoute",
+        "Synopsis":  "Removes a route from a VPN connection."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Remove-VpnConnectionTriggerApplication",
+        "Synopsis":  "Removes a trigger application from a VPN connection object."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Remove-VpnConnectionTriggerDnsConfiguration",
+        "Synopsis":  "Removes DNS suffixes from VPN connection DNS trigger properties."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Remove-VpnConnectionTriggerTrustedNetwork",
+        "Synopsis":  "Removes DNS suffixes previously configured as trusted networks from the VPN profile."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Set-VpnConnection",
+        "Synopsis":  "Changes the configuration settings of an existing VPN connection profile."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Set-VpnConnectionIPsecConfiguration",
+        "Synopsis":  "Sets the IPsec parameters of a VPN connection."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Set-VpnConnectionProxy",
+        "Synopsis":  "Configures web proxy information for the specified VPN connection."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Set-VpnConnectionTriggerDnsConfiguration",
+        "Synopsis":  "Changes DNS servers for an existing DNS suffix."
+    },
+    {
+        "Module":  "VpnClient",
+        "Name":  "Set-VpnConnectionTriggerTrustedNetwork",
+        "Synopsis":  "Sets the trusted network list."
+    }
+]

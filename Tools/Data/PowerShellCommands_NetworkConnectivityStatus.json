@@ -1,0 +1,22 @@
+﻿[
+    {
+        "Module":  "NetworkConnectivityStatus",
+        "Name":  "Get-DAConnectionStatus",
+        "Synopsis":  "Returns an object detailing the DirectAccess status of the user."
+    },
+    {
+        "Module":  "NetworkConnectivityStatus",
+        "Name":  "Get-NCSIPolicyConfiguration",
+        "Synopsis":  "Gets the Network Connectivity Status indicator configuration on a specified store, either the active store on the local connection or on a Group Policy object."
+    },
+    {
+        "Module":  "NetworkConnectivityStatus",
+        "Name":  "Reset-NCSIPolicyConfiguration",
+        "Synopsis":  "Resets a configuration for NCSI."
+    },
+    {
+        "Module":  "NetworkConnectivityStatus",
+        "Name":  "Set-NCSIPolicyConfiguration",
+        "Synopsis":  "Specifies the policy store from which the cmdlet should pull configuration information."
+    }
+]

@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Module":  "Microsoft.PowerShell.Archive",
+        "Name":  "Compress-Archive",
+        "Synopsis":  "Creates a compressed archive, or zipped file, from specified files and directories."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Archive",
+        "Name":  "Expand-Archive",
+        "Synopsis":  "Extracts files from a specified archive (zipped) file."
+    }
+]

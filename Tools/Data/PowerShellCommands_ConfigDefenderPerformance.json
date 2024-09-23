@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Module":  "ConfigDefenderPerformance",
+        "Name":  "Get-MpPerformanceReport",
+        "Synopsis":  "This cmdlet reports the file paths, file extensions, and processes that cause\nthe highest impact to Microsoft Defender Antivirus scans."
+    },
+    {
+        "Module":  "ConfigDefenderPerformance",
+        "Name":  "New-MpPerformanceRecording",
+        "Synopsis":  "This cmdlet collects a performance recording of Microsoft Defender Antivirus\nscans."
+    }
+]

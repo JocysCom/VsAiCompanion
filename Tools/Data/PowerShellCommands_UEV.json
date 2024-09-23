@@ -1,0 +1,127 @@
+﻿[
+    {
+        "Module":  "UEV",
+        "Name":  "Clear-UevAppxPackage",
+        "Synopsis":  "Clears a setting in the computer or user sections of the registry."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Clear-UevConfiguration",
+        "Synopsis":  "Clears UE-V configuration settings."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Disable-Uev",
+        "Synopsis":  "Disables the UE-V service."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Disable-UevAppxPackage",
+        "Synopsis":  "Disables UE-V synchronization of Windows 8 apps."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Disable-UevTemplate",
+        "Synopsis":  "Disables a settings location template."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Enable-Uev",
+        "Synopsis":  "Enables the UE-V service."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Enable-UevAppxPackage",
+        "Synopsis":  "Enables UE-V synchronization of Windows 8 apps."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Enable-UevTemplate",
+        "Synopsis":  "Enables a settings location template."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Export-UevConfiguration",
+        "Synopsis":  "Exports the UE-V configuration."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Export-UevPackage",
+        "Synopsis":  "Exports the settings stored in a settings package."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Get-UevAppxPackage",
+        "Synopsis":  "Gets a list of Windows 8 apps and synchronization status."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Get-UevConfiguration",
+        "Synopsis":  "Gets the UE-V configuration settings."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Get-UevStatus",
+        "Synopsis":  "Gets the status of the UE-V service."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Get-UevTemplate",
+        "Synopsis":  "Gets settings location templates for UE-V."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Get-UevTemplateProgram",
+        "Synopsis":  "Gets the information about programs defined by a settings location template."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Import-UevConfiguration",
+        "Synopsis":  "Imports the UE-V configuration."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Register-UevTemplate",
+        "Synopsis":  "Registers a settings location template with UE-V."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Repair-UevTemplateIndex",
+        "Synopsis":  "Repairs a corrupted UE-V template index."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Restore-UevBackup",
+        "Synopsis":  "Applies backed up settings from another computer to this computer."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Restore-UevUserSetting",
+        "Synopsis":  "Sets a restore flag for the user settings."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Set-UevConfiguration",
+        "Synopsis":  "Modifies UE-V configuration settings."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Set-UevTemplateProfile",
+        "Synopsis":  "Modifies which profile to associate with an individual template."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Test-UevTemplate",
+        "Synopsis":  "Verifies whether a template complies with the schema for UE-V."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Unregister-UevTemplate",
+        "Synopsis":  "Unregisters a settings location template from Microsoft User Experience Virtualization (UE-V)."
+    },
+    {
+        "Module":  "UEV",
+        "Name":  "Update-UevTemplate",
+        "Synopsis":  "Updates settings location templates in UE-V."
+    }
+]

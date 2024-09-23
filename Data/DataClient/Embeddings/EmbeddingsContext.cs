@@ -15,6 +15,11 @@ namespace Embeddings
 {
 	/// <summary>Embeddings Context</summary>
 	[GeneratedCode("MainModel", "2023.1.19")]
+#if NETFRAMEWORK
+	// Setting EF6 configuration OPTION 1.
+	//[DbConfigurationType(typeof(System.Data.Entity.SqlServer.MicrosoftSqlDbConfiguration))]
+	//[DbConfigurationType(typeof(EntityFrameworkConfiguration))]
+#endif
 	public partial class EmbeddingsContext : DbContext
 	{
 

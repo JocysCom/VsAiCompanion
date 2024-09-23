@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Module":  "Microsoft.PowerShell.Host",
+        "Name":  "Start-Transcript",
+        "Synopsis":  "Creates a record of all or part of a PowerShell session to a text file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Host",
+        "Name":  "Stop-Transcript",
+        "Synopsis":  "Stops a transcript."
+    }
+]

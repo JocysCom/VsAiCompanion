@@ -1,0 +1,17 @@
+﻿[
+    {
+        "Module":  "SmbWitness",
+        "Name":  "Move-SmbClient",
+        "Synopsis":  "Requests an SMB client to move the associated SMB connection to a specified cluster node."
+    },
+    {
+        "Module":  "SmbWitness",
+        "Name":  "Get-SmbWitnessClient",
+        "Synopsis":  "Retrieves information about the SMB clients connected to the SMB witness servers in a cluster."
+    },
+    {
+        "Module":  "SmbWitness",
+        "Name":  "Move-SmbWitnessClient",
+        "Synopsis":  "Requests an SMB client to move the associated SMB connection to a specified cluster node."
+    }
+]

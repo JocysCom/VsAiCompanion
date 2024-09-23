@@ -1,0 +1,52 @@
+﻿[
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Get-Language",
+        "Synopsis":  "Returns information about the installed languages on a device."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Get-PreferredLanguage",
+        "Synopsis":  "Returns the current System Preferred Language."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Get-SystemLanguage",
+        "Synopsis":  "Returns the current System Preferred Language."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Set-PreferredLanguage",
+        "Synopsis":  "Sets the provided language as the System Preferred UI Language."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Set-SystemLanguage",
+        "Synopsis":  "Sets the provided language as the System Preferred UI Language."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Get-InstalledLanguage",
+        "Synopsis":  "Returns information about the installed languages on a device."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Get-SystemPreferredUILanguage",
+        "Synopsis":  "Returns the current System Preferred Language."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Install-Language",
+        "Synopsis":  "Installs a language onto a device."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Set-SystemPreferredUILanguage",
+        "Synopsis":  "Sets the provided language as the System Preferred UI Language."
+    },
+    {
+        "Module":  "LanguagePackManagement",
+        "Name":  "Uninstall-Language",
+        "Synopsis":  "Uninstalls a language from a device."
+    }
+]

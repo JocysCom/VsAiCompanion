@@ -1,0 +1,42 @@
+﻿[
+    {
+        "Module":  "BitsTransfer",
+        "Name":  "Add-BitsFile",
+        "Synopsis":  "Adds one or more files to an existing BITS transfer job."
+    },
+    {
+        "Module":  "BitsTransfer",
+        "Name":  "Complete-BitsTransfer",
+        "Synopsis":  "Completes a BITS transfer job."
+    },
+    {
+        "Module":  "BitsTransfer",
+        "Name":  "Get-BitsTransfer",
+        "Synopsis":  "Gets the associated BitsJob object for an existing BITS transfer job."
+    },
+    {
+        "Module":  "BitsTransfer",
+        "Name":  "Remove-BitsTransfer",
+        "Synopsis":  "Cancels a BITS transfer job."
+    },
+    {
+        "Module":  "BitsTransfer",
+        "Name":  "Resume-BitsTransfer",
+        "Synopsis":  "Resumes a BITS transfer job."
+    },
+    {
+        "Module":  "BitsTransfer",
+        "Name":  "Set-BitsTransfer",
+        "Synopsis":  "Modifies the properties of an existing BITS transfer job."
+    },
+    {
+        "Module":  "BitsTransfer",
+        "Name":  "Start-BitsTransfer",
+        "Synopsis":  "Creates a BITS transfer job."
+    },
+    {
+        "Module":  "BitsTransfer",
+        "Name":  "Suspend-BitsTransfer",
+        "Synopsis":  "Suspends a BITS transfer job."
+    }
+]

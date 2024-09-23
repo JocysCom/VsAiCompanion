@@ -1,0 +1,82 @@
+﻿[
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Add-JobTrigger",
+        "Synopsis":  "Adds job triggers to scheduled jobs."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Disable-JobTrigger",
+        "Synopsis":  "Disables the job triggers of scheduled jobs."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Disable-ScheduledJob",
+        "Synopsis":  "Disables a scheduled job."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Enable-JobTrigger",
+        "Synopsis":  "Enables the job triggers of scheduled jobs."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Enable-ScheduledJob",
+        "Synopsis":  "Enables a scheduled job."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Get-JobTrigger",
+        "Synopsis":  "Gets the job triggers of scheduled jobs."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Get-ScheduledJob",
+        "Synopsis":  "Gets scheduled jobs on the local computer."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Get-ScheduledJobOption",
+        "Synopsis":  "Gets the job options of scheduled jobs."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "New-JobTrigger",
+        "Synopsis":  "Creates a job trigger for a scheduled job."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "New-ScheduledJobOption",
+        "Synopsis":  "Creates an object that contains advanced options for a scheduled job."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Register-ScheduledJob",
+        "Synopsis":  "Creates a scheduled job."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Remove-JobTrigger",
+        "Synopsis":  "Delete job triggers from scheduled jobs."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Set-JobTrigger",
+        "Synopsis":  "Changes the job trigger of a scheduled job."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Set-ScheduledJob",
+        "Synopsis":  "Changes scheduled jobs."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Set-ScheduledJobOption",
+        "Synopsis":  "Changes the job options of a scheduled job."
+    },
+    {
+        "Module":  "PSScheduledJob",
+        "Name":  "Unregister-ScheduledJob",
+        "Synopsis":  "Deletes scheduled jobs on the local computer."
+    }
+]

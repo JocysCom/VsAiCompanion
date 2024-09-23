@@ -1,0 +1,42 @@
+﻿[
+    {
+        "Module":  "HostNetworkingService",
+        "Name":  "Get-HnsEndpoint",
+        "Synopsis":  "\r\nGet-HnsEndpoint [[-Id] \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HostNetworkingService",
+        "Name":  "Get-HnsNamespace",
+        "Synopsis":  "\r\nGet-HnsNamespace [[-Id] \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HostNetworkingService",
+        "Name":  "Get-HnsNetwork",
+        "Synopsis":  "\r\nGet-HnsNetwork [[-Id] \u003cstring\u003e] [-Detailed] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HostNetworkingService",
+        "Name":  "Get-HnsPolicyList",
+        "Synopsis":  "\r\nGet-HnsPolicyList [[-Id] \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HostNetworkingService",
+        "Name":  "Remove-HnsEndpoint",
+        "Synopsis":  "\r\nRemove-HnsEndpoint [-InputObjects] \u003cObject[]\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HostNetworkingService",
+        "Name":  "Remove-HnsNamespace",
+        "Synopsis":  "\r\nRemove-HnsNamespace [-InputObjects] \u003cObject[]\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HostNetworkingService",
+        "Name":  "Remove-HnsNetwork",
+        "Synopsis":  "\r\nRemove-HnsNetwork [-InputObjects] \u003cObject[]\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HostNetworkingService",
+        "Name":  "Remove-HnsPolicyList",
+        "Synopsis":  "\r\nRemove-HnsPolicyList [-InputObjects] \u003cObject[]\u003e [\u003cCommonParameters\u003e]\r\n"
+    }
+]

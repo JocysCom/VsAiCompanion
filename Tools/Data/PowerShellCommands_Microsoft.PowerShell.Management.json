@@ -1,0 +1,447 @@
+﻿[
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Add-Computer",
+        "Synopsis":  "Add the local computer to a domain or workgroup."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Add-Content",
+        "Synopsis":  "Adds content to the specified items, such as adding words to a file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Checkpoint-Computer",
+        "Synopsis":  "Creates a system restore point on the local computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Clear-Content",
+        "Synopsis":  "Deletes the contents of an item, but does not delete the item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Clear-EventLog",
+        "Synopsis":  "Clears all entries from specified event logs on the local or remote computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Clear-Item",
+        "Synopsis":  "Clears the contents of an item, but does not delete the item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Clear-ItemProperty",
+        "Synopsis":  "Clears the value of a property but does not delete the property."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Clear-RecycleBin",
+        "Synopsis":  "Clears the contents of the current user\u0027s recycle bin."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Complete-Transaction",
+        "Synopsis":  "Commits the active transaction."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Convert-Path",
+        "Synopsis":  "Converts a path from a PowerShell path to a PowerShell provider path."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Copy-Item",
+        "Synopsis":  "Copies an item from one location to another."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Copy-ItemProperty",
+        "Synopsis":  "Copies a property and value from a specified location to another location."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Debug-Process",
+        "Synopsis":  "Debugs one or more processes running on the local computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Disable-ComputerRestore",
+        "Synopsis":  "Disables the System Restore feature on the specified file system drive."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Enable-ComputerRestore",
+        "Synopsis":  "Enables the System Restore feature on the specified file system drive."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-ChildItem",
+        "Synopsis":  "Gets the items and child items in one or more specified locations."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-Clipboard",
+        "Synopsis":  "Gets the current Windows clipboard entry."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-ComputerInfo",
+        "Synopsis":  "Gets a consolidated object of system and operating system properties."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-ComputerRestorePoint",
+        "Synopsis":  "Gets the restore points on the local computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-Content",
+        "Synopsis":  "Gets the content of the item at the specified location."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-ControlPanelItem",
+        "Synopsis":  "Gets control panel items."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-EventLog",
+        "Synopsis":  "Gets the events in an event log, or a list of the event logs, on the local computer or remote computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-HotFix",
+        "Synopsis":  "Gets the hotfixes that are installed on local or remote computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-Item",
+        "Synopsis":  "Gets the item at the specified location."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-ItemProperty",
+        "Synopsis":  "Gets the properties of a specified item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-ItemPropertyValue",
+        "Synopsis":  "Gets the value for one or more properties of a specified item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-Location",
+        "Synopsis":  "Gets information about the current working location or a location stack."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-Process",
+        "Synopsis":  "Gets the processes that are running on the local computer or a remote computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-PSDrive",
+        "Synopsis":  "Gets drives in the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-PSProvider",
+        "Synopsis":  "Gets information about the specified PowerShell provider."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-Service",
+        "Synopsis":  "Gets the services on a local or remote computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-TimeZone",
+        "Synopsis":  "Gets the current time zone or a list of available time zones."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-Transaction",
+        "Synopsis":  "Gets the current (active) transaction."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Get-WmiObject",
+        "Synopsis":  "Gets instances of Windows Management Instrumentation (WMI) classes or information about the available classes."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Invoke-Item",
+        "Synopsis":  "Performs the default action on the specified item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Invoke-WmiMethod",
+        "Synopsis":  "Calls WMI methods."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Join-Path",
+        "Synopsis":  "Combines a path and a child path into a single path."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Limit-EventLog",
+        "Synopsis":  "Sets the event log properties that limit the size of the event log and the age of its entries."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Move-Item",
+        "Synopsis":  "Moves an item from one location to another."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Move-ItemProperty",
+        "Synopsis":  "Moves a property from one location to another."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "New-EventLog",
+        "Synopsis":  "Creates a new event log and a new event source on a local or remote computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "New-Item",
+        "Synopsis":  "Creates a new item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "New-ItemProperty",
+        "Synopsis":  "Creates a new property for an item and sets its value."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "New-PSDrive",
+        "Synopsis":  "Creates temporary and persistent drives that are associated with a location in an item data store."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "New-Service",
+        "Synopsis":  "Creates a new Windows service."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "New-WebServiceProxy",
+        "Synopsis":  "Creates a Web service proxy object that lets you use and manage the Web service in PowerShell."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Pop-Location",
+        "Synopsis":  "Changes the current location to the location most recently pushed onto the stack."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Push-Location",
+        "Synopsis":  "Adds the current location to the top of a location stack."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Register-WmiEvent",
+        "Synopsis":  "Subscribes to a Windows Management Instrumentation (WMI) event."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Remove-Computer",
+        "Synopsis":  "Removes the local computer from its domain."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Remove-EventLog",
+        "Synopsis":  "Deletes an event log or unregisters an event source."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Remove-Item",
+        "Synopsis":  "Deletes the specified items."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Remove-ItemProperty",
+        "Synopsis":  "Deletes the property and its value from an item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Remove-PSDrive",
+        "Synopsis":  "Deletes temporary PowerShell drives and disconnects mapped network drives."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Remove-WmiObject",
+        "Synopsis":  "Deletes an instance of an existing Windows Management Instrumentation (WMI) class."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Rename-Computer",
+        "Synopsis":  "Renames a computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Rename-Item",
+        "Synopsis":  "Renames an item in a PowerShell provider namespace."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Rename-ItemProperty",
+        "Synopsis":  "Renames a property of an item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Reset-ComputerMachinePassword",
+        "Synopsis":  "Resets the machine account password for the computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Resolve-Path",
+        "Synopsis":  "Resolves the wildcard characters in a path, and displays the path contents."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Restart-Computer",
+        "Synopsis":  "Restarts the operating system on local and remote computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Restart-Service",
+        "Synopsis":  "Stops and then starts one or more services."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Restore-Computer",
+        "Synopsis":  "Starts a system restore on the local computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Resume-Service",
+        "Synopsis":  "Resumes one or more suspended (paused) services."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Set-Clipboard",
+        "Synopsis":  "Sets the current Windows clipboard entry."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Set-Content",
+        "Synopsis":  "Writes new content or replaces existing content in a file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Set-Item",
+        "Synopsis":  "Changes the value of an item to the value specified in the command."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Set-ItemProperty",
+        "Synopsis":  "Creates or changes the value of a property of an item."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Set-Location",
+        "Synopsis":  "Sets the current working location to a specified location."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Set-Service",
+        "Synopsis":  "Starts, stops, and suspends a service, and changes its properties."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Set-TimeZone",
+        "Synopsis":  "Sets the system time zone to a specified time zone."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Set-WmiInstance",
+        "Synopsis":  "Creates or updates an instance of an existing Windows Management Instrumentation (WMI) class."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Show-ControlPanelItem",
+        "Synopsis":  "Opens control panel items."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Show-EventLog",
+        "Synopsis":  "Displays the event logs of the local or a remote computer in Event Viewer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Split-Path",
+        "Synopsis":  "Returns the specified part of a path."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Start-Process",
+        "Synopsis":  "Starts one or more processes on the local computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Start-Service",
+        "Synopsis":  "Starts one or more stopped services."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Start-Transaction",
+        "Synopsis":  "Starts a transaction."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Stop-Computer",
+        "Synopsis":  "Stops (shuts down) local and remote computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Stop-Process",
+        "Synopsis":  "Stops one or more running processes."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Stop-Service",
+        "Synopsis":  "Stops one or more running services."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Suspend-Service",
+        "Synopsis":  "Suspends (pauses) one or more running services."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Test-ComputerSecureChannel",
+        "Synopsis":  "Tests and repairs the secure channel between the local computer and its domain."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Test-Connection",
+        "Synopsis":  "Sends ICMP echo request packets, or pings, to one or more computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Test-Path",
+        "Synopsis":  "Determines whether all elements of a path exist."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Undo-Transaction",
+        "Synopsis":  "Rolls back the active transaction."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Use-Transaction",
+        "Synopsis":  "Adds the script block to the active transaction."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Wait-Process",
+        "Synopsis":  "Waits for the processes to be stopped before accepting more input."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Management",
+        "Name":  "Write-EventLog",
+        "Synopsis":  "Writes an event to an event log."
+    }
+]

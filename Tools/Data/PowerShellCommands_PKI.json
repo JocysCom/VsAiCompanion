@@ -1,0 +1,87 @@
+﻿[
+    {
+        "Module":  "PKI",
+        "Name":  "Add-CertificateEnrollmentPolicyServer",
+        "Synopsis":  "Adds an enrollment policy server to the current user or local system configuration."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Export-Certificate",
+        "Synopsis":  "Exports a certificate from a certificate store into a file."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Export-PfxCertificate",
+        "Synopsis":  "Exports a certificate or a PFXData object to a Personal Information Exchange (PFX) file."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Get-Certificate",
+        "Synopsis":  "Submits a certificate request to an enrollment server and installs the response or retrieves a certificate for a previously submitted request."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Get-CertificateAutoEnrollmentPolicy",
+        "Synopsis":  "Retrieves certificate auto-enrollment policy settings."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Get-CertificateEnrollmentPolicyServer",
+        "Synopsis":  "Returns all of the certificate enrollment policy server URL configurations."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Get-CertificateNotificationTask",
+        "Synopsis":  "Returns all registered certificate notification tasks."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Get-PfxData",
+        "Synopsis":  "Extracts the content of a Personal Information Exchange (PFX) file into a structure without importing it to certificate store."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Import-Certificate",
+        "Synopsis":  "Imports one or more certificates into a certificate store."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Import-PfxCertificate",
+        "Synopsis":  "Imports certificates and private keys from a Personal Information Exchange (PFX) file to the destination store."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "New-CertificateNotificationTask",
+        "Synopsis":  "Creates a new task in the Task Scheduler that will be triggered when a certificate is replaced, expired, or about to expired."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "New-SelfSignedCertificate",
+        "Synopsis":  "Creates a new self-signed certificate for testing purposes."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Remove-CertificateEnrollmentPolicyServer",
+        "Synopsis":  "Removes an enrollment policy server and the URL of the enrollment policy server from the current user or local computer configuration."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Remove-CertificateNotificationTask",
+        "Synopsis":  "Removes a certificate notification task from Task Scheduler."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Set-CertificateAutoEnrollmentPolicy",
+        "Synopsis":  "Sets local certificate auto-enrollment policy."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Switch-Certificate",
+        "Synopsis":  "Marks one certificate as having been replaced by another certificate."
+    },
+    {
+        "Module":  "PKI",
+        "Name":  "Test-Certificate",
+        "Synopsis":  "Verifies a certificate according to the input parameters."
+    }
+]

@@ -1,0 +1,87 @@
+﻿[
+    {
+        "Module":  "DnsClient",
+        "Name":  "Add-DnsClientNrptRule",
+        "Synopsis":  "Adds a rule to the NRPT."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Clear-DnsClientCache",
+        "Synopsis":  "Clears the contents of the DNS client cache."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Get-DnsClient",
+        "Synopsis":  "Gets details of the network interfaces configured on a specified computer."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Get-DnsClientCache",
+        "Synopsis":  "Retrieves the contents of the DNS client cache."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Get-DnsClientGlobalSetting",
+        "Synopsis":  "Retrieves global DNS client settings like the suffix search list."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Get-DnsClientNrptGlobal",
+        "Synopsis":  "Gets the NRPT global settings."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Get-DnsClientNrptPolicy",
+        "Synopsis":  "Gets the NRPT configured on a computer."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Get-DnsClientNrptRule",
+        "Synopsis":  "Retrieves the DNS client NRPT rules."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Get-DnsClientServerAddress",
+        "Synopsis":  "Gets DNS server IP addresses from the TCP/IP properties on an interface."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Register-DnsClient",
+        "Synopsis":  "Registers all of the IP addresses on the computer onto the configured DNS server."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Remove-DnsClientNrptRule",
+        "Synopsis":  "Removes the specified DNS client NRPT rule."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Set-DnsClient",
+        "Synopsis":  "Sets the interface-specific DNS client configurations on the computer."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Set-DnsClientGlobalSetting",
+        "Synopsis":  "Sets the DNS client global, non-interface specific, settings."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Set-DnsClientNrptGlobal",
+        "Synopsis":  "Modifies the global Name Resolution Policy Table (NRPT) settings."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Set-DnsClientNrptRule",
+        "Synopsis":  "Modifies a DNS client Name Resolution Policy Table (NRPT) rule for the specified namespace."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Set-DnsClientServerAddress",
+        "Synopsis":  "Sets DNS server addresses associated with the TCP/IP properties on an interface."
+    },
+    {
+        "Module":  "DnsClient",
+        "Name":  "Resolve-DnsName",
+        "Synopsis":  "\r\nResolve-DnsName [-Name] \u003cstring\u003e [[-Type] \u003cRecordType\u003e] [-Server \u003cstring[]\u003e] [-DnsOnly] [-CacheOnly] [-DnssecOk] [-DnssecCd] [-NoHostsFile] [-LlmnrNetbiosOnly] [-LlmnrFallback] [-LlmnrOnly] [-NetbiosFallback] [-NoIdn] [-NoRecursion] [-QuickTimeout] [-TcpOnly] [\u003cCommonParameters\u003e]\r\n"
+    }
+]

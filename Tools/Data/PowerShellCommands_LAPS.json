@@ -1,0 +1,62 @@
+﻿[
+    {
+        "Module":  "LAPS",
+        "Name":  "Get-LapsAADPassword",
+        "Synopsis":  "Queries Microsoft Entra ID for the Windows Local Administrator Password Solution (LAPS) credentials on a specified Microsoft Entra device."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Get-LapsDiagnostics",
+        "Synopsis":  "Collects Windows Local Administrator Password Solution (LAPS) logs and tracing from the local machine."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Find-LapsADExtendedRights",
+        "Synopsis":  "Queries Active Directory (AD) to find principals that have been granted permission to read Windows Local Administrator Password Solution (LAPS) password attributes."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Get-LapsADPassword",
+        "Synopsis":  "Queries Windows Local Administrator Password Solution (LAPS) credentials from Active Directory (AD) on a specified AD computer or domain controller object."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Invoke-LapsPolicyProcessing",
+        "Synopsis":  "Causes Windows Local Administrator Password Solution (LAPS) to process the currently configured policy."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Reset-LapsPassword",
+        "Synopsis":  "Causes Windows Local Administrator Password Solution (LAPS) to immediately rotate the password for the currently managed local account."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Set-LapsADAuditing",
+        "Synopsis":  "Configures an Active Directory (AD) Organizational Unit (OU) to enable auditing on the Windows Local Administrator Password Solution (LAPS) password schema attributes."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Set-LapsADComputerSelfPermission",
+        "Synopsis":  "Configures permissions on an Active Directory (AD) Organizational Unit (OU) to enable computers in that OU to update their Windows Local Administrator Password Solution (LAPS) passwords."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Set-LapsADPasswordExpirationTime",
+        "Synopsis":  "Sets the Windows Local Administrator Password Solution (LAPS) password expiration timestamp on an Active Directory (AD) computer or domain controller object."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Set-LapsADReadPasswordPermission",
+        "Synopsis":  "Configures security on an Active Directory (AD) Organizational Unit (OU) to grant specific users or groups permission to query Windows Local Administrator Password Solution (LAPS) passwords."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Set-LapsADResetPasswordPermission",
+        "Synopsis":  "Configures security on an Active Directory (AD) Organizational Unit (OU) to grant specific users or groups permission to set the Windows Local Administrator Password Solution (LAPS) password expiration time."
+    },
+    {
+        "Module":  "LAPS",
+        "Name":  "Update-LapsADSchema",
+        "Synopsis":  "Extends the Active Directory (AD) schema with the Windows Local Administrator Password Solution (LAPS) schema attributes."
+    }
+]

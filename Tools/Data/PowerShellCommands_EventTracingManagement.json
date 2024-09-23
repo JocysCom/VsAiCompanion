@@ -1,0 +1,102 @@
+﻿[
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Remove-EtwTraceSession",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Set-AutologgerConfig",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Set-EtwTraceSession",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Add-EtwTraceProvider",
+        "Synopsis":  "Adds an ETW trace provider to an ETW Autologger configuration or ETW session."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Flush-EtwTraceSession",
+        "Synopsis":  "Adds an ETW trace provider to an ETW Autologger configuration or ETW session."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Get-AutologgerConfig",
+        "Synopsis":  "Gets Autologger configurations."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Get-EtwTraceProvider",
+        "Synopsis":  "Gets ETW trace providers."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Get-EtwTraceSession",
+        "Synopsis":  "Gets ETW trace sessions."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "New-AutologgerConfig",
+        "Synopsis":  "Creates an Autologger configuration."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "New-EtwTraceSession",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Remove-AutologgerConfig",
+        "Synopsis":  "Removes an Autologger configuration."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Remove-EtwTraceProvider",
+        "Synopsis":  "Removes an ETW trace provider from an ETW Autologger configuration or an ETW session."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Save-EtwTraceSession",
+        "Synopsis":  "\r\nSave-EtwTraceSession [-Name] \u003cstring\u003e [-OutputFile \u003cFileInfo\u003e] [-OutputFolder \u003cDirectoryInfo\u003e] [-Stop] [-Overwrite] [-CimSession \u003cCimSession\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Send-EtwTraceSession",
+        "Synopsis":  "Copies ETW trace sessions to a folder."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Set-EtwTraceProvider",
+        "Synopsis":  "Modifies an ETW trace provider."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Start-AutologgerConfig",
+        "Synopsis":  "Modifies an ETW trace provider."
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Start-EtwTraceSession",
+        "Synopsis":  "\r\nStart-EtwTraceSession [-Name] \u003cstring\u003e [-LogFileMode \u003cuint32\u003e] [-LocalFilePath \u003cstring\u003e] [-MaximumFileSize \u003cuint32\u003e] [-BufferSize \u003cuint32\u003e] [-MinimumBuffers \u003cuint32\u003e] [-MaximumBuffers \u003cuint32\u003e] [-FlushTimer \u003cuint32\u003e] [-ClockType \u003cstring\u003e] [-FileMode \u003cstring\u003e] [-Compress] [-RealTime] [-NonPaged] [-CimSession \u003cCimSession\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Stop-EtwTraceSession",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Update-AutologgerConfig",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "EventTracingManagement",
+        "Name":  "Update-EtwTraceSession",
+        "Synopsis":  ""
+    }
+]

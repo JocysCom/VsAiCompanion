@@ -1,0 +1,172 @@
+﻿[
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Clear-IISCentralCertProvider",
+        "Synopsis":  "Removes configuration information from the IIS central certificate store."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Clear-IISConfigCollection",
+        "Synopsis":  "Clears an IIS configuration collection."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Disable-IISCentralCertProvider",
+        "Synopsis":  "Disables the IIS central certificate store."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Disable-IISSharedConfig",
+        "Synopsis":  "Disables IIS shared configuration."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Enable-IISCentralCertProvider",
+        "Synopsis":  "Enables the IIS central certificate store."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Enable-IISSharedConfig",
+        "Synopsis":  "Enables shared configuration."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Export-IISConfiguration",
+        "Synopsis":  "Exports the IIS configuration and machine keys."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISAppPool",
+        "Synopsis":  "Gets configuration information for an IIS Application Pool."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISCentralCertProvider",
+        "Synopsis":  "Gets information about the IIS central certificate store."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISConfigAttributeValue",
+        "Synopsis":  "Gets a configuration attribute value from an IIS configuration section or configuration element attribute."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISConfigCollection",
+        "Synopsis":  "Gets a configuration collection object from an IIS configuration section or a configuration element."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISConfigCollectionElement",
+        "Synopsis":  "Gets a configuration element object from an IIS configuration collection."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISConfigElement",
+        "Synopsis":  "Gets a configuration element object from an IIS configuration section or a configuration element."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISConfigSection",
+        "Synopsis":  "Gets a configuration section object to work further with the IIS Configuration Store."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISServerManager",
+        "Synopsis":  "Gets the IISAdministration view of IIS ServerManager."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISSharedConfig",
+        "Synopsis":  "Gets IIS shared configuration status."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISSite",
+        "Synopsis":  "Gets configuration information for an IIS Web site."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Get-IISSiteBinding",
+        "Synopsis":  "\r\nGet-IISSiteBinding [-Name] \u003cstring\u003e [[-BindingInformation] \u003cstring\u003e] [[-Protocol] \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "New-IISConfigCollectionElement",
+        "Synopsis":  "Creates a new configuration element object in an IIS configuration collection."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "New-IISSite",
+        "Synopsis":  "Creates an IIS Web site."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "New-IISSiteBinding",
+        "Synopsis":  "\r\nNew-IISSiteBinding [-Name] \u003cstring\u003e [-BindingInformation] \u003cstring\u003e [[-Protocol] \u003cstring\u003e] [[-CertificateThumbPrint] \u003cstring\u003e] [[-SslFlag] \u003cSslFlags\u003e] [[-CertStoreLocation] \u003cstring\u003e] [-Force] [-Passthru] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Remove-IISConfigAttribute",
+        "Synopsis":  "Removes a configuration attribute from an IIS configuration section or configuration element attribute."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Remove-IISConfigCollectionElement",
+        "Synopsis":  "Removes a configuration element object from an IIS configuration collection."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Remove-IISConfigElement",
+        "Synopsis":  "Removes a specified configuration element."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Remove-IISSite",
+        "Synopsis":  "Removes a web site from an IIS server."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Remove-IISSiteBinding",
+        "Synopsis":  "\r\nRemove-IISSiteBinding [-Name] \u003cstring\u003e [-BindingInformation] \u003cstring\u003e [[-Protocol] \u003cstring\u003e] [-RemoveConfigOnly] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Reset-IISServerManager",
+        "Synopsis":  "Resets the IISAdministration view of the IIS ServerManager."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Set-IISCentralCertProvider",
+        "Synopsis":  "Sets property values for the IIS central certificate store."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Set-IISCentralCertProviderCredential",
+        "Synopsis":  "Modifies the user account credentials for the IIS certificate store."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Set-IISConfigAttributeValue",
+        "Synopsis":  "Sets a configuration attribute value for an IIS configuration section or configuration element attribute."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Start-IISCommitDelay",
+        "Synopsis":  "Instructs the IIS configuration system to delay the commitment of changes."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Start-IISSite",
+        "Synopsis":  "Starts an existing site on the IIS server."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Stop-IISCommitDelay",
+        "Synopsis":  "Instructs the IIS configuration system to resume the commitment of changes."
+    },
+    {
+        "Module":  "IISAdministration",
+        "Name":  "Stop-IISSite",
+        "Synopsis":  "Stops an IIS Web site."
+    }
+]

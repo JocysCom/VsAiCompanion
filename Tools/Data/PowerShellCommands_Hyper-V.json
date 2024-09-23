@@ -1,0 +1,1217 @@
+﻿[
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Export-VMCheckpoint",
+        "Synopsis":  "Exports a virtual machine checkpoint to disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMCheckpoint",
+        "Synopsis":  "Gets the checkpoints associated with a virtual machine or checkpoint."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMCheckpoint",
+        "Synopsis":  "Deletes a virtual machine checkpoint."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Rename-VMCheckpoint",
+        "Synopsis":  "Renames a virtual machine checkpoint."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Restore-VMCheckpoint",
+        "Synopsis":  "Restores a virtual machine checkpoint."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMAssignableDevice",
+        "Synopsis":  "\r\nAdd-VMAssignableDevice [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-InstancePath \u003cstring\u003e] [-LocationPath \u003cstring\u003e] [-VirtualFunction \u003cuint16\u003e] [-ResourcePoolName \u003cstring\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nAdd-VMAssignableDevice [-VM] \u003cVirtualMachine[]\u003e [-InstancePath \u003cstring\u003e] [-LocationPath \u003cstring\u003e] [-VirtualFunction \u003cuint16\u003e] [-ResourcePoolName \u003cstring\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMDvdDrive",
+        "Synopsis":  "Adds a DVD drive to a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMFibreChannelHba",
+        "Synopsis":  "Adds a virtual Fibre Channel host bus adapter to a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMGpuPartitionAdapter",
+        "Synopsis":  "\r\nAdd-VMGpuPartitionAdapter [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Passthru] [-MinPartitionVRAM \u003cuint64\u003e] [-MaxPartitionVRAM \u003cuint64\u003e] [-OptimalPartitionVRAM \u003cuint64\u003e] [-MinPartitionEncode \u003cuint64\u003e] [-MaxPartitionEncode \u003cuint64\u003e] [-OptimalPartitionEncode \u003cuint64\u003e] [-MinPartitionDecode \u003cuint64\u003e] [-MaxPartitionDecode \u003cuint64\u003e] [-OptimalPartitionDecode \u003cuint64\u003e] [-MinPartitionCompute \u003cuint64\u003e] [-MaxPartitionCompute \u003cuint64\u003e] [-OptimalPartitionCompute \u003cuint64\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nAdd-VMGpuPartitionAdapter [-VM] \u003cVirtualMachine[]\u003e [-Passthru] [-MinPartitionVRAM \u003cuint64\u003e] [-MaxPartitionVRAM \u003cuint64\u003e] [-OptimalPartitionVRAM \u003cuint64\u003e] [-MinPartitionEncode \u003cuint64\u003e] [-MaxPartitionEncode \u003cuint64\u003e] [-OptimalPartitionEncode \u003cuint64\u003e] [-MinPartitionDecode \u003cuint64\u003e] [-MaxPartitionDecode \u003cuint64\u003e] [-OptimalPartitionDecode \u003cuint64\u003e] [-MinPartitionCompute \u003cuint64\u003e] [-MaxPartitionCompute \u003cuint64\u003e] [-OptimalPartitionCompute \u003cuint64\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMGroupMember",
+        "Synopsis":  "Adds group members to a virtual machine group."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMHardDiskDrive",
+        "Synopsis":  "Adds a hard disk drive to a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMHostAssignableDevice",
+        "Synopsis":  "\r\nAdd-VMHostAssignableDevice -ResourcePoolName \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Force] [-InstancePath \u003cstring\u003e] [-LocationPath \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n\r\nAdd-VMHostAssignableDevice [-VMHostAssignableDevice] \u003cVMHostAssignableDevice[]\u003e -ResourcePoolName \u003cstring[]\u003e [-Force] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMKeyStorageDrive",
+        "Synopsis":  "\r\nAdd-VMKeyStorageDrive [-VMName] \u003cstring[]\u003e [[-ControllerNumber] \u003cint\u003e] [[-ControllerLocation] \u003cint\u003e] [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-ResourcePoolName \u003cstring\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nAdd-VMKeyStorageDrive [-VM] \u003cVirtualMachine[]\u003e [[-ControllerNumber] \u003cint\u003e] [[-ControllerLocation] \u003cint\u003e] [-ResourcePoolName \u003cstring\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMMigrationNetwork",
+        "Synopsis":  "Adds a network for virtual machine migration on one or more virtual machine hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMNetworkAdapter",
+        "Synopsis":  "Adds a virtual network adapter to a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMNetworkAdapterAcl",
+        "Synopsis":  "Creates an ACL to apply to the traffic through a virtual machine network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMNetworkAdapterExtendedAcl",
+        "Synopsis":  "Creates an extended ACL for a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMNetworkAdapterRoutingDomainMapping",
+        "Synopsis":  "Adds a routing domain and virtual subnets to a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMPmemController",
+        "Synopsis":  "\r\nAdd-VMPmemController [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nAdd-VMPmemController [-VM] \u003cVirtualMachine[]\u003e [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMRemoteFx3dVideoAdapter",
+        "Synopsis":  "Adds a RemoteFX video adapter in a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMScsiController",
+        "Synopsis":  "Adds a SCSI controller in a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMStoragePath",
+        "Synopsis":  "Adds a path to a storage resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMSwitch",
+        "Synopsis":  "Adds a virtual switch to an Ethernet resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMSwitchExtensionPortFeature",
+        "Synopsis":  "Adds a feature to a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMSwitchExtensionSwitchFeature",
+        "Synopsis":  "Adds a feature to a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Add-VMSwitchTeamMember",
+        "Synopsis":  "Adds members to a virtual switch team."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Checkpoint-VM",
+        "Synopsis":  "Creates a checkpoint of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Compare-VM",
+        "Synopsis":  "Compares a virtual machine and a virtual machine host for compatibility, returning a compatibility report."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Complete-VMFailover",
+        "Synopsis":  "Completes a virtual machine\u0027s failover process on the Replica server. Removes all recovery points on a failed over virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Connect-VMNetworkAdapter",
+        "Synopsis":  "Connects a virtual network adapter to a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Connect-VMSan",
+        "Synopsis":  "Associates a host bus adapter with a virtual storage area network (SAN)."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Convert-VHD",
+        "Synopsis":  "Converts the format, version type, and block size of a virtual hard disk file."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Copy-VMFile",
+        "Synopsis":  "Copies a file to a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Debug-VM",
+        "Synopsis":  "Debugs a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disable-VMConsoleSupport",
+        "Synopsis":  "Disables keyboard, video, and mouse for a generation 2 virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disable-VMEventing",
+        "Synopsis":  "Disables virtual machine eventing."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disable-VMIntegrationService",
+        "Synopsis":  "Disables an integration service on a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disable-VMMigration",
+        "Synopsis":  "Disables migration on one or more virtual machine hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disable-VMRemoteFXPhysicalVideoAdapter",
+        "Synopsis":  "Disables one or more RemoteFX physical video adapters from use with RemoteFX-enabled virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disable-VMResourceMetering",
+        "Synopsis":  "Disables collection of resource utilization data for a virtual machine or resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disable-VMSwitchExtension",
+        "Synopsis":  "Disables one or more extensions on one or more virtual switches."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disable-VMTPM",
+        "Synopsis":  "Disables TPM functionality on a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disconnect-VMNetworkAdapter",
+        "Synopsis":  "Disconnects a virtual network adapter from a virtual switch or Ethernet resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Disconnect-VMSan",
+        "Synopsis":  "Removes a host bus adapter from a virtual storage area network (SAN)."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Dismount-VHD",
+        "Synopsis":  "Dismounts a virtual hard disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Dismount-VMHostAssignableDevice",
+        "Synopsis":  "\r\nDismount-VMHostAssignableDevice [[-InstancePath] \u003cstring\u003e] [[-LocationPath] \u003cstring\u003e] [-Force] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMConsoleSupport",
+        "Synopsis":  "Enables keyboard, video, and mouse for virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMEventing",
+        "Synopsis":  "Enables virtual machine eventing."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMIntegrationService",
+        "Synopsis":  "Enables an integration service on a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMMigration",
+        "Synopsis":  "Enables migration on one or more virtual machine hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMRemoteFXPhysicalVideoAdapter",
+        "Synopsis":  "Enables one or more RemoteFX physical video adapters for use with RemoteFX-enabled virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMReplication",
+        "Synopsis":  "Enables replication of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMResourceMetering",
+        "Synopsis":  "Collects resource utilization data for a virtual machine or resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMSwitchExtension",
+        "Synopsis":  "Enables one or more extensions on one or more switches."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Enable-VMTPM",
+        "Synopsis":  "Enables TPM functionality on a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Export-VM",
+        "Synopsis":  "Exports a virtual machine to disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Export-VMSnapshot",
+        "Synopsis":  "Exports a virtual machine checkpoint to disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VHD",
+        "Synopsis":  "Gets the virtual hard disk object associated with a virtual hard disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VHDSet",
+        "Synopsis":  "Gets information about a VHD set."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VHDSnapshot",
+        "Synopsis":  "Gets information about a checkpoint in a VHD set."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VM",
+        "Synopsis":  "Gets the virtual machines from one or more Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMAssignableDevice",
+        "Synopsis":  "\r\nGet-VMAssignableDevice [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMAssignableDevice [-VM] \u003cVirtualMachine[]\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMBios",
+        "Synopsis":  "Gets the BIOS of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMComPort",
+        "Synopsis":  "Gets the COM ports of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMConnectAccess",
+        "Synopsis":  "Gets entries showing users and the virtual machines to which they can connect on one or more Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMDvdDrive",
+        "Synopsis":  "Gets the DVD drives attached to a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMFibreChannelHba",
+        "Synopsis":  "Gets the Fibre Channel host bus adapters associated with one or more virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMFirmware",
+        "Synopsis":  "Gets the firmware configuration of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMFloppyDiskDrive",
+        "Synopsis":  "Gets the floppy disk drives of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMGpuPartitionAdapter",
+        "Synopsis":  "\r\nGet-VMGpuPartitionAdapter [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-AdapterId \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMGpuPartitionAdapter [-VMSnapshot] \u003cVMSnapshot\u003e [\u003cCommonParameters\u003e]\r\n\r\nGet-VMGpuPartitionAdapter [-VM] \u003cVirtualMachine[]\u003e [-AdapterId \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMGroup",
+        "Synopsis":  "Gets virtual machine groups."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMHardDiskDrive",
+        "Synopsis":  "Gets the virtual hard disk drives attached to one or more virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMHost",
+        "Synopsis":  "Gets a Hyper-V host."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMHostAssignableDevice",
+        "Synopsis":  "\r\nGet-VMHostAssignableDevice [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMHostCluster",
+        "Synopsis":  "Gets virtual machine host clusters."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMHostNumaNode",
+        "Synopsis":  "Gets the NUMA topology of a virtual machine host."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMHostNumaNodeStatus",
+        "Synopsis":  "Gets the status of the virtual machines on the non-uniform memory access (NUMA) nodes of a virtual machine host or hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMHostSupportedVersion",
+        "Synopsis":  "Returns a list of virtual machine configuration versions that are supported on a host."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMIdeController",
+        "Synopsis":  "Gets the IDE controllers of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMIntegrationService",
+        "Synopsis":  "Gets the integration services of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMKeyProtector",
+        "Synopsis":  "Retrieves a key protector for a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMKeyStorageDrive",
+        "Synopsis":  "\r\nGet-VMKeyStorageDrive [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-ControllerLocation \u003cint\u003e] [-ControllerNumber \u003cint\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMKeyStorageDrive [-VM] \u003cVirtualMachine[]\u003e [-ControllerLocation \u003cint\u003e] [-ControllerNumber \u003cint\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMKeyStorageDrive [-VMDriveController] \u003cVMDriveController[]\u003e [-ControllerLocation \u003cint\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMMemory",
+        "Synopsis":  "Gets the memory of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMMigrationNetwork",
+        "Synopsis":  "Gets the networks added for migration to one or more virtual machine hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapter",
+        "Synopsis":  "Gets the virtual network adapters of a virtual machine, snapshot, management operating system, or of a virtual machine and management operating system."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapterAcl",
+        "Synopsis":  "Gets the ACLs configured for a virtual machine network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapterExtendedAcl",
+        "Synopsis":  "Gets extended ACLs configured for a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapterFailoverConfiguration",
+        "Synopsis":  "Gets the IP address of a virtual network adapter configured to be used when a virtual machine fails over."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapterIsolation",
+        "Synopsis":  "Gets isolation settings for a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapterRdma",
+        "Synopsis":  "\r\nGet-VMNetworkAdapterRdma [-VMName] \u003cstring\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Name \u003cstring\u003e] [-Passthru] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMNetworkAdapterRdma -ManagementOS [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Name \u003cstring\u003e] [-SwitchName \u003cstring\u003e] [-Passthru] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMNetworkAdapterRdma [-VMNetworkAdapter] \u003cVMNetworkAdapterBase\u003e [-Passthru] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMNetworkAdapterRdma [-VM] \u003cVirtualMachine\u003e [-Name \u003cstring\u003e] [-Passthru] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapterRoutingDomainMapping",
+        "Synopsis":  "Gets members of a routing domain."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapterTeamMapping",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMNetworkAdapterVlan",
+        "Synopsis":  "Gets the virtual LAN settings configured on a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMPartitionableGpu",
+        "Synopsis":  "\r\nGet-VMPartitionableGpu [[-ComputerName] \u003cstring[]\u003e] [[-Credential] \u003cpscredential[]\u003e] [-Name \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMPartitionableGpu [-CimSession] \u003cCimSession[]\u003e [-Name \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMPmemController",
+        "Synopsis":  "\r\nGet-VMPmemController [-VMName] \u003cstring[]\u003e [[-ControllerNumber] \u003cint\u003e] [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMPmemController [-VMSnapshot] \u003cVMSnapshot\u003e [[-ControllerNumber] \u003cint\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMPmemController [-VM] \u003cVirtualMachine[]\u003e [[-ControllerNumber] \u003cint\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMProcessor",
+        "Synopsis":  "Gets the processor of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMRemoteFx3dVideoAdapter",
+        "Synopsis":  "Gets the RemoteFX video adapter of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMRemoteFXPhysicalVideoAdapter",
+        "Synopsis":  "Gets the RemoteFX physical graphics adapters on one or more Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMReplication",
+        "Synopsis":  "Gets the replication settings for a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMReplicationAuthorizationEntry",
+        "Synopsis":  "Gets the authorization entries of a Replica server."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMReplicationServer",
+        "Synopsis":  "Gets the replication and authentication settings of a Replica server."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMResourcePool",
+        "Synopsis":  "Gets the resource pools on one or more virtual machine hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSan",
+        "Synopsis":  "Gets the available virtual machine storage area networks on a Hyper-V host or hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMScsiController",
+        "Synopsis":  "Gets the SCSI controllers of a virtual machine or snapshot."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSecurity",
+        "Synopsis":  "Gets security information about a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSnapshot",
+        "Synopsis":  "Gets the checkpoints associated with a virtual machine or checkpoint."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMStoragePath",
+        "Synopsis":  "Gets the storage paths in a storage resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMStorageSettings",
+        "Synopsis":  "\r\nGet-VMStorageSettings [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-VMStorageSettings [-VM] \u003cVirtualMachine[]\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSwitch",
+        "Synopsis":  "Gets virtual switches from one or more virtual Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSwitchExtension",
+        "Synopsis":  "Gets the extensions on one or more virtual switches."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSwitchExtensionPortData",
+        "Synopsis":  "Retrieves the status of a virtual switch extension feature applied to a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSwitchExtensionPortFeature",
+        "Synopsis":  "Gets the features configured on a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSwitchExtensionSwitchData",
+        "Synopsis":  "Gets the status of a virtual switch extension feature applied on a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSwitchExtensionSwitchFeature",
+        "Synopsis":  "Gets the features configured on a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSwitchTeam",
+        "Synopsis":  "Gets virtual switch teams from Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSystemSwitchExtension",
+        "Synopsis":  "Gets the switch extensions installed on a virtual machine host."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSystemSwitchExtensionPortFeature",
+        "Synopsis":  "Gets the port-level features supported by virtual switch extensions on one or more Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMSystemSwitchExtensionSwitchFeature",
+        "Synopsis":  "Gets the switch-level features on one or more Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Get-VMVideo",
+        "Synopsis":  "Gets video settings for virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Grant-VMConnectAccess",
+        "Synopsis":  "Grants a user or users access to connect to a virtual machine or machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Import-VM",
+        "Synopsis":  "Imports a virtual machine from a file."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Import-VMInitialReplication",
+        "Synopsis":  "Imports initial replication files for a Replica virtual machine to complete the initial replication when using external media as the source."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Measure-VM",
+        "Synopsis":  "Reports resource utilization data for one or more virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Measure-VMReplication",
+        "Synopsis":  "Gets replication statistics and information associated with a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Measure-VMResourcePool",
+        "Synopsis":  "Reports resource utilization data for one or more resource pools."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Merge-VHD",
+        "Synopsis":  "Merges virtual hard disks."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Mount-VHD",
+        "Synopsis":  "Mounts one or more virtual hard disks."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Mount-VMHostAssignableDevice",
+        "Synopsis":  "\r\nMount-VMHostAssignableDevice [[-HostAssignableDevice] \u003cVMHostAssignableDevice[]\u003e] [[-InstancePath] \u003cstring\u003e] [[-LocationPath] \u003cstring\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Move-VM",
+        "Synopsis":  "Moves a virtual machine to a new Hyper-V host."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Move-VMStorage",
+        "Synopsis":  "Moves the storage of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "New-VFD",
+        "Synopsis":  "Creates a virtual floppy disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "New-VHD",
+        "Synopsis":  "Creates one or more new virtual hard disks."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "New-VM",
+        "Synopsis":  "Creates a new virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "New-VMGroup",
+        "Synopsis":  "Creates a virtual machine group."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "New-VMReplicationAuthorizationEntry",
+        "Synopsis":  "Creates a new authorization entry that allows one or more primary servers to replicate data to a specified Replica server."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "New-VMResourcePool",
+        "Synopsis":  "Creates a resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "New-VMSan",
+        "Synopsis":  "Creates a new virtual storage area network (SAN) on a Hyper-V host."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "New-VMSwitch",
+        "Synopsis":  "Creates a new virtual switch on one or more virtual machine hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Optimize-VHD",
+        "Synopsis":  "Optimizes the allocation of space used by virtual hard disk files, except for fixed virtual hard disks."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Optimize-VHDSet",
+        "Synopsis":  "Optimizes VHD set files."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VHDSnapshot",
+        "Synopsis":  "Removes a checkpoint from a VHD set file."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VM",
+        "Synopsis":  "Deletes a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMAssignableDevice",
+        "Synopsis":  "\r\nRemove-VMAssignableDevice [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-InstancePath \u003cstring\u003e] [-LocationPath \u003cstring\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-VMAssignableDevice [-VMAssignableDevice] \u003cVMAssignedDevice[]\u003e [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMDvdDrive",
+        "Synopsis":  "Deletes a DVD drive from a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMFibreChannelHba",
+        "Synopsis":  "Removes a Fibre Channel host bus adapter from a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMGpuPartitionAdapter",
+        "Synopsis":  "\r\nRemove-VMGpuPartitionAdapter [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Passthru] [-AdapterId \u003cstring\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-VMGpuPartitionAdapter [-VM] \u003cVirtualMachine[]\u003e [-Passthru] [-AdapterId \u003cstring\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-VMGpuPartitionAdapter [-VMGpuPartitionAdapter] \u003cVMGpuPartitionAdapter[]\u003e [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMGroup",
+        "Synopsis":  "Removes a virtual machine group."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMGroupMember",
+        "Synopsis":  "Removes members from a virtual machine group."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMHardDiskDrive",
+        "Synopsis":  "Deletes a hard disk drive from a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMHostAssignableDevice",
+        "Synopsis":  "\r\nRemove-VMHostAssignableDevice -ResourcePoolName \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-InstancePath \u003cstring\u003e] [-LocationPath \u003cstring\u003e] [-Force] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-VMHostAssignableDevice [-VMHostAssignableDevice] \u003cVMHostAssignableDevice[]\u003e -ResourcePoolName \u003cstring[]\u003e [-Force] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMKeyStorageDrive",
+        "Synopsis":  "\r\nRemove-VMKeyStorageDrive [-VMName] \u003cstring\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-VMKeyStorageDrive [-VMKeyStorageDrive] \u003cKeyStorageDrive[]\u003e [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMMigrationNetwork",
+        "Synopsis":  "Removes a network from use with migration."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMNetworkAdapter",
+        "Synopsis":  "Removes one or more virtual network adapters from a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMNetworkAdapterAcl",
+        "Synopsis":  "Removes an ACL applied to the traffic through a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMNetworkAdapterExtendedAcl",
+        "Synopsis":  "Removes an extended ACL for a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMNetworkAdapterRoutingDomainMapping",
+        "Synopsis":  "Removes a routing domain from a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMNetworkAdapterTeamMapping",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMPmemController",
+        "Synopsis":  "\r\nRemove-VMPmemController [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-VMPmemController [-VMPmemController] \u003cVMPmemController[]\u003e [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMRemoteFx3dVideoAdapter",
+        "Synopsis":  "Removes a RemoteFX 3D video adapter from a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMReplication",
+        "Synopsis":  "Removes the replication relationship of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMReplicationAuthorizationEntry",
+        "Synopsis":  "Removes an authorization entry from a Replica server."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMResourcePool",
+        "Synopsis":  "Deletes a resource pool from one or more virtual machine hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMSan",
+        "Synopsis":  "Removes a virtual storage area network (SAN) from a Hyper-V host."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMSavedState",
+        "Synopsis":  "Deletes the saved state of a saved virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMScsiController",
+        "Synopsis":  "Removes a SCSI controller from a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMSnapshot",
+        "Synopsis":  "Deletes a virtual machine checkpoint."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMStoragePath",
+        "Synopsis":  "Removes a path from a storage resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMSwitch",
+        "Synopsis":  "Deletes a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMSwitchExtensionPortFeature",
+        "Synopsis":  "Removes a feature from a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMSwitchExtensionSwitchFeature",
+        "Synopsis":  "Removes a feature from a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Remove-VMSwitchTeamMember",
+        "Synopsis":  "Removes a member from a virtual machine switch team."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Rename-VM",
+        "Synopsis":  "Renames a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Rename-VMGroup",
+        "Synopsis":  "Renames virtual machine groups."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Rename-VMNetworkAdapter",
+        "Synopsis":  "Renames a virtual network adapter on a virtual machine or on the management operating system."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Rename-VMResourcePool",
+        "Synopsis":  "Renames a resource pool on one or more Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Rename-VMSan",
+        "Synopsis":  "Renames a virtual storage area network (SAN)."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Rename-VMSnapshot",
+        "Synopsis":  "Renames a virtual machine checkpoint."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Rename-VMSwitch",
+        "Synopsis":  "Renames a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Repair-VM",
+        "Synopsis":  "Repairs one or more virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Reset-VMReplicationStatistics",
+        "Synopsis":  "Resets the replication statistics of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Reset-VMResourceMetering",
+        "Synopsis":  "Resets the resource utilization data collected by Hyper-V resource metering."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Resize-VHD",
+        "Synopsis":  "Resizes a virtual hard disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Restart-VM",
+        "Synopsis":  "Restarts a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Restore-VMSnapshot",
+        "Synopsis":  "Restores a virtual machine checkpoint."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Resume-VM",
+        "Synopsis":  "Resumes a suspended (paused) virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Resume-VMReplication",
+        "Synopsis":  "Resumes a virtual machine replication that is in a state of Paused, Error, Resynchronization Required, or Suspended."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Revoke-VMConnectAccess",
+        "Synopsis":  "Revokes access for one or more users to connect to a one or more virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Save-VM",
+        "Synopsis":  "Saves a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VHD",
+        "Synopsis":  "Sets properties associated with a virtual hard disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VM",
+        "Synopsis":  "Configures a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMBios",
+        "Synopsis":  "Configures the BIOS of a Generation 1 virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMComPort",
+        "Synopsis":  "Configures the COM port of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMDvdDrive",
+        "Synopsis":  "Configures a virtual DVD drive."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMFibreChannelHba",
+        "Synopsis":  "Configures a Fibre Channel host bus adapter on a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMFirmware",
+        "Synopsis":  "Sets the firmware configuration of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMFloppyDiskDrive",
+        "Synopsis":  "Configures a virtual floppy disk drive."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMGpuPartitionAdapter",
+        "Synopsis":  "\r\nSet-VMGpuPartitionAdapter [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Passthru] [-AdapterId \u003cstring\u003e] [-MinPartitionVRAM \u003cuint64\u003e] [-MaxPartitionVRAM \u003cuint64\u003e] [-OptimalPartitionVRAM \u003cuint64\u003e] [-MinPartitionEncode \u003cuint64\u003e] [-MaxPartitionEncode \u003cuint64\u003e] [-OptimalPartitionEncode \u003cuint64\u003e] [-MinPartitionDecode \u003cuint64\u003e] [-MaxPartitionDecode \u003cuint64\u003e] [-OptimalPartitionDecode \u003cuint64\u003e] [-MinPartitionCompute \u003cuint64\u003e] [-MaxPartitionCompute \u003cuint64\u003e] [-OptimalPartitionCompute \u003cuint64\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMGpuPartitionAdapter [-VM] \u003cVirtualMachine[]\u003e [-Passthru] [-AdapterId \u003cstring\u003e] [-MinPartitionVRAM \u003cuint64\u003e] [-MaxPartitionVRAM \u003cuint64\u003e] [-OptimalPartitionVRAM \u003cuint64\u003e] [-MinPartitionEncode \u003cuint64\u003e] [-MaxPartitionEncode \u003cuint64\u003e] [-OptimalPartitionEncode \u003cuint64\u003e] [-MinPartitionDecode \u003cuint64\u003e] [-MaxPartitionDecode \u003cuint64\u003e] [-OptimalPartitionDecode \u003cuint64\u003e] [-MinPartitionCompute \u003cuint64\u003e] [-MaxPartitionCompute \u003cuint64\u003e] [-OptimalPartitionCompute \u003cuint64\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMGpuPartitionAdapter [-VMGpuPartitionAdapter] \u003cVMGpuPartitionAdapter[]\u003e [-Passthru] [-MinPartitionVRAM \u003cuint64\u003e] [-MaxPartitionVRAM \u003cuint64\u003e] [-OptimalPartitionVRAM \u003cuint64\u003e] [-MinPartitionEncode \u003cuint64\u003e] [-MaxPartitionEncode \u003cuint64\u003e] [-OptimalPartitionEncode \u003cuint64\u003e] [-MinPartitionDecode \u003cuint64\u003e] [-MaxPartitionDecode \u003cuint64\u003e] [-OptimalPartitionDecode \u003cuint64\u003e] [-MinPartitionCompute \u003cuint64\u003e] [-MaxPartitionCompute \u003cuint64\u003e] [-OptimalPartitionCompute \u003cuint64\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMHardDiskDrive",
+        "Synopsis":  "Configures a virtual hard disk."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMHost",
+        "Synopsis":  "Configures a Hyper-V host."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMHostCluster",
+        "Synopsis":  "Configures a virtual machine host cluster."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMKeyProtector",
+        "Synopsis":  "Configures a key protector for a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMKeyStorageDrive",
+        "Synopsis":  "\r\nSet-VMKeyStorageDrive [-VMName] \u003cstring\u003e [[-ControllerNumber] \u003cint\u003e] [[-ControllerLocation] \u003cint\u003e] [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-ToControllerNumber \u003cint\u003e] [-ToControllerLocation \u003cint\u003e] [-ResourcePoolName \u003cstring\u003e] [-AllowUnverifiedPaths] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMKeyStorageDrive [-VMKeyStorageDrive] \u003cKeyStorageDrive[]\u003e [-ToControllerNumber \u003cint\u003e] [-ToControllerLocation \u003cint\u003e] [-ResourcePoolName \u003cstring\u003e] [-AllowUnverifiedPaths] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMMemory",
+        "Synopsis":  "Configures the memory of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMMigrationNetwork",
+        "Synopsis":  "Sets the subnet, subnet mask, and/or priority of a migration network."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMNetworkAdapter",
+        "Synopsis":  "Configures features of the virtual network adapter in a virtual machine or the management operating system."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMNetworkAdapterFailoverConfiguration",
+        "Synopsis":  "Configures the IP address of a virtual network adapter to be used when a virtual machine fails over."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMNetworkAdapterIsolation",
+        "Synopsis":  "Modifies isolation settings for a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMNetworkAdapterRdma",
+        "Synopsis":  "\r\nSet-VMNetworkAdapterRdma [-VMName] \u003cstring\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Name \u003cstring\u003e] [-RdmaWeight \u003cuint32\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMNetworkAdapterRdma -ManagementOS [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Name \u003cstring\u003e] [-RdmaWeight \u003cuint32\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMNetworkAdapterRdma [-VMNetworkAdapter] \u003cVMNetworkAdapterBase\u003e [-RdmaWeight \u003cuint32\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMNetworkAdapterRdma [-VM] \u003cVirtualMachine\u003e [-Name \u003cstring\u003e] [-RdmaWeight \u003cuint32\u003e] [-Passthru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMNetworkAdapterRoutingDomainMapping",
+        "Synopsis":  "Sets virtual subnets on a routing domain."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMNetworkAdapterTeamMapping",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMNetworkAdapterVlan",
+        "Synopsis":  "Configures the virtual LAN settings for the traffic through a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMPartitionableGpu",
+        "Synopsis":  "\r\nSet-VMPartitionableGpu [[-ComputerName] \u003cstring[]\u003e] [[-Credential] \u003cpscredential[]\u003e] [-Passthru] [-PartitionCount \u003cuint16\u003e] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMPartitionableGpu [-CimSession] \u003cCimSession[]\u003e [-Passthru] [-PartitionCount \u003cuint16\u003e] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMPartitionableGpu [-PartitionableGpu] \u003cVMPartitionableGpu[]\u003e [-Passthru] [-PartitionCount \u003cuint16\u003e] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMPartitionableGpu [-Passthru] [-Name \u003cstring\u003e] [-PartitionCount \u003cuint16\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMProcessor",
+        "Synopsis":  "Configures one or more processors of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMRemoteFx3dVideoAdapter",
+        "Synopsis":  "Configures the RemoteFX 3D video adapter of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMReplication",
+        "Synopsis":  "Modifies the replication settings of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMReplicationAuthorizationEntry",
+        "Synopsis":  "Modifies an authorization entry on a Replica server."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMReplicationServer",
+        "Synopsis":  "Configures a host as a Replica server."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMResourcePool",
+        "Synopsis":  "Sets the parent resource pool for a selected resource pool."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMSan",
+        "Synopsis":  "Configures a virtual storage area network (SAN) on one or more Hyper-V hosts."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMSecurity",
+        "Synopsis":  "Configures security settings for a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMSecurityPolicy",
+        "Synopsis":  "Configures the security policy for a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMStorageSettings",
+        "Synopsis":  "\r\nSet-VMStorageSettings [-VMName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-Passthru] [-DisableInterruptBatching \u003cbool\u003e] [-ThreadCountPerChannel \u003cThreadCount\u003e] [-VirtualProcessorsPerChannel \u003cuint16\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-VMStorageSettings [-VM] \u003cVirtualMachine[]\u003e [-Passthru] [-DisableInterruptBatching \u003cbool\u003e] [-ThreadCountPerChannel \u003cThreadCount\u003e] [-VirtualProcessorsPerChannel \u003cuint16\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMSwitch",
+        "Synopsis":  "Configures a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMSwitchExtensionPortFeature",
+        "Synopsis":  "Configures a feature on a virtual network adapter."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMSwitchExtensionSwitchFeature",
+        "Synopsis":  "Configures a feature on a virtual switch."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMSwitchTeam",
+        "Synopsis":  "Configures a virtual switch team."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Set-VMVideo",
+        "Synopsis":  "Configures video settings for virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Start-VM",
+        "Synopsis":  "Starts a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Start-VMFailover",
+        "Synopsis":  "Starts failover on a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Start-VMInitialReplication",
+        "Synopsis":  "Starts replication of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Start-VMTrace",
+        "Synopsis":  "Starts tracing to a file."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Stop-VM",
+        "Synopsis":  "Shuts down, turns off, or saves a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Stop-VMFailover",
+        "Synopsis":  "Stops failover of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Stop-VMInitialReplication",
+        "Synopsis":  "Stops an ongoing initial replication."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Stop-VMReplication",
+        "Synopsis":  "Cancels an ongoing virtual machine resynchronization."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Stop-VMTrace",
+        "Synopsis":  "Stops tracing to file."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Suspend-VM",
+        "Synopsis":  "Suspends, or pauses, a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Suspend-VMReplication",
+        "Synopsis":  "Suspends replication of a virtual machine."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Test-VHD",
+        "Synopsis":  "Tests a virtual hard disk for any problems that would make it unusable."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Test-VMNetworkAdapter",
+        "Synopsis":  "Tests connectivity between virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Test-VMReplicationConnection",
+        "Synopsis":  "Tests the connection between a primary server and a Replica server."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Update-VMVersion",
+        "Synopsis":  "Updates the version of virtual machines."
+    },
+    {
+        "Module":  "Hyper-V",
+        "Name":  "Wait-VM",
+        "Synopsis":  "\r\nWait-VM [-Name] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ComputerName \u003cstring[]\u003e] [-Credential \u003cpscredential[]\u003e] [-AsJob] [-Passthru] [-For \u003cWaitVMTypes\u003e] [-Delay \u003cuint16\u003e] [-Timeout \u003cint\u003e] [\u003cCommonParameters\u003e]\r\n\r\nWait-VM [-VM] \u003cVirtualMachine[]\u003e [-AsJob] [-Passthru] [-For \u003cWaitVMTypes\u003e] [-Delay \u003cuint16\u003e] [-Timeout \u003cint\u003e] [\u003cCommonParameters\u003e]\r\n"
+    }
+]

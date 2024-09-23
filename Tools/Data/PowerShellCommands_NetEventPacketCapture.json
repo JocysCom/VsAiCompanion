@@ -1,0 +1,177 @@
+﻿[
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Add-NetEventNetworkAdapter",
+        "Synopsis":  "Adds a network adapter as a filter on a provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Add-NetEventPacketCaptureProvider",
+        "Synopsis":  "Adds a Remote Packet Capture provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Add-NetEventProvider",
+        "Synopsis":  "Adds an ETW provider to a session."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Add-NetEventVFPProvider",
+        "Synopsis":  "\r\nAdd-NetEventVFPProvider [-SessionName] \u003cstring\u003e [[-Level] \u003cbyte\u003e] [[-MatchAnyKeyword] \u003cuint64\u003e] [[-MatchAllKeywords] \u003cuint64\u003e] [[-DestinationMACAddresses] \u003cstring[]\u003e] [[-SourceMACAddresses] \u003cstring[]\u003e] [[-VLANIds] \u003cuint16[]\u003e] [[-TenantIds] \u003cuint32[]\u003e] [[-GREKeys] \u003cuint32[]\u003e] [[-SourceIPAddresses] \u003cstring[]\u003e] [[-DestinationIPAddresses] \u003cstring[]\u003e] [[-IPProtocols] \u003cbyte[]\u003e] [[-TCPPorts] \u003cuint16[]\u003e] [[-UDPPorts] \u003cuint16[]\u003e] [[-VFPFlowDirection] \u003cuint32\u003e] [[-SwitchName] \u003cstring\u003e] [[-PortIds] \u003cuint32[]\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Add-NetEventVmNetworkAdapter",
+        "Synopsis":  "Adds a virtual network adapter as a filter on the provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Add-NetEventVmSwitch",
+        "Synopsis":  "Adds a Hyper-V virtual switch as a filter on a provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Add-NetEventVmSwitchProvider",
+        "Synopsis":  "\r\nAdd-NetEventVmSwitchProvider [-SessionName] \u003cstring\u003e [[-Level] \u003cbyte\u003e] [[-MatchAnyKeyword] \u003cuint64\u003e] [[-MatchAllKeywords] \u003cuint64\u003e] [[-SwitchName] \u003cstring\u003e] [[-PortIds] \u003cuint32[]\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Add-NetEventWFPCaptureProvider",
+        "Synopsis":  "Creates a WFP capture provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventNetworkAdapter",
+        "Synopsis":  "Gets the network adapters associated with a Remote Packet Capture provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventPacketCaptureProvider",
+        "Synopsis":  "Displays a Remote Packet Capture provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventProvider",
+        "Synopsis":  "Displays the ETW providers that are present on the computer or associated with an event and packet capture session."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventSession",
+        "Synopsis":  "Gets network event sessions."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventVFPProvider",
+        "Synopsis":  "\r\nGet-NetEventVFPProvider [[-SessionName] \u003cstring[]\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nGet-NetEventVFPProvider [-AssociatedEventSession \u003cCimInstance#MSFT_NetEventSession\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventVmNetworkAdapter",
+        "Synopsis":  "Gets virtual network adapters from a provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventVmSwitch",
+        "Synopsis":  "Gets Hyper-V virtual switches from a provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventVmSwitchProvider",
+        "Synopsis":  "\r\nGet-NetEventVmSwitchProvider [[-SessionName] \u003cstring[]\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nGet-NetEventVmSwitchProvider [-AssociatedEventSession \u003cCimInstance#MSFT_NetEventSession\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Get-NetEventWFPCaptureProvider",
+        "Synopsis":  "Displays settings for a local or remote WFP capture provider configuration."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "New-NetEventSession",
+        "Synopsis":  "Creates a network event session."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventNetworkAdapter",
+        "Synopsis":  "Removes network adapters associated with a provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventPacketCaptureProvider",
+        "Synopsis":  "Removes the Remote Packet Capture provider and deletes the settings."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventProvider",
+        "Synopsis":  "Removes an ETW provider from a session."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventSession",
+        "Synopsis":  "Removes a network event session."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventVFPProvider",
+        "Synopsis":  "\r\nRemove-NetEventVFPProvider [-SessionName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-NetEventVFPProvider -InputObject \u003cCimInstance#MSFT_NetEventVFPProvider[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventVmNetworkAdapter",
+        "Synopsis":  "Removes virtual network adapters from a provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventVmSwitch",
+        "Synopsis":  "Removes Hyper-V virtual switches from a provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventVmSwitchProvider",
+        "Synopsis":  "\r\nRemove-NetEventVmSwitchProvider [-SessionName] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-NetEventVmSwitchProvider -InputObject \u003cCimInstance#MSFT_NetEventVmSwitchProvider[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Remove-NetEventWFPCaptureProvider",
+        "Synopsis":  "Removes a local or remote WFP capture provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Set-NetEventPacketCaptureProvider",
+        "Synopsis":  "Modifies the configuration for a Remote Packet Capture provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Set-NetEventProvider",
+        "Synopsis":  "Modifies settings for an ETW provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Set-NetEventSession",
+        "Synopsis":  "Modifies a network event session."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Set-NetEventVFPProvider",
+        "Synopsis":  "\r\nSet-NetEventVFPProvider [[-SessionName] \u003cstring[]\u003e] [[-Level] \u003cbyte\u003e] [[-MatchAnyKeyword] \u003cuint64\u003e] [[-MatchAllKeyword] \u003cuint64\u003e] [[-DestinationMACAddresses] \u003cstring[]\u003e] [[-SourceMACAddresses] \u003cstring[]\u003e] [[-VLANIds] \u003cuint16[]\u003e] [[-TenantIds] \u003cuint32[]\u003e] [[-GREKeys] \u003cuint32[]\u003e] [[-SourceIPAddresses] \u003cstring[]\u003e] [[-DestinationIPAddresses] \u003cstring[]\u003e] [[-IPProtocols] \u003cbyte[]\u003e] [[-TCPPorts] \u003cuint16[]\u003e] [[-UDPPorts] \u003cuint16[]\u003e] [[-VFPFlowDirection] \u003cVFPFlowDirection\u003e] [[-SwitchName] \u003cstring\u003e] [[-PortIds] \u003cuint32[]\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-NetEventVFPProvider [[-Level] \u003cbyte\u003e] [[-MatchAnyKeyword] \u003cuint64\u003e] [[-MatchAllKeyword] \u003cuint64\u003e] [[-DestinationMACAddresses] \u003cstring[]\u003e] [[-SourceMACAddresses] \u003cstring[]\u003e] [[-VLANIds] \u003cuint16[]\u003e] [[-TenantIds] \u003cuint32[]\u003e] [[-GREKeys] \u003cuint32[]\u003e] [[-SourceIPAddresses] \u003cstring[]\u003e] [[-DestinationIPAddresses] \u003cstring[]\u003e] [[-IPProtocols] \u003cbyte[]\u003e] [[-TCPPorts] \u003cuint16[]\u003e] [[-UDPPorts] \u003cuint16[]\u003e] [[-VFPFlowDirection] \u003cVFPFlowDirection\u003e] [[-SwitchName] \u003cstring\u003e] [[-PortIds] \u003cuint32[]\u003e] [-AssociatedEventSession \u003cCimInstance#MSFT_NetEventSession\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-NetEventVFPProvider [[-Level] \u003cbyte\u003e] [[-MatchAnyKeyword] \u003cuint64\u003e] [[-MatchAllKeyword] \u003cuint64\u003e] [[-DestinationMACAddresses] \u003cstring[]\u003e] [[-SourceMACAddresses] \u003cstring[]\u003e] [[-VLANIds] \u003cuint16[]\u003e] [[-TenantIds] \u003cuint32[]\u003e] [[-GREKeys] \u003cuint32[]\u003e] [[-SourceIPAddresses] \u003cstring[]\u003e] [[-DestinationIPAddresses] \u003cstring[]\u003e] [[-IPProtocols] \u003cbyte[]\u003e] [[-TCPPorts] \u003cuint16[]\u003e] [[-UDPPorts] \u003cuint16[]\u003e] [[-VFPFlowDirection] \u003cVFPFlowDirection\u003e] [[-SwitchName] \u003cstring\u003e] [[-PortIds] \u003cuint32[]\u003e] -InputObject \u003cCimInstance#MSFT_NetEventVFPProvider[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Set-NetEventVmSwitchProvider",
+        "Synopsis":  "\r\nSet-NetEventVmSwitchProvider [[-SessionName] \u003cstring[]\u003e] [[-Level] \u003cbyte\u003e] [[-MatchAnyKeyword] \u003cuint64\u003e] [[-MatchAllKeyword] \u003cuint64\u003e] [[-SwitchName] \u003cstring\u003e] [[-PortIds] \u003cuint32[]\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-NetEventVmSwitchProvider [[-Level] \u003cbyte\u003e] [[-MatchAnyKeyword] \u003cuint64\u003e] [[-MatchAllKeyword] \u003cuint64\u003e] [[-SwitchName] \u003cstring\u003e] [[-PortIds] \u003cuint32[]\u003e] [-AssociatedEventSession \u003cCimInstance#MSFT_NetEventSession\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-NetEventVmSwitchProvider [[-Level] \u003cbyte\u003e] [[-MatchAnyKeyword] \u003cuint64\u003e] [[-MatchAllKeyword] \u003cuint64\u003e] [[-SwitchName] \u003cstring\u003e] [[-PortIds] \u003cuint32[]\u003e] -InputObject \u003cCimInstance#MSFT_NetEventVmSwitchProvider[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Set-NetEventWFPCaptureProvider",
+        "Synopsis":  "Modifies the configuration of a WFP capture provider."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Start-NetEventSession",
+        "Synopsis":  "Starts event and packet capture for a network event session."
+    },
+    {
+        "Module":  "NetEventPacketCapture",
+        "Name":  "Stop-NetEventSession",
+        "Synopsis":  "Stops event and packet capture for a network event session."
+    }
+]

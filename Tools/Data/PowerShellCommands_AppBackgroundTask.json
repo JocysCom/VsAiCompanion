@@ -1,0 +1,32 @@
+﻿[
+    {
+        "Module":  "AppBackgroundTask",
+        "Name":  "Get-AppBackgroundTask",
+        "Synopsis":  "Gets background task information."
+    },
+    {
+        "Module":  "AppBackgroundTask",
+        "Name":  "Start-AppBackgroundTask",
+        "Synopsis":  "Starts a background task."
+    },
+    {
+        "Module":  "AppBackgroundTask",
+        "Name":  "Unregister-AppBackgroundTask",
+        "Synopsis":  "Unregisters a background task."
+    },
+    {
+        "Module":  "AppBackgroundTask",
+        "Name":  "Disable-AppBackgroundTaskDiagnosticLog",
+        "Synopsis":  "Disables background task logging in Event Viewer."
+    },
+    {
+        "Module":  "AppBackgroundTask",
+        "Name":  "Enable-AppBackgroundTaskDiagnosticLog",
+        "Synopsis":  "Enables background task logging in Event Viewer."
+    },
+    {
+        "Module":  "AppBackgroundTask",
+        "Name":  "Set-AppBackgroundTaskResourcePolicy",
+        "Synopsis":  "Configures the use of global pool by background tasks."
+    }
+]

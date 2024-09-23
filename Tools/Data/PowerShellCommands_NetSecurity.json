@@ -1,0 +1,447 @@
+﻿[
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Copy-NetFirewallRule",
+        "Synopsis":  "Copies an entire firewall rule, and associated filters, to the same or to a different policy store."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Copy-NetIPsecMainModeCryptoSet",
+        "Synopsis":  "Copies an entire main mode cryptographic set to the same or to a different policy store."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Copy-NetIPsecMainModeRule",
+        "Synopsis":  "Copies an entire main mode rule, and associated filters, to the same or to a different policy store."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Copy-NetIPsecPhase1AuthSet",
+        "Synopsis":  "Copies an entire phase 1 authentication set to the same or to a different policy store."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Copy-NetIPsecPhase2AuthSet",
+        "Synopsis":  "Copies an entire phase 2 authentication set to the same or to a different policy store."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Copy-NetIPsecQuickModeCryptoSet",
+        "Synopsis":  "Copies an entire quick mode cryptographic set to the same or to a different policy store."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Copy-NetIPsecRule",
+        "Synopsis":  "Copies an entire IPsec rule, and the associated filters, to the same or to a different policy store."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Disable-NetFirewallRule",
+        "Synopsis":  "Disables a firewall rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Disable-NetIPsecMainModeRule",
+        "Synopsis":  "Disables a main mode rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Disable-NetIPsecRule",
+        "Synopsis":  "Disables an IPsec rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Enable-NetFirewallRule",
+        "Synopsis":  "Enables a previously disabled firewall rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Enable-NetIPsecMainModeRule",
+        "Synopsis":  "Enables a previously disabled main mode rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Enable-NetIPsecRule",
+        "Synopsis":  "Enables a previously disabled IPsec rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Find-NetIPsecRule",
+        "Synopsis":  "Gets IPsec rules that match specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallAddressFilter",
+        "Synopsis":  "Retrieves address filter objects from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallApplicationFilter",
+        "Synopsis":  "Retrieves application filter objects from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallDynamicKeywordAddress",
+        "Synopsis":  "\r\nGet-NetFirewallDynamicKeywordAddress [-All] [-PolicyStore \u003cstring\u003e] [-AllAutoResolve] [-AllNonAutoResolve] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nGet-NetFirewallDynamicKeywordAddress [-Id] \u003cstring[]\u003e [-PolicyStore \u003cstring\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallInterfaceFilter",
+        "Synopsis":  "Retrieves interface filter objects from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallInterfaceTypeFilter",
+        "Synopsis":  "Retrieves interface type filter objects from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallPortFilter",
+        "Synopsis":  "Retrieves port filter objects from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallProfile",
+        "Synopsis":  "Displays settings that apply to the per-profile configurations of the Windows Firewall with Advanced Security."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallRule",
+        "Synopsis":  "Retrieves firewall rules from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallSecurityFilter",
+        "Synopsis":  "Retrieves security filter objects from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallServiceFilter",
+        "Synopsis":  "Retrieves service filter objects from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetFirewallSetting",
+        "Synopsis":  "Retrieves the global firewall settings of the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecDospSetting",
+        "Synopsis":  "Retrieves IPsec DoS protection settings from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecMainModeCryptoSet",
+        "Synopsis":  "Gets main mode cryptographic sets from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecMainModeRule",
+        "Synopsis":  "Gets the IPsec main mode rules from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecMainModeSA",
+        "Synopsis":  "Returns active main mode security associations (SA) from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecPhase1AuthSet",
+        "Synopsis":  "Gets a phase 1 authentication set from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecPhase2AuthSet",
+        "Synopsis":  "Gets a phase 2 authorization set from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecQuickModeCryptoSet",
+        "Synopsis":  "Gets a quick mode cryptographic set from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecQuickModeSA",
+        "Synopsis":  "Returns active quick mode security associations (SAs) from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-NetIPsecRule",
+        "Synopsis":  "Gets an IPsec rule from the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetFirewallDynamicKeywordAddress",
+        "Synopsis":  "\r\nNew-NetFirewallDynamicKeywordAddress [-Id \u003cstring\u003e] [-Keyword \u003cstring\u003e] [-Addresses \u003cstring\u003e] [-AutoResolve \u003cbool\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetFirewallRule",
+        "Synopsis":  "Creates a new inbound or outbound firewall rule and adds the rule to the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecDospSetting",
+        "Synopsis":  "Creates an IPsec DoS protection setting and adds the setting to the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecMainModeCryptoSet",
+        "Synopsis":  "Creates a main mode cryptographic set that contains suites of cryptographic protocols to offer in IPsec main mode negotiations with other computers."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecMainModeRule",
+        "Synopsis":  "Creates an IPsec main mode rule that tells the computer which peers require IPsec security associations (SAs) for securing network traffic, and how to negotiate those SAs."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecPhase1AuthSet",
+        "Synopsis":  "Creates a phase 1 authentication set that specifies the methods offered for main mode first authentication during IPsec negotiations."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecPhase2AuthSet",
+        "Synopsis":  "Creates a phase 2 authentication set that specifies the methods offered for second user authentication during IPsec negotiations."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecQuickModeCryptoSet",
+        "Synopsis":  "Creates a quick mode cryptographic set that contains suites of cryptographic protocols to offer in IPsec quick mode negotiations with other computers."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecRule",
+        "Synopsis":  "Creates an IPsec rule that defines security requirements for network connections that match the specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Open-NetGPO",
+        "Synopsis":  "Creates a cached copy of the Group Policy Object (GPO) to modify locally."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetFirewallDynamicKeywordAddress",
+        "Synopsis":  "\r\nRemove-NetFirewallDynamicKeywordAddress [-All] [-PolicyStore \u003cstring\u003e] [-AllAutoResolve] [-AllNonAutoResolve] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-NetFirewallDynamicKeywordAddress [-Id] \u003cstring[]\u003e [-PolicyStore \u003cstring\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-NetFirewallDynamicKeywordAddress -InputObject \u003cCimInstance#MSFT_NetFirewallDynamicKeywordAddress[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetFirewallRule",
+        "Synopsis":  "Deletes one or more firewall rules that match the specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecDospSetting",
+        "Synopsis":  "Deletes existing IPsec Dosp configurations."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecMainModeCryptoSet",
+        "Synopsis":  "Deletes any main mode cryptographic sets that match the specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecMainModeRule",
+        "Synopsis":  "Deletes any main mode rules that match the specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecMainModeSA",
+        "Synopsis":  "Removes an active main mode security association (SA)."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecPhase1AuthSet",
+        "Synopsis":  "Deletes all of the phase 1 authentication sets that match the specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecPhase2AuthSet",
+        "Synopsis":  "Deletes all of the phase 2 authentication sets that match the specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecQuickModeCryptoSet",
+        "Synopsis":  "Deletes all of the quick mode cryptographic sets that match the specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecQuickModeSA",
+        "Synopsis":  "Deletes an established quick mode security association (SA)."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Remove-NetIPsecRule",
+        "Synopsis":  "Defines security requirements for network connections that match the specified criteria."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Rename-NetFirewallRule",
+        "Synopsis":  "Renames a single IPsec rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Rename-NetIPsecMainModeCryptoSet",
+        "Synopsis":  "Renames a single main mode cryptographic set."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Rename-NetIPsecMainModeRule",
+        "Synopsis":  "Renames a single main mode rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Rename-NetIPsecPhase1AuthSet",
+        "Synopsis":  "Renames a single phase 1 authentication set."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Rename-NetIPsecPhase2AuthSet",
+        "Synopsis":  "Renames a single phase 2 authentication set."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Rename-NetIPsecQuickModeCryptoSet",
+        "Synopsis":  "Renames a single quick mode cryptographic set."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Rename-NetIPsecRule",
+        "Synopsis":  "Renames a single IPsec rule."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Save-NetGPO",
+        "Synopsis":  "Applies the modified cached local Group Policy Object (GPO) to the actual GPO."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallAddressFilter",
+        "Synopsis":  "Modifies address filter objects, thereby modifying the local and remote address conditions of the firewall, IPsec, and main mode rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallApplicationFilter",
+        "Synopsis":  "Modifies application filter objects, thereby modifying the program and package conditions of the firewall rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallInterfaceFilter",
+        "Synopsis":  "Modifies interface filter objects, thereby modifying the InterfaceAlias parameter values of the firewall or IPsec rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallInterfaceTypeFilter",
+        "Synopsis":  "Modifies interface type filter objects, thereby modifying the interface type conditions of the firewall or IPsec rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallPortFilter",
+        "Synopsis":  "Modifies port filter objects, thereby modifying the protocol and port conditions using the Protocol, LocalPort, RemotePort, IcmpType, and DynamicTransport parameters of the firewall or IPsec rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallProfile",
+        "Synopsis":  "Configures settings that apply to the per-profile configurations of the Windows Firewall with Advanced Security."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallRule",
+        "Synopsis":  "Modifies existing firewall rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallSecurityFilter",
+        "Synopsis":  "Modifies security filter objects, thereby modifying the Authentication, Encryption, OverrideBlockRules, LocalUser, RemoteUser, and RemoteMachine conditions of the firewall rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallServiceFilter",
+        "Synopsis":  "Modifies service filter objects, thereby modifying the service conditions of the firewall rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetFirewallSetting",
+        "Synopsis":  "Modifies the global firewall settings of the target computer."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetIPsecDospSetting",
+        "Synopsis":  "Modifies existing IPsec Dos protection settings."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetIPsecMainModeCryptoSet",
+        "Synopsis":  "Modifies existing main mode cryptographic sets."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetIPsecMainModeRule",
+        "Synopsis":  "Modifies existing main mode rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetIPsecPhase1AuthSet",
+        "Synopsis":  "Modifies existing phase 1 authentication sets."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetIPsecPhase2AuthSet",
+        "Synopsis":  "Modifies existing phase 2 authentication sets."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetIPsecQuickModeCryptoSet",
+        "Synopsis":  "Modifies existing quick mode cryptographic sets."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Set-NetIPsecRule",
+        "Synopsis":  "Modifies existing IPsec rules."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Show-NetFirewallRule",
+        "Synopsis":  "Displays all of the existing IPsec rules and associated objects in a fully expanded view."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Show-NetIPsecRule",
+        "Synopsis":  "Displays all of the existing IPsec rules and associated objects in a fully expanded view."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Sync-NetIPsecRule",
+        "Synopsis":  "Gets the list of IP addresses to be added and deleted to an IPsec rule based on the differences detected between the existing rule IP addresses and the specified IP addresses."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Update-NetFirewallDynamicKeywordAddress",
+        "Synopsis":  "\r\nUpdate-NetFirewallDynamicKeywordAddress [-Id \u003cstring\u003e] [-Addresses \u003cstring\u003e] [-Append \u003cbool\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Update-NetIPsecRule",
+        "Synopsis":  "Updates an IPsec rule by adding or removing a set of IP addresses."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "Get-DAPolicyChange",
+        "Synopsis":  "Gets a list of IP addresses that need to be added and deleted to an IPsec rule based on the differences detected between the IP addresses for the existing rule and the IP addresses derived from the input parameters, and creates a Windows PowerShell® script (.ps1) that updates the IPsec rule in the appropriate policy stores."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecAuthProposal",
+        "Synopsis":  "Creates a main mode authentication proposal that specifies a suite of authentication protocols to offer in IPsec main mode negotiations with other computers."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecMainModeCryptoProposal",
+        "Synopsis":  "Creates a main mode cryptographic proposal that specifies a suite of cryptographic protocols to offer in IPsec main mode negotiations with other computers."
+    },
+    {
+        "Module":  "NetSecurity",
+        "Name":  "New-NetIPsecQuickModeCryptoProposal",
+        "Synopsis":  "Creates a quick mode cryptographic proposal that specifies a suite of cryptographic protocols to offer in IPsec quick mode negotiations with other computers."
+    }
+]

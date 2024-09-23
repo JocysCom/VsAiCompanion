@@ -1,0 +1,67 @@
+﻿[
+    {
+        "Module":  "iSCSI",
+        "Name":  "Connect-IscsiTarget",
+        "Synopsis":  "Establishes a connection between the local iSCSI initiator and an iSCSI target device."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Disconnect-IscsiTarget",
+        "Synopsis":  "Disconnects sessions to the specified iSCSI target object."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Get-IscsiConnection",
+        "Synopsis":  "Gets information about connected iSCSI initiator connections."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Get-IscsiSession",
+        "Synopsis":  "Retrieves information about established iSCSI sessions."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Get-IscsiTarget",
+        "Synopsis":  "Returns an iSCSI target object for each iSCSI target that is registered with the iSCSI initiator."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Get-IscsiTargetPortal",
+        "Synopsis":  "Gets iSCSI target portals."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "New-IscsiTargetPortal",
+        "Synopsis":  "Configures an iSCSI target portal."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Register-IscsiSession",
+        "Synopsis":  "Registers an active iSCSI session to be persistent using the session identifier as input."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Remove-IscsiTargetPortal",
+        "Synopsis":  "Removes the specified iSCSI target portal."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Set-IscsiChapSecret",
+        "Synopsis":  "Sets a CHAP secret key for use with iSCSI initiator connections."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Unregister-IscsiSession",
+        "Synopsis":  "Removes an active iSCSI session from being persistent using the session identifier as input."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Update-IscsiTarget",
+        "Synopsis":  "Refreshes the information about connected iSCSI target objects."
+    },
+    {
+        "Module":  "iSCSI",
+        "Name":  "Update-IscsiTargetPortal",
+        "Synopsis":  "Updates information about the specified iSCSI target portal."
+    }
+]

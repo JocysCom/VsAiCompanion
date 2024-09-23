@@ -1,0 +1,17 @@
+﻿[
+    {
+        "Module":  "WindowsErrorReporting",
+        "Name":  "Disable-WindowsErrorReporting",
+        "Synopsis":  "Disables Windows Error Reporting."
+    },
+    {
+        "Module":  "WindowsErrorReporting",
+        "Name":  "Enable-WindowsErrorReporting",
+        "Synopsis":  "Enables Windows Error Reporting."
+    },
+    {
+        "Module":  "WindowsErrorReporting",
+        "Name":  "Get-WindowsErrorReporting",
+        "Synopsis":  "Retrieves the Windows Error Reporting status."
+    }
+]

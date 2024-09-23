@@ -1,0 +1,97 @@
+﻿[
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Disable-ScheduledTask",
+        "Synopsis":  "Disables a scheduled task."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Enable-ScheduledTask",
+        "Synopsis":  "Enables a scheduled task."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Export-ScheduledTask",
+        "Synopsis":  "Exports a scheduled task as an XML string."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Get-ClusteredScheduledTask",
+        "Synopsis":  "Gets clustered scheduled tasks for a failover cluster."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Get-ScheduledTask",
+        "Synopsis":  "Gets the task definition object of a scheduled task that is registered on the local computer."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Get-ScheduledTaskInfo",
+        "Synopsis":  "Gets run-time information for a scheduled task."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "New-ScheduledTask",
+        "Synopsis":  "Creates a scheduled task instance."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "New-ScheduledTaskAction",
+        "Synopsis":  "Creates a scheduled task action."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "New-ScheduledTaskPrincipal",
+        "Synopsis":  "Creates an object that contains a scheduled task principal."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "New-ScheduledTaskSettingsSet",
+        "Synopsis":  "Creates a new scheduled task settings object."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "New-ScheduledTaskTrigger",
+        "Synopsis":  "Creates a scheduled task trigger object."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Register-ClusteredScheduledTask",
+        "Synopsis":  "Registers a scheduled task on a failover cluster."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Register-ScheduledTask",
+        "Synopsis":  "Registers a scheduled task definition on a local computer."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Set-ClusteredScheduledTask",
+        "Synopsis":  "Changes settings for a clustered scheduled task."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Set-ScheduledTask",
+        "Synopsis":  "Modifies a scheduled task."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Start-ScheduledTask",
+        "Synopsis":  "Starts one or more instances of a scheduled task."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Stop-ScheduledTask",
+        "Synopsis":  "Stops all running instances of a task."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Unregister-ClusteredScheduledTask",
+        "Synopsis":  "Removes a scheduled task from a failover cluster."
+    },
+    {
+        "Module":  "ScheduledTasks",
+        "Name":  "Unregister-ScheduledTask",
+        "Synopsis":  "Unregisters a scheduled task."
+    }
+]

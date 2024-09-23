@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Module":  "TroubleshootingPack",
+        "Name":  "Get-TroubleshootingPack",
+        "Synopsis":  "Gets a troubleshooting pack or generates an answer file."
+    },
+    {
+        "Module":  "TroubleshootingPack",
+        "Name":  "Invoke-TroubleshootingPack",
+        "Synopsis":  "Runs a troubleshooting pack."
+    }
+]

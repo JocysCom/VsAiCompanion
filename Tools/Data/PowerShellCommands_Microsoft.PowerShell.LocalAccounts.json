@@ -1,0 +1,77 @@
+﻿[
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Add-LocalGroupMember",
+        "Synopsis":  "Adds members to a local group."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Disable-LocalUser",
+        "Synopsis":  "Disables a local user account."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Enable-LocalUser",
+        "Synopsis":  "Enables a local user account."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Get-LocalGroup",
+        "Synopsis":  "Gets the local security groups."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Get-LocalGroupMember",
+        "Synopsis":  "Gets members from a local group."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Get-LocalUser",
+        "Synopsis":  "Gets local user accounts."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "New-LocalGroup",
+        "Synopsis":  "Creates a local security group."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "New-LocalUser",
+        "Synopsis":  "Creates a local user account."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Remove-LocalGroup",
+        "Synopsis":  "Deletes local security groups."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Remove-LocalGroupMember",
+        "Synopsis":  "Removes members from a local group."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Remove-LocalUser",
+        "Synopsis":  "Deletes local user accounts."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Rename-LocalGroup",
+        "Synopsis":  "Renames a local security group."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Rename-LocalUser",
+        "Synopsis":  "Renames a local user account."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Set-LocalGroup",
+        "Synopsis":  "Changes a local security group."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.LocalAccounts",
+        "Name":  "Set-LocalUser",
+        "Synopsis":  "Modifies a local user account."
+    }
+]

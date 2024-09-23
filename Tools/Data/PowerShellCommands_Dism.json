@@ -1,0 +1,312 @@
+﻿[
+    {
+        "Module":  "Dism",
+        "Name":  "Add-AppProvisionedPackage",
+        "Synopsis":  "Adds an app package (.appx) that will install for each new user to a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Add-ProvisionedAppPackage",
+        "Synopsis":  "Adds an app package (.appx) that will install for each new user to a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Add-ProvisionedAppxPackage",
+        "Synopsis":  "Adds an app package (.appx) that will install for each new user to a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Apply-WindowsUnattend",
+        "Synopsis":  "Applies an unattended answer file to a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-AppProvisionedPackage",
+        "Synopsis":  "Gets information about app packages (.appx) in an image that will be installed for each new user."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-ProvisionedAppPackage",
+        "Synopsis":  "Gets information about app packages (.appx) in an image that will be installed for each new user."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-ProvisionedAppxPackage",
+        "Synopsis":  "Gets information about app packages (.appx) in an image that will be installed for each new user."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Optimize-AppProvisionedPackages",
+        "Synopsis":  "\r\nOptimize-AppXProvisionedPackages -Path \u003cstring\u003e [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n\r\nOptimize-AppXProvisionedPackages -Online [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Optimize-ProvisionedAppPackages",
+        "Synopsis":  "\r\nOptimize-AppXProvisionedPackages -Path \u003cstring\u003e [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n\r\nOptimize-AppXProvisionedPackages -Online [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Optimize-ProvisionedAppxPackages",
+        "Synopsis":  "\r\nOptimize-AppXProvisionedPackages -Path \u003cstring\u003e [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n\r\nOptimize-AppXProvisionedPackages -Online [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Remove-AppProvisionedPackage",
+        "Synopsis":  "Removes an app package (.appx) from a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Remove-ProvisionedAppPackage",
+        "Synopsis":  "Removes an app package (.appx) from a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Remove-ProvisionedAppxPackage",
+        "Synopsis":  "Removes an app package (.appx) from a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Set-AppPackageProvisionedDataFile",
+        "Synopsis":  "Adds custom data into the specified app (.appx) package that has been provisioned in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Set-ProvisionedAppPackageDataFile",
+        "Synopsis":  "Adds custom data into the specified app (.appx) package that has been provisioned in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Set-ProvisionedAppXDataFile",
+        "Synopsis":  "Adds custom data into the specified app (.appx) package that has been provisioned in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Add-AppxProvisionedPackage",
+        "Synopsis":  "Adds an app package (.appx) that will install for each new user to a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Add-WindowsCapability",
+        "Synopsis":  "Installs a Windows capability package on the specified operating system image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Add-WindowsDriver",
+        "Synopsis":  "Adds a driver to an offline Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Add-WindowsImage",
+        "Synopsis":  "Adds an additional image to an existing image (.wim) file."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Add-WindowsPackage",
+        "Synopsis":  "Adds a single .cab or .msu file to a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Clear-WindowsCorruptMountPoint",
+        "Synopsis":  "Deletes all of the resources associated with a mounted image that has been corrupted."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Disable-WindowsOptionalFeature",
+        "Synopsis":  "Disables a feature in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Dismount-WindowsImage",
+        "Synopsis":  "Dismounts a Windows image from the directory it is mapped to."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Enable-WindowsOptionalFeature",
+        "Synopsis":  "Enables a feature in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Expand-WindowsCustomDataImage",
+        "Synopsis":  "Expands a custom data image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Expand-WindowsImage",
+        "Synopsis":  "Applies an image to a specified location."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Export-WindowsCapabilitySource",
+        "Synopsis":  "\r\nExport-WindowsCapabilitySource -Source \u003cstring\u003e -Target \u003cstring\u003e -Path \u003cstring\u003e [-Name \u003cstring\u003e] [-Recipe \u003cstring\u003e] [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Export-WindowsDriver",
+        "Synopsis":  "Exports all third-party drivers from a Windows image to a destination folder."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Export-WindowsImage",
+        "Synopsis":  "Exports a copy of the specified image to another image file."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-AppxProvisionedPackage",
+        "Synopsis":  "Gets information about app packages (.appx) in an image that will be installed for each new user."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-NonRemovableAppsPolicy",
+        "Synopsis":  "\r\nGet-NonRemovableAppsPolicy -Path \u003cstring\u003e [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-NonRemovableAppsPolicy -Online [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WIMBootEntry",
+        "Synopsis":  "Displays the Windows image file boot (WIMBoot) configuration entries for a specified disk volume."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WindowsCapability",
+        "Synopsis":  "Gets Windows capabilities for an image or a running operating system."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WindowsDriver",
+        "Synopsis":  "Displays information about drivers in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WindowsEdition",
+        "Synopsis":  "Gets edition information about a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WindowsImage",
+        "Synopsis":  "Gets information about a Windows image in a WIM or VHD file."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WindowsImageContent",
+        "Synopsis":  "Displays a list of the files and folders in a specified image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WindowsOptionalFeature",
+        "Synopsis":  "Gets information about optional features in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WindowsPackage",
+        "Synopsis":  "Gets information about packages in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Get-WindowsReservedStorageState",
+        "Synopsis":  "\r\nGet-WindowsReservedStorageState [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Mount-WindowsImage",
+        "Synopsis":  "Mounts a Windows image in a WIM or VHD file to a directory on the local computer."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "New-WindowsCustomImage",
+        "Synopsis":  "Captures an image of customized or serviced Windows components on a Windows Image File Boot (WIMBoot) configured device."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "New-WindowsImage",
+        "Synopsis":  "Captures an image of a drive to a new WIM file."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Optimize-AppxProvisionedPackages",
+        "Synopsis":  "\r\nOptimize-AppXProvisionedPackages -Path \u003cstring\u003e [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n\r\nOptimize-AppXProvisionedPackages -Online [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Optimize-WindowsImage",
+        "Synopsis":  "Configures a Windows image with specified optimizations."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Remove-AppxProvisionedPackage",
+        "Synopsis":  "Removes an app package (.appx) from a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Remove-WindowsCapability",
+        "Synopsis":  "Uninstalls a Windows capability package from an image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Remove-WindowsDriver",
+        "Synopsis":  "Removes a driver from an offline Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Remove-WindowsImage",
+        "Synopsis":  "Deletes the specified volume image from a WIM file that has multiple volume images."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Remove-WindowsPackage",
+        "Synopsis":  "Removes a package from a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Repair-WindowsImage",
+        "Synopsis":  "Repairs a Windows image in a WIM or VHD file."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Save-WindowsImage",
+        "Synopsis":  "Applies changes made to a mounted image to its WIM or VHD file."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Set-AppXProvisionedDataFile",
+        "Synopsis":  "Adds custom data into the specified app (.appx) package that has been provisioned in a Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Set-NonRemovableAppsPolicy",
+        "Synopsis":  "\r\nSet-NonRemovableAppsPolicy -PackageFamilyName \u003cstring\u003e -NonRemovable \u003cint\u003e -Path \u003cstring\u003e [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n\r\nSet-NonRemovableAppsPolicy -PackageFamilyName \u003cstring\u003e -NonRemovable \u003cint\u003e -Online [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Set-WindowsEdition",
+        "Synopsis":  "Changes a Windows image to a higher edition."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Set-WindowsProductKey",
+        "Synopsis":  "Sets the product key for the Windows image."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Set-WindowsReservedStorageState",
+        "Synopsis":  "\r\nSet-WindowsReservedStorageState -State \u003cReservedStorageState\u003e [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Split-WindowsImage",
+        "Synopsis":  "Splits an existing .wim file into multiple read-only split .wim files."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Start-OSUninstall",
+        "Synopsis":  "\r\nStart-OSUninstall -Path \u003cstring\u003e [-NoRestart] [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n\r\nStart-OSUninstall -Online [-NoRestart] [-WindowsDirectory \u003cstring\u003e] [-SystemDrive \u003cstring\u003e] [-LogPath \u003cstring\u003e] [-ScratchDirectory \u003cstring\u003e] [-LogLevel \u003cLogLevel\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Update-WIMBootEntry",
+        "Synopsis":  "Updates the Windows image file boot (WIMBoot) configuration entry, associated with either the specified data source ID, the renamed image file path or the moved image file path."
+    },
+    {
+        "Module":  "Dism",
+        "Name":  "Use-WindowsUnattend",
+        "Synopsis":  "Applies an unattended answer file to a Windows image."
+    }
+]

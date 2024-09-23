@@ -578,8 +578,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				{
 					fi.MoveTo(newFullName);
 				}
-				catch
+				catch (Exception ex)
 				{
+					MainControl.ErrorsLogPanel.Add(ex.ToString() + "\r\n");
 					return;
 				}
 			}

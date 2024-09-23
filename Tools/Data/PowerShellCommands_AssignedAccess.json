@@ -1,0 +1,17 @@
+﻿[
+    {
+        "Module":  "AssignedAccess",
+        "Name":  "Clear-AssignedAccess",
+        "Synopsis":  "Removes the user account from assigned access."
+    },
+    {
+        "Module":  "AssignedAccess",
+        "Name":  "Get-AssignedAccess",
+        "Synopsis":  "Retrieves the current configuration for assigned access."
+    },
+    {
+        "Module":  "AssignedAccess",
+        "Name":  "Set-AssignedAccess",
+        "Synopsis":  "Configures a user to launch only one app."
+    }
+]

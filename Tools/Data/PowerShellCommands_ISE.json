@@ -1,0 +1,17 @@
+﻿[
+    {
+        "Module":  "ISE",
+        "Name":  "Get-IseSnippet",
+        "Synopsis":  "Gets snippets that the user created."
+    },
+    {
+        "Module":  "ISE",
+        "Name":  "Import-IseSnippet",
+        "Synopsis":  "Imports ISE snippets into the current session"
+    },
+    {
+        "Module":  "ISE",
+        "Name":  "New-IseSnippet",
+        "Synopsis":  "Creates a Windows PowerShell ISE code snippet."
+    }
+]

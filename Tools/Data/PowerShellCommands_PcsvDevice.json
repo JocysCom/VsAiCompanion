@@ -1,0 +1,47 @@
+﻿[
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Clear-PcsvDeviceLog",
+        "Synopsis":  "Clears the System Event Log for a PCSV device."
+    },
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Get-PcsvDevice",
+        "Synopsis":  "Gets information about a remote hardware device."
+    },
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Get-PcsvDeviceLog",
+        "Synopsis":  "Gets System Event Log entries from a PCSV device."
+    },
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Restart-PcsvDevice",
+        "Synopsis":  "Restarts a remote hardware device."
+    },
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Set-PcsvDeviceBootConfiguration",
+        "Synopsis":  "Modifies the boot configuration on the remote hardware device."
+    },
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Set-PcsvDeviceNetworkConfiguration",
+        "Synopsis":  "Changes the network configuration of a PCSV device."
+    },
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Set-PcsvDeviceUserPassword",
+        "Synopsis":  "Changes the password of a user on a PCSV device."
+    },
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Start-PcsvDevice",
+        "Synopsis":  "Starts the specified remote hardware device."
+    },
+    {
+        "Module":  "PcsvDevice",
+        "Name":  "Stop-PcsvDevice",
+        "Synopsis":  "Shuts down a remote hardware device."
+    }
+]

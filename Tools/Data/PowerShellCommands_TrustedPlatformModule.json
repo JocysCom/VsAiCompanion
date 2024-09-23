@@ -1,0 +1,57 @@
+﻿[
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Clear-Tpm",
+        "Synopsis":  "Resets a TPM to its default state."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "ConvertTo-TpmOwnerAuth",
+        "Synopsis":  "Creates a TPM owner authorization value from a supplied string."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Disable-TpmAutoProvisioning",
+        "Synopsis":  "Disables TPM auto-provisioning."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Enable-TpmAutoProvisioning",
+        "Synopsis":  "Enables TPM auto-provisioning."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Get-Tpm",
+        "Synopsis":  "Gets an object that contains information about a TPM."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Get-TpmEndorsementKeyInfo",
+        "Synopsis":  "Gets information about the endorsement key and certificates of the TPM."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Get-TpmSupportedFeature",
+        "Synopsis":  "Verifies whether a TPM supports specified features."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Import-TpmOwnerAuth",
+        "Synopsis":  "Imports a TPM owner authorization value to the registry."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Initialize-Tpm",
+        "Synopsis":  "Performs part of the provisioning process for a TPM."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Set-TpmOwnerAuth",
+        "Synopsis":  "Changes the TPM owner authorization value."
+    },
+    {
+        "Module":  "TrustedPlatformModule",
+        "Name":  "Unblock-Tpm",
+        "Synopsis":  "Resets a TPM lockout."
+    }
+]

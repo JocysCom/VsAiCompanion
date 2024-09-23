@@ -1,0 +1,172 @@
+﻿[
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Find-NetRoute",
+        "Synopsis":  "Finds the best local IP address and the best route to reach a remote address."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetCompartment",
+        "Synopsis":  "Gets all network compartments in the protocol stack."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetIPAddress",
+        "Synopsis":  "Gets the IP address configuration."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetIPConfiguration",
+        "Synopsis":  "Gets IP network configuration."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetIPInterface",
+        "Synopsis":  "Gets an IP interface."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetIPv4Protocol",
+        "Synopsis":  "Gets IPv4 protocol configurations."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetIPv6Protocol",
+        "Synopsis":  "Gets IPv6 protocol configurations."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetNeighbor",
+        "Synopsis":  "Gets neighbor cache entries."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetOffloadGlobalSetting",
+        "Synopsis":  "Gets the global TCP/IP offload settings."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetPrefixPolicy",
+        "Synopsis":  "Gets the prefix policy."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetRoute",
+        "Synopsis":  "Gets the IP route information from the IP routing table."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetTCPConnection",
+        "Synopsis":  "Gets TCP connections."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetTCPSetting",
+        "Synopsis":  "Gets information about TCP settings and configuration."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetTransportFilter",
+        "Synopsis":  "Gets transport filters."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetUDPEndpoint",
+        "Synopsis":  "Gets current UDP endpoint statistics."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Get-NetUDPSetting",
+        "Synopsis":  "Gets UDP settings."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "New-NetIPAddress",
+        "Synopsis":  "Creates and configures an IP address."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "New-NetNeighbor",
+        "Synopsis":  "Creates a neighbor cache entry."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "New-NetRoute",
+        "Synopsis":  "Creates a route in the IP routing table."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "New-NetTransportFilter",
+        "Synopsis":  "Creates a transport filter."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Remove-NetIPAddress",
+        "Synopsis":  "Removes an IP address and its configuration."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Remove-NetNeighbor",
+        "Synopsis":  "Removes neighbor cache entries."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Remove-NetRoute",
+        "Synopsis":  "Removes IP routes from the IP routing table."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Remove-NetTransportFilter",
+        "Synopsis":  "Removes transport filters."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetIPAddress",
+        "Synopsis":  "Modifies the configuration of an IP address."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetIPInterface",
+        "Synopsis":  "Modifies an IP interface."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetIPv4Protocol",
+        "Synopsis":  "Modifies information about the IPv4 Protocol configuration."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetIPv6Protocol",
+        "Synopsis":  "Modifies the IPv6 protocol configuration."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetNeighbor",
+        "Synopsis":  "Modifies a neighbor cache entry."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetOffloadGlobalSetting",
+        "Synopsis":  "Modifies the global TCP/IP offload settings."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetRoute",
+        "Synopsis":  "Modifies an entry or entries in the IP routing table."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetTCPSetting",
+        "Synopsis":  "Modifies a TCP setting."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Set-NetUDPSetting",
+        "Synopsis":  "Modifies UDP settings."
+    },
+    {
+        "Module":  "NetTCPIP",
+        "Name":  "Test-NetConnection",
+        "Synopsis":  "Displays diagnostic information for a connection."
+    }
+]

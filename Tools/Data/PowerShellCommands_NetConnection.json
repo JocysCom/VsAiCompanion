@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Module":  "NetConnection",
+        "Name":  "Get-NetConnectionProfile",
+        "Synopsis":  "Gets a connection profile."
+    },
+    {
+        "Module":  "NetConnection",
+        "Name":  "Set-NetConnectionProfile",
+        "Synopsis":  "Changes the network category of a connection profile."
+    }
+]

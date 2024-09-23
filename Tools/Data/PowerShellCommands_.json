@@ -1,0 +1,57 @@
+﻿[
+    {
+        "Module":  "",
+        "Name":  "Clear-Host",
+        "Synopsis":  "Clears the display in the host program."
+    },
+    {
+        "Module":  "",
+        "Name":  "Get-Verb",
+        "Synopsis":  "Gets approved PowerShell verbs."
+    },
+    {
+        "Module":  "",
+        "Name":  "help",
+        "Synopsis":  "Displays information about PowerShell commands and concepts."
+    },
+    {
+        "Module":  "",
+        "Name":  "ImportSystemModules",
+        "Synopsis":  "\r\nImportSystemModules \r\n"
+    },
+    {
+        "Module":  "",
+        "Name":  "IsBuiltInModule",
+        "Synopsis":  "\r\nIsBuiltInModule [[-moduleName] \u003cObject\u003e]\r\n"
+    },
+    {
+        "Module":  "",
+        "Name":  "mkdir",
+        "Synopsis":  "Creates a new item."
+    },
+    {
+        "Module":  "",
+        "Name":  "more",
+        "Synopsis":  "\r\nmore [[-paths] \u003cstring[]\u003e]\r\n"
+    },
+    {
+        "Module":  "",
+        "Name":  "oss",
+        "Synopsis":  "Outputs input objects as a string."
+    },
+    {
+        "Module":  "",
+        "Name":  "Pause",
+        "Synopsis":  "\r\nPause \r\n"
+    },
+    {
+        "Module":  "",
+        "Name":  "prompt",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "",
+        "Name":  "TabExpansion2",
+        "Synopsis":  "\r\nTabExpansion2 [-inputScript] \u003cstring\u003e [-cursorColumn] \u003cint\u003e [[-options] \u003chashtable\u003e] [\u003cCommonParameters\u003e]\r\n\r\nTabExpansion2 [-ast] \u003cAst\u003e [-tokens] \u003cToken[]\u003e [-positionOfCursor] \u003cIScriptPosition\u003e [[-options] \u003chashtable\u003e] [\u003cCommonParameters\u003e]\r\n"
+    }
+]

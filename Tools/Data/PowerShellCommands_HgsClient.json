@@ -1,0 +1,82 @@
+﻿[
+    {
+        "Module":  "HgsClient",
+        "Name":  "ConvertTo-HgsKeyProtector",
+        "Synopsis":  "Converts a key protector into a Host Guardian Service key protector."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Export-HgsGuardian",
+        "Synopsis":  "Exports a guardian that contains public keys."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Get-HgsClientConfiguration",
+        "Synopsis":  "Gets the configuration of a Host Guardian Service client."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Get-HgsClientHostKey",
+        "Synopsis":  "\r\nGet-HgsClientHostKey [\u003cCommonParameters\u003e]\r\n\r\nGet-HgsClientHostKey [-Path \u003cstring\u003e] [-Force] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Get-HgsGuardian",
+        "Synopsis":  "Gets guardian objects from storage."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Grant-HgsKeyProtectorAccess",
+        "Synopsis":  "Grants access to a guardian for a key protector."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Import-HgsGuardian",
+        "Synopsis":  "Creates a guardian object from an .xml file."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "New-HgsGuardian",
+        "Synopsis":  "Creates a Host Guardian Service guardian."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "New-HgsKeyProtector",
+        "Synopsis":  "Creates a key protector."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Remove-HgsClientHostKey",
+        "Synopsis":  "\r\nRemove-HgsClientHostKey [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Remove-HgsGuardian",
+        "Synopsis":  "Removes a guardian from the guardian store."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Revoke-HgsKeyProtectorAccess",
+        "Synopsis":  "Revokes access for a guardian to a key protector."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Set-HgsClientConfiguration",
+        "Synopsis":  "Modifies the configuration of a Host Guardian Service client."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Set-HgsClientHostKey",
+        "Synopsis":  "\r\nSet-HgsClientHostKey [[-Thumbprint] \u003cstring\u003e] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Test-HgsClientConfiguration",
+        "Synopsis":  "Forces the HGS client to attest against the configured attestation servers."
+    },
+    {
+        "Module":  "HgsClient",
+        "Name":  "Get-HgsAttestationBaselinePolicy",
+        "Synopsis":  "Generates an attestation baseline policy."
+    }
+]

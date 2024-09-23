@@ -1,0 +1,27 @@
+﻿[
+    {
+        "Module":  "SecureBoot",
+        "Name":  "Confirm-SecureBootUEFI",
+        "Synopsis":  "Confirms that Secure Boot is enabled by checking the Secure Boot status on the local computer."
+    },
+    {
+        "Module":  "SecureBoot",
+        "Name":  "Format-SecureBootUEFI",
+        "Synopsis":  "Formats certificates or hashes into a content object that is returned and creates a file that is ready to be signed."
+    },
+    {
+        "Module":  "SecureBoot",
+        "Name":  "Get-SecureBootPolicy",
+        "Synopsis":  "Gets the publisher GUID and the policy version of the Secure Boot configuration policy."
+    },
+    {
+        "Module":  "SecureBoot",
+        "Name":  "Get-SecureBootUEFI",
+        "Synopsis":  "Gets the UEFI variable values related to Secure Boot."
+    },
+    {
+        "Module":  "SecureBoot",
+        "Name":  "Set-SecureBootUEFI",
+        "Synopsis":  "Sets the Secure Boot-related UEFI variables."
+    }
+]

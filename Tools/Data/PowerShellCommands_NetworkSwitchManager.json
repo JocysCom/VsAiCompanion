@@ -1,0 +1,97 @@
+﻿[
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Disable-NetworkSwitchEthernetPort",
+        "Synopsis":  "Disables an Ethernet port on a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Disable-NetworkSwitchFeature",
+        "Synopsis":  "Disables features of a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Disable-NetworkSwitchVlan",
+        "Synopsis":  "Disables a VLAN of a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Enable-NetworkSwitchEthernetPort",
+        "Synopsis":  "Enables an Ethernet port on a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Enable-NetworkSwitchFeature",
+        "Synopsis":  "Enables features of a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Enable-NetworkSwitchVlan",
+        "Synopsis":  "Enables a VLAN for a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Get-NetworkSwitchEthernetPort",
+        "Synopsis":  "Gets port information for a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Get-NetworkSwitchFeature",
+        "Synopsis":  "Gets features of a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Get-NetworkSwitchGlobalData",
+        "Synopsis":  "Gets global data of a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Get-NetworkSwitchVlan",
+        "Synopsis":  "Gets VLANs for a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "New-NetworkSwitchVlan",
+        "Synopsis":  "Creates a VLAN for a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Remove-NetworkSwitchEthernetPortIPAddress",
+        "Synopsis":  "Removes an IP address from a port of a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Remove-NetworkSwitchVlan",
+        "Synopsis":  "Removes network switch VLANs."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Restore-NetworkSwitchConfiguration",
+        "Synopsis":  "Restores configuration for a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Save-NetworkSwitchConfiguration",
+        "Synopsis":  "Saves configuration for starting a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Set-NetworkSwitchEthernetPortIPAddress",
+        "Synopsis":  "Sets the IP address on a port on a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Set-NetworkSwitchPortMode",
+        "Synopsis":  "Sets the port mode on a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Set-NetworkSwitchPortProperty",
+        "Synopsis":  "Sets the port properties for a network switch."
+    },
+    {
+        "Module":  "NetworkSwitchManager",
+        "Name":  "Set-NetworkSwitchVlanProperty",
+        "Synopsis":  "Modifies properties on a VLAN on a network switch."
+    }
+]

@@ -1,0 +1,537 @@
+﻿[
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertFrom-SddlString",
+        "Synopsis":  "Converts a SDDL string to a custom object."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Format-Hex",
+        "Synopsis":  "Displays a file or other input as hexadecimal."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-FileHash",
+        "Synopsis":  "Computes the hash value for a file by using a specified hash algorithm."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Import-PowerShellDataFile",
+        "Synopsis":  "Imports values from a `.PSD1` file without invoking its contents."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "New-Guid",
+        "Synopsis":  "Creates a GUID."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "New-TemporaryFile",
+        "Synopsis":  "Creates a temporary file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Add-Member",
+        "Synopsis":  "Adds custom properties and methods to an instance of a PowerShell object."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Add-Type",
+        "Synopsis":  "Adds a Microsoft .NET class to a PowerShell session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Clear-Variable",
+        "Synopsis":  "Deletes the value of a variable."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Compare-Object",
+        "Synopsis":  "Compares two sets of objects."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertFrom-Csv",
+        "Synopsis":  "Converts object properties in character-separated value (CSV) format into CSV versions of the original objects."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertFrom-Json",
+        "Synopsis":  "Converts a JSON-formatted string to a custom object."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertFrom-String",
+        "Synopsis":  "Extracts and parses structured properties from string content."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertFrom-StringData",
+        "Synopsis":  "Converts a string containing one or more key and value pairs to a hash table."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Convert-String",
+        "Synopsis":  "Formats a string to match examples."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertTo-Csv",
+        "Synopsis":  "Converts .NET objects into a series of character-separated value (CSV) strings."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertTo-Html",
+        "Synopsis":  "Converts .NET objects into HTML that can be displayed in a Web browser."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertTo-Json",
+        "Synopsis":  "Converts an object to a JSON-formatted string."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "ConvertTo-Xml",
+        "Synopsis":  "Creates an XML-based representation of an object."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Debug-Runspace",
+        "Synopsis":  "Starts an interactive debugging session with a runspace."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Disable-PSBreakpoint",
+        "Synopsis":  "Disables the breakpoints in the current console."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Disable-RunspaceDebug",
+        "Synopsis":  "Disables debugging on one or more runspaces, and releases any pending debugger stop."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Enable-PSBreakpoint",
+        "Synopsis":  "Enables the breakpoints in the current console."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Enable-RunspaceDebug",
+        "Synopsis":  "Enables debugging on runspaces where any breakpoint is preserved until a debugger is attached."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Export-Alias",
+        "Synopsis":  "Exports information about currently defined aliases to a file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Export-Clixml",
+        "Synopsis":  "Creates an XML-based representation of an object or objects and stores it in a file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Export-Csv",
+        "Synopsis":  "Converts objects into a series of character-separated value (CSV) strings and saves the strings to a file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Export-FormatData",
+        "Synopsis":  "Saves formatting data from the current session in a formatting file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Export-PSSession",
+        "Synopsis":  "Exports commands from another session and saves them in a PowerShell module."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Format-Custom",
+        "Synopsis":  "Uses a customized view to format the output."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Format-List",
+        "Synopsis":  "Formats the output as a list of properties in which each property appears on a new line."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Format-Table",
+        "Synopsis":  "Formats the output as a table."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Format-Wide",
+        "Synopsis":  "Formats objects as a wide table that displays only one property of each object."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Alias",
+        "Synopsis":  "Gets the aliases for the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Culture",
+        "Synopsis":  "Gets the current culture set in the operating system."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Date",
+        "Synopsis":  "Gets the current date and time."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Event",
+        "Synopsis":  "Gets the events in the event queue."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-EventSubscriber",
+        "Synopsis":  "Gets the event subscribers in the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-FormatData",
+        "Synopsis":  "Gets the formatting data in the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Host",
+        "Synopsis":  "Gets an object that represents the current host program."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Member",
+        "Synopsis":  "Gets the properties and methods of objects."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-PSBreakpoint",
+        "Synopsis":  "Gets the breakpoints that are set in the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-PSCallStack",
+        "Synopsis":  "Displays the current call stack."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Random",
+        "Synopsis":  "Gets a random number, or selects objects randomly from a collection."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Runspace",
+        "Synopsis":  "Gets active runspaces within a PowerShell host process."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-RunspaceDebug",
+        "Synopsis":  "Shows runspace debugging options."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-TraceSource",
+        "Synopsis":  "Gets PowerShell components that are instrumented for tracing."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-TypeData",
+        "Synopsis":  "Gets the extended type data in the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-UICulture",
+        "Synopsis":  "Gets the current UI culture settings in the operating system."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Unique",
+        "Synopsis":  "Returns unique items from a sorted list."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Get-Variable",
+        "Synopsis":  "Gets the variables in the current console."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Group-Object",
+        "Synopsis":  "Groups objects that contain the same value for specified properties."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Import-Alias",
+        "Synopsis":  "Imports an alias list from a file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Import-Clixml",
+        "Synopsis":  "Imports a CLIXML file and creates corresponding objects in PowerShell."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Import-Csv",
+        "Synopsis":  "Creates table-like custom objects from the items in a character-separated value (CSV) file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Import-LocalizedData",
+        "Synopsis":  "Imports language-specific data into scripts and functions based on the UI culture that\u0027s selected for the operating system."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Import-PSSession",
+        "Synopsis":  "Imports commands from another session into the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Invoke-Expression",
+        "Synopsis":  "Runs commands or expressions on the local computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Invoke-RestMethod",
+        "Synopsis":  "Sends an HTTP or HTTPS request to a RESTful web service."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Invoke-WebRequest",
+        "Synopsis":  "Gets content from a web page on the internet."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Measure-Command",
+        "Synopsis":  "Measures the time it takes to run script blocks and cmdlets."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Measure-Object",
+        "Synopsis":  "Calculates the numeric properties of objects, and the characters, words, and lines in string objects, such as files of text."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "New-Alias",
+        "Synopsis":  "Creates a new alias."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "New-Event",
+        "Synopsis":  "Creates a new event."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "New-Object",
+        "Synopsis":  "Creates an instance of a Microsoft .NET Framework or COM object."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "New-TimeSpan",
+        "Synopsis":  "Creates a TimeSpan object."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "New-Variable",
+        "Synopsis":  "Creates a new variable."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Out-File",
+        "Synopsis":  "Sends output to a file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Out-GridView",
+        "Synopsis":  "Sends output to an interactive table in a separate window."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Out-Printer",
+        "Synopsis":  "Sends output to a printer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Out-String",
+        "Synopsis":  "Outputs input objects as a string."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Read-Host",
+        "Synopsis":  "Reads a line of input from the console."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Register-EngineEvent",
+        "Synopsis":  "Subscribes to events that are generated by the PowerShell engine and by the `New-Event` cmdlet."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Register-ObjectEvent",
+        "Synopsis":  "Subscribes to the events that are generated by a Microsoft .NET Framework object."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Remove-Event",
+        "Synopsis":  "Deletes events from the event queue."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Remove-PSBreakpoint",
+        "Synopsis":  "Deletes breakpoints from the current console."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Remove-TypeData",
+        "Synopsis":  "Deletes extended types from the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Remove-Variable",
+        "Synopsis":  "Deletes a variable and its value."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Select-Object",
+        "Synopsis":  "Selects objects or object properties."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Select-String",
+        "Synopsis":  "Finds text in strings and files."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Select-Xml",
+        "Synopsis":  "Finds text in an XML string or document."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Send-MailMessage",
+        "Synopsis":  "Sends an email message."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Set-Alias",
+        "Synopsis":  "Creates or changes an alias for a cmdlet or other command in the current PowerShell session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Set-Date",
+        "Synopsis":  "Changes the system time on the computer to a time that you specify."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Set-PSBreakpoint",
+        "Synopsis":  "Sets a breakpoint on a line, command, or variable."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Set-TraceSource",
+        "Synopsis":  "Configures, starts, and stops a trace of PowerShell components."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Set-Variable",
+        "Synopsis":  "Sets the value of a variable. Creates the variable if one with the requested name does not exist."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Show-Command",
+        "Synopsis":  "Displays PowerShell command information in a graphical window."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Sort-Object",
+        "Synopsis":  "Sorts objects by property values."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Start-Sleep",
+        "Synopsis":  "Suspends the activity in a script or session for the specified period of time."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Tee-Object",
+        "Synopsis":  "Saves command output in a file or variable and also sends it down the pipeline."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Trace-Command",
+        "Synopsis":  "Configures and starts a trace of the specified expression or command."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Unblock-File",
+        "Synopsis":  "Unblocks files that were downloaded from the internet."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Unregister-Event",
+        "Synopsis":  "Cancels an event subscription."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Update-FormatData",
+        "Synopsis":  "Updates the formatting data in the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Update-List",
+        "Synopsis":  "Adds items to and removes items from a property value that contains a collection of objects."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Update-TypeData",
+        "Synopsis":  "Updates the extended type data in the session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Wait-Debugger",
+        "Synopsis":  "Stops a script in the debugger before running the next statement in the script."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Wait-Event",
+        "Synopsis":  "Waits until a particular event is raised before continuing to run."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Write-Debug",
+        "Synopsis":  "Writes a debug message to the console."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Write-Error",
+        "Synopsis":  "Writes an object to the error stream."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Write-Host",
+        "Synopsis":  "Writes customized output to a host."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Write-Information",
+        "Synopsis":  "Specifies how PowerShell handles information stream data for a command."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Write-Output",
+        "Synopsis":  "Writes the specified objects to the pipeline."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Write-Progress",
+        "Synopsis":  "Displays a progress bar within a PowerShell command window."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Write-Verbose",
+        "Synopsis":  "Writes text to the verbose message stream."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Utility",
+        "Name":  "Write-Warning",
+        "Synopsis":  "Writes a warning message."
+    }
+]

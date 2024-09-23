@@ -1,0 +1,67 @@
+﻿[
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Clear-StorageBusDisk",
+        "Synopsis":  "\r\nClear-StorageBusDisk -Guid \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n\r\nClear-StorageBusDisk -Number \u003cuint16\u003e [\u003cCommonParameters\u003e]\r\n\r\nClear-StorageBusDisk -PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Disable-StorageBusCache",
+        "Synopsis":  "\r\nDisable-StorageBusCache [[-Force] \u003cbool\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Disable-StorageBusDisk",
+        "Synopsis":  "\r\nDisable-StorageBusDisk -Guid \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n\r\nDisable-StorageBusDisk -Number \u003cuint16\u003e [\u003cCommonParameters\u003e]\r\n\r\nDisable-StorageBusDisk -PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Enable-StorageBusCache",
+        "Synopsis":  "\r\nEnable-StorageBusCache [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Enable-StorageBusDisk",
+        "Synopsis":  "\r\nEnable-StorageBusDisk -Guid \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n\r\nEnable-StorageBusDisk -Number \u003cuint16\u003e [\u003cCommonParameters\u003e]\r\n\r\nEnable-StorageBusDisk -PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Get-StorageBusBinding",
+        "Synopsis":  "\r\nGet-StorageBusBinding -Guid \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageBusBinding -Number \u003cuint16\u003e [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageBusBinding -PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Get-StorageBusDisk",
+        "Synopsis":  "\r\nGet-StorageBusDisk [-Guid \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageBusDisk [-Number \u003cuint16\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageBusDisk [-PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "New-StorageBusBinding",
+        "Synopsis":  "\r\nNew-StorageBusBinding -CacheGuid \u003cstring\u003e -CapacityGuid \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n\r\nNew-StorageBusBinding -CacheNumber \u003cstring\u003e -CapacityNumber \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "New-StorageBusCacheStore",
+        "Synopsis":  "\r\nNew-StorageBusCacheStore -Guid \u003cstring\u003e [-PageSize \u003cuint32\u003e] [-ReserveCapacity \u003cuint64\u003e] [\u003cCommonParameters\u003e]\r\n\r\nNew-StorageBusCacheStore -Number \u003cstring\u003e [-PageSize \u003cuint32\u003e] [-ReserveCapacity \u003cuint64\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Remove-StorageBusBinding",
+        "Synopsis":  "\r\nRemove-StorageBusBinding -Guid \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n\r\nRemove-StorageBusBinding -Number \u003cuint16\u003e [\u003cCommonParameters\u003e]\r\n\r\nRemove-StorageBusBinding -PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Resume-StorageBusDisk",
+        "Synopsis":  "\r\nResume-StorageBusDisk -Guid \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n\r\nResume-StorageBusDisk -Number \u003cuint16\u003e [\u003cCommonParameters\u003e]\r\n\r\nResume-StorageBusDisk -PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Set-StorageBusProfile",
+        "Synopsis":  "\r\nSet-StorageBusProfile [[-ClaimFlash] \u003cbool\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StorageBusCache",
+        "Name":  "Suspend-StorageBusDisk",
+        "Synopsis":  "\r\nSuspend-StorageBusDisk -Guid \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n\r\nSuspend-StorageBusDisk -Number \u003cuint16\u003e [\u003cCommonParameters\u003e]\r\n\r\nSuspend-StorageBusDisk -PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e [\u003cCommonParameters\u003e]\r\n"
+    }
+]

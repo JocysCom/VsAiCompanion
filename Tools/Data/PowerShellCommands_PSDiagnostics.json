@@ -1,0 +1,52 @@
+﻿[
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Disable-PSTrace",
+        "Synopsis":  "\r\nDisable-PSTrace [-AnalyticOnly]\r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Disable-PSWSManCombinedTrace",
+        "Synopsis":  "\r\nDisable-PSWSManCombinedTrace \r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Disable-WSManTrace",
+        "Synopsis":  "\r\nDisable-WSManTrace \r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Enable-PSTrace",
+        "Synopsis":  "\r\nEnable-PSTrace [-Force] [-AnalyticOnly]\r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Enable-PSWSManCombinedTrace",
+        "Synopsis":  "\r\nEnable-PSWSManCombinedTrace [-DoNotOverwriteExistingTrace]\r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Enable-WSManTrace",
+        "Synopsis":  "\r\nEnable-WSManTrace \r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Get-LogProperties",
+        "Synopsis":  "\r\nGet-LogProperties [-Name] \u003cObject\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Set-LogProperties",
+        "Synopsis":  "\r\nSet-LogProperties [-LogDetails] \u003cLogDetails\u003e [-Force] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Start-Trace",
+        "Synopsis":  "\r\nStart-Trace [-SessionName] \u003cstring\u003e [[-OutputFilePath] \u003cstring\u003e] [[-ProviderFilePath] \u003cstring\u003e] [-ETS] [-Format \u003cObject\u003e] [-MinBuffers \u003cint\u003e] [-MaxBuffers \u003cint\u003e] [-BufferSizeInKB \u003cint\u003e] [-MaxLogFileSizeInMB \u003cint\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PSDiagnostics",
+        "Name":  "Stop-Trace",
+        "Synopsis":  "\r\nStop-Trace [-SessionName] \u003cObject\u003e [-ETS] [\u003cCommonParameters\u003e]\r\n"
+    }
+]

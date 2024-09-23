@@ -1,0 +1,22 @@
+﻿[
+    {
+        "Module":  "PnpDevice",
+        "Name":  "Disable-PnpDevice",
+        "Synopsis":  "Disables a PnP device."
+    },
+    {
+        "Module":  "PnpDevice",
+        "Name":  "Enable-PnpDevice",
+        "Synopsis":  "Enables a PnP device."
+    },
+    {
+        "Module":  "PnpDevice",
+        "Name":  "Get-PnpDevice",
+        "Synopsis":  "Returns information about PnP devices."
+    },
+    {
+        "Module":  "PnpDevice",
+        "Name":  "Get-PnpDeviceProperty",
+        "Synopsis":  "Gets detailed properties for a PnP device."
+    }
+]

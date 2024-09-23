@@ -1,0 +1,22 @@
+﻿[
+    {
+        "Module":  "HgsDiagnostics",
+        "Name":  "Get-HgsTrace",
+        "Synopsis":  "Collects and analyzes data relevant to the operation of a guarded fabric."
+    },
+    {
+        "Module":  "HgsDiagnostics",
+        "Name":  "Get-HgsTraceFileData",
+        "Synopsis":  "Gets metadata about and the contents of HGS Diagnostic trace files recorded in a trace manifest."
+    },
+    {
+        "Module":  "HgsDiagnostics",
+        "Name":  "New-HgsTraceTarget",
+        "Synopsis":  "Creates a HGS Diagnostics target object."
+    },
+    {
+        "Module":  "HgsDiagnostics",
+        "Name":  "Test-HgsTraceTarget",
+        "Synopsis":  "Verifies that a remote Windows PowerShell® session can be opened to the provided target."
+    }
+]

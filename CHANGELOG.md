@@ -1,3 +1,7 @@
+2024-09-23 v1.13.9
+
+- Update: Use Microsoft.Data.SqlClient in the extension for accessing data.
+
 2024-09-16 v1.13.8
 
 - Fix: The model's response would time out sooner than what was specified in the AI service settings.

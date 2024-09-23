@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Module":  "PSWorkflow",
+        "Name":  "New-PSWorkflowSession",
+        "Synopsis":  "Creates a workflow session."
+    },
+    {
+        "Module":  "PSWorkflow",
+        "Name":  "New-PSWorkflowExecutionOption",
+        "Synopsis":  "Creates an object that contains session configuration options for workflow sessions."
+    }
+]

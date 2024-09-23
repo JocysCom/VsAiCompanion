@@ -1,0 +1,77 @@
+﻿[
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "ConvertFrom-SecureString",
+        "Synopsis":  "Converts a secure string to an encrypted standard string."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "ConvertTo-SecureString",
+        "Synopsis":  "Converts plain text or encrypted strings to secure strings."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Get-Acl",
+        "Synopsis":  "Gets the security descriptor for a resource, such as a file or registry key."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Get-AuthenticodeSignature",
+        "Synopsis":  "Gets information about the Authenticode signature for a file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Get-CmsMessage",
+        "Synopsis":  "Gets content that has been encrypted by using the Cryptographic Message Syntax format."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Get-Credential",
+        "Synopsis":  "Gets a credential object based on a user name and password."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Get-ExecutionPolicy",
+        "Synopsis":  "Gets the execution policies for the current session."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Get-PfxCertificate",
+        "Synopsis":  "Gets information about PFX certificate files on the computer."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "New-FileCatalog",
+        "Synopsis":  "Creates a Windows catalog file containing cryptographic hashes for files and folders in the specified paths."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Protect-CmsMessage",
+        "Synopsis":  "Encrypts content by using the Cryptographic Message Syntax format."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Set-Acl",
+        "Synopsis":  "Changes the security descriptor of a specified item, such as a file or a registry key."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Set-AuthenticodeSignature",
+        "Synopsis":  "Adds an Authenticode (/windows-hardware/drivers/install/authenticode)signature to a PowerShell script or other file."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Set-ExecutionPolicy",
+        "Synopsis":  "Sets the PowerShell execution policies for Windows computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Test-FileCatalog",
+        "Synopsis":  "`Test-FileCatalog` validates whether the hashes contained in a catalog file (.cat) matches the hashes of the actual files in order to validate their authenticity."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Security",
+        "Name":  "Unprotect-CmsMessage",
+        "Synopsis":  "Decrypts content that has been encrypted by using the Cryptographic Message Syntax format."
+    }
+]

@@ -1,0 +1,82 @@
+﻿[
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Disable-DeliveryOptimizationVerboseLogs",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Enable-DeliveryOptimizationVerboseLogs",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DeliveryOptimizationPerfSnap",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DeliveryOptimizationPerfSnapThisMonth",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DeliveryOptimizationStatus",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DOConfig",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DODownloadMode",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DOPercentageMaxBackgroundBandwidth",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DOPercentageMaxForegroundBandwidth",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Delete-DeliveryOptimizationCache",
+        "Synopsis":  "\r\nDelete-DeliveryOptimizationCache [-FileId \u003cstring\u003e] [-IncludePinnedFiles] [-Force] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DeliveryOptimizationLog",
+        "Synopsis":  "\r\nGet-DeliveryOptimizationLog [[-Path] \u003cstring[]\u003e] [-Flush] [-Provider \u003cstring\u003e] [-LevelFilter \u003cuint32\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Get-DeliveryOptimizationLogAnalysis",
+        "Synopsis":  "\r\nGet-DeliveryOptimizationLogAnalysis [[-Path] \u003cstring[]\u003e] [-ListConnections] [-Flush] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Set-DeliveryOptimizationStatus",
+        "Synopsis":  "\r\nSet-DeliveryOptimizationStatus [-Pin \u003cbool\u003e] [-FileId \u003cstring\u003e] [-ExpireOn \u003cdatetime\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Set-DODownloadMode",
+        "Synopsis":  "\r\nSet-DODownloadMode [-DownloadMode] \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Set-DOPercentageMaxBackgroundBandwidth",
+        "Synopsis":  "\r\nSet-DOPercentageMaxBackgroundBandwidth [[-MaxBackgroundBandwidthPercentage] \u003cuint32\u003e] [-Reset] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "DeliveryOptimization",
+        "Name":  "Set-DOPercentageMaxForegroundBandwidth",
+        "Synopsis":  "\r\nSet-DOPercentageMaxForegroundBandwidth [[-MaxForegroundBandwidthPercentage] \u003cuint32\u003e] [-Reset] [\u003cCommonParameters\u003e]\r\n"
+    }
+]

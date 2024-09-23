@@ -1,0 +1,22 @@
+﻿[
+    {
+        "Module":  "StartLayout",
+        "Name":  "Get-StartApps",
+        "Synopsis":  "Gets the names and AppIDs of installed apps."
+    },
+    {
+        "Module":  "StartLayout",
+        "Name":  "Export-StartLayout",
+        "Synopsis":  "Exports the layout of the Start screen."
+    },
+    {
+        "Module":  "StartLayout",
+        "Name":  "Export-StartLayoutEdgeAssets",
+        "Synopsis":  "\r\nExport-StartLayoutEdgeAssets [-Path] \u003cstring\u003e [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nExport-StartLayoutEdgeAssets -LiteralPath \u003cstring\u003e [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "StartLayout",
+        "Name":  "Import-StartLayout",
+        "Synopsis":  "Imports the layout of the Start into a mounted Windows image."
+    }
+]

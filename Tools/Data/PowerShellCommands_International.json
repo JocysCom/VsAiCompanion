@@ -1,0 +1,92 @@
+﻿[
+    {
+        "Module":  "International",
+        "Name":  "Get-WinAcceptLanguageFromLanguageListOptOut",
+        "Synopsis":  "Gets the HTTP Accept Language from the Language List opt-out setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Get-WinCultureFromLanguageListOptOut",
+        "Synopsis":  "Gets the Culture (User Locale) from the language list opt-out setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Get-WinDefaultInputMethodOverride",
+        "Synopsis":  "Gets the default input method override setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Get-WinHomeLocation",
+        "Synopsis":  "Gets the Windows GeoID home location setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Get-WinLanguageBarOption",
+        "Synopsis":  "Gets the language bar mode and language bar type for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Get-WinSystemLocale",
+        "Synopsis":  "Gets the System-locale setting (that is, the language for non-Unicode programs) for the current computer."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Get-WinUILanguageOverride",
+        "Synopsis":  "Gets the Windows user interface (UI) language override setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Get-WinUserLanguageList",
+        "Synopsis":  "Gets the language list for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "New-WinUserLanguageList",
+        "Synopsis":  "Instantiates a new language list object."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-Culture",
+        "Synopsis":  "Sets the user culture for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-WinAcceptLanguageFromLanguageListOptOut",
+        "Synopsis":  "Sets the HTTP Accept Language from the Language List opt-out setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-WinCultureFromLanguageListOptOut",
+        "Synopsis":  "Sets the Culture (User Locale) from language list opt out setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-WinDefaultInputMethodOverride",
+        "Synopsis":  "Sets the default input method override for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-WinHomeLocation",
+        "Synopsis":  "Sets the home location setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-WinLanguageBarOption",
+        "Synopsis":  "Sets the language bar type and mode for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-WinSystemLocale",
+        "Synopsis":  "Sets the system locale (the language for non-Unicode programs) for the current computer."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-WinUILanguageOverride",
+        "Synopsis":  "Sets the Windows user interface (UI) language override setting for the current user account."
+    },
+    {
+        "Module":  "International",
+        "Name":  "Set-WinUserLanguageList",
+        "Synopsis":  "Sets the language list and associated properties for the current user account."
+    }
+]

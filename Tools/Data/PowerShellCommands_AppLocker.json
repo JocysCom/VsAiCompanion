@@ -1,0 +1,27 @@
+﻿[
+    {
+        "Module":  "AppLocker",
+        "Name":  "Get-AppLockerFileInformation",
+        "Synopsis":  "Gets the file information necessary to create AppLocker rules from a list of files or an event log."
+    },
+    {
+        "Module":  "AppLocker",
+        "Name":  "Get-AppLockerPolicy",
+        "Synopsis":  "Gets the local, the effective, or a domain AppLocker policy."
+    },
+    {
+        "Module":  "AppLocker",
+        "Name":  "New-AppLockerPolicy",
+        "Synopsis":  "Creates a new AppLocker policy from a list of file information and other rule creation options."
+    },
+    {
+        "Module":  "AppLocker",
+        "Name":  "Set-AppLockerPolicy",
+        "Synopsis":  "Sets the AppLocker policy for the specified GPO."
+    },
+    {
+        "Module":  "AppLocker",
+        "Name":  "Test-AppLockerPolicy",
+        "Synopsis":  "Specifies the AppLocker policy to determine whether the input files will be allowed to run for a given user."
+    }
+]

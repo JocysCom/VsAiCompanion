@@ -1,0 +1,147 @@
+﻿[
+    {
+        "Module":  "Appx",
+        "Name":  "Add-AppPackage",
+        "Synopsis":  "Adds a signed app package to a user account."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Add-AppPackageVolume",
+        "Synopsis":  "Adds an appx volume to the Package Manager."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Dismount-AppPackageVolume",
+        "Synopsis":  "Dismounts an appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppPackage",
+        "Synopsis":  "Gets a list of the app packages that are installed in a user profile."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppPackageDefaultVolume",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppPackageLastError",
+        "Synopsis":  "Get the last error reported in the app package installation logs."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppPackageLog",
+        "Synopsis":  "Gets an app package installation log."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppPackageManifest",
+        "Synopsis":  "Gets the manifest of an app package."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppPackageVolume",
+        "Synopsis":  "Gets appx volumes for the computer."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Mount-AppPackageVolume",
+        "Synopsis":  "Mounts an appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Move-AppPackage",
+        "Synopsis":  "Moves a package from its current location to another appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Remove-AppPackage",
+        "Synopsis":  "Removes an app package from a user account."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Remove-AppPackageVolume",
+        "Synopsis":  "Removes an appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Set-AppPackageDefaultVolume",
+        "Synopsis":  "Specifies a default appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppxLastError",
+        "Synopsis":  "Get the last error reported in the app package installation logs."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppxLog",
+        "Synopsis":  "Gets an app package installation log."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Add-AppxPackage",
+        "Synopsis":  "Adds a signed app package to a user account."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Add-AppxVolume",
+        "Synopsis":  "Adds an appx volume to the Package Manager."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Dismount-AppxVolume",
+        "Synopsis":  "Dismounts an appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppxDefaultVolume",
+        "Synopsis":  "Gets the default appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppxPackage",
+        "Synopsis":  "Gets a list of the app packages that are installed in a user profile."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppxPackageManifest",
+        "Synopsis":  "Gets the manifest of an app package."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Get-AppxVolume",
+        "Synopsis":  "Gets appx volumes for the computer."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Invoke-CommandInDesktopPackage",
+        "Synopsis":  "{{Fill in the Synopsis}}"
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Mount-AppxVolume",
+        "Synopsis":  "Mounts an appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Move-AppxPackage",
+        "Synopsis":  "Moves a package from its current location to another appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Remove-AppxPackage",
+        "Synopsis":  "Removes an app package from a user account."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Remove-AppxVolume",
+        "Synopsis":  "Removes an appx volume."
+    },
+    {
+        "Module":  "Appx",
+        "Name":  "Set-AppxDefaultVolume",
+        "Synopsis":  "Specifies a default appx volume."
+    }
+]

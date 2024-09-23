@@ -1,0 +1,207 @@
+﻿[
+    {
+        "Module":  "MsDtc",
+        "Name":  "Add-DtcClusterTMMapping",
+        "Synopsis":  "Adds a cluster DTC mapping."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-Dtc",
+        "Synopsis":  "Gets DTC instances."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcAdvancedHostSetting",
+        "Synopsis":  "Queries the DTC host level properties in the registry."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcAdvancedSetting",
+        "Synopsis":  "Queries the advanced setting for MSDTC in the registry."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcClusterDefault",
+        "Synopsis":  "Retrieves the default cluster server."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcClusterTMMapping",
+        "Synopsis":  "Gets cluster DTC Mapping data."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcDefault",
+        "Synopsis":  "Gets the default DTC instance."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcLog",
+        "Synopsis":  "Gets DTC log file settings."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcNetworkSetting",
+        "Synopsis":  "Gets DTC network and security configuration settings."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcTransaction",
+        "Synopsis":  "Gets information about transactions being handled by the DTC instance."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcTransactionsStatistics",
+        "Synopsis":  "Gets a summary of transactions."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcTransactionsTraceSession",
+        "Synopsis":  "Gets the DTC transactions trace session specific setting of the host."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Get-DtcTransactionsTraceSetting",
+        "Synopsis":  "Gets the DTC transactions trace setting of the host."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Install-Dtc",
+        "Synopsis":  "Installs the local transactions coordinator."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Remove-DtcClusterTMMapping",
+        "Synopsis":  "Removes a cluster DTC mapping."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Reset-DtcLog",
+        "Synopsis":  "Resets the log file of a DTC instance."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcAdvancedHostSetting",
+        "Synopsis":  "Sets the DTC host level properties in the registry."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcAdvancedSetting",
+        "Synopsis":  "Sets DTC instance specific properties in the registry."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcClusterDefault",
+        "Synopsis":  "Sets the cluster default transactions coordinator."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcClusterTMMapping",
+        "Synopsis":  "Modifies an existing cluster DTC mapping."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcDefault",
+        "Synopsis":  "Sets the default transactions coordinator."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcLog",
+        "Synopsis":  "Modifies the log file settings of a DTC instance."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcNetworkSetting",
+        "Synopsis":  "Modifies DTC network and security configuration for a DTC instance."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcTransaction",
+        "Synopsis":  "Modifies the state of a transaction."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcTransactionsTraceSession",
+        "Synopsis":  "Modifies the DTC transactions trace setting of the host."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Set-DtcTransactionsTraceSetting",
+        "Synopsis":  "Modifies the DTC transactions trace setting of the host."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Start-Dtc",
+        "Synopsis":  "Starts the DTC instance."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Start-DtcTransactionsTraceSession",
+        "Synopsis":  "Starts a new DTC transactions trace session for the host."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Stop-Dtc",
+        "Synopsis":  "Stops a DTC instance."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Stop-DtcTransactionsTraceSession",
+        "Synopsis":  "Stops the active DTC transactions trace session on the host."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Test-Dtc",
+        "Synopsis":  "Tests whether two computers can participate in networked transactions."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Uninstall-Dtc",
+        "Synopsis":  "Uninstalls the local transactions coordinator."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Write-DtcTransactionsTraceSession",
+        "Synopsis":  "Writes the data from an active DTC transactions trace session into the log file."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Complete-DtcDiagnosticTransaction",
+        "Synopsis":  "Invokes the Commit process if the specified transaction is the root transaction; otherwise, invokes the Complete method on a transaction object."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Join-DtcDiagnosticResourceManager",
+        "Synopsis":  "Enlists a diagnostic Resource Manager for a transaction object."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "New-DtcDiagnosticTransaction",
+        "Synopsis":  "Creates a new transaction in a Transaction Manager on the local computer."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Receive-DtcDiagnosticTransaction",
+        "Synopsis":  "Propagates a transaction from a given diagnostic Resource Manager."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Send-DtcDiagnosticTransaction",
+        "Synopsis":  "Propagates a transaction to a specified diagnostic Resource Manager."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Start-DtcDiagnosticResourceManager",
+        "Synopsis":  "Starts a diagnostic Resource Manager."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Stop-DtcDiagnosticResourceManager",
+        "Synopsis":  "Stops and removes a diagnostic Resource Manager job."
+    },
+    {
+        "Module":  "MsDtc",
+        "Name":  "Undo-DtcDiagnosticTransaction",
+        "Synopsis":  "Invokes the Abort process on the specified transaction."
+    }
+]

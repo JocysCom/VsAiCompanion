@@ -1,5 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace JocysCom.ClassLibrary.Controls

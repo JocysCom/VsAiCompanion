@@ -1,0 +1,27 @@
+﻿[
+    {
+        "Module":  "Microsoft.PowerShell.Diagnostics",
+        "Name":  "Export-Counter",
+        "Synopsis":  "Exports performance counter data to log files."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Diagnostics",
+        "Name":  "Get-Counter",
+        "Synopsis":  "Gets performance counter data from local and remote computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Diagnostics",
+        "Name":  "Get-WinEvent",
+        "Synopsis":  "Gets events from event logs and event tracing log files on local and remote computers."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Diagnostics",
+        "Name":  "Import-Counter",
+        "Synopsis":  "Imports performance counter log files and creates the objects that represent each counter sample in the log."
+    },
+    {
+        "Module":  "Microsoft.PowerShell.Diagnostics",
+        "Name":  "New-WinEvent",
+        "Synopsis":  "Creates a new Windows event for the specified event provider."
+    }
+]

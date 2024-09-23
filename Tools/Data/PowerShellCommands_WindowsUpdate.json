@@ -1,0 +1,5 @@
+﻿{
+    "Module":  "WindowsUpdate",
+    "Name":  "Get-WindowsUpdateLog",
+    "Synopsis":  "Merges Windows Update .etl files into a single log file."
+}

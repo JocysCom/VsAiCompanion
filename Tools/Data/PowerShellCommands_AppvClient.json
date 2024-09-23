@@ -1,0 +1,167 @@
+﻿[
+    {
+        "Module":  "AppvClient",
+        "Name":  "Get-AppvVirtualProcess",
+        "Synopsis":  "Displays the virtual processes running on a computer."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Start-AppvVirtualProcess",
+        "Synopsis":  "Starts a virtual process."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Add-AppvClientConnectionGroup",
+        "Synopsis":  "Creates a composition of multiple packages."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Add-AppvClientPackage",
+        "Synopsis":  "Adds a package to a computer running the App-V client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Add-AppvPublishingServer",
+        "Synopsis":  "Adds a publishing server for the computer that runs the App-V client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Disable-Appv",
+        "Synopsis":  "Disables the App-V service."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Disable-AppvClientConnectionGroup",
+        "Synopsis":  "Disables a connection group on the computer running the App-V client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Enable-Appv",
+        "Synopsis":  "Enables the App-V service."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Enable-AppvClientConnectionGroup",
+        "Synopsis":  "Enables a running connection group on the computer running the App-V client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Get-AppvClientApplication",
+        "Synopsis":  "Returns applications that are part of App-V Client Packages."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Get-AppvClientConfiguration",
+        "Synopsis":  "Returns the configuration for the App-V client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Get-AppvClientConnectionGroup",
+        "Synopsis":  "Returns an App-V connection group object."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Get-AppvClientMode",
+        "Synopsis":  "Displays the mode for the App-V Client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Get-AppvClientPackage",
+        "Synopsis":  "Returns App-V Client Packages."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Get-AppvPublishingServer",
+        "Synopsis":  "Returns App-V Server objects."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Get-AppvStatus",
+        "Synopsis":  "Gets the status of the App-V service."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Mount-AppvClientConnectionGroup",
+        "Synopsis":  "Streams the contents of packages to the local disk."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Mount-AppvClientPackage",
+        "Synopsis":  "Loads a package into the App-V cache."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Publish-AppvClientPackage",
+        "Synopsis":  "Publishes the App-V package."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Remove-AppvClientConnectionGroup",
+        "Synopsis":  "Deletes an App-V connection group on the client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Remove-AppvClientPackage",
+        "Synopsis":  "Removes the package from a computer."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Remove-AppvPublishingServer",
+        "Synopsis":  "Removes an App-V publishing server."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Repair-AppvClientConnectionGroup",
+        "Synopsis":  "Resets the user package settings for the connection group."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Repair-AppvClientPackage",
+        "Synopsis":  "Resets the user settings of a package."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Send-AppvClientReport",
+        "Synopsis":  "Sends reporting data from the client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Set-AppvClientConfiguration",
+        "Synopsis":  "Applies configuration settings to the App-V Client."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Set-AppvClientMode",
+        "Synopsis":  "Sets the mode in which the client runs."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Set-AppvClientPackage",
+        "Synopsis":  "Configures an App-V Client Package."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Set-AppvPublishingServer",
+        "Synopsis":  "Modifies properties of an App-V Publishing Server."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Stop-AppvClientConnectionGroup",
+        "Synopsis":  "Shuts down the shared virtual environment of a connection group."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Stop-AppvClientPackage",
+        "Synopsis":  "Shuts down virtual environments for specified packages."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Sync-AppvPublishingServer",
+        "Synopsis":  "Initiates the App-V Publishing Refresh operation."
+    },
+    {
+        "Module":  "AppvClient",
+        "Name":  "Unpublish-AppvClientPackage",
+        "Synopsis":  "Removes the extension points for packages."
+    }
+]

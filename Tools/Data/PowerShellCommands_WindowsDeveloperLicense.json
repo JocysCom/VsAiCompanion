@@ -1,0 +1,17 @@
+﻿[
+    {
+        "Module":  "WindowsDeveloperLicense",
+        "Name":  "Get-WindowsDeveloperLicense",
+        "Synopsis":  "Provides information about a developer license for the current computer."
+    },
+    {
+        "Module":  "WindowsDeveloperLicense",
+        "Name":  "Show-WindowsDeveloperLicenseRegistration",
+        "Synopsis":  "Starts the developer license registration workflow that allows a user to register a developer license."
+    },
+    {
+        "Module":  "WindowsDeveloperLicense",
+        "Name":  "Unregister-WindowsDeveloperLicense",
+        "Synopsis":  "Removes the developer license from the current computer."
+    }
+]

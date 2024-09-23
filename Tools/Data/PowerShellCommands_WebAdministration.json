@@ -1,0 +1,402 @@
+﻿[
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Begin-WebCommitDelay",
+        "Synopsis":  "Configures properties for existing ODBC DSNs."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "End-WebCommitDelay",
+        "Synopsis":  "Configures properties for existing ODBC DSNs."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Add-WebConfiguration",
+        "Synopsis":  "Adds a collection element to an IIS configuration collection."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Add-WebConfigurationLock",
+        "Synopsis":  "Locks an IIS configuration section or element."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Add-WebConfigurationProperty",
+        "Synopsis":  "Adds a property to an IIS configuration section."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Backup-WebConfiguration",
+        "Synopsis":  "Creates a backup of an IIS configuration."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Clear-WebCentralCertProvider",
+        "Synopsis":  "Removes all settings for the central certificate provider."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Clear-WebConfiguration",
+        "Synopsis":  "Removes configuration settings from the specified configuration location."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Clear-WebRequestTracingSetting",
+        "Synopsis":  "Clears the Request Tracing configuration from the specified Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Clear-WebRequestTracingSettings",
+        "Synopsis":  "Clears the Request Tracing configuration from the specified Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "ConvertTo-WebApplication",
+        "Synopsis":  "Converts an IIS virtual directory to an IIS Web application."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Disable-WebCentralCertProvider",
+        "Synopsis":  "Takes the central certificate provider offline."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Disable-WebGlobalModule",
+        "Synopsis":  "Disables the specified IIS module."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Disable-WebRequestTracing",
+        "Synopsis":  "Disables Request Tracing for the specified site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Enable-WebCentralCertProvider",
+        "Synopsis":  "Enables the specified central certificate provider."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Enable-WebGlobalModule",
+        "Synopsis":  "Enables the specified IIS module."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Enable-WebRequestTracing",
+        "Synopsis":  "Enables Request Tracing for the site specified."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebAppDomain",
+        "Synopsis":  "Gets the application domains in which the specified IIS worker process is running."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebApplication",
+        "Synopsis":  "Gets the Web Applications associated with a specific site or with the specified name."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebAppPoolState",
+        "Synopsis":  "Gets the run-time state of an IIS application pool."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebBinding",
+        "Synopsis":  "Gets the bindings on the specified IIS site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebCentralCertProvider",
+        "Synopsis":  "Retrieves the configuration settings of the central certificate provider."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebConfigFile",
+        "Synopsis":  "Gets the file system path of the Web.config file."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebConfiguration",
+        "Synopsis":  "Gets an IIS configuration element at the specified path."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebConfigurationBackup",
+        "Synopsis":  "Gets a list of available IIS configuration backups."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebConfigurationLocation",
+        "Synopsis":  "Gets the location of a specified configuration setting."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebConfigurationLock",
+        "Synopsis":  "Gets the lock status of the specified IIS configuration location."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebConfigurationProperty",
+        "Synopsis":  "Gets an IIS configuration property at the specified path."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebFilePath",
+        "Synopsis":  "Gets the physical path to the location of the specified IIS module."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebGlobalModule",
+        "Synopsis":  "Gets the global modules configured in IIS, or information about a specific module."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebHandler",
+        "Synopsis":  "Gets IIS request handlers."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebItemState",
+        "Synopsis":  "Gets the run-time state of a site or an application pool."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebManagedModule",
+        "Synopsis":  "Gets the managed modules that are configured for a particular application."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebRequest",
+        "Synopsis":  "Gets the IIS requests that are currently being executed."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-Website",
+        "Synopsis":  "Gets configuration information for an IIS Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebsiteState",
+        "Synopsis":  "Gets the state of an IIS Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebURL",
+        "Synopsis":  "Gets information about the URL associated with the specified Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Get-WebVirtualDirectory",
+        "Synopsis":  "Gets a list of the virtual directories on the specified site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-WebApplication",
+        "Synopsis":  "Creates a new IIS Web application."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-WebAppPool",
+        "Synopsis":  "Creates a new IIS application pool."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-WebBinding",
+        "Synopsis":  "Adds a new binding to an existing Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-WebFtpSite",
+        "Synopsis":  "Create a new FTP 7 Site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-WebGlobalModule",
+        "Synopsis":  "Creates a new IIS global module."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-WebHandler",
+        "Synopsis":  "Creates a new IIS request handler."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-WebManagedModule",
+        "Synopsis":  "Adds a new managed module to the IIS request pipeline."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-Website",
+        "Synopsis":  "Creates a new IIS Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "New-WebVirtualDirectory",
+        "Synopsis":  "Creates a new virtual directory in IIS."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebApplication",
+        "Synopsis":  "Removes a Web application from an IIS Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebAppPool",
+        "Synopsis":  "Removes an application pool from IIS."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebBinding",
+        "Synopsis":  "Removes a binding from an IIS Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebConfigurationBackup",
+        "Synopsis":  "Removes an existing IIS configuration backup."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebConfigurationLocation",
+        "Synopsis":  "Removes an IIS configuration location."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebConfigurationLock",
+        "Synopsis":  "Removes a lock on configuration settings."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebConfigurationProperty",
+        "Synopsis":  "Removes an IIS configuration property."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebGlobalModule",
+        "Synopsis":  "Removes an IIS module."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebHandler",
+        "Synopsis":  "Removes a request handler from IIS."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebManagedModule",
+        "Synopsis":  "Removes a managed module from IIS."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-Website",
+        "Synopsis":  "Removes an IIS Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Remove-WebVirtualDirectory",
+        "Synopsis":  "Removes an IIS virtual directory."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Rename-WebConfigurationLocation",
+        "Synopsis":  "Renames a configuration location."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Restart-WebAppPool",
+        "Synopsis":  "Recycles an application pool."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Restart-WebItem",
+        "Synopsis":  "Restarts an application pool or a Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Restore-WebConfiguration",
+        "Synopsis":  "Restores an IIS configuration backup."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Select-WebConfiguration",
+        "Synopsis":  "Returns Web configuration objects."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Set-WebBinding",
+        "Synopsis":  "Changes a property of an IIS site binding."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Set-WebCentralCertProvider",
+        "Synopsis":  "Sets the configuration settings for the central certificate provider."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Set-WebCentralCertProviderCredential",
+        "Synopsis":  "Sets the user-account credentials for the central certificate provider."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Set-WebConfiguration",
+        "Synopsis":  "Sets the value of an IIS configuration element."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Set-WebConfigurationProperty",
+        "Synopsis":  "Changes the value of an IIS configuration property."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Set-WebGlobalModule",
+        "Synopsis":  "Specifies configuration settings for an IIS module."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Set-WebHandler",
+        "Synopsis":  "Configures an IIS request handler."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Set-WebManagedModule",
+        "Synopsis":  "Configures an IIS managed module."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Start-WebAppPool",
+        "Synopsis":  "Starts an application pool."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Start-WebCommitDelay",
+        "Synopsis":  "Instructs the IIS configuration system to delay the commitment of changes."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Start-WebItem",
+        "Synopsis":  "Starts an application pool or a site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Start-Website",
+        "Synopsis":  "Starts an IIS Web site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Stop-WebAppPool",
+        "Synopsis":  "Stops an application pool."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Stop-WebCommitDelay",
+        "Synopsis":  "Instructs the IIS configuration system to resume the commitment of changes."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Stop-WebItem",
+        "Synopsis":  "Stops an application pool or a site."
+    },
+    {
+        "Module":  "WebAdministration",
+        "Name":  "Stop-Website",
+        "Synopsis":  "Stops an IIS Web site."
+    }
+]

@@ -1,0 +1,5 @@
+﻿{
+    "Module":  "PSWorkflowUtility",
+    "Name":  "Invoke-AsWorkflow",
+    "Synopsis":  "Runs a command or expression as a Windows PowerShell Workflow."
+}

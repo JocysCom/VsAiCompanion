@@ -178,6 +178,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				? di.Name
 				: $"{di.Parent.Name} - {di.Name}";
 			Global.Embeddings.RenameItem(Item, newName);
+			// Offer to rename database.
+
 		}
 
 

@@ -1,0 +1,832 @@
+﻿[
+    {
+        "Module":  "Storage",
+        "Name":  "Disable-PhysicalDiskIndication",
+        "Synopsis":  "Turns off the identification LED on the specified physical disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Disable-StorageDiagnosticLog",
+        "Synopsis":  "Stops a Storage diagnostic log."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Enable-PhysicalDiskIndication",
+        "Synopsis":  "Enables the identification LED on the specified physical disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Enable-StorageDiagnosticLog",
+        "Synopsis":  "Starts Storage diagnostic logging."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Flush-Volume",
+        "Synopsis":  "Writes the file system cache to disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-DiskSNV",
+        "Synopsis":  "Gets the view of a disk from a storage node."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-PhysicalDiskSNV",
+        "Synopsis":  "Gets the node view of a physical disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageEnclosureSNV",
+        "Synopsis":  "Gets the node view of a Storage enclosure."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Initialize-Volume",
+        "Synopsis":  "Formats one or more existing volumes or a new volume on an existing partition."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Write-FileSystemCache",
+        "Synopsis":  "Writes the file system cache to disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Add-InitiatorIdToMaskingSet",
+        "Synopsis":  "Adds an initiator ID to an existing masking set, granting the host associated with the initiator ID access to the virtual disk and target port resources defined in the masking set."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Add-PartitionAccessPath",
+        "Synopsis":  "Adds an access path such as a drive letter or folder to a partition."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Add-PhysicalDisk",
+        "Synopsis":  "Adds a physical disk to the specified storage pool or manually assigns a physical disk to a specific virtual disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Add-StorageFaultDomain",
+        "Synopsis":  "\r\nAdd-StorageFaultDomain [-VirtualDisk] \u003cCimInstance#MSFT_VirtualDisk\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nAdd-StorageFaultDomain -VirtualDiskFriendlyName \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nAdd-StorageFaultDomain -VirtualDiskName \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nAdd-StorageFaultDomain -VirtualDiskUniqueId \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nAdd-StorageFaultDomain [-StorageTier] \u003cCimInstance#MSFT_StorageTier\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nAdd-StorageFaultDomain -StorageTierFriendlyName \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nAdd-StorageFaultDomain -StorageTierUniqueId \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Add-TargetPortToMaskingSet",
+        "Synopsis":  "Adds one or more target ports to a specified masking set, allowing a connection between the target ports, and any virtual disks and initiator IDs that the masking set contains."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Add-VirtualDiskToMaskingSet",
+        "Synopsis":  "Adds a virtual disk to a specified masking set and grants access to the virtual disk to all initiator IDs defined in the masking set."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Block-FileShareAccess",
+        "Synopsis":  "Blocks access to a file share."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Clear-Disk",
+        "Synopsis":  "Cleans a disk by removing all partition information and un-initializing it, erasing all data on the disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Clear-FileStorageTier",
+        "Synopsis":  "Unpins a file from the specified storage tier."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Clear-StorageDiagnosticInfo",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Connect-VirtualDisk",
+        "Synopsis":  "Connects a disconnected virtual disk to the specified computer when using the Windows Storage subsystem."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Debug-FileShare",
+        "Synopsis":  "Finds problems with a file share and recommends solutions."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Debug-StorageSubSystem",
+        "Synopsis":  "Finds problems with a storage subsystem and recommends solutions."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Debug-Volume",
+        "Synopsis":  "Finds problems with a volume and recommends solutions."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Disable-PhysicalDiskIdentification",
+        "Synopsis":  "Turns off the identification LED on the specified physical disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Disable-StorageEnclosureIdentification",
+        "Synopsis":  "Turns off the identification LED on a storage enclosure or the slots for individual disks."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Disable-StorageEnclosurePower",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Disable-StorageHighAvailability",
+        "Synopsis":  "Disables a Storage resource."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Disable-StorageMaintenanceMode",
+        "Synopsis":  "Disables storage maintenance mode on a fault domain."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Disconnect-VirtualDisk",
+        "Synopsis":  "Disconnects a virtual disk from the specified computer, revoking access to the virtual disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Dismount-DiskImage",
+        "Synopsis":  "Dismounts a disk image (virtual hard disk or ISO) so that it can no longer be accessed as a disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Enable-PhysicalDiskIdentification",
+        "Synopsis":  "Enables the identification LED on the specified physical disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Enable-StorageEnclosureIdentification",
+        "Synopsis":  "Enables the identification LED on a storage enclosure or the slots for individual disks."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Enable-StorageEnclosurePower",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Enable-StorageHighAvailability",
+        "Synopsis":  "Enables a disk to be added to the failover cluster."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Enable-StorageMaintenanceMode",
+        "Synopsis":  "Enables storage maintenance mode on a device."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Format-Volume",
+        "Synopsis":  "Formats one or more existing volumes or a new volume on an existing partition."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-DedupProperties",
+        "Synopsis":  "Gets Data Deduplication information."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-Disk",
+        "Synopsis":  "Gets one or more disks visible to the operating system."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-DiskImage",
+        "Synopsis":  "Gets one or more disk image objects (virtual hard disk or ISO)."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-DiskStorageNodeView",
+        "Synopsis":  "Gets the view of a disk from a storage node."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-FileIntegrity",
+        "Synopsis":  "Gets integrity information for a file on an ReFS volume."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-FileShare",
+        "Synopsis":  "Retrieves file share objects and their properties."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-FileShareAccessControlEntry",
+        "Synopsis":  "Retrieves an access control entry for the share corresponding to a single account."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-FileStorageTier",
+        "Synopsis":  "Gets the files assigned to a Storage tier on a volume, and their status."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-InitiatorId",
+        "Synopsis":  "Gets the InitiatorID objects for the specified iSCSI initiators."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-InitiatorPort",
+        "Synopsis":  "Gets one or more host bus adapter (HBA) initiator ports."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-MaskingSet",
+        "Synopsis":  "Gets masking sets. Masking sets are used to grant access to a virtual disk or iSCSI VHD for one or more servers."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-OffloadDataTransferSetting",
+        "Synopsis":  "Returns offloaded data transfer (ODX) settings for the specified subsystem."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-Partition",
+        "Synopsis":  "Returns a list of all partition objects visible on all disks, or optionally a filtered list using specified parameters."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-PartitionSupportedSize",
+        "Synopsis":  "Returns information on supported partition sizes for the specified Disk object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-PhysicalDisk",
+        "Synopsis":  "Gets a list of all PhysicalDisk objects visible across any available Storage Management Providers, or optionally a filtered list."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-PhysicalDiskStorageNodeView",
+        "Synopsis":  "Gets the node view of a physical disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-PhysicalExtent",
+        "Synopsis":  "Gets physical allocations for a physical disk, storage tier, or virtual disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-PhysicalExtentAssociation",
+        "Synopsis":  "Gets the physical disk, storage tier, or virtual disk that is associated with a physical extent."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-ResiliencySetting",
+        "Synopsis":  "Gets the resiliency settings (also known as storage layouts) available for creating virtual disks on the specified storage subsystem."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageAdvancedProperty",
+        "Synopsis":  "Gets the advanced properties on a storage device."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageChassis",
+        "Synopsis":  "\r\nGet-StorageChassis [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageChassis -StorageSubsystem \u003cCimInstance#MSFT_StorageSubsystem\u003e [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageChassis -StorageFaultDomain \u003cCimInstance#MSFT_StorageFaultDomain\u003e [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageDiagnosticInfo",
+        "Synopsis":  "Gets Storage diagnostic information."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageEnclosure",
+        "Synopsis":  "Gets storage enclosures."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageEnclosureStorageNodeView",
+        "Synopsis":  "Gets the node view of a Storage enclosure."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageEnclosureVendorData",
+        "Synopsis":  "Gets vendor-specific data for an enclosure."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageExtendedStatus",
+        "Synopsis":  "\r\nGet-StorageExtendedStatus -StorageJob \u003cCimInstance#MSFT_StorageJob\u003e [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageFaultDomain",
+        "Synopsis":  "Gets a Storage fault domain object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageFileServer",
+        "Synopsis":  "Gets a storage file server."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageFirmwareInformation",
+        "Synopsis":  "Gets information about firmware on a storage object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageHealthAction",
+        "Synopsis":  "Gets health-related system activities."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageHealthReport",
+        "Synopsis":  "Gets a storage health report."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageHealthSetting",
+        "Synopsis":  "Gets storage health service settings."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageHistory",
+        "Synopsis":  "\r\nGet-StorageHistory -PhysicalDisk \u003cCimInstance#MSFT_PhysicalDisk\u003e [-Credential \u003cpscredential\u003e] [-LogFile \u003cstring\u003e] [-NumberOfHours \u003cuint32\u003e] [-Disaggregate] [-Errors] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageHistory -DeviceGuid \u003cstring\u003e [-LogFile \u003cstring\u003e] [-NumberOfHours \u003cuint32\u003e] [-Disaggregate] [-Errors] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageHistory -DeviceNumber \u003cstring\u003e [-LogFile \u003cstring\u003e] [-NumberOfHours \u003cuint32\u003e] [-Disaggregate] [-Errors] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageJob",
+        "Synopsis":  "Returns information about long-running Storage module jobs, such as a repair task."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageNode",
+        "Synopsis":  "Gets storage nodes."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StoragePool",
+        "Synopsis":  "Gets a specific storage pool, or a set of StoragePool objects either from all storage subsystems across all storage providers, or optionally a filtered subset based on specific parameters."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageProvider",
+        "Synopsis":  "Returns a list of the storage providers available on the local computer."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageRack",
+        "Synopsis":  "\r\nGet-StorageRack [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageRack -StorageSubsystem \u003cCimInstance#MSFT_StorageSubsystem\u003e [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageRack -StorageFaultDomain \u003cCimInstance#MSFT_StorageFaultDomain\u003e [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageReliabilityCounter",
+        "Synopsis":  "Gets storage reliability counters."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageScaleUnit",
+        "Synopsis":  "\r\nGet-StorageScaleUnit [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageScaleUnit -StorageSubsystem \u003cCimInstance#MSFT_StorageSubsystem\u003e [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageScaleUnit -StorageFaultDomain \u003cCimInstance#MSFT_StorageFaultDomain\u003e [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageSetting",
+        "Synopsis":  "Gets a StorageSettings object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageSite",
+        "Synopsis":  "\r\nGet-StorageSite [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageSite -StorageSubsystem \u003cCimInstance#MSFT_StorageSubsystem\u003e [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-StorageSite -StorageFaultDomain \u003cCimInstance#MSFT_StorageFaultDomain\u003e [-FriendlyName \u003cstring\u003e] [-SerialNumber \u003cstring\u003e] [-PhysicalLocation \u003cstring\u003e] [-CimSession \u003cCimSession\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageSubSystem",
+        "Synopsis":  "Gets one or more StorageSubsystem objects."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageTier",
+        "Synopsis":  "Gets storage tiers on Windows Storage subsystems."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-StorageTierSupportedSize",
+        "Synopsis":  "Gets the minimum and maximum possible sizes of a storage tier."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-SupportedClusterSizes",
+        "Synopsis":  "Gets the supported cluster sizes."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-SupportedFileSystems",
+        "Synopsis":  "Gets the file system choices for a specified volume."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-TargetPort",
+        "Synopsis":  "Returns a TargetPort object associated with a specific port address and connection type."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-TargetPortal",
+        "Synopsis":  "Returns a TargetPortal object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-VirtualDisk",
+        "Synopsis":  "Returns a list of VirtualDisk objects, across all storage pools, across all providers, or optionally a filtered subset based on provided criteria."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-VirtualDiskSupportedSize",
+        "Synopsis":  "Returns all sizes supported by a storage pool for virtual disk creation based on the specified resiliency setting name."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-Volume",
+        "Synopsis":  "Gets the specified Volume object, or all Volume objects if no filter is provided."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-VolumeCorruptionCount",
+        "Synopsis":  "Gets a count of the file system errors on the NTFS volume."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Get-VolumeScrubPolicy",
+        "Synopsis":  "Gets the status of the volume scrub policy."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Grant-FileShareAccess",
+        "Synopsis":  "Grants access to a file share."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Hide-VirtualDisk",
+        "Synopsis":  "Hides the virtual disk from the host when the Storage Management Provider in use does not support masking sets."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Initialize-Disk",
+        "Synopsis":  "Initializes a RAW disk for first time use, enabling the disk to be formatted and used to store data."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Mount-DiskImage",
+        "Synopsis":  "Mounts a previously created disk image (virtual hard disk or ISO), making it appear as a normal disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-FileShare",
+        "Synopsis":  "Creates an access point for a remote file share."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-MaskingSet",
+        "Synopsis":  "Creates a new masking set."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-Partition",
+        "Synopsis":  "Creates a new partition on an existing Disk object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-StorageFileServer",
+        "Synopsis":  "Creates a storage file server."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-StoragePool",
+        "Synopsis":  "Creates a new storage pool using a group of physical disks."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-StorageSubsystemVirtualDisk",
+        "Synopsis":  "Allows the creation of a VirtualDisk object on a storage subsystem that does not support creation of storage pools."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-StorageTier",
+        "Synopsis":  "Creates a storage tier."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-VirtualDisk",
+        "Synopsis":  "Creates a new virtual disk in the specified storage pool."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-VirtualDiskClone",
+        "Synopsis":  "Creates a new clone of a specified virtual disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-VirtualDiskSnapshot",
+        "Synopsis":  "Creates a new snapshot of the specified virtual disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "New-Volume",
+        "Synopsis":  "Creates a volume with the specified file system."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Optimize-StoragePool",
+        "Synopsis":  "Optimizes a Storage pool."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Optimize-Volume",
+        "Synopsis":  "Optimizes a volume."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Register-StorageSubsystem",
+        "Synopsis":  "Connects to storage subsystems on a remote computer."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-FileShare",
+        "Synopsis":  "Removes a file share."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-InitiatorId",
+        "Synopsis":  "Removes an initiator identifier (ID)."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-InitiatorIdFromMaskingSet",
+        "Synopsis":  "Removes an initiator identifier (ID) from a masking set."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-MaskingSet",
+        "Synopsis":  "Removes a masking set."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-Partition",
+        "Synopsis":  "Deletes the specified Partition object on an existing disk and any underlying Volume objects."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-PartitionAccessPath",
+        "Synopsis":  "Removes an access path such as a drive letter or folder from a partition."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-PhysicalDisk",
+        "Synopsis":  "Removes a physical disk from a specified storage pool."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-StorageFaultDomain",
+        "Synopsis":  "\r\nRemove-StorageFaultDomain [-VirtualDisk] \u003cCimInstance#MSFT_VirtualDisk\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nRemove-StorageFaultDomain -VirtualDiskFriendlyName \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nRemove-StorageFaultDomain -VirtualDiskName \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nRemove-StorageFaultDomain -VirtualDiskUniqueId \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nRemove-StorageFaultDomain [-StorageTier] \u003cCimInstance#MSFT_StorageTier\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nRemove-StorageFaultDomain -StorageTierFriendlyName \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nRemove-StorageFaultDomain -StorageTierUniqueId \u003cstring\u003e [-StorageFaultDomains \u003cCimInstance#MSFT_StorageFaultDomain[]\u003e] [-StorageFaultDomainFriendlyNames \u003cstring[]\u003e] [-CimSession \u003cCimSession\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-StorageFileServer",
+        "Synopsis":  "Removes a file server."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-StorageHealthIntent",
+        "Synopsis":  "\r\nRemove-StorageHealthIntent -InputObject \u003cCimInstance#MSFT_StorageObject\u003e [-CimSession \u003cCimSession\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-StorageHealthSetting",
+        "Synopsis":  "Removes a storage health service setting."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-StoragePool",
+        "Synopsis":  "Deletes a storage pool and associated VirtualDisk objects."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-StorageTier",
+        "Synopsis":  "Removes storage tiers from a storage pool."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-TargetPortFromMaskingSet",
+        "Synopsis":  "Removes a specified target port from a masking set."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-VirtualDisk",
+        "Synopsis":  "Deletes an existing virtual disk and reclaims the used space for use by other virtual disks in the same storage pool."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Remove-VirtualDiskFromMaskingSet",
+        "Synopsis":  "Removes a virtual disk from a specified masking set to block access to the virtual disk by an InitiatorIds object defined in the masking set."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Rename-MaskingSet",
+        "Synopsis":  "Renames an existing masking set."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Repair-FileIntegrity",
+        "Synopsis":  "Repairs a corrupted file on an NTFS or ReFS volume."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Repair-VirtualDisk",
+        "Synopsis":  "Performs repairs on a virtual disk that is unhealthy."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Repair-Volume",
+        "Synopsis":  "Performs repairs on a volume."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Reset-PhysicalDisk",
+        "Synopsis":  "Resets the status of a physical disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Reset-StorageReliabilityCounter",
+        "Synopsis":  "Resets storage reliability counters for a disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Resize-Partition",
+        "Synopsis":  "Resizes a partition and the underlying file system."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Resize-StorageTier",
+        "Synopsis":  "Increases the size of storage tiers."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Resize-VirtualDisk",
+        "Synopsis":  "Resizes an existing virtual disk to be larger or smaller."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Revoke-FileShareAccess",
+        "Synopsis":  "Revokes access to a file share."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-Disk",
+        "Synopsis":  "Takes a Disk object or unique disk identifiers and a set of attributes, and updates the physical disk on the system."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-FileIntegrity",
+        "Synopsis":  "Sets integrity for a file on an ReFS volume."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-FileShare",
+        "Synopsis":  "Modifies a file share."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-FileStorageTier",
+        "Synopsis":  "Assigns a file to a storage tier."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-InitiatorPort",
+        "Synopsis":  "Sets properties on the InitiatorPort object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-Partition",
+        "Synopsis":  "Sets attributes of a partition, such as active, read-only, and offline states."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-PhysicalDisk",
+        "Synopsis":  "Sets attributes on a specific physical disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-ResiliencySetting",
+        "Synopsis":  "Modifies the properties of the specified resiliency setting name."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-StorageFileServer",
+        "Synopsis":  "Modifies a storage file server."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-StorageHealthSetting",
+        "Synopsis":  "Modifies a storage health service setting."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-StoragePool",
+        "Synopsis":  "Modifies the properties of the specified storage pool."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-StorageProvider",
+        "Synopsis":  "Modifies whether to enable the SMP provider cache."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-StorageSetting",
+        "Synopsis":  "Adjusts or configures current storage settings of the StorageSetting object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-StorageSubSystem",
+        "Synopsis":  "Modifies the properties of a StorageSubsystem object."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-StorageTier",
+        "Synopsis":  "Modifies a storage tier."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-VirtualDisk",
+        "Synopsis":  "Modifies the attributes of an existing virtual disk."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-Volume",
+        "Synopsis":  "Sets or changes the file system label of an existing volume."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Set-VolumeScrubPolicy",
+        "Synopsis":  "Sets the status of the volume scrub policy."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Show-StorageHistory",
+        "Synopsis":  "\r\nShow-StorageHistory [-Objects] \u003cArrayList\u003e [-Title \u003cstring\u003e] [-DisplayAvgLatency] [-DisplayMaxLatency] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Show-VirtualDisk",
+        "Synopsis":  "Makes a virtual disk available to a host."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Start-StorageDiagnosticLog",
+        "Synopsis":  "Starts Storage diagnostic logging."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Stop-StorageDiagnosticLog",
+        "Synopsis":  "Stops a Storage diagnostic log."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Stop-StorageJob",
+        "Synopsis":  "Stops storage job."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Unblock-FileShareAccess",
+        "Synopsis":  "Unblocks access to a file share."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Unregister-StorageSubsystem",
+        "Synopsis":  "Disconnects from storage subsystems on a remote computer."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Update-Disk",
+        "Synopsis":  "Updates cached information about the specified Disk object only"
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Update-HostStorageCache",
+        "Synopsis":  "Initiates an update on the host storage cache to reflect the current status of storage."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Update-StorageFirmware",
+        "Synopsis":  "Updates the firmware on a storage device."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Update-StoragePool",
+        "Synopsis":  "Updates the metadata of a Windows Server 2012 R2 storage pool."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Update-StorageProviderCache",
+        "Synopsis":  "Updates the cache of the service for a particular provider and associated child objects."
+    },
+    {
+        "Module":  "Storage",
+        "Name":  "Write-VolumeCache",
+        "Synopsis":  "Writes the file system cache to disk."
+    }
+]

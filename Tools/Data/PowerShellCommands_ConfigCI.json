@@ -1,0 +1,82 @@
+﻿[
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Add-SignerRule",
+        "Synopsis":  "Creates a signer rule and adds it to a policy."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "ConvertFrom-CIPolicy",
+        "Synopsis":  "Converts an .xml file that contains a Code Integrity policy into binary format."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Edit-CIPolicyRule",
+        "Synopsis":  "This cmdlet is not supported."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Get-CIPolicy",
+        "Synopsis":  "Gets the rules in a Code Integrity policy."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Get-CIPolicyIdInfo",
+        "Synopsis":  "Displays Code Integrity policy information."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Get-CIPolicyInfo",
+        "Synopsis":  "This cmdlet is not supported."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Get-SystemDriver",
+        "Synopsis":  "Scans for drivers on the system."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Merge-CIPolicy",
+        "Synopsis":  "Combines the rules in several Code Integrity policy files."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "New-CIPolicy",
+        "Synopsis":  "Creates a Code Integrity policy as an .xml file."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "New-CIPolicyRule",
+        "Synopsis":  "Generates Code Integrity policy rules for drivers."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Remove-CIPolicyRule",
+        "Synopsis":  "This cmdlet is not supported."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Set-CIPolicyIdInfo",
+        "Synopsis":  "Modifies the name and ID of a Code Integrity policy."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Set-CIPolicySetting",
+        "Synopsis":  "\r\nSet-CIPolicySetting [-FilePath] \u003cstring\u003e -Provider \u003cstring\u003e -Key \u003cstring\u003e -ValueName \u003cstring\u003e -Delete [\u003cCommonParameters\u003e]\r\n\r\nSet-CIPolicySetting [-FilePath] \u003cstring\u003e -Provider \u003cstring\u003e -Key \u003cstring\u003e -ValueName \u003cstring\u003e -ValueType \u003cstring\u003e -Value \u003cstring\u003e [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Set-CIPolicyVersion",
+        "Synopsis":  "Updates the version number of the policy."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Set-HVCIOptions",
+        "Synopsis":  "Modifies hypervisor Code Integrity options for a policy."
+    },
+    {
+        "Module":  "ConfigCI",
+        "Name":  "Set-RuleOption",
+        "Synopsis":  "Modifies rule options in a Code Integrity policy."
+    }
+]

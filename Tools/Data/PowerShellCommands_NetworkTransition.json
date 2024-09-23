@@ -1,0 +1,172 @@
+﻿[
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Add-NetIPHttpsCertBinding",
+        "Synopsis":  "Binds an SSL certificate to an IP-HTTPS server."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Disable-NetDnsTransitionConfiguration",
+        "Synopsis":  "Disables the DNS64 configuration on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Disable-NetIPHttpsProfile",
+        "Synopsis":  "Disables the currently active IP-HTTPS profile."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Disable-NetNatTransitionConfiguration",
+        "Synopsis":  "Disables the NAT64 configuration on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Enable-NetDnsTransitionConfiguration",
+        "Synopsis":  "Enables the DNS64 configuration on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Enable-NetIPHttpsProfile",
+        "Synopsis":  "Enables an IP-HTTPS configuration profile."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Enable-NetNatTransitionConfiguration",
+        "Synopsis":  "Enables the NAT64 configuration on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-Net6to4Configuration",
+        "Synopsis":  "Retrieves the 6to4 configuration of a computer or a Group Policy Object (GPO)."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetDnsTransitionConfiguration",
+        "Synopsis":  "Retrieves the DNS64 configuration of a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetDnsTransitionMonitoring",
+        "Synopsis":  "Retrieves the DNS64 configuration of a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetIPHttpsConfiguration",
+        "Synopsis":  "Gets the IP-HTTPS configuration from a computer or a Group Policy Object (GPO)."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetIPHttpsState",
+        "Synopsis":  "Gets the active IP-HTTPS state of a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetIsatapConfiguration",
+        "Synopsis":  "Gets the ISATAP configuration of a computer or a Group Policy Object (GPO)."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetNatTransitionConfiguration",
+        "Synopsis":  "Retrieves the NAT64 configuration of a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetNatTransitionMonitoring",
+        "Synopsis":  "Retrieves the NAT64 mappings on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetTeredoConfiguration",
+        "Synopsis":  "Gets the Teredo configuration of a computer or a Group Policy Object (GPO)."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Get-NetTeredoState",
+        "Synopsis":  "Retrieves the active Teredo state of the local computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "New-NetIPHttpsConfiguration",
+        "Synopsis":  "Creates an IP-HTTPS configuration."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "New-NetNatTransitionConfiguration",
+        "Synopsis":  "Creates a new instance of the NAT64 and the associated configuration on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Remove-NetIPHttpsCertBinding",
+        "Synopsis":  "Removes all of the IP-HTTPS certificate bindings."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Remove-NetIPHttpsConfiguration",
+        "Synopsis":  "Removes an IP-HTTPS configuration profile."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Remove-NetNatTransitionConfiguration",
+        "Synopsis":  "Removes the NAT64 configuration for one or more instances on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Rename-NetIPHttpsConfiguration",
+        "Synopsis":  "Renames an IP-HTTPS profile."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Reset-Net6to4Configuration",
+        "Synopsis":  "Resets the Group Policy Object (GPO) settings for a 6to4 configuration."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Reset-NetDnsTransitionConfiguration",
+        "Synopsis":  "Resets the DNS64 configuration on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Reset-NetIPHttpsConfiguration",
+        "Synopsis":  "Resets the IP-HTTPS configuration elements in a Group Policy Object (GPO)."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Reset-NetIsatapConfiguration",
+        "Synopsis":  "Resets ISATAP configuration elements contained in a Group Policy Object (GPO)."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Reset-NetTeredoConfiguration",
+        "Synopsis":  "Resets the Teredo configuration elements in a Group Policy Object (GPO)."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Set-Net6to4Configuration",
+        "Synopsis":  "Sets the 6to4 configuration for both client computers and servers."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Set-NetDnsTransitionConfiguration",
+        "Synopsis":  "Sets the DNS64 configuration on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Set-NetIPHttpsConfiguration",
+        "Synopsis":  "Modifies an IP-HTTPS configuration."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Set-NetIsatapConfiguration",
+        "Synopsis":  "Sets an ISATAP configuration on a computer or on a Group Policy Object (GPO)."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Set-NetNatTransitionConfiguration",
+        "Synopsis":  "Sets the NAT64 configuration on a computer."
+    },
+    {
+        "Module":  "NetworkTransition",
+        "Name":  "Set-NetTeredoConfiguration",
+        "Synopsis":  "Modifies the Teredo configuration of a computer or a Group Policy object (GPO)."
+    }
+]

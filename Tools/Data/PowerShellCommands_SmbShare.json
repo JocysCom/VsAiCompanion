@@ -1,0 +1,212 @@
+﻿[
+    {
+        "Module":  "SmbShare",
+        "Name":  "Block-SmbShareAccess",
+        "Synopsis":  "Adds a deny ACE for a trustee to the security descriptor of the SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Close-SmbOpenFile",
+        "Synopsis":  "Closes a file that is open by one of the clients of the SMB server."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Close-SmbSession",
+        "Synopsis":  "Ends forcibly the SMB session."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Disable-SmbDelegation",
+        "Synopsis":  "Disables a constrained delegation authorization for an SMB client and server."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Enable-SmbDelegation",
+        "Synopsis":  "Enables a constrained delegation authorization for an SMB client and server."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbBandWidthLimit",
+        "Synopsis":  "Gets the list of SMB bandwidth caps for each traffic category."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbClientConfiguration",
+        "Synopsis":  "Retrieves the SMB client configuration."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbClientNetworkInterface",
+        "Synopsis":  "Retrieves the network interfaces used by the SMB client."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbConnection",
+        "Synopsis":  "Retrieves the connections established from the SMB client to the SMB servers."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbDelegation",
+        "Synopsis":  "Gets the constrained delegation authorizations for an SMB client."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbGlobalMapping",
+        "Synopsis":  "\r\nGet-SmbGlobalMapping [[-LocalPath] \u003cstring[]\u003e] [[-RemotePath] \u003cstring[]\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbMapping",
+        "Synopsis":  "Retrieves the SMB client directory mappings created for a server."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbMultichannelConnection",
+        "Synopsis":  "Retrieves the SMB connections made between the SMB client network interfaces and the SMB server network interfaces."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbMultichannelConstraint",
+        "Synopsis":  "Retrieves the constraints that define how the SMB client uses network interfaces to connect to the servers."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbOpenFile",
+        "Synopsis":  "Retrieves basic information about the files that are open on behalf of the clients of the SMB server."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbServerCertificateMapping",
+        "Synopsis":  "\r\nGet-SmbServerCertificateMapping [[-Name] \u003cstring[]\u003e] [[-Subject] \u003cstring[]\u003e] [-Thumbprint \u003cstring[]\u003e] [-DisplayName \u003cstring[]\u003e] [-Type \u003cType[]\u003e] [-IncludeHidden] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbServerConfiguration",
+        "Synopsis":  "Retrieves the SMB server configuration."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbServerNetworkInterface",
+        "Synopsis":  "Retrieves the network interfaces used by the SMB server."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbSession",
+        "Synopsis":  "Retrieves information about the SMB sessions that are currently established between the SMB server and the associated clients."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbShare",
+        "Synopsis":  "Retrieves the SMB shares on the computer."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Get-SmbShareAccess",
+        "Synopsis":  "Retrieves the ACL of the SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Grant-SmbShareAccess",
+        "Synopsis":  "Adds an allow ACE for a trustee to the security descriptor of the SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "New-SmbGlobalMapping",
+        "Synopsis":  "\r\nNew-SmbGlobalMapping [[-LocalPath] \u003cstring\u003e] [-RemotePath] \u003cstring\u003e -Credential \u003cpscredential\u003e [-Persistent \u003cbool\u003e] [-RequireIntegrity \u003cbool\u003e] [-RequirePrivacy \u003cbool\u003e] [-UseWriteThrough \u003cbool\u003e] [-FullAccess \u003cstring[]\u003e] [-DenyAccess \u003cstring[]\u003e] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "New-SmbMapping",
+        "Synopsis":  "Creates an SMB mapping."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "New-SmbMultichannelConstraint",
+        "Synopsis":  "Creates an SMB multi-channel constraint for the specified server."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "New-SmbServerCertificateMapping",
+        "Synopsis":  "\r\nNew-SmbServerCertificateMapping [-Name] \u003cstring\u003e [-Thumbprint] \u003cstring\u003e [-Subject \u003cstring\u003e] [-DisplayName \u003cstring\u003e] [-Type \u003cType\u003e] [-Force] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "New-SmbShare",
+        "Synopsis":  "Creates an SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Remove-SmbBandwidthLimit",
+        "Synopsis":  "Removes SMB bandwidth caps."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Remove-SMBComponent",
+        "Synopsis":  "\r\nRemove-SmbComponent [-Name] \u003cstring[]\u003e [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Remove-SmbGlobalMapping",
+        "Synopsis":  "\r\nRemove-SmbGlobalMapping [[-LocalPath] \u003cstring[]\u003e] [[-RemotePath] \u003cstring[]\u003e] [-Force] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-SmbGlobalMapping -InputObject \u003cCimInstance#MSFT_SmbGlobalMapping[]\u003e [-Force] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Remove-SmbMapping",
+        "Synopsis":  "Removes the SMB mapping to an SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Remove-SmbMultichannelConstraint",
+        "Synopsis":  "Removes SMB multi-channel constraints."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Remove-SmbServerCertificateMapping",
+        "Synopsis":  "\r\nRemove-SmbServerCertificateMapping [-Name] \u003cstring[]\u003e [[-Subject] \u003cstring[]\u003e] [[-Thumbprint] \u003cstring[]\u003e] [[-DisplayName] \u003cstring[]\u003e] [[-Type] \u003cType[]\u003e] [-IncludeHidden] [-Force] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nRemove-SmbServerCertificateMapping -InputObject \u003cCimInstance#MSFT_SmbServerCertificateMapping[]\u003e [-Force] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Remove-SmbShare",
+        "Synopsis":  "Deletes the specified SMB shares."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Revoke-SmbShareAccess",
+        "Synopsis":  "Removes all of the allow ACEs for a trustee from the security descriptor of the SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Set-SmbBandwidthLimit",
+        "Synopsis":  "Adds an SMB bandwidth cap."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Set-SmbClientConfiguration",
+        "Synopsis":  "Sets the SMB client configuration."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Set-SmbPathAcl",
+        "Synopsis":  "Sets the ACL for the file system folder to match the ACL used by an SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Set-SmbServerConfiguration",
+        "Synopsis":  "Sets the SMB Service configuration."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Set-SmbShare",
+        "Synopsis":  "Modifies the properties of the SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Unblock-SmbShareAccess",
+        "Synopsis":  "Removes all of the deny ACEs for the trustee from the security descriptor of the SMB share."
+    },
+    {
+        "Module":  "SmbShare",
+        "Name":  "Update-SmbMultichannelConnection",
+        "Synopsis":  "Forces the SMB client to update the multi-channel-related information."
+    }
+]

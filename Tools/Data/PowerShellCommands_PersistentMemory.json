@@ -1,0 +1,32 @@
+﻿[
+    {
+        "Module":  "PersistentMemory",
+        "Name":  "Get-PmemDisk",
+        "Synopsis":  "\r\nGet-PmemDisk [\u003cCommonParameters\u003e]\r\n\r\nGet-PmemDisk [[-DiskNumber] \u003cuint32[]\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-PmemDisk [-PhysicalDevice \u003cPmemPhysicalDevice\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-PmemDisk [-PhysicalDeviceId \u003cstring[]\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-PmemDisk [-InputObject \u003cciminstance\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PersistentMemory",
+        "Name":  "Get-PmemPhysicalDevice",
+        "Synopsis":  "\r\nGet-PmemPhysicalDevice [\u003cCommonParameters\u003e]\r\n\r\nGet-PmemPhysicalDevice [[-DeviceId] \u003cstring[]\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-PmemPhysicalDevice [-LogicalDisk \u003cPmemDisk\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-PmemPhysicalDevice [-DiskNumber \u003cuint32\u003e] [\u003cCommonParameters\u003e]\r\n\r\nGet-PmemPhysicalDevice [-InputObject \u003cciminstance\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PersistentMemory",
+        "Name":  "Get-PmemUnusedRegion",
+        "Synopsis":  "\r\nGet-PmemUnusedRegion [[-RegionId] \u003cuint32[]\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PersistentMemory",
+        "Name":  "Initialize-PmemPhysicalDevice",
+        "Synopsis":  "\r\nInitialize-PmemPhysicalDevice -DeviceId \u003cstring\u003e [-Force] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PersistentMemory",
+        "Name":  "New-PmemDisk",
+        "Synopsis":  "\r\nNew-PmemDisk -RegionId \u003cuint32[]\u003e [-FriendlyName \u003cstring[]\u003e] [-AtomicityType \u003cNAMESPACE_ATOMICITY_TYPE[]\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PersistentMemory",
+        "Name":  "Remove-PmemDisk",
+        "Synopsis":  "\r\nRemove-PmemDisk -DiskNumber \u003cuint32\u003e [-Force] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    }
+]

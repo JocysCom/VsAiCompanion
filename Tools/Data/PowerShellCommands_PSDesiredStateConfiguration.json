@@ -1,0 +1,87 @@
+﻿[
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Configuration",
+        "Synopsis":  "\r\nConfiguration [[-ResourceModuleTuplesToImport] \u003cList[Tuple[string[],ModuleSpecification[],version]]\u003e] [[-OutputPath] \u003cObject\u003e] [[-Name] \u003cObject\u003e] [[-Body] \u003cscriptblock\u003e] [[-ArgsToBody] \u003chashtable\u003e] [[-ConfigurationData] \u003chashtable\u003e] [[-InstanceName] \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Disable-DscDebug",
+        "Synopsis":  "Stops debugging of DSC resources."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Enable-DscDebug",
+        "Synopsis":  "Starts debugging of all DSC resources."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Get-DscConfiguration",
+        "Synopsis":  "Gets the current configuration of the nodes."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Get-DscConfigurationStatus",
+        "Synopsis":  "Retrieves data about completed configuration runs."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Get-DscLocalConfigurationManager",
+        "Synopsis":  "Gets Local Configuration Manager (LCM) settings and states for the node."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Get-DscResource",
+        "Synopsis":  "Gets Desired State Configuration (DSC) resources present on the computer."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "New-DscChecksum",
+        "Synopsis":  "Creates checksum files for DSC documents and DSC resources."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Remove-DscConfigurationDocument",
+        "Synopsis":  "Removes a configuration document from the DSC configuration store."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Restore-DscConfiguration",
+        "Synopsis":  "Reapplies the previous configuration for the node."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Stop-DscConfiguration",
+        "Synopsis":  "Stops a configuration job that is running."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Update-DscConfiguration",
+        "Synopsis":  "Checks the pull server for an updated configuration and applies it."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Invoke-DscResource",
+        "Synopsis":  "Runs a method of a specified DSC resource."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Publish-DscConfiguration",
+        "Synopsis":  "Publishes a DSC configuration to a set of computers."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Set-DscLocalConfigurationManager",
+        "Synopsis":  "Applies Local Configuration Manager (LCM) settings to nodes."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Start-DscConfiguration",
+        "Synopsis":  "Applies configuration to nodes."
+    },
+    {
+        "Module":  "PSDesiredStateConfiguration",
+        "Name":  "Test-DscConfiguration",
+        "Synopsis":  "Tests whether the actual configuration on the nodes matches the desired configuration."
+    }
+]

@@ -1,0 +1,162 @@
+﻿[
+    {
+        "Module":  "BranchCache",
+        "Name":  "Add-BCDataCacheExtension",
+        "Synopsis":  "Increases the amount of cache storage space that is available on a hosted cache server by adding a new cache file."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Clear-BCCache",
+        "Synopsis":  "Deletes all data in all data cache files and all hash cache files."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Disable-BC",
+        "Synopsis":  "Disables the BranchCache service."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Disable-BCDowngrading",
+        "Synopsis":  "Disables downgrading, so that client computers do not request previous versions of content information from content servers."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Disable-BCServeOnBattery",
+        "Synopsis":  "Configures a client to ignore content discovery requests in distributed cache mode when operating on battery power."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Enable-BCDistributed",
+        "Synopsis":  "Enables BranchCache and configures a computer to operate in distributed cache mode."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Enable-BCDowngrading",
+        "Synopsis":  "Instructs a client computer that is running an operating system in a downgraded mode."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Enable-BCHostedClient",
+        "Synopsis":  "Configures BranchCache to operate in hosted cache client mode."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Enable-BCHostedServer",
+        "Synopsis":  "Configures BranchCache to operate in hosted cache server mode."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Enable-BCLocal",
+        "Synopsis":  "Enables the BranchCache service in local caching mode."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Enable-BCServeOnBattery",
+        "Synopsis":  "Configures a client to listen for content discovery requests in distributed cache mode when operating on battery power."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Export-BCCachePackage",
+        "Synopsis":  "Exports a cache package."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Export-BCSecretKey",
+        "Synopsis":  "Exports a secret key to a file."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Get-BCClientConfiguration",
+        "Synopsis":  "Retrieves the current BranchCache client computer settings."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Get-BCContentServerConfiguration",
+        "Synopsis":  "Retrieves the current BranchCache content server settings."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Get-BCDataCache",
+        "Synopsis":  "Retrieves an object that represents the BranchCache data cache."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Get-BCDataCacheExtension",
+        "Synopsis":  "Retrieves objects that represent the BranchCache data cache extensions from a hosted cache server."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Get-BCHashCache",
+        "Synopsis":  "Retrieves the BranchCache hash cache."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Get-BCHostedCacheServerConfiguration",
+        "Synopsis":  "Retrieves the current BranchCache hosted cache server settings."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Get-BCNetworkConfiguration",
+        "Synopsis":  "Retrieves the current BranchCache network settings."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Get-BCStatus",
+        "Synopsis":  "Retrieves a set of objects that provide BranchCache status and configuration information."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Import-BCCachePackage",
+        "Synopsis":  "Imports a cache package."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Import-BCSecretKey",
+        "Synopsis":  "Imports the cryptographic key that BranchCache uses for the generation of segment secrets."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Publish-BCFileContent",
+        "Synopsis":  "Generates hashes for files in shared folders."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Publish-BCWebContent",
+        "Synopsis":  "Creates hashes for web content."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Remove-BCDataCacheExtension",
+        "Synopsis":  "Deletes a data cache file."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Reset-BC",
+        "Synopsis":  "Resets BranchCache to the default configuration."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Set-BCAuthentication",
+        "Synopsis":  "Specifies the BranchCache computer authentication mode."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Set-BCCache",
+        "Synopsis":  "Modifies the cache file configuration."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Set-BCDataCacheEntryMaxAge",
+        "Synopsis":  "Modifies the maximum amount of time that data can remain in the cache."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Set-BCMinSMBLatency",
+        "Synopsis":  "Sets the minimum latency that must exist between client and server before transparent caching functions are utilized."
+    },
+    {
+        "Module":  "BranchCache",
+        "Name":  "Set-BCSecretKey",
+        "Synopsis":  "Sets the cryptographic key used in the generation of segment secrets."
+    }
+]

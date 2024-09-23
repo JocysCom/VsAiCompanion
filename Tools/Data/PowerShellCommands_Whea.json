@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Module":  "Whea",
+        "Name":  "Get-WheaMemoryPolicy",
+        "Synopsis":  "Gets the WHEA memory policies for a computer."
+    },
+    {
+        "Module":  "Whea",
+        "Name":  "Set-WheaMemoryPolicy",
+        "Synopsis":  "Sets the WHEA memory policy for a computer."
+    }
+]

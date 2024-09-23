@@ -25,6 +25,7 @@ using JocysCom.VS.AiCompanion.Engine.Controls;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary.Controls;
+
 #if NETFRAMEWORK
 using System.Data.SQLite;
 #else
@@ -534,8 +535,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private static List<string> GetGroupNames(EmbeddingsItem ei)
 		{
+			var items = new List<string>();
 			if (ei?.IsEnabled != true || string.IsNullOrWhiteSpace(ei?.Target))
-				return new List<string>();
+				return items;
 			try
 			{
 				var target = AssemblyInfo.ExpandPath(ei.Target);
@@ -543,13 +545,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 					? SqlInitHelper.PathToConnectionString(target)
 					: target;
 				var db = SqlInitHelper.NewEmbeddingsContext(connectionString);
-				var items = db.Files.Select(x => x.GroupName).Distinct().ToList();
-				return items;
+				var connection = db.GetConnection();
+				connection.Open();
+				var containsTable = SqlInitHelper.ContainsTable(nameof(Embeddings.Embedding.File), connection);
+				if (containsTable)
+					items = db.Files.Select(x => x.GroupName).Distinct().ToList();
+				connection.Close();
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				return new List<string>();
+				System.Diagnostics.Debug.WriteLine(ex.Message);
 			}
+			return items;
 		}
 
 		private static Embeddings.Embedding.Group[] GetFlags(EmbeddingsItem ei, string groupName)

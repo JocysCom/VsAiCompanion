@@ -1,0 +1,67 @@
+﻿[
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Add-NetLbfoTeamMember",
+        "Synopsis":  "Adds a new member (network adapter) to a specified NIC team."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Add-NetLbfoTeamNic",
+        "Synopsis":  "Adds a new interface to a NIC team."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Get-NetLbfoTeam",
+        "Synopsis":  "Retrieves a list of NIC teams on the system, as specified by the input parameters."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Get-NetLbfoTeamMember",
+        "Synopsis":  "Retrieves a list of network adapters that are members of a NIC team, as specified by the input parameters."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Get-NetLbfoTeamNic",
+        "Synopsis":  "Retrieves a list of team interfaces."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "New-NetLbfoTeam",
+        "Synopsis":  "Creates a new NIC team."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Remove-NetLbfoTeam",
+        "Synopsis":  "Removes the specified NIC team from the host."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Remove-NetLbfoTeamMember",
+        "Synopsis":  "Removes one or more network adapters from a specified NIC team."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Remove-NetLbfoTeamNic",
+        "Synopsis":  "Removes a team interface from a NIC team."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Rename-NetLbfoTeam",
+        "Synopsis":  "Renames a NIC team."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Set-NetLbfoTeam",
+        "Synopsis":  "Sets parameters on the specified NIC team."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Set-NetLbfoTeamMember",
+        "Synopsis":  "Sets the role of a member network adapter in a NIC team."
+    },
+    {
+        "Module":  "NetLbfo",
+        "Name":  "Set-NetLbfoTeamNic",
+        "Synopsis":  "Sets a new VLAN id on a team interface, or restores the interface to Default mode."
+    }
+]

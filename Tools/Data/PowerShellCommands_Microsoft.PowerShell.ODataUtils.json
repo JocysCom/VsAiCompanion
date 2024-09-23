@@ -1,0 +1,5 @@
+﻿{
+    "Module":  "Microsoft.PowerShell.ODataUtils",
+    "Name":  "Export-ODataEndpointProxy",
+    "Synopsis":  "Generates a module that contains cmdlets to manage an OData endpoint."
+}

@@ -1,0 +1,27 @@
+﻿[
+    {
+        "Module":  "MMAgent",
+        "Name":  "Debug-MMAppPrelaunch",
+        "Synopsis":  "Provides the ability to debug the application prelaunch of a specific application by triggering the prelaunch to occur and to exit debug mode for the application."
+    },
+    {
+        "Module":  "MMAgent",
+        "Name":  "Disable-MMAgent",
+        "Synopsis":  "Disables application launch prefetching, operation recorder API functionality, page combining, and application prelaunch."
+    },
+    {
+        "Module":  "MMAgent",
+        "Name":  "Enable-MMAgent",
+        "Synopsis":  "Enables application launch prefetching, operation recorder API functionality, page combining, and application prelaunch."
+    },
+    {
+        "Module":  "MMAgent",
+        "Name":  "Get-MMAgent",
+        "Synopsis":  "Returns the state of application launch prefetching, operation API prefetching functionality, page combining, and application prelaunching."
+    },
+    {
+        "Module":  "MMAgent",
+        "Name":  "Set-MMAgent",
+        "Synopsis":  "Sets the maximum number of prefetch files for scenarios that the Operation Recorder API records."
+    }
+]

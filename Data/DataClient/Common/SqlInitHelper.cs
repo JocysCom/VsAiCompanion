@@ -10,10 +10,14 @@ using System.Linq;
 using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using System.Threading;
+
+
+
 #if NETFRAMEWORK
 using System.Data.Entity;
 using System.Data.SQLite;
 using Microsoft.Data.SqlClient;
+using System.Data.Entity.SqlServer;
 #else
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
@@ -122,14 +126,19 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return isAzureSQL;
 		}
 
-		public static bool CreateTable(string name, DbConnection connection)
+		public static bool ContainsTable(string name, DbConnection connection)
 		{
 			var isPortable = IsPortable(connection.ConnectionString);
 			var commandText = isPortable
 				? $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name"
 				: $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'Embedding' AND TABLE_NAME = @name";
 			var exist = Exist(commandText, name, connection);
-			return exist || RunScript(name, connection);
+			return exist;
+		}
+
+		public static bool CreateTable(string name, DbConnection connection)
+		{
+			return ContainsTable(name, connection) || RunScript(name, connection);
 		}
 
 		public static bool CreateProcedure(string name, DbConnection connection)
@@ -212,11 +221,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		{
 			var isPortable = IsPortable(connectionString);
 #if NETFRAMEWORK
-			if (isPortable)
-			{
-				var sconn = (System.Data.SQLite.SQLiteConnection)System.Data.SQLite.EF6.SQLiteProviderFactory.Instance.CreateConnection();
-			}
-
 			// Disable check for code first. ` __MigrationHistory` table.
 			Database.SetInitializer<EmbeddingsContext>(null);
 			EmbeddingsContext db;
@@ -228,8 +232,10 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			}
 			else
 			{
-				var connection = new System.Data.SqlClient.SqlConnection();
-				connection.ConnectionString = connectionString;
+				var connection = NewConnection(connectionString);
+				//var connection = new System.Data.SqlClient.SqlConnection();
+				//var connection = new Microsoft.Data.SqlClient.SqlConnection();
+				//connection.ConnectionString = connectionString;
 				db = new EmbeddingsContext(connection, true);
 				//db = new EmbeddingsContext();
 				//db.Database.Connection.ConnectionString = connectionString;
@@ -271,7 +277,15 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static DbConnection NewConnection(string connectionString)
 		{
 			var isPortable = IsPortable(connectionString);
-			if (!isPortable)
+			if (isPortable)
+			{
+#if NETFRAMEWORK
+				return new SQLiteConnection(connectionString);
+#else
+				return new SqliteConnection(connectionString);
+#endif
+			}
+			else
 			{
 				//return new System.Data.SqlClient.SqlConnection(connectionString);
 				var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
@@ -280,14 +294,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				if (isMicrosoftCloud && !activeDirectory)
 					connection.AccessTokenCallback = GetAccessTokenAsync;
 				return connection;
-			}
-			else
-			{
-#if NETFRAMEWORK
-				return new SQLiteConnection(connectionString);
-#else
-				return new SqliteConnection(connectionString);
-#endif
 			}
 		}
 
@@ -513,9 +519,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			while (await reader.ReadAsync())
 			{
 				var item = new DataInfo();
-				item.GroupName = reader.GetString(reader.GetOrdinal("GroupName"));
-				item.GroupFlag = reader.GetInt64(reader.GetOrdinal("GroupFlag"));
-				var flagNameOrdinal = reader.GetOrdinal("FlagName");
+				item.GroupName = reader.GetString(reader.GetOrdinal(nameof(DataInfo.GroupName)));
+				item.GroupFlag = reader.GetInt64(reader.GetOrdinal(nameof(DataInfo.GroupFlag)));
+				var flagNameOrdinal = reader.GetOrdinal(nameof(Group.FlagName));
 				if (!reader.IsDBNull(flagNameOrdinal))
 					item.GroupFlagName = reader.GetString(flagNameOrdinal);
 				item.Count = reader.GetInt32(reader.GetOrdinal("Count"));
@@ -529,10 +535,10 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		{
 			var filePart = new FilePart
 			{
-				Id = reader.GetInt64(reader.GetOrdinal("Id")),
+				Id = reader.GetInt64(reader.GetOrdinal(nameof(FilePart.Id))),
 				//GroupName = reader.GetString(reader.GetOrdinal("GroupName")),
 				//GroupFlag = reader.GetInt64(reader.GetOrdinal("GroupFlag")),
-				FileId = reader.GetInt64(reader.GetOrdinal("FileId")),
+				FileId = reader.GetInt64(reader.GetOrdinal(nameof(FilePart.FileId))),
 				//Index = reader.GetInt32(reader.GetOrdinal("Index")),
 				//Count = reader.GetInt32(reader.GetOrdinal("Count")),
 				//HashType = reader.GetString(reader.GetOrdinal("HashType")),
@@ -541,7 +547,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				//TextTokens = reader.GetInt64(reader.GetOrdinal("TextTokens")),
 				//EmbeddingModel = reader.GetString(reader.GetOrdinal("EmbeddingModel")),
 				//EmbeddingSize = reader.GetInt32(reader.GetOrdinal("EmbeddingSize")),
-				Embedding = (byte[])reader["Embedding"],
+				Embedding = (byte[])reader[nameof(FilePart.Embedding)],
 				//IsEnabled = reader.GetBoolean(reader.GetOrdinal("IsEnabled")),
 				//Created = reader.GetDateTime(reader.GetOrdinal("Created")),
 				//Modified = reader.GetDateTime(reader.GetOrdinal("Modified"))
@@ -583,6 +589,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			return table;
 		}
 
+#if !NETFRAMEWORK
+
 		/// <summary>
 		/// Add Db Provider Factory.
 		/// </summary>
@@ -590,25 +598,13 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static void AddDbProviderFactory(DbProviderFactory instance)
 		{
 			var type = instance.GetType();
-#if NETFRAMEWORK
-			var invariantName = type.Namespace;
-			var table = GetDbProviderFactories();
-			// Ensure any existing registrations are removed to avoid duplicate rows
-			var row = table.Select($"InvariantName='{invariantName}'").FirstOrDefault();
-			row?.Delete();
-			var rowToAdd = table.NewRow();
-			rowToAdd["Name"] = $"{invariantName} Data Provider";
-			rowToAdd["Description"] = $".NET Framework Data Provider for {invariantName}";
-			rowToAdd["InvariantName"] = invariantName;
-			rowToAdd["AssemblyQualifiedName"] = type.AssemblyQualifiedName;
-			table.Rows.Add(rowToAdd);
-#else
 			//var invariantName = type.FullName;
 			var invariantName = type.Namespace;
 			if (!DbProviderFactories.GetProviderInvariantNames().Contains(invariantName))
 				DbProviderFactories.RegisterFactory(invariantName, instance);
+	}
+
 #endif
-		}
 
 		private static void ClearDbProviderFactories()
 		{
@@ -625,10 +621,17 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		public static void AddDbProviderFactories()
 		{
 #if NETFRAMEWORK
-			// Register the ADO.NET provider for SQLite.
-			//AddDbProviderFactory(System.Data.SQLite.EF6.SQLiteProviderFactory.Instance);
-			// Register the Entity Framework provider for SQLite (EF6).
-			AddEntityFrameworkProviders();
+			// Setting EF6 configuration OPTION 2.
+			//DbConfiguration.SetConfiguration(new MicrosoftSqlDbConfiguration());
+			//DbConfiguration.SetConfiguration(new EntityFrameworkConfiguration());
+			// Setting EF6 configuration OPTION 3.
+			DbConfiguration.Loaded += (sender, args) =>
+			{
+				//args.AddDependencyResolver(new SystemSqlEF6Resolver(), overrideConfigFile: true);
+				args.AddDependencyResolver(new MicrosoftSqEF6Resolver(), overrideConfigFile: true);
+				args.AddDependencyResolver(new SqlLiteEF6Resolver(), overrideConfigFile: true);
+			};
+
 #else
 			// Workaround fix for System.Runtime.ExceptionServices.FirstChanceException
 			// The specified invariant name 'System.Data.SqlClient' wasn't found in the list of registered .NET Data Providers.
@@ -638,7 +641,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		}
 
 		#endregion
-
 		#region Add Entity Framework Providers
 
 		// Application configuration equivalent:
@@ -654,16 +656,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 
 #if NETFRAMEWORK
-
-		private static void AddEntityFrameworkProviders()
-		{
-			System.Data.Entity.DbConfiguration.Loaded += (sender, args) =>
-			{
-				args.AddDependencyResolver(new SqlLiteEF6Resolver(), true);
-				//args.AddDependencyResolver(new SystemSqlEF6Resolver(), true);
-				args.AddDependencyResolver(new MsSqlEF6Resolver(), true);
-			};
-		}
 
 		public class SqlLiteEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
 		{
@@ -687,12 +679,12 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				}
 				else if (type == typeof(System.Data.Common.DbProviderFactory))
 				{
-					if (invariantName.Equals(key))
+					if (string.Equals(key as string, invariantName, StringComparison.OrdinalIgnoreCase))
 						return instance;
 				}
 				else if (type == typeof(System.Data.Entity.Core.Common.DbProviderServices))
 				{
-					if (invariantName.Equals(key))
+					if (string.Equals(key as string, invariantName, StringComparison.OrdinalIgnoreCase))
 						return instance.GetService(type);
 				}
 				return null;
@@ -709,7 +701,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			System.Data.SqlClient.SqlClientFactory instance
 				=> System.Data.SqlClient.SqlClientFactory.Instance;
 
-			// "System.Data.SQLite.EF6"
+			// "System.Data.SqlClient"
 			string invariantName
 				=> instance.GetType().Namespace;
 
@@ -723,12 +715,12 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				}
 				else if (type == typeof(System.Data.Common.DbProviderFactory))
 				{
-					if (invariantName.Equals(key))
+					if (string.Equals(key as string, invariantName, StringComparison.OrdinalIgnoreCase))
 						return instance;
 				}
 				else if (type == typeof(System.Data.Entity.Core.Common.DbProviderServices))
 				{
-					if (invariantName.Equals(key))
+					if (string.Equals(key as string, invariantName, StringComparison.OrdinalIgnoreCase))
 						return System.Data.Entity.SqlServer.SqlProviderServices.Instance;
 				}
 				return null;
@@ -740,32 +732,45 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		}
 
-		public class MsSqlEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
+		public class MicrosoftSqEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
 		{
-			Microsoft.Data.SqlClient.SqlClientFactory instance
-				=> Microsoft.Data.SqlClient.SqlClientFactory.Instance;
+			private readonly System.Data.Common.DbProviderFactory _providerFactory;
+			private readonly System.Data.Entity.Core.Common.DbProviderServices _providerServices;
+			private readonly System.Data.Entity.Infrastructure.IProviderInvariantName _providerInvariantName;
 
-			// "System.Data.SQLite.EF6"
-			string invariantName
-				=> instance.GetType().Namespace;
+			public MicrosoftSqEF6Resolver()
+			{
+				// "Microsoft.Data.SqlClient"
+				string invariantName = Microsoft.Data.SqlClient.SqlClientFactory.Instance.GetType().Namespace;
+				// Initialize the provider factory and services
+				_providerFactory = Microsoft.Data.SqlClient.SqlClientFactory.Instance;
+				// Requires: <PackageReference Include="Microsoft.EntityFramework.SqlServer" Version="6.5.1" />
+				_providerServices = MicrosoftSqlProviderServices.Instance;
+				_providerInvariantName = new ProviderInvariantName(invariantName);
+			}
 
 			/// <inheritdoc />
 			public object GetService(Type type, object key)
 			{
 				if (type == typeof(System.Data.Entity.Infrastructure.IProviderInvariantName))
 				{
-					if (key is Microsoft.Data.SqlClient.SqlClientFactory)
-						return new ProviderInvariantName(invariantName);
+					if (key == _providerFactory)
+						return _providerInvariantName;
 				}
 				else if (type == typeof(System.Data.Common.DbProviderFactory))
 				{
-					if (invariantName.Equals(key))
-						return instance;
+					if (string.Equals(key as string, _providerInvariantName.Name, StringComparison.OrdinalIgnoreCase))
+						return _providerFactory;
 				}
 				else if (type == typeof(System.Data.Entity.Core.Common.DbProviderServices))
 				{
-					if (invariantName.Equals(key))
-						return System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+					if (string.Equals(key as string, _providerInvariantName.Name, StringComparison.OrdinalIgnoreCase))
+						return _providerServices;
+				}
+				else if (type == typeof(System.Data.Entity.Infrastructure.IDbExecutionStrategy))
+				{
+					if (string.Equals(key as string, _providerInvariantName.Name, StringComparison.OrdinalIgnoreCase))
+						return new MicrosoftSqlAzureExecutionStrategy();
 				}
 				return null;
 			}
@@ -786,8 +791,43 @@ namespace JocysCom.VS.AiCompanion.DataClient
 		}
 
 #endif
-
 		#endregion
-
 	}
+
+#if NETFRAMEWORK
+
+	/// <summary>
+	/// You can use this class instead of resolver.
+	/// </summary>
+	public class EntityFrameworkConfiguration : DbConfiguration
+	{
+		public EntityFrameworkConfiguration()
+		{
+			// "Microsoft.Data.SqlClient"
+			// https://learn.microsoft.com/en-us/ef/ef6/what-is-new/microsoft-ef6-sqlserver
+			var msSqlInvariantName = MicrosoftSqlProviderServices.ProviderInvariantName;
+			SetProviderFactory(msSqlInvariantName, Microsoft.Data.SqlClient.SqlClientFactory.Instance);
+			SetProviderServices(msSqlInvariantName, MicrosoftSqlProviderServices.Instance);
+			SetExecutionStrategy(msSqlInvariantName, () => new MicrosoftSqlAzureExecutionStrategy());
+
+			// Override hardcoded "System.Data.SqlClient"
+			// https://learn.microsoft.com/en-us/ef/ef6/what-is-new/microsoft-ef6-sqlserver
+			var dataSqlInstance = System.Data.SqlClient.SqlClientFactory.Instance;
+			var dataSqlInvariantName = dataSqlInstance.GetType().Namespace;
+			SetProviderFactory(dataSqlInvariantName, Microsoft.Data.SqlClient.SqlClientFactory.Instance);
+			SetProviderServices(dataSqlInvariantName, MicrosoftSqlProviderServices.Instance);
+			SetExecutionStrategy(dataSqlInvariantName, () => new MicrosoftSqlAzureExecutionStrategy());
+
+			// "System.Data.SQLite.EF6"
+			var liteInstance = System.Data.SQLite.EF6.SQLiteProviderFactory.Instance;
+			var liteInvarialName = liteInstance.GetType().Name;
+			SetProviderFactory(liteInvarialName, System.Data.SQLite.EF6.SQLiteProviderFactory.Instance);
+			var liteServiceType = typeof(System.Data.Entity.Core.Common.DbProviderServices);
+			SetProviderServices(liteInvarialName, (System.Data.Entity.Core.Common.DbProviderServices)liteInstance.GetService(liteServiceType));
+		}
+	}
+
+#endif
+
+
 }

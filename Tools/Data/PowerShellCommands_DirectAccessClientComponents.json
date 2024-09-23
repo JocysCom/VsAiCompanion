@@ -1,0 +1,57 @@
+﻿[
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Disable-DAManualEntryPointSelection",
+        "Synopsis":  "Disables a manually selected DirectAccess site, and reverts the selection to the default."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Enable-DAManualEntryPointSelection",
+        "Synopsis":  "Allows a user to manually choose which DirectAccess entry point to use for connectivity."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Get-DAClientExperienceConfiguration",
+        "Synopsis":  "Returns the configuration for the DirectAccess client user experience."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Get-DAEntryPointTableItem",
+        "Synopsis":  "Retrieves the list of entry points that have been configured for DirectAccess."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "New-DAEntryPointTableItem",
+        "Synopsis":  "Configures a new entry point for multisite DirectAccess."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Remove-DAEntryPointTableItem",
+        "Synopsis":  "Removes a DirectAccess entry point from the specified configuration store."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Rename-DAEntryPointTableItem",
+        "Synopsis":  "Renames a DirectAccess entry point."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Reset-DAClientExperienceConfiguration",
+        "Synopsis":  "Restores the specified DirectAccess client configuration to the defaults."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Reset-DAEntryPointTableItem",
+        "Synopsis":  "Resets the specified DirectAccess entry point configuration to the default configuration."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Set-DAClientExperienceConfiguration",
+        "Synopsis":  "Modifies the configuration of the specified DirectAccess client user experience."
+    },
+    {
+        "Module":  "DirectAccessClientComponents",
+        "Name":  "Set-DAEntryPointTableItem",
+        "Synopsis":  "Modifies the configuration of a DirectAccess entry point stored in a Group Policy object."
+    }
+]

@@ -13,7 +13,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		/// <summary>
 		/// Notifies clients that a property value has changed.
 		/// </summary>
-		// CWE-502: Deserialization of Untrusted Data
+		// SUPPRESS: CWE-502: Deserialization of Untrusted Data
 		// Fix: Apply [field: NonSerialized] attribute to an event inside class with [Serialized] attribute.
 		[field: NonSerialized]
 		public event PropertyChangedEventHandler PropertyChanged;

@@ -1,0 +1,67 @@
+﻿[
+    {
+        "Module":  "NetNat",
+        "Name":  "Add-NetNatExternalAddress",
+        "Synopsis":  "Adds an external address to a NAT instance."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Add-NetNatStaticMapping",
+        "Synopsis":  "Adds a static mapping to a NAT instance."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Get-NetNat",
+        "Synopsis":  "Gets NAT objects."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Get-NetNatExternalAddress",
+        "Synopsis":  "Gets external addresses configured for NAT instances."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Get-NetNatGlobal",
+        "Synopsis":  "Retrieves global settings for all NAT instances on a computer."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Get-NetNatSession",
+        "Synopsis":  "Gets all active NAT sessions."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Get-NetNatStaticMapping",
+        "Synopsis":  "Gets static mappings configured on NAT instances."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "New-NetNat",
+        "Synopsis":  "Creates a NAT object."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Remove-NetNat",
+        "Synopsis":  "Removes NAT objects."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Remove-NetNatExternalAddress",
+        "Synopsis":  "Removes an external address from a NAT instance."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Remove-NetNatStaticMapping",
+        "Synopsis":  "Removes static mappings from a NAT instance."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Set-NetNat",
+        "Synopsis":  "Modifies settings for NAT objects."
+    },
+    {
+        "Module":  "NetNat",
+        "Name":  "Set-NetNatGlobal",
+        "Synopsis":  "Modifies global settings for NAT instances on a computer."
+    }
+]

@@ -1,0 +1,112 @@
+﻿[
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Add-Printer",
+        "Synopsis":  "Adds a printer to the specified computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Add-PrinterDriver",
+        "Synopsis":  "Installs a printer driver on the specified computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Add-PrinterPort",
+        "Synopsis":  "Installs a printer port on the specified computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Get-PrintConfiguration",
+        "Synopsis":  "Gets the configuration information of a printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Get-Printer",
+        "Synopsis":  "Retrieves a list of printers installed on a computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Get-PrinterDriver",
+        "Synopsis":  "Retrieves the list of printer drivers installed on the specified computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Get-PrinterPort",
+        "Synopsis":  "Retrieves a list of printer ports installed on the specified computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Get-PrinterProperty",
+        "Synopsis":  "Retrieves printer properties for the specified printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Get-PrintJob",
+        "Synopsis":  "Retrieves a list of print jobs in the specified printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Read-PrinterNfcTag",
+        "Synopsis":  "Reads information about printers from an NFC tag."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Remove-Printer",
+        "Synopsis":  "Removes a printer from the specified computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Remove-PrinterDriver",
+        "Synopsis":  "Deletes printer driver from the specified computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Remove-PrinterPort",
+        "Synopsis":  "Removes the specified printer port from the specified computer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Remove-PrintJob",
+        "Synopsis":  "Removes a print job on the specified printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Rename-Printer",
+        "Synopsis":  "Renames the specified printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Restart-PrintJob",
+        "Synopsis":  "Restarts a print job on the specified printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Resume-PrintJob",
+        "Synopsis":  "Resumes a suspended print job."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Set-PrintConfiguration",
+        "Synopsis":  "Sets the configuration information for the specified printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Set-Printer",
+        "Synopsis":  "Updates the configuration of an existing printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Set-PrinterProperty",
+        "Synopsis":  "Modifies the printer properties for the specified printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Suspend-PrintJob",
+        "Synopsis":  "Suspends a print job on the specified printer."
+    },
+    {
+        "Module":  "PrintManagement",
+        "Name":  "Write-PrinterNfcTag",
+        "Synopsis":  "Writes printer connection data to an NFC tag."
+    }
+]

@@ -1,0 +1,72 @@
+﻿[
+    {
+        "Module":  "BitLocker",
+        "Name":  "Add-BitLockerKeyProtector",
+        "Synopsis":  "Adds a key protector for a BitLocker volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Backup-BitLockerKeyProtector",
+        "Synopsis":  "Saves a key protector for a BitLocker volume in AD DS."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "BackupToAAD-BitLockerKeyProtector",
+        "Synopsis":  ""
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Clear-BitLockerAutoUnlock",
+        "Synopsis":  "Removes BitLocker automatic unlocking keys."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Disable-BitLocker",
+        "Synopsis":  "Disables BitLocker encryption for a volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Disable-BitLockerAutoUnlock",
+        "Synopsis":  "Disables automatic unlocking for a BitLocker volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Enable-BitLocker",
+        "Synopsis":  "Enables encryption for a BitLocker volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Enable-BitLockerAutoUnlock",
+        "Synopsis":  "Enables automatic unlocking for a BitLocker volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Get-BitLockerVolume",
+        "Synopsis":  "Gets information about volumes that BitLocker can protect."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Lock-BitLocker",
+        "Synopsis":  "Prevents access to encrypted data on a BitLocker volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Remove-BitLockerKeyProtector",
+        "Synopsis":  "Removes a key protector for a BitLocker volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Resume-BitLocker",
+        "Synopsis":  "Restores Bitlocker encryption for the specified volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Suspend-BitLocker",
+        "Synopsis":  "Suspends Bitlocker encryption for the specified volume."
+    },
+    {
+        "Module":  "BitLocker",
+        "Name":  "Unlock-BitLocker",
+        "Synopsis":  "Restores access to data on a BitLocker volume."
+    }
+]

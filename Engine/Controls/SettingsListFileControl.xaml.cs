@@ -407,15 +407,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var sortedFilteredItems = view.OfType<ISettingsListFileItem>().ToList();
 			// Get positions of remaining items.
 			var deletePositions = itemsToDelete.Select(x => sortedFilteredItems.IndexOf(x));
+			if (!deletePositions.Any())
+				return (0, null);
 			var minDeletePosition = deletePositions.Min();
 			var remainPositions = Enumerable.Range(0, sortedFilteredItems.Count()).Except(deletePositions).ToList();
-			if (remainPositions.Any())
-			{
-				var selectedPosition = remainPositions.FirstOrDefault(x => x > minDeletePosition);
-				var selectedItem = sortedFilteredItems[selectedPosition];
-				return (selectedPosition, selectedItem);
-			}
-			return (0, null);
+			if (!remainPositions.Any())
+				return (0, null);
+			var selectedPosition = remainPositions.FirstOrDefault(x => x > minDeletePosition);
+			var selectedItem = sortedFilteredItems[selectedPosition];
+			return (selectedPosition, selectedItem);
 		}
 
 		#region Grid Editing

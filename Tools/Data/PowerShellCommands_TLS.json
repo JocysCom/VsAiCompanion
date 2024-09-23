@@ -1,0 +1,52 @@
+﻿[
+    {
+        "Module":  "TLS",
+        "Name":  "Disable-TlsCipherSuite",
+        "Synopsis":  "Disables a TLS cipher suite."
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "Disable-TlsEccCurve",
+        "Synopsis":  "\r\nDisable-TlsEccCurve [-Name] \u003cstring\u003e [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "Disable-TlsSessionTicketKey",
+        "Synopsis":  "Disables a TLS session ticket key."
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "Enable-TlsCipherSuite",
+        "Synopsis":  "Enables a TLS cipher suite."
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "Enable-TlsEccCurve",
+        "Synopsis":  "\r\nEnable-TlsEccCurve [-Name] \u003cstring\u003e [[-Position] \u003cuint32\u003e] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "Enable-TlsSessionTicketKey",
+        "Synopsis":  "Configures a TLS server with a TLS session ticket key."
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "Export-TlsSessionTicketKey",
+        "Synopsis":  "Exports a TLS session ticket key."
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "Get-TlsCipherSuite",
+        "Synopsis":  "Gets the list of cipher suites for TLS for a computer."
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "Get-TlsEccCurve",
+        "Synopsis":  "\r\nGet-TlsEccCurve [[-Name] \u003cstring\u003e] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "TLS",
+        "Name":  "New-TlsSessionTicketKey",
+        "Synopsis":  "Creates a TLS session ticket key configuration file."
+    }
+]

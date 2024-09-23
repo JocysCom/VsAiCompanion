@@ -1,0 +1,32 @@
+﻿[
+    {
+        "Module":  "Kds",
+        "Name":  "Add-KdsRootKey",
+        "Synopsis":  "Generates a new root key for the Microsoft Group KdsSvc within Active Directory."
+    },
+    {
+        "Module":  "Kds",
+        "Name":  "Clear-KdsCache",
+        "Synopsis":  "Clears the group key cache of the local computer."
+    },
+    {
+        "Module":  "Kds",
+        "Name":  "Get-KdsConfiguration",
+        "Synopsis":  "Retrieves the current configuration of the Microsoft Group KdsSvc from Active Directory."
+    },
+    {
+        "Module":  "Kds",
+        "Name":  "Get-KdsRootKey",
+        "Synopsis":  "Retrieves a list of root key values stored by the Microsoft Group KdsSvc."
+    },
+    {
+        "Module":  "Kds",
+        "Name":  "Set-KdsConfiguration",
+        "Synopsis":  "Sets the configuration of Microsoft Group KdsSvc."
+    },
+    {
+        "Module":  "Kds",
+        "Name":  "Test-KdsRootKey",
+        "Synopsis":  "Tests the root key configuration."
+    }
+]

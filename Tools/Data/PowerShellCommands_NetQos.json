@@ -1,0 +1,22 @@
+﻿[
+    {
+        "Module":  "NetQos",
+        "Name":  "Get-NetQosPolicy",
+        "Synopsis":  "Retrieves network Quality of Service (QoS) policies."
+    },
+    {
+        "Module":  "NetQos",
+        "Name":  "New-NetQosPolicy",
+        "Synopsis":  "Creates a new network Quality of Service (QoS) policy."
+    },
+    {
+        "Module":  "NetQos",
+        "Name":  "Remove-NetQosPolicy",
+        "Synopsis":  "Removes a network Quality of Service (QoS) policy."
+    },
+    {
+        "Module":  "NetQos",
+        "Name":  "Set-NetQosPolicy",
+        "Synopsis":  "Updates the Quality of Service (QoS) policy settings."
+    }
+]

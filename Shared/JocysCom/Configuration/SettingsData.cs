@@ -684,6 +684,7 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		/// <summary>
 		/// Renames a settings item file to a new name, ensuring file system consistency and updating internal metadata accordingly.
+		/// If folder with the same name exists. then rename the folder too.
 		/// </summary>
 		/// <param name="fileItem">The settings item file object to be renamed.</param>
 		/// <param name="newName">The new name for the settings item file.</param>

@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Module":  "WindowsSearch",
+        "Name":  "Get-WindowsSearchSetting",
+        "Synopsis":  "Gets the values of settings for Windows Search."
+    },
+    {
+        "Module":  "WindowsSearch",
+        "Name":  "Set-WindowsSearchSetting",
+        "Synopsis":  "Modifies values that control Windows Search."
+    }
+]

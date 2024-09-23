@@ -5,13 +5,12 @@ using Embeddings.Embedding;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 #if NETFRAMEWORK
 using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Data.Entity.Infrastructure;
 #else
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 #endif
 

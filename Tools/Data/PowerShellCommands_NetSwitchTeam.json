@@ -1,0 +1,37 @@
+﻿[
+    {
+        "Module":  "NetSwitchTeam",
+        "Name":  "Add-NetSwitchTeamMember",
+        "Synopsis":  "Adds a network adapter member to an existing switch team."
+    },
+    {
+        "Module":  "NetSwitchTeam",
+        "Name":  "Get-NetSwitchTeam",
+        "Synopsis":  "Gets the extensible switch team."
+    },
+    {
+        "Module":  "NetSwitchTeam",
+        "Name":  "Get-NetSwitchTeamMember",
+        "Synopsis":  "Gets the current network adapter members of a switch team."
+    },
+    {
+        "Module":  "NetSwitchTeam",
+        "Name":  "New-NetSwitchTeam",
+        "Synopsis":  "Creates a new switch team."
+    },
+    {
+        "Module":  "NetSwitchTeam",
+        "Name":  "Remove-NetSwitchTeam",
+        "Synopsis":  "Deletes a switch team."
+    },
+    {
+        "Module":  "NetSwitchTeam",
+        "Name":  "Remove-NetSwitchTeamMember",
+        "Synopsis":  "Removes a network adapter member from a switch team."
+    },
+    {
+        "Module":  "NetSwitchTeam",
+        "Name":  "Rename-NetSwitchTeam",
+        "Synopsis":  "Changes the name of a switch team."
+    }
+]

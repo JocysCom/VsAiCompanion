@@ -1,0 +1,362 @@
+﻿[
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapter",
+        "Synopsis":  "Disables a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterBinding",
+        "Synopsis":  "Disables a binding to a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterChecksumOffload",
+        "Synopsis":  "Disables the selected checksum offloads on the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterEncapsulatedPacketTaskOffload",
+        "Synopsis":  "Disables encapsulated packet task offload."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterIPsecOffload",
+        "Synopsis":  "Disables IPsec offload on the network adapter, so that the network adapter will not perform the per packet encryption operations."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterLso",
+        "Synopsis":  "Disables all LSO properties, such as LSOv4 and LSOv6, of the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterPacketDirect",
+        "Synopsis":  "\r\nDisable-NetAdapterPacketDirect [-Name] \u003cstring[]\u003e [-IncludeHidden] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nDisable-NetAdapterPacketDirect -InterfaceDescription \u003cstring[]\u003e [-IncludeHidden] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nDisable-NetAdapterPacketDirect -InputObject \u003cCimInstance#MSFT_NetAdapterPacketDirectSettingData[]\u003e [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterPowerManagement",
+        "Synopsis":  "Disables specific power management features on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterQos",
+        "Synopsis":  "Disables QoS on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterRdma",
+        "Synopsis":  "Disables RDMA on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterRsc",
+        "Synopsis":  "Disables RSC on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterRss",
+        "Synopsis":  "Disables RSS on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterSriov",
+        "Synopsis":  "Disables SR-IOV on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterUso",
+        "Synopsis":  "\r\nDisable-NetAdapterUso [-Name] \u003cstring[]\u003e [-IncludeHidden] [-IPv4] [-IPv6] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nDisable-NetAdapterUso -InterfaceDescription \u003cstring[]\u003e [-IncludeHidden] [-IPv4] [-IPv6] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nDisable-NetAdapterUso -InputObject \u003cCimInstance#MSFT_NetAdapterUsoSettingData[]\u003e [-IPv4] [-IPv6] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Disable-NetAdapterVmq",
+        "Synopsis":  "Disables the VMQ feature on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapter",
+        "Synopsis":  "Enables a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterBinding",
+        "Synopsis":  "Enables binding of a protocol or filter to a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterChecksumOffload",
+        "Synopsis":  "Enables checksum offloads on the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterEncapsulatedPacketTaskOffload",
+        "Synopsis":  "Enables encapsulated packet task offload."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterIPsecOffload",
+        "Synopsis":  "Enables IPsec offload on the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterLso",
+        "Synopsis":  "Enables LSO properties, such as LSOv4 and LSOv6, of the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterPacketDirect",
+        "Synopsis":  "\r\nEnable-NetAdapterPacketDirect [-Name] \u003cstring[]\u003e [-IncludeHidden] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nEnable-NetAdapterPacketDirect -InterfaceDescription \u003cstring[]\u003e [-IncludeHidden] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nEnable-NetAdapterPacketDirect -InputObject \u003cCimInstance#MSFT_NetAdapterPacketDirectSettingData[]\u003e [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterPowerManagement",
+        "Synopsis":  "Enables specific power management features on the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterQos",
+        "Synopsis":  "Enables QoS on the network adapter, specifically DCB."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterRdma",
+        "Synopsis":  "Enables RDMA on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterRsc",
+        "Synopsis":  "Enables RSC on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterRss",
+        "Synopsis":  "Enables RSS on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterSriov",
+        "Synopsis":  "Enables SR-IOV on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterUso",
+        "Synopsis":  "\r\nEnable-NetAdapterUso [-Name] \u003cstring[]\u003e [-IncludeHidden] [-IPv4] [-IPv6] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nEnable-NetAdapterUso -InterfaceDescription \u003cstring[]\u003e [-IncludeHidden] [-IPv4] [-IPv6] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nEnable-NetAdapterUso -InputObject \u003cCimInstance#MSFT_NetAdapterUsoSettingData[]\u003e [-IPv4] [-IPv6] [-NoRestart] [-PassThru] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Enable-NetAdapterVmq",
+        "Synopsis":  "Enables VMQ on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapter",
+        "Synopsis":  "Gets the basic network adapter properties."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterAdvancedProperty",
+        "Synopsis":  "Gets the advanced properties for a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterBinding",
+        "Synopsis":  "Gets a list of bindings for a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterChecksumOffload",
+        "Synopsis":  "Gets the various checksum offload settings from network adapters that support these checksum offloads."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterEncapsulatedPacketTaskOffload",
+        "Synopsis":  "Gets the network adapters that support encapsulated task offload."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterHardwareInfo",
+        "Synopsis":  "Gets the hardware information of the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterIPsecOffload",
+        "Synopsis":  "Gets the IPsec offload properties of the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterLso",
+        "Synopsis":  "Gets the LSO properties of the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterPacketDirect",
+        "Synopsis":  "\r\nGet-NetAdapterPacketDirect [[-Name] \u003cstring[]\u003e] [-IncludeHidden] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nGet-NetAdapterPacketDirect -InterfaceDescription \u003cstring[]\u003e [-IncludeHidden] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterPowerManagement",
+        "Synopsis":  "Gets the power management features of a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterQos",
+        "Synopsis":  "Gets the QoS properties of the network adapter, specifically DCB settings."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterRdma",
+        "Synopsis":  "Gets the RDMA properties for a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterRsc",
+        "Synopsis":  "Gets network adapters that support RSC."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterRss",
+        "Synopsis":  "Gets RSS properties of the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterSriov",
+        "Synopsis":  "Gets the SR-IOV properties of the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterSriovVf",
+        "Synopsis":  "Displays the SR-IOV virtual function settings for a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterStatistics",
+        "Synopsis":  "Gets statistics from a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterUso",
+        "Synopsis":  "\r\nGet-NetAdapterUso [[-Name] \u003cstring[]\u003e] [-IncludeHidden] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n\r\nGet-NetAdapterUso -InterfaceDescription \u003cstring[]\u003e [-IncludeHidden] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterVmq",
+        "Synopsis":  "Gets the VMQ properties of a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterVMQQueue",
+        "Synopsis":  "Gets the VMQs allocated on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Get-NetAdapterVPort",
+        "Synopsis":  "Displays the network adapter VPort settings for a SR-IOV or VMQ VPort."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "New-NetAdapterAdvancedProperty",
+        "Synopsis":  "Creates an advanced property for the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Remove-NetAdapterAdvancedProperty",
+        "Synopsis":  "Removes an advanced property from the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Rename-NetAdapter",
+        "Synopsis":  "Renames a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Reset-NetAdapterAdvancedProperty",
+        "Synopsis":  "Resets the advanced properties of a network adapter to their factory default values."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Restart-NetAdapter",
+        "Synopsis":  "Restarts a network adapter by disabling and then re-enabling the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapter",
+        "Synopsis":  "Sets the basic network adapter properties."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterAdvancedProperty",
+        "Synopsis":  "Sets the advanced properties of a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterBinding",
+        "Synopsis":  "Sets the binding state of a transport or filter on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterChecksumOffload",
+        "Synopsis":  "Sets the various checksum offload settings."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterEncapsulatedPacketTaskOffload",
+        "Synopsis":  "Sets the encapsulated packet task offload property of the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterIPsecOffload",
+        "Synopsis":  "Sets the IPsec offload properties of a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterLso",
+        "Synopsis":  "Sets the LSO properties of a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterPacketDirect",
+        "Synopsis":  "\r\nSet-NetAdapterPacketDirect [-Name] \u003cstring[]\u003e [-IncludeHidden] [-Enabled \u003cbool\u003e] [-DomainId \u003cuint32\u003e] [-NoRestart] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-NetAdapterPacketDirect -InterfaceDescription \u003cstring[]\u003e [-IncludeHidden] [-Enabled \u003cbool\u003e] [-DomainId \u003cuint32\u003e] [-NoRestart] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-NetAdapterPacketDirect -InputObject \u003cCimInstance#MSFT_NetAdapterPacketDirectSettingData[]\u003e [-Enabled \u003cbool\u003e] [-DomainId \u003cuint32\u003e] [-NoRestart] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterPowerManagement",
+        "Synopsis":  "Sets the power management properties on the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterQos",
+        "Synopsis":  "Sets QoS properties on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterRdma",
+        "Synopsis":  "Sets the RDMA properties on the network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterRsc",
+        "Synopsis":  "Sets the enabled state of RSC."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterRss",
+        "Synopsis":  "Sets the RSS properties on a network adapter."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterSriov",
+        "Synopsis":  "Sets the SR-IOV properties of the network adapter, such as the number of virtual functions, the number of VPorts, and the number of queue pairs for default and non-default VPorts."
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterUso",
+        "Synopsis":  "\r\nSet-NetAdapterUso [-Name] \u003cstring[]\u003e [-IncludeHidden] [-IPv4Enabled \u003cbool\u003e] [-IPv6Enabled \u003cbool\u003e] [-NoRestart] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-NetAdapterUso -InterfaceDescription \u003cstring[]\u003e [-IncludeHidden] [-IPv4Enabled \u003cbool\u003e] [-IPv6Enabled \u003cbool\u003e] [-NoRestart] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n\r\nSet-NetAdapterUso -InputObject \u003cCimInstance#MSFT_NetAdapterUsoSettingData[]\u003e [-IPv4Enabled \u003cbool\u003e] [-IPv6Enabled \u003cbool\u003e] [-NoRestart] [-CimSession \u003cCimSession[]\u003e] [-ThrottleLimit \u003cint\u003e] [-AsJob] [-PassThru] [-WhatIf] [-Confirm] [\u003cCommonParameters\u003e]\r\n"
+    },
+    {
+        "Module":  "NetAdapter",
+        "Name":  "Set-NetAdapterVmq",
+        "Synopsis":  "Sets the VMQ properties of a network adapter."
+    }
+]
