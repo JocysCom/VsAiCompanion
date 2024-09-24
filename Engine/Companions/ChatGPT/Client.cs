@@ -311,6 +311,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				var options = new OpenAIClientOptions();
 				options.NetworkTimeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 				options.Transport = transport;
+				options.Endpoint = endpoint;
 				client = new OpenAIClient(credential, options);
 				//var prop = client.GetType().GetField("_isConfiguredForAzureOpenAI", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 				//prop.SetValue(client, false);

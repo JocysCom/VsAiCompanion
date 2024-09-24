@@ -1,6 +1,7 @@
-2024-09-23 v1.13.9
+2024-09-23 v1.13.12
 
 - Update: Use Microsoft.Data.SqlClient in the extension for accessing data.
+- Fix: OpenAI type client will ignore the custom URL and use the api.openai.com address instead.
 
 2024-09-16 v1.13.8
 
