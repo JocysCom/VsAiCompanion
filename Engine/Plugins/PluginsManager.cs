@@ -53,13 +53,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AddMethods(typeof(Lists));
 #if DEBUG
 				AddMethods(typeof(Automation));
-				if (Global.AppSettings.EnableApiPlugins)
-				{
-					JocysCom.ClassLibrary.Helper.RunSynchronously(async () =>
-					await API_LoadPlugins(Global.PluginsPath));
-				}
-
 #endif
+				JocysCom.ClassLibrary.Helper.RunSynchronously(async () =>
+					await API_LoadPlugins(Global.PluginsPath));
 			}
 			_pluginFunctionsSemaphore.Release();
 			return _PluginFunctions;

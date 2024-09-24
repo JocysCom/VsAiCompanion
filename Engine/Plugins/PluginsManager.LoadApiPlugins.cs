@@ -120,18 +120,30 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Check for web server exe file.
 				var exeFI = pluginDi.GetFileSystemInfos("*.exe").FirstOrDefault();
 				Uri openApiSpecUri = null;
+				AiService service = null;
 				try
 				{
-					if (exeFI is null)
+					var url = aiPlugin.api.url;
+					var uri = Uri.IsWellFormedUriString(url, UriKind.Absolute)
+						? url
+						: $"http://localhost/{url.TrimStart('/')}";
+					openApiSpecUri = new Uri(uri);
+
+					var services = Global.AppSettings.AiServices;
+					service = services
+						.Where(x => string.Equals(url, x.BaseUrl, StringComparison.OrdinalIgnoreCase))
+						.FirstOrDefault();
+					if (service is null)
 					{
-						openApiSpecUri = new Uri(aiPlugin.api.url);
+						service = new AiService();
+						service.ServiceType = ApiServiceType.AiPlugin;
+						service.BaseUrl = openApiSpecUri.GetLeftPart(UriPartial.Authority);
+						service.Name = openApiSpecUri.Host;
+						services.Add(service);
 					}
-					else
+					if (Global.AppSettings.EnableApiPlugins && exeFI != null)
 					{
 						var kv = await API_StartServer(exeFI.FullName);
-						var uri = Uri.IsWellFormedUriString(aiPlugin.api.url, UriKind.Absolute)
-							? aiPlugin.api.url
-							: $"{kv.uri}{aiPlugin.api.url.TrimStart('/')}";
 						var ub = new UriBuilder(uri);
 						ub.Host = kv.uri.Host;
 						ub.Port = kv.uri.Port;
@@ -146,13 +158,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 				if (openApiSpecUri is null)
 					continue;
-				// Get OpenAI specificaton file.
-				var client = new HttpClient();
-				var openApiSpec = await client.GetStringAsync(openApiSpecUri.ToString());
-				var doc = LoadOpenApiSpec(openApiSpec);
-				var pluginItems = ExtractPluginItems(doc);
-				_PluginFunctions.AddRange(pluginItems);
-				//API_StopServer(exeFI.FullName);
+				if (Global.AppSettings.EnableApiPlugins && service?.IsEnabled == true)
+				{
+					// Get OpenAI specificaton file.
+					var client = new HttpClient();
+					var openApiSpec = await client.GetStringAsync(openApiSpecUri.ToString());
+					var doc = LoadOpenApiSpec(openApiSpec);
+					var pluginItems = ExtractPluginItems(doc);
+					_PluginFunctions.AddRange(pluginItems);
+					//API_StopServer(exeFI.FullName);
+				}
 			}
 		}
 

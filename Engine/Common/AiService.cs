@@ -18,7 +18,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		/// <summary>Used by default.</summary>
 		[DefaultValue(ApiServiceType.None)]
-		public ApiServiceType ServiceType { get => _ServiceType; set => SetProperty(ref _ServiceType, value); }
+		public ApiServiceType ServiceType
+		{
+			get => _ServiceType;
+			set
+			{
+				SetProperty(ref _ServiceType, value);
+				Path = JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(value);
+				OnPropertyChanged(nameof(Path));
+			}
+		}
 		ApiServiceType _ServiceType;
 
 		/// <summary>Unique Id.</summary>
