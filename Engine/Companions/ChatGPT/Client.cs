@@ -48,13 +48,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		/// <summary>
 		/// Can be used to log response and reply.
 		/// </summary>
-		public HttpClientSpy Spy => _Spy;
-		HttpClientSpy _Spy;
+		public HttpClientLogger Logger => _Logger;
+		HttpClientLogger _Logger;
 
 		public async Task<HttpClient> GetClient(CancellationToken cancellationToken = default)
 		{
-			_Spy = new HttpClientSpy();
-			var client = new HttpClient(_Spy);
+			_Logger = new HttpClientLogger();
+			var client = new HttpClient(_Logger);
 			client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			client.BaseAddress = new Uri(Service.BaseUrl);
 			var apiSecretKey = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiSecretKeyVaultItemId, Service.ApiSecretKey);
@@ -297,10 +297,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			else
 			{
 				var credential = new System.ClientModel.ApiKeyCredential(apiSecretKey);
-				// Create HttpClient with HttpClientSpy handler
-				var spyHandler = new HttpClientSpy(new HttpClientHandler());
-				// Create the HttpClient to use HttpClientSpy
-				var httpClient = new HttpClient(spyHandler)
+				// Create HttpClient with HttpClientLogger handler
+				var logger = new HttpClientLogger(new HttpClientHandler());
+				// Create the HttpClient to use HttpClientLogger
+				var httpClient = new HttpClient(logger)
 				{
 					BaseAddress = endpoint,
 					Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout),

@@ -271,7 +271,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		FileProcessor _Scanner;
 		Embeddings.EmbeddingsContext db;
-		System.Security.Cryptography.SHA256 algorithm = System.Security.Cryptography.SHA256.Create();
 
 		private void ScanStartButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
@@ -432,7 +431,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var fi = (FileInfo)e.SubData;
 				var processingState = await EmbeddingHelper.UpdateEmbedding(
 					Item,
-					db, fi.FullName, algorithm,
+					db, fi.FullName,
 					fp.Cancellation.Token
 				);
 				return processingState;

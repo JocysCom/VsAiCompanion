@@ -206,8 +206,9 @@ namespace JocysCom.VS.AiCompanion.DataClient
 				{
 					command.ExecuteNonQuery();
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
+					Console.WriteLine(ex.Message);
 					if (!ignoreError)
 						throw;
 				}
@@ -360,7 +361,7 @@ namespace JocysCom.VS.AiCompanion.DataClient
                 UPDATE {filePartTable}
 				SET [State] = @State
                 WHERE [GroupName] = @GroupName
-                AND [GroupFlag] = @GroupFlag";
+				AND [GroupFlag] = @GroupFlag";
 			var rowsAffected = await command.ExecuteNonQueryAsync();
 			command.CommandText = $@"
                 UPDATE {fileTable}
@@ -394,19 +395,35 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			var groupTable = $"{schema}[{nameof(Group)}]";
 			var commandText = "";
 			// Delete file parts.
-			commandText = $"DELETE FROM {filePartTable}\r\nWHERE [GroupName] = @GroupName\r\n";
+			commandText = $"DELETE FROM {filePartTable}\r\n";
+			commandText += $"WHERE [GroupName] = @GroupName\r\n";
 			if (groupFlag != null)
-				commandText += $"AND [GroupFlag] = @GroupFlag\r\n";
+				commandText += $"\tAND [GroupFlag] = @GroupFlag\r\n";
 			if (state != null)
-				commandText += $"AND [State] = @State\r\n";
+				commandText += $"\tAND [State] = @State\r\n";
 			command.CommandText = commandText;
 			var rowsAffected = await command.ExecuteNonQueryAsync();
 			// Delete files.
-			commandText = $"DELETE FROM {fileTable}\r\nWHERE [GroupName] = @GroupName\r\n";
+			commandText = $"DELETE FROM {fileTable}\r\n";
+			commandText += $"WHERE [GroupName] = @GroupName\r\n";
 			if (groupFlag != null)
-				commandText += $"AND [GroupFlag] = @GroupFlag\r\n";
+				commandText += $"\tAND [GroupFlag] = @GroupFlag\r\n";
 			if (state != null)
-				commandText += $"AND [State] = @State\r\n";
+				commandText += $"\tAND [State] = @State\r\n";
+			command.CommandText = commandText;
+			rowsAffected += await command.ExecuteNonQueryAsync();
+			// Cleanup group records.
+			commandText = "";
+			commandText += $"DELETE FROM {groupTable}\r\n";
+			commandText += $"--SELECT * FROM {groupTable}\r\n";
+			commandText += $"WHERE [Name] NOT IN (\r\n";
+			commandText += $"\tSELECT DISTINCT [GroupName]\r\n";
+			commandText += $"\tFROM {fileTable}\r\n";
+			commandText += $") OR [Flag] NOT IN (\r\n";
+			commandText += $"\tSELECT DISTINCT [GroupFlag]\r\n";
+			commandText += $"\tFROM {fileTable}\r\n";
+			commandText += $"\tWHERE [GroupName] = {groupTable}.[Name]\r\n";
+			commandText += $");\r\n";
 			command.CommandText = commandText;
 			rowsAffected += await command.ExecuteNonQueryAsync();
 			// Return affected rows.

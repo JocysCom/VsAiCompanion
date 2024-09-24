@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 namespace JocysCom.ClassLibrary.Web.Services
 {
 	// DelegatingHandler Requires: System.Net.Http.dll assembly.
-	public class HttpClientSpy : DelegatingHandler
+	public class HttpClientLogger : DelegatingHandler
 	{
-		public HttpClientSpy() : base(new HttpClientHandler()) { }
+		public HttpClientLogger() : base(new HttpClientHandler()) { }
 
-		public HttpClientSpy(HttpMessageHandler innerHandler) : base(innerHandler) { }
+		public HttpClientLogger(HttpMessageHandler innerHandler) : base(innerHandler) { }
 
 		/// <summary>
 		/// Set to false, because we don’t need anything from the current SynchronizationContext context.
@@ -91,10 +91,10 @@ namespace JocysCom.ClassLibrary.Web.Services
 				/>
 			  </diagnostics>
 			  </system.serviceModel>
-			  <!-- Enabling Tracing in HttpClientSpy -->
+			  <!-- Enabling Tracing in HttpClientLogger -->
 			  <system.diagnostics>
 				<sources>
-				  <source name="JocysCom.ClassLibrary.Web.Services.HttpClientSpy" switchValue="All">
+				  <source name="JocysCom.ClassLibrary.Web.Services.HttpClientLogger" switchValue="All">
 					<listeners>
 					  <add name="WebServiceLogs"/>
 					</listeners>

@@ -43,7 +43,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			EmbeddingsItem ei,
 			EmbeddingsContext db,
 			string fileName,
-			System.Security.Cryptography.SHA256 algorithm,
 			CancellationToken cancellationToken = default
 		)
 		{
@@ -91,7 +90,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 				x.GroupFlag == (int)embeddingGroupFlag &&
 				x.Url == fi.FullName);
 
+			var algorithm = System.Security.Cryptography.SHA256.Create();
 			var fileHash = HashHelper.GetHashFromFile(algorithm, fileName);
+			algorithm.Dispose();
+			//algorithm.Dispose();
 			var fileHashDb = EmbeddingBase.GetHashByName(file?.Hash, file?.HashType);
 			// If file found but different.
 			if (fileHashDb != null && !fileHashDb.SequenceEqual(fileHash))
@@ -131,7 +133,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var aiModel = Global.AppSettings.AiModels.FirstOrDefault(x => x.AiServiceId == service.Id && x.Name == modelName);
 
 			FilePart[] parts = null;
-			List<byte[]> sourceFilePartHashes = null;
+			var sourceFilePartHashes = new List<byte[]>();
 			decimal tokenReduction = 0.80m;
 
 			// Fill with updated records.
@@ -147,15 +149,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var targetFilePartHashes = targetFileParts
 				.Select(x => EmbeddingBase.GetHashByName(x.Hash, x.HashType))
 				.ToList();
-
+			var algorithm2 = System.Security.Cryptography.SHA256.Create();
 			do
 			{
 
 				parts = GetParts(fi.FullName, aiModel.MaxInputTokens == 0 ? 2048 : aiModel.MaxInputTokens, tokenReduction);
-				var input = parts.Select(x => x.Text);
-				sourceFilePartHashes = input
-					.Select(x => algorithm.ComputeHash(System.Text.Encoding.Unicode.GetBytes(x)))
-					.ToList();
+				var inputs = parts.Select(x => x.Text);
+				foreach (var input in inputs)
+				{
+					var hash = algorithm2.ComputeHash(System.Text.Encoding.Unicode.GetBytes(input));
+					sourceFilePartHashes.Add(hash);
+				}
 				// If all hashes match then...
 				if (targetFilePartHashes.Count == sourceFilePartHashes.Count &&
 					!targetFilePartHashes.Where((x, i) => !x.SequenceEqual(sourceFilePartHashes[i])).Any())
@@ -166,7 +170,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					return ProgressStatus.Skipped;
 				}
 
-				var opResults = await client.GetEmbedding(modelName, input, cancellationToken);
+				var opResults = await client.GetEmbedding(modelName, inputs, cancellationToken);
 				results = opResults.Data;
 				if (opResults?.Success == true || maxRetries-- <= 0 || cancellationToken.IsCancellationRequested)
 					break;
@@ -181,6 +185,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 			}
 			while (true);
+			algorithm2.Dispose();
+
 			if (cancellationToken.IsCancellationRequested)
 				return ProgressStatus.Canceled;
 			if (results == null)
@@ -505,13 +511,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var items = property.ToArray();
 					foreach (var item in items)
 					{
-						var flagName = flags.FirstOrDefault(x => x.Flag == (long)item.Key)?.FlagName ?? string.Empty;
 						var description = Attributes.GetDescription(item.Key);
-						if (!string.IsNullOrEmpty(flagName))
-						{
+						var flagName = flags.FirstOrDefault(x => x.Flag == (long)item.Key)?.FlagName;
+						if (flagName != null)
 							description += ": " + flagName;
-						}
-
 						item.Value = description;
 					}
 				});

@@ -37,9 +37,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Make sure that Visual Studio and standalone app is not loggin to the same file.
 				int processId = Process.GetCurrentProcess().Id;
 				var filename = Path.Combine(Global.LogsPath, $"HttpClientLog_P{processId}.svclog");
-				var sourceName = typeof(JocysCom.ClassLibrary.Web.Services.HttpClientSpy).FullName;
+				var sourceName = typeof(JocysCom.ClassLibrary.Web.Services.HttpClientLogger).FullName;
 				logListener = new RollingXmlWriterTraceListener(filename);
-				// Accept messages from `HttpClientSpy` only.
+				// Accept messages from `HttpClientLogger` only.
 				logListener.Filter = new SourceFilter(sourceName);
 				Trace.Listeners.Add(logListener);
 				TraceHelper.AddLog(sourceName, TraceEventType.Information, new NameValueCollection { { "Log", "HTTP Logging Enabled" } });
@@ -53,7 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				if (logListener == null)
 					return;
-				var sourceName = typeof(JocysCom.ClassLibrary.Web.Services.HttpClientSpy).FullName;
+				var sourceName = typeof(JocysCom.ClassLibrary.Web.Services.HttpClientLogger).FullName;
 				TraceHelper.AddLog(sourceName, TraceEventType.Information, new NameValueCollection { { "Log", "HTTP Logging Disabled" } });
 				Trace.Listeners.Remove(logListener);
 				logListener.Close();
