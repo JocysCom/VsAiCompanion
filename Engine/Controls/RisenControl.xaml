@@ -1,0 +1,175 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.RisenControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+			<!--  Style for icons  -->
+			<Style x:Key="IconTextStyle" TargetType="TextBlock">
+				<Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+				<Setter Property="FontSize" Value="16" />
+				<Setter Property="VerticalAlignment" Value="Center" />
+				<Setter Property="Margin" Value="0,0,5,0" />
+			</Style>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<!--  TabControl for RISEN Components  -->
+	<TabControl
+		x:Name="MainTabControl"
+		Margin="3"
+		HorizontalAlignment="Stretch"
+		HorizontalContentAlignment="Stretch"
+		x:FieldModifier="public">
+		<TabItem x:Name="ChatInstructionsTabItem" x:FieldModifier="public" IsEnabled="False">
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE713;" />
+					<Label Content="{StaticResource main_Instructions}" />
+				</StackPanel>
+			</TabItem.Header>
+		</TabItem>
+
+		<TabItem x:Name="ChatMessageTabItem" x:FieldModifier="public" IsEnabled="False">
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE8BD;" />
+					<Label Content="{StaticResource main_Message}" />
+				</StackPanel>
+			</TabItem.Header>
+		</TabItem>
+		<TabItem x:Name="MessageTabItem" x:FieldModifier="public" IsEnabled="False">
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<Label Content="RISEN:" Opacity="0.5" />
+				</StackPanel>
+			</TabItem.Header>
+		</TabItem>
+		<!--  Role (R) Tab  -->
+		<TabItem x:Name="RoleTabItem" x:FieldModifier="public">
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE77B;" />
+					<Label Content="{StaticResource main_Role}" />
+				</StackPanel>
+			</TabItem.Header>
+			<StackPanel Margin="10">
+				<TextBlock Text="{StaticResource main_RISEN_Role_Help}" ToolTip="{StaticResource main_RISEN_Role_Example}" />
+				<TextBox
+					Name="RoleTextBox"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text=""
+					TextWrapping="Wrap" />
+			</StackPanel>
+		</TabItem>
+		<!--  Instructions (I) Tab  -->
+		<TabItem x:Name="InstructionsTabItem" x:FieldModifier="public">
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE70F;" />
+					<Label Content="{StaticResource main_Instructions}" />
+				</StackPanel>
+			</TabItem.Header>
+			<StackPanel Margin="10">
+				<TextBlock Text="{StaticResource main_RISEN_Instructions_Help}" ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
+				<TextBox
+					Name="InstructionsTextBox"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text=""
+					TextWrapping="Wrap" />
+			</StackPanel>
+		</TabItem>
+		<!--  Steps (S) Tab  -->
+		<TabItem x:Name="StepsTabItem" x:FieldModifier="public">
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE14C;" />
+					<Label Content="{StaticResource main_Steps}" />
+				</StackPanel>
+			</TabItem.Header>
+			<StackPanel Margin="10">
+				<TextBlock Text="{StaticResource main_RISEN_Steps_Help}" ToolTip="{StaticResource main_RISEN_Steps_Example}" />
+				<TextBox
+					Name="StepsTextBox"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text=""
+					TextWrapping="Wrap" />
+			</StackPanel>
+		</TabItem>
+		<!--  End Goal (E) Tab  -->
+		<TabItem x:Name="EndGoalTabItem" x:FieldModifier="public">
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE908;" />
+					<Label Content="{StaticResource main_EndGoal}" />
+				</StackPanel>
+			</TabItem.Header>
+			<StackPanel Margin="10">
+				<TextBlock Text="{StaticResource main_RISEN_EndGoal_Help}" ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
+				<TextBox
+					Name="EndGoalTextBox"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text=""
+					TextWrapping="Wrap" />
+			</StackPanel>
+		</TabItem>
+		<!--  Narrowing (N) Tab  -->
+		<TabItem x:Name="NarrowingTabItem" x:FieldModifier="public">
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE71C;" />
+					<Label Content="{StaticResource main_Narrowing}" />
+				</StackPanel>
+			</TabItem.Header>
+			<StackPanel Margin="10">
+				<TextBlock Text="{StaticResource main_RISEN_Narrowing_Help}" ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />
+				<TextBox
+					Name="NarrowingTextBox"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					AcceptsReturn="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SpellCheck.IsEnabled="True"
+					Text=""
+					TextWrapping="Wrap" />
+			</StackPanel>
+		</TabItem>
+	</TabControl>
+</UserControl>

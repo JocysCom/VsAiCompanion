@@ -81,6 +81,32 @@
 	<!--  Tasks / Templates → Personalized Context  -->
 	<sys:String x:Key="main_Personalize_the_chat">Personalize the chat by providing personalized context. You can create and edit context lists on the [Lists] tab.</sys:String>
 
+	<!--  Tasks / Templates → RISEN  -->
+
+	<sys:String x:Key="main_RISEN_Role_Help">Role (R): Define the role or persona you want the AI to assume to set the context for its response.</sys:String>
+	<sys:String x:Key="main_RISEN_Role_Example">E.g., "Act as a professional copywriter" or "You are an experienced chef."</sys:String>
+	<sys:String x:Key="main_RISEN_Instructions_Help">Instructions (I): Specify the task or action you want the AI to perform.</sys:String>
+	<sys:String x:Key="main_RISEN_Instructions_Example">E.g., "Write a blog post about sustainable living."</sys:String>
+	<sys:String x:Key="main_RISEN_Steps_Help">Steps (S): Outline the structure or steps you want the AI to follow in its response.</sys:String>
+	<sys:String x:Key="main_RISEN_Steps_Example">E.g., "Begin with an engaging hook, include three main points with examples, and conclude with a persuasive call to action."</sys:String>
+	<sys:String x:Key="main_RISEN_EndGoal_Help">End Goal (E): State the final objective or purpose you aim to achieve with the AI's response.</sys:String>
+	<sys:String x:Key="main_RISEN_EndGoal_Example">E.g., "To inform mid-level designers about overcoming challenges with auto layout in Figma."</sys:String>
+	<sys:String x:Key="main_RISEN_Narrowing_Help">Narrowing (N): Specify any constraints or limits to focus the AI's response on your specific needs.</sys:String>
+	<sys:String x:Key="main_RISEN_Narrowing_Example">E.g., "Limit the content to 600 words" or "Use a friendly and conversational tone."</sys:String>
+	<!--  Custom Prompt Template  -->
+	<sys:String x:Key="main_RISEN_Prompt_Template">
+		### Assume the role of:
+		{0}
+		### Your task is:
+		{1}
+		### Please follow these steps:
+		{2}
+		### Our goal is:
+		{3}
+		### Please consider these constraints:
+		{4}
+	</sys:String>
+
 	<!--  Fine-Tuning  -->
 	<sys:String x:Key="main__1_Assistants">1. Assistants</sys:String>
 	<sys:String x:Key="main__1_Source_Files">1. Source Files</sys:String>
@@ -314,6 +340,10 @@
 	<sys:String x:Key="main_Value">Value</sys:String>
 
 	<!--  ***  -->
+	<sys:String x:Key="main_Role">Role</sys:String>
+	<sys:String x:Key="main_Steps">Steps</sys:String>
+	<sys:String x:Key="main_EndGoal">End Goal</sys:String>
+	<sys:String x:Key="main_Narrowing">Narrowing</sys:String>
 	<sys:String x:Key="main_Apply">Apply</sys:String>
 	<sys:String x:Key="main_Plugins">Plugins</sys:String>
 	<sys:String x:Key="main_Tools">Tools</sys:String>

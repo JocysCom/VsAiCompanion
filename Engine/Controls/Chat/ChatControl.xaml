@@ -310,6 +310,7 @@
 						</StackPanel>
 						<!--  Send Message  -->
 						<StackPanel Grid.Row="1" Margin="10">
+							<controls:RisenControl x:Name="RisenPanel" />
 							<Grid x:Name="MessageInputGrid">
 								<TextBox
 									x:Name="DataTextBox"
