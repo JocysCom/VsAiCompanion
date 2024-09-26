@@ -82,7 +82,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ChatPanel_DataInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			UpdateShowInstructionsCheckBox();
+			_ = Helper.Delay(UpdateShowInstructionsCheckBox);
 		}
 
 		void UpdateShowInstructionsCheckBox()
@@ -401,7 +401,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				if (PanelSettings.Focus)
 					RestoreFocus();
-				UpdateShowInstructionsCheckBox();
+				_ = Helper.Delay(UpdateShowInstructionsCheckBox);
 				UpdateAvatarControl();
 				UpdateListEditButtons();
 			}
