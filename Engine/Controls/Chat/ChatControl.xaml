@@ -2,6 +2,7 @@
 	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Chat.ChatControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:JcConverters="clr-namespace:JocysCom.ClassLibrary.Controls.Converters"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -251,83 +252,16 @@
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE713;" />
 											<Label Content="{StaticResource main_Instructions}" />
+											<Label x:Name="InstructionsExtLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>
 									<!--  Instructions  -->
-									<Grid x:Name="InstructionsGrid" Background="White">
-										<TextBox
-											x:Name="DataInstructionsTextBox"
-											MinHeight="30"
-											Margin="0"
-											Padding="10,7,10,7"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											VerticalContentAlignment="Top"
-											AcceptsReturn="True"
-											Background="White"
-											BorderThickness="0"
-											FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
-											PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
-											ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-											ScrollViewer.ScrollChanged="DataInstructionsTextBox_ScrollChanged"
-											ScrollViewer.VerticalScrollBarVisibility="Auto"
-											SpellCheck.IsEnabled="True"
-											Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}"
-											TextChanged="DataInstructionsTextBox_TextChanged"
-											TextWrapping="Wrap">
-											<TextBox.Resources>
-												<Style TargetType="Border">
-													<Setter Property="CornerRadius" Value="10" />
-												</Style>
-											</TextBox.Resources>
-										</TextBox>
-										<TextBlock
-											MinHeight="30"
-											Padding="10,7,10,7"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											IsHitTestVisible="False"
-											Opacity="0.5"
-											Text="Type instructions">
-											<TextBlock.Style>
-												<Style TargetType="{x:Type TextBlock}">
-													<Setter Property="Visibility" Value="Collapsed" />
-													<Style.Triggers>
-														<MultiDataTrigger>
-															<MultiDataTrigger.Conditions>
-																<Condition Binding="{Binding ElementName=DataInstructionsTextBox, Path=Text}" Value="" />
-																<Condition Binding="{Binding ElementName=DataInstructionsTextBox, Path=IsKeyboardFocused}" Value="False" />
-															</MultiDataTrigger.Conditions>
-															<MultiDataTrigger.Setters>
-																<Setter Property="Visibility" Value="Visible" />
-															</MultiDataTrigger.Setters>
-														</MultiDataTrigger>
-													</Style.Triggers>
-												</Style>
-											</TextBlock.Style>
-										</TextBlock>
-										<Button
-											x:Name="ExpandInstructionsButton"
-											Width="30"
-											Height="30"
-											Margin="0"
-											HorizontalAlignment="Right"
-											VerticalAlignment="Bottom"
-											Background="Transparent"
-											Click="ExpandInstructionsButton_Click"
-											Opacity="0.5">
-											<Viewbox>
-												<ContentControl
-													x:Name="ExpandInstructionsButtonContent"
-													Margin="0"
-													Padding="0"
-													Content="{StaticResource Icon_Maximize}"
-													Focusable="False" />
-											</Viewbox>
-										</Button>
-									</Grid>
+									<JcControls:PlaceholderTextBox
+										x:Name="DataInstructionsTextBox"
+										PlaceholderText="Type instructions"
+										PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
+										Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}" />
 								</TabItem>
-
 								<TabItem x:Name="ChatMessageTabItem" x:FieldModifier="public">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
@@ -335,199 +269,65 @@
 											<Label Content="{StaticResource main_Message}" />
 										</StackPanel>
 									</TabItem.Header>
-									<Grid x:Name="MessageInputGrid" Background="White">
-										<TextBox
-											x:Name="DataTextBox"
-											MinHeight="30"
-											Margin="0"
-											Padding="10,7,10,7"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											VerticalContentAlignment="Top"
-											x:FieldModifier="public"
-											AcceptsReturn="True"
-											Background="White"
-											BorderThickness="0"
-											FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
-											PreviewKeyDown="DataTextBox_PreviewKeyDown"
-											PreviewKeyUp="DataTextBox_PreviewKeyUp"
-											ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-											ScrollViewer.ScrollChanged="DataTextBox_ScrollChanged"
-											ScrollViewer.VerticalScrollBarVisibility="Auto"
-											SpellCheck.IsEnabled="True"
-											Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
-											TextChanged="DataTextBox_TextChanged"
-											TextWrapping="Wrap">
-											<TextBox.Resources>
-												<Style TargetType="Border">
-													<Setter Property="CornerRadius" Value="10" />
-												</Style>
-											</TextBox.Resources>
-										</TextBox>
-										<TextBlock
-											MinHeight="30"
-											Padding="10,7,10,7"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											IsHitTestVisible="False"
-											Opacity="0.5"
-											Text="Type a message">
-											<TextBlock.Style>
-												<Style TargetType="{x:Type TextBlock}">
-													<Setter Property="Visibility" Value="Collapsed" />
-													<Style.Triggers>
-														<MultiDataTrigger>
-															<MultiDataTrigger.Conditions>
-																<Condition Binding="{Binding ElementName=DataTextBox, Path=Text}" Value="" />
-																<Condition Binding="{Binding ElementName=DataTextBox, Path=IsKeyboardFocused}" Value="False" />
-															</MultiDataTrigger.Conditions>
-															<MultiDataTrigger.Setters>
-																<Setter Property="Visibility" Value="Visible" />
-															</MultiDataTrigger.Setters>
-														</MultiDataTrigger>
-													</Style.Triggers>
-												</Style>
-											</TextBlock.Style>
-										</TextBlock>
-										<Button
-											x:Name="ExpandMessageButton"
-											Width="30"
-											Height="30"
-											Margin="0"
-											HorizontalAlignment="Right"
-											VerticalAlignment="Bottom"
-											Background="Transparent"
-											Click="ExpandMessageButton_Click"
-											Opacity="0.5">
-											<Viewbox>
-												<ContentControl
-													x:Name="ExpandMessageButtonContent"
-													Margin="0"
-													Padding="0"
-													Content="{StaticResource Icon_Maximize}"
-													Focusable="False" />
-											</Viewbox>
-										</Button>
-									</Grid>
-
+									<JcControls:PlaceholderTextBox
+										x:Name="DataTextBox"
+										PlaceholderText="Type a message"
+										PreviewKeyDown="DataTextBox_PreviewKeyDown"
+										PreviewKeyUp="DataTextBox_PreviewKeyUp"
+										Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+										TextChanged="DataTextBox_TextChanged" />
 								</TabItem>
 								<!--  Role (R) Tab  -->
-								<TabItem x:Name="RoleTabItem" x:FieldModifier="public">
+								<TabItem x:Name="RoleTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE77B;" />
 											<Label Content="{StaticResource main_Role}" />
 										</StackPanel>
 									</TabItem.Header>
-									<StackPanel Margin="10">
-										<TextBlock Text="{StaticResource main_RISEN_Role_Help}" ToolTip="{StaticResource main_RISEN_Role_Example}" />
-										<TextBox
-											Name="RoleTextBox"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											VerticalContentAlignment="Top"
-											AcceptsReturn="True"
-											ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-											ScrollViewer.VerticalScrollBarVisibility="Auto"
-											SpellCheck.IsEnabled="True"
-											Text=""
-											TextWrapping="Wrap" />
-									</StackPanel>
+									<JcControls:PlaceholderTextBox x:Name="RoleTextBox" PlaceholderText="{StaticResource main_RISEN_Role_Help}" ToolTip="{StaticResource main_RISEN_Role_Example}" />
 								</TabItem>
 								<!--  Instructions (I) Tab  -->
-								<TabItem x:Name="InstructionsTabItem" x:FieldModifier="public">
+								<TabItem x:Name="InstructionsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE70F;" />
 											<Label Content="{StaticResource main_Instructions}" />
 										</StackPanel>
 									</TabItem.Header>
-									<StackPanel Margin="10">
-										<TextBlock Text="{StaticResource main_RISEN_Instructions_Help}" ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
-										<TextBox
-											Name="InstructionsTextBox"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											VerticalContentAlignment="Top"
-											AcceptsReturn="True"
-											ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-											ScrollViewer.VerticalScrollBarVisibility="Auto"
-											SpellCheck.IsEnabled="True"
-											Text=""
-											TextWrapping="Wrap" />
-									</StackPanel>
+									<JcControls:PlaceholderTextBox x:Name="InstructionsTextBox" PlaceholderText="{StaticResource main_RISEN_Instructions_Help}" ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
 								</TabItem>
 								<!--  Steps (S) Tab  -->
-								<TabItem x:Name="StepsTabItem" x:FieldModifier="public">
+								<TabItem x:Name="StepsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE14C;" />
 											<Label Content="{StaticResource main_Steps}" />
 										</StackPanel>
 									</TabItem.Header>
-									<StackPanel Margin="10">
-										<TextBlock Text="{StaticResource main_RISEN_Steps_Help}" ToolTip="{StaticResource main_RISEN_Steps_Example}" />
-										<TextBox
-											Name="StepsTextBox"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											VerticalContentAlignment="Top"
-											AcceptsReturn="True"
-											ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-											ScrollViewer.VerticalScrollBarVisibility="Auto"
-											SpellCheck.IsEnabled="True"
-											Text=""
-											TextWrapping="Wrap" />
-									</StackPanel>
+									<JcControls:PlaceholderTextBox x:Name="StepsTextBox" PlaceholderText="{StaticResource main_RISEN_Steps_Help}" ToolTip="{StaticResource main_RISEN_Steps_Example}" />
 								</TabItem>
 								<!--  End Goal (E) Tab  -->
-								<TabItem x:Name="EndGoalTabItem" x:FieldModifier="public">
+								<TabItem x:Name="EndGoalTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE908;" />
 											<Label Content="{StaticResource main_EndGoal}" />
 										</StackPanel>
 									</TabItem.Header>
-									<StackPanel Margin="10">
-										<TextBlock Text="{StaticResource main_RISEN_EndGoal_Help}" ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
-										<TextBox
-											Name="EndGoalTextBox"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											VerticalContentAlignment="Top"
-											AcceptsReturn="True"
-											ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-											ScrollViewer.VerticalScrollBarVisibility="Auto"
-											SpellCheck.IsEnabled="True"
-											Text=""
-											TextWrapping="Wrap" />
-									</StackPanel>
+									<JcControls:PlaceholderTextBox x:Name="EndGoalTextBox" PlaceholderText="{StaticResource main_RISEN_EndGoal_Help}" ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
 								</TabItem>
 								<!--  Narrowing (N) Tab  -->
-								<TabItem x:Name="NarrowingTabItem" x:FieldModifier="public">
+								<TabItem x:Name="NarrowingTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE71C;" />
 											<Label Content="{StaticResource main_Narrowing}" />
 										</StackPanel>
 									</TabItem.Header>
-									<StackPanel Margin="10">
-										<TextBlock Text="{StaticResource main_RISEN_Narrowing_Help}" ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />
-										<TextBox
-											Name="NarrowingTextBox"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											VerticalContentAlignment="Top"
-											AcceptsReturn="True"
-											ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-											ScrollViewer.VerticalScrollBarVisibility="Auto"
-											SpellCheck.IsEnabled="True"
-											Text=""
-											TextWrapping="Wrap" />
-									</StackPanel>
+									<JcControls:PlaceholderTextBox x:Name="NarrowingTextBox" PlaceholderText="{StaticResource main_RISEN_Narrowing_Help}" ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />
 								</TabItem>
 							</TabControl>
-
 						</StackPanel>
 
 						<!--  Buttons Panel  -->

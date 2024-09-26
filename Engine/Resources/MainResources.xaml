@@ -82,7 +82,8 @@
 	<sys:String x:Key="main_Personalize_the_chat">Personalize the chat by providing personalized context. You can create and edit context lists on the [Lists] tab.</sys:String>
 
 	<!--  Tasks / Templates → RISEN  -->
-
+	<sys:String x:Key="main_RISEN">RISEN</sys:String>
+	<sys:String x:Key="main_RISEN_Help">RISEN Framework prompt</sys:String>
 	<sys:String x:Key="main_RISEN_Role_Help">Role (R): Define the role or persona you want the AI to assume to set the context for its response.</sys:String>
 	<sys:String x:Key="main_RISEN_Role_Example">E.g., "Act as a professional copywriter" or "You are an experienced chef."</sys:String>
 	<sys:String x:Key="main_RISEN_Instructions_Help">Instructions (I): Specify the task or action you want the AI to perform.</sys:String>

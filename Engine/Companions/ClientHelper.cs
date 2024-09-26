@@ -644,6 +644,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 
 		public static int CountTokens(object item, JsonSerializerOptions options)
 		{
+			if (item is string s && string.IsNullOrEmpty(s))
+				return 0;
 			var json = JsonSerializer.Serialize(item, options);
 			int count;
 			List<string> tokens = null;

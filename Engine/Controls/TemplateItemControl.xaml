@@ -955,11 +955,11 @@
 					<ContentControl Content="{StaticResource Icon_microphone2}" Focusable="False" />
 				</Button>
 				<CheckBox
-					Name="ShowInstructionsCheckBox"
-					AutomationProperties.HelpText="{StaticResource main_Show_Instructions_TextBox_Help}"
-					AutomationProperties.Name="{StaticResource main_Show_Instructions_TextBox_Name}"
-					Content="{StaticResource main_Show_Instructions_TextBox_Name}"
-					IsChecked="{Binding ShowInstructions}" />
+					Name="ShowRisenCheckBox"
+					AutomationProperties.HelpText="{StaticResource main_RISEN_Help}"
+					AutomationProperties.Name="{StaticResource main_RISEN}"
+					Content="{StaticResource main_RISEN}"
+					IsChecked="{Binding ShowRisen}" />
 				<CheckBox
 					Name="ShowPromptingCheckBox"
 					AutomationProperties.HelpText="{StaticResource main_Show_Prompting_Toolbar_Help}"

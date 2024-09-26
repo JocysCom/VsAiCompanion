@@ -21,16 +21,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return;
 			UpdateControlButtons();
 			UpdateMessageEdit();
-			AppControlsHelper.AllowDrop(DataTextBox, true);
-			AppControlsHelper.AllowDrop(DataInstructionsTextBox, true);
+			AppControlsHelper.AllowDrop(DataTextBox.PART_ContentTextBox, true);
+			AppControlsHelper.AllowDrop(DataInstructionsTextBox.PART_ContentTextBox, true);
 		}
-
 		public void FocusDataTextBox()
 		{
 			ControlsHelper.AppBeginInvoke(() =>
 			{
-				DataTextBox.Focus();
-				DataTextBox.SelectionStart = DataTextBox.Text?.Length ?? 0;
+				DataTextBox.PART_ContentTextBox.Focus();
+				DataTextBox.PART_ContentTextBox.SelectionStart = DataTextBox.PART_ContentTextBox.Text?.Length ?? 0;
 			});
 		}
 
@@ -60,7 +59,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (ControlsHelper.AllowLoad(this))
 			{
 				AppHelper.InitHelp(this);
-				UiPresetsManager.InitControl(this, true);
+				UiPresetsManager.InitControl(this, true,
+					new[] { RoleTextBox, InstructionsTextBox, StepsTextBox, EndGoalTextBox, NarrowingTextBox });
 			}
 		}
 
@@ -79,8 +79,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public bool AllowToSend()
 		{
 			return
-				!string.IsNullOrEmpty(DataTextBox.Text) ||
-				!string.IsNullOrEmpty(DataInstructionsTextBox.Text);
+				!string.IsNullOrEmpty(DataTextBox.PART_ContentTextBox.Text) ||
+				!string.IsNullOrEmpty(DataInstructionsTextBox.PART_ContentTextBox.Text);
 		}
 
 		public bool UseEnterToSendMessage { get; set; } = true;
@@ -203,8 +203,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (SuspendUpdateMaxSize)
 				return;
 			var maxHeight = ActualHeight;
-			DataInstructionsTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
-			DataTextBox.MaxHeight = Math.Round(maxHeight * 0.4);
+			DataInstructionsTextBox.PART_ContentTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
+			DataTextBox.PART_ContentTextBox.MaxHeight = Math.Round(maxHeight * 0.4);
 		}
 
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -212,7 +212,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			if (isEdit)
 			{
-				DataTextBox.Text = "";
+				DataTextBox.PART_ContentTextBox.Text = "";
 				EditMessageId = null;
 				UpdateMessageEdit();
 			}
@@ -252,22 +252,22 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private void ExpandInstructionsButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			ExpandButton(InstructionsGrid, DataInstructionsTextBox, ExpandInstructionsButton, ExpandInstructionsButtonContent);
+			//ExpandButton(InstructionsGrid, DataInstructionsTextBox, ExpandInstructionsButton, ExpandInstructionsButtonContent);
 		}
 
 		private void ExpandMessageButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			ExpandButton(MessageInputGrid, DataTextBox, ExpandMessageButton, ExpandMessageButtonContent);
+			//ExpandButton(MessageInputGrid, DataTextBox, ExpandMessageButton, ExpandMessageButtonContent);
 		}
 
 		private void DataInstructionsTextBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
 		{
 			if (e.OriginalSource is ScrollViewer sv)
 			{
-				var isVisible = sv.ComputedVerticalScrollBarVisibility == Visibility.Visible;
-				var isMax = _prevElement == InstructionsGrid;
-				ExpandInstructionsButton.Visibility = isVisible || isMax ? Visibility.Visible : Visibility.Collapsed;
-				ExpandInstructionsButton.Margin = new Thickness(3, 3, 3 + SystemParameters.VerticalScrollBarWidth, 3);
+				//var isVisible = sv.ComputedVerticalScrollBarVisibility == Visibility.Visible;
+				//var isMax = _prevElement == InstructionsGrid;
+				//ExpandInstructionsButton.Visibility = isVisible || isMax ? Visibility.Visible : Visibility.Collapsed;
+				//ExpandInstructionsButton.Margin = new Thickness(3, 3, 3 + SystemParameters.VerticalScrollBarWidth, 3);
 			}
 		}
 
@@ -275,10 +275,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			if (e.OriginalSource is ScrollViewer sv)
 			{
-				var isVisible = sv.ComputedVerticalScrollBarVisibility == Visibility.Visible;
-				var isMax = _prevElement == MessageInputGrid;
-				ExpandMessageButton.Visibility = isVisible || isMax ? Visibility.Visible : Visibility.Collapsed;
-				ExpandMessageButton.Margin = new Thickness(3, 3, 3 + SystemParameters.VerticalScrollBarWidth, 3);
+				//var isVisible = sv.ComputedVerticalScrollBarVisibility == Visibility.Visible;
+				//var isMax = _prevElement == MessageInputGrid;
+				//ExpandMessageButton.Visibility = isVisible || isMax ? Visibility.Visible : Visibility.Collapsed;
+				//ExpandMessageButton.Margin = new Thickness(3, 3, 3 + SystemParameters.VerticalScrollBarWidth, 3);
 			}
 		}
 

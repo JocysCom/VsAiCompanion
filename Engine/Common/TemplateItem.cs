@@ -45,10 +45,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		string _TextInstructions;
 
-		/// <summary>Show Instructions</summary>
-		[DefaultValue(true)]
-		public bool ShowInstructions { get => _ShowInstructions; set => SetProperty(ref _ShowInstructions, value); }
-		bool _ShowInstructions;
+		/// <summary>Show RISEN textboxes</summary>
+		[DefaultValue(false)]
+		public bool ShowRisen { get => _ShowRisen; set => SetProperty(ref _ShowRisen, value); }
+		bool _ShowRisen;
 
 		/// <summary>If true then instructions will be sent as System message, otherwise will be added the the used message.</summary>
 		[DefaultValue(false)]

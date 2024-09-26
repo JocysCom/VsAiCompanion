@@ -40,9 +40,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.OnStop += ChatPanel_OnStop;
 			ChatPanel.MessagesPanel.WebBrowserDataLoaded += MessagesPanel_WebBrowserDataLoaded;
 			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += MessagesPanel_ScriptingHandler_OnMessageAction;
-			ChatPanel.DataTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
-			ChatPanel.DataInstructionsTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
-			ChatPanel.DataInstructionsTextBox.TextChanged += ChatPanel_DataInstructionsTextBox_TextChanged;
+			ChatPanel.DataTextBox.PART_ContentTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
+			ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
+			ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.TextChanged += ChatPanel_DataInstructionsTextBox_TextChanged;
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -87,12 +87,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		void UpdateShowInstructionsCheckBox()
 		{
-			var isEmpty = string.IsNullOrWhiteSpace(ChatPanel.DataInstructionsTextBox.Text);
-			var fontWeight = isEmpty ? FontWeights.Normal : FontWeights.SemiBold;
-			if (ShowInstructionsCheckBox.FontWeight != fontWeight)
-			{
-				ShowInstructionsCheckBox.FontWeight = fontWeight;
-			}
+			var text = ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.Text;
+			var tokens = ClientHelper.CountTokens(Item.TextInstructions, null);
+			var s = tokens == 0 ? "" : $"({tokens})";
+			ControlsHelper.SetText(ChatPanel.InstructionsExtLabel, s);
 		}
 
 		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -156,7 +154,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			if (action == MessageAction.Use)
 			{
-				ChatPanel.DataTextBox.Text = message.Body;
+				ChatPanel.DataTextBox.PART_ContentTextBox.Text = message.Body;
 				ChatPanel.EditMessageId = null;
 				ChatPanel.FocusDataTextBox();
 			}
@@ -169,7 +167,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else if (action == MessageAction.Edit)
 			{
-				ChatPanel.DataTextBox.Text = message.Body;
+				ChatPanel.DataTextBox.PART_ContentTextBox.Text = message.Body;
 				ChatPanel.EditMessageId = id;
 				ChatPanel.FocusDataTextBox();
 			}
@@ -195,8 +193,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		void UpdateSpellCheck()
 		{
 			var isEnabled = Global.AppSettings.IsSpellCheckEnabled;
-			UpdateSpellCheckForTextBox(ChatPanel.DataTextBox, isEnabled);
-			UpdateSpellCheckForTextBox(ChatPanel.DataInstructionsTextBox, isEnabled);
+			UpdateSpellCheckForTextBox(ChatPanel.DataTextBox.PART_ContentTextBox, isEnabled);
+			UpdateSpellCheckForTextBox(ChatPanel.DataInstructionsTextBox.PART_ContentTextBox, isEnabled);
 		}
 
 		private void UpdateSpellCheckForTextBox(TextBox box, bool isEnabled)
@@ -212,16 +210,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var box = (TextBox)sender;
 			if (box.SpellCheck.IsEnabled)
 				box.SpellCheck.IsEnabled = false;
-			if (box == ChatPanel.DataTextBox)
+			if (box == ChatPanel.DataTextBox.PART_ContentTextBox)
 				await Helper.Delay(EnableOnDataTextBox);
-			if (box == ChatPanel.DataInstructionsTextBox)
+			if (box == ChatPanel.DataInstructionsTextBox.PART_ContentTextBox)
 				await Helper.Delay(EnableOnDataInstructionsTextBox);
 		}
 
 		void EnableOnDataTextBox()
-			=> ChatPanel.DataTextBox.SpellCheck.IsEnabled = true;
+			=> ChatPanel.DataTextBox.PART_ContentTextBox.SpellCheck.IsEnabled = true;
 		void EnableOnDataInstructionsTextBox()
-			=> ChatPanel.DataInstructionsTextBox.SpellCheck.IsEnabled = true;
+			=> ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.SpellCheck.IsEnabled = true;
 
 		#endregion
 
@@ -429,12 +427,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					if (_Item.UseSystemInstructions && text.Contains(TextToProcess))
 					{
 						var s = text.Replace(TextToProcess, "").TrimEnd();
-						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
+						AppHelper.SetText(ChatPanel.DataInstructionsTextBox.PART_ContentTextBox, s);
 					}
 					else if (!_Item.UseSystemInstructions && !containsDataHeader && !string.IsNullOrEmpty(text))
 					{
 						var s = ClientHelper.JoinMessageParts(text, TextToProcess);
-						AppHelper.SetText(ChatPanel.DataInstructionsTextBox, s);
+						AppHelper.SetText(ChatPanel.DataInstructionsTextBox.PART_ContentTextBox, s);
 					}
 					break;
 				case nameof(TemplateItem.ShowAvatar):
@@ -518,7 +516,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var item = (PropertyItem)cb.SelectedItem;
 			cb.SelectedIndex = alwaysSelectedIndex;
-			AppHelper.InsertText(ChatPanel.DataTextBox, "{" + item.Key + "}");
+			AppHelper.InsertText(ChatPanel.DataTextBox.PART_ContentTextBox, "{" + item.Key + "}");
 			// Enable use of macros.
 			if (!_Item.UseMacros)
 				_Item.UseMacros = true;
@@ -640,9 +638,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private TextBox GetFocused()
 		{
-			var box = _Item?.ShowInstructions == true
-				? LastFocusedForCodeTextBox ?? ChatPanel.DataInstructionsTextBox
-				: ChatPanel.DataTextBox;
+			var box = LastFocusedForCodeTextBox ?? ChatPanel.DataInstructionsTextBox.PART_ContentTextBox;
 			return box;
 		}
 
@@ -656,7 +652,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void _RestoreFocus()
 		{
 			var box = GetFocused();
-			var canFocus = PanelSettings.FocusedControl != ChatPanel.DataInstructionsTextBox.Name || _Item.ShowInstructions;
+			var canFocus = PanelSettings.FocusedControl != ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.Name;
 			if (canFocus)
 			{
 				PanelSettings.RestoreFocus(ChatPanel);

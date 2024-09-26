@@ -31,8 +31,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			var item = (TemplateItem)((Button)sender).DataContext;
 			var copy = item.Copy(true);
-			// Hide instructions box by default on Tasks.
-			copy.ShowInstructions = false;
 			copy.IsPinned = false;
 			copy.Created = DateTime.Now;
 			copy.Modified = copy.Created;
