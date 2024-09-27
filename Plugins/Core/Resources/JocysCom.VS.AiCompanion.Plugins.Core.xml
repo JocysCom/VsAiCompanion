@@ -108,6 +108,15 @@
             <exception cref="T:System.Exception">Error message explaining why the request failed.</exception>
             <remarks>Be cautious with executing scripts received via API due to security risks.</remarks>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertFile(System.String,System.String)">
+            <summary>
+            Read plain text content from files and documents.
+            Supported source formats: .docx, .xlsx, .xls, .pdf
+            Supported target formats: .txt
+            </summary>
+            <param name="sourcePath">File to read from.</param>
+            <param name="targetPath">File to write to.</param>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFilesAsPlainText(System.String[])">
             <summary>
             Read plain text content from files and documents. Supported document formats include: .docx, .xlsx, .xls, .pdf.

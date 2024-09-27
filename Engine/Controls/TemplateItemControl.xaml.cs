@@ -380,6 +380,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					_Item.PropertyChanged -= _item_PropertyChanged;
 					_Item.Settings = ChatPanel.MessagesPanel.GetWebSettings();
 				}
+				ChatPanel.MonitorTextBoxSelections(false);
 				// Make sure that custom AiModel old and new item is available to select.
 				AppHelper.UpdateModelCodes(value?.AiService, AiModelBoxPanel.AiModels, value?.AiModel, oldItem?.AiModel);
 				// Set new item.
@@ -417,6 +418,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				if (PanelSettings.Focus)
 					RestoreFocus();
+				ChatPanel.MonitorTextBoxSelections(true);
 				UpdateAvatarControl();
 				UpdateListEditButtons();
 			}

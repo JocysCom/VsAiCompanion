@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.VS.AiCompanion.Plugins.Core.UnifiedFormat;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -9,6 +10,39 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	public partial class Basic
 	{
 		#region File Operations
+
+		/// <summary>
+		/// Read plain text content from files and documents.
+		/// Supported source formats: .docx, .xlsx, .xls, .pdf
+		/// Supported target formats: .txt
+		/// </summary>
+		/// <param name="sourcePath">File to read from.</param>
+		/// <param name="targetPath">File to write to.</param>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<bool> ConvertFile(string sourcePath, string targetPath)
+		{
+			var list = new List<OperationResult<bool>>();
+			try
+			{
+				var ext = Path.GetExtension(targetPath).ToLower();
+				switch (ext)
+				{
+					case ".txt":
+						var txtReadResult = fileHelper.ReadFileAsPlainText(sourcePath);
+						if (!txtReadResult.Success)
+							return txtReadResult.ToResult(false);
+						var text = txtReadResult.Data;
+						var txtWriteResult = WriteFileText(targetPath, text);
+						return txtReadResult.ToResult(false);
+					default:
+						return new OperationResult<bool>(new Exception($"Unknown target extension: '{ext}'"));
+				}
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
 
 		/// <summary>
 		/// Read plain text content from files and documents. Supported document formats include: .docx, .xlsx, .xls, .pdf.

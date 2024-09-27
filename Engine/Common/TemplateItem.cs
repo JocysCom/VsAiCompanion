@@ -360,6 +360,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public List<string> AttachmentsSelection { get => _AttachmentsDataSelection; set => SetProperty(ref _AttachmentsDataSelection, value); }
 		List<string> _AttachmentsDataSelection;
 
+		[DefaultValue(null)]
+		public List<TextBoxData> UiSelections { get => _UiSelections; set => SetProperty(ref _UiSelections, value); }
+		List<TextBoxData> _UiSelections;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeSelections() => _UiSelections?.Count > 0;
+
 		#endregion
 
 		#region AI Mail Client

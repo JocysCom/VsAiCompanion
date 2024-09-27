@@ -246,6 +246,7 @@
 								HorizontalAlignment="Stretch"
 								HorizontalContentAlignment="Stretch"
 								x:FieldModifier="public"
+								SelectionChanged="MainTabControl_SelectionChanged"
 								TabStripPlacement="Bottom">
 								<!--  Instructions  -->
 								<TabItem x:Name="ChatInstructionsTabItem" x:FieldModifier="public">
@@ -263,7 +264,7 @@
 										Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}" />
 								</TabItem>
 								<!--  Message  -->
-								<TabItem x:Name="ChatMessageTabItem" x:FieldModifier="public">
+								<TabItem x:Name="ChatMessageTabItem" x:FieldModifier="public" IsSelected="True">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE8BD;" />
@@ -280,54 +281,54 @@
 										TextChanged="DataTextBox_TextChanged" />
 								</TabItem>
 								<!--  Role (R) Tab  -->
-								<TabItem x:Name="RoleTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem x:Name="RisenRoleTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE77B;" />
 											<Label Content="{StaticResource main_Role}" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="RoleTextBox" PlaceholderText="{StaticResource main_RISEN_Role_Help}" ToolTip="{StaticResource main_RISEN_Role_Example}" />
+									<JcControls:PlaceholderTextBox x:Name="RisenRoleTextBox" PlaceholderText="{StaticResource main_RISEN_Role_Help}" ToolTip="{StaticResource main_RISEN_Role_Example}" />
 								</TabItem>
 								<!--  Instructions (I) Tab  -->
-								<TabItem x:Name="InstructionsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem x:Name="RisenInstructionsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE70F;" />
 											<Label Content="{StaticResource main_Instructions}" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="InstructionsTextBox" PlaceholderText="{StaticResource main_RISEN_Instructions_Help}" ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
+									<JcControls:PlaceholderTextBox x:Name="RisenInstructionsTextBox" PlaceholderText="{StaticResource main_RISEN_Instructions_Help}" ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
 								</TabItem>
 								<!--  Steps (S) Tab  -->
-								<TabItem x:Name="StepsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem x:Name="RisenStepsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE14C;" />
 											<Label Content="{StaticResource main_Steps}" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="StepsTextBox" PlaceholderText="{StaticResource main_RISEN_Steps_Help}" ToolTip="{StaticResource main_RISEN_Steps_Example}" />
+									<JcControls:PlaceholderTextBox x:Name="RisenStepsTextBox" PlaceholderText="{StaticResource main_RISEN_Steps_Help}" ToolTip="{StaticResource main_RISEN_Steps_Example}" />
 								</TabItem>
 								<!--  End Goal (E) Tab  -->
-								<TabItem x:Name="EndGoalTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem x:Name="RisenEndGoalTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE908;" />
 											<Label Content="{StaticResource main_EndGoal}" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="EndGoalTextBox" PlaceholderText="{StaticResource main_RISEN_EndGoal_Help}" ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
+									<JcControls:PlaceholderTextBox x:Name="RisenEndGoalTextBox" PlaceholderText="{StaticResource main_RISEN_EndGoal_Help}" ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
 								</TabItem>
 								<!--  Narrowing (N) Tab  -->
-								<TabItem x:Name="NarrowingTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem x:Name="RisenNarrowingTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE71C;" />
 											<Label Content="{StaticResource main_Narrowing}" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="NarrowingTextBox" PlaceholderText="{StaticResource main_RISEN_Narrowing_Help}" ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />
+									<JcControls:PlaceholderTextBox x:Name="RisenNarrowingTextBox" PlaceholderText="{StaticResource main_RISEN_Narrowing_Help}" ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />
 								</TabItem>
 							</TabControl>
 						</StackPanel>

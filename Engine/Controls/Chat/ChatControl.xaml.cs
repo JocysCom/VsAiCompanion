@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 {
@@ -21,9 +23,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return;
 			UpdateControlButtons();
 			UpdateMessageEdit();
+			InitRisen();
 			AppControlsHelper.AllowDrop(DataTextBox.PART_ContentTextBox, true);
 			AppControlsHelper.AllowDrop(DataInstructionsTextBox.PART_ContentTextBox, true);
 		}
+
 		public void FocusDataTextBox()
 		{
 			ControlsHelper.AppBeginInvoke(() =>
@@ -60,7 +64,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true,
-					new[] { RoleTextBox, InstructionsTextBox, StepsTextBox, EndGoalTextBox, NarrowingTextBox });
+					new FrameworkElement[] {
+						RisenRoleTextBox, RisenInstructionsTextBox, RisenStepsTextBox, RisenEndGoalTextBox, RisenNarrowingTextBox,
+						RisenRoleTabItem, RisenInstructionsTabItem, RisenStepsTabItem, RisenEndGoalTabItem, RisenNarrowingTabItem,
+					});
 			}
 		}
 
@@ -222,13 +229,49 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
+		private void AttachmentsButton_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		#region RISEN Framework
+
+		void InitRisen()
+		{
+			var boxes = new[]{
+				RisenRoleTextBox.PART_ContentTextBox,
+				RisenInstructionsTextBox.PART_ContentTextBox,
+				RisenStepsTextBox.PART_ContentTextBox,
+				RisenEndGoalTextBox.PART_ContentTextBox,
+				RisenNarrowingTextBox.PART_ContentTextBox,
+			};
+			foreach (var box in boxes)
+				box.TextChanged += RisenBox_TextChanged;
+
+		}
+
+		private async void RisenBox_TextChanged(object sender, TextChangedEventArgs e)
+				=> await Helper.Delay(UpdateMessageFromRisen);
+
+		void UpdateMessageFromRisen()
+		{
+
+			var item = DataContext as TemplateItem;
+			if (item is null)
+				return;
+			if (!item.ShowRisen)
+				return;
+			var text = ConstructPrompt();
+			ControlsHelper.SetText(DataTextBox.PART_ContentTextBox, text);
+		}
+
 		private string ConstructPrompt()
 		{
-			var role = RoleTextBox.Text.Trim();
-			var instructions = InstructionsTextBox.Text.Trim();
-			var steps = StepsTextBox.Text.Trim();
-			var endGoal = EndGoalTextBox.Text.Trim();
-			var narrowing = NarrowingTextBox.Text.Trim();
+			var role = RisenRoleTextBox.Text.Trim();
+			var instructions = RisenInstructionsTextBox.Text.Trim();
+			var steps = RisenStepsTextBox.Text.Trim();
+			var endGoal = RisenEndGoalTextBox.Text.Trim();
+			var narrowing = RisenNarrowingTextBox.Text.Trim();
 			var promptTemplate = (string)FindResource("prompt_Template");
 			// Create a dictionary for placeholders and values
 			var placeholders = new Dictionary<string, string>
@@ -247,6 +290,124 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			return prompt;
 		}
 
+		#endregion
+
+		#region Load and Save Selections
+
+		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var tab = MainTabControl.SelectedItem as TabItem;
+			if (tab == null)
+				return;
+			var ptb = (PlaceholderTextBox)ControlsHelper.GetAll(tab, typeof(PlaceholderTextBox)).FirstOrDefault();
+			Dispatcher.BeginInvoke(new Action(() =>
+			{
+				LoadSelection(ptb.PART_ContentTextBox);
+			}), DispatcherPriority.Render);
+		}
+
+		public void MonitorTextBoxSelections(bool enable)
+		{
+			if (SelectionControls is null)
+				InitControlsAllowedToRememer();
+			foreach (var item in SelectionControls)
+			{
+				if (enable)
+				{
+					item.Box.AddHandler(TextBox.SelectionChangedEvent, new RoutedEventHandler(Box_SelectionChanged), handledEventsToo: true);
+				}
+				else
+				{
+					item.Box.RemoveHandler(TextBox.SelectionChangedEvent, new RoutedEventHandler(Box_SelectionChanged));
+				}
+			}
+		}
+
+		private void Box_SelectionChanged(object sender, RoutedEventArgs e)
+		{
+			var box = (TextBox)sender;
+			if (!box.IsFocused)
+				return;
+			var group = SelectionControls.FirstOrDefault(x => x.Box == box);
+			// Save selection only if tab is visible.
+			if (((TabControl)group.Tab.Parent).SelectedItem == group.Tab)
+				SaveSelection(box);
+		}
+
+		/// <summary>
+		/// Get textboxes which can store selection data.
+		/// Other data must be removed.
+		/// </summary>
+		void InitControlsAllowedToRememer()
+		{
+			SelectionControls = new (TabItem, PlaceholderTextBox, TextBox)[] {
+				(ChatInstructionsTabItem, DataInstructionsTextBox, DataInstructionsTextBox.PART_ContentTextBox),
+				(ChatMessageTabItem, DataTextBox, DataTextBox.PART_ContentTextBox),
+				(RisenRoleTabItem, RisenRoleTextBox, RisenRoleTextBox.PART_ContentTextBox),
+				(RisenInstructionsTabItem, RisenInstructionsTextBox, RisenInstructionsTextBox.PART_ContentTextBox),
+				(RisenStepsTabItem, RisenStepsTextBox, RisenStepsTextBox.PART_ContentTextBox),
+				(RisenEndGoalTabItem, RisenEndGoalTextBox, RisenEndGoalTextBox.PART_ContentTextBox),
+				(RisenNarrowingTabItem,  RisenNarrowingTextBox, RisenNarrowingTextBox.PART_ContentTextBox),
+			};
+		}
+
+		(TabItem Tab, PlaceholderTextBox Holder, TextBox Box)[] SelectionControls;
+
+		TextBoxData GetSelectionByBox(TextBox box)
+		{
+			var group = SelectionControls.FirstOrDefault(x => x.Box == box);
+			if (group.Holder is null)
+				return null;
+			var item = DataContext as TemplateItem;
+			if (item is null)
+				return null;
+			if (item.UiSelections is null)
+				item.UiSelections = new List<TextBoxData>();
+			var name = group.Holder.Name;
+			var selection = item.UiSelections?.FirstOrDefault(x => x.Name == name);
+			if (selection == null)
+			{
+				selection = new TextBoxData();
+				selection.Name = name;
+				item.UiSelections.Add(selection);
+			}
+			return selection;
+		}
+
+		public void LoadSelection(TextBox box)
+		{
+			var selection = GetSelectionByBox(box);
+			// Set logical focus
+			box.Focus();
+			// Set keyboard focus
+			Keyboard.Focus(box);
+			if (selection is null || selection.TextLength != (box.Text?.Length ?? 0))
+			{
+				box.SelectionStart = box.Text?.Length ?? 0;
+				return;
+			}
+			//box.CaretIndex = box.SelectionStart + selection.SelectionLength;
+			box.SelectionStart = selection.SelectionStart;
+			box.SelectionLength = selection.SelectionLength;
+		}
+
+		public void SaveSelection(TextBox box)
+		{
+			var selection = GetSelectionByBox(box);
+			if (selection is null)
+				return;
+			// Cleanup selections.
+			if (string.IsNullOrEmpty(box.Text))
+			{
+				var item = DataContext as TemplateItem;
+				item.UiSelections.Remove(selection);
+			}
+			selection.SelectionStart = box.SelectionStart;
+			selection.SelectionLength = box.SelectionLength;
+			selection.TextLength = box.Text?.Length ?? 0;
+		}
+
+		#endregion
 
 		#region Maximize/Restore TextBox
 
@@ -331,10 +492,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#endregion
 
-		private void AttachmentsButton_Click(object sender, RoutedEventArgs e)
-		{
-
-		}
 	}
 
 }
