@@ -239,7 +239,7 @@
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
 						<!--  Send Message  -->
-						<StackPanel Grid.Row="1" Margin="10">
+						<StackPanel Grid.Row="1">
 							<TabControl
 								x:Name="MainTabControl"
 								Margin="3"
@@ -247,6 +247,7 @@
 								HorizontalContentAlignment="Stretch"
 								x:FieldModifier="public"
 								TabStripPlacement="Bottom">
+								<!--  Instructions  -->
 								<TabItem x:Name="ChatInstructionsTabItem" x:FieldModifier="public">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
@@ -255,18 +256,19 @@
 											<Label x:Name="InstructionsExtLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>
-									<!--  Instructions  -->
 									<JcControls:PlaceholderTextBox
 										x:Name="DataInstructionsTextBox"
 										PlaceholderText="Type instructions"
 										PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
 										Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}" />
 								</TabItem>
+								<!--  Message  -->
 								<TabItem x:Name="ChatMessageTabItem" x:FieldModifier="public">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE8BD;" />
 											<Label Content="{StaticResource main_Message}" />
+											<Label x:Name="MessageExtLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox

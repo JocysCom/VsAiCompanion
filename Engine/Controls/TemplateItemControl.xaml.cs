@@ -42,7 +42,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += MessagesPanel_ScriptingHandler_OnMessageAction;
 			ChatPanel.DataTextBox.PART_ContentTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
 			ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
-			ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.TextChanged += ChatPanel_DataInstructionsTextBox_TextChanged;
+			InitTokenCounters();
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -80,18 +80,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
 		}
 
-		private void ChatPanel_DataInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		#region Update Token Count / Usage
+
+		void InitTokenCounters()
 		{
-			_ = Helper.Delay(UpdateShowInstructionsCheckBox);
+			ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.TextChanged += ChatPanel_DataInstructionsTextBox_TextChanged;
+			ChatPanel.DataTextBox.PART_ContentTextBox.TextChanged += ChatPanel_DataTextBox_TextChanged;
 		}
 
-		void UpdateShowInstructionsCheckBox()
+		void UpdateTokenCount(TextBox textBox, Label label)
 		{
-			var text = ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.Text;
-			var tokens = ClientHelper.CountTokens(Item.TextInstructions, null);
+			var text = textBox.Text;
+			var tokens = ClientHelper.CountTokens(text, null);
 			var s = tokens == 0 ? "" : $"({tokens})";
-			ControlsHelper.SetText(ChatPanel.InstructionsExtLabel, s);
+			ControlsHelper.SetText(label, s);
 		}
+
+		private async void ChatPanel_DataInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Delay(UpdateInstructionsTokenCount);
+		private async void ChatPanel_DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Delay(UpdateMessageTokenCount);
+
+		void UpdateInstructionsTokenCount()
+			=> UpdateTokenCount(ChatPanel.DataInstructionsTextBox.PART_ContentTextBox, ChatPanel.InstructionsExtLabel);
+
+		void UpdateMessageTokenCount()
+		=> UpdateTokenCount(ChatPanel.DataTextBox.PART_ContentTextBox, ChatPanel.MessageExtLabel);
+
+		#endregion
 
 		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -401,7 +417,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
 				if (PanelSettings.Focus)
 					RestoreFocus();
-				_ = Helper.Delay(UpdateShowInstructionsCheckBox);
 				UpdateAvatarControl();
 				UpdateListEditButtons();
 			}
