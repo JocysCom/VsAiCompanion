@@ -25,11 +25,12 @@
 			AcceptsReturn="True"
 			Background="White"
 			BorderThickness="0"
-			FocusVisualStyle="{x:Null}"
+			FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
 			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SpellCheck.IsEnabled="True"
-			Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+			Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			TextWrapping="Wrap">
 			<!--  Rounded corners for the TextBox  -->
 			<TextBox.Resources>
 				<Style TargetType="Border">

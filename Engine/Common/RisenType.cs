@@ -6,6 +6,7 @@
 	/// </summary>
 	public enum RisenType
 	{
+		None = 0,
 		/// <summary>
 		/// Defines the role or persona the AI should adopt, setting the context for interaction.
 		/// </summary>

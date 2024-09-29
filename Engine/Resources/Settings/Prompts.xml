@@ -28,6 +28,7 @@
         <Option>respectful</Option>
         <Option>insulting</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Format</Name>
@@ -65,6 +66,7 @@
         <Option>interview</Option>
         <Option>headline</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Context</Name>
@@ -90,6 +92,7 @@
         <Option>legal case</Option>
         <Option>film synopsis</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Role</Name>
@@ -114,6 +117,7 @@
         <Option>smart home assistant</Option>
         <Option>professional chef</Option>
       </Options>
+      <RisenType>Role</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Instruction</Name>
@@ -137,6 +141,7 @@
         <Option>reveal</Option>
         <Option>outline</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Temperature</Name>
@@ -148,6 +153,7 @@
         <Option>very high</Option>
         <Option>extremely high</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Length</Name>
@@ -162,6 +168,7 @@
         <Option>minimum</Option>
         <Option>maximum</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Experiment</Name>
@@ -186,6 +193,7 @@
         <Option>sarcastic</Option>
         <Option>humorous</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Protagonist</Name>
@@ -207,6 +215,7 @@
         <Option>dynamic character</Option>
         <Option>static character</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Scenario</Name>
@@ -225,6 +234,7 @@
         <Option>human civilization on Mars</Option>
         <Option>time travel to the renaissance period</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Nature</Name>
@@ -257,6 +267,7 @@
         <Option>calculative</Option>
         <Option>theoretical</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Perspective</Name>
@@ -278,6 +289,7 @@
         <Option>possessive second person</Option>
         <Option>possessive third person</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Timeframe</Name>
@@ -300,6 +312,7 @@
         <Option>postmodern era</Option>
         <Option>digital age</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Style</Name>
@@ -326,6 +339,7 @@
         <Option>academic language</Option>
         <Option>conversational style</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Emotion</Name>
@@ -363,6 +377,7 @@
         <Option>compassionate</Option>
         <Option>romantic</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>References</Name>
@@ -377,6 +392,7 @@
         <Option>clarify</Option>
         <Option>analyze</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Audience</Name>
@@ -407,6 +423,7 @@
         <Option>veterans</Option>
         <Option>job seekers</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Quotes</Name>
@@ -422,6 +439,7 @@
         <Option>annotate</Option>
         <Option>summarize</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Statement</Name>
@@ -443,6 +461,7 @@
         <Option>fact</Option>
         <Option>description</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Detail</Name>
@@ -466,6 +485,7 @@
         <Option>user testimonials</Option>
         <Option>simple analogies</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Problem</Name>
@@ -483,6 +503,7 @@
         <Option>simulate a process</Option>
         <Option>identify patterns</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Creativity</Name>
@@ -513,6 +534,7 @@
         <Option>presentation</Option>
         <Option>infographic</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Simplicity</Name>
@@ -531,6 +553,7 @@
         <Option>provide plain language explanations</Option>
         <Option>offer step-by-step guidance</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Logic</Name>
@@ -547,6 +570,7 @@
         <Option>comprehensive critique</Option>
         <Option>schematic representation</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Imagery</Name>
@@ -565,6 +589,7 @@
         <Option>objective and unbiased</Option>
         <Option>persuasive and compelling</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Terminology</Name>
@@ -586,6 +611,7 @@
         <Option>everyday language</Option>
         <Option>colloquial</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Counterarguments</Name>
@@ -602,6 +628,7 @@
         <Option>disputes</Option>
         <Option>denials</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Hypotheses</Name>
@@ -621,6 +648,7 @@
         <Option>defend</Option>
         <Option>explore</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Predictions</Name>
@@ -645,6 +673,7 @@
         <Option>qualitative</Option>
         <Option>seasonality-adjusted</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Recommendations</Name>
@@ -662,6 +691,7 @@
         <Option>deliver tips about</Option>
         <Option>formulate strategies around</Option>
       </Options>
+      <RisenType>Instructions</RisenType>
     </PromptItem>
     <PromptItem>
       <Name>Language</Name>
@@ -736,6 +766,7 @@
         <Option>Yiddish</Option>
         <Option>Zulu</Option>
       </Options>
+      <RisenType>Narrowing</RisenType>
     </PromptItem>
   </Items>
 </Data>

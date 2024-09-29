@@ -280,7 +280,6 @@
 		<EmbeddedResource Include="..\LICENSE" Link="LICENSE" />
 		<EmbeddedResource Include="Resources\Icons\Icons_Default\user_comment.svg" />
 		<EmbeddedResource Include="Resources\Icons\Templates\control_panel.svg" />
-		<EmbeddedResource Include="Resources\PromptItems.xml" />
 	</ItemGroup>
 
 	<ItemGroup>

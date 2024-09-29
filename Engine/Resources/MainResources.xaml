@@ -95,18 +95,23 @@
 	<sys:String x:Key="main_RISEN_Narrowing_Help">Narrowing (N): Specify any constraints or limits to focus the AI's response on your specific needs.</sys:String>
 	<sys:String x:Key="main_RISEN_Narrowing_Example">E.g., "Limit the content to 600 words" or "Use a friendly and conversational tone."</sys:String>
 	<!--  Custom Prompt Template  -->
-	<sys:String x:Key="main_RISEN_Prompt_Template">
-		### Assume the role of:
-		{0}
-		### Your task is:
-		{1}
-		### Please follow these steps:
-		{2}
-		### Our goal is:
-		{3}
-		### Please consider these constraints:
-		{4}
-	</sys:String>
+	<sys:String x:Key="main_RISEN_Prompt_Template" xml:space="preserve"><![CDATA[
+### Assume the role of:
+{Role}
+		
+### Your task is:
+{Instructions}
+		
+### Please follow these steps:
+{Steps}
+		
+### Our goal is:
+{EndGoal}
+		
+### Please consider these constraints:
+{Narrowing}
+		
+]]></sys:String>
 
 	<!--  Fine-Tuning  -->
 	<sys:String x:Key="main__1_Assistants">1. Assistants</sys:String>

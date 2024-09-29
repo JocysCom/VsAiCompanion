@@ -12,6 +12,7 @@
 	x:Name="This"
 	Loaded="This_Loaded"
 	SizeChanged="This_SizeChanged"
+	DataContextChanged="This_DataContextChanged"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -268,7 +269,7 @@
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE8BD;" />
-											<Label Content="{StaticResource main_Message}" />
+											<Label Content="{StaticResource main_Message}" FontWeight="Bold" />
 											<Label x:Name="MessageExtLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>

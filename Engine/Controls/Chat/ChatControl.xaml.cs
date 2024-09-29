@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return;
 			UpdateControlButtons();
 			UpdateMessageEdit();
-			InitRisen();
 			AppControlsHelper.AllowDrop(DataTextBox.PART_ContentTextBox, true);
 			AppControlsHelper.AllowDrop(DataInstructionsTextBox.PART_ContentTextBox, true);
 		}
@@ -36,8 +36,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				DataTextBox.PART_ContentTextBox.SelectionStart = DataTextBox.PART_ContentTextBox.Text?.Length ?? 0;
 			});
 		}
-
-
 
 		public string EditMessageId
 		{
@@ -236,7 +234,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#region RISEN Framework
 
-		void InitRisen()
+		void EnableRisen(bool enable)
 		{
 			var boxes = new[]{
 				RisenRoleTextBox.PART_ContentTextBox,
@@ -245,9 +243,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				RisenEndGoalTextBox.PART_ContentTextBox,
 				RisenNarrowingTextBox.PART_ContentTextBox,
 			};
+			if (enable)
+				UpdateRisenFromMessage();
 			foreach (var box in boxes)
-				box.TextChanged += RisenBox_TextChanged;
-
+			{
+				if (enable)
+					box.AddHandler(TextBox.TextChangedEvent, new TextChangedEventHandler(RisenBox_TextChanged), handledEventsToo: true);
+				else
+					box.RemoveHandler(TextBox.TextChangedEvent, new TextChangedEventHandler(RisenBox_TextChanged));
+			}
 		}
 
 		private async void RisenBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -255,39 +259,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		void UpdateMessageFromRisen()
 		{
-
-			var item = DataContext as TemplateItem;
+			var item = Item;
 			if (item is null)
 				return;
 			if (!item.ShowRisen)
 				return;
-			var text = ConstructPrompt();
+			var text = RisenHelper.ConstructPrompt(
+				RisenRoleTextBox.Text,
+				RisenInstructionsTextBox.Text,
+				RisenStepsTextBox.Text,
+				RisenEndGoalTextBox.Text,
+				RisenNarrowingTextBox.Text);
 			ControlsHelper.SetText(DataTextBox.PART_ContentTextBox, text);
 		}
 
-		private string ConstructPrompt()
+		void UpdateRisenFromMessage()
 		{
-			var role = RisenRoleTextBox.Text.Trim();
-			var instructions = RisenInstructionsTextBox.Text.Trim();
-			var steps = RisenStepsTextBox.Text.Trim();
-			var endGoal = RisenEndGoalTextBox.Text.Trim();
-			var narrowing = RisenNarrowingTextBox.Text.Trim();
-			var promptTemplate = (string)FindResource("prompt_Template");
-			// Create a dictionary for placeholders and values
-			var placeholders = new Dictionary<string, string>
-			{
-				{ "{Role}", !string.IsNullOrWhiteSpace(role) ? role : "Assistant" },
-				{ "{Instructions}", instructions },
-				{ "{Steps}", steps },
-				{ "{EndGoal}", endGoal },
-				{ "{Narrowing}", narrowing }
-			};
-			var prompt = promptTemplate;
-			foreach (var placeholder in placeholders)
-			{
-				prompt = prompt.Replace(placeholder.Key, placeholder.Value);
-			}
-			return prompt;
+			var item = Item;
+			if (item is null)
+				return;
+			var result = RisenHelper.ExtractProperties(item.Text);
+			if (result == null)
+				return;
+			RisenRoleTextBox.Text = result.Value.Role;
+			RisenInstructionsTextBox.Text = result.Value.Instructions;
+			RisenStepsTextBox.Text = result.Value.Steps;
+			RisenEndGoalTextBox.Text = result.Value.EndGoal;
+			RisenNarrowingTextBox.Text = result.Value.Narrowing;
 		}
 
 		#endregion
@@ -300,6 +298,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (tab == null)
 				return;
 			var ptb = (PlaceholderTextBox)ControlsHelper.GetAll(tab, typeof(PlaceholderTextBox)).FirstOrDefault();
+			if (ptb == null)
+				return;
 			Dispatcher.BeginInvoke(new Action(() =>
 			{
 				LoadSelection(ptb.PART_ContentTextBox);
@@ -313,13 +313,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			foreach (var item in SelectionControls)
 			{
 				if (enable)
-				{
 					item.Box.AddHandler(TextBox.SelectionChangedEvent, new RoutedEventHandler(Box_SelectionChanged), handledEventsToo: true);
-				}
 				else
-				{
 					item.Box.RemoveHandler(TextBox.SelectionChangedEvent, new RoutedEventHandler(Box_SelectionChanged));
-				}
 			}
 		}
 
@@ -492,6 +488,46 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#endregion
 
+		TemplateItem _Item;
+		public TemplateItem Item
+		{
+			get => _Item;
+			set
+			{
+				if (Equals(value, _Item))
+					return;
+				// Update from previous settings.
+				if (_Item != null)
+				{
+					_Item.PropertyChanged -= _item_PropertyChanged;
+					EnableRisen(false);
+				}
+				_Item = value;
+				if (_Item != null)
+				{
+					EnableRisen(_Item.ShowRisen);
+					_Item.PropertyChanged += _item_PropertyChanged;
+				}
+			}
+		}
+
+		private void _item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(TemplateItem.ShowRisen):
+					EnableRisen(_Item.ShowRisen);
+					break;
+				default:
+					break;
+			}
+		}
+
+
+		private void This_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			Item = DataContext as TemplateItem;
+		}
 	}
 
 }
