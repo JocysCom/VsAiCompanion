@@ -107,11 +107,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 			// Load all EXE servers in the Plugins directory
 			var assemblies = new List<Assembly>();
-			foreach (var pluginDir in Directory.GetDirectories(pluginsDirectory))
+			var di = new DirectoryInfo(pluginsDirectory);
+			if (!di.Exists)
+				return;
+			foreach (var pluginDi in di.GetDirectories())
 			{
-				var pluginDi = new DirectoryInfo(pluginDir);
 				// Check for "ai-plugin.json" file.
-				var aiPluginPath = Path.Combine(pluginDir, ".well-known", "ai-plugin.json");
+				var aiPluginPath = Path.Combine(pluginDi.FullName, ".well-known", "ai-plugin.json");
 				if (!File.Exists(aiPluginPath))
 					continue;
 				// Read "ai-plugin.json" file.

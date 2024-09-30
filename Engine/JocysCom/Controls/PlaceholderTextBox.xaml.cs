@@ -53,7 +53,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region PlaceholderText DependencyProperty
+		#region DependencyProperty: PlaceholderText
 
 		public static readonly DependencyProperty PlaceholderTextProperty =
 			DependencyProperty.Register(
@@ -66,6 +66,23 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			get => (string)GetValue(PlaceholderTextProperty);
 			set => SetValue(PlaceholderTextProperty, value);
+		}
+
+		#endregion
+
+		#region DependencyProperty: ShowPlaceholderOnFocusProperty
+
+		public static readonly DependencyProperty ShowPlaceholderOnFocusProperty =
+			DependencyProperty.Register(
+				nameof(ShowPlaceholderOnFocus),
+				typeof(bool),
+				typeof(PlaceholderTextBox),
+				new PropertyMetadata(true));
+
+		public bool ShowPlaceholderOnFocus
+		{
+			get => (bool)GetValue(ShowPlaceholderOnFocusProperty);
+			set => SetValue(ShowPlaceholderOnFocusProperty, value);
 		}
 
 		#endregion

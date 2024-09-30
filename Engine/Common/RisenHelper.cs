@@ -14,6 +14,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 			steps = (steps ?? "").Trim();
 			endGoal = (endGoal ?? "").Trim();
 			narrowing = (narrowing ?? "").Trim();
+			// If all empty then return empty.
+			var values = new string[] { role, instructions, steps, endGoal, narrowing };
+			if (values.All(x => string.IsNullOrWhiteSpace(x)))
+				return "";
 			var promptTemplate = Resources.MainResources.main_RISEN_Prompt_Template;
 			// Create a dictionary for placeholders and values
 			var placeholders = new Dictionary<string, string>

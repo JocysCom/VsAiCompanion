@@ -119,6 +119,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Use_Maximum_Context_Name => FindResource(nameof(main_Use_Maximum_Context_Name));
         public static string main_Use_System_Message_Help => FindResource(nameof(main_Use_System_Message_Help));
         public static string main_Use_System_Message_Name => FindResource(nameof(main_Use_System_Message_Name));
+        public static string main_Text_Placeholder => FindResource(nameof(main_Text_Placeholder));
+        public static string main_Placeholder => FindResource(nameof(main_Placeholder));
         public static string main_Personalize_the_chat => FindResource(nameof(main_Personalize_the_chat));
         public static string main_RISEN => FindResource(nameof(main_RISEN));
         public static string main_RISEN_Help => FindResource(nameof(main_RISEN_Help));

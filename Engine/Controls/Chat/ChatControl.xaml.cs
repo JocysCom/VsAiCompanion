@@ -207,9 +207,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			if (SuspendUpdateMaxSize)
 				return;
-			var maxHeight = ActualHeight;
-			DataInstructionsTextBox.PART_ContentTextBox.MaxHeight = Math.Round(maxHeight * 0.3);
-			DataTextBox.PART_ContentTextBox.MaxHeight = Math.Round(maxHeight * 0.4);
+			var maxHeight = Math.Round(ActualHeight * 0.4);
+			foreach (var item in SelectionControls)
+				item.Box.MaxHeight = maxHeight;
 		}
 
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -339,6 +339,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			SelectionControls = new (TabItem, PlaceholderTextBox, TextBox)[] {
 				(ChatInstructionsTabItem, DataInstructionsTextBox, DataInstructionsTextBox.PART_ContentTextBox),
 				(ChatMessageTabItem, DataTextBox, DataTextBox.PART_ContentTextBox),
+				(MessagePlaceholderTabItem, MessagePlaceholderTextBox, MessagePlaceholderTextBox.PART_ContentTextBox),
 				(RisenRoleTabItem, RisenRoleTextBox, RisenRoleTextBox.PART_ContentTextBox),
 				(RisenInstructionsTabItem, RisenInstructionsTextBox, RisenInstructionsTextBox.PART_ContentTextBox),
 				(RisenStepsTabItem, RisenStepsTextBox, RisenStepsTextBox.PART_ContentTextBox),

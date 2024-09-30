@@ -750,7 +750,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
 				JsonElement jsonElement;
 				// Extract parameters as a dictionary.
-				var parameters = function.parameters.additional_properties;
+				var parameters = function.parameters?.additional_properties;
 				if (parameters == null)
 					parameters = new Dictionary<string, JsonElement>();
 				if (parameters.TryGetValue(param.Name, out jsonElement))

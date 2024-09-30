@@ -10,9 +10,9 @@
 	xmlns:locales="clr-namespace:JocysCom.VS.AiCompanion.Engine.Resources"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
+	DataContextChanged="This_DataContextChanged"
 	Loaded="This_Loaded"
 	SizeChanged="This_SizeChanged"
-	DataContextChanged="This_DataContextChanged"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -275,12 +275,30 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="DataTextBox"
-										PlaceholderText="Type a message"
+										PlaceholderText="{Binding TextPlaceholder, UpdateSourceTrigger=PropertyChanged}"
 										PreviewKeyDown="DataTextBox_PreviewKeyDown"
 										PreviewKeyUp="DataTextBox_PreviewKeyUp"
 										Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
 										TextChanged="DataTextBox_TextChanged" />
 								</TabItem>
+								<!--  Message  -->
+								<TabItem x:Name="MessagePlaceholderTabItem" x:FieldModifier="public" IsSelected="True">
+									<TabItem.Header>
+										<StackPanel Opacity="0.5" Orientation="Horizontal">
+											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE70B;" />
+											<Label Content="{StaticResource main_Placeholder}" />
+											<Label x:Name="MessagePlaceholderExtLabel" x:FieldModifier="public" />
+										</StackPanel>
+									</TabItem.Header>
+									<JcControls:PlaceholderTextBox
+										x:Name="MessagePlaceholderTextBox"
+										PlaceholderText="{StaticResource main_Text_Placeholder}"
+										PreviewKeyDown="DataTextBox_PreviewKeyDown"
+										PreviewKeyUp="DataTextBox_PreviewKeyUp"
+										Text="{Binding TextPlaceholder, UpdateSourceTrigger=PropertyChanged}"
+										TextChanged="DataTextBox_TextChanged" />
+								</TabItem>
+
 								<!--  Role (R) Tab  -->
 								<TabItem x:Name="RisenRoleTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>

@@ -490,6 +490,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				PanelSettings = Global.AppSettings.GetTaskSettings(value);
 				ZoomSlider.Value = PanelSettings.ChatPanelZoom;
 				PanelSettings.PropertyChanged += PanelSettings_PropertyChanged;
+
+				var binding = new System.Windows.Data.Binding();
+				binding.Path = new PropertyPath(nameof(TemplateItemVisibility));
+				binding.Source = this;
+				ChatPanel.MessagePlaceholderTabItem.SetBinding(UIElement.VisibilityProperty, binding);
+
+
 				// Update the rest.
 				PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton);
 				PanelSettings.UpdateListToggleButtonIcon(ListToggleButton);

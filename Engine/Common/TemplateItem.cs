@@ -66,6 +66,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		string _Text;
 
+		[DefaultValue(null)]
+		public string TextPlaceholder
+		{
+			get => _TextPlaceholder ?? Engine.Resources.MainResources.main_Text_Placeholder;
+			set => SetProperty(ref _TextPlaceholder, AppHelper.ReplaceInvalidXmlChars(value));
+		}
+		string _TextPlaceholder;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeTextPlaceholder() => string.IsNullOrEmpty(TextPlaceholder) || TextPlaceholder == Engine.Resources.MainResources.main_Text_Placeholder;
 
 		/// <summary>Attachments to send.</summary>
 		[DefaultValue(null)]

@@ -77,6 +77,8 @@
 	<sys:String x:Key="main_Use_Maximum_Context_Name">Use Maximum Context</sys:String>
 	<sys:String x:Key="main_Use_System_Message_Help">If checked, instructions will be sent as a system message. Otherwise, they will be added to the user's message. This feature is supported by OpenAI GPT models. System messages have priority over user messages.</sys:String>
 	<sys:String x:Key="main_Use_System_Message_Name">Use System Messages</sys:String>
+	<sys:String x:Key="main_Text_Placeholder">Type a message</sys:String>
+	<sys:String x:Key="main_Placeholder">Placeholder</sys:String>
 
 	<!--  Tasks / Templates → Personalized Context  -->
 	<sys:String x:Key="main_Personalize_the_chat">Personalize the chat by providing personalized context. You can create and edit context lists on the [Lists] tab.</sys:String>
