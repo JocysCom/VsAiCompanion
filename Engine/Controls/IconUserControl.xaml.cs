@@ -40,18 +40,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public void Edit()
 		{
-			var dialog = _OpenFileDialog;
-			dialog.SupportMultiDottedExtensions = true;
-			JocysCom.ClassLibrary.Controls.DialogHelper.AddFilter(dialog, ".svg");
-			JocysCom.ClassLibrary.Controls.DialogHelper.AddFilter(dialog);
-			dialog.FilterIndex = 1;
-			dialog.RestoreDirectory = true;
-			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(".svg");
-			var result = dialog.ShowDialog();
-			if (result != System.Windows.Forms.DialogResult.OK)
-				return;
-			var contents = System.IO.File.ReadAllText(dialog.FileNames[0]);
-			_item?.SetIcon(contents);
+			string contents = null;
+			// Check if CTRL+C is pressed.
+			if (Keyboard.Modifiers != ModifierKeys.Control)
+			{
+				// Get SVG file content from clipboard.
+				contents = Clipboard.GetText();
+			}
+			else
+			{
+				var dialog = _OpenFileDialog;
+				dialog.SupportMultiDottedExtensions = true;
+				JocysCom.ClassLibrary.Controls.DialogHelper.AddFilter(dialog, ".svg");
+				JocysCom.ClassLibrary.Controls.DialogHelper.AddFilter(dialog);
+				dialog.FilterIndex = 1;
+				dialog.RestoreDirectory = true;
+				dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(".svg");
+				var result = dialog.ShowDialog();
+				if (result != System.Windows.Forms.DialogResult.OK)
+					return;
+				contents = System.IO.File.ReadAllText(dialog.FileNames[0]);
+			}
+			if (string.IsNullOrEmpty(contents))
+				_item?.SetIcon(contents);
 		}
 
 		private void UserControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)

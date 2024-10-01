@@ -540,7 +540,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var item = (PropertyItem)cb.SelectedItem;
 			cb.SelectedIndex = alwaysSelectedIndex;
-			AppHelper.InsertText(ChatPanel.DataTextBox.PART_ContentTextBox, "{" + item.Key + "}");
+			var box = GetFocused();
+			AppHelper.InsertText(box, "{" + item.Key + "}");
 			// Enable use of macros.
 			if (!_Item.UseMacros)
 				_Item.UseMacros = true;

@@ -28,15 +28,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			AppControlsHelper.AllowDrop(DataInstructionsTextBox.PART_ContentTextBox, true);
 		}
 
-		public void FocusDataTextBox()
-		{
-			ControlsHelper.AppBeginInvoke(() =>
-			{
-				DataTextBox.PART_ContentTextBox.Focus();
-				DataTextBox.PART_ContentTextBox.SelectionStart = DataTextBox.PART_ContentTextBox.Text?.Length ?? 0;
-			});
-		}
-
 		public string EditMessageId
 		{
 			get { return _EditMessageId; }
@@ -329,6 +320,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (((TabControl)group.Tab.Parent).SelectedItem == group.Tab)
 				SaveSelection(box);
 		}
+
+		public void FocusDataTextBox()
+		{
+			var item = SelectionControls.FirstOrDefault(x => x.Tab == MainTabControl.SelectedItem);
+			if (item.Box is null)
+				return;
+			LoadSelection(item.Box);
+		}
+
 
 		/// <summary>
 		/// Get textboxes which can store selection data.
