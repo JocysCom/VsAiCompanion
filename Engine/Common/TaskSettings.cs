@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine
@@ -64,11 +63,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string FocusedControl { get => _FocusedControl; set => SetProperty(ref _FocusedControl, value); }
 		private string _FocusedControl;
 
-		/// <summary>Focused carret index</summary>
-		[DefaultValue(0)]
-		public int FocusedCaretIndex { get => _FocusedCaretIndex; set => SetProperty(ref _FocusedCaretIndex, value); }
-		private int _FocusedCaretIndex;
-
 		/// <summary>Focus</summary>
 		[DefaultValue(false)]
 		public bool Focus { get => _Focus; set => SetProperty(ref _Focus, value); }
@@ -101,37 +95,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			rt.Angle = IsListPanelVisible ? 0 : 180;
 			button.RenderTransform = rt;
 			button.RenderTransformOrigin = new Point(0.5, 0.5);
-		}
-
-		/// <summary>
-		///  Save the currently focused control name and caret position
-		/// </summary>
-		public void SaveFocus()
-		{
-			if (Keyboard.FocusedElement is TextBox textBox)
-			{
-				FocusedControl = textBox.Name;
-				FocusedCaretIndex = textBox.CaretIndex;
-			}
-		}
-
-		/// <summary>
-		/// Restore the focus and caret position
-		/// </summary>
-		public void RestoreFocus(FrameworkElement parentElement)
-		{
-			if (parentElement is null)
-				return;
-			var fc = FocusedControl;
-			var index = FocusedCaretIndex;
-			if (string.IsNullOrEmpty(fc))
-				return;
-			var box = parentElement.FindName(fc) as TextBox;
-			if (box == null)
-				return;
-			box.Focus();
-			box.CaretIndex = index < box.Text.Length ? index : box.Text.Length;
-			Focus = false;
 		}
 
 		#endregion

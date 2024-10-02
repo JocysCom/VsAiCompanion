@@ -78,12 +78,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void RefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			_ = Helper.Delay(Refresh, AppHelper.NavigateDelayMs);
+			_ = Helper.Debounce(Refresh, AppHelper.NavigateDelayMs);
 		}
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
+			await Helper.Debounce(UpdateButtons, AppHelper.NavigateDelayMs);
 			SaveSelection();
 		}
 
@@ -105,7 +105,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			if (MustRefresh && IsVisible)
-				_ = Helper.Delay(Refresh, AppHelper.NavigateDelayMs);
+				_ = Helper.Debounce(Refresh, AppHelper.NavigateDelayMs);
 			if (ControlsHelper.AllowLoad(this))
 			{
 				AppHelper.InitHelp(this);
@@ -135,7 +135,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_Data = value;
 				MustRefresh = true;
 				if (IsVisible)
-					_ = Helper.Delay(Refresh, AppHelper.NavigateDelayMs);
+					_ = Helper.Debounce(Refresh, AppHelper.NavigateDelayMs);
 			}
 		}
 		public FineTuningItem _Data;
@@ -147,7 +147,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (e.PropertyName == nameof(_Data.AiService))
 			{
 				if (await Global.IsGoodSettings(_Data.AiService))
-					_ = Helper.Delay(Refresh, AppHelper.NavigateDelayMs);
+					_ = Helper.Debounce(Refresh, AppHelper.NavigateDelayMs);
 			}
 		}
 

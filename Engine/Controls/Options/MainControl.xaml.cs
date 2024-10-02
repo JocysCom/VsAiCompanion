@@ -45,7 +45,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 					break;
 				case nameof(AppData.OverrideInfoDefaultHead):
 				case nameof(AppData.OverrideInfoDefaultBody):
-					await Helper.Delay(Global.MainControl.UpdateInfoPanelDefaults);
+					await Helper.Debounce(Global.MainControl.UpdateInfoPanelDefaults);
 					break;
 				default:
 					break;

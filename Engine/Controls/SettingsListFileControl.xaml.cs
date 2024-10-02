@@ -82,7 +82,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					}
 					if (refreshGrid)
 					{
-						_ = Helper.Delay(RefreshDataGrid);
+						_ = Helper.Debounce(RefreshDataGrid);
 					}
 				}
 			});
@@ -248,7 +248,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
+			await Helper.Debounce(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
 		}
 
 		private void UpdateOnSelectionChanged()
@@ -617,7 +617,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//			e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace ||
 			//			e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move;
 			if (refreshGrid)
-				_ = Helper.Delay(RefreshDataGrid);
+				_ = Helper.Debounce(RefreshDataGrid);
 		}
 
 		public ObservableCollection<ISettingsListFileItem> FilteredList { get; set; }
@@ -653,18 +653,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_SearchHelper.Filter();
 		}
 
+		private void GenerateIconButton_Click(object sender, RoutedEventArgs e)
+		{
+			var items = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().ToArray();
+			foreach (var item in items)
+			{
+				// Item type specific code.
+				if (DataType == ItemType.Task || DataType == ItemType.Template)
+				{
+					var ti = (TemplateItem)item;
+					var task = ClientHelper.GenerateResult(ti, SettingsSourceManager.TemplateGenerateIconTaskName);
+					// Assign task to property to make sure it is not garbage collected.
+					ti.GenerateIconTask = task;
+				}
+			}
+		}
+
 		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
 		{
-			var item = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().FirstOrDefault();
-			if (item == null)
-				return;
-			// Item type specific code.
-			if (DataType == ItemType.Task || DataType == ItemType.Template)
+			var items = MainDataGrid.SelectedItems.Cast<ISettingsListFileItem>().ToArray();
+			foreach (var item in items)
 			{
-				var ti = (TemplateItem)item;
-				var task = ClientHelper.GenerateTitle(ti);
-				// Assign task to property to make sure it is not garbage collected.
-				ti.GenerateTitleTask = task;
+				// Item type specific code.
+				if (DataType == ItemType.Task || DataType == ItemType.Template)
+				{
+					var ti = (TemplateItem)item;
+					var task = ClientHelper.GenerateResult(ti, SettingsSourceManager.TemplateGenerateTitleTaskName);
+					// Assign task to property to make sure it is not garbage collected.
+					ti.GenerateTitleTask = task;
+				}
 			}
 		}
 
@@ -748,7 +765,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			view.SortDescriptions.Add(new SortDescription(nameof(SettingsListFileItem.Name), ListSortDirection.Ascending));
 			view.GroupDescriptions.Add(new PropertyGroupDescription(groupingProperty));
-			_ = Helper.Delay(RefreshDataGrid);
+			_ = Helper.Debounce(RefreshDataGrid);
 		}
 
 		private void ExpanderToggle_Click(object sender, RoutedEventArgs e)
@@ -793,10 +810,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		}
 
-		private void GenerateIconButton_Click(object sender, RoutedEventArgs e)
-		{
-
-		}
 	}
 
 }

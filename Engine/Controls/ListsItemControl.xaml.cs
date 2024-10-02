@@ -34,7 +34,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 			if (e.PropertyDescriptor?.Name == nameof(TemplateItem.Name))
 			{
-				_ = Helper.Delay(RefreshPaths);
+				_ = Helper.Debounce(RefreshPaths);
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateButtons, AppHelper.NavigateDelayMs);
+			await Helper.Debounce(UpdateButtons, AppHelper.NavigateDelayMs);
 		}
 
 		#endregion

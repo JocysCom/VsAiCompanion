@@ -26,7 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void Plugins_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateOnListChanged, AppHelper.NavigateDelayMs);
+			await Helper.Debounce(UpdateOnListChanged, AppHelper.NavigateDelayMs);
 		}
 
 		private void UpdateOnListChanged()

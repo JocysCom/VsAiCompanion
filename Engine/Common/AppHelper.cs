@@ -1052,7 +1052,10 @@ EndFragment:{3:00000000}";
 		{
 			// Check if we need to set the control active
 			if (activate)
+			{
 				box.Focus();
+				Keyboard.Focus(box);
+			}
 			// Save the current position of the cursor
 			var cursorPosition = box.CaretIndex;
 			// Check if there is a selected text to replace
@@ -1199,7 +1202,7 @@ EndFragment:{3:00000000}";
 				if (e.PropertyDescriptor?.Name == property)
 					changed = true;
 			if (changed)
-				_ = Helper.Delay(action);
+				_ = Helper.Debounce(action);
 			return changed;
 		}
 

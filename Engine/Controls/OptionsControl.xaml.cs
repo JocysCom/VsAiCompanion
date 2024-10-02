@@ -24,7 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(AppData.EnableMicrosoftAccount))
-				await Helper.Delay(UpdateMicrosoftControls);
+				await Helper.Debounce(UpdateMicrosoftControls);
 		}
 
 		void UpdateMicrosoftControls()

@@ -94,14 +94,14 @@ namespace JocysCom.VS.AiCompanion
 				(e.ListChangedType == System.ComponentModel.ListChangedType.ItemChanged &&
 				e.PropertyDescriptor?.Name == nameof(TemplateItem.Icon));
 			if (updateTrayMenu)
-				await Helper.Delay(UpdateTrayMenu);
+				await Helper.Debounce(UpdateTrayMenu);
 		}
 		private CancellationTokenSource cts = new CancellationTokenSource();
 
 		private async void Global_AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(AppData.MaxTaskItemsInTray))
-				await Helper.Delay(UpdateTrayMenu);
+				await Helper.Debounce(UpdateTrayMenu);
 		}
 
 		public async Task UpdateTrayMenu()

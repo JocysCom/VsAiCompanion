@@ -38,11 +38,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.PromptingUpdated += Global_PromptingUpdated;
 			ChatPanel.OnSend += ChatPanel_OnSend;
 			ChatPanel.OnStop += ChatPanel_OnStop;
-			ChatPanel.MessagesPanel.WebBrowserDataLoaded += MessagesPanel_WebBrowserDataLoaded;
-			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += MessagesPanel_ScriptingHandler_OnMessageAction;
-			ChatPanel.DataTextBox.PART_ContentTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
-			ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.GotFocus += ChatPanel_DataTextBox_GotFocus;
-			InitTokenCounters();
+			ChatPanel.MessagesPanel.WebBrowserDataLoaded += ChatPanel_MessagesPanel_WebBrowserDataLoaded;
+			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction;
+			ChatPanel.SelectionSaved += ChatPanel_SelectionSaved;
+			ChatPanel.InitTokenCounters();
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
 			//FileRadioButton.IsEnabled = Global.GetSelectedDocuments != null;
@@ -80,35 +79,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
 		}
 
-		#region Update Token Count / Usage
-
-		void InitTokenCounters()
-		{
-			ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.TextChanged += ChatPanel_DataInstructionsTextBox_TextChanged;
-			ChatPanel.DataTextBox.PART_ContentTextBox.TextChanged += ChatPanel_DataTextBox_TextChanged;
-		}
-
-		void UpdateTokenCount(TextBox textBox, Label label)
-		{
-			var text = textBox.Text;
-			var tokens = ClientHelper.CountTokens(text, null);
-			var s = tokens == 0 ? "" : $"({tokens})";
-			ControlsHelper.SetText(label, s);
-		}
-
-		private async void ChatPanel_DataInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
-			=> await Helper.Delay(UpdateInstructionsTokenCount);
-		private async void ChatPanel_DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
-			=> await Helper.Delay(UpdateMessageTokenCount);
-
-		void UpdateInstructionsTokenCount()
-			=> UpdateTokenCount(ChatPanel.DataInstructionsTextBox.PART_ContentTextBox, ChatPanel.InstructionsExtLabel);
-
-		void UpdateMessageTokenCount()
-		=> UpdateTokenCount(ChatPanel.DataTextBox.PART_ContentTextBox, ChatPanel.MessageExtLabel);
-
-		#endregion
-
 		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			UpdateAvatarControl();
@@ -131,8 +101,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (promptItem == null)
 				return;
 			var promptString = string.Format(promptItem.Pattern, _Item?.PromptOption);
-			var box = GetFocused();
-			AppHelper.InsertText(box, promptString, false, true);
+			var box = ChatPanel.GetFocusedTextBox();
+			AppHelper.InsertText(box, promptString, true, true);
 		}
 
 		private void ListsPromptsPanel_AddPromptButton_Click(object sender, RoutedEventArgs e)
@@ -143,20 +113,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var promptOption = promptItem.Items.FirstOrDefault(x => x.Key == _Item?.ListPromptOption);
 			if (promptOption == null)
 				return;
-			var box = GetFocused();
-			AppHelper.InsertText(box, promptOption.Value, false, true);
+			var box = ChatPanel.GetFocusedTextBox();
+			AppHelper.InsertText(box, promptOption.Value, true, true);
 		}
 
 		bool WebBrowserDataLoaded;
 
-		private async void MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
+		private async void ChatPanel_MessagesPanel_WebBrowserDataLoaded(object sender, EventArgs e)
 		{
-			await Helper.Delay(SetZoom, AppHelper.NavigateDelayMs);
+			await Helper.Debounce(SetZoom, AppHelper.NavigateDelayMs);
 			WebBrowserDataLoaded = true;
-			RestoreFocus();
+			RestoreTabSelection();
 		}
 
-		private async void MessagesPanel_ScriptingHandler_OnMessageAction(object sender, string[] e)
+		private async void ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction(object sender, string[] e)
 		{
 			var actionString = e[1];
 			if (string.IsNullOrEmpty(actionString))
@@ -227,9 +197,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (box.SpellCheck.IsEnabled)
 				box.SpellCheck.IsEnabled = false;
 			if (box == ChatPanel.DataTextBox.PART_ContentTextBox)
-				await Helper.Delay(EnableOnDataTextBox);
+				await Helper.Debounce(EnableOnDataTextBox);
 			if (box == ChatPanel.DataInstructionsTextBox.PART_ContentTextBox)
-				await Helper.Delay(EnableOnDataInstructionsTextBox);
+				await Helper.Debounce(EnableOnDataInstructionsTextBox);
 		}
 
 		void EnableOnDataTextBox()
@@ -269,7 +239,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit,
 					extraInstructions: voiceInstructions,
 					addMessageAsRole: addMessageAsRole);
-				RestoreFocus();
+				RestoreTabSelection();
 			}
 		}
 
@@ -284,7 +254,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void ChatPanel_OnStop(object sender, EventArgs e)
 		{
 			_Item?.StopClients();
-			RestoreFocus();
+			RestoreTabSelection();
 		}
 
 		public string CreativityName
@@ -415,9 +385,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: voiceInstructions);
 					});
 				}
-				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+				_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
 				if (PanelSettings.Focus)
-					RestoreFocus();
+					RestoreTabSelection();
 				ChatPanel.MonitorTextBoxSelections(true);
 				UpdateAvatarControl();
 				UpdateListEditButtons();
@@ -456,7 +426,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					UpdateAvatarControl();
 					break;
 				case nameof(TemplateItem.EmbeddingGroupName):
-					_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+					_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
 					break;
 				case nameof(TemplateItem.Context0ListName):
 				case nameof(TemplateItem.Context1ListName):
@@ -540,7 +510,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return;
 			var item = (PropertyItem)cb.SelectedItem;
 			cb.SelectedIndex = alwaysSelectedIndex;
-			var box = GetFocused();
+			var box = ChatPanel.GetFocusedTextBox();
 			AppHelper.InsertText(box, "{" + item.Key + "}");
 			// Enable use of macros.
 			if (!_Item.UseMacros)
@@ -573,7 +543,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Global.MainControl.InfoPanel.HelpProvider.Add(AutoOperationComboBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
 					Global.MainControl.InfoPanel.HelpProvider.Add(AutoFormatCodeCheckBox, AutomationVsLabel.Content as string, Engine.Resources.MainResources.main_VsExtensionFeatureMessage);
 				}
-				CodeBlockPanel.GetFocused = GetFocused;
+				CodeBlockPanel.GetFocused = ChatPanel.GetFocusedTextBox;
 				AppHelper.InitHelp(this);
 				// Remove control, which visibility is controlled by the code.
 				var excludeElements = new FrameworkElement[] {
@@ -590,7 +560,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
  				};
 				UiPresetsManager.InitControl(this, excludeElements: excludeElements);
 			}
-			RestoreFocus();
+			RestoreTabSelection();
 			UpdateAvatarControl();
 			// Workaround after resetting settings.
 			if (RebindItemOnLoad)
@@ -599,7 +569,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var item = Item;
 				Item = null;
 				if (item != null)
-					_ = Helper.Delay(() => Item = item);
+					_ = Helper.Debounce(() => Item = item);
 			}
 		}
 
@@ -615,21 +585,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_Item.Messages.Clear();
 			ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
 			ChatPanel.UpdateMessageEdit();
-			RestoreFocus();
+			RestoreTabSelection();
 		}
 
 		private void ScrollToBottomButton_Click(object sender, RoutedEventArgs e)
 		{
 			ChatPanel.MessagesPanel.InvokeScript("ScrollToBottom()");
-			RestoreFocus();
-		}
-
-		private void GenerateTitleButton_Click(object sender, RoutedEventArgs e)
-		{
-			var firstMessage = _Item.Messages.FirstOrDefault();
-			if (firstMessage == null)
-				return;
-			_ = ClientHelper.GenerateTitle(_Item);
+			RestoreTabSelection();
 		}
 
 		private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
@@ -653,35 +615,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		#region Focus
 
-		private TextBox LastFocusedForCodeTextBox;
-
-		private void ChatPanel_DataTextBox_GotFocus(object sender, RoutedEventArgs e)
+		private void ChatPanel_SelectionSaved(object sender, EventArgs e)
 		{
-			LastFocusedForCodeTextBox = (TextBox)sender;
-			PanelSettings.SaveFocus();
+			var tab = ChatPanel.SelectionControls.FirstOrDefault(x => x.Tab.IsSelected).Tab;
+			if (tab != null)
+				PanelSettings.FocusedControl = tab.Name;
 		}
 
-		private TextBox GetFocused()
-		{
-			var box = LastFocusedForCodeTextBox ?? ChatPanel.DataInstructionsTextBox.PART_ContentTextBox;
-			return box;
-		}
-
-		private void RestoreFocus()
+		private void RestoreTabSelection()
 		{
 			// Note: Setting focus during web browser loading fails to hide textbox placeholder.
 			if (WebBrowserDataLoaded)
-				_ = Helper.Delay(_RestoreFocus, AppHelper.NavigateDelayMs);
+				_ = Helper.Debounce(_RestoreTabSelection, AppHelper.NavigateDelayMs);
 		}
 
-		private void _RestoreFocus()
+		private void _RestoreTabSelection()
 		{
-			var box = GetFocused();
-			var canFocus = PanelSettings.FocusedControl != ChatPanel.DataInstructionsTextBox.PART_ContentTextBox.Name;
-			if (canFocus)
-			{
-				PanelSettings.RestoreFocus(ChatPanel);
-			}
+			var tab = ChatPanel.SelectionControls.FirstOrDefault(x => x.Tab.Name == PanelSettings.FocusedControl).Tab;
+			if (tab != null)
+				tab.IsSelected = true;
 		}
 
 		#endregion
@@ -700,7 +652,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			if (e.PropertyName == nameof(PanelSettings.ChatPanelZoom))
 			{
-				await Helper.Delay(SetZoom);
+				await Helper.Debounce(SetZoom);
 			}
 		}
 
@@ -767,7 +719,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				e.ListChangedType == ListChangedType.ItemDeleted)
 				update = true;
 			if (update)
-				_ = Helper.Delay(UpdateEmbeddingNames);
+				_ = Helper.Debounce(UpdateEmbeddingNames);
 		}
 
 		public Dictionary<EmbeddingGroupFlag, string> FilePartGroups
@@ -803,7 +755,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				e.ListChangedType == ListChangedType.ItemDeleted)
 				update = true;
 			if (update)
-				_ = Helper.Delay(UpdateMailAccounts);
+				_ = Helper.Debounce(UpdateMailAccounts);
 		}
 
 		#endregion
@@ -814,7 +766,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var files = ChatPanel.AttachmentsPanel.GetFiles();
 			if (files == null || !files.Any())
 				return;
-			var textBox = GetFocused();
+			var textBox = ChatPanel.GetFocusedTextBox();
 			AppControlsHelper.DropFiles(textBox, files);
 		}
 
@@ -829,7 +781,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var captureResult = await ScreenshotHelper.CaptureRegion(null, path, System.Drawing.Imaging.ImageFormat.Jpeg);
 			if (captureResult.Success)
 			{
-				var box = GetFocused();
+				var box = ChatPanel.GetFocusedTextBox();
 				AppHelper.InsertText(box, $"Please analyse screenshot\r\n{captureResult.Data}", true, false);
 			}
 			if (isCtrlDown && !Global.IsVsExtension)
@@ -839,7 +791,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void MicrophoneButton_Click(object sender, RoutedEventArgs e)
 		{
-			var box = GetFocused();
+			var box = ChatPanel.GetFocusedTextBox();
 			AppHelper.InsertText(box, "", true);
 			// First, press and hold the 'Windows' key.
 			KeyboardHelper.SendDown(Key.LWin);
@@ -957,7 +909,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ControlsHelper.EnsureTabItemSelected(grid);
 			var list = new List<string>() { name };
 			ControlsHelper.SetSelection(grid, nameof(ISettingsListFileItem.Name), list, 0);
-			_ = Helper.Delay(() =>
+			_ = Helper.Debounce(() =>
 			{
 				Global.MainControl.ListsPanel.ListsItemPanel?.InstructionsTextBox.Focus();
 			});

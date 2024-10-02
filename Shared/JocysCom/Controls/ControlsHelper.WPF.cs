@@ -363,6 +363,10 @@ namespace JocysCom.ClassLibrary.Controls
 
 			if (vParent is ItemsControl items)
 				items.Items.Remove(element);
+			if (vParent is StackPanel panel)
+				panel.Children.Remove(element);
+			if (vParent is Panel grid)
+				grid.Children.Remove(element);
 			if (vParent is ContentPresenter window)
 				window.Content = null;
 			if (vParent is Decorator border)

@@ -22,7 +22,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			Global.Templates.Items.ListChanged += SourceItems_ListChanged;
-			_ = Helper.Delay(RefreshDataGrid);
+			_ = Helper.Debounce(RefreshDataGrid);
 		}
 
 		public ObservableCollection<ISettingsListFileItem> FilteredList { get; set; } = new ObservableCollection<ISettingsListFileItem>();

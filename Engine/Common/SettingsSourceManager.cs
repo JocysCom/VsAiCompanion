@@ -297,6 +297,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#region Reset Templates
 
 		public const string TemplateGenerateTitleTaskName = "® System - Generate Title";
+		public const string TemplateGenerateIconTaskName = "® System - Generate Icon";
 		public const string TemplateFormatMessageTaskName = "® System - Format Message";
 		public const string TemplatePluginApprovalTaskName = "® System - Plugin Approval";
 		public const string TempalteListsUpdateUserProfile = "Lists - Update User Profile";

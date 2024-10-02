@@ -59,7 +59,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 		private void Splash_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			_SplashScreenPanel.Loaded -= Splash_Loaded;
-			_ = Helper.Delay(async () =>
+			_ = Helper.Debounce(async () =>
 			{
 				await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 				try

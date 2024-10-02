@@ -38,7 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				)
 			{
 				var view = (ICollectionView)MainItemsControl.ItemsSource;
-				await Helper.Delay(view.Refresh);
+				await Helper.Debounce(view.Refresh);
 			}
 		}
 
@@ -49,13 +49,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				e.PropertyName == nameof(UserProfile.UserGroups))
 			{
 				var view = (ICollectionView)MainItemsControl.ItemsSource;
-				await Helper.Delay(view.Refresh);
+				await Helper.Debounce(view.Refresh);
 			}
 		}
 
 		private async void Plugins_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateOnListChanged, AppHelper.NavigateDelayMs);
+			await Helper.Debounce(UpdateOnListChanged, AppHelper.NavigateDelayMs);
 		}
 
 		public IList<PluginItem> GetAllMetods()
@@ -114,7 +114,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				// e.NewValue contains the new value of the property
 				// e.OldValue contains the old value of the property
-				await Helper.Delay(control.UpdateOnListChanged, AppHelper.NavigateDelayMs);
+				await Helper.Debounce(control.UpdateOnListChanged, AppHelper.NavigateDelayMs);
 			}
 		}
 

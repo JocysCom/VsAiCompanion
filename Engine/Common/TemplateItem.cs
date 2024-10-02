@@ -75,7 +75,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		string _TextPlaceholder;
 
 		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
-		public bool ShouldSerializeTextPlaceholder() => string.IsNullOrEmpty(TextPlaceholder) || TextPlaceholder == Engine.Resources.MainResources.main_Text_Placeholder;
+		public bool ShouldSerializeTextPlaceholder() => !string.IsNullOrEmpty(TextPlaceholder) && TextPlaceholder != Engine.Resources.MainResources.main_Text_Placeholder;
 
 		/// <summary>Attachments to send.</summary>
 		[DefaultValue(null)]
@@ -150,6 +150,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		[XmlIgnore, JsonIgnore]
 		public Task GenerateTitleTask;
+
+		[XmlIgnore, JsonIgnore]
+		public Task GenerateIconTask;
 
 		[DefaultValue(false)]
 		public bool AutoGenerateTitle { get => _AutoGenerateTitle; set => SetProperty(ref _AutoGenerateTitle, value); }
@@ -375,7 +378,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		List<TextBoxData> _UiSelections;
 
 		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
-		public bool ShouldSerializeSelections() => _UiSelections?.Count > 0;
+		public bool ShouldSerializeUiSelections() => _UiSelections?.Count > 0;
 
 		#endregion
 

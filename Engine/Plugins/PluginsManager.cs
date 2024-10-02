@@ -543,13 +543,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		#region Function calls inside assistant message
 
+		public static Match[] GetMarkdownMatches(string name, string text)
+		{
+			// Pattern to find blocks enclosed in triple backticks
+			var pattern = @"```(?:" + name + @")?\s*\n([\s\S]*?)\n```";
+			var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+			var matches = regex.Matches(text).Cast<Match>().ToArray();
+			return matches;
+		}
+
 		public static (string assistantMessage, chat_completion_function[] calls) ProcessAssistantMessage(string assistantMessage)
 		{
-			// Pattern to find JSON blocks enclosed in triple backticks
-			var pattern = @"```(?:json)?\s*\n([\s\S]*?)\n```";
-			var regex = new Regex(pattern, RegexOptions.IgnoreCase);
-			var matches = regex.Matches(assistantMessage);
 			var functionCalls = new List<chat_completion_function>();
+			var matches = GetMarkdownMatches("json", assistantMessage);
 			foreach (Match match in matches)
 			{
 				var jsonText = match.Groups[1].Value.Trim();

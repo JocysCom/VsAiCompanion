@@ -86,7 +86,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (e.PropertyName == nameof(AppData.ShowErrorsPanel))
 				ErrorsTabItem.Visibility = Global.AppSettings.ShowErrorsPanel ? Visibility.Visible : Visibility.Collapsed;
 			if (e.PropertyName == nameof(AppData.EnableMicrosoftAccount))
-				await Helper.Delay(UpdateMicrosoftControls);
+				await Helper.Debounce(UpdateMicrosoftControls);
 		}
 
 		void UpdateMicrosoftControls()

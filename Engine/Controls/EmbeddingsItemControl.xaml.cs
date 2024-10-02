@@ -112,8 +112,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				GroupNameEditMode(false);
 				TargetEditMode(false);
 				MaskConnectionString();
-				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
-				_ = Helper.Delay(EmbeddingGroupNames_OnPropertyChanged);
+				_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
+				_ = Helper.Debounce(EmbeddingGroupNames_OnPropertyChanged);
 				// Make sure that embedding selection could be initially made.
 				if (!EmbeddingGroupNames.Contains(value?.EmbeddingGroupName))
 					EmbeddingGroupNames.Add(value?.EmbeddingGroupName);
@@ -134,7 +134,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void _Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(EmbeddingsItem.EmbeddingGroupName))
-				_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+				_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
 			if (e.PropertyName == nameof(EmbeddingsItem.Target))
 				MaskConnectionString();
 			if (e.PropertyName == nameof(EmbeddingsItem.Source))
@@ -810,7 +810,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				LogPanel.Add(ex.ToString());
 			}
 			GroupFlagNameEditMode(false);
-			_ = Helper.Delay(EmbeddingGroupFlags_OnPropertyChanged);
+			_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
 		}
 
 		public void EmbeddingGroupFlags_OnPropertyChanged()

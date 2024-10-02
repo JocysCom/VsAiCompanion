@@ -411,7 +411,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					if (item.AutoGenerateTitle)
 					{
 						item.AutoGenerateTitle = false;
-						_ = GenerateTitle(item);
+						_ = GenerateResult(item, SettingsSourceManager.TemplateGenerateTitleTaskName);
 					}
 					// If must add message as role then skip sending part.
 					if (addMessageAsRole == null)
@@ -510,25 +510,38 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			return text;
 		}
 
-		public async static Task GenerateTitle(TemplateItem item)
+		public async static Task GenerateResult(TemplateItem item, string taskName)
 		{
 			/// Try to get reserved template to generate title.
-			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == SettingsSourceManager.TemplateGenerateTitleTaskName);
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == taskName);
 			if (rItem == null)
 				return;
-			if (item.Messages.Count == 0)
-				return;
 			var availableTokens = GetAvailableTokens(item, null);
-			var allmessages = item.Messages
+			var messagesToSend = item.Messages.ToList();
+			if (!messagesToSend.Any())
+			{
+				if (!string.IsNullOrWhiteSpace(item.Text) || !string.IsNullOrWhiteSpace(item.TextInstructions))
+				{
+					var userMessage = new MessageItem();
+					userMessage.Type = MessageType.Out;
+					userMessage.Body = item.Text;
+					userMessage.Body = item.TextInstructions;
+					messagesToSend.Add(userMessage);
+				}
+			}
+			if (!messagesToSend.Any())
+				return;
+			var allmessages = messagesToSend
 				// Exclude preview messages from the history.
 				//.Where(x => !x.IsPreview)
-				.SelectMany(x => ConvertMessageItemToChatMessage(item.UseSystemInstructions, x, false)).ToList();
+				.SelectMany(x => ConvertMessageItemToChatMessage(rItem.UseSystemInstructions, x, false)).ToList();
 			var messages = AppHelper.GetMessages(allmessages, availableTokens, ChatLogOptions);
 			// Crate a copy in order not to add to existing list.
 			try
 			{
 				// Add instructions to generate title to existing messages.
-				messages.Add(new chat_completion_message(message_role.system, rItem.TextInstructions));
+				var role = rItem.UseSystemInstructions ? message_role.system : message_role.user;
+				messages.Add(new chat_completion_message(role, rItem.TextInstructions));
 				var client = new Companions.ChatGPT.Client(rItem.AiService);
 				// Send body and context data. Make sure it runs on NON-UI thread.
 				var response = await Task.Run(async () => await client.QueryAI(
@@ -539,12 +552,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var body = response.FirstOrDefault()?.Body;
 				if (!string.IsNullOrEmpty(body))
 				{
-					body = SettingsData<object>.RemoveInvalidFileNameChars(body);
-					if (body.Split().Length > 0)
+					if (taskName == SettingsSourceManager.TemplateGenerateTitleTaskName)
 					{
-						var title = string.Join(" ", body.Split().Take(6).ToList());
+						body = SettingsData<object>.RemoveInvalidFileNameChars(body);
+						if (body.Split().Length > 0)
+						{
+							var title = string.Join(" ", body.Split().Take(6).ToList());
+							// If items is still there then...
+							if (Global.Tasks.Items.Contains(item))
+								Global.Tasks.RenameItem(item, title);
+						}
+					}
+					if (taskName == SettingsSourceManager.TemplateGenerateIconTaskName)
+					{
+						// If items is still there then...
 						if (Global.Tasks.Items.Contains(item))
-							Global.Tasks.RenameItem(item, title);
+						{
+							try
+							{
+								var matches = PluginsManager.GetMarkdownMatches("svg", body);
+								var svg = matches.Any()
+									? matches[0].Groups[1].Value.Trim()
+									: body;
+								Converters.SvgHelper.LoadSvgFromString(svg);
+								item.SetIcon(svg);
+							}
+							catch (Exception ex)
+							{
+								Global.SetWithTimeout(MessageBoxImage.Error, ex.Message);
+							}
+						}
 					}
 				}
 			}

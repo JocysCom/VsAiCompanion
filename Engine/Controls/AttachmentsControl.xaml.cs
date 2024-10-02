@@ -43,7 +43,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
+			await Helper.Debounce(UpdateOnSelectionChanged, AppHelper.NavigateDelayMs);
 		}
 
 		private void UpdateOnSelectionChanged()

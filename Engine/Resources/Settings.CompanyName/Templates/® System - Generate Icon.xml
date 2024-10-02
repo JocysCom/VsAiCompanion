@@ -74,7 +74,7 @@ Only provide the generated SVG file content in your response.</TextInstructions>
       <IsEnabled>false</IsEnabled>
       <Id>ab880acfad604a25860525836f3ee6ae</Id>
       <User>System</User>
-      <Body>This reserved task use AI to automatically generate chat title.</Body>
+      <Body>This reserved task use AI to automatically generate chat icon.</Body>
       <Attachments />
       <Date>2023-07-16T08:55:56.1042695+01:00</Date>
       <Type>Information</Type>

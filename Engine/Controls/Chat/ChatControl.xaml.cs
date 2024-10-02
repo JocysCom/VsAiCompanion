@@ -181,6 +181,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private void SendButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
 			OnSend?.Invoke(sender, e);
 		}
 
@@ -194,17 +196,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			UpdateMaxSize();
 		}
 
+		double? MessageMaxHeightOverride;
+
 		private void UpdateMaxSize()
 		{
 			if (SuspendUpdateMaxSize)
 				return;
-			var maxHeight = Math.Round(ActualHeight * 0.4);
+			var maxHeight = Math.Round(ActualHeight * (MessageMaxHeightOverride ?? 0.4));
 			foreach (var item in SelectionControls)
 				item.Box.MaxHeight = maxHeight;
 		}
 
 		private void StopButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			if (isEdit)
 			{
@@ -246,7 +252,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		}
 
 		private async void RisenBox_TextChanged(object sender, TextChangedEventArgs e)
-				=> await Helper.Delay(UpdateMessageFromRisen);
+				=> await Helper.Debounce(UpdateMessageFromRisen);
 
 		void UpdateMessageFromRisen()
 		{
@@ -310,6 +316,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
+		public event EventHandler SelectionSaved;
+
 		private void Box_SelectionChanged(object sender, RoutedEventArgs e)
 		{
 			var box = (TextBox)sender;
@@ -318,15 +326,24 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var group = SelectionControls.FirstOrDefault(x => x.Box == box);
 			// Save selection only if tab is visible.
 			if (((TabControl)group.Tab.Parent).SelectedItem == group.Tab)
+			{
 				SaveSelection(box);
+				SelectionSaved?.Invoke(this, EventArgs.Empty);
+			}
 		}
+
+		public TabItem GetSelectedTab()
+			=> SelectionControls.FirstOrDefault(x => x.Tab == MainTabControl.SelectedItem).Tab;
+
+		public TextBox GetFocusedTextBox()
+			=> SelectionControls.FirstOrDefault(x => x.Tab == MainTabControl.SelectedItem).Box;
 
 		public void FocusDataTextBox()
 		{
-			var item = SelectionControls.FirstOrDefault(x => x.Tab == MainTabControl.SelectedItem);
-			if (item.Box is null)
+			var box = GetFocusedTextBox();
+			if (box is null)
 				return;
-			LoadSelection(item.Box);
+			LoadSelection(box);
 		}
 
 
@@ -336,19 +353,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// </summary>
 		void InitControlsAllowedToRememer()
 		{
-			SelectionControls = new (TabItem, PlaceholderTextBox, TextBox)[] {
-				(ChatInstructionsTabItem, DataInstructionsTextBox, DataInstructionsTextBox.PART_ContentTextBox),
-				(ChatMessageTabItem, DataTextBox, DataTextBox.PART_ContentTextBox),
-				(MessagePlaceholderTabItem, MessagePlaceholderTextBox, MessagePlaceholderTextBox.PART_ContentTextBox),
-				(RisenRoleTabItem, RisenRoleTextBox, RisenRoleTextBox.PART_ContentTextBox),
-				(RisenInstructionsTabItem, RisenInstructionsTextBox, RisenInstructionsTextBox.PART_ContentTextBox),
-				(RisenStepsTabItem, RisenStepsTextBox, RisenStepsTextBox.PART_ContentTextBox),
-				(RisenEndGoalTabItem, RisenEndGoalTextBox, RisenEndGoalTextBox.PART_ContentTextBox),
-				(RisenNarrowingTabItem,  RisenNarrowingTextBox, RisenNarrowingTextBox.PART_ContentTextBox),
+			SelectionControls = new (TabItem, PlaceholderTextBox, TextBox, Label)[] {
+				(ChatInstructionsTabItem, DataInstructionsTextBox, DataInstructionsTextBox.PART_ContentTextBox, InstructionsCountLabel),
+				(ChatMessageTabItem, DataTextBox, DataTextBox.PART_ContentTextBox, MessageCountLabel),
+				(MessagePlaceholderTabItem, MessagePlaceholderTextBox, MessagePlaceholderTextBox.PART_ContentTextBox, MessagePlaceholderCountLabel ),
+				(RisenRoleTabItem, RisenRoleTextBox, RisenRoleTextBox.PART_ContentTextBox, RisenRoleCountLabel),
+				(RisenInstructionsTabItem, RisenInstructionsTextBox, RisenInstructionsTextBox.PART_ContentTextBox, RisenInstructionsCountLabel),
+				(RisenStepsTabItem, RisenStepsTextBox, RisenStepsTextBox.PART_ContentTextBox, RisenStepsCountLabel),
+				(RisenEndGoalTabItem, RisenEndGoalTextBox, RisenEndGoalTextBox.PART_ContentTextBox, RisenEndGoalCountLabel),
+				(RisenNarrowingTabItem,  RisenNarrowingTextBox, RisenNarrowingTextBox.PART_ContentTextBox, RisenNarrowingCountLabel),
 			};
 		}
 
-		(TabItem Tab, PlaceholderTextBox Holder, TextBox Box)[] SelectionControls;
+		public (TabItem Tab, PlaceholderTextBox Holder, TextBox Box, Label Label)[] SelectionControls;
 
 		TextBoxData GetSelectionByBox(TextBox box)
 		{
@@ -406,16 +423,83 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#endregion
 
-		#region Maximize/Restore TextBox
+		#region Update Token Count / Usage
 
-		private void ExpandInstructionsButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		public void InitTokenCounters()
 		{
-			//ExpandButton(InstructionsGrid, DataInstructionsTextBox, ExpandInstructionsButton, ExpandInstructionsButtonContent);
+			DataInstructionsTextBox.PART_ContentTextBox.TextChanged += ChatPanel_DataInstructionsTextBox_TextChanged;
+			DataTextBox.PART_ContentTextBox.TextChanged += ChatPanel_DataTextBox_TextChanged;
+			MessagePlaceholderTextBox.PART_ContentTextBox.TextChanged += ChatPanel_MessagePlaceholderTextBox_TextChanged;
+			RisenRoleTextBox.PART_ContentTextBox.TextChanged += ChatPanel_RisenRoleTextBox_TextChanged;
+			RisenInstructionsTextBox.PART_ContentTextBox.TextChanged += ChatPanel_RisenInstructionsTextBox_TextChanged;
+			RisenStepsTextBox.PART_ContentTextBox.TextChanged += ChatPanel_RisenStepsTextBox_TextChanged;
+			RisenEndGoalTextBox.PART_ContentTextBox.TextChanged += ChatPanel_RisenEndGoalTextBox_TextChanged;
+			RisenNarrowingTextBox.PART_ContentTextBox.TextChanged += ChatPanel_RisenNarrowingTextBox_TextChanged;
 		}
+
+		void UpdateTokenCount(TextBox textBox)
+		{
+			var label = SelectionControls.FirstOrDefault(x => x.Box == textBox).Label;
+			var text = textBox.Text;
+			var tokens = Companions.ClientHelper.CountTokens(text, null);
+			var s = tokens == 0 ? "" : $"({tokens})";
+			ControlsHelper.SetText(label, s);
+		}
+
+		private async void ChatPanel_DataInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Debounce(UpdateInstructionsTokenCount, (TextBox)sender);
+		private async void ChatPanel_DataTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Debounce(UpdateMessageTokenCount, (TextBox)sender);
+		private async void ChatPanel_MessagePlaceholderTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Debounce(UpdateMessagePlaceholderTokenCount, (TextBox)sender);
+		private async void ChatPanel_RisenRoleTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Debounce(UpdateRisenRoleTokenCount, (TextBox)sender);
+		private async void ChatPanel_RisenInstructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Debounce(UpdateRisenInstructionsTokenCount, (TextBox)sender);
+		private async void ChatPanel_RisenStepsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Debounce(UpdateRisenStepsTokenCount, (TextBox)sender);
+		private async void ChatPanel_RisenEndGoalTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Debounce(UpdateRisenEndGoalTokenCount, (TextBox)sender);
+		private async void ChatPanel_RisenNarrowingTextBox_TextChanged(object sender, TextChangedEventArgs e)
+			=> await Helper.Debounce(UpdateRisenNarrowingTokenCount, (TextBox)sender);
+
+		void UpdateInstructionsTokenCount(TextBox box)
+			=> UpdateTokenCount(box);
+		void UpdateMessageTokenCount(TextBox box)
+			=> UpdateTokenCount(box);
+		void UpdateMessagePlaceholderTokenCount(TextBox box)
+			=> UpdateTokenCount(box);
+		void UpdateRisenRoleTokenCount(TextBox box)
+			=> UpdateTokenCount(box);
+		void UpdateRisenInstructionsTokenCount(TextBox box)
+			=> UpdateTokenCount(box);
+		void UpdateRisenStepsTokenCount(TextBox box)
+			=> UpdateTokenCount(box);
+		void UpdateRisenEndGoalTokenCount(TextBox box)
+			=> UpdateTokenCount(box);
+		void UpdateRisenNarrowingTokenCount(TextBox box)
+			=> UpdateTokenCount(box);
+
+		#endregion
+
+		#region Maximize/Restore TextBox
 
 		private void ExpandMessageButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			//ExpandButton(MessageInputGrid, DataTextBox, ExpandMessageButton, ExpandMessageButtonContent);
+			//if (MessageMaxHeightOverride is null)
+			//{
+			//	MainGrid.Visibility = Visibility.Collapsed;
+			//	MessageMaxHeightOverride = 1.0;
+			//	ExpandButtonContentControl.Content = Resources["Icon_Minimize"];
+			//}
+			//else
+			//{
+			//	MessageMaxHeightOverride = null;
+			//	ExpandButtonContentControl.Content = Resources["Icon_Maximize"];
+			//	MainGrid.Visibility = Visibility.Visible;
+			//}
+			//UpdateMaxSize();
+			ApplyExpand(ChatInputGrid, ExpandButton, ExpandButtonContentControl);
 		}
 
 		private void DataInstructionsTextBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -447,12 +531,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		FrameworkElement _prevElement;
 		int _prevIndex;
 
-		public void ExpandButton(FrameworkElement element, TextBox textBox, Button button, ContentControl buttonContent)
+		public void ApplyExpand(FrameworkElement element, Button button, ContentControl buttonContent)
 		{
 			if (_prevElement == null)
 			{
+				MessageMaxHeightOverride = 1.0;
+				UpdateMaxSize();
 				SuspendUpdateMaxSize = true;
-				textBox.MaxHeight = double.MaxValue;
 				MainGrid.Visibility = Visibility.Collapsed;
 				Maximize(element, ControlGrid);
 				buttonContent.Content = Resources["Icon_Minimize"];
@@ -460,30 +545,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			else
 			{
 				SuspendUpdateMaxSize = false;
+				MessageMaxHeightOverride = null;
+				UpdateMaxSize();
 				MainGrid.Visibility = Visibility.Visible;
 				Restore(_prevElement);
 				buttonContent.Content = Resources["Icon_Maximize"];
-				UpdateMaxSize();
 			}
 		}
 
-		private void Maximize(FrameworkElement element, Panel parent)
+		private void Maximize(FrameworkElement element, Panel newParent)
 		{
 			_prevParent = VisualTreeHelper.GetParent(element) as FrameworkElement;
 			if (_prevParent is Panel panel)
 				_prevIndex = panel.Children.IndexOf(element);
-			Panel parentPanel = element.Parent as Panel;
-			parentPanel.Children.Remove(element);
-			parent.Children.Add(element);
+			// Remove from current parent.
+			ControlsHelper.RemoveFromParent(element);
+			newParent.Children.Add(element);
 			_prevElement = element;
 		}
 
 		private void Restore(FrameworkElement element)
 		{
-			var currentParent = element.Parent as Panel;
-			currentParent.Children.Remove(element);
+			// Remove from current parent.
+			ControlsHelper.RemoveFromParent(element);
 			if (_prevParent is Panel panel)
 				panel.Children.Insert(_prevIndex, element);
+			if (_prevParent is Border border)
+				border.Child = element;
 			_prevElement = null;
 		}
 

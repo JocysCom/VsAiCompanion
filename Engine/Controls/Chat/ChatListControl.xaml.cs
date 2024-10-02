@@ -131,7 +131,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				UiPresetsManager.InitControl(this, true);
 				// Remove control frm the UI presets list.
 				UiPresetsManager.RemoveControls(LoadingLabel);
-				await Helper.Delay(InitWebBrowser);
+				await Helper.Debounce(InitWebBrowser);
 			}
 		}
 

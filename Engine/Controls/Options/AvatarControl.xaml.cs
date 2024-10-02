@@ -98,7 +98,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		private async void GenderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateVoiceNames);
+			await Helper.Debounce(UpdateVoiceNames);
 		}
 
 		#endregion
@@ -109,7 +109,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		private async void VoiceLocalesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			await Helper.Delay(UpdateVoiceNames);
+			await Helper.Debounce(UpdateVoiceNames);
 		}
 
 		public void UpdateVoiceNames()
