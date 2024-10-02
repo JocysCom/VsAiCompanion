@@ -61,6 +61,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_document_checks = nameof(Icon_document_checks);
 		public const string Icon_document_gear = nameof(Icon_document_gear);
 		public const string Icon_document_header = nameof(Icon_document_header);
+		public const string Icon_document_icon_refresh = nameof(Icon_document_icon_refresh);
 		public const string Icon_document_title_refresh = nameof(Icon_document_title_refresh);
 		public const string Icon_dude3 = nameof(Icon_dude3);
 		public const string Icon_elements_branch2 = nameof(Icon_elements_branch2);
@@ -105,6 +106,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_office_building2 = nameof(Icon_office_building2);
 		public const string Icon_painters_palette = nameof(Icon_painters_palette);
 		public const string Icon_photo_portrait = nameof(Icon_photo_portrait);
+		public const string Icon_picture = nameof(Icon_picture);
 		public const string Icon_picture_comment = nameof(Icon_picture_comment);
 		public const string Icon_pieces = nameof(Icon_pieces);
 		public const string Icon_piece_blue = nameof(Icon_piece_blue);
