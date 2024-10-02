@@ -792,6 +792,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		{
 
 		}
+
+		private void GenerateIconButton_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
 	}
 
 }

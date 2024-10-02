@@ -89,6 +89,17 @@
 				</StackPanel>
 			</Button>
 			<Button
+				Name="GenerateIconButton"
+				Margin="0,0,3,3"
+				x:FieldModifier="public"
+				Background="Transparent"
+				Click="GenerateIconButton_Click"
+				ToolTip="{StaticResource main_Icon_for_Attached_Context}">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_document_icon_refresh}" Focusable="False" />
+				</StackPanel>
+			</Button>
+			<Button
 				Name="GenerateTitleButton"
 				Margin="0,0,3,3"
 				x:FieldModifier="public"
