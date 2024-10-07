@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,7 +17,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			UpdateButtons();
+			if (IsMouseOver)
+				MainGrid_MouseEnter(MainGrid, null);
 		}
 
 		ISettingsListFileItem _item;
@@ -26,14 +28,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_item = item;
 			DataContext = item;
 			UpdateButtons();
-		}
-
-		private void UpdateButtons()
-		{
-			// Edit button is always visible if icon is not set.
-			IconEditButton.Visibility = _item?.Icon == null
-				? Visibility.Visible
-				: Visibility.Hidden;
 		}
 
 		System.Windows.Forms.OpenFileDialog _OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -65,24 +59,109 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_item?.SetIcon(contents);
 		}
 
-		private void UserControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		public void Copy()
 		{
-			//Edit();
+			var item = _item;
+			if (item == null || string.IsNullOrEmpty(item.IconData))
+				return;
+			var contents = SettingsListFileItem.GetContent(item.IconData);
+			var tempPath = AppHelper.GetTempFolderPath();
+			ClipboardHelper.SetClipboard(item.Name + ".svg", contents, tempPath);
+		}
+
+		public void Paste()
+		{
+			// Paste icon data from the clipboard to the item.
+			if (Clipboard.ContainsText())
+			{
+				try
+				{
+					var svg = Clipboard.GetText();
+					Converters.SvgHelper.LoadSvgFromString(svg);
+					_item?.SetIcon(svg);
+					return;
+				}
+				catch (Exception ex)
+				{
+					Global.SetWithTimeout(MessageBoxImage.Error, ex.Message);
+				}
+			}
 		}
 
 		private void IconEditButton_Click(object sender, RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsOnCooldown(sender))
+				return;
+			var modifiers = Keyboard.Modifiers;
+			if ((modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+			{
+				Paste();
+				return;
+			}
+			if ((modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+			{
+				Copy();
+				return;
+			}
 			Edit();
 		}
 
-		private void Grid_MouseEnter(object sender, MouseEventArgs e)
-		{
-			IconEditButton.Visibility = Visibility.Visible;
-		}
-
-		private void Grid_MouseLeave(object sender, MouseEventArgs e)
+		private void InputManager_PreProcessInput(object sender, PreProcessInputEventArgs e)
 		{
 			UpdateButtons();
+		}
+
+		private void MainGrid_MouseEnter(object sender, MouseEventArgs e)
+		{
+			InputManager.Current.PreProcessInput += InputManager_PreProcessInput;
+			UpdateButtons(true);
+		}
+
+		private void MainGrid_MouseLeave(object sender, MouseEventArgs e)
+		{
+			InputManager.Current.PreProcessInput -= InputManager_PreProcessInput;
+			UpdateButtons(true);
+		}
+
+		ModifierKeys prevModifiers;
+
+		private void UpdateButtons(bool force = false)
+		{
+			// Get the current modifiers.
+			var modifiers = Keyboard.Modifiers;
+
+			if (prevModifiers == modifiers && !force)
+				return;
+			prevModifiers = modifiers;
+
+			// Edit button is always visible if icon is not set.
+			IconEditButton.Visibility = _item?.Icon == null || MainGrid.IsMouseOver
+				? Visibility.Visible
+				: Visibility.Hidden;
+
+			// Update the visibility of the icons.
+			System.Diagnostics.Debug.WriteLine($"Keyboard.Modifiers: {modifiers}");
+			// Check Alt key first, because right Alt will be reported as Alt + Control.
+			if ((modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+			{
+				// ALT is down - show Paste icon.
+				IconEdit.Visibility = Visibility.Collapsed;
+				IconCopy.Visibility = Visibility.Collapsed;
+				IconPaste.Visibility = Visibility.Visible;
+				return;
+			}
+			if ((modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+			{
+				// CTRL is down - show Copy icon.
+				IconEdit.Visibility = Visibility.Collapsed;
+				IconCopy.Visibility = Visibility.Visible;
+				IconPaste.Visibility = Visibility.Collapsed;
+				return;
+			}
+			// No modifier - show Edit icon.
+			IconEdit.Visibility = Visibility.Visible;
+			IconCopy.Visibility = Visibility.Collapsed;
+			IconPaste.Visibility = Visibility.Collapsed;
 		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)

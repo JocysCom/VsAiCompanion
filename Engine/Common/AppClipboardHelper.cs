@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public static class ClipboardHelper
+	public static class AppClipboardHelper
 	{
 		public static void ProcessDataAndPaste()
 		{

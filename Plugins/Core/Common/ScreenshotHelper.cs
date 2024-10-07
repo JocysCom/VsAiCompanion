@@ -22,6 +22,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	public class ScreenshotHelper
 	{
 		/// <summary>
+		/// Get path to temp folder.
+		/// </summary>
+		public static Func<string> GetTempFolderPath { get; set; }
+
+		/// <summary>
 		/// Capture screen image
 		/// </summary>
 		/// <param name="screenId"></param>
@@ -37,7 +42,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 					return await CaptureUserDefinedRegion(imageFolder, format);
 				format = format ?? ImageFormat.Png;
 				// Determine the folder to save the image, defaulting to the temp directory if not provided
-				string folderPath = imageFolder ?? Path.GetTempPath();
+				var tempFolderPath = GetTempFolderPath is null
+					? System.IO.Path.GetTempPath()
+					: GetTempFolderPath();
+
+				string folderPath = imageFolder ?? tempFolderPath;
 				string fileName = $"Capture_{DateTime.Now:yyyyMMddHHmmss}.{format.ToString().ToLower()}";
 				string fullPath = Path.Combine(folderPath, fileName);
 				if (screenId.HasValue)
@@ -362,7 +371,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <returns></returns>
 		public static string PrepareFilePath(string folderPath, System.Drawing.Imaging.ImageFormat format)
 		{
-			folderPath = folderPath ?? Path.GetTempPath();
+			var tempFolderPath = GetTempFolderPath is null
+					? System.IO.Path.GetTempPath()
+					: GetTempFolderPath();
+			folderPath = folderPath ?? tempFolderPath;
 			string fileName = $"Capture_{DateTime.Now:yyyyMMddHHmmss}.{format.ToString().ToLower()}";
 			string fullPath = Path.Combine(folderPath, fileName);
 			return fullPath;

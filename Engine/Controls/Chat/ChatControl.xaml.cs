@@ -338,14 +338,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public TextBox GetFocusedTextBox()
 			=> SelectionControls.FirstOrDefault(x => x.Tab == MainTabControl.SelectedItem).Box;
 
-		public void FocusDataTextBox()
+		public void FocusChatInputTextBox()
 		{
 			var box = GetFocusedTextBox();
 			if (box is null)
 				return;
 			LoadSelection(box);
 		}
-
 
 		/// <summary>
 		/// Get textboxes which can store selection data.

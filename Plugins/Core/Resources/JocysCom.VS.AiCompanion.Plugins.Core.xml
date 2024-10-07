@@ -562,6 +562,11 @@
             Capture Screen, Window and Region screenshots.
             </summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper.GetTempFolderPath">
+            <summary>
+            Get path to temp folder.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.ScreenshotHelper.CaptureScreen(System.Nullable{System.Int32},System.String,System.Drawing.Imaging.ImageFormat)">
             <summary>
             Capture screen image
@@ -894,6 +899,11 @@
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.VideoToText">
             <summary>
             Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GetTempFolderPath">
+            <summary>
+            Get path to temp folder.
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePictures(System.String,System.String[])">

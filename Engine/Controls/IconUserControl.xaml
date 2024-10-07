@@ -10,7 +10,6 @@
 	d:DesignHeight="128"
 	d:DesignWidth="128"
 	Loaded="This_Loaded"
-	MouseDoubleClick="UserControl_MouseDoubleClick"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -22,7 +21,11 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Margin="4" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
+	<Grid
+		x:Name="MainGrid"
+		Margin="4"
+		MouseEnter="MainGrid_MouseEnter"
+		MouseLeave="MainGrid_MouseLeave">
 		<Image x:Name="IconImage" Source="{Binding Icon}" />
 		<Button
 			Name="IconEditButton"
@@ -36,7 +39,23 @@
 			Opacity="0.8"
 			Visibility="Collapsed">
 			<StackPanel>
-				<ContentControl Margin="2" Content="{StaticResource Icon_Edit}" Focusable="False" />
+				<ContentControl
+					x:Name="IconEdit"
+					Margin="2"
+					Content="{StaticResource Icon_Edit}"
+					Focusable="False" />
+				<ContentControl
+					x:Name="IconCopy"
+					Margin="2"
+					Content="{StaticResource Icon_copy}"
+					Focusable="False"
+					Visibility="Collapsed" />
+				<ContentControl
+					x:Name="IconPaste"
+					Margin="2"
+					Content="{StaticResource Icon_clipboard_paste}"
+					Focusable="False"
+					Visibility="Collapsed" />
 			</StackPanel>
 		</Button>
 	</Grid>

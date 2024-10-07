@@ -142,12 +142,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				ChatPanel.DataTextBox.PART_ContentTextBox.Text = message.Body;
 				ChatPanel.EditMessageId = null;
-				ChatPanel.FocusDataTextBox();
+				ChatPanel.FocusChatInputTextBox();
 			}
 			if (action == MessageAction.Regenerate)
 			{
 				ChatPanel.EditMessageId = id;
-				ChatPanel.FocusDataTextBox();
+				ChatPanel.FocusChatInputTextBox();
 				var voiceInstructions = GetVoiceInstructions();
 				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, message.Body, extraInstructions: voiceInstructions);
 			}
@@ -155,7 +155,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				ChatPanel.DataTextBox.PART_ContentTextBox.Text = message.Body;
 				ChatPanel.EditMessageId = id;
-				ChatPanel.FocusDataTextBox();
+				ChatPanel.FocusChatInputTextBox();
 			}
 		}
 
@@ -772,7 +772,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ScreenshotButton_Click(object sender, RoutedEventArgs e)
 		{
-			var path = System.IO.Path.Combine(AppHelper.GetTempPath(), "Screenshots");
+			var path = System.IO.Path.Combine(AppHelper.GetTempFolderPath(), "Screenshots");
 			var isCtrlDown =
 				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
 				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);

@@ -17,6 +17,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;
+			Plugins.Core.ScreenshotHelper.GetTempFolderPath = AppHelper.GetTempFolderPath;
 			ControlsHelper.InitInvokeContext();
 			Topmost = Global.AppSettings.AppAlwaysOnTop;
 			Global.AppSettings.PropertyChanged += AppSettings_PropertyChanged;

@@ -55,7 +55,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return mv;
 		}
 
-		public static string GetTempPath()
+
+		public static string GetTempFolderPath()
 		{
 			var path = Path.Combine(Global.AppData.XmlFile.Directory.FullName, "Temp");
 			if (!Directory.Exists(path))
@@ -1010,9 +1011,13 @@ EndFragment:{3:00000000}";
 		{
 			// Enqueue the action on the dispatcher.
 			// This will ensure the action will be executed after the UI has finished processing events.
-			ControlsHelper.AppBeginInvoke(() => lastFocusedElement?.Focus());
+			ControlsHelper.AppBeginInvoke(()
+				=> lastFocusedElement?.Focus());
 		}
 
+		/// <summary>
+		/// Used for checkboxes. Attempts to keep keyboard focus inside the textbox when the checkbox is clicked with the mouse.
+		/// </summary>
 		public static void EnableKeepFocusOnMouseClick(params UIElement[] controls)
 		{
 			foreach (var control in controls)

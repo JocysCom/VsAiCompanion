@@ -115,7 +115,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 				: input;
 			var relativePath = AudioHelper.GetUniqueFilePath(null, null, Config.SpeechSynthesisVoiceName, "", "", inputForFileName);
 			var settings = Global.AppSettings.AiAvatar;
-			var path = AppHelper.GetTempPath();
+			var path = AppHelper.GetTempFolderPath();
 			AudioFilePath = Path.Combine(path, relativePath + GetExtension(settings.CacheAudioFormat));
 			AudioInfoPath = Path.Combine(path, relativePath + ".xml");
 			var wavFi = new FileInfo(AudioFilePath);
@@ -207,7 +207,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Speech
 
 		public async Task<MemoryStream> GetMemoryStreamWithHeader(AudioDataStream source)
 		{
-			var tempFolderPath = Path.GetTempPath();
+			var tempFolderPath = AppHelper.GetTempFolderPath();
 			var wavFileName = Path.GetRandomFileName() + ".wav";
 			var tempWavFilePath = System.IO.Path.Combine(tempFolderPath, wavFileName);
 			// Save to a temporary WAV file first

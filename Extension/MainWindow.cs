@@ -111,6 +111,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			Global.GetClipboard = AppHelper.GetClipboard;
 			Global.SetClipboard = AppHelper.SetClipboard;
 			Global.GetEnvironmentProperties = AppHelper.GetEnvironmentProperties;
+			Plugins.Core.ScreenshotHelper.GetTempFolderPath = AppHelper.GetTempFolderPath;
 			//Global.GetEnvironmentProperties = SolutionHelper.GetEnvironmentProperties;
 			//Global.GetReservedProperties = SolutionHelper.GetReservedProperties;
 			//Global.GetOtherProperties = SolutionHelper.GetOtherProperties;

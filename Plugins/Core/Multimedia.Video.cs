@@ -27,6 +27,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public Func<string, string[], Task<OperationResult<string>>> VideoToText { get; set; }
 
 		/// <summary>
+		/// Get path to temp folder.
+		/// </summary>
+		public Func<string> GetTempFolderPath { get; set; }
+
+		/// <summary>
 		/// Analyzes visual content (pictures/photos) based on given instructions using an AI model.
 		/// Supported file types: .jpg, .png, .gif, .bmp, .tiff
 		/// Do not use for analyzing plain text files.
@@ -294,7 +299,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			{
 				var fi = new FileInfo(pdfFilePath);
 				var tempName = $"{fi.Name}_{System.IO.Path.GetRandomFileName()}";
-				var tempPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "AICOMP", tempName);
+				var tempFolderPath = GetTempFolderPath is null
+					? System.IO.Path.GetTempPath()
+					: GetTempFolderPath();
+				var tempPath = System.IO.Path.Combine(tempFolderPath, "AICOMP", tempName);
 				var tempDi = new DirectoryInfo(tempPath);
 				if (!tempDi.Exists)
 					tempDi.Create();

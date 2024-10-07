@@ -306,7 +306,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 
 		private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			var path = AppHelper.GetTempPath();
+			var path = AppHelper.GetTempFolderPath();
 			ControlsHelper.OpenUrl(path);
 		}
 	}

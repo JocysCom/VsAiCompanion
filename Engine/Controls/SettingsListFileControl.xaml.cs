@@ -500,7 +500,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						// Determine the file name
 						var fileName = $"{fi.Name}.xml";
 						// Write the serialized text to a file
-						var filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+						var tempFolderPath = AppHelper.GetTempFolderPath();
+						var filePath = System.IO.Path.Combine(tempFolderPath, fileName);
 						System.IO.File.WriteAllText(filePath, text);
 						files.Add(filePath);
 					}
