@@ -52,25 +52,25 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="bblanchon.PDFium.macOS" Version="130.0.6707" ExcludeAssets="All" PrivateAssets="all">
+		<PackageReference Include="bblanchon.PDFium.macOS" Version="130.0.6721" ExcludeAssets="All" PrivateAssets="all">
 		  <IncludeAssets>none</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="2.88.8" ExcludeAssets="All" PrivateAssets="All" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.8" GeneratePathProperty="true" ExcludeAssets="All" />
-		<PackageReference Include="bblanchon.PDFium.Linux" Version="130.0.6707" ExcludeAssets="All" PrivateAssets="all">
+		<PackageReference Include="bblanchon.PDFium.Linux" Version="130.0.6721" ExcludeAssets="All" PrivateAssets="all">
 		  <IncludeAssets>none</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="bblanchon.PDFium.Win32" Version="130.0.6707" GeneratePathProperty="true" ExcludeAssets="All" />
+		<PackageReference Include="bblanchon.PDFium.Win32" Version="130.0.6721" GeneratePathProperty="true" ExcludeAssets="All" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" ExcludeAssets="All" PrivateAssets="All" />
 		<PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.1.0" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.65" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
 		<PackageReference Include="LiteDB" Version="5.0.21" />
 		<PackageReference Include="NPOI" Version="2.7.1" />
-		<PackageReference Include="PdfPig" Version="0.1.8" />
-		<PackageReference Include="PDFtoImage" Version="4.1.0" />
+		<PackageReference Include="PdfPig" Version="0.1.9" />
+		<PackageReference Include="PDFtoImage" Version="4.1.1" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
-		<PackageReference Include="System.Data.OleDb" Version="8.0.0" />
+		<PackageReference Include="System.Data.OleDb" Version="8.0.1" />
 		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
 		<PackageReference Include="Tiktoken" Version="2.0.3" />
 	</ItemGroup>
@@ -96,7 +96,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<PackageReference Include="System.Text.Json" Version="8.0.4" />
+		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 		<PackageReference Include="HtmlRenderer.PdfSharp" Version="1.5.0.6" />
 		<Reference Include="System.Device" />
 		<Reference Include="System.Net.Http" />

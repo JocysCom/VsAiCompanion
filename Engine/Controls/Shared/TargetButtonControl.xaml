@@ -1,0 +1,27 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Shared.TargetButtonControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<StackPanel
+			x:Name="TargetButton"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			PreviewMouseLeftButtonDown="TargetButton_PreviewMouseLeftButtonDown"
+			ToolTip="Drag to select a target control">
+			<TextBlock FontSize="32" Style="{StaticResource IconTextStyle}" Text="&#xE707;" />
+		</StackPanel>
+	</Grid>
+</UserControl>

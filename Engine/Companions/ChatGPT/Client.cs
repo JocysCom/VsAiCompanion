@@ -1,5 +1,4 @@
-﻿using Azure;
-using Azure.AI.OpenAI;
+﻿using Azure.AI.OpenAI;
 using Azure.Identity;
 using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
@@ -292,7 +291,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				client = string.IsNullOrEmpty(apiSecretKey)
 					? new AzureOpenAIClient(endpoint, new DefaultAzureCredential())
-					: new AzureOpenAIClient(endpoint, new AzureKeyCredential(apiSecretKey));
+					: new AzureOpenAIClient(endpoint, new System.ClientModel.ApiKeyCredential(apiSecretKey));
 			}
 			else
 			{
@@ -348,10 +347,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				var response = await embeddingClient.GenerateEmbeddingsAsync(input, cancellationToken: linkedTokenSource.Token);
 				if (response != null)
 				{
-					var inputTokens = response.Value.Usage.InputTokens;
-					var totalTokens = response.Value.Usage.TotalTokens;
+					var inputTokens = response.Value.Usage.InputTokenCount;
+					var totalTokens = response.Value.Usage.TotalTokenCount;
 					results = response.Value
-						.ToDictionary(x => x.Index, x => x.Vector.ToArray());
+						.ToDictionary(x => x.Index, x => x.ToFloats().ToArray());
 				}
 			}
 			catch (Exception ex)
@@ -515,7 +514,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 							var toolCallIdsByIndex = new Dictionary<int, string>();
 							var functionNamesByIndex = new Dictionary<int, string>();
-							var functionArgumentBuildersByIndex = new Dictionary<int, StringBuilder>();
+							var functionArgumentsByIndex = new Dictionary<int, MemoryStream>();
 
 							while (await choicesEnumerator.MoveNextAsync())
 							{
@@ -529,30 +528,36 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 								{
 									foreach (StreamingChatToolCallUpdate update in choice.ToolCallUpdates)
 									{
-										if (!string.IsNullOrEmpty(update.Id))
-											toolCallIdsByIndex[update.Index] = update.Id;
+										var index = update.Index;
+										if (!string.IsNullOrEmpty(update.ToolCallId))
+											toolCallIdsByIndex[index] = update.ToolCallId;
 										if (!string.IsNullOrEmpty(update.FunctionName))
-											functionNamesByIndex[update.Index] = update.FunctionName;
-										if (!string.IsNullOrEmpty(update.FunctionArgumentsUpdate))
+											functionNamesByIndex[index] = update.FunctionName;
+										if (update.FunctionArgumentsUpdate != null)
 										{
-											StringBuilder argumentsBuilder
-												= functionArgumentBuildersByIndex.TryGetValue(update.Index, out StringBuilder existingBuilder)
-													? existingBuilder
-													: new StringBuilder();
-											argumentsBuilder.Append(update.FunctionArgumentsUpdate);
-											functionArgumentBuildersByIndex[update.Index] = argumentsBuilder;
+											// If arguments storage don't exists yet then...
+											if (!functionArgumentsByIndex.TryGetValue(index, out MemoryStream stream))
+											{
+												stream = new MemoryStream();
+												functionArgumentsByIndex[index] = stream;
+											}
+											using (Stream updateStream = update.FunctionArgumentsUpdate.ToStream())
+												updateStream.CopyTo(stream);
 										}
 									}
 								}
 							}
-							foreach (KeyValuePair<int, string> indexToIdPair in toolCallIdsByIndex)
+							foreach (var kv in toolCallIdsByIndex)
 							{
-								var toolCall = ChatToolCall.CreateFunctionToolCall(
-									indexToIdPair.Value,
-									functionNamesByIndex[indexToIdPair.Key],
-									functionArgumentBuildersByIndex[indexToIdPair.Key].ToString());
+								var index = kv.Key;
+								var toolCallId = kv.Value;
+								var functionName = functionNamesByIndex[index];
+								// Getting function arguments.
+								var stream = functionArgumentsByIndex[index];
+								stream.Position = 0; // Reset the stream position to the beginning
+								var functionArguments = BinaryData.FromStream(stream);
+								var toolCall = ChatToolCall.CreateFunctionToolCall(toolCallId, functionName, functionArguments);
 								toolCalls.Add(toolCall);
-
 							}
 						}
 						// Streaming is not supported.
@@ -566,7 +571,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							{
 								case ChatFinishReason.Stop:
 								case ChatFinishReason.ToolCalls:
-									answer = string.Join("\r\n", completion.Content);
+									answer = string.Join("\r\n", completion.Content?.Select(x => x.Text));
 									break;
 								case ChatFinishReason.Length:
 									answer = "Incomplete model output due to MaxTokens parameter or token limit exceeded.";
@@ -714,7 +719,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			{
 				var json = JsonSerializer.Serialize(toolCall);
 				var parameters = new base_item();
-				if (!string.IsNullOrEmpty(toolCall.FunctionArguments))
+				if (toolCall.FunctionArguments != null)
 					parameters = JsonSerializer.Deserialize<base_item>(toolCall.FunctionArguments);
 				var function = new chat_completion_function()
 				{
@@ -850,21 +855,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			switch (item.type)
 			{
 				case cotent_item_type.text:
-					return ChatMessageContentPart.CreateTextMessageContentPart(item.text);
+					return ChatMessageContentPart.CreateTextPart(item.text);
 				case cotent_item_type.image_url:
 					// The Microsoft Uri has a size limit of x0FFF0.
 					// At the moment the ChatMessageImageUrl does not support attaching base64 images larger than that.
-					var detail = (ImageChatMessageContentPartDetail)item.image_url.detail.ToString();
+					var detail = (ChatImageDetailLevel)item.image_url.detail.ToString();
 					ChatMessageContentPart ci = null;
 					if (ClassLibrary.Files.Mime.TryParseDataUri(item.image_url.url, out string mimeType, out byte[] data))
 					{
 						var bytes = BinaryData.FromBytes(data);
-						ci = ChatMessageContentPart.CreateImageMessageContentPart(bytes, mimeType, detail);
+						ci = ChatMessageContentPart.CreateImagePart(bytes, mimeType, detail);
 					}
 					else
 					{
 						var imageUri = new System.Uri(item.image_url.url);
-						ci = ChatMessageContentPart.CreateImageMessageContentPart(imageUri, detail);
+						ci = ChatMessageContentPart.CreateImagePart(imageUri, detail);
 					}
 					return ci;
 				default:

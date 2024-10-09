@@ -4,11 +4,12 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:Chat="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Chat"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controlsShared="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
+	xmlns:controlsTemplate="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Template"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:root="clr-namespace:JocysCom.VS.AiCompanion.Engine"
-	xmlns:templateItemControls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Template"
 	x:Name="This"
 	d:Height="450"
 	d:Width="900"
@@ -169,7 +170,7 @@
 						</StackPanel>
 					</TabItem.Header>
 					<WrapPanel>
-						<controls:IconUserControl
+						<controlsShared:IconUserControl
 							x:Name="IconPanel"
 							Grid.Row="1"
 							Width="64"
@@ -483,6 +484,17 @@
 						</WrapPanel>
 					</Grid>
 				</TabItem>
+
+				<TabItem x:Name="CanvasTabItem" x:FieldModifier="public">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Content="{StaticResource Icon_painters_palette}" />
+							<Label Content="Canvas" />
+						</StackPanel>
+					</TabItem.Header>
+					<controlsTemplate:CanvasControl x:Name="CanvasPanel" />
+				</TabItem>
+
 				<TabItem x:Name="PersonalizedTabItem" x:FieldModifier="public">
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
@@ -783,7 +795,7 @@
 							<Label Content="{StaticResource main_Tools}" />
 						</StackPanel>
 					</TabItem.Header>
-					<templateItemControls:ToolsUserControl x:Name="ToolsPanel" />
+					<controlsTemplate:ToolsUserControl x:Name="ToolsPanel" />
 				</TabItem>
 
 				<TabItem x:Name="MultimediaTabItem" x:FieldModifier="public">

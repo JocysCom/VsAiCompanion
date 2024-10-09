@@ -476,7 +476,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				return;
 			// Need to use reflection to set the Temperature property
 			// because the developers used unnecessary C# 9.0 features that won't work on .NET 4.8.
-			var value = ChatToolChoice.Auto;
+			var value = ChatToolChoice.CreateAutoChoice();
 			var toolsToProvide = new List<ChatTool>();
 			// Make sure that last message is not automated reply or it will go into the infinite loop.
 			if (item.Messages.LastOrDefault()?.IsAutomated == true)
@@ -484,7 +484,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// If chat is configured to require a specific tool then...
 			if (item.ToolChoiceRequired)
 			{
-				value = ChatToolChoice.Required;
+				value = ChatToolChoice.CreateRequiredChoice();
 				var requiredFunctions = tools.Where(x => item.ToolChoiceRequiredNames.Contains(x.FunctionName)).ToList();
 				foreach (var tool in requiredFunctions)
 					toolsToProvide.Add(tool);

@@ -315,6 +315,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return copy;
 		}
 
+		#region Canvaas Panel
+
+		[DefaultValue(false)]
+		public bool CanvasPanelEnabled
+		{
+			get => _CanvasPanelEnabled;
+			set => SetProperty(ref _CanvasPanelEnabled, value);
+		}
+		bool _CanvasPanelEnabled;
+
+		#endregion
+
 		#region Markdown Languages
 
 		[DefaultValue("JSON")]

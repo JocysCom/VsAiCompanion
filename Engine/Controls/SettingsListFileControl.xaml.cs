@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -488,7 +489,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				Array.Copy(selectedItems, items, items.Length);
 
 				// Serialize the items to a XML string.
-				var text = items.Length == 1
+				var xml = items.Length == 1
 					? Serializer.SerializeToXmlString(selectedItems[0], null, true)
 					: Serializer.SerializeToXmlString(items, null, true);
 				var files = new System.Collections.Specialized.StringCollection();
@@ -500,15 +501,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 						// Determine the file name
 						var fileName = $"{fi.Name}.xml";
 						// Write the serialized text to a file
-						var tempFolderPath = AppHelper.GetTempFolderPath();
+						var tempFolderPath = System.IO.Path.Combine(AppHelper.GetTempFolderPath(), nameof(Clipboard));
+						Directory.CreateDirectory(tempFolderPath);
 						var filePath = System.IO.Path.Combine(tempFolderPath, fileName);
-						System.IO.File.WriteAllText(filePath, text);
+						System.IO.File.WriteAllText(filePath, xml);
 						files.Add(filePath);
 					}
 				}
 				// Create a DataObject to hold both text and file drop list
 				var dataObject = new DataObject();
-				dataObject.SetText(text);
+
+				dataObject.SetText(xml);
 				if (files.Count > 0)
 					dataObject.SetFileDropList(files);
 				// Place the dataObject on the clipboard

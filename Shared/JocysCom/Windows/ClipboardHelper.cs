@@ -5,6 +5,7 @@ using System.Windows;
 
 public static class ClipboardHelper
 {
+
 	/// <summary>
 	/// Copies the specified content as a file to the clipboard.
 	/// </summary>
@@ -12,41 +13,117 @@ public static class ClipboardHelper
 	/// <param name="contents">The string contents of the file.</param>
 	public static void SetClipboard(string fileName, string contents, string tempFolder = null)
 	{
+		// Write the contents to the temporary file
 		var ext = Path.GetExtension(fileName);
-		// Generate a unique temporary file path
 		if (tempFolder == null)
 			tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-
 		var tempFilePath = Path.Combine(tempFolder, fileName);
-
-		// Ensure the directory exists
-		Directory.CreateDirectory(Path.GetDirectoryName(tempFilePath));
-
-		// Write the contents to the temporary file
+		Directory.CreateDirectory(tempFolder);
 		File.WriteAllText(tempFilePath, contents);
 
-		// Create a FileDrop data object
-		DataObject dataObject = new DataObject();
-		string[] files = new string[] { tempFilePath };
-		dataObject.SetData(DataFormats.FileDrop, files);
+		// Create clipboard object.
+		var dataObject = new DataObject();
 
-		// Set the preferred drop effect (Copy)
-		MemoryStream dropEffect = new MemoryStream();
-		byte[] dropEffectBytes = new byte[] { 5, 0, 0, 0 }; // 5 for Copy
-		dropEffect.Write(dropEffectBytes, 0, dropEffectBytes.Length);
-		dataObject.SetData("Preferred DropEffect", dropEffect);
+		// Add a custom format to help identify clipboard data
+		var clipboardIdentifier = Guid.NewGuid().ToString();
+		dataObject.SetData(ClipboardFormatName, clipboardIdentifier);
 
-		// Add a custom format to help identify our clipboard data
-		string customClipboardFormat = "MyAppClipboardFormat";
-		string clipboardIdentifier = Guid.NewGuid().ToString();
-		dataObject.SetData(customClipboardFormat, clipboardIdentifier);
+		// Set Text format
+		dataObject.SetText(contents);
+
+		// If the file is an SVG then...
+		if (ext.Equals(".svg", StringComparison.OrdinalIgnoreCase))
+		{
+			// add it to the clipboard as an image.
+			dataObject.SetData("image/svg+xml", contents);
+			dataObject.SetData(DataFormats.UnicodeText, contents);
+		}
+
+		// Set the FileDropList format.
+		var fileDropList = new System.Collections.Specialized.StringCollection();
+		_ = fileDropList.Add(tempFilePath);
+		dataObject.SetFileDropList(fileDropList);
 
 		// Place the data object onto the clipboard
 		Clipboard.SetDataObject(dataObject, true);
 
 		// Start monitoring the clipboard
-		MonitorClipboard(customClipboardFormat, clipboardIdentifier, tempFilePath);
+		MonitorClipboard(ClipboardFormatName, clipboardIdentifier, tempFilePath);
 	}
+
+	/// <summary>
+	/// Looks for svg image, svg text and svg file.
+	/// </summary>
+	public static string GetSvgFromClipboard()
+	{
+		string svgContent = null;
+		var dataObject = Clipboard.GetDataObject();
+		// Try to get content from image/svg+xml
+		if (dataObject.GetDataPresent("image/svg+xml"))
+		{
+			object data = dataObject.GetData("image/svg+xml");
+			if (data is string svgData)
+			{
+				svgContent = svgData;
+				return svgContent;
+			}
+		}
+		// Try to get content from UnicodeText
+		if (dataObject.GetDataPresent(DataFormats.UnicodeText))
+		{
+			object data = dataObject.GetData(DataFormats.UnicodeText);
+			if (data is string textData && IsValidSvg(textData))
+			{
+				svgContent = textData;
+				return svgContent;
+			}
+		}
+		// Try to get content from FileDrop
+		if (dataObject.GetDataPresent(DataFormats.FileDrop))
+		{
+			var files = dataObject.GetData(DataFormats.FileDrop) as string[];
+			if (files != null)
+			{
+				foreach (string file in files)
+				{
+					if (Path.GetExtension(file).Equals(".svg", StringComparison.OrdinalIgnoreCase))
+					{
+						try
+						{
+							svgContent = File.ReadAllText(file);
+							return svgContent;
+						}
+						catch (Exception ex)
+						{
+							System.Diagnostics.Debug.WriteLine($"Failed to read SVG file '{file}': {ex.Message}");
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private static bool IsValidSvg(string content)
+	{
+		// Basic validation to check if content contains SVG tags
+		return !string.IsNullOrWhiteSpace(content) &&
+			   content.IndexOf("<svg", StringComparison.OrdinalIgnoreCase) > -1 &&
+			   content.IndexOf("</svg>", StringComparison.OrdinalIgnoreCase) > -1;
+	}
+
+	public static void SetDragDropEffects(IDataObject dataObject, DragDropEffects effects)
+	{
+		var dropEffect = new MemoryStream();
+		byte[] effect = BitConverter.GetBytes((int)effects);
+		dropEffect.Write(effect, 0, effect.Length);
+		dropEffect.Position = 0;
+		dataObject.SetData("Preferred DropEffect", dropEffect);
+	}
+
+	public static string ClipboardFormatName
+		=> $"{typeof(ClipboardHelper).Namespace}ClipboardFormat";
+
 
 	private static async void MonitorClipboard(string customFormat, string identifier, string tempFilePath)
 	{
@@ -59,7 +136,7 @@ public static class ClipboardHelper
 				break;
 		}
 		// Clean up the temporary file after the clipboard data changes
-		DeleteTemporaryFile(tempFilePath);
+		//DeleteTemporaryFile(tempFilePath);
 	}
 
 	private static bool ClipboardHasChanged(string customFormat, string originalIdentifier)

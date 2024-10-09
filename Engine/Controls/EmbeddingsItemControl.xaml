@@ -4,6 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
+	xmlns:controlsShared="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
@@ -67,7 +68,7 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<controls:IconUserControl
+			<controlsShared:IconUserControl
 				x:Name="IconPanel"
 				Grid.RowSpan="3"
 				Width="64"

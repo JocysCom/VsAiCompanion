@@ -1,0 +1,20 @@
+﻿<Window
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Shared.TargetOverlayWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	Title="TargetOverlayWindow"
+	d:Height="100"
+	d:Width="100"
+	AllowsTransparency="True"
+	Background="Transparent"
+	ShowInTaskbar="False"
+	Topmost="True"
+	WindowState="Normal"
+	WindowStyle="None"
+	mc:Ignorable="d">
+	<Canvas x:Name="CanvasPanel" Background="Green" Opacity="0.1" />
+</Window>

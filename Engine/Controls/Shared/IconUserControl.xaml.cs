@@ -1,11 +1,12 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace JocysCom.VS.AiCompanion.Engine.Controls
+namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 {
 	/// <summary>
 	/// Interaction logic for IconUserControl.xaml
@@ -35,26 +36,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public void Edit()
 		{
 			string contents = null;
-			// Check if CTRL+C is pressed.
-			if (Keyboard.Modifiers != ModifierKeys.Control)
-			{
-				// Get SVG file content from clipboard.
-				contents = Clipboard.GetText();
-			}
-			else
-			{
-				var dialog = _OpenFileDialog;
-				dialog.SupportMultiDottedExtensions = true;
-				JocysCom.ClassLibrary.Controls.DialogHelper.AddFilter(dialog, ".svg");
-				JocysCom.ClassLibrary.Controls.DialogHelper.AddFilter(dialog);
-				dialog.FilterIndex = 1;
-				dialog.RestoreDirectory = true;
-				dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(".svg");
-				var result = dialog.ShowDialog();
-				if (result != System.Windows.Forms.DialogResult.OK)
-					return;
-				contents = System.IO.File.ReadAllText(dialog.FileNames[0]);
-			}
+			var dialog = _OpenFileDialog;
+			dialog.SupportMultiDottedExtensions = true;
+			JocysCom.ClassLibrary.Controls.DialogHelper.AddFilter(dialog, ".svg");
+			JocysCom.ClassLibrary.Controls.DialogHelper.AddFilter(dialog);
+			dialog.FilterIndex = 1;
+			dialog.RestoreDirectory = true;
+			dialog.Title = "Open " + JocysCom.ClassLibrary.Files.Mime.GetFileDescription(".svg");
+			var result = dialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+			contents = System.IO.File.ReadAllText(dialog.FileNames[0]);
 			if (string.IsNullOrEmpty(contents))
 				_item?.SetIcon(contents);
 		}
@@ -65,26 +57,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (item == null || string.IsNullOrEmpty(item.IconData))
 				return;
 			var contents = SettingsListFileItem.GetContent(item.IconData);
-			var tempPath = AppHelper.GetTempFolderPath();
-			ClipboardHelper.SetClipboard(item.Name + ".svg", contents, tempPath);
+			var tempFolderPath = Path.Combine(AppHelper.GetTempFolderPath(), nameof(Clipboard));
+			ClipboardHelper.SetClipboard(item.Name + ".svg", contents, tempFolderPath);
 		}
 
+		/// <summary>
+		/// Paste icon data from the clipboard to the item.
+		/// </summary>
 		public void Paste()
 		{
-			// Paste icon data from the clipboard to the item.
-			if (Clipboard.ContainsText())
+			try
 			{
-				try
-				{
-					var svg = Clipboard.GetText();
+				var svg = ClipboardHelper.GetSvgFromClipboard();
+				if (!string.IsNullOrEmpty(svg))
 					Converters.SvgHelper.LoadSvgFromString(svg);
-					_item?.SetIcon(svg);
-					return;
-				}
-				catch (Exception ex)
-				{
-					Global.SetWithTimeout(MessageBoxImage.Error, ex.Message);
-				}
+				_item?.SetIcon(svg);
+			}
+			catch (Exception ex)
+			{
+				Global.SetWithTimeout(MessageBoxImage.Error, ex.Message);
 			}
 		}
 
@@ -93,12 +84,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.IsOnCooldown(sender))
 				return;
 			var modifiers = Keyboard.Modifiers;
-			if ((modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+			if (modifiers.HasFlag(ModifierKeys.Alt))
 			{
 				Paste();
 				return;
 			}
-			if ((modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+			if (modifiers.HasFlag(ModifierKeys.Control))
 			{
 				Copy();
 				return;

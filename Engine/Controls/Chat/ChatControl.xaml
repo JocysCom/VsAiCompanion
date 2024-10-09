@@ -24,13 +24,6 @@
 				<ResourceDictionary Source="../../Resources/Icons/Icons_Default.xaml" />
 				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
-			<!--  Style for icons  -->
-			<Style x:Key="IconTextStyle" TargetType="TextBlock">
-				<Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
-				<Setter Property="FontSize" Value="16" />
-				<Setter Property="VerticalAlignment" Value="Center" />
-				<Setter Property="Margin" Value="0,0,5,0" />
-			</Style>
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
 			<Style x:Key="RoundCornerRed" TargetType="{x:Type Button}">
 				<Setter Property="HorizontalContentAlignment" Value="Center" />
