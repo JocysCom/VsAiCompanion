@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Processes;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Processes;
 using System;
 using System.Windows;
 using System.Windows.Automation;
@@ -13,76 +14,147 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 	/// </summary>
 	public partial class TargetButtonControl : UserControl
 	{
-		public event EventHandler<TargetSelectedEventArgs> TargetSelected;
-
 		public TargetButtonControl()
 		{
 			InitializeComponent();
-			mouseHandler = new MouseGlobalHandler();
-			mouseHandler.MouseLeftButtonUp += GlobalMouseHandler_MouseLeftButtonUp;
+			overlayWindow = new TargetOverlayWindow();
+			overlayWindow.Title = "Overlay Window";
+			overlayWindow.TargetBorder.Visibility = Visibility.Collapsed;
+			highlightWindow = new TargetOverlayWindow();
+			highlightWindow.Title = "Highlight Window";
+			highlightWindow.TargetButton.Visibility = Visibility.Collapsed;
+			mouseHandler = new MouseGlobalHook();
+			mouseHandler.MouseUp += MouseHandler_MouseUp;
 			mouseHandler.MouseMove += MouseHandler_MouseMove;
 		}
 
+		public event EventHandler<TargetSelectedEventArgs> TargetSelected;
+		MouseGlobalHook mouseHandler;
+		TargetOverlayWindow overlayWindow;
+		TargetOverlayWindow highlightWindow;
 
 		private void TargetButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			System.Diagnostics.Debug.WriteLine("TargetButton_PreviewMouseLeftButtonDown");
-			// Hide parent window
-			var parentWindow = Window.GetWindow(this);
-			parentWindow?.Hide();
-			mouseHandler.Start();
+			if (MouseGlobalHook.IsPrimaryMouseButton(MouseButton.Left))
+				StartTargeting();
 		}
 
-		MouseGlobalHandler mouseHandler;
-
-		private void GlobalMouseHandler_MouseLeftButtonUp(object sender, EventArgs e)
+		private void TargetButton_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			mouseHandler.Stop();
+			if (MouseGlobalHook.IsPrimaryMouseButton(MouseButton.Right))
+				StartTargeting();
+		}
 
-			System.Diagnostics.Debug.WriteLine("MouseHook_OnMouseUp");
-			// Get the cursor position
-			var screenPoint = System.Windows.Forms.Cursor.Position;
-			// Identify the control under the cursor
-			var element = AutomationElement.FromPoint(new System.Windows.Point(screenPoint.X, screenPoint.Y));
-			// Get the window element from the element under the cursor.
-			var windowElement = GetParentWindow(element);
-			// Hide parent window
-			var parentWindow = Window.GetWindow(this);
-			parentWindow?.Show();
-			// Raise the TargetSelected event
-			TargetSelected?.Invoke(this, new TargetSelectedEventArgs(windowElement, element));
+		private void MouseHandler_MouseUp(object sender, MouseGlobalEventArgs e)
+		{
+			StopTargeting();
+		}
+
+		public void HighlightElement(AutomationElement element)
+		{
+			if (element == null)
+			{
+				highlightWindow.Hide();
+			}
+			else
+			{
+				var rect = (Rect)element.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
+				highlightWindow.Width = rect.Width;
+				highlightWindow.Height = rect.Height;
+				highlightWindow.Top = rect.Top;
+				highlightWindow.Left = rect.Left;
+				highlightWindow.Show();
+			}
+		}
+
+		void StartTargeting()
+		{
+			lock (this)
+			{
+				System.Diagnostics.Debug.WriteLine(nameof(StartTargeting));
+				TargetIcon.Visibility = Visibility.Hidden;
+				var position = MouseGlobalHook.GetCursorPosition();
+				MoveOverlayWindow(position);
+				overlayWindow.Width = TargetButton.ActualWidth;
+				overlayWindow.Height = TargetButton.ActualHeight;
+				overlayWindow.Show();
+				// Hide parent window
+				var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+				if (!isCtrlDown)
+				{
+					var parentWindow = Window.GetWindow(this);
+					parentWindow?.Hide();
+				}
+				mouseHandler.Start();
+			}
+		}
+
+		void StopTargeting()
+		{
+			lock (this)
+			{
+				System.Diagnostics.Debug.WriteLine(nameof(StopTargeting));
+				overlayWindow.Hide();
+				TargetIcon.Visibility = Visibility.Visible;
+				mouseHandler.Stop();
+				var windowElement = _previousWindowElement;
+				var editroElement = _previousEditorElement;
+				HighlightElement(null);
+				// Hide parent window
+				var parentWindow = Window.GetWindow(this);
+				parentWindow?.Show();
+				// Raise the TargetSelected event
+				TargetSelected?.Invoke(this, new TargetSelectedEventArgs(windowElement, editroElement));
+			}
+		}
+
+		void MoveOverlayWindow(Point p)
+		{
+			overlayWindow.Left = p.X - overlayWindow.Width / 2;
+			overlayWindow.Top = p.Y - overlayWindow.Height / 2;
 		}
 
 
 		// Add this field to keep track of the previous element under the cursor
-		private AutomationElement _previousElement = null;
+		private AutomationElement _previousWindowElement = null;
+		private AutomationElement _previousEditorElement = null;
+		private Point _previousMousePosition;
 
-		private void MouseHandler_MouseMove(object sender, MouseGlobalHandler.GlobalMouseEventArgs e)
+		void UpdateTarget(Point point)
 		{
-
-			// Get the cursor position relative to the overlay window
-			// Convert to screen coordinates
-			var screenPoint = System.Windows.Forms.Cursor.Position;
-
-			AutomationElement currentElement = null;
-			try
+			System.Diagnostics.Debug.WriteLine($"{nameof(UpdateTarget)}: {point}");
+			// Use Dispatcher to invoke the UI Automation call on the UI thread
+			Dispatcher.BeginInvoke(new Action(() =>
 			{
 				// Identify the control under the cursor
-				currentElement = AutomationElement.FromPoint(
-					new System.Windows.Point(screenPoint.X, screenPoint.Y));
-			}
-			catch (Exception ex)
-			{
-				System.Diagnostics.Debug.Write(ex.Message);
-			}
+				var currentWindowElement = MouseGlobalHook.GetWindowElementFromPoint(point);
+				var currentEditorElement = AutomationElement.FromPoint(point);
+				//if (!Equals(currentEditorElement, _previousEditorElement))
+				//{
+				_previousWindowElement = currentWindowElement;
+				_previousMousePosition = point;
+				WindowName.Text = ShowElementData(currentWindowElement, "Window");
+				//}
+				// Check if the element has changed
+				//if (!Equals(currentEditorElement, _previousEditorElement))
+				//{
+				_previousEditorElement = currentEditorElement;
+				_previousMousePosition = point;
+				HighlightElement(currentEditorElement);
+				EditorName.Text = ShowElementData(currentEditorElement, "Editor");
 
-			// Check if the element has changed
-			if (!Equals(currentElement, _previousElement))
+				//}
+			}));
+		}
+
+		private void MouseHandler_MouseMove(object sender, MouseGlobalEventArgs e)
+		{
+			// Move the overlay window on the UI thread
+			Dispatcher.Invoke(new Action(() =>
 			{
-				ShowElementData(currentElement);
-				// Update the previous element
-				_previousElement = currentElement;
-			}
+				MoveOverlayWindow(e.Point);
+			}));
+			_ = Helper.Debounce(UpdateTarget, e.Point, 250);
 		}
 
 		private void Overlay_TargetSelected(object sender, TargetSelectedEventArgs e)
@@ -95,20 +167,21 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			TargetSelected?.Invoke(this, e);
 		}
 
-		public static void ShowElementData(AutomationElement element)
+		public static string ShowElementData(AutomationElement element, string note = "Element")
 		{
 			if (element == null)
 			{
 				System.Diagnostics.Debug.WriteLine("No element selected");
-				return;
+				return "";
 			}
-			var elementName = element.Current.Name;
+			var name = element.Current.Name;
+			var className = element.Current.ClassName;
 			var controlType = element.Current.ControlType.ProgrammaticName;
 			// Get the window element from the current element
-			var windowElement = GetParentWindow(element);
-			var windowTitle = windowElement?.Current.Name ?? "Unknown Window";
-			System.Diagnostics.Debug.WriteLine(
-				$"Selected Element: {elementName} [{controlType}] in Window: {windowTitle}");
+			//var windowElement = GetParentWindow(element);
+			var s = $"{note}: Type: {controlType}, Class: {className}, Name: {name}";
+			System.Diagnostics.Debug.WriteLine(s);
+			return s;
 		}
 
 		/// <summary>

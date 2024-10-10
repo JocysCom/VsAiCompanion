@@ -5,23 +5,34 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Margin="0"
+	Padding="0"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
-				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
+				<ResourceDictionary Source="../../Resources/Icons/Icons_Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid>
-		<StackPanel
-			x:Name="TargetButton"
-			HorizontalAlignment="Center"
-			VerticalAlignment="Center"
-			PreviewMouseLeftButtonDown="TargetButton_PreviewMouseLeftButtonDown"
-			ToolTip="Drag to select a target control">
-			<TextBlock FontSize="32" Style="{StaticResource IconTextStyle}" Text="&#xE707;" />
+	<!--  Background property must be set to Transparent in order to captures mouse events across element entire area.  -->
+	<StackPanel
+		x:Name="TargetButton"
+		Margin="0"
+		Background="Transparent"
+		Orientation="Horizontal"
+		PreviewMouseLeftButtonDown="TargetButton_PreviewMouseLeftButtonDown"
+		PreviewMouseRightButtonDown="TargetButton_PreviewMouseLeftButtonDown"
+		ToolTip="Drag to select a target control">
+		<ContentControl
+			x:Name="TargetIcon"
+			Width="32"
+			Height="32"
+			Content="{StaticResource Icon_target}"
+			Focusable="False" />
+		<StackPanel Orientation="Vertical">
+			<TextBlock x:Name="WindowName" Text="Window: none" />
+			<TextBlock x:Name="EditorName" Text="Editor: none" />
 		</StackPanel>
-	</Grid>
+	</StackPanel>
 </UserControl>

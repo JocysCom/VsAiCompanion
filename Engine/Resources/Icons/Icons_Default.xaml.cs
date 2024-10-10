@@ -1,5 +1,4 @@
 using System.Windows;
-
 namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 {
 	partial class Icons_Default : ResourceDictionary
@@ -123,6 +122,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_settings = nameof(Icon_settings);
 		public const string Icon_shield = nameof(Icon_shield);
 		public const string Icon_spellcheck = nameof(Icon_spellcheck);
+		public const string Icon_target = nameof(Icon_target);
 		public const string Icon_task = nameof(Icon_task);
 		public const string Icon_task_add = nameof(Icon_task_add);
 		public const string Icon_teacher = nameof(Icon_teacher);

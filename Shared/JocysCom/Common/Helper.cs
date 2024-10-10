@@ -228,7 +228,16 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Contains the CancellationTokenSource for each delegate to manage debouncing.
 		/// </summary>
-		static ConcurrentDictionary<Delegate, CancellationTokenSource> DebounceActions = new ConcurrentDictionary<Delegate, CancellationTokenSource>();
+		static ConcurrentDictionary<Delegate, DebounceData> DebounceActions = new ConcurrentDictionary<Delegate, DebounceData>();
+
+		/// <summary>
+		/// Holds debouncing information for a specific delegate.
+		/// </summary>
+		class DebounceData
+		{
+			public int Counter = 0;
+			public object LockObject = new object();
+		}
 
 		[Obsolete]
 		public static async Task Delay(Action action, int? delay = null, params object[] args)
@@ -270,8 +279,8 @@ namespace JocysCom.ClassLibrary
 			=> await _Debounce(action, delay);
 
 		/// <summary>
-		/// Core implementation of the debounce functionality for delegates.
-		/// It schedules the execution of the delegate after a delay, canceling any previous pending executions of the same delegate.
+		/// Debounces the specified action, ensuring it's only invoked after a specified delay since the last call.
+		/// Subsequent calls within the delay period reset the timer.
 		/// </summary>
 		/// <param name="action">The delegate to debounce.</param>
 		/// <param name="delay">The delay in milliseconds before the delegate is invoked. Defaults to 500 milliseconds if not specified.</param>
@@ -281,40 +290,20 @@ namespace JocysCom.ClassLibrary
 		{
 			if (action == null)
 				return;
-			var className = action.Method.DeclaringType;
-			var methodName = action.Method.Name;
-			var source = new CancellationTokenSource();
-			// Replace any previous CancellationTokenSource with a new one.
-			DebounceActions.AddOrUpdate(
-				// Add token if action key does not exist.
-				action, source,
-				// If the action key already exists, cancel the previous token and use the new one.
-				(key, oldSource) =>
-				{
-					System.Diagnostics.Debug.WriteLine($"Cancel previous `{className}.{methodName}`");
-					// Cancel previous delayed operation of the same action.
-					oldSource?.Cancel();
-					// Return new token.
-					return source;
-				}
-			);
-			try
+			int delayValue = delay ?? 500;
+			var debounceData = DebounceActions.GetOrAdd(action, new DebounceData());
+			int currentCount;
+			lock (debounceData.LockObject)
 			{
-				// Wait for the specified delay unless a cancellation is requested.
-				await Task.Delay(delay ?? 500, source.Token);
+				debounceData.Counter++;
+				currentCount = debounceData.Counter;
 			}
-			catch (TaskCanceledException)
+			await Task.Delay(delayValue);
+			lock (debounceData.LockObject)
 			{
-				// The delay was canceled; exit the method.
-				return;
-			}
-			lock (action)
-			{
-				// If cancellation was requested after the delay, do not invoke the action.
-				if (source.Token.IsCancellationRequested)
-					return;
-				System.Diagnostics.Debug.WriteLine($"Invoke `{className}.{methodName}`");
-				action.DynamicInvoke(args);
+				// This is the latest scheduled call; invoke the action
+				if (currentCount == debounceData.Counter)
+					action.DynamicInvoke(args);
 			}
 		}
 

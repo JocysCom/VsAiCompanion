@@ -7,14 +7,32 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
 	Title="TargetOverlayWindow"
-	d:Height="100"
-	d:Width="100"
+	Margin="0"
+	Padding="0"
+	d:Height="32"
+	d:Width="32"
 	AllowsTransparency="True"
 	Background="Transparent"
+	Focusable="False"
+	ResizeMode="NoResize"
 	ShowInTaskbar="False"
 	Topmost="True"
 	WindowState="Normal"
 	WindowStyle="None"
 	mc:Ignorable="d">
-	<Canvas x:Name="CanvasPanel" Background="Green" Opacity="0.1" />
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+	<Grid>
+		<Border x:Name="TargetBorder" BorderBrush="Black" BorderThickness="2" />
+		<ContentControl
+			x:Name="TargetButton"
+			Margin="0"
+			Padding="0"
+			Content="{StaticResource Icon_target}" />
+	</Grid>
 </Window>

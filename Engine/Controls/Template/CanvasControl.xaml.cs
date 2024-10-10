@@ -49,7 +49,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 		{
 			AutomationElement windowElement = e.WindowElement;
 			AutomationElement controlElement = e.ControlElement;
-			TargetOverlayWindow.ShowElementData(controlElement);
 		}
 
 		/// <summary>
