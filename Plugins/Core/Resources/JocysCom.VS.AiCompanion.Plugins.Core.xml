@@ -9,6 +9,28 @@
             Use to navigate via UI of the application.
             </summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCanvasEditorElementPath">
+            <summary>
+            Get path to canvas AutomationElement
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentCanvasPath">
+            <summary>
+            Retrieve current canvas path.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCanvasContent">
+            <summary>
+            Get the content of the canvas.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SetCanvasContent(System.String)">
+            <summary>
+            Get the content of the canvas.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuOptions(System.String)">
             <summary>
             Retrieve current menu options or choices.

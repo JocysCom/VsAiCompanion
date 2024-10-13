@@ -34,10 +34,10 @@ namespace JocysCom.ClassLibrary.Windows
 				var predicates = new List<string>();
 
 				if (!string.IsNullOrEmpty(automationId))
-					predicates.Add($"@AutomationId='{EscapeXPathValue(automationId)}'");
+					predicates.Add($"@{nameof(AutomationElement.AutomationElementInformation.AutomationId)}='{EscapeXPathValue(automationId)}'");
 
 				if (!string.IsNullOrEmpty(name))
-					predicates.Add($"@Name='{EscapeXPathValue(name)}'");
+					predicates.Add($"@{nameof(AutomationElement.AutomationElementInformation.Name)}='{EscapeXPathValue(name)}'");
 
 				if (predicates.Count == 0)
 				{
@@ -73,34 +73,75 @@ namespace JocysCom.ClassLibrary.Windows
 
 				var controlType = GetControlTypeByName(controlTypeName);
 
+				// Start building conditions without the Name predicate
 				var conditions = new List<Condition>
-				{
-					new PropertyCondition(AutomationElement.ControlTypeProperty, controlType)
-				};
+		{
+			new PropertyCondition(AutomationElement.ControlTypeProperty, controlType)
+		};
 
-				if (predicates.TryGetValue("AutomationId", out string automationId))
+				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.AutomationId), out string automationId))
 					conditions.Add(new PropertyCondition(AutomationElement.AutomationIdProperty, automationId));
-
-				if (predicates.TryGetValue("Name", out string name))
-					conditions.Add(new PropertyCondition(AutomationElement.NameProperty, name));
 
 				var finalCondition = conditions.Count > 1 ? new AndCondition(conditions.ToArray()) : conditions.First();
 
+				// Retrieve all candidate elements
+				var children = currentElement.FindAll(TreeScope.Children, finalCondition).Cast<AutomationElement>().ToList();
+
+				// Filter based on Name predicate, if present
+				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.Name), out string namePredicate))
+				{
+					var filteredChildren = new List<AutomationElement>();
+					foreach (AutomationElement child in children)
+					{
+						var elementName = child.Current.Name ?? "";
+
+						bool nameMatches;
+						if (namePredicate.StartsWith("*") && namePredicate.EndsWith("*"))
+						{
+							var substring = namePredicate.Trim('*');
+							nameMatches = elementName.Contains(substring);
+						}
+						else if (namePredicate.StartsWith("*"))
+						{
+							var substring = namePredicate.TrimStart('*');
+							nameMatches = elementName.EndsWith(substring);
+						}
+						else if (namePredicate.EndsWith("*"))
+						{
+							var substring = namePredicate.TrimEnd('*');
+							nameMatches = elementName.StartsWith(substring);
+						}
+						else
+						{
+							nameMatches = elementName.Equals(namePredicate);
+						}
+
+						if (nameMatches)
+						{
+							filteredChildren.Add(child);
+						}
+					}
+					children = filteredChildren;
+				}
+
+				// Handle position() predicate if present
+				AutomationElement nextElement = null;
 				if (predicates.TryGetValue("position()", out string positionStr) && int.TryParse(positionStr, out int position))
 				{
-					var children = currentElement.FindAll(TreeScope.Children, finalCondition);
 					if (position > 0 && position <= children.Count)
-						currentElement = children[position - 1]; // Convert to 0-based index
+						nextElement = children[position - 1]; // Convert to 0-based index
 					else
 						return null;
 				}
 				else
 				{
-					currentElement = currentElement.FindFirst(TreeScope.Children, finalCondition);
+					nextElement = children.Count > 0 ? children[0] : null;
 				}
 
-				if (currentElement == null)
+				if (nextElement == null)
 					return null;
+
+				currentElement = nextElement;
 			}
 
 			return currentElement;
@@ -501,6 +542,24 @@ namespace JocysCom.ClassLibrary.Windows
 
 			public const int MOUSEEVENTF_LEFTDOWN = 0x02;
 			public const int MOUSEEVENTF_LEFTUP = 0x04;
+		}
+
+		#endregion
+
+		#region Manage Content
+
+		public string GetValue(AutomationElement element)
+		{
+			// Get the value from the text box.
+			var valuePattern = element.GetCurrentPattern(ValuePattern.Pattern) as ValuePattern;
+			return valuePattern?.Current.Value;
+		}
+
+		public void SetValue(AutomationElement element, string value)
+		{
+			// Set the value of the text box.
+			var valuePattern = element.GetCurrentPattern(ValuePattern.Pattern) as ValuePattern;
+			valuePattern?.SetValue(value);
 		}
 
 		#endregion

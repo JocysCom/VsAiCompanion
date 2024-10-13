@@ -148,27 +148,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return null;
 		}
 
-		public string GetCanvasContent()
-		{
-			if (CurrentTextBox != null)
-			{
-				// Get the value from the text box.
-				var valuePattern = CurrentTextBox.GetCurrentPattern(ValuePattern.Pattern) as ValuePattern;
-				return valuePattern?.Current.Value;
-			}
-			return null;
-		}
-
-		public void SetCanvasContent(string content)
-		{
-			if (CurrentTextBox != null)
-			{
-				// Set the value of the text box.
-				var valuePattern = CurrentTextBox.GetCurrentPattern(ValuePattern.Pattern) as ValuePattern;
-				valuePattern?.SetValue(content);
-			}
-		}
-
 		public void Dispose()
 		{
 			StopMonitoringWindows();

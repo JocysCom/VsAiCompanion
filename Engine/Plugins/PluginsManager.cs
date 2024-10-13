@@ -51,8 +51,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AddMethods(typeof(Search));
 				AddMethods(typeof(Multimedia));
 				AddMethods(typeof(Lists));
-#if DEBUG
 				AddMethods(typeof(Automation));
+#if DEBUG
 #endif
 				JocysCom.ClassLibrary.Helper.RunSynchronously(async () =>
 					await API_LoadPlugins(Global.PluginsPath));
@@ -236,6 +236,18 @@ namespace JocysCom.VS.AiCompanion.Engine
 					mm.GetTempFolderPath = null;
 					mm.AISpeakCallback = null;
 					ai.Item = null;
+				});
+			}
+			else if (classInstance is Automation am)
+			{
+				await Global.MainControl.Dispatcher.Invoke(async () =>
+				{
+					var ac = new AutomationClient();
+					ac.Item = item;
+					am.GetCanvasEditorElementPath = ac.GetCanvasEditorElementPath;
+					methodResult = await InvokeMethod(methodInfo, am, invokeParams, true, cancellationTokenSource.Token);
+					am.GetCanvasEditorElementPath = null;
+					ac.Item = null;
 				});
 			}
 			else if (classInstance is Mail mail)
