@@ -29,6 +29,7 @@ namespace JocysCom.ClassLibrary.Windows
 				var controlTypeName = currentElement.Current.ControlType.ProgrammaticName.Split('.').Last();
 				var automationId = currentElement.Current.AutomationId;
 				var name = currentElement.Current.Name;
+				var className = currentElement.Current.ClassName;
 
 				var segment = new StringBuilder(controlTypeName);
 				var predicates = new List<string>();
@@ -36,12 +37,15 @@ namespace JocysCom.ClassLibrary.Windows
 				if (!string.IsNullOrEmpty(automationId))
 					predicates.Add($"@{nameof(AutomationElement.AutomationElementInformation.AutomationId)}='{EscapeXPathValue(automationId)}'");
 
-				if (!string.IsNullOrEmpty(name))
+				if (!string.IsNullOrEmpty(className))
+					predicates.Add($"@{nameof(AutomationElement.AutomationElementInformation.ClassName)}='{EscapeXPathValue(className)}'");
+
+				if (IsNameUseful(name))
 					predicates.Add($"@{nameof(AutomationElement.AutomationElementInformation.Name)}='{EscapeXPathValue(name)}'");
 
 				if (predicates.Count == 0)
 				{
-					int index = GetIndexAmongSiblings(currentElement) + 1; // XPath is 1-based
+					int index = GetChildIndex(currentElement) + 1; // Adjust indexing as necessary
 					predicates.Add($"position()={index}");
 				}
 
@@ -64,7 +68,10 @@ namespace JocysCom.ClassLibrary.Windows
 				throw new ArgumentNullException(nameof(path));
 
 			var pathSegments = SplitXPath(path);
-			var currentElement = AutomationElement.RootElement;
+
+			// Start from the desktop window instead of the root element
+			IntPtr desktopHandle = NativeMethods.GetDesktopWindow();
+			var currentElement = AutomationElement.FromHandle(desktopHandle);
 
 			foreach (var segment in pathSegments)
 			{
@@ -73,7 +80,7 @@ namespace JocysCom.ClassLibrary.Windows
 
 				var controlType = GetControlTypeByName(controlTypeName);
 
-				// Start building conditions without the Name predicate
+				// Build the conditions
 				var conditions = new List<Condition>
 		{
 			new PropertyCondition(AutomationElement.ControlTypeProperty, controlType)
@@ -82,60 +89,29 @@ namespace JocysCom.ClassLibrary.Windows
 				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.AutomationId), out string automationId))
 					conditions.Add(new PropertyCondition(AutomationElement.AutomationIdProperty, automationId));
 
+				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.ClassName), out string className))
+					conditions.Add(new PropertyCondition(AutomationElement.ClassNameProperty, className));
+
+				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.Name), out string name))
+					conditions.Add(new PropertyCondition(AutomationElement.NameProperty, name));
+
 				var finalCondition = conditions.Count > 1 ? new AndCondition(conditions.ToArray()) : conditions.First();
 
-				// Retrieve all candidate elements
-				var children = currentElement.FindAll(TreeScope.Children, finalCondition).Cast<AutomationElement>().ToList();
-
-				// Filter based on Name predicate, if present
-				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.Name), out string namePredicate))
-				{
-					var filteredChildren = new List<AutomationElement>();
-					foreach (AutomationElement child in children)
-					{
-						var elementName = child.Current.Name ?? "";
-
-						bool nameMatches;
-						if (namePredicate.StartsWith("*") && namePredicate.EndsWith("*"))
-						{
-							var substring = namePredicate.Trim('*');
-							nameMatches = elementName.Contains(substring);
-						}
-						else if (namePredicate.StartsWith("*"))
-						{
-							var substring = namePredicate.TrimStart('*');
-							nameMatches = elementName.EndsWith(substring);
-						}
-						else if (namePredicate.EndsWith("*"))
-						{
-							var substring = namePredicate.TrimEnd('*');
-							nameMatches = elementName.StartsWith(substring);
-						}
-						else
-						{
-							nameMatches = elementName.Equals(namePredicate);
-						}
-
-						if (nameMatches)
-						{
-							filteredChildren.Add(child);
-						}
-					}
-					children = filteredChildren;
-				}
+				// Include the current element in the search by using TreeScope.Element | TreeScope.Children
+				var candidates = currentElement.FindAll(TreeScope.Element | TreeScope.Children, finalCondition).Cast<AutomationElement>().ToList();
 
 				// Handle position() predicate if present
 				AutomationElement nextElement = null;
 				if (predicates.TryGetValue("position()", out string positionStr) && int.TryParse(positionStr, out int position))
 				{
-					if (position > 0 && position <= children.Count)
-						nextElement = children[position - 1]; // Convert to 0-based index
+					if (position > 0 && position <= candidates.Count)
+						nextElement = candidates[position - 1]; // Convert to 0-based index
 					else
 						return null;
 				}
 				else
 				{
-					nextElement = children.Count > 0 ? children[0] : null;
+					nextElement = candidates.Count > 0 ? candidates[0] : null;
 				}
 
 				if (nextElement == null)
@@ -145,6 +121,33 @@ namespace JocysCom.ClassLibrary.Windows
 			}
 
 			return currentElement;
+		}
+
+		private static bool IsNameReliable(AutomationElement element)
+		{
+			// Get the Name property
+			string name = element.Current.Name;
+
+			// Exclude if Name is empty or null
+			if (string.IsNullOrEmpty(name))
+				return false;
+
+			// Exclude if Name is too long (indicating dynamic content)
+			if (name.Length > 50) // You can adjust the threshold as needed
+				return false;
+
+			// Exclude specific ControlTypes where Name is likely dynamic
+			var controlType = element.Current.ControlType;
+			if (controlType == ControlType.Document || controlType == ControlType.Edit)
+				return false;
+
+			// Exclude specific ClassNames known to have dynamic Names
+			string className = element.Current.ClassName;
+			if (className == "Scintilla") // Scintilla is commonly used in text editors like Notepad++
+				return false;
+
+			// If none of the conditions matched, Name is considered reliable
+			return true;
 		}
 
 		#endregion
@@ -517,6 +520,40 @@ namespace JocysCom.ClassLibrary.Windows
 			return -1; // Should not reach here
 		}
 
+		private static int GetChildIndex(AutomationElement element)
+		{
+			var parent = TreeWalker.RawViewWalker.GetParent(element);
+			if (parent == null)
+				return 0;  // Root element
+
+			// Use the same conditions used when retrieving children in GetElement
+			var children = parent.FindAll(TreeScope.Children, Condition.TrueCondition);
+
+			for (int index = 0; index < children.Count; index++)
+			{
+				if (children[index].Equals(element))
+					return index;
+			}
+			return -1; // Should not reach here
+		}
+
+		private static bool IsNameUseful(string name)
+		{
+			// Exclude null, empty, or whitespace-only names
+			if (string.IsNullOrWhiteSpace(name))
+				return false;
+			// Exclude names that are '...'
+			if (name.Trim() == "...")
+				return false;
+			// Exclude overly long names (indicative of dynamic content)
+			if (name.Length > 50) // Adjust threshold as appropriate
+				return false;
+			// Exclude names for specific control types or classes if necessary
+			// For example, exclude names for Scintilla controls
+			// Return false if name is not useful
+			return true;
+		}
+
 		// Escapes single quotes in XPath values
 		private static string EscapeXPathValue(string value)
 		{
@@ -534,6 +571,10 @@ namespace JocysCom.ClassLibrary.Windows
 
 		internal static class NativeMethods
 		{
+
+			[DllImport("user32.dll")]
+			internal static extern IntPtr GetDesktopWindow();
+
 			[DllImport("user32.dll")]
 			internal static extern bool SetCursorPos(int x, int y);
 
@@ -548,19 +589,221 @@ namespace JocysCom.ClassLibrary.Windows
 
 		#region Manage Content
 
+		// P/Invoke declarations
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern bool CloseHandle(IntPtr hObject);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress,
+			uint dwSize, uint flAllocationType, uint flProtect);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress,
+			uint dwSize, uint dwFreeType);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern bool ReadProcessMemory(IntPtr hProcess,
+			IntPtr lpBaseAddress, byte[] lpBuffer, uint dwSize, out IntPtr lpNumberOfBytesRead);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern bool WriteProcessMemory(IntPtr hProcess,
+			IntPtr lpBaseAddress, byte[] lpBuffer, uint dwSize, out IntPtr lpNumberOfBytesWritten);
+
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+		// Process access rights
+		private const uint PROCESS_VM_OPERATION = 0x0008;
+		private const uint PROCESS_VM_READ = 0x0010;
+		private const uint PROCESS_VM_WRITE = 0x0020;
+		private const uint PROCESS_QUERY_INFORMATION = 0x0400;
+
+		// Memory allocation constants
+		private const uint MEM_COMMIT = 0x1000;
+		private const uint MEM_RESERVE = 0x2000;
+		private const uint MEM_RELEASE = 0x8000;
+		private const uint PAGE_READWRITE = 0x04;
+
+		// Scintilla message constants
+		private const uint SCI_GETTEXT = 2182;
+		private const uint SCI_GETTEXTLENGTH = 2183;
+		private const uint SCI_SETTEXT = 2181;
+
+		// Other constants
+		private const uint WM_GETTEXTLENGTH = 0x000E;
+		private const uint WM_GETTEXT = 0x000D;
+
 		public string GetValue(AutomationElement element)
 		{
-			// Get the value from the text box.
-			var valuePattern = element.GetCurrentPattern(ValuePattern.Pattern) as ValuePattern;
-			return valuePattern?.Current.Value;
+			if (element == null)
+				throw new ArgumentNullException(nameof(element));
+
+			// Try ValuePattern first
+			if (element.TryGetCurrentPattern(ValuePattern.Pattern, out object vp))
+			{
+				var valuePattern = (ValuePattern)vp;
+				return valuePattern.Current.Value;
+			}
+			// Try TextPattern
+			else if (element.TryGetCurrentPattern(TextPattern.Pattern, out object tp))
+			{
+				var textPattern = (TextPattern)tp;
+				var documentRange = textPattern.DocumentRange;
+				return documentRange.GetText(-1).TrimEnd('\r', '\n');
+			}
+			else if (element.Current.ClassName == "Scintilla")
+			{
+				// Handle Scintilla control in another process
+				IntPtr hwnd = new IntPtr(element.Current.NativeWindowHandle);
+
+				uint processId;
+				GetWindowThreadProcessId(hwnd, out processId);
+
+				// Open the target process
+				IntPtr hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, processId);
+				if (hProcess == IntPtr.Zero)
+					throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(), "Failed to open target process.");
+
+				try
+				{
+					// Get the length of the text
+					int length = SendMessage(hwnd, SCI_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+
+					// Allocate memory in the target process
+					IntPtr remoteBuffer = VirtualAllocEx(hProcess, IntPtr.Zero, (uint)(length + 1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+					if (remoteBuffer == IntPtr.Zero)
+						throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(), "Failed to allocate memory in target process.");
+
+					try
+					{
+						// Send the SCI_GETTEXT message to the Scintilla control
+						IntPtr result = SendMessage(hwnd, SCI_GETTEXT, new IntPtr(length + 1), remoteBuffer);
+
+						if (result.ToInt64() == 0)
+							throw new InvalidOperationException("Failed to retrieve text from Scintilla control.");
+
+						// Create a buffer in our process to receive the text
+						byte[] localBuffer = new byte[length];
+
+						// Read the text from the target process's memory
+						IntPtr bytesRead;
+						bool success = ReadProcessMemory(hProcess, remoteBuffer, localBuffer, (uint)length, out bytesRead);
+						if (!success || bytesRead.ToInt32() != length)
+							throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(), "Failed to read process memory.");
+
+						// Convert the bytes to string using UTF-8 encoding
+						string text = Encoding.UTF8.GetString(localBuffer);
+
+						return text;
+					}
+					finally
+					{
+						// Free the memory allocated in the target process
+						VirtualFreeEx(hProcess, remoteBuffer, 0, MEM_RELEASE);
+					}
+				}
+				finally
+				{
+					// Close the handle to the target process
+					CloseHandle(hProcess);
+				}
+			}
+			else
+			{
+				throw new InvalidOperationException("The control does not support ValuePattern or TextPattern.");
+			}
 		}
 
+		[STAThread]
 		public void SetValue(AutomationElement element, string value)
 		{
-			// Set the value of the text box.
-			var valuePattern = element.GetCurrentPattern(ValuePattern.Pattern) as ValuePattern;
-			valuePattern?.SetValue(value);
+			if (element == null)
+				throw new ArgumentNullException(nameof(element));
+
+			// Try ValuePattern first
+			if (element.TryGetCurrentPattern(ValuePattern.Pattern, out object vp))
+			{
+				var valuePattern = (ValuePattern)vp;
+				valuePattern.SetValue(value);
+			}
+			else if (element.Current.ClassName == "Scintilla")
+			{
+				// Handle Scintilla control in another process
+				IntPtr hwnd = new IntPtr(element.Current.NativeWindowHandle);
+
+				uint processId;
+				GetWindowThreadProcessId(hwnd, out processId);
+
+				// Open the target process
+				IntPtr hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_QUERY_INFORMATION, false, processId);
+				if (hProcess == IntPtr.Zero)
+					throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(), "Failed to open target process.");
+
+				try
+				{
+					// Prepare the text to write (null-terminated UTF-8)
+					byte[] textBytes = Encoding.UTF8.GetBytes(value + "\0");
+					int length = textBytes.Length;
+
+					// Allocate memory in the target process
+					IntPtr remoteBuffer = VirtualAllocEx(hProcess, IntPtr.Zero, (uint)length, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+					if (remoteBuffer == IntPtr.Zero)
+						throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(), "Failed to allocate memory in target process.");
+
+					try
+					{
+						// Write the text to the allocated memory in the target process
+						IntPtr bytesWritten;
+						bool success = WriteProcessMemory(hProcess, remoteBuffer, textBytes, (uint)length, out bytesWritten);
+						if (!success || bytesWritten.ToInt32() != length)
+							throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(), "Failed to write process memory.");
+
+						// Send the SCI_SETTEXT message to the Scintilla control
+						IntPtr result = SendMessage(hwnd, SCI_SETTEXT, IntPtr.Zero, remoteBuffer);
+
+						if (result.ToInt64() == 0)
+							throw new InvalidOperationException("Failed to set text in Scintilla control.");
+					}
+					finally
+					{
+						// Free the memory allocated in the target process
+						VirtualFreeEx(hProcess, remoteBuffer, 0, MEM_RELEASE);
+					}
+				}
+				finally
+				{
+					// Close the handle to the target process
+					CloseHandle(hProcess);
+				}
+			}
+			// If TextPattern is read-only, use key simulation
+			else if (element.Current.IsKeyboardFocusable)
+			{
+				// Try to set focus and send keystrokes
+				element.SetFocus();
+
+				// Wait briefly to ensure the control has focus
+				System.Threading.Thread.Sleep(100);
+
+				// Clear existing text
+				System.Windows.Forms.SendKeys.SendWait("^a"); // Ctrl+A to select all
+				System.Windows.Forms.SendKeys.SendWait("{DEL}"); // Delete
+
+				// Send the new text
+				System.Windows.Forms.SendKeys.SendWait(value);
+			}
+			else
+			{
+				throw new InvalidOperationException("Cannot set value: control is not focusable and does not support ValuePattern.");
+			}
 		}
+
 
 		#endregion
 	}
