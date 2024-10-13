@@ -1,6 +1,8 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine.Controls.Shared;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -11,7 +13,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 	/// Represents a user control that allows the user to enable or disable a canvas panel
 	/// and select target controls within other windows.
 	/// </summary>
-	public partial class CanvasControl : UserControl
+	public partial class CanvasControl : UserControl, INotifyPropertyChanged
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CanvasControl"/> class.
@@ -26,7 +28,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 		// Create an instance of the CanvasHelper.
 		private readonly CanvasHelper _CanvasHelper = new CanvasHelper();
 
-		private TemplateItem _Item;
 		/// <summary>
 		/// Gets or sets the data item associated with this control.
 		/// </summary>
@@ -38,10 +39,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 				if (Equals(value, _Item))
 					return;
 				_Item = value;
-				DataContext = value;
-				// Additional logic can be added here to handle changes to the Item property.
+				OnPropertyChanged(nameof(Item));
 			}
 		}
+		private TemplateItem _Item;
 
 		/// <summary>
 		/// Handles the TargetSelected event from the TargetButtonControl.
@@ -82,5 +83,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 		{
 			// Cleanup logic can be added here if necessary.
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
+
 	}
 }

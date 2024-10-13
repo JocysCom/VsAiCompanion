@@ -9,84 +9,94 @@
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
+			<!--  Merge external resource dictionaries  -->
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Themes/Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
+
+			<!--  Content Styles  -->
+			<Style x:Key="_GridDefault" TargetType="{x:Type Grid}" />
+			<Style x:Key="_ContentDefault" BasedOn="{StaticResource TextBox_Default}" TargetType="{x:Type TextBox}" />
+			<Style x:Key="_ContentInTab" BasedOn="{StaticResource TextBox_Default}" TargetType="{x:Type TextBox}">
+				<Setter Property="Margin" Value="3" />
+				<Setter Property="BorderThickness" Value="0" />
+				<Setter Property="Padding" Value="10,7,10,7" />
+			</Style>
+
+			<!--  InTab Styles  -->
+			<Style x:Key="_GridInTab" TargetType="{x:Type Grid}">
+				<Setter Property="Background" Value="White" />
+			</Style>
+			<Style x:Key="_PlaceholderStyle" BasedOn="{StaticResource TextBox_Default}" TargetType="{x:Type TextBox}">
+				<Setter Property="Visibility" Value="Collapsed" />
+				<Style.Triggers>
+					<!--  Trigger when ShowPlaceholderOnFocus is False  -->
+					<MultiDataTrigger>
+						<MultiDataTrigger.Conditions>
+							<!--  Placeholder should be visible when Text is empty  -->
+							<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=Text.Length}" Value="0" />
+							<!--  TextBox is not focused  -->
+							<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=IsKeyboardFocused}" Value="False" />
+							<!--  ShowPlaceholderOnFocus is False  -->
+							<Condition Binding="{Binding ShowPlaceholderOnFocus, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
+						</MultiDataTrigger.Conditions>
+						<Setter Property="Visibility" Value="Visible" />
+					</MultiDataTrigger>
+					<!--  Trigger when ShowPlaceholderOnFocus is True  -->
+					<MultiDataTrigger>
+						<MultiDataTrigger.Conditions>
+							<!--  Placeholder should be visible when Text is empty  -->
+							<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=Text.Length}" Value="0" />
+							<!--  ShowPlaceholderOnFocus is True  -->
+							<Condition Binding="{Binding ShowPlaceholderOnFocus, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
+						</MultiDataTrigger.Conditions>
+						<Setter Property="Visibility" Value="Visible" />
+					</MultiDataTrigger>
+				</Style.Triggers>
+			</Style>
+
+			<Style x:Key="_PlaceholderDefault" BasedOn="{StaticResource _PlaceholderStyle}" TargetType="{x:Type TextBox}" />
+			<Style x:Key="_PlaceholderInTab" BasedOn="{StaticResource _PlaceholderStyle}" TargetType="{x:Type TextBox}">
+				<Setter Property="Margin" Value="3" />
+				<Setter Property="BorderThickness" Value="0" />
+				<Setter Property="Padding" Value="12,7,10,7" />
+			</Style>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Background="White">
+	<Grid x:Name="PART_Grid" Style="{StaticResource _GridDefault}">
 		<!--  Main TextBox  -->
 		<TextBox
 			x:Name="PART_ContentTextBox"
-			Margin="3"
-			Padding="10,7,10,7"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			VerticalContentAlignment="Top"
 			x:FieldModifier="public"
 			AcceptsReturn="True"
 			AutomationProperties.Name="{Binding PlaceholderText, RelativeSource={RelativeSource AncestorType=UserControl}}"
-			Background="White"
-			BorderThickness="0"
-			FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
 			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SpellCheck.IsEnabled="True"
+			Style="{StaticResource _ContentDefault}"
 			Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-			TextWrapping="Wrap">
-			<!--  Rounded corners for the TextBox  -->
-			<TextBox.Resources>
-				<Style TargetType="Border">
-					<Setter Property="CornerRadius" Value="10" />
-				</Style>
-			</TextBox.Resources>
-		</TextBox>
+			TextWrapping="Wrap" />
 
 		<!--  Placeholder TextBlock  -->
 		<AdornerDecorator>
-			<TextBlock
-				Margin="3"
-				Padding="14,7,10,7"
+			<TextBox
+				x:Name="PART_PlaceholderTextBox"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
+				VerticalContentAlignment="Top"
 				AutomationProperties.IsOffscreenBehavior="Offscreen"
 				Focusable="False"
 				IsHitTestVisible="False"
 				Opacity="0.5"
-				Text="{Binding PlaceholderText, RelativeSource={RelativeSource AncestorType=UserControl}}">
-				<TextBlock.Style>
-					<Style TargetType="{x:Type TextBlock}">
-						<Setter Property="Visibility" Value="Collapsed" />
-						<Style.Triggers>
-							<!--  Trigger when ShowPlaceholderOnFocus is False  -->
-							<MultiDataTrigger>
-								<MultiDataTrigger.Conditions>
-									<!--  Placeholder should be visible when Text is empty  -->
-									<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=Text.Length}" Value="0" />
-									<!--  TextBox is not focused  -->
-									<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=IsKeyboardFocused}" Value="False" />
-									<!--  ShowPlaceholderOnFocus is False  -->
-									<Condition Binding="{Binding ShowPlaceholderOnFocus, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
-								</MultiDataTrigger.Conditions>
-								<Setter Property="Visibility" Value="Visible" />
-							</MultiDataTrigger>
-							<!--  Trigger when ShowPlaceholderOnFocus is True  -->
-							<MultiDataTrigger>
-								<MultiDataTrigger.Conditions>
-									<!--  Placeholder should be visible when Text is empty  -->
-									<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=Text.Length}" Value="0" />
-									<!--  ShowPlaceholderOnFocus is True  -->
-									<Condition Binding="{Binding ShowPlaceholderOnFocus, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
-								</MultiDataTrigger.Conditions>
-								<Setter Property="Visibility" Value="Visible" />
-							</MultiDataTrigger>
-
-						</Style.Triggers>
-					</Style>
-				</TextBlock.Style>
-			</TextBlock>
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				SpellCheck.IsEnabled="False"
+				Style="{StaticResource _PlaceholderDefault}"
+				Text="{Binding PlaceholderText, RelativeSource={RelativeSource AncestorType=UserControl}}"
+				TextWrapping="Wrap" />
 		</AdornerDecorator>
-
 	</Grid>
-
 </UserControl>

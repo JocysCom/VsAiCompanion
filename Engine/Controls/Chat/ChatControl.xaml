@@ -255,6 +255,7 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="DataInstructionsTextBox"
+										IsInTab="True"
 										PlaceholderText="Type instructions"
 										PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
 										Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}" />
@@ -270,6 +271,7 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="DataTextBox"
+										IsInTab="True"
 										PlaceholderText="{Binding TextPlaceholder, UpdateSourceTrigger=PropertyChanged}"
 										PreviewKeyDown="DataTextBox_PreviewKeyDown"
 										PreviewKeyUp="DataTextBox_PreviewKeyUp"
@@ -287,6 +289,7 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="MessagePlaceholderTextBox"
+										IsInTab="True"
 										PlaceholderText="{StaticResource main_Text_Placeholder}"
 										PreviewKeyDown="DataTextBox_PreviewKeyDown"
 										PreviewKeyUp="DataTextBox_PreviewKeyUp"
@@ -303,7 +306,11 @@
 											<Label x:Name="RisenRoleCountLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="RisenRoleTextBox" PlaceholderText="{StaticResource main_RISEN_Role_Help}" ToolTip="{StaticResource main_RISEN_Role_Example}" />
+									<JcControls:PlaceholderTextBox
+										x:Name="RisenRoleTextBox"
+										IsInTab="True"
+										PlaceholderText="{StaticResource main_RISEN_Role_Help}"
+										ToolTip="{StaticResource main_RISEN_Role_Example}" />
 								</TabItem>
 								<!--  Instructions (I) Tab  -->
 								<TabItem x:Name="RisenInstructionsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
@@ -314,7 +321,11 @@
 											<Label x:Name="RisenInstructionsCountLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="RisenInstructionsTextBox" PlaceholderText="{StaticResource main_RISEN_Instructions_Help}" ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
+									<JcControls:PlaceholderTextBox
+										x:Name="RisenInstructionsTextBox"
+										IsInTab="True"
+										PlaceholderText="{StaticResource main_RISEN_Instructions_Help}"
+										ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
 								</TabItem>
 								<!--  Steps (S) Tab  -->
 								<TabItem x:Name="RisenStepsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
@@ -325,7 +336,11 @@
 											<Label x:Name="RisenStepsCountLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="RisenStepsTextBox" PlaceholderText="{StaticResource main_RISEN_Steps_Help}" ToolTip="{StaticResource main_RISEN_Steps_Example}" />
+									<JcControls:PlaceholderTextBox
+										x:Name="RisenStepsTextBox"
+										IsInTab="True"
+										PlaceholderText="{StaticResource main_RISEN_Steps_Help}"
+										ToolTip="{StaticResource main_RISEN_Steps_Example}" />
 								</TabItem>
 								<!--  End Goal (E) Tab  -->
 								<TabItem x:Name="RisenEndGoalTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
@@ -336,7 +351,11 @@
 											<Label x:Name="RisenEndGoalCountLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="RisenEndGoalTextBox" PlaceholderText="{StaticResource main_RISEN_EndGoal_Help}" ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
+									<JcControls:PlaceholderTextBox
+										x:Name="RisenEndGoalTextBox"
+										IsInTab="True"
+										PlaceholderText="{StaticResource main_RISEN_EndGoal_Help}"
+										ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
 								</TabItem>
 								<!--  Narrowing (N) Tab  -->
 								<TabItem x:Name="RisenNarrowingTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
@@ -347,7 +366,11 @@
 											<Label x:Name="RisenNarrowingCountLabel" x:FieldModifier="public" />
 										</StackPanel>
 									</TabItem.Header>
-									<JcControls:PlaceholderTextBox x:Name="RisenNarrowingTextBox" PlaceholderText="{StaticResource main_RISEN_Narrowing_Help}" ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />
+									<JcControls:PlaceholderTextBox
+										x:Name="RisenNarrowingTextBox"
+										IsInTab="True"
+										PlaceholderText="{StaticResource main_RISEN_Narrowing_Help}"
+										ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />
 								</TabItem>
 							</TabControl>
 						</StackPanel>

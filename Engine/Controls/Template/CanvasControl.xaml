@@ -21,7 +21,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<StackPanel DataContext="{Binding Item, ElementName=This}">
+	<StackPanel DataContext="{Binding Item, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 		<GroupBox Grid.Row="3" Margin="3,0,3,3" HorizontalAlignment="Left">
 			<GroupBox.Header>
 				<StackPanel Margin="-4" Orientation="Horizontal">
@@ -35,7 +35,7 @@
 			</GroupBox.Header>
 			<StackPanel HorizontalAlignment="Left">
 				<controlsShared:TargetButtonControl x:Name="TargetPanel" />
-				<JcControls:PlaceholderTextBox x:Name="CanvasEditorElementPathTextBox" PlaceholderText="{StaticResource main_CanvasEditorElementPath_Name}" Text="{Binding CanvasEditorElementPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<JcControls:PlaceholderTextBox x:Name="CanvasEditorElementPathTextBox" PlaceholderText="{StaticResource main_CanvasEditorElementPath_Name}" Text="{Binding CanvasEditorElementPath, UpdateSourceTrigger=PropertyChanged}" />
 			</StackPanel>
 		</GroupBox>
 	</StackPanel>

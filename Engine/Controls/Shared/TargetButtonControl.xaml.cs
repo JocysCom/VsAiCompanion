@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Processes;
 using System;
 using System.Windows;
@@ -59,10 +60,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			else
 			{
 				var rect = (Rect)element.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
-				highlightWindow.Width = rect.Width;
-				highlightWindow.Height = rect.Height;
-				highlightWindow.Top = rect.Top;
-				highlightWindow.Left = rect.Left;
+				var size = PositionSettings.ConvertToDiu(rect.Size);
+				var location = PositionSettings.ConvertToDiu(rect.Location);
+				highlightWindow.Width = size.Width;
+				highlightWindow.Height = size.Height;
+				highlightWindow.Top = location.Y;
+				highlightWindow.Left = location.X;
 				highlightWindow.Show();
 			}
 		}
@@ -110,10 +113,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 
 		void MoveOverlayWindow(Point p)
 		{
-			overlayWindow.Left = p.X - overlayWindow.Width / 2;
-			overlayWindow.Top = p.Y - overlayWindow.Height / 2;
+			var position = PositionSettings.ConvertToDiu(p);
+			overlayWindow.Left = position.X - overlayWindow.Width / 2;
+			overlayWindow.Top = position.Y - overlayWindow.Height / 2;
 		}
-
 
 		// Add this field to keep track of the previous element under the cursor
 		private AutomationElement _previousWindowElement = null;
@@ -126,6 +129,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			// Use Dispatcher to invoke the UI Automation call on the UI thread
 			Dispatcher.BeginInvoke(new Action(() =>
 			{
+				MoveOverlayWindow(point);
 				// Identify the control under the cursor
 				var currentWindowElement = MouseGlobalHook.GetWindowElementFromPoint(point);
 				var currentEditorElement = AutomationElement.FromPoint(point);
@@ -149,11 +153,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 
 		private void MouseHandler_MouseMove(object sender, MouseGlobalEventArgs e)
 		{
-			// Move the overlay window on the UI thread
-			Dispatcher.Invoke(new Action(() =>
-			{
-				MoveOverlayWindow(e.Point);
-			}));
+			//// Move the overlay window on the UI thread
+			//Dispatcher.Invoke(new Action(() =>
+			//{
+			//	MoveOverlayWindow(e.Point);
+			//}));
 			_ = Helper.Debounce(UpdateTarget, e.Point, 250);
 		}
 

@@ -86,5 +86,43 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		#endregion
+
+
+		#region InTab Style
+
+		public static readonly DependencyProperty IsInTabProperty = DependencyProperty.Register(
+		nameof(IsInTab), typeof(bool), typeof(PlaceholderTextBox), new PropertyMetadata(false, OnIsInTabChanged));
+
+		public bool IsInTab
+		{
+			get => (bool)GetValue(IsInTabProperty);
+			set => SetValue(IsInTabProperty, value);
+		}
+
+		private static void OnIsInTabChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var control = (PlaceholderTextBox)d;
+			control.SetStyle((bool)e.NewValue);
+		}
+
+		public void SetStyle(bool isInTab)
+		{
+			if (isInTab)
+			{
+				PART_Grid.Style = FindResource("_GridInTab") as Style;
+				PART_ContentTextBox.Style = FindResource("_ContentInTab") as Style;
+				PART_PlaceholderTextBox.Style = FindResource("_PlaceholderInTab") as Style;
+			}
+			else
+			{
+				PART_Grid.Style = FindResource("_GridDefault") as Style;
+				PART_ContentTextBox.Style = FindResource("_ContentDefault") as Style;
+				PART_PlaceholderTextBox.Style = FindResource("_PlaceholderDefault") as Style;
+			}
+		}
+
+		#endregion
+
+
 	}
 }

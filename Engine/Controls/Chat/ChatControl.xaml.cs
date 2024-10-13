@@ -51,6 +51,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return;
 			if (ControlsHelper.AllowLoad(this))
 			{
+				var boxes = new PlaceholderTextBox[] { RisenRoleTextBox, RisenInstructionsTextBox, RisenStepsTextBox, RisenEndGoalTextBox, RisenNarrowingTextBox };
+				foreach (var box in boxes)
+				{
+					box.Background = box.PART_ContentTextBox.Background;
+					box.PART_ContentTextBox.BorderThickness = new Thickness(0);
+					box.PART_ContentTextBox.Margin = new Thickness(3);
+					box.PART_ContentTextBox.Padding = new Thickness(10, 7, 10, 7);
+					box.PART_PlaceholderTextBox.BorderThickness = new Thickness(0);
+					box.PART_PlaceholderTextBox.Margin = new Thickness(3);
+					box.PART_PlaceholderTextBox.Padding = new Thickness(14, 7, 10, 7);
+				}
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true,
 					new FrameworkElement[] {

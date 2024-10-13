@@ -368,7 +368,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
 				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 				IconPanel.BindData(_Item);
-				CanvasPanel.Item = Item;
+				CanvasPanel.Item = _Item;
 				PromptsPanel.BindData(_Item);
 				ListsPromptsPanel.BindData(_Item);
 				ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
