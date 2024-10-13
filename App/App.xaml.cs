@@ -211,6 +211,7 @@ namespace JocysCom.VS.AiCompanion
 			// ----------------------------------------------
 			Global.GetClipboard = AppHelper.GetClipboard;
 			Global.SetClipboard = AppHelper.SetClipboard;
+			ClipboardHelper.XmlToColorizedHtml = AppHelper.XmlToColorizedHtml;
 			var window = new Engine.MainWindow();
 			TrayManager.SetSettigns(Global.AppSettings);
 			TrayManager.CreateTrayIcon();

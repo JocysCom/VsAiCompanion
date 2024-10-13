@@ -55,6 +55,7 @@
 		<PackageReference Include="bblanchon.PDFium.macOS" Version="130.0.6721" ExcludeAssets="All" PrivateAssets="all">
 		  <IncludeAssets>none</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="ColorCode.HTML" Version="2.0.15" />
 		<PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="2.88.8" ExcludeAssets="All" PrivateAssets="All" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.8" GeneratePathProperty="true" ExcludeAssets="All" />
 		<PackageReference Include="bblanchon.PDFium.Linux" Version="130.0.6721" ExcludeAssets="All" PrivateAssets="all">

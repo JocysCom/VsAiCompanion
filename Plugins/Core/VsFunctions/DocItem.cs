@@ -133,57 +133,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		}
 
 		/// <summary>
-		/// Return true if content of the file is binary.
-		/// </summary>
-		/// <param name="fileName">File to check.</param>
-		/// <param name="bytesToCheck">Maximum amount of bytes to check.</param>
-		public static bool IsBinary(string fileName, long bytesToCheck = long.MaxValue)
-		{
-			using (var stream = File.OpenRead(fileName))
-				return IsBinary(stream, bytesToCheck);
-		}
-
-		/// <summary>
-		/// Return true if content is binary.
-		/// </summary>
-		/// <param name="data">Bytes to check.</param>
-		/// <param name="bytesToCheck">Maximum amount of bytes to check.</param>
-		public static bool IsBinary(byte[] data, long bytesToCheck = long.MaxValue)
-		{
-			using (var stream = new MemoryStream(data))
-				return IsBinary(stream, bytesToCheck);
-		}
-
-		/// <summary>
-		/// Return true if sram content is binary.
-		/// </summary>
-		/// <param name="stream">Stream to check.</param>
-		/// <param name="bytesToCheck">Maximum amount of bytes to check.</param>
-		public static bool IsBinary(Stream stream, long bytesToCheck = long.MaxValue)
-		{
-			long bytesChecked = 0;
-			var buffer = new byte[4096]; // 4 KB chunks
-			while (bytesChecked < bytesToCheck)
-			{
-				int bytesRead = stream.Read(buffer, 0, buffer.Length);
-				if (bytesRead == 0)
-					break; // End of file
-				for (int i = 0; i < bytesRead && bytesChecked < bytesToCheck; i++, bytesChecked++)
-				{
-					byte b = buffer[i];
-					// Found a control character that isn't tab, line feed, or carriage return.
-					// This is a simplistic check and may not hold true for all text files,
-					// especially those using non-ASCII or non-UTF-8 encodings.
-					if (b < 0x20 && b != 0x09 && b != 0x0A && b != 0x0D)
-						return true;
-				}
-			}
-			// If we made it through the whole file without finding a non-text character,
-			// then we'll assume it's not a binary file.
-			return false;
-		}
-
-		/// <summary>
 		/// Convert to flat string representation.
 		/// </summary>
 		/// <param name="items">Item to convert.</param>
@@ -279,7 +228,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 					return 0;
 				}
 				// Read first 8 KB max to check if file is binary.
-				IsText = !IsBinary(FullName, 1024 * 8);
+				IsText = !JocysCom.ClassLibrary.Files.Mime.IsBinary(FullName, 1024 * 8);
 				if (IsText)
 				{
 					ContentData = File.ReadAllText(FullName);

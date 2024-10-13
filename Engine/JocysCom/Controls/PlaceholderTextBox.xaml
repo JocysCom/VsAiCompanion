@@ -25,6 +25,7 @@
 			VerticalContentAlignment="Top"
 			x:FieldModifier="public"
 			AcceptsReturn="True"
+			AutomationProperties.Name="{Binding PlaceholderText, RelativeSource={RelativeSource AncestorType=UserControl}}"
 			Background="White"
 			BorderThickness="0"
 			FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
@@ -42,45 +43,50 @@
 		</TextBox>
 
 		<!--  Placeholder TextBlock  -->
-		<TextBlock
-			Margin="3"
-			Padding="14,7,10,7"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
-			IsHitTestVisible="False"
-			Opacity="0.5"
-			Text="{Binding PlaceholderText, RelativeSource={RelativeSource AncestorType=UserControl}}">
-			<TextBlock.Style>
-				<Style TargetType="{x:Type TextBlock}">
-					<Setter Property="Visibility" Value="Collapsed" />
-					<Style.Triggers>
-						<!--  Trigger when ShowPlaceholderOnFocus is False  -->
-						<MultiDataTrigger>
-							<MultiDataTrigger.Conditions>
-								<!--  Placeholder should be visible when Text is empty  -->
-								<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=Text.Length}" Value="0" />
-								<!--  TextBox is not focused  -->
-								<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=IsKeyboardFocused}" Value="False" />
-								<!--  ShowPlaceholderOnFocus is False  -->
-								<Condition Binding="{Binding ShowPlaceholderOnFocus, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
-							</MultiDataTrigger.Conditions>
-							<Setter Property="Visibility" Value="Visible" />
-						</MultiDataTrigger>
-						<!--  Trigger when ShowPlaceholderOnFocus is True  -->
-						<MultiDataTrigger>
-							<MultiDataTrigger.Conditions>
-								<!--  Placeholder should be visible when Text is empty  -->
-								<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=Text.Length}" Value="0" />
-								<!--  ShowPlaceholderOnFocus is True  -->
-								<Condition Binding="{Binding ShowPlaceholderOnFocus, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
-							</MultiDataTrigger.Conditions>
-							<Setter Property="Visibility" Value="Visible" />
-						</MultiDataTrigger>
+		<AdornerDecorator>
+			<TextBlock
+				Margin="3"
+				Padding="14,7,10,7"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				AutomationProperties.IsOffscreenBehavior="Offscreen"
+				Focusable="False"
+				IsHitTestVisible="False"
+				Opacity="0.5"
+				Text="{Binding PlaceholderText, RelativeSource={RelativeSource AncestorType=UserControl}}">
+				<TextBlock.Style>
+					<Style TargetType="{x:Type TextBlock}">
+						<Setter Property="Visibility" Value="Collapsed" />
+						<Style.Triggers>
+							<!--  Trigger when ShowPlaceholderOnFocus is False  -->
+							<MultiDataTrigger>
+								<MultiDataTrigger.Conditions>
+									<!--  Placeholder should be visible when Text is empty  -->
+									<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=Text.Length}" Value="0" />
+									<!--  TextBox is not focused  -->
+									<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=IsKeyboardFocused}" Value="False" />
+									<!--  ShowPlaceholderOnFocus is False  -->
+									<Condition Binding="{Binding ShowPlaceholderOnFocus, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
+								</MultiDataTrigger.Conditions>
+								<Setter Property="Visibility" Value="Visible" />
+							</MultiDataTrigger>
+							<!--  Trigger when ShowPlaceholderOnFocus is True  -->
+							<MultiDataTrigger>
+								<MultiDataTrigger.Conditions>
+									<!--  Placeholder should be visible when Text is empty  -->
+									<Condition Binding="{Binding ElementName=PART_ContentTextBox, Path=Text.Length}" Value="0" />
+									<!--  ShowPlaceholderOnFocus is True  -->
+									<Condition Binding="{Binding ShowPlaceholderOnFocus, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
+								</MultiDataTrigger.Conditions>
+								<Setter Property="Visibility" Value="Visible" />
+							</MultiDataTrigger>
 
-					</Style.Triggers>
-				</Style>
-			</TextBlock.Style>
-		</TextBlock>
+						</Style.Triggers>
+					</Style>
+				</TextBlock.Style>
+			</TextBlock>
+		</AdornerDecorator>
+
 	</Grid>
 
 </UserControl>

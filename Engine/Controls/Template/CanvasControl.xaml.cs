@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine.Controls.Shared;
 using System.Windows;
 using System.Windows.Automation;
@@ -37,6 +38,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 				if (Equals(value, _Item))
 					return;
 				_Item = value;
+				DataContext = value;
 				// Additional logic can be added here to handle changes to the Item property.
 			}
 		}
@@ -49,6 +51,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 		{
 			AutomationElement windowElement = e.WindowElement;
 			AutomationElement controlElement = e.ControlElement;
+			var item = Item;
+			if (item != null)
+			{
+				var path = AutomationHelper.GetPath(controlElement);
+				item.CanvasEditorElementPath = path;
+			}
 		}
 
 		/// <summary>

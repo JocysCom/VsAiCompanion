@@ -70,8 +70,8 @@
 		<PackageReference Include="Ignore" Version="0.2.1" />
 		<PackageReference Include="MailKit" Version="4.8.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.40.0" />
-		<PackageReference Include="Microsoft.Graph" Version="5.59.0" />
+		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.41.1" />
+		<PackageReference Include="Microsoft.Graph" Version="5.60.0" />
 		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.1.2" />
 		<PackageReference Include="Microsoft.ML" Version="3.0.1" />
 		<PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />

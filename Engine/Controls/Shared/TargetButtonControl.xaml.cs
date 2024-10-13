@@ -77,11 +77,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				MoveOverlayWindow(position);
 				overlayWindow.Width = TargetButton.ActualWidth;
 				overlayWindow.Height = TargetButton.ActualHeight;
-				overlayWindow.Show();
 				// Hide parent window
 				var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 				if (!isCtrlDown)
 				{
+					overlayWindow.Show();
 					var parentWindow = Window.GetWindow(this);
 					parentWindow?.Hide();
 				}

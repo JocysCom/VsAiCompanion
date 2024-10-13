@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using JocysCom.ClassLibrary;
-using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
+using JocysCom.ClassLibrary.Files;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -64,7 +64,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 						content = ReadTextFile(path);
 						break;
 					default:
-						if (!DocItem.IsBinary(path, 1024))
+						if (!Mime.IsBinary(path, 1024))
 						{
 							content = ReadTextFile(path);
 						}

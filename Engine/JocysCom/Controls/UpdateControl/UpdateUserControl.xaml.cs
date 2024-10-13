@@ -3,11 +3,11 @@ using JocysCom.ClassLibrary.Network;
 using JocysCom.ClassLibrary.Security;
 using JocysCom.ClassLibrary.Windows;
 using JocysCom.Controls.UpdateControl.GitHub;
-using JocysCom.VS.AiCompanion.Engine;
 using JocysCom.WebSites.Engine.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -55,11 +55,13 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		public bool EnableReplace { get; set; }
 		public bool EnableRestart { get; set; }
 
+		public string DownloadTempFolder { get; set; } = Path.GetTempPath();
+
 		/// <summary>
 		/// Path to GitHub file on the local disk.
 		/// </summary>
 		public string DownloadTargetFile
-			=> AppHelper.GetTempFolderPath() + Settings.GitHubAssetName;
+			=> DownloadTempFolder + Settings.GitHubAssetName;
 
 		/// <summary>New application file.</summary>
 		public string UpdateNewFileFullName

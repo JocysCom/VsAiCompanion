@@ -68,7 +68,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 		{
 			try
 			{
-				var svg = ClipboardHelper.GetSvgFromClipboard();
+				var svg = ClipboardHelper.GetContentFromClipboard(".svg");
 				if (!string.IsNullOrEmpty(svg))
 					Converters.SvgHelper.LoadSvgFromString(svg);
 				_item?.SetIcon(svg);

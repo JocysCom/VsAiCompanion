@@ -136,6 +136,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return solutionProperties.OrderBy(x => x.Key).ToList();
 		}
 
+		public static string XmlToColorizedHtml(string xml)
+		{
+			var formatter = new ColorCode.HtmlClassFormatter();
+			var html = formatter.GetHtmlString(xml, ColorCode.Languages.Xml);
+			// Get the CSS styles used by the formatter
+			var styles = formatter.GetCSSString();
+			// Embed the styles in a <style> tag
+			html = $"<style>{styles}</style>{html}";
+			return html;
+		}
+
 		public static DocItem GetClipboard()
 		{
 			var text = Clipboard.GetText();

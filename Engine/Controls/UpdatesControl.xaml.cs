@@ -22,25 +22,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			else
 			{
-				var control = new UpdateUserControl();
+				var mainUuc = new UpdateUserControl();
 				var us = Global.AppSettings.UpdateSettings;
 				us.UpdateMissingDefaults(appExeAssembly);
-				control.EnableReplace = true;
-				control.EnableRestart = true;
-				control.Settings = us;
-				control.AddTask += UpdatesPanel_AddTask;
-				control.RemoveTask += UpdatesPanel_RemoveTask;
-				MainTabItem.Content = control;
+				mainUuc.DownloadTempFolder = AppHelper.GetTempFolderPath();
+				mainUuc.EnableReplace = true;
+				mainUuc.EnableRestart = true;
+				mainUuc.Settings = us;
+				mainUuc.AddTask += UpdatesPanel_AddTask;
+				mainUuc.RemoveTask += UpdatesPanel_RemoveTask;
+				MainTabItem.Content = mainUuc;
 			}
 			if (InitHelper.IsDebug)
 			{
-				var pd = new UpdateUserControl();
+				var pandocUuc = new UpdateUserControl();
 				var pdUs = Global.AppSettings.PandocUpdateSettings;
 				UpdateMissingPandocDefaults(pdUs);
-				pd.Settings = pdUs;
-				pd.AddTask += UpdatesPanel_AddTask;
-				pd.RemoveTask += UpdatesPanel_RemoveTask;
-				PandocTabItem.Content = pd;
+				pandocUuc.DownloadTempFolder = AppHelper.GetTempFolderPath();
+				pandocUuc.Settings = pdUs;
+				pandocUuc.AddTask += UpdatesPanel_AddTask;
+				pandocUuc.RemoveTask += UpdatesPanel_RemoveTask;
+				PandocTabItem.Content = pandocUuc;
 			}
 		}
 

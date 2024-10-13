@@ -95,6 +95,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_ToolChoiceRequiredNames_Help => FindResource(nameof(main_ToolChoiceRequiredNames_Help));
         public static string main_CanvasPanelEnabled_Name => FindResource(nameof(main_CanvasPanelEnabled_Name));
         public static string main_CanvasPanelEnabled_Help => FindResource(nameof(main_CanvasPanelEnabled_Help));
+        public static string main_CanvasEditorElementPath_Name => FindResource(nameof(main_CanvasEditorElementPath_Name));
         public static string main_Auto_Generate_Title => FindResource(nameof(main_Auto_Generate_Title));
         public static string main_Auto_Generate_Title_Help => FindResource(nameof(main_Auto_Generate_Title_Help));
         public static string main_Auto_Generate_Title_Name => FindResource(nameof(main_Auto_Generate_Title_Name));

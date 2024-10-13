@@ -368,6 +368,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				PluginApprovalPanel.Item = _Item.PluginFunctionCalls;
 				ChatPanel.AttachmentsPanel.CurrentItems = _Item.Attachments;
 				IconPanel.BindData(_Item);
+				CanvasPanel.Item = Item;
 				PromptsPanel.BindData(_Item);
 				ListsPromptsPanel.BindData(_Item);
 				ChatPanel.MessagesPanel.SetDataItems(_Item.Messages, _Item.Settings);
@@ -827,6 +828,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			dialog.Title = "Export HTML File";
 			dialog.Filter = "Webpage, single file (*.html)|*.html";
 			//DialogHelper.AddFilter(dialog, ".pdf");
+			//DialogHelper.AddFilter(dialog, ".rtf");
 			DialogHelper.AddFilter(dialog);
 			var result = dialog.ShowDialog();
 			if (result != System.Windows.Forms.DialogResult.OK)
@@ -844,7 +846,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					break;
 				default:
 					var bytes = System.Text.Encoding.UTF8.GetBytes(html);
-					JocysCom.ClassLibrary.Configuration.SettingsHelper.WriteIfDifferent(dialog.FileName, bytes);
+					SettingsHelper.WriteIfDifferent(dialog.FileName, bytes);
 					break;
 			}
 		}

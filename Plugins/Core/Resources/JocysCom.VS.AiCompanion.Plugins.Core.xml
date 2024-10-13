@@ -1382,27 +1382,6 @@
             <param name="s">Content to convert</param>
             <returns></returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.IsBinary(System.String,System.Int64)">
-            <summary>
-            Return true if content of the file is binary.
-            </summary>
-            <param name="fileName">File to check.</param>
-            <param name="bytesToCheck">Maximum amount of bytes to check.</param>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.IsBinary(System.Byte[],System.Int64)">
-            <summary>
-            Return true if content is binary.
-            </summary>
-            <param name="data">Bytes to check.</param>
-            <param name="bytesToCheck">Maximum amount of bytes to check.</param>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.IsBinary(System.IO.Stream,System.Int64)">
-            <summary>
-            Return true if sram content is binary.
-            </summary>
-            <param name="stream">Stream to check.</param>
-            <param name="bytesToCheck">Maximum amount of bytes to check.</param>
-        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem.ConvertFile(System.Collections.Generic.IList{JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.DocItem})">
             <summary>
             Convert to flat string representation.

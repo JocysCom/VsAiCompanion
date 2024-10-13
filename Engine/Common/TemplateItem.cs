@@ -325,6 +325,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		bool _CanvasPanelEnabled;
 
+		[DefaultValue(null)]
+		public string CanvasEditorElementPath
+		{
+			get => _CanvasEditorElementPath;
+			set => SetProperty(ref _CanvasEditorElementPath, value);
+		}
+		string _CanvasEditorElementPath;
+
 		#endregion
 
 		#region Markdown Languages

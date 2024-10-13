@@ -3,7 +3,6 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
-using JocysCom.ClassLibrary.Runtime;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -478,73 +476,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void CopyButton_Click(object sender, RoutedEventArgs e)
 		{
-			try
-			{
-				var selectedItems = MainDataGrid.SelectedItems.Cast<object>().ToArray();
-				if (!selectedItems.Any())
-					return;
-				// Create array for serialization.
-				var itemType = SourceItems.GetType().GenericTypeArguments[0];
-				var items = Array.CreateInstance(itemType, selectedItems.Length);
-				Array.Copy(selectedItems, items, items.Length);
-
-				// Serialize the items to a XML string.
-				var xml = items.Length == 1
-					? Serializer.SerializeToXmlString(selectedItems[0], null, true)
-					: Serializer.SerializeToXmlString(items, null, true);
-				var files = new System.Collections.Specialized.StringCollection();
-				if (selectedItems[0] is ISettingsListFileItem)
-				{
-					foreach (var item in items)
-					{
-						var fi = (ISettingsListFileItem)item;
-						// Determine the file name
-						var fileName = $"{fi.Name}.xml";
-						// Write the serialized text to a file
-						var tempFolderPath = System.IO.Path.Combine(AppHelper.GetTempFolderPath(), nameof(Clipboard));
-						Directory.CreateDirectory(tempFolderPath);
-						var filePath = System.IO.Path.Combine(tempFolderPath, fileName);
-						System.IO.File.WriteAllText(filePath, xml);
-						files.Add(filePath);
-					}
-				}
-				// Create a DataObject to hold both text and file drop list
-				var dataObject = new DataObject();
-
-				dataObject.SetText(xml);
-				if (files.Count > 0)
-					dataObject.SetFileDropList(files);
-				// Place the dataObject on the clipboard
-				Clipboard.SetDataObject(dataObject, true);
-			}
-			catch (Exception ex)
-			{
-				Global.ShowError(ex.Message);
+			var selectedItems = MainDataGrid.SelectedItems.Cast<object>().ToArray();
+			if (!selectedItems.Any())
 				return;
-			}
+			var itemType = SourceItems.GetType().GenericTypeArguments[0];
+			var names = selectedItems.Cast<ISettingsListFileItem>().Select(x => x.Name).ToArray();
+			var items = Array.CreateInstance(itemType, selectedItems.Length);
+			Array.Copy(selectedItems, items, items.Length);
+			var tempFolderPath = System.IO.Path.Combine(AppHelper.GetTempFolderPath(), nameof(Clipboard));
+			var exception = ClipboardHelper.SetXmlSerializable(itemType, selectedItems, names, tempFolderPath);
+			if (exception != null)
+				Global.ShowError(exception.Message);
 		}
 
 		private void PasteButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				var xml = Clipboard.GetText()?.Trim();
 				var itemType = SourceItems.GetType().GenericTypeArguments[0];
-				var isArray = xml.StartsWith($"<{nameof(Array)}");
-				if (isArray)
+				var items = ClipboardHelper.GetXmlSerializable<ISettingsListFileItem>(itemType);
+				foreach (var item in items)
 				{
-					var arrayType = Array.CreateInstance(itemType, 0).GetType();
-					var items = Serializer.DeserializeFromXmlString(xml, arrayType) as Array;
-					foreach (var item in items)
-					{
-						var sfi = item as ISettingsListFileItem;
-						AppHelper.FixName(sfi, SourceItems);
-						InsertItem(sfi);
-					}
-				}
-				else
-				{
-					var item = (ISettingsListFileItem)Serializer.DeserializeFromXmlString(xml, itemType);
 					AppHelper.FixName(item, SourceItems);
 					InsertItem(item);
 				}

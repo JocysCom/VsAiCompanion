@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-
 #if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard
 #else // .NET Framework
