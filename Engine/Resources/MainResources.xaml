@@ -58,6 +58,7 @@
 	<sys:String x:Key="main_CanvasPanelEnabled_Name">Use Canvas Panel</sys:String>
 	<sys:String x:Key="main_CanvasPanelEnabled_Help">Allow the use of a text edit control from another window as a canvas</sys:String>
 	<sys:String x:Key="main_CanvasEditorElementPath_Name">Canvas Editor Automation Element Path</sys:String>
+	<sys:String x:Key="main_Canvas_Feature_Description">Use the crosshair tool to select any external application window as an AI canvas. For example, drag it over Notepad++ to allow the AI to access and modify the text within.</sys:String>
 
 	<!--  Tasks / Templates → Main  -->
 	<sys:String x:Key="main_Auto_Generate_Title">Auto-Generate Title</sys:String>

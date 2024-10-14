@@ -30,7 +30,7 @@
 			Height="32"
 			Content="{StaticResource Icon_target}"
 			Focusable="False" />
-		<StackPanel Orientation="Vertical">
+		<StackPanel Orientation="Vertical" Visibility="Collapsed">
 			<TextBlock x:Name="WindowName" Text="Window: none" />
 			<TextBlock x:Name="EditorName" Text="Editor: none" />
 		</StackPanel>

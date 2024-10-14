@@ -22,7 +22,10 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<StackPanel DataContext="{Binding Item, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-		<GroupBox Grid.Row="3" Margin="3,0,3,3" HorizontalAlignment="Left">
+		<Border Grid.ColumnSpan="2" Margin="3,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
+			<TextBlock Name="FeatureDescriptionLabel" Text="{StaticResource main_Canvas_Feature_Description}" />
+		</Border>
+		<GroupBox Grid.Row="3" Margin="3,0,3,3">
 			<GroupBox.Header>
 				<StackPanel Margin="-4" Orientation="Horizontal">
 					<CheckBox
@@ -33,10 +36,19 @@
 						IsChecked="{Binding CanvasPanelEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</StackPanel>
 			</GroupBox.Header>
-			<StackPanel HorizontalAlignment="Left">
-				<controlsShared:TargetButtonControl x:Name="TargetPanel" />
-				<JcControls:PlaceholderTextBox x:Name="CanvasEditorElementPathTextBox" PlaceholderText="{StaticResource main_CanvasEditorElementPath_Name}" Text="{Binding CanvasEditorElementPath, UpdateSourceTrigger=PropertyChanged}" />
-			</StackPanel>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<controlsShared:TargetButtonControl x:Name="TargetPanel" Margin="3" />
+				<JcControls:PlaceholderTextBox
+					x:Name="CanvasEditorElementPathTextBox"
+					Grid.Column="1"
+					VerticalAlignment="Top"
+					PlaceholderText="{StaticResource main_CanvasEditorElementPath_Name}"
+					Text="{Binding CanvasEditorElementPath, UpdateSourceTrigger=PropertyChanged}" />
+			</Grid>
 		</GroupBox>
 	</StackPanel>
 </UserControl>
