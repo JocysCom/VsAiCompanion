@@ -130,19 +130,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 						? url
 						: $"http://localhost/{url.TrimStart('/')}";
 					openApiSpecUri = new Uri(uri);
+					var baseUrl = openApiSpecUri.GetLeftPart(UriPartial.Authority);
 
 					var services = Global.AppSettings.AiServices;
 					service = services
-						.Where(x => string.Equals(url, x.BaseUrl, StringComparison.OrdinalIgnoreCase))
+						.Where(x => baseUrl.Equals(x.BaseUrl, StringComparison.OrdinalIgnoreCase))
 						.FirstOrDefault();
 					if (service is null)
 					{
 						service = new AiService();
 						service.ServiceType = ApiServiceType.AiPlugin;
-						service.BaseUrl = openApiSpecUri.GetLeftPart(UriPartial.Authority);
+						service.BaseUrl = baseUrl;
 						service.Name = openApiSpecUri.Host;
 						services.Add(service);
 					}
+					// If plugins enabled and web server executable exists then...
 					if (Global.AppSettings.EnableApiPlugins && exeFI != null)
 					{
 						var kv = await API_StartServer(exeFI.FullName);

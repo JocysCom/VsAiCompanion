@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Automation;
+using AEI = System.Windows.Automation.AutomationElement.AutomationElementInformation;
 
 namespace JocysCom.ClassLibrary.Windows
 {
@@ -35,13 +37,13 @@ namespace JocysCom.ClassLibrary.Windows
 				var predicates = new List<string>();
 
 				if (!string.IsNullOrEmpty(automationId))
-					predicates.Add($"@{nameof(AutomationElement.AutomationElementInformation.AutomationId)}='{EscapeXPathValue(automationId)}'");
+					predicates.Add($"@{nameof(AEI.AutomationId)}='{EscapeXPathValue(automationId)}'");
 
 				if (!string.IsNullOrEmpty(className))
-					predicates.Add($"@{nameof(AutomationElement.AutomationElementInformation.ClassName)}='{EscapeXPathValue(className)}'");
+					predicates.Add($"@{nameof(AEI.ClassName)}='{EscapeXPathValue(className)}'");
 
 				if (IsNameUseful(name))
-					predicates.Add($"@{nameof(AutomationElement.AutomationElementInformation.Name)}='{EscapeXPathValue(name)}'");
+					predicates.Add($"@{nameof(AEI.Name)}='{EscapeXPathValue(name)}'");
 
 				if (predicates.Count == 0)
 				{
@@ -86,13 +88,13 @@ namespace JocysCom.ClassLibrary.Windows
 			new PropertyCondition(AutomationElement.ControlTypeProperty, controlType)
 		};
 
-				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.AutomationId), out string automationId))
+				if (predicates.TryGetValue(nameof(AEI.AutomationId), out string automationId))
 					conditions.Add(new PropertyCondition(AutomationElement.AutomationIdProperty, automationId));
 
-				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.ClassName), out string className))
+				if (predicates.TryGetValue(nameof(AEI.ClassName), out string className))
 					conditions.Add(new PropertyCondition(AutomationElement.ClassNameProperty, className));
 
-				if (predicates.TryGetValue(nameof(AutomationElement.AutomationElementInformation.Name), out string name))
+				if (predicates.TryGetValue(nameof(AEI.Name), out string name))
 					conditions.Add(new PropertyCondition(AutomationElement.NameProperty, name));
 
 				var finalCondition = conditions.Count > 1 ? new AndCondition(conditions.ToArray()) : conditions.First();
@@ -123,36 +125,112 @@ namespace JocysCom.ClassLibrary.Windows
 			return currentElement;
 		}
 
-		private static bool IsNameReliable(AutomationElement element)
+		/// <summary>
+		/// Retrieves properties of the given automation element.
+		/// </summary>
+		/// <param name="element">The AutomationElement to inspect.</param>
+		/// <returns>Dictionary containing property names and values.</returns>
+		public Dictionary<string, object> GetElementProperties(AutomationElement element)
 		{
-			// Get the Name property
-			string name = element.Current.Name;
+			var properties = new Dictionary<string, object>();
 
-			// Exclude if Name is empty or null
-			if (string.IsNullOrEmpty(name))
-				return false;
-
-			// Exclude if Name is too long (indicating dynamic content)
-			if (name.Length > 50) // You can adjust the threshold as needed
-				return false;
-
-			// Exclude specific ControlTypes where Name is likely dynamic
-			var controlType = element.Current.ControlType;
-			if (controlType == ControlType.Document || controlType == ControlType.Edit)
-				return false;
-
-			// Exclude specific ClassNames known to have dynamic Names
-			string className = element.Current.ClassName;
-			if (className == "Scintilla") // Scintilla is commonly used in text editors like Notepad++
-				return false;
-
-			// If none of the conditions matched, Name is considered reliable
-			return true;
+			// Get the AutomationElementInformation structure
+			var aeInfo = element.Current;
+			// Use reflection to get all public properties of AutomationElement.AutomationElementInformation
+			var aeInfoType = typeof(AutomationElement.AutomationElementInformation);
+			var propInfos = aeInfoType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			foreach (var propInfo in propInfos)
+			{
+				string name = propInfo.Name;
+				try
+				{
+					// Get the property name and value
+					object value = propInfo.GetValue(aeInfo);
+					// Special handling for certain property types
+					if (value is ControlType controlType)
+					{
+						value = controlType.ProgrammaticName;
+					}
+					else if (value is System.Windows.Rect rect)
+					{
+						value = rect.ToString();
+					}
+					else if (value is System.Windows.Point point)
+					{
+						value = point.ToString();
+					}
+					else if (value is IntPtr ptr)
+					{
+						value = ptr.ToInt64(); // Convert pointer to Int64 for readability
+					}
+					else if (value != null && value.GetType().IsEnum)
+					{
+						value = value.ToString(); // Convert enums to their string representation
+					}
+					properties[name] = value;
+				}
+				catch (Exception ex)
+				{
+					// Handle any exceptions (e.g., property not supported)
+					properties[name] = $"Error retrieving value: {ex.Message}";
+				}
+			}
+			// Include Supported Patterns
+			properties["SupportedPatterns"] = element.GetSupportedPatterns()
+				.Select(p => p.ProgrammaticName)
+				.ToArray();
+			return properties;
 		}
 
 		#endregion
 
 		#region Element Search Methods
+
+		/// <summary>
+		/// Finds elements matching specific conditions.
+		/// </summary>
+		/// <param name="conditions">Dictionary of property names and values to match.</param>
+		/// <returns>List of matching AutomationElements.</returns>
+		public List<AutomationElement> FindElementsByConditions(Dictionary<string, string> conditions)
+		{
+			if (conditions == null || conditions.Count == 0)
+				throw new ArgumentException("Conditions dictionary cannot be null or empty.", nameof(conditions));
+			var condList = new List<Condition>();
+			foreach (var kvp in conditions)
+			{
+				var property = GetAutomationPropertyByName(kvp.Key);
+				if (property == null)
+					continue; // Skip unknown properties
+				var cond = new PropertyCondition(property, kvp.Value);
+				condList.Add(cond);
+			}
+			Condition finalCondition;
+			if (condList.Count == 1)
+			{
+				finalCondition = condList.First();
+			}
+			else
+			{
+				finalCondition = new AndCondition(condList.ToArray());
+			}
+			var elements = AutomationElement.RootElement.FindAll(TreeScope.Descendants, finalCondition)
+				.Cast<AutomationElement>()
+				.ToList();
+			return elements;
+		}
+
+		/// <summary>
+		/// Gets the AutomationProperty corresponding to the given property name.
+		/// </summary>
+		private AutomationProperty GetAutomationPropertyByName(string propertyName)
+		{
+			// Append "Property" to the property name to match the static field names
+			string fieldName = propertyName + "Property";
+			var fieldInfo = typeof(AutomationElement).GetField(fieldName, BindingFlags.Static | BindingFlags.Public);
+			if (fieldInfo != null && fieldInfo.FieldType == typeof(AutomationProperty))
+				return (AutomationProperty)fieldInfo.GetValue(null);
+			return null;
+		}
 
 		/// <summary>
 		/// Finds automation elements by process ID.
@@ -502,22 +580,6 @@ namespace JocysCom.ClassLibrary.Windows
 			}
 
 			return ControlType.Custom;
-		}
-
-		private static int GetIndexAmongSiblings(AutomationElement element)
-		{
-			var parent = TreeWalker.RawViewWalker.GetParent(element);
-			if (parent == null)
-				return 0;  // Root element
-			var controlType = element.Current.ControlType;
-			var condition = new PropertyCondition(AutomationElement.ControlTypeProperty, controlType);
-			var siblings = parent.FindAll(TreeScope.Children, condition);
-			for (int index = 0; index < siblings.Count; index++)
-			{
-				if (siblings[index].Equals(element))
-					return index;
-			}
-			return -1; // Should not reach here
 		}
 
 		private static int GetChildIndex(AutomationElement element)

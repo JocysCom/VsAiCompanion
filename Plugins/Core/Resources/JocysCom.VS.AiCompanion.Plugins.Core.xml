@@ -31,33 +31,31 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuOptions(System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetAllTopLevelWindowPaths">
             <summary>
-            Retrieve current menu options or choices.
+            Retrieve paths to all top-level windows on the desktop.
             </summary>
-            <param name="menuContext">The context of the menu to retrieve options from.</param>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentMenuSelection(System.String)">
-            <summary>
-            Get current selection in the menu.
-            </summary>
-            <param name="menuContext">The context of the menu to check for selection.</param>
-            <returns>The currently selected menu option.</returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SelectMenuOption(System.String,System.String)">
-            <summary>
-            Select a menu option.
-            </summary>
-            <param name="menuContext">The context of the menu where selection will be made.</param>
-            <param name="option">The option to select.</param>
-            <returns>True if the operation was successful.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.NavigateToElement(System.String)">
             <summary>
-            Method to navigate to a specific UI element (e.g., button, field).
+            Navigate to a specific UI element (e.g., button, field).
             </summary>
-            <param name="elementIdentifier">The identifier of the element to navigate to.</param>
+            <param name="elementPath">The identifier of the element to navigate to.</param>
             <returns>True if the navigation was successful.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementProperties(System.String)">
+            <summary>
+            Get properties of a UI element specified by its path.
+            </summary>
+            <param name="elementPath">XPath-like path of the UI element.</param>
+            <returns>Dictionary containing property names and values.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.FindElementsByConditions(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Find UI elements matching specific conditions.
+            </summary>
+            <param name="conditions">Dictionary of property names and values to match.</param>
+            <returns>List of XPath-like paths to the matching elements.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Basic">
             <summary>

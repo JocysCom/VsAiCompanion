@@ -1,6 +1,9 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Windows;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Automation;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -76,57 +79,77 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 		}
 
-
-
-
 		/// <summary>
-		/// Retrieve current menu options or choices.
+		/// Retrieve paths to all top-level windows on the desktop.
 		/// </summary>
-		/// <param name="menuContext">The context of the menu to retrieve options from.</param>
-		//[RiskLevel(RiskLevel.Low)]
-		public static string[] GetCurrentMenuOptions(string menuContext)
+		[RiskLevel(RiskLevel.Medium)]
+		public static string[] GetAllTopLevelWindowPaths()
 		{
-			// Implementation would depend on how the UI framework presents menus.
-			// For example, it might query a menu component for its items.
-			return Array.Empty<string>(); // Changed from throw to return default value.
+			// Get the desktop AutomationElement
+			AutomationElement desktop = AutomationElement.RootElement;
+			var paths = desktop.FindAll(TreeScope.Children, Condition.TrueCondition)
+				.Cast<AutomationElement>()
+				.Select(x => AutomationHelper.GetPath(x))
+				.ToArray();
+			return paths;
 		}
 
 		/// <summary>
-		/// Get current selection in the menu.
+		/// Navigate to a specific UI element (e.g., button, field).
 		/// </summary>
-		/// <param name="menuContext">The context of the menu to check for selection.</param>
-		/// <returns>The currently selected menu option.</returns>
-		//[RiskLevel(RiskLevel.Low)]
-		public static string GetCurrentMenuSelection(string menuContext)
-		{
-			// This method would typically return the identifier or name of the selected option.
-			return ""; // Changed from throw to return default value.
-		}
-
-		/// <summary>
-		/// Select a menu option.
-		/// </summary>
-		/// <param name="menuContext">The context of the menu where selection will be made.</param>
-		/// <param name="option">The option to select.</param>
-		/// <returns>True if the operation was successful.</returns>
-		//[RiskLevel(RiskLevel.Medium)]
-		public static bool SelectMenuOption(string menuContext, string option)
-		{
-			// This method would send a command to the UI to update the selection.
-			// Logic to find and select the menu option would be here.
-			return true; // Changed from void to bool and return true.
-		}
-
-		/// <summary>
-		/// Method to navigate to a specific UI element (e.g., button, field).
-		/// </summary>
-		/// <param name="elementIdentifier">The identifier of the element to navigate to.</param>
+		/// <param name="elementPath">The identifier of the element to navigate to.</param>
 		/// <returns>True if the navigation was successful.</returns>
-		//[RiskLevel(RiskLevel.Medium)]
-		public static bool NavigateToElement(string elementIdentifier)
+		[RiskLevel(RiskLevel.Medium)]
+		public static bool NavigateToElement(string elementPath)
 		{
-			// This method would move the focus or cursor to the specified element.
 			return true; // Changed from void to bool and return true.
+		}
+
+		/// <summary>
+		/// Get properties of a UI element specified by its path.
+		/// </summary>
+		/// <param name="elementPath">XPath-like path of the UI element.</param>
+		/// <returns>Dictionary containing property names and values.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<Dictionary<string, object>> GetElementProperties(string elementPath)
+		{
+			try
+			{
+				var ah = new AutomationHelper();
+				var element = ah.GetElement(elementPath);
+				if (element == null)
+				{
+					return new OperationResult<Dictionary<string, object>>(new Exception("Element not found."));
+				}
+
+				var properties = ah.GetElementProperties(element);
+				return new OperationResult<Dictionary<string, object>>(properties);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<Dictionary<string, object>>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Find UI elements matching specific conditions.
+		/// </summary>
+		/// <param name="conditions">Dictionary of property names and values to match.</param>
+		/// <returns>List of XPath-like paths to the matching elements.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<List<string>> FindElementsByConditions(Dictionary<string, string> conditions)
+		{
+			try
+			{
+				var ah = new AutomationHelper();
+				var elements = ah.FindElementsByConditions(conditions);
+				var paths = elements.Select(e => AutomationHelper.GetPath(e)).ToList();
+				return new OperationResult<List<string>>(paths);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<List<string>>(ex);
+			}
 		}
 	}
 }
