@@ -57,6 +57,22 @@
             <param name="conditions">Dictionary of property names and values to match.</param>
             <returns>List of XPath-like paths to the matching elements.</returns>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.PerformActionOnElement(System.String,System.String,System.Object)">
+            <summary>
+            Perform an action on a UI element specified by its path.
+            </summary>
+            <param name="elementPath">XPath-like path of the UI element.</param>
+            <param name="action">The action to perform (e.g., "click", "setText").</param>
+            <param name="parameters">Additional parameters required for the action.</param>
+            <returns>True if the action was performed successfully.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementChildren(System.String)">
+            <summary>
+            Retrieve the child elements of a specified UI element.
+            </summary>
+            <param name="elementPath">XPath-like path of the parent UI element.</param>
+            <returns>List of XPath-like paths to the child elements.</returns>
+        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Basic">
             <summary>
             Basic functions that allow AI to create and modify files.

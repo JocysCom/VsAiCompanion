@@ -151,5 +151,61 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return new OperationResult<List<string>>(ex);
 			}
 		}
+
+
+		/// <summary>
+		/// Perform an action on a UI element specified by its path.
+		/// </summary>
+		/// <param name="elementPath">XPath-like path of the UI element.</param>
+		/// <param name="action">The action to perform (e.g., "click", "setText").</param>
+		/// <param name="parameters">Additional parameters required for the action.</param>
+		/// <returns>True if the action was performed successfully.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public OperationResult<bool> PerformActionOnElement(string elementPath, string action, object parameters = null)
+		{
+			try
+			{
+				var ah = new AutomationHelper();
+				var element = ah.GetElement(elementPath);
+				if (element == null)
+				{
+					return new OperationResult<bool>(new Exception("Element not found."));
+				}
+
+				bool result = ah.PerformAction(element, action, parameters);
+				return new OperationResult<bool>(result);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Retrieve the child elements of a specified UI element.
+		/// </summary>
+		/// <param name="elementPath">XPath-like path of the parent UI element.</param>
+		/// <returns>List of XPath-like paths to the child elements.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<List<string>> GetElementChildren(string elementPath)
+		{
+			try
+			{
+				var ah = new AutomationHelper();
+				var parentElement = ah.GetElement(elementPath);
+				if (parentElement == null)
+				{
+					return new OperationResult<List<string>>(new Exception("Parent element not found."));
+				}
+
+				var children = ah.FindAllChildren(parentElement);
+				var childPaths = children.Select(e => AutomationHelper.GetPath(e)).ToList();
+				return new OperationResult<List<string>>(childPaths);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<List<string>>(ex);
+			}
+		}
 	}
 }

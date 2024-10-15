@@ -422,6 +422,139 @@ namespace JocysCom.ClassLibrary.Windows
 		#region Helper Methods
 
 		/// <summary>
+		/// Performs the specified action on the given automation element.
+		/// </summary>
+		/// <param name="element">The AutomationElement to interact with.</param>
+		/// <param name="action">The action to perform (e.g., "click", "setText", "select").</param>
+		/// <param name="parameters">Additional parameters required for the action.</param>
+		/// <returns>True if the action was performed successfully.</returns>
+		public bool PerformAction(AutomationElement element, string action, object parameters = null)
+		{
+			if (element == null)
+				throw new ArgumentNullException(nameof(element));
+
+			action = action.ToLowerInvariant();
+
+			switch (action)
+			{
+				case "click":
+					return ClickElement(element);
+				case "settext":
+					if (parameters is string text)
+					{
+						SetValue(element, text);
+						return true;
+					}
+					else
+					{
+						throw new ArgumentException("Parameters must be a string for 'setText' action.");
+					}
+				case "select":
+					return SelectElement(element);
+				// Add more actions as needed
+				default:
+					throw new NotSupportedException($"Action '{action}' is not supported.");
+			}
+		}
+
+		/// <summary>
+		/// Clicks on the specified automation element.
+		/// </summary>
+		/// <param name="element">The AutomationElement to click.</param>
+		/// <returns>True if the click action was successful.</returns>
+		private bool ClickElement(AutomationElement element)
+		{
+			try
+			{
+				// Try using the InvokePattern
+				if (element.TryGetCurrentPattern(InvokePattern.Pattern, out object pattern))
+				{
+					((InvokePattern)pattern).Invoke();
+				}
+				else
+				{
+					// Fallback to simulate a mouse click
+					var rect = element.Current.BoundingRectangle;
+					if (rect.IsEmpty)
+						return false;
+
+					var x = rect.Left + rect.Width / 2;
+					var y = rect.Top + rect.Height / 2;
+
+					NativeMethods.SetCursorPos((int)x, (int)y);
+					NativeMethods.mouse_event(NativeMethods.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+					NativeMethods.mouse_event(NativeMethods.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+				}
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Selects the specified automation element.
+		/// </summary>
+		/// <param name="element">The AutomationElement to select.</param>
+		/// <returns>True if the select action was successful.</returns>
+		private bool SelectElement(AutomationElement element)
+		{
+			try
+			{
+				if (element.TryGetCurrentPattern(SelectionItemPattern.Pattern, out object pattern))
+				{
+					((SelectionItemPattern)pattern).Select();
+					return true;
+				}
+				else if (element.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out pattern))
+				{
+					var expandCollapsePattern = (ExpandCollapsePattern)pattern;
+					if (expandCollapsePattern.Current.ExpandCollapseState == ExpandCollapseState.Collapsed ||
+						expandCollapsePattern.Current.ExpandCollapseState == ExpandCollapseState.PartiallyExpanded)
+					{
+						expandCollapsePattern.Expand();
+						return true;
+					}
+				}
+				return false;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		// Existing methods ...
+
+		/// <summary>
+		/// Retrieves all child elements of the specified automation element.
+		/// </summary>
+		/// <param name="parent">The parent AutomationElement.</param>
+		/// <returns>A list of child AutomationElements.</returns>
+		public List<AutomationElement> FindAllChildren(AutomationElement parent)
+		{
+			if (parent == null)
+				throw new ArgumentNullException(nameof(parent));
+
+			var children = parent.FindAll(TreeScope.Children, Condition.TrueCondition)
+				.Cast<AutomationElement>()
+				.ToList();
+
+			return children;
+		}
+
+		/// <summary>
+		/// Finds all child elements matching the specified control type.
+		/// </summary>
+		public List<AutomationElement> FindAllChildren(string parentPath, ControlType controlType = null)
+		{
+			var parent = GetElement(parentPath);
+			var children = FindAllChildren(parent, controlType);
+			return children;
+		}
+
+		/// <summary>
 		/// Finds all child elements matching the specified control type.
 		/// </summary>
 		public static List<AutomationElement> FindAllChildren(AutomationElement parent, ControlType controlType = null)
@@ -598,6 +731,7 @@ namespace JocysCom.ClassLibrary.Windows
 			}
 			return -1; // Should not reach here
 		}
+
 
 		private static bool IsNameUseful(string name)
 		{
