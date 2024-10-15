@@ -14,6 +14,11 @@
             Get path to canvas AutomationElement
             </summary>
         </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetTempFolderPath">
+            <summary>
+            Get path to temp folder.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentCanvasPath">
             <summary>
             Retrieve current canvas path.
@@ -48,21 +53,21 @@
             Get properties of a UI element specified by its path.
             </summary>
             <param name="elementPath">XPath-like path of the UI element.</param>
-            <returns>Dictionary containing property names and values.</returns>
+            <returns>List containing property names and values.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.FindElementsByConditions(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.FindElementsByConditions(JocysCom.ClassLibrary.Collections.KeyValue[])">
             <summary>
             Find UI elements matching specific conditions.
             </summary>
-            <param name="conditions">Dictionary of property names and values to match.</param>
+            <param name="conditions">List of property names and values to match.</param>
             <returns>List of XPath-like paths to the matching elements.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.PerformActionOnElement(System.String,System.String,System.Object)">
             <summary>
-            Perform an action on a UI element specified by its path.
+            Performs the specified action on the given automation element.
             </summary>
-            <param name="elementPath">XPath-like path of the UI element.</param>
-            <param name="action">The action to perform (e.g., "click", "setText").</param>
+            <param name="elementPath">The AutomationElement to interact with.</param>
+            <param name="action">The action to perform (e.g., "click", "settext", "select", "sendkeys").</param>
             <param name="parameters">Additional parameters required for the action.</param>
             <returns>True if the action was performed successfully.</returns>
         </member>
@@ -72,6 +77,36 @@
             </summary>
             <param name="elementPath">XPath-like path of the parent UI element.</param>
             <returns>List of XPath-like paths to the child elements.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.WaitForElement(System.String,System.Int32)">
+            <summary>
+            Waits for a UI element specified by its path to become available within a given timeout.
+            </summary>
+            <param name="elementPath">XPath-like path of the UI element.</param>
+            <param name="timeoutInMilliseconds">Maximum time to wait for the element.</param>
+            <returns>True if the element becomes available within the timeout, false otherwise.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.IsElementAvailable(System.String)">
+            <summary>
+            Checks if a UI element specified by its path is currently available.
+            </summary>
+            <param name="elementPath">XPath-like path of the UI element.</param>
+            <returns>True if the element is available, false otherwise.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementTree(System.String)">
+            <summary>
+            Retrieves the UI element hierarchy starting from the specified element.
+            </summary>
+            <param name="elementPath">XPath-like path of the root UI element.</param>
+            <returns>An ElementNode representing the UI hierarchy.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.CaptureElementImageToFile(System.String,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Captures an image of the specified UI element.
+            </summary>
+            <param name="elementPath">XPath-like path of the UI element.</param>
+            <param name="format">The format of the image to capture.</param>
+            <returns>Path to the captured image, that could be read with other function.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Basic">
             <summary>

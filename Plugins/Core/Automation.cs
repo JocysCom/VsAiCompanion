@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.Windows;
 using System;
 using System.Collections.Generic;
@@ -118,9 +119,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Get properties of a UI element specified by its path.
 		/// </summary>
 		/// <param name="elementPath">XPath-like path of the UI element.</param>
-		/// <returns>Dictionary containing property names and values.</returns>
+		/// <returns>List containing property names and values.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		public OperationResult<Dictionary<string, object>> GetElementProperties(string elementPath)
+		public OperationResult<List<KeyValue>> GetElementProperties(string elementPath)
 		{
 			try
 			{
@@ -128,30 +129,31 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				var element = ah.GetElement(elementPath);
 				if (element == null)
 				{
-					return new OperationResult<Dictionary<string, object>>(new Exception("Element not found."));
+					return new OperationResult<List<KeyValue>>(new Exception("Element not found."));
 				}
 
 				var properties = ah.GetElementProperties(element);
-				return new OperationResult<Dictionary<string, object>>(properties);
+				var values = properties.Select(x => new KeyValue(x.Key, x.Value?.ToString())).ToList();
+				return new OperationResult<List<KeyValue>>(values);
 			}
 			catch (Exception ex)
 			{
-				return new OperationResult<Dictionary<string, object>>(ex);
+				return new OperationResult<List<KeyValue>>(ex);
 			}
 		}
 
 		/// <summary>
 		/// Find UI elements matching specific conditions.
 		/// </summary>
-		/// <param name="conditions">Dictionary of property names and values to match.</param>
+		/// <param name="conditions">List of property names and values to match.</param>
 		/// <returns>List of XPath-like paths to the matching elements.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		public OperationResult<List<string>> FindElementsByConditions(Dictionary<string, string> conditions)
+		public OperationResult<List<string>> FindElementsByConditions(KeyValue[] conditions)
 		{
 			try
 			{
 				var ah = new AutomationHelper();
-				var elements = ah.FindElementsByConditions(conditions);
+				var elements = ah.FindElementsByConditions(conditions.ToList());
 				var paths = elements.Select(e => AutomationHelper.GetPath(e)).ToList();
 				return new OperationResult<List<string>>(paths);
 			}

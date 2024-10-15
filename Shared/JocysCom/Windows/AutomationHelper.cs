@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -240,7 +241,7 @@ namespace JocysCom.ClassLibrary.Windows
 		/// </summary>
 		/// <param name="conditions">Dictionary of property names and values to match.</param>
 		/// <returns>List of matching AutomationElements.</returns>
-		public List<AutomationElement> FindElementsByConditions(Dictionary<string, string> conditions)
+		public List<AutomationElement> FindElementsByConditions(List<KeyValue> conditions)
 		{
 			if (conditions == null || conditions.Count == 0)
 				throw new ArgumentException("Conditions dictionary cannot be null or empty.", nameof(conditions));
