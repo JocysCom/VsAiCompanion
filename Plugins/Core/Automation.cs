@@ -2,8 +2,11 @@
 using JocysCom.ClassLibrary.Windows;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Automation;
+using static JocysCom.ClassLibrary.Windows.AutomationHelper;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -18,6 +21,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Get path to canvas AutomationElement
 		/// </summary>
 		public Func<string> GetCanvasEditorElementPath { get; set; }
+
+		/// <summary>
+		/// Get path to temp folder.
+		/// </summary>
+		public Func<string> GetTempFolderPath { get; set; }
+
 
 		/// <summary>
 		/// Retrieve current canvas path.
@@ -154,10 +163,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 
 		/// <summary>
-		/// Perform an action on a UI element specified by its path.
+		/// Performs the specified action on the given automation element.
 		/// </summary>
-		/// <param name="elementPath">XPath-like path of the UI element.</param>
-		/// <param name="action">The action to perform (e.g., "click", "setText").</param>
+		/// <param name="elementPath">The AutomationElement to interact with.</param>
+		/// <param name="action">The action to perform (e.g., "click", "settext", "select", "sendkeys").</param>
 		/// <param name="parameters">Additional parameters required for the action.</param>
 		/// <returns>True if the action was performed successfully.</returns>
 		[RiskLevel(RiskLevel.High)]
@@ -205,6 +214,106 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			catch (Exception ex)
 			{
 				return new OperationResult<List<string>>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Waits for a UI element specified by its path to become available within a given timeout.
+		/// </summary>
+		/// <param name="elementPath">XPath-like path of the UI element.</param>
+		/// <param name="timeoutInMilliseconds">Maximum time to wait for the element.</param>
+		/// <returns>True if the element becomes available within the timeout, false otherwise.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<bool> WaitForElement(string elementPath, int timeoutInMilliseconds)
+		{
+			try
+			{
+				var ah = new AutomationHelper();
+				var element = ah.WaitForElement(elementPath, timeoutInMilliseconds);
+
+				return new OperationResult<bool>(element != null);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Checks if a UI element specified by its path is currently available.
+		/// </summary>
+		/// <param name="elementPath">XPath-like path of the UI element.</param>
+		/// <returns>True if the element is available, false otherwise.</returns>
+		[RiskLevel(RiskLevel.Low)]
+		public OperationResult<bool> IsElementAvailable(string elementPath)
+		{
+			try
+			{
+				var ah = new AutomationHelper();
+				var element = ah.GetElement(elementPath);
+
+				return new OperationResult<bool>(element != null);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the UI element hierarchy starting from the specified element.
+		/// </summary>
+		/// <param name="elementPath">XPath-like path of the root UI element.</param>
+		/// <returns>An ElementNode representing the UI hierarchy.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<ElementNode> GetElementTree(string elementPath)
+		{
+			try
+			{
+				var ah = new AutomationHelper();
+				var rootElement = ah.GetElement(elementPath);
+				if (rootElement == null)
+				{
+					return new OperationResult<ElementNode>(new Exception("Element not found."));
+				}
+
+				var tree = ah.BuildElementTree(rootElement);
+				return new OperationResult<ElementNode>(tree);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<ElementNode>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Captures an image of the specified UI element.
+		/// </summary>
+		/// <param name="elementPath">XPath-like path of the UI element.</param>
+		/// <param name="format">The format of the image to capture.</param>
+		/// <returns>Path to the captured image, that could be read with other function.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public async Task<OperationResult<string>> CaptureElementImageToFile(string elementPath, ImageFormat format)
+		{
+			try
+			{
+				var ah = new AutomationHelper();
+				var element = ah.GetElement(elementPath);
+				if (element == null)
+				{
+					return new OperationResult<string>(new Exception("Element not found."));
+				}
+				var boundingRect = element.Current.BoundingRectangle;
+				if (boundingRect == System.Windows.Rect.Empty)
+					throw new InvalidOperationException("Element has no bounding rectangle.");
+				var region = new System.Drawing.Rectangle((int)boundingRect.X, (int)boundingRect.Y, (int)boundingRect.Width, (int)boundingRect.Height);
+				var tempFolderPath = System.IO.Path.Combine(GetTempFolderPath(), "Screenshots");
+				var result = await ScreenshotHelper.CaptureRegion(region, tempFolderPath, format);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<string>(ex);
 			}
 		}
 	}

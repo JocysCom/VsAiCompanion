@@ -182,6 +182,55 @@ namespace JocysCom.ClassLibrary.Windows
 			return properties;
 		}
 
+		public class ElementNode
+		{
+			public string Name { get; set; }
+			public string AutomationId { get; set; }
+			public string ControlType { get; set; }
+			public string ClassName { get; set; }
+			public List<ElementNode> Children { get; set; }
+		}
+
+		public ElementNode BuildElementTree(AutomationElement element)
+		{
+			var node = new ElementNode
+			{
+				Name = element.Current.Name,
+				AutomationId = element.Current.AutomationId,
+				ControlType = element.Current.ControlType.ProgrammaticName,
+				ClassName = element.Current.ClassName,
+				Children = new List<ElementNode>()
+			};
+
+			var children = element.FindAll(TreeScope.Children, Condition.TrueCondition);
+			foreach (AutomationElement child in children)
+			{
+				var childNode = BuildElementTree(child);
+				node.Children.Add(childNode);
+			}
+
+			return node;
+		}
+
+		public AutomationElement WaitForElement(string elementPath, int timeoutInMilliseconds)
+		{
+			int elapsed = 0;
+			const int waitInterval = 100; // milliseconds
+			AutomationElement element = null;
+
+			while (elapsed < timeoutInMilliseconds)
+			{
+				element = GetElement(elementPath);
+				if (element != null)
+					break;
+
+				System.Threading.Thread.Sleep(waitInterval);
+				elapsed += waitInterval;
+			}
+
+			return element;
+		}
+
 		#endregion
 
 		#region Element Search Methods
@@ -425,7 +474,7 @@ namespace JocysCom.ClassLibrary.Windows
 		/// Performs the specified action on the given automation element.
 		/// </summary>
 		/// <param name="element">The AutomationElement to interact with.</param>
-		/// <param name="action">The action to perform (e.g., "click", "setText", "select").</param>
+		/// <param name="action">The action to perform (e.g., "click", "settext", "select", "sendkeys").</param>
 		/// <param name="parameters">Additional parameters required for the action.</param>
 		/// <returns>True if the action was performed successfully.</returns>
 		public bool PerformAction(AutomationElement element, string action, object parameters = null)
@@ -451,9 +500,34 @@ namespace JocysCom.ClassLibrary.Windows
 					}
 				case "select":
 					return SelectElement(element);
+				case "sendkeys":
+					if (parameters is string keys)
+					{
+						SendKeysToElement(element, keys);
+						return true;
+					}
+					else
+					{
+						throw new ArgumentException("Parameters must be a string for 'sendKeys' action.");
+					}
 				// Add more actions as needed
 				default:
 					throw new NotSupportedException($"Action '{action}' is not supported.");
+			}
+		}
+
+		// Helper method to send keys to an element
+		private void SendKeysToElement(AutomationElement element, string keys)
+		{
+			if (element.Current.IsKeyboardFocusable)
+			{
+				element.SetFocus();
+				// Simulate key presses
+				System.Windows.Forms.SendKeys.SendWait(keys);
+			}
+			else
+			{
+				throw new InvalidOperationException("Element is not focusable.");
 			}
 		}
 
@@ -1002,5 +1076,6 @@ namespace JocysCom.ClassLibrary.Windows
 
 
 		#endregion
+
 	}
 }
