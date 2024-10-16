@@ -1,9 +1,12 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using DiffPlex;
+using DiffPlex.DiffBuilder;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -131,6 +134,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				UiPresetsManager.InitControl(this, true);
 			}
 		}
+
+		#region Diff Panel
+
+		public void SetDiff(string oldText, string newText)
+		{
+			var diffBuilder = new SideBySideDiffBuilder(new Differ());
+			var diffModel = diffBuilder.BuildDiffModel(oldText, newText);
+			DiffViewer.OldText = oldText;
+			DiffViewer.NewText = newText;
+		}
+
+		public string GetDiffHTml(string oldText, string newText)
+		{
+			var diffBuilder = new SideBySideDiffBuilder(new Differ());
+			var diffModel = diffBuilder.BuildDiffModel(oldText, newText);
+			var html = new StringBuilder();
+			html.Append("<html><body><table>");
+			// Iterate over each line in the diff model
+			foreach (var diffLine in diffModel.NewText.Lines)
+			{
+				string lineClass = diffLine.Type.ToString().ToLower();
+				html.AppendFormat("<tr class='{0}'><td>{1}</td></tr>", lineClass, diffLine.Text);
+			}
+			return html.ToString();
+		}
+
+		#endregion
 
 		#region ■ INotifyPropertyChanged
 

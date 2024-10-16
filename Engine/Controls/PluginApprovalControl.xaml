@@ -3,9 +3,11 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:diffPlex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
+	d:Height="240"
 	Loaded="This_Loaded"
 	Visibility="{Binding SowApprovalPanel, ElementName=This}"
 	mc:Ignorable="d">
@@ -19,121 +21,136 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<StackPanel Background="{Binding ApprovalColor, ElementName=This}">
-		<Border Margin="5" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" CornerRadius="5">
-			<StackPanel Orientation="Vertical">
-				<Grid>
-					<Grid.ColumnDefinitions />
-					<StackPanel
-						x:Name="TitleBackStackPanel"
-						HorizontalAlignment="Stretch"
-						Background="{Binding ApprovalColor, ElementName=This}"
-						Opacity="0.5"
-						Orientation="Horizontal">
-						<Label Content=" " FontWeight="Bold" />
-					</StackPanel>
-					<StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-						<Label Padding="5,0,5,0" Content="Do you want to execute function submitted by AI?" FontWeight="Bold" />
-						<Label Content="{Binding FunctionId, ElementName=This}" FontWeight="Bold" />
-					</StackPanel>
-					<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-						<Button Name="ApproveButton" MinWidth="75" Click="ApproveButton_Click">
-							<StackPanel Focusable="False">
-								<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
-								<Label Content="Approve" />
-							</StackPanel>
-						</Button>
-						<Button Name="DenyButton" MinWidth="75" Click="DenyButton_Click">
-							<StackPanel Focusable="False">
-								<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
-								<Label Content="Deny" />
-							</StackPanel>
-						</Button>
-					</StackPanel>
-				</Grid>
-				<Border
-					x:Name="ReasonBorder"
-					Margin="4,0,4,0"
-					x:FieldModifier="public"
-					BorderBrush="{StaticResource BackgroundDark}"
-					BorderThickness="0,0,0,1">
-					<StackPanel Margin="5" Orientation="Horizontal">
-						<TextBlock x:Name="ReasonForInvocationLabel" Opacity="0.5" Text="{StaticResource main_AI_reason_for_action}" />
-						<TextBlock MinWidth="5" Opacity="0.5" Text=":" />
-						<TextBlock x:Name="ReasonForInvocationTextBox" Text="{Binding ApprovalItem.ReasonForInvocation, ElementName=This}" />
-					</StackPanel>
-				</Border>
-				<local:PluginItemControl x:Name="PluginItemPanel" Margin="0,0,0,-1" DataContext="{Binding ApprovalItem.Plugin, ElementName=This}" />
-				<Border
-					x:Name="SeparatorBorder"
-					Margin="4,0,4,0"
-					x:FieldModifier="public"
-					BorderBrush="{StaticResource BackgroundDark}"
-					BorderThickness="0,0,0,1"
-					Visibility="{Binding ShowSecondaryAiEvaluation, ElementName=This}">
-					<TextBlock
-						Margin="0,0,0,4"
-						Padding="0"
-						HorizontalAlignment="Stretch"
-						VerticalAlignment="Top"
-						Text="{Binding ApprovalItem.SecondaryAiEvaluation, ElementName=This}"
-						TextWrapping="Wrap" />
-				</Border>
-				<!--  Send Message  -->
-				<StackPanel Grid.Row="1" Grid.Column="0" Margin="10">
-					<Grid x:Name="MessageInputGrid">
-						<TextBox
-							x:Name="DataTextBox"
-							MinHeight="30"
-							Margin="0"
-							Padding="10,7,10,7"
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<StackPanel Background="{Binding ApprovalColor, ElementName=This}">
+			<Border Margin="5" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" CornerRadius="5">
+				<StackPanel Orientation="Vertical">
+					<Grid>
+						<Grid.ColumnDefinitions />
+						<StackPanel
+							x:Name="TitleBackStackPanel"
 							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							VerticalContentAlignment="Top"
-							x:FieldModifier="public"
-							AcceptsReturn="True"
-							Background="White"
-							BorderThickness="0"
-							FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
-							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-							ScrollViewer.VerticalScrollBarVisibility="Auto"
-							SpellCheck.IsEnabled="True"
-							Text="{Binding ApprovalItem.ApprovalReason, ElementName=This, UpdateSourceTrigger=PropertyChanged}"
-							TextWrapping="Wrap">
-							<TextBox.Resources>
-								<Style TargetType="Border">
-									<Setter Property="CornerRadius" Value="10" />
-								</Style>
-							</TextBox.Resources>
-						</TextBox>
-						<TextBlock
-							MinHeight="30"
-							Padding="10,7,10,7"
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							IsHitTestVisible="False"
+							Background="{Binding ApprovalColor, ElementName=This}"
 							Opacity="0.5"
-							Text="{StaticResource main_Provide_the_reason}">
-							<TextBlock.Style>
-								<Style TargetType="{x:Type TextBlock}">
-									<Setter Property="Visibility" Value="Collapsed" />
-									<Style.Triggers>
-										<MultiDataTrigger>
-											<MultiDataTrigger.Conditions>
-												<Condition Binding="{Binding ElementName=DataTextBox, Path=Text}" Value="" />
-												<Condition Binding="{Binding ElementName=DataTextBox, Path=IsKeyboardFocused}" Value="False" />
-											</MultiDataTrigger.Conditions>
-											<MultiDataTrigger.Setters>
-												<Setter Property="Visibility" Value="Visible" />
-											</MultiDataTrigger.Setters>
-										</MultiDataTrigger>
-									</Style.Triggers>
-								</Style>
-							</TextBlock.Style>
-						</TextBlock>
+							Orientation="Horizontal">
+							<Label Content=" " FontWeight="Bold" />
+						</StackPanel>
+						<StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+							<Label Padding="5,0,5,0" Content="Do you want to execute function submitted by AI?" FontWeight="Bold" />
+							<Label Content="{Binding FunctionId, ElementName=This}" FontWeight="Bold" />
+						</StackPanel>
+						<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+							<Button Name="ApproveButton" MinWidth="75" Click="ApproveButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_OK}" Focusable="False" />
+									<Label Content="Approve" />
+								</StackPanel>
+							</Button>
+							<Button Name="DenyButton" MinWidth="75" Click="DenyButton_Click">
+								<StackPanel Focusable="False">
+									<ContentControl Content="{StaticResource Icon_Cancel}" Focusable="False" />
+									<Label Content="Deny" />
+								</StackPanel>
+							</Button>
+						</StackPanel>
 					</Grid>
+					<Border
+						x:Name="ReasonBorder"
+						Margin="4,0,4,0"
+						x:FieldModifier="public"
+						BorderBrush="{StaticResource BackgroundDark}"
+						BorderThickness="0,0,0,1">
+						<StackPanel Margin="5" Orientation="Horizontal">
+							<TextBlock x:Name="ReasonForInvocationLabel" Opacity="0.5" Text="{StaticResource main_AI_reason_for_action}" />
+							<TextBlock MinWidth="5" Opacity="0.5" Text=":" />
+							<TextBlock x:Name="ReasonForInvocationTextBox" Text="{Binding ApprovalItem.ReasonForInvocation, ElementName=This}" />
+						</StackPanel>
+					</Border>
+					<local:PluginItemControl x:Name="PluginItemPanel" Margin="0,0,0,-1" DataContext="{Binding ApprovalItem.Plugin, ElementName=This}" />
+					<Border
+						x:Name="SeparatorBorder"
+						Margin="4,0,4,0"
+						x:FieldModifier="public"
+						BorderBrush="{StaticResource BackgroundDark}"
+						BorderThickness="0,0,0,1"
+						Visibility="{Binding ShowSecondaryAiEvaluation, ElementName=This}">
+						<TextBlock
+							Margin="0,0,0,4"
+							Padding="0"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Top"
+							Text="{Binding ApprovalItem.SecondaryAiEvaluation, ElementName=This}"
+							TextWrapping="Wrap" />
+					</Border>
+					<!--  Send Message  -->
+					<StackPanel Grid.Row="1" Grid.Column="0" Margin="10">
+						<Grid x:Name="MessageInputGrid">
+							<TextBox
+								x:Name="DataTextBox"
+								MinHeight="30"
+								Margin="0"
+								Padding="10,7,10,7"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								VerticalContentAlignment="Top"
+								x:FieldModifier="public"
+								AcceptsReturn="True"
+								Background="White"
+								BorderThickness="0"
+								FocusVisualStyle="{StaticResource FocusVisualStyle_None}"
+								ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+								ScrollViewer.VerticalScrollBarVisibility="Auto"
+								SpellCheck.IsEnabled="True"
+								Text="{Binding ApprovalItem.ApprovalReason, ElementName=This, UpdateSourceTrigger=PropertyChanged}"
+								TextWrapping="Wrap">
+								<TextBox.Resources>
+									<Style TargetType="Border">
+										<Setter Property="CornerRadius" Value="10" />
+									</Style>
+								</TextBox.Resources>
+							</TextBox>
+							<TextBlock
+								MinHeight="30"
+								Padding="10,7,10,7"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								IsHitTestVisible="False"
+								Opacity="0.5"
+								Text="{StaticResource main_Provide_the_reason}">
+								<TextBlock.Style>
+									<Style TargetType="{x:Type TextBlock}">
+										<Setter Property="Visibility" Value="Collapsed" />
+										<Style.Triggers>
+											<MultiDataTrigger>
+												<MultiDataTrigger.Conditions>
+													<Condition Binding="{Binding ElementName=DataTextBox, Path=Text}" Value="" />
+													<Condition Binding="{Binding ElementName=DataTextBox, Path=IsKeyboardFocused}" Value="False" />
+												</MultiDataTrigger.Conditions>
+												<MultiDataTrigger.Setters>
+													<Setter Property="Visibility" Value="Visible" />
+												</MultiDataTrigger.Setters>
+											</MultiDataTrigger>
+										</Style.Triggers>
+									</Style>
+								</TextBlock.Style>
+							</TextBlock>
+						</Grid>
+					</StackPanel>
 				</StackPanel>
-			</StackPanel>
+			</Border>
+		</StackPanel>
+		<Border
+			x:Name="DiffPanel"
+			Grid.Row="1"
+			Margin="5"
+			Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+			CornerRadius="5"
+			Visibility="Collapsed">
+			<diffPlex:DiffViewer Name="DiffViewer" />
 		</Border>
-	</StackPanel>
+	</Grid>
 </UserControl>
