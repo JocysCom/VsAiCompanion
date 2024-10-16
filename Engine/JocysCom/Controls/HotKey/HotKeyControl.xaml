@@ -1,0 +1,23 @@
+﻿<UserControl
+	x:Class="JocysCom.ClassLibrary.Controls.HotKey.HotKeyControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Width="Auto"
+	Height="Auto">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../Themes/Default.xaml" />
+				<ResourceDictionary Source="../Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<StackPanel Orientation="Vertical">
+		<CheckBox Content="{Binding HotKeyText, RelativeSource={RelativeSource AncestorType=UserControl}}" IsChecked="{Binding HotKeyEnabled, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+		<TextBox
+			Width="150"
+			HorizontalContentAlignment="Center"
+			PreviewKeyDown="TextBox_PreviewKeyDown"
+			Text="{Binding HotKey, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+	</StackPanel>
+</UserControl>

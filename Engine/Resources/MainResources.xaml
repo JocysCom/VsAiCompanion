@@ -207,7 +207,8 @@
 	<sys:String x:Key="main_MaxRiskLevel">App max risk level</sys:String>
 	<sys:String x:Key="main_MaxRiskLevelWhenSignedOut">Max risk level when signed out</sys:String>
 	<sys:String x:Key="main_DomainMaxRiskLevel">Domain max risk level</sys:String>
-
+	<sys:String x:Key="main_HotKeys">Hot Keys</sys:String>
+	<sys:String x:Key="main_HotKeys_AIWindow">AI Window</sys:String>
 
 	<!--  Options → Microsoft Account → Azure Key Vault Items  -->
 	<sys:String x:Key="main_ActivationDate">Activation Date</sys:String>

@@ -3,6 +3,7 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:JcControlsHotKey="clr-namespace:JocysCom.ClassLibrary.Controls.HotKey"
 	xmlns:controls="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -188,6 +189,17 @@
 							IsChecked="{Binding LogHttp, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					</WrapPanel>
 				</GroupBox>
+
+				<GroupBox x:Name="HotKeyGroupBox" Margin="3,0,3,3" Header="{StaticResource main_HotKeys}">
+					<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
+						<JcControlsHotKey:HotKeyControl
+							x:Name="HotKeyPanel"
+							HotKey="{Binding AiWindowHotKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							HotKeyEnabled="{Binding AiWindowHotKeyEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							HotKeyText="{StaticResource main_HotKeys_AIWindow}" />
+					</WrapPanel>
+				</GroupBox>
+
 			</WrapPanel>
 			<GroupBox x:Name="EnterpriseOptionsGroupBox" Grid.Row="2" Margin="3,0,3,0">
 				<GroupBox.Header>

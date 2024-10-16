@@ -485,6 +485,18 @@ Do not return as a code block.")]
 		public int MaxTaskItemsInTray { get => _MaxTaskItemsInTray; set => SetProperty(ref _MaxTaskItemsInTray, value); }
 		int _MaxTaskItemsInTray;
 
+		#region AI Window
+
+		[DefaultValue(false)]
+		public bool AiWindowHotKeyEnabled { get => _AiWindowHotKeyEnabled; set => SetProperty(ref _AiWindowHotKeyEnabled, value); }
+		bool _AiWindowHotKeyEnabled;
+
+		[DefaultValue("CTRL+SHIFT+1")]
+		public string AiWindowHotKey { get => _AiWindowHotKey; set => SetProperty(ref _AiWindowHotKey, value); }
+		string _AiWindowHotKey;
+
+		#endregion
+
 		#region ■ ITrayManagerSettings
 
 		[DefaultValue(false)]
