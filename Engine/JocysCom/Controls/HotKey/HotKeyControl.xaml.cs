@@ -83,7 +83,7 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 		}
 
 		private Window _parentWindow;
-		private HotKeyHelper _hotKeyHelper;
+		public HotKeyHelper HotKeyHelper;
 
 		private Window ParentWindow
 		{
@@ -97,10 +97,10 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 
 		private void RegisterHotKey(ModifierKeys modifiers, Key key)
 		{
-			_hotKeyHelper?.Dispose();
-			_hotKeyHelper = new HotKeyHelper(ParentWindow);
-			_hotKeyHelper.HotKeyPressed += HotKeyHelper_HotKeyPressed;
-			_hotKeyHelper.RegisterHotKey(modifiers, key);
+			HotKeyHelper?.Dispose();
+			HotKeyHelper = new HotKeyHelper(ParentWindow);
+			HotKeyHelper.HotKeyPressed += HotKeyHelper_HotKeyPressed;
+			HotKeyHelper.RegisterHotKey(modifiers, key);
 		}
 
 		private void HotKeyHelper_HotKeyPressed(object sender, System.EventArgs e)
@@ -112,7 +112,7 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 		// Clean up when unloaded
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			_hotKeyHelper?.Dispose();
+			HotKeyHelper?.Dispose();
 		}
 	}
 
