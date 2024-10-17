@@ -27,7 +27,7 @@ namespace JocysCom.ClassLibrary.Windows
 
 			var pathSegments = new List<string>();
 			var currentElement = element;
-
+			var partialPath = "";
 			while (currentElement != null)
 			{
 				var controlTypeName = currentElement.Current.ControlType.ProgrammaticName.Split('.').Last();
@@ -57,41 +57,29 @@ namespace JocysCom.ClassLibrary.Windows
 					segment += $"[{string.Join(" and ", predicates)}]";
 
 				pathSegments.Insert(0, segment);
-
+				partialPath = string.Join("/", pathSegments);
 				var parentElement = TreeWalker.RawViewWalker.GetParent(currentElement);
-
 				// If validation is enabled, validate the current segment
 				if (enableValidation)
 				{
-					// Build the partial path up to the current segment
-					var partialPath = "/" + string.Join("/", pathSegments);
-
 					// Use GetElement to check if we can retrieve the current element with the partial path
-					var retrievedElement = GetElement(partialPath, parentElement);
+					var retrievedElement = GetElement(segment, parentElement);
 					if (retrievedElement == null || !Equals(currentElement, retrievedElement))
 					{
 						// Collect detailed information
 						var properties = GetElementProperties(currentElement);
-
 						var errorMessage = new StringBuilder();
 						errorMessage.AppendLine($"Validation failed at segment '{segment}'.");
 						errorMessage.AppendLine($"Unable to retrieve element using path '{partialPath}'.");
 						errorMessage.AppendLine("Current Element Properties:");
-
 						foreach (var prop in properties)
-						{
 							errorMessage.AppendLine($"{prop.Key}: {prop.Value}");
-						}
-
 						throw new Exception(errorMessage.ToString());
 					}
 				}
-
 				currentElement = parentElement;
 			}
-
-			var elementPath = "/" + string.Join("/", pathSegments);
-			return elementPath;
+			return "/" + partialPath;
 		}
 
 
