@@ -55,9 +55,8 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			try
 			{
-				var ah = new AutomationHelper();
 				var path = GetCanvasEditorElementPath();
-				var element = ah.GetElement(path);
+				var element = AutomationHelper.GetElement(path);
 				//var path2 = AutomationHelper.GetPath(element);
 				var text = AutomationHelper.GetValue(element);
 				return new OperationResult<string>(text);
@@ -77,9 +76,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			try
 			{
-				var ah = new AutomationHelper();
 				var path = GetCanvasEditorElementPath();
-				var element = ah.GetElement(path);
+				var element = AutomationHelper.GetElement(path);
+				var ah = new AutomationHelper();
 				ah.SetValue(element, contents);
 				return new OperationResult<bool>(true);
 			}
@@ -125,14 +124,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			try
 			{
-				var ah = new AutomationHelper();
-				var element = ah.GetElement(elementPath);
+				var element = AutomationHelper.GetElement(elementPath);
 				if (element == null)
-				{
 					return new OperationResult<List<KeyValue>>(new Exception("Element not found."));
-				}
-
-				var properties = ah.GetElementProperties(element);
+				var properties = AutomationHelper.GetElementProperties(element);
 				var values = properties.Select(x => new KeyValue(x.Key, x.Value?.ToString())).ToList();
 				return new OperationResult<List<KeyValue>>(values);
 			}
@@ -177,7 +172,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			try
 			{
 				var ah = new AutomationHelper();
-				var element = ah.GetElement(elementPath);
+				var element = AutomationHelper.GetElement(elementPath);
 				if (element == null)
 				{
 					return new OperationResult<bool>(new Exception("Element not found."));
@@ -203,12 +198,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			try
 			{
 				var ah = new AutomationHelper();
-				var parentElement = ah.GetElement(elementPath);
+				var parentElement = AutomationHelper.GetElement(elementPath);
 				if (parentElement == null)
 				{
 					return new OperationResult<List<string>>(new Exception("Parent element not found."));
 				}
-
 				var children = ah.FindAllChildren(parentElement);
 				var childPaths = children.Select(e => AutomationHelper.GetPath(e)).ToList();
 				return new OperationResult<List<string>>(childPaths);
@@ -251,9 +245,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			try
 			{
-				var ah = new AutomationHelper();
-				var element = ah.GetElement(elementPath);
-
+				var element = AutomationHelper.GetElement(elementPath);
 				return new OperationResult<bool>(element != null);
 			}
 			catch (Exception ex)
@@ -272,13 +264,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			try
 			{
-				var ah = new AutomationHelper();
-				var rootElement = ah.GetElement(elementPath);
+				var rootElement = AutomationHelper.GetElement(elementPath);
 				if (rootElement == null)
 				{
 					return new OperationResult<ElementNode>(new Exception("Element not found."));
 				}
-
+				var ah = new AutomationHelper();
 				var tree = ah.BuildElementTree(rootElement);
 				return new OperationResult<ElementNode>(tree);
 			}
@@ -299,8 +290,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			try
 			{
-				var ah = new AutomationHelper();
-				var element = ah.GetElement(elementPath);
+				var element = AutomationHelper.GetElement(elementPath);
 				if (element == null)
 				{
 					return new OperationResult<string>(new Exception("Element not found."));

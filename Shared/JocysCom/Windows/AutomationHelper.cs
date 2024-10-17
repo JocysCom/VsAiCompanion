@@ -16,10 +16,11 @@ namespace JocysCom.ClassLibrary.Windows
 	{
 		#region Path Helper Methods
 
+
 		/// <summary>
 		/// Retrieves the XPath-like path of the given automation element.
 		/// </summary>
-		public static string GetPath(AutomationElement element)
+		public static string GetPath(AutomationElement element, bool enableValidation = false)
 		{
 			if (element == null)
 				return null;
@@ -38,13 +39,13 @@ namespace JocysCom.ClassLibrary.Windows
 				var predicates = new List<string>();
 
 				if (!string.IsNullOrEmpty(automationId))
-					predicates.Add($"@{nameof(AEI.AutomationId)}='{EscapeXPathValue(automationId)}'");
+					predicates.Add($"@{nameof(AutomationElement.AutomationIdProperty)}='{EscapeXPathValue(automationId)}'");
 
 				if (!string.IsNullOrEmpty(className))
-					predicates.Add($"@{nameof(AEI.ClassName)}='{EscapeXPathValue(className)}'");
+					predicates.Add($"@{nameof(AutomationElement.ClassNameProperty)}='{EscapeXPathValue(className)}'");
 
 				if (IsNameUseful(name))
-					predicates.Add($"@{nameof(AEI.Name)}='{EscapeXPathValue(name)}'");
+					predicates.Add($"@{nameof(AutomationElement.NameProperty)}='{EscapeXPathValue(name)}'");
 
 				if (predicates.Count == 0)
 				{
@@ -56,16 +57,48 @@ namespace JocysCom.ClassLibrary.Windows
 					segment.Append($"[{string.Join(" and ", predicates)}]");
 
 				pathSegments.Insert(0, segment.ToString());
+
+				// If validation is enabled, validate the current segment
+				if (enableValidation)
+				{
+					// Build the partial path up to the current segment
+					var partialPath = "/" + string.Join("/", pathSegments);
+
+					// Use GetElement to check if we can retrieve the current element with the partial path
+					var retrievedElement = GetElement(partialPath);
+					if (retrievedElement == null || !Equals(currentElement, retrievedElement))
+					{
+						// Collect detailed information
+						var properties = GetElementProperties(currentElement);
+
+						var errorMessage = new StringBuilder();
+						errorMessage.AppendLine($"Validation failed at segment '{segment}'.");
+						errorMessage.AppendLine($"Unable to retrieve element using path '{partialPath}'.");
+						errorMessage.AppendLine("Current Element Properties:");
+
+						foreach (var prop in properties)
+						{
+							errorMessage.AppendLine($"{prop.Key}: {prop.Value}");
+						}
+
+						throw new Exception(errorMessage.ToString());
+					}
+				}
+
 				currentElement = TreeWalker.RawViewWalker.GetParent(currentElement);
 			}
 
-			return "/" + string.Join("/", pathSegments);
+			var elementPath = "/" + string.Join("/", pathSegments);
+			return elementPath;
 		}
+
 
 		/// <summary>
 		/// Retrieves an automation element based on the provided XPath-like path.
 		/// </summary>
-		public AutomationElement GetElement(string path)
+		/// <param name="path">XPath-like path of the given automation element.</param>
+		/// <param name="currentElement">Root element. Desktop Window if not specified.</param>
+		public static AutomationElement GetElement(string path, AutomationElement currentElement = null)
 		{
 			if (string.IsNullOrEmpty(path))
 				throw new ArgumentNullException(nameof(path));
@@ -74,7 +107,7 @@ namespace JocysCom.ClassLibrary.Windows
 
 			// Start from the desktop window instead of the root element
 			IntPtr desktopHandle = NativeMethods.GetDesktopWindow();
-			var currentElement = AutomationElement.FromHandle(desktopHandle);
+			currentElement = currentElement ?? AutomationElement.FromHandle(desktopHandle);
 
 			foreach (var segment in pathSegments)
 			{
@@ -85,9 +118,9 @@ namespace JocysCom.ClassLibrary.Windows
 
 				// Build the conditions
 				var conditions = new List<Condition>
-		{
-			new PropertyCondition(AutomationElement.ControlTypeProperty, controlType)
-		};
+				{
+					new PropertyCondition(AutomationElement.ControlTypeProperty, controlType)
+				};
 
 				if (predicates.TryGetValue(nameof(AEI.AutomationId), out string automationId))
 					conditions.Add(new PropertyCondition(AutomationElement.AutomationIdProperty, automationId));
@@ -116,13 +149,10 @@ namespace JocysCom.ClassLibrary.Windows
 				{
 					nextElement = candidates.Count > 0 ? candidates[0] : null;
 				}
-
 				if (nextElement == null)
 					return null;
-
 				currentElement = nextElement;
 			}
-
 			return currentElement;
 		}
 
@@ -131,7 +161,7 @@ namespace JocysCom.ClassLibrary.Windows
 		/// </summary>
 		/// <param name="element">The AutomationElement to inspect.</param>
 		/// <returns>Dictionary containing property names and values.</returns>
-		public Dictionary<string, object> GetElementProperties(AutomationElement element)
+		public static Dictionary<string, object> GetElementProperties(AutomationElement element)
 		{
 			var properties = new Dictionary<string, object>();
 

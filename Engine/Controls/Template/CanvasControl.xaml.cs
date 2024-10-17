@@ -55,8 +55,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 			var item = Item;
 			if (item != null)
 			{
-				var path = AutomationHelper.GetPath(controlElement);
-				item.CanvasEditorElementPath = path;
+				try
+				{
+					var path = AutomationHelper.GetPath(controlElement, true);
+					item.CanvasEditorElementPath = path;
+				}
+				catch (System.Exception ex)
+				{
+					item.CanvasEditorElementPath = ex.ToString();
+				}
 			}
 		}
 

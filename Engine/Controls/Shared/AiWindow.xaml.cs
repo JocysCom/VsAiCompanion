@@ -38,5 +38,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 		{
 
 		}
+
+		#region Properties
+
+		public static readonly DependencyProperty AttachSelectionProperty =
+			DependencyProperty.Register(nameof(AttachSelection), typeof(bool), typeof(AiWindow), new PropertyMetadata(false));
+
+		public bool AttachSelection
+		{
+			get { return (bool)GetValue(AttachSelectionProperty); }
+			set { SetValue(AttachSelectionProperty, value); }
+		}
+
+		public static readonly DependencyProperty AttachDocumentProperty =
+			DependencyProperty.Register(nameof(AttachDocument), typeof(bool), typeof(AiWindow), new PropertyMetadata(false));
+
+		public bool AttachDocument
+		{
+			get { return (bool)GetValue(AttachDocumentProperty); }
+			set { SetValue(AttachDocumentProperty, value); }
+		}
+
+
+		#endregion
 	}
 }

@@ -7,16 +7,17 @@
 	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	Title="AI Window"
+	Title="Ask AI"
 	MinWidth="240"
 	Margin="0"
 	Padding="0"
-	AllowsTransparency="True"
-	Background="Transparent"
+	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	SizeToContent="WidthAndHeight"
+	TextOptions.TextFormattingMode="Display"
 	Topmost="True"
+	UseLayoutRounding="True"
 	WindowState="Normal"
-	WindowStyle="None"
+	WindowStyle="SingleBorderWindow"
 	mc:Ignorable="d">
 	<Window.Resources>
 		<ResourceDictionary>
@@ -29,40 +30,45 @@
 		</ResourceDictionary>
 	</Window.Resources>
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="21*" />
+			<ColumnDefinition Width="185*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
 		<JcControls:PlaceholderTextBox
 			x:Name="DataTextBox"
+			Grid.ColumnSpan="2"
 			IsInTab="False"
 			PlaceholderText="{StaticResource main_Ask_AI_Placeholder}"
 			PreviewKeyDown="DataTextBox_PreviewKeyDown"
 			PreviewKeyUp="DataTextBox_PreviewKeyUp"
 			TextChanged="DataTextBox_TextChanged" />
-		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-			<Button
-				x:Name="SendButton"
-				Margin="6,6,0,6"
-				Padding="3"
-				Background="Transparent"
-				Click="SendButton_Click">
+		<StackPanel Grid.Column="2" HorizontalAlignment="Center" Orientation="Horizontal">
+			<Button x:Name="SendButton" Padding="3" Click="SendButton_Click">
 				<TextBlock
-					Margin="0"
+					Margin="5,4,2,2"
 					Padding="0"
 					Opacity="0.5"
 					Style="{StaticResource IconTextStyle}"
 					Text="&#xE724;" />
 			</Button>
-			<Button
-				x:Name="CloseButton"
-				Margin="0,6,6,6"
-				Padding="3"
-				Background="Transparent"
-				Click="CloseButton_Click">
-				<TextBlock
-					Margin="0"
-					Padding="0"
-					Opacity="0.5"
-					Style="{StaticResource IconTextStyle}"
-					Text="&#xE711;" />
-			</Button>
+		</StackPanel>
+		<StackPanel
+			Grid.Row="1"
+			Grid.ColumnSpan="2"
+			Margin="3,3,3,3"
+			Orientation="Horizontal">
+			<TextBlock
+				Padding="0"
+				Opacity="0.5"
+				Style="{StaticResource IconTextStyle}"
+				Text="&#xE723;" />
+			<CheckBox Content="{StaticResource main_Selection}" IsChecked="{Binding AttachSelection}" Opacity="0.5" />
+			<CheckBox Content="{StaticResource main_Document}" IsChecked="{Binding AttachDocument}" Opacity="0.5" />
 		</StackPanel>
 	</Grid>
 </Window>

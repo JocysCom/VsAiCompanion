@@ -156,17 +156,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 		private void MouseHandler_MouseMove(object sender, MouseGlobalEventArgs e)
 		{
 			var now = DateTime.UtcNow;
-			if (now.Subtract(LastMoveOverlayWindowUpdateDate).TotalMilliseconds > 50)
+			if (now.Subtract(LastMoveOverlayWindowUpdateDate).TotalMilliseconds > 100)
 			{
 				LastMoveOverlayWindowUpdateDate = now;
-				Dispatcher.Invoke(new Action(() =>
+				Dispatcher.BeginInvoke(new Action(() =>
 				{
 					// Move the overlay window on the UI thread
 					MoveOverlayWindow(e.Point);
 				}));
 			}
 			_ = Helper.Debounce(UpdateTarget, e.Point, 250);
-
 		}
 
 		private void Overlay_TargetSelected(object sender, TargetSelectedEventArgs e)

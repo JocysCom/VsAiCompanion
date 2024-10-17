@@ -1,8 +1,9 @@
-2024-09-23 v1.13.12
+2024-10-17 v1.13.12
 
 - Update: Use Microsoft.Data.SqlClient in the extension for accessing data.
 - Update: Better copy and paste from clipboard and files.
 - Fix: OpenAI type client will ignore the custom URL and use the api.openai.com address instead.
+- New: Hold CTRL to drop the content of a file instead of a link into the chat window.
 
 2024-09-16 v1.13.8
 

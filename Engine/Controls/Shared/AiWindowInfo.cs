@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Windows;
+using System;
 using System.Windows;
 using System.Windows.Automation;
 
@@ -17,8 +18,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				return;
 			// Collect information from the element
 			ElementPath = AutomationHelper.GetPath(element);
-			TextContent = AutomationHelper.GetValue(element);
-			SelectedText = AutomationHelper.GetSelectedTextFromElement(element);
+			try
+			{
+				TextContent = AutomationHelper.GetValue(element);
+				SelectedText = AutomationHelper.GetSelectedTextFromElement(element);
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine(ex.Message);
+			}
 		}
 
 	}
