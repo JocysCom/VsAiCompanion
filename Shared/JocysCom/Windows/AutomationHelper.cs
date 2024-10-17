@@ -39,13 +39,13 @@ namespace JocysCom.ClassLibrary.Windows
 				var predicates = new List<string>();
 
 				if (!string.IsNullOrEmpty(automationId))
-					predicates.Add($"@{nameof(AutomationElement.AutomationIdProperty)}='{EscapeXPathValue(automationId)}'");
+					predicates.Add($"@{nameof(AEI.AutomationId)}='{EscapeXPathValue(automationId)}'");
 
 				if (!string.IsNullOrEmpty(className))
-					predicates.Add($"@{nameof(AutomationElement.ClassNameProperty)}='{EscapeXPathValue(className)}'");
+					predicates.Add($"@{nameof(AEI.ClassName)}='{EscapeXPathValue(className)}'");
 
 				if (IsNameUseful(name))
-					predicates.Add($"@{nameof(AutomationElement.NameProperty)}='{EscapeXPathValue(name)}'");
+					predicates.Add($"@{nameof(AEI.Name)}='{EscapeXPathValue(name)}'");
 
 				if (predicates.Count == 0)
 				{
@@ -58,6 +58,8 @@ namespace JocysCom.ClassLibrary.Windows
 
 				pathSegments.Insert(0, segment.ToString());
 
+				var parentElement = TreeWalker.RawViewWalker.GetParent(currentElement);
+
 				// If validation is enabled, validate the current segment
 				if (enableValidation)
 				{
@@ -65,7 +67,7 @@ namespace JocysCom.ClassLibrary.Windows
 					var partialPath = "/" + string.Join("/", pathSegments);
 
 					// Use GetElement to check if we can retrieve the current element with the partial path
-					var retrievedElement = GetElement(partialPath);
+					var retrievedElement = GetElement(partialPath, parentElement);
 					if (retrievedElement == null || !Equals(currentElement, retrievedElement))
 					{
 						// Collect detailed information
@@ -85,7 +87,7 @@ namespace JocysCom.ClassLibrary.Windows
 					}
 				}
 
-				currentElement = TreeWalker.RawViewWalker.GetParent(currentElement);
+				currentElement = parentElement;
 			}
 
 			var elementPath = "/" + string.Join("/", pathSegments);
@@ -105,9 +107,12 @@ namespace JocysCom.ClassLibrary.Windows
 
 			var pathSegments = SplitXPath(path);
 
-			// Start from the desktop window instead of the root element
-			IntPtr desktopHandle = NativeMethods.GetDesktopWindow();
-			currentElement = currentElement ?? AutomationElement.FromHandle(desktopHandle);
+			// If no starting element is provided, default to the desktop window
+			if (currentElement == null)
+			{
+				IntPtr desktopHandle = NativeMethods.GetDesktopWindow();
+				currentElement = AutomationElement.FromHandle(desktopHandle);
+			}
 
 			foreach (var segment in pathSegments)
 			{
@@ -825,18 +830,17 @@ namespace JocysCom.ClassLibrary.Windows
 			var parent = TreeWalker.RawViewWalker.GetParent(element);
 			if (parent == null)
 				return 0;  // Root element
-
-			// Use the same conditions used when retrieving children in GetElement
-			var children = parent.FindAll(TreeScope.Children, Condition.TrueCondition);
-
-			for (int index = 0; index < children.Count; index++)
+						   // Use the same conditions used when retrieving siblings
+			var siblings = parent.FindAll(TreeScope.Children, Condition.TrueCondition);
+			int index = 0;
+			foreach (AutomationElement sibling in siblings)
 			{
-				if (children[index].Equals(element))
+				if (element.Equals(sibling))
 					return index;
+				index++;
 			}
 			return -1; // Should not reach here
 		}
-
 
 		private static bool IsNameUseful(string name)
 		{
