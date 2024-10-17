@@ -15,7 +15,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			MarkdownLanguageNameComboBox.ItemsSource = Global.AppSettings.MarkdownLanguageNames.Split(',');
+			MarkdownLanguageNameComboBox.ItemsSource = MarkdownHelper.MarkdownLanguageNames.Split(',');
 		}
 
 		private void This_Loaded(object sender, RoutedEventArgs e)

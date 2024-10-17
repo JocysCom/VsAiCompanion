@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -21,9 +22,18 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 			// Get the window handle
 			var helper = new WindowInteropHelper(window);
 			_windowHandle = helper.Handle;
-
 			// Add hook for window messages
 			ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
+		}
+
+		public bool RegisterHotKey(string hotKey)
+		{
+			ModifierKeys modifiers;
+			Key key;
+			var success = TryParseHotKey(hotKey, out key, out modifiers);
+			if (success)
+				RegisterHotKey(modifiers, key);
+			return success;
 		}
 
 		public bool RegisterHotKey(ModifierKeys modifierKeys, System.Windows.Input.Key key)
@@ -62,6 +72,57 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 		{
 			UnregisterHotKey();
 			ComponentDispatcher.ThreadPreprocessMessage -= ComponentDispatcher_ThreadPreprocessMessage;
+		}
+
+		public static string HotKeyToString(ModifierKeys modifiers, Key key)
+		{
+			// Capture modifier keys
+			var keys = new List<string>();
+			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+				keys.Add("CTRL");
+			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+				keys.Add("ALT");
+			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+				keys.Add("SHIFT");
+			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Windows))
+				keys.Add("WIN");
+			keys.Add(key.ToString());
+			var hotKey = string.Join("+", keys);
+			return hotKey;
+		}
+
+		public static bool TryParseHotKey(string hotkeyString, out Key key, out ModifierKeys modifiers)
+		{
+			key = Key.None;
+			modifiers = 0;
+			if (string.IsNullOrEmpty(hotkeyString))
+				return false;
+			var parts = hotkeyString.ToUpper().Split('+');
+			foreach (string part in parts)
+			{
+				switch (part)
+				{
+					case "CTRL":
+						modifiers |= ModifierKeys.Control;
+						break;
+					case "ALT":
+						modifiers |= ModifierKeys.Alt;
+						break;
+					case "SHIFT":
+						modifiers |= ModifierKeys.Shift;
+						break;
+					case "WIN":
+						modifiers |= ModifierKeys.Windows;
+						break;
+					default:
+						if (Enum.TryParse(part, out Key parsedKey))
+							key = parsedKey;
+						else
+							return false;
+						break;
+				}
+			}
+			return true;
 		}
 
 		private static class NativeMethods

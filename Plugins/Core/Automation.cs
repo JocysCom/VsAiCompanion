@@ -59,7 +59,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				var path = GetCanvasEditorElementPath();
 				var element = ah.GetElement(path);
 				//var path2 = AutomationHelper.GetPath(element);
-				var text = ah.GetValue(element);
+				var text = AutomationHelper.GetValue(element);
 				return new OperationResult<string>(text);
 			}
 			catch (Exception ex)

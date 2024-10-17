@@ -46,6 +46,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
             return resource as string;
         }
 
+        public static string main_Ask_AI_Placeholder => FindResource(nameof(main_Ask_AI_Placeholder));
         public static string main_Templates => FindResource(nameof(main_Templates));
         public static string main_AI_reason_for_action => FindResource(nameof(main_AI_reason_for_action));
         public static string main_Approval_Template => FindResource(nameof(main_Approval_Template));

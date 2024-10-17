@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -14,6 +13,8 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 		public HotKeyControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			DataContext = this;
 		}
 
@@ -38,48 +39,31 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 		public string HotKey
 		{
 			get { return (string)GetValue(HotKeyProperty); }
-			set { SetValue(HotKeyProperty, value); }
+			set
+			{
+				SetValue(HotKeyProperty, value);
+			}
+		}
+
+		void UpdateHotKey()
+		{
+			// Register the hotkey if enabled
+			//if (HotKeyEnabled && ParentWindow != null)
+			//	RegisterHotKey(modifiers, e.Key);
 		}
 
 		public static readonly DependencyProperty HotKeyProperty =
 			DependencyProperty.Register(nameof(HotKey), typeof(string), typeof(HotKeyControl), new PropertyMetadata(""));
+
+
 
 		private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			// Ignore Tab and Arrow keys to not interfere with UI navigation
 			if (e.Key == Key.Tab || e.Key == Key.Left || e.Key == Key.Right || e.Key == Key.Up || e.Key == Key.Down)
 				return;
-
 			e.Handled = true;
-
-			// Capture modifier keys
-			var modifiers = ModifierKeys.None;
-			var keys = new List<string>();
-			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-			{
-				keys.Add("CTRL");
-				modifiers |= ModifierKeys.Control;
-			}
-			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
-			{
-				keys.Add("ALT");
-				modifiers |= ModifierKeys.Alt;
-			}
-			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-			{
-				keys.Add("SHIFT");
-				modifiers |= ModifierKeys.Shift;
-			}
-			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Windows))
-			{
-				keys.Add("WIN");
-				modifiers |= ModifierKeys.Windows;
-			}
-			keys.Add(e.Key.ToString());
-			HotKey = string.Join("+", keys);
-			// Register the hotkey if enabled
-			if (HotKeyEnabled && ParentWindow != null)
-				RegisterHotKey(modifiers, e.Key);
+			HotKey = HotKeyHelper.HotKeyToString(Keyboard.Modifiers, e.Key);
 		}
 
 		private Window _parentWindow;
@@ -97,9 +81,6 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 
 		private void RegisterHotKey(ModifierKeys modifiers, Key key)
 		{
-			HotKeyHelper?.Dispose();
-			HotKeyHelper = new HotKeyHelper(ParentWindow);
-			HotKeyHelper.HotKeyPressed += HotKeyHelper_HotKeyPressed;
 			HotKeyHelper.RegisterHotKey(modifiers, key);
 		}
 
@@ -112,7 +93,13 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 		// Clean up when unloaded
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			HotKeyHelper?.Dispose();
+			//HotKeyHelper?.Dispose();
+		}
+
+		private void This_Loaded(object sender, RoutedEventArgs e)
+		{
+			HotKeyHelper = new HotKeyHelper(ParentWindow);
+			HotKeyHelper.HotKeyPressed += HotKeyHelper_HotKeyPressed;
 		}
 	}
 

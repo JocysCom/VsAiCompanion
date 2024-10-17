@@ -1,9 +1,11 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.HotKey;
 using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls;
+using JocysCom.VS.AiCompanion.Engine.Controls.Shared;
 using JocysCom.VS.AiCompanion.Engine.Security;
 using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core;
@@ -44,6 +46,32 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public static Func<List<PropertyItem>> GetEnvironmentProperties = () => new List<PropertyItem>();
 		public static Func<List<PropertyItem>> GetReservedProperties = () => new List<PropertyItem>();
 		public static Func<List<PropertyItem>> GetOtherProperties = () => new List<PropertyItem>();
+
+		public static HotKeyHelper AiWindowHotKeyHelper;
+
+		/// <summary>
+		/// Load hotkeys when app settins loaded.
+		/// </summary>
+		/// <param name="window"></param>
+		public static void InitHotKeys(Window window)
+		{
+			AiWindowHotKeyHelper = new HotKeyHelper(window);
+			AiWindowHotKeyHelper.HotKeyPressed += AiWindowHotKeyHelper_HotKeyPressed;
+			AiWindowHotKeyHelper.RegisterHotKey(AppSettings.AiWindowHotKey);
+		}
+
+		private static void AiWindowHotKeyHelper_HotKeyPressed(object sender, EventArgs e)
+		{
+			var point = ClassLibrary.Processes.MouseGlobalHook.GetCursorPosition();
+			var position = PositionSettings.ConvertToDiu(point);
+			var ai = new AiWindowInfo();
+			ai.LoadInfo(position);
+			var win = new Controls.Shared.AiWindow();
+			win.Info = ai;
+			win.Left = position.X;
+			win.Top = position.Y;
+			win.Show();
+		}
 
 		public static AssemblyInfo Info { get; } = new AssemblyInfo(typeof(Global).Assembly);
 
@@ -473,6 +501,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					}
 				}
 			}
+			InitHotKeys(Application.Current.MainWindow);
 			// Always refresh plugins.
 			var newPluginsList = Engine.AppData.RefreshPlugins(AppSettings.Plugins);
 			ClassLibrary.Collections.CollectionsHelper.Synchronize(newPluginsList, AppSettings.Plugins);

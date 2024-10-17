@@ -7,6 +7,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 	/// </summary>
 	public partial class AiWindow : Window
 	{
+
+		public AiWindowInfo Info { get; set; }
+
 		public AiWindow()
 		{
 			InitializeComponent();
@@ -19,12 +22,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
 		{
-
+			This.Close();
 		}
 
 		private void DataTextBox_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{
-
 		}
 
 		private void DataTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

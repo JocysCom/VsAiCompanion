@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace JocysCom.VS.AiCompanion.Extension
 {
@@ -119,6 +120,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 			// Create controls.
 			var control = new Engine.MainControl();
 			Global.MainControl = control;
+			var window = Application.Current.MainWindow;
 		}
 
 		/// <summary>

@@ -910,7 +910,7 @@ namespace JocysCom.ClassLibrary.Windows
 		private const uint WM_GETTEXTLENGTH = 0x000E;
 		private const uint WM_GETTEXT = 0x000D;
 
-		public string GetValue(AutomationElement element)
+		public static string GetValue(AutomationElement element)
 		{
 			if (element == null)
 				throw new ArgumentNullException(nameof(element));
@@ -1072,6 +1072,40 @@ namespace JocysCom.ClassLibrary.Windows
 			else
 			{
 				throw new InvalidOperationException("Cannot set value: control is not focusable and does not support ValuePattern.");
+			}
+		}
+
+		public static string GetSelectedTextFromElement(AutomationElement element)
+		{
+			if (element == null)
+				return null;
+
+			try
+			{
+				// Try to get the TextPattern
+				if (element.TryGetCurrentPattern(TextPattern.Pattern, out object textPatternObj))
+				{
+					var textPattern = (TextPattern)textPatternObj;
+					var selection = textPattern.GetSelection();
+					if (selection != null && selection.Length > 0)
+					{
+						return selection[0].GetText(-1).TrimEnd('\r', '\n');
+					}
+				}
+
+				// For edit controls that support ValuePattern
+				if (element.TryGetCurrentPattern(ValuePattern.Pattern, out object valuePatternObj))
+				{
+					var valuePattern = (ValuePattern)valuePatternObj;
+					return valuePattern.Current.Value;
+				}
+
+				return null;
+			}
+			catch (Exception)
+			{
+				// Handle exceptions
+				return null;
 			}
 		}
 

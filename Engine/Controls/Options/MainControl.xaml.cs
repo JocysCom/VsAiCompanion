@@ -1,8 +1,6 @@
 ﻿using Hompus.VideoInputDevices;
 using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Processes;
-using JocysCom.VS.AiCompanion.Engine.Controls.Shared;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System;
 using System.Collections.Generic;
@@ -35,17 +33,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 			EnableApiPluginsCheckBox.Visibility = debugVisibility;
 			MultimediaGroupBox.Visibility = debugVisibility;
 			EnableShowFormInfoCheckBox.Visibility = debugVisibility;
-			HotKeyPanel.HotKeyHelper.HotKeyPressed += HotKeyHelper_HotKeyPressed;
-		}
-
-		private void HotKeyHelper_HotKeyPressed(object sender, EventArgs e)
-		{
-			var win = new AiWindow();
-			var point = MouseGlobalHook.GetCursorPosition();
-			var position = PositionSettings.ConvertToDiu(point);
-			win.Left = position.X;
-			win.Top = position.Y;
-			win.Show();
 		}
 
 		private async void AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

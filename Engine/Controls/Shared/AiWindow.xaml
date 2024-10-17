@@ -13,6 +13,7 @@
 	Padding="0"
 	AllowsTransparency="True"
 	Background="Transparent"
+	SizeToContent="WidthAndHeight"
 	Topmost="True"
 	WindowState="Normal"
 	WindowStyle="None"
@@ -63,7 +64,5 @@
 					Text="&#xE711;" />
 			</Button>
 		</StackPanel>
-
-
 	</Grid>
 </Window>

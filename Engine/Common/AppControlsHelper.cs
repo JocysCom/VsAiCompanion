@@ -50,17 +50,31 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static void DropFiles(TextBox textBox, string[] files)
 		{
-			// Initialize the text to insert
-			StringBuilder sb = new StringBuilder();
-			// Ensure instructions are added only once and not present in the current line
-			var instructionsExist = textBox.Text.Contains(Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+			var sb = new StringBuilder();
 			var currentLine = GetLineFromCaret(textBox);
-			// Determine if instructions should be added
-			if (!instructionsExist && !currentLine.TrimStart().StartsWith("-"))
-				sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
-			// Append file paths
-			foreach (string file in files)
-				sb.AppendLine($"- {file}");
+			// If user holds CTRL key during drop then...
+			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+			{
+				// Append file content
+				foreach (string file in files)
+				{
+					var fileContent = File.ReadAllText(file);
+					var markdownCodeBlock = MarkdownHelper.CreateMarkdownCodeBlock(file, fileContent);
+					sb.AppendLine($"\r\n\r\n{markdownCodeBlock}\r\n");
+				}
+			}
+			else
+			{
+				// Initialize the text to insert
+				// Ensure instructions are added only once and not present in the current line
+				var instructionsExist = textBox.Text.Contains(Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+				// Determine if instructions should be added
+				if (!instructionsExist && !currentLine.TrimStart().StartsWith("-"))
+					sb.AppendLine("\r\n" + Resources.MainResources.main_TextBox_Drop_Files_Instructions);
+				// Append file paths
+				foreach (string file in files)
+					sb.AppendLine($"- {file}");
+			}
 			// Insert or append the text to the TextBox
 			var startIndex = textBox.CaretIndex;
 			if (!IsCaretAtLineStart(textBox))
