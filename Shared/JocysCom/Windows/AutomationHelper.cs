@@ -35,7 +35,7 @@ namespace JocysCom.ClassLibrary.Windows
 				var name = currentElement.Current.Name;
 				var className = currentElement.Current.ClassName;
 
-				var segment = new StringBuilder(controlTypeName);
+				var segment = controlTypeName;
 				var predicates = new List<string>();
 
 				if (!string.IsNullOrEmpty(automationId))
@@ -54,9 +54,9 @@ namespace JocysCom.ClassLibrary.Windows
 				}
 
 				if (predicates.Count > 0)
-					segment.Append($"[{string.Join(" and ", predicates)}]");
+					segment += $"[{string.Join(" and ", predicates)}]";
 
-				pathSegments.Insert(0, segment.ToString());
+				pathSegments.Insert(0, segment);
 
 				var parentElement = TreeWalker.RawViewWalker.GetParent(currentElement);
 
