@@ -1,8 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-	<sys:String x:Key="main_Templates">Templates</sys:String>
+	<!--  AI Window  -->
+	<sys:String x:Key="main_Ask_AI_Placeholder">Ask AI: Type a message.</sys:String>
 
 	<!--  Tasks / Templates  -->
+	<sys:String x:Key="main_Templates">Templates</sys:String>
 	<sys:String x:Key="main_AI_reason_for_action">Reason given by AI for this action</sys:String>
 	<sys:String x:Key="main_Approval_Template">Approval Template</sys:String>
 	<sys:String x:Key="main_Approval_Type">Approval</sys:String>

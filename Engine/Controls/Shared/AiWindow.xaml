@@ -1,0 +1,69 @@
+﻿<Window
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Shared.AiWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
+	Title="AI Window"
+	MinWidth="240"
+	Margin="0"
+	Padding="0"
+	AllowsTransparency="True"
+	Background="Transparent"
+	Topmost="True"
+	WindowState="Normal"
+	WindowStyle="None"
+	mc:Ignorable="d">
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="../../JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+	<Grid>
+		<JcControls:PlaceholderTextBox
+			x:Name="DataTextBox"
+			IsInTab="False"
+			PlaceholderText="{StaticResource main_Ask_AI_Placeholder}"
+			PreviewKeyDown="DataTextBox_PreviewKeyDown"
+			PreviewKeyUp="DataTextBox_PreviewKeyUp"
+			TextChanged="DataTextBox_TextChanged" />
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+			<Button
+				x:Name="SendButton"
+				Margin="6,6,0,6"
+				Padding="3"
+				Background="Transparent"
+				Click="SendButton_Click">
+				<TextBlock
+					Margin="0"
+					Padding="0"
+					Opacity="0.5"
+					Style="{StaticResource IconTextStyle}"
+					Text="&#xE724;" />
+			</Button>
+			<Button
+				x:Name="CloseButton"
+				Margin="0,6,6,6"
+				Padding="3"
+				Background="Transparent"
+				Click="CloseButton_Click">
+				<TextBlock
+					Margin="0"
+					Padding="0"
+					Opacity="0.5"
+					Style="{StaticResource IconTextStyle}"
+					Text="&#xE711;" />
+			</Button>
+		</StackPanel>
+
+
+	</Grid>
+</Window>
