@@ -163,7 +163,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				plugin = new PluginItem(methodInfo);
 			});
-
+			plugin.InvokeParams = invokeParams;
 			if (plugin.RiskLevel != RiskLevel.None)
 			{
 				pfci.Plugin = plugin;

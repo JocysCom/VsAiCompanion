@@ -153,6 +153,11 @@ namespace JocysCom.VS.AiCompanion.Engine
 		#endregion
 
 		[XmlIgnore, JsonIgnore]
+		public object[] InvokeParams { get => _InvokeParams; set => SetProperty(ref _InvokeParams, value); }
+		object[] _InvokeParams;
+
+
+		[XmlIgnore, JsonIgnore]
 		public BindingList<PluginParam> Params { get => _Params; set => SetProperty(ref _Params, value); }
 		BindingList<PluginParam> _Params;
 

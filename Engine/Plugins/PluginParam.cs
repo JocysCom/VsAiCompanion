@@ -13,6 +13,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public int Index { get; set; }
 
 		[XmlIgnore, JsonIgnore]
+		public object ParamValue { get; set; }
+
+		[XmlIgnore, JsonIgnore]
 		public object ParamValuePreview { get; set; }
 
 		[XmlIgnore, JsonIgnore]

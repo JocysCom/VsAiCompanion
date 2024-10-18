@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -88,6 +89,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var item = Item.FirstOrDefault();
 				var rl = item?.Plugin.RiskLevel;
 				var brush = RiskToBrush[RiskLevel.Unknown];
+				if (item?.Plugin.Name == nameof(Plugins.Core.UnifiedFormat.IDiffHelper.ModifyContents))
+				{
+					var contents = (string)item.Plugin.InvokeParams[0];
+					var unifiedDiff = (string)item.Plugin.InvokeParams[1];
+					//var oldText = item.function.parameters[].Args[0].ToString();
+					//var newText = item.Args[1].ToString();
+					//SetDiff(oldText, newText);
+				}
 				if (rl != null && RiskToBrush.ContainsKey(rl.Value))
 					brush = RiskToBrush[rl.Value];
 				ApprovalColor = brush;
