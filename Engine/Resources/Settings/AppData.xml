@@ -54,15 +54,16 @@
             <string>AI - Chat (GPT-4o)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
+          <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
           <GridSplitterPosition>0.2207920792079208</GridSplitterPosition>
           <ListSelection>
-            <string>AI - Chat</string>
+            <string>® System - AI Window</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
-          <FocusedControl>DataTextBox</FocusedControl>
+          <ListSelectedIndex>70</ListSelectedIndex>
+          <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>
@@ -93,7 +94,7 @@
           <ListSelection>
             <string>Open AI</string>
           </ListSelection>
-          <ListSelectedIndex>3</ListSelectedIndex>
+          <ListSelectedIndex>4</ListSelectedIndex>
         </TaskSettings>
         <TaskSettings>
           <ItemType>MailAccount</ItemType>
@@ -143,6 +144,7 @@ Provide detailed and clear structures without ambiguity.&#xD;
 Do not return as a code block.</StructuredImageAnalysisInstructions>
       <AiServices>
         <AiService>
+          <Path>OpenAI</Path>
           <Name>Open AI</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -155,6 +157,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <ModelFilter />
         </AiService>
         <AiService>
+          <Path>OpenAI</Path>
           <Name>GPT4All (Local Machine)</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -167,6 +170,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <ModelFilter />
         </AiService>
         <AiService>
+          <Path>OpenAI</Path>
           <Name>LM Studio (Local Machine)</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -179,6 +183,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <ModelFilter />
         </AiService>
         <AiService>
+          <Path>OpenAI</Path>
           <Name>Open AI (On-Premises)</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -191,6 +196,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <ModelFilter />
         </AiService>
         <AiService>
+          <Path>OpenAI</Path>
           <Name>Azure Open AI</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -204,6 +210,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <ModelFilter />
         </AiService>
         <AiService>
+          <Path>Microsoft Azure</Path>
           <Name>Speech Service</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -686,6 +693,10 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ConvertFile</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Basic.ReadFilesAsPlainText</Id>
         </PluginItem>
         <PluginItem>
@@ -954,8 +965,58 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Lists.GetListItems</Id>
         </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCurrentCanvasPath</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCanvasContent</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.SetCanvasContent</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetAllTopLevelWindowPaths</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.NavigateToElement</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementProperties</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.FindElementsByConditions</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.PerformActionOnElement</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementChildren</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.WaitForElement</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.IsElementAvailable</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementTree</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.CaptureElementImageToFile</Id>
+        </PluginItem>
       </Plugins>
-      <MarkdownLanguageNames>ABAP,ABNF,AL,ANTLR4,APL,AQL,ARFF,ARMASM,ASM6502,AWK,ActionScript,Ada,Agda,ApacheConf,Apex,AppleScript,Arduino,Arturo,Asciidoc,Asmatmel,Aspnet,AutoHotkey,AutoIt,AviSynth,Avro-IDL,BBCode,BBJ,BNF,BQN,BSL,Bash,Basic,Batch,Bicep,Birb,Bison,Brainfuck,BrightScript,Bro,C,CFScript,CIL,CMake,COBOL,CSHTML,CSP,CSS,CSS-Extras,CSV,Chaiscript,CilkC,CilkCpp,Clike,Clojure,CoffeeScript,Concurnas,Cooklang,Coq,Cpp,Crystal,Csharp,Cue,Cypher,D,DAX,DNS-Zone-File,Dart,DataWeave,Dhall,Diff,Django,Docker,Dot,EBNF,EJS,ERB,EditorConfig,Eiffel,Elixir,Elm,Erlang,Excel-Formula,FORTRAN,FTL,Factor,False,Firestore-Security-Rules,Flow,Fsharp,GAP,GCode,GEDCOM,GLSL,GML,GN,GdScript,Gettext,Gherkin,Git,Go,Go-Module,Gradle,Graphql,Groovy,HCL,HLSL,HPKP,HSTS,HTTP,Haml,Handlebars,Haskell,Haxe,Hoon,ICU-Message-Format,IECSt,INI,IchigoJam,Icon,Idris,Ignore,Inform7,Io,J,JEXL,JQ,JS-Extras,JS-Templates,JSDoc,JSON,JSON5,JSONP,JSStackTrace,JSX,Java,JavaDoc,JavaDocLike,JavaScript,JavaStackTrace,Jolie,Julia,KeepALIVED,Keyman,Kotlin,Kumir,Kusto,LLVM,LOLCode,Latex,Latte,Less,LilyPond,Linker-Script,Liquid,Lisp,LiveScript,Log,Lua,MAXScript,MEL,Magma,Makefile,Markdown,Markup,Markup-Templating,Mata,Matlab,Mermaid,MetaFont,Mizar,MongoDB,Monkey,MoonScript,N1QL,N4JS,NASM,NSIS,Nand2Tetris-HDL,Naniscript,Neon,Nevod,Nginx,Nim,Nix,OCaml,ObjectiveC,Odin,OpenCL,OpenQASM,Oz,PCAxis,PHP,PHP-Extras,PHPDoc,PLSQL,PSL,PariGP,Parser,Pascal,PascalIGO,PeopleCode,Perl,Plant-UML,PowerQuery,PowerShell,Processing,Prolog,PromQL,Properties,Protobuf,Pug,Puppet,Pure,PureBasic,PureScript,Python,Q,QML,QSharp,Qore,R,REST,RIP,Racket,Reason,Regex,Rego,RenPY,Rescript,Roboconf,RobotFramework,Ruby,Rust,SAS,SCSS,SML,SPARQL,SQF,SQL,Sass,Scala,Scheme,Shell-Session,Smali,SmallTalk,Smarty,Solidity,Solution-File,Soy,Splunk-SPL,Squirrel,Stan,Stata,Stylus,SuperCollider,Swift,Systemd,T4-CS,T4-Templating,T4-VB,TAP,TOML,TSX,TT2,Tcl,Textile,Tremor,Turtle,Twig,TypeScript,TypoScript,UORazor,URI,UnrealScript,V,VBNet,VHDL,Vala,Velocity,Verilog,Vim,Visual-Basic,WASM,WGSL,WarpScript,Web-IDL,Wiki,Wolfram,Wren,XML,XQuery,Xeora,Xojo,YAML,Yang,ZigetLua</MarkdownLanguageNames>
     </AppData>
   </Items>
 </Data>

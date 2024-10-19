@@ -21,7 +21,6 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
   <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
   <TextInstructions>Select table names to understand the database structure. Then obtain the column names for these tables to construct a valid SQL command as requested. Ensure you use the correct SQL connection string.</TextInstructions>
-  <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>

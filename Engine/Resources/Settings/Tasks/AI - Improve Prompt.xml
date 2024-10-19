@@ -27,7 +27,6 @@ z/4FWrZIn9sMAAA=</IconData>
   <TextInstructions>Please analyze the following AI prompt text and suggest improvements for clarity and conciseness, while ensuring it effectively elicits reliable responses from AI models. The tone should be direct, without excessive politeness. Respond with the revised AI prompt text.&#xD;
 &#xD;
 Data for processing:</TextInstructions>
-  <ShowInstructions>false</ShowInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <Settings />

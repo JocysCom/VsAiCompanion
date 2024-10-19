@@ -35,4 +35,12 @@ I+fHCUZzONzFKnw/INqfXIZqDRgeTh5rNbQczlfQ1jooTIXnJgA0tjV17/ZR0W5Yvbe8u3vdtYQX&#xD
   <MaxRiskLevel>Medium</MaxRiskLevel>
   <ShowPrompting>true</ShowPrompting>
   <AttachmentsSelection />
+  <UiSelections>
+    <TextBoxData>
+      <Name>DataTextBox</Name>
+      <SelectionStart>0</SelectionStart>
+      <SelectionLength>0</SelectionLength>
+      <TextLength>0</TextLength>
+    </TextBoxData>
+  </UiSelections>
 </TemplateItem>

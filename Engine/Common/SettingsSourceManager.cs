@@ -14,6 +14,156 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public static class SettingsSourceManager
 	{
 
+		#region Required System Templates
+
+		public const string TemplateAiWindowTaskName = "® System - AI Window";
+		public const string TemplateGenerateTitleTaskName = "® System - Generate Title";
+		public const string TemplateGenerateIconTaskName = "® System - Generate Icon";
+		public const string TemplateFormatMessageTaskName = "® System - Format Message";
+		public const string TemplatePluginApprovalTaskName = "® System - Plugin Approval";
+		public const string TempalteListsUpdateUserProfile = "Lists - Update User Profile";
+		public const string TemplateAIChatPersonalized = "AI - Chat - Personalized";
+
+		public const string TemplatePlugin_Model_TextToAudio = "® System - Text-To-Audio";
+		public const string TemplatePlugin_Model_AudioToText = "® System - Audio-To-Text";
+		public const string TemplatePlugin_Model_VideoToText = "® System - Video-To-Text";
+		public const string TemplatePlugin_Model_TextToVideo = "® System - Text-To-Video";
+
+		public static string[] GetRequiredTemplates()
+		{
+			return new string[] {
+				TemplateAiWindowTaskName,
+				TemplateGenerateTitleTaskName,
+				TemplateGenerateIconTaskName,
+				TemplateFormatMessageTaskName,
+				TemplatePluginApprovalTaskName,
+				TempalteListsUpdateUserProfile,
+				TemplateAIChatPersonalized,
+				TemplatePlugin_Model_TextToAudio,
+				TemplatePlugin_Model_AudioToText,
+				TemplatePlugin_Model_VideoToText,
+				TemplatePlugin_Model_TextToVideo,
+			};
+		}
+
+		public static int CheckRequiredTemplates(IList<TemplateItem> items, ZipStorer zip = null)
+		{
+			bool closeZip;
+			if (closeZip = zip == null)
+				zip = GetSettingsZip();
+			if (zip == null)
+				return 0;
+			// ---
+			var required = GetRequiredTemplates();
+			var current = items.Select(x => x.Name).ToArray();
+			var missing = required.Except(current).ToArray();
+			// If all templates exist then return.
+			if (missing.Length == 0)
+				return 0;
+			var zipItems = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates, missing);
+			foreach (var zipItem in zipItems)
+				items.Add(zipItem);
+			// ---
+			if (closeZip)
+				zip.Close();
+			return missing.Length;
+		}
+
+		/// <summary>
+		/// Get items from the zip. entry pattern: filenameInZipStartsWith*.xml
+		/// </summary>
+		public static List<T> GetItemsFromZip<T>(ZipStorer zip, string filenameInZipStartsWith, SettingsData<T> data, params string[] names)
+		{
+			var list = new List<T>();
+			var entries = zip.ReadCentralDir()
+				.Where(x => x.FilenameInZip.StartsWith(filenameInZipStartsWith) && x.FilenameInZip.EndsWith(".xml"))
+				.ToArray();
+			foreach (var entry in entries)
+			{
+				// If names supplied then get only named templates.
+				if (names?.Length > 0)
+				{
+					var nameInZip = Path.GetFileNameWithoutExtension(entry.FilenameInZip);
+					if (!names.Contains(nameInZip))
+						continue;
+				}
+				var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
+				if (data.UseSeparateFiles)
+				{
+					var itemFile = data.DeserializeItem(bytes, false);
+					list.Add(itemFile);
+				}
+				else
+				{
+					var dataFile = data.DeserializeData(bytes, false);
+					list.AddRange(dataFile.Items);
+				}
+			}
+			return list;
+		}
+
+		public static void ResetUI()
+		{
+			var w = AdjustForScreenshot(Global.AppSettings.ResetWindowWidth);
+			var h = AdjustForScreenshot(Global.AppSettings.ResetWindowHeight);
+			if (Global.AppSettings.ResetWindowWidth != w)
+				Global.AppSettings.ResetWindowWidth = w;
+			if (Global.AppSettings.ResetWindowHeight != h)
+				Global.AppSettings.ResetWindowHeight = h;
+			var items = Global.AppSettings.PanelSettingsList.ToArray();
+			foreach (var item in items)
+				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item, false, new string[] { nameof(TaskSettings.ItemType) });
+			var ps = Global.AppSettings.StartPosition;
+			if (!Global.IsVsExtension)
+			{
+				var window = ControlsHelper.GetParent<System.Windows.Window>(Global.MainControl);
+				//var pixRect = PositionSettings.GetPixelsBoundaryRectangle(this);
+				//var pixRectWin = PositionSettings.GetPixelsBoundaryRectangle(window);
+				var width = Math.Max(w, window.MinWidth);
+				var height = Math.Max(h, window.MinHeight);
+				var content = (System.Windows.FrameworkElement)window.Content;
+				// Get space taken by the window borders.
+				var wSpace = window.ActualWidth - content.ActualWidth;
+				var hSpace = window.ActualHeight - content.ActualHeight;
+				//var tPad = pixRect.Top - pixRectWin.Top;
+				//var lPad = pixRect.Left - pixRectWin.Left;
+				//var padPoint = new Point(tPad, lPad);
+				var size = new System.Windows.Size(width + wSpace, height + hSpace);
+				var point = new System.Windows.Point(window.Left, window.Top);
+				//var newSize = PositionSettings.ConvertToDiu(size);
+				//var newPoint = PositionSettings.ConvertToDiu(point);
+				//var newPadPoint = PositionSettings.ConvertToDiu(padPoint);
+				ps.Left = (int)(point.X / 2 / 3 / 5) * 2 * 3 * 5;
+				ps.Top = (int)(point.Y / 2 / 3 / 5) * 2 * 3 * 5;
+				ps.Width = size.Width;
+				ps.Height = size.Height;
+				ps.LoadPosition(window);
+			}
+		}
+
+
+		/// <summary>
+		/// Adjusts the provided dimension to the nearest perfect size for screenshots, 
+		/// meeting the criteria of divisibility by 2, 3, 4, and 10.
+		/// </summary>
+		/// <param name="value">The original size of the screenshot dimension 
+		/// (width or height) to be adjusted.</param>
+		/// <returns>The adjusted size, meeting the criteria of being a multiple of 2, 3, 4, and 10 
+		/// for optimal resizing quality.</returns>
+		private static int AdjustForScreenshot(int value)
+		{
+			// The LCM of 2, 3, 4, and 10 to ensure scaling and quality criteria
+			const int perfectDivisor = 60;
+			// If the value already meets the perfect criteria then return.
+			if (value % perfectDivisor == 0)
+				return value;
+			// Calculate the nearest higher multiple of 60
+			int adjustedValue = ((value / perfectDivisor) + 1) * perfectDivisor;
+			return adjustedValue;
+		}
+
+		#endregion
+
 		public static void ResetAllSettings(bool confirm = false)
 		{
 			if (confirm && !AppHelper.AllowReset("All Settings", "Please note that this will reset all services, models, templates and tasks!"))
@@ -290,149 +440,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (closeZip)
 				zip.Close();
 			return missing.Length;
-		}
-
-		#endregion
-
-		#region Reset Templates
-
-		public const string TemplateGenerateTitleTaskName = "® System - Generate Title";
-		public const string TemplateGenerateIconTaskName = "® System - Generate Icon";
-		public const string TemplateFormatMessageTaskName = "® System - Format Message";
-		public const string TemplatePluginApprovalTaskName = "® System - Plugin Approval";
-		public const string TempalteListsUpdateUserProfile = "Lists - Update User Profile";
-		public const string TemplateAIChatPersonalized = "AI - Chat - Personalized";
-
-		public const string TemplatePlugin_Model_TextToAudio = "® System - Text-To-Audio";
-		public const string TemplatePlugin_Model_AudioToText = "® System - Audio-To-Text";
-		public const string TemplatePlugin_Model_VideoToText = "® System - Video-To-Text";
-		public const string TemplatePlugin_Model_TextToVideo = "® System - Text-To-Video";
-
-		public static string[] GetRequiredTemplates()
-		{
-			return new string[] {
-				TemplateGenerateTitleTaskName,
-				TemplateFormatMessageTaskName,
-				TemplatePluginApprovalTaskName,
-				TempalteListsUpdateUserProfile,
-				TemplateAIChatPersonalized,
-			};
-		}
-
-		public static int CheckRequiredTemplates(IList<TemplateItem> items, ZipStorer zip = null)
-		{
-			bool closeZip;
-			if (closeZip = zip == null)
-				zip = GetSettingsZip();
-			if (zip == null)
-				return 0;
-			// ---
-			var required = GetRequiredTemplates();
-			var current = items.Select(x => x.Name).ToArray();
-			var missing = required.Except(current).ToArray();
-			// If all templates exist then return.
-			if (missing.Length == 0)
-				return 0;
-			var zipItems = GetItemsFromZip(zip, Global.TemplatesName, Global.Templates, missing);
-			foreach (var zipItem in zipItems)
-				items.Add(zipItem);
-			// ---
-			if (closeZip)
-				zip.Close();
-			return missing.Length;
-		}
-
-		/// <summary>
-		/// Get items from the zip. entry pattern: filenameInZipStartsWith*.xml
-		/// </summary>
-		public static List<T> GetItemsFromZip<T>(ZipStorer zip, string filenameInZipStartsWith, SettingsData<T> data, params string[] names)
-		{
-			var list = new List<T>();
-			var entries = zip.ReadCentralDir()
-				.Where(x => x.FilenameInZip.StartsWith(filenameInZipStartsWith) && x.FilenameInZip.EndsWith(".xml"))
-				.ToArray();
-			foreach (var entry in entries)
-			{
-				// If names supplied then get only named templates.
-				if (names?.Length > 0)
-				{
-					var nameInZip = Path.GetFileNameWithoutExtension(entry.FilenameInZip);
-					if (!names.Contains(nameInZip))
-						continue;
-				}
-				var bytes = AppHelper.ExtractFile(zip, entry.FilenameInZip);
-				if (data.UseSeparateFiles)
-				{
-					var itemFile = data.DeserializeItem(bytes, false);
-					list.Add(itemFile);
-				}
-				else
-				{
-					var dataFile = data.DeserializeData(bytes, false);
-					list.AddRange(dataFile.Items);
-				}
-			}
-			return list;
-		}
-
-		public static void ResetUI()
-		{
-			var w = AdjustForScreenshot(Global.AppSettings.ResetWindowWidth);
-			var h = AdjustForScreenshot(Global.AppSettings.ResetWindowHeight);
-			if (Global.AppSettings.ResetWindowWidth != w)
-				Global.AppSettings.ResetWindowWidth = w;
-			if (Global.AppSettings.ResetWindowHeight != h)
-				Global.AppSettings.ResetWindowHeight = h;
-			var items = Global.AppSettings.PanelSettingsList.ToArray();
-			foreach (var item in items)
-				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item, false, new string[] { nameof(TaskSettings.ItemType) });
-			var ps = Global.AppSettings.StartPosition;
-			if (!Global.IsVsExtension)
-			{
-				var window = ControlsHelper.GetParent<System.Windows.Window>(Global.MainControl);
-				//var pixRect = PositionSettings.GetPixelsBoundaryRectangle(this);
-				//var pixRectWin = PositionSettings.GetPixelsBoundaryRectangle(window);
-				var width = Math.Max(w, window.MinWidth);
-				var height = Math.Max(h, window.MinHeight);
-				var content = (System.Windows.FrameworkElement)window.Content;
-				// Get space taken by the window borders.
-				var wSpace = window.ActualWidth - content.ActualWidth;
-				var hSpace = window.ActualHeight - content.ActualHeight;
-				//var tPad = pixRect.Top - pixRectWin.Top;
-				//var lPad = pixRect.Left - pixRectWin.Left;
-				//var padPoint = new Point(tPad, lPad);
-				var size = new System.Windows.Size(width + wSpace, height + hSpace);
-				var point = new System.Windows.Point(window.Left, window.Top);
-				//var newSize = PositionSettings.ConvertToDiu(size);
-				//var newPoint = PositionSettings.ConvertToDiu(point);
-				//var newPadPoint = PositionSettings.ConvertToDiu(padPoint);
-				ps.Left = (int)(point.X / 2 / 3 / 5) * 2 * 3 * 5;
-				ps.Top = (int)(point.Y / 2 / 3 / 5) * 2 * 3 * 5;
-				ps.Width = size.Width;
-				ps.Height = size.Height;
-				ps.LoadPosition(window);
-			}
-		}
-
-
-		/// <summary>
-		/// Adjusts the provided dimension to the nearest perfect size for screenshots, 
-		/// meeting the criteria of divisibility by 2, 3, 4, and 10.
-		/// </summary>
-		/// <param name="value">The original size of the screenshot dimension 
-		/// (width or height) to be adjusted.</param>
-		/// <returns>The adjusted size, meeting the criteria of being a multiple of 2, 3, 4, and 10 
-		/// for optimal resizing quality.</returns>
-		private static int AdjustForScreenshot(int value)
-		{
-			// The LCM of 2, 3, 4, and 10 to ensure scaling and quality criteria
-			const int perfectDivisor = 60;
-			// If the value already meets the perfect criteria then return.
-			if (value % perfectDivisor == 0)
-				return value;
-			// Calculate the nearest higher multiple of 60
-			int adjustedValue = ((value / perfectDivisor) + 1) * perfectDivisor;
-			return adjustedValue;
 		}
 
 		#endregion
