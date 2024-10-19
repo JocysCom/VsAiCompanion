@@ -42,6 +42,7 @@
 		<JcControls:PlaceholderTextBox
 			x:Name="DataTextBox"
 			Grid.ColumnSpan="2"
+			x:FieldModifier="public"
 			IsInTab="False"
 			PlaceholderText="{StaticResource main_Ask_AI_Placeholder}"
 			PreviewKeyDown="DataTextBox_PreviewKeyDown"

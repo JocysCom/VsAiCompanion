@@ -74,15 +74,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private static void AiWindowHotKeyHelper_HotKeyPressed(object sender, EventArgs e)
 		{
-			var point = ClassLibrary.Processes.MouseGlobalHook.GetCursorPosition();
-			var position = PositionSettings.ConvertToDiu(point);
-			var ai = new AiWindowInfo();
-			ai.LoadInfo(position);
-			var win = new Controls.Shared.AiWindow();
-			win.Info = ai;
-			win.Left = position.X;
-			win.Top = position.Y;
-			win.Show();
+			AiWindow.ShowUnderTheMouse();
 		}
 
 		public static AssemblyInfo Info { get; } = new AssemblyInfo(typeof(Global).Assembly);
