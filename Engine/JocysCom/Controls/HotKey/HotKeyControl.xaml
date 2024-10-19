@@ -4,8 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	x:Name="This"
 	Width="Auto"
-	Height="Auto"
-	Loaded="This_Loaded">
+	Height="Auto">
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -19,6 +18,8 @@
 		<TextBox
 			Width="150"
 			HorizontalContentAlignment="Center"
+			GotFocus="TextBox_GotFocus"
+			LostFocus="TextBox_LostFocus"
 			PreviewKeyDown="TextBox_PreviewKeyDown"
 			Text="{Binding HotKey, RelativeSource={RelativeSource AncestorType=UserControl}}" />
 	</StackPanel>

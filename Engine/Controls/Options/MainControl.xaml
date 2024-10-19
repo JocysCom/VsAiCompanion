@@ -194,8 +194,8 @@
 					<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
 						<JcControlsHotKey:HotKeyControl
 							x:Name="HotKeyPanel"
-							HotKey="{Binding AiWindowHotKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-							HotKeyEnabled="{Binding AiWindowHotKeyEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							HotKey="{Binding AiWindowHotKey, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							HotKeyEnabled="{Binding AiWindowHotKeyEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							HotKeyText="{StaticResource main_HotKeys_AIWindow}" />
 					</WrapPanel>
 				</GroupBox>

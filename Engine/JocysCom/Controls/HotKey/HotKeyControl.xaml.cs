@@ -18,6 +18,11 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 			DataContext = this;
 		}
 
+		/// <summary>
+		/// Hotkey which will be controlled by this control.
+		/// </summary>
+		public HotKeyHelper HotKeyHelper { get; set; }
+
 		public bool HotKeyEnabled
 		{
 			get { return (bool)GetValue(HotKeyEnabledProperty); }
@@ -45,17 +50,8 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 			}
 		}
 
-		void UpdateHotKey()
-		{
-			// Register the hotkey if enabled
-			//if (HotKeyEnabled && ParentWindow != null)
-			//	RegisterHotKey(modifiers, e.Key);
-		}
-
 		public static readonly DependencyProperty HotKeyProperty =
 			DependencyProperty.Register(nameof(HotKey), typeof(string), typeof(HotKeyControl), new PropertyMetadata(""));
-
-
 
 		private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
@@ -66,41 +62,26 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 			HotKey = HotKeyHelper.HotKeyToString(Keyboard.Modifiers, e.Key);
 		}
 
-		private Window _parentWindow;
-		public HotKeyHelper HotKeyHelper;
-
-		private Window ParentWindow
+		private void TextBox_GotFocus(object sender, RoutedEventArgs e)
 		{
-			get
-			{
-				if (_parentWindow == null)
-					_parentWindow = Window.GetWindow(this);
-				return _parentWindow;
-			}
+
+			var hk = HotKeyHelper;
+			if (hk == null)
+				return;
+			hk.IsSuspended = true;
+			hk.UnregisterHotKey();
 		}
 
-		private void RegisterHotKey(ModifierKeys modifiers, Key key)
+		private void TextBox_LostFocus(object sender, RoutedEventArgs e)
 		{
-			HotKeyHelper.RegisterHotKey(modifiers, key);
+			var hk = HotKeyHelper;
+			if (hk == null)
+				return;
+			hk.IsSuspended = false;
+			if (HotKeyEnabled)
+				hk.RegisterHotKey(HotKey);
 		}
 
-		private void HotKeyHelper_HotKeyPressed(object sender, System.EventArgs e)
-		{
-			// Handle hotkey pressed event
-			//MessageBox.Show("HotKey Pressed: " + HotKey);
-		}
-
-		// Clean up when unloaded
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			//HotKeyHelper?.Dispose();
-		}
-
-		private void This_Loaded(object sender, RoutedEventArgs e)
-		{
-			HotKeyHelper = new HotKeyHelper(ParentWindow);
-			HotKeyHelper.HotKeyPressed += HotKeyHelper_HotKeyPressed;
-		}
 	}
 
 }

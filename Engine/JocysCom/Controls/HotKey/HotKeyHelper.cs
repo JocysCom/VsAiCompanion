@@ -17,6 +17,9 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 
 		public event EventHandler HotKeyPressed;
 
+		// Use when you want to suspend hotkey processing.
+		public bool IsSuspended;
+
 		public HotKeyHelper(Window window)
 		{
 			// Get the window handle
@@ -61,6 +64,8 @@ namespace JocysCom.ClassLibrary.Controls.HotKey
 
 		private void ComponentDispatcher_ThreadPreprocessMessage(ref MSG msg, ref bool handled)
 		{
+			if (IsSuspended)
+				return;
 			if (msg.message == WM_HOTKEY && (int)msg.wParam == _hotKeyId)
 			{
 				HotKeyPressed?.Invoke(this, EventArgs.Empty);

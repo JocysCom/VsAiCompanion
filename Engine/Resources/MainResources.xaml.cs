@@ -52,6 +52,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Approval_Template => FindResource(nameof(main_Approval_Template));
         public static string main_Approval_Type => FindResource(nameof(main_Approval_Type));
         public static string main_Attachments => FindResource(nameof(main_Attachments));
+        public static string main_Attachments_Help => FindResource(nameof(main_Attachments_Help));
         public static string main_ClearMessages_Help => FindResource(nameof(main_ClearMessages_Help));
         public static string main_ClearMessages_Name => FindResource(nameof(main_ClearMessages_Name));
         public static string main_Copy => FindResource(nameof(main_Copy));

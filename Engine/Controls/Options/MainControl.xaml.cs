@@ -61,6 +61,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Options
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			// Assing hotkey to control.
+			HotKeyPanel.HotKeyHelper = Global.AiWindowHotKeyHelper;
 			AppHelper.AddHelp(IsSpellCheckEnabledCheckBox, Engine.Resources.MainResources.main_Enable_Spell_Check_Help);
 			if (ControlsHelper.AllowLoad(this))
 			{

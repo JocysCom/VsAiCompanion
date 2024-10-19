@@ -57,7 +57,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			AiWindowHotKeyHelper = new HotKeyHelper(window);
 			AiWindowHotKeyHelper.HotKeyPressed += AiWindowHotKeyHelper_HotKeyPressed;
-			AiWindowHotKeyHelper.RegisterHotKey(AppSettings.AiWindowHotKey);
+			UpdateAiWindowHotKey();
+		}
+
+		static void UpdateAiWindowHotKey()
+		{
+			var hk = AiWindowHotKeyHelper;
+			if (hk == null || hk.IsSuspended)
+				return;
+			var isEnabled = AppSettings.AiWindowHotKeyEnabled;
+			if (isEnabled)
+				hk.RegisterHotKey(AppSettings.AiWindowHotKey);
+			else
+				hk.UnregisterHotKey();
 		}
 
 		private static void AiWindowHotKeyHelper_HotKeyPressed(object sender, EventArgs e)
@@ -569,7 +581,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 			IsSettignsLoaded = true;
 		}
 
-
 		private static void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(Engine.AppData.LogHttp))
@@ -579,6 +590,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Apply new prest to controls.
 				UiPresetsManager.ApplyUiPreset(AppSettings.UiPresetName, UiPresetsManager.AllUiElements.Keys.ToArray());
 			}
+			if (e.PropertyName == nameof(Engine.AppData.AiWindowHotKey) || e.PropertyName == nameof(Engine.AppData.AiWindowHotKeyEnabled))
+				UpdateAiWindowHotKey();
 		}
 
 		private static void AiServices_ListChanged(object sender, ListChangedEventArgs e)
