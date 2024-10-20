@@ -12,6 +12,7 @@
 	Margin="0"
 	Padding="0"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	PreviewKeyDown="This_PreviewKeyDown"
 	SizeToContent="WidthAndHeight"
 	TextOptions.TextFormattingMode="Display"
 	Topmost="True"
@@ -33,21 +34,19 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="21*" />
-			<ColumnDefinition Width="185*" />
+			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 		<JcControls:PlaceholderTextBox
 			x:Name="DataTextBox"
-			Grid.ColumnSpan="2"
 			x:FieldModifier="public"
 			IsInTab="False"
 			PlaceholderText="{StaticResource main_Ask_AI_Placeholder}"
 			PreviewKeyDown="DataTextBox_PreviewKeyDown"
-			PreviewKeyUp="DataTextBox_PreviewKeyUp"
-			TextChanged="DataTextBox_TextChanged" />
+			PreviewKeyUp="DataTextBox_PreviewKeyUp" />
 		<StackPanel Grid.Column="2" HorizontalAlignment="Center" Orientation="Horizontal">
 			<Button x:Name="SendButton" Padding="3" Click="SendButton_Click">
 				<TextBlock
@@ -68,8 +67,31 @@
 				Opacity="0.5"
 				Style="{StaticResource IconTextStyle}"
 				Text="&#xE723;" />
-			<CheckBox Content="{StaticResource main_Selection}" IsChecked="{Binding AttachSelection}" Opacity="0.5" />
-			<CheckBox Content="{StaticResource main_Document}" IsChecked="{Binding AttachDocument}" Opacity="0.5" />
+			<CheckBox IsChecked="{Binding AttachSelection}" Opacity="0.5">
+				<CheckBox.Content>
+					<StackPanel>
+						<Label Content="{StaticResource main_Selection}" />
+						<Label x:Name="SelectionCountLabel" x:FieldModifier="public" />
+					</StackPanel>
+				</CheckBox.Content>
+			</CheckBox>
+			<CheckBox IsChecked="{Binding AttachDocument}" Opacity="0.5">
+				<CheckBox.Content>
+					<StackPanel>
+						<Label Content="{StaticResource main_Document}" />
+						<Label x:Name="DocumentCountLabel" x:FieldModifier="public" />
+					</StackPanel>
+				</CheckBox.Content>
+			</CheckBox>
 		</StackPanel>
+		<TextBox
+			x:Name="ElementPathTextBox"
+			Grid.Row="2"
+			Grid.ColumnSpan="2"
+			MaxWidth="800"
+			Padding="0"
+			x:FieldModifier="public"
+			MaxLines="4"
+			TextWrapping="Wrap" />
 	</Grid>
 </Window>

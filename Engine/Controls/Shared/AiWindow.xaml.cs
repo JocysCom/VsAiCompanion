@@ -1,4 +1,7 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,26 +24,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 
 		private void SendButton_Click(object sender, RoutedEventArgs e)
 		{
-
+			SendMessage();
 		}
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
 		{
 			This.Close();
-		}
-
-		private void DataTextBox_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-		}
-
-		private void DataTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-
-		}
-
-		private void DataTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-		{
-
 		}
 
 		#region Properties
@@ -75,13 +64,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			var position = ClassLibrary.Controls.PositionSettings.ConvertToDiu(point);
 			// Create the window and set its Info
 			var ai = new AiWindowInfo();
-			ai.LoadInfo(position);
+			ai.LoadInfo(point);
+			// Show the window.
 			var win = new AiWindow();
 			win.Info = ai;
 			win.Left = position.X;
 			win.Top = position.Y;
+			win.ElementPathTextBox.Text = ai.ElementPath;
+			win.UpdateTokenCount();
 			// Show the window first
 			win.Show();
+			// Activate the window to ensure it has focus
+			win.Activate();
 			// Adjust the window position so that the caret is under the mouse cursor
 			win.Dispatcher.BeginInvoke(new Action(() =>
 			{
@@ -90,6 +84,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				// Set focus to the TextBox
 				box.Focus();
 				Keyboard.Focus(box);
+				box.Text = " ";
+				box.Text = "";
 				// Get the caret position in screen coordinates
 				var caretScreenPoint = win.GetCaretScreenPoint(box);
 				var caretScreenPosition = ClassLibrary.Controls.PositionSettings.ConvertToDiu(caretScreenPoint);
@@ -122,6 +118,81 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 		}
 
 		#endregion
+
+		void UpdateTokenCount()
+		{
+			// Update selection tokens count.
+			var selectionTokens = Companions.ClientHelper.CountTokens(Info?.SelectedText, null);
+			var selectionText = selectionTokens == 0 ? "" : $"({selectionTokens})";
+			ControlsHelper.SetText(SelectionCountLabel, selectionText);
+			// Update document tokens count.
+			var documentTokens = Companions.ClientHelper.CountTokens(Info?.DocumentText, null);
+			var documentText = documentTokens == 0 ? "" : $"({documentTokens})";
+			ControlsHelper.SetText(SelectionCountLabel, documentText);
+		}
+
+		#region
+
+		public bool UseEnterToSendMessage => Global.AppSettings.UseEnterToSendMessage;
+
+		private void DataTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (UseEnterToSendMessage && e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+			{
+				// Prevent new line added to the message.
+				e.Handled = true;
+			}
+		}
+
+		private void DataTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
+		{
+			if (UseEnterToSendMessage && e.Key == Key.Enter && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+			{
+				if (AllowToSend())
+					SendMessage();
+				// Prevent new line added to the message.
+				e.Handled = true;
+			}
+		}
+
+		public bool AllowToSend()
+		{
+			return
+				!string.IsNullOrEmpty(DataTextBox.PART_ContentTextBox.Text) ||
+				(AttachSelection && !string.IsNullOrEmpty(Info.SelectedText)) ||
+				(AttachDocument && !string.IsNullOrEmpty(Info.DocumentText));
+		}
+
+		void SendMessage()
+		{
+			var ti = Global.Templates.Items.FirstOrDefault(x => x.Name == SettingsSourceManager.TemplateAiWindowTaskName);
+			var selection = new List<string>();
+			var copy = ti.Copy(true);
+			copy.IsPinned = false;
+			copy.CanvasEditorElementPath = Info.ElementPath;
+			copy.Created = DateTime.Now;
+			copy.Modified = copy.Created;
+			Global.InsertItem(copy, ItemType.Task);
+			selection.Add(copy.Name);
+			// Select new task in the tasks list on the [Tasks] tab.
+			var settings = Global.AppSettings.GetTaskSettings(ItemType.Task);
+			settings.ListSelection = selection;
+			settings.Focus = true;
+			Global.RaiseOnTasksUpdated();
+		}
+
+		#endregion
+
+		private void This_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			// Allow to close window with [Esc] key if text box is empty.
+			if (e.Key == Key.Escape)
+			{
+				if (string.IsNullOrEmpty(DataTextBox.PART_ContentTextBox.Text))
+					Close();
+				e.Handled = true;
+			}
+		}
 
 	}
 }

@@ -44,7 +44,7 @@ namespace JocysCom.ClassLibrary.Windows
 				if (!string.IsNullOrEmpty(className))
 					predicates.Add($"@{nameof(AEI.ClassName)}='{EscapeXPathValue(className)}'");
 
-				if (IsNameUseful(name))
+				if (ShouldIncludeNameInPath(currentElement))
 					predicates.Add($"@{nameof(AEI.Name)}='{EscapeXPathValue(name)}'");
 
 				if (predicates.Count == 0)
@@ -830,20 +830,39 @@ namespace JocysCom.ClassLibrary.Windows
 			return -1; // Should not reach here
 		}
 
-		private static bool IsNameUseful(string name)
+		private static bool ShouldIncludeNameInPath(AutomationElement element)
 		{
-			// Exclude null, empty, or whitespace-only names
-			if (string.IsNullOrWhiteSpace(name))
+			var controlType = element.Current.ControlType;
+			var className = element.Current.ClassName;
+			var name = element.Current.Name;
+
+			// Exclude controls that support ValuePattern or TextPattern
+			// These controls often use Name for content rather than identification
+			if (element.TryGetCurrentPattern(ValuePattern.Pattern, out _) ||
+				element.TryGetCurrentPattern(TextPattern.Pattern, out _))
+			{
 				return false;
-			// Exclude names that are '...'
-			if (name.Trim() == "...")
+			}
+
+			// Exclude specific control types that are known to use Name for content
+			if (controlType == ControlType.Document || controlType == ControlType.Edit)
+			{
 				return false;
-			// Exclude overly long names (indicative of dynamic content)
-			if (name.Length > 50) // Adjust threshold as appropriate
+			}
+
+			// Exclude specific classes known to use Name for content (like Scintilla)
+			if (className == "Scintilla")
+			{
 				return false;
-			// Exclude names for specific control types or classes if necessary
-			// For example, exclude names for Scintilla controls
-			// Return false if name is not useful
+			}
+
+			// If Name is null or empty, don't include it
+			if (string.IsNullOrEmpty(name))
+			{
+				return false;
+			}
+
+			// Include Name for other control types
 			return true;
 		}
 

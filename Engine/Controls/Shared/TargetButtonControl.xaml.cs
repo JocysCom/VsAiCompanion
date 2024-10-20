@@ -59,9 +59,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			}
 			else
 			{
+				// Get the bounding rectangle of the AutomationElement.
+				// 'rect' is in screen coordinates (physical pixels), relative to the virtual screen.
 				var rect = (Rect)element.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
-				var size = PositionSettings.ConvertToDiu(rect.Size);
+				// Adjust size and location for DPI scaling.
+				// Note: This may not account for per-monitor DPI scaling differences.
 				var location = PositionSettings.ConvertToDiu(rect.Location);
+				var size = PositionSettings.ConvertToDiu(rect.Size, rect.Location);
 				highlightWindow.Width = size.Width;
 				highlightWindow.Height = size.Height;
 				highlightWindow.Top = location.Y;
@@ -76,6 +80,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			{
 				System.Diagnostics.Debug.WriteLine(nameof(StartTargeting));
 				TargetIcon.Visibility = Visibility.Hidden;
+				// Get the current cursor position.
+				// 'position' is in device units (physical pixels), relative to the virtual screen (all monitors).
 				var position = MouseGlobalHook.GetCursorPosition();
 				MoveOverlayWindow(position);
 				overlayWindow.Width = TargetButton.ActualWidth;
@@ -113,6 +119,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 
 		void MoveOverlayWindow(Point p)
 		{
+			// 'p' is in device units (physical pixels), relative to the virtual screen (all monitors).
+			// Convert the point to device-independent units (DIPs).
+			// Note: This conversion may not account for per-monitor DPI scaling differences.
 			var position = PositionSettings.ConvertToDiu(p);
 			overlayWindow.Left = position.X - overlayWindow.Width / 2;
 			overlayWindow.Top = position.Y - overlayWindow.Height / 2;
@@ -131,23 +140,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			{
 				MoveOverlayWindow(point);
 				// Identify the control under the cursor
+				// 'point' is in device units (physical pixels), relative to the virtual screen (all monitors).
 				var currentWindowElement = MouseGlobalHook.GetWindowElementFromPoint(point);
+				// Get the AutomationElement directly from the screen point.
+				// Note: 'AutomationElement.FromPoint' expects screen coordinates in physical pixels.
 				var currentEditorElement = AutomationElement.FromPoint(point);
-				//if (!Equals(currentEditorElement, _previousEditorElement))
-				//{
 				_previousWindowElement = currentWindowElement;
 				_previousMousePosition = point;
 				WindowName.Text = ShowElementData(currentWindowElement, "Window");
-				//}
-				// Check if the element has changed
-				//if (!Equals(currentEditorElement, _previousEditorElement))
-				//{
 				_previousEditorElement = currentEditorElement;
 				_previousMousePosition = point;
 				HighlightElement(currentEditorElement);
 				EditorName.Text = ShowElementData(currentEditorElement, "Editor");
-
-				//}
 			}));
 		}
 
@@ -162,6 +166,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				Dispatcher.BeginInvoke(new Action(() =>
 				{
 					// Move the overlay window on the UI thread
+					// 'e.Point' is in device units (physical pixels), relative to the virtual screen.
 					MoveOverlayWindow(e.Point);
 				}));
 			}

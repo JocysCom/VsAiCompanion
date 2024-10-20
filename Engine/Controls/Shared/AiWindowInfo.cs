@@ -9,7 +9,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 	{
 		public string ElementPath { get; set; }
 		public string SelectedText { get; set; }
-		public string TextContent { get; set; }
+		public string DocumentText { get; set; }
+		public string Error { get; set; }
 
 		public void LoadInfo(Point point)
 		{
@@ -20,11 +21,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			ElementPath = AutomationHelper.GetPath(element);
 			try
 			{
-				TextContent = AutomationHelper.GetValue(element);
 				SelectedText = AutomationHelper.GetSelectedTextFromElement(element);
+				DocumentText = AutomationHelper.GetValue(element);
 			}
 			catch (Exception ex)
 			{
+				Error = ex.ToString();
 				System.Diagnostics.Debug.WriteLine(ex.Message);
 			}
 		}

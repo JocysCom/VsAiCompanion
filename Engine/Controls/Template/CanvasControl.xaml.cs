@@ -23,6 +23,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Template
 			InitializeComponent();
 			// Subscribe to the TargetSelected event from the TargetButtonControl.
 			TargetPanel.TargetSelected += TargetPanel_TargetSelected;
+			CanvasEditorElementPathTextBox.PART_ContentTextBox.MaxLines = 4;
+			CanvasEditorElementPathTextBox.PART_PlaceholderTextBox.MaxLines = 4;
 		}
 
 		// Create an instance of the CanvasHelper.

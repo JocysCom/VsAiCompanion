@@ -41,7 +41,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public void SavePosition(Window w)
 		{
-			// Get virtual scren
+			// Get virtual screen
 			var sLeft = SystemParameters.VirtualScreenLeft;
 			var sTop = SystemParameters.VirtualScreenTop;
 			var sWidth = SystemParameters.VirtualScreenWidth;
@@ -54,11 +54,6 @@ namespace JocysCom.ClassLibrary.Controls
 			Top = pixRectangle.Top;
 			Width = pixRectangle.Width;
 			Height = pixRectangle.Height;
-			//var diuRectangle = ConvertToDiu(pixRectangle);
-			//Left = diuRectangle.Left;
-			//Top = diuRectangle.Top;
-			//Width = diuRectangle.Width;
-			//Height = diuRectangle.Height;
 			// Set screen name.
 			var adjustedScreenBounds = Screen.AllScreens.ToDictionary(x => x, x => GetAdjustedScreenBounds(x));
 			ScreenName = (adjustedScreenBounds.FirstOrDefault(x => x.Value.Screen.IntersectsWith(pixRectangle)).Key ?? Screen.PrimaryScreen).DeviceName;
@@ -87,8 +82,6 @@ namespace JocysCom.ClassLibrary.Controls
 
 			// Get window bounds.
 			var pixRectangle = new Rect(Left, Top, Width, Height);
-			//var diuRectangle = new Rect(Left, Top, Width, Height);
-			//var pixRectangle = ConvertToPixels(diuRectangle);
 
 			// Get virtual screen
 			var sLeft = SystemParameters.VirtualScreenLeft;
@@ -179,17 +172,61 @@ namespace JocysCom.ClassLibrary.Controls
 			return new Point(point.X * matrix.M11, point.Y * matrix.M22);
 		}
 
-		public static Point ConvertToDiu(Point point, Visual v = null)
+		// Updated ConvertToDiu method
+		public static Point ConvertToDiu(Point point)
 		{
-			var matrix = GetMatrix(v);
-			return new Point(point.X / matrix.M11, point.Y / matrix.M22);
+			// Determine the monitor that contains the point
+			var monitor = NativeMethods.MonitorFromPoint(new NativeMethods.POINT { x = (int)point.X, y = (int)point.Y }, NativeMethods.MONITOR_DEFAULTTONEAREST);
+			if (monitor == IntPtr.Zero)
+			{
+				// Fallback to system DPI scaling if monitor not found
+				var matrix = GetMatrix();
+				return new Point(point.X / matrix.M11, point.Y / matrix.M22);
+			}
+			// Get DPI for the monitor
+			uint dpiX, dpiY;
+			int result = GetDpiForMonitor(monitor, DpiType.Effective, out dpiX, out dpiY);
+			if (result != 0)
+			{
+				// Fallback to system DPI scaling if unable to get monitor DPI
+				var matrix = GetMatrix();
+				return new Point(point.X / matrix.M11, point.Y / matrix.M22);
+			}
+			// Convert DPI to scaling factor
+			double scaleX = dpiX / 96.0;
+			double scaleY = dpiY / 96.0;
+			// Convert the point to DIPs
+			return new Point(point.X / scaleX, point.Y / scaleY);
 		}
 
-		public static Size ConvertToDiu(Size size, Visual v = null)
+		// Similarly, update ConvertToDiu for Size if needed
+		public static Size ConvertToDiu(Size size, Point point)
 		{
-			var matrix = GetMatrix(v);
-			return new Size(size.Width / matrix.M11, size.Height / matrix.M22);
+			// Determine the monitor that contains the point
+			var monitor = NativeMethods.MonitorFromPoint(new NativeMethods.POINT { x = (int)point.X, y = (int)point.Y }, NativeMethods.MONITOR_DEFAULTTONEAREST);
+			if (monitor == IntPtr.Zero)
+			{
+				// Fallback to system DPI scaling if monitor not found
+				var matrix = GetMatrix();
+				return new Size(size.Width / matrix.M11, size.Height / matrix.M22);
+			}
+
+			// Get DPI for the monitor
+			uint dpiX, dpiY;
+			int result = GetDpiForMonitor(monitor, DpiType.Effective, out dpiX, out dpiY);
+			if (result != 0)
+			{
+				// Fallback to system DPI scaling if unable to get monitor DPI
+				var matrix = GetMatrix();
+				return new Size(size.Width / matrix.M11, size.Height / matrix.M22);
+			}
+			// Convert DPI to scaling factor
+			double scaleX = dpiX / 96.0;
+			double scaleY = dpiY / 96.0;
+			// Convert the size to DIPs
+			return new Size(size.Width / scaleX, size.Height / scaleY);
 		}
+
 
 		/// <summary>
 		/// Convert device-independent units rectangle to the screen rectangle.
@@ -206,6 +243,9 @@ namespace JocysCom.ClassLibrary.Controls
 
 		static System.Windows.Media.Matrix GetMatrix(Visual v = null)
 		{
+			// Get the transformation matrix for the specified visual.
+			// If no visual is provided, create a temporary visual to obtain the matrix.
+			// Note: This may not correctly reflect per-monitor DPI scaling in multi-monitor setups.
 			var matrix = v is null ? null : PresentationSource.FromVisual(v)?.CompositionTarget?.TransformToDevice;
 			if (matrix != null)
 				return matrix.Value;
@@ -242,6 +282,32 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		#endregion
+
+		static internal class NativeMethods
+		{
+			[DllImport("Shcore.dll")]
+			internal static extern int GetDpiForMonitor(IntPtr hmonitor, DpiType dpiType, out uint dpiX, out uint dpiY);
+
+			[DllImport("user32.dll")]
+			internal static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
+
+			internal const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+
+			public enum DpiType
+			{
+				Effective = 0,
+				Angular = 1,
+				Raw = 2,
+			}
+
+			[StructLayout(LayoutKind.Sequential)]
+			public struct POINT
+			{
+				public int x;
+				public int y;
+			}
+
+		}
 
 		#region Get screen bounds adjusted for the DPI scaling.
 
@@ -288,7 +354,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region Grid Postion
+		#region Grid Position
 
 		/*
 

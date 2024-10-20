@@ -145,6 +145,7 @@ namespace JocysCom.ClassLibrary.Processes
 			// Marshal the mouse input data
 			var hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
 			// Create a Point from the coordinates
+			// 'hookStruct.pt.x' and 'hookStruct.pt.y' are in device units (physical pixels), relative to the virtual screen (all monitors).
 			var point = new Point(hookStruct.pt.x, hookStruct.pt.y);
 			var buttonState = MouseButtonState.Released;
 			var changedButton = MouseButton.Left; // Default value
@@ -225,7 +226,8 @@ namespace JocysCom.ClassLibrary.Processes
 		public static Point GetCursorPosition()
 		{
 			POINT point;
-			// Get the cursor position
+			// Get the cursor position in screen coordinates (device units, physical pixels),
+			// relative to the virtual screen (all monitors combined).
 			return GetCursorPos(out point)
 				? new Point(point.x, point.y)
 				: new Point();
@@ -244,6 +246,7 @@ namespace JocysCom.ClassLibrary.Processes
 		public static AutomationElement GetWindowElementFromPoint(Point point)
 		{
 			AutomationElement currentElement = null;
+			// 'point' is in device units (physical pixels), relative to the virtual screen.
 			// Convert System.Windows.Point to native POINT
 			var nativePoint = new POINT();
 			nativePoint.x = (int)point.X;
