@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Processes;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -27,6 +28,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			mouseHandler = new MouseGlobalHook();
 			mouseHandler.MouseUp += MouseHandler_MouseUp;
 			mouseHandler.MouseMove += MouseHandler_MouseMove;
+			PositionSettings.NativeMethods.GetProcessDpiAwareness(Process.GetCurrentProcess().Handle, out var awareness);
+			TypTextBox.Text = awareness.ToString();
 		}
 
 		public event EventHandler<TargetSelectedEventArgs> TargetSelected;
@@ -82,10 +85,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				TargetIcon.Visibility = Visibility.Hidden;
 				// Get the current cursor position.
 				// 'position' is in device units (physical pixels), relative to the virtual screen (all monitors).
-				var position = MouseGlobalHook.GetCursorPosition();
-				MoveOverlayWindow(position);
-				overlayWindow.Width = TargetButton.ActualWidth;
-				overlayWindow.Height = TargetButton.ActualHeight;
+				var point = MouseGlobalHook.GetCursorPosition();
+				MoveOverlayWindow(point);
+				overlayWindow.Width = TargetIcon.ActualWidth;
+				overlayWindow.Height = TargetIcon.ActualHeight;
 				// Hide parent window
 				var isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 				if (!isCtrlDown)
@@ -119,10 +122,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 
 		void MoveOverlayWindow(Point p)
 		{
+			var position = PositionSettings.ConvertToDiu(p);
+			var scaling = PositionSettings.GetScalingFactorsAtPoint(p);
+			PixTextBox.Text = $"[{p.X};{p.Y}]";
+			DuiTextBox.Text = $"[{position.X};{position.Y}]";
+			ScaTextBox.Text = $"[{scaling.scaleX};{scaling.scaleY}]";
 			// 'p' is in device units (physical pixels), relative to the virtual screen (all monitors).
 			// Convert the point to device-independent units (DIPs).
 			// Note: This conversion may not account for per-monitor DPI scaling differences.
-			var position = PositionSettings.ConvertToDiu(p);
 			overlayWindow.Left = position.X - overlayWindow.Width / 2;
 			overlayWindow.Top = position.Y - overlayWindow.Height / 2;
 		}

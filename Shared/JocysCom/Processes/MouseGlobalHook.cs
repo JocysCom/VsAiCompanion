@@ -221,13 +221,12 @@ namespace JocysCom.ClassLibrary.Processes
 		#region Public Methods
 
 		/// <summary>
-		/// Get cursor position.
+		/// Get the cursor position in screen coordinates (device units, physical pixels),
+		/// relative to the virtual screen (all monitors combined).
 		/// </summary>
 		public static Point GetCursorPosition()
 		{
 			POINT point;
-			// Get the cursor position in screen coordinates (device units, physical pixels),
-			// relative to the virtual screen (all monitors combined).
 			return GetCursorPos(out point)
 				? new Point(point.x, point.y)
 				: new Point();

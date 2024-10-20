@@ -55,7 +55,7 @@ namespace JocysCom.ClassLibrary.Controls
 			Width = pixRectangle.Width;
 			Height = pixRectangle.Height;
 			// Set screen name.
-			var adjustedScreenBounds = Screen.AllScreens.ToDictionary(x => x, x => GetAdjustedScreenBounds(x));
+			var adjustedScreenBounds = Screen.AllScreens.ToDictionary(x => x, x => NativeMethods.GetAdjustedScreenBounds(x));
 			ScreenName = (adjustedScreenBounds.FirstOrDefault(x => x.Value.Screen.IntersectsWith(pixRectangle)).Key ?? Screen.PrimaryScreen).DeviceName;
 			// Enable settings for loading.
 			IsEnabled = true;
@@ -101,7 +101,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 			// Move the window into screen working area (one that exclude Windows toolbar) if it's outside of it.
 			// Get screen bounds adjusted for the DPI scaling.
-			var adjustedScreenBounds = Screen.AllScreens.ToDictionary(x => x, x => GetAdjustedScreenBounds(x));
+			var adjustedScreenBounds = Screen.AllScreens.ToDictionary(x => x, x => NativeMethods.GetAdjustedScreenBounds(x));
 			var adjusted = adjustedScreenBounds.FirstOrDefault(x => x.Value.Screen.IntersectsWith(pixRectangle));
 			var screen = adjusted.Value;
 			var adjustedBounds = adjusted.Key;
@@ -141,25 +141,6 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region Helper Functions
 
-		class AdjustedBounds
-		{
-			public Rect Screen;
-			public Rect WorkingArea;
-		}
-
-		/// <summary>
-		/// Convert the screen rectangle to device-independent units rectangle.
-		/// </summary>
-		static Rect ConvertToDiu(Rect pixRectangle, Visual v = null)
-		{
-			var matrix = GetMatrix(v);
-			var leftDiu = pixRectangle.Left / matrix.M11;
-			var topDiu = pixRectangle.Top / matrix.M22;
-			var widthDiu = pixRectangle.Width / matrix.M11;
-			var heightDiu = pixRectangle.Height / matrix.M22;
-			return new Rect(leftDiu, topDiu, widthDiu, heightDiu);
-		}
-
 		public static Size ConvertToPixels(Size size, Visual v = null)
 		{
 			var matrix = GetMatrix(v);
@@ -172,61 +153,84 @@ namespace JocysCom.ClassLibrary.Controls
 			return new Point(point.X * matrix.M11, point.Y * matrix.M22);
 		}
 
-		// Updated ConvertToDiu method
-		public static Point ConvertToDiu(Point point)
+		/// <summary>
+		/// Converts a point from physical pixels to device-independent units (DIUs), considering the DPI scaling at the given point.
+		/// </summary>
+		/// <param name="pixPoint">The point in physical pixels to convert.</param>
+		/// <returns>The point converted to device-independent units (DIUs).</returns>
+		public static Point ConvertToDiu(Point pixPoint)
+		{
+			var (scaleX, scaleY) = GetScalingFactorsAtPoint(pixPoint);
+			return new Point(pixPoint.X / scaleX, pixPoint.Y / scaleY);
+		}
+
+		/// <summary>
+		/// Converts a size from physical pixels to device-independent units (DIUs), considering the DPI scaling at the location of a specified point.
+		/// </summary>
+		/// <param name="pixSize">The size in physical pixels to convert.</param>
+		/// <param name="pixPoint">A point representing the location where the size applies, used to determine the DPI scaling.</param>
+		/// <returns>The size converted to device-independent units (DIUs).</returns>
+		public static Size ConvertToDiu(Size pixSize, Point pixPoint)
+		{
+			var (scaleX, scaleY) = GetScalingFactorsAtPoint(pixPoint);
+			return new Size(pixSize.Width / scaleX, pixSize.Height / scaleY);
+		}
+
+		/// <summary>
+		/// Convert the screen rectangle to device-independent units rectangle.
+		/// </summary>
+		static Rect ConvertToDiu(Rect pixRect)
+		{
+			var (scaleX, scaleY) = GetScalingFactorsAtPoint(pixRect.Location);
+			var location = new Point(pixRect.X / scaleX, pixRect.Y / scaleY);
+			var size = new Size(pixRect.Width / scaleX, pixRect.Height / scaleY);
+			return new Rect(location, size);
+		}
+
+		/// <summary>
+		/// Retrieves the scaling factors (DPI scaling) at the specified point by determining the monitor's DPI settings.
+		/// </summary>
+		/// <param name="point">The point for which to retrieve the scaling factors.</param>
+		/// <returns>A tuple containing the scaling factors for the X and Y axes.</returns>
+		public static (double scaleX, double scaleY) GetScalingFactorsAtPoint(Point point)
 		{
 			// Determine the monitor that contains the point
-			var monitor = NativeMethods.MonitorFromPoint(new NativeMethods.POINT { x = (int)point.X, y = (int)point.Y }, NativeMethods.MONITOR_DEFAULTTONEAREST);
+			var monitor = NativeMethods.MonitorFromPoint(
+				new NativeMethods.POINT { x = (int)point.X, y = (int)point.Y },
+				NativeMethods.MONITOR_DEFAULTTONEAREST);
+
 			if (monitor == IntPtr.Zero)
 			{
 				// Fallback to system DPI scaling if monitor not found
 				var matrix = GetMatrix();
-				return new Point(point.X / matrix.M11, point.Y / matrix.M22);
-			}
-			// Get DPI for the monitor
-			uint dpiX, dpiY;
-			int result = GetDpiForMonitor(monitor, DpiType.Effective, out dpiX, out dpiY);
-			if (result != 0)
-			{
-				// Fallback to system DPI scaling if unable to get monitor DPI
-				var matrix = GetMatrix();
-				return new Point(point.X / matrix.M11, point.Y / matrix.M22);
-			}
-			// Convert DPI to scaling factor
-			double scaleX = dpiX / 96.0;
-			double scaleY = dpiY / 96.0;
-			// Convert the point to DIPs
-			return new Point(point.X / scaleX, point.Y / scaleY);
-		}
-
-		// Similarly, update ConvertToDiu for Size if needed
-		public static Size ConvertToDiu(Size size, Point point)
-		{
-			// Determine the monitor that contains the point
-			var monitor = NativeMethods.MonitorFromPoint(new NativeMethods.POINT { x = (int)point.X, y = (int)point.Y }, NativeMethods.MONITOR_DEFAULTTONEAREST);
-			if (monitor == IntPtr.Zero)
-			{
-				// Fallback to system DPI scaling if monitor not found
-				var matrix = GetMatrix();
-				return new Size(size.Width / matrix.M11, size.Height / matrix.M22);
+				return (matrix.M11, matrix.M22);
 			}
 
 			// Get DPI for the monitor
 			uint dpiX, dpiY;
-			int result = GetDpiForMonitor(monitor, DpiType.Effective, out dpiX, out dpiY);
+			int result = NativeMethods.GetDpiForMonitor(
+				monitor,
+				NativeMethods.DpiType.Effective,
+				out dpiX,
+				out dpiY);
+
 			if (result != 0)
 			{
+				// Log the error
+				System.Diagnostics.Debug.WriteLine($"GetDpiForMonitor failed with result {result}");
 				// Fallback to system DPI scaling if unable to get monitor DPI
 				var matrix = GetMatrix();
-				return new Size(size.Width / matrix.M11, size.Height / matrix.M22);
+				return (matrix.M11, matrix.M22);
 			}
+
+			// Log the DPI values
+			System.Diagnostics.Debug.WriteLine($"Monitor DPI: X={dpiX}, Y={dpiY}");
+
 			// Convert DPI to scaling factor
 			double scaleX = dpiX / 96.0;
 			double scaleY = dpiY / 96.0;
-			// Convert the size to DIPs
-			return new Size(size.Width / scaleX, size.Height / scaleY);
+			return (scaleX, scaleY);
 		}
-
 
 		/// <summary>
 		/// Convert device-independent units rectangle to the screen rectangle.
@@ -270,7 +274,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		static Rect UnionOfAllWorkingAreaBounds()
 		{
-			var adjustedScreenBounds = Screen.AllScreens.Select(x => GetAdjustedScreenBounds(x));
+			var adjustedScreenBounds = Screen.AllScreens.Select(x => NativeMethods.GetAdjustedScreenBounds(x));
 			return adjustedScreenBounds.Aggregate(Rect.Empty, (union, rect) => Rect.Union(union, rect.WorkingArea));
 		}
 
@@ -285,74 +289,78 @@ namespace JocysCom.ClassLibrary.Controls
 
 		static internal class NativeMethods
 		{
-			[DllImport("Shcore.dll")]
-			internal static extern int GetDpiForMonitor(IntPtr hmonitor, DpiType dpiType, out uint dpiX, out uint dpiY);
+
 
 			[DllImport("user32.dll")]
 			internal static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
 
+			[DllImport("Shcore.dll")]
+			internal static extern int GetDpiForMonitor(IntPtr hMonitor, DpiType dpiType, out uint dpiX, out uint dpiY);
+
+			[DllImport("user32.dll", SetLastError = true)]
+			internal static extern IntPtr MonitorFromRect(ref Int32Rect lprcMonitor, uint dwFlags);
+
+			[DllImport("shcore.dll")]
+			public static extern int GetProcessDpiAwareness(IntPtr hprocess, out ProcessDpiAwareness value);
+
 			internal const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
 
-			public enum DpiType
+			[StructLayout(LayoutKind.Sequential)]
+			internal struct POINT
+			{
+				public int x;
+				public int y;
+			}
+
+			internal enum DpiType
 			{
 				Effective = 0,
 				Angular = 1,
 				Raw = 2,
 			}
 
-			[StructLayout(LayoutKind.Sequential)]
-			public struct POINT
+			public enum ProcessDpiAwareness
 			{
-				public int x;
-				public int y;
+				Process_DPI_Unaware = 0,
+				Process_System_DPI_Aware = 1,
+				Process_Per_Monitor_DPI_Aware = 2
+			}
+
+
+			public class AdjustedBounds
+			{
+				public Rect Screen;
+				public Rect WorkingArea;
+			}
+
+			internal static AdjustedBounds GetAdjustedScreenBounds(Screen screen)
+			{
+				var sBounds = screen.Bounds;
+				var wBounds = screen.WorkingArea;
+				var monitorRect = new Int32Rect(sBounds.Left, sBounds.Top, sBounds.Right, sBounds.Bottom);
+				var monitor = MonitorFromRect(ref monitorRect, MONITOR_DEFAULTTONEAREST);
+				var ab = new AdjustedBounds();
+				if (monitor == IntPtr.Zero)
+					return ab;
+				GetDpiForMonitor(monitor, DpiType.Effective, out uint dpiX, out uint dpiY);
+				var scaleFactorX = (double)dpiX / 96f;
+				var scaleFactorY = (double)dpiY / 96f;
+				ab.Screen = new Rect(
+					sBounds.Left / scaleFactorX,
+					sBounds.Top / scaleFactorY,
+					sBounds.Width / scaleFactorX,
+					sBounds.Height / scaleFactorY
+				);
+				ab.WorkingArea = new Rect(
+					wBounds.Left / scaleFactorX,
+					wBounds.Top / scaleFactorY,
+					wBounds.Width / scaleFactorX,
+					wBounds.Height / scaleFactorY
+				);
+				return ab;
 			}
 
 		}
-
-		#region Get screen bounds adjusted for the DPI scaling.
-
-		[DllImport("Shcore.dll")]
-		static extern int GetDpiForMonitor(IntPtr hMonitor, DpiType dpiType, out uint dpiX, out uint dpiY);
-
-		[DllImport("user32.dll", SetLastError = true)]
-		static extern IntPtr MonitorFromRect(ref Int32Rect lprcMonitor, uint dwFlags);
-
-		enum DpiType
-		{
-			Effective = 0,
-			Angular = 1,
-			Raw = 2,
-		}
-
-		static AdjustedBounds GetAdjustedScreenBounds(Screen screen)
-		{
-			const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
-			var sBounds = screen.Bounds;
-			var wBounds = screen.WorkingArea;
-			var monitorRect = new Int32Rect(sBounds.Left, sBounds.Top, sBounds.Right, sBounds.Bottom);
-			var monitor = MonitorFromRect(ref monitorRect, MONITOR_DEFAULTTONEAREST);
-			var ab = new AdjustedBounds();
-			if (monitor == IntPtr.Zero)
-				return ab;
-			GetDpiForMonitor(monitor, DpiType.Effective, out uint dpiX, out uint dpiY);
-			var scaleFactorX = (double)dpiX / 96f;
-			var scaleFactorY = (double)dpiY / 96f;
-			ab.Screen = new Rect(
-				sBounds.Left / scaleFactorX,
-				sBounds.Top / scaleFactorY,
-				sBounds.Width / scaleFactorX,
-				sBounds.Height / scaleFactorY
-			);
-			ab.WorkingArea = new Rect(
-				wBounds.Left / scaleFactorX,
-				wBounds.Top / scaleFactorY,
-				wBounds.Width / scaleFactorX,
-				wBounds.Height / scaleFactorY
-			);
-			return ab;
-		}
-
-		#endregion
 
 		#region Grid Position
 
