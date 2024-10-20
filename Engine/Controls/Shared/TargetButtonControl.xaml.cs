@@ -120,13 +120,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			}
 		}
 
+		/// <summary>
+		/// Move overlay window under the point.
+		/// </summary>
+		/// <param name="p">Position is in device units (physical pixels), relative to the virtual screen (all monitors).</param>
 		void MoveOverlayWindow(Point p)
 		{
+			var fp = System.Windows.Forms.Cursor.Position; // Correct position.
+			p = new Point(fp.X, fp.Y);
+			// Convert the point to device-independent units (DIPs) and scaling factors.
 			var position = PositionSettings.ConvertToDiu(p);
 			var scaling = PositionSettings.GetScalingFactorsAtPoint(p);
-			PixTextBox.Text = $"[{p.X};{p.Y}]";
-			DuiTextBox.Text = $"[{position.X};{position.Y}]";
-			ScaTextBox.Text = $"[{scaling.scaleX};{scaling.scaleY}]";
+
+			// Mouse position is only relevant to top window.
+			//var mousePosition = Mouse.GetPosition(null);
+			PixTextBox.Text = $"P[{p.X};{p.Y}]";
+			DuiTextBox.Text = $"D[{position.X};{position.Y}]";
+			FrmTextBox.Text = $"F[{fp.X};{fp.Y}]";
+			ScaTextBox.Text = $"S[{scaling.scaleX};{scaling.scaleY}]";
+			//MouTextBox.Text = $"[{mousePosition.X};{mousePosition.Y}]";
 			// 'p' is in device units (physical pixels), relative to the virtual screen (all monitors).
 			// Convert the point to device-independent units (DIPs).
 			// Note: This conversion may not account for per-monitor DPI scaling differences.

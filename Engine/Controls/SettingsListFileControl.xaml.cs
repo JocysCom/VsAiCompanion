@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine.Companions;
 using System;
 using System.Collections.Generic;

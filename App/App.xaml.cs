@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine;
 using System;
 using System.Configuration;

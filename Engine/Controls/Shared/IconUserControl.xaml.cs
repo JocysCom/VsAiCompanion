@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Windows;
 using System;
 using System.IO;
 using System.Windows;

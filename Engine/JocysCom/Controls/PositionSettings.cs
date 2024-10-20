@@ -187,6 +187,21 @@ namespace JocysCom.ClassLibrary.Controls
 			return new Rect(location, size);
 		}
 
+		public static Point ScreenToWpf(Point screenPoint)
+		{
+			PresentationSource source = PresentationSource.FromVisual(System.Windows.Application.Current.MainWindow);
+			if (source != null)
+			{
+				Matrix transform = source.CompositionTarget.TransformFromDevice;
+				return transform.Transform(screenPoint);
+			}
+			else
+			{
+				return screenPoint;
+			}
+		}
+
+
 		/// <summary>
 		/// Retrieves the scaling factors (DPI scaling) at the specified point by determining the monitor's DPI settings.
 		/// </summary>
