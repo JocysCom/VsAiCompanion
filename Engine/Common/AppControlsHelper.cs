@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 {
 	public class AppControlsHelper
 	{
+
+		#region TextBox: Allow Drop
 
 		public static void AllowDrop(TextBox control, bool allow)
 		{
@@ -55,12 +58,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// If user holds CTRL key during drop then...
 			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
 			{
+				var binaryFiles = new List<string>();
 				// Append file content
 				foreach (string file in files)
 				{
+					if (JocysCom.ClassLibrary.Files.Mime.IsBinary(file))
+					{
+						binaryFiles.Add(file);
+						continue;
+					}
 					var fileContent = File.ReadAllText(file);
-					var markdownCodeBlock = MarkdownHelper.CreateMarkdownCodeBlock(file, fileContent);
-					sb.AppendLine($"\r\n\r\n{markdownCodeBlock}\r\n");
+					var markdownCodeBlock = MarkdownHelper.CreateMarkdownCodeBlock(file, fileContent, null);
+					sb.AppendLine($"\r\n\r\n`{file}`:\r\n");
+					sb.AppendLine($"{markdownCodeBlock}\r\n");
+				}
+				if (binaryFiles.Any())
+				{
+					// Append file paths
+					foreach (string file in files)
+						sb.AppendLine($"- {file}");
 				}
 			}
 			else
@@ -88,6 +104,107 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Update cursor position
 			textBox.CaretIndex += sb.Length;
 		}
+
+		#endregion
+
+		#region TextBox: Allow Paste
+
+		private static readonly Dictionary<TextBox, CommandBinding> PasteCommandBindings = new Dictionary<TextBox, CommandBinding>();
+
+		public static void AllowPasteFiles(TextBox textBox, bool allow)
+		{
+			if (textBox == null)
+				throw new ArgumentNullException(nameof(textBox));
+			if (allow)
+			{
+				if (PasteCommandBindings.ContainsKey(textBox))
+					return;
+				CommandBinding pasteBinding = new CommandBinding(ApplicationCommands.Paste, OnPasteFiles, OnCanPasteFiles);
+				textBox.CommandBindings.Add(pasteBinding);
+				EnsurePasteMenuItem(textBox);
+				PasteCommandBindings[textBox] = pasteBinding;
+			}
+			else
+			{
+				if (!PasteCommandBindings.TryGetValue(textBox, out CommandBinding pasteBinding))
+					return;
+				textBox.CommandBindings.Remove(pasteBinding);
+				PasteCommandBindings.Remove(textBox);
+			}
+		}
+
+		private static void EnsurePasteMenuItem(TextBox textBox)
+		{
+			if (textBox.ContextMenu == null)
+			{
+				// Initialize with default ContextMenu
+				textBox.ContextMenu = new ContextMenu();
+
+				// Add default "Cut" menu item
+				MenuItem cutItem = new MenuItem
+				{
+					Command = ApplicationCommands.Cut,
+					Header = "Cut"
+				};
+				textBox.ContextMenu.Items.Add(cutItem);
+
+				// Add default "Copy" menu item
+				MenuItem copyItem = new MenuItem
+				{
+					Command = ApplicationCommands.Copy,
+					Header = "Copy"
+				};
+				textBox.ContextMenu.Items.Add(copyItem);
+			}
+
+			bool hasPaste = textBox.ContextMenu.Items.OfType<MenuItem>().Any(item =>
+				item.Command == ApplicationCommands.Paste || item.Header.ToString().Equals("Paste", StringComparison.OrdinalIgnoreCase));
+			if (hasPaste)
+				return;
+
+			MenuItem pasteItem = new MenuItem
+			{
+				Command = ApplicationCommands.Paste,
+				Header = "Paste"
+			};
+			textBox.ContextMenu.Items.Add(pasteItem);
+		}
+
+		private static void OnCanPasteFiles(object sender, CanExecuteRoutedEventArgs e)
+		{
+			if (sender is TextBox textBox)
+			{
+				e.CanExecute = Clipboard.ContainsText() || Clipboard.ContainsFileDropList();
+				// Do not set e.Handled to true to allow other commands to process
+			}
+		}
+
+		private static void OnPasteFiles(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (sender is TextBox textBox)
+			{
+				if (Clipboard.ContainsFileDropList())
+				{
+					var filePaths = Clipboard.GetFileDropList().Cast<string>().ToArray();
+					DropFiles(textBox, filePaths);
+					return;
+				}
+				else if (Clipboard.ContainsText())
+				{
+					var textToInsert = Clipboard.GetText();
+					if (!string.IsNullOrEmpty(textToInsert))
+					{
+						int selectionStart = textBox.SelectionStart;
+						textBox.Text = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength);
+						textBox.Text = textBox.Text.Insert(selectionStart, textToInsert);
+						textBox.SelectionStart = selectionStart + textToInsert.Length;
+					}
+				}
+				e.Handled = true;
+			}
+		}
+
+		#endregion
 
 		private static bool IsCaretAtLineStart(TextBox textBox)
 		{

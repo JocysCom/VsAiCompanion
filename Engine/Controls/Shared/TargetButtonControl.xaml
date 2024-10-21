@@ -30,16 +30,6 @@
 			Height="32"
 			Content="{StaticResource Icon_target}"
 			Focusable="False" />
-		<StackPanel Margin="3" Orientation="Vertical">
-			<TextBlock x:Name="PixTextBox" FontFamily="Consolas" Text="P[0;0]" />
-			<TextBlock x:Name="Pi2TextBox" FontFamily="Consolas" Text="P[0;0]2" />
-			<TextBlock x:Name="DuiTextBox" FontFamily="Consolas" Text="D[0;0]" />
-			<TextBlock x:Name="FrmTextBox" FontFamily="Consolas" Text="F[0;0]" />
-			<TextBlock x:Name="WpfTextBox" FontFamily="Consolas" Text="W[0;0]" />
-			<TextBlock x:Name="ScaTextBox" FontFamily="Consolas" Text="S[0;0]" />
-			<TextBlock x:Name="MouTextBox" FontFamily="Consolas" Text="M[0;0]" />
-			<TextBlock x:Name="TypTextBox" FontFamily="Consolas" Text="" />
-		</StackPanel>
 		<StackPanel Orientation="Vertical" Visibility="Collapsed">
 			<TextBlock x:Name="WindowName" Text="Window: none" />
 			<TextBlock x:Name="EditorName" Text="Editor: none" />

@@ -90,6 +90,16 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region InTab Style
 
+		public static readonly DependencyProperty IsTransparentProperty = DependencyProperty.Register(
+			nameof(IsTransparent), typeof(bool), typeof(PlaceholderTextBox), new PropertyMetadata(false, OnIsInTabChanged));
+
+		public bool IsTransparent
+		{
+			get => (bool)GetValue(IsTransparentProperty);
+			set => SetValue(IsTransparentProperty, value);
+		}
+
+
 		public static readonly DependencyProperty IsInTabProperty = DependencyProperty.Register(
 		nameof(IsInTab), typeof(bool), typeof(PlaceholderTextBox), new PropertyMetadata(false, OnIsInTabChanged));
 

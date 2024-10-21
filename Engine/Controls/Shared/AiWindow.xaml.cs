@@ -60,32 +60,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 		public static AiWindow ShowUnderTheMouse()
 		{
 			// Get the current mouse position
+			var wpfPosition = PositionSettings.GetWpfCursorPosition();
 			var point = ClassLibrary.Processes.MouseGlobalHook.GetCursorPosition();
-			var position = ClassLibrary.Controls.PositionSettings.ConvertToDiu(point);
 			// Create the window and set its Info
 			var ai = new AiWindowInfo();
 			ai.LoadInfo(point);
 			// Show the window.
 			var win = new AiWindow();
 			win.Info = ai;
-			win.Left = position.X;
-			win.Top = position.Y;
+			win.Left = wpfPosition.X;
+			win.Top = wpfPosition.Y;
 			win.ElementPathTextBox.Text = ai.ElementPath;
 			win.UpdateTokenCount();
 			// Show the window first
 			win.Show();
-			// Activate the window to ensure it has focus
-			win.Activate();
 			// Adjust the window position so that the caret is under the mouse cursor
 			win.Dispatcher.BeginInvoke(new Action(() =>
 			{
+				if (!string.IsNullOrWhiteSpace(ai.SelectedText))
+					win.SelectionCheckBox.IsChecked = true;
+				else if (!string.IsNullOrWhiteSpace(ai.DocumentText))
+					win.DocumentCheckBox.IsChecked = true;
 				// Access the inner TextBox if DataTextBox is a custom control
 				var box = win.DataTextBox.PART_ContentTextBox;
-				// Set focus to the TextBox
-				box.Focus();
-				Keyboard.Focus(box);
-				box.Text = " ";
-				box.Text = "";
 				// Get the caret position in screen coordinates
 				var caretScreenPoint = win.GetCaretScreenPoint(box);
 				var caretScreenPosition = ClassLibrary.Controls.PositionSettings.ConvertToDiu(caretScreenPoint);
@@ -93,8 +90,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				var offsetX = caretScreenPosition.X - win.Left;
 				var offsetY = caretScreenPosition.Y - win.Top;
 				// Adjust the window's Left and Top properties so that the caret is under the mouse position
-				win.Left = position.X - offsetX;
-				win.Top = position.Y - offsetY;
+				win.Left = wpfPosition.X - offsetX;
+				win.Top = wpfPosition.Y - offsetY;
+				// Activate the window to ensure it has focus
+				win.Activate();
+				// Set focus to the TextBox
+				box.Focus();
+				Keyboard.Focus(box);
+				_ = ClassLibrary.Helper.Debounce(win.HideCursor, 100);
 			}), DispatcherPriority.Loaded);
 			return win;
 		}
@@ -128,7 +131,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			// Update document tokens count.
 			var documentTokens = Companions.ClientHelper.CountTokens(Info?.DocumentText, null);
 			var documentText = documentTokens == 0 ? "" : $"({documentTokens})";
-			ControlsHelper.SetText(SelectionCountLabel, documentText);
+			ControlsHelper.SetText(DocumentCountLabel, documentText);
 		}
 
 		#region
@@ -172,6 +175,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			copy.CanvasEditorElementPath = Info.ElementPath;
 			copy.Created = DateTime.Now;
 			copy.Modified = copy.Created;
+			var messages = new List<string>();
+			if (SelectionCheckBox.IsChecked == true)
+				messages.Add(MarkdownHelper.CreateMarkdownCodeBlock(Info.SelectedText, "text"));
+			if (DocumentCheckBox.IsChecked == true)
+				messages.Add(MarkdownHelper.CreateMarkdownCodeBlock(Info.DocumentText, "text"));
+			var elementDescrition = "This is path to the used selected element on UI\r\n";
+			elementDescrition += MarkdownHelper.CreateMarkdownCodeBlock(Info.ElementPath, "text");
+			messages.Add(elementDescrition);
+			messages.Add(DataTextBox.PART_ContentTextBox.Text);
+			copy.Text += string.Join("\r\n\r\n", messages);
 			Global.InsertItem(copy, ItemType.Task);
 			selection.Add(copy.Name);
 			// Select new task in the tasks list on the [Tasks] tab.
@@ -179,6 +192,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			settings.ListSelection = selection;
 			settings.Focus = true;
 			Global.RaiseOnTasksUpdated();
+			Close();
 		}
 
 		#endregion
@@ -193,6 +207,51 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				e.Handled = true;
 			}
 		}
+
+		#region Cursor
+
+		void HideCursor()
+		{
+			Dispatcher.BeginInvoke(new Action(() =>
+			{
+				// Hide the cursor globally within the application
+				Mouse.OverrideCursor = Cursors.None;
+				// Set up the mouse move event handler
+				MouseMove += AiWindow_MouseMove;
+				Closing += AiWindow_Closing;
+				Unloaded += AiWindow_Unloaded;
+				DataTextBox.PART_ContentTextBox.LostFocus += PART_ContentTextBox_LostFocus;
+				Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+			}));
+		}
+
+		private void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+			=> ShowCursor();
+
+		private void PART_ContentTextBox_LostFocus(object sender, RoutedEventArgs e)
+			=> ShowCursor();
+
+		private void AiWindow_Unloaded(object sender, RoutedEventArgs e)
+			=> ShowCursor();
+
+		private void AiWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+			=> ShowCursor();
+
+		private void AiWindow_MouseMove(object sender, MouseEventArgs e)
+			=> ShowCursor();
+
+		private void ShowCursor()
+		{
+			// Restore the cursor globally within the application
+			Mouse.OverrideCursor = null;
+			MouseMove -= AiWindow_MouseMove;
+			Closing -= AiWindow_Closing;
+			Unloaded -= AiWindow_Unloaded;
+			DataTextBox.PART_ContentTextBox.LostFocus -= PART_ContentTextBox_LostFocus;
+			Application.Current.DispatcherUnhandledException -= Current_DispatcherUnhandledException;
+		}
+
+		#endregion
 
 	}
 }

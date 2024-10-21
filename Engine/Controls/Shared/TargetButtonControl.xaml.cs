@@ -2,7 +2,6 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Processes;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -28,8 +27,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			mouseHandler = new MouseGlobalHook();
 			mouseHandler.MouseUp += MouseHandler_MouseUp;
 			mouseHandler.MouseMove += MouseHandler_MouseMove;
-			PositionSettings.NativeMethods.GetProcessDpiAwareness(Process.GetCurrentProcess().Handle, out var awareness);
-			TypTextBox.Text = awareness.ToString();
 		}
 
 		public event EventHandler<TargetSelectedEventArgs> TargetSelected;

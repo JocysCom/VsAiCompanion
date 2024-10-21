@@ -24,8 +24,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return;
 			UpdateControlButtons();
 			UpdateMessageEdit();
-			AppControlsHelper.AllowDrop(DataTextBox.PART_ContentTextBox, true);
-			AppControlsHelper.AllowDrop(DataInstructionsTextBox.PART_ContentTextBox, true);
+			var boxes = new PlaceholderTextBox[] { DataInstructionsTextBox, DataTextBox, RisenRoleTextBox, RisenInstructionsTextBox, RisenStepsTextBox, RisenEndGoalTextBox, RisenNarrowingTextBox };
+			foreach (var box in boxes)
+			{
+				AppControlsHelper.AllowDrop(box.PART_ContentTextBox, true);
+				AppControlsHelper.AllowPasteFiles(box.PART_ContentTextBox, true);
+			}
 		}
 
 		public string EditMessageId
@@ -51,17 +55,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				return;
 			if (ControlsHelper.AllowLoad(this))
 			{
-				var boxes = new PlaceholderTextBox[] { RisenRoleTextBox, RisenInstructionsTextBox, RisenStepsTextBox, RisenEndGoalTextBox, RisenNarrowingTextBox };
-				foreach (var box in boxes)
-				{
-					box.Background = box.PART_ContentTextBox.Background;
-					box.PART_ContentTextBox.BorderThickness = new Thickness(0);
-					box.PART_ContentTextBox.Margin = new Thickness(3);
-					box.PART_ContentTextBox.Padding = new Thickness(10, 7, 10, 7);
-					box.PART_PlaceholderTextBox.BorderThickness = new Thickness(0);
-					box.PART_PlaceholderTextBox.Margin = new Thickness(3);
-					box.PART_PlaceholderTextBox.Padding = new Thickness(14, 7, 10, 7);
-				}
+				//var boxes = new PlaceholderTextBox[] { RisenRoleTextBox, RisenInstructionsTextBox, RisenStepsTextBox, RisenEndGoalTextBox, RisenNarrowingTextBox };
+				//foreach (var box in boxes)
+				//{
+				//	box.PART_ContentTextBox.BorderThickness = new Thickness(0);
+				//	box.PART_ContentTextBox.Margin = new Thickness(3);
+				//	box.PART_ContentTextBox.Padding = new Thickness(10, 7, 10, 7);
+				//	box.PART_PlaceholderTextBox.BorderThickness = new Thickness(0);
+				//	box.PART_PlaceholderTextBox.Margin = new Thickness(3);
+				//	box.PART_PlaceholderTextBox.Padding = new Thickness(14, 7, 10, 7);
+				//}
 				AppHelper.InitHelp(this);
 				UiPresetsManager.InitControl(this, true,
 					new FrameworkElement[] {

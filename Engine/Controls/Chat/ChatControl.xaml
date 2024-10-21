@@ -24,6 +24,14 @@
 				<ResourceDictionary Source="../../Resources/Icons/Icons_Default.xaml" />
 				<ResourceDictionary Source="../../Resources/MainResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
+			<SolidColorBrush x:Key="InstructionsBackgroundBrush" Color="#E6F7FF" />
+			<SolidColorBrush x:Key="PlaceholderBackgroundBrush" Color="#E6F6E6" />
+			<SolidColorBrush x:Key="RisenRoleBackgroundBrush" Color="#E6FFE6" />
+			<SolidColorBrush x:Key="RisenInstructionsBackgroundBrush" Color="#FFFFE6" />
+			<SolidColorBrush x:Key="RisenStepsBackgroundBrush" Color="#FFF3E6" />
+			<SolidColorBrush x:Key="RisenEndGoalBackgroundBrush" Color="#F3E6FF" />
+			<SolidColorBrush x:Key="RisenNarrowingBackgroundBrush" Color="#FFE6F2" />
+			<SolidColorBrush x:Key="NewBackgroundBrush" Color="#FFE6F7" />
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
 			<Style x:Key="RoundCornerRed" TargetType="{x:Type Button}">
 				<Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -245,7 +253,7 @@
 								SelectionChanged="MainTabControl_SelectionChanged"
 								TabStripPlacement="Bottom">
 								<!--  Instructions  -->
-								<TabItem x:Name="ChatInstructionsTabItem" x:FieldModifier="public">
+								<TabItem x:Name="ChatInstructionsTabItem" x:FieldModifier="public" Background="{StaticResource InstructionsBackgroundBrush}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE713;" />
@@ -255,6 +263,7 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="DataInstructionsTextBox"
+										Background="{StaticResource InstructionsBackgroundBrush}"
 										IsInTab="True"
 										PlaceholderText="Type instructions"
 										PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
@@ -271,6 +280,7 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="DataTextBox"
+										Background="White"
 										IsInTab="True"
 										PlaceholderText="{Binding TextPlaceholder, UpdateSourceTrigger=PropertyChanged}"
 										PreviewKeyDown="DataTextBox_PreviewKeyDown"
@@ -278,8 +288,12 @@
 										Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
 										TextChanged="DataTextBox_TextChanged" />
 								</TabItem>
-								<!--  Message  -->
-								<TabItem x:Name="MessagePlaceholderTabItem" x:FieldModifier="public" IsSelected="True">
+								<!--  Placeholder  -->
+								<TabItem
+									x:Name="MessagePlaceholderTabItem"
+									x:FieldModifier="public"
+									Background="{StaticResource PlaceholderBackgroundBrush}"
+									IsSelected="True">
 									<TabItem.Header>
 										<StackPanel Opacity="0.5" Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE70B;" />
@@ -289,6 +303,7 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="MessagePlaceholderTextBox"
+										Background="{StaticResource PlaceholderBackgroundBrush}"
 										IsInTab="True"
 										PlaceholderText="{StaticResource main_Text_Placeholder}"
 										PreviewKeyDown="DataTextBox_PreviewKeyDown"
@@ -298,7 +313,11 @@
 								</TabItem>
 
 								<!--  Role (R) Tab  -->
-								<TabItem x:Name="RisenRoleTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem
+									x:Name="RisenRoleTabItem"
+									x:FieldModifier="public"
+									Background="{StaticResource RisenRoleBackgroundBrush}"
+									Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE77B;" />
@@ -308,12 +327,17 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="RisenRoleTextBox"
+										Background="{StaticResource RisenRoleBackgroundBrush}"
 										IsInTab="True"
 										PlaceholderText="{StaticResource main_RISEN_Role_Help}"
 										ToolTip="{StaticResource main_RISEN_Role_Example}" />
 								</TabItem>
 								<!--  Instructions (I) Tab  -->
-								<TabItem x:Name="RisenInstructionsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem
+									x:Name="RisenInstructionsTabItem"
+									x:FieldModifier="public"
+									Background="{StaticResource RisenInstructionsBackgroundBrush}"
+									Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE70F;" />
@@ -323,12 +347,17 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="RisenInstructionsTextBox"
+										Background="{StaticResource RisenInstructionsBackgroundBrush}"
 										IsInTab="True"
 										PlaceholderText="{StaticResource main_RISEN_Instructions_Help}"
 										ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
 								</TabItem>
 								<!--  Steps (S) Tab  -->
-								<TabItem x:Name="RisenStepsTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem
+									x:Name="RisenStepsTabItem"
+									x:FieldModifier="public"
+									Background="{StaticResource RisenStepsBackgroundBrush}"
+									Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE14C;" />
@@ -338,12 +367,17 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="RisenStepsTextBox"
+										Background="{StaticResource RisenStepsBackgroundBrush}"
 										IsInTab="True"
 										PlaceholderText="{StaticResource main_RISEN_Steps_Help}"
 										ToolTip="{StaticResource main_RISEN_Steps_Example}" />
 								</TabItem>
 								<!--  End Goal (E) Tab  -->
-								<TabItem x:Name="RisenEndGoalTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem
+									x:Name="RisenEndGoalTabItem"
+									x:FieldModifier="public"
+									Background="{StaticResource RisenEndGoalBackgroundBrush}"
+									Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE908;" />
@@ -353,12 +387,17 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="RisenEndGoalTextBox"
+										Background="{StaticResource RisenEndGoalBackgroundBrush}"
 										IsInTab="True"
 										PlaceholderText="{StaticResource main_RISEN_EndGoal_Help}"
 										ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
 								</TabItem>
 								<!--  Narrowing (N) Tab  -->
-								<TabItem x:Name="RisenNarrowingTabItem" x:FieldModifier="public" Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
+								<TabItem
+									x:Name="RisenNarrowingTabItem"
+									x:FieldModifier="public"
+									Background="{StaticResource RisenNarrowingBackgroundBrush}"
+									Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 									<TabItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE71C;" />
@@ -368,6 +407,7 @@
 									</TabItem.Header>
 									<JcControls:PlaceholderTextBox
 										x:Name="RisenNarrowingTextBox"
+										Background="{StaticResource RisenNarrowingBackgroundBrush}"
 										IsInTab="True"
 										PlaceholderText="{StaticResource main_RISEN_Narrowing_Help}"
 										ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />

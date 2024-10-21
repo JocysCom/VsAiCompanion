@@ -14,7 +14,6 @@
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	PreviewKeyDown="This_PreviewKeyDown"
 	SizeToContent="WidthAndHeight"
-	TextOptions.TextFormattingMode="Display"
 	Topmost="True"
 	UseLayoutRounding="True"
 	WindowState="Normal"
@@ -67,17 +66,17 @@
 				Opacity="0.5"
 				Style="{StaticResource IconTextStyle}"
 				Text="&#xE723;" />
-			<CheckBox IsChecked="{Binding AttachSelection}" Opacity="0.5">
+			<CheckBox x:Name="SelectionCheckBox" IsChecked="{Binding AttachSelection}" Opacity="0.5">
 				<CheckBox.Content>
-					<StackPanel>
+					<StackPanel Orientation="Horizontal">
 						<Label Content="{StaticResource main_Selection}" />
 						<Label x:Name="SelectionCountLabel" x:FieldModifier="public" />
 					</StackPanel>
 				</CheckBox.Content>
 			</CheckBox>
-			<CheckBox IsChecked="{Binding AttachDocument}" Opacity="0.5">
+			<CheckBox x:Name="DocumentCheckBox" IsChecked="{Binding AttachDocument}" Opacity="0.5">
 				<CheckBox.Content>
-					<StackPanel>
+					<StackPanel Orientation="Horizontal">
 						<Label Content="{StaticResource main_Document}" />
 						<Label x:Name="DocumentCountLabel" x:FieldModifier="public" />
 					</StackPanel>
@@ -92,6 +91,7 @@
 			Padding="0"
 			x:FieldModifier="public"
 			MaxLines="4"
-			TextWrapping="Wrap" />
+			TextWrapping="Wrap"
+			Visibility="Collapsed" />
 	</Grid>
 </Window>

@@ -10,6 +10,7 @@
 	-->
 	<!--  Colors  -->
 
+	<SolidColorBrush x:Key="BackgroundTransparent" Color="Transparent" />
 	<SolidColorBrush x:Key="BackgroundWhite" Color="#ffffff" />
 	<SolidColorBrush x:Key="BackgroundLight" Color="#f0f0f0" />
 	<SolidColorBrush x:Key="BackgroundDark" Color="#dedede" />
@@ -726,6 +727,7 @@
 			<Style TargetType="TabItem">
 				<Setter Property="SnapsToDevicePixels" Value="True" />
 				<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_TabItem}" />
+				<Setter Property="Background" Value="{StaticResource BackgroundWhite}" />
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="TabItem">
@@ -766,9 +768,10 @@
 							<!--  Triggers for TabItem  -->
 							<ControlTemplate.Triggers>
 								<Trigger Property="IsSelected" Value="True">
-									<Setter TargetName="TiBorder" Property="Background" Value="{StaticResource BackgroundWhite}" />
+									<!--  Use Binding instead of TemplateBinding  -->
+									<Setter TargetName="TiBorder" Property="Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
 									<Setter TargetName="TiBorder" Property="BorderBrush" Value="{StaticResource BorderDark}" />
-									<Setter TargetName="BoBorder" Property="BorderBrush" Value="{StaticResource BackgroundWhite}" />
+									<Setter TargetName="BoBorder" Property="BorderBrush" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
 								</Trigger>
 								<MultiTrigger>
 									<MultiTrigger.Conditions>

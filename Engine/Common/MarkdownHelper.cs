@@ -46,15 +46,21 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return language;
 		}
 
-		public static string CreateMarkdownCodeBlock(string filePath, string fileContent, string mimeType = null)
+		public static string CreateMarkdownCodeBlock(string contents, string language)
 		{
-			var language = GetMarkdownLanguage(filePath, mimeType);
 			// Find the maximum number of consecutive backticks in the content
-			var maxBackticksInContent = GetMaxConsecutiveCharCount(fileContent, '`');
+			var maxBackticksInContent = GetMaxConsecutiveCharCount(contents, '`');
 			// Determine the number of backticks to use in the code fence
 			var backtickCount = Math.Max(3, maxBackticksInContent + 1);
 			var backticks = new string('`', backtickCount);
-			return $"{backticks}{language}\n{fileContent}\n{backticks}";
+			return $"{backticks}{language}\n{contents}\n{backticks}";
+		}
+
+
+		public static string CreateMarkdownCodeBlock(string filePath, string fileContent, string mimeType)
+		{
+			var language = GetMarkdownLanguage(filePath, mimeType);
+			return CreateMarkdownCodeBlock(fileContent, language);
 		}
 
 		private static int GetMaxConsecutiveCharCount(string input, char charToCount)

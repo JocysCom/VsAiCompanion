@@ -19,14 +19,16 @@
 			<Style x:Key="_ContentDefault" BasedOn="{StaticResource TextBox_Default}" TargetType="{x:Type TextBox}" />
 			<Style x:Key="_ContentInTab" BasedOn="{StaticResource TextBox_Default}" TargetType="{x:Type TextBox}">
 				<Setter Property="Margin" Value="3" />
+				<Setter Property="Background" Value="Transparent" />
 				<Setter Property="BorderThickness" Value="0" />
 				<Setter Property="Padding" Value="10,7,10,7" />
 			</Style>
 
 			<!--  InTab Styles  -->
 			<Style x:Key="_GridInTab" TargetType="{x:Type Grid}">
-				<Setter Property="Background" Value="White" />
+				<Setter Property="Background" Value="Transparent" />
 			</Style>
+
 			<Style x:Key="_PlaceholderStyle" BasedOn="{StaticResource TextBox_Default}" TargetType="{x:Type TextBox}">
 				<Setter Property="Visibility" Value="Collapsed" />
 				<Style.Triggers>
@@ -58,6 +60,7 @@
 			<Style x:Key="_PlaceholderDefault" BasedOn="{StaticResource _PlaceholderStyle}" TargetType="{x:Type TextBox}" />
 			<Style x:Key="_PlaceholderInTab" BasedOn="{StaticResource _PlaceholderStyle}" TargetType="{x:Type TextBox}">
 				<Setter Property="Margin" Value="3" />
+				<Setter Property="Background" Value="Transparent" />
 				<Setter Property="BorderThickness" Value="0" />
 				<Setter Property="Padding" Value="12,7,10,7" />
 			</Style>
