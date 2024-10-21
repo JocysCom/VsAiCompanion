@@ -344,6 +344,8 @@ $xaml.Root.RemoveNodes();
 
 # Start <ResourceName>.xaml.cs file.
 [File]::WriteAllText($fileNameCs, "using System.Windows;`r`n");
+# Wait, because the file might be locked for a moment after using WriteAllText.
+Start-Sleep -Milliseconds 100
 [File]::AppendAllText($fileNameCs, "`r`n");
 [File]::AppendAllText($fileNameCs, "namespace $namespace`r`n");
 [File]::AppendAllText($fileNameCs, "{`r`n");

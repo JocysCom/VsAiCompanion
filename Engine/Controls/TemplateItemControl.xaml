@@ -488,7 +488,7 @@
 				<TabItem x:Name="CanvasTabItem" x:FieldModifier="public">
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
-							<ContentControl Content="{StaticResource Icon_painters_palette}" />
+							<ContentControl Content="{StaticResource Icon_window_text}" />
 							<Label Content="Canvas" />
 						</StackPanel>
 					</TabItem.Header>

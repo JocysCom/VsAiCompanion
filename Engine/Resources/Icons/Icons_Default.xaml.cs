@@ -1,4 +1,5 @@
 using System.Windows;
+
 namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 {
 	partial class Icons_Default : ResourceDictionary
@@ -148,7 +149,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_windows = nameof(Icon_windows);
 		public const string Icon_window_panel_left = nameof(Icon_window_panel_left);
 		public const string Icon_window_panel_top = nameof(Icon_window_panel_top);
+		public const string Icon_window_picture = nameof(Icon_window_picture);
 		public const string Icon_window_split_hor = nameof(Icon_window_split_hor);
+		public const string Icon_window_text = nameof(Icon_window_text);
 
 	}
 }

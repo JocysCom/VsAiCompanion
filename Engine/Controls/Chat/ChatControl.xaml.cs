@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
@@ -202,11 +201,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private void This_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			UpdateMaxSize();
 		}
 
 		private void DataInstructionsPanel_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			UpdateMaxSize();
 		}
 
@@ -214,8 +217,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private void UpdateMaxSize()
 		{
-			if (SuspendUpdateMaxSize)
-				return;
 			var maxHeight = Math.Round(ActualHeight * (MessageMaxHeightOverride ?? 0.4));
 			foreach (var item in SelectionControls)
 				item.Box.MaxHeight = maxHeight;
@@ -305,6 +306,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			var tab = MainTabControl.SelectedItem as TabItem;
 			if (tab == null)
 				return;
@@ -403,6 +406,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public void LoadSelection(TextBox box)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			var selection = GetSelectionByBox(box);
 			// Set logical focus
 			box.Focus();
@@ -420,6 +425,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public void SaveSelection(TextBox box)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			var selection = GetSelectionByBox(box);
 			if (selection is null)
 				return;
@@ -499,20 +506,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		private void ExpandMessageButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			//if (MessageMaxHeightOverride is null)
-			//{
-			//	MainGrid.Visibility = Visibility.Collapsed;
-			//	MessageMaxHeightOverride = 1.0;
-			//	ExpandButtonContentControl.Content = Resources["Icon_Minimize"];
-			//}
-			//else
-			//{
-			//	MessageMaxHeightOverride = null;
-			//	ExpandButtonContentControl.Content = Resources["Icon_Maximize"];
-			//	MainGrid.Visibility = Visibility.Visible;
-			//}
-			//UpdateMaxSize();
-			ApplyExpand(ChatInputGrid, ExpandButton, ExpandButtonContentControl);
+			ControlsHelper.IsOnCooldown(sender);
+			MaximizeAndNormal();
 		}
 
 		private void DataInstructionsTextBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -537,55 +532,48 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
-		public bool SuspendUpdateMaxSize;
-		public int MaximizedControl;
+		bool expanded = false;
 
-		FrameworkElement _prevParent;
-		FrameworkElement _prevElement;
-		int _prevIndex;
-
-		public void ApplyExpand(FrameworkElement element, Button button, ContentControl buttonContent)
+		public void MaximizeAndNormal()
 		{
-			if (_prevElement == null)
+			if (expanded)
 			{
-				MessageMaxHeightOverride = 1.0;
+				// Limit chat input.
+				MessageMaxHeightOverride = null;
 				UpdateMaxSize();
-				SuspendUpdateMaxSize = true;
-				MainGrid.Visibility = Visibility.Collapsed;
-				Maximize(element, ControlGrid);
-				buttonContent.Content = Resources["Icon_Minimize"];
+				ExpandRow(0);
+				ExpandButtonContentControl.Content = Resources["Icon_Maximize"];
+				MessagesPanelBorder.Visibility = Visibility.Visible;
 			}
 			else
 			{
-				SuspendUpdateMaxSize = false;
-				MessageMaxHeightOverride = null;
+				// Expand chat input.
+				MessageMaxHeightOverride = double.PositiveInfinity;
 				UpdateMaxSize();
-				MainGrid.Visibility = Visibility.Visible;
-				Restore(_prevElement);
-				buttonContent.Content = Resources["Icon_Maximize"];
+				ExpandRow(1);
+				ExpandButtonContentControl.Content = Resources["Icon_Minimize"];
+				MessagesPanelBorder.Visibility = Visibility.Collapsed;
 			}
+			expanded = !expanded;
 		}
 
-		private void Maximize(FrameworkElement element, Panel newParent)
+		public void ExpandRow(int rowIndex)
 		{
-			_prevParent = VisualTreeHelper.GetParent(element) as FrameworkElement;
-			if (_prevParent is Panel panel)
-				_prevIndex = panel.Children.IndexOf(element);
-			// Remove from current parent.
-			ControlsHelper.RemoveFromParent(element);
-			newParent.Children.Add(element);
-			_prevElement = element;
-		}
 
-		private void Restore(FrameworkElement element)
-		{
-			// Remove from current parent.
-			ControlsHelper.RemoveFromParent(element);
-			if (_prevParent is Panel panel)
-				panel.Children.Insert(_prevIndex, element);
-			if (_prevParent is Border border)
-				border.Child = element;
-			_prevElement = null;
+			// Iterate over all RowDefinitions in the MainGrid
+			for (int i = 0; i < MainGrid.RowDefinitions.Count; i++)
+			{
+				if (i == rowIndex)
+				{
+					// Set the Height of the specified row to Star (*)
+					MainGrid.RowDefinitions[i].Height = new GridLength(1, GridUnitType.Star);
+				}
+				else
+				{
+					// Set the Height of all other rows to Auto
+					MainGrid.RowDefinitions[i].Height = GridLength.Auto;
+				}
+			}
 		}
 
 		#endregion
