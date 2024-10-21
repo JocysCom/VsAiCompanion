@@ -187,21 +187,6 @@ namespace JocysCom.ClassLibrary.Controls
 			return new Rect(location, size);
 		}
 
-		public static Point ScreenToWpf(Point screenPoint)
-		{
-			PresentationSource source = PresentationSource.FromVisual(System.Windows.Application.Current.MainWindow);
-			if (source != null)
-			{
-				Matrix transform = source.CompositionTarget.TransformFromDevice;
-				return transform.Transform(screenPoint);
-			}
-			else
-			{
-				return screenPoint;
-			}
-		}
-
-
 		/// <summary>
 		/// Retrieves the scaling factors (DPI scaling) at the specified point by determining the monitor's DPI settings.
 		/// </summary>
@@ -245,6 +230,25 @@ namespace JocysCom.ClassLibrary.Controls
 			double scaleX = dpiX / 96.0;
 			double scaleY = dpiY / 96.0;
 			return (scaleX, scaleY);
+		}
+
+		/// <summary>
+		/// Get cursor position for Windows Forms, relative to the virtual screen (all monitors).
+		/// </summary>
+		public static System.Drawing.Point GetFormsCursorPosition()
+		{
+			return System.Windows.Forms.Cursor.Position;
+		}
+
+		/// <summary>
+		/// Get cursor position for WPF forms, relative to the virtual screen (all monitors).
+		/// </summary>
+		public static Point GetWpfCursorPosition()
+		{
+			var p = System.Windows.Forms.Cursor.Position;
+			var frmPosition = new System.Windows.Point(p.X, p.Y);
+			var wpfPosition = ConvertToDiu(frmPosition);
+			return wpfPosition;
 		}
 
 		/// <summary>

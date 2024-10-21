@@ -83,10 +83,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			{
 				System.Diagnostics.Debug.WriteLine(nameof(StartTargeting));
 				TargetIcon.Visibility = Visibility.Hidden;
-				// Get the current cursor position.
-				// 'position' is in device units (physical pixels), relative to the virtual screen (all monitors).
-				var point = MouseGlobalHook.GetCursorPosition();
-				MoveOverlayWindow(point);
+				var wpfPosition = PositionSettings.GetWpfCursorPosition();
+				MoveOverlayWindow(wpfPosition);
 				overlayWindow.Width = TargetIcon.ActualWidth;
 				overlayWindow.Height = TargetIcon.ActualHeight;
 				// Hide parent window
@@ -124,26 +122,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 		/// Move overlay window under the point.
 		/// </summary>
 		/// <param name="p">Position is in device units (physical pixels), relative to the virtual screen (all monitors).</param>
-		void MoveOverlayWindow(Point p)
+		void MoveOverlayWindow(Point wpfPosition)
 		{
-			var fp = System.Windows.Forms.Cursor.Position; // Correct position.
-			p = new Point(fp.X, fp.Y);
-			// Convert the point to device-independent units (DIPs) and scaling factors.
-			var position = PositionSettings.ConvertToDiu(p);
-			var scaling = PositionSettings.GetScalingFactorsAtPoint(p);
-
-			// Mouse position is only relevant to top window.
-			//var mousePosition = Mouse.GetPosition(null);
-			PixTextBox.Text = $"P[{p.X};{p.Y}]";
-			DuiTextBox.Text = $"D[{position.X};{position.Y}]";
-			FrmTextBox.Text = $"F[{fp.X};{fp.Y}]";
-			ScaTextBox.Text = $"S[{scaling.scaleX};{scaling.scaleY}]";
-			//MouTextBox.Text = $"[{mousePosition.X};{mousePosition.Y}]";
-			// 'p' is in device units (physical pixels), relative to the virtual screen (all monitors).
-			// Convert the point to device-independent units (DIPs).
-			// Note: This conversion may not account for per-monitor DPI scaling differences.
-			overlayWindow.Left = position.X - overlayWindow.Width / 2;
-			overlayWindow.Top = position.Y - overlayWindow.Height / 2;
+			overlayWindow.Left = wpfPosition.X - overlayWindow.Width / 2;
+			overlayWindow.Top = wpfPosition.Y - overlayWindow.Height / 2;
 		}
 
 		// Add this field to keep track of the previous element under the cursor
@@ -151,24 +133,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 		private AutomationElement _previousEditorElement = null;
 		private Point _previousMousePosition;
 
-		void UpdateTarget(Point point)
+		void UpdateTarget(Point position)
 		{
-			System.Diagnostics.Debug.WriteLine($"{nameof(UpdateTarget)}: {point}");
+			System.Diagnostics.Debug.WriteLine($"{nameof(UpdateTarget)}: {position}");
 			// Use Dispatcher to invoke the UI Automation call on the UI thread
 			Dispatcher.BeginInvoke(new Action(() =>
 			{
-				MoveOverlayWindow(point);
+				var wpfPosition = PositionSettings.GetWpfCursorPosition();
+				MoveOverlayWindow(wpfPosition);
 				// Identify the control under the cursor
 				// 'point' is in device units (physical pixels), relative to the virtual screen (all monitors).
-				var currentWindowElement = MouseGlobalHook.GetWindowElementFromPoint(point);
+				var currentWindowElement = MouseGlobalHook.GetWindowElementFromPoint(position);
 				// Get the AutomationElement directly from the screen point.
 				// Note: 'AutomationElement.FromPoint' expects screen coordinates in physical pixels.
-				var currentEditorElement = AutomationElement.FromPoint(point);
+				var currentEditorElement = AutomationElement.FromPoint(position);
 				_previousWindowElement = currentWindowElement;
-				_previousMousePosition = point;
+				_previousMousePosition = position;
 				WindowName.Text = ShowElementData(currentWindowElement, "Window");
 				_previousEditorElement = currentEditorElement;
-				_previousMousePosition = point;
+				_previousMousePosition = position;
 				HighlightElement(currentEditorElement);
 				EditorName.Text = ShowElementData(currentEditorElement, "Editor");
 			}));
@@ -184,9 +167,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				LastMoveOverlayWindowUpdateDate = now;
 				Dispatcher.BeginInvoke(new Action(() =>
 				{
-					// Move the overlay window on the UI thread
-					// 'e.Point' is in device units (physical pixels), relative to the virtual screen.
-					MoveOverlayWindow(e.Point);
+					var wpfPosition = PositionSettings.GetWpfCursorPosition();
+					MoveOverlayWindow(wpfPosition);
 				}));
 			}
 			_ = Helper.Debounce(UpdateTarget, e.Point, 250);
