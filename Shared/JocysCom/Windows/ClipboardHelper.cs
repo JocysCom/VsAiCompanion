@@ -2,10 +2,12 @@
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace JocysCom.ClassLibrary.Windows
 {
@@ -191,9 +193,9 @@ namespace JocysCom.ClassLibrary.Windows
 		}
 
 		/// <summary>
-		/// Looks for svg image, svg text and svg file.
+		/// Get content as text from, clipbpoars. If content is binary then return path to tem file content.
 		/// </summary>
-		public static string GetContentFromClipboard(string fileExtension)
+		public static string GetContentFromClipboard(string fileExtension, string tempFolder = null)
 		{
 			var ext = fileExtension.ToLower();
 			var dataObject = Clipboard.GetDataObject();
@@ -214,6 +216,50 @@ namespace JocysCom.ClassLibrary.Windows
 				{
 					if (ext == ".svg")
 						return contents;
+				}
+			}
+			// Try to get binary content like images...
+			if (dataObject.GetDataPresent(DataFormats.Bitmap))
+			{
+				var image = (System.Drawing.Image)dataObject.GetData(DataFormats.Bitmap);
+				if (image != null)
+				{
+					// Ensure temp folder is created
+					if (tempFolder == null)
+						tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+					Directory.CreateDirectory(tempFolder);
+					var imageFileName = Path.GetRandomFileName() + ext;
+					var tempFilePath = Path.Combine(tempFolder, imageFileName);
+
+					// Map extension to ImageFormat
+					ImageFormat imageFormat;
+					switch (ext)
+					{
+						case ".bmp":
+							imageFormat = ImageFormat.Bmp;
+							break;
+						case ".jpg":
+						case ".jpeg":
+							imageFormat = ImageFormat.Jpeg;
+							break;
+						case ".png":
+							imageFormat = ImageFormat.Png;
+							break;
+						case ".gif":
+							imageFormat = ImageFormat.Gif;
+							break;
+						case ".tif":
+						case ".tiff":
+							imageFormat = ImageFormat.Tiff;
+							break;
+						default:
+							// Default to PNG format if extension is unrecognized
+							imageFormat = ImageFormat.Png;
+							break;
+					}
+					// Save image to temp file
+					image.Save(tempFilePath, imageFormat);
+					return tempFilePath;
 				}
 			}
 			// Try to get content from FileDrop
@@ -239,6 +285,97 @@ namespace JocysCom.ClassLibrary.Windows
 					}
 				}
 			}
+			return null;
+		}
+
+		/// <summary>
+		/// Gets an image from the clipboard and saves it to a temporary file.
+		/// Returns the path to the temporary image file.
+		/// </summary>
+		/// <param name="tempFolder">Optional. The folder where the temporary file should be saved. If null, a new temp folder will be created.</param>
+		/// <returns>The path to the temporary image file if an image is found; otherwise, null.</returns>
+		public static string GetImageFromClipboard(string tempFolder = null)
+		{
+			try
+			{
+				// Check if the clipboard contains image data
+				if (Clipboard.ContainsImage())
+				{
+					// Retrieve the image from the clipboard
+					BitmapSource bitmapSource = Clipboard.GetImage();
+					if (bitmapSource != null)
+					{
+						// Determine the image format and extension
+						// By default, we will use PNG
+						string extension = ".png";
+						BitmapEncoder encoder = new PngBitmapEncoder();
+
+						// Optionally, check for more specific image formats in the clipboard data
+						IDataObject dataObject = Clipboard.GetDataObject();
+						if (dataObject != null)
+						{
+							if (dataObject.GetDataPresent("PNG"))
+							{
+								extension = ".png";
+								encoder = new PngBitmapEncoder();
+							}
+							else if (dataObject.GetDataPresent("JFIF"))
+							{
+								extension = ".jpg";
+								encoder = new JpegBitmapEncoder();
+							}
+							else if (dataObject.GetDataPresent("GIF"))
+							{
+								extension = ".gif";
+								encoder = new GifBitmapEncoder();
+							}
+							else if (dataObject.GetDataPresent("TIFF"))
+							{
+								extension = ".tif";
+								encoder = new TiffBitmapEncoder();
+							}
+							else if (dataObject.GetDataPresent(DataFormats.Dib))
+							{
+								extension = ".bmp";
+								encoder = new BmpBitmapEncoder();
+							}
+							else
+							{
+								// Default to PNG format
+								extension = ".png";
+								encoder = new PngBitmapEncoder();
+							}
+						}
+
+						// Ensure the temporary folder is created
+						if (string.IsNullOrEmpty(tempFolder))
+						{
+							tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+						}
+						Directory.CreateDirectory(tempFolder);
+
+						// Generate a random file name with the appropriate extension
+						string imageFileName = Path.GetRandomFileName() + extension;
+						string tempFilePath = Path.Combine(tempFolder, imageFileName);
+
+						// Save the image to the temporary file
+						using (FileStream fs = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write))
+						{
+							encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+							encoder.Save(fs);
+						}
+
+						return tempFilePath;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				// Handle exceptions (e.g., access denied to clipboard)
+				System.Diagnostics.Debug.WriteLine($"Error accessing clipboard image: {ex.Message}");
+			}
+
+			// Return null if no image is found or an error occurs
 			return null;
 		}
 
