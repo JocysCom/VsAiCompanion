@@ -21,13 +21,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			InitControlsAllowedToRememer();
 			UpdateControlButtons();
 			UpdateMessageEdit();
-			var boxes = new PlaceholderTextBox[] { DataInstructionsTextBox, DataTextBox, RisenRoleTextBox, RisenInstructionsTextBox, RisenStepsTextBox, RisenEndGoalTextBox, RisenNarrowingTextBox };
-			foreach (var box in boxes)
+			foreach (var item in SelectionControls)
 			{
-				AppControlsHelper.AllowDrop(box.PART_ContentTextBox, true);
-				AppControlsHelper.AllowPasteFiles(box.PART_ContentTextBox, true);
+				AppControlsHelper.AllowDrop(item.Box, true);
+				AppControlsHelper.AllowPasteFiles(item.Box, true);
 			}
 		}
 
@@ -322,8 +322,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		public void MonitorTextBoxSelections(bool enable)
 		{
-			if (SelectionControls is null)
-				InitControlsAllowedToRememer();
 			foreach (var item in SelectionControls)
 			{
 				if (enable)
