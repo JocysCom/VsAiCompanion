@@ -96,8 +96,20 @@ namespace JocysCom.VS.AiCompanion
 				e.PropertyDescriptor?.Name == nameof(TemplateItem.Icon));
 			if (updateTrayMenu)
 				await Helper.Debounce(UpdateTrayMenu);
+			if (e.ListChangedType == System.ComponentModel.ListChangedType.ItemChanged)
+			{
+				var items = (ClassLibrary.ComponentModel.SortableBindingList<TemplateItem>)sender;
+				var item = (ISettingsListFileItem)items[e.NewIndex];
+				// Save every 5 seconds if changed.
+				_ = Helper.Debounce(SaveTasks, 5 * 1000);
+			}
 		}
 		private CancellationTokenSource cts = new CancellationTokenSource();
+
+		private static void SaveTasks()
+		{
+			Global.Tasks.Save();
+		}
 
 		private async void Global_AppSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{

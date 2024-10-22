@@ -65,8 +65,8 @@ namespace JocysCom.ClassLibrary.Windows
 			File.WriteAllText(tempFilePath, contents);
 			var dataObject = new DataObject();
 			dataObject.SetText(contents);
-			SetMimeContent(dataObject, fileName, contents);
-			SetFileDropList(dataObject, fileName);
+			SetMimeContent(dataObject, tempFilePath, contents);
+			SetFileDropList(dataObject, tempFilePath);
 			// Because file don't exist, add a custom format to help identify clipboard data.
 			// It will be used to remove file when clipboard is not needed.
 			var clipboardIdentifier = Guid.NewGuid().ToString();
@@ -293,8 +293,9 @@ namespace JocysCom.ClassLibrary.Windows
 		/// Returns the path to the temporary image file.
 		/// </summary>
 		/// <param name="tempFolder">Optional. The folder where the temporary file should be saved. If null, a new temp folder will be created.</param>
+		/// <param name="convertLargeFilesToPng">Optional. If true, saves large image formats like BMP and TIFF as PNG to reduce file size.</param>
 		/// <returns>The path to the temporary image file if an image is found; otherwise, null.</returns>
-		public static string GetImageFromClipboard(string tempFolder = null)
+		public static string GetImageFromClipboard(string tempFolder = null, bool convertLargeFilesToPng = false)
 		{
 			try
 			{
@@ -345,6 +346,13 @@ namespace JocysCom.ClassLibrary.Windows
 								extension = ".png";
 								encoder = new PngBitmapEncoder();
 							}
+						}
+
+						// If the option is set, convert large image formats to PNG
+						if (convertLargeFilesToPng && (extension == ".bmp" || extension == ".tif"))
+						{
+							extension = ".png";
+							encoder = new PngBitmapEncoder();
 						}
 
 						// Ensure the temporary folder is created

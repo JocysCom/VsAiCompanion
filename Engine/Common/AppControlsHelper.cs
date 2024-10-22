@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Data;
+using JocysCom.ClassLibrary.Windows;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -62,7 +63,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Append file content
 				foreach (string file in files)
 				{
-					if (JocysCom.ClassLibrary.Files.Mime.IsBinary(file))
+					if (!File.Exists(file) || JocysCom.ClassLibrary.Files.Mime.IsBinary(file))
 					{
 						binaryFiles.Add(file);
 						continue;
@@ -174,7 +175,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		{
 			if (sender is TextBox textBox)
 			{
-				e.CanExecute = Clipboard.ContainsText() || Clipboard.ContainsFileDropList();
+				e.CanExecute = Clipboard.ContainsText() || Clipboard.ContainsFileDropList() || Clipboard.ContainsImage();
 				// Do not set e.Handled to true to allow other commands to process
 			}
 		}
@@ -189,16 +190,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 					DropFiles(textBox, filePaths);
 					return;
 				}
+				string textToInsert = null;
+				if (Clipboard.ContainsImage())
+				{
+					var tempFolderPath = Path.Combine(AppHelper.GetTempFolderPath(), nameof(Clipboard));
+					textToInsert = ClipboardHelper.GetImageFromClipboard(tempFolderPath, true);
+				}
 				else if (Clipboard.ContainsText())
 				{
-					var textToInsert = Clipboard.GetText();
-					if (!string.IsNullOrEmpty(textToInsert))
-					{
-						int selectionStart = textBox.SelectionStart;
-						textBox.Text = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength);
-						textBox.Text = textBox.Text.Insert(selectionStart, textToInsert);
-						textBox.SelectionStart = selectionStart + textToInsert.Length;
-					}
+					textToInsert = Clipboard.GetText();
+				}
+				if (!string.IsNullOrEmpty(textToInsert))
+				{
+					int selectionStart = textBox.SelectionStart;
+					textBox.Text = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength);
+					textBox.Text = textBox.Text.Insert(selectionStart, textToInsert);
+					textBox.SelectionStart = selectionStart + textToInsert.Length;
 				}
 				e.Handled = true;
 			}
