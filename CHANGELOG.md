@@ -1,9 +1,13 @@
-2024-10-17 v1.13.12
+2024-10-22 v1.14.6
 
+- Fix: OpenAI type client will ignore the custom URL and use the api.openai.com address instead.
 - Update: Use Microsoft.Data.SqlClient in the extension for accessing data.
 - Update: Better copy and paste from clipboard and files.
-- Fix: OpenAI type client will ignore the custom URL and use the api.openai.com address instead.
+- Update: The chat input panel has been updated with parts of the RISEN Framework.
 - New: Hold CTRL to drop the content of a file instead of a link into the chat window.
+- New: Open the Ask AI window anywhere on the desktop with CTRL+SHIFT+D1.
+- New: Use text editors as an external canvas.
+- New: Automation plugins that allow AI to navigate and interact with UI.
 
 2024-09-16 v1.13.8
 
