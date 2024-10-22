@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Windows;
 using JocysCom.VS.AiCompanion.Engine;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using Microsoft.VisualStudio.Shell;
