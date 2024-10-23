@@ -5,9 +5,57 @@
     </assembly>
     <members>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Automation">
-            <summary>
-            Use to navigate via UI of the application.
-            </summary>
+             <summary>
+             Use to navigate via UI of the application.
+             </summary>
+             <example>
+             Simplified sequence of steps for an AI to control a PC via remote connection (screen, mouse, keyboard).
+            
+             1. Capture Current Screen
+                - Take a screenshot to perceive the current state of the interface.
+                  Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage(System.Nullable{System.Int32},System.String,System.Nullable{System.Drawing.Rectangle},System.String,System.Drawing.Imaging.ImageFormat)" />.
+            
+             2. Analyze and Decide
+                - Analyze the screenshot to determine the next action needed to progress toward the goal.
+                  Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePictures(System.String,System.String[])" />.
+            
+             3. Execute Action
+                - Perform the decided action, such as:
+                  - Move Mouse: Navigate the cursor to the desired coordinates.
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.MoveMouse(System.Int32,System.Int32)" />.
+                  - Click Mouse: Interact with elements by clicking as needed.
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.ClickMouseButton(System.Windows.Forms.MouseButtons)" />.
+                  - Send Keyboard Input: Input necessary keystrokes or commands.
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SendKeys(System.String)" />.
+                  - Interact with UI Elements (e.g., buttons, fields):
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.PerformActionOnElement(System.String,System.String,System.Object)" />.
+                  - Navigate to a Specific UI Element:
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.NavigateToElement(System.String)" />.
+                  - Wait for a UI Element to become available:
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.WaitForElement(System.String,System.Int32)" />.
+                  - Check if a UI Element is available:
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.IsElementAvailable(System.String)" />.
+            
+             4. Verify Outcome
+                - Take a screenshot after the action.
+                  Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureImage(System.Nullable{System.Int32},System.String,System.Nullable{System.Drawing.Rectangle},System.String,System.Drawing.Imaging.ImageFormat)" />.
+                - Analyze it to confirm that the action had the intended effect.
+                  Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.AnalysePictures(System.String,System.String[])" />.
+                - Optionally, check if a UI Element is available:
+                  Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.IsElementAvailable(System.String)" />.
+            
+             5. Error Handling and Retrying
+                - If verification is successful:
+                  - Proceed to the next action.
+                - If an error is detected:
+                  - Retry the last action from the last successful state.
+                  - Repeat the verification step.
+                  - Optionally, wait for a UI Element to become available:
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.WaitForElement(System.String,System.Int32)" />.
+            
+             6. Iterate Until Completion
+                - Repeat steps 1-5 until the final goal is achieved.
+             </example>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCanvasEditorElementPath">
             <summary>
@@ -107,6 +155,37 @@
             <param name="elementPath">XPath-like path of the UI element.</param>
             <param name="format">The format of the image to capture.</param>
             <returns>Path to the captured image, that could be read with other function.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.MoveMouse(System.Int32,System.Int32)">
+            <summary>
+            Moves the mouse pointer to the specified screen coordinates.
+            This method is typically used in a loop with taking screenshots and analyzing them to determine where to move the mouse.
+            </summary>
+            <param name="x">The x-coordinate of the screen in pixels.</param>
+            <param name="y">The y-coordinate of the screen in pixels.</param>
+            <returns>Operation result indicating success or failure.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.ClickMouseButton(System.Windows.Forms.MouseButtons)">
+            <summary>
+            Simulates a mouse click with the specified button at the current cursor position.
+            </summary>
+            <param name="button">The mouse button to click (Left, Right, Middle).</param>
+            <returns>Operation result indicating success or failure.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SendKeys(System.String)">
+            <summary>
+            Sends the specified keyboard input to the active application.
+            </summary>
+            <param name="keys">The keys to send (e.g., "{ENTER}", "Hello World").</param>
+            <returns>Operation result indicating success or failure.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementUnderMouse(System.Int32,System.Int32)">
+            <summary>
+            Retrieves information about the element currently under the mouse cursor position.
+            </summary>
+            <param name="x">The x-coordinate of the screen in pixels.</param>
+            <param name="y">The y-coordinate of the screen in pixels.</param>
+            <returns>An OperationResult containing the element's properties.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Basic">
             <summary>
