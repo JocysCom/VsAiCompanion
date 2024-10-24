@@ -256,7 +256,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				RisenNarrowingTextBox.PART_ContentTextBox,
 			};
 			if (enable)
+			{
 				UpdateRisenFromMessage();
+			}
+			else
+			{
+				if (!ChatMessageTabItem.IsSelected || !ChatInstructionsTabItem.IsSelected)
+					ChatMessageTabItem.IsSelected = true;
+			}
 			foreach (var box in boxes)
 			{
 				if (enable)

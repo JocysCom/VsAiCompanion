@@ -1,5 +1,6 @@
 2024-10-24 v1.14.8
 
+- Fix: Display the RISEN input even when RISEN is disabled.
 - Update: Restore main window from tray when the "Ask AI" window message is sent.
 - Update: Marked mouse and keyboard control with a critical attribute.
 
