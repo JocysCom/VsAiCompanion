@@ -346,6 +346,7 @@
 	<sys:String x:Key="main_Log">Log</sys:String>
 	<sys:String x:Key="main_Main">Main</sys:String>
 	<sys:String x:Key="main_Message">Message</sys:String>
+	<sys:String x:Key="main_Message_CAPS">MESSAGE</sys:String>
 	<sys:String x:Key="main_ModelRefreshButton_ToolTip">Click to refresh models. Use CTRL+Click to set manually.</sys:String>
 	<sys:String x:Key="main_Multimedia">Multimedia</sys:String>
 	<sys:String x:Key="main_Name">Name</sys:String>

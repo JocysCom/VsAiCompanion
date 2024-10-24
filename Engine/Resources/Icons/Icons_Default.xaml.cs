@@ -36,6 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_checkbox_unchecked_all = nameof(Icon_checkbox_unchecked_all);
 		public const string Icon_clipboard_checks = nameof(Icon_clipboard_checks);
 		public const string Icon_clipboard_check_edit = nameof(Icon_clipboard_check_edit);
+		public const string Icon_clipboard_disabled = nameof(Icon_clipboard_disabled);
 		public const string Icon_clipboard_paste = nameof(Icon_clipboard_paste);
 		public const string Icon_cloud = nameof(Icon_cloud);
 		public const string Icon_cloud_download = nameof(Icon_cloud_download);
@@ -52,6 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_code_text = nameof(Icon_code_text);
 		public const string Icon_code_typescript = nameof(Icon_code_typescript);
 		public const string Icon_code_xml = nameof(Icon_code_xml);
+		public const string Icon_comment_disabled = nameof(Icon_comment_disabled);
 		public const string Icon_contract = nameof(Icon_contract);
 		public const string Icon_control_panel = nameof(Icon_control_panel);
 		public const string Icon_copy = nameof(Icon_copy);
@@ -62,6 +64,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_document_gear = nameof(Icon_document_gear);
 		public const string Icon_document_header = nameof(Icon_document_header);
 		public const string Icon_document_icon_refresh = nameof(Icon_document_icon_refresh);
+		public const string Icon_document_landscape_disabled = nameof(Icon_document_landscape_disabled);
 		public const string Icon_document_title_refresh = nameof(Icon_document_title_refresh);
 		public const string Icon_dude3 = nameof(Icon_dude3);
 		public const string Icon_elements_branch2 = nameof(Icon_elements_branch2);
@@ -70,10 +73,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_eyeglasses = nameof(Icon_eyeglasses);
 		public const string Icon_eye_blind = nameof(Icon_eye_blind);
 		public const string Icon_face_scan = nameof(Icon_face_scan);
+		public const string Icon_filter_disabled = nameof(Icon_filter_disabled);
 		public const string Icon_find = nameof(Icon_find);
 		public const string Icon_find_gray = nameof(Icon_find_gray);
 		public const string Icon_find_text = nameof(Icon_find_text);
 		public const string Icon_first_aid_box = nameof(Icon_first_aid_box);
+		public const string Icon_flag_disabled = nameof(Icon_flag_disabled);
 		public const string Icon_folder3_document = nameof(Icon_folder3_document);
 		public const string Icon_folders = nameof(Icon_folders);
 		public const string Icon_folder_network = nameof(Icon_folder_network);
@@ -91,6 +96,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_internet = nameof(Icon_internet);
 		public const string Icon_list = nameof(Icon_list);
 		public const string Icon_list_style_numbered = nameof(Icon_list_style_numbered);
+		public const string Icon_logs_disabled = nameof(Icon_logs_disabled);
 		public const string Icon_magnifying_glass = nameof(Icon_magnifying_glass);
 		public const string Icon_mail = nameof(Icon_mail);
 		public const string Icon_map_location2 = nameof(Icon_map_location2);
@@ -104,6 +110,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_objects = nameof(Icon_objects);
 		public const string Icon_objects_exchange = nameof(Icon_objects_exchange);
 		public const string Icon_office_building2 = nameof(Icon_office_building2);
+		public const string Icon_page_text_disabled = nameof(Icon_page_text_disabled);
 		public const string Icon_painters_palette = nameof(Icon_painters_palette);
 		public const string Icon_photo_portrait = nameof(Icon_photo_portrait);
 		public const string Icon_picture = nameof(Icon_picture);
@@ -124,13 +131,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_shield = nameof(Icon_shield);
 		public const string Icon_spellcheck = nameof(Icon_spellcheck);
 		public const string Icon_target = nameof(Icon_target);
+		public const string Icon_target_disabled = nameof(Icon_target_disabled);
 		public const string Icon_task = nameof(Icon_task);
 		public const string Icon_task_add = nameof(Icon_task_add);
 		public const string Icon_teacher = nameof(Icon_teacher);
 		public const string Icon_Template = nameof(Icon_Template);
 		public const string Icon_todo_list = nameof(Icon_todo_list);
 		public const string Icon_todo_list_add = nameof(Icon_todo_list_add);
+		public const string Icon_todo_list_disabled = nameof(Icon_todo_list_disabled);
 		public const string Icon_todo_list_time = nameof(Icon_todo_list_time);
+		public const string Icon_tool_pencil_disabled = nameof(Icon_tool_pencil_disabled);
 		public const string Icon_translate = nameof(Icon_translate);
 		public const string Icon_user = nameof(Icon_user);
 		public const string Icon_users_crowd = nameof(Icon_users_crowd);
@@ -139,6 +149,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_user_azure = nameof(Icon_user_azure);
 		public const string Icon_user_blue = nameof(Icon_user_blue);
 		public const string Icon_user_comment = nameof(Icon_user_comment);
+		public const string Icon_user_disabled = nameof(Icon_user_disabled);
 		public const string Icon_user_grey = nameof(Icon_user_grey);
 		public const string Icon_user_group = nameof(Icon_user_group);
 		public const string Icon_user_group_emoticon = nameof(Icon_user_group_emoticon);

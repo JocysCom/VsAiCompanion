@@ -250,29 +250,13 @@
 						x:FieldModifier="public"
 						SelectionChanged="MainTabControl_SelectionChanged"
 						TabStripPlacement="Bottom">
-						<!--  Instructions  -->
-						<TabItem x:Name="ChatInstructionsTabItem" x:FieldModifier="public" Background="{StaticResource InstructionsBackgroundBrush}">
-							<TabItem.Header>
-								<StackPanel Orientation="Horizontal">
-									<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE713;" />
-									<Label Content="{StaticResource main_Instructions}" />
-									<Label x:Name="InstructionsCountLabel" x:FieldModifier="public" />
-								</StackPanel>
-							</TabItem.Header>
-							<JcControls:PlaceholderTextBox
-								x:Name="DataInstructionsTextBox"
-								Background="{StaticResource InstructionsBackgroundBrush}"
-								IsInTab="True"
-								PlaceholderText="Type instructions"
-								PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
-								Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}" />
-						</TabItem>
+
 						<!--  Message  -->
 						<TabItem x:Name="ChatMessageTabItem" x:FieldModifier="public" IsSelected="True">
 							<TabItem.Header>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE8BD;" />
-									<Label Content="{StaticResource main_Message}" FontWeight="Bold" />
+									<ContentControl Content="{StaticResource Icon_comment_disabled}" />
+									<Label Content="{StaticResource main_Message_CAPS}" />
 									<Label x:Name="MessageCountLabel" x:FieldModifier="public" />
 								</StackPanel>
 							</TabItem.Header>
@@ -286,6 +270,25 @@
 								Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
 								TextChanged="DataTextBox_TextChanged" />
 						</TabItem>
+
+						<!--  Instructions  -->
+						<TabItem x:Name="ChatInstructionsTabItem" x:FieldModifier="public" Background="{StaticResource InstructionsBackgroundBrush}">
+							<TabItem.Header>
+								<StackPanel Orientation="Horizontal">
+									<ContentControl Content="{StaticResource Icon_page_text_disabled}" />
+									<Label Content="{StaticResource main_Instructions}" />
+									<Label x:Name="InstructionsCountLabel" x:FieldModifier="public" />
+								</StackPanel>
+							</TabItem.Header>
+							<JcControls:PlaceholderTextBox
+								x:Name="DataInstructionsTextBox"
+								Background="{StaticResource InstructionsBackgroundBrush}"
+								IsInTab="True"
+								PlaceholderText="Type instructions"
+								PreviewKeyUp="DataInstructionsTextBox_PreviewKeyUp"
+								Text="{Binding TextInstructions, UpdateSourceTrigger=PropertyChanged}" />
+						</TabItem>
+
 						<!--  Placeholder  -->
 						<TabItem
 							x:Name="MessagePlaceholderTabItem"
@@ -294,7 +297,7 @@
 							IsSelected="True">
 							<TabItem.Header>
 								<StackPanel Opacity="0.5" Orientation="Horizontal">
-									<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE70B;" />
+									<ContentControl Content="{StaticResource Icon_document_landscape_disabled}" />
 									<Label Content="{StaticResource main_Placeholder}" />
 									<Label x:Name="MessagePlaceholderCountLabel" x:FieldModifier="public" />
 								</StackPanel>
@@ -318,7 +321,7 @@
 							Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 							<TabItem.Header>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE77B;" />
+									<ContentControl Content="{StaticResource Icon_user_disabled}" />
 									<Label Content="{StaticResource main_Role}" />
 									<Label x:Name="RisenRoleCountLabel" x:FieldModifier="public" />
 								</StackPanel>
@@ -338,7 +341,7 @@
 							Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 							<TabItem.Header>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE70F;" />
+									<ContentControl Content="{StaticResource Icon_tool_pencil_disabled}" />
 									<Label Content="{StaticResource main_Instructions}" />
 									<Label x:Name="RisenInstructionsCountLabel" x:FieldModifier="public" />
 								</StackPanel>
@@ -358,7 +361,7 @@
 							Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 							<TabItem.Header>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE14C;" />
+									<ContentControl Content="{StaticResource Icon_todo_list_disabled}" />
 									<Label Content="{StaticResource main_Steps}" />
 									<Label x:Name="RisenStepsCountLabel" x:FieldModifier="public" />
 								</StackPanel>
@@ -378,7 +381,7 @@
 							Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 							<TabItem.Header>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE908;" />
+									<ContentControl Content="{StaticResource Icon_flag_disabled}" />
 									<Label Content="{StaticResource main_EndGoal}" />
 									<Label x:Name="RisenEndGoalCountLabel" x:FieldModifier="public" />
 								</StackPanel>
@@ -398,7 +401,7 @@
 							Visibility="{Binding ShowRisen, Converter={StaticResource _BoolToVisibilityConverter}}">
 							<TabItem.Header>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Style="{StaticResource IconTextStyle}" Text="&#xE71C;" />
+									<ContentControl Content="{StaticResource Icon_filter_disabled}" />
 									<Label Content="{StaticResource main_Narrowing}" />
 									<Label x:Name="RisenNarrowingCountLabel" x:FieldModifier="public" />
 								</StackPanel>

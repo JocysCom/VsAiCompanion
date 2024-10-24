@@ -328,6 +328,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Log => FindResource(nameof(main_Log));
         public static string main_Main => FindResource(nameof(main_Main));
         public static string main_Message => FindResource(nameof(main_Message));
+        public static string main_Message_CAPS => FindResource(nameof(main_Message_CAPS));
         public static string main_ModelRefreshButton_ToolTip => FindResource(nameof(main_ModelRefreshButton_ToolTip));
         public static string main_Multimedia => FindResource(nameof(main_Multimedia));
         public static string main_Name => FindResource(nameof(main_Name));
