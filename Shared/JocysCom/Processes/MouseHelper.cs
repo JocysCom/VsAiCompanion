@@ -54,6 +54,9 @@ namespace JocysCom.ClassLibrary.Processes
 
 			[DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 			internal static extern int DeleteObject(IntPtr hObject);
+
+			[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+			internal static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 		}
 
 		public static void MoveMouse(int x, int y)
@@ -227,6 +230,42 @@ namespace JocysCom.ClassLibrary.Processes
 			}
 		}
 
+		private static MouseEventFlags GetMouseEventFlag(MouseButtons button, bool isDown)
+		{
+			switch (button)
+			{
+				case MouseButtons.Left:
+					return isDown
+						? MouseEventFlags.MOUSEEVENTF_LEFTDOWN
+						: MouseEventFlags.MOUSEEVENTF_LEFTUP;
+				case MouseButtons.Right:
+					return isDown
+						? MouseEventFlags.MOUSEEVENTF_RIGHTDOWN
+						: MouseEventFlags.MOUSEEVENTF_RIGHTUP;
+				case MouseButtons.Middle:
+					return isDown
+						? MouseEventFlags.MOUSEEVENTF_MIDDLEDOWN
+						: MouseEventFlags.MOUSEEVENTF_MIDDLEUP;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(button), button, null);
+			}
+		}
+
+
+		public static void MouseDown(MouseButtons button)
+		{
+			NativeMethods.mouse_event((int)GetMouseEventFlag(button, true), 0, 0, 0, 0);
+		}
+
+		public static void MouseUp(MouseButtons button)
+		{
+			NativeMethods.mouse_event((int)GetMouseEventFlag(button, false), 0, 0, 0, 0);
+		}
+
+		public static void Scroll(int delta)
+		{
+			NativeMethods.mouse_event((int)MouseEventFlags.MOUSEEVENTF_WHEEL, 0, 0, delta, 0);
+		}
 
 	}
 }

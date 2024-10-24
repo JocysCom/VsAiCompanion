@@ -24,7 +24,7 @@
                   - Move Mouse: Navigate the cursor to the desired coordinates.
                     Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.MoveMouse(System.Int32,System.Int32)" />.
                   - Click Mouse: Interact with elements by clicking as needed.
-                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.ClickMouseButton(System.Windows.Forms.MouseButtons)" />.
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.ClickMouseButton(System.Windows.Forms.MouseButtons,System.Int32)" />.
                   - Send Keyboard Input: Input necessary keystrokes or commands.
                     Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SendKeys(System.String)" />.
                   - Interact with UI Elements (e.g., buttons, fields):
@@ -165,11 +165,12 @@
             <param name="y">The y-coordinate of the screen in pixels.</param>
             <returns>Operation result indicating success or failure.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.ClickMouseButton(System.Windows.Forms.MouseButtons)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.ClickMouseButton(System.Windows.Forms.MouseButtons,System.Int32)">
             <summary>
             Simulates a mouse click with the specified button at the current cursor position.
             </summary>
             <param name="button">The mouse button to click (Left, Right, Middle).</param>
+            <param name="delay">Delay between down and up in miliseconds. Default: 50</param>
             <returns>Operation result indicating success or failure.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SendKeys(System.String)">
@@ -179,13 +180,64 @@
             <param name="keys">The keys to send (e.g., "{ENTER}", "Hello World").</param>
             <returns>Operation result indicating success or failure.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementUnderMouse(System.Int32,System.Int32)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementFromPoint(System.Int32,System.Int32)">
             <summary>
-            Retrieves information about the element currently under the mouse cursor position.
+            Retrieves information about the element currently under the point.
             </summary>
             <param name="x">The x-coordinate of the screen in pixels.</param>
             <param name="y">The y-coordinate of the screen in pixels.</param>
             <returns>An OperationResult containing the element's properties.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetMousePosition">
+            <summary>
+            Retrieves the current mouse cursor position.
+            </summary>
+            <returns>Operation result containing the cursor position as a Point.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.MouseDown(System.Windows.Forms.MouseButtons)">
+            <summary>
+            Simulates pressing down a mouse button at the current cursor position.
+            </summary>
+            <param name="button">The mouse button to press down.</param>
+            <returns>Operation result indicating success or failure.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.MouseUp(System.Windows.Forms.MouseButtons)">
+            <summary>
+            Simulates releasing a mouse button at the current cursor position.
+            </summary>
+            <param name="button">The mouse button to release.</param>
+            <returns>Operation result indicating success or failure.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.ScrollMouse(System.Int32)">
+            <summary>
+            Simulates mouse wheel scrolling.
+            </summary>
+            <param name="delta">The amount to scroll. Positive to scroll up, negative to scroll down.</param>
+            <returns>Operation result indicating success or failure.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.DragAndDrop(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Simulates a drag-and-drop operation from a starting point to an ending point.
+            </summary>
+            <param name="startX">The starting x-coordinate in pixels.</param>
+            <param name="startY">The starting y-coordinate in pixels.</param>
+            <param name="endX">The ending x-coordinate in pixels.</param>
+            <param name="endY">The ending y-coordinate in pixels.</param>
+            <returns>Operation result indicating success or failure.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.KeyDown(System.Windows.Input.Key[])">
+            <summary>
+            Simulates pressing down a specific keyboard keys.
+            </summary>
+            <param name="keys">The keys to press down.</param>
+            <returns>Operation result indicating success or failure.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.KeyUp(System.Windows.Input.Key[])">
+            <summary>
+            Simulates releasing a specific keyboard keys.
+            </summary>
+            <param name="keys">Key to release.</param>
+            <returns>Operation result indicating success or failure.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Basic">
             <summary>

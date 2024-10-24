@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Forms;
+using System.Windows.Input;
 using static JocysCom.ClassLibrary.Windows.AutomationHelper;
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {
@@ -32,7 +34,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	///      - Move Mouse: Navigate the cursor to the desired coordinates.
 	///        Use <see cref="Automation.MoveMouse(int, int)" />.
 	///      - Click Mouse: Interact with elements by clicking as needed.
-	///        Use <see cref="Automation.ClickMouseButton(MouseButtons)" />.
+	///        Use <see cref="Automation.ClickMouseButton(MouseButtons, int)" />.
 	///      - Send Keyboard Input: Input necessary keystrokes or commands.
 	///        Use <see cref="Automation.SendKeys(string)" />.
 	///      - Interact with UI Elements (e.g., buttons, fields):
@@ -145,7 +147,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			// Get the desktop AutomationElement
 			AutomationElement desktop = AutomationElement.RootElement;
-			var paths = desktop.FindAll(TreeScope.Children, Condition.TrueCondition)
+			var paths = desktop.FindAll(TreeScope.Children, System.Windows.Automation.Condition.TrueCondition)
 				.Cast<AutomationElement>()
 				.Select(x => AutomationHelper.GetPath(x))
 				.ToArray();
@@ -385,16 +387,17 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Simulates a mouse click with the specified button at the current cursor position.
 		/// </summary>
 		/// <param name="button">The mouse button to click (Left, Right, Middle).</param>
+		/// <param name="delay">Delay between down and up in miliseconds. Default: 50</param>
 		/// <returns>Operation result indicating success or failure.</returns>
 		[RiskLevel(RiskLevel.High)]
-		public OperationResult<bool> ClickMouseButton(MouseButtons button)
+		public async Task<OperationResult<bool>> ClickMouseButton(MouseButtons button, int delay = 50)
 		{
 			try
 			{
 				// Get current cursor position
-				var x = Cursor.Position.X;
-				var y = Cursor.Position.Y;
-				MouseHelper.Click(x, y, button);
+				MouseHelper.MouseDown(button);
+				await Task.Delay(delay);
+				MouseHelper.MouseUp(button);
 				return new OperationResult<bool>(true);
 			}
 			catch (Exception ex)
@@ -423,13 +426,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Retrieves information about the element currently under the mouse cursor position.
+		/// Retrieves information about the element currently under the point.
 		/// </summary>
 		/// <param name="x">The x-coordinate of the screen in pixels.</param>
 		/// <param name="y">The y-coordinate of the screen in pixels.</param>
 		/// <returns>An OperationResult containing the element's properties.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		public OperationResult<List<KeyValue>> GetElementUnderMouse(int x, int y)
+		public OperationResult<List<KeyValue>> GetElementFromPoint(int x, int y)
 		{
 			try
 			{
@@ -445,6 +448,151 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return new OperationResult<List<KeyValue>>(ex);
 			}
 		}
+
+
+		/// <summary>
+		/// Retrieves the current mouse cursor position.
+		/// </summary>
+		/// <returns>Operation result containing the cursor position as a Point.</returns>
+		[RiskLevel(RiskLevel.Low)]
+		public OperationResult<Point> GetMousePosition()
+		{
+			try
+			{
+				// Note: add parameter to return various positions: WPF, Forms, Screen...
+				var position = System.Windows.Forms.Cursor.Position;
+				var point = new Point(position.X, position.Y);
+				return new OperationResult<Point>(point);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<Point>(ex);
+			}
+		}
+
+
+
+		/// <summary>
+		/// Simulates pressing down a mouse button at the current cursor position.
+		/// </summary>
+		/// <param name="button">The mouse button to press down.</param>
+		/// <returns>Operation result indicating success or failure.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public OperationResult<bool> MouseDown(MouseButtons button)
+		{
+			try
+			{
+				MouseHelper.MouseDown(button);
+				return new OperationResult<bool>(true);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Simulates releasing a mouse button at the current cursor position.
+		/// </summary>
+		/// <param name="button">The mouse button to release.</param>
+		/// <returns>Operation result indicating success or failure.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public OperationResult<bool> MouseUp(MouseButtons button)
+		{
+			try
+			{
+				MouseHelper.MouseUp(button);
+				return new OperationResult<bool>(true);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Simulates mouse wheel scrolling.
+		/// </summary>
+		/// <param name="delta">The amount to scroll. Positive to scroll up, negative to scroll down.</param>
+		/// <returns>Operation result indicating success or failure.</returns>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<bool> ScrollMouse(int delta)
+		{
+			try
+			{
+				MouseHelper.Scroll(delta);
+				return new OperationResult<bool>(true);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Simulates a drag-and-drop operation from a starting point to an ending point.
+		/// </summary>
+		/// <param name="startX">The starting x-coordinate in pixels.</param>
+		/// <param name="startY">The starting y-coordinate in pixels.</param>
+		/// <param name="endX">The ending x-coordinate in pixels.</param>
+		/// <param name="endY">The ending y-coordinate in pixels.</param>
+		/// <returns>Operation result indicating success or failure.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public OperationResult<bool> DragAndDrop(int startX, int startY, int endX, int endY)
+		{
+			try
+			{
+				MouseHelper.MoveMouse(startX, startY);
+				MouseHelper.MouseDown(MouseButtons.Left);
+				// For a smooth drag, you might want to interpolate between start and end points
+				MouseHelper.MoveMouse(endX, endY);
+				MouseHelper.MouseUp(MouseButtons.Left);
+				return new OperationResult<bool>(true);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Simulates pressing down a specific keyboard keys.
+		/// </summary>
+		/// <param name="keys">The keys to press down.</param>
+		/// <returns>Operation result indicating success or failure.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public OperationResult<bool> KeyDown(Key[] keys)
+		{
+			try
+			{
+				KeyboardHelper.SendDown(keys);
+				return new OperationResult<bool>(true);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Simulates releasing a specific keyboard keys.
+		/// </summary>
+		/// <param name="keys">Key to release.</param>
+		/// <returns>Operation result indicating success or failure.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public OperationResult<bool> KeyUp(Key[] keys)
+		{
+			try
+			{
+				KeyboardHelper.SendUp(keys);
+				return new OperationResult<bool>(true);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
 
 		#endregion
 	}
