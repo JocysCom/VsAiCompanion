@@ -1,3 +1,8 @@
+2024-10-24 v1.14.8
+
+- Update: Restore main window from tray when the "Ask AI" window message is sent.
+- Update: Marked mouse and keyboard control with a critical attribute.
+
 2024-10-22 v1.14.6
 
 - Fix: OpenAI type client will ignore the custom URL and use the api.openai.com address instead.

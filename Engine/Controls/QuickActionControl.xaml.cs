@@ -36,10 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			copy.Modified = copy.Created;
 			Global.InsertItem(copy, ItemType.Task);
 			// Select new task in the tasks list on the [Tasks] tab.
-			var settings = Global.AppSettings.GetTaskSettings(ItemType.Task);
-			//settings.ListSelection = selection;
-			settings.Focus = true;
-			Global.RaiseOnTasksUpdated();
+			Global.SelectTask();
 		}
 
 		private void SourceItems_ListChanged(object sender, ListChangedEventArgs e)
