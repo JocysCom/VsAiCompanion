@@ -57,6 +57,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 
 		#region Show Window
 
+		private static bool MoveTextBoxUnderMousePointer = false;
+
 		public static AiWindow ShowUnderTheMouse()
 		{
 			// Get the current mouse position
@@ -87,11 +89,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				var caretScreenPoint = win.GetCaretScreenPoint(box);
 				var caretScreenPosition = ClassLibrary.Controls.PositionSettings.ConvertToDiu(caretScreenPoint);
 				// Calculate the offset between the caret position and the window's current position
-				var offsetX = caretScreenPosition.X - win.Left;
-				var offsetY = caretScreenPosition.Y - win.Top;
-				// Adjust the window's Left and Top properties so that the caret is under the mouse position
-				win.Left = wpfPosition.X - offsetX;
-				win.Top = wpfPosition.Y - offsetY;
+				if (MoveTextBoxUnderMousePointer)
+				{
+					// Adjust the window's Left and Top properties so that the caret is under the mouse position
+					var offsetX = caretScreenPosition.X - win.Left;
+					var offsetY = caretScreenPosition.Y - win.Top;
+					win.Left -= -offsetX;
+					win.Top -= offsetY;
+				}
 				// Activate the window to ensure it has focus
 				win.Activate();
 				// Set focus to the TextBox
@@ -169,29 +174,31 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 		void SendMessage()
 		{
 			var ti = Global.Templates.Items.FirstOrDefault(x => x.Name == SettingsSourceManager.TemplateAiWindowTaskName);
-			var selection = new List<string>();
 			var copy = ti.Copy(true);
 			copy.IsPinned = false;
 			copy.CanvasEditorElementPath = Info.ElementPath;
 			copy.Created = DateTime.Now;
 			copy.Modified = copy.Created;
-			var messages = new List<string>();
+			var messageParts = new List<string>();
 			if (SelectionCheckBox.IsChecked == true)
-				messages.Add(MarkdownHelper.CreateMarkdownCodeBlock(Info.SelectedText, "text"));
+				messageParts.Add(MarkdownHelper.CreateMarkdownCodeBlock(Info.SelectedText, "text"));
 			if (DocumentCheckBox.IsChecked == true)
-				messages.Add(MarkdownHelper.CreateMarkdownCodeBlock(Info.DocumentText, "text"));
-			var elementDescrition = "This is path to the used selected element on UI\r\n";
-			elementDescrition += MarkdownHelper.CreateMarkdownCodeBlock(Info.ElementPath, "text");
-			messages.Add(elementDescrition);
-			messages.Add(DataTextBox.PART_ContentTextBox.Text);
-			copy.Text += string.Join("\r\n\r\n", messages);
+				messageParts.Add(MarkdownHelper.CreateMarkdownCodeBlock(Info.DocumentText, "text"));
+			messageParts.Add(DataTextBox.PART_ContentTextBox.Text);
+			var userMessage = new Chat.MessageItem();
+			userMessage.Type = Chat.MessageType.Out;
+			userMessage.Body = string.Join("\r\n\r\n", messageParts);
+			var pathAttachment = new Chat.MessageAttachments();
+			pathAttachment.SetData(Info.ElementPath, "xpath");
+			pathAttachment.Title = "UI Element Path";
+			pathAttachment.Instructions = "Selected element path on UI used by the user";
+			userMessage.Attachments.Add(pathAttachment);
+			copy.Messages.Add(userMessage);
 			Global.InsertItem(copy, ItemType.Task);
-			selection.Add(copy.Name);
 			// Select new task in the tasks list on the [Tasks] tab.
-			var settings = Global.AppSettings.GetTaskSettings(ItemType.Task);
-			settings.ListSelection = selection;
-			settings.Focus = true;
-			Global.RaiseOnTasksUpdated();
+			Global.SelectTask(copy.Name);
+			if (!Global.IsVsExtension)
+				Global.TrayManager.RestoreFromTray(true, false);
 			Close();
 		}
 

@@ -423,6 +423,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			OnTabControlSelectionChanged?.Invoke(sender, e);
 		}
 
+		public static void SelectTask(params string[] names)
+		{
+			// Select new task in the tasks list on the [Tasks] tab.
+			var settings = AppSettings.GetTaskSettings(ItemType.Task);
+			if (names.Length > 0)
+				settings.ListSelection = names.ToList();
+			settings.Focus = true;
+			RaiseOnTasksUpdated();
+		}
+
 		#endregion
 
 		public static void SaveSettings()

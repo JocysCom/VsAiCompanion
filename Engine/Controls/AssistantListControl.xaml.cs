@@ -218,8 +218,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			task.TextInstructions = Data.SystemMessage;
 			Global.InsertItem(task, ItemType.Task);
 			// Select new task in the tasks list on the [Tasks] tab.
-			Global.AppSettings.GetTaskSettings(ItemType.Task).ListSelection = new List<string> { task.Name };
-			Global.RaiseOnTasksUpdated();
+			Global.SelectTask(task.Name);
 		}
 	}
 }

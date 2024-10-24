@@ -18,9 +18,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
 			Type = attachmentType;
-			Data = $"```{language}\r\n{data}\r\n```";
+			SetData(data, language);
 			IsMarkdown = true;
 		}
+
+		public void SetData(string contents, string language)
+			=> Data = MarkdownHelper.CreateMarkdownCodeBlock(contents, language);
 
 		public MessageAttachments(ContextType attachmentType, object dataToJson)
 		{
@@ -30,10 +33,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var options = new JsonSerializerOptions();
 			options.WriteIndented = true;
 			var data = JsonSerializer.Serialize(dataToJson, options);
-			Data = $"```json\r\n{data}\r\n```";
+			SetData(data, "json");
 			IsMarkdown = true;
 		}
-
 
 		/// <summary>
 		/// If true, the attachment will always be included as part of the body.

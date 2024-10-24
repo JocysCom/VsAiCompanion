@@ -680,10 +680,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 			}
 			// Select new task in the tasks list on the [Tasks] tab.
-			var settings = Global.AppSettings.GetTaskSettings(ItemType.Task);
-			settings.ListSelection = selection;
-			settings.Focus = true;
-			Global.RaiseOnTasksUpdated();
+			Global.SelectTask(selection.ToArray());
 		}
 
 		private void Global_OnTasksUpdated(object sender, EventArgs e)

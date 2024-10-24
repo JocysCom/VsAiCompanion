@@ -230,36 +230,45 @@ namespace JocysCom.ClassLibrary.Processes
 			}
 		}
 
-		private static MouseEventFlags GetMouseEventFlag(MouseButtons button, bool isDown)
+		private static (MouseEventFlags flags, int buttons) GetMouseEventArgs(MouseButtons button, bool isDown)
 		{
 			switch (button)
 			{
 				case MouseButtons.Left:
-					return isDown
+					return (isDown
 						? MouseEventFlags.MOUSEEVENTF_LEFTDOWN
-						: MouseEventFlags.MOUSEEVENTF_LEFTUP;
+						: MouseEventFlags.MOUSEEVENTF_LEFTUP, 0);
 				case MouseButtons.Right:
-					return isDown
+					return (isDown
 						? MouseEventFlags.MOUSEEVENTF_RIGHTDOWN
-						: MouseEventFlags.MOUSEEVENTF_RIGHTUP;
+						: MouseEventFlags.MOUSEEVENTF_RIGHTUP, 0);
 				case MouseButtons.Middle:
-					return isDown
+					return (isDown
 						? MouseEventFlags.MOUSEEVENTF_MIDDLEDOWN
-						: MouseEventFlags.MOUSEEVENTF_MIDDLEUP;
+						: MouseEventFlags.MOUSEEVENTF_MIDDLEUP, 0);
+				case MouseButtons.XButton1:
+					return (isDown
+						? MouseEventFlags.MOUSEEVENTF_XDOWN
+						: MouseEventFlags.MOUSEEVENTF_XUP, 1);
+				case MouseButtons.XButton2:
+					return (isDown
+						? MouseEventFlags.MOUSEEVENTF_XDOWN
+						: MouseEventFlags.MOUSEEVENTF_XUP, 2);
 				default:
 					throw new ArgumentOutOfRangeException(nameof(button), button, null);
 			}
 		}
 
-
 		public static void MouseDown(MouseButtons button)
 		{
-			NativeMethods.mouse_event((int)GetMouseEventFlag(button, true), 0, 0, 0, 0);
+			var args = GetMouseEventArgs(button, true);
+			NativeMethods.mouse_event((int)args.flags, 0, 0, args.buttons, 0);
 		}
 
 		public static void MouseUp(MouseButtons button)
 		{
-			NativeMethods.mouse_event((int)GetMouseEventFlag(button, false), 0, 0, 0, 0);
+			var args = GetMouseEventArgs(button, false);
+			NativeMethods.mouse_event((int)args.flags, 0, 0, args.buttons, 0);
 		}
 
 		public static void Scroll(int delta)

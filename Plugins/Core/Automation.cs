@@ -369,7 +369,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="x">The x-coordinate of the screen in pixels.</param>
 		/// <param name="y">The y-coordinate of the screen in pixels.</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public OperationResult<bool> MoveMouse(int x, int y)
 		{
 			try
@@ -389,7 +389,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="button">The mouse button to click (Left, Right, Middle).</param>
 		/// <param name="delay">Delay between down and up in miliseconds. Default: 50</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public async Task<OperationResult<bool>> ClickMouseButton(MouseButtons button, int delay = 50)
 		{
 			try
@@ -411,7 +411,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="keys">The keys to send (e.g., "{ENTER}", "Hello World").</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public OperationResult<bool> SendKeys(string keys)
 		{
 			try
@@ -477,7 +477,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="button">The mouse button to press down.</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public OperationResult<bool> MouseDown(MouseButtons button)
 		{
 			try
@@ -496,7 +496,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="button">The mouse button to release.</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public OperationResult<bool> MouseUp(MouseButtons button)
 		{
 			try
@@ -515,7 +515,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="delta">The amount to scroll. Positive to scroll up, negative to scroll down.</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.Medium)]
+		[RiskLevel(RiskLevel.Critical)]
 		public OperationResult<bool> ScrollMouse(int delta)
 		{
 			try
@@ -537,7 +537,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="endX">The ending x-coordinate in pixels.</param>
 		/// <param name="endY">The ending y-coordinate in pixels.</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public OperationResult<bool> DragAndDrop(int startX, int startY, int endX, int endY)
 		{
 			try
@@ -560,7 +560,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="keys">The keys to press down.</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public OperationResult<bool> KeyDown(Key[] keys)
 		{
 			try
@@ -579,7 +579,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="keys">Key to release.</param>
 		/// <returns>Operation result indicating success or failure.</returns>
-		[RiskLevel(RiskLevel.High)]
+		[RiskLevel(RiskLevel.Critical)]
 		public OperationResult<bool> KeyUp(Key[] keys)
 		{
 			try
