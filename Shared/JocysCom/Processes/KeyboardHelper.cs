@@ -155,35 +155,25 @@ namespace JocysCom.ClassLibrary.Processes
 
 		#region Type Keys
 
-		private static readonly Random random = new Random();
-
-
 		/// <summary>
-		/// Synthesizes keystrokes corresponding to the specified Unicode string,
-		/// sending them to the currently active window.
+		/// Sends keystrokes corresponding to the specified Unicode string to the currently active window.
 		/// </summary>
 		/// <param name="s">The string to send.</param>
-		/// <param name="typingSpeed">
-		/// A value from 0 to 10 indicating typing speed.
-		/// 0 is the slowest, 10 is the fastest, 5 is normal human speed.
+		/// <param name="millisecondsDelay">
+		///  Delay in milliseconds between typing each character:
+		/// - 0: Use this to paste the text without any typing delay.
+		/// - 20: Use this value to simulate typical AI typing speed.
+		/// - 200: Use this value to simulate typical human typing speed.
+		/// Default is 0, meaning it pastes immediately.
 		/// </param>
 		/// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
-		public static async Task TypeKeys(string s, int typingSpeed = 0, CancellationToken cancellationToken = default)
+		public static async Task TypeKeys(string s, int millisecondsDelay = 0, CancellationToken cancellationToken = default)
 		{
-			// Ensure typingSpeed is within the valid range
-			typingSpeed = Math.Max(0, Math.Min(10, typingSpeed));
-
-			// Define base delay and randomize amount based on typingSpeed
-			int baseDelay = (11 - typingSpeed) * 50; // Adjust this multiplier to suit the desired speed
-			int randomizeAmount = baseDelay / 2; // Randomize amount can be half of base delay
-
 			// Loop through each Unicode character in the string.
 			foreach (char c in s)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
-
 				var inputs = new List<NativeMethods.INPUT>();
-
 				// First send a key down, then a key up.
 				foreach (bool keyUp in new bool[] { false, true })
 				{
@@ -201,49 +191,36 @@ namespace JocysCom.ClassLibrary.Processes
 							{
 								// Virtual-key code must be 0 since we are sending Unicode characters.
 								wVk = 0,
-
 								// The Unicode character to be sent.
 								wScan = c,
-
 								// Indicate that we are sending a Unicode character.
 								// Also indicate key-up on the second iteration.
 								dwFlags = NativeMethods.KEYEVENTF_UNICODE | (keyUp ? NativeMethods.KEYEVENTF_KEYUP : 0),
-
 								dwExtraInfo = NativeMethods.GetMessageExtraInfo(),
 							}
 						}
 					};
-
 					// Add to the list (to be sent later).
 					inputs.Add(input);
 				}
-
 				// Send the inputs for this character
 				NativeMethods.SendInput((uint)inputs.Count, inputs.ToArray(), Marshal.SizeOf(typeof(NativeMethods.INPUT)));
-
-				// Delay between each key press
-				await Delay(baseDelay, randomizeAmount, cancellationToken);
+				if (millisecondsDelay > 0)
+				{
+					// Randomization amount set to ±20% of the delay.
+					var randomizeAmount = (int)(millisecondsDelay * 0.2);
+					var randomDelay = millisecondsDelay +
+						(randomizeAmount > 0 ? random.Next(-randomizeAmount, randomizeAmount + 1) : 0);
+					if (randomDelay > 0)
+						// Delay with cancellation support
+						await Task.Delay(randomDelay, cancellationToken);
+				}
+				if (cancellationToken.IsCancellationRequested)
+					return;
 			}
 		}
 
-		/// <summary>
-		/// Delays execution for the specified duration with randomization, supporting cancellation.
-		/// </summary>
-		/// <param name="millisecondsDelay">Base delay in milliseconds.</param>
-		/// <param name="millisecondsRandomize">Amount by which to randomize the delay.</param>
-		/// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
-		private static async Task Delay(int millisecondsDelay, int millisecondsRandomize, CancellationToken cancellationToken)
-		{
-			// Calculate randomized delay
-			int randomDelay = millisecondsDelay + random.Next(-millisecondsRandomize, millisecondsRandomize + 1);
-			if (randomDelay < 0)
-				randomDelay = 0;
-
-			// Delay with cancellation support
-			await Task.Delay(randomDelay, cancellationToken);
-		}
-
-
+		private static readonly Random random = new Random();
 
 		#endregion
 

@@ -48,7 +48,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			if (result != System.Windows.Forms.DialogResult.OK)
 				return;
 			contents = System.IO.File.ReadAllText(dialog.FileNames[0]);
-			if (string.IsNullOrEmpty(contents))
+			if (!string.IsNullOrEmpty(contents))
 				_item?.SetIcon(contents);
 		}
 

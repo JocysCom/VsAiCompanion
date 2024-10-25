@@ -33,15 +33,13 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// 3. Execute Action
 	///    - Perform the decided action, such as:
 	///      - Move Mouse: Navigate the cursor to the desired coordinates.
-	///        Use <see cref="Automation.MoveMouse(int, int)" />.
+	///        Use <see cref="Automation.MoveMouse(int, int, CancellationToken)" />.
 	///      - Click Mouse: Interact with elements by clicking as needed.
 	///        Use <see cref="Automation.ClickMouseButton(MouseButtons, int)" />.
 	///      - Send Keyboard Input: Input necessary keystrokes or commands.
 	///        Use <see cref="Automation.SendKeys(string)" />.
 	///      - Interact with UI Elements (e.g., buttons, fields):
-	///        Use <see cref="Automation.PerformActionOnElement(string, string, object)" />.
-	///      - Navigate to a Specific UI Element:
-	///        Use <see cref="Automation.NavigateToElement(string)" />.
+	///        Use <see cref="Automation.PerformActionOnElement(string, AutomationAction, string)" />.
 	///      - Wait for a UI Element to become available:
 	///        Use <see cref="Automation.WaitForElement(string, int)" />.
 	///      - Check if a UI Element is available:
@@ -140,8 +138,27 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			}
 		}
 
+
 		/// <summary>
-		/// Retrieve paths to all top-level windows on the desktop.
+		/// Get information about all displays, including their rectangles and where the mouse pointer can move from one monitor to another.
+		/// Use this method if you need to use the mouse to interact with the application window or control.
+		/// </summary>
+		[RiskLevel(RiskLevel.Medium)]
+		public OperationResult<DisplayInfo[]> GetDisplayInfo()
+		{
+			try
+			{
+				var info = DisplayHelper.GetAllMonitorsInfo().ToArray();
+				return new OperationResult<DisplayInfo[]>(info);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<DisplayInfo[]>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Retrieve paths to all top-level windows on the desktop. Use this to find applications opened by the user.
 		/// </summary>
 		[RiskLevel(RiskLevel.Medium)]
 		public static string[] GetAllTopLevelWindowPaths()
@@ -155,16 +172,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return paths;
 		}
 
-		/// <summary>
-		/// Navigate to a specific UI element (e.g., button, field).
-		/// </summary>
-		/// <param name="elementPath">The identifier of the element to navigate to.</param>
-		/// <returns>True if the navigation was successful.</returns>
-		[RiskLevel(RiskLevel.Medium)]
-		public static bool NavigateToElement(string elementPath)
-		{
-			return true; // Changed from void to bool and return true.
-		}
+		///// <summary>
+		///// Navigate to a specific UI element (e.g., button, field).
+		///// </summary>
+		///// <param name="elementPath">The identifier of the element to navigate to.</param>
+		///// <returns>True if the navigation was successful.</returns>
+		//[RiskLevel(RiskLevel.Medium)]
+		//public static bool NavigateToElement(string elementPath)
+		//{
+		//	return true; // Changed from void to bool and return true.
+		//}
 
 		/// <summary>
 		/// Get properties of a UI element specified by its path.
@@ -191,6 +208,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 		/// <summary>
 		/// Find UI elements matching specific conditions.
+		/// Search will be done on `AutomationElement.RootElement`.
 		/// </summary>
 		/// <param name="conditions">List of property names and values to match.</param>
 		/// <returns>List of XPath-like paths to the matching elements.</returns>
@@ -215,11 +233,11 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// Performs the specified action on the given automation element.
 		/// </summary>
 		/// <param name="elementPath">The AutomationElement to interact with.</param>
-		/// <param name="action">The action to perform (e.g., "click", "settext", "select", "sendkeys").</param>
-		/// <param name="parameters">Additional parameters required for the action.</param>
+		/// <param name="action">The action to perform.</param>
+		/// <param name="parameters">Optional parameters required for the action, as an array of strings.</param>
 		/// <returns>True if the action was performed successfully.</returns>
-		[RiskLevel(RiskLevel.High)]
-		public OperationResult<bool> PerformActionOnElement(string elementPath, string action, object parameters = null)
+		[RiskLevel(RiskLevel.Critical)]
+		public OperationResult<bool> PerformActionOnElement(string elementPath, AutomationAction action, string[] parameters = null)
 		{
 			try
 			{
@@ -369,13 +387,16 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="x">The x-coordinate of the screen in pixels.</param>
 		/// <param name="y">The y-coordinate of the screen in pixels.</param>
+		/// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
 		/// <returns>Operation result indicating success or failure.</returns>
 		[RiskLevel(RiskLevel.Critical)]
-		public OperationResult<bool> MoveMouse(int x, int y)
+		public OperationResult<bool> MoveMouse(int x, int y, CancellationToken cancellationToken = default)
 		{
 			try
 			{
-				MouseHelper.MoveMouse(x, y);
+				var start = MouseGlobalHook.GetCursorPosition();
+				// Move the mouse in steps of 5 pixels, with a 10ms delay between steps
+				MouseHelper.MoveMouse((int)start.X, (int)start.Y, x, y, 5, 10);
 				return new OperationResult<bool>(true);
 			}
 			catch (Exception ex)
@@ -427,21 +448,23 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Synthesizes keystrokes corresponding to the specified Unicode string,
-		/// sending them to the currently active window.
+		/// Sends keystrokes corresponding to the specified Unicode string to the currently active window.
 		/// </summary>
 		/// <param name="s">The string to send.</param>
-		/// <param name="typingSpeed">
-		/// A value from 0 to 10 indicating typing speed.
-		/// 0 is the slowest, 10 is the fastest, 5 is normal human speed.
+		/// <param name="millisecondsDelay">
+		///  Delay in milliseconds between typing each character:
+		/// - 0: Use this to paste the text without any typing delay.
+		/// - 20: Use this value to simulate typical AI typing speed.
+		/// - 200: Use this value to simulate typical human typing speed.
+		/// Default is 0, meaning it pastes immediately.
 		/// </param>
 		/// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
 		[RiskLevel(RiskLevel.Critical)]
-		public async Task<OperationResult<bool>> TypeKeys(string s, int typingSpeed = 0, CancellationToken cancellationToken = default)
+		public async Task<OperationResult<bool>> TypeKeys(string s, int millisecondsDelay = 0, CancellationToken cancellationToken = default)
 		{
 			try
 			{
-				await KeyboardHelper.TypeKeys(s, typingSpeed, cancellationToken);
+				await KeyboardHelper.TypeKeys(s, millisecondsDelay, cancellationToken);
 				return new OperationResult<bool>(true);
 			}
 			catch (Exception ex)
@@ -617,7 +640,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				return new OperationResult<bool>(ex);
 			}
 		}
-
 
 		#endregion
 	}

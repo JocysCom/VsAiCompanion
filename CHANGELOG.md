@@ -1,8 +1,11 @@
-2024-10-24 v1.14.8
+2024-10-25 v1.14.16
 
+- Fix: Can't set icons from files.
 - Fix: Display the RISEN input even when RISEN is disabled.
 - Update: Restore main window from tray when the "Ask AI" window message is sent.
 - Update: Marked mouse and keyboard control with a critical attribute.
+- New: `AI - Computer Use` template.
+- New: Automation functions that allow AI to navigate and interact with UI.
 
 2024-10-22 v1.14.6
 

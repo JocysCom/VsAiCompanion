@@ -498,61 +498,179 @@ namespace JocysCom.ClassLibrary.Windows
 		/// Performs the specified action on the given automation element.
 		/// </summary>
 		/// <param name="element">The AutomationElement to interact with.</param>
-		/// <param name="action">The action to perform (e.g., "click", "settext", "select", "sendkeys").</param>
+		/// <param name="action">The action to perform.</param>
 		/// <param name="parameters">Additional parameters required for the action.</param>
 		/// <returns>True if the action was performed successfully.</returns>
-		public bool PerformAction(AutomationElement element, string action, object parameters = null)
+		/// <summary>
+		/// Performs the specified action on the given automation element.
+		/// </summary>
+		/// <param name="element">The AutomationElement to interact with.</param>
+		/// <param name="action">The action to perform.</param>
+		/// <param name="parameters">Optional parameters required for the action, as an array of strings.</param>
+		/// <returns>True if the action was performed successfully.</returns>
+		public bool PerformAction(AutomationElement element, AutomationAction action, string[] parameters = null)
 		{
 			if (element == null)
 				throw new ArgumentNullException(nameof(element));
 
-			action = action.ToLowerInvariant();
-
 			switch (action)
 			{
-				case "click":
-					return ClickElement(element);
-				case "settext":
-					if (parameters is string text)
+				case AutomationAction.SetValue:
+					if (parameters != null && parameters.Length == 1)
 					{
+						string text = parameters[0];
 						SetValue(element, text);
 						return true;
 					}
-					else
+					throw new ArgumentException("Parameters must be a string array with a single element for 'SetValue' action.");
+
+				case AutomationAction.MouseLeftClick:
+				case AutomationAction.MouseLeftDoubleClick:
+				case AutomationAction.MouseRightClick:
+				case AutomationAction.MouseRightDoubleClick:
+					// Handle click actions (no parameters required)
+					if (element.TryGetCurrentPattern(InvokePattern.Pattern, out object invokePatternObj))
 					{
-						throw new ArgumentException("Parameters must be a string for 'setText' action.");
-					}
-				case "select":
-					return SelectElement(element);
-				case "sendkeys":
-					if (parameters is string keys)
-					{
-						SendKeysToElement(element, keys);
+						var invokePattern = (InvokePattern)invokePatternObj;
+						invokePattern.Invoke();
 						return true;
 					}
 					else
 					{
-						throw new ArgumentException("Parameters must be a string for 'sendKeys' action.");
+						// Fallback to simulate a click if InvokePattern is not available
+						var clickablePoint = element.GetClickablePoint();
+						System.Windows.Forms.Cursor.Position = new System.Drawing.Point((int)clickablePoint.X, (int)clickablePoint.Y);
+						var clicks = action.ToString().IndexOf("Double", StringComparison.OrdinalIgnoreCase) > -1 ? 2 : 1;
+						bool isRightClick = action.ToString().IndexOf("Right", StringComparison.OrdinalIgnoreCase) > -1;
+						var mouseDownFlag = isRightClick ? NativeMethods.MOUSEEVENTF_RIGHTDOWN : NativeMethods.MOUSEEVENTF_LEFTDOWN;
+						var mouseUpFlag = isRightClick ? NativeMethods.MOUSEEVENTF_RIGHTUP : NativeMethods.MOUSEEVENTF_LEFTUP;
+						for (int i = 0; i < clicks; i++)
+						{
+							NativeMethods.mouse_event((int)mouseDownFlag, 0, 0, 0, 0);
+							NativeMethods.mouse_event((int)mouseUpFlag, 0, 0, 0, 0);
+						}
+						return true;
 					}
-				// Add more actions as needed
+
+				case AutomationAction.Select:
+					var selectionItemPattern = GetPattern<SelectionItemPattern>(element);
+					selectionItemPattern.Select();
+					return true;
+
+				case AutomationAction.SetFocus:
+					element.SetFocus();
+					return true;
+
+				case AutomationAction.SetMinimized:
+				case AutomationAction.SetNormal:
+				case AutomationAction.SetMaximize:
+				case AutomationAction.Close:
+				case AutomationAction.WaitForInputIdle:
+					var windowPattern = GetPattern<WindowPattern>(element);
+					if (action == AutomationAction.SetMinimized)
+						windowPattern.SetWindowVisualState(WindowVisualState.Minimized);
+					else if (action == AutomationAction.SetNormal)
+						windowPattern.SetWindowVisualState(WindowVisualState.Normal);
+					else if (action == AutomationAction.SetMaximize)
+						windowPattern.SetWindowVisualState(WindowVisualState.Maximized);
+					else if (action == AutomationAction.Close)
+						windowPattern.Close();
+					else if (action == AutomationAction.WaitForInputIdle)
+					{
+						int milliseconds = 0;
+						if (parameters != null && parameters.Length > 0)
+							int.TryParse(parameters[0], out milliseconds);
+						windowPattern.WaitForInputIdle(milliseconds);
+					}
+					return true;
+
+				case AutomationAction.Toggle:
+					var togglePattern = GetPattern<TogglePattern>(element);
+					togglePattern.Toggle();
+					return true;
+
+				case AutomationAction.Expand:
+				case AutomationAction.Collapse:
+					var expandCollapsePattern = GetPattern<ExpandCollapsePattern>(element);
+					if (action == AutomationAction.Expand)
+						expandCollapsePattern.Expand();
+					else if (action == AutomationAction.Collapse)
+						expandCollapsePattern.Collapse();
+					return true;
+
+				case AutomationAction.ScrollVertical:
+				case AutomationAction.ScrollHorizontal:
+				case AutomationAction.SetScrollPercent:
+					var scrollPattern = GetPattern<ScrollPattern>(element);
+					if (action == AutomationAction.ScrollVertical)
+					{
+						if (parameters == null || parameters.Length != 1)
+							throw new ArgumentException("Parameters must be a single string representing ScrollAmount for 'ScrollVertical' action.");
+						if (!Enum.TryParse(parameters[0], true, out ScrollAmount scrollAmountV))
+							throw new ArgumentException("Invalid ScrollAmount value provided for 'ScrollVertical' action.");
+						scrollPattern.Scroll(ScrollAmount.NoAmount, scrollAmountV);
+						return true;
+					}
+					else if (action == AutomationAction.ScrollHorizontal)
+					{
+						if (parameters == null || parameters.Length != 1)
+							throw new ArgumentException("Parameters must be a single string representing ScrollAmount for 'ScrollHorizontal' action.");
+						if (!Enum.TryParse(parameters[0], true, out ScrollAmount scrollAmountH))
+							throw new ArgumentException("Invalid ScrollAmount value provided for 'ScrollHorizontal' action.");
+						scrollPattern.Scroll(scrollAmountH, ScrollAmount.NoAmount);
+						return true;
+					}
+					else if (action == AutomationAction.ScrollHorizontal)
+					{
+						if (parameters == null || parameters.Length != 2)
+							throw new ArgumentException("Parameters must be an array of two strings representing doubles for 'SetScrollPercent' action.");
+						if (!double.TryParse(parameters[0], out double horizontalPercent) || !double.TryParse(parameters[1], out double verticalPercent))
+							throw new ArgumentException("Parameters must be two valid doubles for 'SetScrollPercent' action.");
+						scrollPattern.SetScrollPercent(horizontalPercent, verticalPercent);
+						return true;
+					}
+					return true;
+
+				case AutomationAction.Move:
+				case AutomationAction.Resize:
+					var transformPattern = GetPattern<TransformPattern>(element);
+					if (parameters == null || parameters.Length != 2)
+						throw new ArgumentException($"Parameters must be an array of two strings representing doubles for '{action}' action.");
+					if (!double.TryParse(parameters[0], out double v1) || !double.TryParse(parameters[1], out double v2))
+						throw new ArgumentException($"Parameters must be two valid doubles for '{action}' action.");
+					if (action == AutomationAction.Resize)
+						transformPattern.Resize(v1, v2);
+					if (action == AutomationAction.Move)
+						transformPattern.Resize(v1, v2);
+					return true;
+
+				case AutomationAction.SetRangeValue:
+					var rangeValuePattern = GetPattern<RangeValuePattern>(element);
+					if (parameters == null || parameters.Length != 1)
+						throw new ArgumentException($"Parameters must be a single string representing a double for '{action}' action.");
+					if (!double.TryParse(parameters[0], out double value))
+						throw new ArgumentException($"Parameters must be a valid double for '{action}' action.");
+					rangeValuePattern.SetValue(value);
+					return true;
+
 				default:
 					throw new NotSupportedException($"Action '{action}' is not supported.");
 			}
 		}
 
-		// Helper method to send keys to an element
-		private void SendKeysToElement(AutomationElement element, string keys)
+
+		private TPattern GetPattern<TPattern>(AutomationElement element) where TPattern : BasePattern
 		{
-			if (element.Current.IsKeyboardFocusable)
-			{
-				element.SetFocus();
-				// Simulate key presses
-				System.Windows.Forms.SendKeys.SendWait(keys);
-			}
-			else
-			{
-				throw new InvalidOperationException("Element is not focusable.");
-			}
+			if (element == null)
+				throw new ArgumentNullException(nameof(element));
+			// Get the static 'Pattern' field from the pattern type using reflection.
+			var patternField = typeof(TPattern).GetField("Pattern", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+			if (patternField == null)
+				throw new NotSupportedException($"Pattern type '{typeof(TPattern).Name}' does not have a static 'Pattern' field.");
+			var automationPattern = (AutomationPattern)patternField.GetValue(null);
+			if (element.TryGetCurrentPattern(automationPattern, out object patternObj))
+				throw new InvalidOperationException($"Element does not support the '{typeof(TPattern).Name}' pattern.");
+			return (TPattern)patternObj;
 		}
 
 		/// <summary>
@@ -590,40 +708,6 @@ namespace JocysCom.ClassLibrary.Windows
 				return false;
 			}
 		}
-
-		/// <summary>
-		/// Selects the specified automation element.
-		/// </summary>
-		/// <param name="element">The AutomationElement to select.</param>
-		/// <returns>True if the select action was successful.</returns>
-		private bool SelectElement(AutomationElement element)
-		{
-			try
-			{
-				if (element.TryGetCurrentPattern(SelectionItemPattern.Pattern, out object pattern))
-				{
-					((SelectionItemPattern)pattern).Select();
-					return true;
-				}
-				else if (element.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out pattern))
-				{
-					var expandCollapsePattern = (ExpandCollapsePattern)pattern;
-					if (expandCollapsePattern.Current.ExpandCollapseState == ExpandCollapseState.Collapsed ||
-						expandCollapsePattern.Current.ExpandCollapseState == ExpandCollapseState.PartiallyExpanded)
-					{
-						expandCollapsePattern.Expand();
-						return true;
-					}
-				}
-				return false;
-			}
-			catch
-			{
-				return false;
-			}
-		}
-
-		// Existing methods ...
 
 		/// <summary>
 		/// Retrieves all child elements of the specified automation element.
@@ -895,6 +979,8 @@ namespace JocysCom.ClassLibrary.Windows
 
 			public const int MOUSEEVENTF_LEFTDOWN = 0x02;
 			public const int MOUSEEVENTF_LEFTUP = 0x04;
+			public const uint MOUSEEVENTF_RIGHTDOWN = 0x08;
+			public const uint MOUSEEVENTF_RIGHTUP = 0x10;
 		}
 
 		#endregion

@@ -30,7 +30,7 @@
         <Left>197</Left>
         <Top>80</Top>
         <Width>1033</Width>
-        <Height>815.5</Height>
+        <Height>816</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -49,7 +49,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.20495049504950494</GridSplitterPosition>
+          <GridSplitterPosition>0.20456802383316783</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
           </ListSelection>
@@ -58,11 +58,11 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.2207920792079208</GridSplitterPosition>
+          <GridSplitterPosition>0.22045680238331677</GridSplitterPosition>
           <ListSelection>
-            <string>® System - AI Window</string>
+            <string>AI - Computer Use</string>
           </ListSelection>
-          <ListSelectedIndex>70</ListSelectedIndex>
+          <ListSelectedIndex>2</ListSelectedIndex>
           <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
@@ -979,11 +979,11 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetAllTopLevelWindowPaths</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetDisplayInfo</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
-          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.NavigateToElement</Id>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetAllTopLevelWindowPaths</Id>
         </PluginItem>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
@@ -1015,6 +1015,44 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
         <PluginItem>
           <IsEnabled>true</IsEnabled>
           <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.CaptureElementImageToFile</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.MoveMouse</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.ClickMouseButton</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.SendKeys</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.TypeKeys</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementFromPoint</Id>
+        </PluginItem>
+        <PluginItem>
+          <IsEnabled>true</IsEnabled>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetMousePosition</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.MouseDown</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.MouseUp</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.ScrollMouse</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.DragAndDrop</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.KeyDown</Id>
+        </PluginItem>
+        <PluginItem>
+          <Id>JocysCom.VS.AiCompanion.Plugins.Core.Automation.KeyUp</Id>
         </PluginItem>
       </Plugins>
     </AppData>

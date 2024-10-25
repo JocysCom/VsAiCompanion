@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Processes
@@ -65,6 +66,32 @@ namespace JocysCom.ClassLibrary.Processes
 			LastX = x;
 			LastY = y;
 		}
+
+		public static void MoveMouse(int startX, int startY, int endX, int endY, double stepSize, int millisecondsDelay, CancellationToken cancellationToken = default)
+		{
+			double deltaX = endX - startX;
+			double deltaY = endY - startY;
+			double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+			double steps = distance / stepSize;
+			double stepX = deltaX / steps;
+			double stepY = deltaY / steps;
+			double currentX = startX;
+			double currentY = startY;
+			int stepsInt = (int)Math.Ceiling(steps);
+
+			for (int i = 0; i < stepsInt; i++)
+			{
+				if (cancellationToken.IsCancellationRequested)
+					return;
+				NativeMethods.SetCursorPos((int)Math.Round(currentX), (int)Math.Round(currentY));
+				Thread.Sleep(millisecondsDelay);
+				currentX += stepX;
+				currentY += stepY;
+			}
+			// Ensure the cursor ends at the exact end position
+			NativeMethods.SetCursorPos(endX, endY);
+		}
+
 
 		public const uint WM_LBUTTONUP = 0x202;
 		public const uint WM_RBUTTONUP = 0x205;

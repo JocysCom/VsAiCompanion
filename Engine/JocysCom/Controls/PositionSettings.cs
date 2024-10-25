@@ -306,6 +306,11 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+		#region Screen Helper
+
+
+		#endregion
+
 		static internal class NativeMethods
 		{
 
