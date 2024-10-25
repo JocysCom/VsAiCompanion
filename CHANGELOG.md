@@ -1,4 +1,4 @@
-2024-10-25 v1.14.16
+2024-10-25 v1.14.17
 
 - Fix: Can't set icons from files.
 - Fix: Display the RISEN input even when RISEN is disabled.

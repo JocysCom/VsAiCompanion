@@ -26,8 +26,8 @@
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.14.6</AssemblyVersion>
-		<FileVersion>1.14.6</FileVersion>
+		<AssemblyVersion>1.14.17</AssemblyVersion>
+		<FileVersion>1.14.17</FileVersion>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<PlatformTarget>x64</PlatformTarget>
 		<Platforms>AnyCPU</Platforms>
@@ -66,13 +66,13 @@
 		<PackageReference Include="CsvHelper" Version="33.0.1" />
 		<PackageReference Include="DiffPlex.Wpf" Version="1.4.0" />
 		<PackageReference Include="DnsClient" Version="1.8.0" />
-		<PackageReference Include="DocumentFormat.OpenXml" Version="3.1.0" />
-			<PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
+		<PackageReference Include="DocumentFormat.OpenXml" Version="3.1.1" />
+			<PackageReference Include="HtmlAgilityPack" Version="1.11.70" />
 		<PackageReference Include="Ignore" Version="0.2.1" />
 		<PackageReference Include="MailKit" Version="4.8.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
 		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.41.1" />
-		<PackageReference Include="Microsoft.Graph" Version="5.60.0" />
+		<PackageReference Include="Microsoft.Graph" Version="5.61.0" />
 		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.1.2" />
 		<PackageReference Include="Microsoft.ML" Version="3.0.1" />
 		<PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />
