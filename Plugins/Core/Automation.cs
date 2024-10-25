@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -417,6 +418,30 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			try
 			{
 				System.Windows.Forms.SendKeys.SendWait(keys);
+				return new OperationResult<bool>(true);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<bool>(ex);
+			}
+		}
+
+		/// <summary>
+		/// Synthesizes keystrokes corresponding to the specified Unicode string,
+		/// sending them to the currently active window.
+		/// </summary>
+		/// <param name="s">The string to send.</param>
+		/// <param name="typingSpeed">
+		/// A value from 0 to 10 indicating typing speed.
+		/// 0 is the slowest, 10 is the fastest, 5 is normal human speed.
+		/// </param>
+		/// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
+		[RiskLevel(RiskLevel.Critical)]
+		public async Task<OperationResult<bool>> TypeKeys(string s, int typingSpeed = 0, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				await KeyboardHelper.TypeKeys(s, typingSpeed, cancellationToken);
 				return new OperationResult<bool>(true);
 			}
 			catch (Exception ex)
