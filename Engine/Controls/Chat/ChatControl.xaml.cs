@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,7 +15,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 	/// <summary>
 	/// Interaction logic for ChatControl.xaml
 	/// </summary>
-	public partial class ChatControl : UserControl
+	public partial class ChatControl : UserControl, INotifyPropertyChanged
 	{
 		public ChatControl()
 		{
@@ -537,11 +538,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			}
 		}
 
-		bool expanded = false;
+		public bool IsChatInputExpanded
+		{
+			get => _ChatInputExpanded;
+			set { _ChatInputExpanded = value; OnPropertyChanged(); }
+		}
+		bool _ChatInputExpanded;
+
 
 		public void MaximizeAndNormal()
 		{
-			if (expanded)
+			if (IsChatInputExpanded)
 			{
 				// Limit chat input.
 				MessageMaxHeightOverride = null;
@@ -559,7 +566,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				ExpandButtonContentControl.Content = Resources["Icon_Minimize"];
 				MessagesPanelBorder.Visibility = Visibility.Collapsed;
 			}
-			expanded = !expanded;
+			IsChatInputExpanded = !IsChatInputExpanded;
 		}
 
 		public void ExpandRow(int rowIndex)
@@ -623,6 +630,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			Item = DataContext as TemplateItem;
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		#endregion
+
 	}
 
 }

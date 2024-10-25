@@ -423,7 +423,7 @@
 						Orientation="Horizontal">
 						<Button
 							x:Name="ExpandButton"
-							Margin="0"
+							Margin="1"
 							Background="Transparent"
 							Click="ExpandMessageButton_Click"
 							Opacity="0.5">
@@ -436,40 +436,38 @@
 						x:Name="MessageButtons"
 						Grid.Column="1"
 						VerticalAlignment="Bottom"
-						Orientation="Vertical">
+						Orientation="Horizontal">
 						<!--  Buttons Panel  -->
-						<StackPanel Margin="0,0,0,22" Orientation="Horizontal">
-							<Button
-								x:Name="SendButton"
-								Width="30"
-								Height="30"
-								Margin="0,0,0,10"
-								Click="SendButton_Click"
-								Style="{DynamicResource RoundCornerBlue}">
-								<Viewbox>
-									<ContentControl
-										Margin="0"
-										Padding="0"
-										Content="{StaticResource Icon_MediaPlay}"
-										Focusable="False" />
-								</Viewbox>
-							</Button>
-							<Button
-								x:Name="StopButton"
-								Width="30"
-								Height="30"
-								Margin="10,0,10,10"
-								Click="StopButton_Click"
-								Style="{DynamicResource RoundCornerRed}">
-								<Viewbox>
-									<ContentControl
-										Margin="0"
-										Padding="0"
-										Content="{StaticResource Icon_MediaStop}"
-										Focusable="False" />
-								</Viewbox>
-							</Button>
-						</StackPanel>
+						<Button
+							x:Name="SendButton"
+							Width="30"
+							Height="30"
+							Margin="2,0,5,31"
+							Click="SendButton_Click"
+							Style="{DynamicResource RoundCornerBlue}">
+							<Viewbox>
+								<ContentControl
+									Margin="0"
+									Padding="0"
+									Content="{StaticResource Icon_MediaPlay}"
+									Focusable="False" />
+							</Viewbox>
+						</Button>
+						<Button
+							x:Name="StopButton"
+							Width="30"
+							Height="30"
+							Margin="0,0,5,31"
+							Click="StopButton_Click"
+							Style="{DynamicResource RoundCornerRed}">
+							<Viewbox>
+								<ContentControl
+									Margin="0"
+									Padding="0"
+									Content="{StaticResource Icon_MediaStop}"
+									Focusable="False" />
+							</Viewbox>
+						</Button>
 					</StackPanel>
 				</Grid>
 			</Border>

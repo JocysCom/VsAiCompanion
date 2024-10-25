@@ -192,6 +192,10 @@
 
 				<GroupBox x:Name="HotKeyGroupBox" Margin="3,0,3,3" Header="{StaticResource main_HotKeys}">
 					<WrapPanel VerticalAlignment="Top" Orientation="Vertical">
+						<!--  Description  -->
+						<Border Grid.ColumnSpan="2" Margin="3,3,3,3" Style="{StaticResource BorderDescriptionNormal}">
+							<TextBlock Name="HotKeyFeatureDescriptionLabel" Text="{StaticResource main_HotKeys_AIWindow_Help}" />
+						</Border>
 						<JcControlsHotKey:HotKeyControl
 							x:Name="HotKeyPanel"
 							HotKey="{Binding AiWindowHotKey, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

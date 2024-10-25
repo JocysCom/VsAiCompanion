@@ -498,14 +498,18 @@ namespace JocysCom.ClassLibrary.Windows
 		/// Performs the specified action on the given automation element.
 		/// </summary>
 		/// <param name="element">The AutomationElement to interact with.</param>
-		/// <param name="action">The action to perform.</param>
-		/// <param name="parameters">Additional parameters required for the action.</param>
-		/// <returns>True if the action was performed successfully.</returns>
-		/// <summary>
-		/// Performs the specified action on the given automation element.
-		/// </summary>
-		/// <param name="element">The AutomationElement to interact with.</param>
-		/// <param name="action">The action to perform.</param>
+		/// <param name="action">
+		/// The action to perform. Note that some actions require specific parameters:
+		/// - SetValue: parameters[0] is the string value to set.
+		/// - WaitForInputIdle: parameters[0] (optional) is the wait time in milliseconds (string representing an integer).
+		/// - ScrollVertical: parameters[0] is a string representing a `ScrollAmount` enum value (e.g., "LargeIncrement", "SmallIncrement").
+		/// - ScrollHorizontal: parameters[0] is a string representing a `ScrollAmount` enum value (e.g., "LargeIncrement", "SmallIncrement").
+		/// - SetScrollPercent: parameters[0] is the horizontal scroll percent (string representing a double), parameters[1] is the vertical scroll percent.
+		/// - Move: parameters[0] is the x-coordinate (string representing a double), parameters[1] is the y-coordinate.
+		/// - Resize: parameters[0] is the width (string representing a double), parameters[1] is the height.
+		/// - SetRangeValue: parameters[0] is the value to set (string representing a double).
+		/// Actions not listed above do not require parameters.
+		/// </param>
 		/// <param name="parameters">Optional parameters required for the action, as an array of strings.</param>
 		/// <returns>True if the action was performed successfully.</returns>
 		public bool PerformAction(AutomationElement element, AutomationAction action, string[] parameters = null)

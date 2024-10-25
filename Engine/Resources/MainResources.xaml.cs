@@ -214,6 +214,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_DomainMaxRiskLevel => FindResource(nameof(main_DomainMaxRiskLevel));
         public static string main_HotKeys => FindResource(nameof(main_HotKeys));
         public static string main_HotKeys_AIWindow => FindResource(nameof(main_HotKeys_AIWindow));
+        public static string main_HotKeys_AIWindow_Help => FindResource(nameof(main_HotKeys_AIWindow_Help));
         public static string main_ActivationDate => FindResource(nameof(main_ActivationDate));
         public static string main_ClearVaultItem_Help => FindResource(nameof(main_ClearVaultItem_Help));
         public static string main_ClearVaultItem_Name => FindResource(nameof(main_ClearVaultItem_Name));

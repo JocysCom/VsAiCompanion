@@ -41,6 +41,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.MessagesPanel.WebBrowserDataLoaded += ChatPanel_MessagesPanel_WebBrowserDataLoaded;
 			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction;
 			ChatPanel.SelectionSaved += ChatPanel_SelectionSaved;
+			ChatPanel.PropertyChanged += ChatPanel_PropertyChanged;
 			ChatPanel.InitTokenCounters();
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
@@ -77,6 +78,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
+		}
+
+		private void ChatPanel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(ChatPanel.IsChatInputExpanded))
+			{
+				// If top bar panel is visible then...
+				if (PanelSettings.IsBarPanelVisible)
+					// Colapse it to make more space for chat input.
+					PanelSettings.UpdateBarToggleButtonIcon(BarToggleButton, true);
+			}
 		}
 
 		private void Global_OnTabControlSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -222,25 +234,28 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void ChatPanel_OnSend(object sender, EventArgs e)
 		{
-			if (_Item != null)
-			{
-				var voiceInstructions = GetVoiceInstructions();
-				var isCtrlDown =
-					System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
-					System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);
-				var isAltDown =
-					System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) ||
-					System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt);
-				message_role? addMessageAsRole = null;
-				if (isCtrlDown)
-					addMessageAsRole = message_role.user;
-				if (isAltDown)
-					addMessageAsRole = message_role.assistant;
-				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit,
-					extraInstructions: voiceInstructions,
-					addMessageAsRole: addMessageAsRole);
-				RestoreTabSelection();
-			}
+			if (_Item == null)
+				return;
+			if (ChatPanel.IsChatInputExpanded)
+				// Make panel normal again, so that the user can see the chat log.
+				ChatPanel.MaximizeAndNormal();
+
+			var voiceInstructions = GetVoiceInstructions();
+			var isCtrlDown =
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl);
+			var isAltDown =
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) ||
+				System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt);
+			message_role? addMessageAsRole = null;
+			if (isCtrlDown)
+				addMessageAsRole = message_role.user;
+			if (isAltDown)
+				addMessageAsRole = message_role.assistant;
+			await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit,
+				extraInstructions: voiceInstructions,
+				addMessageAsRole: addMessageAsRole);
+			RestoreTabSelection();
 		}
 
 		string GetVoiceInstructions()

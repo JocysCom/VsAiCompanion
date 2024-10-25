@@ -455,7 +455,7 @@ Do not return as a code block.")]
 
 		#region AI Window
 
-		[DefaultValue(false)]
+		[DefaultValue(true)]
 		public bool AiWindowHotKeyEnabled { get => _AiWindowHotKeyEnabled; set => SetProperty(ref _AiWindowHotKeyEnabled, value); }
 		bool _AiWindowHotKeyEnabled;
 

@@ -212,6 +212,7 @@
 	<sys:String x:Key="main_DomainMaxRiskLevel">Domain max risk level</sys:String>
 	<sys:String x:Key="main_HotKeys">Hot Keys</sys:String>
 	<sys:String x:Key="main_HotKeys_AIWindow">AI Window</sys:String>
+	<sys:String x:Key="main_HotKeys_AIWindow_Help">The path to the UI element directly under the mouse pointer will be sent to the AI.</sys:String>
 
 	<!--  Options → Microsoft Account → Azure Key Vault Items  -->
 	<sys:String x:Key="main_ActivationDate">Activation Date</sys:String>

@@ -19,11 +19,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
 			Type = attachmentType;
 			SetData(data, language);
-			IsMarkdown = true;
 		}
 
 		public void SetData(string contents, string language)
-			=> Data = MarkdownHelper.CreateMarkdownCodeBlock(contents, language);
+		{
+			Data = MarkdownHelper.CreateMarkdownCodeBlock(contents, language);
+			IsMarkdown = true;
+		}
 
 		public MessageAttachments(ContextType attachmentType, object dataToJson)
 		{
@@ -34,7 +36,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			options.WriteIndented = true;
 			var data = JsonSerializer.Serialize(dataToJson, options);
 			SetData(data, "json");
-			IsMarkdown = true;
 		}
 
 		/// <summary>

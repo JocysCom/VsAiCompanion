@@ -54,6 +54,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources.Icons
 		public const string Icon_code_typescript = nameof(Icon_code_typescript);
 		public const string Icon_code_xml = nameof(Icon_code_xml);
 		public const string Icon_comment_disabled = nameof(Icon_comment_disabled);
+		public const string Icon_computer = nameof(Icon_computer);
 		public const string Icon_contract = nameof(Icon_contract);
 		public const string Icon_control_panel = nameof(Icon_control_panel);
 		public const string Icon_copy = nameof(Icon_copy);

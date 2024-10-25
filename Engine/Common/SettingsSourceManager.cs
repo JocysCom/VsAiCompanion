@@ -102,7 +102,20 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return list;
 		}
 
+		public static void ResetUIPanelSettingLists()
+		{
+			var items = Global.AppSettings.PanelSettingsList.ToArray();
+			foreach (var item in items)
+				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item, false, new string[] { nameof(TaskSettings.ItemType) });
+		}
+
 		public static void ResetUI()
+		{
+			ResetUIMainWindow();
+			ResetUIPanelSettingLists();
+		}
+
+		public static void ResetUIMainWindow()
 		{
 			var w = AdjustForScreenshot(Global.AppSettings.ResetWindowWidth);
 			var h = AdjustForScreenshot(Global.AppSettings.ResetWindowHeight);
@@ -110,9 +123,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				Global.AppSettings.ResetWindowWidth = w;
 			if (Global.AppSettings.ResetWindowHeight != h)
 				Global.AppSettings.ResetWindowHeight = h;
-			var items = Global.AppSettings.PanelSettingsList.ToArray();
-			foreach (var item in items)
-				ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(item, false, new string[] { nameof(TaskSettings.ItemType) });
 			var ps = Global.AppSettings.StartPosition;
 			if (!Global.IsVsExtension)
 			{
@@ -140,7 +150,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				ps.LoadPosition(window);
 			}
 		}
-
 
 		/// <summary>
 		/// Adjusts the provided dimension to the nearest perfect size for screenshots, 

@@ -50,6 +50,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		private void Window_SourceInitialized(object sender, System.EventArgs e)
 		{
+			var ps = Global.AppSettings.StartPosition;
+			// Workaround: If Window position was completely minimized.
+			if (ps.Height < 40)
+				SettingsSourceManager.ResetUIMainWindow();
 			Global.AppSettings.StartPosition.LoadPosition(this);
 		}
 

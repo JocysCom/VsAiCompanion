@@ -139,8 +139,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			ControlsHelper.SetText(DocumentCountLabel, documentText);
 		}
 
-		#region
-
 		public bool UseEnterToSendMessage => Global.AppSettings.UseEnterToSendMessage;
 
 		private void DataTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -179,20 +177,35 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			copy.CanvasEditorElementPath = Info.ElementPath;
 			copy.Created = DateTime.Now;
 			copy.Modified = copy.Created;
-			var messageParts = new List<string>();
-			if (SelectionCheckBox.IsChecked == true)
-				messageParts.Add(MarkdownHelper.CreateMarkdownCodeBlock(Info.SelectedText, "text"));
-			if (DocumentCheckBox.IsChecked == true)
-				messageParts.Add(MarkdownHelper.CreateMarkdownCodeBlock(Info.DocumentText, "text"));
-			messageParts.Add(DataTextBox.PART_ContentTextBox.Text);
+
 			var userMessage = new Chat.MessageItem();
 			userMessage.Type = Chat.MessageType.Out;
-			userMessage.Body = string.Join("\r\n\r\n", messageParts);
+			userMessage.Body = DataTextBox.PART_ContentTextBox.Text;
+
+			// Add element path attachment.
 			var pathAttachment = new Chat.MessageAttachments();
 			pathAttachment.SetData(Info.ElementPath, "xpath");
-			pathAttachment.Title = "UI Element Path";
-			pathAttachment.Instructions = "Selected element path on UI used by the user";
+			pathAttachment.IsAlwaysIncluded = true;
+			pathAttachment.Title = "Active UI Element Path";
 			userMessage.Attachments.Add(pathAttachment);
+
+			var messageParts = new List<string>();
+			if (SelectionCheckBox.IsChecked == true)
+			{
+				var attachment = new Chat.MessageAttachments();
+				attachment.Title = "Selection";
+				attachment.SetData(Info.SelectedText, "text");
+				attachment.IsAlwaysIncluded = true;
+				userMessage.Attachments.Add(attachment);
+			}
+			if (DocumentCheckBox.IsChecked == true)
+			{
+				var attachment = new Chat.MessageAttachments();
+				attachment.Title = "Document";
+				attachment.SetData(Info.DocumentText, "text");
+				attachment.IsAlwaysIncluded = true;
+				userMessage.Attachments.Add(attachment);
+			}
 			copy.Messages.Add(userMessage);
 			Global.InsertItem(copy, ItemType.Task);
 			// Select new task in the tasks list on the [Tasks] tab.
@@ -201,8 +214,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				Global.TrayManager.RestoreFromTray(true, false);
 			Close();
 		}
-
-		#endregion
 
 		private void This_PreviewKeyDown(object sender, KeyEventArgs e)
 		{

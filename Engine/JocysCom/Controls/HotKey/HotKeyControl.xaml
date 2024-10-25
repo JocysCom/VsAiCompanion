@@ -17,6 +17,7 @@
 		<CheckBox Content="{Binding HotKeyText, RelativeSource={RelativeSource AncestorType=UserControl}}" IsChecked="{Binding HotKeyEnabled, RelativeSource={RelativeSource AncestorType=UserControl}}" />
 		<TextBox
 			Width="150"
+			HorizontalAlignment="Left"
 			HorizontalContentAlignment="Center"
 			GotFocus="TextBox_GotFocus"
 			LostFocus="TextBox_LostFocus"

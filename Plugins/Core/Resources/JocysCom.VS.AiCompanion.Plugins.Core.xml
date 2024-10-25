@@ -28,7 +28,7 @@
                   - Send Keyboard Input: Input necessary keystrokes or commands.
                     Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.SendKeys(System.String)" />.
                   - Interact with UI Elements (e.g., buttons, fields):
-                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.PerformActionOnElement(System.String,JocysCom.ClassLibrary.Windows.AutomationAction,System.String)" />.
+                    Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.PerformActionOnElement(System.String,JocysCom.ClassLibrary.Windows.AutomationAction,System.String[])" />.
                   - Wait for a UI Element to become available:
                     Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.WaitForElement(System.String,System.Int32)" />.
                   - Check if a UI Element is available:
@@ -53,6 +53,10 @@
             
              6. Iterate Until Completion
                 - Repeat steps 1-5 until the final goal is achieved.
+            
+             Notes:
+                - Before starting any action, you can get information about all displays.
+                  Use <see cref="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetDisplayInfo" />.
              </example>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetCanvasEditorElementPath">
@@ -108,13 +112,24 @@
             <param name="conditions">List of property names and values to match.</param>
             <returns>List of XPath-like paths to the matching elements.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.PerformActionOnElement(System.String,JocysCom.ClassLibrary.Windows.AutomationAction,System.String)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.PerformActionOnElement(System.String,JocysCom.ClassLibrary.Windows.AutomationAction,System.String[])">
             <summary>
             Performs the specified action on the given automation element.
             </summary>
             <param name="elementPath">The AutomationElement to interact with.</param>
-            <param name="action">The action to perform.</param>
-            <param name="parameters">Additional parameters required for the action.</param>
+            <param name="action">
+            The action to perform. Note that some actions require specific parameters:
+            - SetValue: parameters[0] is the string value to set.
+            - WaitForInputIdle: parameters[0] (optional) is the wait time in milliseconds (string representing an integer).
+            - ScrollVertical: parameters[0] is a string representing a `ScrollAmount` enum value (e.g., "LargeIncrement", "SmallIncrement").
+            - ScrollHorizontal: parameters[0] is a string representing a `ScrollAmount` enum value (e.g., "LargeIncrement", "SmallIncrement").
+            - SetScrollPercent: parameters[0] is the horizontal scroll percent (string representing a double), parameters[1] is the vertical scroll percent.
+            - Move: parameters[0] is the x-coordinate (string representing a double), parameters[1] is the y-coordinate.
+            - Resize: parameters[0] is the width (string representing a double), parameters[1] is the height.
+            - SetRangeValue: parameters[0] is the value to set (string representing a double).
+            Actions not listed above do not require parameters.
+            </param>
+            <param name="parameters">Optional parameters required for the action, as an array of strings.</param>
             <returns>True if the action was performed successfully.</returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Automation.GetElementChildren(System.String)">
