@@ -178,7 +178,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				var messageType = MessageType.Out;
 				if (addMessageAsRole == message_role.assistant)
 					messageType = MessageType.In;
-				m = new MessageItem(UserName, itemText, messageType);
+				// If no message and last message is user then...
+				if (string.IsNullOrEmpty(itemText) && item.Messages?.Last().Type == MessageType.Out)
+				{
+					// Reuse last user message.
+					m = item.Messages?.Last();
+					m.User = UserName;
+				}
+				else
+				{
+					m = new MessageItem(UserName, itemText, messageType);
+				}
 				if (addMessageAsRole == null || addMessageAsRole == message_role.user)
 					m.BodyInstructions = instructions;
 				if (item.UseMacros)
@@ -389,7 +399,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				}
 			}
 			var maxTokens = Client.GetMaxInputTokens(item);
-			item.Messages.Add(m);
+			if (!item.Messages.Contains(m))
+				item.Messages.Add(m);
 			item.Modified = DateTime.Now;
 			var msgTokens = CountTokens(chatLogMessages, ChatLogOptions);
 			if (item.IsPreview)
