@@ -185,10 +185,27 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public event EventHandler OnSend;
 		public event EventHandler OnStop;
 
+		public void ApplyMessageEdit()
+		{
+			var isEdit = !string.IsNullOrEmpty(EditMessageId);
+			if (isEdit)
+			{
+				var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId);
+				if (message != null)
+				{
+					message.Body = DataTextBox.PART_ContentTextBox.Text;
+					message.BodyInstructions = DataInstructionsTextBox.PART_ContentTextBox.Text;
+					DataTextBox.PART_ContentTextBox.Text = "";
+					MessagesPanel.UpdateWebMessage(message, true);
+				}
+			}
+			EditMessageId = null;
+		}
+
 		/// <summary>
 		/// If the chat form is in message edit mode, remove relevant messages before adding a new message.
 		/// </summary>
-		public void ApplyMessageEdit()
+		public void ApplyMessageEditWithRemovingMessages()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			if (isEdit)

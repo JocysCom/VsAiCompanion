@@ -106,7 +106,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// <summary>
 		/// Update web message from C# message.
 		/// </summary>
-		void UpdateWebMessage(MessageItem item, bool autoScroll)
+		public void UpdateWebMessage(MessageItem item, bool autoScroll)
 		{
 			var json = JsonSerializer.Serialize(item);
 			InvokeScript($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});");

@@ -338,8 +338,8 @@
 
 		function DeleteMessage(messageId) {
 			var messageEl = document.getElementById(idPrefix + messageId);
-			messageEl.parentElement.removeChild(el);
-			HideRegenerateButtonsExceptLast();
+			messageEl.parentElement.removeChild(messageEl);
+			UpdateRegenerateButtons();
 		}
 
 		function DeleteMessages() {
@@ -369,7 +369,7 @@
 			// Scroll if needed
 			if (autoScroll && keepScrollOnTheBottom)
 				ScrollToBottom();
-			HideRegenerateButtonsExceptLast();
+			UpdateRegenerateButtons();
 			return true;
 		}
 
@@ -380,7 +380,7 @@
 			// Scroll to the bottom of the chatLog div.
 			if (autoScroll && keepScrollOnTheBottom)
 				ScrollToBottom();
-			HideRegenerateButtonsExceptLast();
+			UpdateRegenerateButtons();
 		}
 
 		function CreateMessageHtml(message) {
@@ -462,7 +462,7 @@
 		}
 
 
-		function HideRegenerateButtonsExceptLast() {
+		function UpdateRegenerateButtons() {
 			// Get all the buttons inside chatLog
 			var buttons = document.getElementById('chatLog').getElementsByClassName('regenerate-Out')
 			// Hide/Show all buttons
@@ -477,7 +477,9 @@
 			buttons = newList;
 
 			for (var i = 0; i < buttons.length; i++) {
-				var value = i == buttons.length - 1 ? 'inline-block' : "none";
+				var value = 'inline-block';
+				// If button is last.
+				//var value = i == buttons.length - 1 ? 'inline-block' : "none";
 				var style = buttons[i].style;
 				if (style.display !== value)
 					style.display = value;

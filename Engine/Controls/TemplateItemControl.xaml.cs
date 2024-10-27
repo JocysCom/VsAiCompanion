@@ -161,7 +161,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				ChatPanel.EditMessageId = id;
 				ChatPanel.FocusChatInputTextBox();
 				var voiceInstructions = GetVoiceInstructions();
-				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, message.Body, extraInstructions: voiceInstructions);
+				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, message.Body, extraInstructions: voiceInstructions);
 			}
 			else if (action == MessageAction.Edit)
 			{
@@ -252,9 +252,17 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				addMessageAsRole = message_role.user;
 			if (isAltDown)
 				addMessageAsRole = message_role.assistant;
-			await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit,
-				extraInstructions: voiceInstructions,
-				addMessageAsRole: addMessageAsRole);
+			var isEdit = !string.IsNullOrEmpty(ChatPanel.EditMessageId);
+			if (isEdit)
+			{
+				ChatPanel.ApplyMessageEdit();
+			}
+			else
+			{
+				await ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages,
+					extraInstructions: voiceInstructions,
+					addMessageAsRole: addMessageAsRole);
+			}
 			RestoreTabSelection();
 		}
 
@@ -398,7 +406,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					ControlsHelper.AppBeginInvoke(() =>
 					{
 						var voiceInstructions = GetVoiceInstructions();
-						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEdit, extraInstructions: voiceInstructions);
+						_ = ClientHelper.Send(_Item, ChatPanel.ApplyMessageEditWithRemovingMessages, extraInstructions: voiceInstructions);
 					});
 				}
 				_ = Helper.Debounce(EmbeddingGroupFlags_OnPropertyChanged);
