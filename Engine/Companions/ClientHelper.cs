@@ -252,6 +252,34 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						};
 						m.Attachments.Add(clipAttachment);
 					}
+					if (item.UseEmbeddings)
+					{
+						// AI must decide what to search for, not to use by the last user message.
+						var embeddingItem = Global.Embeddings.Items
+							.FirstOrDefault(x => x.Name == item.EmbeddingName);
+						if (embeddingItem != null)
+						{
+							if (!string.IsNullOrWhiteSpace(m.Body))
+							{
+								if (!string.IsNullOrEmpty(embeddingText))
+								{
+									var eh = new EmbeddingHelper();
+									var embeddingData = await eh.SearchEmbeddingsToSystemMessage(embeddingItem,
+										item.EmbeddingGroupName, item.EmbeddingGroupFlag,
+										embeddingText, embeddingItem.Skip, embeddingItem.Take);
+									if (!string.IsNullOrEmpty(embeddingData))
+									{
+										var embeddingAttachment = new MessageAttachments();
+										embeddingAttachment.SetData(embeddingData, "text");
+										// Data is temporary and only for current answer.
+										embeddingAttachment.IsAlwaysIncluded = false;
+										embeddingAttachment.Title = "Embedding";
+										m.Attachments.Add(embeddingAttachment);
+									}
+								}
+							}
+						}
+					}
 					if (Global.IsVsExtension)
 					{
 						// If text selection in Visual Studio.

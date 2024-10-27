@@ -397,45 +397,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				Global.MainControl.InfoPanel.AddTask(id);
 				Global.AvatarPanel?.PlayMessageSentAnimation();
 			});
-			if (serviceItem.UseEmbeddings)
-			{
-				// Experimental.
-				// AI must decide what to search for, not to use by the last user message.
-				var embeddingItem = Global.Embeddings.Items
-					.FirstOrDefault(x => x.Name == serviceItem.EmbeddingName);
-				if (embeddingItem != null)
-				{
-					var eh = new EmbeddingHelper();
-					var lastUserMessage = messagesToSend.Last(x => x.role == message_role.user);
-					if (!string.IsNullOrWhiteSpace(lastUserMessage?.content as string))
-					{
-						// Try to get system message before user message.
-						var lastSystemMessage = messagesToSend.LastOrDefault(x => x.role == message_role.system);
-						var lastUserMessageIndex = messagesToSend.IndexOf(lastUserMessage);
-						// If no system message
-						var addNewSystemMessage = false;
-						if (lastSystemMessage == null)
-							addNewSystemMessage = true;
-						// system message is not before user message, add one.
-						else if ((messagesToSend.IndexOf(lastSystemMessage) - 1) != lastUserMessageIndex)
-							addNewSystemMessage = true;
-						if (addNewSystemMessage)
-						{
-							// Insert system message before user message.
-							lastSystemMessage = new chat_completion_message(message_role.system, "");
-							messagesToSend.Insert(lastUserMessageIndex, lastSystemMessage);
-						}
-						if (!string.IsNullOrEmpty(embeddingText))
-						{
-							var systemMessage = await eh.SearchEmbeddingsToSystemMessage(embeddingItem,
-								serviceItem.EmbeddingGroupName, serviceItem.EmbeddingGroupFlag,
-								embeddingText, embeddingItem.Skip, embeddingItem.Take);
-							if (!string.IsNullOrEmpty(systemMessage))
-								lastSystemMessage.content += "\r\n\r\n" + systemMessage;
-						}
-					}
-				}
-			}
 			var secure = new Uri(service.BaseUrl).Scheme == Uri.UriSchemeHttps;
 			try
 			{
