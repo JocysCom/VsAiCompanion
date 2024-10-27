@@ -33,171 +33,6 @@
 			<SolidColorBrush x:Key="RisenNarrowingBackgroundBrush" Color="#FFE6F2" />
 			<SolidColorBrush x:Key="NewBackgroundBrush" Color="#FFE6F7" />
 			<JcConverters:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter" />
-			<Style x:Key="RoundCornerRed" TargetType="{x:Type Button}">
-				<Setter Property="HorizontalContentAlignment" Value="Center" />
-				<Setter Property="VerticalContentAlignment" Value="Center" />
-				<Setter Property="Foreground" Value="White" />
-				<Setter Property="Template">
-					<Setter.Value>
-						<ControlTemplate TargetType="{x:Type Button}">
-							<Viewbox>
-								<Border
-									x:Name="border"
-									Width="40"
-									Height="40"
-									CornerRadius="20"
-									RenderTransformOrigin="0.5,0.5">
-									<Border.RenderTransform>
-										<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
-									</Border.RenderTransform>
-									<Border.Background>
-										<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-											<GradientStop Offset="0" Color="#EF6B78" />
-											<GradientStop Offset="1" Color="#EF6B78" />
-										</LinearGradientBrush>
-									</Border.Background>
-									<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-								</Border>
-							</Viewbox>
-							<ControlTemplate.Triggers>
-								<MultiDataTrigger>
-									<MultiDataTrigger.Conditions>
-										<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
-									</MultiDataTrigger.Conditions>
-									<MultiDataTrigger.Setters>
-										<Setter TargetName="border" Property="Background">
-											<Setter.Value>
-												<!--  +6L  -->
-												<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-													<GradientStop Offset="0" Color="#ED5564" />
-													<GradientStop Offset="1" Color="#ED5564" />
-												</LinearGradientBrush>
-											</Setter.Value>
-										</Setter>
-									</MultiDataTrigger.Setters>
-								</MultiDataTrigger>
-
-								<!--  Other triggers  -->
-								<EventTrigger RoutedEvent="Button.PreviewMouseDown">
-									<BeginStoryboard>
-										<Storyboard>
-											<DoubleAnimation
-												Storyboard.TargetName="Transform"
-												Storyboard.TargetProperty="ScaleX"
-												To="0.95"
-												Duration="0:0:0.1" />
-											<DoubleAnimation
-												Storyboard.TargetName="Transform"
-												Storyboard.TargetProperty="ScaleY"
-												To="0.95"
-												Duration="0:0:0.1" />
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<EventTrigger RoutedEvent="Button.PreviewMouseUp">
-									<BeginStoryboard>
-										<Storyboard>
-											<DoubleAnimation
-												Storyboard.TargetName="Transform"
-												Storyboard.TargetProperty="ScaleX"
-												To="1"
-												Duration="0:0:0.1" />
-											<DoubleAnimation
-												Storyboard.TargetName="Transform"
-												Storyboard.TargetProperty="ScaleY"
-												To="1"
-												Duration="0:0:0.1" />
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<!--  Other triggers  -->
-							</ControlTemplate.Triggers>
-						</ControlTemplate>
-					</Setter.Value>
-				</Setter>
-			</Style>
-			<Style x:Key="RoundCornerBlue" TargetType="{x:Type Button}">
-				<Setter Property="HorizontalContentAlignment" Value="Center" />
-				<Setter Property="VerticalContentAlignment" Value="Center" />
-				<Setter Property="Foreground" Value="White" />
-				<Setter Property="Template">
-					<Setter.Value>
-						<ControlTemplate TargetType="{x:Type Button}">
-							<Viewbox>
-								<Border
-									x:Name="border"
-									Width="40"
-									Height="40"
-									CornerRadius="20"
-									RenderTransformOrigin="0.5,0.5">
-									<Border.RenderTransform>
-										<ScaleTransform x:Name="Transform" ScaleX="1" ScaleY="1" />
-									</Border.RenderTransform>
-									<Border.Background>
-										<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-											<GradientStop Offset="0" Color="#00aeec" />
-											<GradientStop Offset="1" Color="#00aeec" />
-										</LinearGradientBrush>
-									</Border.Background>
-									<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-								</Border>
-							</Viewbox>
-							<ControlTemplate.Triggers>
-								<MultiDataTrigger>
-									<MultiDataTrigger.Conditions>
-										<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
-									</MultiDataTrigger.Conditions>
-									<MultiDataTrigger.Setters>
-										<Setter TargetName="border" Property="Background">
-											<Setter.Value>
-												<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-													<GradientStop Offset="0" Color="#00B8FA" />
-													<GradientStop Offset="1" Color="#00B8FA" />
-												</LinearGradientBrush>
-											</Setter.Value>
-										</Setter>
-									</MultiDataTrigger.Setters>
-								</MultiDataTrigger>
-
-								<!--  Other triggers  -->
-								<EventTrigger RoutedEvent="Button.PreviewMouseDown">
-									<BeginStoryboard>
-										<Storyboard>
-											<DoubleAnimation
-												Storyboard.TargetName="Transform"
-												Storyboard.TargetProperty="ScaleX"
-												To="0.95"
-												Duration="0:0:0.1" />
-											<DoubleAnimation
-												Storyboard.TargetName="Transform"
-												Storyboard.TargetProperty="ScaleY"
-												To="0.95"
-												Duration="0:0:0.1" />
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<EventTrigger RoutedEvent="Button.PreviewMouseUp">
-									<BeginStoryboard>
-										<Storyboard>
-											<DoubleAnimation
-												Storyboard.TargetName="Transform"
-												Storyboard.TargetProperty="ScaleX"
-												To="1"
-												Duration="0:0:0.1" />
-											<DoubleAnimation
-												Storyboard.TargetName="Transform"
-												Storyboard.TargetProperty="ScaleY"
-												To="1"
-												Duration="0:0:0.1" />
-										</Storyboard>
-									</BeginStoryboard>
-								</EventTrigger>
-								<!--  Other triggers  -->
-							</ControlTemplate.Triggers>
-						</ControlTemplate>
-					</Setter.Value>
-				</Setter>
-			</Style>
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid x:Name="ControlGrid">
@@ -443,13 +278,17 @@
 							Width="30"
 							Height="30"
 							Margin="2,0,5,31"
-							Click="SendButton_Click"
-							Style="{DynamicResource RoundCornerBlue}">
+							Padding="0"
+							AutomationProperties.HelpText="{StaticResource main_Chat_Send_Help}"
+							AutomationProperties.Name="{StaticResource main_Chat_Send_Name}"
+							Background="Transparent"
+							Click="SendButton_Click">
 							<Viewbox>
 								<ContentControl
+									x:Name="SendButtonIcon"
 									Margin="0"
 									Padding="0"
-									Content="{StaticResource Icon_MediaPlay}"
+									Content="{StaticResource Icon_media_play}"
 									Focusable="False" />
 							</Viewbox>
 						</Button>
@@ -458,13 +297,17 @@
 							Width="30"
 							Height="30"
 							Margin="0,0,5,31"
-							Click="StopButton_Click"
-							Style="{DynamicResource RoundCornerRed}">
+							Padding="0"
+							AutomationProperties.HelpText="{StaticResource main_Chat_Stop_Help}"
+							AutomationProperties.Name="{StaticResource main_Chat_Stop_Name}"
+							Background="Transparent"
+							Click="StopButton_Click">
 							<Viewbox>
 								<ContentControl
+									x:Name="StopButtonIcon"
 									Margin="0"
 									Padding="0"
-									Content="{StaticResource Icon_MediaStop}"
+									Content="{StaticResource Icon_media_stop}"
 									Focusable="False" />
 							</Viewbox>
 						</Button>

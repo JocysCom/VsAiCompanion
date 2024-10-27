@@ -128,6 +128,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Text_Placeholder => FindResource(nameof(main_Text_Placeholder));
         public static string main_Placeholder => FindResource(nameof(main_Placeholder));
         public static string main_Personalize_the_chat => FindResource(nameof(main_Personalize_the_chat));
+        public static string main_Chat_Send_Name => FindResource(nameof(main_Chat_Send_Name));
+        public static string main_Chat_Send_Help => FindResource(nameof(main_Chat_Send_Help));
+        public static string main_Chat_Stop_Name => FindResource(nameof(main_Chat_Stop_Name));
+        public static string main_Chat_Stop_Help => FindResource(nameof(main_Chat_Stop_Help));
+        public static string main_Chat_Apply_Name => FindResource(nameof(main_Chat_Apply_Name));
+        public static string main_Chat_Apply_Help => FindResource(nameof(main_Chat_Apply_Help));
+        public static string main_Chat_Cancel_Name => FindResource(nameof(main_Chat_Cancel_Name));
+        public static string main_Chat_Cancel_Help => FindResource(nameof(main_Chat_Cancel_Help));
         public static string main_RISEN => FindResource(nameof(main_RISEN));
         public static string main_RISEN_Help => FindResource(nameof(main_RISEN_Help));
         public static string main_RISEN_Role_Help => FindResource(nameof(main_RISEN_Role_Help));

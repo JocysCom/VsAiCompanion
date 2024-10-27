@@ -1,5 +1,7 @@
 ﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Resources;
+using JocysCom.VS.AiCompanion.Engine.Resources.Icons;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -136,8 +138,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public void UpdateMessageEdit()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
-			SendButton.ToolTip = isEdit ? "Update message" : "Send message. Hold CTRL to add a user message and ALT to add an assistant message.";
-			StopButton.ToolTip = isEdit ? "Cancel editing" : "AnimationAndMediaStop Request";
+			AppHelper.UpdateHelp(SendButton,
+				isEdit ? MainResources.main_Chat_Apply_Name : MainResources.main_Chat_Send_Name,
+				isEdit ? MainResources.main_Chat_Apply_Help : MainResources.main_Chat_Send_Help);
+			AppHelper.UpdateHelp(StopButton,
+				isEdit ? MainResources.main_Chat_Cancel_Name : MainResources.main_Chat_Stop_Name,
+				isEdit ? MainResources.main_Chat_Cancel_Help : MainResources.main_Chat_Stop_Help);
+			SendButtonIcon.Content = isEdit
+				? Resources[Icons_Default.Icon_button_ok]
+				: Resources[Icons_Default.Icon_media_play];
+			StopButtonIcon.Content = isEdit
+				? Resources[Icons_Default.Icon_button_cancel]
+				: Resources[Icons_Default.Icon_media_stop];
 			SendButton.IsEnabled = !IsBusy && AllowToSend();
 			StopButton.IsEnabled = isEdit || IsBusy;
 			var sendOp = SendButton.IsEnabled ? 1.0 : 0.2;

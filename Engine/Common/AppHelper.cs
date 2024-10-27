@@ -701,6 +701,18 @@ EndFragment:{3:00000000}";
 			}
 		}
 
+		public static void UpdateHelp(UIElement element, string name, string helpText)
+		{
+			var hp = Global.MainControl?.InfoPanel.HelpProvider;
+			// If form not loaded yet then..
+			if (hp is null)
+				return;
+			Global.MainControl.InfoPanel.HelpProvider.Remove(element);
+			AutomationProperties.SetName(element, name);
+			AutomationProperties.SetHelpText(element, helpText);
+			Global.MainControl.InfoPanel.HelpProvider.Add(element, name, helpText);
+		}
+
 		/// <summary>
 		/// Get all child controls. Excludes controls that are sourced from external XAML resource dictionaries.
 		/// </summary>

@@ -265,20 +265,19 @@ namespace JocysCom.VS.AiCompanion
 
 		private void CloseSplashScreen()
 		{
-			if (_splashScreen != null)
+			if (_splashScreen == null)
+				return;
+			var operation = _splashScreen.Dispatcher.BeginInvoke(new Action(() =>
 			{
-				var operation = _splashScreen.Dispatcher.BeginInvoke(new Action(() =>
+				_splashScreen.Close();
+				System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
 				{
-					_splashScreen.Close();
-					System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
-					{
-						System.Windows.Threading.Dispatcher.ExitAllFrames();
-					}), System.Windows.Threading.DispatcherPriority.Background);
-				}));
-				// Comment this line to prevent the app from freezing while in debugging.
-				//_splashThread.Join();
-				_splashThread = null;
-			}
+					System.Windows.Threading.Dispatcher.ExitAllFrames();
+				}), System.Windows.Threading.DispatcherPriority.Background);
+			}));
+			// Comment this line to prevent the app from freezing while in debugging.
+			//_splashThread.Join();
+			_splashThread = null;
 		}
 
 		#endregion
@@ -306,10 +305,12 @@ namespace JocysCom.VS.AiCompanion
 			{
 				if (IsDebug)
 					throw;
+				CloseSplashScreen();
 				var message = ExceptionToText(ex);
-				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OKCancel, MessageBoxImage.Error, MessageBoxResult.OK);
-				if (result == MessageBoxResult.Cancel)
-					ShutDownWithOptionalSaveAndTrayDispose(false);
+				var result = Global.ShowError(message);
+				//var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OKCancel, MessageBoxImage.Error, MessageBoxResult.OK);
+				//if (result == MessageBoxResult.Cancel)
+				ShutDownWithOptionalSaveAndTrayDispose(false);
 			}
 		}
 

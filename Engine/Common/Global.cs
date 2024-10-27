@@ -218,11 +218,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		public static void ShowError(string message)
+		public static MessageBoxResult ShowError(string message, MessageBoxButton button = MessageBoxButton.OK)
 		{
-			var form = new MessageBoxWindow();
-			ControlsHelper.CheckTopMost(form);
-			form.ShowDialog(message);
+			var box = new MessageBoxWindow();
+			box.SetSize(800, 600);
+			//box.MessageTextBox.IsReadOnly = true;
+			//var result = box.ShowPrompt(message, "Error!", button, MessageBoxImage.Error);
+			var result = box.ShowDialog(message, "Error!", button, MessageBoxImage.Error);
+			return result;
 		}
 
 		#region Keyboard Hook to handle CTRL+C
