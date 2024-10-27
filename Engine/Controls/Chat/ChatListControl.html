@@ -439,7 +439,11 @@
 						aInstructions = ConvertForDisplayAsHtml(aInstructions);
 						aInstructions = aInstructions + "</ br>";
 					}
-					var box = AddAttachmentBox(message.Id + "_" + i, a.Title, aInstructions, aData);
+					var aTitle = a.Title;
+					if (a.IsAlwaysIncluded === false) {
+						aTitle += " ᵀ";
+					}
+					var box = AddAttachmentBox(message.Id + "_" + i, aTitle, aInstructions, aData);
 					buttons += box.buttonHTML;
 					data += "\r\n\r\n" + box.panelHTML;
 				}
