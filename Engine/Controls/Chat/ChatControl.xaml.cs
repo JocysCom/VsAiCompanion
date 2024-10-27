@@ -144,6 +144,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			AppHelper.UpdateHelp(StopButton,
 				isEdit ? MainResources.main_Chat_Cancel_Name : MainResources.main_Chat_Stop_Name,
 				isEdit ? MainResources.main_Chat_Cancel_Help : MainResources.main_Chat_Stop_Help);
+			// Select message tab if options are invisible but selected.
+			if (!isEdit && MessageOptionsTabItem.IsSelected)
+				ChatMessageTabItem.IsSelected = true;
+			MessageOptionsTabItem.Visibility = isEdit ? Visibility.Visible : Visibility.Collapsed;
+			MessageOptionsPanel.DataContext = isEdit ? MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId) : null;
 			SendButtonIcon.Content = isEdit
 				? Resources[Icons_Default.Icon_button_ok]
 				: Resources[Icons_Default.Icon_media_play];
@@ -163,9 +168,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			{
 				var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId);
 				if (message != null)
-				{
 					AttachmentsPanel.CurrentItems = message.Attachments;
-				}
 			}
 		}
 

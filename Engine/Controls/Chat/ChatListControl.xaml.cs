@@ -86,15 +86,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			return null;
 		}
 
+		public void SetZoom(int zoom)
+		{
+			InvokeScript($"SetZoom({zoom});");
+		}
+
 		public void RemoveMessage(MessageItem message)
 		{
 			Messages.Remove(message);
 			InvokeScript($"DeleteMessage('{message.Id}');");
-		}
-
-		public void SetZoom(int zoom)
-		{
-			InvokeScript($"SetZoom({zoom});");
 		}
 
 		void InsertWebMessage(MessageItem item, bool autoScroll)
@@ -103,10 +103,25 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			InvokeScript($"InsertMessage({json}, {autoScroll.ToString().ToLower()});");
 		}
 
+		/// <summary>
+		/// Update web message from C# message.
+		/// </summary>
+		void UpdateWebMessage(MessageItem item, bool autoScroll)
+		{
+			var json = JsonSerializer.Serialize(item);
+			InvokeScript($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});");
+		}
+
 		private void DataItems_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			if (e.ListChangedType == ListChangedType.ItemAdded)
 				InsertWebMessage(Messages[e.NewIndex], true);
+			if (e.ListChangedType == ListChangedType.ItemChanged)
+			{
+				var allowUpdate = e.PropertyDescriptor.Name == nameof(MessageItem.Type);
+				if (allowUpdate)
+					UpdateWebMessage(Messages[e.NewIndex], true);
+			}
 		}
 
 		public BindingList<MessageItem> Messages { get; set; }

@@ -344,6 +344,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Object => FindResource(nameof(main_Object));
         public static string main_Open => FindResource(nameof(main_Open));
         public static string main_Open_File => FindResource(nameof(main_Open_File));
+        public static string main_Options => FindResource(nameof(main_Options));
         public static string main_Refresh => FindResource(nameof(main_Refresh));
         public static string main_Service => FindResource(nameof(main_Service));
         public static string main_Status => FindResource(nameof(main_Status));

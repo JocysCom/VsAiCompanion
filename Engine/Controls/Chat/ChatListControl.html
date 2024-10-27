@@ -336,9 +336,55 @@
 			}
 		}
 
+		function DeleteMessage(messageId) {
+			var messageEl = document.getElementById(idPrefix + messageId);
+			messageEl.parentElement.removeChild(el);
+			HideRegenerateButtonsExceptLast();
+		}
+
+		function DeleteMessages() {
+			var chatLog = document.getElementById('chatLog');
+			chatLog.innerHTML = "";
+		}
+
+		function UpdateMessage(message, autoScroll) {
+			var messageEl = document.getElementById(idPrefix + message.Id);
+			if (!messageEl)
+				return false;
+			// Get the parent element (chatLog)
+			var chatLog = document.getElementById('chatLog');
+			// Find the index of messageEl in chatLog's childNodes
+			var children = chatLog.children;
+			var index = Array.prototype.indexOf.call(children, messageEl);
+			// Remove the existing message element
+			chatLog.removeChild(messageEl);
+			// Create new message element.
+			var messageHTML = CreateMessageHtml(message)
+			// Insert the new message element at the position index
+			if (index >= 0 && index < children.length) {
+				children[index].insertAdjacentHTML('beforebegin', messageHTML);
+			} else {
+				chatLog.insertAdjacentHTML('beforeend', messageHTML);
+			}
+			// Scroll if needed
+			if (autoScroll && keepScrollOnTheBottom)
+				ScrollToBottom();
+			HideRegenerateButtonsExceptLast();
+			return true;
+		}
+
 		function InsertMessage(message, autoScroll) {
 			var chatLog = document.getElementById('chatLog');
-			var messageTemplate = document.getElementById('messageTemplate').innerHTML;
+			var messageHTML = CreateMessageHtml(message)
+			chatLog.insertAdjacentHTML('beforeend', messageHTML);
+			// Scroll to the bottom of the chatLog div.
+			if (autoScroll && keepScrollOnTheBottom)
+				ScrollToBottom();
+			HideRegenerateButtonsExceptLast();
+		}
+
+		function CreateMessageHtml(message) {
+
 			// Convert markdown code to HTML.
 			var body = "" + message.Body;
 			// According to the Markdown Guide, in order to force a new line, you need to add 2 spaces at the end of the line, followed by the return key.
@@ -356,8 +402,7 @@
 			// Make sure that multiple spaces are preserved.
 			//if (message.Type == MessageType.Out)
 			//	body = "<div style=\"white-space: pre;\">" + body + "</div>";
-			var newMessageInstructionsHTML = "";
-
+			var messageInstructionsHTML = "";
 			var buttons = "";
 			// If body AI instructions supplied then...
 			if ((message.BodyInstructions) && ("" + message.BodyInstructions).length > 0) {
@@ -367,12 +412,10 @@
 				instructions = parseMarkdown(instructions);
 				var box = AddAttachmentBox(message.Id + "_instructions", "Instructions", instructions, "");
 				buttons += box.buttonHTML;
-				newMessageInstructionsHTML = box.panelHTML;
+				messageInstructionsHTML = box.panelHTML;
 			}
-
 			var attachments = message.Attachments;
 			var data = "";
-
 			if (Array.isArray(attachments)) {
 				for (var i = 0; i < attachments.length; i++) {
 					var a = attachments[i];
@@ -401,10 +444,10 @@
 					data += "\r\n\r\n" + box.panelHTML;
 				}
 			}
-
-			var bodyContents = "" + newMessageInstructionsHTML + body;
+			var bodyContents = "" + messageInstructionsHTML + body;
 			// Replace all placeholders with actual values from the message.
-			var newMessageHTML = messageTemplate
+			var messageTemplate = document.getElementById('messageTemplate').innerHTML;
+			var messageHTML = messageTemplate
 				.replace(/{Type}/g, messageType[message.Type])
 				.replace(/{Automated}/g, message.IsAutomated ? "Automated" : "Normal")
 				.replace(/{Id}/g, idPrefix + message.Id)
@@ -415,17 +458,9 @@
 				.replace(/{Data}/g, data)
 				.replace(/{DataHide}/g, data === "" ? "item-hide" : "")
 				.replace(/{Buttons}/g, buttons);
-
-			// Create a new div element and set its innerHTML to the newly created message.
-			//var newMessage = document.createElement('div');
-			//newMessage.innerHTML = newMessageHTML;
-			//chatLog.appendChild(newMessage);
-			chatLog.insertAdjacentHTML('beforeend', newMessageHTML);
-			// Scroll to the bottom of the chatLog div.
-			if (autoScroll && keepScrollOnTheBottom)
-				ScrollToBottom();
-			HideRegenerateButtonsExceptLast();
+			return messageHTML;
 		}
+
 
 		function HideRegenerateButtonsExceptLast() {
 			// Get all the buttons inside chatLog
@@ -538,7 +573,7 @@
 			@param messageId Unique message Id.
 			@param responseDiff Response recevied from the stream.
 		 */
-		function UpdateMessage(messageId, responseDiff) {
+		function UpdateMessageDiff(messageId, responseDiff) {
 			// Get message element by message Id.
 			var el = document.getElementById(idPrefix + messageId);
 			var bodyEl = el.getElementsByClassName("chat-message-body")[0];
@@ -577,16 +612,6 @@
 			}
 		}
 
-		function DeleteMessage(messageId) {
-			var el = document.getElementById(idPrefix + messageId);
-			el.parentElement.removeChild(el);
-			HideRegenerateButtonsExceptLast();
-		}
-
-		function DeleteMessages() {
-			var chatLog = document.getElementById('chatLog');
-			chatLog.innerHTML = "";
-		}
 
 		function ScrollToBottom() {
 			window.setTimeout(function () {

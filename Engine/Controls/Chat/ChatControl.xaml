@@ -168,6 +168,7 @@
 								PlaceholderText="{StaticResource main_RISEN_Role_Help}"
 								ToolTip="{StaticResource main_RISEN_Role_Example}" />
 						</TabItem>
+
 						<!--  Instructions (I) Tab  -->
 						<TabItem
 							x:Name="RisenInstructionsTabItem"
@@ -188,6 +189,7 @@
 								PlaceholderText="{StaticResource main_RISEN_Instructions_Help}"
 								ToolTip="{StaticResource main_RISEN_Instructions_Example}" />
 						</TabItem>
+
 						<!--  Steps (S) Tab  -->
 						<TabItem
 							x:Name="RisenStepsTabItem"
@@ -208,6 +210,7 @@
 								PlaceholderText="{StaticResource main_RISEN_Steps_Help}"
 								ToolTip="{StaticResource main_RISEN_Steps_Example}" />
 						</TabItem>
+
 						<!--  End Goal (E) Tab  -->
 						<TabItem
 							x:Name="RisenEndGoalTabItem"
@@ -228,6 +231,7 @@
 								PlaceholderText="{StaticResource main_RISEN_EndGoal_Help}"
 								ToolTip="{StaticResource main_RISEN_EndGoal_Example}" />
 						</TabItem>
+
 						<!--  Narrowing (N) Tab  -->
 						<TabItem
 							x:Name="RisenNarrowingTabItem"
@@ -247,6 +251,17 @@
 								IsInTab="True"
 								PlaceholderText="{StaticResource main_RISEN_Narrowing_Help}"
 								ToolTip="{StaticResource main_RISEN_Narrowing_Example}" />
+						</TabItem>
+
+						<!--  Message Options  -->
+						<TabItem x:Name="MessageOptionsTabItem" x:FieldModifier="public">
+							<TabItem.Header>
+								<StackPanel Orientation="Horizontal">
+									<ContentControl Content="{StaticResource Icon_gearwheel}" />
+									<Label Content="{StaticResource main_Options}" />
+								</StackPanel>
+							</TabItem.Header>
+							<local:MessageOptionsControl x:Name="MessageOptionsPanel" Margin="5,3,5,3" />
 						</TabItem>
 					</TabControl>
 					<StackPanel

@@ -364,6 +364,7 @@
 	<sys:String x:Key="main_Object">Object</sys:String>
 	<sys:String x:Key="main_Open">Open...</sys:String>
 	<sys:String x:Key="main_Open_File">Open File</sys:String>
+	<sys:String x:Key="main_Options">Options</sys:String>
 	<sys:String x:Key="main_Refresh">Refresh</sys:String>
 	<sys:String x:Key="main_Service">Service</sys:String>
 	<sys:String x:Key="main_Status">Status</sys:String>
