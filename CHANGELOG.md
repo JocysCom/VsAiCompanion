@@ -1,6 +1,10 @@
-2024-10-26 v1.14.18
+2024-10-27 v1.14.27
 
 - Fix: The executable remains open when there is an exception in the main app.
+- New: Data from the embedding database will now be visible in the chat log.
+- New: Added the `ᵀ` suffix to temporary message attachments that are sent once.
+- New: [Options] tab for messages to control additional options when editing.
+- Updated: The buttons will now change to Apply/Cancel when editing a message.
 
 - 2024-10-25 v1.14.17
 
