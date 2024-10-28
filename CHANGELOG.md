@@ -1,4 +1,4 @@
-2024-10-27 v1.14.31
+2024-10-28 v1.14.31
 
 - Fix: The executable remains open when there is an exception in the main app.
 - Fix: Avatar voice used when the voice was not enabled, and the avatar window was hidden.
