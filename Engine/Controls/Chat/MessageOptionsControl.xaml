@@ -29,12 +29,12 @@
 				HorizontalAlignment="Left"
 				SelectedValue="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		</StackPanel>
-		<TabControl>
+		<!--<TabControl>
 			<TabItem Header="{StaticResource main_Attachments}">
 				<StackPanel>
 					<controls:AttachmentsControl x:Name="AttachmentsPanel" />
 				</StackPanel>
 			</TabItem>
-		</TabControl>
+		</TabControl>-->
 	</WrapPanel>
 </UserControl>

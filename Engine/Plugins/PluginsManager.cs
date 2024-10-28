@@ -472,7 +472,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					);
 					// If avatar voice not enabled then disable.
 					var useVoice = item.UseAvatarVoice || Global.IsAvatarInWindow || item.ShowAvatar;
-					if (!useVoice && tool.FunctionName == nameof(Multimedia.AISpeak))
+					var voiceFunctions = new[] { nameof(Multimedia.AISpeak), nameof(Multimedia.PlayText), nameof(Multimedia.StopText) };
+					if (!useVoice && voiceFunctions.Contains(tool.FunctionName))
 						continue;
 					tools.Add(tool);
 				}
