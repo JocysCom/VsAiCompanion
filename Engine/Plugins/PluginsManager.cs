@@ -470,6 +470,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 						string.Join("\r\n\r\n", lines),
 						binaryParamaters
 					);
+					// If avatar voice not enabled then disable.
+					var useVoice = item.UseAvatarVoice || Global.IsAvatarInWindow || item.ShowAvatar;
+					if (!useVoice && tool.FunctionName == nameof(Multimedia.AISpeak))
+						continue;
 					tools.Add(tool);
 				}
 			}

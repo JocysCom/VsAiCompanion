@@ -269,7 +269,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		string GetVoiceInstructions()
 		{
 			// If use voice is checked or if avatar is visible.
-			if (Item.UseAvatarVoice || Global.IsAvatarInWindow || Item.ShowAvatar)
+			var useVoice = Item.UseAvatarVoice || Global.IsAvatarInWindow || Item.ShowAvatar;
+			if (useVoice)
 				return Global.AppSettings.AiAvatar.Instructions;
 			return null;
 		}
@@ -380,7 +381,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				_Item = value ?? AppHelper.GetNewTemplateItem(true);
 				// This will trigger AiCompanionComboBox_SelectionChanged event.
 				AiModelBoxPanel.Item = null;
-				ChatPanel.AttachmentsPanel.CurrentItems = null;
+				if (ChatPanel.AttachmentsPanel.CurrentItems != null)
+					ChatPanel.AttachmentsPanel.CurrentItems = null;
 				DataContext = _Item;
 				_Item.PropertyChanged += _item_PropertyChanged;
 				AiModelBoxPanel.Item = _Item;

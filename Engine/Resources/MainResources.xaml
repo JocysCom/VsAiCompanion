@@ -370,6 +370,7 @@
 	<sys:String x:Key="main_Status">Status</sys:String>
 	<sys:String x:Key="main_Stop">Stop</sys:String>
 	<sys:String x:Key="main_Task">Task</sys:String>
+	<sys:String x:Key="main_Title">Title</sys:String>
 	<sys:String x:Key="main_Test">Test</sys:String>
 	<sys:String x:Key="main_Title_for_Attached_Context">Generate Title for Attached Context</sys:String>
 	<sys:String x:Key="main_Icon_for_Attached_Context">Generate Icon for Attached Context</sys:String>

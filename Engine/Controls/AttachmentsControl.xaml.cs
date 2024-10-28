@@ -2,7 +2,9 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -22,6 +24,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			CurrentItems2.Add(new MessageAttachments() { Title = "Item 1" });
 			CurrentItems = new BindingList<MessageAttachments>();
 		}
 
@@ -65,6 +68,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
+		public ObservableCollection<MessageAttachments> CurrentItems2
+		{
+			get => _CurrentItems2;
+		}
+		ObservableCollection<MessageAttachments> _CurrentItems2 = new ObservableCollection<MessageAttachments>();
+
 		public BindingList<MessageAttachments> CurrentItems
 		{
 			get => _CurrentItems;
@@ -73,6 +82,20 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (_CurrentItems != null)
 					CurrentItems.ListChanged -= CurrentItems_ListChanged;
 				_CurrentItems = value;
+				var items = value ?? new BindingList<MessageAttachments>();
+				//CollectionsHelper.Synchronize(items, CurrentItems2);
+				Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+				{
+					CurrentItems2.Add(new MessageAttachments() { Title = "Item New" });
+					foreach (var item in MainDataGrid.Items)
+					{
+						var row = (DataGridRow)MainDataGrid.ItemContainerGenerator.ContainerFromItem(item);
+						if (row != null)
+						{
+							Debug.WriteLine($"Item: {item}, Visibility: {row.Visibility}");
+						}
+					}
+				}));
 				if (_CurrentItems != null)
 					CurrentItems.ListChanged += CurrentItems_ListChanged;
 				OnPropertyChanged();

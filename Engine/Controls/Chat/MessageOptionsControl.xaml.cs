@@ -33,6 +33,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 					_Item.PropertyChanged -= _item_PropertyChanged;
 				}
 				_Item = value;
+				AttachmentsPanel.CurrentItems = _Item?.Attachments;
 				if (_Item != null)
 				{
 					_Item.PropertyChanged += _item_PropertyChanged;

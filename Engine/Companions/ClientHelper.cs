@@ -115,8 +115,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			message_role? addMessageAsRole = null
 		)
 		{
+			var allowSend = addMessageAsRole == null;
 			System.Diagnostics.Debug.WriteLine($"Send on Item: {item.Name}");
-			if (!await Global.IsGoodSettings(item.AiService, true))
+			// Preview won't send anything therefor no need to validate.
+			if (allowSend && !item.IsPreview && !await Global.IsGoodSettings(item.AiService, true))
 				return;
 			if (!Global.ValidateServiceAndModel(item))
 				return;
@@ -452,8 +454,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 						item.AutoGenerateTitle = false;
 						_ = GenerateResult(item, SettingsSourceManager.TemplateGenerateTitleTaskName);
 					}
-					// If must add message as role then skip sending part.
-					if (addMessageAsRole == null)
+					if (allowSend)
 					{
 						var client = new Companions.ChatGPT.Client(item.AiService);
 						// Send body and context data. Make sure it runs on NON-UI thread.

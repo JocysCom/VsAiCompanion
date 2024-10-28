@@ -19,7 +19,7 @@ YcgIHZbQJSCRyI1lGGW950MZbVXu8f5VqNwo5Dim+1e48fYV432gbwp+fUbY+20rNZAAbVdMQUNX&#xD
 GYgqlgqlh9qDqGm8JI3BsgHIhbN9VRr22Whqo8KjhMMBDT/WpQ2oNo54jhmekyHbz+zNy3wJXzX4&#xD;
 ZfL2zf/F/eOyZwkAAA==</IconData>
   <Created>2024-09-19T15:16:51.0170517+01:00</Created>
-  <Modified>2024-10-25T16:17:39.2924224+01:00</Modified>
+  <Modified>2024-10-28T12:05:56.4100702+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
@@ -75,13 +75,38 @@ Notes:&#xD;
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
-  <Messages />
+  <Messages>
+    <MessageItem>
+      <Id>1249d6a38a094756bd0d0e3cdcfa80ae</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>**Warning:**
+
+Using AI to control your computer presents unique risks, especially when interacting with the internet. Do not leave processing unattended when the AI is in control.
+
+To mitigate risks:
+
+- **Use a Secure Environment:** Run the AI application inside a dedicated virtual machine or container with minimal privileges to prevent system attacks or accidents.
+- **Protect Sensitive Data:** Avoid giving the model access to sensitive information, such as account login details, to prevent information theft.
+- **Restrict Internet Access:** Limit internet connectivity to an allowlist of trusted domains to reduce exposure to malicious content.
+- **Beware of Prompt Injection:** Some AI models may follow commands found within content that conflict with your instructions. Isolate the environment from sensitive data and critical actions to mitigate this risk.
+
+**Note on Control Mechanisms:**
+
+When the AI takes over mouse and keyboard control, manually approving processes becomes challenging. To facilitate this:
+
+- Set Approval to **"Allow All"**.
+- Alternatively, use **"User when AI Denies"** approval with a secondary AI handling approvals via the **"® System - Plugin Approval"** template.</Body>
+      <Attachments />
+      <Date>2024-10-28T12:05:56.0075676+00:00</Date>
+      <Type>Warning</Type>
+    </MessageItem>
+  </Messages>
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
-  <AutoGenerateTitle>true</AutoGenerateTitle>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
@@ -98,9 +123,15 @@ Notes:&#xD;
     </TextBoxData>
     <TextBoxData>
       <Name>DataInstructionsTextBox</Name>
-      <SelectionStart>2065</SelectionStart>
+      <SelectionStart>0</SelectionStart>
       <SelectionLength>0</SelectionLength>
       <TextLength>2399</TextLength>
+    </TextBoxData>
+    <TextBoxData>
+      <Name>DataTextBox</Name>
+      <SelectionStart>0</SelectionStart>
+      <SelectionLength>0</SelectionLength>
+      <TextLength>0</TextLength>
     </TextBoxData>
   </UiSelections>
 </TemplateItem>

@@ -9,6 +9,7 @@
 	x:Name="This"
 	d:DesignHeight="100"
 	d:DesignWidth="400"
+	DataContext="{Binding RelativeSource={RelativeSource Self}}"
 	Loaded="This_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -29,13 +30,16 @@
 		</Grid.RowDefinitions>
 		<DataGrid
 			x:Name="MainDataGrid"
-			Height="Auto"
+			Grid.Row="2"
+			MaxHeight="400"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			x:FieldModifier="public"
 			AutoGenerateColumns="False"
+			EnableColumnVirtualization="False"
+			EnableRowVirtualization="False"
 			IsReadOnly="True"
-			ItemsSource="{Binding CurrentItems, ElementName=This}"
+			ItemsSource="{Binding CurrentItems2, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 			Loaded="MainDataGrid_Loaded"
 			PreviewKeyDown="MainDataGrid_PreviewKeyDown"
 			ScrollViewer.CanContentScroll="True"
@@ -92,6 +96,13 @@
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
+				<DataGridTextColumn
+					x:Name="TitleColumn"
+					Width="Auto"
+					Binding="{Binding Title}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="{StaticResource main_Title}" />
 				<DataGridTextColumn
 					x:Name="LocationColumn"
 					Width="*"

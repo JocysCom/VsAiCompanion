@@ -133,9 +133,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			UpdateMessageEdit();
 		}
 
+		public void UpdateMessageEdit()
+		{
+			_ = Helper.Debounce(UpdateMessageEditDebounced, 100);
+		}
+
 		public bool IsBusy;
 
-		public void UpdateMessageEdit()
+		public void UpdateMessageEditDebounced()
 		{
 			var isEdit = !string.IsNullOrEmpty(EditMessageId);
 			AppHelper.UpdateHelp(SendButton,
@@ -164,11 +169,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			if (StopButton.Opacity != stopOp)
 				StopButton.Opacity = stopOp;
 			System.Diagnostics.Debug.WriteLine($"UpdateButtons: IsBusy={IsBusy}, isEdit={isEdit}, stopOp={stopOp}");
-			if (isEdit)
+			// Bind attachments.
+			var attachments = isEdit ? MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId)?.Attachments : null;
+			if (AttachmentsPanel.CurrentItems != attachments)
 			{
-				var message = MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId);
-				if (message != null)
-					AttachmentsPanel.CurrentItems = message.Attachments;
+				AttachmentsPanel.CurrentItems = attachments;
+				AttachmentsPanel.CurrentItems2.Add(new MessageAttachments() { Title = "External " });
 			}
 		}
 
@@ -351,12 +357,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			var tab = MainTabControl.SelectedItem as TabItem;
 			if (tab == null)
 				return;
-			var ptb = (PlaceholderTextBox)ControlsHelper.GetAll(tab, typeof(PlaceholderTextBox)).FirstOrDefault();
-			if (ptb == null)
+			var contentTextBox = SelectionControls?.FirstOrDefault(x => x.Tab == tab).Box;
+			if (contentTextBox == null)
 				return;
 			Dispatcher.BeginInvoke(new Action(() =>
 			{
-				LoadSelection(ptb.PART_ContentTextBox);
+				LoadSelection(contentTextBox);
 			}), DispatcherPriority.Render);
 		}
 

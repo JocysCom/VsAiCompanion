@@ -1,23 +1,25 @@
 ﻿<TemplateItem>
   <Name>AI - Computer Use</Name>
   <IconType>.svg</IconType>
-  <IconData>H4sIAAAAAAAACq2WX2+jOBDA30+672C5L7tSABsMhAr6cNWptw/dlXbVD8Afk3jXwZFxStJPf2Mg&#xD;
-KOmlvaJNpGQ8gz3j38xgJ22fV+iZ61aoJsPUpfjPPxB89hvZtBleG7O99byu69wucJVeeT4hxINF&#xD;
-p/Nu91I0vy7NpkmSeP1TjDpRmXWGQ+pjtOZitTaj8ix495faZ5gggsBiv/hu8J8aYSS/60RTqa5F&#xD;
-olRN6g22cULF2/LsOaq12iCz5ugLaH/vt1wL3pTcLcH84NwrKXlpgNdF92p70HYnqDigL1/vv33/&#xD;
-gR42xT/ok2UQTal0a5d9dlOvjzPFrNtx3OsAyHP9oPMKIhm0pxmOGEYHkAEA7n0rqetHFIyg+DFz&#xD;
-qR8lIUarcdFTIwwkfNdy/WObl/xb89RyjESV4VJJpR16TMkUtTVqi1RdtxwySTCyutNPzvBNnhfL&#xD;
-MsTeu4voq0UJzUleny1KvXO4D2In0YDtx4Bti2yxgyRxoSHmUPvzqHnEi5rMpK4qznhxDWrK2Igd&#xD;
-LF2WhOHAzQhxCaEzsIN52JVf5ZzOxC6DklfL38EmI7Wtb08dxrbHR+ogtE0ez6Bm86gDXpB6LjX1&#xD;
-E875NajjscVpkECLH0sdz27xcGaLk9qvq7m1Lnhef6jF7UE3HW7pCtVCygw3qoE927Gjd5L3hheu&#xD;
-lQ2j1S9+nDFoznjU08lgQ5X5NsPFzpgz608l4OLZCMP1ZO81KUCADzKZq7xd51rnhwyf2U4yVavG&#xD;
-OHW+EfIwbdqauvG+OTG14mXatuF74+RNubbJOpIcLOdG7J1C8qZyNqrit6hRepPL04ql29ysEVTz&#xD;
-Ea6tBVtKsghCXzqMLRcEFAe0EkSC4oVDI0QjKyQDScpkQawhtj80ehnbYqefOTTXkPqdlp9uxivg&#xD;
-83kFp8gRWyTgcowYEDaGP3UYXnDov+WQgUc4tcANIQOFH0YyWLJ398wuhAjeDbF85Q0SlSAnhhFy&#xD;
-BoNjJ9ixEw+in/Qqmy/o0ebzau5OmIIj003df96igXRT/1rF9y8kkr2VSLKAo+h/ig9v4n8chm9W&#xD;
-BmoOLFcrDeTgiv5OqOwLf7E2qbeCUWr/p979C07r+EjiCgAA</IconData>
+  <IconData>H4sIAAAAAAAACsVWbW/bNhD+3l/BcV8tiu8vQdyikZNmQLIVWJphnwZX1iyhnm3Irpzm1+9OpCWj&#xD;
+cYF+C2CYOvG5u+eO5ENdvnv6b0W6qt01m/WUCsYpqdblZtGsl1P66eEm8/Td2zeXv8z+KB7+/nhN&#xD;
+dt2SfPx0dfdbQWiW53+pIs9nDzPy5+MHIpjI8+vfKaH1fr+9yPPD4cAOim3aZf6hnW/rptzlAMwR&#xD;
+CE45BBOCLfYLCikw8gkRQUmzmNK7+beq/QcM4LneTc9ElpxzjJQgF0+rZv3lHFCEEPJ+FqBTyrdP&#xD;
+lHxL46FZ7OsplRqNumqW9f5odU11uNqgA+FEavhhi+afV1X2eV5+Wbabr2sguq4O5AQBXC5223lZ&#xD;
+Tem2rXZV21VQJCGXy76sptysexvebOf7msC7ezmRkgnTZZqpkk8yzrR1ZsKZ8tKg6dHw6bEWHmEJ&#xD;
+EycSdEB2MVICZafTY7g6w0iFjJNSTXoeVoBHYvRMyb/NajWlvxbFjM8Czb+nLvhEilvdZbK2j1KM&#xD;
+Dv466FAMDmXTlquKlNBOIZmhpIQVkLDpWngxOL1/fyWvZj/lxNFObtbYmfNnyBmmoBZRQ82ixD/V&#xD;
+twyeYl+FiOPxv8sEM3EFIvQUMcJqDDdES5M9cgB2EKiA/HYiodUegGBoHKWYHHk93wvHPCLci9Rn&#xD;
+2KXkZ4t5wRQJ9DvgtJCxjmMZBTCwR1qJTKQ7MAOWlrlXZmmZObJMZCLLgRmw9Cy8MkvP3JFlIhNZ&#xD;
+Dsye7yV/ZY4hcgKOkUq0EqvnHx3FUauSNKwgGOTHxzqT/C69HkXne0mKkhMVRySVAck50ZwXoiOV&#xD;
+uMHjvgE9bfYo2XA7vDzlijktLZ4qcwuG7VtbZ4pJbErfP5jHFjpuLbZQMOm1A0bWODmYMATlYhOF&#xD;
+0jhwhZ3jth9kSEYNmYK1KAHSwMs0CQl4kH60EIsiwKVTuFUFZhOaaR1ghCCTU+4/1M6x93BNG/C8&#xD;
+lcxrj8LtAtAGtRZMK677B2+D60AulZNxMVRA9j0Ul9ijBe7JwBWRXPf3CU6lSbwyRBgNhD7G4Lh8&#xD;
+YcgIHZbQJSCRyI1lGGW950MZbVXu8f5VqNwo5Dim+1e48fYV432gbwp+fUbY+20rNZAAbVdMQUNX&#xD;
+GYgqlgqlh9qDqGm8JI3BsgHIhbN9VRr22Whqo8KjhMMBDT/WpQ2oNo54jhmekyHbz+zNy3wJXzX4&#xD;
+ZfL2zf/F/eOyZwkAAA==</IconData>
   <Created>2024-09-19T15:16:51.0170517+01:00</Created>
-  <Modified>2024-10-25T16:17:39.2924224+01:00</Modified>
+  <Modified>2024-10-28T12:05:56.4100702+00:00</Modified>
   <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
   <AiModel>gpt-4o</AiModel>
   <TemplateName>AI - Chat</TemplateName>
@@ -33,18 +35,18 @@ BmoOLFcrDeTgiv5OqOwLf7E2qbeCUWr/p979C07r+EjiCgAA</IconData>
 &#xD;
 3. Execute Action&#xD;
    - Perform the decided action, such as:&#xD;
-   - Move Mouse: Navigate the cursor to the desired coordinates.&#xD;
-     Use &lt;see cref="Automation.MoveMouse(int, int, CancellationToken)" /&gt;.&#xD;
-   - Click Mouse: Interact with elements by clicking as needed.&#xD;
-     Use &lt;see cref="Automation.ClickMouseButton(MouseButtons, int)" /&gt;.&#xD;
-   - Send Keyboard Input: Input necessary keystrokes or commands.&#xD;
-     Use &lt;see cref="Automation.SendKeys(string)" /&gt;.&#xD;
-   - Interact with UI Elements (e.g., buttons, fields):&#xD;
-     Use &lt;see cref="Automation.PerformActionOnElement(string, AutomationAction, string)" /&gt;.&#xD;
-   - Wait for a UI Element to become available:&#xD;
-     Use &lt;see cref="Automation.WaitForElement(string, int)" /&gt;.&#xD;
-   - Check if a UI Element is available:&#xD;
-     Use &lt;see cref="Automation.IsElementAvailable(string)" /&gt;.&#xD;
+     - Move Mouse: Navigate the cursor to the desired coordinates.&#xD;
+       Use &lt;see cref="Automation.MoveMouse(int, int, CancellationToken)" /&gt;.&#xD;
+     - Click Mouse: Interact with elements by clicking as needed.&#xD;
+       Use &lt;see cref="Automation.ClickMouseButton(MouseButtons, int)" /&gt;.&#xD;
+     - Send Keyboard Input: Input necessary keystrokes or commands.&#xD;
+       Use &lt;see cref="Automation.SendKeys(string)" /&gt;.&#xD;
+     - Interact with UI Elements (e.g., buttons, fields):&#xD;
+       Use &lt;see cref="Automation.PerformActionOnElement(string, AutomationAction, string[])" /&gt;.&#xD;
+     - Wait for a UI Element to become available:&#xD;
+       Use &lt;see cref="Automation.WaitForElement(string, int)" /&gt;.&#xD;
+     - Check if a UI Element is available:&#xD;
+       Use &lt;see cref="Automation.IsElementAvailable(string)" /&gt;.&#xD;
 &#xD;
 4. Verify Outcome&#xD;
    - Take a screenshot after the action.&#xD;
@@ -56,27 +58,55 @@ BmoOLFcrDeTgiv5OqOwLf7E2qbeCUWr/p979C07r+EjiCgAA</IconData>
 &#xD;
 5. Error Handling and Retrying&#xD;
    - If verification is successful:&#xD;
-   - Proceed to the next action.&#xD;
+     - Proceed to the next action.&#xD;
    - If an error is detected:&#xD;
-   - Retry the last action from the last successful state.&#xD;
-   - Repeat the verification step.&#xD;
-   - Optionally, wait for a UI Element to become available:&#xD;
-     Use &lt;see cref="Automation.WaitForElement(string, int)" /&gt;.&#xD;
+     - Retry the last action from the last successful state.&#xD;
+     - Repeat the verification step.&#xD;
+     - Optionally, wait for a UI Element to become available:&#xD;
+       Use &lt;see cref="Automation.WaitForElement(string, int)" /&gt;.&#xD;
 &#xD;
 6. Iterate Until Completion&#xD;
    - Repeat steps 1-5 until the final goal is achieved.&#xD;
-</TextInstructions>
+&#xD;
+Notes:&#xD;
+   - Before starting any action, you can get information about all displays.&#xD;
+     Use &lt;see cref="Automation.GetDisplayInfo()" /&gt;.</TextInstructions>
   <IsSystemInstructions>true</IsSystemInstructions>
   <Attachments />
   <AttachContext>ChatHistory</AttachContext>
   <Settings />
-  <Messages />
+  <Messages>
+    <MessageItem>
+      <Id>1249d6a38a094756bd0d0e3cdcfa80ae</Id>
+      <User>User</User>
+      <BodyInstructions />
+      <Body>**Warning:**
+
+Using AI to control your computer presents unique risks, especially when interacting with the internet. Do not leave processing unattended when the AI is in control.
+
+To mitigate risks:
+
+- **Use a Secure Environment:** Run the AI application inside a dedicated virtual machine or container with minimal privileges to prevent system attacks or accidents.
+- **Protect Sensitive Data:** Avoid giving the model access to sensitive information, such as account login details, to prevent information theft.
+- **Restrict Internet Access:** Limit internet connectivity to an allowlist of trusted domains to reduce exposure to malicious content.
+- **Beware of Prompt Injection:** Some AI models may follow commands found within content that conflict with your instructions. Isolate the environment from sensitive data and critical actions to mitigate this risk.
+
+**Note on Control Mechanisms:**
+
+When the AI takes over mouse and keyboard control, manually approving processes becomes challenging. To facilitate this:
+
+- Set Approval to **"Allow All"**.
+- Alternatively, use **"User when AI Denies"** approval with a secondary AI handling approvals via the **"® System - Plugin Approval"** template.</Body>
+      <Attachments />
+      <Date>2024-10-28T12:05:56.0075676+00:00</Date>
+      <Type>Warning</Type>
+    </MessageItem>
+  </Messages>
   <AutoSend>false</AutoSend>
   <MessageBoxOperation>ClearMessage</MessageBoxOperation>
   <AutoOperation>None</AutoOperation>
   <AutoRemove>false</AutoRemove>
   <AutoFormatCode>false</AutoFormatCode>
-  <AutoGenerateTitle>true</AutoGenerateTitle>
   <IsPreview>false</IsPreview>
   <UseMaximumContext>true</UseMaximumContext>
   <PluginsEnabled>true</PluginsEnabled>
@@ -86,22 +116,16 @@ BmoOLFcrDeTgiv5OqOwLf7E2qbeCUWr/p979C07r+EjiCgAA</IconData>
   <AttachmentsSelection />
   <UiSelections>
     <TextBoxData>
-      <Name>DataInstructionsTextBox</Name>
-      <SelectionStart>1122</SelectionStart>
-      <SelectionLength>0</SelectionLength>
-      <TextLength>2223</TextLength>
-    </TextBoxData>
-    <TextBoxData>
       <Name>MessagePlaceholderTextBox</Name>
       <SelectionStart>14</SelectionStart>
       <SelectionLength>0</SelectionLength>
       <TextLength>14</TextLength>
     </TextBoxData>
     <TextBoxData>
-      <Name>DataTextBox</Name>
+      <Name>DataInstructionsTextBox</Name>
       <SelectionStart>0</SelectionStart>
       <SelectionLength>0</SelectionLength>
-      <TextLength>0</TextLength>
+      <TextLength>2399</TextLength>
     </TextBoxData>
   </UiSelections>
 </TemplateItem>

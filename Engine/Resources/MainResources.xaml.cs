@@ -350,6 +350,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Status => FindResource(nameof(main_Status));
         public static string main_Stop => FindResource(nameof(main_Stop));
         public static string main_Task => FindResource(nameof(main_Task));
+        public static string main_Title => FindResource(nameof(main_Title));
         public static string main_Test => FindResource(nameof(main_Test));
         public static string main_Title_for_Attached_Context => FindResource(nameof(main_Title_for_Attached_Context));
         public static string main_Icon_for_Attached_Context => FindResource(nameof(main_Icon_for_Attached_Context));

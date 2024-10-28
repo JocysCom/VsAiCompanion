@@ -1,6 +1,7 @@
 2024-10-27 v1.14.27
 
 - Fix: The executable remains open when there is an exception in the main app.
+- Fix: Avatar voice used when the voice was not enabled, and the avatar window was hidden.
 - New: Data from the embedding database will now be visible in the chat log.
 - New: Added the `ᵀ` suffix to temporary message attachments that are sent once.
 - New: [Options] tab for messages to control additional options when editing.

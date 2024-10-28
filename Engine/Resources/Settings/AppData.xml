@@ -27,10 +27,10 @@
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
       <StartPosition>
-        <Left>197</Left>
-        <Top>80</Top>
-        <Width>1033</Width>
-        <Height>816</Height>
+        <Left>289</Left>
+        <Top>52</Top>
+        <Width>1273</Width>
+        <Height>872</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -49,7 +49,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.20456802383316783</GridSplitterPosition>
+          <GridSplitterPosition>0.20449077786688052</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
           </ListSelection>
@@ -58,11 +58,11 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.22045680238331677</GridSplitterPosition>
+          <GridSplitterPosition>0.17802726543704891</GridSplitterPosition>
           <ListSelection>
-            <string>AI - Computer Use</string>
+            <string>AI - Chat</string>
           </ListSelection>
-          <ListSelectedIndex>2</ListSelectedIndex>
+          <ListSelectedIndex>0</ListSelectedIndex>
           <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
@@ -91,6 +91,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiService</ItemType>
+          <GridSplitterPosition>0.29989969909729186</GridSplitterPosition>
           <ListSelection>
             <string>Open AI</string>
           </ListSelection>
