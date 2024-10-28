@@ -11,6 +11,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		public MessageAttachments()
 		{
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
+			SendType = AttachmentSendType.Temp;
 		}
 
 		public MessageAttachments(ContextType attachmentType, string language, string data)
@@ -18,6 +19,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			JocysCom.ClassLibrary.Runtime.Attributes.ResetPropertiesToDefault(this);
 			Title = ClassLibrary.Runtime.Attributes.GetDescription(attachmentType);
 			Type = attachmentType;
+			SendType = AttachmentSendType.Temp;
 			SetData(data, language);
 		}
 
@@ -41,9 +43,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// <summary>
 		/// If true, the attachment will always be included as part of the body.
 		/// </summary>
-		[DefaultValue(false)]
-		public bool IsAlwaysIncluded { get => _IsAlwaysIncluded; set => SetProperty(ref _IsAlwaysIncluded, value); }
-		bool _IsAlwaysIncluded;
+		[DefaultValue(AttachmentSendType.None)]
+		public AttachmentSendType SendType { get => _SendType; set => SetProperty(ref _SendType, value); }
+		AttachmentSendType _SendType;
 
 		public bool IsMarkdown { get => _IsMarkdown; set => SetProperty(ref _IsMarkdown, value); }
 		bool _IsMarkdown;

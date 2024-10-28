@@ -58,12 +58,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Add new line if caret is not on the new line.
 			if (caretIndex > 0 && box.Text[caretIndex - 1] != '\n')
 				prefix += $"\r\n";
-			prefix += $"```{language}\r\n";
-			var suffix = $"\r\n```";
 			// Add new line if caret is not at the end of the line.
+			var suffix = "";
 			if (caretIndex < box.Text.Length && box.Text[caretIndex] != '\r')
 				suffix += $"\r\n";
-			var text = $"{prefix}{clipboardText}{suffix}";
+			var block = MarkdownHelper.CreateMarkdownCodeBlock(clipboardText, language);
+			var text = $"{prefix}{block}{suffix}";
 			AppHelper.InsertText(box, text, true, false);
 			var newIndex = string.IsNullOrEmpty(clipboardText)
 				? caretIndex + prefix.Length

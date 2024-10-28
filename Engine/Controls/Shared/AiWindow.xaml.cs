@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -185,7 +186,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 			// Add element path attachment.
 			var pathAttachment = new Chat.MessageAttachments();
 			pathAttachment.SetData(Info.ElementPath, "xpath");
-			pathAttachment.IsAlwaysIncluded = true;
+			pathAttachment.SendType = AttachmentSendType.None;
 			pathAttachment.Title = "Active UI Element Path";
 			userMessage.Attachments.Add(pathAttachment);
 
@@ -195,7 +196,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				var attachment = new Chat.MessageAttachments();
 				attachment.Title = "Selection";
 				attachment.SetData(Info.SelectedText, "text");
-				attachment.IsAlwaysIncluded = true;
+				attachment.SendType = AttachmentSendType.None;
 				userMessage.Attachments.Add(attachment);
 			}
 			if (DocumentCheckBox.IsChecked == true)
@@ -203,7 +204,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Shared
 				var attachment = new Chat.MessageAttachments();
 				attachment.Title = "Document";
 				attachment.SetData(Info.DocumentText, "text");
-				attachment.IsAlwaysIncluded = true;
+				attachment.SendType = AttachmentSendType.None;
 				userMessage.Attachments.Add(attachment);
 			}
 			copy.Messages.Add(userMessage);

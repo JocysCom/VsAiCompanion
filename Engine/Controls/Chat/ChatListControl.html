@@ -298,6 +298,13 @@
 			Out: 5,
 		}
 
+
+		const AttachmentSendType = {
+			None: 0,
+			Temp: 1,
+			User: 2,
+		}
+
 		const AttachmentType = {
 			None: 0,
 			Clipboard: 1,
@@ -440,8 +447,11 @@
 						aInstructions = aInstructions + "</ br>";
 					}
 					var aTitle = a.Title;
-					if (a.IsAlwaysIncluded === false) {
+					if (a.SendType === AttachmentSendType.Temp) {
 						aTitle += " ᵀ";
+					}
+					if (a.SendType === AttachmentSendType.User) {
+						aTitle += " ᵁ";
 					}
 					var box = AddAttachmentBox(message.Id + "_" + i, aTitle, aInstructions, aData);
 					buttons += box.buttonHTML;

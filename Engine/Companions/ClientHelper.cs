@@ -51,15 +51,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 			MessageAttachments[] systemAttachments;
 			MessageAttachments[] userAttachments;
 			// If system instructions supported then...
+			var mAttachments = message.Attachments.Where(x => x.SendType != AttachmentSendType.User);
 			if (isSystemInstructions)
 			{
-				systemAttachments = message.Attachments.Where(x => x.MessageRole == message_role.system).ToArray();
-				userAttachments = message.Attachments.Where(x => x.MessageRole == message_role.user).ToArray();
+				systemAttachments = mAttachments.Where(x => x.MessageRole == message_role.system).ToArray();
+				userAttachments = mAttachments.Where(x => x.MessageRole == message_role.user).ToArray();
 			}
 			else
 			{
 				systemAttachments = Array.Empty<MessageAttachments>();
-				userAttachments = message.Attachments.ToArray();
+				userAttachments = mAttachments.ToArray();
 			}
 			var bodyAttachments = Array.Empty<MessageAttachments>();
 			var instructionAttachments = Array.Empty<MessageAttachments>();
@@ -69,13 +70,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 				if (includeAttachments == true)
 					bodyAttachments = userAttachments;
 				if (includeAttachments == null)
-					bodyAttachments = userAttachments.Where(x => x.IsAlwaysIncluded).ToArray();
+					bodyAttachments = userAttachments.Where(x => x.SendType == AttachmentSendType.None).ToArray();
 
 				// If all attachments must be included.
 				if (includeAttachments == true)
 					instructionAttachments = systemAttachments;
 				if (includeAttachments == null)
-					instructionAttachments = systemAttachments.Where(x => x.IsAlwaysIncluded).ToArray();
+					instructionAttachments = systemAttachments.Where(x => x.SendType == AttachmentSendType.None).ToArray();
 
 				if (bodyAttachments.Any())
 					messageContent = JoinMessageParts(messageContent, ConvertAttachmentsToString(bodyAttachments));
@@ -274,7 +275,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 										var embeddingAttachment = new MessageAttachments();
 										embeddingAttachment.SetData(embeddingData, "text");
 										// Data is temporary and only for current answer.
-										embeddingAttachment.IsAlwaysIncluded = false;
+										embeddingAttachment.SendType = AttachmentSendType.Temp;
 										embeddingAttachment.Title = "Embedding";
 										m.Attachments.Add(embeddingAttachment);
 									}

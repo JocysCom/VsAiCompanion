@@ -718,14 +718,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);
 			fnCallAttachment.Title = "AI Functions Call";
 			// Don't send it back to AI or it will confuse it and it will start outputing YAML instead of calling functions.
-			fnCallAttachment.IsAlwaysIncluded = false;
+			fnCallAttachment.SendType = AttachmentSendType.User;
 			assistantMessageItem.Attachments.Add(fnCallAttachment);
 			assistantMessageItem.IsAutomated = true;
 			messageItems.Add(assistantMessageItem);
 			// Add call to user message so that AI will see what functions it called.
 			var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
 			fnCallAttachmentUser.Title = "AI Functions Call";
-			fnCallAttachmentUser.IsAlwaysIncluded = true;
+			fnCallAttachmentUser.SendType = AttachmentSendType.User;
 			functionResults.Add(fnCallAttachmentUser);
 			ControlsHelper.AppInvoke(() =>
 			{
@@ -740,7 +740,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 					var content = await PluginsManager.ProcessPluginFunction(item, function, cancellationTokenSource);
 					var fnResultAttachment = new MessageAttachments(ContextType.None, content.Value.Item1, content.Value.Item2);
 					fnResultAttachment.Title = "AI Function Results (Id:" + function.id + ")";
-					fnResultAttachment.IsAlwaysIncluded = true;
+					fnResultAttachment.SendType = AttachmentSendType.None;
 					functionResults.Add(fnResultAttachment);
 				}
 			}

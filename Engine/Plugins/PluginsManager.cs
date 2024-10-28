@@ -379,7 +379,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var lastMessage = item.Messages.Last();
 					var attachment = new Controls.Chat.MessageAttachments(ContextType.None, "text", assistantEvaluation);
 					attachment.Title = "Approval by Secondary AI";
-					attachment.IsAlwaysIncluded = true;
+					attachment.SendType = AttachmentSendType.None;
 					lastMessage.Attachments.Add(attachment);
 				});
 				assistantApproved = assistantEvaluation.ToLower().Contains("function call approved");
@@ -524,14 +524,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (message != null)
 			{
 				var functions = Client.ConvertChatToolsTo(toolsToProvide);
-				var functionDefinitions = $"```json\r\n{Client.Serialize(functions)}\r\n```";
+				var functionDefinitions = MarkdownHelper.CreateMarkdownCodeBlock(Client.Serialize(functions), "json");
 				// Create function definitions attachment.
 				var fda = new MessageAttachments();
 				fda.Title = "Function Definitions";
 				fda.Instructions = Global.AppSettings.ContextFunctionRequestInstructions;
 				fda.Type = ContextType.None;
 				fda.Data = functionDefinitions;
-				fda.IsAlwaysIncluded = false;
+				fda.SendType = AttachmentSendType.Temp;
 				message.Attachments.Add(fda);
 				// Create response definitions attachment.
 				var settings = new SystemTextJsonSchemaGeneratorSettings
@@ -547,13 +547,13 @@ namespace JocysCom.VS.AiCompanion.Engine
 					AlwaysAllowAdditionalObjectProperties = false,         // Do not allow additional properties by default
 				};
 				var responseSchema = NJsonSchema.JsonSchema.FromType(typeof(IEnumerable<chat_completion_message_tool_call>), settings);
-				var responseDefinition = $"```json\r\n{responseSchema.ToJson()}\r\n```";
+				var responseDefinition = MarkdownHelper.CreateMarkdownCodeBlock(responseSchema.ToJson(), "json");
 				var rda = new MessageAttachments();
 				rda.Title = "Function Call Definition";
 				rda.Instructions = Global.AppSettings.ContextFunctionResponseInstructions;
 				rda.Type = ContextType.None;
 				rda.Data = responseDefinition;
-				rda.IsAlwaysIncluded = false;
+				rda.SendType = AttachmentSendType.Temp;
 				message.Attachments.Add(rda);
 			}
 		}
