@@ -440,6 +440,10 @@ Do not return as a code block.")]
 		public bool EnableApiPlugins { get => _EnableExternalPlugins; set => SetProperty(ref _EnableExternalPlugins, value); }
 		private bool _EnableExternalPlugins;
 
+		[DefaultValue(false)]
+		public bool EnableVoiceToApprovePlugins { get => _EnableVoiceToApprovePlugins; set => SetProperty(ref _EnableVoiceToApprovePlugins, value); }
+		bool _EnableVoiceToApprovePlugins;
+
 		/// <summary>Plugins</summary>
 		public SortableBindingList<PluginItem> Plugins
 		{

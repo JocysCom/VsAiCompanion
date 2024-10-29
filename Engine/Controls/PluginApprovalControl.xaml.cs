@@ -1,6 +1,7 @@
 ﻿using DiffPlex;
 using DiffPlex.DiffBuilder;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Speech;
 using JocysCom.VS.AiCompanion.Plugins.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,7 +29,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			//PluginItemPanel.MethodCheckBox.IsEnabled = false;
 			PluginItemPanel.MethodCheckBox.Visibility = Visibility.Collapsed;
 			PluginItemPanel.MethodStackPanel.Visibility = Visibility.Visible;
+
+			VoiceCommands = new VoiceCommands(ApproveCommand, DenyCommand);
+			Global.AppSettings.PropertyChanged += Global_AppSettings_PropertyChanged;
+			VoiceCommands.CommandRecognized += VoiceCommands_CommandRecognized;
 		}
+
+		private void Global_AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(Global.AppSettings.EnableVoiceToApprovePlugins))
+				UpdatePluginItemControl();
+		}
+
+		VoiceCommands VoiceCommands;
 
 		BindingList<PluginApprovalItem> emptyData = new BindingList<PluginApprovalItem>();
 
@@ -79,6 +92,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			OnPropertyChanged(nameof(ApprovalItem));
 			OnPropertyChanged(nameof(ShowSecondaryAiEvaluation));
 			OnPropertyChanged(nameof(FunctionId));
+			if (Item.Count > 0 && Global.AppSettings.EnableVoiceToApprovePlugins)
+			{
+				VoiceCommands.StartListening();
+			}
+			else
+			{
+				VoiceCommands.StopListening();
+			}
 		}
 
 		public PluginApprovalItem ApprovalItem
@@ -125,15 +146,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void ApproveButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			ApprovalItem.IsApproved = true;
-			ApprovalItem.Semaphore.Release();
+			Approve(true);
 		}
 
 		private void DenyButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			ApprovalItem.IsApproved = false;
+			Approve(false);
+		}
+
+		void Approve(bool isApproved)
+		{
+			ApprovalItem.IsApproved = isApproved;
 			ApprovalItem.Semaphore.Release();
 		}
+
+		string ApproveCommand = "approve";
+		string DenyCommand = "deny";
+
+		private void VoiceCommands_CommandRecognized(string command)
+		{
+			var isApproved = command == ApproveCommand;
+			Approve(isApproved);
+		}
+
 		private void This_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.AllowLoad(this))

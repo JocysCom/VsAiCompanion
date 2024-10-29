@@ -92,7 +92,11 @@
 								Margin="0"
 								Content="{StaticResource main_Enable_API_Plugins}"
 								IsChecked="{Binding EnableApiPlugins, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
+							<CheckBox
+								Name="EnableVoiceToApprovePluginsCheckBox"
+								Margin="0"
+								Content="{StaticResource main_EnableVoiceToApprovePlugins}"
+								IsChecked="{Binding EnablePluginApprovalWithVoice, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 							<CheckBox
 								Name="RequireToSignInCheckBox"
 								Margin="0"
