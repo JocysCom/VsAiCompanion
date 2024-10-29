@@ -47,7 +47,7 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -72,7 +72,7 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_J2YR5nrgDRBWdYgtt4izoJDD)</Title>
@@ -215,7 +215,7 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -240,7 +240,7 @@ Return a dad joke.</Body>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_okqaZN4rQSajc2qb5nU8qtwF)</Title>

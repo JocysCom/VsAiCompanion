@@ -96,7 +96,7 @@
 								Name="EnableVoiceToApprovePluginsCheckBox"
 								Margin="0"
 								Content="{StaticResource main_EnableVoiceToApprovePlugins}"
-								IsChecked="{Binding EnablePluginApprovalWithVoice, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+								IsChecked="{Binding EnableVoiceToApprovePlugins, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 							<CheckBox
 								Name="RequireToSignInCheckBox"
 								Margin="0"

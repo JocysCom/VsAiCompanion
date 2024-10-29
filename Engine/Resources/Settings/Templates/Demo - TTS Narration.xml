@@ -44,7 +44,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -85,7 +85,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_dtEEQHMRMBuZ7aonCjcWi9gN)</Title>
@@ -94,7 +94,7 @@ true&#xD;
 ```</Data>
         </MessageAttachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_2CDbH8X0MfEa0sfJtk6DTMt9)</Title>
@@ -103,7 +103,7 @@ true&#xD;
 ```</Data>
         </MessageAttachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_wyKFkoyJYe23VBCnRcieidtK)</Title>
@@ -112,7 +112,7 @@ true&#xD;
 ```</Data>
         </MessageAttachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_v6NkVKYaJ03bBwvcy6RR9Ftp)</Title>

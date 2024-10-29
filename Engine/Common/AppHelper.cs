@@ -393,7 +393,7 @@ EndFragment:{3:00000000}";
 				// Download models from API service.
 				if (!await Global.IsGoodSettings(aiService, true))
 					return;
-				var client = new Client(aiService);
+				var client = AiClientFactory.GetAiClient(aiService);
 				var models = await client.GetModels();
 				modelCodes = models?.Select(x => x.id).ToArray();
 			}

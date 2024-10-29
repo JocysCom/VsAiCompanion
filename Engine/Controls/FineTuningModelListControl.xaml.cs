@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using System;
@@ -164,7 +165,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!Global.ValidateServiceAndModel(Data))
 				return;
 			SaveSelection();
-			var client = new Client(Data.AiService);
+			var client = AiClientFactory.GetAiClient(Data.AiService);
 			var models = await client.GetModels();
 			CollectionsHelper.Synchronize(models, CurrentItems);
 			MustRefresh = false;
@@ -188,7 +189,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = GetWithAllow(AllowAction.Delete);
 			if (items == null)
 				return;
-			var client = new Client(Data.AiService);
+			var client = AiClientFactory.GetAiClient(Data.AiService);
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{

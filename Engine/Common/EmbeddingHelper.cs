@@ -1,7 +1,6 @@
 ﻿using Embeddings;
 using JocysCom.ClassLibrary;
 using JocysCom.VS.AiCompanion.DataClient;
-using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,6 +24,8 @@ using JocysCom.VS.AiCompanion.Engine.Controls;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Companions;
+
 
 #if NETFRAMEWORK
 using System.Data.SQLite;
@@ -137,7 +138,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			decimal tokenReduction = 0.80m;
 
 			// Fill with updated records.
-			var client = new Client(service);
+			var client = AiClientFactory.GetAiClient(service);
 			Dictionary<int, float[]> results = null;
 			int maxRetries = 3;
 
@@ -365,7 +366,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					return;
 				}
 				var input = new List<string> { message };
-				var client = new Client(item.AiService);
+				var client = AiClientFactory.GetAiClient(item.AiService);
 				// TRy to get embeddings.
 				Dictionary<int, float[]> results = null;
 				int maxRetries = 3;

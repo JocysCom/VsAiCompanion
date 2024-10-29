@@ -95,8 +95,10 @@ To mitigate risks:
 
 When the AI takes over mouse and keyboard control, manually approving processes becomes challenging. To facilitate this:
 
+- Enable voice commands to approve AI actions on [Options] page.&#xD;
+- Use **"User when AI Denies"** approval with a secondary AI handling approvals via the **"® System - Plugin Approval"** template.&#xD;
 - Set Approval to **"Allow All"**.
-- Alternatively, use **"User when AI Denies"** approval with a secondary AI handling approvals via the **"® System - Plugin Approval"** template.</Body>
+</Body>
       <Attachments />
       <Date>2024-10-28T12:05:56.0075676+00:00</Date>
       <Type>Warning</Type>
@@ -123,7 +125,7 @@ When the AI takes over mouse and keyboard control, manually approving processes 
     </TextBoxData>
     <TextBoxData>
       <Name>DataInstructionsTextBox</Name>
-      <SelectionStart>0</SelectionStart>
+      <SelectionStart>2399</SelectionStart>
       <SelectionLength>0</SelectionLength>
       <TextLength>2399</TextLength>
     </TextBoxData>

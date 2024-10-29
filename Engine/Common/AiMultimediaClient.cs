@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				}
 				message.content = content.ToArray();
 				messages.Add(message);
-				var client = new Companions.ChatGPT.Client(rItem.AiService);
+				var client = AiClientFactory.GetAiClient(rItem.AiService);
 				// Send body and context data. Make sure it runs on NON-UI thread.
 				var response = await Task.Run(async () => await client.QueryAI(
 					rItem,

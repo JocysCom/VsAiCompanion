@@ -4,6 +4,7 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.Files;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Concurrent;
@@ -203,7 +204,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!Global.ValidateServiceAndModel(Data))
 				return;
 			SaveSelection();
-			var client = new Client(Data.AiService);
+			var client = AiClientFactory.GetAiClient(Data.AiService);
 			var files = await client.GetFilesAsync();
 			var fileList = files?.FirstOrDefault()?.data ?? new List<file>();
 			CollectionsHelper.Synchronize(fileList, CurrentItems);
@@ -247,7 +248,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			// Define the async method for processing items.
 			async Task DeleteItemAsync(file item)
 			{
-				var client = new Client(Data.AiService);
+				var client = AiClientFactory.GetAiClient(Data.AiService);
 				var response = await client.DeleteFileAsync(item.id);
 				if (!string.IsNullOrEmpty(client.LastError))
 					errors.Add(client.LastError);
@@ -268,7 +269,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Use begin invoke or grid update will deadlock on same thread.
 				ControlsHelper.BeginInvoke(async () =>
 				{
-					var client = new Client(Data.AiService);
+					var client = AiClientFactory.GetAiClient(Data.AiService);
 					var request = new fine_tune_request()
 					{
 						training_file = item.id,

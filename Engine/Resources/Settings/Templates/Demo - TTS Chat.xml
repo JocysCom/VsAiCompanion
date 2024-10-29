@@ -45,7 +45,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -71,7 +71,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_dtEEQHMRMBuZ7aonCjcWi9gN)</Title>
@@ -110,7 +110,7 @@ true&#xD;
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -136,7 +136,7 @@ true&#xD;
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_tPuzm8bc3oXt3si8xOCQ1ibA)</Title>
@@ -175,7 +175,7 @@ true&#xD;
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -201,7 +201,7 @@ true&#xD;
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_dtEEQHMRMBuZ7aonCjcWi9gN)</Title>

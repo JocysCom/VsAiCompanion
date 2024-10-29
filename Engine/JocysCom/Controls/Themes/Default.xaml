@@ -15,6 +15,8 @@
 	<SolidColorBrush x:Key="BackgroundLight" Color="#f0f0f0" />
 	<SolidColorBrush x:Key="BackgroundDark" Color="#dedede" />
 	<SolidColorBrush x:Key="BackgroundDarkSelected" Color="#c2e7ff" />
+	<SolidColorBrush x:Key="BackgroundDarkPressed" Color="#c2ffe7" />
+
 	<SolidColorBrush x:Key="BackgroundWarning" Color="#ffe0e0" />
 	<SolidColorBrush x:Key="BackgroundHelp" Color="#ffffe1" />
 	<SolidColorBrush x:Key="BorderDark" Color="#cccccc" />
@@ -567,18 +569,33 @@
 					</Border>
 					<!--  Triggers  -->
 					<ControlTemplate.Triggers>
+						<!--  New MultiTrigger for IsMouseOver and IsPressed  -->
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
 								<Condition Property="IsMouseOver" Value="True" />
 								<Condition Property="IsEnabled" Value="True" />
+								<Condition Property="IsPressed" Value="True" />
+							</MultiTrigger.Conditions>
+							<Setter TargetName="ButtonBorder" Property="Background" Value="{StaticResource BackgroundDarkPressed}" />
+						</MultiTrigger>
+
+						<!--  Existing MultiTrigger for IsMouseOver  -->
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsMouseOver" Value="True" />
+								<Condition Property="IsEnabled" Value="True" />
+								<Condition Property="IsPressed" Value="False" />
 							</MultiTrigger.Conditions>
 							<Setter TargetName="ButtonBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
 						</MultiTrigger>
+
+						<!--  Existing Trigger for IsEnabled  -->
 						<Trigger Property="IsEnabled" Value="False">
 							<Setter Property="Opacity" Value="0.5" />
 							<Setter Property="Focusable" Value="False" />
 						</Trigger>
 					</ControlTemplate.Triggers>
+
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>

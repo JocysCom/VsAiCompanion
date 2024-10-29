@@ -38,6 +38,7 @@ GBAD2XOwMdcrWIA8kncGbviMDqn9qWLS1MSJs4SPp/4AHu79Bu7oypPOBwAA</IconData>
 Provide the list under the heading `TODO - Website Project`.</Body>
       <Attachments>
         <MessageAttachments>
+          <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
           <Title>Profile - Project Manager</Title>
@@ -45,6 +46,7 @@ Provide the list under the heading `TODO - Website Project`.</Body>
           <Data>{"Description":"","Instructions":"Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.","Items":[{"Key":"Leadership skills","Value":"Ability to lead, motivate, and manage project teams.","Comment":""},{"Key":"Excellent communication","Value":"Strong verbal and written communication skills.","Comment":""},{"Key":"Problem-solving","Value":"Strong analytical and problem-solving abilities.","Comment":""},{"Key":"Organizational skills","Value":"High level of organizational and multitasking abilities.","Comment":""},{"Key":"Technical expertise","Value":"Understanding of software development processes and methodologies.","Comment":""},{"Key":"Budget management","Value":"Experience in budget planning and financial management.","Comment":""},{"Key":"Risk management","Value":"Ability to identify and mitigate project risks.","Comment":""},{"Key":"Decision-making","Value":"Capability to make informed decisions quickly and effectively.","Comment":""},{"Key":"Adaptability","Value":"Flexibility to adapt to new challenges and changes within projects.","Comment":""}],"Name":"Profile - Project Manager","IsEnabled":true}</Data>
         </MessageAttachments>
         <MessageAttachments>
+          <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
           <Title>Role - Project Manager</Title>
@@ -143,6 +145,7 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
 3.  Insert missing subtasks.</Body>
       <Attachments>
         <MessageAttachments>
+          <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
           <Title>Profile - Project Manager</Title>
@@ -150,6 +153,7 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
           <Data>{"Description":"","Instructions":"Refer to this list to identify and evaluate the necessary traits and qualifications for hiring or assessing a Project Manager.","Items":[{"Key":"Leadership skills","Value":"Ability to lead, motivate, and manage project teams.","Comment":""},{"Key":"Excellent communication","Value":"Strong verbal and written communication skills.","Comment":""},{"Key":"Problem-solving","Value":"Strong analytical and problem-solving abilities.","Comment":""},{"Key":"Organizational skills","Value":"High level of organizational and multitasking abilities.","Comment":""},{"Key":"Technical expertise","Value":"Understanding of software development processes and methodologies.","Comment":""},{"Key":"Budget management","Value":"Experience in budget planning and financial management.","Comment":""},{"Key":"Risk management","Value":"Ability to identify and mitigate project risks.","Comment":""},{"Key":"Decision-making","Value":"Capability to make informed decisions quickly and effectively.","Comment":""},{"Key":"Adaptability","Value":"Flexibility to adapt to new challenges and changes within projects.","Comment":""}],"Name":"Profile - Project Manager","IsEnabled":true}</Data>
         </MessageAttachments>
         <MessageAttachments>
+          <SendType>Temp</SendType>
           <IsMarkdown>false</IsMarkdown>
           <Type>None</Type>
           <Title>Role - Project Manager</Title>
@@ -167,7 +171,7 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Call</Title>
@@ -197,7 +201,7 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
       <IsAutomated>true</IsAutomated>
       <Attachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_WvpekNEbxQ4ljPSvvQwPYvnK)</Title>
@@ -206,7 +210,7 @@ The "Profile - Project Manager" and "Role - Project Manager" lists can be used t
 ```</Data>
         </MessageAttachments>
         <MessageAttachments>
-          <IsAlwaysIncluded>true</IsAlwaysIncluded>
+          <SendType>Temp</SendType>
           <IsMarkdown>true</IsMarkdown>
           <Type>None</Type>
           <Title>AI Function Results (Id:call_NVt6Qm6h9anLfTPG8NRubqBw)</Title>

@@ -58,11 +58,11 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.17802726543704891</GridSplitterPosition>
+          <GridSplitterPosition>0.20126926563916592</GridSplitterPosition>
           <ListSelection>
-            <string>AI - Chat</string>
+            <string>AI - Computer Use</string>
           </ListSelection>
-          <ListSelectedIndex>0</ListSelectedIndex>
+          <ListSelectedIndex>2</ListSelectedIndex>
           <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
@@ -79,7 +79,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
-          <GridSplitterPosition>0.2495049504950495</GridSplitterPosition>
+          <GridSplitterPosition>0.24939855653568566</GridSplitterPosition>
           <ListSelection>
             <string>Prompts</string>
           </ListSelection>

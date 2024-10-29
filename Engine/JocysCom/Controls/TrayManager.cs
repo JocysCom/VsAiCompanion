@@ -288,12 +288,27 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private bool IsVisible(Window window)
 		{
+			// If the window is null or not loaded then...
+			if (window == null || !window.IsLoaded)
+				return false;
+			// If the window's content is not available then...
+			if (window.Content == null)
+				return false;
 			IntPtr myHandle = new WindowInteropHelper(window).Handle;
 			// Get the window's content bounds
 			Rect contentBounds = VisualTreeHelper.GetDescendantBounds((Visual)window.Content);
+			Point topLeft;
+			Point bottomRight;
+			try
+			{
+				topLeft = window.PointToScreen(contentBounds.TopLeft);
+				bottomRight = window.PointToScreen(contentBounds.BottomRight);
+			}
+			catch
+			{
+				return false;
+			}
 			// Convert to screen coordinates
-			Point topLeft = window.PointToScreen(contentBounds.TopLeft);
-			Point bottomRight = window.PointToScreen(contentBounds.BottomRight);
 			RECT myRect = new RECT()
 			{
 				Left = (int)topLeft.X,

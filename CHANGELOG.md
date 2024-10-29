@@ -1,3 +1,7 @@
+2024-10-29 v1.14.33
+
+- New: Approve AI actions with voice commands (e.g., when the AI is controlling the computer).
+
 2024-10-28 v1.14.31
 
 - Fix: The executable remains open when there is an exception in the main app.

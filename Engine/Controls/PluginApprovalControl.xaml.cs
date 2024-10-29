@@ -154,10 +154,18 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			Approve(false);
 		}
 
-		void Approve(bool isApproved)
+		async void Approve(bool isApproved)
 		{
-			ApprovalItem.IsApproved = isApproved;
-			ApprovalItem.Semaphore.Release();
+			var item = ApprovalItem;
+			var button = isApproved ? ApproveButton : DenyButton;
+			var defaultBackground = button.Background;
+			button.Background = Resources["BackgroundDarkPressed"] as Brush;
+			await ClassLibrary.Helper.Debounce(new System.Action(() =>
+			{
+				button.Background = defaultBackground;
+				item.IsApproved = isApproved;
+				item.Semaphore.Release();
+			}));
 		}
 
 		string ApproveCommand = "approve";

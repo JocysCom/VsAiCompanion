@@ -27,7 +27,7 @@ using YamlDotNet.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
-	public partial class Client
+	public partial class Client : IAiClient
 	{
 		public Client(AiService service)
 		{
@@ -139,7 +139,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			}
 		}
 
-		public string LastError;
+		public string LastError { get; set; }
 
 		public async Task<List<T>> GetAsync<T>(
 			string operationPath, object o = null, HttpMethod overrideHttpMethod = null, bool stream = false, CancellationToken cancellationToken = default

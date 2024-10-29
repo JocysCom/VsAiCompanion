@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using System;
 using System.Collections.Generic;
@@ -186,7 +187,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (!Global.ValidateServiceAndModel(Data))
 				return;
 			SaveSelection();
-			var client = new Client(Data.AiService);
+			var client = AiClientFactory.GetAiClient(Data.AiService);
 			var request = new fine_tuning_jobs_request();
 			request.limit = 1000;
 			var response = await client.GetFineTuningJobsAsync(request);
@@ -216,7 +217,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = GetWithAllow(AllowAction.Delete);
 			if (items == null)
 				return;
-			var client = new Client(Data.AiService);
+			var client = AiClientFactory.GetAiClient(Data.AiService);
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(async () =>
 			{
@@ -240,7 +241,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			{
 				foreach (var item in items)
 				{
-					var client = new Client(Data.AiService);
+					var client = AiClientFactory.GetAiClient(Data.AiService);
 					var response = await client.CancelFineTuningJobAsync(item.id);
 					if (!string.IsNullOrEmpty(client.LastError))
 						MessageBox.Show(client.LastError, "Error", MessageBoxButton.OK, MessageBoxImage.Error);

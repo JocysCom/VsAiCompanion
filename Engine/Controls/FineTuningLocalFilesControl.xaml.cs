@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Collections;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.VS.AiCompanion.Engine.Companions;
 using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.FileConverters;
 using System;
@@ -396,7 +397,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				foreach (var item in items)
 				{
 					var sourcePath = Global.GetPath(Data, FolderType.ToString(), item.filename);
-					var client = new Client(Data.AiService);
+					var client = AiClientFactory.GetAiClient(Data.AiService);
 					var ext = Path.GetExtension(item.filename).ToLower();
 					var purpose = ext == ".jsonl"
 						? Client.FineTuningPurpose
