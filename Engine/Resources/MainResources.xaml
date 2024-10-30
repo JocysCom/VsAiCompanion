@@ -46,6 +46,7 @@
 	<sys:String x:Key="main_Enable_Microsoft_Account">Enable Microsoft Account</sys:String>
 	<sys:String x:Key="main_Enable_API_Plugins">Enable API Plugins</sys:String>
 	<sys:String x:Key="main_EnableVoiceToApprovePlugins">Enable Voice to Approve Plugins</sys:String>
+	<sys:String x:Key="main_EnableVoiceToApprovePlugins_Help">Enable voice commands to approve plugins. Just say the name on the button when the approval message pops up.</sys:String>
 	<sys:String x:Key="main_Require_To_Sign_In">Require to sign in</sys:String>
 	<sys:String x:Key="main_Require_To_Sign_In_Message">Please sign in to your Microsoft account.</sys:String>
 	<sys:String x:Key="main_Plugins_require_chat_history">Plugins/functions require chat history. Uncheck the use of plugins/functions first.</sys:String>

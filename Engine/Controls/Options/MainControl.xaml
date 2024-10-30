@@ -95,6 +95,8 @@
 							<CheckBox
 								Name="EnableVoiceToApprovePluginsCheckBox"
 								Margin="0"
+								AutomationProperties.HelpText="{StaticResource main_EnableVoiceToApprovePlugins_Help}"
+								AutomationProperties.Name="{StaticResource main_EnableVoiceToApprovePlugins}"
 								Content="{StaticResource main_EnableVoiceToApprovePlugins}"
 								IsChecked="{Binding EnableVoiceToApprovePlugins, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 							<CheckBox
