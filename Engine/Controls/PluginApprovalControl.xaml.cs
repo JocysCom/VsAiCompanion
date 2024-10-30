@@ -109,13 +109,29 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var item = Item.FirstOrDefault();
 				var rl = item?.Plugin.RiskLevel;
 				var brush = RiskToBrush[RiskLevel.Unknown];
-				if (item?.Plugin.Name == nameof(Plugins.Core.UnifiedFormat.IDiffHelper.ModifyContents))
+				if (item?.Plugin.Name == nameof(Plugins.Core.UnifiedFormat.IDiffHelper.CompareContentsAndReturnChanges))
+				{
+					var originalText = (string)item.Plugin.InvokeParams[0];
+					var modifiedText = (string)item.Plugin.InvokeParams[1];
+					DiffViewer.SideBySideModeToggleTitle = false;
+					DiffViewer.IsCommandBarVisible = true;
+					SetDiff(originalText, modifiedText);
+					ControlsHelper.SetVisible(DiffPanel, true);
+				}
+				else if (item?.Plugin.Name == nameof(Plugins.Core.UnifiedFormat.IDiffHelper.ModifyContents))
 				{
 					var contents = (string)item.Plugin.InvokeParams[0];
 					var unifiedDiff = (string)item.Plugin.InvokeParams[1];
 					//var oldText = item.function.parameters[].Args[0].ToString();
 					//var newText = item.Args[1].ToString();
 					//SetDiff(oldText, newText);
+					//ControlsHelper.SetVisible(DiffPanel, true);
+				}
+				else
+				{
+					ControlsHelper.SetVisible(DiffPanel, false);
+					SetDiff("", "");
+
 				}
 				if (rl != null && RiskToBrush.ContainsKey(rl.Value))
 					brush = RiskToBrush[rl.Value];

@@ -16,7 +16,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		/// <summary>
 		/// OpenAI's GPT-based API services (e.g., GPT-3, GPT-4, ChatGPT API).
 		/// </summary>
-		[Description("OpenAI GPT")]
+		[Description("OpenAI")]
 		OpenAI,
 
 		/// <summary>
