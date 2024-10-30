@@ -768,5 +768,93 @@
         <Option>Zulu</Option>
       </Options>
     </PromptItem>
+    <PromptItem>
+      <Name>Objective</Name>
+      <Pattern>Your goal is to {0}.</Pattern>
+      <RisenType>EndGoal</RisenType>
+      <Options>
+        <Option>educate the reader</Option>
+        <Option>persuade the audience</Option>
+        <Option>entertain the listener</Option>
+        <Option>inform about environmental issues</Option>
+        <Option>inspire action</Option>
+        <Option>explain the concept clearly</Option>
+        <Option>provide a solution</Option>
+        <Option>increase awareness</Option>
+        <Option>summarize key points</Option>
+        <Option>develop a plan</Option>
+        <Option>motivate change</Option>
+        <Option>clarify misunderstandings</Option>
+        <Option>promote a product</Option>
+        <Option>advocate for a cause</Option>
+        <Option>solve a mystery</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Goal</Name>
+      <Pattern>The ultimate goal is to {0}.</Pattern>
+      <RisenType>EndGoal</RisenType>
+      <Options>
+        <Option>reduce costs</Option>
+        <Option>improve efficiency</Option>
+        <Option>enhance understanding</Option>
+        <Option>gain insights</Option>
+        <Option>achieve success</Option>
+        <Option>solve the problem</Option>
+        <Option>discover new methods</Option>
+        <Option>innovate</Option>
+        <Option>make a profit</Option>
+        <Option>build a solution</Option>
+        <Option>increase productivity</Option>
+        <Option>optimize processes</Option>
+        <Option>reach a conclusion</Option>
+        <Option>develop skills</Option>
+        <Option>strengthen relationships</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Procedure</Name>
+      <Pattern>Please outline the steps to {0}.</Pattern>
+      <RisenType>Steps</RisenType>
+      <Options>
+        <Option>solve the problem</Option>
+        <Option>complete the task</Option>
+        <Option>achieve the goal</Option>
+        <Option>build a website</Option>
+        <Option>prepare the report</Option>
+        <Option>conduct an experiment</Option>
+        <Option>write an essay</Option>
+        <Option>create a marketing plan</Option>
+        <Option>design a product</Option>
+        <Option>implement the algorithm</Option>
+        <Option>train a model</Option>
+        <Option>organize an event</Option>
+        <Option>launch a campaign</Option>
+        <Option>develop software</Option>
+        <Option>learn a new skill</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Process</Name>
+      <Pattern>Please describe the process of {0}.</Pattern>
+      <RisenType>Steps</RisenType>
+      <Options>
+        <Option>photosynthesis</Option>
+        <Option>cell division</Option>
+        <Option>software development</Option>
+        <Option>data analysis</Option>
+        <Option>manufacturing</Option>
+        <Option>recruitment</Option>
+        <Option>project management</Option>
+        <Option>decision making</Option>
+        <Option>financial planning</Option>
+        <Option>learning a language</Option>
+        <Option>brewing coffee</Option>
+        <Option>publishing a book</Option>
+        <Option>cooking a meal</Option>
+        <Option>setting up a network</Option>
+        <Option>creating a presentation</Option>
+      </Options>
+    </PromptItem>
   </Items>
 </Data>

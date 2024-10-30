@@ -413,19 +413,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// </summary>
 		void InitControlsAllowedToRememer()
 		{
-			SelectionControls = new (TabItem, PlaceholderTextBox, TextBox, Label)[] {
-				(ChatInstructionsTabItem, DataInstructionsTextBox, DataInstructionsTextBox.PART_ContentTextBox, InstructionsCountLabel),
-				(ChatMessageTabItem, DataTextBox, DataTextBox.PART_ContentTextBox, MessageCountLabel),
-				(MessagePlaceholderTabItem, MessagePlaceholderTextBox, MessagePlaceholderTextBox.PART_ContentTextBox, MessagePlaceholderCountLabel ),
-				(RisenRoleTabItem, RisenRoleTextBox, RisenRoleTextBox.PART_ContentTextBox, RisenRoleCountLabel),
-				(RisenInstructionsTabItem, RisenInstructionsTextBox, RisenInstructionsTextBox.PART_ContentTextBox, RisenInstructionsCountLabel),
-				(RisenStepsTabItem, RisenStepsTextBox, RisenStepsTextBox.PART_ContentTextBox, RisenStepsCountLabel),
-				(RisenEndGoalTabItem, RisenEndGoalTextBox, RisenEndGoalTextBox.PART_ContentTextBox, RisenEndGoalCountLabel),
-				(RisenNarrowingTabItem,  RisenNarrowingTextBox, RisenNarrowingTextBox.PART_ContentTextBox, RisenNarrowingCountLabel),
+			SelectionControls = new (TabItem, PlaceholderTextBox, TextBox, Label, RisenType)[] {
+				(ChatInstructionsTabItem, DataInstructionsTextBox, DataInstructionsTextBox.PART_ContentTextBox, InstructionsCountLabel, RisenType.None),
+				(ChatMessageTabItem, DataTextBox, DataTextBox.PART_ContentTextBox, MessageCountLabel, RisenType.None),
+				(MessagePlaceholderTabItem, MessagePlaceholderTextBox, MessagePlaceholderTextBox.PART_ContentTextBox, MessagePlaceholderCountLabel, RisenType.None),
+				(RisenRoleTabItem, RisenRoleTextBox, RisenRoleTextBox.PART_ContentTextBox, RisenRoleCountLabel, RisenType.Role),
+				(RisenInstructionsTabItem, RisenInstructionsTextBox, RisenInstructionsTextBox.PART_ContentTextBox, RisenInstructionsCountLabel, RisenType.Instructions),
+				(RisenStepsTabItem, RisenStepsTextBox, RisenStepsTextBox.PART_ContentTextBox, RisenStepsCountLabel, RisenType.Steps),
+				(RisenEndGoalTabItem, RisenEndGoalTextBox, RisenEndGoalTextBox.PART_ContentTextBox, RisenEndGoalCountLabel, RisenType.EndGoal),
+				(RisenNarrowingTabItem,  RisenNarrowingTextBox, RisenNarrowingTextBox.PART_ContentTextBox, RisenNarrowingCountLabel, RisenType.Narrowing),
 			};
 		}
 
-		public (TabItem Tab, PlaceholderTextBox Holder, TextBox Box, Label Label)[] SelectionControls;
+		public (TabItem Tab, PlaceholderTextBox Holder, TextBox Box, Label Label, RisenType RisenType)[] SelectionControls;
 
 		TextBoxData GetSelectionByBox(TextBox box)
 		{

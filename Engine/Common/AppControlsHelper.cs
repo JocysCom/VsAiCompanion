@@ -70,8 +70,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 					}
 					var fileContent = File.ReadAllText(file);
 					var markdownCodeBlock = MarkdownHelper.CreateMarkdownCodeBlock(file, fileContent, null);
-					sb.AppendLine($"\r\n\r\n`{file}`:\r\n");
-					sb.AppendLine($"{markdownCodeBlock}\r\n");
+					sb.AppendLine($"\r\n`{file}`:\r\n");
+					sb.AppendLine($"{markdownCodeBlock}");
 				}
 				if (binaryFiles.Any())
 				{
@@ -96,14 +96,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var startIndex = textBox.CaretIndex;
 			if (!IsCaretAtLineStart(textBox))
 			{
-				var insertionIndex = textBox.Text.IndexOf(Environment.NewLine, textBox.CaretIndex);
+				var insertionIndex = textBox.Text.IndexOf(Environment.NewLine, startIndex);
 				startIndex = insertionIndex != -1
 					? insertionIndex + Environment.NewLine.Length
 					: textBox.Text.Length;
 			}
 			textBox.Text = textBox.Text.Insert(startIndex, sb.ToString());
 			// Update cursor position
-			textBox.CaretIndex += sb.Length;
+			textBox.CaretIndex = startIndex + sb.Length;
 		}
 
 		#endregion

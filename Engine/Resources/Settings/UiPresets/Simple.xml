@@ -14,17 +14,19 @@ iz+y7EqprQMAAA==</IconData>
   <Created>2024-06-27T16:38:49.1475699+01:00</Created>
   <Modified>2024-06-27T16:38:49.1475699+01:00</Modified>
   <Items>
-    <VisibilityItem Path="TeamsTabItem" IsVisible="false" />
-    <VisibilityItem Path="FineTuningTabItem" IsVisible="false" />
-    <VisibilityItem Path="EmbeddingTabItem" IsVisible="false" />
-    <VisibilityItem Path="OptionsPanel.UiPresetsTabItem" IsVisible="false" />
-    <VisibilityItem Path="OptionsPanel.ContextPanel.AttachedContextGroupBox" IsVisible="false" />
-    <VisibilityItem Path="OptionsPanel.MicrosoftAccountsTabItem" IsVisible="false" />
-    <VisibilityItem Path="AuthIconPanel" IsVisible="false" />
-    <VisibilityItem Path="TasksPanel.TaskPanel.EmbeddingsTabItem" IsVisible="false" />
-    <VisibilityItem Path="TasksPanel.TaskPanel.MailTabItem" IsVisible="false" />
-    <VisibilityItem Path="TasksPanel.TaskPanel.MultimediaTabItem" IsVisible="false" />
-    <VisibilityItem Path="OptionsPanel.MailAccountsTabItem" IsVisible="false" />
-    <VisibilityItem Path="OptionsPanel.MainPanel.EnterpriseOptionsGroupBox" IsVisible="false" />
+    <VisibilityItem Path="TeamsTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="FineTuningTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="EmbeddingTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="OptionsPanel.UiPresetsTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="OptionsPanel.ContextPanel.AttachedContextGroupBox" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.EmbeddingsTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.MailTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.MultimediaTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="OptionsPanel.MailAccountsTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="OptionsPanel.MainPanel.EnterpriseOptionsGroupBox" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.CanvasTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.ToolsTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.VisualStudioTabItem" IsVisible="false" IsEnabled="false" />
+    <VisibilityItem Path="TasksPanel.TaskPanel.ZoomSliderPanel" IsVisible="false" IsEnabled="false" />
   </Items>
 </UiPresetItem>

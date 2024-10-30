@@ -132,11 +132,12 @@
 		}
 
 		.chat-button {
+			font-family: 'Segoe UI Symbol', 'Arial Unicode MS', 'Noto Sans Symbols', sans-serif;
 			cursor: pointer;
 			color: white;
 			opacity: 0.20;
 			border: none;
-			padding: 0.25em 0.5em;
+			padding: 0.25em 0.5em 0.25em 0.5em;
 			border-radius: 0.5em;
 			background: linear-gradient(to bottom, #00aeec, #008adc);
 			transition: opacity 0.3s ease;
@@ -144,14 +145,22 @@
 			margin-left: 0.5em;
 		}
 
-			.chat-button:hover {
-				opacity: 0.8;
-				outline: none;
-			}
+		.chat-button-red:hover {
+			color: #e57373;
+		}
 
-			.chat-button.clicked {
-				background: linear-gradient(to bottom, #00ff00, #008000);
-			}
+		.chat-button-green:hover {
+			color: #81c784;
+		}
+
+		.chat-button:hover {
+			opacity: 0.8;
+			outline: none;
+		}
+
+		.chat-button.clicked {
+			background: linear-gradient(to bottom, #00ff00, #008000);
+		}
 
 		code {
 			font-family: 'Cascadia Mono', 'Consolas';
@@ -196,7 +205,7 @@
 			color: black;
 			opacity: 0.50;
 			border: none;
-			padding: 0.25em 0.5em;
+			padding: 0.25em 0.5em 0.25em 0.5em;
 			border-radius: 0.5em;
 			background: linear-gradient(to bottom, #ffffff, #f0f0f0);
 			transition: opacity 0.3s ease;
@@ -919,11 +928,11 @@
 			<div class="chat-message color-{Type}">
 				<div class="chat-message-head">
 					<span class="chat-date">{Date}</span>
-					<button class="chat-button" onclick="MessageAction(this, '{Id}', 'Remove')">Remove</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Use')">Use</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Edit')">Edit</button>
-					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')">Copy</button>
-					<button class="chat-button item-{Automated} regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;">Regenerate</button>
+					<button class="chat-button chat-button-red" onclick="MessageAction(this, '{Id}', 'Remove')" title="Remove" aria-label="Remove">❌</button>
+					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Use')" title="Use" aria-label="Use">📥</button>
+					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Edit')" title="Edit" aria-label="Edit">✎</button>
+					<button class="chat-button item-{Automated}" onclick="MessageAction(this, '{Id}', 'Copy')" title="Copy" aria-label="Copy">📄</button>
+					<button class="chat-button item-{Automated} chat-button-green regenerate-{Type}" onclick="MessageAction(this, '{Id}', 'Regenerate')" style="display: none;" title="Regenerate" aria-label="Regenerate">🔃</button>
 					{Buttons}
 				</div>
 				<div class="chat-message-body {BodyHide}">{Body}</div>

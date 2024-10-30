@@ -17,7 +17,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<StackPanel DataContext="{Binding Item, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Orientation="Horizontal">
+	<StackPanel Margin="3" DataContext="{Binding Item, ElementName=This, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Orientation="Horizontal">
 		<Label
 			Grid.Row="0"
 			Grid.Column="1"
@@ -27,13 +27,18 @@
 			Visibility="Collapsed" />
 		<ComboBox
 			Name="AiServicesComboBox"
+			Margin="0"
 			x:FieldModifier="public"
 			DisplayMemberPath="Name"
 			SelectedValue="{Binding AiServiceId}"
 			SelectedValuePath="Id"
 			SelectionChanged="AiServicesComboBox_SelectionChanged" />
-		<Label VerticalAlignment="Center" Content="{StaticResource main_Model}" />
-		<ComboBox Name="ModelComboBox" ItemsSource="{Binding AiModels, ElementName=This}" SelectedValue="{Binding AiModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+		<Label Margin="3,0,0,0" VerticalAlignment="Center" Content="{StaticResource main_Model}" />
+		<ComboBox
+			Name="ModelComboBox"
+			Margin="3,0,0,0"
+			ItemsSource="{Binding AiModels, ElementName=This}"
+			SelectedValue="{Binding AiModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		<Button
 			Name="ModelRefreshButton"
 			Grid.Row="1"

@@ -34,6 +34,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 					var element = namedElements[newPath];
 					var item = GetVisibilityItem(newPath, element);
 					AllUiElements.Add(newPath, item);
+					UiContextMenuManager.AssignContextMenu(element);
 				}
 				// Create sorted lit of new paths.
 				var paths = Global.VisibilityPaths.Union(newPaths).ToArray();
@@ -47,7 +48,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 		}
 
-		private static VisibilityItem GetVisibilityItem(string path, FrameworkElement element)
+		public static VisibilityItem GetVisibilityItem(string path, FrameworkElement element)
 		{
 			var item = new VisibilityItem
 			{

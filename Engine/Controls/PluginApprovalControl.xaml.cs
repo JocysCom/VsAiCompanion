@@ -129,8 +129,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				}
 				else
 				{
-					ControlsHelper.SetVisible(DiffPanel, false);
-					SetDiff("", "");
+					if (DiffPanel != null)
+					{
+						ControlsHelper.SetVisible(DiffPanel, false);
+						SetDiff("", "");
+					}
 
 				}
 				if (rl != null && RiskToBrush.ContainsKey(rl.Value))

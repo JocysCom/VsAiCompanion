@@ -103,6 +103,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>UiPreset</ItemType>
+          <GridSplitterPosition>0.29991915925626517</GridSplitterPosition>
           <ListSelection>
             <string>Advanced</string>
           </ListSelection>
@@ -130,6 +131,7 @@
           <UserGroups />
         </UserProfile>
       </UserProfiles>
+      <UiPresetName>Simple</UiPresetName>
       <ContextFunctionResponseInstructions>To call a function, Provide the function call as JSON that strictly adheres to the JSON schema for function calls, which is supplied below.&#xD;
 Enclose the JSON code in triple backticks with "JSON" after the opening backticks, like this:&#xD;
 ```JSON&#xD;

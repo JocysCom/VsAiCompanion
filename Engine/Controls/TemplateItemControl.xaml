@@ -71,21 +71,26 @@
 							AutomationProperties.Name="{StaticResource main_Preview}"
 							Content="{StaticResource main_Preview}"
 							IsChecked="{Binding IsPreview}" />
-						<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
-						<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
-						<Slider
-							Name="ZoomSlider"
-							Width="80"
-							Maximum="150"
-							Minimum="50"
-							TickFrequency="10"
-							TickPlacement="BottomRight"
-							ValueChanged="ZoomSlider_ValueChanged"
-							Value="100" />
-						<!--  Value="{Binding Creativity}"  -->
-						<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
+						<StackPanel x:Name="ZoomSliderPanel" Orientation="Horizontal">
+							<ContentControl Margin="6,0,0,0" Content="{StaticResource Icon_font_decrease}" Focusable="False" />
+							<!--  Min 25%, Max 500%, Default 100%, ±10%  -->
+							<Slider
+								Name="ZoomSlider"
+								Width="80"
+								Maximum="150"
+								Minimum="50"
+								TickFrequency="10"
+								TickPlacement="BottomRight"
+								ValueChanged="ZoomSlider_ValueChanged"
+								Value="100" />
+							<ContentControl Content="{StaticResource Icon_font_increase}" Focusable="False" />
+						</StackPanel>
 					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+					<StackPanel
+						x:Name="PluginRiskSettingsPanel"
+						Grid.Row="1"
+						Grid.ColumnSpan="2"
+						Orientation="Horizontal">
 						<Border Name="ColumnWidthBorder">
 							<CheckBox
 								Name="PluginsEnableContextCheckBox"
@@ -177,7 +182,7 @@
 							Height="64"
 							VerticalAlignment="Top" />
 						<StackPanel Orientation="Vertical">
-							<GroupBox Margin="0,0,0,3" VerticalAlignment="Top">
+							<GroupBox x:Name="CreativityGroupBox" Margin="0,0,0,3" VerticalAlignment="Top">
 								<GroupBox.Header>
 									<StackPanel Orientation="Horizontal">
 										<Label
@@ -224,6 +229,7 @@
 								Visibility="{Binding TemplateItemVisibility, ElementName=This}" />
 						</StackPanel>
 						<GroupBox
+							x:Name="AutomationGroupBox"
 							Grid.Row="1"
 							Grid.Column="1"
 							Margin="3,0,0,3"
@@ -293,6 +299,7 @@
 							</StackPanel>
 						</GroupBox>
 						<GroupBox
+							x:Name="InstructionsGroupBox"
 							Grid.Row="1"
 							Grid.Column="1"
 							Margin="3,0,3,3"
@@ -927,12 +934,12 @@
 				Visibility="{Binding ShowPrompting, Converter={StaticResource _BooleanToVisibilityConverter}}">
 				<WrapPanel Orientation="Horizontal">
 					<controls:CodeBlockControl x:Name="CodeBlockPanel" />
-					<Border BorderBrush="{StaticResource BorderDark}" BorderThickness="0,0,1,0">
+					<controls:ListsPromptsControl x:Name="ListsPromptsPanel" />
+					<Border BorderBrush="{StaticResource BorderDark}" BorderThickness="1,0,0,0">
 						<StackPanel Orientation="Horizontal">
 							<controls:PromptsControl x:Name="PromptsPanel" />
 						</StackPanel>
 					</Border>
-					<controls:ListsPromptsControl x:Name="ListsPromptsPanel" />
 				</WrapPanel>
 			</Border>
 			<!--  Row 6  -->

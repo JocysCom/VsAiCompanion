@@ -26,8 +26,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private void Global_OnAiServicesUpdated(object sender, EventArgs e)
 		{
-			AiServicesComboBox.ItemsSource = Global.AppSettings.AiServices
+			var items = Global.AppSettings.AiServices
 				.Where(x => x.ServiceType == ApiServiceType.None || x.ServiceType == ApiServiceType.OpenAI);
+			AiServicesComboBox.ItemsSource = items;
+			ControlsHelper.SetVisible(AiServicesComboBox, items.Count() > 1);
 		}
 
 		public IAiServiceModel Item
@@ -86,7 +88,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			if (ControlsHelper.AllowLoad(this))
 			{
 				AppHelper.InitHelp(this);
-				UiPresetsManager.InitControl(this, true);
+				UiPresetsManager.InitControl(this, true, new[] { AiServicesComboBox });
 			}
 		}
 

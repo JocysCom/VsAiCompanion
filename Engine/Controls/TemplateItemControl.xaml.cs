@@ -42,6 +42,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			ChatPanel.MessagesPanel.ScriptingHandler.OnMessageAction += ChatPanel_MessagesPanel_ScriptingHandler_OnMessageAction;
 			ChatPanel.SelectionSaved += ChatPanel_SelectionSaved;
 			ChatPanel.PropertyChanged += ChatPanel_PropertyChanged;
+			ChatPanel.MainTabControl.SelectionChanged += ChatPanel_MainTabControl_SelectionChanged;
 			ChatPanel.InitTokenCounters();
 			//SolutionRadioButton.IsEnabled = Global.GetSolutionDocuments != null;
 			//ProjectRadioButton.IsEnabled = Global.GetProjectDocuments != null;
@@ -78,6 +79,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
+		}
+
+		private void ChatPanel_MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			var tab = ChatPanel.MainTabControl.SelectedItem as TabItem;
+			if (tab == null)
+				return;
+			var risenType = ChatPanel.SelectionControls?
+				.FirstOrDefault(x => x.Tab == tab).RisenType ?? RisenType.None;
+			// Filter prompts by risen type.
+			PromptsPanel.BindData(_Item, risenType);
 		}
 
 		private void ChatPanel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -574,6 +588,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				// Remove control, which visibility is controlled by the code.
 				var excludeElements = new FrameworkElement[] {
 					this, MainTabControl,
+					ZoomSlider,
+					// Plugin approval.
+					ColumnWidthBorder,
+					PluginsEnableContextCheckBox,
+					MaximumRiskLevelComboBox,
+					PluginApprovalProcessComboBox,
+					PluginApprovalTemplateComboBox,
+					// Other controls.
 					Context0EditButton,
 					Context1EditButton,
 					Context2EditButton,
@@ -582,7 +604,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Context5EditButton,
 					Context6EditButton,
 					Context7EditButton,
-					Context8EditButton
+					Context8EditButton,
  				};
 				UiPresetsManager.InitControl(this, excludeElements: excludeElements);
 			}

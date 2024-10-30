@@ -306,7 +306,10 @@
 	<sys:String x:Key="main_Voices">Voices</sys:String>
 
 	<!--  Options → UI Presets  -->
-	<sys:String x:Key="main_Feature_UiPresets">Allows users to quickly switch between predefined templates such as "Simple," "Advanced," and "Release," customizing the visibility and accessibility of various UI elements. This enables a tailored user experience by hiding or locking specific aspects of the interface based on the chosen preset.</sys:String>
+	<sys:String x:Key="main_Feature_UiPresets">
+		Allows users to quickly switch between predefined templates such as "Simple," "Advanced," and "Release," customizing the visibility and accessibility of various UI elements. This enables a tailored user experience by hiding or locking specific aspects of the interface based on the chosen preset.
+		To access the UI preset settings context menu directly over any UI element, please hold down the CTRL+SHIFT keys while right-clicking.
+	</sys:String>
 
 	<!--  Options → Reset Settings  -->
 	<sys:String x:Key="main_Reset_All_Settings">Reset All Settings</sys:String>

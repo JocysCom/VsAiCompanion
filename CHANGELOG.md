@@ -1,6 +1,9 @@
-2024-10-29 v1.14.33
+2024-10-30 v1.14.37
 
+- Fix: When pasting content, the textbox cursor won't be moved to the end of the pasted content.
+- Update: Use icons for chat log buttons to simplify the UI.
 - New: Approve AI actions with voice commands (e.g., when the AI is controlling the computer).
+- New: Access UI preset settings context menu over any UI element with CTRL+SHIFT+RButton.
 
 2024-10-28 v1.14.31
 

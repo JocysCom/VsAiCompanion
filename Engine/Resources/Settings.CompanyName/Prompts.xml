@@ -3,6 +3,7 @@
     <PromptItem>
       <Name>Tone</Name>
       <Pattern>Please use {0} tone.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>friendly</Option>
         <Option>sarcastic</Option>
@@ -32,6 +33,7 @@
     <PromptItem>
       <Name>Format</Name>
       <Pattern>Please write the content in {0} format.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>essay</Option>
         <Option>dialogue</Option>
@@ -69,6 +71,7 @@
     <PromptItem>
       <Name>Context</Name>
       <Pattern>Please write based on {0} context.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>historical event</Option>
         <Option>future prediction</Option>
@@ -94,6 +97,7 @@
     <PromptItem>
       <Name>Role</Name>
       <Pattern>Please behave like a {0}.</Pattern>
+      <RisenType>Role</RisenType>
       <Options>
         <Option>helpful assistant</Option>
         <Option>Shakespearean character</Option>
@@ -118,6 +122,7 @@
     <PromptItem>
       <Name>Instruction</Name>
       <Pattern>Please {0} the given content.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>summarize</Option>
         <Option>translate</Option>
@@ -141,6 +146,7 @@
     <PromptItem>
       <Name>Temperature</Name>
       <Pattern>Please generate responses with {0} creativity.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>low</Option>
         <Option>moderate</Option>
@@ -152,6 +158,7 @@
     <PromptItem>
       <Name>Length</Name>
       <Pattern>Please limit the response length to {0} tokens.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>very short</Option>
         <Option>short</Option>
@@ -166,6 +173,7 @@
     <PromptItem>
       <Name>Experiment</Name>
       <Pattern>Please write in a {0} style.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>modern</Option>
         <Option>traditional</Option>
@@ -190,6 +198,7 @@
     <PromptItem>
       <Name>Protagonist</Name>
       <Pattern>Please add a {0} to the content.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>central character</Option>
         <Option>narrator</Option>
@@ -211,6 +220,7 @@
     <PromptItem>
       <Name>Scenario</Name>
       <Pattern>Please write in the scenario of {0}.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>alien explaining Earth</Option>
         <Option>Shakespeare vs Einstein</Option>
@@ -229,6 +239,7 @@
     <PromptItem>
       <Name>Nature</Name>
       <Pattern>Please write content that is {0}.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>fact-based</Option>
         <Option>imaginative</Option>
@@ -261,6 +272,7 @@
     <PromptItem>
       <Name>Perspective</Name>
       <Pattern>Please use {0} perspective.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>first person</Option>
         <Option>second person</Option>
@@ -282,6 +294,7 @@
     <PromptItem>
       <Name>Timeframe</Name>
       <Pattern>Please write for the {0} timeframe.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>past</Option>
         <Option>present</Option>
@@ -304,6 +317,7 @@
     <PromptItem>
       <Name>Style</Name>
       <Pattern>Please write in {0} style.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>standard English</Option>
         <Option>old English</Option>
@@ -330,6 +344,7 @@
     <PromptItem>
       <Name>Emotion</Name>
       <Pattern>Please reflect {0} emotion in writing.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>optimistic</Option>
         <Option>anxious</Option>
@@ -367,6 +382,7 @@
     <PromptItem>
       <Name>References</Name>
       <Pattern>Please {0} regional or pop culture references.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>include</Option>
         <Option>exclude</Option>
@@ -381,6 +397,7 @@
     <PromptItem>
       <Name>Audience</Name>
       <Pattern>Please write for {0}.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>business professionals</Option>
         <Option>children</Option>
@@ -411,6 +428,7 @@
     <PromptItem>
       <Name>Quotes</Name>
       <Pattern>Please {0} dialogues or quotes in the content.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>include</Option>
         <Option>exclude</Option>
@@ -426,6 +444,7 @@
     <PromptItem>
       <Name>Statement</Name>
       <Pattern>Please provide a {0} as a response.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>request</Option>
         <Option>question</Option>
@@ -447,6 +466,7 @@
     <PromptItem>
       <Name>Detail</Name>
       <Pattern>Please provide {0} in the response.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>expanded explanation</Option>
         <Option>short summary</Option>
@@ -470,6 +490,7 @@
     <PromptItem>
       <Name>Problem</Name>
       <Pattern>Please {0} or discuss {0}.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>solve a problem</Option>
         <Option>discuss a concept</Option>
@@ -487,6 +508,7 @@
     <PromptItem>
       <Name>Creativity</Name>
       <Pattern>Please create a {0}.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>poem</Option>
         <Option>story</Option>
@@ -517,6 +539,7 @@
     <PromptItem>
       <Name>Simplicity</Name>
       <Pattern>Please {0}.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>simplification of complex concepts</Option>
         <Option>use of technical jargon</Option>
@@ -535,6 +558,7 @@
     <PromptItem>
       <Name>Logic</Name>
       <Pattern>Please provide a {0} of the content.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>logical breakdown</Option>
         <Option>critical review</Option>
@@ -551,6 +575,7 @@
     <PromptItem>
       <Name>Imagery</Name>
       <Pattern>Please use {0} style in writing.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>vivid and descriptive</Option>
         <Option>literal and straightforward</Option>
@@ -569,6 +594,7 @@
     <PromptItem>
       <Name>Terminology</Name>
       <Pattern>Please use {0} terminology in the content.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>industry-specific</Option>
         <Option>non-technical</Option>
@@ -590,6 +616,7 @@
     <PromptItem>
       <Name>Counterarguments</Name>
       <Pattern>Please provide {0} to the specified points.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>counterarguments</Option>
         <Option>rebuttals</Option>
@@ -606,6 +633,7 @@
     <PromptItem>
       <Name>Hypotheses</Name>
       <Pattern>Please {0} some specific hypotheses.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>generate</Option>
         <Option>evaluate</Option>
@@ -625,6 +653,7 @@
     <PromptItem>
       <Name>Predictions</Name>
       <Pattern>Please make {0} predictions.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>data-driven</Option>
         <Option>scenario-based</Option>
@@ -649,6 +678,7 @@
     <PromptItem>
       <Name>Recommendations</Name>
       <Pattern>Please {0} the given context.</Pattern>
+      <RisenType>Instructions</RisenType>
       <Options>
         <Option>provide advice on</Option>
         <Option>give suggestions about</Option>
@@ -666,6 +696,7 @@
     <PromptItem>
       <Name>Language</Name>
       <Pattern>Communicate only in the {0} language.</Pattern>
+      <RisenType>Narrowing</RisenType>
       <Options>
         <Option>Arabic</Option>
         <Option>Armenian</Option>
@@ -735,6 +766,94 @@
         <Option>Xhosa</Option>
         <Option>Yiddish</Option>
         <Option>Zulu</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Objective</Name>
+      <Pattern>Your goal is to {0}.</Pattern>
+      <RisenType>EndGoal</RisenType>
+      <Options>
+        <Option>educate the reader</Option>
+        <Option>persuade the audience</Option>
+        <Option>entertain the listener</Option>
+        <Option>inform about environmental issues</Option>
+        <Option>inspire action</Option>
+        <Option>explain the concept clearly</Option>
+        <Option>provide a solution</Option>
+        <Option>increase awareness</Option>
+        <Option>summarize key points</Option>
+        <Option>develop a plan</Option>
+        <Option>motivate change</Option>
+        <Option>clarify misunderstandings</Option>
+        <Option>promote a product</Option>
+        <Option>advocate for a cause</Option>
+        <Option>solve a mystery</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Goal</Name>
+      <Pattern>The ultimate goal is to {0}.</Pattern>
+      <RisenType>EndGoal</RisenType>
+      <Options>
+        <Option>reduce costs</Option>
+        <Option>improve efficiency</Option>
+        <Option>enhance understanding</Option>
+        <Option>gain insights</Option>
+        <Option>achieve success</Option>
+        <Option>solve the problem</Option>
+        <Option>discover new methods</Option>
+        <Option>innovate</Option>
+        <Option>make a profit</Option>
+        <Option>build a solution</Option>
+        <Option>increase productivity</Option>
+        <Option>optimize processes</Option>
+        <Option>reach a conclusion</Option>
+        <Option>develop skills</Option>
+        <Option>strengthen relationships</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Procedure</Name>
+      <Pattern>Please outline the steps to {0}.</Pattern>
+      <RisenType>Steps</RisenType>
+      <Options>
+        <Option>solve the problem</Option>
+        <Option>complete the task</Option>
+        <Option>achieve the goal</Option>
+        <Option>build a website</Option>
+        <Option>prepare the report</Option>
+        <Option>conduct an experiment</Option>
+        <Option>write an essay</Option>
+        <Option>create a marketing plan</Option>
+        <Option>design a product</Option>
+        <Option>implement the algorithm</Option>
+        <Option>train a model</Option>
+        <Option>organize an event</Option>
+        <Option>launch a campaign</Option>
+        <Option>develop software</Option>
+        <Option>learn a new skill</Option>
+      </Options>
+    </PromptItem>
+    <PromptItem>
+      <Name>Process</Name>
+      <Pattern>Please describe the process of {0}.</Pattern>
+      <RisenType>Steps</RisenType>
+      <Options>
+        <Option>photosynthesis</Option>
+        <Option>cell division</Option>
+        <Option>software development</Option>
+        <Option>data analysis</Option>
+        <Option>manufacturing</Option>
+        <Option>recruitment</Option>
+        <Option>project management</Option>
+        <Option>decision making</Option>
+        <Option>financial planning</Option>
+        <Option>learning a language</Option>
+        <Option>brewing coffee</Option>
+        <Option>publishing a book</Option>
+        <Option>cooking a meal</Option>
+        <Option>setting up a network</Option>
+        <Option>creating a presentation</Option>
       </Options>
     </PromptItem>
   </Items>

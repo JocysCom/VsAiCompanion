@@ -15,21 +15,30 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 	{
 		public PromptsControl()
 		{
-			var names = Global.Prompts.Items.Select(x => x.Name).OrderBy(x => x).ToList();
-			PromptNames = new BindingList<string>(names);
+			PromptNames = new BindingList<string>();
 			PromptOptions = new BindingList<string>();
 			InitializeComponent();
 		}
 
 		TemplateItem Item;
+		RisenType _RisenType;
 
-		public void BindData(TemplateItem item = null)
+		public void BindData(TemplateItem item = null, RisenType risenType = RisenType.None)
 		{
-			if (Equals(item, Item))
+			if (Equals(item, Item) && _RisenType == risenType)
 				return;
+			_RisenType = risenType;
 			PromptNameComboBox.SelectionChanged -= PromptNameComboBox_SelectionChanged;
 			DataContext = null;
 			Item = null;
+			var items = Global.Prompts.Items
+				.Where(x => risenType == RisenType.None || x.RisenType == risenType)
+				.ToList();
+			// If nothing found then show all.
+			if (!items.Any())
+				items = Global.Prompts.Items.ToList();
+			var names = items.Select(x => x.Name).OrderBy(x => x).ToList();
+			CollectionsHelper.Synchronize(names, PromptNames);
 			// Prepare for binding.
 			FixPromptName(item);
 			FixPromptOption(item);
@@ -100,16 +109,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public BindingList<string> PromptOptions { get; set; }
 
-		#region ■ INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-
-		#endregion
-
 		private void This_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
@@ -123,5 +122,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			AppHelper.AddHelp(PromptOptionComboBox, "Prompting style", "Choose a specific style within the selected category to guide the AI's output.");
 			AppHelper.AddHelp(AddPromptButton, "Add prompt", "Add a prompt to the user's message.");
 		}
+
+		#region ■ INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
+		#endregion
+
 	}
 }
