@@ -89,6 +89,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Enable_Microsoft_Account => FindResource(nameof(main_Enable_Microsoft_Account));
         public static string main_Enable_API_Plugins => FindResource(nameof(main_Enable_API_Plugins));
         public static string main_EnableVoiceToApprovePlugins => FindResource(nameof(main_EnableVoiceToApprovePlugins));
+        public static string main_EnableVoiceToApprovePlugins_Help => FindResource(nameof(main_EnableVoiceToApprovePlugins_Help));
         public static string main_Require_To_Sign_In => FindResource(nameof(main_Require_To_Sign_In));
         public static string main_Require_To_Sign_In_Message => FindResource(nameof(main_Require_To_Sign_In_Message));
         public static string main_Plugins_require_chat_history => FindResource(nameof(main_Plugins_require_chat_history));
