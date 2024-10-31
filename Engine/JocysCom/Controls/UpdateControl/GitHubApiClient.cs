@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
 {
-
+	/// <summary>
+	/// Client for accessing GitHub API to retrieve information about releases.
+	/// </summary>
 	public class GitHubApiClient
 	{
 		private readonly HttpClient _httpClient;
 
+		/// <summary>
+		/// Initializes a new instance of the GitHubApiClient.
+		/// </summary>
 		public GitHubApiClient()
 		{
 			_httpClient = new HttpClient();
@@ -21,6 +26,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			_httpClient.DefaultRequestHeaders.Add("User-Agent", "JocysCom GitHub API Client");
 		}
 
+		/// <summary>
+		/// Retrieves the list of releases from the specified GitHub repository.
+		/// </summary>
+		/// <param name="company">The GitHub organization or user name.</param>
+		/// <param name="product">The GitHub repository name.</param>
+		/// <returns>A list of releases from the specified repository.</returns>
 		public async Task<List<release>> GetGitHubReleasesAsync(string company, string product)
 		{
 			var url = $"repos/{company}/{product}/releases";
@@ -38,5 +49,4 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			}
 		}
 	}
-
 }

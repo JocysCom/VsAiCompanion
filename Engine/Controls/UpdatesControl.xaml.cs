@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.UpdateControl;
+using System;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -32,6 +33,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				mainUuc.AddTask += UpdatesPanel_AddTask;
 				mainUuc.RemoveTask += UpdatesPanel_RemoveTask;
 				MainTabItem.Content = mainUuc;
+				mainUpdateUserControl = mainUuc;
+				// Add Update Time settings.
+				mainUuc.UpdateTimePanel.Item = Global.AppSettings.UpdateTimeSettings;
+				mainUuc.UpdateTimePanel.UpdateRequired += mainUuc_UpdateTimeControl_UpdateRequired;
+
 			}
 			if (InitHelper.IsDebug)
 			{
@@ -43,8 +49,32 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				pandocUuc.AddTask += UpdatesPanel_AddTask;
 				pandocUuc.RemoveTask += UpdatesPanel_RemoveTask;
 				PandocTabItem.Content = pandocUuc;
+				pandocUpdateUserControl = pandocUuc;
+				// Add Pandoc Update Time settings.
+				pandocUuc.UpdateTimePanel.Item = Global.AppSettings.PandocUpdateTimeSettings;
+				pandocUuc.UpdateTimePanel.UpdateRequired += pandocUuc_UpdateTimeControl_UpdateRequired;
 			}
 		}
+
+		UpdateUserControl mainUpdateUserControl;
+		UpdateUserControl pandocUpdateUserControl;
+
+		private async void mainUuc_UpdateTimeControl_UpdateRequired(object sender, EventArgs e)
+		{
+			// Start the update check process.
+			await mainUpdateUserControl.StartUpdateCheckAsync();
+			// Optionally, if you want to automatically install updates, call the install process.
+			// await UpdateControl.StartUpdateInstallAsync();
+		}
+
+		private async void pandocUuc_UpdateTimeControl_UpdateRequired(object sender, EventArgs e)
+		{
+			// Start the update check process.
+			await pandocUpdateUserControl.StartUpdateCheckAsync();
+			// Optionally, if you want to automatically install updates, call the install process.
+			// await UpdateControl.StartUpdateInstallAsync();
+		}
+
 
 		public void UpdateMissingPandocDefaults(UpdateSettings us)
 		{

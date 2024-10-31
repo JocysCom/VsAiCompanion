@@ -7,9 +7,18 @@ using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
 {
+	/// <summary>
+	/// Helper class for performing update-related processes such as replacing files and restarting the application.
+	/// </summary>
 	public class UpdateProcessHelper
 	{
-
+		/// <summary>
+		/// Replaces the existing executable with a new version.
+		/// </summary>
+		/// <param name="bakFile">The backup file path of the current executable.</param>
+		/// <param name="newFile">The file path of the new executable.</param>
+		/// <param name="exeFile">The existing executable file path to be replaced.</param>
+		/// <returns>"OK" if successful; otherwise, an error message.</returns>
 		public static string ReplaceFiles(string bakFile, string newFile, string exeFile)
 		{
 			try
@@ -30,6 +39,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				return ex.Message;
 			}
 		}
+
+		/// <summary>
+		/// Restarts the application by closing existing instances and launching a new instance of the executable.
+		/// </summary>
+		/// <param name="exeFile">The executable file path to start.</param>
+		/// <returns>"OK" if successful; otherwise, an error message.</returns>
 		public static string RestartApp(string exeFile)
 		{
 			try
@@ -64,11 +79,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		}
 
 		/// <summary>
-		/// Returns true if command was executed locally.
+		/// Runs a command with elevated privileges if necessary.
 		/// </summary>
+		/// <param name="args">The arguments for the command to be executed.</param>
+		/// <returns>True if the command was executed locally; false if a new process was started.</returns>
 		public static bool RunElevated(string[] args)
 		{
-
 			// If program is running as Administrator already.
 			if (JocysCom.ClassLibrary.Security.PermissionHelper.IsElevated)
 			{
@@ -85,6 +101,12 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				return false;
 			}
 		}
+
+		/// <summary>
+		/// Runs a process asynchronously without waiting for it to finish.
+		/// </summary>
+		/// <param name="args">The arguments for the process to be executed.</param>
+		/// <returns>True when the process starts successfully.</returns>
 		public static bool RunProcessAsync(string[] args)
 		{
 			// Don't wait for process to finish.
@@ -92,8 +114,13 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				JocysCom.ClassLibrary.Windows.UacHelper.CurrentProcessFileName,
 				string.Join(" ", args));
 			return true;
-
 		}
+
+		/// <summary>
+		/// Processes administrative commands based on the provided arguments.
+		/// </summary>
+		/// <param name="args">The arguments containing the commands to execute.</param>
+		/// <returns>True if a command was recognized and processed; otherwise, false.</returns>
 		public static bool ProcessAdminCommands(string[] args)
 		{
 			var ic = new JocysCom.ClassLibrary.Configuration.Arguments(args);
@@ -115,6 +142,5 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			}
 			return false;
 		}
-
 	}
 }

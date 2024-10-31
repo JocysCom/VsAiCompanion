@@ -110,12 +110,27 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 		private UpdateSettings _UpdateSettings;
 
+		public UpdateTimeSettings UpdateTimeSettings
+		{
+			get => _UpdateTimeSettings = _UpdateTimeSettings ?? new UpdateTimeSettings();
+			set => _UpdateTimeSettings = value;
+		}
+		private UpdateTimeSettings _UpdateTimeSettings;
+
 		public UpdateSettings PandocUpdateSettings
 		{
 			get => _PandocUpdateSettings = _PandocUpdateSettings ?? new UpdateSettings();
 			set => _PandocUpdateSettings = value;
 		}
 		private UpdateSettings _PandocUpdateSettings;
+
+		public UpdateTimeSettings PandocUpdateTimeSettings
+		{
+			get => _PandocUpdateTimeSettings = _PandocUpdateTimeSettings ?? new UpdateTimeSettings();
+			set => _PandocUpdateTimeSettings = value;
+		}
+		private UpdateTimeSettings _PandocUpdateTimeSettings;
+
 
 		#region Positions and Locations
 

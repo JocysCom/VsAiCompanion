@@ -20,7 +20,8 @@ using System.Windows.Controls;
 namespace JocysCom.ClassLibrary.Controls.UpdateControl
 {
 	/// <summary>
-	/// Interaction logic for UpdateUserControl.xaml
+	/// UserControl that handles the update process by interacting with GitHub releases.
+	/// Provides functionality to check for updates, download, extract, verify, and install updates.
 	/// </summary>
 	public partial class UpdateUserControl : UserControl, INotifyPropertyChanged
 	{
@@ -70,12 +71,20 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		/// <summary>Current application backup file.</summary>
 		public string UpdateBakFileFullName
 			=> UacHelper.CurrentProcessFileName + ".bak";
+
+		/// <summary>
+		/// Starts the installation process by initiating the download step.
+		/// </summary>
 		private async void InstallButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = true;
 			cancellationTokenSource = new CancellationTokenSource();
 			await Step2Download();
 		}
+
+		/// <summary>
+		/// Checks for available updates by retrieving release information from GitHub.
+		/// </summary>
 		private async void CheckButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
 			InstallMode = false;
@@ -161,6 +170,9 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			return asset;
 		}
 
+		/// <summary>
+		/// Queries GitHub for available releases and updates the UI with the retrieved release information.
+		/// </summary>
 		public async Task Step1CheckOnline()
 		{
 			var e = new EventArgs();
@@ -220,6 +232,9 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		Downloader _downloader;
 
+		/// <summary>
+		/// Initiates the download of the selected release asset from GitHub.
+		/// </summary>
 		public async Task Step2Download()
 		{
 			AddLog($"Downloading File...\r\n");
@@ -280,6 +295,11 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			InstallMode = false;
 			Step3ExtractFile();
 		}
+
+		/// <summary>
+		/// Extracts the downloaded update package to obtain the new executable.
+		/// </summary>
+		/// <returns>True if extraction was successful; otherwise, false.</returns>
 		bool Step3ExtractFile()
 		{
 			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
@@ -309,6 +329,10 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			Step3CheckSignature();
 		}
 
+		/// <summary>
+		/// Checks if the downloaded executable is digitally signed and trusted.
+		/// </summary>
+		/// <returns>True if the signature is valid; otherwise, false.</returns>
 		bool Step3CheckSignature()
 		{
 			if (InstallMode && cancellationTokenSource.Token.IsCancellationRequested)
@@ -416,6 +440,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			System.Windows.Application.Current.Shutdown();
 			return true;
 		}
+
 		private void ReleaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			UpdateButtons();
@@ -430,5 +455,24 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 
 		#endregion
 
+		/// <summary>
+		/// Initiates the update check process programmatically.
+		/// </summary>
+		public async Task StartUpdateCheckAsync()
+		{
+			InstallMode = false;
+			LogPanel.Clear();
+			await Step1CheckOnline();
+		}
+
+		/// <summary>
+		/// Initiates the update and install process.
+		/// </summary>
+		public async Task StartUpdateInstallAsync()
+		{
+			InstallMode = true;
+			cancellationTokenSource = new CancellationTokenSource();
+			await Step2Download();
+		}
 	}
 }
