@@ -375,6 +375,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			var names = zipItems.Select(x => propertySelector(x).ToLower()).ToArray();
 			// If mirror then all existng items will be removed and replaces with zip items.
 			var itemsToRemove = data.Items.Where(x => mirror || names.Contains(propertySelector(x).ToLower())).ToArray();
+			var oldPresetName = Global.AppSettings.UiPresetName;
 			if (data.UseSeparateFiles)
 			{
 				foreach (var item in itemsToRemove)
@@ -420,6 +421,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 					}
 				}
 			}
+			// Restore preset selection.
+			var uiPreset = Global.UiPresets.Items.FirstOrDefault(x => x.Name == oldPresetName);
+			if (uiPreset != null && Global.AppSettings.UiPresetName != uiPreset.Name)
+				Global.AppSettings.UiPresetName = uiPreset.Name;
 			// Close zip.
 			if (closeZip)
 				zip.Close();

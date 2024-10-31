@@ -1,3 +1,7 @@
+2024-10-31 v1.14.38
+
+- Fix: Resetting UI presets will deselect the currently selected UI preset.
+
 2024-10-30 v1.14.37
 
 - Fix: When pasting content, the textbox cursor won't be moved to the end of the pasted content.

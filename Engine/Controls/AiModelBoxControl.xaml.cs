@@ -29,7 +29,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var items = Global.AppSettings.AiServices
 				.Where(x => x.ServiceType == ApiServiceType.None || x.ServiceType == ApiServiceType.OpenAI);
 			AiServicesComboBox.ItemsSource = items;
-			ControlsHelper.SetVisible(AiServicesComboBox, items.Count() > 1);
+			//ControlsHelper.SetVisible(AiServicesComboBox, items.Count() > 1);
 		}
 
 		public IAiServiceModel Item
