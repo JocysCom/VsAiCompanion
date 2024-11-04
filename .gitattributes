@@ -1,3 +1,22 @@
+# Enforce consistent line endings of all text files that aren’t gitignored across all users,
+# regardless of their Git configurations.
+# It overrides individual 'core.autocrlf' settings for the files specified.
+# Text files will have LF line endings in the repository.
+# On checkout, text files will have native line endings in the working directory:
+#   - CRLF on Windows
+#   - LF on Linux/macOS/FreeBSD
+# Binary files are automatically detected and are not affected by this setting.
+#
+# Useful commands:
+#
+#  - List files with CRLF ending in repository:
+#    git ls-files --eol | where { $_.StartsWith("i/crlf")}
+#
+#  - Update all tracked files in repo according to the rules:
+#    git add --renormalize .
+#
+* text=auto
+
 * -text
 # Exclude files from language stats
 Resources/**/* linguist-vendored
