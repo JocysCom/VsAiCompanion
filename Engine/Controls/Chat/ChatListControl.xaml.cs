@@ -71,7 +71,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		{
 			if (!ScriptHandlerInitialized)
 				return null;
-			var json = InvokeScript($"GetSettings();");
+			var json = (string)InvokeScript($"GetSettings();");
 			if (string.IsNullOrEmpty(json))
 				return null;
 			try
@@ -106,10 +106,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		/// <summary>
 		/// Update web message from C# message.
 		/// </summary>
-		public void UpdateWebMessage(MessageItem item, bool autoScroll)
+		public bool UpdateWebMessage(MessageItem item, bool autoScroll)
 		{
 			var json = JsonSerializer.Serialize(item);
-			InvokeScript($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});");
+			var success = (bool)InvokeScript($"UpdateMessage({json}, {autoScroll.ToString().ToLower()});");
+			return success;
 		}
 
 		private void DataItems_ListChanged(object sender, ListChangedEventArgs e)
@@ -301,19 +302,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 
 		#region HTML
 
-		public string InvokeScript(string script)
+		public object InvokeScript(string script)
 		{
 			if (!ScriptHandlerInitialized)
-				return null;
+				return default;
 			try
 			{
-				return (string)_WebBrowser.InvokeScript("eval", new object[] { script });
+				return _WebBrowser.InvokeScript("eval", new object[] { script });
 			}
 			catch (Exception ex)
 			{
 				Global.MainControl.InfoPanel.SetBodyError(ex.Message);
 			}
-			return null;
+			return default;
 		}
 
 		string GetResource(string name)

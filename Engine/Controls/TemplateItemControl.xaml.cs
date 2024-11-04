@@ -901,7 +901,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		public string GetPageHtml()
 		{
 			// Cast the document to an HTMLDocument
-			var html = ChatPanel.MessagesPanel.InvokeScript("document.documentElement.outerHTML;");
+			var html = (string)ChatPanel.MessagesPanel.InvokeScript("document.documentElement.outerHTML;");
 			if (!string.IsNullOrEmpty(html))
 				html = CleanupHtml(html);
 			return html;
