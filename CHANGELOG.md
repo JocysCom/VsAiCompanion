@@ -2,6 +2,7 @@
 
 - Fix: Resetting UI presets will deselect the currently selected UI preset.
 - Fix: Error message after applying edit changes.
+- New: Option to enable or disable the global instructions.
 
 2024-10-30 v1.14.37
 

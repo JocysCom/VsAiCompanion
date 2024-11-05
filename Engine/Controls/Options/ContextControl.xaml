@@ -21,13 +21,24 @@
 	</UserControl.Resources>
 	<ScrollViewer>
 		<StackPanel Margin="0,0,0,3">
-			<GroupBox Margin="3,0,3,0" Header="{StaticResource main_Global_Instructions}">
+			<GroupBox Margin="3,0,3,0">
+				<GroupBox.Header>
+					<CheckBox
+						x:Name="GlobalInstructionsEnabledCheckBox"
+						Margin="-4"
+						AutomationProperties.HelpText="{StaticResource main_Global_Instructions_Help}"
+						AutomationProperties.Name="{StaticResource main_Global_Instructions_Name}"
+						Content="{StaticResource main_Global_Instructions}"
+						IsChecked="{Binding GlobalInstructionsEnabled, Source={x:Static root:Global.AppSettings}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				</GroupBox.Header>
 				<TextBox
 					Name="GlobalInstructionsTextBox"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Top"
 					AcceptsReturn="True"
+					AutomationProperties.HelpText="{StaticResource main_Global_Instructions_Help}"
+					AutomationProperties.Name="{StaticResource main_Global_Instructions_Name}"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
 					SpellCheck.IsEnabled="True"

@@ -335,9 +335,14 @@ Ensure the JSON conforms exactly to the provided schema below:";
 
 
 		/// <summary>Instructions that will be included at the start of every message.</summary>
-		[DefaultValue("")]
+		[DefaultValue("Respond in French by default unless instructed otherwise.")]
 		public string GlobalInstructions { get => _GlobalInstructions; set => SetProperty(ref _GlobalInstructions, value); }
 		string _GlobalInstructions;
+
+		/// <summary>Enable global instructions.</summary>
+		[DefaultValue(false)]
+		public bool GlobalInstructionsEnabled { get => _GlobalInstructionsEnabled; set => SetProperty(ref _GlobalInstructionsEnabled, value); }
+		bool _GlobalInstructionsEnabled;
 
 		/// <summary>Instructions that will be use to analyse images as structured JSON.</summary>
 		[DefaultValue(

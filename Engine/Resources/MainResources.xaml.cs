@@ -276,6 +276,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Resources
         public static string main_Context_Options => FindResource(nameof(main_Context_Options));
         public static string main_Files => FindResource(nameof(main_Files));
         public static string main_Global_Instructions => FindResource(nameof(main_Global_Instructions));
+        public static string main_Global_Instructions_Name => FindResource(nameof(main_Global_Instructions_Name));
+        public static string main_Global_Instructions_Help => FindResource(nameof(main_Global_Instructions_Help));
         public static string main_StructuredImageAnalysisInstructions => FindResource(nameof(main_StructuredImageAnalysisInstructions));
         public static string main_ContextFunctionRequestInstructionsText => FindResource(nameof(main_ContextFunctionRequestInstructionsText));
         public static string main_ContextFunctionResponseInstructionsText => FindResource(nameof(main_ContextFunctionResponseInstructionsText));

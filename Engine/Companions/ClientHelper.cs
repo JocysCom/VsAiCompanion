@@ -168,9 +168,12 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions
 					itemText = await FormatMessage(item, itemText);
 				embeddingText = itemText;
 				var vsData = AppHelper.GetMacroValues();
+				var globalInstructions = Global.AppSettings.GlobalInstructionsEnabled
+					? Global.AppSettings.GlobalInstructions
+					: "";
 				// Prepare instructions.
 				var instructions = JoinMessageParts(
-					Global.AppSettings.GlobalInstructions,
+					globalInstructions,
 					item.TextInstructions
 					);
 				if (item.UseMacros)

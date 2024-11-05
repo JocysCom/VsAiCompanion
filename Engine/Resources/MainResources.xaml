@@ -286,6 +286,8 @@
 	<sys:String x:Key="main_Context_Options">Context</sys:String>
 	<sys:String x:Key="main_Files">Files</sys:String>
 	<sys:String x:Key="main_Global_Instructions">Global Instructions</sys:String>
+	<sys:String x:Key="main_Global_Instructions_Name">Global Instructions</sys:String>
+	<sys:String x:Key="main_Global_Instructions_Help">Instructions that will be included at the start of every message.</sys:String>
 	<sys:String x:Key="main_StructuredImageAnalysisInstructions">Structured image analysis instructions</sys:String>
 	<sys:String x:Key="main_ContextFunctionRequestInstructionsText">Tool Function Request (Definitions) Instructions</sys:String>
 	<sys:String x:Key="main_ContextFunctionResponseInstructionsText">Tool Function Response (Call) Instructions</sys:String>
