@@ -5,7 +5,7 @@
 		Removes temporary and user specific solution files.
 .NOTES
     Author:     Evaldas Jocys <evaldas@jocys.com>
-    Modified:   2023-06-06
+    Modified:   2024-11-06
 .LINK
     http://www.jocys.com
 #>
@@ -82,24 +82,29 @@ Function RemoveDirectories {
 	# Function.
 	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object { $_ -is [DirectoryInfo] }
 	foreach ($item in $items) {
-		if ($mustBeInProject) {
-			# Get parent folder.
-			[DirectoryInfo] $parent = $item.Parent
-			$projects = $parent.GetFiles("*.*proj", [SearchOption]::TopDirectoryOnly)
-			# If parent folder do not contain *.*proj file then...
-			if ($projects.length -eq 0) {
-				# Ignore node_modules.
-				if ($item.FullName -like "*\node_modules\*") {
-					continue
-				}
-				Write-Output "  Skip:   $($item.FullName)"
-				$global:skipCount += 1
+		# If folder no longer exists then...
+		if (-not [Directory]::Exists($item.FullName)) {
+			continue
+		}
+		if (-not $mustBeInProject) {
+			continue
+		}
+		# Get parent folder.
+		[DirectoryInfo] $parent = $item.Parent
+		$projects = $parent.GetFiles("*.*proj", [SearchOption]::TopDirectoryOnly)
+		# If parent folder do not contain *.*proj file then...
+		if ($projects.length -eq 0) {
+			# Ignore node_modules.
+			if ($item.FullName -like "*\node_modules\*") {
 				continue
 			}
-			Write-Output "  Remove: $($item.FullName)"
-			$global:removeCount += 1
-			Remove-Item -LiteralPath $item.FullName -Force -Recurse
+			Write-Output "  Skip:   $($item.FullName)"
+			$global:skipCount += 1
+			continue
 		}
+		Write-Output "  Remove: $($item.FullName)"
+		$global:removeCount += 1
+		Remove-Item -LiteralPath $item.FullName -Force -Recurse
 	}
 }
 # ----------------------------------------------------------------------------
@@ -127,7 +132,7 @@ Function RemoveFiles {
 	# Function.
 	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object { $_ -is [FileInfo] }
 	foreach ($item in $items) {
-		Write-Output $item.FullName
+		Write-Output "  $($item.FullName)"
 		Remove-Item -LiteralPath $item.FullName -Force
 	}
 }
@@ -135,48 +140,48 @@ Function RemoveFiles {
 function ClearBuilds {
 	$global:removeCount = 0
 	$global:skipCount = 0
-	Write-Host "Clear Build Folders"
 	# Remove 'obj' folders first, because it can contain 'bin' inside.
+	Write-Host "Delete Intermediate Build Object Folders"
 	RemoveDirectories "obj" $true
+	Write-Host "Delete Final Build Binary Folders"
 	RemoveDirectories "bin" $true
 	#Write-Output "Skipped: $global:skipCount, Removed: $global:removeCount"
 }
 # ----------------------------------------------------------------------------
-# Kill tasks which could lock files in the project folders.
-function KillDeveloperTasks {
+# Kill processes which could lock files in the project folders.
+function KillDeveloperProcesses {
 	# You can find the process locking file by searching for the locked file name using SysInternals Process Explorer.
 	# 1. Open SysInternals Process Explorer.
 	# 2. Go to the Menu and click on "Find". Then, choose "Find Handle or DLL...(CTRL+SHIFT+F)".
 	#
-	# TaskKill
-	#   /IM <name>  Name of the process to be terminated.
-	#   /T          Terminates the specified process and any child processes.
-	#   /F          Specifies to forcefully terminate the process(es).
-	#
-	# Kill Microsoft Build Engine. 
-	& TaskKill.exe @("/F", "/T", "/IM", "MsBuild.exe")
-	# Kill Microsoft Visual Studio Team Foundation Server End Task.
-	& TaskKill.exe @("/F", "/T", "/IM", "EndTask.exe")
-	# Kill IIS Worker.
-	& TaskKill.exe @("/F", "/T", "/IM", "w3wp.exe")
-	# Kill Node.js JavaScript runtime environment.
-	& TaskKill.exe @("/F", "/T", "/IM", "node.exe")
-	# Kill Web View Host.
-	& TaskKill.exe @("/F", "/T", "/IM", "WebViewHost.exe")
-	# Kill ChromeDriver. Ued for UI testing.
-	& TaskKill.exe @("/F", "/T", "/IM", "ChromeDriver.exe")
-	# Kill IIS Express.
-	& TaskKill.exe @("/F", "/T", "/IM", "iisexpress.exe")
-	# Kill IIS Express Tray Icon.
-	& TaskKill.exe @("/F", "/T", "/IM", "iisexpresstray.exe")
-	# Kill Integrated Development Environment (IDE) for Microsoft's Visual Studio.
-	& TaskKill.exe @("/F", "/T", "/IM", "devenv.exe")
-	# Kill Visual Studio Test Host.
-	& TaskKill.exe @("/F", "/T", "/IM", "testhost.exe")
-	# Kill GIT Cache.
-	& TaskKill.exe @("/F", "/T", "/IM", "TGitCache.exe")
-	# Kill SVN Cache.
-	& TaskKill.exe @("/F", "/T", "/IM", "TSVNCache.exe")
+	# List of process names to kill (without the .exe extension), with comments.
+	$processNames = @(
+		"MsBuild", # Microsoft Build Engine.
+		"EndTask", # Microsoft Visual Studio Team Foundation Server End Task.
+		"w3wp", # IIS Worker.
+		"node", # Node.js JavaScript runtime environment.
+		"WebViewHost", # Web View Host.
+		"ChromeDriver", # ChromeDriver. Used for UI testing.
+		"iisexpress", # IIS Express.
+		"iisexpresstray", # IIS Express Tray Icon.
+		"devenv", # Integrated Development Environment (IDE) for Microsoft's Visual Studio.
+		"testhost", # Visual Studio Test Host.
+		"TGitCache", # GIT Cache.
+		"TSVNCache"         # SVN Cache.
+	)
+	Write-Host "Kill Developer Processes"
+	foreach ($name in $processNames) {
+		# Attempt to get the running processes by name.
+		$processes = Get-Process -Name $name -ErrorAction SilentlyContinue
+		if ($processes) {
+			foreach ($process in $processes) {
+				# Stop the process.
+				Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+				# Output a message indicating the process was stopped.
+				Write-Host "  Stopped process: $($process.Name) (PID: $($process.Id))"
+			}
+		}
+	}
 }
 # ----------------------------------------------------------------------------
 function ClearCache {
@@ -275,7 +280,7 @@ function ShowMainMenu {
 		Write-Host
 		Write-Host "User profiles will be affected: $namesAffected"
 		Write-Host "Please close Visual Studio before starting cleanup."
-		Write-Host "The 'Clear' option will kill all developer tasks."
+		Write-Host "The 'Clear' option will kill all developer processes."
 		Write-Host
 		Write-Host "    1 - Clear Project builds"
 		Write-Host "    2 - Clear IIS and temp files"
@@ -284,17 +289,17 @@ function ShowMainMenu {
 		Write-Host "    0 - Clear all"
 		Write-Host
 		Write-Host "    R - Reset Permissions"
-		Write-Host "    K - Kill Developer Tasks"
+		Write-Host "    K - Kill Developer Processes"
 		Write-Host
 		$m = Read-Host -Prompt "Type option and press ENTER to continue"
 		Write-Host
 		# Options:
-		IF ("$m" -eq "0" -or "$m" -eq "1" -or "$m" -eq "2" -or "$m" -eq "3" ) { KillDeveloperTasks }
+		IF ("$m" -eq "0" -or "$m" -eq "1" -or "$m" -eq "2" -or "$m" -eq "3" ) { KillDeveloperProcesses }
 		IF ("$m" -eq "0" -or "$m" -eq "1") { ClearBuilds }
 		IF ("$m" -eq "0" -or "$m" -eq "2") { ClearCache }
 		IF ("$m" -eq "0" -or "$m" -eq "3") { ClearCacheVS }
 		IF ("$m" -eq "R") { ResetPermissions "$scriptPath" }
-		IF ("$m" -eq "K") { KillDeveloperTasks; Start-Sleep -Seconds 2.0; }
+		IF ("$m" -eq "K") { KillDeveloperProcesses; Start-Sleep -Seconds 2.0; }
 		# If option was choosen.
 		IF ("$m" -ne "") {
 			pause

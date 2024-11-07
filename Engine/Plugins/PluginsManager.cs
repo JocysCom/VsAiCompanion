@@ -53,6 +53,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 				AddMethods(typeof(Lists));
 				AddMethods(typeof(Automation));
 #if DEBUG
+				AddMethods(typeof(Workflow));
 #endif
 				JocysCom.ClassLibrary.Helper.RunSynchronously(async () =>
 					await API_LoadPlugins(Global.PluginsPath));
@@ -238,6 +239,22 @@ namespace JocysCom.VS.AiCompanion.Engine
 					ai.Item = null;
 				});
 			}
+			else if (classInstance is Workflow wf)
+			{
+				await Global.MainControl.Dispatcher.Invoke(async () =>
+				{
+					wf.ExecutePlanCallback = async (plan, cancellationToken) =>
+					{
+						var we = new Plugins.Core.Workflows.WorkflowExecutor();
+						var methods = GetPluginFunctions().Where(x => x.Mi != null).Select(x => x.Mi).ToArray();
+						await we.ExecutePlan(plan, methods, cancellationToken);
+						return new ClassLibrary.OperationResult<bool>(true);
+					};
+					methodResult = await InvokeMethod(methodInfo, wf, invokeParams, true, cancellationTokenSource.Token);
+					wf.ExecutePlanCallback = null;
+				});
+			}
+
 			else if (classInstance is Automation am)
 			{
 				await Global.MainControl.Dispatcher.Invoke(async () =>

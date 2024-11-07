@@ -2303,6 +2303,132 @@
             <param name="useDefaultCredentials">Use default credentials.</param>
             <returns>The JSON response from the API.</returns>
         </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Workflow">
+            <summary>
+            Provides functionality to execute a workflow plan by invoking specified methods.
+            The executor manages variables and handles method invocation using reflection.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Workflow.ExecutePlanCallback">
+            <summary>
+            Will be used by plugins manager.
+            </summary>
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Workflow.ExecutePlan(JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Plan,System.Threading.CancellationToken)">
+            <summary>
+            Executes the workflow plan by invoking methods defined in the plan.
+            </summary>
+            <param name="plan">The workflow plan containing variables and operations to execute.</param>
+            <param name="cancellationToken">Token to monitor for cancellation requests.</param>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Example">
+            <summary>
+            Demonstrates how to use the WorkflowExecutor to execute a workflow plan.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Example.FunctionA(System.Int32)">
+            <summary>
+            Sample function that takes an integer argument and returns a formatted string.
+            </summary>
+            <param name="arg1">An integer argument.</param>
+            <returns>A formatted string containing the argument value.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Example.FunctionB(System.String)">
+            <summary>
+            Sample function that takes a string input and returns a boolean indicating if the string is not null or empty.
+            </summary>
+            <param name="input">A string input.</param>
+            <returns>True if the input is not null or empty; otherwise, false.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Example.Test(System.Threading.CancellationToken)">
+            <summary>
+            Tests the workflow execution by creating a plan and executing it using WorkflowExecutor.
+            </summary>
+            <param name="cancellationToken">A cancellation token for asynchronous operations (unused in this example).</param>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Operation">
+            <summary>
+            Represents an operation (method call) in the workflow plan.
+            Each operation specifies a method to invoke, its arguments, and where to store the output.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Operation.MethodName">
+            <summary>
+            Gets or sets the name of the method to invoke.
+            The method must be available in the provided method collection.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Operation.Arguments">
+            <summary>
+            Gets or sets the list of variable names to use as arguments.
+            The variables must be defined in the plan's variable list.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Operation.Output">
+            <summary>
+            Gets or sets the name of the variable to store the result.
+            The result can then be used as an argument in subsequent operations.
+            </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Plan">
+            <summary>
+            Represents the workflow plan.
+            The plan consists of a list of variables and a sequence of operations to execute.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Plan.Variables">
+            <summary>
+            Gets or sets the list of variables defined in the plan.
+            Variables provide data inputs and store outputs of operations.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Plan.Workflow">
+            <summary>
+            Gets or sets the list of operations (method calls) to execute.
+            Operations are executed in the order they appear in this list.
+            </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Variable">
+            <summary>
+            Represents a variable in the workflow plan.
+            Variables are used to store data that can be passed between operations.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Variable.Name">
+            <summary>
+            Gets or sets the name of the variable.
+            This is used to reference the variable within the workflow.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Variable.Value">
+            <summary>
+            Gets or sets the value of the variable.
+            Can be any object type.
+            </summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.WorkflowExecutor">
+            <summary>
+            Provides functionality to execute a workflow plan by invoking specified methods.
+            The executor manages variables and handles method invocation using reflection.
+            </summary>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.WorkflowExecutor.variables">
+            <summary>
+            Stores the variables used in the workflow execution.
+            The key is the variable name, and the value is the variable's value.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Workflows.WorkflowExecutor.ExecutePlan(JocysCom.VS.AiCompanion.Plugins.Core.Workflows.Plan,System.Reflection.MethodInfo[],System.Threading.CancellationToken)">
+            <summary>
+            Executes the workflow plan by invoking methods defined in the plan.
+            </summary>
+            <param name="plan">The workflow plan containing variables and operations to execute.</param>
+            <param name="methods">An array of methods available for invocation.</param>
+            <param name="cancellationToken">Token to monitor for cancellation requests.</param>
+        </member>
         <member name="T:Hompus.VideoInputDevices.SystemDeviceEnumerator">
             <summary>
             A system device enumerator.
