@@ -24,7 +24,7 @@ using System.Windows.Media;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public static class Global
+	public static partial class Global
 	{
 
 		public static ISolutionHelper _SolutionHelper;
@@ -480,6 +480,19 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public static bool IsMainWindowClosing;
 
+		public static void LoadGlobal()
+		{
+			AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+			// Start settings check.
+			InitUpdateTimeChecker();
+		}
+
+		private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
+		{
+			IsAppExiting = true;
+			//UnInitUpdateTimeChecker();
+		}
+
 		public static void LoadSettings()
 		{
 			// Make sure DbContext supports SQL Server and SQLite
@@ -584,6 +597,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			LogHelper.LogHttp = AppSettings.LogHttp;
 			// Mark settings as loaded.
 			IsSettignsLoaded = true;
+			LoadGlobal();
 		}
 
 		private static void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)

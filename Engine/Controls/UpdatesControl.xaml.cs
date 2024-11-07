@@ -34,10 +34,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				mainUuc.RemoveTask += UpdatesPanel_RemoveTask;
 				MainTabItem.Content = mainUuc;
 				mainUpdateUserControl = mainUuc;
-				// Add Update Time settings.
-				mainUuc.UpdateTimePanel.Item = Global.AppSettings.UpdateTimeSettings;
-				mainUuc.UpdateTimePanel.UpdateRequired += mainUuc_UpdateTimeControl_UpdateRequired;
-
+				Global.AiCompUpdateTimeChecker.UpdateRequired += mainUuc_UpdateTimeControl_UpdateRequired;
 			}
 			if (InitHelper.IsDebug)
 			{
@@ -50,9 +47,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				pandocUuc.RemoveTask += UpdatesPanel_RemoveTask;
 				PandocTabItem.Content = pandocUuc;
 				pandocUpdateUserControl = pandocUuc;
-				// Add Pandoc Update Time settings.
-				pandocUuc.UpdateTimePanel.Item = Global.AppSettings.PandocUpdateTimeSettings;
-				pandocUuc.UpdateTimePanel.UpdateRequired += pandocUuc_UpdateTimeControl_UpdateRequired;
+				Global.PanDocUpdateTimeChecker.UpdateRequired += pandocUuc_UpdateTimeControl_UpdateRequired;
 			}
 		}
 

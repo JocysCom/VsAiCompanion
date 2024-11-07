@@ -39,7 +39,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 				? Visibility.Visible
 				: Visibility.Collapsed;
 			Application.Current.MainWindow.Closing += MainWindow_Closing;
-			AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 			if (InitHelper.IsDebug)
 			{
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -67,11 +66,6 @@ namespace JocysCom.VS.AiCompanion.Engine
 		private void MainWindow_Closing(object sender, CancelEventArgs e)
 		{
 			Global.IsMainWindowClosing = true;
-		}
-
-		private void CurrentDomain_ProcessExit(object sender, EventArgs e)
-		{
-			Global.IsAppExiting = true;
 		}
 
 		private void BusyCount_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
