@@ -17,6 +17,7 @@
         <GitHubAssetName>JocysCom.VS.AiCompanion.App.zip</GitHubAssetName>
         <FileNameInsideZip>JocysCom.VS.AiCompanion.App.exe</FileNameInsideZip>
       </UpdateSettings>
+      <UpdateTimeSettings />
       <PandocUpdateSettings>
         <GitHubCompany>jgm</GitHubCompany>
         <GitHubProduct>pandoc</GitHubProduct>
@@ -26,9 +27,10 @@
         <GitHubAssetName>windows-x86_64.zip</GitHubAssetName>
         <FileNameInsideZip>pandoc.exe</FileNameInsideZip>
       </PandocUpdateSettings>
+      <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>289</Left>
-        <Top>52</Top>
+        <Left>300</Left>
+        <Top>56</Top>
         <Width>1273</Width>
         <Height>872</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
@@ -58,11 +60,11 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.20126926563916592</GridSplitterPosition>
+          <GridSplitterPosition>0.2012830793905373</GridSplitterPosition>
           <ListSelection>
-            <string>AI - Computer Use</string>
+            <string>AI - Chat</string>
           </ListSelection>
-          <ListSelectedIndex>2</ListSelectedIndex>
+          <ListSelectedIndex>0</ListSelectedIndex>
           <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>

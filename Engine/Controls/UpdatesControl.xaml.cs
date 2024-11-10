@@ -26,11 +26,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var mainUuc = new UpdateUserControl();
 				var us = Global.AppSettings.UpdateSettings;
 				us.UpdateMissingDefaults(appExeAssembly);
+				//mainUuc.Checker = Global.AiCompUpdateChecker;
+
 				mainUuc.DownloadTempFolder = AppHelper.GetTempFolderPath();
 				mainUuc.EnableReplace = true;
 				mainUuc.EnableRestart = true;
 				mainUuc.Settings = us;
-				mainUuc.AddTask += UpdatesPanel_AddTask;
+				//mainUuc.Checker.AddTask += UpdatesPanel_AddTask;
 				mainUuc.RemoveTask += UpdatesPanel_RemoveTask;
 				MainTabItem.Content = mainUuc;
 				mainUpdateUserControl = mainUuc;

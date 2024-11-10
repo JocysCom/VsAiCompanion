@@ -75,5 +75,6 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		{
 			return TimeUnitHelper.GetDateTimes(LastUpdate ?? DateTime.MinValue, CheckFrequencyValue, CheckFrequencyUnit).Last();
 		}
+
 	}
 }
