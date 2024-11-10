@@ -20,16 +20,16 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		/// <summary>
 		/// The UpdateTimeSettings object that this control binds to.
 		/// </summary>
-		public UpdateTimeSettings Item
+		public UpdateTimeSettings Settings
 		{
-			get => _Item;
+			get => _Settings;
 			set
 			{
-				_Item = value;
+				_Settings = value;
 				OnPropertyChanged();
 			}
 		}
-		UpdateTimeSettings _Item;
+		UpdateTimeSettings _Settings;
 
 		/// <summary>
 		/// Provides a dictionary of time units for use in the frequency unit ComboBox.

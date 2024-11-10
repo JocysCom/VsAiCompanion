@@ -595,9 +595,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			// Enable logging.
 			AppSettings.PropertyChanged += AppSettings_PropertyChanged;
 			LogHelper.LogHttp = AppSettings.LogHttp;
+			LoadGlobal();
 			// Mark settings as loaded.
 			IsSettignsLoaded = true;
-			LoadGlobal();
 		}
 
 		private static void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)

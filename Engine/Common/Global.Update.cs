@@ -5,24 +5,25 @@ namespace JocysCom.VS.AiCompanion.Engine
 	public static partial class Global
 	{
 		public static UpdateChecker AiCompUpdateChecker;
+		public static UpdateChecker PanDocUpdateChecker;
 		public static UpdateTimeChecker AiCompUpdateTimeChecker;
 		public static UpdateTimeChecker PanDocUpdateTimeChecker;
 
 		public static void InitUpdateTimeChecker()
 		{
-			UpdateChecker AiCompUpdateChecker = new UpdateChecker();
-
-
-
 			// AI App update time checker.
 			AiCompUpdateTimeChecker = new UpdateTimeChecker();
 			AiCompUpdateTimeChecker.Settings = AppSettings.UpdateTimeSettings;
 			AiCompUpdateTimeChecker.UpdateRequired += AiCompUpdateTimeChecker_UpdateRequired;
+			AiCompUpdateChecker = new UpdateChecker();
+			AiCompUpdateChecker.Settings = AppSettings.UpdateSettings;
 			AiCompUpdateTimeChecker.Start();
 			// Pandoc update time checker.
 			PanDocUpdateTimeChecker = new UpdateTimeChecker();
 			PanDocUpdateTimeChecker.Settings = AppSettings.PandocUpdateTimeSettings;
 			PanDocUpdateTimeChecker.UpdateRequired += PanDocUpdateTimeChecker_UpdateRequired;
+			PanDocUpdateChecker = new UpdateChecker();
+			PanDocUpdateChecker.Settings = AppSettings.PandocUpdateSettings;
 			PanDocUpdateTimeChecker.Start();
 		}
 

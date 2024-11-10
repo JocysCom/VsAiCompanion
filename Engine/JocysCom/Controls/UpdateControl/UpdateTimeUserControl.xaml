@@ -16,7 +16,7 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<UserControl.DataContext>
-		<Binding Path="Item" RelativeSource="{RelativeSource Self}" />
+		<Binding Path="Settings" RelativeSource="{RelativeSource Self}" />
 	</UserControl.DataContext>
 	<GroupBox x:Name="MainGroupBox" Grid.Row="2" Margin="3,0,3,0">
 		<GroupBox.Header>

@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.UpdateControl;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace JocysCom.VS.AiCompanion.Engine.Controls
@@ -15,40 +16,46 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-
+			PandocTabItem.Visibility = InitHelper.IsDebug
+				? Visibility.Visible
+				: Visibility.Collapsed;
 			var appExeAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			if (Global.IsVsExtension)
 			{
-				MainTabItem.Visibility = System.Windows.Visibility.Collapsed;
+				MainTabItem.Visibility = Visibility.Collapsed;
 			}
 			else
 			{
-				var mainUuc = new UpdateUserControl();
-				var us = Global.AppSettings.UpdateSettings;
-				us.UpdateMissingDefaults(appExeAssembly);
-				//mainUuc.Checker = Global.AiCompUpdateChecker;
-
-				mainUuc.DownloadTempFolder = AppHelper.GetTempFolderPath();
-				mainUuc.EnableReplace = true;
-				mainUuc.EnableRestart = true;
-				mainUuc.Settings = us;
-				//mainUuc.Checker.AddTask += UpdatesPanel_AddTask;
-				mainUuc.RemoveTask += UpdatesPanel_RemoveTask;
-				MainTabItem.Content = mainUuc;
-				mainUpdateUserControl = mainUuc;
+				var checker = Global.AiCompUpdateChecker;
+				var control = new UpdateUserControl();
+				checker.Settings.UpdateMissingDefaults(appExeAssembly);
+				checker.DownloadTempFolder = AppHelper.GetTempFolderPath();
+				checker.EnableReplace = true;
+				checker.EnableRestart = true;
+				checker.AddTask += UpdatesPanel_AddTask;
+				checker.RemoveTask += UpdatesPanel_RemoveTask;
+				// Bind data to control.
+				control.Checker = checker;
+				control.Settings = checker.Settings;
+				// Add app update control to the app UI.
+				MainTabItem.Content = control;
+				mainUpdateUserControl = control;
 				Global.AiCompUpdateTimeChecker.UpdateRequired += mainUuc_UpdateTimeControl_UpdateRequired;
 			}
 			if (InitHelper.IsDebug)
 			{
-				var pandocUuc = new UpdateUserControl();
-				var pdUs = Global.AppSettings.PandocUpdateSettings;
-				UpdateMissingPandocDefaults(pdUs);
-				pandocUuc.DownloadTempFolder = AppHelper.GetTempFolderPath();
-				pandocUuc.Settings = pdUs;
-				pandocUuc.AddTask += UpdatesPanel_AddTask;
-				pandocUuc.RemoveTask += UpdatesPanel_RemoveTask;
-				PandocTabItem.Content = pandocUuc;
-				pandocUpdateUserControl = pandocUuc;
+				var checker = Global.PanDocUpdateChecker;
+				var control = new UpdateUserControl();
+				UpdateMissingPandocDefaults(checker.Settings);
+				checker.DownloadTempFolder = AppHelper.GetTempFolderPath();
+				checker.AddTask += UpdatesPanel_AddTask;
+				checker.RemoveTask += UpdatesPanel_RemoveTask;
+				// Bind data to control.
+				control.Checker = checker;
+				control.Settings = checker.Settings;
+				// Add pandoc control to the app UI.
+				PandocTabItem.Content = control;
+				pandocUpdateUserControl = control;
 				Global.PanDocUpdateTimeChecker.UpdateRequired += pandocUuc_UpdateTimeControl_UpdateRequired;
 			}
 		}
@@ -58,8 +65,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		private async void mainUuc_UpdateTimeControl_UpdateRequired(object sender, EventArgs e)
 		{
+
 			// Start the update check process.
-			await mainUpdateUserControl.StartUpdateCheckAsync();
+			await Global.AiCompUpdateChecker.StartUpdateCheckAsync();
 			// Optionally, if you want to automatically install updates, call the install process.
 			// await UpdateControl.StartUpdateInstallAsync();
 		}
@@ -67,7 +75,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async void pandocUuc_UpdateTimeControl_UpdateRequired(object sender, EventArgs e)
 		{
 			// Start the update check process.
-			await pandocUpdateUserControl.StartUpdateCheckAsync();
+			await Global.PanDocUpdateChecker.StartUpdateCheckAsync();
 			// Optionally, if you want to automatically install updates, call the install process.
 			// await UpdateControl.StartUpdateInstallAsync();
 		}
