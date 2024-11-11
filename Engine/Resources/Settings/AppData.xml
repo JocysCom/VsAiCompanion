@@ -683,7 +683,7 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>88e2561e-01e6-7704-d428-54126fb25e13</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
-          <MaxInputTokens>2049</MaxInputTokens>
+          <MaxInputTokens>128000</MaxInputTokens>
         </AiModel>
       </AiModels>
       <MailAccounts />
