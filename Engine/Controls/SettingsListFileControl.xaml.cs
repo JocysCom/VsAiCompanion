@@ -498,6 +498,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				var items = ClipboardHelper.GetXmlSerializable<ISettingsListFileItem>(itemType);
 				foreach (var item in items)
 				{
+					// If items must be unique.
+					if (item is IHasGuid guidItem)
+					{
+						var hasItem = SourceItems.Cast<IHasGuid>().Any(x => x.Id == guidItem.Id);
+						if (hasItem)
+							guidItem.Id = Guid.NewGuid();
+					}
 					AppHelper.FixName(item, SourceItems);
 					InsertItem(item);
 				}

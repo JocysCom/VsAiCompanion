@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine
 {
-	public class AiService : SettingsListFileItem
+	public class AiService : SettingsListFileItem, IHasGuid
 	{
 
 		public AiService()

@@ -61,7 +61,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			client.DefaultRequestHeaders.Accept.Clear();
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 			var apiOrganizationId = await Security.MicrosoftResourceManager.Current.GetKeyVaultSecretValue(Service.ApiOrganizationIdVaultItemId, Service.ApiOrganizationId);
-			client.DefaultRequestHeaders.Add("OpenAI-Organization", apiOrganizationId);
+			if (!string.IsNullOrEmpty(apiOrganizationId))
+				client.DefaultRequestHeaders.Add("OpenAI-Organization", apiOrganizationId);
 			return client;
 		}
 
@@ -97,8 +98,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public async Task<file> UploadFileAsync(string filePath, string purpose, CancellationToken cancellationToken = default)
 		{
-			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{Service.BaseUrl}{filesPath}?date={date}";
+			//var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			//var urlWithDate = $"{Service.BaseUrl}{filesPath}?date={date}";
+			var urlWithDate = $"{Service.BaseUrl}{filesPath}";
 			var client = await GetClient();
 			//client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			using (var content = new MultipartFormDataContent())
@@ -123,8 +125,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 
 		public async Task<T> DeleteAsync<T>(string path, string id, CancellationToken cancellationToken = default)
 		{
-			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{Service.BaseUrl}{path}/{id}?date={date}";
+			//var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			//var urlWithDate = $"{Service.BaseUrl}{path}/{id}?date={date}";
+			var urlWithDate = $"{Service.BaseUrl}{path}/{id}";
 			var client = await GetClient();
 			using (var response = await client.DeleteAsync(urlWithDate, cancellationToken))
 			{
@@ -145,8 +148,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 			string operationPath, object o = null, HttpMethod overrideHttpMethod = null, bool stream = false, CancellationToken cancellationToken = default
 		)
 		{
-			var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
-			var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
+			//var date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+			//var urlWithDate = $"{Service.BaseUrl}{operationPath}?date={date}";
+			var urlWithDate = $"{Service.BaseUrl}{operationPath}";
 			var client = await GetClient();
 			client.Timeout = TimeSpan.FromSeconds(Service.ResponseTimeout);
 			HttpResponseMessage response;
@@ -412,9 +416,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 						prompt = ClientHelper.JoinMessageParts(messagesToSend.Select(x => x.content as string).ToArray()),
 						temperature = (float)creativity,
 						stream = service.ResponseStreaming,
-						max_tokens = maxInputTokens,
+
 
 					};
+					if (service.ServiceType == ApiServiceType.OpenAI)
+						request.max_tokens = maxInputTokens;
 					var data = await GetAsync<text_completion_response>(completionsPath, request, null, service.ResponseStreaming, cancellationTokenSource.Token);
 					foreach (var dataItem in data)
 						foreach (var chatChoice in dataItem.choices)
@@ -574,8 +580,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 							model = modelName,
 							temperature = (float)creativity,
 							stream = service.ResponseStreaming,
-							max_tokens = maxInputTokens,
+
 						};
+						if (service.ServiceType == ApiServiceType.OpenAI)
+							request.max_tokens = maxInputTokens;
 						request.messages = new List<chat_completion_message>();
 						request.messages.AddRange(messagesToSend);
 						ControlsHelper.AppInvoke(() =>

@@ -27,7 +27,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private void Global_OnAiServicesUpdated(object sender, EventArgs e)
 		{
 			var items = Global.AppSettings.AiServices
-				.Where(x => x.ServiceType == ApiServiceType.None || x.ServiceType == ApiServiceType.OpenAI);
+				.Where(x =>
+				x.ServiceType == ApiServiceType.None
+				|| x.ServiceType == ApiServiceType.OpenAI
+				);
 			AiServicesComboBox.ItemsSource = items;
 			//ControlsHelper.SetVisible(AiServicesComboBox, items.Count() > 1);
 		}
