@@ -18,6 +18,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 
 		public const string TemplateAiWindowTaskName = "® System - AI Window";
 		public const string TemplateGenerateTitleTaskName = "® System - Generate Title";
+		public const string TemplateGenerateTitlexAiTaskName = "® System - Generate Title - xAI";
 		public const string TemplateGenerateIconTaskName = "® System - Generate Icon";
 		public const string TemplateFormatMessageTaskName = "® System - Format Message";
 		public const string TemplatePluginApprovalTaskName = "® System - Plugin Approval";
@@ -35,6 +36,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return new string[] {
 				TemplateAiWindowTaskName,
 				TemplateGenerateTitleTaskName,
+				TemplateGenerateTitlexAiTaskName,
 				TemplateGenerateIconTaskName,
 				TemplateFormatMessageTaskName,
 				TemplatePluginApprovalTaskName,

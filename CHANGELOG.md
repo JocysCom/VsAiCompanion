@@ -2,7 +2,10 @@
 
 - Fix: Resetting UI presets will deselect the currently selected UI preset.
 - Fix: Error message after applying edit changes.
+- Fix: Unique Id for the AI model when pasting the service.
 - New: Option to enable or disable the global instructions.
+- New: xAI Grok service, model and templates.
+- New: `Utilize Lists` and `Authentic Language` template to `Prompts` list.
 
 2024-10-30 v1.14.37
 

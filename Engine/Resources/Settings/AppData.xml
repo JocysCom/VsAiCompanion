@@ -150,6 +150,16 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
       <AiServices>
         <AiService>
           <Path>OpenAI</Path>
+          <Name>xAi Grok</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <ServiceType>OpenAI</ServiceType>
+          <Id>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</Id>
+          <DefaultAiModel>grok-beta</DefaultAiModel>
+          <BaseUrl>https://api.x.ai/v1/</BaseUrl>
+        </AiService>
+        <AiService>
+          <Path>OpenAI</Path>
           <Name>Open AI</Name>
           <Created>0001-01-01T00:00:00</Created>
           <Modified>0001-01-01T00:00:00</Modified>
@@ -663,6 +673,16 @@ Do not return as a code block.</StructuredImageAnalysisInstructions>
           <Id>53eb1f52-5ad9-40ea-fe6b-a8960a583ee9</Id>
           <AllowFineTuning>false</AllowFineTuning>
           <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+          <MaxInputTokens>2049</MaxInputTokens>
+        </AiModel>
+        <AiModel>
+          <Path>xAi Grok</Path>
+          <Name>grok-beta</Name>
+          <Created>0001-01-01T00:00:00</Created>
+          <Modified>0001-01-01T00:00:00</Modified>
+          <Id>88e2561e-01e6-7704-d428-54126fb25e13</Id>
+          <AllowFineTuning>false</AllowFineTuning>
+          <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
           <MaxInputTokens>2049</MaxInputTokens>
         </AiModel>
       </AiModels>

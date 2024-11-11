@@ -1,0 +1,37 @@
+﻿<TemplateItem>
+  <Name>® System - Generate Title - xAI</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACm2QSw7CMAwFr2LlAI4dJ2lAwIK7oFIJmgqqBm6PSz/qortYHk+efXoPNXyej/Z9&#xD;
+Nve+747WllKwCOZXbR0RWSUMDM2tXPPnbAgIfIxIHgJHPIi5nLr8+Na5hS43ba8iQnbAyWHF4MQj&#xD;
+z6wDkYQclopJe7KQmyljd6TbKUprFTRLAu8dxmrqeZCYULwmnaA93bwDKct4iPoYv9a86ktxih00&#xD;
+LyOrfYb3RJIIqzXO9jRrJRVyhBnkkP6X2I6N3vHOlx8UW0S8jwEAAA==</IconData>
+  <Created>2024-02-25T21:17:42.836114+00:00</Created>
+  <Modified>2024-02-25T21:17:42.836114+00:00</Modified>
+  <AiServiceId>eacfa2d8-de16-4ef4-a644-facbc9e2fe64</AiServiceId>
+  <AiModel>grok-beta</AiModel>
+  <TextInstructions>Analyze conversation and create a chat title consisting of 2-5 words. Emphasize user requests in the title. Do not mention the chat itself by using words like "chat," "chat log," or "conversation." Please do not include prefixes such as "Title:." Avoid using dots, commas, or any other special characters. Only provide the generated title in your response.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Attachments />
+  <Settings />
+  <Messages>
+    <MessageItem>
+      <IsEnabled>false</IsEnabled>
+      <Id>ab880acfad604a25860525836f3ee6ae</Id>
+      <User>System</User>
+      <Body>This reserved task use AI to automatically generate chat title.</Body>
+      <Attachments />
+      <Date>2023-07-16T08:55:56.1042695+01:00</Date>
+      <Type>Information</Type>
+    </MessageItem>
+  </Messages>
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>None</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <AutoGenerateTitle>true</AutoGenerateTitle>
+  <IsPreview>true</IsPreview>
+  <IsFavorite>false</IsFavorite>
+  <UseMaximumContext>true</UseMaximumContext>
+  <AttachmentsSelection />
+</TemplateItem>

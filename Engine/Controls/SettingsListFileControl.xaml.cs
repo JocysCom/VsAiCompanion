@@ -642,7 +642,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				if (DataType == ItemType.Task || DataType == ItemType.Template)
 				{
 					var ti = (TemplateItem)item;
-					var task = ClientHelper.GenerateResult(ti, SettingsSourceManager.TemplateGenerateTitleTaskName);
+					var template = string.IsNullOrEmpty(ti.GenerateTitleTemplate)
+						? SettingsSourceManager.TemplateGenerateTitleTaskName
+						: ti.GenerateTitleTemplate;
+					var task = ClientHelper.GenerateResult(ti, template);
 					// Assign task to property to make sure it is not garbage collected.
 					ti.GenerateTitleTask = task;
 				}

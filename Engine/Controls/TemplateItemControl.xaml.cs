@@ -79,6 +79,16 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			TemplateTextToAudioComboBox.Visibility = debugVisibility;
 			TemplateTextToVideoComboBox.Visibility = debugVisibility;
 			Global.OnTabControlSelectionChanged += Global_OnTabControlSelectionChanged;
+			Global.Templates.Items.ListChanged += Global_Templates_Items_ListChanged;
+		}
+
+		private void Global_Templates_Items_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			AppHelper.CollectionChanged(e, () =>
+			{
+				OnPropertyChanged(nameof(GenerateTitleTemplates));
+				OnPropertyChanged(nameof(PluginTemplates));
+			});
 		}
 
 		private void ChatPanel_MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -325,6 +335,19 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 
 		public Dictionary<string, string> PluginTemplates
 			=> Global.Templates.Items.ToDictionary(x => x.Name, x => x.Name);
+
+		public Dictionary<string, string> GenerateTitleTemplates
+		{
+			get
+			{
+				var kv = Global.Templates.Items
+					.Where(x => x.Name.StartsWith(SettingsSourceManager.TemplateGenerateTitleTaskName))
+					.ToDictionary(x => x.Name, x => x.Name);
+				//kv.Add(null, "Default");
+				return kv;
+			}
+			set { }
+		}
 
 		public ObservableCollection<ListInfo> ContextListNames { get; set; } = new ObservableCollection<ListInfo>();
 		public ObservableCollection<ListInfo> ProfileListNames { get; set; } = new ObservableCollection<ListInfo>();
