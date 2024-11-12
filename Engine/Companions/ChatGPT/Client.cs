@@ -23,7 +23,6 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using YamlDotNet.Serialization;
 
 namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 {
@@ -713,28 +712,33 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 		{
 			if (functions?.Any() != true)
 				return;
-			// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
-			// Otherwise, it starts outputting JSON instead of calling functions.
-			var serializer = new SerializerBuilder().Build();
-			var yaml = serializer.Serialize(functions.Select(f => new
+			var functionsList = functions.Select(f => new
 			{
 				f.id,
 				f.name,
 				parameters = PluginsManager.ConvertFromToolItem(PluginsManager.GetPluginFunctions().FirstOrDefault(x => x.Name == f.name)?.Mi, f)
-			}));
+			});
+
+			// Serialize function calls as YAML for display as attachment to avoid confusing the AI.
+			// Otherwise, it starts outputting JSON instead of calling functions.
+			//var yaml = new SerializerBuilder().Build().Serialize(functionsList);
+			var json = Serialize(functionsList, true);
 			// Create message attachment first.
-			var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);
-			fnCallAttachment.Title = "AI Functions Call";
+			//var fnCallAttachment = new MessageAttachments(ContextType.None, "YAML", yaml);
+			var fnCallAttachment = new MessageAttachments(ContextType.None, "JSON", json);
+			fnCallAttachment.Title = "Function Calls";
 			// Don't send it back to AI or it will confuse it and it will start outputing YAML instead of calling functions.
 			fnCallAttachment.SendType = AttachmentSendType.User;
 			assistantMessageItem.Attachments.Add(fnCallAttachment);
 			assistantMessageItem.IsAutomated = true;
 			messageItems.Add(assistantMessageItem);
+			// Note: Maybe ask AI asistant to record call in its reply.
 			// Add call to user message so that AI will see what functions it called.
-			var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
-			fnCallAttachmentUser.Title = "AI Functions Call";
-			fnCallAttachmentUser.SendType = AttachmentSendType.User;
-			functionResults.Add(fnCallAttachmentUser);
+			//var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "YAML", yaml);
+			//var fnCallAttachmentUser = new MessageAttachments(ContextType.None, "JSON", json);
+			//fnCallAttachmentUser.Title = "Functions Call";
+			//fnCallAttachmentUser.SendType = AttachmentSendType.User;
+			//functionResults.Add(fnCallAttachmentUser);
 			ControlsHelper.AppInvoke(() =>
 			{
 				item.Messages.Add(assistantMessageItem);
@@ -747,7 +751,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT
 				{
 					var content = await PluginsManager.ProcessPluginFunction(item, function, cancellationTokenSource);
 					var fnResultAttachment = new MessageAttachments(ContextType.None, content.Value.Item1, content.Value.Item2);
-					fnResultAttachment.Title = "AI Function Results (Id:" + function.id + ")";
+					fnResultAttachment.Title = "Function Results (Id:" + function.id + ")";
 					fnResultAttachment.SendType = AttachmentSendType.None;
 					functionResults.Add(fnResultAttachment);
 				}

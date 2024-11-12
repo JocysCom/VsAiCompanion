@@ -292,7 +292,8 @@
 	<sys:String x:Key="main_ContextFunctionRequestInstructionsText">Tool Function Request (Definitions) Instructions</sys:String>
 	<sys:String x:Key="main_ContextFunctionResponseInstructionsText">Tool Function Response (Call) Instructions</sys:String>
 
-	<!--  Options → AI Avatar  -->
+	<!--  Options → AI Speech  -->
+	<sys:String x:Key="main_AI_Speech">AI Speech</sys:String>
 	<sys:String x:Key="main_AI_Avatar">AI Avatar</sys:String>
 	<sys:String x:Key="main_Always_on_Top">Always on Top</sys:String>
 	<sys:String x:Key="main_AvatarItem_Instructions">Always use voice in addition to the text responses. Provide voice summaries for lengthy or complex text responses.</sys:String>

@@ -297,7 +297,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			var result = (methodResult is string s)
 				? ("text", s)
-				: ("text", Client.Serialize(methodResult));
+				: ("json", Client.Serialize(methodResult, true));
 			return result;
 		}
 

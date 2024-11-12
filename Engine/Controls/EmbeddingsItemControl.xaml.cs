@@ -385,15 +385,6 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var ignore = Ignores.GetOrAdd(parentPath, x => GetIgnoreFromFile(Path.Combine(parentPath, ".gitignore")));
 			if (ignore?.IsIgnored(relativePath) == true)
 				return true;
-			if (fileLength > 0)
-			{
-				// If can't read file then....
-				var fh = new Plugins.Core.FileHelper();
-				var result = fh.ReadFileAsPlainText(filePath);
-				var content = result?.Data;
-				if (string.IsNullOrWhiteSpace(content))
-					return true;
-			}
 			return false;
 		}
 
@@ -429,6 +420,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			try
 			{
 				var fi = (FileInfo)e.SubData;
+				// Skip empty files.
+				if (fi.Length == 0)
+					return ProgressStatus.Skipped;
 				var processingState = await EmbeddingHelper.UpdateEmbedding(
 					Item,
 					db, fi.FullName,
