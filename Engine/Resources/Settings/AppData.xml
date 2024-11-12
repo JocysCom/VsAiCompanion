@@ -29,10 +29,10 @@
       </PandocUpdateSettings>
       <PandocUpdateTimeSettings />
       <StartPosition>
-        <Left>300</Left>
-        <Top>56</Top>
-        <Width>1273</Width>
-        <Height>872</Height>
+        <Left>392</Left>
+        <Top>122</Top>
+        <Width>1033</Width>
+        <Height>815.5</Height>
         <ScreenName>\\.\DISPLAY2</ScreenName>
         <WindowState>Normal</WindowState>
         <IsEnabled>true</IsEnabled>
@@ -43,7 +43,6 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Embeddings</ItemType>
-          <GridSplitterPosition>0.20693069306930692</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions - Portable</string>
           </ListSelection>
@@ -51,25 +50,23 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Task</ItemType>
-          <GridSplitterPosition>0.20449077786688052</GridSplitterPosition>
+          <GridSplitterPosition>0.2188118811881188</GridSplitterPosition>
+          <IsBarPanelVisible>false</IsBarPanelVisible>
           <ListSelection>
             <string>AI - Chat (GPT-4o)</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
-          <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>Template</ItemType>
-          <GridSplitterPosition>0.2012830793905373</GridSplitterPosition>
+          <GridSplitterPosition>0.22574257425742575</GridSplitterPosition>
           <ListSelection>
             <string>AI - Chat</string>
           </ListSelection>
           <ListSelectedIndex>0</ListSelectedIndex>
-          <FocusedControl>ChatMessageTabItem</FocusedControl>
         </TaskSettings>
         <TaskSettings>
           <ItemType>FineTuning</ItemType>
-          <GridSplitterPosition>0.18217821782178217</GridSplitterPosition>
           <ListSelection>
             <string>CyberNet Solutions</string>
           </ListSelection>
@@ -81,7 +78,7 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>Lists</ItemType>
-          <GridSplitterPosition>0.24939855653568566</GridSplitterPosition>
+          <GridSplitterPosition>0.24455445544554455</GridSplitterPosition>
           <ListSelection>
             <string>Prompts</string>
           </ListSelection>
@@ -93,7 +90,6 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>AiService</ItemType>
-          <GridSplitterPosition>0.29989969909729186</GridSplitterPosition>
           <ListSelection>
             <string>Open AI</string>
           </ListSelection>
@@ -105,7 +101,6 @@
         </TaskSettings>
         <TaskSettings>
           <ItemType>UiPreset</ItemType>
-          <GridSplitterPosition>0.29991915925626517</GridSplitterPosition>
           <ListSelection>
             <string>Advanced</string>
           </ListSelection>

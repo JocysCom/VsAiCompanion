@@ -1,0 +1,104 @@
+﻿<TemplateItem>
+  <Name>Voice - Tell a Story</Name>
+  <IconType>.svg</IconType>
+  <IconData>H4sIAAAAAAAACp1W247bNhB9z1cQyksCkLJ40S2w96GLIs1DE6BBPkBL02t1ZcmQtGvvfn3PjGzB&#xD;
+DtKk2wCxyBlyzsyZM0yWw9O9eAr9UHftKtKxjt4I/DnumnZYRdtx3H9YLA6HQ3ywcdffL0ySJAvc&#xD;
+uTj24djU7cOPDuuyLBfsjcShXo/bVZRqE4ltqO+342nzVIfDb91xFSUiEbDQ3+iGwy/HemzCza4a&#xD;
+HgZR+65dLibL5F2HwV84xabvdmLcBvEJu9+P+9DXofUh9jB/VLdd0wQ/os5Y3Hb7555yEHfP4tPn&#xD;
+2y9/fRUfd3d/iHeUfd36rh/o2vt4uWCUM+BmmJa8RWGh6j/21Ro4ozhqEFimsTM2R13P2NrMxEXi&#xD;
+sDsalFsmcZaUhpzYGqNjWxR5JO5PIb619QjWH4fQf91XPnxpvw0hEvV6Ffmu6XqlT8TMKQxjtxfd&#xD;
+ZjME0JlEgvaKz66it9qUIYRo8dM7sU10mX1304W7bGN+dTN1ZWL+B6b+7k4S8uzuCm25uOb256Qb&#xD;
+4+J0ItwkhpbEtnFFbMiMtdNpDOGmr6DavIrq/0KY/iVVrytbJbF2Ni+nyrXOz5VnuY6LNDN6Kt46&#xD;
+HbuyfE3x9lXFh03qU/264quN9lr/uniav/PQLe/Fpm6aVdR2LdKlteofm8CGl9B3hNF3D+F8Ytqp&#xD;
+09OjZwMB+Wq/iu4ex/HK+ndX4xnc1WPoZzvvmhofxEhm87oatlXfV8+r6Mp2wdKma0e1qXZ18zwn&#xD;
+TabD6f27MA31y5z2GI6jqlq/JabOlTxTnbv6qO6a0K7VrluHD6Lt+l3VXDRrua/GrUAf/3SpkTrz&#xD;
+WZzKRGhMhXRCp1JjbBtrZZl4U8q8jFORwsdzI1SGQZLGpV4VOCfpmlA6h7KkynKhTJJJpR2CNgpB&#xD;
+FKIoCq1gEdAjVtpiSWFwL069c1IBQBQcQ2dCWy2V1eSybCjwsbCbBGGSF4HMEUIW1qtSagdQQjAU&#xD;
+RFnkK/kyossMBkJi8JQThqfEWWGpbgtMkcEmTQGHQQKlICMBwkVWYOIAUK0lVG1ywNKCgC2FUi45&#xD;
+Q1LQGfQMeQlYnODKM1gBqFyA6TOMywnUOMBwXYoQUvgtvuVkwa8HCJKBC32z+FD4HD+eWSaOCShj&#xD;
+pnNvqXKRSfgEII1Hp5UuhKVSqYkpl4qHADSgI9gJPI90KBF4LbAAvwhDAajFgllynl0UAE1Dxfgt&#xD;
+XqbJw/PRN+/env5den81ybMIbULt4rSZNGUKiGxSDPZC5emUBHAaRSuqnUrnRChDVKFJnNIYDy5g&#xD;
+zqWmauFCkj/KxvxbNlpD6CSFq0CUmC5Y0KxnQuXBQDaUnibyJu1D+l7lEKpDa0oSDERxnhtlnJuG&#xD;
+i+ZiHosTzcThaeFtLg21MM+lc6z8tOSBIDRMBNzToNhJNIb4gZxpoCaJ4LKdwnOH6LYy6DWUwo2j&#xD;
+hKeWw55J0hgFh7+gMePj2ekmFM5Hgamy6Xp2HQ21Mia6KDWMzB4+hTfTkDFPuRGZlQULieTDL0Fe&#xD;
+SJZPwmQZrialGiANHlYeAHaSGTTPQ4kceIjYgdeLjdMoa2iUcuCZ5dU8/vQukIf3lNv8ZgBa0zCA&#xD;
+XHMGptdpgj2NKEC5l8zLlCg/jFfQCEoXr0EvIE8vxo+0aWdtLhf3N2+W9H/pm38A6zGo+4ULAAA=</IconData>
+  <Created>2024-10-28T20:00:14.8655989+00:00</Created>
+  <Modified>2024-10-28T20:55:50.1296069+00:00</Modified>
+  <AiServiceId>7b785f4c-6aef-1bb3-1f41-c3454068d906</AiServiceId>
+  <AiModel>gpt-4o</AiModel>
+  <TemplateName>Voice - Tell a Story</TemplateName>
+  <TextInstructions>Instructions for AI how to create and play story or dialogue with differentiated voices if asked:&#xD;
+&#xD;
+1. Create a full story with dialogues.&#xD;
+2. Split the story into parts by whose text it is (narrator and story characters).&#xD;
+3. Decide who in the story should speak with what kind of voice:&#xD;
+&#xD;
+- Define the language code (e.g., en-US) to ensure accurate pronunciation.&#xD;
+- Use different genders and pitch to make it easy for the listener to identify who is speaking.&#xD;
+- Maintain consistency in voice assignment for each character throughout the dialogue to avoid confusion.&#xD;
+- Do not use pitch effects for the story narrator's voice, use a high pitch effect for small characters, and a low pitch effect for large characters.&#xD;
+- Analyse AI Functions Call sequence example below.&#xD;
+&#xD;
+```&#xD;
+"id": "call_POwvwaWv9O2v8M3wlFlQyfkO",&#xD;
+"name": "AISpeak",&#xD;
+"parameters": ("text": "&lt;speak&gt;&lt;prosody pitch="0%"&gt;Once upon a time, a small mouse and a big dragon met. The small mouse said.&lt;/prosody&gt;&lt;/speak&gt;", "gender: "Male", "language": "en-US", "isSsml": true)&#xD;
+&#xD;
+"id": "call_PSrIyxD5JdFfMaA5k8M3abi9",&#xD;
+"name": "AISpeak",&#xD;
+"parameters": ("text": "&lt;speak&gt;&lt;prosody pitch="+30%"&gt;Oh, big dragon, could you fly and carry me over the lake to the other side?&lt;/prosody&gt;&lt;/speak&gt;", "gender": "Female", "language": "en-US", "isSsml":  true)&#xD;
+&#xD;
+"id": "call_zG1XB1SlDR3JWnE7k3ts42da",&#xD;
+"name": "AISpeak",&#xD;
+"parameters": ("text": "&lt;speak&gt;&lt;prosody pitch="0%"&gt;The big dragon replied to the small mouse.&lt;/prosody&gt;&lt;/speak&gt;", "gender: "Male", "language": "en-US", "isSsml": true)&#xD;
+&#xD;
+"id": "call_4O6jG2N7MudSvHwzkXn2CekY",&#xD;
+"name": "AISpeak",&#xD;
+"parameters": ("text": "&lt;speak&gt;&lt;prosody pitch="-30%"&gt;Certainly! Hold on to my claw and I will carry you to the other side.&lt;/prosody&gt;&lt;/speak&gt;", "gender: "Male", "language": "en-US", "isSsml": true)&#xD;
+```&#xD;
+&#xD;
+4. Analyse AI Function Call Results report example below. This will indicate which calls were successful and which were not:&#xD;
+&#xD;
+```&#xD;
+"RequestId":"1672d7e18c154f6c9209d8565604c53f",&#xD;
+"Success":true&#xD;
+```&#xD;
+&#xD;
+5. When making calls, do not abrupt calls artificially to ask, if you need to continue, if story is not very long and everything is fine.&#xD;
+5.  Generate and make all calls of all story in correct order in one continuous sequence. &#xD;
+6. Check AI Function Results at the end and in case some AI Function Calls were unsuccessful, try to make unsuccessful-remaining AI Functions Calls one additional time.&#xD;
+7. Include text version of the story in your response.</TextInstructions>
+  <IsSystemInstructions>true</IsSystemInstructions>
+  <Text>Can you create and play story with different voices about small bat and count Dracula?</Text>
+  <Attachments />
+  <AttachContext>ChatHistory</AttachContext>
+  <Settings />
+  <Messages />
+  <AutoSend>false</AutoSend>
+  <MessageBoxOperation>ClearMessage</MessageBoxOperation>
+  <AutoOperation>None</AutoOperation>
+  <AutoRemove>false</AutoRemove>
+  <AutoFormatCode>false</AutoFormatCode>
+  <AutoGenerateTitle>true</AutoGenerateTitle>
+  <IsPreview>false</IsPreview>
+  <UseMaximumContext>true</UseMaximumContext>
+  <ShowAvatar>true</ShowAvatar>
+  <UseAvatarVoice>true</UseAvatarVoice>
+  <PluginsEnabled>true</PluginsEnabled>
+  <AttachmentsSelection />
+  <UiSelections>
+    <TextBoxData>
+      <Name>DataTextBox</Name>
+      <SelectionStart>86</SelectionStart>
+      <SelectionLength>0</SelectionLength>
+      <TextLength>86</TextLength>
+    </TextBoxData>
+    <TextBoxData>
+      <Name>DataInstructionsTextBox</Name>
+      <SelectionStart>0</SelectionStart>
+      <SelectionLength>0</SelectionLength>
+      <TextLength>2474</TextLength>
+    </TextBoxData>
+  </UiSelections>
+</TemplateItem>
