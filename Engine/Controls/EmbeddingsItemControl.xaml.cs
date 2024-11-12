@@ -417,10 +417,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		private async Task<ProgressStatus> _Scanner_ProcessItem(FileProcessor fp, ClassLibrary.ProgressEventArgs e)
 		{
 			//await Task.Delay(50);
+			var fi = (FileInfo)e.SubData;
 			try
 			{
-				var fi = (FileInfo)e.SubData;
 				// Skip empty files.
+				// Empty files will be deleted from the database.
 				if (fi.Length == 0)
 					return ProgressStatus.Skipped;
 				var processingState = await EmbeddingHelper.UpdateEmbedding(
@@ -432,9 +433,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 			catch (Exception ex)
 			{
+				LogPanel.Add($"\r\nFile: {fi.FullName}\r\nError: {ex.Message}\r\n");
 				e.Exception = ex;
 				// Stop if too many exceptions.
-				if (fp.ProcessItemStates[ClassLibrary.ProgressStatus.Exception] > 5)
+				if (fp.ProcessItemStates[ClassLibrary.ProgressStatus.Exception] > Item.ProcessMaxErrors)
 					fp.IsStopping = true;
 				return ClassLibrary.ProgressStatus.Exception;
 			}
@@ -450,6 +452,15 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 					Global.MainControl.InfoPanel.RemoveTask(TaskName.Scan);
 					ScanStartButton.IsEnabled = true;
 					ScanStopButton.IsEnabled = false;
+					var states =
+					_Scanner.ProcessItemStates
+						.Where(x => x.Value > 0)
+						.Select(x => $"{x.Key}: {x.Value}")
+						.ToList();
+					var totalCount = _Scanner.ProcessItemStates.Sum(x => x.Value);
+					states.Add($"TOTAL: {totalCount}");
+					var logMessage = string.Join("\r\n", states);
+					LogPanel.Add($"\r\nProcess Completed\r\n{logMessage}\r\n");
 				}
 			}));
 		}

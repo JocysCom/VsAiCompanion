@@ -323,6 +323,25 @@
 				Margin="0,3,0,3"
 				Background="{StaticResource BorderDark}" />
 			<!--  7. Test  -->
+			<Label
+				x:Name="ProcessMaxErrorsLabel"
+				Grid.Row="7"
+				Margin="6,0,0,0"
+				AutomationProperties.HelpText="{StaticResource main_ProcessMaxErrors_Help}"
+				AutomationProperties.Name="{StaticResource main_ProcessMaxErrors_Name}"
+				Content="{StaticResource main_ProcessMaxErrors_Name}" />
+			<StackPanel
+				Grid.Row="7"
+				Grid.Column="1"
+				Grid.ColumnSpan="3"
+				Orientation="Horizontal">
+				<JcControls:NumericUpDown
+					x:Name="ProcessMaxErrorsUpdown"
+					AutomationProperties.HelpText="{StaticResource main_ProcessMaxErrors_Help}"
+					AutomationProperties.Name="{StaticResource main_ProcessMaxErrors_Name}"
+					Maximum="9223372036854775807"
+					Value="{Binding ProcessMaxErrors, UpdateSourceTrigger=PropertyChanged}" />
+			</StackPanel>
 			<StackPanel
 				Grid.Row="7"
 				Grid.ColumnSpan="4"

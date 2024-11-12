@@ -174,6 +174,9 @@
 	<sys:String x:Key="main_OverrideGroupName_Help">Override Group Name - Don't automatically set the group name from the data folder when importing data.</sys:String>
 	<sys:String x:Key="main_OverrideGroupFlag_Name">Override Flag (sub-Group)</sys:String>
 	<sys:String x:Key="main_OverrideGroupFlag_Help">Override Flag (sub-Group) - Don't automatically set the group flag from the data folder when importing data.</sys:String>
+	<sys:String x:Key="main_ProcessMaxErrors_Name">Max Errors</sys:String>
+	<sys:String x:Key="main_ProcessMaxErrors_Help">Specifies the maximum number of errors allowed before file import the process is halted.</sys:String>
+
 
 	<!--  Lists  -->
 	<sys:String x:Key="main_Comment">Comment</sys:String>

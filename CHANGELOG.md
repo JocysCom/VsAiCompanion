@@ -1,4 +1,4 @@
-2024-11-03 v1.14.40
+2024-11-12 v1.14.48
 
 - Fix: Resetting UI presets will deselect the currently selected UI preset.
 - Fix: Error message after applying edit changes.
@@ -6,6 +6,8 @@
 - New: Option to enable or disable the global instructions.
 - New: xAI Grok service, model and templates.
 - New: `Utilize Lists` and `Authentic Language` template to `Prompts` list.
+- New: Option to set maximum number of errors before the embedding database import process is halted.
+- Update: Display errors when importing files into the embedding database.
 
 2024-10-30 v1.14.37
 
