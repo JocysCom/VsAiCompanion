@@ -24,7 +24,7 @@
 				Name="IsEnabledCheckBox"
 				Margin="-4"
 				Content="Check for Updates"
-				IsChecked="{Binding Item.IsEnabled, Mode=TwoWay}" />
+				IsChecked="{Binding IsEnabled, Mode=TwoWay}" />
 		</GroupBox.Header>
 		<Grid>
 			<WrapPanel>
@@ -34,15 +34,15 @@
 					Maximum="100000"
 					Minimum="0"
 					SmallChange="1"
-					Value="{Binding Item.CheckFrequencyValue, Mode=TwoWay}" />
+					Value="{Binding CheckFrequencyValue, Mode=TwoWay}" />
 				<ComboBox
 					DisplayMemberPath="Value"
 					ItemsSource="{Binding TimeUnitTypes, ElementName=This}"
-					SelectedValue="{Binding Item.CheckFrequencyUnit, Mode=TwoWay}"
+					SelectedValue="{Binding CheckFrequencyUnit, Mode=TwoWay}"
 					SelectedValuePath="Key" />
 				<TextBlock Margin="3,0,0,0" VerticalAlignment="Center" Text="Last Update" />
-				<TextBox MinWidth="152" IsReadOnly="True" Text="{Binding Item.LastUpdate, Mode=TwoWay}" />
-				<CheckBox Content="Check On App Start" IsChecked="{Binding Item.CheckOnAppStart, Mode=TwoWay}" />
+				<TextBox MinWidth="152" IsReadOnly="True" Text="{Binding LastUpdate, Mode=TwoWay}" />
+				<CheckBox Content="Check On App Start" IsChecked="{Binding CheckOnAppStart, Mode=TwoWay}" />
 			</WrapPanel>
 		</Grid>
 	</GroupBox>

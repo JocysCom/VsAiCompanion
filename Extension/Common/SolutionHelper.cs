@@ -1037,6 +1037,7 @@ namespace JocysCom.VS.AiCompanion.Extension
 
 		private static DocItem Convert(Solution2 o, bool includeContents)
 		{
+			ThreadHelper.ThrowIfNotOnUIThread();
 			var solutionFilePath = o.FullName;
 			var docItem = new DocItem
 			{

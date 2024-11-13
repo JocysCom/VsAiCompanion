@@ -17,6 +17,8 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				return;
 		}
 
+
+
 		/// <summary>
 		/// The UpdateTimeSettings object that this control binds to.
 		/// </summary>
