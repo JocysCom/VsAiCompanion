@@ -62,7 +62,6 @@
 		<PackageReference Include="HtmlAgilityPack" />
 		<PackageReference Include="LiteDB" />
 		<PackageReference Include="NPOI" />
-		<PackageReference Include="Microsoft.Data.SqlClient" />
 		<PackageReference Include="PdfPig" />
 		<PackageReference Include="PDFtoImage" />
 		<PackageReference Include="Tiktoken" />
