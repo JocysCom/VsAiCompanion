@@ -1,35 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
-	<PropertyGroup>
-		<TargetFramework>net8.0-windows</TargetFramework>
-		<Nullable>disable</Nullable>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Description>A plugin that allows the user to read wen links using ChatGPT.</Description>
-		<DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<DebugType>embedded</DebugType>
-		<OutputType>Exe</OutputType>
-		<Platforms>AnyCPU</Platforms>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\*.xml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Include="..\Core\Common\RiskLevel.cs" Link="Resources\RiskLevel.cs" />
-	  <Compile Include="..\Core\Common\RiskLevelAttribute.cs" Link="Resources\RiskLevelAttribute.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-
-		<Content Include=".well-known\ai-plugin.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Description>A plugin that allows the user to read wen links using ChatGPT.</Description>
+    <DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>embedded</DebugType>
+    <OutputType>Exe</OutputType>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\*.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Core\Common\RiskLevel.cs" Link="Resources\RiskLevel.cs" />
+    <Compile Include="..\Core\Common\RiskLevelAttribute.cs" Link="Resources\RiskLevelAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".well-known\ai-plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
 </Project>

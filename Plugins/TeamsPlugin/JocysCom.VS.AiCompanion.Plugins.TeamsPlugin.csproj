@@ -1,38 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
-	<PropertyGroup>
-		<TargetFramework>net8.0-windows</TargetFramework>
-		<Nullable>disable</Nullable>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Description>A plugin that allows the to read Microsoft Teams Meeting lists and transcripts.</Description>
-		<DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<DebugType>embedded</DebugType>
-		<OutputType>Exe</OutputType>
-		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<Title>Jocys.com AI Companion Teams Plugin</Title>
-		<Description>Teams Plugin for AI Companion.</Description>
-		<Copyright>Jocys.com</Copyright>
-		<Product>AI Companion Teams Plugin</Product>
-		<Company>Jocys.com</Company>
-		<Authors>Jocys.com Team</Authors>
-		<Platforms>AnyCPU</Platforms>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\*.xml" />
-	</ItemGroup>
-
-	<ItemGroup>
-
-		<Content Include=".well-known\ai-plugin.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.66.1" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="3.3.1" />
-		<PackageReference Include="Microsoft.Identity.Web.UI" Version="3.3.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Description>A plugin that allows the to read Microsoft Teams Meeting lists and transcripts.</Description>
+    <DocumentationFile>$(OutputPath)Resources\$(AssemblyName).xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>embedded</DebugType>
+    <OutputType>Exe</OutputType>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Title>Jocys.com AI Companion Teams Plugin</Title>
+    <Description>Teams Plugin for AI Companion.</Description>
+    <Copyright>Jocys.com</Copyright>
+    <Product>AI Companion Teams Plugin</Product>
+    <Company>Jocys.com</Company>
+    <Authors>Jocys.com Team</Authors>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\*.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".well-known\ai-plugin.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Identity.Client" />
+    <PackageReference Include="Microsoft.Identity.Web" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
 </Project>
