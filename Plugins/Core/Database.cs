@@ -1,7 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Files;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
 {

@@ -234,7 +234,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			else
 			{
 				var connection = NewConnection(connectionString);
-				//var connection = new System.Data.SqlClient.SqlConnection();
 				//var connection = new Microsoft.Data.SqlClient.SqlConnection();
 				//connection.ConnectionString = connectionString;
 				db = new EmbeddingsContext(connection, true);
@@ -288,7 +287,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			}
 			else
 			{
-				//return new System.Data.SqlClient.SqlConnection(connectionString);
 				var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
 				var isMicrosoftCloud = connectionString.IndexOf("database.windows.net", StringComparison.OrdinalIgnoreCase) > -1;
 				var activeDirectory = connectionString.IndexOf("Active Directory Default", StringComparison.OrdinalIgnoreCase) > -1;
@@ -713,42 +711,6 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 		}
 
-		public class SystemSqlEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
-		{
-			System.Data.SqlClient.SqlClientFactory instance
-				=> System.Data.SqlClient.SqlClientFactory.Instance;
-
-			// "System.Data.SqlClient"
-			string invariantName
-				=> instance.GetType().Namespace;
-
-			/// <inheritdoc />
-			public object GetService(Type type, object key)
-			{
-				if (type == typeof(System.Data.Entity.Infrastructure.IProviderInvariantName))
-				{
-					if (key is System.Data.SqlClient.SqlClientFactory)
-						return new ProviderInvariantName(invariantName);
-				}
-				else if (type == typeof(System.Data.Common.DbProviderFactory))
-				{
-					if (string.Equals(key as string, invariantName, StringComparison.OrdinalIgnoreCase))
-						return instance;
-				}
-				else if (type == typeof(System.Data.Entity.Core.Common.DbProviderServices))
-				{
-					if (string.Equals(key as string, invariantName, StringComparison.OrdinalIgnoreCase))
-						return System.Data.Entity.SqlServer.SqlProviderServices.Instance;
-				}
-				return null;
-			}
-
-			/// <inheritdoc />
-			public IEnumerable<object> GetServices(Type type, object key)
-				=> new object[] { GetService(type, key) }.Where(o => o != null);
-
-		}
-
 		public class MicrosoftSqEF6Resolver : System.Data.Entity.Infrastructure.DependencyResolution.IDbDependencyResolver
 		{
 			private readonly System.Data.Common.DbProviderFactory _providerFactory;
@@ -829,8 +791,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 
 			// Override hardcoded "System.Data.SqlClient"
 			// https://learn.microsoft.com/en-us/ef/ef6/what-is-new/microsoft-ef6-sqlserver
-			var dataSqlInstance = System.Data.SqlClient.SqlClientFactory.Instance;
-			var dataSqlInvariantName = dataSqlInstance.GetType().Namespace;
+			//var dataSqlInstance = System.Data.SqlClient.SqlClientFactory.Instance;
+			var dataSqlInvariantName = "System.Data.SqlClient";
 			SetProviderFactory(dataSqlInvariantName, Microsoft.Data.SqlClient.SqlClientFactory.Instance);
 			SetProviderServices(dataSqlInvariantName, MicrosoftSqlProviderServices.Instance);
 			SetExecutionStrategy(dataSqlInvariantName, () => new MicrosoftSqlAzureExecutionStrategy());

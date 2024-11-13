@@ -1,114 +1,106 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
-    <SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\'))</SolutionDir>
-    <ProjectDir Condition="'$(ProjectDir)' == '' Or '$(ProjectDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\.\'))</ProjectDir>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <OutputType>Library</OutputType>
-    <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
-    <Nullable>disable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Title>Jocys.com AI Companion Core Plugins</Title>
-    <Description>Core Plugins for AI Companion.</Description>
-    <Copyright>Jocys.com</Copyright>
-    <Product>AI Companion Core Plugins</Product>
-    <Company>Jocys.com</Company>
-    <Authors>Jocys.com Team</Authors>
-    <PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
-    <RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <AssemblyVersion>1.14.49</AssemblyVersion>
-    <FileVersion>1.14.49</FileVersion>
-    <SignAssembly>False</SignAssembly>
-    <DelaySign>False</DelaySign>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-    <PlatformTarget>x64</PlatformTarget>
-    <Platforms>AnyCPU</Platforms>
-    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <!-- Set the target platform to Windows -->
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="bblanchon.PDFium.macOS" ExcludeAssets="All" PrivateAssets="all">
-      <IncludeAssets>none</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="ColorCode.HTML" />
-    <PackageReference Include="SkiaSharp.NativeAssets.macOS" ExcludeAssets="All" PrivateAssets="all">
-      <IncludeAssets>none</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="SkiaSharp.NativeAssets.Win32" GeneratePathProperty="true" ExcludeAssets="All" />
-    <PackageReference Include="bblanchon.PDFium.Linux" ExcludeAssets="All" PrivateAssets="all">
-      <IncludeAssets>none</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="bblanchon.PDFium.Win32" GeneratePathProperty="true" ExcludeAssets="All" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" ExcludeAssets="All" PrivateAssets="all">
-      <IncludeAssets>none</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="BouncyCastle.Cryptography" />
-    <PackageReference Include="DocumentFormat.OpenXml" />
-    <PackageReference Include="HtmlAgilityPack" />
-    <PackageReference Include="LiteDB" />
-    <PackageReference Include="NPOI" />
-    <PackageReference Include="PdfPig" />
-    <PackageReference Include="PDFtoImage" />
-    <PackageReference Include="SixLabors.ImageSharp" />
-    <PackageReference Include="System.Data.Odbc" />
-    <PackageReference Include="System.Data.OleDb" />
-    <PackageReference Include="System.Formats.Asn1" />
-    <PackageReference Include="Tiktoken" />
-  </ItemGroup>
-  <ItemGroup>
-    <!-- Reference the native DLLs and specify the destination within the project -->
-    <None Include="$(PkgSkiaSharp_NativeAssets_Win32)\runtimes\win-x64\native\*.dll">
-      <Link>x64\%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <!-- Reference the native DLLs and specify the destination within the project -->
-    <None Include="$(Pkgbblanchon_pdfium_win32)\runtimes\win-x64\native\*.dll">
-      <Link>x64\%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\*.xml" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="System.Text.Json" />
-    <PackageReference Include="HtmlRenderer.PdfSharp" />
-    <Reference Include="System.Device" />
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-    <PackageReference Include="HtmlRenderer.PdfSharp.NetStandard2" />
-  </ItemGroup>
-  <Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
-    <!-- Execute once for multiple builds -->
-  </Target>
-  <!-- Copy the documentation file to the final output directory if content is different -->
-  <Target Name="CopyDocumentationFile" AfterTargets="Build">
-    <!--<Message Importance="high" Text="Updating the Documentation File: $(DocumentationFile)" />-->
-    <Exec Condition="'$(DocumentationFile)'!=''" Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CopyChanged.ps1&quot; -sourceFile &quot;$(ProjectDir)\$(DocumentationFile)&quot; -destinationFile &quot;$(ProjectDir)Resources\$(AssemblyName).xml&quot;" />
-  </Target>
+	<PropertyGroup>
+		<!-- Ensure that $(SolutionDir) is defined even when the project is built outside the context of a solution -->
+		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\'))</SolutionDir>
+		<ProjectDir Condition="'$(ProjectDir)' == '' Or '$(ProjectDir)' == '*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\.\'))</ProjectDir>
+	</PropertyGroup>
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+		<Nullable>disable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<Title>Jocys.com AI Companion Core Plugins</Title>
+		<Description>Core Plugins for AI Companion.</Description>
+		<Copyright>Jocys.com</Copyright>
+		<Product>AI Companion Core Plugins</Product>
+		<Company>Jocys.com</Company>
+		<Authors>Jocys.com Team</Authors>
+		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
+		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<AssemblyVersion>1.14.49</AssemblyVersion>
+		<FileVersion>1.14.49</FileVersion>
+		<SignAssembly>False</SignAssembly>
+		<DelaySign>False</DelaySign>
+		<AssemblyOriginatorKeyFile>
+		</AssemblyOriginatorKeyFile>
+		<PlatformTarget>x64</PlatformTarget>
+		<Platforms>AnyCPU</Platforms>
+		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+		<!-- Set the target platform to Windows -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="bblanchon.PDFium.macOS" ExcludeAssets="All" PrivateAssets="all">
+			<IncludeAssets>none</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SkiaSharp.NativeAssets.macOS" ExcludeAssets="All" PrivateAssets="all">
+			<IncludeAssets>none</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SkiaSharp.NativeAssets.Win32" GeneratePathProperty="true" ExcludeAssets="All" />
+		<PackageReference Include="bblanchon.PDFium.Linux" ExcludeAssets="All" PrivateAssets="all">
+			<IncludeAssets>none</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="bblanchon.PDFium.Win32" GeneratePathProperty="true" ExcludeAssets="All" />
+		<PackageReference Include="BouncyCastle.Cryptography" />
+		<PackageReference Include="DocumentFormat.OpenXml" />
+		<PackageReference Include="HtmlAgilityPack" />
+		<PackageReference Include="LiteDB" />
+		<PackageReference Include="NPOI" />
+		<PackageReference Include="Microsoft.Data.SqlClient" />
+		<PackageReference Include="PdfPig" />
+		<PackageReference Include="PDFtoImage" />
+		<PackageReference Include="Tiktoken" />
+	</ItemGroup>
+	<ItemGroup>
+		<!-- Reference the native DLLs and specify the destination within the project -->
+		<None Include="$(PkgSkiaSharp_NativeAssets_Win32)\runtimes\win-x64\native\*.dll">
+			<Link>x64\%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<!-- Reference the native DLLs and specify the destination within the project -->
+		<None Include="$(Pkgbblanchon_pdfium_win32)\runtimes\win-x64\native\*.dll">
+			<Link>x64\%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\*.xml" />
+	</ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<PackageReference Include="HtmlRenderer.PdfSharp" />
+		<Reference Include="System.Device" />
+		<Reference Include="System.Net.Http" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Shared\JocysCom.VS.AiCompanion.Shared.csproj" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<PackageReference Include="HtmlRenderer.PdfSharp.NetStandard2" />
+	</ItemGroup>
+	<Target Name="OuterPreBuild" BeforeTargets="DispatchToInnerBuilds">
+		<!-- Execute once for multiple builds -->
+	</Target>
+	<!-- Copy the documentation file to the final output directory if content is different -->
+	<Target Name="CopyDocumentationFile" AfterTargets="Build">
+		<!--<Message Importance="high" Text="Updating the Documentation File: $(DocumentationFile)" />-->
+		<Exec Condition="'$(DocumentationFile)'!=''" Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CopyChanged.ps1&quot; -sourceFile &quot;$(ProjectDir)\$(DocumentationFile)&quot; -destinationFile &quot;$(ProjectDir)Resources\$(AssemblyName).xml&quot;" />
+	</Target>
 </Project>

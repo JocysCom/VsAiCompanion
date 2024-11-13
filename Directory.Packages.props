@@ -47,7 +47,7 @@
 		<PackageVersion Include="Microsoft.ML" Version="4.0.0" />
 		<PackageVersion Include="Microsoft.OpenApi" Version="1.6.22" />
 		<PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
-		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.2" />
+		<PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.11" />
 		<PackageVersion Include="Microsoft.VisualStudio.SDK" Version="17.10.40171" />
 		<PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.10.2185" />
 		<PackageVersion Include="NAudio" Version="2.2.1" />
@@ -71,7 +71,6 @@
 		<PackageVersion Include="System.Data.OracleClient" Version="1.0.8" />
 		<PackageVersion Include="System.Data.SQLite" Version="1.0.119" />
 		<PackageVersion Include="System.Data.SQLite.EF6" Version="1.0.119" />
-		<PackageVersion Include="System.Data.SqlClient" Version="4.9.0" />
 		<PackageVersion Include="System.Diagnostics.EventLog" Version="8.0.1" />
 		<PackageVersion Include="System.Drawing.Common" Version="8.0.11" />
 		<PackageVersion Include="System.Dynamic.Runtime" Version="4.3.0" />
