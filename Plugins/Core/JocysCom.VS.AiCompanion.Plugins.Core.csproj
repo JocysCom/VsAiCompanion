@@ -83,7 +83,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\*.xml" />
 	</ItemGroup>
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<PackageReference Include="HtmlRenderer.PdfSharp" />
 		<Reference Include="System.Device" />
 		<Reference Include="System.Net.Http" />

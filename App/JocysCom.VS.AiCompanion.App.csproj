@@ -28,7 +28,7 @@
 		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<Reference Include="System.configuration" />
 	</ItemGroup>
 
