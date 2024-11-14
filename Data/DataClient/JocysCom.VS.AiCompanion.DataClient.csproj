@@ -1,86 +1,86 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFrameworks>net472;net8.0</TargetFrameworks>
-    <Nullable>disable</Nullable>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Title>Jocys.com VS AI Companion Data Client</Title>
-    <Description>AI Companion data client for embeddings database.</Description>
-    <Copyright>Jocys.com</Copyright>
-    <Product>VS AI Companion Data Client</Product>
-    <Company>Jocys.com</Company>
-    <Authors>Jocys.com Team</Authors>
-    <PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
-    <RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <AssemblyVersion>1.14.49</AssemblyVersion>
-    <FileVersion>1.14.49</FileVersion>
-    <Platforms>AnyCPU</Platforms>
-    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
-    <!-- Set the target platform to Windows -->
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
-  </PropertyGroup>
-  <PropertyGroup>
-    <!-- Make sure deployment copy SQLite Interops. -->
-    <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
-    <CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
-    <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
-    <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-    <PackageReference Include="LiteDB" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-    <PackageReference Include="EntityFramework" />
-    <PackageReference Include="Microsoft.EntityFramework.SqlServer" />
-    <PackageReference Include="System.Data.SQLite" />
-    <PackageReference Include="System.Data.SQLite.EF6" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Data.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="MainModel.cs" />
-    <Compile Remove="MainModel.tt.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\DataFunctions\Common\EmbeddingsBase.Methods.cs" Link="Common\EmbeddingsBase.Methods.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Deployment\Setup\**\*.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Deployment\Setup\**\*.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getSimilarFileParts.sql" Link="Deployment\Setup\MSSQL\sp_getSimilarFileParts.sql" />
-    <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\Setup\MSSQL\File.sql" />
-    <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\FilePart.sql" Link="Deployment\Setup\MSSQL\FilePart.sql" />
-    <EmbeddedResource Include="..\DataFunctions\Embedding\Tables\Group.sql" Link="Deployment\Setup\MSSQL\Group.sql" />
-    <EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
-    <None Include="MainModel.cs" />
-    <None Include="MainModel.tt.cs" />
-  </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
-  </Target>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="::PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Deployment\CreateSetupFiles.ps1&quot;" />
-  </Target>
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net472;net8.0</TargetFrameworks>
+		<Nullable>disable</Nullable>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<Copyright>Jocys.com</Copyright>
+		<Company>Jocys.com</Company>
+		<Authors>Jocys.com Team</Authors>
+		<AssemblyVersion>1.14.49</AssemblyVersion>
+		<FileVersion>1.14.49</FileVersion>
+		<Title>Jocys.com VS AI Companion Data Client</Title>
+		<Description>AI Companion data client for embeddings database.</Description>
+		<Product>VS AI Companion Data Client</Product>
+		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
+		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Platforms>AnyCPU</Platforms>
+		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+		<!--<RestoreProjectStyle>PackageReference</RestoreProjectStyle>-->
+		<!-- Set the target platform to Windows -->
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+	</PropertyGroup>
+	<PropertyGroup>
+		<!-- Make sure deployment copy SQLite Interops. -->
+		<ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
+		<CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
+		<CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
+		<CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+		<PackageReference Include="LiteDB" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+		<PackageReference Include="EntityFramework" />
+		<PackageReference Include="Microsoft.EntityFramework.SqlServer" />
+		<PackageReference Include="System.Data.SQLite" />
+		<PackageReference Include="System.Data.SQLite.EF6" />
+		<Reference Include="System.Data.DataSetExtensions" />
+		<Reference Include="System.Data.Entity" />
+		<Reference Include="System.Data.Linq" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="MainModel.cs" />
+		<Compile Remove="MainModel.tt.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\DataFunctions\Common\EmbeddingsBase.Methods.cs" Link="Common\EmbeddingsBase.Methods.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Deployment\Setup\**\*.sql" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Deployment\Setup\**\*.sql" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Stored Procedures\sp_getSimilarFileParts.sql" Link="Deployment\Setup\MSSQL\sp_getSimilarFileParts.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\File.sql" Link="Deployment\Setup\MSSQL\File.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\FilePart.sql" Link="Deployment\Setup\MSSQL\FilePart.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Embedding\Tables\Group.sql" Link="Deployment\Setup\MSSQL\Group.sql" />
+		<EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
+		<None Include="MainModel.cs" />
+		<None Include="MainModel.tt.cs" />
+	</ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />
+	</Target>
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="::PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Deployment\CreateSetupFiles.ps1&quot;" />
+	</Target>
 </Project>

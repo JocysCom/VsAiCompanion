@@ -9,12 +9,14 @@
 		<DebugType>embedded</DebugType>
 		<OutputType>Exe</OutputType>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<Title>Jocys.com AI Companion Teams Plugin</Title>
-		<Description>Teams Plugin for AI Companion.</Description>
 		<Copyright>Jocys.com</Copyright>
-		<Product>AI Companion Teams Plugin</Product>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
+		<AssemblyVersion>1.14.49</AssemblyVersion>
+		<FileVersion>1.14.49</FileVersion>
+		<Title>Jocys.com AI Companion Teams Plugin</Title>
+		<Description>Teams Plugin for AI Companion.</Description>
+		<Product>AI Companion Teams Plugin</Product>
 		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 	<ItemGroup>

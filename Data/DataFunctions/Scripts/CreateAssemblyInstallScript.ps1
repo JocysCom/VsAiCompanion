@@ -1,6 +1,5 @@
 param([string]$targetPath)
 
-
 # Add line to Release post-build event:
 # PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Deployment\CreateSetupFiles.ps1"
 
@@ -34,9 +33,12 @@ $dllHexString = [System.BitConverter]::ToString($dllBytes) -replace '-', ''
 $pdbHexString = [System.BitConverter]::ToString($pdbBytes) -replace '-', ''
 
 # Replace placeholders in SQL script template with actual hex strings
-$sqlScript = $sqlScriptTemplate -f $fileBaseName, $dllHexString, $pdbHexString
+$sqlScriptContents = $sqlScriptTemplate -f $fileBaseName, $dllHexString, $pdbHexString
 
 # Write SQL script to file
-[System.IO.File]::WriteAllText([System.IO.Path]::Combine($targetDirectory, "$fileBaseName.sql"), $sqlScript)
+$sqlScriptPath = [System.IO.Path]::Combine($targetDirectory, "$fileBaseName.sql")
+ # Fix dot notations.
+$sqlScriptPath = [System.IO.Path]::GetFullPath($sqlScriptPath);
+[System.IO.File]::WriteAllText($sqlScriptPath, $sqlScriptContents)
 
-Write-Host "SQL assembly install script has been created."
+Write-Host "SQL assembly install script has been created: $sqlScriptPath."

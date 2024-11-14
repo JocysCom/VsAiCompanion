@@ -6,17 +6,17 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<Title>Jocys.com AI Companion Shared Classes</Title>
-		<Description>Shared Classes for AI Companion.</Description>
 		<Copyright>Jocys.com</Copyright>
-		<Product>AI Companion Shared Classes</Product>
 		<Company>Jocys.com</Company>
 		<Authors>Jocys.com Team</Authors>
+		<AssemblyVersion>1.14.49</AssemblyVersion>
+		<FileVersion>1.14.49</FileVersion>
+		<Title>Jocys.com AI Companion Shared Classes</Title>
+		<Description>Shared Classes for AI Companion.</Description>
+		<Product>AI Companion Shared Classes</Product>
 		<PackageProjectUrl>https://www.jocys.com</PackageProjectUrl>
 		<RepositoryUrl>https://www.github.com/JocysCom/VsAiCompanion</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<AssemblyVersion>1.14.49</AssemblyVersion>
-		<FileVersion>1.14.49</FileVersion>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -4,7 +4,7 @@
 .NOTES
     Author:     Evaldas Jocys <evaldas@jocys.com>
     File Name:  UpdateVersion.ps1
-    Modified:   2022-06-06
+    Modified:   2024-11-14
 .LINK
     http://www.jocys.com
 #>
@@ -56,10 +56,16 @@ function GetConfig
 	$c.File = $file
 	$c.VCodes = @()
 	if ($extension -eq ".cs"){ # AssemblyInfo.cs
-		$c.VNames = @( "(?<p>[\r?\n]+\[assembly: AssemblyVersion\("")(?<v>[^""]*)(?<s>""\)])", "(?<p>[\r?\n]+\[assembly: AssemblyFileVersion\("")(?<v>[^""]*)(?<s>""\)])" )
+		$c.VNames = @(
+			"(?<p>[\r?\n]+\[assembly: AssemblyVersion\("")(?<v>[^""]*)(?<s>""\)])",
+			"(?<p>[\r?\n]+\[assembly: AssemblyFileVersion\("")(?<v>[^""]*)(?<s>""\)])"
+		)
 	}
-	if ($extension -eq ".csproj"){ # ProjectName.csproj
-		$c.VNames = @( "(?<p><AssemblyVersion>)(?<v>[^<]*)(?<s></AssemblyVersion>)", "(?<p><FileVersion>)(?<v>[^<]*)(?<s>\</FileVersion>)" )
+	if ($extension -eq ".csproj" -or $extension -eq ".props"){ # ProjectName.csproj or Directory.Build.props
+		$c.VNames = @(
+			"(?<p><AssemblyVersion>)(?<v>[^<]*)(?<s></AssemblyVersion>)",
+			"(?<p><FileVersion>)(?<v>[^<]*)(?<s>\</FileVersion>)"
+		)
 	}
 	if ($extension -eq ".xml"){ # AndroidManifest.xml (Android)
 		$c.VNames = @( "(?<p>android:versionName="")(?<v>[^""]*)(?<s>"")" )
@@ -81,6 +87,9 @@ function GetConfig
 function ShowRxValues {
 	param([string]$name, [string]$content, [string[]]$rxs)
 	#----------------------------------------------------------
+	if ($null -eq $rxs -or $rxs.Count -eq 0) {
+		return
+	}
 	foreach	($s in $rxs) {
 		$rx = New-Object Regex($s)
 		$ms = $rx.Matches($content)
@@ -127,7 +136,7 @@ function GetVersion
 		Write-Host "Version Name not found. Exiting."
 	}
 	$versionName = $vnMatch.Groups["v"].Value
-	Write-Host "    Version Name: $versionName"
+	#Write-Host "    Version Name: $versionName"
 	$version = new-Object Version($versionName)
 	# If version revision stored separately then...
 	if ($item.VCodes.Length -gt 0) {
@@ -192,10 +201,10 @@ function ShowMainMenu {
 		#$items
 		Write-Host
 		ShowVersions $items
+		Write-Host
 		[Version]$oldVersion = GetVersion $items[0]
 		[Version]$newVersionM = new-Object Version("$($oldVersion.Major).$($oldVersion.Minor).$([Math]::Max(0, $oldVersion.Build - 1)).$([Math]::Max(0, $oldVersion.Revision - 1))")
 		[Version]$newVersionP = new-Object Version("$($oldVersion.Major).$($oldVersion.Minor).$($oldVersion.Build + 1).$($oldVersion.Revision + 1)")
-		Write-Host
 		Write-Host "Current version: $oldVersion"
 		# Set certificate types.
 		Write-Host
@@ -231,17 +240,17 @@ function GetConfigurationFiles
 {
 	# First record will be used to identify current version.
 	[Config[]]$items = @()
-	$items += (GetConfig "Shared\JocysCom.VS.AiCompanion.Shared.csproj")
-	$items += (GetConfig "Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj")
+	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
 	$items += (GetConfig "Data\DataClient\JocysCom.VS.AiCompanion.DataClient.csproj")
 	$items += (GetConfig "Data\DataFunctions\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Engine\JocysCom.VS.AiCompanion.Engine.csproj")
-	$items += (GetConfig "App\JocysCom.VS.AiCompanion.App.csproj")
 	$items += (GetConfig "Extension\Properties\AssemblyInfo.cs")
 	$items += (GetConfig "Extension\source.extension.vsixmanifest")
-	$items += (GetConfig "Setup\Setup\JocysCom.VS.AiCompanion.Setup.vdproj")
+	$items += (GetConfig "Plugins\Core\JocysCom.VS.AiCompanion.Plugins.Core.csproj")
 	$items += (GetConfig "Setup\CustomActions\JocysCom.VS.AiCompanion.Setup.CustomActions.csproj")
 	$items += (GetConfig "Setup\CustomActions\Properties\AssemblyInfo.cs")
+	$items += (GetConfig "Setup\Setup\JocysCom.VS.AiCompanion.Setup.vdproj")
+	$items += (GetConfig "Shared\JocysCom.VS.AiCompanion.Shared.csproj")
 	return $items
 }
 # ----------------------------------------------------------------------------

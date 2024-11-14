@@ -1,15 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net472</TargetFrameworks>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration.Install" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="InstallerClass.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net472</TargetFrameworks>
+		<OutputType>Library</OutputType>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Copyright>Jocys.com</Copyright>
+		<Company>Jocys.com</Company>
+		<Authors>Jocys.com Team</Authors>
+		<AssemblyVersion>1.14.49</AssemblyVersion>
+		<FileVersion>1.14.49</FileVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Configuration.Install" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="InstallerClass.cs">
+			<SubType>Component</SubType>
+		</Compile>
+	</ItemGroup>
 </Project>

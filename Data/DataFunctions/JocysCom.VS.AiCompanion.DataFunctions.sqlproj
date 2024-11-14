@@ -112,11 +112,11 @@
     </ArtifactReference>
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>:: Sign first
-PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Sign.ps1" "$(TargetPath)"
-:: Create assembly script
-PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Scripts\CreateAssemblyInstallScript.ps1" "$(TargetPath)"
-
+    <PostBuildEvent>
+:: $(Name): Sign assembly
+PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Sign.ps1" "$(TargetPath)"
+:: $(Name): Create assembly install script
+PowerShell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)Scripts\CreateAssemblyInstallScript.ps1" "$(TargetPath)"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

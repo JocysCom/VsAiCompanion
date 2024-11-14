@@ -348,8 +348,8 @@ namespace JocysCom.VS.AiCompanion.DataClient
 			if (connection.State != ConnectionState.Open)
 				connection.Open();
 			AddParameters(command, groupName, groupFlag, state);
-			var isPortable = IsPortable(connection.ConnectionString);
 
+			var isPortable = IsPortable(connection.ConnectionString);
 			var schema = isPortable ? "" : "[Embedding].";
 			var filePartTable = $"{schema}[{nameof(FilePart)}]";
 			var fileTable = $"{schema}[{nameof(File)}]";
