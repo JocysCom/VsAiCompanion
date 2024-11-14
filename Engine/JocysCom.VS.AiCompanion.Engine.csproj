@@ -10,7 +10,7 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		-->
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
 		<Nullable>disable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
@@ -34,12 +34,12 @@
 		<!-- Set the target platform to Windows -->
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
 		<!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
 		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
 		<!-- Generate JocysCom.VS.AiCompanion.Engine.dll.config with binding redirects for extension.dll -->
 		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 		<DebugType>embedded</DebugType>
@@ -93,7 +93,7 @@
 		<PackageReference Include="System.Data.Common" />
 		<PackageReference Include="System.Text.RegularExpressions" />
 	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
 		<Reference Include="System.Speech" />
 		<Reference Include="System.DirectoryServices.AccountManagement" />
 		<Reference Include="Microsoft.CSharp" />
@@ -305,7 +305,7 @@
 	</Target>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 	</Target>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
 		<None Include="$(ProjectDir)Resources\Microsoft.CognitiveServices.Speech\*.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Link>%(FileName)%(Extension)</Link>

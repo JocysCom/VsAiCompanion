@@ -7,7 +7,7 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
 		<Nullable>disable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
@@ -33,13 +33,13 @@
 		<!-- Set the target platform to Windows -->
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows|AnyCPU'">
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
@@ -83,7 +83,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\*.xml" />
 	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
 		<PackageReference Include="HtmlRenderer.PdfSharp" />
 		<Reference Include="System.Device" />
 		<Reference Include="System.Net.Http" />
@@ -100,6 +100,6 @@
 	<!-- Copy the documentation file to the final output directory if content is different -->
 	<Target Name="CopyDocumentationFile" AfterTargets="Build">
 		<!--<Message Importance="high" Text="Updating the Documentation File: $(DocumentationFile)" />-->
-		<Exec Condition="'$(DocumentationFile)'!=''" Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CopyChanged.ps1&quot; -sourceFile &quot;$(ProjectDir)\$(DocumentationFile)&quot; -destinationFile &quot;$(ProjectDir)Resources\$(AssemblyName).xml&quot;" />
+		<Exec Condition="'$(DocumentationFile)'!=''" Command="PowerShell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(SolutionDir)Resources\CopyChanged.ps1&quot; -sourceFile &quot;$(ProjectDir)$(DocumentationFile)&quot; -destinationFile &quot;$(ProjectDir)Resources\$(AssemblyName).xml&quot;" />
 	</Target>
 </Project>

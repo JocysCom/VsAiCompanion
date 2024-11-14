@@ -43,7 +43,7 @@ This is the project info:&#xD;
 	&lt;GenerateDocumentationFile&gt;true&lt;/GenerateDocumentationFile&gt;&#xD;
 	--&gt;&#xD;
 	&lt;OutputType&gt;Library&lt;/OutputType&gt;&#xD;
-	&lt;TargetFrameworks&gt;net48;net8.0-windows&lt;/TargetFrameworks&gt;&#xD;
+	&lt;TargetFrameworks&gt;net472;net8.0-windows&lt;/TargetFrameworks&gt;&#xD;
 	&lt;Nullable&gt;disable&lt;/Nullable&gt;&#xD;
 	&lt;UseWindowsForms&gt;true&lt;/UseWindowsForms&gt;&#xD;
 	&lt;UseWPF&gt;true&lt;/UseWPF&gt;&#xD;
