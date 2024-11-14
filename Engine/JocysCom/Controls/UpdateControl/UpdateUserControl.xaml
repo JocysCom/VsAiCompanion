@@ -29,7 +29,6 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<local:UpdateTimeUserControl x:Name="UpdateTimePanel" Grid.Row="1" x:FieldModifier="public" />
 		<StackPanel
 			Grid.Row="2"
 			Grid.Column="0"
