@@ -100,6 +100,7 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			CheckVersionButton.IsEnabled = selected;
 			ReplaceFileButton.IsEnabled = selected;
 			RestartButton.IsEnabled = selected;
+			SkipVersionButton.IsEnabled = selected;
 			var currentVersion = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
 			var changesText = "";
 			if (checker.Releases?.Count > 0)
@@ -179,6 +180,34 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			Checker.Step6RestartApp();
 		}
 
+		private void SkipVersionButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (Checker != null && Checker.ReleaseId != null)
+			{
+				var release = Checker.GetSelectedRelease();
+				if (release != null)
+				{
+					var version = UpdateChecker.ExtractVersionFromName(release.tag_name);
+					if (!string.IsNullOrWhiteSpace(version))
+					{
+						// Add the version to the skipped versions list
+						if (!Checker.Settings.SkippedVersions.Contains(version))
+						{
+							Checker.Settings.SkippedVersions.Add(version);
+							// Optionally, save settings here if they need to persist between sessions
+							// Update the release list and UI
+							Checker.ReleaseList.Remove(
+								Checker.ReleaseList.FirstOrDefault(kv => kv.Key == release.id)
+							);
+							ReleaseComboBox.Items.Refresh();
+							UpdateButtons();
+							LogPanel.Add($"Version {version} has been skipped.\r\n");
+						}
+					}
+				}
+			}
+		}
+
 		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -187,5 +216,6 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		#endregion
+
 	}
 }

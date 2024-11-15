@@ -112,6 +112,9 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 				filter = filter.Where(x => Settings.IncludePrerelease || x.prerelease == false);
 				filter = filter.Where(x => minVersion <= Version.Parse(ExtractVersionFromName(x.tag_name)));
 				filter = filter.OrderByDescending(x => Version.Parse(ExtractVersionFromName(x.tag_name)));
+				// Check if version is skipped.
+				var skippedVersions = Settings.SkippedVersions ?? new List<string>();
+				filter = filter.Where(x => !skippedVersions.Contains(ExtractVersionFromName(x.tag_name)));
 				Releases = gitReleases.ToList();
 				ReleaseList.Clear();
 				for (int i = 0; i < Releases.Count; i++)

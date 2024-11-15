@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -86,12 +88,14 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		/// <summary>
 		/// If true, includes pre-release versions in the update search.
 		/// </summary>
+		[DefaultValue(false)]
 		public bool IncludePrerelease { get => _IncludePrerelease; set => SetProperty(ref _IncludePrerelease, value); }
 		bool _IncludePrerelease;
 
 		/// <summary>
 		/// Specifies the minimum version required for updates.
 		/// </summary>
+		[DefaultValue(null)]
 		public string MinVersion { get => _MinVersion; set => SetProperty(ref _MinVersion, value); }
 		string _MinVersion;
 
@@ -108,6 +112,20 @@ namespace JocysCom.ClassLibrary.Controls.UpdateControl
 		[DefaultValue(null)]
 		public string FileNameInsideZip { get => _FileNameInsideZip; set => SetProperty(ref _FileNameInsideZip, value); }
 		string _FileNameInsideZip;
+
+		/// <summary>
+		/// List of versions that the user has chosen to skip.
+		/// </summary>
+		[DefaultValue(null)]
+		public List<string> SkippedVersions
+		{
+			get => _SkippedVersions = _SkippedVersions ?? new List<string>();
+			set => SetProperty(ref _SkippedVersions, value);
+		}
+		private List<string> _SkippedVersions;
+
+		/// <summary>Indicates whether the property should be serialized with the XML serializer.</summary>
+		public bool ShouldSerializeSkippedVersions() => !SkippedVersions.Any();
 
 		#region Helper Methods
 
