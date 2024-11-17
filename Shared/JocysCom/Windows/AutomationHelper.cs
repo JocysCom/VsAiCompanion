@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -236,6 +237,29 @@ namespace JocysCom.ClassLibrary.Windows
 			return node;
 		}
 
+		/// <summary>
+		///  Find process window by regular expression.
+		/// </summary>
+		public static AutomationElement WaitForWindow(Process p, Regex rx, int timeoutMilliseconds = 30000)
+		{
+			var watch = Stopwatch.StartNew();
+			do
+			{
+				List<AutomationElement> windows = FindWindowsByProcessId(p.Id);
+				foreach (var window in windows)
+				{
+					if (rx.IsMatch(window.Current.Name))
+					{
+						watch.Stop();
+						return window;
+					}
+				}
+				// Logical delay without blocking the current hardware thread.
+				Task.Delay(1000).Wait();
+			} while (watch.ElapsedMilliseconds < timeoutMilliseconds);
+			throw new Exception("Window not found");
+		}
+
 		public AutomationElement WaitForElement(string elementPath, int timeoutInMilliseconds)
 		{
 			int elapsed = 0;
@@ -319,22 +343,32 @@ namespace JocysCom.ClassLibrary.Windows
 		}
 
 		/// <summary>
-		/// Finds window patterns by process ID.
+		/// Finds window elements by process ID.
 		/// </summary>
-		public static List<WindowPattern> FindWindowsByProcessId(int id)
+		public static List<AutomationElement> FindWindowsByProcessId(int id)
 		{
 			var condition = new AndCondition(
 				new PropertyCondition(AutomationElement.ProcessIdProperty, id),
 				new PropertyCondition(AutomationElement.IsEnabledProperty, true),
 				new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window)
 			);
-
 			var windows = AutomationElement.RootElement
 				.FindAll(TreeScope.Element | TreeScope.Children, condition)
 				.Cast<AutomationElement>()
+				.ToList();
+			return windows;
+		}
+
+
+
+		/// <summary>
+		/// Finds window patterns by process ID.
+		/// </summary>
+		public static List<WindowPattern> FindWindowPatternsByProcessId(int id)
+		{
+			var windows = FindWindowsByProcessId(id)
 				.Select(x => x.GetCurrentPattern(WindowPattern.Pattern) as WindowPattern)
 				.ToList();
-
 			return windows;
 		}
 

@@ -1,4 +1,14 @@
-﻿using Microsoft.Data.SqlClient;
+﻿#if MSSQLCLIENT
+// Requires "Microsoft.Data.SqlClient" NuGet Package on .NET Core/Standard
+// Add to `*.csproj` or `Directory.Build.props`:
+// <PropertyGroup>
+//	<DefineConstants>$(DefineConstants);MSSQLCLIENT</DefineConstants>
+// </PropertyGroup>
+using Microsoft.Data.SqlClient;
+#else
+// Requires "System.Data.SqlClient" NuGet Package on .NET Core/Standard
+using System.Data.SqlClient;
+#endif
 using System;
 using System.Collections;
 using System.Collections.Concurrent;

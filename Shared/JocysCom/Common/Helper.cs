@@ -239,11 +239,11 @@ namespace JocysCom.ClassLibrary
 			public object LockObject = new object();
 		}
 
-		[Obsolete]
+		[Obsolete("Use `async Task Debounce(Action action, int? delay = null, params object[] args)` instead.")]
 		public static async Task Delay(Action action, int? delay = null, params object[] args)
 			=> await _Debounce(action, delay, args);
 
-		[Obsolete]
+		[Obsolete("Use `async Task Debounce(Func<Task> action, int? delay = null, params object[] args)` instead.")]
 		public static async Task Delay(Func<Task> action, int? delay = null, params object[] args)
 			=> await _Debounce(action, delay, args);
 
