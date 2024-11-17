@@ -328,8 +328,8 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			_Scanner.ProcessItem = _Scanner_ProcessItem;
 			_Scanner.FileFinder.IsIgnored = _Scanner_FileFinder_IsIgnored;
 			_Scanner.Progress += _Scanner_Progress;
-			ExcludePatterns = GetIgnoreFromText(item.ExcludePatterns);
-			IncludePatterns = GetIgnoreFromText(item.IncludePatterns);
+			ExcludePatterns = Plugins.Core.FileHelper.GetIgnoreFromText(item.ExcludePatterns);
+			IncludePatterns = Plugins.Core.FileHelper.GetIgnoreFromText(item.IncludePatterns);
 			ControlsHelper.AppInvoke(new Action(() =>
 			{
 				MainTabControl.SelectedItem = LogTabPage;
@@ -382,36 +382,10 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 				return true;
 			if (ExcludePatterns?.IsIgnored(relativePath) == true)
 				return true;
-			var ignore = Ignores.GetOrAdd(parentPath, x => GetIgnoreFromFile(Path.Combine(parentPath, ".gitignore")));
+			var ignore = Ignores.GetOrAdd(parentPath, x => Plugins.Core.FileHelper.GetIgnoreFromFile(Path.Combine(parentPath, ".gitignore")));
 			if (ignore?.IsIgnored(relativePath) == true)
 				return true;
 			return false;
-		}
-
-		private Ignore.Ignore GetIgnoreFromText(string text)
-		{
-			var ignore = new Ignore.Ignore();
-			var lines = text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
-			var containsRules = false;
-			foreach (var line in lines)
-			{
-				if (string.IsNullOrWhiteSpace(line))
-					continue;
-				if (line.TrimStart().StartsWith("#"))
-					continue;
-				ignore.Add(line);
-				containsRules = true;
-			}
-			return containsRules ? ignore : null;
-		}
-
-		private Ignore.Ignore GetIgnoreFromFile(string path)
-		{
-			var fi = new FileInfo(path);
-			if (!fi.Exists)
-				return null;
-			var text = System.IO.File.ReadAllText(path);
-			return GetIgnoreFromText(text);
 		}
 
 		private async Task<ProgressStatus> _Scanner_ProcessItem(FileProcessor fp, ClassLibrary.ProgressEventArgs e)

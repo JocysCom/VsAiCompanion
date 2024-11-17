@@ -219,6 +219,17 @@ namespace JocysCom.VS.AiCompanion.Engine
 					search.SearchEmbeddingsCallback = null;
 				});
 			}
+			else if (classInstance is Database database)
+			{
+				await Global.MainControl.Dispatcher.Invoke(async () =>
+				{
+					// Map Text, Audio and Video converter methods.
+					//database.GetDatabasesFolderPath = () => { item.Name };
+					methodResult = await InvokeMethod(methodInfo, database, invokeParams, true, cancellationTokenSource.Token);
+					database.GetDatabasesFolderPath = null;
+				});
+			}
+
 			else if (classInstance is Multimedia mm)
 			{
 				await Global.MainControl.Dispatcher.Invoke(async () =>

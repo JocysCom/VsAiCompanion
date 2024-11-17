@@ -458,6 +458,21 @@
             Detect file encoding and new line type.
             </summary>
         </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.FindFiles(System.String,System.String,System.Boolean,System.String,System.String,System.Boolean)">
+            <summary>
+             Find files.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoreFromText(System.String)">
+            <summary>
+            Get ignore object.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoreFromFile(System.String)">
+            <summary>
+            Get ignore object.
+            </summary>
+        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.ReadFileAsPlainText(System.String)">
             <summary>
             Read the content of a file in plain text. Supported document types include .docx, .xlsx, .xls, .pdf, .htm, .html and .pdf.
@@ -915,6 +930,62 @@
             <param name="column">Column name.</param>
             <param name="description">Description text.</param>
             <returns>0 (success) or 1 (failure).</returns>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Database.GetDatabasesFolderPath">
+            <summary>
+            Get path to databases folder.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.GetDatabaseNames(System.String)">
+            <summary>
+            Get SQLite database names filtered by an optional regular expression pattern.
+            </summary>
+            <param name="pattern">The regex pattern to filter database names. If null, all names are returned.</param>
+            <returns>A List of filtered database names.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.CreateDatabase(System.String)">
+            <summary>
+            Creates a new SQLite database.
+            </summary>
+            <param name="databaseName">Name of the database</param>
+            <returns>0 operation successfull, -3 database already exists.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.DeleteDatabase(System.String)">
+            <summary>
+            Deletes an existing SQLite database.
+            </summary>
+            <param name="databaseName">Name of the database</param>
+            <returns>0 operation successfull, -1 database not found, -2 database is readonly.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQueryByDatabaseName(System.String,System.String)">
+            <summary>
+            Execute non query command on SQLite database. Return number of rows affected.
+            </summary>
+            <param name="databaseName">Database name.</param>
+            <param name="cmdText">SQL Command Text.</param>
+            <returns>Number of rows affected.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTableByDatabaseName(System.String,System.String)">
+            <summary>
+            Execute non query command on SQLite database. Returns resutls as CSV.
+            </summary>
+            <param name="databaseName">Database name.</param>
+            <param name="cmdText">SQL Command Text.</param>
+            <returns>Returns resutls as CSV.</returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.InsertFilesToTableByDatabaseName(System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean)">
+            <summary>
+            Searches for files and inserts them into a table of a SQLite database.
+            </summary>
+            <param name="databaseName">Name of the database.</param>
+            <param name="tableName">Name of the table to insert files into.</param>
+            <param name="path">Directory path to search for files.</param>
+            <param name="searchPattern">Search pattern for files (e.g., "*.txt").</param>
+            <param name="allDirectories">Whether to search all subdirectories.</param>
+            <param name="includePatterns">Patterns to include.</param>
+            <param name="excludePatterns">Patterns to exclude.</param>
+            <param name="useGitIgnore">Whether to respect .gitignore files.</param>
+            <returns>Number of files inserted.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Lists">
             <summary>

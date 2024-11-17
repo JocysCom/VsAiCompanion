@@ -1,4 +1,6 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.IO;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -250,6 +252,76 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		#endregion
+
+		#region File Finder
+
+		/// <summary>
+		///  Find files.
+		/// </summary>
+		public static List<FileInfo> FindFiles(
+			string path, string searchPattern, bool allDirectories = false,
+			string includePatterns = null, string excludePatterns = null,
+			bool useGitIgnore = false)
+		{
+			// Setup file finder.
+			var fileFinder = new FileFinder();
+			var IncludePatterns = GetIgnoreFromText(includePatterns);
+			var ExcludePatterns = GetIgnoreFromText(excludePatterns);
+			var Ignores = new ConcurrentDictionary<string, Ignore.Ignore>();
+			fileFinder.IsIgnored = (string parentPath, string filePath, long fileLength) =>
+			{
+				var relativePath = PathHelper.GetRelativePath(parentPath + "\\", filePath, false)
+					.Replace("\\", "/");
+				if (IncludePatterns?.IsIgnored(relativePath) == false)
+					return true;
+				if (ExcludePatterns?.IsIgnored(relativePath) == true)
+					return true;
+				var ignore = Ignores.GetOrAdd(parentPath, x => GetIgnoreFromFile(Path.Combine(parentPath, ".gitignore")));
+				if (ignore?.IsIgnored(relativePath) == true)
+					return true;
+				return false;
+			};
+			// Do search.
+			var files = fileFinder.GetFiles(searchPattern, allDirectories, new[] { path });
+			return files;
+		}
+
+		/// <summary>
+		/// Get ignore object.
+		/// </summary>
+		public static Ignore.Ignore GetIgnoreFromText(string text)
+		{
+			var ignore = new Ignore.Ignore();
+			var lines = text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
+			var containsRules = false;
+			foreach (var line in lines)
+			{
+				if (string.IsNullOrWhiteSpace(line))
+					continue;
+				if (line.TrimStart().StartsWith("#"))
+					continue;
+				ignore.Add(line);
+				containsRules = true;
+			}
+			return containsRules ? ignore : null;
+		}
+
+		/// <summary>
+		/// Get ignore object.
+		/// </summary>
+		public static Ignore.Ignore GetIgnoreFromFile(string path)
+		{
+			var fi = new FileInfo(path);
+			if (!fi.Exists)
+				return null;
+			var text = System.IO.File.ReadAllText(path);
+			return GetIgnoreFromText(text);
+		}
+
+		#endregion
+
+
+
 
 	}
 }
