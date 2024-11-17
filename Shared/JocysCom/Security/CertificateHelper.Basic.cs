@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace JocysCom.WebSites.Engine.Security
+namespace JocysCom.ClassLibrary.Security
 {
 	public partial class CertificateHelper
 	{
