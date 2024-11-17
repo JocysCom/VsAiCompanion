@@ -380,16 +380,15 @@ namespace JocysCom.ClassLibrary.Data
 
 		#region Execute Methods
 
-		public int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null, int? timeout = null)
+		public int ExecuteNonQuery(string connectionString, DbCommand cmd, string comment = null, int? timeout = null)
 		{
-			//var sql = ToSqlCommandString(cmd);
 			var cb = new SqlConnectionStringBuilder(connectionString);
 			if (timeout.HasValue)
 			{
 				cmd.CommandTimeout = timeout.Value;
 				cb.ConnectTimeout = timeout.Value;
 			}
-			var conn = new SqlConnection(cb.ConnectionString);
+			var conn = CreateConnection(cmd, cb.ConnectionString);
 			cmd.Connection = conn;
 			conn.Open();
 			SetSessionUserCommentContext(conn, comment);
@@ -408,10 +407,10 @@ namespace JocysCom.ClassLibrary.Data
 		//	return ExecuteNonQuery(connectionString, cmd, comment, timeout);
 		//}
 
-		public object ExecuteScalar(string connectionString, SqlCommand cmd, string comment = null)
+		public object ExecuteScalar(string connectionString, DbCommand cmd, string comment = null)
 		{
 			//var sql = ToSqlCommandString(cmd);
-			var conn = new SqlConnection(connectionString);
+			var conn = CreateConnection(cmd, connectionString);
 			cmd.Connection = conn;
 			conn.Open();
 			SetSessionUserCommentContext(conn, comment);
@@ -434,7 +433,8 @@ namespace JocysCom.ClassLibrary.Data
 
 		public T ExecuteDataSet<T>(string connectionString, DbCommand cmd, string comment = null) where T : DataSet
 		{
-			var conn = new SqlConnection(connectionString);
+			//var conn = new SqlConnection(connectionString);
+			var conn = CreateConnection(cmd, connectionString);
 			cmd.Connection = conn;
 			conn.Open();
 			SetSessionUserCommentContext(conn, comment);
@@ -948,6 +948,11 @@ namespace JocysCom.ClassLibrary.Data
 
 		#region Helper Methods
 
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<Type, DbProviderFactory> DbProviderFactoryCache
+			= new ConcurrentDictionary<Type, DbProviderFactory>();
+
 		public static DbConnection CreateConnection(DbCommand cmd, string connectionString)
 		{
 			var factory = GetProviderFactory(cmd);
@@ -964,26 +969,53 @@ namespace JocysCom.ClassLibrary.Data
 			return adapter;
 		}
 
-		public static DbProviderFactory GetProviderFactory(DbCommand cmd)
+		/// <summary>
+		/// Get DescriptionAttribute value from object or enumeration value.
+		/// </summary>
+		/// <param name="o">Enumeration value or object</param>
+		/// <returns>Description, class name, or enumeration property name.</returns>
+		private static DbProviderFactory GetProviderFactory(DbCommand cmd)
+		{
+			var key = cmd.GetType();
+			return DbProviderFactoryCache.GetOrAdd(key, x => _GetProviderFactory(cmd));
+		}
+
+		private static DbProviderFactory _GetProviderFactory(DbCommand cmd)
 		{
 			var cmdType = cmd.GetType();
-			var assembly = cmdType.Assembly;
 			// Attempt to get the factory type directly
 			var factoryTypeName = cmdType.Namespace + ".DbProviderFactory";
-			var factoryType = assembly.GetType(factoryTypeName);
+			var factoryType = Type.GetType(factoryTypeName);
+			// Common factory type names for known providers
+			var namespaceParts = cmdType.Namespace.Split('.');
+			var lastNamespacePart = namespaceParts[namespaceParts.Length - 1];
+			factoryTypeName = cmdType.Namespace + "." + lastNamespacePart + "Factory";
+			if (factoryType == null)
+				factoryType = Type.GetType(factoryTypeName);
 			if (factoryType == null)
 			{
-				// Common factory type names for known providers
-				var namespaceParts = cmdType.Namespace.Split('.');
-				var lastNamespacePart = namespaceParts[namespaceParts.Length - 1];
-				factoryTypeName = cmdType.Namespace + "." + lastNamespacePart + "Factory";
+				var assembly = cmdType.Assembly;
 				factoryType = assembly.GetType(factoryTypeName);
 			}
 			if (factoryType == null)
+			{
+				// Search all loaded assemblies if still not found
+				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					factoryType = assembly.GetType(factoryTypeName);
+					if (factoryType != null)
+						break;
+				}
+			}
+
+			if (factoryType == null)
 				throw new InvalidOperationException("Unable to determine provider factory.");
-			var instanceProperty = factoryType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+
+			//var instanceProperty = factoryType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+			var instanceProperty = factoryType.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
 			if (instanceProperty == null)
 				throw new InvalidOperationException("Provider factory does not have an 'Instance' property.");
+
 			return instanceProperty.GetValue(null) as DbProviderFactory;
 		}
 
