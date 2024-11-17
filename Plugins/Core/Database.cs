@@ -6,6 +6,7 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -21,45 +22,48 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	{
 		/// <summary>
 		/// Execute non query command on database. Return number of rows affected.
+		/// If connection string not provided, the default database is used.
 		/// </summary>
-		/// <param name="connectionString">Databse connection string.</param>
 		/// <param name="cmdText">SQL Command Text.</param>
 		/// <param name="cmdType">SQL Command Type.
 		/// "Text" = An SQL text command.
 		/// "StoredProcedure" - The name of a stored procedure.
 		/// "TableDirect" - The name of a table.
 		/// </param>
+		/// <param name="connectionString">Databse connection string.</param>
 		[RiskLevel(RiskLevel.High)]
-		public async Task<OperationResult<int>> ExecuteNonQuery(string cmdText, string cmdType, string connectionString = null)
+		public OperationResult<int> ExecuteNonQuery(string cmdText, string cmdType, string connectionString = null)
 		{
+			var cmd = string.IsNullOrEmpty(connectionString)
+				? (DbCommand)new SqliteCommand(cmdText)
+				: (DbCommand)new SqlCommand(cmdText);
 			if (string.IsNullOrEmpty(connectionString))
-			{
-				return await ExecuteNonQueryByDatabaseName(_DatabaseName, cmdText);
-			}
-			else
-			{
-				var cmd = new SqlCommand(cmdText);
-				cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
-				var helper = new ClassLibrary.Data.SqlHelper();
-				var rowsAffected = helper.ExecuteNonQuery(connectionString, cmd);
-				return new OperationResult<int>(rowsAffected);
-			}
+				connectionString = GetSqliteConnectionSring();
+			cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
+			var helper = new ClassLibrary.Data.SqlHelper();
+			var rowsAffected = helper.ExecuteNonQuery(connectionString, cmd);
+			return new OperationResult<int>(rowsAffected);
 		}
 
 		/// <summary>
 		/// SQL query command on database. Returns resutls as CSV.
+		/// If connection string not provided, the default database is used.
 		/// </summary>
-		/// <param name="connectionString">Databse connection string.</param>
 		/// <param name="cmdText">SQL Command Text.</param>
 		/// <param name="cmdType">SQL Command Type.
 		/// "Text" = An SQL text command.
 		/// "StoredProcedure" - The name of a stored procedure.
 		/// "TableDirect" - The name of a table.
 		/// </param>
+		/// <param name="connectionString">Databse connection string.</param>
 		[RiskLevel(RiskLevel.High)]
-		public string ExecuteDataTable(string connectionString, string cmdText, string cmdType)
+		public string ExecuteDataTable(string cmdText, string cmdType, string connectionString = null)
 		{
-			var cmd = new SqlCommand(cmdText);
+			var cmd = string.IsNullOrEmpty(connectionString)
+				? (DbCommand)new SqliteCommand(cmdText)
+				: (DbCommand)new SqlCommand(cmdText);
+			if (string.IsNullOrEmpty(connectionString))
+				connectionString = GetSqliteConnectionSring();
 			cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
 			var helper = new ClassLibrary.Data.SqlHelper();
 			var table = helper.ExecuteDataTable(connectionString, cmd);
@@ -107,6 +111,14 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		public Func<string> GetDatabasesFolderPath { get; set; }
 		private string databaseFileExtension = ".sqlite";
 		private string _DatabaseName = "Default";
+
+		private string GetSqliteConnectionSring()
+		{
+			var path = GetDatabasesFolderPath();
+			var fullFileName = System.IO.Path.Combine(path, _DatabaseName + databaseFileExtension);
+			return fullFileName;
+		}
+
 
 		/// <summary>
 		/// Get SQLite database names filtered by an optional regular expression pattern.
@@ -171,9 +183,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			var names = GetDatabaseNames(databaseName);
 			if (!names.Any())
 				return new OperationResult<int>(new Exception($"Database `{databaseName}` not found"));
-			var path = GetDatabasesFolderPath();
-			var fullFileName = System.IO.Path.Combine(path, databaseName + databaseFileExtension);
-
+			var fullFileName = GetSqliteConnectionSring();
 			try
 			{
 				using (var connection = new SqliteConnection(fullFileName))
