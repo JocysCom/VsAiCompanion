@@ -15,6 +15,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -422,24 +423,22 @@ namespace JocysCom.ClassLibrary.Data
 			return returnValue;
 		}
 
-		public IDataReader ExecuteReader(string connectionString, SqlCommand cmd, string comment = null)
+		public IDataReader ExecuteReader(string connectionString, DbCommand cmd, string comment = null)
 		{
-			//var sql = ToSqlCommandString(cmd);
-			var conn = new SqlConnection(connectionString);
+			var conn = CreateConnection(cmd, connectionString);
 			cmd.Connection = conn;
 			conn.Open();
 			SetSessionUserCommentContext(conn, comment);
 			return cmd.ExecuteReader();
 		}
 
-		public T ExecuteDataSet<T>(string connectionString, SqlCommand cmd, string comment = null) where T : DataSet
+		public T ExecuteDataSet<T>(string connectionString, DbCommand cmd, string comment = null) where T : DataSet
 		{
-			//var sql = ToSqlCommandString(cmd);
 			var conn = new SqlConnection(connectionString);
 			cmd.Connection = conn;
 			conn.Open();
 			SetSessionUserCommentContext(conn, comment);
-			var adapter = new SqlDataAdapter(cmd);
+			var adapter = CreateDataAdapter(cmd);
 			var ds = Activator.CreateInstance<T>();
 			int rowsAffected = ds.GetType() == typeof(DataSet)
 				? adapter.Fill(ds)
@@ -463,26 +462,26 @@ namespace JocysCom.ClassLibrary.Data
 			return ExecuteDataSet<DataSet>(connectionString, cmd, comment);
 		}
 
-		public DataSet ExecuteDataSet(string connectionString, SqlCommand cmd, string comment = null)
+		public DataSet ExecuteDataSet(string connectionString, DbCommand cmd, string comment = null)
 		{
 			return ExecuteDataSet<DataSet>(connectionString, cmd, comment);
 		}
 
-		public DataTable ExecuteDataTable(string connectionString, SqlCommand cmd, string comment = null)
+		public DataTable ExecuteDataTable(string connectionString, DbCommand cmd, string comment = null)
 		{
 			var ds = ExecuteDataSet(connectionString, cmd, comment);
 			if (ds != null && ds.Tables.Count > 0) return ds.Tables[0];
 			return null;
 		}
 
-		public DataRow ExecuteDataRow(string connectionString, SqlCommand cmd, string comment = null)
+		public DataRow ExecuteDataRow(string connectionString, DbCommand cmd, string comment = null)
 		{
 			var table = ExecuteDataTable(connectionString, cmd, comment);
 			if (table != null && table.Rows.Count > 0) return table.Rows[0];
 			return null;
 		}
 
-		public List<T> ExecuteData<T>(string connectionString, SqlCommand cmd, string comment = null)
+		public List<T> ExecuteData<T>(string connectionString, DbCommand cmd, string comment = null)
 		{
 			var list = new List<T>();
 			var props = typeof(T).GetProperties().ToDictionary(x => x.Name, x => x);
@@ -947,5 +946,49 @@ namespace JocysCom.ClassLibrary.Data
 
 		#endregion
 
+		#region Helper Methods
+
+		public static DbConnection CreateConnection(DbCommand cmd, string connectionString)
+		{
+			var factory = GetProviderFactory(cmd);
+			var conn = factory.CreateConnection();
+			conn.ConnectionString = connectionString;
+			return conn;
+		}
+
+		public static DbDataAdapter CreateDataAdapter(DbCommand cmd)
+		{
+			var factory = GetProviderFactory(cmd);
+			var adapter = factory.CreateDataAdapter();
+			adapter.SelectCommand = cmd;
+			return adapter;
+		}
+
+		public static DbProviderFactory GetProviderFactory(DbCommand cmd)
+		{
+			var cmdType = cmd.GetType();
+			var assembly = cmdType.Assembly;
+			// Attempt to get the factory type directly
+			var factoryTypeName = cmdType.Namespace + ".DbProviderFactory";
+			var factoryType = assembly.GetType(factoryTypeName);
+			if (factoryType == null)
+			{
+				// Common factory type names for known providers
+				var namespaceParts = cmdType.Namespace.Split('.');
+				var lastNamespacePart = namespaceParts[namespaceParts.Length - 1];
+				factoryTypeName = cmdType.Namespace + "." + lastNamespacePart + "Factory";
+				factoryType = assembly.GetType(factoryTypeName);
+			}
+			if (factoryType == null)
+				throw new InvalidOperationException("Unable to determine provider factory.");
+			var instanceProperty = factoryType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+			if (instanceProperty == null)
+				throw new InvalidOperationException("Provider factory does not have an 'Instance' property.");
+			return instanceProperty.GetValue(null) as DbProviderFactory;
+		}
+
+		#endregion
 	}
+
 }
+

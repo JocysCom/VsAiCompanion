@@ -30,12 +30,20 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// "TableDirect" - The name of a table.
 		/// </param>
 		[RiskLevel(RiskLevel.High)]
-		public int ExecuteNonQuery(string connectionString, string cmdText, string cmdType)
+		public async Task<OperationResult<int>> ExecuteNonQuery(string cmdText, string cmdType, string connectionString = null)
 		{
-			var cmd = new SqlCommand(cmdText);
-			cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
-			var helper = new SqlHelper();
-			return helper.ExecuteNonQuery(connectionString, cmd);
+			if (string.IsNullOrEmpty(connectionString))
+			{
+				return await ExecuteNonQueryByDatabaseName(_DatabaseName, cmdText);
+			}
+			else
+			{
+				var cmd = new SqlCommand(cmdText);
+				cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
+				var helper = new ClassLibrary.Data.SqlHelper();
+				var rowsAffected = helper.ExecuteNonQuery(connectionString, cmd);
+				return new OperationResult<int>(rowsAffected);
+			}
 		}
 
 		/// <summary>
@@ -53,7 +61,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			var cmd = new SqlCommand(cmdText);
 			cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
-			var helper = new SqlHelper();
+			var helper = new ClassLibrary.Data.SqlHelper();
 			var table = helper.ExecuteDataTable(connectionString, cmd);
 			return CsvHelper.Write(table);
 		}
@@ -71,7 +79,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.High)]
 		public string GetDescription(string connectionString, string schema = null, string table = null, string column = null)
 		{
-			return SqlHelper.GetProperty(connectionString, "MS_Description", schema, table, column);
+			return ClassLibrary.Data.SqlHelper.GetProperty(connectionString, "MS_Description", schema, table, column);
 		}
 
 		/// <summary>
@@ -88,24 +96,24 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		[RiskLevel(RiskLevel.High)]
 		public int SetDescription(string connectionString, string description, string schema = null, string table = null, string column = null)
 		{
-			return SqlHelper.SetProperty(connectionString, "MS_Description", description, schema, table, column);
+			return ClassLibrary.Data.SqlHelper.SetProperty(connectionString, "MS_Description", description, schema, table, column);
 		}
 
-		#region SQLite Database
+		#region SQLite Portable Database
 
 		/// <summary>
 		/// Get path to databases folder.
 		/// </summary>
 		public Func<string> GetDatabasesFolderPath { get; set; }
 		private string databaseFileExtension = ".sqlite";
+		private string _DatabaseName = "Default";
 
 		/// <summary>
 		/// Get SQLite database names filtered by an optional regular expression pattern.
 		/// </summary>
 		/// <param name="pattern">The regex pattern to filter database names. If null, all names are returned.</param>
 		/// <returns>A List of filtered database names.</returns>
-		[RiskLevel(RiskLevel.None)]
-		public List<string> GetDatabaseNames(string pattern = null)
+		private List<string> GetDatabaseNames(string pattern = null)
 		{
 			var path = GetDatabasesFolderPath();
 			var names = System.IO.Directory
@@ -124,8 +132,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="databaseName">Name of the database</param>
 		/// <returns>0 operation successfull, -3 database already exists.</returns>
-		[RiskLevel(RiskLevel.None)]
-		public int CreateDatabase(string databaseName)
+		private int CreateDatabase(string databaseName)
 		{
 			var names = GetDatabaseNames(databaseName);
 			// List already exists.
@@ -139,8 +146,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// </summary>
 		/// <param name="databaseName">Name of the database</param>
 		/// <returns>0 operation successfull, -1 database not found, -2 database is readonly.</returns>
-		[RiskLevel(RiskLevel.None)]
-		public int DeleteDatabase(string databaseName)
+		private int DeleteDatabase(string databaseName)
 		{
 			var names = GetDatabaseNames(databaseName);
 			if (!names.Any())
@@ -160,8 +166,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="databaseName">Database name.</param>
 		/// <param name="cmdText">SQL Command Text.</param>
 		/// <returns>Number of rows affected.</returns>
-		[RiskLevel(RiskLevel.None)]
-		public async Task<OperationResult<int>> ExecuteNonQueryByDatabaseName(string databaseName, string cmdText)
+		private async Task<OperationResult<int>> ExecuteNonQueryByDatabaseName(string databaseName, string cmdText)
 		{
 			var names = GetDatabaseNames(databaseName);
 			if (!names.Any())
@@ -195,8 +200,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="databaseName">Database name.</param>
 		/// <param name="cmdText">SQL Command Text.</param>
 		/// <returns>Returns resutls as CSV.</returns>
-		[RiskLevel(RiskLevel.None)]
-		public async Task<OperationResult<string>> ExecuteDataTableByDatabaseName(string databaseName, string cmdText)
+		private async Task<OperationResult<string>> ExecuteDataTableByDatabaseName(string cmdText, string databaseName)
 		{
 			var names = GetDatabaseNames(databaseName);
 			if (!names.Any())
@@ -238,8 +242,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="excludePatterns">Patterns to exclude.</param>
 		/// <param name="useGitIgnore">Whether to respect .gitignore files.</param>
 		/// <returns>Number of files inserted.</returns>
-		[RiskLevel(RiskLevel.Medium)]
-		public async Task<OperationResult<int>> InsertFilesToTableByDatabaseName(
+		private async Task<OperationResult<int>> InsertFilesToTableByDatabaseName(
 			string databaseName,
 			string tableName,
 			string path,

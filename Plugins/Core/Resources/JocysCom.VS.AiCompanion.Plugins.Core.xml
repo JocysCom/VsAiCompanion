@@ -869,14 +869,6 @@
             <param name="format"></param>
             <returns></returns>
         </member>
-        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.SqlHelper">
-            <summary>
-            SQL Data Helper.
-            </summary>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.SqlHelper.SetProperty(System.String,System.String,System.String,System.String,System.String,System.String)">
-            <returns>0 (success) or 1 (failure).</returns>
-        </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Database">
             <summary>
             Allows AI to execute queries or stored procedures on a database. For example, it can retrieve a database schema and construct complex results. Use database permissions to restrict AI's access.

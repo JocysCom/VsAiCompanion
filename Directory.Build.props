@@ -1,4 +1,6 @@
 <Project>
 	<PropertyGroup>
+		<!-- Define MSSQLCLIENT symbol to use Microsoft.Data.SqlClient in conditional compilation -->
+		<DefineConstants>$(DefineConstants);MSSQLCLIENT</DefineConstants>
 	</PropertyGroup>
 </Project>
