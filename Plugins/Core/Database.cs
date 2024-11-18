@@ -202,74 +202,6 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Execute non query command on SQLite database. Return number of rows affected.
-		/// </summary>
-		/// <param name="databaseName">Database name.</param>
-		/// <param name="cmdText">SQL Command Text.</param>
-		/// <returns>Number of rows affected.</returns>
-		private async Task<OperationResult<int>> ExecuteNonQueryByDatabaseName(string databaseName, string cmdText)
-		{
-			var names = GetDatabaseNames(databaseName);
-			if (!names.Any())
-				return new OperationResult<int>(new Exception($"Database `{databaseName}` not found"));
-			var fullFileName = GetSqliteConnectionSring();
-			try
-			{
-				using (var connection = new SqliteConnection(fullFileName))
-				{
-					connection.Open();
-					using (var cmd = new SqliteCommand(cmdText, connection))
-					{
-						cmd.CommandType = CommandType.Text;
-						int rowsAffected = await cmd.ExecuteNonQueryAsync();
-						return new OperationResult<int>(rowsAffected);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				return new OperationResult<int>(ex);
-			}
-		}
-
-
-		/// <summary>
-		/// Execute non query command on SQLite database. Returns resutls as CSV.
-		/// </summary>
-		/// <param name="databaseName">Database name.</param>
-		/// <param name="cmdText">SQL Command Text.</param>
-		/// <returns>Returns resutls as CSV.</returns>
-		private async Task<OperationResult<string>> ExecuteDataTableByDatabaseName(string cmdText, string databaseName)
-		{
-			var names = GetDatabaseNames(databaseName);
-			if (!names.Any())
-				return new OperationResult<string>(new Exception($"Database `{databaseName}` not found"));
-			var path = GetDatabasesFolderPath();
-			var fullFileName = System.IO.Path.Combine(path, databaseName + databaseFileExtension);
-
-			try
-			{
-				using (var connection = new SqliteConnection(fullFileName))
-				{
-					connection.Open();
-					using (var cmd = new SqliteCommand(cmdText, connection))
-					{
-						cmd.CommandType = CommandType.Text;
-						var table = new DataTable();
-						using (var reader = await cmd.ExecuteReaderAsync())
-							table.Load(reader);
-						var csv = CsvHelper.Write(table);
-						return new OperationResult<string>(csv);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				return new OperationResult<string>(ex);
-			}
-		}
-
-		/// <summary>
 		/// Searches for files and inserts them into a database table with a unique Id column.
 		/// </summary>
 		/// <param name="connectionString">
@@ -287,7 +219,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
 		/// <returns>Number of files inserted.</returns>
 		[RiskLevel(RiskLevel.Medium)]
-		public async Task<OperationResult<int>> InsertFilesToTableByDatabaseName(
+		public async Task<OperationResult<int>> SearchAndSaveFilesToTable(
 			string connectionString,
 			string tableName,
 			string searchPath,

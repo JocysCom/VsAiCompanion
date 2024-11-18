@@ -1012,23 +1012,7 @@
             <param name="databaseName">Name of the database</param>
             <returns>0 operation successfull, -1 database not found, -2 database is readonly.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQueryByDatabaseName(System.String,System.String)">
-            <summary>
-            Execute non query command on SQLite database. Return number of rows affected.
-            </summary>
-            <param name="databaseName">Database name.</param>
-            <param name="cmdText">SQL Command Text.</param>
-            <returns>Number of rows affected.</returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTableByDatabaseName(System.String,System.String)">
-            <summary>
-            Execute non query command on SQLite database. Returns resutls as CSV.
-            </summary>
-            <param name="databaseName">Database name.</param>
-            <param name="cmdText">SQL Command Text.</param>
-            <returns>Returns resutls as CSV.</returns>
-        </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.InsertFilesToTableByDatabaseName(System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean,System.Threading.CancellationToken)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.SearchAndSaveFilesToTable(System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean,System.Threading.CancellationToken)">
             <summary>
             Searches for files and inserts them into a database table with a unique Id column.
             </summary>
@@ -1397,7 +1381,7 @@
             For properties like dates and size, where partial matching isn't applicable, the method uses SQL expressions to define ranges.
             </remarks>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchAndSaveFilesAsCsv(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchAndSaveFilesToCsv(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean)">
             <summary>
             Searches for files  and write search results as csv file.
             </summary>

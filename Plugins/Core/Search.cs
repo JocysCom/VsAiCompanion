@@ -355,7 +355,7 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		/// <param name="useGitIgnore">Whether to respect .gitignore files.</param>
 		/// <returns>Number of files inserted.</returns>
 		[RiskLevel(RiskLevel.High)]
-		public async Task<OperationResult<int>> SearchAndSaveFilesAsCsv(
+		public async Task<OperationResult<int>> SearchAndSaveFilesToCsv(
 			string path,
 			string searchPath,
 			string searchPattern,
