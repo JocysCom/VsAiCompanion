@@ -62,14 +62,15 @@ namespace JocysCom.ClassLibrary
 		/// <param name="statusCode">Status code representing operation outcome.</param>
 		/// <param name="statusText">Descriptive text providing additional details.</param>
 		/// <param name="errors">Collection of exceptions related to operation failure.</param>
-		public OperationResult(T data, int statusCode, string statusText, IEnumerable<Exception> errors) : this()
+		public OperationResult(T data, int statusCode, string statusText, IEnumerable<Exception> errors = null) : this()
 		{
 			Data = data;
 			StatusCode = statusCode;
 			StatusText = statusText ?? statusCode.ToString();
 			Errors = new List<string>();
-			foreach (var error in errors)
-				Errors.Add(error.ToString());
+			if (errors != null)
+				foreach (var error in errors)
+					Errors.Add(error.ToString());
 		}
 
 		/// <summary>

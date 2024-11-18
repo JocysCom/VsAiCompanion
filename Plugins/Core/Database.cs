@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.Files;
 using LiteDB;
 using Microsoft.Data.SqlClient;
@@ -10,6 +11,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JocysCom.VS.AiCompanion.Plugins.Core
@@ -20,54 +22,72 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 	/// </summary>
 	public partial class Database
 	{
-		/// <summary>
-		/// Execute non query command on database. Return number of rows affected.
-		/// If connection string not provided, the default database is used.
-		/// </summary>
+		/// <summary>Execute non query command on database. Return number of rows affected.</summary>
 		/// <param name="cmdText">SQL Command Text.</param>
 		/// <param name="cmdType">SQL Command Type.
 		/// "Text" = An SQL text command.
 		/// "StoredProcedure" - The name of a stored procedure.
 		/// "TableDirect" - The name of a table.
 		/// </param>
-		/// <param name="connectionString">Databse connection string.</param>
+		/// <param name="connectionString">
+		/// The database connection string.
+		/// If the connection string is not provided, the default SQLite database is used.
+		/// The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
+		/// </param>
 		[RiskLevel(RiskLevel.High)]
 		public OperationResult<int> ExecuteNonQuery(string cmdText, string cmdType, string connectionString = null)
 		{
-			var cmd = string.IsNullOrEmpty(connectionString)
-				? (DbCommand)new SqliteCommand(cmdText)
-				: (DbCommand)new SqlCommand(cmdText);
-			if (string.IsNullOrEmpty(connectionString))
-				connectionString = GetSqliteConnectionSring();
-			cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
-			var helper = new ClassLibrary.Data.SqlHelper();
-			var rowsAffected = helper.ExecuteNonQuery(connectionString, cmd);
-			return new OperationResult<int>(rowsAffected);
+			try
+			{
+				var cmd = string.IsNullOrEmpty(connectionString)
+					? (DbCommand)new SqliteCommand(cmdText)
+					: (DbCommand)new SqlCommand(cmdText);
+				if (string.IsNullOrEmpty(connectionString))
+					connectionString = GetSqliteConnectionSring();
+				cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
+				var helper = new ClassLibrary.Data.SqlHelper();
+				var rowsAffected = helper.ExecuteNonQuery(connectionString, cmd);
+				return new OperationResult<int>(rowsAffected);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<int>(ex);
+			}
+
 		}
 
-		/// <summary>
-		/// SQL query command on database. Returns resutls as CSV.
-		/// If connection string not provided, the default database is used.
-		/// </summary>
+		/// <summary>SQL query command on database. Returns resutls as CSV.</summary>
 		/// <param name="cmdText">SQL Command Text.</param>
 		/// <param name="cmdType">SQL Command Type.
 		/// "Text" = An SQL text command.
 		/// "StoredProcedure" - The name of a stored procedure.
 		/// "TableDirect" - The name of a table.
 		/// </param>
-		/// <param name="connectionString">Databse connection string.</param>
+		/// <param name="connectionString">
+		/// The database connection string.
+		/// If the connection string is not provided, the default SQLite database is used.
+		/// The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
+		/// </param>
 		[RiskLevel(RiskLevel.High)]
-		public string ExecuteDataTable(string cmdText, string cmdType, string connectionString = null)
+		public OperationResult<string> ExecuteDataTable(string cmdText, string cmdType, string connectionString = null)
 		{
-			var cmd = string.IsNullOrEmpty(connectionString)
-				? (DbCommand)new SqliteCommand(cmdText)
-				: (DbCommand)new SqlCommand(cmdText);
-			if (string.IsNullOrEmpty(connectionString))
-				connectionString = GetSqliteConnectionSring();
-			cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
-			var helper = new ClassLibrary.Data.SqlHelper();
-			var table = helper.ExecuteDataTable(connectionString, cmd);
-			return CsvHelper.Write(table);
+			try
+			{
+				var cmd = string.IsNullOrEmpty(connectionString)
+					? (DbCommand)new SqliteCommand(cmdText)
+					: (DbCommand)new SqlCommand(cmdText);
+				if (string.IsNullOrEmpty(connectionString))
+					connectionString = GetSqliteConnectionSring();
+				cmd.CommandType = (CommandType)Enum.Parse(typeof(CommandType), cmdType);
+				var helper = new ClassLibrary.Data.SqlHelper();
+				var table = helper.ExecuteDataTable(connectionString, cmd);
+				var csvContents = CsvHelper.Write(table);
+				return new OperationResult<string>(csvContents);
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<string>(ex);
+			}
 		}
 
 		/// <summary>
@@ -116,9 +136,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		{
 			var path = GetDatabasesFolderPath();
 			var fullFileName = System.IO.Path.Combine(path, _DatabaseName + databaseFileExtension);
-			return fullFileName;
+			var builder = new SqliteConnectionStringBuilder();
+			builder.DataSource = fullFileName;
+			return builder.ToString();
 		}
-
 
 		/// <summary>
 		/// Get SQLite database names filtered by an optional regular expression pattern.
@@ -128,8 +149,10 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		private List<string> GetDatabaseNames(string pattern = null)
 		{
 			var path = GetDatabasesFolderPath();
+			if (!Directory.Exists(path))
+				return new List<string>();
 			var names = System.IO.Directory
-				.GetFiles($"*{databaseFileExtension}")
+				.GetFiles(path, $"*{databaseFileExtension}")
 				.Select(x => System.IO.Path.GetFileNameWithoutExtension(x));
 			if (pattern != null)
 			{
@@ -150,6 +173,12 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			// List already exists.
 			if (names.Any())
 				return -3;
+			var path = GetDatabasesFolderPath();
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+			var fullName = System.IO.Path.Combine(path, $"{databaseName}{databaseFileExtension}");
+			if (!File.Exists(fullName))
+				System.IO.File.WriteAllText(fullName, "");
 			return 0;
 		}
 
@@ -241,50 +270,41 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 		}
 
 		/// <summary>
-		/// Searches for files and inserts them into a table of a SQLite database.
+		/// Searches for files and inserts them into a database table with a unique Id column.
 		/// </summary>
-		/// <param name="databaseName">Name of the database.</param>
+		/// <param name="connectionString">
+		/// The database connection string.
+		/// If the connection string is not provided, the default SQLite database is used.
+		/// The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
+		/// </param>
 		/// <param name="tableName">Name of the table to insert files into.</param>
-		/// <param name="path">Directory path to search for files.</param>
+		/// <param name="searchPath">Directory path to search for files.</param>
 		/// <param name="searchPattern">Search pattern for files (e.g., "*.txt").</param>
 		/// <param name="allDirectories">Whether to search all subdirectories.</param>
 		/// <param name="includePatterns">Patterns to include.</param>
 		/// <param name="excludePatterns">Patterns to exclude.</param>
 		/// <param name="useGitIgnore">Whether to respect .gitignore files.</param>
+		/// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
 		/// <returns>Number of files inserted.</returns>
-		private async Task<OperationResult<int>> InsertFilesToTableByDatabaseName(
-			string databaseName,
+		[RiskLevel(RiskLevel.Medium)]
+		public async Task<OperationResult<int>> InsertFilesToTableByDatabaseName(
+			string connectionString,
 			string tableName,
-			string path,
+			string searchPath,
 			string searchPattern,
 			bool allDirectories = false,
 			string includePatterns = null,
 			string excludePatterns = null,
-			bool useGitIgnore = false
+			bool useGitIgnore = false,
+			CancellationToken cancellationToken = default
 		)
 		{
-			// Validate the tableName to prevent SQL injection.
-			if (string.IsNullOrWhiteSpace(tableName) || !Regex.IsMatch(tableName, @"^\w+$"))
-				return new OperationResult<int>(new Exception($"Invalid table name `{tableName}`."));
-
-			// Check if the database exists.
-			var names = GetDatabaseNames(databaseName);
-			if (!names.Any())
-				return new OperationResult<int>(new Exception($"Database `{databaseName}` not found"));
-
-			// Get the full path to the database file.
-			var dbPath = GetDatabasesFolderPath();
-			var fullFileName = System.IO.Path.Combine(dbPath, databaseName + databaseFileExtension);
-
-			// Build the connection string.
-			var connectionString = $"Data Source={fullFileName};";
-
-			// Find the files.
+			var fileHelper = new FileHelper();
 			List<FileInfo> files;
 			try
 			{
-				files = FileHelper.FindFiles(
-					path,
+				files = fileHelper.FindFiles(
+					searchPath,
 					searchPattern,
 					allDirectories,
 					includePatterns,
@@ -299,82 +319,104 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 
 			try
 			{
-				using (var connection = new SqliteConnection(connectionString))
+				var helper = new ClassLibrary.Data.SqlHelper();
+				if (string.IsNullOrEmpty(connectionString))
 				{
-					await connection.OpenAsync();
-					var fullName = nameof(FileInfo.FullName);
-					var name = nameof(FileInfo.Name);
-					var length = nameof(FileInfo.Length);
-					var creationTimeUtc = nameof(FileInfo.CreationTimeUtc);
-					var lastWriteTimeUtc = nameof(FileInfo.LastWriteTimeUtc);
-
-					// Check if the table exists.
-					string tableExistsQuery = @"SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName;";
-					using (var checkCmd = new SqliteCommand(tableExistsQuery, connection))
-					{
-						checkCmd.Parameters.AddWithValue("@tableName", tableName);
-						var result = await checkCmd.ExecuteScalarAsync();
-						if (result == null)
-						{
-							// Table does not exist; create it.
-							string createTableQuery = $@"
-                        CREATE TABLE {tableName} (
-                            [{fullName}] TEXT,
-                            [{name}] TEXT,
-                            [{length}] INTEGER,
-                            [{creationTimeUtc}] TEXT,
-                            [{lastWriteTimeUtc}] TEXT
-                        );";
-
-							using (var createCmd = new SqliteCommand(createTableQuery, connection))
-							{
-								await createCmd.ExecuteNonQueryAsync();
-							}
-						}
-					}
-
-					// Begin a transaction for efficiency.
-					using (var transaction = connection.BeginTransaction())
-					{
-						// Prepare the insert command.
-						string insertQuery = $@"
-                    INSERT INTO {tableName} ({fullName}, {name}, {length}, {creationTimeUtc}, {lastWriteTimeUtc})
-                    VALUES (@FullPath, @{name}, @{length}, @{creationTimeUtc}, @{lastWriteTimeUtc});";
-
-						using (var insertCmd = new SqliteCommand(insertQuery, connection, transaction))
-						{
-							// Add parameters.
-							insertCmd.Parameters.Add($"@{fullName}", SqliteType.Text);
-							insertCmd.Parameters.Add($"@{name}", SqliteType.Text);
-							insertCmd.Parameters.Add($"@{length}", SqliteType.Integer);
-							insertCmd.Parameters.Add($"@{creationTimeUtc}", SqliteType.Text);
-							insertCmd.Parameters.Add($"@{lastWriteTimeUtc}", SqliteType.Text);
-							int insertCount = 0;
-							// For each file, set parameter values and execute insert.
-							foreach (var file in files)
-							{
-								insertCmd.Parameters[$"@{fullName}"].Value = file.FullName;
-								insertCmd.Parameters[$"@{name}"].Value = file.Name;
-								insertCmd.Parameters[$"@{length}"].Value = file.Length;
-								insertCmd.Parameters[$"@{creationTimeUtc}"].Value = file.CreationTimeUtc.ToString("o"); // ISO 8601 format
-								insertCmd.Parameters[$"@{lastWriteTimeUtc}"].Value = file.LastWriteTimeUtc.ToString("o");
-								await insertCmd.ExecuteNonQueryAsync();
-								insertCount++;
-							}
-							// Commit the transaction.
-							transaction.Commit();
-							// Return the number of files inserted.
-							return new OperationResult<int>(insertCount);
-						}
-					}
+					connectionString = GetSqliteConnectionSring();
+					CreateDatabase(_DatabaseName);
 				}
+
+				var fullName = nameof(FileInfo.FullName);
+				var name = nameof(FileInfo.Name);
+				var length = nameof(FileInfo.Length);
+				var creationTimeUtc = nameof(FileInfo.CreationTimeUtc);
+				var lastWriteTimeUtc = nameof(FileInfo.LastWriteTimeUtc);
+				var status = "Status";
+				var id = "Id";
+
+				var isPortable = SqlHelper.IsPortable(connectionString);
+
+				var connection = isPortable
+					? (DbConnection)new SqliteConnection(connectionString)
+					: (DbConnection)new SqlConnection(connectionString);
+				await connection.OpenAsync();
+
+				var containsTable = SqlHelper.ContainsTable(tableName, connection);
+				var sqliteSchema =
+					$"[{id}] INTEGER PRIMARY KEY AUTOINCREMENT,\r\n" +
+					$"[{fullName}] TEXT,\r\n" +
+					$"[{name}] TEXT,\r\n" +
+					$"[{length}] INTEGER,\r\n" +
+					$"[{creationTimeUtc}] TEXT,\r\n" +
+					$"[{lastWriteTimeUtc}] TEXT,\r\n" +
+					$"[{status}] TEXT\r\n";
+				var sqlSchema =
+					$"[{id}] INT IDENTITY(1,1) PRIMARY KEY,\r\n" +
+					$"[{fullName}] NVARCHAR(MAX),\r\n" +
+					$"[{name}] NVARCHAR(MAX),\r\n" +
+					$"[{length}] BIGINT,\r\n" +
+					$"[{creationTimeUtc}] DATETIME,\r\n" +
+					$"[{lastWriteTimeUtc}] DATETIME,\r\n" +
+					$"[{status}] NVARCHAR(MAX)\r\n";
+				var schema = isPortable ? sqliteSchema : sqlSchema;
+				if (!containsTable)
+				{
+					// Table does not exist; create it with a unique Id column.
+					var createTableQuery = $"CREATE TABLE {tableName} (\r\n{schema});";
+					var createCmd = isPortable
+						? (DbCommand)new SqliteCommand(createTableQuery)
+						: (DbCommand)new SqlCommand(createTableQuery);
+					createCmd.Connection = connection;
+					createCmd.ExecuteNonQuery();
+				}
+
+				// Prepare the insert command.
+				var insertQuery = $@"
+            INSERT INTO {tableName} ({fullName}, {name}, {length}, {creationTimeUtc}, {lastWriteTimeUtc}, {status})
+            VALUES (@{fullName}, @{name}, @{length}, @{creationTimeUtc}, @{lastWriteTimeUtc}, @{status});";
+
+				var insertCmd = isPortable
+					? (DbCommand)new SqliteCommand(insertQuery)
+					: (DbCommand)new SqlCommand(insertQuery);
+				insertCmd.Connection = connection;
+
+				// Add parameters.
+				SqlHelper.AddParameter(insertCmd, $"@{fullName}", "");
+				SqlHelper.AddParameter(insertCmd, $"@{name}", "");
+				SqlHelper.AddParameter(insertCmd, $"@{length}", 0);
+				SqlHelper.AddParameter(insertCmd, $"@{creationTimeUtc}", "");
+				SqlHelper.AddParameter(insertCmd, $"@{lastWriteTimeUtc}", "");
+				SqlHelper.AddParameter(insertCmd, $"@{status}", "");
+
+				int insertCount = 0;
+
+				// For each file, set parameter values and execute insert.
+				foreach (var file in files)
+				{
+					if (cancellationToken.IsCancellationRequested)
+						return new OperationResult<int>(new Exception("User cancelled the action."));
+
+					insertCmd.Parameters[$"@{fullName}"].Value = file.FullName;
+					insertCmd.Parameters[$"@{name}"].Value = file.Name;
+					insertCmd.Parameters[$"@{length}"].Value = file.Length;
+					insertCmd.Parameters[$"@{creationTimeUtc}"].Value = file.CreationTimeUtc.ToString("o"); // ISO 8601 format
+					insertCmd.Parameters[$"@{lastWriteTimeUtc}"].Value = file.LastWriteTimeUtc.ToString("o");
+					insertCmd.Parameters[$"@{status}"].Value = "";
+
+					insertCount += insertCmd.ExecuteNonQuery();
+				}
+				var databaseSyntax = isPortable ? " on SQLite database" : "";
+
+				// Prepare table schema description for the status message.
+				var statusText = $@"Table '{tableName}' created{databaseSyntax} with schema:\r\n {schema}";
+				// Return the number of files inserted along with the table schema description.
+				return new OperationResult<int>(insertCount, 0, statusText);
 			}
 			catch (Exception ex)
 			{
 				return new OperationResult<int>(ex);
 			}
 		}
-
 		#endregion
 
 	}

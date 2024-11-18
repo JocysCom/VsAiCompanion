@@ -223,8 +223,9 @@ namespace JocysCom.VS.AiCompanion.Engine
 			{
 				await Global.MainControl.Dispatcher.Invoke(async () =>
 				{
+					var path = Global.GetPath(item);
 					// Map Text, Audio and Video converter methods.
-					//database.GetDatabasesFolderPath = () => { item.Name };
+					database.GetDatabasesFolderPath = () => { return path; };
 					methodResult = await InvokeMethod(methodInfo, database, invokeParams, true, cancellationTokenSource.Token);
 					database.GetDatabasesFolderPath = null;
 				});

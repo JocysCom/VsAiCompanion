@@ -47,6 +47,7 @@
 		<PackageReference Include="LiteDB" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
 		<PackageReference Include="EntityFramework" />
 		<PackageReference Include="Microsoft.EntityFramework.SqlServer" />
 		<PackageReference Include="System.Data.SQLite" />
@@ -76,6 +77,9 @@
 		<EmbeddedResource Include="..\DataFunctions\Security\Embedding.sql" Link="Deployment\Setup\MSSQL\Embedding.sql" />
 		<None Include="MainModel.cs" />
 		<None Include="MainModel.tt.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="SQLitePCLRaw.core" />
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="PowerShell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)Sign.ps1&quot; &quot;$(TargetPath)&quot;&#xD;&#xA;" />

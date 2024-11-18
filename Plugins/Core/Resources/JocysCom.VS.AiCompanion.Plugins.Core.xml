@@ -465,13 +465,72 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoreFromText(System.String)">
             <summary>
-            Get ignore object.
+            Creates an <see cref="T:Ignore.Ignore"/> object from the given text.
             </summary>
+            <param name="text">The text content to parse into ignore rules.</param>
+            <returns>
+            An <see cref="T:Ignore.Ignore"/> object containing the parsed rules, or <c>null</c> if no valid rules were found.
+            </returns>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoreFromFile(System.String)">
             <summary>
-            Get ignore object.
+            Creates an <see cref="T:Ignore.Ignore"/> object from the specified file.
             </summary>
+            <param name="path">The path to the file containing ignore rules.</param>
+            <returns>
+            An <see cref="T:Ignore.Ignore"/> object containing the parsed rules, or <c>null</c> if the file does not exist or contains no valid rules.
+            </returns>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.IgnoreCache">
+            <summary>
+            Cache for <see cref="T:Ignore.Ignore"/> objects to improve performance.
+            </summary>
+            <remarks>Cache allows for this class to work 20 times faster.</remarks>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoreFromFolder(System.String,System.Boolean)">
+            <summary>
+            Retrieves an <see cref="T:Ignore.Ignore"/> object from the specified folder, optionally using a cache.
+            </summary>
+            <param name="path">The folder path to retrieve the ignore object from.</param>
+            <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
+            <returns>
+            An <see cref="T:Ignore.Ignore"/> object retrieved from the folder.
+            </returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetIgnoresFromDirectory(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Retrieves <see cref="T:Ignore.Ignore"/> objects by searching for <c>.gitignore</c> files in the specified folder and optionally its parent directories.
+            </summary>
+            <param name="path">The folder path to start the search.</param>
+            <param name="searchParentDirectories">
+            If <c>true</c>, searches all parent directories for <c>.gitignore</c> files; otherwise, only searches the specified folder.
+            </param>
+            <param name="cache">If <c>true</c>, the cache will be used to retrieve the ignore object.</param>
+            <returns>
+            A list of <see cref="T:Ignore.Ignore"/> objects found in the folder and optionally its parent directories.
+            </returns>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.IsIgnored(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Returns true if file is ignored.
+            </summary>
+            <param name="filePath">Full path to the file.</param>
+            <param name="searchParentDirectories">If `true`, searches all parent directories for `.gitignore` files; otherwise, only searches the file folder.</param>
+            <param name="cache">If `true`, the cache will be used to retrieve the ignore object.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.IsIgnored(System.String,Ignore.Ignore)">
+            <summary>
+            Returns true if file is ignored.
+            </summary>
+            <param name="relativeFilePath">relative path to the file.</param>
+            <param name="ignore">Ignore object.</param>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.GetRelativePathToIgnore(System.String,System.String)">
+            <summary>
+            Get path relative to ignore,
+            </summary>
+            <param name="ignorePath"></param>
+            <param name="filePath"></param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.FileHelper.ReadFileAsPlainText(System.String)">
             <summary>
@@ -875,30 +934,32 @@
             </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteNonQuery(System.String,System.String,System.String)">
-            <summary>
-            Execute non query command on database. Return number of rows affected.
-            If connection string not provided, the default database is used.
-            </summary>
+            <summary>Execute non query command on database. Return number of rows affected.</summary>
             <param name="cmdText">SQL Command Text.</param>
             <param name="cmdType">SQL Command Type.
             "Text" = An SQL text command.
             "StoredProcedure" - The name of a stored procedure.
             "TableDirect" - The name of a table.
             </param>
-            <param name="connectionString">Databse connection string.</param>
+            <param name="connectionString">
+            The database connection string.
+            If the connection string is not provided, the default SQLite database is used.
+            The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
+            </param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.ExecuteDataTable(System.String,System.String,System.String)">
-            <summary>
-            SQL query command on database. Returns resutls as CSV.
-            If connection string not provided, the default database is used.
-            </summary>
+            <summary>SQL query command on database. Returns resutls as CSV.</summary>
             <param name="cmdText">SQL Command Text.</param>
             <param name="cmdType">SQL Command Type.
             "Text" = An SQL text command.
             "StoredProcedure" - The name of a stored procedure.
             "TableDirect" - The name of a table.
             </param>
-            <param name="connectionString">Databse connection string.</param>
+            <param name="connectionString">
+            The database connection string.
+            If the connection string is not provided, the default SQLite database is used.
+            The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
+            </param>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.GetDescription(System.String,System.String,System.String,System.String)">
             <summary>
@@ -967,18 +1028,23 @@
             <param name="cmdText">SQL Command Text.</param>
             <returns>Returns resutls as CSV.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.InsertFilesToTableByDatabaseName(System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean)">
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Database.InsertFilesToTableByDatabaseName(System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean,System.Threading.CancellationToken)">
             <summary>
-            Searches for files and inserts them into a table of a SQLite database.
+            Searches for files and inserts them into a database table with a unique Id column.
             </summary>
-            <param name="databaseName">Name of the database.</param>
+            <param name="connectionString">
+            The database connection string.
+            If the connection string is not provided, the default SQLite database is used.
+            The SQL syntax and execution behavior will be determined based on the database type specified in the connection string (e.g., SQLite, MS-SQL, Oracle).
+            </param>
             <param name="tableName">Name of the table to insert files into.</param>
-            <param name="path">Directory path to search for files.</param>
+            <param name="searchPath">Directory path to search for files.</param>
             <param name="searchPattern">Search pattern for files (e.g., "*.txt").</param>
             <param name="allDirectories">Whether to search all subdirectories.</param>
             <param name="includePatterns">Patterns to include.</param>
             <param name="excludePatterns">Patterns to exclude.</param>
             <param name="useGitIgnore">Whether to respect .gitignore files.</param>
+            <param name="cancellationToken">Token to monitor for cancellation requests.</param>
             <returns>Number of files inserted.</returns>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.Lists">
@@ -1330,6 +1396,19 @@
             This method leverages the Windows Search Index, offering a powerful search functionality across various file properties.
             For properties like dates and size, where partial matching isn't applicable, the method uses SQL expressions to define ranges.
             </remarks>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchAndSaveFilesAsCsv(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean)">
+            <summary>
+            Searches for files  and write search results as csv file.
+            </summary>
+            <param name="path">The file to write to.</param>
+            <param name="searchPath">Directory path to search for files.</param>
+            <param name="searchPattern">Search pattern for files (e.g., "*.txt").</param>
+            <param name="allDirectories">Whether to search all subdirectories.</param>
+            <param name="includePatterns">Patterns to include.</param>
+            <param name="excludePatterns">Patterns to exclude.</param>
+            <param name="useGitIgnore">Whether to respect .gitignore files.</param>
+            <returns>Number of files inserted.</returns>
         </member>
         <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.Search.SearchEmbeddingsCallback">
             <summary>

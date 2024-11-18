@@ -176,6 +176,9 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		async void Approve(bool isApproved)
 		{
 			var item = ApprovalItem;
+			// Probably cancelled due to the timeout.
+			if (item == null)
+				return;
 			var button = isApproved ? ApproveButton : DenyButton;
 			var defaultBackground = button.Background;
 			button.Background = Resources["BackgroundDarkPressed"] as Brush;

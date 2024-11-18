@@ -376,6 +376,17 @@ namespace JocysCom.ClassLibrary.Data
 			return properties;
 		}
 
+		public static DbParameter AddParameter(DbCommand command, string parameterName, object value)
+		{
+			if (value is null)
+				return null;
+			var parameter = command.CreateParameter();
+			parameter.ParameterName = parameterName;
+			parameter.Value = value;
+			command.Parameters.Add(parameter);
+			return parameter;
+		}
+
 		#endregion
 
 		#region Execute Methods
@@ -433,19 +444,22 @@ namespace JocysCom.ClassLibrary.Data
 
 		public T ExecuteDataSet<T>(string connectionString, DbCommand cmd, string comment = null) where T : DataSet
 		{
-			//var conn = new SqlConnection(connectionString);
 			var conn = CreateConnection(cmd, connectionString);
 			cmd.Connection = conn;
 			conn.Open();
 			SetSessionUserCommentContext(conn, comment);
-			var adapter = CreateDataAdapter(cmd);
 			var ds = Activator.CreateInstance<T>();
-			int rowsAffected = ds.GetType() == typeof(DataSet)
-				? adapter.Fill(ds)
-				: adapter.Fill(ds, ds.Tables[0].TableName);
-			adapter.Dispose();
+			using (var reader = cmd.ExecuteReader())
+			{
+				do
+				{
+					var dataTable = new DataTable();
+					dataTable.Load(reader);
+					ds.Tables.Add(dataTable);
+				}
+				while (!reader.IsClosed && reader.NextResult());
+			}
 			cmd.Dispose();
-			// Dispose calls conn.Close() internally.
 			conn.Dispose();
 			return ds;
 		}
@@ -953,11 +967,12 @@ namespace JocysCom.ClassLibrary.Data
 		private static ConcurrentDictionary<Type, DbProviderFactory> DbProviderFactoryCache
 			= new ConcurrentDictionary<Type, DbProviderFactory>();
 
-		public static DbConnection CreateConnection(DbCommand cmd, string connectionString)
+		public static DbConnection CreateConnection(DbCommand cmd, string connectionString = null)
 		{
 			var factory = GetProviderFactory(cmd);
 			var conn = factory.CreateConnection();
-			conn.ConnectionString = connectionString;
+			if (!string.IsNullOrEmpty(connectionString))
+				conn.ConnectionString = connectionString;
 			return conn;
 		}
 
@@ -1017,6 +1032,30 @@ namespace JocysCom.ClassLibrary.Data
 				throw new InvalidOperationException("Provider factory does not have an 'Instance' property.");
 
 			return instanceProperty.GetValue(null) as DbProviderFactory;
+		}
+
+		public static string[] PortableExt = new string[] { ".sqlite", ".sqlite3", ".db", ".db3", ".s3db", ".sl3" };
+
+		public static bool IsPortable(string connectionStringOrPath)
+		=> PortableExt.Any(x => connectionStringOrPath?.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0);
+
+		public static bool ContainsTable(string name, DbConnection connection)
+		{
+			var isPortable = IsPortable(connection.ConnectionString);
+			var commandText = isPortable
+				? $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name"
+				: $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'Embedding' AND TABLE_NAME = @name";
+			var exist = Exist(commandText, name, connection);
+			return exist;
+		}
+		public static bool Exist(string commandText, string name, DbConnection connection)
+		{
+			var command = connection.CreateCommand();
+			command.CommandText = commandText;
+			AddParameter(command, "@name", name);
+			var result = command.ExecuteScalar();
+			var exists = result?.ToString() == name;
+			return exists;
 		}
 
 		#endregion

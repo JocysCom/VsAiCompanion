@@ -10,6 +10,8 @@ using System.Linq;
 using System.Reflection;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using System.Threading;
+using SQLitePCL;
+
 
 
 
@@ -51,6 +53,15 @@ namespace JocysCom.VS.AiCompanion.DataClient
 {
 	public class SqlInitHelper
 	{
+
+		/// <summary>
+		/// Requires for SQLite to work.
+		/// Requires `SQLitePCLRaw.bundle_e_sqlite3` nuget package.
+		/// </summary>
+		public static void SqlBatteriesInit()
+		{
+			Batteries_V2.Init();
+		}
 
 		public const string SqliteExt = ".sqlite";
 		public static string[] PortableExt = new string[] { ".sqlite", ".sqlite3", ".db", ".db3", ".s3db", ".sl3" };

@@ -10,7 +10,6 @@ using JocysCom.VS.AiCompanion.DataClient;
 using JocysCom.VS.AiCompanion.DataClient.Common;
 using LiteDB;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -270,6 +269,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 		}
 
 		FileProcessor _Scanner;
+		Plugins.Core.FileHelper _FileHelper;
 		Embeddings.EmbeddingsContext db;
 
 		private void ScanStartButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -323,13 +323,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			var connectionString = SqlInitHelper.IsPortable(target)
 				? SqlInitHelper.PathToConnectionString(target)
 				: target;
-			Ignores.Clear();
+			_FileHelper = new Plugins.Core.FileHelper();
 			_Scanner = new FileProcessor();
 			_Scanner.ProcessItem = _Scanner_ProcessItem;
 			_Scanner.FileFinder.IsIgnored = _Scanner_FileFinder_IsIgnored;
 			_Scanner.Progress += _Scanner_Progress;
-			ExcludePatterns = Plugins.Core.FileHelper.GetIgnoreFromText(item.ExcludePatterns);
-			IncludePatterns = Plugins.Core.FileHelper.GetIgnoreFromText(item.IncludePatterns);
+			ExcludePatterns = _FileHelper.GetIgnoreFromText(item.ExcludePatterns);
+			IncludePatterns = _FileHelper.GetIgnoreFromText(item.IncludePatterns);
 			ControlsHelper.AppInvoke(new Action(() =>
 			{
 				MainTabControl.SelectedItem = LogTabPage;
@@ -372,18 +372,14 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls
 			}
 		}
 
-		ConcurrentDictionary<string, Ignore.Ignore> Ignores = new ConcurrentDictionary<string, Ignore.Ignore>();
-
 		private bool _Scanner_FileFinder_IsIgnored(string parentPath, string filePath, long fileLength)
 		{
-			var relativePath = PathHelper.GetRelativePath(parentPath + "\\", filePath, false)
-				.Replace("\\", "/");
-			if (IncludePatterns?.IsIgnored(relativePath) == false)
+			var relativePath = _FileHelper.GetRelativePathToIgnore(parentPath, filePath);
+			if (IncludePatterns != null && _FileHelper.IsIgnored(relativePath, IncludePatterns) == false)
 				return true;
-			if (ExcludePatterns?.IsIgnored(relativePath) == true)
+			if (ExcludePatterns != null && _FileHelper.IsIgnored(relativePath, ExcludePatterns) == true)
 				return true;
-			var ignore = Ignores.GetOrAdd(parentPath, x => Plugins.Core.FileHelper.GetIgnoreFromFile(Path.Combine(parentPath, ".gitignore")));
-			if (ignore?.IsIgnored(relativePath) == true)
+			if (_FileHelper.IsIgnored(filePath, true, true))
 				return true;
 			return false;
 		}

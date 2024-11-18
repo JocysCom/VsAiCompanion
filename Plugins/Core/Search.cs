@@ -1,8 +1,10 @@
 ﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Files;
 using JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions;
 using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.OleDb;
 using System.IO;
 using System.Linq;
@@ -335,6 +337,69 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 				query = query.Replace(parameter.ParameterName, parameterValue);
 			}
 			return query;
+		}
+
+		#endregion
+
+		#region Search Files
+
+		/// <summary>
+		/// Searches for files  and write search results as csv file.
+		/// </summary>
+		/// <param name="path">The file to write to.</param>
+		/// <param name="searchPath">Directory path to search for files.</param>
+		/// <param name="searchPattern">Search pattern for files (e.g., "*.txt").</param>
+		/// <param name="allDirectories">Whether to search all subdirectories.</param>
+		/// <param name="includePatterns">Patterns to include.</param>
+		/// <param name="excludePatterns">Patterns to exclude.</param>
+		/// <param name="useGitIgnore">Whether to respect .gitignore files.</param>
+		/// <returns>Number of files inserted.</returns>
+		[RiskLevel(RiskLevel.High)]
+		public async Task<OperationResult<int>> SearchAndSaveFilesAsCsv(
+			string path,
+			string searchPath,
+			string searchPattern,
+			bool allDirectories = false,
+			string includePatterns = null,
+			string excludePatterns = null,
+			bool useGitIgnore = false
+		)
+		{
+			var fullName = nameof(FileInfo.FullName);
+			var name = nameof(FileInfo.Name);
+			var length = nameof(FileInfo.Length);
+			var creationTime = nameof(FileInfo.CreationTime);
+			var lastWriteTime = nameof(FileInfo.LastWriteTime);
+			var fileHelper = new FileHelper();
+			// Find the files.
+			List<FileInfo> files;
+			try
+			{
+				await Task.Delay(0);
+				files = fileHelper.FindFiles(
+					searchPath,
+					searchPattern,
+					allDirectories,
+					includePatterns,
+					excludePatterns,
+					useGitIgnore
+				).OrderBy(x => x.FullName).ToList();
+				var table = new DataTable();
+				table.Columns.Add(fullName, typeof(string));
+				table.Columns.Add(name, typeof(string));
+				table.Columns.Add(length, typeof(long));
+				table.Columns.Add(creationTime, typeof(DateTime));
+				table.Columns.Add(lastWriteTime, typeof(DateTime));
+				foreach (var file in files)
+					table.Rows.Add(file.FullName, file.Name, file.Length, file.CreationTimeUtc, file.LastWriteTime);
+				var csvContents = CsvHelper.Write(table);
+				System.IO.File.WriteAllText(path, csvContents);
+				return new OperationResult<int>(files.Count());
+			}
+			catch (Exception ex)
+			{
+				return new OperationResult<int>(ex);
+			}
 		}
 
 		#endregion
