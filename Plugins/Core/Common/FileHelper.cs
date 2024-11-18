@@ -318,6 +318,31 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core
 			return GetIgnoreFromText(text);
 		}
 
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<string, Ignore.Ignore> Properties { get; } = new ConcurrentDictionary<string, Ignore.Ignore>();
+
+		private static Ignore.Ignore GetProperties(string path, bool cache = true)
+		{
+			var ignore = cache
+				? Properties.GetOrAdd(path, x => GetIgnoreFromFolder(path))
+				: GetIgnoreFromFolder(path);
+			return ignore;
+		}
+
+		public static Ignore.Ignore GetIgnoreFromFolder(string path)
+		{
+			var list = new List<Ignore.Ignore>();
+			var di = new DirectoryInfo(path);
+			do
+			{
+
+				di = di.Parent;
+			} while (di.Exists);
+			return null; ;
+		}
+
+
 		#endregion
 
 
