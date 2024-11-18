@@ -240,12 +240,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 					// Map Text, Audio and Video converter methods.
 					mm.VideoToText = ai.VideoToText;
 					mm.GetTempFolderPath = AppHelper.GetTempFolderPath;
+					mm.GenerateImageCallback = ai.GenerateImageAsync;
 					mm.GetStructuredImageAnalysisInstructions = () => Global.AppSettings.StructuredImageAnalysisInstructions;
 					mm.AISpeakCallback = Global.AvatarOptionsPanel.AI_SpeakSSML;
 					//mm.CaptureCameraImageCallback = CameraHelper.CaptureCameraImage;
 					methodResult = await InvokeMethod(methodInfo, mm, invokeParams, true, cancellationTokenSource.Token);
 					mm.CaptureCameraImageCallback = null;
 					mm.VideoToText = null;
+					mm.GenerateImageCallback = null;
 					mm.GetTempFolderPath = null;
 					mm.AISpeakCallback = null;
 					ai.Item = null;

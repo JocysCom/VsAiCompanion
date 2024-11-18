@@ -52,6 +52,9 @@ namespace JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions
 		/// <summary>Documents related to exception</summary>
 		[Description("Exception Documents"), JsonPropertyOrder(13)]
 		ExceptionDocuments = 4096,
+		/// <summary>Documents related to exception</summary>
+		[Description("Image"), JsonPropertyOrder(14)]
+		Image = 8192,
 	}
 
 }

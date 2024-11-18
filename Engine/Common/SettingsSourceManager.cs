@@ -26,6 +26,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public const string TemplateAIChatPersonalized = "AI - Chat - Personalized";
 		public const string TemplateAIComputerUse = "AI - Computer Use";
 
+		public const string TemplatePlugin_Model_GenerateImage = "® System - Generate Image";
 		public const string TemplatePlugin_Model_TextToAudio = "® System - Text-To-Audio";
 		public const string TemplatePlugin_Model_AudioToText = "® System - Audio-To-Text";
 		public const string TemplatePlugin_Model_VideoToText = "® System - Video-To-Text";

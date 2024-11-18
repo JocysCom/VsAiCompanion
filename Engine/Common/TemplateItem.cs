@@ -530,6 +530,10 @@ namespace JocysCom.VS.AiCompanion.Engine
 		public string TemplateVideoToText { get => _TemplateVideoToText; set => SetProperty(ref _TemplateVideoToText, value); }
 		string _TemplateVideoToText;
 
+		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_GenerateImage)]
+		public string TemplateGenerateImage { get => _TemplateGenerateImage; set => SetProperty(ref _TemplateGenerateImage, value); }
+		string _TemplateGenerateImage;
+
 		[DefaultValue(SettingsSourceManager.TemplatePlugin_Model_TextToVideo)]
 		public string TemplateTextToVideo { get => _TemplateTextToVideo; set => SetProperty(ref _TemplateTextToVideo, value); }
 		string _TemplateTextToVideo;
