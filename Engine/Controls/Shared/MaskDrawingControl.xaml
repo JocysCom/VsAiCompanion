@@ -1,0 +1,42 @@
+﻿<UserControl
+	x:Class="JocysCom.VS.AiCompanion.Engine.Controls.Shared.MaskDrawingControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.VS.AiCompanion.Engine.Controls.Shared"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="120"
+	d:DesignWidth="240"
+	Name="This"
+	Loaded="This_Loaded"
+	mc:Ignorable="d">
+	<Grid>
+		<!--  Base Image  -->
+		<Image x:Name="BaseImage" Stretch="Uniform" />
+
+		<!--  InkCanvas for Mask Drawing  -->
+		<InkCanvas x:Name="MaskCanvas" Background="Transparent" />
+
+		<!--  Controls Panel  -->
+		<StackPanel
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Background="#AAFFFFFF"
+			Orientation="Horizontal">
+			<TextBlock Margin="5" VerticalAlignment="Center" Text="Brush Size:" />
+			<Slider
+				x:Name="BrushSizeSlider"
+				Width="100"
+				Margin="5"
+				Maximum="50"
+				Minimum="1"
+				Value="{Binding BrushSize, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+			<ToggleButton
+				x:Name="EraserToggleButton"
+				Margin="5"
+				Checked="EraserToggleButton_Checked"
+				Content="Eraser"
+				Unchecked="EraserToggleButton_Unchecked" />
+		</StackPanel>
+	</Grid>
+</UserControl>
