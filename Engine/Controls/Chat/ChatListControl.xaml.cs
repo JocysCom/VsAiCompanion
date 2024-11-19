@@ -67,6 +67,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			InvokeScript($"SetSettings({json});");
 		}
 
+		public void SetTitle(string name)
+		{
+			InvokeScript($"SetTitle({name});");
+		}
+
 		public ChatSettings GetWebSettings()
 		{
 			if (!ScriptHandlerInitialized)

@@ -1312,21 +1312,6 @@
             <param name="pathsOrUrls">Paths to local files or URLs to images for analysis. Supported image file types: .jpg, .png, .gif, .bmp, .tiff</param>
             <returns>Analysis results.</returns>
         </member>
-        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateImage(System.String,JocysCom.VS.AiCompanion.Plugins.Core.image_size,JocysCom.VS.AiCompanion.Plugins.Core.image_style,JocysCom.VS.AiCompanion.Plugins.Core.image_quality)">
-            <summary>
-            Generates an image using the specified prompt.
-            </summary>
-            <param name="prompt">A textual description of the desired image.</param>
-            <param name="imageSize">The width of the generated image in pixels (default is `size_1024x1024`).</param>
-            <param name="imageStyle"> The style to apply to the generated image. Default is `vivid`.</param>
-            <param name="imageQuality"> The quality level of the generated image. Default is `standard`</param>
-            <returns>Operation result containing the path to the generated image.</returns>
-        </member>
-        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateImageCallback">
-            <summary>
-            Will be used by plugins manager and called by AI.
-            </summary>
-        </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.CaptureCameraImage">
             <summary>
             Captures a snapshot from the default camera and saves it to a temporary file as a JPG.
@@ -1353,6 +1338,36 @@
             <param name="format">Image format for the captured image. If not provided, it defaults to PNG.</param>
             <returns>Operation result containing the path to the captured image.</returns>
             <exception cref="T:System.ArgumentException">Thrown if invalid parameters are supplied.</exception>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateImage(System.String,JocysCom.VS.AiCompanion.Plugins.Core.image_size,JocysCom.VS.AiCompanion.Plugins.Core.image_style,JocysCom.VS.AiCompanion.Plugins.Core.image_quality)">
+            <summary>
+            Generates an image using the specified prompt.
+            </summary>
+            <param name="prompt">A textual description of the desired image.</param>
+            <param name="imageSize">The width of the generated image in pixels (default is `size_1024x1024`).</param>
+            <param name="imageStyle"> The style to apply to the generated image. Default is `vivid`.</param>
+            <param name="imageQuality"> The quality level of the generated image. Default is `standard`</param>
+            <returns>Operation result containing the path to the generated image.</returns>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.GenerateImageCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
+        </member>
+        <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ModifyImage(System.String,System.String,System.String,JocysCom.VS.AiCompanion.Plugins.Core.image_size)">
+            <summary>
+            Modify an image using the specified prompt.
+            </summary>
+            <param name="originalImagePath">Full file path to the original image.</param>
+            <param name="prompt">A textual description of the desired image.</param>
+            <param name="imageSize">The width of the generated new image in pixels (default is `size_1024x1024`).</param>
+            <param name="maskImagePath">Path to the mask.</param>
+            <returns>Operation result containing the path to the generated image.</returns>
+        </member>
+        <member name="F:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ModifyImageCallback">
+            <summary>
+            Will be used by plugins manager and called by AI.
+            </summary>
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.Multimedia.ConvertToPDF(System.String,System.String)">
             <summary>
@@ -1907,6 +1922,26 @@
         </member>
         <member name="M:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ExceptionInfo.ToString">
             <summary>Exception to string.</summary>
+        </member>
+        <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo">
+            <summary>
+            Image data.
+            </summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Path">
+            <summary>Image relative path</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.FullPath">
+            <summary>Image full path</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Prompt">
+            <summary>AI Prompt used to generate this image.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Width">
+            <summary>Image width.</summary>
+        </member>
+        <member name="P:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ImageInfo.Height">
+            <summary>Image height.</summary>
         </member>
         <member name="T:JocysCom.VS.AiCompanion.Plugins.Core.VsFunctions.ISolutionHelper">
             <summary>

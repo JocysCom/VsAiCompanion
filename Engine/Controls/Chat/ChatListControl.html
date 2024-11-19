@@ -314,7 +314,7 @@
 			User: 2,
 		}
 
-		const AttachmentType = {
+		const ContextType = {
 			None: 0,
 			Clipboard: 1,
 			Selection: 2,
@@ -329,6 +329,7 @@
 			ErrorDocument: 1024,
 			Exception: 2048,
 			ExceptionDocuments: 4096,
+			Image: 8192,
 		}
 
 		function enumToString(value, enumObject) {
@@ -438,7 +439,19 @@
 					var aData = "";
 					// If data use markdown then...
 					// Example: ```{Language}\r\n{Data}\r\n```
-					if (a.IsMarkdown) {
+					console.log("a.ContextType: "  + a.Type);
+					if (a.Type === ContextType.Image) {
+						console.log(a.Data);
+						var ii = JSON.parse(a.Data);
+						var img = document.createElement('img');
+						img.alt = ii.Prompt;
+						img.style.width = ii.Width + "px";
+						img.style.height = ii.Height + "px";
+						//img.src = ii.Path;
+						img.src = ii.FullPath;
+						aData = img.outerHTML;
+					}
+					else if (a.IsMarkdown) {
 						aData = (a.Data) ? a.Data : "";
 						aData = ConvertForDisplayAsHtml(aData);
 						aData = parseMarkdown(aData);
@@ -533,10 +546,12 @@
 
 		// attachmentId = "{messageId}_{attachmentIndex}".
 		function AttachmentButton_Click(sender, attachmentId) {
-			sender.classList.add('clicked');
-			setTimeout(function () {
-				sender.classList.remove('clicked');
-			}, 500);
+			if (sender !== null) {
+				sender.classList.add('clicked');
+				setTimeout(function () {
+					sender.classList.remove('clicked');
+				}, 500);
+			}
 			var element = document.getElementById(attachmentId + "_panel");
 			var button = document.getElementById(attachmentId + "_button");
 			// Toggle visibility
@@ -683,6 +698,10 @@
 			return isToday
 				? targetDate.toLocaleTimeString([], { timeStyle: 'short' })
 				: targetDate.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+		}
+
+		function SetTitle(name) {
+			document.title = name;
 		}
 
 		function SetSettings(settings) {
@@ -875,16 +894,22 @@
 					Date: new Date().setMinutes(i),
 					Body: messageType[i % 6] + "(" + i + ")" + " messsage. ` test <> test ` \r\n" + codeText,
 					BodyInstructions: "Instructions included at the start of every message.",
-					DataType: AttachmentType.Selection,
 					Data: codeText,
 					Attachments: [
 						{
 							Title: "Data to Process",
 							Instructions: "aaa",
-							Type: AttachmentType.Selection,
+							Type: ContextType.Selection,
 							Data: "```csharp\r\nvar x = 1 + y;\r\n```",
 							IsMarkdown: true,
-						}
+						},
+						{
+							Title: "Image",
+							Instructions: "",
+							Type: ContextType.Image,
+							Data: "{ \"Path\": \"image.png\", \"Prompt\": \"AI Promtp\", \"Width\": 1024, \"Height\": 1024}",
+							IsMarkdown: false,
+						},
 					]
 				}
 				InsertMessage(message);

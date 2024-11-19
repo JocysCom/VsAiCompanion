@@ -104,30 +104,29 @@ namespace JocysCom.VS.AiCompanion.Engine
 			return (imageWidth, imageHeight);
 		}
 
-		private string SaveImageAndAddAttachment(byte[] imageBytes, Plugins.Core.image_size imageSize, string title)
+		private string SaveImageAndAddAttachment(Plugins.Core.VsFunctions.ImageInfo imageInfo, byte[] imageBytes)
 		{
 			var now = DateTime.Now;
-			var dimensions = GetImageDimensions(imageSize);
-			var fileName = $"image_{now:yyyyMMdd_HHmmss_fff}_{dimensions.imageWidth}x{dimensions.imageHeight}.png";
-
+			var fileName = $"image_{now:yyyyMMdd_HHmmss_fff}_{imageInfo.Width}x{imageInfo.Height}.png";
 			// Save image here.
-			var folderPath = Global.GetPath(Item, "Images");
-			var relativePath = Path.Combine(Item.Name, "Images", fileName);
+			var folderPath = Global.GetPath(Item);
+			var relativePath = Path.Combine(Item.Name, fileName);
 			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
-			var pngPath = Path.Combine(folderPath, fileName);
-			File.WriteAllBytes(pngPath, imageBytes);
-
+			var fullPath = Path.Combine(folderPath, fileName);
+			imageInfo.Path = relativePath;
+			imageInfo.FullPath = fullPath;
+			File.WriteAllBytes(fullPath, imageBytes);
 			var message = Item.Messages.Last();
+			var imageData = Client.Serialize(imageInfo);
 			message.Attachments.Add(new MessageAttachments
 			{
-				Title = title,
-				Data = relativePath,
-				Location = pngPath,
+				Title = "Image",
+				Data = imageData,
 				SendType = AttachmentSendType.None,
 				Type = Plugins.Core.VsFunctions.ContextType.Image,
 			});
-			return pngPath;
+			return fullPath;
 		}
 
 		private void AddTaskToUI(Guid id, CancellationTokenSource cancellationTokenSource)
@@ -208,9 +207,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Check if images are generated
 				if (bytes != null)
 				{
+					var imageInfo = new Plugins.Core.VsFunctions.ImageInfo()
+					{
+						Prompt = prompt,
+						Width = imageWidth,
+						Height = imageHeight,
+					};
 					// Save the image and update messages
 					var imageBytes = bytes.ToArray();
-					var pngPath = SaveImageAndAddAttachment(imageBytes, imageSize, "Image");
+					var pngPath = SaveImageAndAddAttachment(imageInfo, imageBytes);
 					return new OperationResult<string>(pngPath);
 				}
 				else
@@ -303,9 +308,15 @@ namespace JocysCom.VS.AiCompanion.Engine
 				// Check if images are generated
 				if (bytes != null)
 				{
+					var imageInfo = new Plugins.Core.VsFunctions.ImageInfo()
+					{
+						Prompt = prompt,
+						Width = imageWidth,
+						Height = imageHeight,
+					};
 					// Save the image and update messages
 					var imageBytes = bytes.ToArray();
-					var pngPath = SaveImageAndAddAttachment(imageBytes, imageSize, "Image");
+					var pngPath = SaveImageAndAddAttachment(imageInfo, imageBytes);
 					return new OperationResult<string>(pngPath);
 				}
 				else
