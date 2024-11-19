@@ -5,6 +5,7 @@ using JocysCom.VS.AiCompanion.Engine.Companions.ChatGPT;
 using JocysCom.VS.AiCompanion.Engine.Controls.Chat;
 using OpenAI.Images;
 using System;
+using System.ClientModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -82,7 +83,92 @@ namespace JocysCom.VS.AiCompanion.Engine
 		}
 
 
-		#region Generate Images
+		#region Generate and Modify Images
+
+		#region Helper Methods
+
+		private (int imageWidth, int imageHeight) GetImageDimensions(Plugins.Core.image_size imageSize)
+		{
+			int imageWidth = 1024;
+			int imageHeight = 1024;
+			if (imageSize == Plugins.Core.image_size.size_1792x1024)
+			{
+				imageWidth = 1792;
+				imageHeight = 1024;
+			}
+			else if (imageSize == Plugins.Core.image_size.size_1024x1792)
+			{
+				imageWidth = 1024;
+				imageHeight = 1792;
+			}
+			return (imageWidth, imageHeight);
+		}
+
+		private string SaveImageAndAddAttachment(byte[] imageBytes, Plugins.Core.image_size imageSize, string title)
+		{
+			var now = DateTime.Now;
+			var dimensions = GetImageDimensions(imageSize);
+			var fileName = $"image_{now:yyyyMMdd_HHmmss_fff}_{dimensions.imageWidth}x{dimensions.imageHeight}.png";
+
+			// Save image here.
+			var folderPath = Global.GetPath(Item, "Images");
+			var relativePath = Path.Combine(Item.Name, "Images", fileName);
+			if (!Directory.Exists(folderPath))
+				Directory.CreateDirectory(folderPath);
+			var pngPath = Path.Combine(folderPath, fileName);
+			File.WriteAllBytes(pngPath, imageBytes);
+
+			var message = Item.Messages.Last();
+			message.Attachments.Add(new MessageAttachments
+			{
+				Title = title,
+				Data = relativePath,
+				Location = pngPath,
+				SendType = AttachmentSendType.None,
+				Type = Plugins.Core.VsFunctions.ContextType.Image,
+			});
+			return pngPath;
+		}
+
+		private void AddTaskToUI(Guid id, CancellationTokenSource cancellationTokenSource)
+		{
+			ControlsHelper.AppInvoke(() =>
+			{
+				// If you have a UI component that tracks tasks, add this task to it
+				Global.MainControl.InfoPanel.AddTask(id);
+				Item.CancellationTokenSources.Add(cancellationTokenSource);
+			});
+		}
+
+		private void RemoveTaskFromUI(Guid id, CancellationTokenSource cancellationTokenSource)
+		{
+			ControlsHelper.AppInvoke(() =>
+			{
+				Item.CancellationTokenSources.Remove(cancellationTokenSource);
+				// Remove the task from the UI component
+				Global.MainControl.InfoPanel.RemoveTask(id);
+			});
+		}
+
+		private (Guid id, CancellationTokenSource cancellationTokenSource, CancellationToken cancellationToken) CreateOperationCancellationToken(int timeoutInSeconds)
+		{
+			var id = Guid.NewGuid();
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(timeoutInSeconds));
+			var cancellationToken = cancellationTokenSource.Token;
+			return (id, cancellationTokenSource, cancellationToken);
+		}
+
+		private async Task<ImageClient> GetImageClientAsync(TemplateItem rItem, CancellationToken cancellationToken)
+		{
+			var client = new Client(rItem.AiService);
+			var aiClient = await client.GetAiClient(cancellationToken);
+			return aiClient.GetImageClient(rItem.AiModel);
+		}
+
+		#endregion
+
+		#region Generate and Modify Images
 
 		public async Task<OperationResult<string>> GenerateImageAsync(
 			string prompt,
@@ -98,36 +184,16 @@ namespace JocysCom.VS.AiCompanion.Engine
 			if (string.IsNullOrWhiteSpace(prompt))
 				return new OperationResult<string>(new Exception($"Prompt can't be empty!"));
 
-			var id = Guid.NewGuid();
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(rItem.AiService.ResponseTimeout));
-			var cancellationToken = cancellationTokenSource.Token;
+			var (id, cancellationTokenSource, cancellationToken) = CreateOperationCancellationToken(rItem.AiService.ResponseTimeout);
 
 			try
 			{
+				AddTaskToUI(id, cancellationTokenSource);
 
-				ControlsHelper.AppInvoke(() =>
-				{
-					// If you have a UI component that tracks tasks, add this task to it
-					Global.MainControl.InfoPanel.AddTask(id);
-					Item.CancellationTokenSources.Add(cancellationTokenSource);
+				var imageClient = await GetImageClientAsync(rItem, cancellationToken);
 
-				});
-				var client = new Client(rItem.AiService);
-				var aiClient = await client.GetAiClient(cancellationToken);
+				var (imageWidth, imageHeight) = GetImageDimensions(imageSize);
 
-				var imageWidth = 1024;
-				var imageHeight = 1024;
-				if (imageSize == Plugins.Core.image_size.size_1792x1024)
-				{
-					imageWidth = 1792;
-					imageHeight = 1024;
-				}
-				else if (imageSize == Plugins.Core.image_size.size_1024x1792)
-				{
-					imageWidth = 1024;
-					imageHeight = 1792;
-				}
 				// Create image generation options
 				var imageGenerationOptions = new ImageGenerationOptions()
 				{
@@ -137,31 +203,14 @@ namespace JocysCom.VS.AiCompanion.Engine
 					Style = new GeneratedImageStyle(imageStyle.ToString()),
 				};
 				// Call the image generation API
-				var imageClient = aiClient.GetImageClient(rItem.AiModel);
 				var response = await imageClient.GenerateImageAsync(prompt, imageGenerationOptions, cancellationToken);
 				var bytes = response?.Value?.ImageBytes;
 				// Check if images are generated
 				if (bytes != null)
 				{
-					// Return the URI of the first generated image
+					// Save the image and update messages
 					var imageBytes = bytes.ToArray();
-					var fileName = $"{Guid.NewGuid()}.png";
-					// Save image here.
-					var folderPath = Global.GetPath(Item, "Images");
-					var relativePath = System.IO.Path.Combine(Item.Name, "Images", fileName);
-					if (!Directory.Exists(folderPath))
-						Directory.CreateDirectory(folderPath);
-					var pngPath = System.IO.Path.Combine(folderPath, fileName);
-					System.IO.File.WriteAllBytes(pngPath, imageBytes);
-					var message = Item.Messages.Last();
-					message.Attachments.Add(new MessageAttachments
-					{
-						Title = "Generated Image",
-						Data = relativePath,
-						Location = pngPath,
-						SendType = AttachmentSendType.None,
-						Type = Plugins.Core.VsFunctions.ContextType.Image,
-					});
+					var pngPath = SaveImageAndAddAttachment(imageBytes, imageSize, "Image");
 					return new OperationResult<string>(pngPath);
 				}
 				else
@@ -176,14 +225,106 @@ namespace JocysCom.VS.AiCompanion.Engine
 			}
 			finally
 			{
-				ControlsHelper.AppInvoke(() =>
-				{
-					Item.CancellationTokenSources.Remove(cancellationTokenSource);
-					// Remove the task from the UI component
-					Global.MainControl.InfoPanel.RemoveTask(id);
-				});
+				RemoveTaskFromUI(id, cancellationTokenSource);
 			}
 		}
+
+		public async Task<OperationResult<string>> ModifyImageAsync(
+			string originalImagePath,
+			string prompt,
+			string maskImagePath = null,
+			Plugins.Core.image_size imageSize = Plugins.Core.image_size.size_1024x1024
+		)
+		{
+			// Try to get reserved template item.
+			var rItem = Global.Templates.Items.FirstOrDefault(x => x.Name == Item.TemplateGenerateImage);
+			if (rItem == null)
+				return new OperationResult<string>(new Exception($"Can't find '{Item.TemplateGenerateImage}'"));
+			if (string.IsNullOrWhiteSpace(prompt))
+				return new OperationResult<string>(new Exception($"Prompt can't be empty!"));
+
+			var (id, cancellationTokenSource, cancellationToken) = CreateOperationCancellationToken(rItem.AiService.ResponseTimeout);
+
+			try
+			{
+				AddTaskToUI(id, cancellationTokenSource);
+
+				var imageClient = await GetImageClientAsync(rItem, cancellationToken);
+
+				var (imageWidth, imageHeight) = GetImageDimensions(imageSize);
+
+				// Create image edit options
+				var imageEditOptions = new ImageEditOptions()
+				{
+					Size = new GeneratedImageSize(imageWidth, imageHeight),
+					ResponseFormat = GeneratedImageFormat.Bytes,
+				};
+
+				// Ensure the original image exists
+				if (!File.Exists(originalImagePath))
+					return new OperationResult<string>(new FileNotFoundException("Original image file not found", originalImagePath));
+
+				var imageFilename = Path.GetFileName(originalImagePath);
+
+				// Initialize mask stream and filename
+				Stream maskStream = null;
+				string maskFilename = null;
+
+				if (!string.IsNullOrWhiteSpace(maskImagePath))
+				{
+					// Ensure the mask image exists
+					if (!File.Exists(maskImagePath))
+						return new OperationResult<string>(new FileNotFoundException("Mask image file not found", maskImagePath));
+
+					// Open the mask image file as a stream
+					maskStream = File.OpenRead(maskImagePath);
+					maskFilename = Path.GetFileName(maskImagePath);
+				}
+
+				ClientResult<GeneratedImage> response = null;
+
+				// Open the original image file as a stream
+				using (var imageStream = File.OpenRead(originalImagePath))
+				{
+					// Call the image editing API
+					response = await imageClient.GenerateImageEditAsync(
+						image: imageStream,
+						imageFilename: imageFilename,
+						prompt: prompt,
+						mask: maskStream,
+						maskFilename: maskFilename,
+						options: imageEditOptions,
+						cancellationToken: cancellationToken
+					);
+				}
+
+				var bytes = response?.Value?.ImageBytes;
+
+				// Check if images are generated
+				if (bytes != null)
+				{
+					// Save the image and update messages
+					var imageBytes = bytes.ToArray();
+					var pngPath = SaveImageAndAddAttachment(imageBytes, imageSize, "Image");
+					return new OperationResult<string>(pngPath);
+				}
+				else
+				{
+					return new OperationResult<string>(new Exception("No images were generated."));
+				}
+			}
+			catch (Exception ex)
+			{
+				// Return any exceptions encountered
+				return new OperationResult<string>(ex);
+			}
+			finally
+			{
+				RemoveTaskFromUI(id, cancellationTokenSource);
+			}
+		}
+
+		#endregion
 
 		#endregion
 
