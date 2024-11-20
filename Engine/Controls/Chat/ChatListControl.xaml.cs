@@ -124,9 +124,11 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 				InsertWebMessage(Messages[e.NewIndex], true);
 			if (e.ListChangedType == ListChangedType.ItemChanged)
 			{
-				var allowUpdate = e.PropertyDescriptor.Name == nameof(MessageItem.Type);
+				var allowUpdate =
+					e.PropertyDescriptor.Name == nameof(MessageItem.Type) ||
+					e.PropertyDescriptor.Name == nameof(MessageItem.Updated);
 				if (allowUpdate)
-					UpdateWebMessage(Messages[e.NewIndex], true);
+					UpdateWebMessage(Messages[e.NewIndex], false);
 			}
 		}
 

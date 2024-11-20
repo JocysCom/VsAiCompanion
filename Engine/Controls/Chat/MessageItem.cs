@@ -56,6 +56,13 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 		[XmlIgnore, JsonIgnore]
 		public object Tag;
 
+		/// <summary>
+		/// Used for triggering updates on the HTML page. For example when attachment added.
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
+		public DateTime Updated { get => _Updated; set => SetProperty(ref _Updated, value); }
+		DateTime _Updated;
+
 		public MessageItem Copy(bool newId)
 		{
 			var copy = new MessageItem();

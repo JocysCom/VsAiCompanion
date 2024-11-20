@@ -117,6 +117,7 @@ namespace JocysCom.VS.AiCompanion.Engine
 			imageInfo.Path = relativePath;
 			imageInfo.FullPath = fullPath;
 			File.WriteAllBytes(fullPath, imageBytes);
+			// Get last messages from the chat list. It will be an assistant message.
 			var message = Item.Messages.Last();
 			var imageData = Client.Serialize(imageInfo);
 			message.Attachments.Add(new MessageAttachments
@@ -126,6 +127,8 @@ namespace JocysCom.VS.AiCompanion.Engine
 				SendType = AttachmentSendType.None,
 				Type = Plugins.Core.VsFunctions.ContextType.Image,
 			});
+			// Set date which will trigger update of the message on the chat web page.
+			message.Updated = DateTime.Now;
 			return fullPath;
 		}
 
