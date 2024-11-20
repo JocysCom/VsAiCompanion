@@ -160,7 +160,7 @@ namespace JocysCom.VS.AiCompanion.Engine.Controls.Chat
 			// Select message tab if options are invisible but selected.
 			if (!isEdit && MessageOptionsTabItem.IsSelected)
 				ChatMessageTabItem.IsSelected = true;
-			MessageOptionsTabItem.Visibility = isEdit ? Visibility.Visible : Visibility.Collapsed;
+			MessageOptionsTabItem.Visibility = isEdit && !isAttachmentEdit ? Visibility.Visible : Visibility.Collapsed;
 			MaskDrawingTabItem.Visibility = isAttachmentEdit ? Visibility.Visible : Visibility.Collapsed;
 			MessageOptionsPanel.DataContext = isEdit ? MessagesPanel.Messages.FirstOrDefault(x => x.Id == EditMessageId) : null;
 			SendButtonIcon.Content = isEdit
